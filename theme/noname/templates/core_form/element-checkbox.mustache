@@ -1,0 +1,36 @@
+<div class="form-group row {{#error}}has-danger{{/error}}">
+    <div class="col-md-9 push-md-3 checkbox">
+        <label>
+        <input type="checkbox" name="{{element.name}}"
+            id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
+            {{#element.frozen}}readonly disabled{{/element.frozen}}
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}} >
+            {{{label}}} {{{helpbutton}}}
+        </label>
+        <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+            {{{error}}}
+        </div>
+    </div>
+</div>
+{{#js}}
+require(['jquery', 'core/event'], function($, Event) {
+    var element = document.getElementById('{{element.id}}');
+    $(element).on(Event.Events.FORM_FIELD_VALIDATION, function(event, msg) {
+        event.preventDefault();
+        var parent = $(element).closest('.form-group');
+        var feedback = parent.find('.form-control-feedback');
+        if (msg !== '') {
+            parent.addClass('has-danger');
+            $(element).attr('aria-describedby', $(element).attr('id') + '-feedback');
+            feedback.html(msg);
+            feedback.show();
+        } else {
+            parent.removeClass('has-danger');
+            $(element).attr('aria-describedby', '');
+            feedback.hide();
+        }
+    });
+});
+{{/js}}

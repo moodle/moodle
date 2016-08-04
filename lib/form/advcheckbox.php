@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/advcheckbox.php');
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * HTML class for an advcheckbox type element
@@ -38,7 +39,7 @@ require_once('HTML/QuickForm/advcheckbox.php');
  * @copyright 2007 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
+class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox implements templatable {
     /** @var string html for help button, if empty then no help will icon will be dispalyed. */
     var $_helpbutton='';
 
@@ -129,5 +130,14 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox{
             $output .= '/>';
         }
         return $output;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        return $context;
     }
 }

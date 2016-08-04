@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/text.php");
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * url type form element
@@ -36,7 +37,7 @@ require_once("HTML/QuickForm/text.php");
  * @copyright 2009 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_url extends HTML_QuickForm_text{
+class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -61,7 +62,9 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         if (!isset($this->_options['usefilepicker'])) {
             $this->_options['usefilepicker'] = true;
         }
+
         parent::__construct($elementName, $elementLabel, $attributes);
+        $this->_type = 'url';
     }
 
     /**
@@ -89,7 +92,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
      * @return string
      */
     function toHtml(){
-        global $PAGE, $OUTPUT;
+
 
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];
@@ -105,6 +108,16 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
             return $str;
         }
 
+        // print out file picker
+        $str .= $this->getFilePickerHTML();
+
+        return $str;
+    }
+
+    function getFilePickerHTML() {
+        global $PAGE, $OUTPUT;
+
+        $str = '';
         $client_id = uniqid();
 
         $args = new stdClass();
@@ -119,7 +132,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         if (count($options->repositories) > 0) {
             $straddlink = get_string('choosealink', 'repository');
             $str .= <<<EOD
-<button id="filepicker-button-js-{$client_id}" class="visibleifjs">
+<button id="filepicker-button-js-{$client_id}" class="visibleifjs btn btn-secondary">
 $straddlink
 </button>
 EOD;
@@ -156,5 +169,15 @@ EOD;
         } else {
             return 'default';
         }
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        $context['filepickerhtml'] = $this->getFilePickerHTML();
+        return $context;
     }
 }

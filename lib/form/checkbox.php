@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/checkbox.php');
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * HTML class for a checkbox type element
@@ -39,7 +40,7 @@ require_once('HTML/QuickForm/checkbox.php');
  * @copyright 2007 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
+class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox implements templatable {
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -137,5 +138,14 @@ class MoodleQuickForm_checkbox extends HTML_QuickForm_checkbox{
             $output .= '/>';
         }
         return $output;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        return $context;
     }
 }

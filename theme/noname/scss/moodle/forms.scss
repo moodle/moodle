@@ -5,25 +5,12 @@
  *
  */
 
-form {
-    margin: 0;
-}
-.mform fieldset .advancedbutton {
-    text-align: right;
-}
 .jsenabled .mform .containsadvancedelements .advanced {
     display: none;
 }
 .mform .containsadvancedelements .advanced.show {
     display: block;
 }
-.mform fieldset.group {
-    margin-bottom: 0
-}
-.mform fieldset.error {
-    border: 1px solid $state-danger-text;
-}
-.mform span.error,
 #adminsettings span.error {
     display: inline-block;
     border: 1px solid $state-danger-border;
@@ -47,36 +34,8 @@ form {
 .jsenabled .mform .collapsed .fcontainer {
     display: none;
 }
-
-.mform .fitem .fitemtitle div {
-    display: inline;
-}
-#adminsettings .error,
-.mform .error {
+#adminsettings .error {
     color: $state-danger-text;
-}
-.mform .fdescription.required {
-    margin-left: $display1-size;
-}
-.mform .fpassword .unmask {
-    display: inline-block;
-    margin-left: 0.5em;
-    & > input {
-        margin: 0;
-    }
-    & > label {
-        display: inline-block;
-    }
-}
-.mform label {
-    display: inline-block;
-}
-
-.mform .iconhelp {
-    margin-left: 4px;
-}
-.mform .ftextarea #id_alltext {
-    width: 100%;
 }
 .mform ul.file-list {
     padding: 0;
@@ -87,39 +46,6 @@ form {
 .mform label .adv {
     cursor: help;
 }
-.mform .fcheckbox input {
-    margin-left: 0;
-}
-.mform .fcheckbox > span,
-.mform .fradio > span,
-.mform .fgroup > span {
-    display: inline-block;
-    margin-top: 5px;
-}
-.mform .fitem fieldset.fgroup label,
-.mform fieldset.fdate_selector label {
-    display: inline;
-    float: none;
-    width: auto;
-}
-.mform .ftags label.accesshide {
-    display: block;
-    position: static;
-}
-.mform .ftags select {
-    margin-bottom: 0.7em;
-    min-width: 22em;
-}
-.mform .helplink img {
-    margin: 0 .45em;
-    padding: 0;
-}
-.mform legend .helplink img {
-    margin: 0 .2em;
-}
-.singleselect label {
-    margin-right: .3em;
-}
 /*rtl:ignore*/
 input#id_externalurl {
     direction: ltr;
@@ -129,8 +55,7 @@ input#id_externalurl {
 }
 
 // Copying in Bootstrap styles.
-.form-item,
-.mform .fitem {
+.form-item {
     margin-bottom: 10px;
     // Theres's a mysterious extra 10px inside this item,
     // so reduce margin by 10px from 20px standard to compensate.
@@ -145,7 +70,6 @@ input#id_externalurl {
 }
 .form-item .form-setting,
 .form-item .form-description,
-.mform .fitem .felement,
 #page-mod-forum-search .c1 .form-horizontal {
     @extend .controls;
 }
@@ -159,14 +83,14 @@ input#id_externalurl {
 // uneditable looks ugly, styling both as form help is fairly
 // subtle in it's impact. Going for the latter as the best option.
 .form-item .form-description,
-.felement.fstatic {
+.no-felement.fstatic {
     @extend .text-muted;
     padding-top: 5px;
 }
 .form-item .form-description {
     padding-top: 0;
 }
-.fitem .fstaticlabel {
+.no-fitem .fstaticlabel {
     font-weight: bold;
 }
 
@@ -203,11 +127,6 @@ div.backup-section + form,
     line-height: $line-height-base * 2;
     border: 0;
     border-bottom: 1px solid #e5e5e5;
-}
-.mform legend a,
-.mform legend a:hover {
-    color: $body-color;
-    text-decoration: none;
 }
 
 // I think this could be avoided (or at least tidied up) ifr
@@ -306,31 +225,8 @@ div.backup-section + form,
     display: inline-block;
 }
 
-// Checkbox labels. Bootstrap puts the associated checkbox inside the label.
-// Moodle puts it beside the label, so we need to make it inline-block
-// to keep it on the same horizontal level.
-input[type="radio"] + label,
-input[type="checkbox"] + label {
-    display: inline;
-    padding-left: 0.2em;
-}
-input[type="radio"],
-input[type="checkbox"] {
-    margin-top: -4px; // Dodgy hack, must be better way.
-    margin-right: 7px;
-}
-.singleselect {
-    display: inline-block;
-    form,
-    select{
-        margin: 0;
-    }
-}
 .form-item .form-label label {
     margin-bottom: 0;
-}
-.felement.ffilepicker {
-    margin-top: 5px;
 }
 div#dateselector-calendar-panel {
     z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
@@ -343,88 +239,7 @@ fieldset.coursesearchbox label {
 /**
  * Show the labels above text editors and file managers except on wide screens.
  */
-#region-main .mform:not(.unresponsive) .fitem .fitemtitle label {
-    font-weight: bold;
-}
-@mixin makeFormsVertical() {
-    #region-main .mform:not(.unresponsive) {
-        .fitem {
-            .fitemtitle {
-                display: block;
-                margin-top: 4px;
-                margin-bottom: 4px;
-                text-align: left;
-                width: 100%;
-            }
-            .felement {
-                margin-left: 0;
-                width: 100%;
-                float: left;
-                padding-left: 0;
-                padding-right: 0;
-            }
-            .fstatic:empty {
-                display: none;
-            }
-            .fcheckbox > span,
-            .fradio > span,
-            .fgroup > span {
-                margin-top: 4px;
-            }
 
-        }
-        .femptylabel {
-            .fitemtitle {
-                display: inline-block;
-                width: auto;
-                margin-right: 8px;
-            }
-            .felement {
-                display: inline-block;
-                margin-top: 4px;
-                padding-top: 5px;
-                width: auto;
-            }
-        }
-        .fitem_fcheckbox{
-            .fitemtitle,
-            .felement {
-                display: inline-block;
-                width: auto;
-            }
-            .felement {
-                padding: 6px;
-            }
-        }
-    }
-}
-
-/**
- * Make forms vertical when the screen is less than 1200px;
- */
-@media (max-width: 1199px) {
-    body {
-        @include makeFormsVertical();
-    }
-}
-
-
-
-/**
- * Make forms vertical when the screen is less than 1474px AND both side-pre and side-post contain blocks.
- * This is an extra special media rule.
- * It causes forms to show vertically when the screen size is calculated as:
- * 1199px + (1199px * 23%)
- * Where 23% is the width of span3
- * Full calculation is:
- *   $maxWidthForVerticalForms: 1199px * (unit((($fluidGridColumnWidth1200 * 3) + ($fluidGridGutterWidth * (3 - 1)))) / 100) + 1199px;
- */
-$maxWidthForVerticalForms: 1474px;
-@media (max-width: $maxWidthForVerticalForms) {
-    .used-region-side-pre.used-region-side-post {
-        @include makeFormsVertical();
-    }
-}
 
 /* Section and module editing forms contain special JS components for the
    availability system (if enabled). */
@@ -538,13 +353,6 @@ $maxWidthForVerticalForms: 1474px;
     }
 }
 
-/* Revert to the non-fixed width where a textarea has the number of columns
-   specified, or an input has it's size specified. */
-textarea[cols],
-input[size] {
-    width: auto;
-}
-
 /* Custom styles for autocomplete form element */
 .form-autocomplete-selection {
     margin: 0.2em;
@@ -564,7 +372,7 @@ input[size] {
     overflow: auto;
     margin: 0px;
     padding: 0px;
-    margin-top: -0.2em;
+    margin-top: 0.4em;
     z-index: 1;
 }
 .form-autocomplete-suggestions li {
@@ -586,7 +394,7 @@ input[size] {
 .form-autocomplete-downarrow {
     color: $body-color;
     position: relative;
-    top: -0.3em;
+    top: 0.2em;
     left: -1.5em;
     cursor: pointer;
 }
@@ -597,4 +405,8 @@ input[size] {
 .form-autocomplete-selection [data-active-selection=true] {
     padding: 0.5em;
     font-size: large;
+}
+
+select[multiple] {
+    overflow: auto;
 }

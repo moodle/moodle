@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/text.php");
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * Text type form element
@@ -37,7 +38,8 @@ require_once("HTML/QuickForm/text.php");
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_text extends HTML_QuickForm_text{
+class MoodleQuickForm_text extends HTML_QuickForm_text implements templatable {
+
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -123,5 +125,15 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
      */
     function getHelpButton(){
         return $this->_helpbutton;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        $context['hideLabel'] = $this->_hiddenLabel;
+        return $context;
     }
 }

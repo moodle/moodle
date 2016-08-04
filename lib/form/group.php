@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/group.php");
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * HTML class for a form element group
@@ -37,12 +38,14 @@ require_once("HTML/QuickForm/group.php");
  * @copyright 2007 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_group extends HTML_QuickForm_group{
+class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable {
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
     /** @var MoodleQuickForm */
     protected $_mform = null;
+
+    var $_renderedfromtemplate = false;
 
     /**
      * constructor
@@ -146,5 +149,90 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
             throw new coding_exception('You can not call createFormElement() on the group element that was not yet added to a form.');
         }
         return call_user_func_array([$this->_mform, 'createElement'], func_get_args());
+    }
+
+    public function export_for_template(renderer_base $output) {
+        global $OUTPUT;
+        $this->_renderedfromtemplate = true;
+
+        include_once('HTML/QuickForm/Renderer/Default.php');
+
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        $elements = [];
+        foreach ($this->_elements as $key => $element) {
+            $element->_generateId();
+            $name = $this->getName();
+            $elementname = '';
+            if ($this->_appendName) {
+                $elementname = $element->getName();
+                if (isset($elementname)) {
+                    $element->setName($name . '['. (strlen($elementname) ? $elementname : $key) .']');
+                } else {
+                    $element->setName($name);
+                }
+            }
+
+            $out = $OUTPUT->mform_element($element, false, '', true);
+
+            if (empty($out)) {
+                $renderer = new HTML_QuickForm_Renderer_Default();
+                $renderer->setElementTemplate('{element}');
+                $element->accept($renderer);
+                $out = $renderer->toHtml();
+            }
+            $elements[] = $out;
+            // Restore the element's name.
+            if ($this->_appendName) {
+                $element->setName($elementname);
+            }
+
+        }
+
+        $context['elements'] = $elements;
+        return $context;
+    }
+
+     /**
+    * Accepts a renderer
+    *
+    * @param object     An HTML_QuickForm_Renderer object
+    * @param bool       Whether a group is required
+    * @param string     An error message associated with a group
+    * @access public
+    * @return void
+    */
+    function accept(&$renderer, $required = false, $error = null) {
+        $this->_createElementsIfNotExist();
+        $renderer->startGroup($this, $required, $error);
+        if (!$this->_renderedfromtemplate) {
+            // Backwards compatible path - only do this if we didn't render the sub-elements already.
+            $name = $this->getName();
+            foreach (array_keys($this->_elements) as $key) {
+                $element =& $this->_elements[$key];
+
+                if ($this->_appendName) {
+                    $elementName = $element->getName();
+                    if (isset($elementName)) {
+                        $element->setName($name . '['. (strlen($elementName)? $elementName: $key) .']');
+                    } else {
+                        $element->setName($name);
+                    }
+                }
+
+                $required = !$element->isFrozen() && in_array($element->getName(), $this->_required);
+
+                $element->accept($renderer, $required);
+
+                // restore the element's name
+                if ($this->_appendName) {
+                    $element->setName($elementName);
+                }
+            }
+        }
+        $renderer->finishGroup($this);
     }
 }

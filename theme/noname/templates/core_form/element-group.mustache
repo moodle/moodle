@@ -1,0 +1,10 @@
+<div class="form-group row {{#error}}has-danger{{/error}}">
+    <label class="col-md-3 col-form-label" for="{{element.id}}">
+        {{{label}}} {{{helpbutton}}}
+    </label>
+    <div class="col-md-9 form-inline">
+        {{#element.elements}}
+            {{{.}}}
+        {{/element.elements}}
+    </div>
+</div>

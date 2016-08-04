@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/element.php');
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * select type form element
@@ -37,7 +38,7 @@ require_once('HTML/QuickForm/element.php');
  * @copyright 2007 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
+class MoodleQuickForm_selectgroups extends HTML_QuickForm_element implements templatable {
 
     /** @var bool add choose option */
     var $showchoose = false;
@@ -506,5 +507,49 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
         } else {
             return 'default';
         }
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        $context['attributes'] = [];
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+            if (!in_array($name, ['id', 'name', 'multiple'])) {
+                $context['attributes'][] = ['name' => $name, 'value' => $value];
+            }
+        }
+        $optiongroups = [];
+        if ($this->showchoose) {
+            $optionsgroups[] = [
+                'text' => get_string('choosedots')
+            ];
+        }
+
+        foreach ($this->_optGroups as $group) {
+            $options = [];
+
+            foreach ($group['options'] as $option) {
+                $o = [];
+                if (is_array($this->_values) && in_array((string)$option['attr']['value'], $this->_values)) {
+                    $o['selected'] = true;
+                } else {
+                    $o['selected'] = false;
+                }
+                $o['text'] = $option['text'];
+                $options[] = $o;
+            }
+
+            $og = [
+                'text' => $group['attr']['label'],
+                'options' => $options
+            ];
+
+            $optiongroups[] = $og;
+        }
+        $context['optiongroups'] = $optiongroups;
+        $context['hideLabel'] = $this->_hiddenLabel;
+
+        return $context;
     }
 }
