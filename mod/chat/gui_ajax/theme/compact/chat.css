@@ -60,6 +60,3 @@
     background: #E3E8F0;
     height: 100%;
 }
-
-.dir-rtl .chat-message {text-align:right;}
-.dir-rtl .mdl-chat-my-entry .chat-message .text {text-align:right;}
