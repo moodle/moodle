@@ -28,6 +28,7 @@ use moodle_url;
 use preferences_groups;
 use action_menu;
 use help_icon;
+use single_select;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -272,4 +273,15 @@ class core_renderer extends \core_renderer {
         $context = $helpicon->export_for_template($this);
         return $this->render_from_template('core/help_icon', $context);
     }
+
+    /**
+     * Renders a single select.
+     *
+     * @param single_select $select The object.
+     * @return string HTML
+     */
+    protected function render_single_select(single_select $select) {
+        return $this->render_from_template('core/single_select', $select->export_for_template($this));
+    }
+
 }

@@ -1,0 +1,35 @@
+<div class="{{classes}}">
+    <form method="{{method}}" action="{{action}}" class="form-inline">
+        {{#params}}
+            <input type="hidden" name="{{name}}" value="{{value}}">
+        {{/params}}
+        <div class="form-group">
+            {{#label}}
+                <label for="{{id}}" {{#labelattributes}}{{name}}="{{value}}" {{/labelattributes}}>
+                    {{label}}
+                </label>
+            {{/label}}
+            {{#helpicon}}
+                {{>core/help_icon}}
+            {{/helpicon}}
+            <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="{{name}}">
+                {{#options}}
+                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{/options}}
+            </select>
+        </div>
+        <noscript>
+            <button type="submit" class="btn btn-secondary">{{#str}}go, core{{/str}}</button>
+        </noscript>
+    </form>
+</div>
+{{#js}}
+require(['core/yui'], function(Y) {
+    Y.use('moodle-core-formautosubmit', function() {
+        M.core.init_formautosubmit({
+            selectid: '{{id}}',
+            nothing: {{#hasnothing}}'{{nothingkey}}'{{/hasnothing}}{{^hasnothing}}false{{/hasnothing}}
+        });
+    });
+});
+{{/js}}
