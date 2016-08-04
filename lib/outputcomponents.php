@@ -447,7 +447,7 @@ class user_picture implements renderable {
  * @package core
  * @category output
  */
-class help_icon implements renderable {
+class help_icon implements renderable, templatable {
 
     /**
      * @var string lang pack identifier (without the "_help" suffix),
@@ -490,6 +490,28 @@ class help_icon implements renderable {
         if (!$sm->string_exists($this->identifier.'_help', $this->component)) {
             debugging("Help contents string does not exist: [{$this->identifier}_help, $this->component]");
         }
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+        $title = get_string($this->identifier, $this->component);
+
+        if (empty($this->linktext)) {
+            $alt = get_string('helpprefix2', '', trim($title, ". \t"));
+        } else {
+            $alt = get_string('helpwiththis');
+        }
+
+        $data = get_formatted_help_string($this->identifier, $this->component, false);
+        $data->alt = $alt;
+
+        $data->ltr = !right_to_left();
+        return $data;
     }
 }
 
