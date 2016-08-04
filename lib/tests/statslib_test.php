@@ -61,7 +61,6 @@ class core_statslib_testcase extends advanced_testcase {
         core_date::set_default_server_timezone();
         $CFG->statsfirstrun           = 'all';
         $CFG->statslastdaily          = 0;
-        $CFG->statslastexecution      = 0;
 
         // Figure out the broken day start so I can figure out when to the start time should be.
         $time   = time();
@@ -73,9 +72,6 @@ class core_statslib_testcase extends advanced_testcase {
         $stime -= $offset;
 
         $shour  = intval(($time - $stime) / (60*60));
-
-        $CFG->statsruntimestarthour   = $shour;
-        $CFG->statsruntimestartminute = 0;
 
         if ($DB->record_exists('user', array('username' => 'user1'))) {
             return;
