@@ -1,0 +1,16 @@
+<div>
+<textarea id="{{id}}" name="{{name}}[text]" rows="{{rows}}" cols="{{cols}}" spellcheck="true" {{#changelistener}} onblur="{{onblur}}"
+    onchange="{{onchange}}" {{/changelistener}}>{{text}}</textarea>
+</div>
+<div>
+    {{^onlyoneformat}}
+        <select name="{{name}}[format]" id="menu{{name}}format">
+        {{#formats}}
+            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
+        {{/formats}}
+        </select>
+    {{/onlyoneformat}}
+    {{#onlyoneformat}}
+        <input name="{{name}}[format]" type="hidden" value="{{format}}"/>
+    {{/onlyoneformat}}
+</div>

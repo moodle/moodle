@@ -30,6 +30,7 @@ global $CFG;
 require_once('HTML/QuickForm/element.php');
 require_once($CFG->dirroot.'/lib/filelib.php');
 require_once($CFG->dirroot.'/repository/lib.php');
+require_once($CFG->libdir.'/outputcomponents.php');
 
 /**
  * Editor element
@@ -43,7 +44,7 @@ require_once($CFG->dirroot.'/repository/lib.php');
  * @todo      MDL-29421 element Freezing
  * @todo      MDL-29426 ajax format conversion
  */
-class MoodleQuickForm_editor extends HTML_QuickForm_element {
+class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatable {
     /** @var string html for help button, if empty then no help will icon will be dispalyed. */
     public $_helpbutton = '';
 
@@ -293,7 +294,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
      * @return string
      */
     function toHtml() {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $OUTPUT;
         require_once($CFG->dirroot.'/repository/lib.php');
 
         if ($this->_flagFrozen) {
@@ -394,24 +395,27 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $cols = empty($this->_attributes['cols']) ? 80 : $this->_attributes['cols'];
 
         //Apply editor validation if required field
-        $editorrules = '';
-        if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
-            $editorrules = ' onblur="'.htmlspecialchars($this->getAttribute('onblur')).'" onchange="'.htmlspecialchars($this->getAttribute('onchange')).'"';
+        $context = [];
+        $context['rows'] = $rows;
+        $context['cols'] = $cols;
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
         }
-        $str .= '<div><textarea id="'.$id.'" name="'.$elname.'[text]" rows="'.$rows.'" cols="'.$cols.'" spellcheck="true"'.$editorrules.'>';
-        $str .= s($text);
-        $str .= '</textarea></div>';
+        $context['hasformats'] = count($formats) > 1;
+        $context['formats'] = [];
+        foreach ($formats as $value => $text) {
+            $context['formats'][] = ['value' => $value, 'text' => $text, 'selected' => ($value == $format)];
+        }
+        $context['id'] = $id;
+        $context['value'] = $text;
+        $context['format'] = $format;
 
-        $str .= '<div>';
-        if (count($formats)>1) {
-            $str .= html_writer::label(get_string('format'), 'menu'. $elname. 'format', false, array('class' => 'accesshide'));
-            $str .= html_writer::select($formats, $elname.'[format]', $format, false, array('id' => 'menu'. $elname. 'format'));
-        } else {
-            $keys = array_keys($formats);
-            $str .= html_writer::empty_tag('input',
-                    array('name'=>$elname.'[format]', 'type'=> 'hidden', 'value' => array_pop($keys)));
+        $str .= $OUTPUT->render_from_template('core_form/editor_textarea', $context);
+
+        if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
+            $context['changelistener'] = true;
         }
-        $str .= '</div>';
 
         // during moodle installation, user area doesn't exist
         // so we need to disable filepicker here.
@@ -444,6 +448,16 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $str .= '</div>';
 
         return $str;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        $context['html'] = $this->toHtml();
+        return $context;
     }
 
     /**

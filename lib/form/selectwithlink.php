@@ -32,6 +32,7 @@ require_once('HTML/QuickForm/select.php');
  *
  * HTML class for a select type element with options containing link
  *
+ * @deprecated since 3.2
  * @package   core_form
  * @category  form
  * @copyright 2008 Nicolas Connault <nicolasconnault@gmail.com>
@@ -63,6 +64,7 @@ class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select{
      * @param bool $linkdata data to be posted
      */
     public function __construct($elementName=null, $elementLabel=null, $options=null, $attributes=null, $linkdata=null) {
+        debugging('Element type selectwithlink is deprecated. Use 2 elements.', DEBUG_DEVELOPER);
         if (!empty($linkdata['link']) && !empty($linkdata['label'])) {
             $this->_link = $linkdata['link'];
             $this->_linklabel = $linkdata['label'];

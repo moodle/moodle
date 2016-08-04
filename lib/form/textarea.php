@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/textarea.php');
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * Textarea type form element
@@ -37,7 +38,7 @@ require_once('HTML/QuickForm/textarea.php');
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
+class MoodleQuickForm_textarea extends HTML_QuickForm_textarea implements templatable {
     /** @var string Need to store id of form as we may need it for helpbutton */
     var $_formid = '';
 
@@ -129,5 +130,15 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
         } else {
             return 'default';
         }
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        $context['hideLabel'] = $this->_hiddenLabel;
+        return $context;
     }
 }

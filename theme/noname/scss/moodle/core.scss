@@ -157,9 +157,16 @@ a.autolink.glossary:hover {
 .pagingbar .thispage {
     font-weight: bold;
 }
+img.userpicture {
+    margin-right: 0.5rem;
+}
 img.resize {
     height: 1em;
     width: 1em;
+}
+.action-menu .dropdown-toggle {
+    margin-right: 0.5rem;
+    text-decoration: none;
 }
 .action-menu {
     white-space: nowrap;
@@ -168,6 +175,8 @@ img.resize {
     width: 16px;
     height: 16px;
     box-sizing: content-box;
+}
+.action-menu .dropdown-menu img {
     padding-right: 0.5rem;
 }
 .action-menu .userpicture {

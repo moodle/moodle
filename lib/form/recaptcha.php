@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/input.php');
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * recaptcha type form element
@@ -37,7 +38,7 @@ require_once('HTML/QuickForm/input.php');
  * @copyright 2008 Nicolas Connault <nicolasconnault@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
+class MoodleQuickForm_recaptcha extends HTML_QuickForm_input implements templatable {
 
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
@@ -151,5 +152,15 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
             return $response->error;
         }
         return true;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        $context['html'] = $this->toHtml();
+        return $context;
     }
 }

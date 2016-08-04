@@ -1,0 +1,16 @@
+<div class="form-group row">
+    <label class="col-md-3 col-form-label {{#element.hideLabel}}sr-only{{/element.hideLabel}}" for="{{element.id}}">
+        {{{label}}} {{{helpbutton}}}
+    </label>
+    <div class="col-md-9 form-inline">
+        <button {{#element.frozen}}readonly{{/element.frozen}}
+                class="btn btn-secondary m-l-0"
+                name="{{element.name}}"
+                id="{{element.id}}"
+                {{#error}}
+                    autofocus aria-describedby="id_error_{{element.name}}"
+                {{/error}} >
+                {{{element.value}}}
+                </button>
+    </div>
+</div>

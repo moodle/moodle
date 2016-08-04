@@ -149,14 +149,14 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         $langscale = get_string('modgradetypescale', 'grades');
         $this->scaleformelement = $this->createFormElement('select', 'modgrade_scale', $langscale,
             $scales, $attributes);
-        $this->scaleformelement->setHiddenLabel = false;
+        $this->scaleformelement->setHiddenLabel(true);
         $scaleformelementid = $this->generate_modgrade_subelement_id('modgrade_scale');
         $this->scaleformelement->updateAttributes(array('id' => $scaleformelementid));
 
         // Maximum grade textbox.
         $langmaxgrade = get_string('modgrademaxgrade', 'grades');
         $this->maxgradeformelement = $this->createFormElement('text', 'modgrade_point', $langmaxgrade, array());
-        $this->maxgradeformelement->setHiddenLabel = false;
+        $this->maxgradeformelement->setHiddenLabel(true);
         $maxgradeformelementid = $this->generate_modgrade_subelement_id('modgrade_point');
         $this->maxgradeformelement->updateAttributes(array('id' => $maxgradeformelementid));
 
@@ -169,7 +169,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         $langtype = get_string('modgradetype', 'grades');
         $this->gradetypeformelement = $this->createFormElement('select', 'modgrade_type', $langtype, $gradetype,
             $attributes, true);
-        $this->gradetypeformelement->setHiddenLabel = false;
+        $this->gradetypeformelement->setHiddenLabel(true);
         $gradetypeformelementid = $this->generate_modgrade_subelement_id('modgrade_type');
         $this->gradetypeformelement->updateAttributes(array('id' => $gradetypeformelementid));
 
@@ -188,7 +188,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                     'modgrade_rescalegrades',
                     $langrescalegrades,
                     $choices);
-                $rescalegradesselect->setHiddenLabel = false;
+                $rescalegradesselect->setHiddenLabel(true);
                 $rescalegradesselectid = $this->generate_modgrade_subelement_id('modgrade_rescalegrades');
                 $rescalegradesselect->updateAttributes(array('id' => $rescalegradesselectid));
             }

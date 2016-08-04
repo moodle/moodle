@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/select.php');
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * select type form element
@@ -37,7 +38,7 @@ require_once('HTML/QuickForm/select.php');
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_select extends HTML_QuickForm_select{
+class MoodleQuickForm_select extends HTML_QuickForm_select implements templatable {
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -188,5 +189,34 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
         } else {
             return $this->_prepareValue($cleaned[0], $assoc);
         }
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        $context['attributes'] = [];
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+            if (!in_array($name, ['id', 'name', 'multiple'])) {
+                $context['attributes'][] = ['name' => $name, 'value' => $value];
+            }
+        }
+
+        $options = [];
+        foreach ($this->_options as $option) {
+            if (is_array($this->_values) && in_array( (string) $option['attr']['value'], $this->_values)) {
+                $this->_updateAttrArray($option['attr'], ['selected' => 'selected']);
+            }
+            $o = [
+                'text' => $option['text'],
+                'value' => $option['attr']['value'],
+                'selected' => !empty($option['attr']['selected'])
+            ];
+            $options[] = $o;
+        }
+        $context['options'] = $options;
+        $context['hideLabel'] = $this->_hiddenLabel;
+
+        return $context;
     }
 }

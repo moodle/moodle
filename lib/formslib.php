@@ -2091,6 +2091,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     function getValidationScript()
     {
+        global $PAGE;
+
         if (empty($this->_rules) || $this->clientvalidation === false) {
             return '';
         }
@@ -2170,67 +2172,74 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         unset($element);
 
         $js = '
-<script type="text/javascript">
-//<![CDATA[
 
 var skipClientValidation = false;
 
-(function() {
+
+require(["core/event", "jquery"], function(Event, $) {
 
     function qf_errorHandler(element, _qfMsg, escapedName) {
-      div = element.parentNode;
+        var event = $.Event(Event.Events.FORM_FIELD_VALIDATION);
+        $(element).trigger(event, _qfMsg);
+        if (event.isDefaultPrevented()) {
+            return _qfMsg == \'\';
+        } else {
+            // Legacy mforms.
+            var div = element.parentNode;
 
-      if ((div == undefined) || (element.name == undefined)) {
-        //no checking can be done for undefined elements so let server handle it.
-        return true;
-      }
+            if ((div == undefined) || (element.name == undefined)) {
+                // No checking can be done for undefined elements so let server handle it.
+                return true;
+            }
 
-      if (_qfMsg != \'\') {
-        var errorSpan = document.getElementById(\'id_error_\' + escapedName);
-        if (!errorSpan) {
-          errorSpan = document.createElement("span");
-          errorSpan.id = \'id_error_\' + escapedName;
-          errorSpan.className = "error";
-          element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
-          document.getElementById(errorSpan.id).setAttribute(\'TabIndex\', \'0\');
-          document.getElementById(errorSpan.id).focus();
-        }
+            if (_qfMsg != \'\') {
+                var errorSpan = document.getElementById(\'id_error_\' + escapedName);
+                if (!errorSpan) {
+                    errorSpan = document.createElement("span");
+                    errorSpan.id = \'id_error_\' + escapedName;
+                    errorSpan.className = "error";
+                    element.parentNode.insertBefore(errorSpan, element.parentNode.firstChild);
+                    document.getElementById(errorSpan.id).setAttribute(\'TabIndex\', \'0\');
+                    document.getElementById(errorSpan.id).focus();
+                }
 
-        while (errorSpan.firstChild) {
-          errorSpan.removeChild(errorSpan.firstChild);
-        }
+                while (errorSpan.firstChild) {
+                    errorSpan.removeChild(errorSpan.firstChild);
+                }
 
-        errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
+                errorSpan.appendChild(document.createTextNode(_qfMsg.substring(3)));
 
-        if (div.className.substr(div.className.length - 6, 6) != " error"
-          && div.className != "error") {
-            div.className += " error";
-            linebreak = document.createElement("br");
-            linebreak.className = "error";
-            linebreak.id = \'id_error_break_\' + escapedName;
-            errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
-        }
+                if (div.className.substr(div.className.length - 6, 6) != " error"
+                        && div.className != "error") {
+                    div.className += " error";
+                    linebreak = document.createElement("br");
+                    linebreak.className = "error";
+                    linebreak.id = \'id_error_break_\' + escapedName;
+                    errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
+                }
 
-        return false;
-      } else {
-        var errorSpan = document.getElementById(\'id_error_\' + escapedName);
-        if (errorSpan) {
-          errorSpan.parentNode.removeChild(errorSpan);
-        }
-        var linebreak = document.getElementById(\'id_error_break_\' + escapedName);
-        if (linebreak) {
-          linebreak.parentNode.removeChild(linebreak);
-        }
+                return false;
+            } else {
+                var errorSpan = document.getElementById(\'id_error_\' + escapedName);
+                if (errorSpan) {
+                    errorSpan.parentNode.removeChild(errorSpan);
+                }
+                var linebreak = document.getElementById(\'id_error_break_\' + escapedName);
+                if (linebreak) {
+                    linebreak.parentNode.removeChild(linebreak);
+                }
 
-        if (div.className.substr(div.className.length - 6, 6) == " error") {
-          div.className = div.className.substr(0, div.className.length - 6);
-        } else if (div.className == "error") {
-          div.className = "";
-        }
+                if (div.className.substr(div.className.length - 6, 6) == " error") {
+                    div.className = div.className.substr(0, div.className.length - 6);
+                } else if (div.className == "error") {
+                    div.className = "";
+                }
 
-        return true;
-      }
-    }';
+                return true;
+            } // End if.
+        } // End if.
+    } // End function.
+    ';
         $validateJS = '';
         foreach ($test as $elementName => $jsandelement) {
             // Fix for bug displaying errors for elements in a group
@@ -2323,10 +2332,12 @@ var skipClientValidation = false;
             ev.preventDefault();
         }
     });
-})();
-//]]>
-</script>';
-        return $js;
+
+});
+';
+
+        $PAGE->requires->js_amd_inline($js);
+        return '';
     } // end func getValidationScript
 
     /**
@@ -2753,6 +2764,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * @param string $error error message to display
      */
     function startGroup(&$group, $required, $error){
+        global $OUTPUT;
+
         // Make sure the element has an id.
         $group->_generateId();
 
@@ -2762,47 +2775,50 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         // Update the ID.
         $group->updateAttributes(array('id' => $groupid));
 
-        if (method_exists($group, 'getElementTemplateType')){
-            $html = $this->_elementTemplates[$group->getElementTemplateType()];
-        }else{
-            $html = $this->_elementTemplates['default'];
+        $html = $OUTPUT->mform_element($group, $required, $error, false);
+        $fromtemplate = !empty($html);
+        if (!$fromtemplate) {
+            if (method_exists($group, 'getElementTemplateType')) {
+                $html = $this->_elementTemplates[$group->getElementTemplateType()];
+            } else {
+                $html = $this->_elementTemplates['default'];
+            }
 
+            if (isset($this->_advancedElements[$group->getName()])) {
+                $html = str_replace(' {advanced}', ' advanced', $html);
+                $html = str_replace('{advancedimg}', $this->_advancedHTML, $html);
+            } else {
+                $html = str_replace(' {advanced}', '', $html);
+                $html = str_replace('{advancedimg}', '', $html);
+            }
+            if (method_exists($group, 'getHelpButton')) {
+                $html = str_replace('{help}', $group->getHelpButton(), $html);
+            } else {
+                $html = str_replace('{help}', '', $html);
+            }
+            $html = str_replace('{id}', $group->getAttribute('id'), $html);
+            $html = str_replace('{name}', $group->getName(), $html);
+            $html = str_replace('{type}', 'fgroup', $html);
+            $html = str_replace('{class}', $group->getAttribute('class'), $html);
+            $emptylabel = '';
+            if ($group->getLabel() == '') {
+                $emptylabel = 'femptylabel';
+            }
+            $html = str_replace('{emptylabel}', $emptylabel, $html);
         }
-
-        if (isset($this->_advancedElements[$group->getName()])){
-            $html =str_replace(' {advanced}', ' advanced', $html);
-            $html =str_replace('{advancedimg}', $this->_advancedHTML, $html);
-        } else {
-            $html =str_replace(' {advanced}', '', $html);
-            $html =str_replace('{advancedimg}', '', $html);
-        }
-        if (method_exists($group, 'getHelpButton')){
-            $html =str_replace('{help}', $group->getHelpButton(), $html);
-        }else{
-            $html =str_replace('{help}', '', $html);
-        }
-        $html = str_replace('{id}', $group->getAttribute('id'), $html);
-        $html =str_replace('{name}', $group->getName(), $html);
-        $html =str_replace('{type}', 'fgroup', $html);
-        $html =str_replace('{fieldtype}', 'group', $html);
-        $html =str_replace('{class}', $group->getAttribute('class'), $html);
-        $emptylabel = '';
-        if ($group->getLabel() == '') {
-            $emptylabel = 'femptylabel';
-        }
-        $html = str_replace('{emptylabel}', $emptylabel, $html);
-
-        $this->_templates[$group->getName()]=$html;
+        $this->_templates[$group->getName()] = $html;
         // Fix for bug in tableless quickforms that didn't allow you to stop a
         // fieldset before a group of elements.
         // if the element name indicates the end of a fieldset, close the fieldset
-        if (   in_array($group->getName(), $this->_stopFieldsetElements)
-            && $this->_fieldsetsOpen > 0
-           ) {
+        if (in_array($group->getName(), $this->_stopFieldsetElements) && $this->_fieldsetsOpen > 0) {
             $this->_html .= $this->_closeFieldsetTemplate;
             $this->_fieldsetsOpen--;
         }
-        parent::startGroup($group, $required, $error);
+        if (!$fromtemplate) {
+            parent::startGroup($group, $required, $error);
+        } else {
+            $this->_html .= $html;
+        }
     }
 
     /**
@@ -2813,56 +2829,66 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
      * @param string $error error message to display
      */
     function renderElement(&$element, $required, $error){
+        global $OUTPUT;
+
         // Make sure the element has an id.
         $element->_generateId();
 
-        //adding stuff to place holders in template
-        //check if this is a group element first
-        if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
-            // so it gets substitutions for *each* element
-            $html = $this->_groupElementTemplate;
-        }
-        elseif (method_exists($element, 'getElementTemplateType')){
-            $html = $this->_elementTemplates[$element->getElementTemplateType()];
-        }else{
-            $html = $this->_elementTemplates['default'];
-        }
-        if (isset($this->_advancedElements[$element->getName()])){
-            $html = str_replace(' {advanced}', ' advanced', $html);
-            $html = str_replace(' {aria-live}', ' aria-live="polite"', $html);
+        $html = $OUTPUT->mform_element($element, $required, $error, false);
+        $fromtemplate = !empty($html);
+        if (!$fromtemplate) {
+            // Adding stuff to place holders in template
+            // check if this is a group element first.
+            if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
+                // So it gets substitutions for *each* element.
+                $html = $this->_groupElementTemplate;
+            } else if (method_exists($element, 'getElementTemplateType')){
+                $html = $this->_elementTemplates[$element->getElementTemplateType()];
+            } else {
+                $html = $this->_elementTemplates['default'];
+            }
+            if (isset($this->_advancedElements[$element->getName()])){
+                $html = str_replace(' {advanced}', ' advanced', $html);
+                $html = str_replace(' {aria-live}', ' aria-live="polite"', $html);
+            } else {
+                $html = str_replace(' {advanced}', '', $html);
+                $html = str_replace(' {aria-live}', '', $html);
+            }
+            if (isset($this->_advancedElements[$element->getName()]) || $element->getName() == 'mform_showadvanced'){
+                $html = str_replace('{advancedimg}', $this->_advancedHTML, $html);
+            } else {
+                $html = str_replace('{advancedimg}', '', $html);
+            }
+            $html = str_replace('{id}', 'fitem_' . $element->getAttribute('id'), $html);
+            $html = str_replace('{type}', 'f' . $element->getType(), $html);
+            $html = str_replace('{name}', $element->getName(), $html);
+            $html = str_replace('{class}', $element->getAttribute('class'), $html);
+            $emptylabel = '';
+            if ($element->getLabel() == '') {
+                $emptylabel = 'femptylabel';
+            }
+            $html = str_replace('{emptylabel}', $emptylabel, $html);
+            if (method_exists($element, 'getHelpButton')) {
+                $html = str_replace('{help}', $element->getHelpButton(), $html);
+            } else {
+                $html = str_replace('{help}', '', $html);
+            }
         } else {
-            $html = str_replace(' {advanced}', '', $html);
-            $html = str_replace(' {aria-live}', '', $html);
-        }
-        if (isset($this->_advancedElements[$element->getName()])||$element->getName() == 'mform_showadvanced'){
-            $html =str_replace('{advancedimg}', $this->_advancedHTML, $html);
-        } else {
-            $html =str_replace('{advancedimg}', '', $html);
-        }
-        $html =str_replace('{id}', 'fitem_' . $element->getAttribute('id'), $html);
-        $html =str_replace('{type}', 'f'.$element->getType(), $html);
-        $html =str_replace('{fieldtype}', $element->getType(), $html);
-        $html =str_replace('{name}', $element->getName(), $html);
-        $html =str_replace('{class}', $element->getAttribute('class'), $html);
-        $emptylabel = '';
-        if ($element->getLabel() == '') {
-            $emptylabel = 'femptylabel';
-        }
-        $html = str_replace('{emptylabel}', $emptylabel, $html);
-        if (method_exists($element, 'getHelpButton')){
-            $html = str_replace('{help}', $element->getHelpButton(), $html);
-        }else{
-            $html = str_replace('{help}', '', $html);
-
+            if ($this->_inGroup) {
+                $this->_groupElementTemplate = $html;
+            }
         }
         if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
             $this->_groupElementTemplate = $html;
-        }
-        elseif (!isset($this->_templates[$element->getName()])) {
+        } else if (!isset($this->_templates[$element->getName()])) {
             $this->_templates[$element->getName()] = $html;
         }
 
-        parent::renderElement($element, $required, $error);
+        if (!$fromtemplate) {
+            parent::renderElement($element, $required, $error);
+        } else { // CRAZZY!
+            $this->_html .= $html;
+        }
     }
 
     /**

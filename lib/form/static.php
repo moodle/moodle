@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/static.php");
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * Text type element
@@ -37,7 +38,7 @@ require_once("HTML/QuickForm/static.php");
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_static extends HTML_QuickForm_static{
+class MoodleQuickForm_static extends HTML_QuickForm_static implements templatable {
     /** @var string Form element type */
     var $_elementTemplateType='static';
 
@@ -81,5 +82,15 @@ class MoodleQuickForm_static extends HTML_QuickForm_static{
      */
     function getElementTemplateType(){
         return $this->_elementTemplateType;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        $context['html'] = $this->toHtml();
+        return $context;
     }
 }

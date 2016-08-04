@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/submit.php");
+require_once(__DIR__ . '/../outputcomponents.php');
 
 /**
  * submit type form element
@@ -37,7 +38,7 @@ require_once("HTML/QuickForm/submit.php");
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_submit extends HTML_QuickForm_submit {
+class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatable {
     /**
      * constructor
      *
@@ -108,4 +109,15 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit {
         $this->_flagFrozen = true;
     }
 
+    public function export_for_template(renderer_base $output) {
+        $context = [];
+        $context['frozen'] = $this->_flagFrozen;
+        foreach ($this->getAttributes() as $name => $value) {
+            $context[$name] = $value;
+        }
+        if ($this->getName() == 'cancel') {
+            $context['iscancel'] = true;
+        }
+        return $context;
+    }
 }

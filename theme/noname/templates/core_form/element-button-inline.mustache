@@ -1,0 +1,11 @@
+    <div class="form-group">
+        <label class="col-md-3 col-form-label {{#element.hideLabel}}sr-only{{/element.hideLabel}}" for="{{element.id}}">
+            {{{label}}} {{{helpbutton}}}
+        </label>
+        <button {{#element.frozen}}readonly{{/element.frozen}}
+                class="btn btn-secondary"
+                name="{{element.name}}"
+                id="{{element.id}}" >
+                {{{element.value}}}
+        </button>
+    </div>
