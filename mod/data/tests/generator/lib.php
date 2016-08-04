@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_data data generator
+ * mod_data data generator class
+ * Currently, the field types in the ignoredfieldtypes array aren't supported.
  *
  * @package    mod_data
  * @category   test
@@ -28,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Database module data generator class
+ * Currently, the field types in the ignoredfieldtypes array aren't supported.
  *
  * @package    mod_data
  * @category   test
@@ -36,6 +38,41 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_data_generator extends testing_module_generator {
 
+    /**
+     * @var int keep track of how many database fields have been created.
+     */
+    protected $databasefieldcount = 0;
+
+    /**
+     * @var int keep track of how many database records have been created.
+     */
+    protected $databaserecordcount = 0;
+
+    /**
+     * @var The field types which not handled by the generator as of now.
+     */
+    protected $ignoredfieldtypes = array('latlong', 'file', 'picture');
+
+
+    /**
+     * To be called from data reset code only,
+     * do not use in tests.
+     * @return void
+     */
+    public function reset() {
+        $this->databasefieldcount = 0;
+        $this->databaserecordcount = 0;
+
+        parent::reset();
+    }
+
+    /**
+     * Creates a mod_data instance
+     *
+     * @param array $record
+     * @param array $options
+     * @return StdClass
+     */
     public function create_instance($record = null, array $options = null) {
         $record = (object)(array)$record;
 
@@ -47,5 +84,260 @@ class mod_data_generator extends testing_module_generator {
         }
 
         return parent::create_instance($record, (array)$options);
+    }
+
+
+    /**
+     * Creates a field for a mod_data instance.
+     * Currently, the field types in the ignoredfieldtypes array aren't supported.
+     *
+     * @param StdClass $record
+     * @param mod_data $data
+     * @return data_field_{type}
+     */
+    public function create_field($record = null, $data = null) {
+        global $DB;
+
+        $record = (array) $record;
+
+        if (in_array($record['type'], $this->ignoredfieldtypes)) {
+            throw new coding_exception('$record\'s type value must not be same as values in ignoredfieldtypes
+                    in phpunit_util::create_field()');
+            return false;
+        }
+
+        $this->databasefieldcount++;
+
+        if (!isset($data->course)) {
+            throw new coding_exception('course must be present in phpunit_util::create_field() $data');
+        }
+
+        if (!isset($data->id)) {
+            throw new coding_exception('dataid must be present in phpunit_util::create_field() $data');
+        } else {
+            $record['dataid'] = $data->id;
+        }
+
+        if (!isset($record['type'])) {
+            throw new coding_exception('type must be present in phpunit_util::create_field() $record');
+        }
+
+        if (!isset($record['required'])) {
+            $record['required'] = 0;
+        }
+
+        if (!isset($record['name'])) {
+            $record['name'] = "testField - " . $this->databasefieldcount;
+        }
+
+        if (!isset($record['description'])) {
+            $record['description'] = " This is testField - " . $this->databasefieldcount;
+        }
+
+        if (!isset($record['param1'])) {
+            if (in_array($record['type'], array('checkbox', 'menu', 'multimenu', 'radiobutton'))) {
+                $record['param1'] = implode("\n", array('one', 'two', 'three', 'four'));
+            } else if (($record['type'] === 'text') || ($record['type'] === 'url')) {
+                $record['param1'] = 1;
+            } else {
+                $record['param1'] = '';
+            }
+        }
+
+        if (!isset($record['param2'])) {
+
+            if ($record['type'] === 'textarea') {
+                $record['param2'] = 60;
+            } else {
+                $record['param2'] = '';
+            }
+        }
+
+        if (!isset($record['param3'])) {
+
+            if (($record['type'] === 'textarea')) {
+                $record['param3'] = 35;
+            } else {
+                $record['param3'] = '';
+            }
+        }
+
+        if (!isset($record['param4'])) {
+
+            if (($record['type'] === 'textarea')) {
+                $record['param4'] = 1;
+            }
+        }
+
+        if (!isset($record['param5'])) {
+            if (($record['type'] === 'textarea')) {
+                $record['param5'] = 0;
+            }
+        }
+
+        $record = (object) $record;
+
+        $field = data_get_field($record, $data);
+        $field->insert_field();
+
+        data_generate_default_template($data, 'addtemplate', 0, false, true);
+
+        return $field;
+    }
+
+    /**
+     * Creates a field for a mod_data instance.
+     * Currently, the field types in the ignoredfieldtypes array aren't supported.
+     * The developers using the generator must adhere to the following format :
+     *
+     *   Syntax : $contents[ fieldid ] = fieldvalue
+     *   $contents['checkbox'] = array('val1', 'val2', 'val3' .....)
+     *   $contents['data'] = 'dd-mm-yyyy'
+     *   $contents['menu'] = 'value';
+     *   $contents['multimenu'] =  array('val1', 'val2', 'val3' .....)
+     *   $contents['number'] = 'numeric value'
+     *   $contents['radiobuton'] = 'value'
+     *   $contents['text'] = 'text'
+     *   $contents['textarea'] = 'text'
+     *   $contents['url'] = 'example.url' or array('example.url', 'urlname')
+     *
+     * @param mod_data $data
+     * @param array $contents
+     * @return data_field_{type}
+     */
+    public function create_entry($data, $contents) {
+        global $DB;
+
+        $this->databaserecordcount++;
+
+        $recordid = data_add_record($data);
+
+        $fields = $DB->get_records('data_fields', array( 'dataid' => $data->id));
+
+        // Validating whether required field are filled.
+        foreach ($fields as $field) {
+            $fieldhascontent = false;
+
+            if (in_array($field->type, $this->ignoredfieldtypes)) {
+                continue;
+            }
+
+            $field = data_get_field($field, $data);
+
+            $fieldid = $field->field->id;
+
+            if ($field->type === 'date') {
+                $values = array();
+
+                $temp = explode('-', $contents[$fieldid], 3);
+
+                $values['field_'.$fieldid.'_day'] = $temp[0];
+                $values['field_'.$fieldid.'_month'] = $temp[1];
+                $values['field_'.$fieldid.'_year'] = $temp[2];
+
+                foreach ($values as $fieldname => $value) {
+                    if ($field->notemptyfield($value, $fieldname)) {
+                        continue 2;
+                    }
+                }
+            } else if ($field->type === 'textarea') {
+                $values = array();
+
+                $values['field_'.$fieldid] = $contents[$fieldid];
+                $values['field_'.$fieldid.'_content1'] = 1;
+
+                foreach ($values as $fieldname => $value) {
+                    if ($field->notemptyfield ($value, $fieldname)) {
+                        continue 2;
+                    }
+                }
+            } else if ($field->type === 'url') {
+                $values = array();
+
+                if (is_array($contents[$fieldid])) {
+                    foreach ($contents[$fieldid] as $key => $value) {
+                        $values['field_'.$fieldid.'_'.$key] = $value;
+                    }
+                } else {
+                    $values['field_'.$fieldid.'_0'] = $contents[$fieldid];
+                }
+
+                foreach ($values as $fieldname => $value) {
+                    if ($field->notemptyfield ($value, $fieldname)) {
+                        continue 2;
+                    }
+                }
+
+            } else {
+                if ($field->notemptyfield ($contents[$fieldid], 'field_'.$fieldid.'_0')) {
+                    continue;
+                }
+            }
+
+            if ($field->field->required && !$fieldhascontent) {
+                return false;
+            }
+        }
+
+        foreach ($contents as $fieldid => $content) {
+
+            $field = $DB->get_record('data_fields', array( 'id' => $fieldid));
+            $field = data_get_field($field, $data);
+
+            if (in_array($field->field->type, $this->ignoredfieldtypes)) {
+                continue;
+            }
+
+            if ($field->type === 'date') {
+                $values = array();
+
+                $temp = explode('-', $content, 3);
+
+                $values['field_'.$fieldid.'_day'] = $temp[0];
+                $values['field_'.$fieldid.'_month'] = $temp[1];
+                $values['field_'.$fieldid.'_year'] = $temp[2];
+
+                foreach ($values as $fieldname => $value) {
+                    $field->update_content($recordid, (string)(int)trim($value), $fieldname);
+                }
+
+                continue;
+            }
+
+            if ($field->type === 'textarea') {
+                $values = array();
+
+                $values['field_'.$fieldid] = $content;
+                $values['field_'.$fieldid.'_content1'] = 1;
+
+                foreach ($values as $fieldname => $value) {
+                    $field->update_content($recordid, $value, $fieldname);
+                }
+
+                continue;
+            }
+
+            if ($field->type === 'url') {
+                $values = array();
+
+                if (is_array($content)) {
+                    foreach ($content as $key => $value) {
+                        $values['field_'.$fieldid.'_'.$key] = $value;
+                    }
+                } else {
+                    $values['field_'.$fieldid.'_0'] = $content;
+                }
+
+                foreach ($values as $fieldname => $value) {
+                    $field->update_content($recordid, $value, $fieldname);
+                }
+
+                continue;
+            }
+
+            $field->update_content($recordid, $contents[$fieldid]);
+        }
+
+        return $recordid;
     }
 }
