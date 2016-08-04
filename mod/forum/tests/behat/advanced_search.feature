@@ -56,7 +56,10 @@ Feature: The forum search allows users to perform advanced searches for forum po
     And I should not see "My subjective"
 
   Scenario: Perform an advanced search using whole words
-    Given I log in as "student1"
+    Given database family used is one of the following:
+      | mysql |
+      | postgres |
+    And I log in as "student1"
     And I follow "Course 1"
     And I follow "News forum"
     And I press "Search forums"
