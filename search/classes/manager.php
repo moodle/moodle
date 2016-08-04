@@ -240,6 +240,11 @@ class manager {
                 $searchclasses = \core_component::get_component_classes_in_namespace($componentname, 'search');
                 foreach ($searchclasses as $classname => $classpath) {
                     $areaname = substr(strrchr($classname, '\\'), 1);
+
+                    if (!static::is_search_area($classname)) {
+                        continue;
+                    }
+
                     $areaid = static::generate_areaid($componentname, $areaname);
                     $searchclass = new $classname();
                     if (!$enabled || ($enabled && $searchclass->is_enabled())) {
@@ -256,6 +261,11 @@ class manager {
 
             foreach ($searchclasses as $classname => $classpath) {
                 $areaname = substr(strrchr($classname, '\\'), 1);
+
+                if (!static::is_search_area($classname)) {
+                    continue;
+                }
+
                 $areaid = static::generate_areaid($componentname, $areaname);
                 $searchclass = new $classname();
                 if (!$enabled || ($enabled && $searchclass->is_enabled())) {
@@ -715,5 +725,20 @@ class manager {
             }
         }
         return $configsettings;
+    }
+
+    /**
+     * Checks whether a classname is of an actual search area.
+     *
+     * @param string $searchareaname
+     * @return bool
+     */
+    protected static function is_search_area($searchareaname) {
+        if (is_subclass_of($searchareaname, 'core_search\base')) {
+            $$searchareaname = new \ReflectionClass($searchareaname);
+            return $$searchareaname->IsInstantiable();
+        }
+
+        return false;
     }
 }
