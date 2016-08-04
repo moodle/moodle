@@ -2072,5 +2072,45 @@ function xmldb_main_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016052301.08) {
+        // Default schedule values.
+        $hour = 0;
+        $minute = 0;
+
+        // Get the old settings.
+        if (isset($CFG->statsruntimestarthour)) {
+            $hour = $CFG->statsruntimestarthour;
+        }
+        if (isset($CFG->statsruntimestartminute)) {
+            $minute = $CFG->statsruntimestartminute;
+        }
+
+        // Retrieve the scheduled task record first.
+        $stattask = $DB->get_record('task_scheduled', array('component' => 'moodle', 'classname' => '\core\task\stats_cron_task'));
+
+        // Don't touch customised scheduling.
+        if ($stattask && !$stattask->customised) {
+
+            $nextruntime = mktime($hour, $minute, 0, date('m'), date('d'), date('Y'));
+            if ($nextruntime < $stattask->lastruntime) {
+                // Add 24 hours to the next run time.
+                $newtime = new DateTime();
+                $newtime->setTimestamp($nextruntime);
+                $newtime->add(new DateInterval('P1D'));
+                $nextruntime = $newtime->getTimestamp();
+            }
+            $stattask->nextruntime = $nextruntime;
+            $stattask->minute = $minute;
+            $stattask->hour = $hour;
+            $stattask->customised = 1;
+            $DB->update_record('task_scheduled', $stattask);
+        }
+        // These settings are no longer used.
+        unset_config('statsruntimestarthour');
+        unset_config('statsruntimestartminute');
+        unset_config('statslastexecution');
+
+        upgrade_main_savepoint(true, 2016052301.08);
+    }
     return true;
 }
