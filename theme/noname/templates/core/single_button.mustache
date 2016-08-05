@@ -1,0 +1,20 @@
+<div class="{{classes}}">
+    <form method="{{method}}" action="{{url}}" id="{{formid}}">
+        {{#params}}
+            <input type="hidden" name="{{name}}" value="{{value}}">
+        {{/params}}
+        <button type="submit" class="btn btn-secondary"
+            id="{{id}}"
+            title={{#quote}}{{tooltip}}{{/quote}}
+            {{#disabled}}disabled{{/disabled}}>{{label}}</button>
+    </form>
+</div>
+{{#hasactions}}
+    {{#js}}
+        require(['core/yui'], function(Y) {
+            {{#actions}}
+                Y.on('{{event}}', {{{jsfunction}}}, '#{{id}}', null{{#jsfunctionargs}}, {{{jsfunctionargs}}}{{/jsfunctionargs}});
+            {{/actions}}
+        });
+    {{/js}}
+{{/hasactions}}

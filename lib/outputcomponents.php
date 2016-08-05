@@ -713,6 +713,49 @@ class single_button implements renderable {
     public function add_action(component_action $action) {
         $this->actions[] = $action;
     }
+
+    /**
+     * Export data.
+     *
+     * @param renderer_base $output Renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $url = $this->method === 'get' ? $this->url->out_omit_querystring(true) : $this->url->out_omit_querystring();
+
+        $data = new stdClass();
+        $data->id = html_writer::random_id('single_button');
+        $data->formid = $this->formid;
+        $data->method = $this->method;
+        $data->url = $url === '' ? '#' : $url;
+        $data->label = $this->label;
+        $data->classes = $this->class;
+        $data->disabled = $this->disabled;
+        $data->tooltip = $this->tooltip;
+
+        // Form parameters.
+        $params = $this->url->params();
+        if ($this->method === 'post') {
+            $params['sesskey'] = sesskey();
+        }
+        $data->params = array_map(function($key) use ($params) {
+            return ['name' => $key, 'value' => $params[$key]];
+        }, array_keys($params));
+
+        // Button actions.
+        $actions = $this->actions;
+        $data->actions = array_map(function($key) use ($actions) {
+            $args = !empty($actions[$key]->jsfunctionargs) ? json_encode($actions[$key]->jsfunctionargs) : false;
+            return [
+                'event' => $actions[$key]->event,
+                'jsfunction' => $actions[$key]->jsfunction,
+                'jsfunctionargs' => $args,
+            ];
+        }, array_keys($actions));
+        $data->hasactions = !empty($data->actions);
+
+        return $data;
+    }
 }
 
 
