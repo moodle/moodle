@@ -317,7 +317,7 @@ module.exports = function(grunt) {
           var files = Object.keys(changedFiles);
           grunt.config('eslint.amd.src', files);
           grunt.config('eslint.yui.src', files);
-          grunt.config('uglify.amd.files', [{ expand: true, src: files, rename: uglifyRename }]);
+          grunt.config('uglify.amd.files', [{expand: true, src: files, rename: uglifyRename}]);
           grunt.config('shifter.options.paths', files);
           grunt.config('stylelint.less.src', files);
           changedFiles = Object.create(null);
