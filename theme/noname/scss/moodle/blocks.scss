@@ -2,3 +2,8 @@
     position: relative;
     left: initial;
 }
+
+.block_search_forums .searchform {
+    /* Override plugin's default. */
+    text-align: left;
+}
