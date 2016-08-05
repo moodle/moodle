@@ -15,12 +15,12 @@
     </div>
     <div class="messaging-area">
         <div class="row-fluid">
-            <div class="span3 contacts-area" data-region="contacts-area">
+            <div class="span3 contacts-area" data-region="contacts-area" role="tablist">
                 {{#contacts}}
                     {{> core_message/message_area_contacts_area }}
                 {{/contacts}}
             </div>
-            <div class="span9 messages-area" data-region="messages-area">
+            <div class="span9 messages-area" data-region="messages-area" role="log">
                 {{#messages}}
                     {{> core_message/message_area_messages_area }}
                 {{/messages}}

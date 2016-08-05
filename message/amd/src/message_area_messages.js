@@ -52,14 +52,23 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._init = function() {
+            customEvents.define(this.messageArea.node, [
+                customEvents.events.activate,
+                customEvents.events.up,
+                customEvents.events.down,
+            ]);
+
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONDELETED, this._handleConversationDeleted.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSELECTED, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, this._chooseMessagesToDelete.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.SENDMESSAGE, this._sendMessage.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.DELETEMESSAGES, this._deleteMessages.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.CANCELDELETEMESSAGES,
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SENDMESSAGE, this._sendMessage.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.DELETEMESSAGES, this._deleteMessages.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.CANCELDELETEMESSAGES,
                 this._cancelMessagesToDelete.bind(this));
+
+            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.MESSAGE, this._selectPreviousMessage.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.MESSAGE, this._selectNextMessage.bind(this));
         };
 
         /**
@@ -383,6 +392,46 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Scroll to the bottom.
             var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES);
             messages.scrollTop(messages[0].scrollHeight);
+        };
+
+        /**
+         * Select the previous message in the list.
+         *
+         * @params {event} e The jquery event
+         * @params {object} data Extra event data
+         * @private
+         */
+        Messages.prototype._selectPreviousMessage = function(e, data) {
+            var currentMessage = $(e.target).closest(this.messageArea.SELECTORS.MESSAGE);
+
+            do {
+                currentMessage = currentMessage.prev();
+            } while (currentMessage.length && !currentMessage.is(this.messageArea.SELECTORS.MESSAGE));
+
+            currentMessage.focus();
+
+            data.originalEvent.preventDefault();
+            data.originalEvent.stopPropagation();
+        };
+
+        /**
+         * Select the next message in the list.
+         *
+         * @params {event} e The jquery event
+         * @params {object} data Extra event data
+         * @private
+         */
+        Messages.prototype._selectNextMessage = function(e, data) {
+            var currentMessage = $(e.target).closest(this.messageArea.SELECTORS.MESSAGE);
+
+            do {
+                currentMessage = currentMessage.next();
+            } while (currentMessage.length && !currentMessage.is(this.messageArea.SELECTORS.MESSAGE));
+
+            currentMessage.focus();
+
+            data.originalEvent.preventDefault();
+            data.originalEvent.stopPropagation();
         };
 
         return Messages;

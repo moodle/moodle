@@ -67,6 +67,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._init = function() {
+            customEvents.define(this.messageArea.node, [
+                customEvents.events.activate,
+                customEvents.events.down,
+                customEvents.events.up,
+            ]);
+
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSSELECTED, this._viewConversations.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSSELECTED, this._viewContacts.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESDELETED, this._deleteConversations.bind(this));
@@ -81,9 +87,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 this._chooseConversationsToDelete.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES,
                 this._cancelConversationsToDelete.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWCONVERSATION,
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.VIEWCONVERSATION,
                 this._viewConversation.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWPROFILE, this._viewContact.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.VIEWPROFILE,
+                this._viewContact.bind(this));
+
+            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.CONTACT, this._selectPreviousContact.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.CONTACT, this._selectNextContact.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.VIEWCONVERSATION, this._selectPreviousConversation.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.VIEWCONVERSATION, this._selectNextConversation.bind(this));
 
             // Now enable the ability to infinitely scroll through conversations and contacts.
             customEvents.define(this.messageArea.SELECTORS.CONVERSATIONS, [
@@ -444,6 +456,66 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }
 
             return text;
+        };
+
+        /**
+         * Shifts focus to the next contact in the list.
+         *
+         * @param {event} e The jquery event
+         * @param {object} data Additional event data
+         */
+        Contacts.prototype._selectNextContact = function(e, data) {
+            var contact = $(e.target).closest(this.messageArea.SELECTORS.CONTACT);
+            var next = contact.next();
+            next.focus();
+
+            data.originalEvent.preventDefault();
+            data.originalEvent.stopPropagation();
+        };
+
+        /**
+         * Shifts focus to the previous contact in the list.
+         *
+         * @param {event} e The jquery event
+         * @param {object} data Additional event data
+         */
+        Contacts.prototype._selectPreviousContact = function(e, data) {
+            var contact = $(e.target).closest(this.messageArea.SELECTORS.CONTACT);
+            var previous = contact.prev();
+            previous.focus();
+
+            data.originalEvent.preventDefault();
+            data.originalEvent.stopPropagation();
+        };
+
+        /**
+         * Shifts focus to the next conversation in the list.
+         *
+         * @param {event} e The jquery event
+         * @param {object} data Additional event data
+         */
+        Contacts.prototype._selectNextConversation = function(e, data) {
+            var conversation = $(e.target).closest(this.messageArea.SELECTORS.VIEWCONVERSATION);
+            var next = conversation.next();
+            next.focus();
+
+            data.originalEvent.preventDefault();
+            data.originalEvent.stopPropagation();
+        };
+
+        /**
+         * Shifts focus to the previous conversation in the list.
+         *
+         * @param {event} e The jquery event
+         * @param {object} data Additional event data
+         */
+        Contacts.prototype._selectPreviousConversation = function(e, data) {
+            var conversation = $(e.target).closest(this.messageArea.SELECTORS.VIEWCONVERSATION);
+            var previous = conversation.prev();
+            previous.focus();
+
+            data.originalEvent.preventDefault();
+            data.originalEvent.stopPropagation();
         };
 
         return Contacts;

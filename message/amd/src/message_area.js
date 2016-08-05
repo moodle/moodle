@@ -38,10 +38,12 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
 
         /** @type {Object} The list of selectors for the message area. */
         Messagearea.prototype.SELECTORS = {
+            ACTIVECONTACTSTAB: "[data-region='contacts-area'] [role='tab'][aria-selected='true']",
             BLOCKTIME: "[data-region='blocktime']",
             CANCELDELETEMESSAGES: "[data-action='cancel-delete-messages']",
             CONTACT: "[data-region='contact']",
             CONTACTS: "[data-region='contacts'][data-region-content='contacts']",
+            CONTACTSPANELS: "[data-region='contacts']",
             CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
             DELETECONVERSATIONCHECKBOX: "[data-region='delete-conversation-checkbox']",
             DELETEMESSAGES: "[data-action='delete-messages']",

@@ -21,7 +21,7 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([], function() {
+define(['core/custom_interaction_events'], function(CustomEvents) {
 
     /**
      * Tabs class.
@@ -45,8 +45,45 @@ define([], function() {
      * @private
      */
     Tabs.prototype._init = function() {
-        this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWCONVERSATIONS, this._viewConversations.bind(this));
-        this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.VIEWCONTACTS, this._viewContacts.bind(this));
+        CustomEvents.define(this.messageArea.node, [
+            CustomEvents.events.activate,
+            CustomEvents.events.up,
+            CustomEvents.events.down,
+            CustomEvents.events.next,
+            CustomEvents.events.previous,
+            CustomEvents.events.ctrlPageUp,
+            CustomEvents.events.ctrlPageDown,
+        ]);
+
+        this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+                this._viewConversations.bind(this));
+        this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.VIEWCONTACTS,
+                this._viewContacts.bind(this));
+
+        // Change to the other tab if any arrow keys are pressed, since there are only two tabs.
+        this.messageArea.onDelegateEvent(CustomEvents.events.up, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+                this._toggleTabs.bind(this));
+        this.messageArea.onDelegateEvent(CustomEvents.events.down, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+                this._toggleTabs.bind(this));
+        this.messageArea.onDelegateEvent(CustomEvents.events.next, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+                this._toggleTabs.bind(this));
+        this.messageArea.onDelegateEvent(CustomEvents.events.previous, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+                this._toggleTabs.bind(this));
+        // Change to the other tab if any arrow keys are pressed, since there are only two tabs.
+        this.messageArea.onDelegateEvent(CustomEvents.events.up, this.messageArea.SELECTORS.VIEWCONTACTS,
+                this._toggleTabs.bind(this));
+        this.messageArea.onDelegateEvent(CustomEvents.events.down, this.messageArea.SELECTORS.VIEWCONTACTS,
+                this._toggleTabs.bind(this));
+        this.messageArea.onDelegateEvent(CustomEvents.events.next, this.messageArea.SELECTORS.VIEWCONTACTS,
+                this._toggleTabs.bind(this));
+        this.messageArea.onDelegateEvent(CustomEvents.events.previous, this.messageArea.SELECTORS.VIEWCONTACTS,
+                this._toggleTabs.bind(this));
+        // Tab panel keyboard handling.
+        this.messageArea.onDelegateEvent(CustomEvents.events.ctrlPageUp, this.messageArea.SELECTORS.CONTACTSPANELS,
+                this._toggleTabs.bind(this));
+        this.messageArea.onDelegateEvent(CustomEvents.events.ctrlPageDown, this.messageArea.SELECTORS.CONTACTSPANELS,
+                this._toggleTabs.bind(this));
+
         this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, function() {
             this._isDeleting = true;
         }.bind(this));
@@ -97,8 +134,38 @@ define([], function() {
      * @private
      */
     Tabs.prototype._selectTab = function(tabselect, tabdeselect) {
-        this.messageArea.find(tabdeselect).removeClass('selected');
-        this.messageArea.find(tabselect).addClass('selected');
+        var tabdeselect = this.messageArea.find(tabdeselect);
+        tabdeselect.removeClass('selected');
+        tabdeselect.attr('aria-selected', 'false');
+        tabdeselect.attr('tabindex', '-1');
+
+        var tabselect = this.messageArea.find(tabselect);
+        tabselect.addClass('selected');
+        tabselect.attr('aria-selected', 'true');
+        tabselect.attr('tabindex', '0');
+        tabselect.focus();
+    };
+
+    /**
+     * Change to the inactive tab.
+     *
+     * @param {event} e The javascript event
+     * @param {object} data The additional event data
+     * @private
+     */
+    Tabs.prototype._toggleTabs = function(e, data) {
+       var activeTab = this.messageArea.find(this.messageArea.SELECTORS.ACTIVECONTACTSTAB);
+
+       if (activeTab.is(this.messageArea.SELECTORS.VIEWCONVERSATIONS)) {
+            this._viewContacts();
+       } else {
+            this._viewConversations();
+       }
+
+       e.preventDefault();
+       e.stopPropagation();
+       data.originalEvent.preventDefault();
+       data.originalEvent.stopPropagation();
     };
 
     return Tabs;
