@@ -28,6 +28,7 @@ use moodle_url;
 use preferences_groups;
 use action_menu;
 use help_icon;
+use single_button;
 use single_select;
 use paging_bar;
 use url_select;
@@ -274,6 +275,18 @@ class core_renderer extends \core_renderer {
     protected function render_help_icon(help_icon $helpicon) {
         $context = $helpicon->export_for_template($this);
         return $this->render_from_template('core/help_icon', $context);
+    }
+
+    /**
+     * Renders a single button widget.
+     *
+     * This will return HTML to display a form containing a single button.
+     *
+     * @param single_button $button
+     * @return string HTML fragment
+     */
+    protected function render_single_button(single_button $button) {
+        return $this->render_from_template('core/single_button', $button->export_for_template($this));
     }
 
     /**
