@@ -30,6 +30,7 @@ use action_menu;
 use help_icon;
 use single_select;
 use paging_bar;
+use url_select;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -297,4 +298,13 @@ class core_renderer extends \core_renderer {
         return $this->render_from_template('core/paging_bar', $pagingbar->export_for_template($this));
     }
 
+    /**
+     * Renders a url select.
+     *
+     * @param url_select $select The object.
+     * @return string HTML
+     */
+    protected function render_url_select(url_select $select) {
+        return $this->render_from_template('core/url_select', $select->export_for_template($this));
+    }
 }

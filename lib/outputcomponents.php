@@ -951,7 +951,7 @@ class single_select implements renderable, templatable {
  * @package core
  * @category output
  */
-class url_select implements renderable {
+class url_select implements renderable, templatable {
     /**
      * @var array $urls associative array value=>label ex.: array(1=>'One, 2=>Two)
      *     it is also possible to specify optgroup as complex label array ex.:
@@ -1060,6 +1060,155 @@ class url_select implements renderable {
     public function set_label($label, $attributes = array()) {
         $this->label = $label;
         $this->labelattributes = $attributes;
+    }
+
+    /**
+     * Clean a URL.
+     *
+     * @param string $value The URL.
+     * @return The cleaned URL.
+     */
+    protected function clean_url($value) {
+        global $CFG;
+
+        if (empty($value)) {
+            // Nothing.
+
+        } else if (strpos($value, $CFG->wwwroot . '/') === 0) {
+            $value = str_replace($CFG->wwwroot, '', $value);
+
+        } else if (strpos($value, '/') !== 0) {
+            debugging("Invalid url_select urls parameter: url '$value' is not local relative url!", DEBUG_DEVELOPER);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Flatten the options for Mustache.
+     *
+     * This also cleans the URLs.
+     *
+     * @param array $options The options.
+     * @param array $nothing The nothing option.
+     * @return array
+     */
+    protected function flatten_options($options, $nothing) {
+        $flattened = [];
+
+        foreach ($options as $value => $option) {
+            if (is_array($option)) {
+                foreach ($option as $groupname => $optoptions) {
+                    if (!isset($flattened[$groupname])) {
+                        $flattened[$groupname] = [
+                            'name' => $groupname,
+                            'isgroup' => true,
+                            'options' => []
+                        ];
+                    }
+                    foreach ($optoptions as $optvalue => $optoption) {
+                        $cleanedvalue = $this->clean_url($optvalue);
+                        $flattened[$groupname]['options'][$cleanedvalue] = [
+                            'name' => $optoption,
+                            'value' => $cleanedvalue,
+                            'selected' => $this->selected == $optvalue,
+                        ];
+                    }
+                }
+
+            } else {
+                $cleanedvalue = $this->clean_url($value);
+                $flattened[$cleanedvalue] = [
+                    'name' => $option,
+                    'value' => $cleanedvalue,
+                    'selected' => $this->selected == $value,
+                ];
+            }
+        }
+
+        if (!empty($nothing)) {
+            $value = key($nothing);
+            $name = reset($nothing);
+            $flattened = [
+                $value => ['name' => $name, 'value' => $value, 'selected' => $this->selected == $value]
+            ] + $flattened;
+        }
+
+        // Make non-associative array.
+        foreach ($flattened as $key => $value) {
+            if (!empty($value['options'])) {
+                $flattened[$key]['options'] = array_values($value['options']);
+            }
+        }
+        $flattened = array_values($flattened);
+
+        return $flattened;
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output Renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $attributes = $this->attributes;
+
+        $data = new stdClass();
+        $data->formid = !empty($this->formid) ? $this->formid : html_writer::random_id('url_select_f');
+        $data->classes = $this->class;
+        $data->label = $this->label;
+        $data->disabled = $this->disabled;
+        $data->title = $this->tooltip;
+        $data->id = !empty($attributes['id']) ? $attributes['id'] : html_writer::random_id('url_select');
+        $data->sesskey = sesskey();
+        $data->action = (new moodle_url('/course/jumpto.php'))->out(false);
+
+        // Remove attributes passed as property directly.
+        unset($attributes['class']);
+        unset($attributes['id']);
+        unset($attributes['name']);
+        unset($attributes['title']);
+
+        $data->showbutton = $this->showbutton;
+        if (empty($this->showbutton)) {
+            $data->classes .= ' autosubmit';
+        }
+
+        // Select options.
+        $nothing = false;
+        if (is_string($this->nothing) && $this->nothing !== '') {
+            $nothing = ['' => $this->nothing];
+            $hasnothing = true;
+        } else if (is_array($this->nothing)) {
+            $key = key($this->nothing);
+            if ($key === 'choose' || $key === 'choosedots') {
+                $nothing = [$key => get_string('choosedots')];
+            } else {
+                $nothing = [$key => reset($this->nothing)];
+            }
+            $hasnothing = true;
+        }
+        $data->hasnothing = !empty($nothing);
+        $data->nothingkey = $data->hasnothing ? key($nothing) : false;
+        $data->options = $this->flatten_options($this->urls, $nothing);
+
+        // Label attributes.
+        $data->labelattributes = [];
+        foreach ($this->labelattributes as $key => $value) {
+            $data->labelattributes[] = ['name' => $key, 'value' => $value];
+        }
+
+        // Help icon.
+        $data->helpicon = !empty($this->helpicon) ? $this->helpicon->export_for_template($output) : false;
+
+        // Finally all the remaining attributes.
+        $data->attributes = [];
+        foreach ($this->attributes as $key => $value) {
+            $data->attributes = ['name' => $key, 'value' => $value];
+        }
+
+        return $data;
     }
 }
 
