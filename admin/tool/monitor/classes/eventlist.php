@@ -103,15 +103,16 @@ class eventlist {
             foreach ($pluginlist as $plugin => $directory) {
                 $plugindirectory = $directory . '/classes/event';
                 foreach (self::get_file_list($plugindirectory) as $eventname => $notused) {
-                    $plugineventname = '\\' . $plugintype . '_' . $plugin . '\\event\\' . $eventname;
+                    $fullpluginname = $plugintype . '_' . $plugin;
+                    $plugineventname = '\\' . $fullpluginname . '\\event\\' . $eventname;
                     // Check that this is actually an event.
-                    if (method_exists($plugineventname, 'get_static_info')  && $plugin != 'monitor') { // No selfie here.
+                    if (method_exists($plugineventname, 'get_static_info')  && $fullpluginname !== 'tool_monitor') { // No selfie here.
                         $ref = new \ReflectionClass($plugineventname);
-                        if (!$ref->isAbstract() && $plugin != 'legacy') {
+                        if (!$ref->isAbstract() && $fullpluginname !== 'logstore_legacy') {
                             if ($withoutcomponent) {
                                 $noncorepluginlist[$plugineventname] = $plugineventname::get_name();
                             } else {
-                                $noncorepluginlist[$plugintype . '_' . $plugin][$plugineventname] = $plugineventname::get_name();
+                                $noncorepluginlist[$fullpluginname][$plugineventname] = $plugineventname::get_name();
                             }
                         }
                     }
