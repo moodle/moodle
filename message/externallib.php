@@ -421,9 +421,10 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea conversations parameters.
+     * The messagearea conversations parameters.
      *
      * @return external_function_parameters
+     * @since 3.2
      */
     public static function data_for_messagearea_conversations_parameters() {
         return new external_function_parameters(
@@ -441,7 +442,9 @@ class core_message_external extends external_api {
      * @param int $userid The id of the user who we are viewing conversations for
      * @param int $limitfrom
      * @param int $limitnum
-     * @return external_function_parameters
+     * @return stdClass
+     * @throws moodle_exception
+     * @since 3.2
      */
     public static function data_for_messagearea_conversations($userid, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $PAGE;
@@ -467,12 +470,13 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea conversations returns.
+     * The messagearea conversations return structure.
      *
-     * @return external_function_parameters
+     * @return external_single_structure
+     * @since 3.2
      */
     public static function data_for_messagearea_conversations_returns() {
-        return new external_function_parameters(
+        return new external_single_structure(
             array(
                 'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
                 'contacts' => new external_multiple_structure(
@@ -482,9 +486,9 @@ class core_message_external extends external_api {
                             'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
                             'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
                             'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
-                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message', VALUE_OPTIONAL),
-                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status', VALUE_OPTIONAL),
-                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message', VALUE_OPTIONAL),
+                            'lastmessage' => new external_value(PARAM_RAW, 'The user\'s last message, null if none.'),
+                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
+                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
                         )
                     )
                 )
@@ -493,9 +497,10 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea contacts parameters.
+     * The messagearea contacts return parameters.
      *
      * @return external_function_parameters
+     * @since 3.2
      */
     public static function data_for_messagearea_contacts_parameters() {
         return self::data_for_messagearea_conversations_parameters();
@@ -507,7 +512,9 @@ class core_message_external extends external_api {
      * @param int $userid The id of the user who we are viewing conversations for
      * @param int $limitfrom
      * @param int $limitnum
-     * @return external_function_parameters
+     * @return stdClass
+     * @throws moodle_exception
+     * @since 3.2
      */
     public static function data_for_messagearea_contacts($userid, $limitfrom = 0, $limitnum = 0) {
         global $CFG, $PAGE;
@@ -533,18 +540,20 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea contacts returns.
+     * The messagearea contacts return structure.
      *
-     * @return external_function_parameters
+     * @return external_single_structure
+     * @since 3.2
      */
     public static function data_for_messagearea_contacts_returns() {
         return self::data_for_messagearea_conversations_returns();
     }
 
     /**
-     * Get messagearea messages parameters.
+     * The messagearea messages parameters.
      *
      * @return external_function_parameters
+     * @since 3.2
      */
     public static function data_for_messagearea_messages_parameters() {
         return new external_function_parameters(
@@ -566,7 +575,9 @@ class core_message_external extends external_api {
      * @param int $limitfrom
      * @param int $limitnum
      * @param boolean $newest
-     * @return external_description
+     * @return stdClass
+     * @throws moodle_exception
+     * @since 3.2
      */
     public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0, $newest = false) {
         global $CFG, $PAGE;
@@ -599,12 +610,13 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea messages returns.
+     * The messagearea messages return structure.
      *
-     * @return external_description
+     * @return external_single_structure
+     * @since 3.2
      */
     public static function data_for_messagearea_messages_returns() {
-        return new external_function_parameters(
+        return new external_single_structure(
             array(
                 'iscurrentuser' => new external_value(PARAM_BOOL, 'Is the currently logged in user the user we are viewing the messages on behalf of?'),
                 'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
@@ -628,9 +640,10 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get the most recent message in a conversation parameters.
+     * The get most recent message return parameters.
      *
      * @return external_function_parameters
+     * @since 3.2
      */
     public static function data_for_messagearea_get_most_recent_message_parameters() {
         return new external_function_parameters(
@@ -646,7 +659,9 @@ class core_message_external extends external_api {
      *
      * @param int $currentuserid The current user's id
      * @param int $otheruserid The other user's id
-     * @return external_single_structure
+     * @return stdClass
+     * @throws moodle_exception
+     * @since 3.2
      */
     public static function data_for_messagearea_get_most_recent_message($currentuserid, $otheruserid) {
         global $CFG, $PAGE;
@@ -671,9 +686,10 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea get most recent message returns.
+     * The get most recent message return structure.
      *
      * @return external_single_structure
+     * @since 3.2
      */
     public static function data_for_messagearea_get_most_recent_message_returns() {
         return new external_single_structure(
@@ -693,6 +709,7 @@ class core_message_external extends external_api {
      * The get profile parameters.
      *
      * @return external_function_parameters
+     * @since 3.2
      */
     public static function data_for_messagearea_get_profile_parameters() {
         return new external_function_parameters(
@@ -708,7 +725,9 @@ class core_message_external extends external_api {
      *
      * @param int $currentuserid The current user's id
      * @param int $otheruserid The id of the user whose profile we are viewing
-     * @return external_single_structure
+     * @return stdClass
+     * @throws moodle_exception
+     * @since 3.2
      */
     public static function data_for_messagearea_get_profile($currentuserid, $otheruserid) {
         global $CFG, $PAGE;
@@ -733,9 +752,10 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get profile returns.
+     * The get profile return structure.
      *
      * @return external_single_structure
+     * @since 3.2
      */
     public static function data_for_messagearea_get_profile_returns() {
         return new external_single_structure(
