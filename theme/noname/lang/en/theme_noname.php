@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['choosereadme'] = 'Hey, change me!';
+$string['currentinparentheses'] = '(current)';
 $string['pluginname'] = 'NONAME';
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';

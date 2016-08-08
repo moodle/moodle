@@ -2417,7 +2417,7 @@ class html_table_cell {
  * @package core
  * @category output
  */
-class paging_bar implements renderable {
+class paging_bar implements renderable, templatable {
 
     /**
      * @var int The maximum number of pagelinks to display.
@@ -2568,6 +2568,82 @@ class paging_bar implements renderable {
                 $this->nextlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), get_string('next'), array('class'=>'next'));
             }
         }
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $data = new stdClass();
+        $data->previous = null;
+        $data->next = null;
+        $data->first = null;
+        $data->last = null;
+        $data->label = get_string('page');
+        $data->pages = [];
+        $data->haspages = $this->totalcount > $this->perpage;
+
+        if (!$data->haspages) {
+            return $data;
+        }
+
+        if ($this->page > 0) {
+            $data->previous = [
+                'page' => $this->page - 1,
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page - 1]))->out(false)
+            ];
+        }
+
+        $currpage = 0;
+        if ($this->page > round(($this->maxdisplay / 3) * 2)) {
+            $currpage = $this->page - round($this->maxdisplay / 3);
+            $data->first = [
+                'page' => 1,
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => 0]))->out(false)
+            ];
+        }
+
+        $lastpage = 1;
+        if ($this->perpage > 0) {
+            $lastpage = ceil($this->totalcount / $this->perpage);
+        }
+
+        $displaycount = 0;
+        $displaypage = 0;
+        while ($displaycount < $this->maxdisplay and $currpage < $lastpage) {
+            $displaypage = $currpage + 1;
+
+            $iscurrent = $this->page == $currpage;
+            $link = new moodle_url($this->baseurl, [$this->pagevar => $currpage]);
+
+            $data->pages[] = [
+                'page' => $displaypage,
+                'active' => $iscurrent,
+                'url' => $iscurrent ? null : $link->out(false)
+            ];
+
+            $displaycount++;
+            $currpage++;
+        }
+
+        if ($currpage < $lastpage) {
+            $data->last = [
+                'page' => $lastpage,
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $lastpage - 1]))->out(false)
+            ];
+        }
+
+        if ($this->page + 1 != $lastpage) {
+            $data->next = [
+                'page' => $this->page + 1,
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page + 1]))->out(false)
+            ];
+        }
+
+        return $data;
     }
 }
 
