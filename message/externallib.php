@@ -475,8 +475,6 @@ class core_message_external extends external_api {
         return new external_function_parameters(
             array(
                 'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
-                'conversationsselected' => new external_value(PARAM_BOOL, 'Determines if conversations were selected,
-                    otherwise contacts were'),
                 'contacts' => new external_multiple_structure(
                     new external_single_structure(
                         array(

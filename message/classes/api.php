@@ -81,7 +81,7 @@ class api {
             }
         }
 
-        return new \core_message\output\messagearea\contacts($userid, 0, $arrcontacts, false);
+        return new \core_message\output\messagearea\contacts($userid, 0, $arrcontacts);
     }
 
     /**

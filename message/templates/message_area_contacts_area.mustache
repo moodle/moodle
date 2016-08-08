@@ -4,54 +4,17 @@
         <input type="text" id="filter{{uniqid}}" placeholder="{{#str}}search{{/str}}" value="{{search}}">
     </form>
 </div>
-<div class="contacts"
-    data-region="contacts"
-    data-region-content="{{#conversationsselected}}conversations{{/conversationsselected}}{{^conversationsselected}}contacts{{/conversationsselected}}"
-    role="tabpanel"
-    {{#conversationsselected}}id="conversations-tab-panel"{{/conversationsselected}}
-    {{^conversationsselected}}id="contacts-tab-panel"{{/conversationsselected}}>
-
+<div class="contacts" data-region="contacts" data-region-content="conversations" role="tabpanel" id="conversations-tab-panel">
     {{> core_message/message_area_contacts }}
 </div>
 {{! Hidden div to load the other tabs items in via JS when appropriate. }}
-<div class="contacts"
-    data-region="contacts"
-    data-region-content="{{#conversationsselected}}contacts{{/conversationsselected}}{{^conversationsselected}}conversations{{/conversationsselected}}"
-    style="display:none;"
-    role="tabpanel"
-    {{#conversationsselected}}id="contacts-tab-panel"{{/conversationsselected}}
-    {{^conversationsselected}}id="conversations-tab-panel"{{/conversationsselected}}>
-</div>
+<div class="contacts" data-region="contacts" data-region-content="contacts" style="display:none;" role="tabpanel" id="contacts-tab-panel"></div>
 <div class="row-fluid tabs">
-    <div class="span6 tab tabconversations {{#conversationsselected}}selected{{/conversationsselected}}"
-        data-action="conversations-view"
-        role="tab"
-        aria-controls="conversations-tab-panel"
-        {{#conversationsselected}}
-            aria-selected="true"
-            tabindex="0"
-        {{/conversationsselected}}
-        {{^conversationsselected}}
-            aria-selected="false"
-            tabindex="-1"
-        {{/conversationsselected}}>
-
+    <div class="span6 tab tabconversations selected" data-action="conversations-view" role="tab" aria-controls="conversations-tab-panel" aria-selected="true" tabindex="0">
         <div>{{#pix}}t/message, moodle{{/pix}}</div>
         <div>{{#str}}conversations, message{{/str}}</div>
     </div>
-    <div class="span6 tab tabcontacts {{^conversationsselected}}selected{{/conversationsselected}}"
-        data-action="contacts-view"
-        role="tab"
-        aria-controls="contacts-tab-panel"
-        {{#conversationsselected}}
-            aria-selected="false"
-            tabindex="-1"
-        {{/conversationsselected}}
-        {{^conversationsselected}}
-            aria-selected="true"
-            tabindex="0"
-        {{/conversationsselected}}>
-
+    <div class="span6 tab tabcontacts" data-action="contacts-view" role="tab" aria-controls="contacts-tab-panel" aria-selected="false" tabindex="-1">
         <div>{{#pix}}i/cohort, moodle{{/pix}}</div>
         <div>{{#str}}contacts, message{{/str}}</div>
     </div>

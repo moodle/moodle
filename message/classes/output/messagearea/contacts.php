@@ -52,23 +52,16 @@ class contacts implements templatable, renderable {
     protected $contacts;
 
     /**
-     * Determines if the conversations have been selected.
-     */
-    protected $conversationsselected;
-
-    /**
      * Constructor.
      *
      * @param int $userid The id of the user the contacts belong to
      * @param int $otheruserid The id of the user we are viewing
      * @param \core_message\output\messagearea\contact[] $contacts
-     * @param bool $conversationsselected
      */
-    public function __construct($userid, $otheruserid, $contacts, $conversationsselected = true) {
+    public function __construct($userid, $otheruserid, $contacts) {
         $this->userid = $userid;
         $this->otheruserid = $otheruserid;
         $this->contacts = $contacts;
-        $this->conversationsselected = $conversationsselected;
     }
 
     public function export_for_template(\renderer_base $output) {
@@ -84,7 +77,6 @@ class contacts implements templatable, renderable {
             }
             $data->contacts[] = $contactdata;
         }
-        $data->conversationsselected = $this->conversationsselected;
 
         return $data;
     }
