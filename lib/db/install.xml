@@ -1218,6 +1218,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="contextid" UNIQUE="false" FIELDS="contextid" COMMENT="links to context table"/>
+        <INDEX NAME="contextidstamp" UNIQUE="true" FIELDS="contextid, stamp"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="question" COMMENT="The questions themselves">
