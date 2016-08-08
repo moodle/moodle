@@ -365,7 +365,7 @@ class file_storage {
                 throw new file_exception('storedfileproblem', 'Could not copy file contents to temp file.');
             }
         } catch (file_exception $fe) {
-            remove_dir($uniqdir);
+            remove_dir($tmp);
             throw $fe;
         }
 
@@ -387,7 +387,7 @@ class file_storage {
         $result = exec($cmd, $output);
         chdir($currentdir);
         if (!file_exists($newtmpfile)) {
-            remove_dir($uniqdir);
+            remove_dir($tmp);
             // Cleanup.
             return false;
         }
@@ -404,7 +404,7 @@ class file_storage {
 
         $convertedfile = $this->create_file_from_pathname($record, $newtmpfile);
         // Cleanup.
-        remove_dir($uniqdir);
+        remove_dir($tmp);
         return $convertedfile;
     }
 
