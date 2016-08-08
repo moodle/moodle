@@ -386,7 +386,8 @@ class file_storage {
         chdir($tmp);
         $result = exec($cmd, $output);
         chdir($currentdir);
-        if (!file_exists($newtmpfile)) {
+        touch($newtmpfile);
+        if (filesize($newtmpfile) === 0) {
             remove_dir($tmp);
             // Cleanup.
             return false;
