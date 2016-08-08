@@ -1,0 +1,14 @@
+<div class="forumsearch">
+    <form action="{{actionurl}}" style="display: inline;">
+        <fieldset class="invisiblefieldset">
+            {{#helpicon}}
+                {{>core/help_icon}}
+            {{/helpicon}}
+            <input type="hidden" name="id" value="{{courseid}}">
+            <label class="accesshide" for="search">{{#str}}search, forum{{/str}}</label>
+            <input id="search" name="search" type="text" size="18" value="{{query}}">
+            <label class="accesshide" for="searchforums">{{#str}}searchforums, forum{{/str}}</label>
+            <input id="searchforums" type="submit" value={{#quote}}{{#str}}searchforums, forum{{/str}}{{/quote}}>
+        </fieldset>
+    </form>
+</div>
