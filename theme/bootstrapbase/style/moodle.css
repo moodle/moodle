@@ -5995,8 +5995,20 @@ a.ygtvspacer:hover {
 .dir-rtl .core_message-messenger-sendmessage .message-send {
   float: left;
 }
+.preferences-container .container-fluid {
+  padding: 0;
+}
+.preferences-container .container-fluid .span6 {
+  min-height: 20px;
+}
+.preferences-container .align-bottom {
+  vertical-align: bottom;
+}
 .preferences-container .preference-table {
   border: 1px solid #ddd;
+}
+.preferences-container .preference-table thead th {
+  text-align: center;
 }
 .preferences-container .preference-table tr td:not(:first-child) {
   width: 150px;
@@ -6023,24 +6035,42 @@ a.ygtvspacer:hover {
   display: inline-block;
   vertical-align: middle;
 }
-.preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-image-container {
-  border: 2px solid #5cb85c;
+.preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-status-container {
+  background-color: #5cb85c;
 }
-.preferences-container .preference-table .preference-row .preference-state .preference-state-image-container {
+.preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-status-container .on-text {
+  display: inline-block;
+}
+.preferences-container .preference-table .preference-row .preference-state input[type="checkbox"]:checked + .preference-state-status-container .off-text {
+  display: none;
+}
+.preferences-container .preference-table .preference-row .preference-state .preference-state-status-container {
   width: 30px;
   height: 30px;
   line-height: 30px;
   text-align: center;
   border-radius: 4px;
-  border: 2px solid #d9534f;
+  background-color: #d9534f;
+  color: #fff;
 }
-.preferences-container .preference-table .preference-row .preference-state .preference-state-image-container .loading-icon {
+.preferences-container .preference-table .preference-row .preference-state .preference-state-status-container .loading-icon {
   display: none;
 }
-.preferences-container .preference-table .preference-row .preference-state.loading .preference-state-image-container .state-icon {
+.preferences-container .preference-table .preference-row .preference-state .preference-state-status-container .on-text {
   display: none;
 }
-.preferences-container .preference-table .preference-row .preference-state.loading .preference-state-image-container .loading-icon {
+.preferences-container .preference-table .preference-row .preference-state .preference-state-status-container .off-text {
+  display: inline-block;
+}
+.preferences-container .preference-table .preference-row .preference-state.loading input[type="checkbox"]:checked + .preference-state-status-container .on-text,
+.preferences-container .preference-table .preference-row .preference-state.loading input[type="checkbox"]:checked + .preference-state-status-container .off-text {
+  display: none;
+}
+.preferences-container .preference-table .preference-row .preference-state.loading .preference-state-status-container .on-text,
+.preferences-container .preference-table .preference-row .preference-state.loading .preference-state-status-container .off-text {
+  display: none;
+}
+.preferences-container .preference-table .preference-row .preference-state.loading .preference-state-status-container .loading-icon {
   display: block;
 }
 .preferences-container .preference-table .preference-row.loading .preference-name .loading-icon {

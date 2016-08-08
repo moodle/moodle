@@ -102,8 +102,17 @@
         <tbody>
             {{#components}}
                 <tr>
-                    <th>{{displayname}}</th>
-                    {{#processors}}<td></td>{{/processors}}
+                    <th><h4>{{displayname}}</h4></th>
+                    {{#processors}}
+                        <td class="align-bottom">
+                            <div class="container-fluid">
+                                <div class="row-fluid">
+                                    <div class="span6">{{#str}} online, message {{/str}}</div>
+                                    <div class="span6">{{#str}} offline, message {{/str}}</div>
+                                </div>
+                            </div>
+                        </td>
+                    {{/processors}}
                 </tr>
                 {{#notifications}}
                     <tr class="preference-row" data-preference-key="{{preferencekey}}">
@@ -118,42 +127,52 @@
                                 {{^locked}}
                                     <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
                                     <form>
-                                        {{#loggedin}}
-                                            <label class="preference-state"
-                                                data-toggle="tooltip"
-                                                title="{{displayname}}"
-                                                data-state="{{name}}">
+                                        <div class="container-fluid">
+                                            <div class="row-fluid">
+                                                <div class="span6">
+                                                    {{#loggedin}}
+                                                        <label class="preference-state"
+                                                            data-toggle="tooltip"
+                                                            title="{{displayname}}"
+                                                            data-state="{{name}}">
 
-                                                <span class="accesshide">{{displayname}}</span>
-                                                <input type="checkbox"
-                                                    tabindex="-1"
-                                                    class="accesshide"
-                                                    {{#checked}}checked{{/checked}}
-                                                    {{#disableall}}disabled{{/disableall}} />
-                                                <div class="preference-state-image-container" tabindex="0">
-                                                    <img class="state-icon" src="{{iconurl}}" role="presentation" />
-                                                    {{> core/loading }}
+                                                            <span class="accesshide">{{displayname}}</span>
+                                                            <input type="checkbox"
+                                                                tabindex="-1"
+                                                                class="accesshide"
+                                                                {{#checked}}checked{{/checked}}
+                                                                {{#disableall}}disabled{{/disableall}} />
+                                                            <div class="preference-state-status-container" tabindex="0">
+                                                                <span class="on-text">{{#str}} on, message {{/str}}</span>
+                                                                <span class="off-text">{{#str}} off, message {{/str}}</span>
+                                                                {{> core/loading }}
+                                                            </div>
+                                                        </label>
+                                                    {{/loggedin}}
                                                 </div>
-                                            </label>
-                                        {{/loggedin}}
-                                        {{#loggedoff}}
-                                            <label class="preference-state"
-                                                data-toggle="tooltip"
-                                                title="{{displayname}}"
-                                                data-state="{{name}}">
+                                                <div class="span6">
+                                                    {{#loggedoff}}
+                                                        <label class="preference-state"
+                                                            data-toggle="tooltip"
+                                                            title="{{displayname}}"
+                                                            data-state="{{name}}">
 
-                                                <span class="accesshide">{{displayname}}</span>
-                                                <input type="checkbox"
-                                                    tabindex="-1"
-                                                    class="accesshide"
-                                                    {{#checked}}checked{{/checked}}
-                                                    {{#disableall}}disabled{{/disableall}} />
-                                                <div class="preference-state-image-container" tabindex="0">
-                                                    <img class="state-icon" src="{{iconurl}}" role="presentation" />
-                                                    {{> core/loading }}
+                                                            <span class="accesshide">{{displayname}}</span>
+                                                            <input type="checkbox"
+                                                                tabindex="-1"
+                                                                class="accesshide"
+                                                                {{#checked}}checked{{/checked}}
+                                                                {{#disableall}}disabled{{/disableall}} />
+                                                            <div class="preference-state-status-container" tabindex="0">
+                                                                <span class="on-text">{{#str}} on, message {{/str}}</span>
+                                                                <span class="off-text">{{#str}} off, message {{/str}}</span>
+                                                                {{> core/loading }}
+                                                            </div>
+                                                        </label>
+                                                    {{/loggedoff}}
                                                 </div>
-                                            </label>
-                                        {{/loggedoff}}
+                                            </div>
+                                        </div>
                                     </form>
                                 {{/locked}}
                             </td>

@@ -278,9 +278,24 @@
 }
 
 .preferences-container {
+    .container-fluid {
+        padding: 0;
+
+        .span6 {
+            min-height: 20px;
+        }
+    }
+    .align-bottom {
+        vertical-align: bottom;
+    }
     .preference-table {
         border: 1px solid #ddd;
 
+        thead {
+            th {
+                text-align: center;
+            }
+        }
         tr {
             td {
                 &:not(:first-child) {
@@ -311,24 +326,46 @@
                 display: inline-block;
                 vertical-align: middle;
 
-                input[type="checkbox"]:checked + .preference-state-image-container {
-                    border: 2px solid #5cb85c;
+                input[type="checkbox"]:checked + .preference-state-status-container {
+                    background-color: #5cb85c;
+
+                    .on-text {
+                        display: inline-block;
+                    }
+                    .off-text {
+                        display: none;
+                    }
                 }
-                .preference-state-image-container {
+                .preference-state-status-container {
                     width: 30px;
                     height: 30px;
                     line-height: 30px;
                     text-align: center;
                     border-radius: 4px;
-                    border: 2px solid #d9534f;
+                    background-color: #d9534f;
+                    color: #fff;
 
                     .loading-icon {
                         display: none;
                     }
+                    .on-text {
+                        display: none;
+                    }
+                    .off-text {
+                        display: inline-block;
+                    }
                 }
                 &.loading {
-                    .preference-state-image-container {
-                        .state-icon {
+                    input[type="checkbox"]:checked + .preference-state-status-container {
+                        .on-text,
+                        .off-text {
+                            display: none;
+                        }
+                    }
+
+                    .preference-state-status-container {
+                        .on-text,
+                        .off-text {
                             display: none;
                         }
                         .loading-icon {

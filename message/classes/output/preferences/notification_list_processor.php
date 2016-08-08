@@ -122,13 +122,11 @@ class notification_list_processor implements templatable, renderable {
                 'name' => 'loggedin',
                 'displayname' => get_string('loggedindescription', 'message'),
                 'checked' => $this->is_preference_enabled($preferencebase.'_loggedin', $processor, $preferences),
-                'iconurl' => $output->pix_url('i/marked')->out(),
             ],
             'loggedoff' => [
                 'name' => 'loggedoff',
                 'displayname' => get_string('loggedoffdescription', 'message'),
                 'checked' => $this->is_preference_enabled($preferencebase.'_loggedoff', $processor, $preferences),
-                'iconurl' => $output->pix_url('i/marker')->out(),
             ],
         ];
 
