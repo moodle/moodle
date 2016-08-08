@@ -26,7 +26,7 @@
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
-use Behat\Behat\Exception\PendingException as PendingException;
+use Behat\Behat\Tester\Exception\PendingException as PendingException;
 use core_competency\competency;
 use core_competency\competency_framework;
 use core_competency\plan;
