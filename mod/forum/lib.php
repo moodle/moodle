@@ -3923,22 +3923,10 @@ function forum_print_mode_form($id, $mode, $forumtype='') {
  * @return string
  */
 function forum_search_form($course, $search='') {
-    global $CFG, $OUTPUT;
-
-    $output  = '<div class="forumsearch">';
-    $output .= '<form action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
-    $output .= '<fieldset class="invisiblefieldset">';
-    $output .= $OUTPUT->help_icon('search');
-    $output .= '<label class="accesshide" for="search" >'.get_string('search', 'forum').'</label>';
-    $output .= '<input id="search" name="search" type="text" size="18" value="'.s($search, true).'" />';
-    $output .= '<label class="accesshide" for="searchforums" >'.get_string('searchforums', 'forum').'</label>';
-    $output .= '<input id="searchforums" value="'.get_string('searchforums', 'forum').'" type="submit" />';
-    $output .= '<input name="id" type="hidden" value="'.$course->id.'" />';
-    $output .= '</fieldset>';
-    $output .= '</form>';
-    $output .= '</div>';
-
-    return $output;
+    global $CFG, $PAGE;
+    $forumsearch = new \mod_forum\output\quick_search_form($course->id, $search);
+    $output = $PAGE->get_renderer('mod_forum');
+    return $output->render($forumsearch);
 }
 
 
