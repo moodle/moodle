@@ -29,6 +29,7 @@ use preferences_groups;
 use action_menu;
 use help_icon;
 use single_select;
+use paging_bar;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -282,6 +283,16 @@ class core_renderer extends \core_renderer {
      */
     protected function render_single_select(single_select $select) {
         return $this->render_from_template('core/single_select', $select->export_for_template($this));
+    }
+
+    /**
+     * Renders a paging bar.
+     *
+     * @param paging_bar $pagingbar The object.
+     * @return string HTML
+     */
+    protected function render_paging_bar(paging_bar $pagingbar) {
+        return $this->render_from_template('core/paging_bar', $pagingbar->export_for_template($this));
     }
 
 }
