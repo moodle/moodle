@@ -1,47 +1,52 @@
-<div class="row-fluid profile" data-userid="{{otheruserid}}" data-region="profile">
-    <div class="row-fluid picture">
-        <div class="span1">
-            <img height="64" src="{{profileimageurl}}" alt="" />
+<div class="profile" data-userid="{{otheruserid}}" data-region="profile">
+    <div class="user-container">
+        <img class="profile-picture" src="{{profileimageurl}}" alt="" />
+        <div class="name-container">
+            <div class="name">{{fullname}}</div>
+            <div class="status {{#isonline}}online{{/isonline}}">
+                <div class="online-text">{{#str}} online, message {{/str}}</div>
+                <div class="offline-text">{{#str}} offline, message {{/str}}</div>
+            </div>
         </div>
-        <div class="span11">
-            <div class="name">{{fullname}} {{#isonline}}*{{/isonline}}</div>
+        <div class="information">
+            <div class="names">
+                <div>{{#str}} email {{/str}}</div>
+                <div>{{#str}} country {{/str}}</div>
+                <div>{{#str}} city {{/str}}</div>
+            </div>
+            <div class="values">
+                <div>{{email}}</div>
+                <div>{{country}}</div>
+                <div>{{city}}</div>
+            </div>
         </div>
     </div>
-    <div class="row-fluid information">
-        <div class="span12">
-            <ul>
-                <li><strong>{{#str}}email{{/str}}:</strong> {{email}}</li>
-                <li><strong>{{#str}}country{{/str}}:</strong> {{country}}</li>
-                <li><strong>{{#str}}city{{/str}}:</strong> {{city}}</li>
-            </ul>
+    <div class="actions">
+        <div class="separator">
+            <a data-action="profile-view" href="#">{{#str}}viewprofile{{/str}}</a>
         </div>
-    </div>
-    <div class="row-fluid actions">
-        <div class="span3">
-            <input type="button" value="{{#str}}viewprofile{{/str}}" data-action="profile-view"/>
-        </div>
-        <div class="span3">
+        <div class="separator">
             {{#iscurrentuser}}
-                <input type="button" value="{{#str}}sendmessage, message{{/str}}" data-action="profile-send-message"/>
+                <a data-action="profile-send-message" href="#">{{#str}}sendmessage, message{{/str}}</a>
             {{/iscurrentuser}}
             {{^iscurrentuser}}
-                <input type="button" value="{{#str}}viewconversation, message{{/str}}" data-action="profile-send-message"/>
+                <a data-action="profile-send-message" href="#">{{#str}}viewconversation, message{{/str}}</a>
             {{/iscurrentuser}}
         </div>
-        <div class="span3">
+        <div class="separator">
             {{#isblocked}}
-                <input type="button" value="{{#str}}unblockcontact, message{{/str}}" data-action="profile-unblock-contact"/>
+                <a data-action="profile-unblock-contact" href="#">{{#str}}unblockcontact, message{{/str}}</a>
             {{/isblocked}}
             {{^isblocked}}
-                <input type="button" value="{{#str}}blockcontact, message{{/str}}" data-action="profile-block-contact"/>
+                <a class="danger" data-action="profile-block-contact" href="#">{{#str}}blockcontact, message{{/str}}</a>
             {{/isblocked}}
         </div>
-        <div class="span3">
+        <div class="separator">
             {{#iscontact}}
-                <input type="button" value="{{#str}}removecontact, message{{/str}}" data-action="profile-remove-contact"/>
+                <a class="danger" data-action="profile-remove-contact" href="#">{{#str}}removecontact, message{{/str}}</a>
             {{/iscontact}}
             {{^iscontact}}
-                <input type="button" value="{{#str}}addcontact, message{{/str}}" data-action="profile-add-contact"/>
+                <a data-action="profile-add-contact" href="#">{{#str}}addcontact, message{{/str}}</a>
             {{/iscontact}}
         </div>
     </div>

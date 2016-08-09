@@ -112,7 +112,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          */
         Profile.prototype._blockContact = function() {
             var action = this._performAction('core_message_block_contacts', 'unblockcontact', 'profile-block-contact',
-                'profile-unblock-contact');
+                'profile-unblock-contact', '');
             return action.then(function() {
                 this.messageArea.trigger(this.messageArea.EVENTS.CONTACTBLOCKED, this._getUserId());
             }.bind(this));
@@ -126,7 +126,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          */
         Profile.prototype._unblockContact = function() {
             var action = this._performAction('core_message_unblock_contacts', 'blockcontact', 'profile-unblock-contact',
-                'profile-block-contact');
+                'profile-block-contact', 'danger');
             return action.then(function() {
                 this.messageArea.trigger(this.messageArea.EVENTS.CONTACTUNBLOCKED, this._getUserId());
             }.bind(this));
@@ -140,7 +140,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          */
         Profile.prototype._addContact = function() {
             var action = this._performAction('core_message_create_contacts', 'removecontact', 'profile-add-contact',
-                'profile-remove-contact');
+                'profile-remove-contact', 'danger');
             return action.then(function() {
                 this.messageArea.trigger(this.messageArea.EVENTS.CONTACTADDED, this._getUserId());
             }.bind(this));
@@ -154,7 +154,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          */
         Profile.prototype._removeContact = function() {
             var action = this._performAction('core_message_delete_contacts', 'addcontact', 'profile-remove-contact',
-                'profile-add-contact');
+                'profile-add-contact', '');
             return action.then(function() {
                 this.messageArea.trigger(this.messageArea.EVENTS.CONTACTREMOVED, this._getUserId());
             }.bind(this));
@@ -167,10 +167,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {String} string The string to change the button value to
          * @param {String} oldaction The data-action of the button
          * @param {string} newaction The data-action to change the button to
+         * @param {String} newclass The CSS class we want to add
          * @returns {Promise} The promise resolved when the action has been performed
          * @private
          */
-        Profile.prototype._performAction = function(service, string, oldaction, newaction) {
+        Profile.prototype._performAction = function(service, string, oldaction, newaction, newclass) {
             var promises = ajax.call([{
                 methodname: service,
                 args: {
@@ -184,22 +185,31 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return promises[0].then(function() {
                 return str.get_string(string, 'message');
             }).then(function(s) {
-                this._changeButton(s, oldaction, newaction);
+                this._changeText(s, oldaction, newaction, newclass);
             }.bind(this)).fail(notification.exception);
         };
 
         /**
-         * Changes the button in the profile area.
+         * Changes the text in the profile area.
          *
          * @param {String} text The string to change the button value to
          * @param {string} oldaction The data-action of the button
          * @param {string} newaction The data-action to change the button to
+         * @param {String} newclass The CSS class we want to add
          * @private
          */
-        Profile.prototype._changeButton = function(text, oldaction, newaction) {
-            var button = this.messageArea.find("[data-action='" + oldaction + "']");
-            button.val(text);
-            button.attr('data-action', newaction);
+        Profile.prototype._changeText = function(text, oldaction, newaction, newclass) {
+            var anchor = this.messageArea.find("[data-action='" + oldaction + "']");
+            // Change the text.
+            anchor.text(text);
+            // Remove any class.
+            anchor.removeClass();
+            // Add the class if there is one.
+            if (newclass) {
+                anchor.addClass(newclass);
+            }
+
+            anchor.attr('data-action', newaction);
         };
 
         /**

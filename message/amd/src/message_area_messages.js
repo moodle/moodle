@@ -21,8 +21,9 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events'],
-    function($, ajax, templates, notification, customEvents) {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events',
+        'core/auto_rows', 'core_message/message_area_actions'],
+    function($, ajax, templates, notification, customEvents, AutoRows, Actions) {
 
         /**
          * Messages class.
@@ -58,17 +59,24 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 customEvents.events.down,
             ]);
 
+            AutoRows.init(this.messageArea.node);
+
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONDELETED, this._handleConversationDeleted.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSELECTED, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, this._chooseMessagesToDelete.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SENDMESSAGE, this._sendMessage.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.STARTDELETEMESSAGES, this._startDeleting.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.DELETEMESSAGES, this._deleteMessages.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.CANCELDELETEMESSAGES,
                 this._cancelMessagesToDelete.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.MESSAGE, this._toggleMessage.bind(this));
 
             this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.MESSAGE, this._selectPreviousMessage.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.MESSAGE, this._selectNextMessage.bind(this));
+
+            this.messageArea.onDelegateEvent('focus', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._setMessaging.bind(this));
+            this.messageArea.onDelegateEvent('blur', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._clearMessaging.bind(this));
         };
 
         /**
@@ -226,14 +234,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._chooseMessagesToDelete = function() {
-            // Show the checkboxes.
-            this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX).show();
-            // Display the confirmation message.
-            var responseSelector = this.messageArea.SELECTORS.MESSAGESAREA + " " +
-                this.messageArea.SELECTORS.MESSAGERESPONSE;
-            return templates.render('core_message/message_area_delete_confirmation', {}).then(function(html, js) {
-                templates.replaceNodeContents(responseSelector, html, js);
-            });
+            this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).addClass('editing');
+            this.messageArea.find(this.messageArea.SELECTORS.MESSAGE)
+                .attr('role', 'checkbox')
+                .attr('aria-checked', 'false');
         };
 
         /**
@@ -243,7 +247,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Messages.prototype._deleteMessages = function() {
             var userid = this.messageArea.getCurrentUserId();
-            var checkboxes = this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX + " input:checked");
+            var checkboxes = this.messageArea.find(this.messageArea.SELECTORS.MESSAGE + "[aria-checked='true']");
             var requests = [];
             var messagestoremove = [];
 
@@ -252,9 +256,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 var node = $(element);
                 var messageid = node.data('messageid');
                 var isread = node.data('messageread') ? 1 : 0;
-                var message = this.messageArea.find(this.messageArea.SELECTORS.MESSAGE +
-                    "[data-id='" + messageid + '' + isread + "']");
-                messagestoremove.push(message);
+                messagestoremove.push(node);
                 requests.push({
                     methodname: 'core_message_delete_message',
                     args: {
@@ -318,19 +320,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._hideDeleteAction = function() {
-            // Uncheck all checkboxes.
-            this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX + " input:checked").removeAttr('checked');
-            // Hide the checkboxes.
-            this.messageArea.find(this.messageArea.SELECTORS.DELETEMESSAGECHECKBOX).hide();
-            // Remove the confirmation message.
-            var responseSelector = this.messageArea.SELECTORS.MESSAGESAREA + " " + this.messageArea.SELECTORS.MESSAGERESPONSE;
-            this.messageArea.find(responseSelector).empty();
-            // Only show a response text area if we are viewing the logged in user's messages.
-            if (this.messageArea.getLoggedInUserId() == this.messageArea.getCurrentUserId()) {
-                return templates.render('core_message/message_area_response', {}).then(function(html, js) {
-                    templates.replaceNodeContents(responseSelector, html, js);
-                });
-            }
+            this.messageArea.find(this.messageArea.SELECTORS.MESSAGE)
+                .removeAttr('role')
+                .removeAttr('aria-checked');
+            this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).removeClass('editing');
         };
 
         /**
@@ -367,7 +360,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }).then(function(html, js) {
                 templates.appendNodeContents(this.messageArea.SELECTORS.MESSAGES, html, js);
                 // Empty the response text area.
-                this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val('');
+                this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val('').trigger('input');
                 // Scroll down.
                 this._scrollBottom();
             }.bind(this)).fail(notification.exception);
@@ -432,6 +425,70 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             data.originalEvent.preventDefault();
             data.originalEvent.stopPropagation();
+        };
+
+        /**
+         * Flag the response area as messaging.
+         *
+         * @params {event} e The jquery event
+         * @private
+         */
+        Messages.prototype._setMessaging = function(e) {
+            $(e.target).closest(this.messageArea.SELECTORS.MESSAGERESPONSE).addClass('messaging');
+        };
+
+        /**
+         * Clear the response area as messaging flag.
+         *
+         * @params {event} e The jquery event
+         * @private
+         */
+        Messages.prototype._clearMessaging = function(e) {
+            $(e.target).closest(this.messageArea.SELECTORS.MESSAGERESPONSE).removeClass('messaging');
+        };
+
+        /**
+         * Turn on delete message mode.
+         *
+         * @params {event} e The jquery event
+         * @private
+         */
+        Messages.prototype._startDeleting = function(e) {
+            var actions = new Actions(this.messageArea);
+            actions.chooseMessagesToDelete();
+
+            e.preventDefault();
+        };
+
+        /**
+         * Check if the message area is in editing mode.
+         *
+         * @return {bool}
+         * @private
+         */
+        Messages.prototype._isEditing = function() {
+            return this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).hasClass('editing');
+        };
+
+        /**
+         * Check or uncheck the message if the message area is in editing mode.
+         *
+         * @params {event} e The jquery event
+         * @params {object} data Additional event data
+         * @private
+         */
+        Messages.prototype._toggleMessage = function(e, data) {
+            if (!this._isEditing()) {
+                return;
+            }
+
+            var message = $(e.target).closest(this.messageArea.SELECTORS.MESSAGE);
+
+            if (message.attr('aria-checked') === 'true') {
+                message.attr('aria-checked', 'false');
+            } else {
+                message.attr('aria-checked', 'true');
+            }
         };
 
         return Messages;

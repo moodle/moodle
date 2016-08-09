@@ -5766,141 +5766,301 @@ a.ygtvspacer:hover {
   padding-left: 5px;
 }
 /** The message area **/
-.messaging-area-container .actions {
-  float: right;
+.messaging-area-container {
+  margin-bottom: 30px;
 }
-.messaging-area-container .actions .core-message-menu {
-  margin: 0;
-}
-.messaging-area-container .actions .core-message-menu li {
-  float: left;
-  position: relative;
-  list-style-type: none;
-  white-space: nowrap;
-}
-.messaging-area-container .actions .core-message-menu ul[aria-hidden=true] {
+.messaging-area-container .status .online-text {
   display: none;
+  color: #77dd77;
 }
-.messaging-area-container .actions .core-message-menu .caret {
-  margin: 8px;
+.messaging-area-container .status .offline-text {
+  color: #ff6961;
 }
-.messaging-area-container .actions .core-message-menu .core-message-sub-menu {
-  position: absolute;
-  list-style: none;
-  margin: 0;
-}
-.messaging-area-container .actions .core-message-menu .core-message-sub-menu li {
-  float: none;
-}
-.messaging-area-container .actions .core-message-menu .core-message-sub-menu .menu-focus a {
-  color: #fff;
-  text-decoration: none;
-  background-color: #00699e;
-  background-image: linear-gradient(to bottom, #0070a8, #005f8f);
-  background-repeat: repeat-x;
-}
-.messaging-area-container .actions .core-message-menu .core-message-sub-menu[aria-hidden=false] {
+.messaging-area-container .status.online .online-text {
   display: block;
 }
-.messaging-area-container .actions .core-message-menu.core-message-menu-open-left .core-message-sub-menu {
-  margin-left: -120px;
+.messaging-area-container .status.online .offline-text {
+  display: none;
 }
-.messaging-area-container .actions .dir-rtl .core-message-menu.core-message-menu-open-left .core-message-sub-menu {
-  margin-left: 0;
-  margin-right: -120px;
+.messaging-area-container a,
+.messaging-area-container .btn.btn-link {
+  color: #4f94cd;
 }
 .messaging-area-container .messaging-area {
-  border: 1px solid black;
+  border: 1px solid #e3e3e3;
   clear: both;
+  border-radius: 4px;
 }
 .messaging-area-container .messaging-area .contacts-area {
-  border-right: 1px solid black;
+  border-right: 1px solid #e3e3e3;
   height: 600px;
 }
 .messaging-area-container .messaging-area .contacts-area .searcharea {
   padding: 5px;
   text-align: center;
+  height: 50px;
+  box-sizing: border-box;
+  line-height: 50px;
+  background-color: #fff;
+  transition: background-color linear 0.2s;
+}
+.messaging-area-container .messaging-area .contacts-area .searcharea input {
+  background-color: #f5f5f5;
+  border: 0;
+  width: 90%;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  transition: background-color linear 0.2s;
+}
+.messaging-area-container .messaging-area .contacts-area .searcharea input:focus {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.messaging-area-container .messaging-area .contacts-area .searcharea.searching {
+  background-color: #f5f5f5;
+  transition: background-color linear 0.2s;
+}
+.messaging-area-container .messaging-area .contacts-area .searcharea.searching input {
+  background-color: #fff;
+  transition: background-color linear 0.2s;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts {
-  height: 505px;
+  height: 500px;
   overflow-y: scroll;
 }
-.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected {
-  background-color: #CCF2FF;
+.messaging-area-container .messaging-area .contacts-area .contacts .contact {
+  height: 66px;
+  cursor: pointer;
+  border-bottom: 1px solid #e3e3e3;
+  box-sizing: border-box;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact:hover {
-  background-color: #CCF2FF;
-  cursor: pointer;
+  background-color: #4f94cd;
+  color: #fff;
+  border: none;
 }
-.messaging-area-container .messaging-area .contacts-area .contacts .contact .deleteconversationcheckbox {
-  display: none;
+.messaging-area-container .messaging-area .contacts-area .contacts .contact:hover .information .lastmessage {
+  color: #fff;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact:hover .picture {
+  border: none;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected:not([aria-checked]) {
+  background-color: #4f94cd;
+  color: #fff;
+  border: none;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected:not([aria-checked]) .information .lastmessage {
+  color: #fff;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected:not([aria-checked]) .picture {
+  border: none;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact .picture {
+  line-height: 66px;
+  text-align: center;
+  width: 25.64102564%;
+  margin: 0;
+  height: 66px;
+  border-bottom: 1px solid #fff;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact .picture img {
+  border-radius: 50%;
+  height: 54px;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .information {
-  padding-left: 8px;
-  padding-right: 8px;
+  margin: 0;
+  padding: 6px 0;
+  height: 66px;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .information .name {
   font-weight: bold;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .information .lastmessage {
   word-wrap: break-word;
+  margin: 0;
+  height: 40px;
+  line-height: 17px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #a1a1a1;
+  padding-right: 10px;
 }
 .messaging-area-container .messaging-area .contacts-area .tabs {
-  border-top: 1px solid black;
+  border-top: 1px solid #e3e3e3;
+  height: 50px;
+  box-sizing: border-box;
+}
+.messaging-area-container .messaging-area .contacts-area .tabs .tab {
+  cursor: pointer;
+  height: 100%;
+  background-color: #f5f5f5;
+  margin: 0;
+  width: 50%;
+  text-align: center;
 }
 .messaging-area-container .messaging-area .contacts-area .tabs .tab:hover {
-  background-color: #CCF2FF;
-  cursor: pointer;
+  color: #4f94cd;
+}
+.messaging-area-container .messaging-area .contacts-area .tabs .tab .tabimage {
+  height: 30px;
+  line-height: 30px;
+}
+.messaging-area-container .messaging-area .contacts-area .tabs .tab .tabimage img {
+  height: 20px;
 }
 .messaging-area-container .messaging-area .contacts-area .tabs .tab.selected {
-  background-color: #CCF2FF;
+  color: #4f94cd;
 }
-.messaging-area-container .messaging-area .contacts-area .tabs .tabconversations {
-  text-align: center;
-  border-right: 1px solid black;
+.messaging-area-container .messaging-area .contacts-area.editing .contacts .contact[aria-checked="true"] {
+  background-color: #4f94cd;
+  color: #fff;
+  border: none;
 }
-.messaging-area-container .messaging-area .contacts-area .tabs .tabcontacts {
-  text-align: center;
+.messaging-area-container .messaging-area .contacts-area.editing .contacts .contact[aria-checked="true"] .information .lastmessage {
+  color: #fff;
+}
+.messaging-area-container .messaging-area .contacts-area.editing .contacts .contact[aria-checked="true"] .picture {
+  border: none;
+}
+.messaging-area-container .messaging-area .messages-area {
+  width: 76.92407792%;
+  height: 600px;
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
 }
 .messaging-area-container .messaging-area .messages-area .profile {
-  padding: 5px;
+  padding: 30px;
   font-size: 16px;
 }
-.messaging-area-container .messaging-area .messages-area .profile .picture .name {
+.messaging-area-container .messaging-area .messages-area .profile .user-container {
+  height: 100px;
+}
+.messaging-area-container .messaging-area .messages-area .profile .user-container .profile-picture {
+  border-radius: 50%;
+  max-height: 100px;
+  display: inline-block;
+}
+.messaging-area-container .messaging-area .messages-area .profile .user-container .name-container {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+.messaging-area-container .messaging-area .messages-area .profile .user-container .name-container .name {
   font-weight: bold;
+  display: block;
+}
+.messaging-area-container .messaging-area .messages-area .profile .user-container .name-container .status {
+  display: block;
+  font-size: 14px;
 }
 .messaging-area-container .messaging-area .messages-area .profile .information {
-  padding-top: 10px;
-}
-.messaging-area-container .messaging-area .messages-area .profile .information ul {
-  list-style: none;
   margin: 0;
+  display: inline-block;
+  float: right;
+  margin-top: 20px;
+  font-size: 14px;
+}
+.messaging-area-container .messaging-area .messages-area .profile .information .names {
+  display: inline-block;
+  font-weight: bold;
+  text-align: right;
+  margin-right: 10px;
+}
+.messaging-area-container .messaging-area .messages-area .profile .information .values {
+  display: inline-block;
 }
 .messaging-area-container .messaging-area .messages-area .profile .actions {
-  padding-top: 10px;
+  padding-top: 80px;
 }
-.messaging-area-container .messaging-area .messages-area .name {
+.messaging-area-container .messaging-area .messages-area .profile .actions .separator {
+  border-bottom: 1px solid #e3e3e3;
+  margin-bottom: 20px;
+  padding-bottom: 5px;
+}
+.messaging-area-container .messaging-area .messages-area .profile .actions .separator a.danger {
+  color: #ff6961;
+}
+.messaging-area-container .messaging-area .messages-area .messages-header {
+  height: 50px;
   font-weight: bold;
+  line-height: 50px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e3e3e3;
+  text-align: center;
+  position: relative;
+}
+.messaging-area-container .messaging-area .messages-area .messages-header .delete-instructions {
+  display: none;
+}
+.messaging-area-container .messaging-area .messages-area .messages-header .name-container {
+  padding-top: 9px;
+  display: inline-block;
+}
+.messaging-area-container .messaging-area .messages-area .messages-header .name-container .name {
+  line-height: 20px;
+}
+.messaging-area-container .messaging-area .messages-area .messages-header .name-container .status {
+  line-height: 12px;
+  font-size: 12px;
+  font-weight: normal;
+}
+.messaging-area-container .messaging-area .messages-area .messages-header .actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-right: 15px;
+  font-weight: normal;
+}
+.messaging-area-container .messaging-area .messages-area .messages-header .actions .cancel-messages-delete {
+  display: none;
 }
 .messaging-area-container .messaging-area .messages-area .messages {
   height: 500px;
   overflow-y: auto;
+  box-sizing: border-box;
+  padding: 15px 50px;
 }
 .messaging-area-container .messaging-area .messages-area .messages .blocktime {
   clear: both;
-  font-weight: bold;
   text-align: center;
+  color: #a1a1a1;
+  font-size: 12px;
+  margin: 5px 0;
 }
 .messaging-area-container .messaging-area .messages-area .messages .message .deletemessagecheckbox {
   display: none;
+  text-align: center;
+  padding-top: 5px;
 }
 .messaging-area-container .messaging-area .messages-area .messages .message .content {
-  border: 1px solid black;
-  padding-left: 5px;
+  border: 1px solid #e3e3e3;
+  padding: 10px;
   margin-bottom: 5px;
-  font-size: 10px;
+  font-size: 12px;
   word-wrap: break-word;
-  width: 80%;
+  max-width: 55%;
+  border-radius: 4px;
+  position: relative;
+}
+.messaging-area-container .messaging-area .messages-area .messages .message .content .text {
+  display: inline-block;
+  margin-right: 60px;
+}
+.messaging-area-container .messaging-area .messages-area .messages .message .content .text p {
+  margin: 0;
+}
+.messaging-area-container .messaging-area .messages-area .messages .message .content .timesent {
+  font-size: 10px;
+  color: #a1a1a1;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 .messaging-area-container .messaging-area .messages-area .messages .message .content.left {
   float: left;
@@ -5908,8 +6068,84 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .messages-area .messages .message .content.right {
   float: right;
 }
+.messaging-area-container .messaging-area .messages-area .response {
+  border-bottom-right-radius: 4px;
+  padding: 10px 0 9px 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  line-height: 28px;
+  text-align: center;
+  border-top: 1px solid #e3e3e3;
+  box-sizing: border-box;
+  background-color: #fff;
+  transition: background-color linear 0.2s;
+}
+.messaging-area-container .messaging-area .messages-area .response .delete-confirmation {
+  display: none;
+}
+.messaging-area-container .messaging-area .messages-area .response .delete-confirmation .btn.btn-link.confirm {
+  border: 1px solid #4f94cd;
+  border-radius: 4px;
+}
+.messaging-area-container .messaging-area .messages-area .response .delete-confirmation .btn.btn-link.confirm:hover {
+  background-color: #4f94cd;
+  color: #fff;
+  text-shadow: none;
+}
 .messaging-area-container .messaging-area .messages-area .response textarea {
-  width: 80%;
+  width: 85%;
+  margin: 0;
+  resize: none;
+  border: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background-color: #f5f5f5;
+  transition: background-color linear 0.2s;
+}
+.messaging-area-container .messaging-area .messages-area .response textarea:focus {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.messaging-area-container .messaging-area .messages-area .response.messaging {
+  background-color: #f5f5f5;
+  transition: background-color linear 0.2s;
+}
+.messaging-area-container .messaging-area .messages-area .response.messaging textarea {
+  background-color: #fff;
+  transition: background-color linear 0.2s;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages-header .delete-instructions {
+  display: block;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages-header .name-container {
+  display: none;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages-header .actions .messages-delete {
+  display: none;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages-header .actions .cancel-messages-delete {
+  display: block;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages .message {
+  cursor: pointer;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages .message[aria-checked="true"] .content {
+  background-color: #4f94cd;
+  border-color: #4f94cd;
+  color: #fff;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages .message[aria-checked="true"] .content .timesent {
+  color: #fff;
+}
+.messaging-area-container .messaging-area .messages-area.editing .response .delete-confirmation {
+  display: block;
+}
+.messaging-area-container .messaging-area .messages-area.editing .response .message-box {
+  display: none;
 }
 #newmessageoverlay {
   min-height: 20px;

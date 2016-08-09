@@ -88,7 +88,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES,
                 this._cancelConversationsToDelete.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.VIEWCONVERSATION,
-                this._viewConversation.bind(this));
+                this._handleConversationActivate.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.VIEWPROFILE,
                 this._viewContact.bind(this));
 
@@ -96,6 +96,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.CONTACT, this._selectNextContact.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.VIEWCONVERSATION, this._selectPreviousConversation.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.VIEWCONVERSATION, this._selectNextConversation.bind(this));
+
+            this.messageArea.onDelegateEvent('focus', this.messageArea.SELECTORS.SEARCHBOX, this._setSearching.bind(this));
+            this.messageArea.onDelegateEvent('blur', this.messageArea.SELECTORS.SEARCHBOX, this._clearSearching.bind(this));
 
             // Now enable the ability to infinitely scroll through conversations and contacts.
             customEvents.define(this.messageArea.SELECTORS.CONVERSATIONS, [
@@ -277,6 +280,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 var userid = $(event.currentTarget).data('userid');
                 this._setSelectedUser(userid);
                 this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONSELECTED, userid);
+                // Don't highlight the contact because the message region has changed.
+                this.messageArea.find(this.messageArea.SELECTORS.SELECTEDVIEWPROFILE).removeClass('selected');
             }
         };
 
@@ -291,6 +296,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 var userid = $(event.currentTarget).data('userid');
                 this._setSelectedUser(userid);
                 this.messageArea.trigger(this.messageArea.EVENTS.CONTACTSELECTED, userid);
+                // Don't highlight the conversation because the message region has changed.
+                this.messageArea.find(this.messageArea.SELECTORS.SELECTEDVIEWCONVERSATION).removeClass('selected');
             }
         };
 
@@ -325,7 +332,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Contacts.prototype._chooseConversationsToDelete = function() {
             this._isDeleting = true;
-            this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX).show();
+            this.messageArea.find(this.messageArea.SELECTORS.CONTACTSAREA).addClass('editing');
+            this.messageArea.find(this.messageArea.SELECTORS.CONTACT)
+                .attr('role', 'checkbox')
+                .attr('aria-checked', 'false');
         };
 
         /**
@@ -335,10 +345,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Contacts.prototype._cancelConversationsToDelete = function() {
             this._isDeleting = false;
-            // Uncheck all checkboxes.
-            this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX + " input:checked").removeAttr('checked');
-            // Hide the checkboxes.
-            this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX).hide();
+            this.messageArea.find(this.messageArea.SELECTORS.CONTACTSAREA).removeClass('editing');
+            this.messageArea.find(this.messageArea.SELECTORS.CONTACT)
+                .removeAttr('role')
+                .removeAttr('aria-checked');
         };
 
         /**
@@ -349,13 +359,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._deleteConversations = function(event, userid) {
-            var checkboxes = this.messageArea.find(this.messageArea.SELECTORS.DELETECONVERSATIONCHECKBOX + " input:checked");
+            var checkboxes = this.messageArea.find(this.messageArea.SELECTORS.CONTACT + "[aria-checked='true']");
             var requests = [];
 
             // Go through all the checked checkboxes and prepare them for deletion.
             checkboxes.each(function(id, element) {
                 var node = $(element);
-                var otheruserid = node.parents(this.messageArea.SELECTORS.CONTACT).data('userid');
+                var otheruserid = node.data('userid');
                 requests.push({
                     methodname: 'core_message_delete_conversation',
                     args: {
@@ -516,6 +526,51 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             data.originalEvent.preventDefault();
             data.originalEvent.stopPropagation();
+        };
+
+        /**
+         * Flags the search area as seaching.
+         */
+        Contacts.prototype._setSearching = function() {
+            $(this.messageArea.SELECTORS.SEARCHAREA).addClass('searching');
+        };
+
+        /**
+         * Flags the search area as seaching.
+         */
+        Contacts.prototype._clearSearching = function() {
+            $(this.messageArea.SELECTORS.SEARCHAREA).removeClass('searching');
+        };
+
+        /**
+         * Toggle the checkbox status of a conversation if we're deleting.
+         *
+         * @param {event} e The jquery event
+         */
+        Contacts.prototype._toggleConversationSelection = function(e) {
+            if (!this._isDeleting) {
+                return;
+            }
+
+            var message = $(e.target).closest(this.messageArea.SELECTORS.CONTACT);
+            if (message.attr('aria-checked') === 'true') {
+                message.attr('aria-checked', 'false');
+            } else {
+                message.attr('aria-checked', 'true');
+            }
+        };
+
+        /**
+         * Handle the activation event on a conversation.
+         *
+         * @param {event} e The jquery event
+         */
+        Contacts.prototype._handleConversationActivate = function(e) {
+            if (this._isDeleting) {
+                return this._toggleConversationSelection(e);
+            } else {
+                return this._viewConversation(e);
+            }
         };
 
         return Contacts;

@@ -1,2 +1,6 @@
-<textarea data-region="send-message-txt"></textarea>
-<input type="button" value="{{#str}}send, message{{/str}}" data-action="send-message" />
+<textarea data-region="send-message-txt"
+    rows="1"
+    data-auto-rows
+    data-max-rows="5"
+    placeholder="{{#str}} writeamessage, message {{/str}}"></textarea>
+<button class="btn btn-link" data-action="send-message">{{#str}}send, message{{/str}}</button>

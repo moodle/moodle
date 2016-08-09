@@ -3,12 +3,16 @@
         {{blocktime}}
     </div>
 {{/displayblocktime}}
-<div class="message row-fluid" data-region="message" data-blocktime="{{blocktime}}" data-id="{{id}}{{isread}}" tabindex="0">
-    <div class="span1 deletemessagecheckbox" data-region="delete-message-checkbox">
-        <input type="checkbox" data-messageid="{{id}}" data-messageread="{{isread}}"/>
-    </div>
-    <div class="span11 content {{position}}">
-        <span data-region="message-text">
+<div class="message row-fluid"
+    data-region="message"
+    data-blocktime="{{blocktime}}"
+    data-id="{{id}}{{isread}}"
+    data-messageid="{{id}}"
+    data-messageread="{{isread}}"
+    tabindex="0">
+
+    <div class="content {{position}}">
+        <span class="text" data-region="message-text">
             {{{text}}}
         </span>
         <span class="timesent">

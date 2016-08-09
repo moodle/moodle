@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core_message/message_area_contacts', 'core_message/message_area_messages',
-        'core_message/message_area_profile', 'core_message/message_area_menubar', 'core_message/message_area_tabs',
+        'core_message/message_area_profile', 'core_message/message_area_tabs',
         'core_message/message_area_actions'],
-    function($, Contacts, Messages, Profile, Menubar, Tabs, Actions) {
+    function($, Contacts, Messages, Profile, Tabs, Actions) {
 
         /**
          * Messagearea class.
@@ -43,9 +43,9 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             CANCELDELETEMESSAGES: "[data-action='cancel-delete-messages']",
             CONTACT: "[data-region='contact']",
             CONTACTS: "[data-region='contacts'][data-region-content='contacts']",
+            CONTACTSAREA: "[data-region='contacts-area']",
             CONTACTSPANELS: "[data-region='contacts']",
             CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
-            DELETECONVERSATIONCHECKBOX: "[data-region='delete-conversation-checkbox']",
             DELETEMESSAGES: "[data-action='delete-messages']",
             DELETEMESSAGECHECKBOX: "[data-region='delete-message-checkbox']",
             LASTMESSAGE: '.lastmessage',
@@ -54,6 +54,7 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             MESSAGE: "[data-region='message']",
             MESSAGES: "[data-region='messages']",
             MESSAGESAREA: "[data-region='messages-area']",
+            MESSAGESHEADERACTIONS: "[data-region='messages-header-actions']",
             MESSAGERESPONSE: "[data-region='response']",
             MESSAGETEXT: "[data-region='message-text']",
             PROFILE: "[data-region='profile']",
@@ -63,8 +64,13 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             PROFILESENDMESSAGE: "[data-action='profile-send-message']",
             PROFILEUNBLOCKCONTACT: "[data-action='profile-unblock-contact']",
             PROFILEVIEW: "[data-action='profile-view']",
+            SEARCHAREA: "[data-region='search-area']",
+            SEARCHBOX: "[data-region='search-box']",
+            SELECTEDVIEWPROFILE: "[data-action='view-contact-profile'].selected",
+            SELECTEDVIEWCONVERSATION: "[data-action='view-contact-msg'].selected",
             SENDMESSAGE: "[data-action='send-message']",
             SENDMESSAGETEXT: "[data-region='send-message-txt']",
+            STARTDELETEMESSAGES: "[data-action='start-delete-messages']",
             VIEWCONTACTS: "[data-action='contacts-view']",
             VIEWCONVERSATION: "[data-action='view-contact-msg']",
             VIEWCONVERSATIONS: "[data-action='conversations-view']",
@@ -100,11 +106,6 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             new Messages(this);
             new Profile(this);
             new Tabs(this);
-            var actions = new Actions(this);
-
-            Menubar.enhance(this.find(this.SELECTORS.MENU), {
-                "[data-action='delete-messages']": actions.chooseMessagesToDelete.bind(actions)
-            });
         };
 
         /**

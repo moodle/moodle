@@ -1,11 +1,31 @@
-<div class="name">
-    {{otheruserfullname}}
+<div class="messages-header">
+    <div class="name-container">
+        <div class="name">
+            {{otheruserfullname}}
+        </div>
+        <div class="status">
+            <span class="offline-text">{{#str}} offline, message {{/str}}</span>
+            <span class="online-text">{{#str}} online, message {{/str}}</span>
+        </div>
+    </div>
+    <div class="delete-instructions">
+        {{#str}} selectmessagestodelete, message {{/str}}
+    </div>
+    <div class="actions" data-region="messages-header-actions">
+        <a class="messages-delete" data-action="start-delete-messages" href="#">{{#str}}edit{{/str}}</a>
+        <a class="cancel-messages-delete" data-action="cancel-delete-messages" href="#">{{#str}}cancel{{/str}}</a>
+    </div>
 </div>
 <div class="messages" data-region="messages" data-userid="{{otheruserid}}">
     {{> core_message/message_area_messages }}
 </div>
 <div class="response" data-region="response">
     {{#iscurrentuser}}
-        {{> core_message/message_area_response }}
+        <div class="message-box">
+            {{> core_message/message_area_response }}
+        </div>
     {{/iscurrentuser}}
+    <div class="delete-confirmation">
+        <button class="btn btn-link confirm" data-action="delete-messages">{{#str}} deletemessagesandconvos, message {{/str}}</button>
+    </div>
 </div>

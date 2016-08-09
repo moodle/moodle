@@ -1,98 +1,128 @@
 /** The message area **/
 .messaging-area-container {
+    margin-bottom: 30px;
 
-    .actions {
-        float: right;
+    .status {
+        .online-text {
+            display: none;
+            color: #77dd77;
+        }
 
-        .core-message-menu {
-            margin: 0;
+        .offline-text {
+            color: #ff6961;
+        }
 
-            li {
-                float: left;
-                position: relative;
-                list-style-type: none;
-                white-space: nowrap;
-            }
-
-            ul[aria-hidden=true] {
-                display: none;
-            }
-
-            .caret {
-                margin: 8px;
-            }
-
-            .core-message-sub-menu {
-                position: absolute;
-                list-style: none;
-                margin: 0;
-
-                li {
-                    float: none;
-                }
-
-                .menu-focus a {
-                    color: #fff;
-                    text-decoration: none;
-                    background-color: #00699e;
-                    background-image: linear-gradient(to bottom, #0070a8, #005f8f);
-                    background-repeat: repeat-x;
-                }
-            }
-
-            .core-message-sub-menu[aria-hidden=false] {
+        &.online {
+            .online-text {
                 display: block;
             }
-        }
-
-        .core-message-menu.core-message-menu-open-left .core-message-sub-menu {
-            margin-left: -120px;
-        }
-
-        .dir-rtl .core-message-menu.core-message-menu-open-left .core-message-sub-menu {
-            margin-left: 0;
-            margin-right: -120px;
+            .offline-text {
+                display: none;
+            }
         }
     }
 
-    .messaging-area {
-        border: 1px solid black;
-        clear: both;
+    a,
+    .btn.btn-link {
+        color: #4f94cd;
+    }
 
-        .setSelected() {
-            background-color: #CCF2FF;
+    .messaging-area {
+        border: 1px solid #e3e3e3;
+        clear: both;
+        border-radius: 4px;
+
+        .setSelectedContact() {
+            background-color: #4f94cd;
+            color: #fff;
+            border: none;
+
+            .information {
+                .lastmessage {
+                    color: #fff;
+                }
+            }
+            .picture {
+                border: none;
+            }
         }
 
         .contacts-area {
-            border-right: 1px solid black;
+            border-right: 1px solid #e3e3e3;
             height: 600px;
 
             .searcharea {
                 padding: 5px;
                 text-align: center;
+                height: 50px;
+                box-sizing: border-box;
+                line-height: 50px;
+                background-color: #fff;
+                transition: background-color linear 0.2s;
+
+                input {
+                    background-color: #f5f5f5;
+                    border: 0;
+                    width: 90%;
+                    -webkit-box-shadow: none;
+                    -moz-box-shadow: none;
+                    box-shadow: none;
+                    transition: background-color linear 0.2s;
+
+                    &:focus {
+                        -webkit-box-shadow: none;
+                        -moz-box-shadow: none;
+                        box-shadow: none;
+                    }
+                }
+
+                &.searching {
+                    background-color: #f5f5f5;
+                    transition: background-color linear 0.2s;
+
+                    input {
+                        background-color: #fff;
+                        transition: background-color linear 0.2s;
+                    }
+                }
             }
 
             .contacts {
-                height: 505px;
+                height: 500px;
                 overflow-y: scroll;
 
-                .contact.selected {
-                    .setSelected();
-                }
-
                 .contact {
+                    height: 66px;
+                    cursor: pointer;
+                    border-bottom: 1px solid #e3e3e3;
+                    box-sizing: border-box;
+
                     &:hover {
-                        .setSelected();
-                        cursor: pointer;
+                        .setSelectedContact();
                     }
 
-                    .deleteconversationcheckbox {
-                        display: none;
+                    &.selected:not([aria-checked]) {
+                        .setSelectedContact();
+                    }
+
+                    .picture {
+                        line-height: 66px;
+                        text-align: center;
+                        width: 25.64102564%;
+                        margin: 0;
+                        height: 66px;
+                        border-bottom: 1px solid #fff;
+
+                        img {
+                            border-radius: 50%;
+                            height: 54px;
+                        }
                     }
 
                     .information {
-                        padding-left: 8px;
-                        padding-right: 8px;
+                        margin: 0;
+                        padding: 6px 0;
+                        height: 66px;
 
                         .name {
                             font-weight: bold;
@@ -100,88 +130,229 @@
 
                         .lastmessage {
                             word-wrap: break-word;
+                            margin: 0;
+                            height: 40px;
+                            line-height: 17px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            color: #a1a1a1;
+                            padding-right: 10px;
                         }
                     }
                 }
             }
 
+            .setSelectedTab() {
+                color: #4f94cd;
+            }
+
             .tabs {
-                border-top: 1px solid black;
+                border-top: 1px solid #e3e3e3;
+                height: 50px;
+                box-sizing: border-box;
 
                 .tab {
+                    cursor: pointer;
+                    height: 100%;
+                    background-color: #f5f5f5;
+                    margin: 0;
+                    width: 50%;
+                    text-align: center;
+
                     &:hover {
-                        .setSelected();
-                        cursor: pointer;
+                        .setSelectedTab();
+                    }
+
+                    .tabimage {
+                        height: 30px;
+                        line-height: 30px;
+
+                        img {
+                            height: 20px;
+                        }
                     }
                 }
 
                 .tab.selected {
-                    .setSelected();
+                    .setSelectedTab();
                 }
+            }
 
-                .tabconversations {
-                    text-align: center;
-                    border-right: 1px solid black;
-                }
-
-                .tabcontacts {
-                    text-align: center;
+            &.editing {
+                .contacts {
+                    .contact {
+                        &[aria-checked="true"] {
+                            .setSelectedContact();
+                        }
+                    }
                 }
             }
         }
 
         .messages-area {
+            width: 76.92407792%;
+            height: 600px;
+            box-sizing: border-box;
+            margin: 0;
+            position: relative;
+
             .profile {
-                padding: 5px;
+                padding: 30px;
                 font-size: 16px;
 
-                .picture {
-                    .name {
-                        font-weight: bold;
+                .user-container {
+                    height: 100px;
+
+                    .profile-picture {
+                        border-radius: 50%;
+                        max-height: 100px;
+                        display: inline-block;
+                    }
+
+                    .name-container {
+                        display: inline-block;
+                        vertical-align: top;
+                        margin-top: 20px;
+                        margin-left: 10px;
+
+                        .name {
+                            font-weight: bold;
+                            display: block;
+                        }
+
+                        .status {
+                            display: block;
+                            font-size: 14px;
+                        }
                     }
                 }
 
                 .information {
-                    padding-top: 10px;
+                    margin: 0;
+                    display: inline-block;
+                    float: right;
+                    margin-top: 20px;
+                    font-size: 14px;
 
-                    ul {
-                        list-style: none;
-                        margin: 0;
+                    .names {
+                        display: inline-block;
+                        font-weight: bold;
+                        text-align: right;
+                        margin-right: 10px;
+                    }
+
+                    .values {
+                        display: inline-block;
                     }
                 }
 
                 .actions {
-                    padding-top: 10px;
+                    padding-top: 80px;
+
+                    .separator {
+                        border-bottom: 1px solid #e3e3e3;
+                        margin-bottom: 20px;
+                        padding-bottom: 5px;
+
+                        a {
+                            &.danger {
+                                color: #ff6961;
+                            }
+                        }
+                    }
                 }
             }
 
-            .name {
+            .messages-header {
+                height: 50px;
                 font-weight: bold;
+                line-height: 50px;
+                box-sizing: border-box;
+                border-bottom: 1px solid #e3e3e3;
+                text-align: center;
+                position: relative;
+
+                .delete-instructions {
+                    display: none;
+                }
+
+                .name-container {
+                    padding-top: 9px;
+                    display: inline-block;
+
+                    .name {
+                        line-height: 20px;
+                    }
+
+                    .status {
+                        line-height: 12px;
+                        font-size: 12px;
+                        font-weight: normal;
+                    }
+                }
+
+                .actions {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    padding-right: 15px;
+                    font-weight: normal;
+
+                    .cancel-messages-delete {
+                        display: none;
+                    }
+                }
             }
 
             .messages {
                 height: 500px;
                 overflow-y: auto;
+                box-sizing: border-box;
+                padding: 15px 50px;
 
                 .blocktime {
                     clear: both;
-                    font-weight: bold;
                     text-align: center;
+                    color: #a1a1a1;
+                    font-size: 12px;
+                    margin: 5px 0;
                 }
 
                 .message {
 
                     .deletemessagecheckbox {
                         display: none;
+                        text-align: center;
+                        padding-top: 5px;
                     }
 
                     .content {
-                        border: 1px solid black;
-                        padding-left: 5px;
+                        border: 1px solid #e3e3e3;
+                        padding: 10px;
                         margin-bottom: 5px;
-                        font-size: 10px;
+                        font-size: 12px;
                         word-wrap: break-word;
-                        width: 80%;
+                        max-width: 55%;
+                        border-radius: 4px;
+                        position: relative;
+
+                        .text {
+                            display: inline-block;
+                            margin-right: 60px;
+
+                            p {
+                                margin: 0;
+                            }
+                        }
+
+                        .timesent {
+                            font-size: 10px;
+                            color: #a1a1a1;
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                        }
                     }
 
                     .content.left {
@@ -194,8 +365,112 @@
                 }
             }
 
-            .response textarea {
-                width: 80%;
+            .response {
+                border-bottom-right-radius: 4px;
+                padding: 10px 0 9px 0;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                line-height: 28px;
+                text-align: center;
+                border-top: 1px solid #e3e3e3;
+                box-sizing: border-box;
+                background-color: #fff;
+                transition: background-color linear 0.2s;
+
+                .delete-confirmation {
+                    display: none;
+
+                    .btn.btn-link.confirm {
+                        border: 1px solid #4f94cd;
+                        border-radius: 4px;
+
+                        &:hover {
+                            background-color: #4f94cd;
+                            color: #fff;
+                            text-shadow: none;
+                        }
+                    }
+                }
+
+                textarea {
+                    width: 85%;
+                    margin: 0;
+                    resize: none;
+                    border: none;
+                    -webkit-box-shadow: none;
+                    -moz-box-shadow: none;
+                    box-shadow: none;
+                    background-color: #f5f5f5;
+                    transition: background-color linear 0.2s;
+
+                    &:focus {
+                        -webkit-box-shadow: none;
+                        -moz-box-shadow: none;
+                        box-shadow: none;
+                    }
+                }
+
+                &.messaging {
+                    background-color: #f5f5f5;
+                    transition: background-color linear 0.2s;
+
+                    textarea {
+                        background-color: #fff;
+                        transition: background-color linear 0.2s;
+                    }
+                }
+            }
+
+            &.editing {
+                .messages-header {
+                    .delete-instructions {
+                        display: block;
+                    }
+
+                    .name-container {
+                        display: none;
+                    }
+
+                    .actions {
+                        .messages-delete {
+                            display: none;
+                        }
+
+                        .cancel-messages-delete {
+                            display: block;
+                        }
+                    }
+                }
+
+                .messages {
+                    .message {
+                        cursor: pointer;
+
+                        &[aria-checked="true"] {
+                            .content {
+                                background-color: #4f94cd;
+                                border-color: #4f94cd;
+                                color: #fff;
+
+                                .timesent {
+                                    color: #fff;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .response {
+                    .delete-confirmation {
+                        display: block;
+                    }
+
+                    .message-box {
+                        display: none;
+                    }
+                }
             }
         }
     }
