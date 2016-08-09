@@ -1024,13 +1024,10 @@ function stats_get_base_monthly($time=0) {
  */
 function stats_get_next_day_start($time) {
     $next = stats_get_base_daily($time);
-    $next = $next + 60*60*26;
-    $next = stats_get_base_daily($next);
-    if ($next <= $time) {
-        //DST trouble - prevent infinite loops
-        $next = $next + 60*60*24;
-    }
-    return $next;
+    $nextdate = new DateTime();
+    $nextdate->setTimestamp($next);
+    $nextdate->add(new DateInterval('P1D'));
+    return $nextdate->getTimestamp();
 }
 
 /**
@@ -1040,13 +1037,10 @@ function stats_get_next_day_start($time) {
  */
 function stats_get_next_week_start($time) {
     $next = stats_get_base_weekly($time);
-    $next = $next + 60*60*24*9;
-    $next = stats_get_base_weekly($next);
-    if ($next <= $time) {
-        //DST trouble - prevent infinite loops
-        $next = $next + 60*60*24*7;
-    }
-    return $next;
+    $nextdate = new DateTime();
+    $nextdate->setTimestamp($next);
+    $nextdate->add(new DateInterval('P1W'));
+    return $nextdate->getTimestamp();
 }
 
 /**
@@ -1056,13 +1050,10 @@ function stats_get_next_week_start($time) {
  */
 function stats_get_next_month_start($time) {
     $next = stats_get_base_monthly($time);
-    $next = $next + 60*60*24*33;
-    $next = stats_get_base_monthly($next);
-    if ($next <= $time) {
-        //DST trouble - prevent infinite loops
-        $next = $next + 60*60*24*31;
-    }
-    return $next;
+    $nextdate = new DateTime();
+    $nextdate->setTimestamp($next);
+    $nextdate->add(new DateInterval('P1M'));
+    return $nextdate->getTimestamp();
 }
 
 /**
