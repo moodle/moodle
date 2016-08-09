@@ -207,7 +207,8 @@ class manager {
         }
 
         $classname = static::get_area_classname($areaid);
-        if (class_exists($classname)) {
+
+        if (class_exists($classname) && static::is_search_area($classname)) {
             return new $classname();
         }
 
@@ -730,12 +731,12 @@ class manager {
     /**
      * Checks whether a classname is of an actual search area.
      *
-     * @param string $searchareaname
+     * @param string $classname
      * @return bool
      */
-    protected static function is_search_area($searchareaname) {
-        if (is_subclass_of($searchareaname, 'core_search\base')) {
-            return (new \ReflectionClass($searchareaname))->isInstantiable();
+    protected static function is_search_area($classname) {
+        if (is_subclass_of($classname, 'core_search\base')) {
+            return (new \ReflectionClass($classname))->isInstantiable();
         }
 
         return false;
