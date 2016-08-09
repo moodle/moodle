@@ -380,7 +380,7 @@ class report_log_table_log extends table_sql {
                 $params['action'] = '%'.$action.'%';
             }
         } else if (!empty($this->filterparams->action)) {
-             list($sql, $params) = $DB->get_in_or_equal(preg_split('//', $this->filterparams->action),
+             list($sql, $params) = $DB->get_in_or_equal(str_split($this->filterparams->action),
                     SQL_PARAMS_NAMED, 'crud');
             $sql = "crud " . $sql;
         } else {
