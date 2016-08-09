@@ -36,7 +36,7 @@ $PAGE->set_url('/user/editor.php', array('id' => $userid, 'course' => $courseid)
 list($user, $course) = useredit_setup_preference_page($userid, $courseid);
 
 // Create form.
-$editorform = new user_edit_editor_form(null, array('userid' => $user->id));
+$editorform = new user_edit_editor_form();
 
 $user->preference_htmleditor = get_user_preferences( 'htmleditor', '', $user->id);
 $editorform->set_data($user);
