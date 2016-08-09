@@ -181,7 +181,7 @@ class mod_data_generator_testcase extends advanced_testcase {
 
         $contents = array();
         $contents[] = array('one', 'two', 'three', 'four');
-        $contents[] = '01-01-2100';
+        $contents[] = '01-01-2037'; // It should be lower than 2038, to avoid failing on 32-bit windows.
         $contents[] = 'one';
         $contents[] = array('one', 'two', 'three', 'four');
         $contents[] = '12345';
