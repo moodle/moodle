@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * PHPUnit data generator tests
+ * PHPUnit data generator tests.
  *
  * @package    mod_data
  * @category   phpunit
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * PHPUnit data generator testcase
+ * PHPUnit data generator testcase.
  *
  * @package    mod_data
  * @category   phpunit
@@ -70,9 +70,7 @@ class mod_data_generator_testcase extends advanced_testcase {
         $this->assertEquals(100, $gitem->grademax);
         $this->assertEquals(0, $gitem->grademin);
         $this->assertEquals(GRADE_TYPE_VALUE, $gitem->gradetype);
-
     }
-
 
     public function test_create_field() {
         global $DB;
@@ -100,7 +98,7 @@ class mod_data_generator_testcase extends advanced_testcase {
         $context = context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
-        $fieldtypes = array( 'checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url' );
+        $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url');
 
         $count = 1;
 
@@ -108,28 +106,27 @@ class mod_data_generator_testcase extends advanced_testcase {
         foreach ($fieldtypes as $fieldtype) {
 
             // Creating variables dynamically.
-            $fieldname = 'field-'.$count;
+            $fieldname = 'field-' . $count;
             $record = new StdClass();
             $record->name = $fieldname;
             $record->type = $fieldtype;
 
             ${$fieldname} = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_field($record, $data);
 
-            $this->assertInstanceOf('data_field_'.$fieldtype , ${$fieldname});
+            $this->assertInstanceOf('data_field_' . $fieldtype, ${$fieldname});
             $count++;
         }
 
-        $this->assertEquals(count($fieldtypes), $DB->count_records('data_fields', array( 'dataid' => $data->id )));
+        $this->assertEquals(count($fieldtypes), $DB->count_records('data_fields', array('dataid' => $data->id)));
 
-        $addtemplate = $DB->get_record('data', array( 'id' => $data->id ), 'addtemplate');
+        $addtemplate = $DB->get_record('data', array('id' => $data->id), 'addtemplate');
         $addtemplate = $addtemplate->addtemplate;
 
         for ($i = 1; $i < $count; $i++) {
-            $fieldname = 'field-'.$i;
-            $this->assertTrue(strpos($addtemplate, '[['.$fieldname.']]') >= 0);
+            $fieldname = 'field-' . $i;
+            $this->assertTrue(strpos($addtemplate, '[[' . $fieldname . ']]') >= 0);
         }
     }
-
 
     public function test_create_entry() {
         global $DB;
@@ -157,7 +154,7 @@ class mod_data_generator_testcase extends advanced_testcase {
         $context = context_module::instance($cm->id);
         $this->assertEquals($data->cmid, $context->instanceid);
 
-        $fieldtypes = array( 'checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url' );
+        $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url');
 
         $count = 1;
 
@@ -165,17 +162,17 @@ class mod_data_generator_testcase extends advanced_testcase {
         foreach ($fieldtypes as $fieldtype) {
 
             // Creating variables dynamically.
-            $fieldname = 'field-'.$count;
+            $fieldname = 'field-' . $count;
             $record = new StdClass();
             $record->name = $fieldname;
             $record->type = $fieldtype;
 
             ${$fieldname} = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_field($record, $data);
-            $this->assertInstanceOf('data_field_'.$fieldtype , ${$fieldname});
+            $this->assertInstanceOf('data_field_' . $fieldtype, ${$fieldname});
             $count++;
         }
 
-        $this->assertEquals(count($fieldtypes), $DB->count_records('data_fields', array( 'dataid' => $data->id )));
+        $this->assertEquals(count($fieldtypes), $DB->count_records('data_fields', array('dataid' => $data->id)));
 
         $fields = $DB->get_records('data_fields', array('dataid' => $data->id), 'id');
 
@@ -197,10 +194,7 @@ class mod_data_generator_testcase extends advanced_testcase {
 
         $datarecordid = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_entry($data, $fieldcontents);
 
-        $this->assertEquals(1, $DB->count_records('data_records', array( 'dataid' => $data->id )));
-
+        $this->assertEquals(1, $DB->count_records('data_records', array('dataid' => $data->id)));
         $this->assertEquals(count($contents), $DB->count_records('data_content', array('recordid' => $datarecordid)));
-
     }
-
 }

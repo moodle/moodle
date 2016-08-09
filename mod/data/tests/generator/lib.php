@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_data data generator class
- * Currently, the field types in the ignoredfieldtypes array aren't supported.
+ * Data generator class for mod_data.
  *
  * @package    mod_data
  * @category   test
@@ -28,7 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Database module data generator class
+ * Data generator class for mod_data.
+ *
  * Currently, the field types in the ignoredfieldtypes array aren't supported.
  *
  * @package    mod_data
@@ -86,7 +86,6 @@ class mod_data_generator extends testing_module_generator {
         return parent::create_instance($record, (array)$options);
     }
 
-
     /**
      * Creates a field for a mod_data instance.
      * Currently, the field types in the ignoredfieldtypes array aren't supported.
@@ -96,8 +95,6 @@ class mod_data_generator extends testing_module_generator {
      * @return data_field_{type}
      */
     public function create_field($record = null, $data = null) {
-        global $DB;
-
         $record = (array) $record;
 
         if (in_array($record['type'], $this->ignoredfieldtypes)) {
@@ -212,7 +209,7 @@ class mod_data_generator extends testing_module_generator {
 
         $recordid = data_add_record($data);
 
-        $fields = $DB->get_records('data_fields', array( 'dataid' => $data->id));
+        $fields = $DB->get_records('data_fields', array('dataid' => $data->id));
 
         // Validating whether required field are filled.
         foreach ($fields as $field) {
@@ -231,9 +228,9 @@ class mod_data_generator extends testing_module_generator {
 
                 $temp = explode('-', $contents[$fieldid], 3);
 
-                $values['field_'.$fieldid.'_day'] = $temp[0];
-                $values['field_'.$fieldid.'_month'] = $temp[1];
-                $values['field_'.$fieldid.'_year'] = $temp[2];
+                $values['field_' . $fieldid . '_day'] = $temp[0];
+                $values['field_' . $fieldid . '_month'] = $temp[1];
+                $values['field_' . $fieldid . '_year'] = $temp[2];
 
                 foreach ($values as $fieldname => $value) {
                     if ($field->notemptyfield($value, $fieldname)) {
@@ -243,11 +240,11 @@ class mod_data_generator extends testing_module_generator {
             } else if ($field->type === 'textarea') {
                 $values = array();
 
-                $values['field_'.$fieldid] = $contents[$fieldid];
-                $values['field_'.$fieldid.'_content1'] = 1;
+                $values['field_' . $fieldid] = $contents[$fieldid];
+                $values['field_' . $fieldid . '_content1'] = 1;
 
                 foreach ($values as $fieldname => $value) {
-                    if ($field->notemptyfield ($value, $fieldname)) {
+                    if ($field->notemptyfield($value, $fieldname)) {
                         continue 2;
                     }
                 }
@@ -256,20 +253,20 @@ class mod_data_generator extends testing_module_generator {
 
                 if (is_array($contents[$fieldid])) {
                     foreach ($contents[$fieldid] as $key => $value) {
-                        $values['field_'.$fieldid.'_'.$key] = $value;
+                        $values['field_' . $fieldid . '_' . $key] = $value;
                     }
                 } else {
-                    $values['field_'.$fieldid.'_0'] = $contents[$fieldid];
+                    $values['field_' . $fieldid . '_0'] = $contents[$fieldid];
                 }
 
                 foreach ($values as $fieldname => $value) {
-                    if ($field->notemptyfield ($value, $fieldname)) {
+                    if ($field->notemptyfield($value, $fieldname)) {
                         continue 2;
                     }
                 }
 
             } else {
-                if ($field->notemptyfield ($contents[$fieldid], 'field_'.$fieldid.'_0')) {
+                if ($field->notemptyfield($contents[$fieldid], 'field_' . $fieldid . '_0')) {
                     continue;
                 }
             }
@@ -281,7 +278,7 @@ class mod_data_generator extends testing_module_generator {
 
         foreach ($contents as $fieldid => $content) {
 
-            $field = $DB->get_record('data_fields', array( 'id' => $fieldid));
+            $field = $DB->get_record('data_fields', array('id' => $fieldid));
             $field = data_get_field($field, $data);
 
             if (in_array($field->field->type, $this->ignoredfieldtypes)) {
@@ -293,13 +290,13 @@ class mod_data_generator extends testing_module_generator {
 
                 $temp = explode('-', $content, 3);
 
-                $values['field_'.$fieldid.'_day'] = (int)trim($temp[0]);
-                $values['field_'.$fieldid.'_month'] = (int)trim($temp[1]);
-                $values['field_'.$fieldid.'_year'] = (int)trim($temp[2]);
+                $values['field_' . $fieldid . '_day'] = (int)trim($temp[0]);
+                $values['field_' . $fieldid . '_month'] = (int)trim($temp[1]);
+                $values['field_' . $fieldid . '_year'] = (int)trim($temp[2]);
 
                 // Year should be less than 2038, so it can be handled by 32 bit windows.
-                if ($values['field_'.$fieldid.'_year'] > 2038) {
-                    throw new coding_exception('DateTime::getTimestamp resturns false on 32 bit win for year beyond '.
+                if ($values['field_' . $fieldid . '_year'] > 2038) {
+                    throw new coding_exception('DateTime::getTimestamp resturns false on 32 bit win for year beyond ' .
                         '2038. Please use year less than 2038.');
                 }
 
@@ -313,8 +310,8 @@ class mod_data_generator extends testing_module_generator {
             if ($field->type === 'textarea') {
                 $values = array();
 
-                $values['field_'.$fieldid] = $content;
-                $values['field_'.$fieldid.'_content1'] = 1;
+                $values['field_' . $fieldid] = $content;
+                $values['field_' . $fieldid . '_content1'] = 1;
 
                 foreach ($values as $fieldname => $value) {
                     $field->update_content($recordid, $value, $fieldname);
@@ -328,10 +325,10 @@ class mod_data_generator extends testing_module_generator {
 
                 if (is_array($content)) {
                     foreach ($content as $key => $value) {
-                        $values['field_'.$fieldid.'_'.$key] = $value;
+                        $values['field_' . $fieldid . '_' . $key] = $value;
                     }
                 } else {
-                    $values['field_'.$fieldid.'_0'] = $content;
+                    $values['field_' . $fieldid . '_0'] = $content;
                 }
 
                 foreach ($values as $fieldname => $value) {
