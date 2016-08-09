@@ -1868,7 +1868,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         $data = new stdClass();
         $data->onlinetext_editor = array('itemid' => file_get_unused_draft_itemid(),
-                                         'text' => 'Submission text',
+                                         'text' => 'Submission text with a <a href="@@PLUGINFILE@@/intro.txt">link</a>',
                                          'format' => FORMAT_MOODLE);
 
         $draftidfile = file_get_unused_draft_itemid();
@@ -1908,6 +1908,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         list($assign, $instance, $student1, $student2, $teacher) = $this->create_submission_for_testing_status();
+        $studentsubmission = $assign->get_user_submission($student1->id, true);
 
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
         // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
@@ -1944,7 +1945,14 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         foreach ($result['lastattempt']['submission']['plugins'] as $plugin) {
             $submissionplugins[$plugin['type']] = $plugin;
         }
-        $this->assertEquals('Submission text', $submissionplugins['onlinetext']['editorfields'][0]['text']);
+
+        // Format expected online text.
+        $onlinetext = 'Submission text with a <a href="@@PLUGINFILE@@/intro.txt">link</a>';
+        list($expectedtext, $expectedformat) = external_format_text($onlinetext, FORMAT_HTML, $assign->get_context()->id,
+                'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $studentsubmission->id);
+
+        $this->assertEquals($expectedtext, $submissionplugins['onlinetext']['editorfields'][0]['text']);
+        $this->assertEquals($expectedformat, $submissionplugins['onlinetext']['editorfields'][0]['format']);
         $this->assertEquals('/', $submissionplugins['file']['fileareas'][0]['files'][0]['filepath']);
         $this->assertEquals('t.txt', $submissionplugins['file']['fileareas'][0]['files'][0]['filename']);
     }
@@ -2016,6 +2024,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         list($assign, $instance, $student1, $student2, $teacher) = $this->create_submission_for_testing_status(true);
+        $studentsubmission = $assign->get_user_submission($student1->id, true);
 
         $this->setUser($teacher);
         // Grade and reopen.
@@ -2087,9 +2096,16 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         foreach ($result['previousattempts'][0]['submission']['plugins'] as $plugin) {
             $submissionplugins[$plugin['type']] = $plugin;
         }
-        $this->assertEquals('Submission text', $submissionplugins['onlinetext']['editorfields'][0]['text']);
+        // Format expected online text.
+        $onlinetext = 'Submission text with a <a href="@@PLUGINFILE@@/intro.txt">link</a>';
+        list($expectedtext, $expectedformat) = external_format_text($onlinetext, FORMAT_HTML, $assign->get_context()->id,
+                'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $studentsubmission->id);
+
+        $this->assertEquals($expectedtext, $submissionplugins['onlinetext']['editorfields'][0]['text']);
+        $this->assertEquals($expectedformat, $submissionplugins['onlinetext']['editorfields'][0]['format']);
         $this->assertEquals('/', $submissionplugins['file']['fileareas'][0]['files'][0]['filepath']);
         $this->assertEquals('t.txt', $submissionplugins['file']['fileareas'][0]['files'][0]['filename']);
+
     }
 
     /**
