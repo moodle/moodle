@@ -1,5 +1,11 @@
 This files describes API changes in the quiz code.
 
+=== 3.2 ===
+
+* External functions mod_quiz_external::get_attempt_data, mod_quiz_external::get_attempt_summary
+  and mod_quiz_external::get_attempt_review now return additional optional fields:
+   - blockedbyprevious: Whether a question is blocked by the previous question.
+
 === 3.1 ===
 
 * quiz_attempt::question_print_comment_fields() has been removed. It was broken

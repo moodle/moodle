@@ -863,6 +863,7 @@ class mod_quiz_external extends external_api {
      *
      * @return external_single_structure the question structure
      * @since  Moodle 3.1
+     * @since Moodle 3.2 blockedbyprevious parameter added.
      */
     private static function question_structure() {
         return new external_single_structure(
@@ -875,6 +876,8 @@ class mod_quiz_external extends external_api {
                 'number' => new external_value(PARAM_INT, 'question ordering number in the quiz', VALUE_OPTIONAL),
                 'state' => new external_value(PARAM_ALPHA, 'the state where the question is in', VALUE_OPTIONAL),
                 'status' => new external_value(PARAM_RAW, 'current formatted state of the question', VALUE_OPTIONAL),
+                'blockedbyprevious' => new external_value(PARAM_BOOL, 'whether the question is blocked by the previous question',
+                        VALUE_OPTIONAL),
                 'mark' => new external_value(PARAM_RAW, 'the mark awarded', VALUE_OPTIONAL),
                 'maxmark' => new external_value(PARAM_FLOAT, 'the maximum mark possible for this question attempt', VALUE_OPTIONAL),
             )
@@ -911,6 +914,7 @@ class mod_quiz_external extends external_api {
                 $question['number'] = $attemptobj->get_question_number($slot);
                 $question['state'] = (string) $attemptobj->get_question_state($slot);
                 $question['status'] = $attemptobj->get_question_status($slot, $displayoptions->correctness);
+                $question['blockedbyprevious'] = $attemptobj->is_blocked_by_previous_question($slot);
             }
             if ($displayoptions->marks >= question_display_options::MAX_ONLY) {
                 $question['maxmark'] = $attemptobj->get_question_attempt($slot)->get_max_mark();
