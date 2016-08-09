@@ -67,8 +67,13 @@ class core_component {
     protected static $version = null;
     /** @var array list of the files to map. */
     protected static $filestomap = array('lib.php', 'settings.php');
-    /** @var array cache of PSR loadable systems */
-    protected static $psrclassmap = null;
+    /** @var array associative array of PSR-0 namespaces and corresponding paths. */
+    protected static $psr0namespaces = array(
+        'Horde' => 'lib/horde/framework/Horde'
+    );
+    /** @var array associative array of PRS-4 namespaces and corresponding paths. */
+    protected static $psr4namespaces = array(
+    );
 
     /**
      * Class loader for Frankenstyle named classes in standard locations.
@@ -107,14 +112,77 @@ class core_component {
             return;
         }
 
-        // Attempt to normalize the classname.
-        $normalizedclassname = str_replace(array('/', '\\'), '_', $classname);
-        if (isset(self::$psrclassmap[$normalizedclassname])) {
-            // Function include would be faster, but for BC it is better to include only once.
-            include_once(self::$psrclassmap[$normalizedclassname]);
+        $file = self::psr_classloader($classname);
+        // If the file is found, require it.
+        if (!empty($file)) {
+            require($file);
             return;
         }
     }
+
+    /**
+     * Return the path to a class from our defined PSR-0 or PSR-4 standard namespaces on
+     * demand. Only returns paths to files that exist.
+     *
+     * Adapated from http://www.php-fig.org/psr/psr-4/examples/ and made PSR-0
+     * compatible.
+     *
+     * @param string $class the name of the class.
+     * @return string|bool The full path to the file defining the class. Or false if it could not be resolved or does not exist.
+     */
+    protected static function psr_classloader($class) {
+        // Iterate through each PSR-4 namespace prefix.
+        foreach (self::$psr4namespaces as $prefix => $path) {
+            $file = self::get_class_file($class, $prefix, $path, array('\\'));
+            if (!empty($file) && file_exists($file)) {
+                return $file;
+            }
+        }
+
+        // Iterate through each PSR-0 namespace prefix.
+        foreach (self::$psr0namespaces as $prefix => $path) {
+            $file = self::get_class_file($class, $prefix, $path, array('\\', '_'));
+            if (!empty($file) && file_exists($file)) {
+                return $file;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Return the path to the class based on the given namespace prefix and path it corresponds to.
+     *
+     * Will return the path even if the file does not exist. Check the file esists before requiring.
+     *
+     * @param string $class the name of the class.
+     * @param string $prefix The namespace prefix used to identify the base directory of the source files.
+     * @param string $path The relative path to the base directory of the source files.
+     * @param string[] $separators The characters that should be used for separating.
+     * @return string|bool The full path to the file defining the class. Or false if it could not be resolved.
+     */
+    protected static function get_class_file($class, $prefix, $path, $separators) {
+        global $CFG;
+
+        // Does the class use the namespace prefix?
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            // No, move to the next prefix.
+            return false;
+        }
+        $path = $CFG->dirroot . '/' . $path;
+
+        // Get the relative class name.
+        $relativeclass = substr($class, $len);
+
+        // Replace the namespace prefix with the base directory, replace namespace
+        // separators with directory separators in the relative class name, append
+        // with .php.
+        $file = $path . str_replace($separators, '/', $relativeclass) . '.php';
+
+        return $file;
+    }
+
 
     /**
      * Initialise caches, always call before accessing self:: caches.
@@ -155,7 +223,6 @@ class core_component {
                 self::$classmap         = $cache['classmap'];
                 self::$classmaprenames  = $cache['classmaprenames'];
                 self::$filemap          = $cache['filemap'];
-                self::$psrclassmap      = $cache['psrclassmap'];
                 return;
             }
 
@@ -196,7 +263,6 @@ class core_component {
                     self::$classmap         = $cache['classmap'];
                     self::$classmaprenames  = $cache['classmaprenames'];
                     self::$filemap          = $cache['filemap'];
-                    self::$psrclassmap      = $cache['psrclassmap'];
                     return;
                 }
                 // Note: we do not verify $CFG->admin here intentionally,
@@ -284,7 +350,6 @@ class core_component {
             'classmaprenames'   => self::$classmaprenames,
             'filemap'           => self::$filemap,
             'version'           => self::$version,
-            'psrclassmap'       => self::$psrclassmap,
         );
 
         return '<?php
@@ -308,7 +373,6 @@ $cache = '.var_export($cache, true).';
         self::fill_classmap_cache();
         self::fill_classmap_renames_cache();
         self::fill_filemap_cache();
-        self::fill_psr_cache();
         self::fetch_core_version();
     }
 
@@ -692,77 +756,6 @@ $cache = '.var_export($cache, true).';
         unset($items);
     }
 
-    /**
-     * Fill caches for classes following the PSR-0 standard for the
-     * specified Vendors.
-     *
-     * PSR Autoloading is detailed at http://www.php-fig.org/psr/psr-0/.
-     */
-    protected static function fill_psr_cache() {
-        global $CFG;
-
-        $psrsystems = array(
-            'Horde' => 'horde/framework',
-        );
-        self::$psrclassmap = array();
-
-        foreach ($psrsystems as $system => $fulldir) {
-            if (!$fulldir) {
-                continue;
-            }
-            self::load_psr_classes($CFG->libdir . DIRECTORY_SEPARATOR . $fulldir);
-        }
-    }
-
-    /**
-     * Find all PSR-0 style classes in within the base directory.
-     *
-     * @param string $basedir The base directory that the PSR-type library can be found in.
-     * @param string $subdir The directory within the basedir to search for classes within.
-     */
-    protected static function load_psr_classes($basedir, $subdir = null) {
-        if ($subdir) {
-            $fulldir = realpath($basedir . DIRECTORY_SEPARATOR . $subdir);
-            $classnameprefix = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR) . '#', '_', $subdir);
-        } else {
-            $fulldir = $basedir;
-        }
-        if (!$fulldir || !is_dir($fulldir)) {
-            return;
-        }
-
-        $items = new \DirectoryIterator($fulldir);
-        foreach ($items as $item) {
-            if ($item->isDot()) {
-                continue;
-            }
-            if ($item->isDir()) {
-                $dirname = $item->getFilename();
-                $newsubdir = $dirname;
-                if ($subdir) {
-                    $newsubdir = implode(DIRECTORY_SEPARATOR, array($subdir, $dirname));
-                }
-                self::load_psr_classes($basedir, $newsubdir);
-                continue;
-            }
-
-            $filename = $item->getFilename();
-            $classname = preg_replace('/\.php$/', '', $filename);
-
-            if ($filename === $classname) {
-                // Not a php file.
-                continue;
-            }
-
-            if ($classnameprefix) {
-                $classname = $classnameprefix . '_' . $classname;
-            }
-
-            self::$psrclassmap[$classname] = $fulldir . DIRECTORY_SEPARATOR . $filename;
-        }
-        unset($item);
-        unset($items);
-    }
 
     /**
      * List all core subsystems and their location

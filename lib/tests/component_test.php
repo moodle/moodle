@@ -36,6 +36,25 @@ class core_component_testcase extends advanced_testcase {
     // always verify that it does not collide with any existing add-on modules and subplugins!!!
     const SUBSYSTEMCOUNT = 65;
 
+    public function setUp() {
+        $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
+        $psr0namespaces->setAccessible(true);
+        $this->oldpsr0namespaces = $psr0namespaces->getValue(null);
+
+        $psr4namespaces = new ReflectionProperty('core_component', 'psr4namespaces');
+        $psr4namespaces->setAccessible(true);
+        $this->oldpsr4namespaces = $psr4namespaces->getValue(null);
+    }
+    public function tearDown() {
+        $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
+        $psr0namespaces->setAccessible(true);
+        $psr0namespaces->setValue(null, $this->oldpsr0namespaces);
+
+        $psr4namespaces = new ReflectionProperty('core_component', 'psr4namespaces');
+        $psr4namespaces->setAccessible(true);
+        $psr4namespaces->setValue(null, $this->oldpsr4namespaces);
+    }
+
     public function test_get_core_subsystems() {
         global $CFG;
 
@@ -468,5 +487,276 @@ class core_component_testcase extends advanced_testcase {
         // Multiple levels.
         $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', '\\output\\myprofile\\'));
         $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', '\\output\\myprofile'));
+    }
+
+    /**
+     * Data provider for classloader test
+     */
+    public function classloader_provider() {
+        global $CFG;
+
+        // As part of these tests, we Check that there are no unexpected problems with overlapping PSR namespaces.
+        // This is not in the spec, but may come up in some libraries using both namespaces and PEAR-style class names.
+        // If problems arise we can remove this test, but will need to add a warning.
+        // Normalise to forward slash for testing purposes.
+        $directory = str_replace('\\', '/', $CFG->dirroot) . "/lib/tests/fixtures/component/";
+
+        $psr0 = [
+          'psr0'      => 'lib/tests/fixtures/component/psr0',
+          'overlap'   => 'lib/tests/fixtures/component/overlap'
+        ];
+        $psr4 = [
+          'psr4'      => 'lib/tests/fixtures/component/psr4',
+          'overlap'   => 'lib/tests/fixtures/component/overlap'
+        ];
+        return [
+          'PSR-0 Classloading - Root' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr0_main',
+              'includedfiles' => "{$directory}psr0/main.php",
+          ],
+          'PSR-0 Classloading - Sub namespace - underscores' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr0_subnamespace_example',
+              'includedfiles' => "{$directory}psr0/subnamespace/example.php",
+          ],
+          'PSR-0 Classloading - Sub namespace - slashes' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr0\\subnamespace\\slashes',
+              'includedfiles' => "{$directory}psr0/subnamespace/slashes.php",
+          ],
+          'PSR-4 Classloading - Root' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr4\\main',
+              'includedfiles' => "{$directory}psr4/main.php",
+          ],
+          'PSR-4 Classloading - Sub namespace' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr4\\subnamespace\\example',
+              'includedfiles' => "{$directory}psr4/subnamespace/example.php",
+          ],
+          'PSR-4 Classloading - Ensure underscores are not converted to paths' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr4\\subnamespace\\underscore_example',
+              'includedfiles' => "{$directory}psr4/subnamespace/underscore_example.php",
+          ],
+          'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'overlap\\subnamespace\\example',
+              'includedfiles' => "{$directory}overlap/subnamespace/example.php",
+          ],
+          'Overlap - Ensure no unexpected problems with PSR-0 overlapping namespaces.' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'overlap_subnamespace_example2',
+              'includedfiles' => "{$directory}overlap/subnamespace/example2.php",
+          ],
+        ];
+    }
+
+    /**
+     * Test the classloader.
+     *
+     * @dataProvider classloader_provider
+     * @param array $psr0 The PSR-0 namespaces to be used in the test.
+     * @param array $psr4 The PSR-4 namespaces to be used in the test.
+     * @param string $classname The name of the class to attempt to load.
+     * @param string $includedfiles The file expected to be loaded.
+     */
+    public function test_classloader($psr0, $psr4, $classname, $includedfiles) {
+        $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
+        $psr0namespaces->setAccessible(true);
+        $psr0namespaces->setValue(null, $psr0);
+
+        $psr4namespaces = new ReflectionProperty('core_component', 'psr4namespaces');
+        $psr4namespaces->setAccessible(true);
+        $psr4namespaces->setValue(null, $psr4);
+
+        core_component::classloader($classname);
+        if (DIRECTORY_SEPARATOR != '/') {
+            // Denormalise the expected path so that we can quickly compare with get_included_files.
+            $includedfiles = str_replace('/', DIRECTORY_SEPARATOR, $includedfiles);
+        }
+        $this->assertContains($includedfiles, get_included_files());
+        $this->assertTrue(class_exists($classname, false));
+    }
+
+    /**
+     * Data provider for psr_classloader test
+     */
+    public function psr_classloader_provider() {
+        global $CFG;
+
+        // As part of these tests, we Check that there are no unexpected problems with overlapping PSR namespaces.
+        // This is not in the spec, but may come up in some libraries using both namespaces and PEAR-style class names.
+        // If problems arise we can remove this test, but will need to add a warning.
+        // Normalise to forward slash for testing purposes.
+        $directory = str_replace('\\', '/', $CFG->dirroot) . "/lib/tests/fixtures/component/";
+
+        $psr0 = [
+          'psr0'      => 'lib/tests/fixtures/component/psr0',
+          'overlap'   => 'lib/tests/fixtures/component/overlap'
+        ];
+        $psr4 = [
+          'psr4'      => 'lib/tests/fixtures/component/psr4',
+          'overlap'   => 'lib/tests/fixtures/component/overlap'
+        ];
+        return [
+          'PSR-0 Classloading - Root' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr0_main',
+              'file' => "{$directory}psr0/main.php",
+          ],
+          'PSR-0 Classloading - Sub namespace - underscores' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr0_subnamespace_example',
+              'file' => "{$directory}psr0/subnamespace/example.php",
+          ],
+          'PSR-0 Classloading - Sub namespace - slashes' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr0\\subnamespace\\slashes',
+              'file' => "{$directory}psr0/subnamespace/slashes.php",
+          ],
+          'PSR-0 Classloading - non-existant file' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr0_subnamespace_nonexistant_file',
+              'file' => false,
+          ],
+          'PSR-4 Classloading - Root' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr4\\main',
+              'file' => "{$directory}psr4/main.php",
+          ],
+          'PSR-4 Classloading - Sub namespace' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr4\\subnamespace\\example',
+              'file' => "{$directory}psr4/subnamespace/example.php",
+          ],
+          'PSR-4 Classloading - Ensure underscores are not converted to paths' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr4\\subnamespace\\underscore_example',
+              'file' => "{$directory}psr4/subnamespace/underscore_example.php",
+          ],
+          'PSR-4 Classloading - non-existant file' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'psr4\\subnamespace\\nonexistant',
+              'file' => false,
+          ],
+          'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'overlap\\subnamespace\\example',
+              'file' => "{$directory}overlap/subnamespace/example.php",
+          ],
+          'Overlap - Ensure no unexpected problems with PSR-0 overlapping namespaces.' => [
+              'psr0' => $psr0,
+              'psr4' => $psr4,
+              'classname' => 'overlap_subnamespace_example2',
+              'file' => "{$directory}overlap/subnamespace/example2.php",
+          ],
+        ];
+    }
+
+    /**
+     * Test the PSR classloader.
+     *
+     * @dataProvider psr_classloader_provider
+     * @param array $psr0 The PSR-0 namespaces to be used in the test.
+     * @param array $psr4 The PSR-4 namespaces to be used in the test.
+     * @param string $classname The name of the class to attempt to load.
+     * @param string|bool $file The expected file corresponding to the class or false for nonexistant.
+     */
+    public function test_psr_classloader($psr0, $psr4, $classname, $file) {
+        $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
+        $psr0namespaces->setAccessible(true);
+        $psr0namespaces->setValue(null, $psr0);
+
+        $psr4namespaces = new ReflectionProperty('core_component', 'psr4namespaces');
+        $psr4namespaces->setAccessible(true);
+        $oldpsr4namespaces = $psr4namespaces->getValue(null);
+        $psr4namespaces->setValue(null, $psr4);
+
+        $component = new ReflectionClass('core_component');
+        $psrclassloader = $component->getMethod('psr_classloader');
+        $psrclassloader->setAccessible(true);
+
+        $returnvalue = $psrclassloader->invokeArgs(null, array($classname));
+        // Normalise to forward slashes for testing comparison.
+        if ($returnvalue) {
+            $returnvalue = str_replace('\\', '/', $returnvalue);
+        }
+        $this->assertEquals($file, $returnvalue);
+    }
+
+    /**
+     * Data provider for get_class_file test
+     */
+    public function get_class_file_provider() {
+        global $CFG;
+
+        return [
+          'Getting a file with underscores' => [
+              'classname' => 'Test_With_Underscores',
+              'prefix' => "Test",
+              'path' => 'test/src',
+              'separators' => ['_'],
+              'result' => $CFG->dirroot . "/test/src/With/Underscores.php",
+          ],
+          'Getting a file with slashes' => [
+              'classname' => 'Test\\With\\Slashes',
+              'prefix' => "Test",
+              'path' => 'test/src',
+              'separators' => ['\\'],
+              'result' => $CFG->dirroot . "/test/src/With/Slashes.php",
+          ],
+          'Getting a file with multiple namespaces' => [
+              'classname' => 'Test\\With\\Multiple\\Namespaces',
+              'prefix' => "Test\\With",
+              'path' => 'test/src',
+              'separators' => ['\\'],
+              'result' => $CFG->dirroot . "/test/src/Multiple/Namespaces.php",
+          ],
+          'Getting a file with multiple namespaces' => [
+              'classname' => 'Nonexistant\\Namespace\\Test',
+              'prefix' => "Test",
+              'path' => 'test/src',
+              'separators' => ['\\'],
+              'result' => false,
+          ],
+        ];
+    }
+
+    /**
+     * Test the PSR classloader.
+     *
+     * @dataProvider get_class_file_provider
+     * @param string $classname the name of the class.
+     * @param string $prefix The namespace prefix used to identify the base directory of the source files.
+     * @param string $path The relative path to the base directory of the source files.
+     * @param string[] $separators The characters that should be used for separating.
+     * @param string|bool $result The expected result to be returned from get_class_file.
+     */
+    public function test_get_class_file($classname, $prefix, $path, $separators, $result) {
+        $component = new ReflectionClass('core_component');
+        $psrclassloader = $component->getMethod('get_class_file');
+        $psrclassloader->setAccessible(true);
+
+        $file = $psrclassloader->invokeArgs(null, array($classname, $prefix, $path, $separators));
+        $this->assertEquals($result, $file);
     }
 }
