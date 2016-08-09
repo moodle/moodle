@@ -252,4 +252,19 @@ class search_manager_testcase extends advanced_testcase {
         $this->assertEquals($allcontexts, $contexts[$this->forumpostareaid]);
         $this->assertEquals(array($course1ctx->id => $course1ctx->id), $contexts[$this->mycoursesareaid]);
     }
+
+    /**
+     * test_is_search_area
+     *
+     * @return void
+     */
+    public function test_is_search_area() {
+
+        $this->assertFalse(testable_core_search::is_search_area('\asd\asd'));
+        $this->assertFalse(testable_core_search::is_search_area('\mod_forum\search\posta'));
+        $this->assertFalse(testable_core_search::is_search_area('\core_search\area\base_mod'));
+        $this->assertTrue(testable_core_search::is_search_area('\mod_forum\search\post'));
+        $this->assertTrue(testable_core_search::is_search_area('\\mod_forum\\search\\post'));
+        $this->assertTrue(testable_core_search::is_search_area('mod_forum\\search\\post'));
+    }
 }
