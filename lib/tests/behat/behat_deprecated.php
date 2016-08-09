@@ -28,7 +28,8 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
-    Behat\Gherkin\Node\TableNode as TableNode;
+    Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Gherkin\Node\PyStringNode as PyStringNode,
 
 /**
  * Deprecated behat step definitions.
@@ -269,6 +270,22 @@ class behat_deprecated extends behat_base {
         $this->deprecated_message($alternative, true);
     }
 
+    /**
+     * Sets the specified value to the field.
+     *
+     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param PyStringNode $value
+     * @deprecated since Moodle 3.2 MDL-55406 - please do not use this step any more.
+     */
+    public function i_set_the_field_to_multiline($field, PyStringNode $value) {
+
+        $alternative = 'I set the field "' . $this->escape($field) . '"  to multiline:';
+        $this->deprecated_message($alternative);
+
+        $this->execute('behat_forms::i_set_the_field_to_multiline', array($field, $value));
+    }
 
     /**
      * Throws an exception if $CFG->behat_usedeprecated is not allowed.

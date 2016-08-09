@@ -221,7 +221,7 @@ class behat_forms extends behat_base {
     /**
      * Sets the specified value to the field.
      *
-     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline$/
+     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to multiline:$/
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $field
      * @param PyStringNode $value
