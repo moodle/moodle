@@ -354,9 +354,9 @@ class file_storage {
         // Copy the file to the tmp dir.
         $uniqdir = "core_file/conversions/" . uniqid($file->get_id() . "-", true);
         $tmp = make_temp_directory($uniqdir);
-        $localfilename = $file->get_filename();
+        $ext = pathinfo($file->get_filename(), PATHINFO_EXTENSION);
         // Safety.
-        $localfilename = clean_param($localfilename, PARAM_FILE);
+        $localfilename = $file->get_id() . '.' . $ext;
 
         $filename = $tmp . '/' . $localfilename;
         try {
