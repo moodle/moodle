@@ -56,8 +56,8 @@ if ($mform->is_cancelled()) {
 
     // If we do not go back to management url and the minscore warning needs to be displayed, display it during redirection.
     $warning = null;
-    if (!empty($data->returnurl)) {
-        if (($scores = $controller->get_min_max_score()) && $scores['minscore'] <> 0) {
+    if (!empty($data->returnurl) && $data->returnurl !== $manager->get_management_url()->out(false)) {
+        if (empty($data->rubric['options']['lockzeropoints']) && ($scores = $controller->get_min_max_score()) && $scores['minscore'] <> 0) {
             $warning = get_string('zerolevelsabsent', 'gradingform_rubric').'<br>'.
                 html_writer::link($manager->get_management_url(), get_string('back'));
         }

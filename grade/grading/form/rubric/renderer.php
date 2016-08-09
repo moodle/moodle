@@ -470,6 +470,9 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                     $html .= html_writer::tag('label', get_string($option, 'gradingform_rubric'), array('for' => $attrs['id']));
                     break;
             }
+            if (get_string_manager()->string_exists($option.'_help', 'gradingform_rubric')) {
+                $html .= $this->help_icon($option, 'gradingform_rubric');
+            }
             $html .= html_writer::end_tag('div'); // .option
         }
         $html .= html_writer::end_tag('div'); // .options
@@ -636,10 +639,7 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         if ($scores['minscore'] <> 0) {
             $html .= $this->output->notification(get_string('zerolevelsabsent', 'gradingform_rubric'), 'error');
         }
-        $html .= $this->box(
-                html_writer::tag('h4', get_string('rubricmapping', 'gradingform_rubric')).
-                html_writer::tag('div', get_string('rubricmappingexplained', 'gradingform_rubric', (object)$scores))
-                , 'generalbox rubricmappingexplained');
+        $html .= $this->output->notification(get_string('rubricmappingexplained', 'gradingform_rubric', (object)$scores), 'info');
         return $html;
     }
 }
