@@ -2253,8 +2253,8 @@ class core_course_external extends external_api {
             $coursecontext = context_course::instance($course->id);
 
             // Category information.
-            if (!isset($categoriescache[$course->category])) {
-                $categoriescache[$course->category] = coursecat::get($course->category);
+            if (!array_key_exists($course->category, $categoriescache)) {
+                $categoriescache[$course->category] = coursecat::get($course->category, IGNORE_MISSING);
             }
             $category = $categoriescache[$course->category];
 
@@ -2302,7 +2302,7 @@ class core_course_external extends external_api {
             $coursereturns['displayname']       = external_format_string($displayname, $coursecontext->id);
             $coursereturns['shortname']         = external_format_string($course->shortname, $coursecontext->id);
             $coursereturns['categoryid']        = $course->category;
-            $coursereturns['categoryname']      = $category->name;
+            $coursereturns['categoryname']      = $category == null ? '' : $category->name;
             $coursereturns['summary']           = $summary;
             $coursereturns['summaryformat']     = $summaryformat;
             $coursereturns['overviewfiles']     = $files;
