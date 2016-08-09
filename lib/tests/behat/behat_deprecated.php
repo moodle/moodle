@@ -29,7 +29,7 @@ require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Gherkin\Node\PyStringNode as PyStringNode,
+    Behat\Gherkin\Node\PyStringNode as PyStringNode;
 
 /**
  * Deprecated behat step definitions.
