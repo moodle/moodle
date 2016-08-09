@@ -25,3 +25,4 @@
  */
 
 $string['pluginname'] = 'Number';
+$string['namenumber'] = 'Number field';

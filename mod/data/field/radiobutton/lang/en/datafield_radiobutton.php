@@ -25,3 +25,4 @@
  */
 
 $string['pluginname'] = 'Radio button';
+$string['nameradiobutton'] = 'Radio button field';
