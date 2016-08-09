@@ -1114,7 +1114,7 @@ function print_checkbox($name, $value, $checked = true, $label = '', $alt = '', 
 /**
  * Prints the 'update this xxx' button that appears on module pages.
  *
- * @deprecated since Moodle 2.0
+ * @deprecated since Moodle 3.2
  *
  * @param string $cmid the course_module id.
  * @param string $ignored not used any more. (Used to be courseid.)
@@ -1124,9 +1124,9 @@ function print_checkbox($name, $value, $checked = true, $label = '', $alt = '', 
 function update_module_button($cmid, $ignored, $string) {
     global $CFG, $OUTPUT;
 
-    // debugging('update_module_button() has been deprecated. Please change your code to use $OUTPUT->update_module_button().');
-
-    //NOTE: DO NOT call new output method because it needs the module name we do not have here!
+    debugging('update_module_button() has been deprecated and should not be used anymore. Activity modules should not add the ' .
+        'edit module button, the link is already available in the Administration block. Themes can choose to display the link ' .
+        'in the buttons row consistently for all module types.', DEBUG_DEVELOPER);
 
     if (has_capability('moodle/course:manageactivities', context_module::instance($cmid))) {
         $string = get_string('updatethis', '', $string);

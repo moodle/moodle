@@ -2685,12 +2685,19 @@ EOD;
     /**
      * Returns HTML to display the 'Update this Modulename' button that appears on module pages.
      *
+     * @deprecated since Moodle 3.2
+     *
      * @param string $cmid the course_module id.
      * @param string $modulename the module name, eg. "forum", "quiz" or "workshop"
      * @return string the HTML for the button, if this user has permission to edit it, else an empty string.
      */
     public function update_module_button($cmid, $modulename) {
         global $CFG;
+
+        debugging('core_renderer::update_module_button() has been deprecated and should not be used anymore. Activity modules ' .
+            'should not add the edit module button, the link is already available in the Administration block. Themes can choose ' .
+            'to display the link in the buttons row consistently for all module types.', DEBUG_DEVELOPER);
+
         if (has_capability('moodle/course:manageactivities', context_module::instance($cmid))) {
             $modulename = get_string('modulename', $modulename);
             $string = get_string('updatethis', '', $modulename);
