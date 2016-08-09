@@ -732,8 +732,7 @@ class manager {
      */
     protected static function is_search_area($searchareaname) {
         if (is_subclass_of($searchareaname, 'core_search\base')) {
-            $$searchareaname = new \ReflectionClass($searchareaname);
-            return $$searchareaname->IsInstantiable();
+            return (new \ReflectionClass($searchareaname))->isInstantiable();
         }
 
         return false;
