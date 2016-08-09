@@ -74,7 +74,8 @@ class mod_data_generator extends testing_module_generator {
      * @return StdClass
      */
     public function create_instance($record = null, array $options = null) {
-        $record = (object)(array)$record;
+        // Note, the parent class does not type $record to cast to array and then to object.
+        $record = (object) (array) $record;
 
         if (!isset($record->assessed)) {
             $record->assessed = 0;
@@ -83,7 +84,7 @@ class mod_data_generator extends testing_module_generator {
             $record->scale = 0;
         }
 
-        return parent::create_instance($record, (array)$options);
+        return parent::create_instance((array) $record, $options);
     }
 
     /**
@@ -94,7 +95,7 @@ class mod_data_generator extends testing_module_generator {
      * @param mod_data $data
      * @return data_field_{type}
      */
-    public function create_field($record = null, $data = null) {
+    public function create_field(stdClass $record = null, $data = null) {
         $record = (array) $record;
 
         if (in_array($record['type'], $this->ignoredfieldtypes)) {
@@ -202,7 +203,7 @@ class mod_data_generator extends testing_module_generator {
      * @param array $contents
      * @return data_field_{type}
      */
-    public function create_entry($data, $contents) {
+    public function create_entry($data, array $contents) {
         global $DB;
 
         $this->databaserecordcount++;
