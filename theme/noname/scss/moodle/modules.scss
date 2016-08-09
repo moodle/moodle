@@ -582,3 +582,51 @@ div#dock {
         background-color: $gray-light;
     }
 }
+
+/**
+ * Assign.
+ */
+.path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
+    top: auto;
+}
+.path-mod-assign [data-region="grade-panel"] h3 {
+    margin: 10px 0;
+    line-height: 40px;
+}
+.path-mod-assign [data-region="grading-navigation"] {
+    padding: 6px;
+}
+.path-mod-assign [data-region="grade-actions"] {
+    padding: 10px;
+}
+.path-mod-assign [data-region="user-info"] .img-rounded {
+    margin-top: 0;
+}
+.path-mod-assign [data-region="grading-navigation-panel"] {
+    height: 85px;
+}
+.path-mod-assign [data-region="grading-navigation"] [data-region="input-field"] input {
+    width: auto;
+    display: inline-block;
+}
+
+/**
+ * Assign feedback.
+ */
+.assignfeedback_editpdf_widget * {
+    box-sizing: content-box;
+}
+.assignfeedback_editpdf_widget button {
+    box-sizing: border-box;
+}
+.assignfeedback_editpdf_widget .commentcolourbutton img {
+    border-width: 0;
+}
+.assignfeedback_editpdf_widget .label {
+    @extend .tag;
+    @extend .tag-info;
+}
+
+.assignfeedback_editpdf_menu {
+    padding: 0;
+}

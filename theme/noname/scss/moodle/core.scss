@@ -1112,6 +1112,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     height: 16px;
     background-size: 100%;
 }
+.moodle-dialogue-base .moodle-dialogue-wrap {
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
 .moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
     @extend .modal-content;
 }
