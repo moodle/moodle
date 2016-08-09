@@ -66,6 +66,7 @@ class moodle1_mod_scorm_handler extends moodle1_mod_handler {
                         'timeopen' => '0',
                         'timeclose' => '0',
                         'introformat' => '0',
+                        'completionstatusallscos' => 0,
                     ),
                     'renamefields' => array(
                         'summary' => 'intro'

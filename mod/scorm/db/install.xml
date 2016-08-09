@@ -45,6 +45,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionstatusrequired" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="completionscorerequired" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="completionstatusallscos" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="displayactivityname" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="autocommit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>

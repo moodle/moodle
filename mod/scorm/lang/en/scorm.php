@@ -83,6 +83,8 @@ $string['completionscorerequired'] = 'Require minimum score';
 $string['completionscorerequired_help'] = 'Enabling this setting will require a user to have at least the minimum score entered to be marked complete in this SCORM activity, as well as any other Activity Completion requirements.';
 $string['completionstatus_passed'] = 'Passed';
 $string['completionstatus_completed'] = 'Completed';
+$string['completionstatusallscos'] = 'Require all scos to return completion status';
+$string['completionstatusallscos_help'] = 'Some SCORM packages contain multiple components or "scos" - when this is enabled all scos within the package must return the relevant lesson_status for this activity to be flagged complete.';
 $string['completionstatusrequired'] = 'Require status';
 $string['completionstatusrequired_help'] = 'Checking one or more statuses will require a user to achieve at least one of the checked statuses in order to be marked complete in this SCORM activity, as well as any other Activity Completion requirements.';
 $string['confirmloosetracks'] = 'WARNING: The package seems to be changed or modified. If the package structure is changed, some users tracks may be lost during update process.';
@@ -413,3 +415,4 @@ Notes on handling of multiple attempts:
 $string['whatgradedesc'] = 'Whether the highest, average (mean), first or last completed attempt is recorded in the gradebook if multiple attempts are allowed.';
 $string['width'] = 'Width';
 $string['window'] = 'Window';
+$string['youmustselectastatus'] = 'You must select a status to require';
