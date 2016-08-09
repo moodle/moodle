@@ -648,6 +648,7 @@ $CFG->admin = 'admin';
 // $CFG->phpunit_prefix = 'phpu_';
 // $CFG->phpunit_dataroot = '/home/example/phpu_moodledata';
 // $CFG->phpunit_directorypermissions = 02777; // optional
+// $CFG->phpunit_profilingenabled = true; // optional to profile PHPUnit runs.
 //
 //
 //=========================================================================
