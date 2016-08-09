@@ -292,6 +292,8 @@ class core_renderer extends \core_renderer {
      * @return string HTML
      */
     protected function render_paging_bar(paging_bar $pagingbar) {
+        // Any more than 10 is not usable and causes wierd wrapping of the pagination in this theme.
+        $pagingbar->maxdisplay = 10;
         return $this->render_from_template('core/paging_bar', $pagingbar->export_for_template($this));
     }
 
