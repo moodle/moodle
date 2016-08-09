@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/lti/db" VERSION="20160322" COMMENT="XMLDB file for Moodle enrol/lti"
+<XMLDB PATH="enrol/lti/db" VERSION="20160809" COMMENT="XMLDB file for Moodle enrol/lti"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -51,6 +51,149 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="toolid" TYPE="foreign" FIELDS="toolid" REFTABLE="enrol_lti_tools" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_lti2_consumer" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="consumer_key256" TYPE="char" LENGTH="256" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="consumer_key" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="secret" TYPE="char" LENGTH="1024" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lti_version" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="consumer_name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="consumer_version" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="consumer_guid" TYPE="char" LENGTH="1024" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="profile" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="tool_proxy" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="settings" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="protected" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="enable_from" TYPE="datetime" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="enable_until" TYPE="datetime" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="last_access" TYPE="datetime" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <!-- <KEY NAME="consumer_key256_uniq" TYPE="unique" FIELDS="consumer_key256"/> TODO We can't have unique 256... either no unique or 255 length -->
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_lti2_tool_proxy" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="tool_proxy_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="tool_proxy_id" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="consumer_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="tool_proxy" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="tool_proxy_pk"/>
+        <KEY NAME="tool_proxy_id_uniq" TYPE="unique" FIELDS="tool_proxy_id"/>
+        <KEY NAME="consumer_pk" TYPE="foreign" FIELDS="consumer_pk" REFTABLE="enrol_lti_lti2_consumer" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_item" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="item_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="resource_link_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="item_title" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="item_text" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="item_url" TYPE="char" LENGTH="200" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="max_rating" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="5" SEQUENCE="false"/>
+        <FIELD NAME="step" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="item_pk"/>
+        <KEY NAME="resource_link_pk" TYPE="foreign" FIELDS="resource_link_pk" REFTABLE="enrol_lti_lti2_resource_link" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_lti2_context" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="context_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="consumer_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lti_context_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="settings" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="context_pk"/>
+        <KEY NAME="consumer_pk" TYPE="foreign" FIELDS="consumer_pk" REFTABLE="enrol_lti_lti2_consumer" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_lti2_nonce" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="consumer_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="expires" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="consumer_pk,value"/>
+        <KEY NAME="consumer_pk" TYPE="foreign" FIELDS="consumer_pk" REFTABLE="enrol_lti_lti2_consumer" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_lti2_resource_link" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="context_pk" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="consumer_pk" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lti_resource_link_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="settings" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="primary_resource_link_pk" TYPE="int" LENGTH="11" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="share_approved" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="context_pk" TYPE="foreign" FIELDS="context_pk" REFTABLE="enrol_lti_lti2_context" REFFIELDS="context_pk"/>
+        <KEY NAME="primary_resource_link_pk" TYPE="foreign" FIELDS="primary_resource_link_pk" REFTABLE="enrol_lti_lti2_resource_link" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="consumer_pk" UNIQUE="false" FIELDS="consumer_pk"/> <!-- TODO shouldn't this be foreign?? -->
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="enrol_lti_lti2_share_key" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="share_key_id" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="resource_link_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="auto_approve" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="expires" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="share_key_id"/>
+        <KEY NAME="resource_link_pk" TYPE="foreign" FIELDS="resource_link_pk" REFTABLE="enrol_lti_lti2_resource_link" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_lti2_user_result" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="user_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="resource_link_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lti_user_id" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lti_result_sourcedid" TYPE="char" LENGTH="1024" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="created" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="updated" TYPE="datetime" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="user_pk"/>
+        <KEY NAME="resource_link_pk" TYPE="foreign" FIELDS="resource_link_pk" REFTABLE="enrol_lti_lti2_resource_link" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_rating" COMMENT="TODO">
+      <FIELDS>
+        <FIELD NAME="item_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="user_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="rating" TYPE="number" LENGTH="10" NOTNULL="true" SEQUENCE="false" DECIMALS="2"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="item_pk,user_pk"/>
+        <KEY NAME="item_pk" TYPE="foreign" FIELDS="item_pk" REFTABLE="enrol_lti_item" REFFIELDS="item_pk"/>
       </KEYS>
     </TABLE>
   </TABLES>
