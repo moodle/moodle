@@ -293,12 +293,18 @@ class mod_data_generator extends testing_module_generator {
 
                 $temp = explode('-', $content, 3);
 
-                $values['field_'.$fieldid.'_day'] = $temp[0];
-                $values['field_'.$fieldid.'_month'] = $temp[1];
-                $values['field_'.$fieldid.'_year'] = $temp[2];
+                $values['field_'.$fieldid.'_day'] = (int)trim($temp[0]);
+                $values['field_'.$fieldid.'_month'] = (int)trim($temp[1]);
+                $values['field_'.$fieldid.'_year'] = (int)trim($temp[2]);
+
+                // Year should be less than 2038, so it can be handled by 32 bit windows.
+                if ($values['field_'.$fieldid.'_year'] > 2038) {
+                    throw new coding_exception('DateTime::getTimestamp resturns false on 32 bit win for year beyond '.
+                        '2038. Please use year less than 2038.');
+                }
 
                 foreach ($values as $fieldname => $value) {
-                    $field->update_content($recordid, (string)(int)trim($value), $fieldname);
+                    $field->update_content($recordid, $value, $fieldname);
                 }
 
                 continue;

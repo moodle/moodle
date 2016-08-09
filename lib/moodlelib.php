@@ -2053,6 +2053,11 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
 
     $time = $date->getTimestamp();
 
+    if ($time === false) {
+        throw new coding_exception('getTimestamp() returned false, please ensure you have passed correct values.'.
+            ' This can fail if year is more than 2038 and OS is 32 bit windows');
+    }
+
     // Moodle BC DST stuff.
     if (!$applydst) {
         $time += dst_offset_on($time, $timezone);
