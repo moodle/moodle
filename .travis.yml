@@ -16,6 +16,9 @@ php:
     - 7.0
     - 5.6
 
+services:
+    - redis-server
+
 env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
     # start first so that the total run time is not too high.
@@ -77,6 +80,10 @@ install:
                 composer config github-oauth.github.com $GITHUB_APITOKEN;
                 echo 'auth.json' >> .git/info/exclude
             fi
+
+            # Enable Redis.
+            echo 'extension="redis.so"' > /tmp/redis.ini
+            phpenv config-add /tmp/redis.ini
 
             # Install composer dependencies.
             # We need --no-interaction in case we hit API limits for composer. This causes it to fall back to a standard clone.
@@ -147,6 +154,7 @@ before_script:
         sed -i \
           -e "/require_once/i \\\$CFG->phpunit_dataroot = '\/home\/travis\/roots\/phpunit';" \
           -e "/require_once/i \\\$CFG->phpunit_prefix = 'p_';" \
+          -e "/require_once/i \\define('TEST_SESSION_REDIS_HOST', '127.0.0.1');" \
           config.php ;
 
         # Initialise PHPUnit for Moodle.
