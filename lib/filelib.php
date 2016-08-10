@@ -2086,9 +2086,12 @@ function send_temp_file_finished($path) {
  *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
  *                        you must detect this case when control is returned using connection_aborted. Please not that session is closed
  *                        and should not be reopened.
+ * @param array $options An array of options, currently accepts:
+ *                       - (string) cacheability: public, or private.
  * @return null script execution stopped unless $dontdie is true
  */
-function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
+function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='',
+                   $dontdie=false, array $options = array()) {
     global $CFG, $COURSE;
 
     if ($dontdie) {
@@ -2122,7 +2125,13 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 
     if ($lifetime > 0) {
         $cacheability = ' public,';
-        if (isloggedin() and !isguestuser()) {
+        if (!empty($options['cacheability']) && ($options['cacheability'] === 'public')) {
+            // This file must be cache-able by both browsers and proxies.
+            $cacheability = ' public,';
+        } else if (!empty($options['cacheability']) && ($options['cacheability'] === 'private')) {
+            // This file must be cache-able only by browsers.
+            $cacheability = ' private,';
+        } else if (isloggedin() and !isguestuser()) {
             // By default, under the conditions above, this file must be cache-able only by browsers.
             $cacheability = ' private,';
         }
