@@ -39,7 +39,7 @@ class mod_feedback_responses_table extends table_sql {
     /**
      * Maximum number of feedback questions to display in the "Show responses" table
      */
-    const PREVIEWCOLUNMNSLIMIT = 10;
+    const PREVIEWCOLUMNSLIMIT = 10;
 
     /**
      * Maximum number of feedback questions answers to retrieve in one SQL query.
@@ -262,7 +262,7 @@ class mod_feedback_responses_table extends table_sql {
         if (!$this->is_downloading()) {
             // In preview mode do not show all columns or the page becomes unreadable.
             // The information message will be displayed to the teacher that the rest of the data can be viewed when downloading.
-            $items = array_slice($items, 0, self::PREVIEWCOLUNMNSLIMIT, true);
+            $items = array_slice($items, 0, self::PREVIEWCOLUMNSLIMIT, true);
         }
 
         $columnscount = 0;
@@ -388,8 +388,8 @@ class mod_feedback_responses_table extends table_sql {
             return;
         }
 
-        if (count($this->feedbackstructure->get_items(true)) > self::PREVIEWCOLUNMNSLIMIT) {
-            echo $OUTPUT->notification(get_string('questionslimited', 'feedback', self::PREVIEWCOLUNMNSLIMIT), 'info');
+        if (count($this->feedbackstructure->get_items(true)) > self::PREVIEWCOLUMNSLIMIT) {
+            echo $OUTPUT->notification(get_string('questionslimited', 'feedback', self::PREVIEWCOLUMNSLIMIT), 'info');
         }
 
         $this->out($this->showall ? $grandtotal : FEEDBACK_DEFAULT_PAGE_COUNT,
