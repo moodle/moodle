@@ -214,7 +214,7 @@ class mod_data_generator extends testing_module_generator {
 
         // Validating whether required field are filled.
         foreach ($fields as $field) {
-            $fieldhascontent = false;
+            $fieldhascontent = true;
 
             if (in_array($field->type, $this->ignoredfieldtypes)) {
                 continue;
@@ -229,13 +229,21 @@ class mod_data_generator extends testing_module_generator {
 
                 $temp = explode('-', $contents[$fieldid], 3);
 
-                $values['field_' . $fieldid . '_day'] = $temp[0];
-                $values['field_' . $fieldid . '_month'] = $temp[1];
-                $values['field_' . $fieldid . '_year'] = $temp[2];
+                $values['field_' . $fieldid . '_day'] = (int)trim($temp[0]);
+                $values['field_' . $fieldid . '_month'] = (int)trim($temp[1]);
+                $values['field_' . $fieldid . '_year'] = (int)trim($temp[2]);
+
+                // Year should be less than 2038, so it can be handled by 32 bit windows.
+                if ($values['field_' . $fieldid . '_year'] > 2038) {
+                    throw new coding_exception('DateTime::getTimestamp resturns false on 32 bit win for year beyond ' .
+                        '2038. Please use year less than 2038.');
+                }
+
+                $contents[$fieldid] = $values;
 
                 foreach ($values as $fieldname => $value) {
-                    if ($field->notemptyfield($value, $fieldname)) {
-                        continue 2;
+                    if (!$field->notemptyfield($value, $fieldname)) {
+                        $fieldhascontent = false;
                     }
                 }
             } else if ($field->type === 'textarea') {
@@ -244,9 +252,11 @@ class mod_data_generator extends testing_module_generator {
                 $values['field_' . $fieldid] = $contents[$fieldid];
                 $values['field_' . $fieldid . '_content1'] = 1;
 
+                $contents[$fieldid] = $values;
+
                 foreach ($values as $fieldname => $value) {
-                    if ($field->notemptyfield($value, $fieldname)) {
-                        continue 2;
+                    if (!$field->notemptyfield($value, $fieldname)) {
+                        $fieldhascontent = false;
                     }
                 }
             } else if ($field->type === 'url') {
@@ -260,12 +270,13 @@ class mod_data_generator extends testing_module_generator {
                     $values['field_' . $fieldid . '_0'] = $contents[$fieldid];
                 }
 
+                $contents[$fieldid] = $values;
+
                 foreach ($values as $fieldname => $value) {
-                    if ($field->notemptyfield($value, $fieldname)) {
-                        continue 2;
+                    if (!$field->notemptyfield($value, $fieldname)) {
+                        $fieldhascontent = false;
                     }
                 }
-
             } else {
                 if ($field->notemptyfield($contents[$fieldid], 'field_' . $fieldid . '_0')) {
                     continue;
@@ -278,68 +289,17 @@ class mod_data_generator extends testing_module_generator {
         }
 
         foreach ($contents as $fieldid => $content) {
+            $field = data_get_field_from_id($fieldid, $data);
 
-            $field = $DB->get_record('data_fields', array('id' => $fieldid));
-            $field = data_get_field($field, $data);
+            if (is_array($content)) {
 
-            if (in_array($field->field->type, $this->ignoredfieldtypes)) {
-                continue;
-            }
-
-            if ($field->type === 'date') {
-                $values = array();
-
-                $temp = explode('-', $content, 3);
-
-                $values['field_' . $fieldid . '_day'] = (int)trim($temp[0]);
-                $values['field_' . $fieldid . '_month'] = (int)trim($temp[1]);
-                $values['field_' . $fieldid . '_year'] = (int)trim($temp[2]);
-
-                // Year should be less than 2038, so it can be handled by 32 bit windows.
-                if ($values['field_' . $fieldid . '_year'] > 2038) {
-                    throw new coding_exception('DateTime::getTimestamp resturns false on 32 bit win for year beyond ' .
-                        '2038. Please use year less than 2038.');
-                }
-
-                foreach ($values as $fieldname => $value) {
+                foreach ($content as $fieldname => $value) {
                     $field->update_content($recordid, $value, $fieldname);
                 }
 
-                continue;
+            } else {
+                $field->update_content($recordid, $content);
             }
-
-            if ($field->type === 'textarea') {
-                $values = array();
-
-                $values['field_' . $fieldid] = $content;
-                $values['field_' . $fieldid . '_content1'] = 1;
-
-                foreach ($values as $fieldname => $value) {
-                    $field->update_content($recordid, $value, $fieldname);
-                }
-
-                continue;
-            }
-
-            if ($field->type === 'url') {
-                $values = array();
-
-                if (is_array($content)) {
-                    foreach ($content as $key => $value) {
-                        $values['field_' . $fieldid . '_' . $key] = $value;
-                    }
-                } else {
-                    $values['field_' . $fieldid . '_0'] = $content;
-                }
-
-                foreach ($values as $fieldname => $value) {
-                    $field->update_content($recordid, $value, $fieldname);
-                }
-
-                continue;
-            }
-
-            $field->update_content($recordid, $contents[$fieldid]);
         }
 
         return $recordid;
