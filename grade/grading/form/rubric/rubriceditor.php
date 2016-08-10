@@ -197,6 +197,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
         // iterate through criteria
         $lastaction = null;
         $lastid = null;
+        $overallminscore = $overallmaxscore = 0;
         foreach ($value['criteria'] as $id => $criterion) {
             if ($id == 'addcriterion') {
                 $id = $this->get_next_id(array_keys($value['criteria']));
@@ -221,7 +222,7 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                 $this->nonjsbuttonpressed = true;
             }
             $levels = array();
-            $maxscore = null;
+            $minscore = $maxscore = null;
             if (array_key_exists('levels', $criterion)) {
                 foreach ($criterion['levels'] as $levelid => $level) {
                     if ($levelid == 'addlevel') {
@@ -249,6 +250,9 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                             }
                         }
                         $levels[$levelid] = $level;
+                        if ($minscore === null || (float)$level['score'] < $minscore) {
+                            $minscore = (float)$level['score'];
+                        }
                         if ($maxscore === null || (float)$level['score'] > $maxscore) {
                             $maxscore = (float)$level['score'];
                         }
@@ -268,6 +272,8 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
                     $errors['err_nodescription'] = 1;
                     $criterion['error_description'] = true;
                 }
+                $overallmaxscore += $maxscore;
+                $overallminscore += $minscore;
             }
             if (array_key_exists('moveup', $criterion) || $lastaction == 'movedown') {
                 unset($criterion['moveup']);
@@ -307,6 +313,9 @@ class MoodleQuickForm_rubriceditor extends HTML_QuickForm_input {
 
         // create validation error string (if needed)
         if ($withvalidation) {
+            if ($overallminscore == $overallmaxscore) {
+                $errors['err_novariations'] = 1;
+            }
             if (count($errors)) {
                 $rv = array();
                 foreach ($errors as $error => $v) {

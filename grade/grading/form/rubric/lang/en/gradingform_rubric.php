@@ -44,6 +44,7 @@ $string['err_mintwolevels'] = 'Each criterion must have at least two levels';
 $string['err_nocriteria'] = 'Rubric must contain at least one criterion';
 $string['err_nodefinition'] = 'Level definition can not be empty';
 $string['err_nodescription'] = 'Criterion description can not be empty';
+$string['err_novariations'] = 'Criterion levels cannot all be worth the same number of points';
 $string['err_scoreformat'] = 'Number of points for each level must be a valid non-negative number';
 $string['err_totalscore'] = 'Maximum number of points possible when graded by the rubric must be more than zero';
 $string['gradingof'] = '{$a} grading';
@@ -83,3 +84,5 @@ $string['showscoreteacher'] = 'Display points for each level during evaluation';
 $string['sortlevelsasc'] = 'Sort order for levels:';
 $string['sortlevelsasc0'] = 'Descending by number of points';
 $string['sortlevelsasc1'] = 'Ascending by number of points';
+$string['zerolevelsabsent'] = 'Warning: The minimum possible score for this rubric is not 0; this can result in unexpected grades for the activity. To avoid this, each criterion should have a level with 0 points.<br>
+This warning may be ignored if a scale is used for grading, and the minimum levels in the rubric correspond to the minimum value of the scale.';
