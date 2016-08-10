@@ -86,4 +86,72 @@ class core_gdlib_testcase extends basic_testcase {
         $this->assertEquals(24, $imageinfo[1]);
         $this->assertEquals('image/png', $imageinfo['mime']);
     }
+
+    public function test_resize_image() {
+        global $CFG;
+        require_once($CFG->libdir . '/gdlib.php');
+
+        $pngpath = $this->fixturepath . 'gd-logo.png';
+
+        // Preferred height.
+        $newpng = resize_image($pngpath, null, 24);
+        $this->assertTrue(is_string($newpng));
+        $imageinfo = getimagesizefromstring($newpng);
+        $this->assertEquals(89, $imageinfo[0]);
+        $this->assertEquals(24, $imageinfo[1]);
+        $this->assertEquals('image/png', $imageinfo['mime']);
+
+        // Preferred width.
+        $newpng = resize_image($pngpath, 100, null);
+        $this->assertTrue(is_string($newpng));
+        $imageinfo = getimagesizefromstring($newpng);
+        $this->assertEquals(100, $imageinfo[0]);
+        $this->assertEquals(26, $imageinfo[1]);
+        $this->assertEquals('image/png', $imageinfo['mime']);
+
+        // Preferred width and height.
+        $newpng = resize_image($pngpath, 50, 50);
+        $this->assertTrue(is_string($newpng));
+        $imageinfo = getimagesizefromstring($newpng);
+        $this->assertEquals(50, $imageinfo[0]);
+        $this->assertEquals(13, $imageinfo[1]);
+        $this->assertEquals('image/png', $imageinfo['mime']);
+    }
+
+    public function test_resize_image_from_image() {
+        global $CFG;
+        require_once($CFG->libdir . '/gdlib.php');
+
+        $pngpath = $this->fixturepath . 'gd-logo.png';
+        $origimageinfo = getimagesize($pngpath);
+        $imagecontent = file_get_contents($pngpath);
+
+        // Preferred height.
+        $imageresource = imagecreatefromstring($imagecontent);
+        $newpng = resize_image_from_image($imageresource, $origimageinfo, null, 24);
+        $this->assertTrue(is_string($newpng));
+        $imageinfo = getimagesizefromstring($newpng);
+        $this->assertEquals(89, $imageinfo[0]);
+        $this->assertEquals(24, $imageinfo[1]);
+        $this->assertEquals('image/png', $imageinfo['mime']);
+
+        // Preferred width.
+        $imageresource = imagecreatefromstring($imagecontent);
+        $newpng = resize_image_from_image($imageresource, $origimageinfo, 100, null);
+        $this->assertTrue(is_string($newpng));
+        $imageinfo = getimagesizefromstring($newpng);
+        $this->assertEquals(100, $imageinfo[0]);
+        $this->assertEquals(26, $imageinfo[1]);
+        $this->assertEquals('image/png', $imageinfo['mime']);
+
+        // Preferred width and height.
+        $imageresource = imagecreatefromstring($imagecontent);
+        $newpng = resize_image_from_image($imageresource, $origimageinfo, 50, 50);
+        $this->assertTrue(is_string($newpng));
+        $imageinfo = getimagesizefromstring($newpng);
+        $this->assertEquals(50, $imageinfo[0]);
+        $this->assertEquals(13, $imageinfo[1]);
+        $this->assertEquals('image/png', $imageinfo['mime']);
+    }
+
 }
