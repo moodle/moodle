@@ -297,6 +297,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                         }
                     }.bind(this));
 
+                    // If there are no messages at all, then remove conversation panel.
+                    if (this.messageArea.find(this.messageArea.SELECTORS.MESSAGE).length === 0) {
+                        this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
+                            this.messageArea.SELECTORS.CONTACT + "[data-userid='" + this._getUserId() + "']").remove();
+                    }
+
                     // Trigger event letting other modules know messages were deleted.
                     this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED, this._getUserId());
                 }.bind(this), notification.exception);
