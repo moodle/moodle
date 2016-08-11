@@ -1,33 +1,5 @@
-<div class="form-group row {{#error}}has-danger{{/error}}">
-    <label class="col-md-3 col-form-label {{#element.hideLabel}}sr-only{{/element.hideLabel}}" for="{{element.id}}">
-        {{{label}}} {{{helpbutton}}}
-    </label>
-    <div class="col-md-9">
+{{< core_form/element-template }}
+    {{$element}}
         {{{element.html}}}
-        <div class="form-control-feedback" id="id_error_{{element.name}}_5btext_5d" {{^error}} style="display: none;"{{/error}}>
-            {{{error}}}
-        </div>
-    </div>
-</div>
-{{#js}}
-require(['jquery', 'core/event'], function($, Event) {
-    var element = document.getElementById('{{element.id}}');
-    $(element).on(Event.Events.FORM_FIELD_VALIDATION, function(event, msg) {
-        event.preventDefault();
-        var parent = $(element).closest('.form-group');
-        var feedback = parent.find('.form-control-feedback');
-        if (msg !== '') {
-            parent.addClass('has-danger');
-            $(element).addClass('form-control-danger');
-            $(element).attr('aria-describedby', $(element).attr('id') + '-feedback');
-            feedback.html(msg);
-            feedback.show();
-        } else {
-            parent.removeClass('has-danger');
-            $(element).removeClass('form-control-danger');
-            $(element).attr('aria-describedby', '');
-            feedback.hide();
-        }
-    });
-});
-{{/js}}
+    {{/element}}
+{{/ core_form/element-template }}

@@ -6,7 +6,7 @@
             {{#element.frozen}}readonly disabled{{/element.frozen}}
             {{#error}}
                 autofocus aria-describedby="id_error_{{element.name}}"
-            {{/error}} >
+            {{/error}} {{{element.attributes}}} >
             {{{label}}} {{{helpbutton}}}
         </label>
         <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>

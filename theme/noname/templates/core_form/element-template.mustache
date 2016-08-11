@@ -1,16 +1,16 @@
-<label class="form-check-inline {{#error}}has-danger{{/error}}">
-<input type="checkbox" name="{{element.name}}"
-    id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
-    {{#element.frozen}}readonly disabled{{/element.frozen}}
-    {{#error}}
-        autofocus aria-describedby="id_error_{{element.name}}"
-    {{/error}}
-    {{{element.attributes}}} >
-    {{{label}}} {{{helpbutton}}}
-</label>
-<span class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
-    {{{error}}}
-</span>
+<div class="form-group row {{#error}}has-danger{{/error}}">
+    <label class="col-md-3 col-form-label {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+        {{{label}}} {{{helpbutton}}}
+    </label>
+    <div class="col-md-9 form-inline">
+        {{$ element }}
+            <!-- Element goes here -->
+        {{/ element }}
+        <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+            {{{error}}}
+        </div>
+    </div>
+</div>
 {{#js}}
 require(['jquery', 'core/event'], function($, Event) {
     var element = document.getElementById('{{element.id}}');
@@ -20,11 +20,13 @@ require(['jquery', 'core/event'], function($, Event) {
         var feedback = parent.find('.form-control-feedback');
         if (msg !== '') {
             parent.addClass('has-danger');
+            $(element).addClass('form-control-danger');
             $(element).attr('aria-describedby', $(element).attr('id') + '-feedback');
             feedback.html(msg);
             feedback.show();
         } else {
             parent.removeClass('has-danger');
+            $(element).removeClass('form-control-danger');
             $(element).attr('aria-describedby', '');
             feedback.hide();
         }

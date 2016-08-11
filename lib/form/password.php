@@ -26,7 +26,7 @@
  */
 
 require_once('HTML/QuickForm/password.php');
-require_once(__DIR__ . '/../outputcomponents.php');
+require_once('templatable_form_element.php');
 
 /**
  * Password type form element
@@ -39,6 +39,8 @@ require_once(__DIR__ . '/../outputcomponents.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_password extends HTML_QuickForm_password implements templatable {
+    use templatable_form_element;
+
     /** @var string, html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -83,14 +85,5 @@ class MoodleQuickForm_password extends HTML_QuickForm_password implements templa
      */
     function getHelpButton(){
         return $this->_helpbutton;
-    }
-
-    public function export_for_template(renderer_base $output) {
-        $context = [];
-        $context['frozen'] = $this->_flagFrozen;
-        foreach ($this->getAttributes() as $name => $value) {
-            $context[$name] = $value;
-        }
-        return $context;
     }
 }

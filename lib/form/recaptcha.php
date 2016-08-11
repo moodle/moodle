@@ -26,7 +26,7 @@
  */
 
 require_once('HTML/QuickForm/input.php');
-require_once(__DIR__ . '/../outputcomponents.php');
+require_once('templatable_form_element.php');
 
 /**
  * recaptcha type form element
@@ -39,6 +39,9 @@ require_once(__DIR__ . '/../outputcomponents.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_recaptcha extends HTML_QuickForm_input implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
 
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
@@ -155,11 +158,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input implements templata
     }
 
     public function export_for_template(renderer_base $output) {
-        $context = [];
-        $context['frozen'] = $this->_flagFrozen;
-        foreach ($this->getAttributes() as $name => $value) {
-            $context[$name] = $value;
-        }
+        $context = $this->export_for_template_base($output);
         $context['html'] = $this->toHtml();
         return $context;
     }

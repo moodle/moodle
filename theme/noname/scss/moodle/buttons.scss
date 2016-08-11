@@ -54,24 +54,6 @@ p.arrow_button {
     margin: 0 0 10px 5px;
 }
 
-input[name="searchwikicontent"] + input[type="submit"],
-select + input[type="submit"],
-input[type="text"] + input[type="button"],
-input[type="password"] + input[type="submit"],
-input[type="text"] + button,
-input[type="text"] + input[type="submit"] {
-    @extend .btn-lineup;
-}
-
-input.form-submit,
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
-    @extend .btn;
-    @extend .btn-secondary;
-    @extend .btn-lineup;
-}
-
 input {
     &.fp-btn-choose {
         @extend .btn-sm;
