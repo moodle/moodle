@@ -593,7 +593,7 @@ class qtype_multianswer_multiresponse_vertical_renderer extends qtype_multianswe
         if ($options->rightanswer) {
             $correct = [];
             foreach ($subq->answers as $ans) {
-                if (question_state::graded_state_for_fraction($ans->fraction) == question_state::$gradedpartial) {
+                if (question_state::graded_state_for_fraction($ans->fraction) != question_state::$gradedwrong) {
                     $correct[] = $subq->format_text($ans->answer, $ans->answerformat, $qa, 'question', 'answer', $ans->id);
                 }
             }
