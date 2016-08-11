@@ -421,6 +421,269 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Get messagearea search people parameters.
+     *
+     * @return external_function_parameters
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_people_in_course_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who is performing the search'),
+                'courseid' => new external_value(PARAM_INT, 'The id of the course'),
+                'search' => new external_value(PARAM_RAW, 'The string being searched'),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get messagearea search people results.
+     *
+     * @param int $userid The id of the user who is performing the search
+     * @param int $courseid The id of the course
+     * @param string $search The string being searched
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return stdClass
+     * @throws moodle_exception
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_people_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
+        global $CFG, $PAGE;
+
+        // Check if messaging is enabled.
+        if (!$CFG->messaging) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'userid' => $userid,
+            'courseid' => $courseid,
+            'search' => $search,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        );
+        self::validate_parameters(self::data_for_messagearea_search_people_in_course_parameters(), $params);
+
+        self::validate_context(context_user::instance($userid));
+
+        $search = \core_message\api::search_people_in_course($userid, $courseid, $search, $limitfrom, $limitnum);
+
+        $renderer = $PAGE->get_renderer('core_message');
+        return $search->export_for_template($renderer);
+    }
+
+    /**
+     * Get messagearea search people returns.
+     *
+     * @return external_single_structure
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_people_in_course_returns() {
+        return new external_single_structure(
+            array(
+                'hascontacts' => new external_value(PARAM_BOOL, 'Are there contacts?'),
+                'contacts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
+                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
+                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
+                        )
+                    )
+                ),
+            )
+        );
+    }
+
+    /**
+     * Get messagearea search people parameters.
+     *
+     * @return external_function_parameters
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_people_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who is performing the search'),
+                'search' => new external_value(PARAM_RAW, 'The string being searched'),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get messagearea search people results.
+     *
+     * @param int $userid The id of the user who is performing the search
+     * @param string $search The string being searched
+     * @param int $limitnum
+     * @return stdClass
+     * @throws moodle_exception
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_people($userid, $search, $limitnum = 0) {
+        global $CFG, $PAGE;
+
+        // Check if messaging is enabled.
+        if (!$CFG->messaging) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'userid' => $userid,
+            'search' => $search,
+            'limitnum' => $limitnum
+        );
+        self::validate_parameters(self::data_for_messagearea_search_people_parameters(), $params);
+
+        self::validate_context(context_user::instance($userid));
+
+        $search = \core_message\api::search_people($userid, $search, $limitnum);
+
+        $renderer = $PAGE->get_renderer('core_message');
+        return $search->export_for_template($renderer);
+    }
+
+    /**
+     * Get messagearea search people returns.
+     *
+     * @return external_single_structure
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_people_returns() {
+        return new external_single_structure(
+            array(
+                'hascontacts' => new external_value(PARAM_BOOL, 'Are there contacts?'),
+                'contacts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
+                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
+                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
+                        )
+                    )
+                ),
+                'hascourses' => new external_value(PARAM_BOOL, 'Are there courses?'),
+                'courses' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'The course id'),
+                            'shortname' => new external_value(PARAM_NOTAGS, 'The course shortname'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'The course fullname'),
+                        )
+                    )
+                ),
+                'hasnoncontacts' => new external_value(PARAM_BOOL, 'Are there non-contacts?'),
+                'noncontacts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
+                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
+                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Get messagearea search messages parameters.
+     *
+     * @return external_function_parameters
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_messages_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who is performing the search'),
+                'search' => new external_value(PARAM_RAW, 'The string being searched'),
+                'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
+                'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get messagearea search messages results.
+     *
+     * @param int $userid The id of the user who is performing the search
+     * @param string $search The string being searched
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return stdClass
+     * @throws moodle_exception
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_messages($userid, $search, $limitfrom = 0, $limitnum = 0) {
+        global $CFG, $PAGE;
+
+        // Check if messaging is enabled.
+        if (!$CFG->messaging) {
+            throw new moodle_exception('disabled', 'message');
+        }
+
+        $params = array(
+            'userid' => $userid,
+            'search' => $search,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+
+        );
+        self::validate_parameters(self::data_for_messagearea_search_messages_parameters(), $params);
+
+        self::validate_context(context_user::instance($userid));
+
+        $search = \core_message\api::search_messages($userid, $search, $limitfrom, $limitnum);
+
+        $renderer = $PAGE->get_renderer('core_message');
+        return $search->export_for_template($renderer);
+    }
+
+    /**
+     * Get messagearea search messages returns.
+     *
+     * @return external_single_structure
+     * @since 3.2
+     */
+    public static function data_for_messagearea_search_messages_returns() {
+        return new external_single_structure(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
+                'contacts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
+                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
+                            'messageid' => new external_value(PARAM_INT, 'The unique search message id'),
+                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
+                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
      * The messagearea conversations parameters.
      *
      * @return external_function_parameters

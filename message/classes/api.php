@@ -37,6 +37,184 @@ defined('MOODLE_INTERNAL') || die();
 class api {
 
     /**
+     * Handles searching for messages in the message area.
+     *
+     * @param int $userid The user id doing the searching
+     * @param string $search The string the user is searching
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \core_message\output\messagearea\message_search_results
+     */
+    public static function search_messages($userid, $search, $limitfrom = 0, $limitnum = 0) {
+        global $DB;
+
+        // Get the user fields we want.
+        $ufields = \user_picture::fields('u', array('lastaccess'), 'userfrom_id', 'userfrom_');
+        $ufields2 = \user_picture::fields('u2', array('lastaccess'), 'userto_id', 'userto_');
+
+        // Get all the messages for the user.
+        $sql = "SELECT m.id, m.useridfrom, m.useridto, m.subject, m.fullmessage, m.fullmessagehtml, m.fullmessageformat,
+                       m.smallmessage, m.notification, m.timecreated, 0 as isread, $ufields, $ufields2
+                  FROM {message} m
+                  JOIN {user} u
+                    ON m.useridfrom = u.id
+                  JOIN {user} u2
+                    ON m.useridto = u2.id
+                 WHERE ((useridto = ? AND timeusertodeleted = 0)
+                    OR (useridfrom = ? AND timeuserfromdeleted = 0))
+                   AND notification = 0
+                   AND u.deleted = 0
+                   AND u2.deleted = 0
+                   AND " . $DB->sql_like('smallmessage', '?', false) . "
+             UNION ALL
+                SELECT mr.id, mr.useridfrom, mr.useridto, mr.subject, mr.fullmessage, mr.fullmessagehtml, mr.fullmessageformat,
+                       mr.smallmessage, mr.notification, mr.timecreated, 1 as isread, $ufields, $ufields2
+                  FROM {message_read} mr
+                  JOIN {user} u
+                    ON mr.useridfrom = u.id
+                  JOIN {user} u2
+                    ON mr.useridto = u2.id
+                 WHERE ((useridto = ? AND timeusertodeleted = 0)
+                    OR (useridfrom = ? AND timeuserfromdeleted = 0))
+                   AND notification = 0
+                   AND u.deleted = 0
+                   AND u2.deleted = 0
+                   AND " . $DB->sql_like('smallmessage', '?', false) . "
+              ORDER BY timecreated DESC";
+        $params = array($userid, $userid, '%' . $search . '%',
+                        $userid, $userid, '%' . $search . '%');
+
+        // Convert the messages into searchable contacts with their last message being the message that was searched.
+        $contacts = array();
+        if ($messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
+            foreach ($messages as $message) {
+                $prefix = 'userfrom_';
+                if ($userid == $message->useridfrom) {
+                    $prefix = 'userto_';
+                    // If it from the user, then mark it as read, even if it wasn't by the receiver.
+                    $message->isread = true;
+                }
+                $message->messageid = $message->id;
+                $contacts[] = \core_message\helper::create_contact($message, $prefix);
+            }
+        }
+
+        return new \core_message\output\messagearea\message_search_results($userid, $contacts);
+    }
+
+    /**
+     * Handles searching for people in a particular course in the message area.
+     *
+     * @param int $userid The user id doing the searching
+     * @param int $courseid The id of the course we are searching in
+     * @param string $search The string the user is searching
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \core_message\output\messagearea\people_search_results
+     */
+    public static function search_people_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
+        global $DB;
+
+        // Get all the users in the course.
+        list($esql, $params) = get_enrolled_sql(\context_course::instance($courseid), '', 0, true);
+        $sql = "SELECT u.*
+                  FROM {user} u
+                  JOIN ($esql) je ON je.id = u.id
+                 WHERE u.deleted = 0";
+        // Add more conditions.
+        $fullname = $DB->sql_fullname();
+        $sql .= " AND u.id != :userid
+                  AND " . $DB->sql_like($fullname, ':search', false) . "
+             ORDER BY " . $DB->sql_fullname();
+        $params = array_merge(array('userid' => $userid, 'search' => '%' . $search . '%'), $params);
+
+
+        // Convert all the user records into contacts.
+        $contacts = array();
+        if ($users = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
+            foreach ($users as $user) {
+                $contacts[] = \core_message\helper::create_contact($user);
+            }
+        }
+
+        return new \core_message\output\messagearea\people_search_results($contacts);
+    }
+
+    /**
+     * Handles searching for people in the message area.
+     *
+     * @param int $userid The user id doing the searching
+     * @param string $search The string the user is searching
+     * @param int $limitnum
+     * @return \core_message\output\messagearea\people_search_results
+     */
+    public static function search_people($userid, $search, $limitnum = 0) {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . '/lib/coursecatlib.php');
+
+        // Used to search for contacts.
+        $fullname = $DB->sql_fullname();
+        $ufields = \user_picture::fields('u', array('lastaccess'));
+
+        // Users not to include.
+        $excludeusers = array($userid, $CFG->siteguest);
+        list($exclude, $excludeparams) = $DB->get_in_or_equal($excludeusers, SQL_PARAMS_NAMED, 'param', false);
+
+        // Ok, let's search for contacts first.
+        $contacts = array();
+        $sql = "SELECT $ufields
+                  FROM {user} u
+                  JOIN {message_contacts} mc
+                    ON u.id = mc.contactid
+                 WHERE mc.userid = :userid
+                   AND u.deleted = 0
+                   AND u.confirmed = 1
+                   AND " . $DB->sql_like($fullname, ':search', false) . "
+                   AND u.id $exclude
+              ORDER BY " . $DB->sql_fullname();
+        if ($users = $DB->get_records_sql($sql, array('userid' => $userid, 'search' => '%' . $search . '%') +
+            $excludeparams, 0, $limitnum)) {
+            foreach ($users as $user) {
+                $contacts[] = \core_message\helper::create_contact($user);
+            }
+        }
+
+        // Now, let's get the courses.
+        $courses = array();
+        if ($arrcourses = \coursecat::search_courses(array('search' => $search), array('limit' => $limitnum))) {
+            foreach ($arrcourses as $course) {
+                $data = new \stdClass();
+                $data->id = $course->id;
+                $data->shortname = $course->shortname;
+                $data->fullname = $course->fullname;
+                $courses[] = $data;
+            }
+        }
+
+        // Let's get those non-contacts. Toast them gears boi.
+        $noncontacts = array();
+        $sql = "SELECT $ufields
+                  FROM {user} u
+                 WHERE u.deleted = 0
+                   AND u.confirmed = 1
+                   AND " . $DB->sql_like($fullname, ':search', false) . "
+                   AND u.id $exclude
+                   AND u.id NOT IN (SELECT contactid 
+                                      FROM {message_contacts} 
+                                     WHERE userid = :userid)
+              ORDER BY " . $DB->sql_fullname();
+        if ($users = $DB->get_records_sql($sql,  array('userid' => $userid, 'search' => '%' . $search . '%') +
+            $excludeparams, 0, $limitnum)) {
+            foreach ($users as $user) {
+                $noncontacts[] = \core_message\helper::create_contact($user);
+            }
+        }
+
+        return new \core_message\output\messagearea\people_search_results($contacts, $courses, $noncontacts);
+    }
+
+    /**
      * Returns the contacts and their conversation to display in the contacts area.
      *
      * @param int $userid The user id

@@ -51,7 +51,18 @@
             border-right: 1px solid #e3e3e3;
             height: 600px;
 
-            .searcharea {
+            &.searchfilter {
+
+                .searchtextarea {
+                    height: 80px;
+                }
+
+                .searcharea {
+                    height: 470px;
+                }
+            }
+
+            .searchtextarea {
                 padding: 5px;
                 text-align: center;
                 height: 50px;
@@ -83,6 +94,42 @@
                     input {
                         background-color: #fff;
                         transition: background-color linear 0.2s;
+                    }
+                }
+
+                .searchfilterarea {
+                    line-height: 20px;
+
+                    .searchfilter {
+                        float: left;
+                    }
+
+                    .searchfilterdelete {
+                        float: left;
+                        margin-left: 5px;
+                        cursor: pointer;
+                    }
+                }
+            }
+
+            .searcharea {
+
+                .heading {
+                    text-align: center;
+                    border-top: 1px solid black;
+                    border-bottom: 1px solid black;
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+
+                .course {
+                    text-align: center;
+
+                    &:hover {
+                        background-color: #4f94cd;
+                        color: #fff;
+                        border: none;
+                        cursor: pointer;
                     }
                 }
             }

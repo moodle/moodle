@@ -1,0 +1,19 @@
+{{#hascontacts}}
+    {{#contacts}}
+        {{> core_message/message_area_contact }}
+    {{/contacts}}
+{{/hascontacts}}
+{{#hascourses}}
+    <div class="heading">{{#str}}courses{{/str}}</div>
+    {{#courses}}
+        <div class="course" data-action="search-people-in-course" data-courseid="{{id}}">
+            {{fullname}}
+        </div>
+    {{/courses}}
+{{/hascourses}}
+{{#hasnoncontacts}}
+    <div class="heading">{{#str}}noncontacts, message{{/str}}</div>
+    {{#noncontacts}}
+        {{> core_message/message_area_contact }}
+    {{/noncontacts}}
+{{/hasnoncontacts}}

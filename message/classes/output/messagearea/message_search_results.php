@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class used to prepare a contact for display.
+ * Contains class used to display message search results.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
@@ -28,48 +28,43 @@ use renderable;
 use templatable;
 
 /**
- * Class to prepare a contact for display.
+ * Class used to display message search results.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class contact implements templatable, renderable {
+class message_search_results implements templatable, renderable {
 
     /**
-     * Maximum length of message to show in left panel.
+     * The id of the user that the contacts belong to.
      */
-    const MAX_MSG_LENGTH = 60;
+    protected $userid;
 
     /**
-     * The contact.
+     * The list of contacts with the.
      */
-    protected $contact;
+    protected $contacts;
 
     /**
      * Constructor.
      *
-     * @param \stdClass $contact
+     * @param int $userid The id of the user the search results belong to
+     * @param \core_message\output\messagearea\contact[] $contacts
      */
-    public function __construct($contact) {
-        $this->contact = $contact;
+    public function __construct($userid, $contacts) {
+        $this->userid = $userid;
+        $this->contacts = $contacts;
     }
 
     public function export_for_template(\renderer_base $output) {
-        $contact = new \stdClass();
-        $contact->userid = $this->contact->userid;
-        $contact->fullname = $this->contact->fullname;
-        $contact->profileimageurl = $this->contact->profileimageurl;
-        $contact->profileimageurlsmall = $this->contact->profileimageurlsmall;
-        $contact->messageid = $this->contact->messageid;
-        if ($this->contact->lastmessage) {
-            $contact->lastmessage = shorten_text($this->contact->lastmessage, self::MAX_MSG_LENGTH);
-        } else {
-            $contact->lastmessage = null;
+        $data = new \stdClass();
+        $data->userid = $this->userid;
+        $data->contacts = array();
+        foreach ($this->contacts as $contact) {
+            $data->contacts[] = $contact->export_for_template($output);
         }
-        $contact->isonline = $this->contact->isonline;
-        $contact->isread = $this->contact->isread;
 
-        return $contact;
+        return $data;
     }
 }

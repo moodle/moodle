@@ -1,14 +1,19 @@
-<div class="searcharea" data-region="search-area">
+<div class="searchtextarea" data-region="search-text-area">
     <form>
-        <label class="accesshide" for="filter{{uniqid}}">{{#str}}search{{/str}}</label>
-        <input data-region="search-box" type="text" id="filter{{uniqid}}" placeholder="{{#str}}search{{/str}}" value="{{search}}">
+        <label class="accesshide" for="searchtext">{{#str}}search{{/str}}</label>
+        <input data-region="search-box" type="text" id="searchtext" placeholder="{{#str}}searchmessages, message{{/str}}">
     </form>
+    <div data-region="search-filter-area" class="searchfilterarea" style="display:none">
+        <div data-region="search-filter" class="searchfilter"></div>
+        <div data-action="search-filter-delete" class="searchfilterdelete">{{#pix}}t/delete{{/pix}}</div>
+    </div>
 </div>
 <div class="contacts" data-region="contacts" data-region-content="conversations" role="tabpanel" id="conversations-tab-panel">
     {{> core_message/message_area_contacts }}
 </div>
-{{! Hidden div to load the other tabs items in via JS when appropriate. }}
+{{! Hidden divs to load the other tab and search panels via JS when appropriate. }}
 <div class="contacts" data-region="contacts" data-region-content="contacts" style="display:none;" role="tabpanel" id="contacts-tab-panel"></div>
+<div class="contacts searcharea" data-region="search-results-area" style="display:none;"></div>
 <div class="row-fluid tabs">
     <div class="span6 tab tabconversations selected" data-action="conversations-view" role="tab" aria-controls="conversations-tab-panel" aria-selected="true" tabindex="0">
         <div class="tabimage">{{#pix}}t/message, moodle{{/pix}}</div>

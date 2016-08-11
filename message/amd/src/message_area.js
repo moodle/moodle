@@ -22,9 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core_message/message_area_contacts', 'core_message/message_area_messages',
-        'core_message/message_area_profile', 'core_message/message_area_tabs',
-        'core_message/message_area_actions'],
-    function($, Contacts, Messages, Profile, Tabs, Actions) {
+        'core_message/message_area_profile', 'core_message/message_area_tabs', 'core_message/message_area_search'],
+    function($, Contacts, Messages, Profile, Tabs, Search) {
 
         /**
          * Messagearea class.
@@ -48,6 +47,7 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
             DELETEMESSAGES: "[data-action='delete-messages']",
             DELETEMESSAGECHECKBOX: "[data-region='delete-message-checkbox']",
+            DELETESEARCHFILTER: "[data-action='search-filter-delete']",
             LASTMESSAGE: '.lastmessage',
             LOADINGICON: '.loading-icon',
             MENU: "[data-region='menu']",
@@ -64,8 +64,12 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             PROFILESENDMESSAGE: "[data-action='profile-send-message']",
             PROFILEUNBLOCKCONTACT: "[data-action='profile-unblock-contact']",
             PROFILEVIEW: "[data-action='profile-view']",
-            SEARCHAREA: "[data-region='search-area']",
             SEARCHBOX: "[data-region='search-box']",
+            SEARCHFILTER: "[data-region='search-filter']",
+            SEARCHFILTERAREA: "[data-region='search-filter-area']",
+            SEARCHPEOPLEINCOURSE : "[data-action='search-people-in-course']",
+            SEARCHRESULTSAREA: "[data-region='search-results-area']",
+            SEARCHTEXTAREA: "[data-region='search-text-area']",
             SELECTEDVIEWPROFILE: "[data-action='view-contact-profile'].selected",
             SELECTEDVIEWCONVERSATION: "[data-action='view-contact-msg'].selected",
             SENDMESSAGE: "[data-action='send-message']",
@@ -91,7 +95,9 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             CONVERSATIONSELECTED: 'conversation-selected',
             CONVERSATIONSSELECTED: 'conversations-selected',
             MESSAGESDELETED: 'messages-deleted',
+            MESSAGESEARCHCANCELED: 'message-search-canceled',
             MESSAGESENT: 'message-sent',
+            PEOPLESEARCHCANCELED: 'people-search-canceled',
             SENDMESSAGE: 'message-send'
         };
 
@@ -106,6 +112,7 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             new Messages(this);
             new Profile(this);
             new Tabs(this);
+            new Search(this);
         };
 
         /**

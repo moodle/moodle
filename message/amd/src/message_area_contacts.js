@@ -73,6 +73,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 customEvents.events.up,
             ]);
 
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESEARCHCANCELED, this._viewConversations.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.PEOPLESEARCHCANCELED, this._viewContacts.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSSELECTED, this._viewContacts.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSSELECTED, this._viewConversations.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSSELECTED, this._viewContacts.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESDELETED, this._deleteConversations.bind(this));
@@ -180,7 +183,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Replace the text.
             user.find(this.messageArea.SELECTORS.LASTMESSAGE).empty().append(text);
             // Ensure user is selected.
-            this._setSelectedUser(userid);
+            this._setSelectedUser("[data-userid='" + userid + "']");
         };
 
         /**
@@ -282,7 +285,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         Contacts.prototype._viewConversation = function(event) {
             if (!this._isDeleting) {
                 var userid = $(event.currentTarget).data('userid');
-                this._setSelectedUser(userid);
+                var messageid = $(event.currentTarget).data('messageid');
+                var selector = "[data-userid='" + userid + "']";
+                // If we have a specific message id then we did a search and the contact may appear in multiple
+                // places - we don't want to highlight them all.
+                if (messageid) {
+                    selector = "[data-messageid='" + messageid + "']";
+                }
+
+                this._setSelectedUser(selector);
                 this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONSELECTED, userid);
                 // Don't highlight the contact because the message region has changed.
                 this.messageArea.find(this.messageArea.SELECTORS.SELECTEDVIEWPROFILE).removeClass('selected');
@@ -298,7 +309,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         Contacts.prototype._viewContact = function(event) {
             if (!this._isDeleting) {
                 var userid = $(event.currentTarget).data('userid');
-                this._setSelectedUser(userid);
+                this._setSelectedUser("[data-userid='" + userid + "']");
                 this.messageArea.trigger(this.messageArea.EVENTS.CONTACTSELECTED, userid);
                 // Don't highlight the conversation because the message region has changed.
                 this.messageArea.find(this.messageArea.SELECTORS.SELECTEDVIEWCONVERSATION).removeClass('selected');
@@ -448,14 +459,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles selecting a contact in the list.
          *
-         * @param {int} userid
+         * @param {String} selector
          * @private
          */
-        Contacts.prototype._setSelectedUser = function(userid) {
+        Contacts.prototype._setSelectedUser = function(selector) {
             // Remove the 'selected' class from any other contact.
             this.messageArea.find(this.messageArea.SELECTORS.CONTACT).removeClass('selected');
             // Set the tab for the user to selected.
-            this.messageArea.find(this.messageArea.SELECTORS.CONTACT + "[data-userid='" + userid + "']").addClass('selected');
+            this.messageArea.find(this.messageArea.SELECTORS.CONTACT + selector).addClass('selected');
         };
 
         /**
@@ -536,14 +547,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Flags the search area as seaching.
          */
         Contacts.prototype._setSearching = function() {
-            $(this.messageArea.SELECTORS.SEARCHAREA).addClass('searching');
+            $(this.messageArea.SELECTORS.SEARCHTEXTAREA).addClass('searching');
         };
 
         /**
          * Flags the search area as seaching.
          */
         Contacts.prototype._clearSearching = function() {
-            $(this.messageArea.SELECTORS.SEARCHAREA).removeClass('searching');
+            $(this.messageArea.SELECTORS.SEARCHTEXTAREA).removeClass('searching');
         };
 
         /**
