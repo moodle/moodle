@@ -53,14 +53,10 @@ class block_calendar_upcoming extends block_base {
 
         } else {
             $courseshown = $this->page->course->id;
-            $this->content->footer = '<div class="gotocal"><a href="'.$CFG->wwwroot.
-                                     '/calendar/view.php?view=upcoming&amp;course='.$courseshown.'">'.
-                                      get_string('gotocalendar', 'calendar').'</a>...</div>';
             $context = context_course::instance($courseshown);
             if (has_any_capability(array('moodle/calendar:manageentries', 'moodle/calendar:manageownentries'), $context)) {
-                $this->content->footer .= '<div class="newevent"><a href="'.$CFG->wwwroot.
-                                          '/calendar/event.php?action=new&amp;course='.$courseshown.'">'.
-                                           get_string('newevent', 'calendar').'</a>...</div>';
+                $this->content->footer = '<div class="newevent"><a href="'.$CFG->wwwroot.
+ +                                          '/calendar/event.php?action=new&amp;course='.$courseshown.'"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> Add a new reminder or event</a></div>';
             }
             if ($courseshown == SITEID) {
                 // Being displayed at site level. This will cause the filter to fall back to auto-detecting
@@ -94,7 +90,7 @@ class block_calendar_upcoming extends block_base {
         }
 
         if (empty($this->content->text)) {
-            $this->content->text = '<div class="post">'. get_string('noupcomingevents', 'calendar').'</div>';
++            $this->content->text = '<div style="text-align:center;color:#ededed;font-size:500%"><i class="fa fa-coffee" aria-hidden="true"></i></div><br><div class="post" style="text-align:center">Time to relax. There have no upcoming reminders or events.</div>';
         }
 
         return $this->content;
