@@ -266,7 +266,8 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         $point = (isset($vals['modgrade_point'])) ? $vals['modgrade_point'] : null;
         $scale = (isset($vals['modgrade_scale'])) ? $vals['modgrade_scale'] : null;
         $rescalegrades = (isset($vals['modgrade_rescalegrades'])) ? $vals['modgrade_rescalegrades'] : null;
-        $return = $this->process_value($type, $scale, $point);
+
+        $return = $this->process_value($type, $scale, $point, $rescalegrades);
         return array($this->getName() => $return, $this->getName() . '_rescalegrades' => $rescalegrades);
     }
 
@@ -276,11 +277,17 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
      * @param  string $type The value of the grade type select box. Can be 'none', 'scale', or 'point'
      * @param  string|int $scale The value of the scale select box.
      * @param  string|int $point The value of the point grade textbox.
+     * @param  string $rescalegrades The value of the rescalegrades select.
      * @return int The resulting value
      */
-    protected function process_value($type='none', $scale=null, $point=null) {
+    protected function process_value($type='none', $scale=null, $point=null, $rescalegrades=null) {
         global $COURSE;
         $val = 0;
+        if ($this->isupdate && $this->hasgrades && $this->canrescale && $this->currentgradetype == 'point' && empty($rescalegrades)) {
+            // If the maxgrade field is disabled with javascript, no value is sent with the form and mform assumes the default.
+            // If the user was forced to choose a rescale option - and they haven't - prevent any changes to the max grade.
+            return $this->currentgrade;
+        }
         switch ($type) {
             case 'point':
                 if ($this->validate_point($point) === true) {
