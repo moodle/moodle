@@ -773,14 +773,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         // Copy activity clipboard..
         echo $this->course_activity_clipboard($course, $displaysection);
         $thissection = $modinfo->get_section_info(0);
-        if ($thissection->summary or !empty($modinfo->sections[0]) or $PAGE->user_is_editing()) {
-            echo $this->start_section_list();
-            echo $this->section_header($thissection, $course, true, $displaysection);
-            echo $this->courserenderer->course_section_cm_list($course, $thissection, $displaysection);
-            echo $this->courserenderer->course_section_add_cm_control($course, 0, $displaysection);
-            echo $this->section_footer();
-            echo $this->end_section_list();
-        }
 
         // Start single-section div
         echo html_writer::start_tag('div', array('class' => 'single-section'));
@@ -790,10 +782,9 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         // Title with section navigation links.
         $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection);
+
         $sectiontitle = '';
-        $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation navigationtitle'));
-        $sectiontitle .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
-        $sectiontitle .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
+        $sectiontitle .= html_writer::start_tag('div', array('class' => 'navigationtitle'));
         // Title attributes
         $classes = 'sectionname';
         if (!$thissection->visible) {
@@ -820,11 +811,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
 
         // Display section bottom navigation.
         $sectionbottomnav = '';
-        $sectionbottomnav .= html_writer::start_tag('div', array('class' => 'section-navigation mdl-bottom'));
-        $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
-        $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
-        $sectionbottomnav .= html_writer::tag('div', $this->section_nav_selection($course, $sections, $displaysection),
-            array('class' => 'mdl-align'));
+        $sectionbottomnav .= html_writer::start_tag('div');
         $sectionbottomnav .= html_writer::end_tag('div');
         echo $sectionbottomnav;
 
