@@ -77,18 +77,6 @@ $stremaildigest  = get_string('emaildigest');
 
 $searchform = forum_search_form($course);
 
-// Retrieve the list of forum digest options for later.
-$digestoptions = forum_get_user_digest_options();
-$digestoptions_selector = new single_select(new moodle_url('/mod/forum/maildigest.php',
-    array(
-        'backtoindex' => 1,
-    )),
-    'maildigest',
-    $digestoptions,
-    null,
-    '');
-$digestoptions_selector->method = 'post';
-
 // Start of the table for General Forums
 
 $generaltable = new html_table();
@@ -115,6 +103,18 @@ if ($can_subscribe) {
 
     $generaltable->head[] = $stremaildigest . ' ' . $OUTPUT->help_icon('emaildigesttype', 'mod_forum');
     $generaltable->align[] = 'center';
+
+    // Retrieve the list of forum digest options for later.
+    $digestoptions = forum_get_user_digest_options();
+    $digestoptions_selector = new single_select(new moodle_url('/mod/forum/maildigest.php',
+        array(
+            'backtoindex' => 1,
+        )),
+        'maildigest',
+        $digestoptions,
+        null,
+        '');
+    $digestoptions_selector->method = 'post';
 }
 
 if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
