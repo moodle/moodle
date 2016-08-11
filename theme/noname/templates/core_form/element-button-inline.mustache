@@ -1,11 +1,15 @@
-    <div class="form-group">
-        <label class="col-md-3 col-form-label {{#element.hideLabel}}sr-only{{/element.hideLabel}}" for="{{element.id}}">
-            {{{label}}} {{{helpbutton}}}
-        </label>
+{{< core_form/element-template-inline }}
+    {{$element}}
         <button {{#element.frozen}}readonly{{/element.frozen}}
                 class="btn btn-secondary"
                 name="{{element.name}}"
-                id="{{element.id}}" >
+                id="{{element.id}}"
+                {{#error}}
+                    autofocus aria-describedby="id_error_{{element.name}}"
+                {{/error}}
+                {{{element.attributes}}}
+                >
                 {{{element.value}}}
         </button>
-    </div>
+    {{/element}}
+{{/ core_form/element-template-inline }}

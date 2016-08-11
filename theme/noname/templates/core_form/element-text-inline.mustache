@@ -1,7 +1,5 @@
-<div class="form-group {{#error}}has-danger{{/error}}">
-    <label class="{{#element.hideLabel}}sr-only{{/element.hideLabel}}" for="{{element.id}}">
-        {{{label}}} {{{helpbutton}}}
-    </label>
+{{< core_form/element-template-inline }}
+    {{$element}}
     <input type="text"
             {{#element.frozen}}readonly{{/element.frozen}}
             class="form-control {{#error}}form-control-danger{{/error}}"
@@ -11,30 +9,7 @@
             size="{{element.size}}"
             {{#error}}
                 autofocus aria-describedby="id_error_{{element.name}}"
-            {{/error}} >
-    <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
-        {{{error}}}
-    </div>
-</div>
-{{#js}}
-require(['jquery', 'core/event'], function($, Event) {
-    var element = document.getElementById('{{element.id}}');
-    $(element).on(Event.Events.FORM_FIELD_VALIDATION, function(event, msg) {
-        event.preventDefault();
-        var parent = $(element).closest('.form-group');
-        var feedback = parent.find('.form-control-feedback');
-        if (msg !== '') {
-            parent.addClass('has-danger');
-            $(element).addClass('form-control-danger');
-            $(element).attr('aria-describedby', $(element).attr('id') + '-feedback');
-            feedback.html(msg);
-            feedback.show();
-        } else {
-            parent.removeClass('has-danger');
-            $(element).removeClass('form-control-danger');
-            $(element).attr('aria-describedby', '');
-            feedback.hide();
-        }
-    });
-});
-{{/js}}
+            {{/error}}
+            {{{element.attributes}}}>
+    {{/element}}
+{{/ core_form/element-template-inline }}

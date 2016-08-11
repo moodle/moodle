@@ -1,15 +1,16 @@
-<div class="form-group row">
-    <label class="col-md-3 col-form-label {{#element.hideLabel}}sr-only{{/element.hideLabel}}" for="{{element.id}}">
-        {{{label}}} {{{helpbutton}}}
-    </label>
-    <div class="col-md-9 form-inline">
+{{< core_form/element-template }}
+    {{$element}}
         <input type="submit" {{#element.frozen}}readonly{{/element.frozen}}
-                class="btn {{^iscancel}}btn-primary{{/iscancel}}{{#iscancel}}btn-secondary{{/iscancel}} m-l-0"
+                class="btn
+                    {{^element.iscancel}}btn-primary{{/element.iscancel}}
+                    {{#element.iscancel}}btn-secondary{{/element.iscancel}}
+                    {{#error}} btn-danger {{/error}}"
                 name="{{element.name}}"
                 id="{{element.id}}"
                 {{#error}}
                     autofocus aria-describedby="id_error_{{element.name}}"
                 {{/error}}
-                value="{{element.value}}">
-    </div>
-</div>
+                value="{{element.value}}"
+                {{{element.attributes}}} >
+    {{/element}}
+{{/ core_form/element-template }}

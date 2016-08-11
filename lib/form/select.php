@@ -26,7 +26,7 @@
  */
 
 require_once('HTML/QuickForm/select.php');
-require_once(__DIR__ . '/../outputcomponents.php');
+require_once('templatable_form_element.php');
 
 /**
  * select type form element
@@ -39,6 +39,11 @@ require_once(__DIR__ . '/../outputcomponents.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_select extends HTML_QuickForm_select implements templatable {
+
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -192,15 +197,7 @@ class MoodleQuickForm_select extends HTML_QuickForm_select implements templatabl
     }
 
     public function export_for_template(renderer_base $output) {
-        $context = [];
-        $context['frozen'] = $this->_flagFrozen;
-        $context['attributes'] = [];
-        foreach ($this->getAttributes() as $name => $value) {
-            $context[$name] = $value;
-            if (!in_array($name, ['id', 'name', 'multiple'])) {
-                $context['attributes'][] = ['name' => $name, 'value' => $value];
-            }
-        }
+        $context = $this->export_for_template_base($output);
 
         $options = [];
         foreach ($this->_options as $option) {
@@ -215,7 +212,6 @@ class MoodleQuickForm_select extends HTML_QuickForm_select implements templatabl
             $options[] = $o;
         }
         $context['options'] = $options;
-        $context['hideLabel'] = $this->_hiddenLabel;
 
         return $context;
     }

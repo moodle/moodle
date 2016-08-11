@@ -40,6 +40,8 @@ require_once(__DIR__ . '/../outputcomponents.php');
  */
 class MoodleQuickForm_button extends HTML_QuickForm_button implements templatable
 {
+    use templatable_form_element;
+
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -85,14 +87,5 @@ class MoodleQuickForm_button extends HTML_QuickForm_button implements templatabl
         } else {
             return 'default';
         }
-    }
-
-    public function export_for_template(renderer_base $output) {
-        $context = [];
-        $context['frozen'] = $this->_flagFrozen;
-        foreach ($this->getAttributes() as $name => $value) {
-            $context[$name] = $value;
-        }
-        return $context;
     }
 }

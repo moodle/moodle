@@ -1,13 +1,9 @@
-<div class="form-group row {{#error}}has-danger{{/error}}">
-    <label class="col-md-3 col-form-label" for="{{element.id}}">
-        {{{label}}} {{{helpbutton}}}
-    </label>
-    <div class="col-md-9 form-inline fdate_time_selector">
+{{< core_form/element-template }}
+    {{$element}}
+        <div class="fdate_time_selector">
         {{#element.elements}}
             {{{.}}}
         {{/element.elements}}
-    </div>
-    <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
-        {{{error}}}
-    </div>
-</div>
+        </div>
+    {{/element}}
+{{/ core_form/element-template }}

@@ -26,7 +26,7 @@
  */
 
 require_once("HTML/QuickForm/group.php");
-require_once(__DIR__ . '/../outputcomponents.php');
+require_once('templatable_form_element.php');
 
 /**
  * HTML class for a form element group
@@ -39,6 +39,10 @@ require_once(__DIR__ . '/../outputcomponents.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -153,15 +157,13 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
 
     public function export_for_template(renderer_base $output) {
         global $OUTPUT;
+
+        $context = $this->export_for_template_base($output);
+
         $this->_renderedfromtemplate = true;
 
         include_once('HTML/QuickForm/Renderer/Default.php');
 
-        $context = [];
-        $context['frozen'] = $this->_flagFrozen;
-        foreach ($this->getAttributes() as $name => $value) {
-            $context[$name] = $value;
-        }
         $elements = [];
         foreach ($this->_elements as $key => $element) {
             $element->_generateId();

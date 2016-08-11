@@ -1,16 +1,19 @@
-<label class="form-check-inline {{#error}}has-danger{{/error}}">
-<input type="checkbox" name="{{element.name}}"
-    id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
-    {{#element.frozen}}readonly disabled{{/element.frozen}}
-    {{#error}}
-        autofocus aria-describedby="id_error_{{element.name}}"
-    {{/error}}
-    {{{element.attributes}}} >
-    {{{label}}} {{{helpbutton}}}
-</label>
-<span class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
-    {{{error}}}
-</span>
+<div class="form-group row {{#error}}has-danger{{/error}}">
+    <div class="col-md-9 push-md-3 checkbox">
+        <label>
+        <input type="radio" name="{{element.name}}"
+            id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
+            {{#element.frozen}}readonly disabled{{/element.frozen}}
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}} {{{element.attributes}}} >
+            {{{label}}} {{{helpbutton}}}
+        </label>
+        <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+            {{{error}}}
+        </div>
+    </div>
+</div>
 {{#js}}
 require(['jquery', 'core/event'], function($, Event) {
     var element = document.getElementById('{{element.id}}');
