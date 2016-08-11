@@ -89,30 +89,33 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
      *
      * This renderer is needed to enable the Bootstrap style navigation.
      */
+    /**
+     * @param custom_menu $menu
+     * @return string
+     */
     protected function render_custom_menu(custom_menu $menu) {
         global $CFG;
+        // $mycourses = $this->page->navigation->get('mycourses');
+      //  if (isloggedin() ) {
+        //    $branchlabel = get_string('mycourses2');
+          //  $branchurl   = new moodle_url('/course/index.php');
+        //    $branchtitle = $branchlabel;
+        //    $branchsort  = -10;
+        //    $branch = $menu->add($branchlabel, $branchurl, $branchtitle, $branchsort);
 
-        $langs = get_string_manager()->get_list_of_translations();
-        $haslangmenu = $this->lang_menu() != '';
+        //    foreach ($mycourses->children as $coursenode) {
+         //       $branch->add($coursenode->get_content(), $coursenode->action, $coursenode->get_title());
 
-        if (!$menu->has_children() && !$haslangmenu) {
-            return '';
-        }
+         //   }
+        //}
 
-        if ($haslangmenu) {
-            $strlang =  get_string('language');
-            $currentlang = current_language();
-            if (isset($langs[$currentlang])) {
-                $currentlang = $langs[$currentlang];
-            } else {
-                $currentlang = $strlang;
+
+if (isloggedin() && !isguestuser() && $mycourses = enrol_get_my_courses(NULL, 'visible DESC, fullname ASC')) {
+            $mycoursesmenu = $menu->add(get_string('mycourses2'), new moodle_url('#'), get_string('mycourses'), -10);// lower numbers = higher priority e.g. move this item to the left on the Custom Menu
+            foreach ($mycourses as $mycourse) {
+                $mycoursesmenu->add($mycourse->fullname, new moodle_url('/course/view.php', array('id' => $mycourse->id)), $mycourse->fullname);
             }
-            $this->language = $menu->add($currentlang, new moodle_url('#'), $strlang, 10000);
-            foreach ($langs as $langtype => $langname) {
-                $this->language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
-            }
         }
-
         $content = '<ul class="nav">';
         foreach ($menu->get_children() as $item) {
             $content .= $this->render_custom_menu_item($item, 1);
