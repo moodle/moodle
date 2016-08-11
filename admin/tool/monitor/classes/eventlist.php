@@ -67,7 +67,7 @@ class eventlist {
                 $ref = new \ReflectionClass($classname);
                 // Ignore abstracts.
                 if (!$ref->isAbstract() && $file != 'manager') {
-                    $eventinformation[$classname] = $classname::get_name();
+                    $eventinformation[$classname] = $classname::get_name_with_info();
                 }
             }
         }
@@ -109,9 +109,9 @@ class eventlist {
                         $ref = new \ReflectionClass($plugineventname);
                         if (!$ref->isAbstract() && $plugin != 'legacy') {
                             if ($withoutcomponent) {
-                                $noncorepluginlist[$plugineventname] = $plugineventname::get_name();
+                                $noncorepluginlist[$plugineventname] = $plugineventname::get_name_with_info();
                             } else {
-                                $noncorepluginlist[$plugintype . '_' . $plugin][$plugineventname] = $plugineventname::get_name();
+                                $noncorepluginlist[$plugintype . '_' . $plugin][$plugineventname] = $plugineventname::get_name_with_info();
                             }
                         }
                     }

@@ -306,6 +306,26 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
+     * Returns the event name complete with metadata information.
+     *
+     * This includes information about whether the event has been deprecated so should not be used in all situations -
+     * for example within reports themselves.
+     *
+     * If overriding this function, please ensure that you call the parent version too.
+     *
+     * @return string
+     */
+    public static function get_name_with_info() {
+        $return = static::get_name();
+
+        if (static::is_deprecated()) {
+            $return = get_string('deprecatedeventname', 'core', $return);
+        }
+
+        return $return;
+    }
+
+    /**
      * Returns non-localised event description with id's for admin use only.
      *
      * @return string
@@ -960,5 +980,18 @@ abstract class base implements \IteratorAggregate {
      */
     public function getIterator() {
         return new \ArrayIterator($this->data);
+    }
+
+    /**
+     * Whether this event has been marked as deprecated.
+     *
+     * Events cannot be deprecated in the normal fashion as they must remain to support historical data.
+     * Once they are deprecated, there is no way to trigger the event, so it does not make sense to list it in some
+     * parts of the UI (e.g. Event Monitor).
+     *
+     * @return boolean
+     */
+    public static function is_deprecated() {
+        return false;
     }
 }

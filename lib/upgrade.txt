@@ -52,6 +52,9 @@ information provided here is intended especially for developers.
 * All file_packer implementations now accept an additional parameter to allow a simple boolean return value instead of
   an array of individual file statuses.
 * "I set the field "field_string" to multiline:" now end with colon (:), as PyStrings is supposed to end with ":"
+* New functions to support deprecation of events have been added to the base event. See MDL-46214 for further details.
+* A new function `get_name_with_info` has been added to the base event. This function adds information about event
+  deprecations and should be used where this information is relevant.
 
 === 3.1 ===
 
