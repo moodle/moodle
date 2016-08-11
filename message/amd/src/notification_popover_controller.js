@@ -431,17 +431,19 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             .done(function() {
                 // If everything executed correctly then update the DOM.
                 if (ischecked) {
-                    button.attr('aria-checked', false)
+                    button.attr('aria-checked', false);
                     button.attr('data-original-title', disablestring);
                     $(document).trigger('messageprefs:enableall');
                 } else {
-                    button.attr('aria-checked', true)
+                    button.attr('aria-checked', true);
                     button.attr('data-original-title', enablestring);
                     $(document).trigger('messageprefs:disableall');
                 }
             })
             .fail(DebugNotification.exception)
-            .always(function() { button.removeClass('loading') });
+            .always(function() {
+                button.removeClass('loading');
+            });
     };
 
     /**

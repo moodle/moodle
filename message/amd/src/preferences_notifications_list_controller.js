@@ -109,7 +109,7 @@ define(['jquery', 'core/custom_interaction_events', 'core_message/notification_p
         $(document).on('messageprefs:enableall', function() {
             this.setEnabled();
         }.bind(this));
-    }
+    };
 
     return PreferencesController;
 });

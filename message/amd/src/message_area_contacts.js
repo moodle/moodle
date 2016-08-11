@@ -92,10 +92,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.VIEWPROFILE,
                 this._viewContact.bind(this));
 
-            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.CONTACT, this._selectPreviousContact.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.CONTACT, this._selectNextContact.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.VIEWCONVERSATION, this._selectPreviousConversation.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.VIEWCONVERSATION, this._selectNextConversation.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.CONTACT,
+                this._selectPreviousContact.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.CONTACT,
+                this._selectNextContact.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.VIEWCONVERSATION,
+                this._selectPreviousConversation.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.VIEWCONVERSATION,
+                this._selectNextConversation.bind(this));
 
             this.messageArea.onDelegateEvent('focus', this.messageArea.SELECTORS.SEARCHBOX, this._setSearching.bind(this));
             this.messageArea.onDelegateEvent('blur', this.messageArea.SELECTORS.SEARCHBOX, this._clearSearching.bind(this));

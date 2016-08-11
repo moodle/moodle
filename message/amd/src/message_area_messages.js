@@ -65,15 +65,21 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSELECTED, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, this._chooseMessagesToDelete.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SENDMESSAGE, this._sendMessage.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.STARTDELETEMESSAGES, this._startDeleting.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.DELETEMESSAGES, this._deleteMessages.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SENDMESSAGE,
+                this._sendMessage.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.STARTDELETEMESSAGES,
+                this._startDeleting.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.DELETEMESSAGES,
+                this._deleteMessages.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.CANCELDELETEMESSAGES,
                 this._cancelMessagesToDelete.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.MESSAGE, this._toggleMessage.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.MESSAGE,
+                this._toggleMessage.bind(this));
 
-            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.MESSAGE, this._selectPreviousMessage.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.MESSAGE, this._selectNextMessage.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.MESSAGE,
+                this._selectPreviousMessage.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.MESSAGE,
+                this._selectNextMessage.bind(this));
 
             this.messageArea.onDelegateEvent('focus', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._setMessaging.bind(this));
             this.messageArea.onDelegateEvent('blur', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._clearMessaging.bind(this));
@@ -474,10 +480,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Check or uncheck the message if the message area is in editing mode.
          *
          * @params {event} e The jquery event
-         * @params {object} data Additional event data
          * @private
          */
-        Messages.prototype._toggleMessage = function(e, data) {
+        Messages.prototype._toggleMessage = function(e) {
             if (!this._isEditing()) {
                 return;
             }
