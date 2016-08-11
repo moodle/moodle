@@ -7345,7 +7345,8 @@ body.path-question-type .mform fieldset.hidden {
   float: right;
 }
 .popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions > * {
-  margin-left: 5px;
+  margin-left: 10px;
+  min-width: 20px;
 }
 .popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .loading-icon {
   display: none;
@@ -7354,7 +7355,8 @@ body.path-question-type .mform fieldset.hidden {
 }
 .popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions label {
   display: inline-block;
-  margin: 0;
+  text-align: center;
+  margin-bottom: 0;
 }
 .popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions [role="checkbox"].loading .loading-icon {
   display: inline-block;
@@ -7380,7 +7382,7 @@ body.path-question-type .mform fieldset.hidden {
   width: 100%;
   overflow-y: auto;
 }
-.popover-region .popover-region-container .popover-region-content-container .loading-icon {
+.popover-region .popover-region-container .popover-region-content-container > .loading-icon {
   display: none;
   text-align: center;
   padding: 5px;
@@ -7391,7 +7393,7 @@ body.path-question-type .mform fieldset.hidden {
   text-align: center;
   padding: 10px;
 }
-.popover-region .popover-region-container .popover-region-content-container.loading .loading-icon {
+.popover-region .popover-region-container .popover-region-content-container.loading > .loading-icon {
   display: block;
 }
 .popover-region .popover-region-container .popover-region-content-container.loading .empty-message {
@@ -7481,6 +7483,7 @@ body.path-question-type .mform fieldset.hidden {
   vertical-align: middle;
   cursor: pointer;
   overflow: hidden;
+  background-color: #8c8c8c;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .fancy-toggle .slider-container {
   width: 100%;
@@ -7510,7 +7513,6 @@ body.path-question-type .mform fieldset.hidden {
   display: inline-block;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .fancy-toggle.on {
-  background-color: green;
   color: #fff;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .fancy-toggle.on .slider-container {
@@ -7524,7 +7526,6 @@ body.path-question-type .mform fieldset.hidden {
   display: none;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .fancy-toggle.off {
-  background-color: red;
   color: #fff;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-header-container .popover-region-header-actions .fancy-toggle.off .slider-container {
@@ -7672,6 +7673,7 @@ body.path-question-type .mform fieldset.hidden {
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container .content-item-controls .block-button .loading-icon {
   padding: 0;
+  display: none;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container .content-item-controls .block-button.loading .loading-icon {
   display: inline-block;
@@ -7727,9 +7729,6 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container.expanded .content-item-controls .expand-buttons .hide-button {
   display: block;
 }
-.popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container:last-child {
-  border-bottom: none;
-}
 .popover-region-notifications.unread-only .popover-region-container .popover-region-content-container .popover-region-content .all-notifications {
   opacity: 0;
   visibility: hidden;
@@ -7771,7 +7770,7 @@ body.path-question-type .mform fieldset.hidden {
   border-bottom: 1px solid #ddd;
   box-sizing: border-box;
   padding: 5px;
-  height: 85px;
+  height: 66px;
   cursor: pointer;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container:hover {
@@ -7816,11 +7815,8 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .content-item-body p {
   margin: 0;
 }
-.popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container:last-child {
-  border-bottom: none;
-}
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread {
-  background-color: #effaff;
+  background-color: #f1f1f1;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container.loading .popover-region-content .messages:empty + .empty-message {
   display: none;
