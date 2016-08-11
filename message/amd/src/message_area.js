@@ -153,15 +153,6 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
         };
 
         /**
-         * Returns the ID of the logged in user.
-         *
-         * @returns {int} The user id
-         */
-        Messagearea.prototype.getLoggedInUserId = function() {
-            return this.node.data('loggedinuserid');
-        };
-
-        /**
          * Returns the ID of the user whose message area we are viewing.
          *
          * @returns {int} The user id
