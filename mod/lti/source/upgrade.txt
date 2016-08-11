@@ -1,7 +1,0 @@
-This files describes API changes in /mod/lti/source/* - LTI source plugins,
-information provided here is intended especially for developers.
-
-=== 3.1 ===
-
-* Callback get_types() is deprecated, instead ltisource plugins can define callback get_shortcuts().
-  See source code for lti_get_shortcuts() and get_module_metadata().
