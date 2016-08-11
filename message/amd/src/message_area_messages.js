@@ -211,6 +211,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Messages.prototype._sendMessage = function() {
             var text = this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val();
+
+            // Do not do anything if it is empty.
+            if (text.trim() === '') {
+                return;
+            }
+
             // Call the web service to save our message.
             var promises = ajax.call([{
                 methodname: 'core_message_send_instant_messages',
