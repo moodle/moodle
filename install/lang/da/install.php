@@ -41,6 +41,7 @@ $string['databasehost'] = 'Databasevært';
 $string['databasename'] = 'Databasenavn';
 $string['databasetypehead'] = 'Vælg databasedriver';
 $string['dataroot'] = 'Datamappe';
+$string['datarootpermission'] = 'Rettighed til data mapper';
 $string['dbprefix'] = 'Præfix for tabeller';
 $string['dirroot'] = 'Moodle-mappe';
 $string['environmenthead'] = 'Kontrollerer din serveropsætning...';
