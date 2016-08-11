@@ -4405,6 +4405,22 @@ EOD;
         ]);
     }
 
+    /**
+     * Renders the login form.
+     *
+     * @param \core\output\login_form $form The renderable.
+     * @return string
+     */
+    public function render_login(\core\output\login $form) {
+        $context = $form->export_for_template($this);
+
+        // Override because rendering is not supported in template yet.
+        $context->cookieshelpiconformatted = $this->help_icon('cookiesenabled');
+        $context->errorformatted = $this->error_text($context->error);
+
+        return $this->render_from_template('core/login_form', $context);
+    }
+
 }
 
 /**
