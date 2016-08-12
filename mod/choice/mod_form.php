@@ -34,6 +34,12 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'allowupdate', get_string("allowupdate", "choice"));
 
         $mform->addElement('selectyesno', 'allowmultiple', get_string('allowmultiple', 'choice'));
+        if ($this->_instance) {
+            if ($DB->count_records('choice_answers', array('choiceid' => $this->_instance)) > 0) {
+                // Prevent user from toggeling the number of allowed answers once there are submissions.
+                $mform->freeze('allowmultiple');
+            }
+        }
 
         $mform->addElement('selectyesno', 'limitanswers', get_string('limitanswers', 'choice'));
         $mform->addHelpButton('limitanswers', 'limitanswers', 'choice');
