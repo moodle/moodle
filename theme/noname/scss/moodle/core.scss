@@ -381,77 +381,17 @@ a.skip:active {
 }
 
 // Login
-.loginbox {
-    margin: 15px;
-    overflow: visible;
-}
-.loginbox.twocolumns {
-    margin: 15px;
-}
-.loginbox h2,
-.loginbox .subcontent {
-    margin: 5px;
-    padding: 10px;
-    text-align: center;
-}
-.loginbox .loginpanel .desc {
-    margin: 0;
-    padding: 0;
-    margin-bottom: 5px;
-    margin-top:15px;
-}
-.loginbox .signuppanel .subcontent {
-    text-align: left;
-}
-.loginbox .loginsub {
-    margin-left: 0;
-    margin-right: 0;
-}
-.loginbox .guestsub,
-.loginbox .forgotsub,
-.loginbox .potentialidps {
-    margin: 5px 12%;
-}
-.loginbox .potentialidps .potentialidplist {
-    margin-left: 40%;
-}
-.loginbox .potentialidps .potentialidplist div {
-    text-align: left;
-}
-.loginbox .loginform {
-    margin-top: 1em;
-    text-align: left;
-}
-.loginbox .loginform .form-label {
-    float: left;
-    text-align: right;
-    width: 49%;
-    white-space: nowrap;
-}
-.loginbox .loginform .form-input {
-    float: right;
-    width: 50%;
-}
-.loginbox .loginform .form-input input {
-    width: 6em;
-}
-.loginbox .signupform {
-    margin-top: 1em;
-    text-align: center;
-}
-.loginbox.twocolumns .loginpanel,
-.loginbox.twocolumns .signuppanel {
-    width: 48%;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    display: block;
-    float: left;
-    margin-left: 2.76243%;
-    min-height: 30px;
-    margin-bottom: -2000px;
-    padding-bottom: 2000px;
-//  @include box-sizing(border-box);
+.login-page {
+    [name="username"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    [type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
 }
 
 // Notes
