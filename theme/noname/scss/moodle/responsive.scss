@@ -82,15 +82,6 @@
             padding-right: 6px;
         }
     }
-    // Login page.
-    .loginbox.twocolumns .loginpanel {
-        margin-left: 0;
-    }
-    .loginbox.twocolumns .loginpanel,
-    .loginbox.twocolumns .signuppanel {
-        width: 48.717948717948715%;
-       *width: 48.664757228587014%;
-   }
     // Wider form labels.
     .form-item .form-label,
     .mform .fitem div.fitemtitle,
@@ -141,15 +132,6 @@
 }
 
 @media (min-width: 768px) and (max-width: 979px) {
-    // Login page.
-    .loginbox.twocolumns .loginpanel {
-          margin-left: 0;
-    }
-    .loginbox.twocolumns .loginpanel,
-    .loginbox.twocolumns .signuppanel {
-        width: 48.61878453038674%;
-        *width: 48.56559304102504%;
-    }
     // Core empty block regions.
     @mixin fluid-span ($columns) {
         @include fluid-span-full($columns, $fluidGridColumnWidth768, $fluidGridGutterWidth768);
@@ -168,15 +150,7 @@
 }
 
 @media (max-width: 767px) {
-     .loginbox.twocolumns .loginpanel,
-     .loginbox.twocolumns .signuppanel {
-         display: block;
-         float: none;
-         width: 100%;
-         margin-left: 0;
-         @include box-sizing(border-box);
-     }
-     #page-mod-quiz-edit div.quizcontents,
+    #page-mod-quiz-edit div.quizcontents,
     .questionbankwindow.block {
         width: 100%;
         float: none;

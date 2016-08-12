@@ -159,16 +159,6 @@ img.icon-pre {
     background-image: none;
 }
 
-// Weird big margins on login page
-.loginbox.twocolumns,
-.loginbox.twocolumns {
-    .signuppanel,
-    .loginpanel {
-        padding: 0px;
-        margin: 0px;
-    }
-}
-
 //Bootstrap needs tooltips to be specified. Moodle does not use this
 .tooltip {
     opacity: 1;

@@ -142,7 +142,7 @@ class login implements renderable, templatable {
         $data->cookieshelpicon = $this->cookieshelpicon->export_for_template($output);
         $data->error = $this->error;
         $data->forgotpasswordurl = $this->forgotpasswordurl->out(false);
-        $data->hasidentityproviders = !empty($this->idps);
+        $data->hasidentityproviders = !empty($this->identityproviders);
         $data->hasinstructions = !empty($this->instructions);
         $data->identityproviders = $identityproviders;
         list($data->instructions, $data->instructionsformat) = external_format_text($this->instructions, FORMAT_MOODLE,
@@ -150,7 +150,7 @@ class login implements renderable, templatable {
         $data->loginurl = $this->loginurl->out(false);
         $data->rememberusername = $this->rememberusername;
         $data->passwordautocomplete = $this->passwordautocomplete;
-        $data->signupurl = $this->loginurl->out(false);
+        $data->signupurl = $this->signupurl->out(false);
 
         return $data;
     }
