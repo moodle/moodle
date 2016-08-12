@@ -64,6 +64,22 @@ class contacts implements templatable, renderable {
         $this->contacts = $contacts;
     }
 
+    /**
+     * Get the list of contacts.
+     */
+    public function get_contacts() {
+        return $this->contacts;
+    }
+
+    /**
+     * Set the other user id.
+     *
+     * @param {int} $otheruserid The id of the other user
+     */
+    public function set_otheruserid($otheruserid) {
+        $this->otheruserid = $otheruserid;
+    }
+
     public function export_for_template(\renderer_base $output) {
         $data = new \stdClass();
         $data->userid = $this->userid;

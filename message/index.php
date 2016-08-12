@@ -245,7 +245,17 @@ $settings->make_active();
 $renderer = $PAGE->get_renderer('core_message');
 if (!$user2realuser) {
     $conversations = \core_message\api::get_conversations($user1->id, 0, 0, 20);
-    $messages = null;
+    $contacts = $conversations->get_contacts();
+
+    if (!empty($contacts)) {
+        // If there are conversations then render the most recent one by default.
+        $contact = reset($contacts);
+        $otheruserid = $contact->get_contact()->userid;
+        $conversations->set_otheruserid($otheruserid);
+        $messages = \core_message\api::get_messages($user1->id, $otheruserid);
+    } else {
+        $messages = null;
+    }
 } else {
     $conversations = \core_message\api::get_conversations($user1->id, $user2->id, 0, 20);
     $messages = \core_message\api::get_messages($user1->id, $user2->id);

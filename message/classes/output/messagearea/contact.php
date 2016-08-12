@@ -55,6 +55,13 @@ class contact implements templatable, renderable {
         $this->contact = $contact;
     }
 
+    /**
+     * Get the user id for this contact.
+     */
+    public function get_contact() {
+        return $this->contact;
+    }
+
     public function export_for_template(\renderer_base $output) {
         $contact = new \stdClass();
         $contact->userid = $this->contact->userid;
