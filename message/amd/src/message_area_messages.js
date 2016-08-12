@@ -25,6 +25,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         'core/auto_rows', 'core_message/message_area_actions'],
     function($, ajax, templates, notification, customEvents, AutoRows, Actions) {
 
+        var MESSAGES_AREA_DEFAULT_HEIGHT = 500;
+        var MESSAGES_RESPONSE_DEFAULT_HEIGHT = 50;
+
         /**
          * Messages class.
          *
@@ -83,6 +86,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             this.messageArea.onDelegateEvent('focus', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._setMessaging.bind(this));
             this.messageArea.onDelegateEvent('blur', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._clearMessaging.bind(this));
+
+            $(document).on(AutoRows.events.ROW_CHANGE, this._adjustMessagesAreaHeight.bind(this));
         };
 
         /**
@@ -506,6 +511,24 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             } else {
                 message.attr('aria-checked', 'true');
             }
+        };
+
+        /**
+         * Adjust the height of the messages area to match the changed height of
+         * the response area.
+         *
+         * @params {event} e The jquery event
+         * @private
+         */
+        Messages.prototype._adjustMessagesAreaHeight = function(e) {
+            var messagesArea = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES);
+            var messagesResponse = this.messageArea.find(this.messageArea.SELECTORS.MESSAGERESPONSE);
+
+            var currentMessageResponseHeight = messagesResponse.outerHeight();
+            var diffResponseHeight = currentMessageResponseHeight - MESSAGES_RESPONSE_DEFAULT_HEIGHT;
+            var newMessagesAreaHeight = MESSAGES_AREA_DEFAULT_HEIGHT - diffResponseHeight;
+
+            messagesArea.outerHeight(newMessagesAreaHeight);
         };
 
         return Messages;
