@@ -143,7 +143,6 @@ define(['core/custom_interaction_events'], function(CustomEvents) {
         tabselect.addClass('selected');
         tabselect.attr('aria-selected', 'true');
         tabselect.attr('tabindex', '0');
-        tabselect.focus();
     };
 
     /**
@@ -154,18 +153,20 @@ define(['core/custom_interaction_events'], function(CustomEvents) {
      * @private
      */
     Tabs.prototype._toggleTabs = function(e, data) {
-       var activeTab = this.messageArea.find(this.messageArea.SELECTORS.ACTIVECONTACTSTAB);
+        var activeTab = this.messageArea.find(this.messageArea.SELECTORS.ACTIVECONTACTSTAB);
 
-       if (activeTab.is(this.messageArea.SELECTORS.VIEWCONVERSATIONS)) {
+        if (activeTab.is(this.messageArea.SELECTORS.VIEWCONVERSATIONS)) {
             this._viewContacts();
-       } else {
+        } else {
             this._viewConversations();
-       }
+        }
 
-       e.preventDefault();
-       e.stopPropagation();
-       data.originalEvent.preventDefault();
-       data.originalEvent.stopPropagation();
+        this.messageArea.find(this.messageArea.SELECTORS.ACTIVECONTACTSTAB).focus();
+
+        e.preventDefault();
+        e.stopPropagation();
+        data.originalEvent.preventDefault();
+        data.originalEvent.stopPropagation();
     };
 
     return Tabs;

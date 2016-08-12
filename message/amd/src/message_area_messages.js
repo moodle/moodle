@@ -60,6 +60,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 customEvents.events.activate,
                 customEvents.events.up,
                 customEvents.events.down,
+                customEvents.events.enter,
             ]);
 
             AutoRows.init(this.messageArea.node);
@@ -86,6 +87,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             this.messageArea.onDelegateEvent('focus', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._setMessaging.bind(this));
             this.messageArea.onDelegateEvent('blur', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._clearMessaging.bind(this));
+
+            this.messageArea.onDelegateEvent(customEvents.events.enter, this.messageArea.SELECTORS.SENDMESSAGETEXT,
+                this._sendMessageHandler.bind(this));
 
             $(document).on(AutoRows.events.ROW_CHANGE, this._adjustMessagesAreaHeight.bind(this));
         };
@@ -529,6 +533,19 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             var newMessagesAreaHeight = MESSAGES_AREA_DEFAULT_HEIGHT - diffResponseHeight;
 
             messagesArea.outerHeight(newMessagesAreaHeight);
+        };
+
+        /**
+         * Handle the event that triggers sending a message from the messages area.
+         *
+         * @params {event} e The jquery event
+         * @params {object} data Additional event data
+         * @private
+         */
+        Messages.prototype._sendMessageHandler = function(e, data) {
+            data.originalEvent.preventDefault();
+
+            this._sendMessage();
         };
 
         return Messages;
