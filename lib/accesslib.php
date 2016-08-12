@@ -7277,3 +7277,168 @@ function get_suspended_userids(context $context, $usecache = false) {
 
     return $susers;
 }
+
+/**
+ * Gets sql for finding users with a capability in the given context
+ *
+ * @param context $context
+ * @param string $capability
+ * @return array($sql, $params)
+ */
+function get_with_capability_sql(context $context, $capability) {
+    static $i = 0;
+    $i++;
+    $prefix = 'cu' . $i . '_';
+
+    $capjoin = get_with_capability_join($context, $capability, $prefix . 'u.id');
+
+    $sql = "SELECT DISTINCT {$prefix}u.id
+              FROM {user} {$prefix}u
+            $capjoin->joins
+             WHERE {$prefix}u.deleted = 0 AND $capjoin->wheres";
+
+    return array($sql, $capjoin->params);
+}
+
+/**
+ * Gets sql joins for finding users with a capability in the given context
+ *
+ * @param context $context
+ * @param string $capability
+ * @param string $useridcolumn e.g. u.id
+ * @return \core\dml\sql_join Contains joins, wheres, params
+ */
+function get_with_capability_join(context $context, $capability, $useridcolumn) {
+    global $DB, $CFG;
+
+    // Use unique prefix just in case somebody makes some SQL magic with the result.
+    static $i = 0;
+    $i++;
+    $prefix = 'eu' . $i . '_';
+
+    // First find the course context.
+    $coursecontext = $context->get_course_context();
+
+    $isfrontpage = ($coursecontext->instanceid == SITEID);
+
+    $joins = array();
+    $wheres = array();
+    $params = array();
+
+    list($contextids, $contextpaths) = get_context_info_list($context);
+
+    list($incontexts, $cparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
+    $cparams['cap'] = $capability;
+
+    $defs = array();
+    $sql = "SELECT rc.id, rc.roleid, rc.permission, ctx.path
+              FROM {role_capabilities} rc
+              JOIN {context} ctx on rc.contextid = ctx.id
+             WHERE rc.contextid $incontexts AND rc.capability = :cap";
+    $rcs = $DB->get_records_sql($sql, $cparams);
+    foreach ($rcs as $rc) {
+        $defs[$rc->path][$rc->roleid] = $rc->permission;
+    }
+
+    $access = array();
+    if (!empty($defs)) {
+        foreach ($contextpaths as $path) {
+            if (empty($defs[$path])) {
+                continue;
+            }
+            foreach ($defs[$path] as $roleid => $perm) {
+                if ($perm == CAP_PROHIBIT) {
+                    $access[$roleid] = CAP_PROHIBIT;
+                    continue;
+                }
+                if (!isset($access[$roleid])) {
+                    $access[$roleid] = (int) $perm;
+                }
+            }
+        }
+    }
+
+    unset($defs);
+
+    // Make lists of roles that are needed and prohibited.
+    $needed = array(); // One of these is enough.
+    $prohibited = array(); // Must not have any of these.
+    foreach ($access as $roleid => $perm) {
+        if ($perm == CAP_PROHIBIT) {
+            unset($needed[$roleid]);
+            $prohibited[$roleid] = true;
+        } else {
+            if ($perm == CAP_ALLOW and empty($prohibited[$roleid])) {
+                $needed[$roleid] = true;
+            }
+        }
+    }
+
+    $defaultuserroleid = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
+    $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
+
+    $nobody = false;
+
+    if ($isfrontpage) {
+        if (!empty($prohibited[$defaultuserroleid]) or !empty($prohibited[$defaultfrontpageroleid])) {
+            $nobody = true;
+        } else {
+            if (!empty($needed[$defaultuserroleid]) or !empty($needed[$defaultfrontpageroleid])) {
+                // Everybody not having prohibit has the capability.
+                $needed = array();
+            } else {
+                if (empty($needed)) {
+                    $nobody = true;
+                }
+            }
+        }
+    } else {
+        if (!empty($prohibited[$defaultuserroleid])) {
+            $nobody = true;
+        } else {
+            if (!empty($needed[$defaultuserroleid])) {
+                // Everybody not having prohibit has the capability.
+                $needed = array();
+            } else {
+                if (empty($needed)) {
+                    $nobody = true;
+                }
+            }
+        }
+    }
+
+    if ($nobody) {
+        // Nobody can match so return some SQL that does not return any results.
+        $wheres[] = "1 = 2";
+
+    } else {
+
+        if ($needed) {
+            $ctxids = implode(',', $contextids);
+            $roleids = implode(',', array_keys($needed));
+            $joins[] = "JOIN {role_assignments} {$prefix}ra3
+                    ON ({$prefix}ra3.userid = $useridcolumn
+                    AND {$prefix}ra3.roleid IN ($roleids)
+                    AND {$prefix}ra3.contextid IN ($ctxids))";
+        }
+
+        if ($prohibited) {
+            $ctxids = implode(',', $contextids);
+            $roleids = implode(',', array_keys($prohibited));
+            $joins[] = "LEFT JOIN {role_assignments} {$prefix}ra4
+                    ON ({$prefix}ra4.userid = $useridcolumn
+                    AND {$prefix}ra4.roleid IN ($roleids)
+                    AND {$prefix}ra4.contextid IN ($ctxids))";
+            $wheres[] = "{$prefix}ra4.id IS NULL";
+        }
+
+    }
+
+    $wheres[] = "$useridcolumn <> :{$prefix}guestid";
+    $params["{$prefix}guestid"] = $CFG->siteguest;
+
+    $joins = implode("\n", $joins);
+    $wheres = "(" . implode(" AND ", $wheres) . ")";
+
+    return new \core\dml\sql_join($joins, $wheres, $params);
+}

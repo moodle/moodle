@@ -1071,9 +1071,6 @@ function enrol_accessing_via_instance(stdClass $instance) {
  *
  * Since 2.2 the result for active enrolments and current user are cached.
  *
- * @package   core_enrol
- * @category  access
- *
  * @param context $context
  * @param int|stdClass $user if null $USER is used, otherwise user object or id expected
  * @param string $withcapability extra capability name
@@ -1083,10 +1080,10 @@ function enrol_accessing_via_instance(stdClass $instance) {
 function is_enrolled(context $context, $user = null, $withcapability = '', $onlyactive = false) {
     global $USER, $DB;
 
-    // first find the course context
+    // First find the course context.
     $coursecontext = $context->get_course_context();
 
-    // make sure there is a real user specified
+    // Make sure there is a real user specified.
     if ($user === null) {
         $userid = isset($USER->id) ? $USER->id : 0;
     } else {
@@ -1094,17 +1091,16 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
     }
 
     if (empty($userid)) {
-        // not-logged-in!
+        // Not-logged-in!
         return false;
     } else if (isguestuser($userid)) {
-        // guest account can not be enrolled anywhere
+        // Guest account can not be enrolled anywhere.
         return false;
     }
 
-    if ($coursecontext->instanceid == SITEID) {
-        // everybody participates on frontpage
-    } else {
-        // try cached info first - the enrolled flag is set only when active enrolment present
+    // Note everybody participates on frontpage, so for other contexts...
+    if ($coursecontext->instanceid != SITEID) {
+        // Try cached info first - the enrolled flag is set only when active enrolment present.
         if ($USER->id == $userid) {
             $coursecontext->reload_if_dirty();
             if (isset($USER->enrol['enrolled'][$coursecontext->instanceid])) {
@@ -1118,7 +1114,7 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
         }
 
         if ($onlyactive) {
-            // look for active enrolments only
+            // Look for active enrolments only.
             $until = enrol_get_enrolment_end($coursecontext->instanceid, $userid);
 
             if ($until === false) {
@@ -1137,13 +1133,13 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
             }
 
         } else {
-            // any enrolment is good for us here, even outdated, disabled or inactive
+            // Any enrolment is good for us here, even outdated, disabled or inactive.
             $sql = "SELECT 'x'
                       FROM {user_enrolments} ue
                       JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = :courseid)
                       JOIN {user} u ON u.id = ue.userid
                      WHERE ue.userid = :userid AND u.deleted = 0";
-            $params = array('userid'=>$userid, 'courseid'=>$coursecontext->instanceid);
+            $params = array('userid' => $userid, 'courseid' => $coursecontext->instanceid);
             if (!$DB->record_exists_sql($sql, $params)) {
                 return false;
             }
@@ -1158,13 +1154,53 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
 }
 
 /**
+ * Returns an array of joins, wheres and params that will limit the group of
+ * users to only those enrolled and with given capability (if specified).
+ *
+ * @param context $context
+ * @param string $prefix optional, a prefix to the user id column
+ * @param string $capability optional, may include a capability name
+ * @param int $group optional, 0 indicates no current group, otherwise the group id
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
+ * @return \core\dml\sql_join Contains joins, wheres, params
+ */
+function get_enrolled_with_capabilities_join(context $context, $prefix = '', $capability = '', $group = 0,
+        $onlyactive = false, $onlysuspended = false) {
+    $uid = $prefix . 'u.id';
+    $joins = array();
+    $wheres = array();
+
+    $enrolledjoin = get_enrolled_join($context, $uid, $onlyactive, $onlysuspended);
+    $joins[] = $enrolledjoin->joins;
+    $wheres[] = $enrolledjoin->wheres;
+    $params = $enrolledjoin->params;
+
+    if (!empty($capability)) {
+        $capjoin = get_with_capability_join($context, $capability, $uid);
+        $joins[] = $capjoin->joins;
+        $wheres[] = $capjoin->wheres;
+        $params = array_merge($params, $capjoin->params);
+    }
+
+    if ($group) {
+        $groupjoin = get_in_group_join($group, $uid);
+        $joins[] = $groupjoin->joins;
+        $params = array_merge($params, $groupjoin->params);
+    }
+
+    $joins = implode("\n", $joins);
+    $wheres[] = "{$prefix}u.deleted = 0";
+    $wheres = implode(" AND ", $wheres);
+
+    return new \core\dml\sql_join($joins, $wheres, $params);
+}
+
+/**
  * Returns array with sql code and parameters returning all ids
  * of users enrolled into course.
  *
  * This function is using 'eu[0-9]+_' prefix for table names and parameters.
- *
- * @package   core_enrol
- * @category  access
  *
  * @param context $context
  * @param string $withcapability
@@ -1174,14 +1210,44 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
  * @return array list($sql, $params)
  */
 function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false, $onlysuspended = false) {
-    global $DB, $CFG;
 
-    // use unique prefix just in case somebody makes some SQL magic with the result
+    // Use unique prefix just in case somebody makes some SQL magic with the result.
     static $i = 0;
     $i++;
-    $prefix = 'eu'.$i.'_';
+    $prefix = 'eu' . $i . '_';
 
-    // first find the course context
+    $capjoin = get_enrolled_with_capabilities_join(
+            $context, $prefix, $withcapability, $groupid, $onlyactive, $onlysuspended);
+
+    $sql = "SELECT DISTINCT {$prefix}u.id
+              FROM {user} {$prefix}u
+            $capjoin->joins
+             WHERE $capjoin->wheres";
+
+    return array($sql, $capjoin->params);
+}
+
+/**
+ * Returns array with sql joins and parameters returning all ids
+ * of users enrolled into course.
+ *
+ * This function is using 'ej[0-9]+_' prefix for table names and parameters.
+ *
+ * @throws coding_exception
+ *
+ * @param context $context
+ * @param string $useridcolumn User id column used the calling query, e.g. u.id
+ * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
+ * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
+ * @return \core\dml\sql_join Contains joins, wheres, params
+ */
+function get_enrolled_join(context $context, $useridcolumn, $onlyactive = false, $onlysuspended = false) {
+    // Use unique prefix just in case somebody makes some SQL magic with the result.
+    static $i = 0;
+    $i++;
+    $prefix = 'ej' . $i . '_';
+
+    // First find the course context.
     $coursecontext = $context->get_course_context();
 
     $isfrontpage = ($coursecontext->instanceid == SITEID);
@@ -1197,125 +1263,17 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
     $wheres = array();
     $params = array();
 
-    list($contextids, $contextpaths) = get_context_info_list($context);
+    $wheres[] = "1 = 1"; // Prevent broken where clauses later on.
 
-    // get all relevant capability info for all roles
-    if ($withcapability) {
-        list($incontexts, $cparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
-        $cparams['cap'] = $withcapability;
-
-        $defs = array();
-        $sql = "SELECT rc.id, rc.roleid, rc.permission, ctx.path
-                  FROM {role_capabilities} rc
-                  JOIN {context} ctx on rc.contextid = ctx.id
-                 WHERE rc.contextid $incontexts AND rc.capability = :cap";
-        $rcs = $DB->get_records_sql($sql, $cparams);
-        foreach ($rcs as $rc) {
-            $defs[$rc->path][$rc->roleid] = $rc->permission;
-        }
-
-        $access = array();
-        if (!empty($defs)) {
-            foreach ($contextpaths as $path) {
-                if (empty($defs[$path])) {
-                    continue;
-                }
-                foreach($defs[$path] as $roleid => $perm) {
-                    if ($perm == CAP_PROHIBIT) {
-                        $access[$roleid] = CAP_PROHIBIT;
-                        continue;
-                    }
-                    if (!isset($access[$roleid])) {
-                        $access[$roleid] = (int)$perm;
-                    }
-                }
-            }
-        }
-
-        unset($defs);
-
-        // make lists of roles that are needed and prohibited
-        $needed     = array(); // one of these is enough
-        $prohibited = array(); // must not have any of these
-        foreach ($access as $roleid => $perm) {
-            if ($perm == CAP_PROHIBIT) {
-                unset($needed[$roleid]);
-                $prohibited[$roleid] = true;
-            } else if ($perm == CAP_ALLOW and empty($prohibited[$roleid])) {
-                $needed[$roleid] = true;
-            }
-        }
-
-        $defaultuserroleid      = isset($CFG->defaultuserroleid) ? $CFG->defaultuserroleid : 0;
-        $defaultfrontpageroleid = isset($CFG->defaultfrontpageroleid) ? $CFG->defaultfrontpageroleid : 0;
-
-        $nobody = false;
-
-        if ($isfrontpage) {
-            if (!empty($prohibited[$defaultuserroleid]) or !empty($prohibited[$defaultfrontpageroleid])) {
-                $nobody = true;
-            } else if (!empty($needed[$defaultuserroleid]) or !empty($needed[$defaultfrontpageroleid])) {
-                // everybody not having prohibit has the capability
-                $needed = array();
-            } else if (empty($needed)) {
-                $nobody = true;
-            }
-        } else {
-            if (!empty($prohibited[$defaultuserroleid])) {
-                $nobody = true;
-            } else if (!empty($needed[$defaultuserroleid])) {
-                // everybody not having prohibit has the capability
-                $needed = array();
-            } else if (empty($needed)) {
-                $nobody = true;
-            }
-        }
-
-        if ($nobody) {
-            // nobody can match so return some SQL that does not return any results
-            $wheres[] = "1 = 2";
-
-        } else {
-
-            if ($needed) {
-                $ctxids = implode(',', $contextids);
-                $roleids = implode(',', array_keys($needed));
-                $joins[] = "JOIN {role_assignments} {$prefix}ra3 ON ({$prefix}ra3.userid = {$prefix}u.id AND {$prefix}ra3.roleid IN ($roleids) AND {$prefix}ra3.contextid IN ($ctxids))";
-            }
-
-            if ($prohibited) {
-                $ctxids = implode(',', $contextids);
-                $roleids = implode(',', array_keys($prohibited));
-                $joins[] = "LEFT JOIN {role_assignments} {$prefix}ra4 ON ({$prefix}ra4.userid = {$prefix}u.id AND {$prefix}ra4.roleid IN ($roleids) AND {$prefix}ra4.contextid IN ($ctxids))";
-                $wheres[] = "{$prefix}ra4.id IS NULL";
-            }
-
-            if ($groupid) {
-                $joins[] = "JOIN {groups_members} {$prefix}gm ON ({$prefix}gm.userid = {$prefix}u.id AND {$prefix}gm.groupid = :{$prefix}gmid)";
-                $params["{$prefix}gmid"] = $groupid;
-            }
-        }
-
-    } else {
-        if ($groupid) {
-            $joins[] = "JOIN {groups_members} {$prefix}gm ON ({$prefix}gm.userid = {$prefix}u.id AND {$prefix}gm.groupid = :{$prefix}gmid)";
-            $params["{$prefix}gmid"] = $groupid;
-        }
-    }
-
-    $wheres[] = "{$prefix}u.deleted = 0 AND {$prefix}u.id <> :{$prefix}guestid";
-    $params["{$prefix}guestid"] = $CFG->siteguest;
-
-    if ($isfrontpage) {
-        // all users are "enrolled" on the frontpage
-    } else {
+    // Note all users are "enrolled" on the frontpage, but for others...
+    if (!$isfrontpage) {
         $where1 = "{$prefix}ue.status = :{$prefix}active AND {$prefix}e.status = :{$prefix}enabled";
         $where2 = "{$prefix}ue.timestart < :{$prefix}now1 AND ({$prefix}ue.timeend = 0 OR {$prefix}ue.timeend > :{$prefix}now2)";
         $ejoin = "JOIN {enrol} {$prefix}e ON ({$prefix}e.id = {$prefix}ue.enrolid AND {$prefix}e.courseid = :{$prefix}courseid)";
         $params[$prefix.'courseid'] = $coursecontext->instanceid;
 
         if (!$onlysuspended) {
-            $joins[] = "JOIN {user_enrolments} {$prefix}ue ON {$prefix}ue.userid = {$prefix}u.id";
+            $joins[] = "JOIN {user_enrolments} {$prefix}ue ON {$prefix}ue.userid = $useridcolumn";
             $joins[] = $ejoin;
             if ($onlyactive) {
                 $wheres[] = "$where1 AND $where2";
@@ -1324,36 +1282,29 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, 
             // Suspended only where there is enrolment but ALL are suspended.
             // Consider multiple enrols where one is not suspended or plain role_assign.
             $enrolselect = "SELECT DISTINCT {$prefix}ue.userid FROM {user_enrolments} {$prefix}ue $ejoin WHERE $where1 AND $where2";
-            $joins[] = "JOIN {user_enrolments} {$prefix}ue1 ON {$prefix}ue1.userid = {$prefix}u.id";
-            $joins[] = "JOIN {enrol} {$prefix}e1 ON ({$prefix}e1.id = {$prefix}ue1.enrolid AND {$prefix}e1.courseid = :{$prefix}_e1_courseid)";
+            $joins[] = "JOIN {user_enrolments} {$prefix}ue1 ON {$prefix}ue1.userid = $useridcolumn";
+            $joins[] = "JOIN {enrol} {$prefix}e1 ON ({$prefix}e1.id = {$prefix}ue1.enrolid
+                    AND {$prefix}e1.courseid = :{$prefix}_e1_courseid)";
             $params["{$prefix}_e1_courseid"] = $coursecontext->instanceid;
-            $wheres[] = "{$prefix}u.id NOT IN ($enrolselect)";
+            $wheres[] = "$useridcolumn NOT IN ($enrolselect)";
         }
 
         if ($onlyactive || $onlysuspended) {
-            $now = round(time(), -2); // rounding helps caching in DB
-            $params = array_merge($params, array($prefix.'enabled'=>ENROL_INSTANCE_ENABLED,
-                    $prefix.'active'=>ENROL_USER_ACTIVE,
-                    $prefix.'now1'=>$now, $prefix.'now2'=>$now));
+            $now = round(time(), -2); // Rounding helps caching in DB.
+            $params = array_merge($params, array($prefix . 'enabled' => ENROL_INSTANCE_ENABLED,
+                    $prefix . 'active' => ENROL_USER_ACTIVE,
+                    $prefix . 'now1' => $now, $prefix . 'now2' => $now));
         }
     }
 
     $joins = implode("\n", $joins);
-    $wheres = "WHERE ".implode(" AND ", $wheres);
+    $wheres = implode(" AND ", $wheres);
 
-    $sql = "SELECT DISTINCT {$prefix}u.id
-              FROM {user} {$prefix}u
-            $joins
-           $wheres";
-
-    return array($sql, $params);
+    return new \core\dml\sql_join($joins, $wheres, $params);
 }
 
 /**
  * Returns list of users enrolled into course.
- *
- * @package   core_enrol
- * @category  access
  *
  * @param context $context
  * @param string $withcapability
@@ -1389,9 +1340,6 @@ function get_enrolled_users(context $context, $withcapability = '', $groupid = 0
 /**
  * Counts list of users enrolled into course (as per above function)
  *
- * @package   core_enrol
- * @category  access
- *
  * @param context $context
  * @param string $withcapability
  * @param int $groupid 0 means ignore groups, any other value limits the result by group id
@@ -1401,13 +1349,15 @@ function get_enrolled_users(context $context, $withcapability = '', $groupid = 0
 function count_enrolled_users(context $context, $withcapability = '', $groupid = 0, $onlyactive = false) {
     global $DB;
 
-    list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid, $onlyactive);
+    $capjoin = get_enrolled_with_capabilities_join(
+            $context, '', $withcapability, $groupid, $onlyactive);
+
     $sql = "SELECT count(u.id)
               FROM {user} u
-              JOIN ($esql) je ON je.id = u.id
-             WHERE u.deleted = 0";
+            $capjoin->joins
+             WHERE $capjoin->wheres AND u.deleted = 0";
 
-    return $DB->count_records_sql($sql, $params);
+    return $DB->count_records_sql($sql, $capjoin->params);
 }
 
 /**
