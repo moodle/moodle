@@ -850,7 +850,8 @@ span.editinstructions {
     }
     .moodle-actionmenu {
         .iconsmall {
-            max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
+            /** reset sets 100% !important which breaks on IE8 without this !important */
+            max-width: none !important; /* stylelint-disable-line declaration-no-important */
             width: 16px;
             height: 16px;
             padding: 4px;
