@@ -71,4 +71,16 @@ echo $OUTPUT->header();
 
 echo $output->render($badge);
 
+// Trigger event, badge viewed.
+$other = array('badgeid' => $badge->badgeid, 'badgehash' => $id);
+$eventparams = array('context' => $PAGE->context, 'other' => $other);
+
+// If the badge does not belong to this user, log it appropriately.
+if (($badge->recipient->id != $USER->id)) {
+    $eventparams['relateduserid'] = $badge->recipient->id;
+}
+
+$event = \core\event\badge_viewed::create($eventparams);
+$event->trigger();
+
 echo $OUTPUT->footer();

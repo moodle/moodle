@@ -66,6 +66,7 @@ if ($type == BADGE_TYPE_SITE) {
     $PAGE->set_pagelayout('admin');
     $PAGE->set_heading($SITE->fullname);
     $title = get_string('sitebadges', 'badges');
+    $eventotherparams = array('badgetype' => BADGE_TYPE_SITE);
 } else {
     require_login($course);
     $coursename = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
@@ -73,6 +74,7 @@ if ($type == BADGE_TYPE_SITE) {
     $PAGE->set_context(context_course::instance($course->id));
     $PAGE->set_pagelayout('incourse');
     $PAGE->set_heading($coursename);
+    $eventotherparams = array('badgetype' => BADGE_TYPE_COURSE, 'courseid' => $course->id);
 }
 
 require_capability('moodle/badges:viewbadges', $PAGE->context);
@@ -104,5 +106,9 @@ if ($totalcount) {
 } else {
     echo $output->notification(get_string('nobadges', 'badges'));
 }
+// Trigger event, badge listing viewed.
+$eventparams = array('context' => $PAGE->context, 'other' => $eventotherparams);
+$event = \core\event\badge_listing_viewed::create($eventparams);
+$event->trigger();
 
 echo $output->footer();
