@@ -38,6 +38,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this._init();
         }
 
+        /** @type {Boolean} checks if we are sending a message */
+        Messages.prototype._isSendingMessage = false;
+
         /** @type {Boolean} checks if we are currently loading messages */
         Messages.prototype._isLoadingMessages = false;
 
@@ -226,6 +229,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 return;
             }
 
+            // If we are sending a message, don't do anything, be patient!
+            if (this._isSendingMessage) {
+                return;
+            }
+
+            // Ok, mark that we are sending a message.
+            this._isSendingMessage = true;
+
             // Call the web service to save our message.
             var promises = ajax.call([{
                 methodname: 'core_message_send_instant_messages',
@@ -244,7 +255,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 // Fire an event to say the message was sent.
                 this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESENT, [this._getUserId(), text]);
                 // Update the messaging area.
-                this._addMessageToDom();
+                return this._addMessageToDom();
+            }.bind(this)).then(function() {
+                // Ok, we are no longer sending a message.
+                this._isSendingMessage = false;
             }.bind(this)).fail(notification.exception);
         };
 
