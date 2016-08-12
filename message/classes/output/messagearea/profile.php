@@ -65,6 +65,7 @@ class profile implements templatable, renderable {
         $data->currentuserid = $this->currentuserid;
         $data->otheruserid = $this->otheruser->userid;
         $data->fullname = $this->otheruser->fullname;
+        $data->isonline = $this->otheruser->isonline;
         $data->email = $this->otheruser->email;
         if (!empty($this->otheruser->country)) {
             $data->country = get_string($this->otheruser->country, 'countries');

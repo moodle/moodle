@@ -885,6 +885,7 @@ class core_message_external extends external_api {
                 'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
                 'otheruserid' => new external_value(PARAM_INT, 'The other user\'s id'),
                 'otheruserfullname' => new external_value(PARAM_NOTAGS, 'The other user\'s fullname'),
+                'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                 'messages' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -1032,6 +1033,7 @@ class core_message_external extends external_api {
                 'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
                 'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
                 'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                 'isblocked' => new external_value(PARAM_BOOL, 'Is the user blocked?'),
                 'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?')
             )

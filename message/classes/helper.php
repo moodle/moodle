@@ -126,14 +126,7 @@ class helper {
      * @return \core_message\output\messagearea\contact
      */
     public static function create_contact($contact, $prefix = '') {
-        global $CFG, $PAGE;
-
-        // Variables to check if we consider this user online or not.
-        $timetoshowusers = 300; // Seconds default.
-        if (isset($CFG->block_online_users_timetosee)) {
-            $timetoshowusers = $CFG->block_online_users_timetosee * 60;
-        }
-        $time = time() - $timetoshowusers;
+        global $PAGE;
 
         // Create the data we are going to pass to the renderable.
         $userfields = \user_picture::unalias($contact, array('lastaccess'), $prefix . 'id', $prefix);
@@ -156,9 +149,28 @@ class helper {
             }
         }
         // Check if the user is online.
-        $data->isonline = $userfields->lastaccess >= $time;
+        $data->isonline = \core_message\helper::is_online($userfields->lastaccess);
         $data->isread = isset($contact->isread) ? $contact->isread : 0;
 
         return new \core_message\output\messagearea\contact($data);
+    }
+
+    /**
+     * Helper function for checking the time meets the 'online' condition.
+     *
+     * @param int $lastaccess
+     * @return boolean
+     */
+    public static function is_online($lastaccess) {
+        global $CFG;
+
+        // Variable to check if we consider this user online or not.
+        $timetoshowusers = 300; // Seconds default.
+        if (isset($CFG->block_online_users_timetosee)) {
+            $timetoshowusers = $CFG->block_online_users_timetosee * 60;
+        }
+        $time = time() - $timetoshowusers;
+
+        return $lastaccess >= $time;
     }
 }

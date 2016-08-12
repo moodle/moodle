@@ -66,9 +66,11 @@ class messages implements templatable, renderable {
     public function __construct($currentuserid, $otheruserid, $messages) {
         global $DB;
 
+        $ufields = get_all_user_name_fields(true) . ', lastaccess';
+
         $this->currentuserid = $currentuserid;
         $this->otheruserid = $otheruserid;
-        $this->otheruser = $DB->get_record('user', array('id' => $otheruserid));
+        $this->otheruser = $DB->get_record('user', array('id' => $otheruserid), $ufields);
         $this->messages = $messages;
     }
 
@@ -80,6 +82,7 @@ class messages implements templatable, renderable {
         $data->currentuserid = $this->currentuserid;
         $data->otheruserid = $this->otheruserid;
         $data->otheruserfullname = fullname($this->otheruser);
+        $data->isonline = \core_message\helper::is_online($this->otheruser->lastaccess);
         $data->messages = array();
         foreach ($this->messages as $message) {
             $data->messages[] = $message->export_for_template($output);
