@@ -195,6 +195,7 @@ $string['multiplesubmit'] = 'Allow multiple submissions';
 $string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit feedback an unlimited number of times.';
 $string['name'] = 'Name';
 $string['name_required'] = 'Name required';
+$string['nameandlabelformat'] = '({$a->label}) {$a->name}';
 $string['next_page'] = 'Next page';
 $string['no_handler'] = 'No action handler exists for';
 $string['no_itemlabel'] = 'No label';

@@ -399,8 +399,8 @@ class mod_feedback_complete_form extends moodleform {
      */
     protected function add_item_label($item, $element) {
         if (strlen($item->label) && ($this->mode == self::MODE_EDIT || $this->mode == self::MODE_VIEW_TEMPLATE)) {
-            $name = $element->getLabel();
-            $name = '('.format_string($item->label).') '.$name;
+            $name = get_string('nameandlabelformat', 'mod_feedback',
+                (object)['label' => format_string($item->label), 'name' => $element->getLabel()]);
             $element->setLabel($name);
         }
     }
