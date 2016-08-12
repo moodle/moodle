@@ -10,24 +10,7 @@
     </div>
 </div>
 {{#js}}
-require(['jquery', 'core/event'], function($, Event) {
-    var element = document.getElementById('{{element.id}}');
-    $(element).on(Event.Events.FORM_FIELD_VALIDATION, function(event, msg) {
-        event.preventDefault();
-        var parent = $(element).closest('.form-group');
-        var feedback = parent.find('.form-control-feedback');
-        if (msg !== '') {
-            parent.addClass('has-danger');
-            $(element).addClass('form-control-danger');
-            $(element).attr('aria-describedby', $(element).attr('id') + '-feedback');
-            feedback.html(msg);
-            feedback.show();
-        } else {
-            parent.removeClass('has-danger');
-            $(element).removeClass('form-control-danger');
-            $(element).attr('aria-describedby', '');
-            feedback.hide();
-        }
-    });
+require(['theme_noname/form-display-errors'], function(module) {
+    module.enhance({{#quote}}{{element.id}}{{/quote}});
 });
 {{/js}}
