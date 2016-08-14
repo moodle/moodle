@@ -4208,15 +4208,32 @@ function get_role_users($roleid, context $context, $parent = false, $fields = ''
     // Adding the fields from $sort that are not present in $fields.
     $sortarray = preg_split('/,\s*/', $sort);
     $fieldsarray = preg_split('/,\s*/', $fields);
+
+    // Discarding aliases from the fields.
+    $fieldnames = array();
+    foreach ($fieldsarray as $key => $field) {
+        list($fieldnames[$key]) = explode(' ', $field);
+    }
+
     $addedfields = array();
     foreach ($sortarray as $sortfield) {
         // Throw away any additional arguments to the sort (e.g. ASC/DESC).
-        list ($sortfield) = explode(' ', $sortfield);
-        if (!in_array($sortfield, $fieldsarray)) {
+        list($sortfield) = explode(' ', $sortfield);
+        list($tableprefix) = explode('.', $sortfield);
+        $fieldpresent = false;
+        foreach ($fieldnames as $fieldname) {
+            if ($fieldname === $sortfield || $fieldname === $tableprefix.'.*') {
+                $fieldpresent = true;
+                break;
+            }
+        }
+
+        if (!$fieldpresent) {
             $fieldsarray[] = $sortfield;
             $addedfields[] = $sortfield;
         }
     }
+
     $fields = implode(', ', $fieldsarray);
     if (!empty($addedfields)) {
         $addedfields = implode(', ', $addedfields);
