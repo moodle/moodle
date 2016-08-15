@@ -416,6 +416,7 @@ class lesson_display_answer_form_truefalse extends moodleform {
                 $ansid = 'answer_id';
             }
 
+            $answer = lesson_page_type_truefalse::rewrite_answers_urls($answer);
             $mform->addElement('radio', $ansid, null, format_text($answer->answer, $answer->answerformat, $options), $answer->id, $disabled);
             $mform->setType($ansid, PARAM_INT);
             if ($hasattempt && $answer->id == $USER->modattempts[$lessonid]->answerid) {
