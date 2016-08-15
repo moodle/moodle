@@ -55,7 +55,7 @@ function xmldb_enrol_self_upgrade($oldversion) {
                         array($role->id, 'enrol/self:holdkey', CAP_PROHIBIT));
             }
         }
-        upgrade_mod_savepoint(true, 2016052301, 'enrol_self');
+        upgrade_plugin_savepoint(true, 2016052301, 'enrol', 'self');
     }
 
     return true;
