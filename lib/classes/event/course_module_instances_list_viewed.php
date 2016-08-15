@@ -27,6 +27,9 @@
 namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
+debugging('core\\event\\course_module_instances_list_viewed has been deperecated. Please use
+        core\\event\\course_module_instance_list_viewed instead', DEBUG_DEVELOPER);
+
 /**
  * This class has been deprecated, please use \core\event\course_module_instance_list_viewed.
  *
@@ -37,7 +40,12 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class course_module_instances_list_viewed extends course_module_instance_list_viewed {
+    /**
+     * This event has been deprected.
+     *
+     * @return boolean
+     */
+    public static function is_deprecated() {
+        return true;
+    }
 }
-
-debugging('core\\event\\course_module_instances_list_viewed has been deperecated. Please use
-        core\\event\\course_module_instance_list_viewed instead', DEBUG_DEVELOPER);

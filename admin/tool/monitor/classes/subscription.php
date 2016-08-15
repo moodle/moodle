@@ -111,7 +111,7 @@ class subscription {
     public function get_event_name() {
         $eventclass = $this->eventname;
         if (class_exists($eventclass)) {
-            return $eventclass::get_name();
+            return $eventclass::get_name_with_info();
         }
         return get_string('eventnotfound', 'tool_monitor');
     }

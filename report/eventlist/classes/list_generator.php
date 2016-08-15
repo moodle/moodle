@@ -243,7 +243,7 @@ class report_eventlist_list_generator {
         $eventdata[$eventfullpath] = $eventfullpath::get_static_info();
         // Create a link for further event detail.
         $url = new \moodle_url('eventdetail.php', array('eventname' => $eventfullpath));
-        $link = \html_writer::link($url, $eventfullpath::get_name());
+        $link = \html_writer::link($url, $eventfullpath::get_name_with_info());
         $eventdata[$eventfullpath]['fulleventname'] = \html_writer::span($link);
         $eventdata[$eventfullpath]['fulleventname'] .= \html_writer::empty_tag('br');
         $eventdata[$eventfullpath]['fulleventname'] .= \html_writer::span($eventdata[$eventfullpath]['eventname'],
@@ -275,7 +275,7 @@ class report_eventlist_list_generator {
         }
 
         // Raw event data to be used to sort the "Event name" column.
-        $eventdata[$eventfullpath]['raweventname'] = $eventfullpath::get_name() . ' ' . $eventdata[$eventfullpath]['eventname'];
+        $eventdata[$eventfullpath]['raweventname'] = $eventfullpath::get_name_with_info() . ' ' . $eventdata[$eventfullpath]['eventname'];
 
         // Unset information that is not currently required.
         unset($eventdata[$eventfullpath]['action']);
