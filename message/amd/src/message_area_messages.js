@@ -254,7 +254,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }]);
 
             // Update the DOM when we get some data back.
-            return promises[0].then(function() {
+            return promises[0].then(function(response) {
+                if (response.length < 0) {
+                    // Even errors should return valid data.
+                    throw new Error('Invalid response');
+                }
+                if (response[0].errormessage) {
+                    throw new Error(response[0].errormessage);
+                }
                 // Fire an event to say the message was sent.
                 this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESENT, [this._getUserId(), text]);
                 // Update the messaging area.
