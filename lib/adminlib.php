@@ -2017,15 +2017,18 @@ class admin_setting_flag {
      * @return string - The html for the checkbox.
      */
     public function output_setting_flag(admin_setting $setting) {
+        global $OUTPUT;
+
         $value = $setting->get_setting_flag_value($this);
-        $output = ' <input type="checkbox" class="form-checkbox" ' .
-                        ' id="' .  $setting->get_id() . '_' . $this->get_shortname() . '" ' .
-                        ' name="' . $setting->get_full_name() .  '_' . $this->get_shortname() . '" ' .
-                        ' value="1" ' . ($value ? 'checked="checked"' : '') . ' />' .
-                        ' <label for="' . $setting->get_id() . '_' . $this->get_shortname() . '">' .
-                        $this->get_displayname() .
-                        ' </label> ';
-        return $output;
+
+        $context = new stdClass();
+        $context->id = $setting->get_id() . '_' . $this->get_shortname();
+        $context->name = $setting->get_full_name() .  '_' . $this->get_shortname();
+        $context->value = 1;
+        $context->checked = $value ? true : false;
+        $context->label = $this->get_displayname();
+
+        return $OUTPUT->render_from_template('core_admin/setting_flag', $context);
     }
 }
 
@@ -2079,14 +2082,11 @@ class admin_setting_heading extends admin_setting {
      */
     public function output_html($data, $query='') {
         global $OUTPUT;
-        $return = '';
-        if ($this->visiblename != '') {
-            $return .= $OUTPUT->heading($this->visiblename, 3, 'main');
-        }
-        if ($this->description != '') {
-            $return .= $OUTPUT->box(highlight($query, markdown_to_html($this->description)), 'generalbox formsettingheading');
-        }
-        return $return;
+        $context = new stdClass();
+        $context->title = $this->visiblename;
+        $context->description = $this->description;
+        $context->descriptionformatted = highlight($query, markdown_to_html($this->description));
+        return $OUTPUT->render_from_template('core_admin/setting_heading', $context);
     }
 }
 
@@ -2177,11 +2177,18 @@ class admin_setting_configtext extends admin_setting {
      * @return string Returns an XHTML string
      */
     public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
+        global $OUTPUT;
 
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-text defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" /></div>',
-        $this->description, true, '', $default, $query);
+        $default = $this->get_defaultsetting();
+        $context = (object) [
+            'size' => $this->size,
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'value' => $data
+        ];
+        $element = $OUTPUT->render_from_template('core_admin/setting_configtext', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 }
 
@@ -2271,16 +2278,24 @@ class admin_setting_configtextarea extends admin_setting_configtext {
      * @return string XHTML string for the editor
      */
     public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
+        global $OUTPUT;
 
+        $default = $this->get_defaultsetting();
         $defaultinfo = $default;
         if (!is_null($default) and $default !== '') {
             $defaultinfo = "\n".$default;
         }
 
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-textarea" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'" spellcheck="true">'. s($data) .'</textarea></div>',
-        $this->description, true, '', $defaultinfo, $query);
+        $context = (object) [
+            'cols' => $this->cols,
+            'rows' => $this->rows,
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'value' => $data
+        ];
+        $element = $OUTPUT->render_from_template('core_admin/setting_configtextarea', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $defaultinfo, $query);
     }
 }
 
@@ -2288,9 +2303,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
 /**
  * General text area with html editor.
  */
-class admin_setting_confightmleditor extends admin_setting_configtext {
-    private $rows;
-    private $cols;
+class admin_setting_confightmleditor extends admin_setting_configtextarea {
 
     /**
      * @param string $name
@@ -2300,9 +2313,7 @@ class admin_setting_confightmleditor extends admin_setting_configtext {
      * @param mixed $paramtype
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $cols='60', $rows='8') {
-        $this->rows = $rows;
-        $this->cols = $cols;
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype);
+        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $cols, $rows);
         editors_head_setup();
     }
 
@@ -2314,20 +2325,10 @@ class admin_setting_confightmleditor extends admin_setting_configtext {
      * @return string XHTML string for the editor
      */
     public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
-
-        $defaultinfo = $default;
-        if (!is_null($default) and $default !== '') {
-            $defaultinfo = "\n".$default;
-        }
-
         $editor = editors_get_preferred_editor(FORMAT_HTML);
         $editor->set_text($data);
         $editor->use_editor($this->get_id(), array('noclean'=>true));
-
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-textarea"><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'" spellcheck="true">'. s($data) .'</textarea></div>',
-        $this->description, true, '', $defaultinfo, $query);
+        return parent::output_html($data, $query);
     }
 }
 
@@ -2375,41 +2376,15 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
      * @return string XHTML field
      */
     public function output_html($data, $query='') {
-        $id = $this->get_id();
-        $unmask = get_string('unmaskpassword', 'form');
-        $unmaskjs = '<script type="text/javascript">
-//<![CDATA[
-var is_ie = (navigator.userAgent.toLowerCase().indexOf("msie") != -1);
-
-document.getElementById("'.$id.'").setAttribute("autocomplete", "off");
-
-var unmaskdiv = document.getElementById("'.$id.'unmaskdiv");
-
-var unmaskchb = document.createElement("input");
-unmaskchb.setAttribute("type", "checkbox");
-unmaskchb.setAttribute("id", "'.$id.'unmask");
-unmaskchb.onchange = function() {unmaskPassword("'.$id.'");};
-unmaskdiv.appendChild(unmaskchb);
-
-var unmasklbl = document.createElement("label");
-unmasklbl.innerHTML = "'.addslashes_js($unmask).'";
-if (is_ie) {
-  unmasklbl.setAttribute("htmlFor", "'.$id.'unmask");
-} else {
-  unmasklbl.setAttribute("for", "'.$id.'unmask");
-}
-unmaskdiv.appendChild(unmasklbl);
-
-if (is_ie) {
-  // ugly hack to work around the famous onchange IE bug
-  unmaskchb.onclick = function() {this.blur();};
-  unmaskdiv.onclick = function() {this.blur();};
-}
-//]]>
-</script>';
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-password"><input type="password" size="'.$this->size.'" id="'.$id.'" name="'.$this->get_full_name().'" value="'.s($data).'" /><div class="unmask" id="'.$id.'unmaskdiv"></div>'.$unmaskjs.'</div>',
-        $this->description, true, '', NULL, $query);
+        global $OUTPUT;
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'size' => $this->size,
+            'value' => $data
+        ];
+        $element = $OUTPUT->render_from_template('core_admin/setting_configpasswordunmask', $context);
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', null, $query);
     }
 }
 
@@ -2438,18 +2413,15 @@ class admin_setting_configempty extends admin_setting_configtext {
      * @return string XHTML string for the editor
      */
     public function output_html($data, $query='') {
-        return format_admin_setting($this,
-                                    $this->visiblename,
-                                    '<div class="form-empty" >' .
-                                    '<input type="hidden"' .
-                                        ' id="'. $this->get_id() .'"' .
-                                        ' name="'. $this->get_full_name() .'"' .
-                                        ' value=""/></div>',
-                                    $this->description,
-                                    true,
-                                    '',
-                                    get_string('none'),
-                                    $query);
+        global $OUTPUT;
+
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name()
+        ];
+        $element = $OUTPUT->render_from_template('core_admin/setting_configempty', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', get_string('none'), $query);
     }
 }
 
@@ -2482,27 +2454,26 @@ class admin_setting_configfile extends admin_setting_configtext {
      * @return string XHTML field
      */
     public function output_html($data, $query='') {
-        global $CFG;
+        global $CFG, $OUTPUT;
+
         $default = $this->get_defaultsetting();
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'size' => $this->size,
+            'value' => $data,
+            'showvalidity' => !empty($data),
+            'valid' => $data && file_exists($data),
+            'readonly' => !empty($CFG->preventexecpath)
+        ];
 
-        if ($data) {
-            if (file_exists($data)) {
-                $executable = '<span class="pathok">&#x2714;</span>';
-            } else {
-                $executable = '<span class="patherror">&#x2718;</span>';
-            }
-        } else {
-            $executable = '';
-        }
-        $readonly = '';
-        if (!empty($CFG->preventexecpath)) {
+        if ($context->readonly) {
             $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
-            $readonly = 'readonly="readonly"';
         }
 
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-file defaultsnext"><input '.$readonly.' type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
-        $this->description, true, '', $default, $query);
+        $element = $OUTPUT->render_from_template('core_admin/setting_configfile', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 
     /**
@@ -2541,28 +2512,27 @@ class admin_setting_configexecutable extends admin_setting_configfile {
      * @return string XHTML field
      */
     public function output_html($data, $query='') {
-        global $CFG;
+        global $CFG, $OUTPUT;
         $default = $this->get_defaultsetting();
         require_once("$CFG->libdir/filelib.php");
 
-        if ($data) {
-            if (file_exists($data) and !is_dir($data) and file_is_executable($data)) {
-                $executable = '<span class="pathok">&#x2714;</span>';
-            } else {
-                $executable = '<span class="patherror">&#x2718;</span>';
-            }
-        } else {
-            $executable = '';
-        }
-        $readonly = '';
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'size' => $this->size,
+            'value' => $data,
+            'showvalidity' => !empty($data),
+            'valid' => $data && file_exists($data) && !is_dir($data) && file_is_executable($data),
+            'readonly' => !empty($CFG->preventexecpath)
+        ];
+
         if (!empty($CFG->preventexecpath)) {
             $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
-            $readonly = 'readonly="readonly"';
         }
 
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-file defaultsnext"><input '.$readonly.' type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
-        $this->description, true, '', $default, $query);
+        $element = $OUTPUT->render_from_template('core_admin/setting_configexecutable', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 }
 
@@ -2582,27 +2552,26 @@ class admin_setting_configdirectory extends admin_setting_configfile {
      * @return string XHTML
      */
     public function output_html($data, $query='') {
-        global $CFG;
+        global $CFG, $OUTPUT;
         $default = $this->get_defaultsetting();
 
-        if ($data) {
-            if (file_exists($data) and is_dir($data)) {
-                $executable = '<span class="pathok">&#x2714;</span>';
-            } else {
-                $executable = '<span class="patherror">&#x2718;</span>';
-            }
-        } else {
-            $executable = '';
-        }
-        $readonly = '';
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'size' => $this->size,
+            'value' => $data,
+            'showvalidity' => !empty($data),
+            'valid' => $data && file_exists($data) && is_dir($data),
+            'readonly' => !empty($CFG->preventexecpath)
+        ];
+
         if (!empty($CFG->preventexecpath)) {
             $this->visiblename .= '<div class="form-overridden">'.get_string('execpathnotallowed', 'admin').'</div>';
-            $readonly = 'readonly="readonly"';
         }
 
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-file defaultsnext"><input '.$readonly.' type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$executable.'</div>',
-        $this->description, true, '', $default, $query);
+        $element = $OUTPUT->render_from_template('core_admin/setting_configexecutable', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 }
 
@@ -2668,8 +2637,17 @@ class admin_setting_configcheckbox extends admin_setting {
      * @return string XHTML field
      */
     public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
+        global $OUTPUT;
 
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'no' => $this->no,
+            'value' => $this->yes,
+            'checked' => (string) $data === $this->yes,
+        ];
+
+        $default = $this->get_defaultsetting();
         if (!is_null($default)) {
             if ((string)$default === $this->yes) {
                 $defaultinfo = get_string('checkboxyes', 'admin');
@@ -2680,16 +2658,9 @@ class admin_setting_configcheckbox extends admin_setting {
             $defaultinfo = NULL;
         }
 
-        if ((string)$data === $this->yes) { // convert to strings before comparison
-            $checked = 'checked="checked"';
-        } else {
-            $checked = '';
-        }
+        $element = $OUTPUT->render_from_template('core_admin/setting_configcheckbox', $context);
 
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-checkbox defaultsnext" ><input type="hidden" name="'.$this->get_full_name().'" value="'.s($this->no).'" /> '
-            .'<input type="checkbox" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($this->yes).'" '.$checked.' /></div>',
-        $this->description, true, '', $defaultinfo, $query);
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $defaultinfo, $query);
     }
 }
 
@@ -2814,9 +2785,12 @@ class admin_setting_configmulticheckbox extends admin_setting {
      * @return string XHTML field
      */
     public function output_html($data, $query='') {
+        global $OUTPUT;
+
         if (!$this->load_choices() or empty($this->choices)) {
             return '';
         }
+
         $default = $this->get_defaultsetting();
         if (is_null($default)) {
             $default = array();
@@ -2824,42 +2798,40 @@ class admin_setting_configmulticheckbox extends admin_setting {
         if (is_null($data)) {
             $data = array();
         }
+
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+        ];
+
         $options = array();
         $defaults = array();
-        foreach ($this->choices as $key=>$description) {
-            if (!empty($data[$key])) {
-                $checked = 'checked="checked"';
-            } else {
-                $checked = '';
-            }
+        foreach ($this->choices as $key => $description) {
             if (!empty($default[$key])) {
                 $defaults[] = $description;
             }
 
-            $options[] = '<input type="checkbox" id="'.$this->get_id().'_'.$key.'" name="'.$this->get_full_name().'['.$key.']" value="1" '.$checked.' />'
-                .'<label for="'.$this->get_id().'_'.$key.'">'.highlightfast($query, $description).'</label>';
+            $options[] = [
+                'key' => $key,
+                'checked' => !empty($data[$key]),
+                'label' => highlightfast($query, $description)
+            ];
         }
 
         if (is_null($default)) {
-            $defaultinfo = NULL;
+            $defaultinfo = null;
         } else if (!empty($defaults)) {
-                $defaultinfo = implode(', ', $defaults);
-            } else {
-                $defaultinfo = get_string('none');
-            }
-
-        $return = '<div class="form-multicheckbox">';
-        $return .= '<input type="hidden" name="'.$this->get_full_name().'[xxxxx]" value="1" />'; // something must be submitted even if nothing selected
-        if ($options) {
-            $return .= '<ul>';
-            foreach ($options as $option) {
-                $return .= '<li>'.$option.'</li>';
-            }
-            $return .= '</ul>';
+            $defaultinfo = implode(', ', $defaults);
+        } else {
+            $defaultinfo = get_string('none');
         }
-        $return .= '</div>';
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
+        $context->options = $options;
+        $context->hasoptions = !empty($options);
+
+        $element = $OUTPUT->render_from_template('core_admin/setting_configmulticheckbox', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', $defaultinfo, $query);
 
     }
 }
@@ -3024,31 +2996,10 @@ class admin_setting_configselect extends admin_setting {
      * @param string $current the currently selected option in the database, null if none.
      * @param string $default the default selected option.
      * @return array the HTML for the select element, and a warning message.
+     * @deprecated since Moodle 3.2
      */
     public function output_select_html($data, $current, $default, $extraname = '') {
-        if (!$this->load_choices() or empty($this->choices)) {
-            return array('', '');
-        }
-
-        $warning = '';
-        if (is_null($current)) {
-        // first run
-        } else if (empty($current) and (array_key_exists('', $this->choices) or array_key_exists(0, $this->choices))) {
-            // no warning
-            } else if (!array_key_exists($current, $this->choices)) {
-                    $warning = get_string('warningcurrentsetting', 'admin', s($current));
-                    if (!is_null($default) and $data == $current) {
-                        $data = $default; // use default instead of first value when showing the form
-                    }
-                }
-
-        $selecthtml = '<select id="'.$this->get_id().'" name="'.$this->get_full_name().$extraname.'">';
-        foreach ($this->choices as $key => $value) {
-        // the string cast is needed because key may be integer - 0 is equal to most strings!
-            $selecthtml .= '<option value="'.$key.'"'.((string)$key==$data ? ' selected="selected"' : '').'>'.$value.'</option>';
-        }
-        $selecthtml .= '</select>';
-        return array($selecthtml, $warning);
+        debugging('The method admin_setting_configselect::output_select_html is depreacted, do not use any more.', DEBUG_DEVELOPER);
     }
 
     /**
@@ -3061,23 +3012,52 @@ class admin_setting_configselect extends admin_setting {
      * @return string XHTML field and wrapping div
      */
     public function output_html($data, $query='') {
+        global $OUTPUT;
+
         $default = $this->get_defaultsetting();
         $current = $this->get_setting();
 
-        list($selecthtml, $warning) = $this->output_select_html($data, $current, $default);
-        if (!$selecthtml) {
+        if (!$this->load_choices() || empty($this->choices)) {
             return '';
         }
 
-        if (!is_null($default) and array_key_exists($default, $this->choices)) {
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+        ];
+
+        if (!is_null($default) && array_key_exists($default, $this->choices)) {
             $defaultinfo = $this->choices[$default];
         } else {
             $defaultinfo = NULL;
         }
 
-        $return = '<div class="form-select defaultsnext">' . $selecthtml . '</div>';
+        // Warnings.
+        $warning = '';
+        if ($current === null) {
+            // First run.
+        } else if (empty($current) && (array_key_exists('', $this->choices) || array_key_exists(0, $this->choices))) {
+            // No warning.
+        } else if (!array_key_exists($current, $this->choices)) {
+            $warning = get_string('warningcurrentsetting', 'admin', $current);
+            if (!is_null($default) && $data == $current) {
+                $data = $default; // Use default instead of first value when showing the form.
+            }
+        }
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, $warning, $defaultinfo, $query);
+        $options = [];
+        foreach ($this->choices as $value => $name) {
+            $options[] = [
+                'value' => $value,
+                'name' => $name,
+                'selected' => (string) $value == $data
+            ];
+        }
+        $context->options = $options;
+
+        $element = $OUTPUT->render_from_template('core_admin/setting_configselect', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, $warning, $defaultinfo, $query);
     }
 }
 
@@ -3176,10 +3156,12 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
      * @return string XHTML multi-select field
      */
     public function output_html($data, $query='') {
+        global $OUTPUT;
+
         if (!$this->load_choices() or empty($this->choices)) {
             return '';
         }
-        $choices = $this->choices;
+
         $default = $this->get_defaultsetting();
         if (is_null($default)) {
             $default = array();
@@ -3188,22 +3170,25 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
             $data = array();
         }
 
-        $defaults = array();
-        $size = min(10, count($this->choices));
-        $return = '<div class="form-select"><input type="hidden" name="'.$this->get_full_name().'[xxxxx]" value="1" />'; // something must be submitted even if nothing selected
-        $return .= '<select id="'.$this->get_id().'" name="'.$this->get_full_name().'[]" size="'.$size.'" multiple="multiple">';
-        foreach ($this->choices as $key => $description) {
-            if (in_array($key, $data)) {
-                $selected = 'selected="selected"';
-            } else {
-                $selected = '';
-            }
-            if (in_array($key, $default)) {
-                $defaults[] = $description;
-            }
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'size' => min(10, count($this->choices))
+        ];
 
-            $return .= '<option value="'.s($key).'" '.$selected.'>'.$description.'</option>';
+        $defaults = [];
+        $options = [];
+        foreach ($this->choices as $value => $name) {
+            if (in_array($value, $default)) {
+                $defaults[] = $name;
+            }
+            $options[] = [
+                'value' => $value,
+                'name' => $name,
+                'selected' => in_array($value, $data)
+            ];
         }
+        $context->options = $options;
 
         if (is_null($default)) {
             $defaultinfo = NULL;
@@ -3213,8 +3198,9 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
             $defaultinfo = get_string('none');
         }
 
-        $return .= '</select></div>';
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, '', $defaultinfo, $query);
+        $element = $OUTPUT->render_from_template('core_admin/setting_configmultiselect', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $defaultinfo, $query);
     }
 }
 
@@ -3281,29 +3267,37 @@ class admin_setting_configtime extends admin_setting {
      * @return string XHTML time select fields and wrapping div(s)
      */
     public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
+        global $OUTPUT;
 
+        $default = $this->get_defaultsetting();
         if (is_array($default)) {
             $defaultinfo = $default['h'].':'.$default['m'];
         } else {
             $defaultinfo = NULL;
         }
 
-        $return  = '<div class="form-time defaultsnext">';
-        $return .= '<label class="accesshide" for="' . $this->get_id() . 'h">' . get_string('hours') . '</label>';
-        $return .= '<select id="' . $this->get_id() . 'h" name="' . $this->get_full_name() . '[h]">';
-        for ($i = 0; $i < 24; $i++) {
-            $return .= '<option value="' . $i . '"' . ($i == $data['h'] ? ' selected="selected"' : '') . '>' . $i . '</option>';
-        }
-        $return .= '</select>:';
-        $return .= '<label class="accesshide" for="' . $this->get_id() . 'm">' . get_string('minutes') . '</label>';
-        $return .= '<select id="' . $this->get_id() . 'm" name="' . $this->get_full_name() . '[m]">';
-        for ($i = 0; $i < 60; $i += 5) {
-            $return .= '<option value="' . $i . '"' . ($i == $data['m'] ? ' selected="selected"' : '') . '>' . $i . '</option>';
-        }
-        $return .= '</select>';
-        $return .= '</div>';
-        return format_admin_setting($this, $this->visiblename, $return, $this->description,
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'hours' => array_map(function($i) use ($data) {
+                return [
+                    'value' => $i,
+                    'name' => $i,
+                    'selected' => $i == $data['h']
+                ];
+            }, range(0, 23)),
+            'minutes' => array_map(function($i) use ($data) {
+                return [
+                    'value' => $i,
+                    'name' => $i,
+                    'selected' => $i == $data['m']
+                ];
+            }, range(0, 59, 5))
+        ];
+
+        $element = $OUTPUT->render_from_template('core_admin/setting_configtime', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description,
             $this->get_id() . 'h', '', $defaultinfo, $query);
     }
 
@@ -3440,8 +3434,9 @@ class admin_setting_configduration extends admin_setting {
      * @return string duration text+select fields and wrapping div(s)
      */
     public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
+        global $OUTPUT;
 
+        $default = $this->get_defaultsetting();
         if (is_number($default)) {
             $defaultinfo = self::get_duration_text($default);
         } else if (is_array($default)) {
@@ -3450,29 +3445,26 @@ class admin_setting_configduration extends admin_setting {
             $defaultinfo = null;
         }
 
-        $units = self::get_units();
-
         $inputid = $this->get_id() . 'v';
+        $units = self::get_units();
+        $defaultunit = $this->defaultunit;
 
-        $return = '<div class="form-duration defaultsnext">';
-        $return .= '<input type="text" size="5" id="' . $inputid . '" name="' . $this->get_full_name() .
-            '[v]" value="' . s($data['v']) . '" />';
-        $return .= '<label for="' . $this->get_id() . 'u" class="accesshide">' .
-            get_string('durationunits', 'admin') . '</label>';
-        $return .= '<select id="'.$this->get_id().'u" name="'.$this->get_full_name().'[u]">';
-        foreach ($units as $val => $text) {
-            $selected = '';
-            if ($data['v'] == 0) {
-                if ($val == $this->defaultunit) {
-                    $selected = ' selected="selected"';
-                }
-            } else if ($val == $data['u']) {
-                $selected = ' selected="selected"';
-            }
-            $return .= '<option value="'.$val.'"'.$selected.'>'.$text.'</option>';
-        }
-        $return .= '</select></div>';
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, $inputid, '', $defaultinfo, $query);
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'value' => $data['v'],
+            'options' => array_map(function($unit) use ($units, $data, $defaultunit) {
+                return [
+                    'value' => $unit,
+                    'name' => $units[$unit],
+                    'selected' => ($data['v'] == 0 && $unit == $defaultunit) || $unit == $data['u']
+                ];
+            }, array_keys($units))
+        ];
+
+        $element = $OUTPUT->render_from_template('core_admin/setting_configduration', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, $inputid, '', $defaultinfo, $query);
     }
 }
 
@@ -3912,6 +3904,8 @@ class admin_setting_courselist_frontpage extends admin_setting {
      * @return string XHTML select field and wrapping div
      */
     public function output_html($data, $query='') {
+        global $OUTPUT;
+
         $this->load_choices();
         $currentsetting = array();
         foreach ($data as $key) {
@@ -3920,23 +3914,33 @@ class admin_setting_courselist_frontpage extends admin_setting {
             }
         }
 
-        $return = '<div class="form-group">';
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+        ];
+
+        $options = $this->choices;
+        $selects = [];
         for ($i = 0; $i < count($this->choices) - 1; $i++) {
             if (!array_key_exists($i, $currentsetting)) {
-                $currentsetting[$i] = 'none'; //none
+                $currentsetting[$i] = 'none';
             }
-            $return .='<select class="form-select" id="'.$this->get_id().$i.'" name="'.$this->get_full_name().'[]">';
-            foreach ($this->choices as $key => $value) {
-                $return .= '<option value="'.$key.'"'.("$key" == $currentsetting[$i] ? ' selected="selected"' : '').'>'.$value.'</option>';
-            }
-            $return .= '</select>';
-            if ($i !== count($this->choices) - 2) {
-                $return .= '<br />';
-            }
+            $selects[] = [
+                'key' => $i,
+                'options' => array_map(function($option) use ($options, $currentsetting, $i) {
+                    return [
+                        'name' => $options[$option],
+                        'value' => $option,
+                        'selected' => $currentsetting[$i] == $option
+                    ];
+                }, array_keys($options))
+            ];
         }
-        $return .= '</div>';
+        $context->selects = $selects;
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
+        $element = $OUTPUT->render_from_template('core_admin/setting_courselist_frontpage', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', null, $query);
     }
 }
 
@@ -4063,13 +4067,14 @@ class admin_setting_sitesettext extends admin_setting_configtext {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_special_frontpagedesc extends admin_setting {
+class admin_setting_special_frontpagedesc extends admin_setting_confightmleditor {
+
     /**
      * Calls parent::__construct with specific arguments
      */
     public function __construct() {
-        parent::__construct('summary', get_string('frontpagedescription'), get_string('frontpagedescriptionhelp'), NULL);
-        editors_head_setup();
+        parent::__construct('summary', get_string('frontpagedescription'), get_string('frontpagedescriptionhelp'), null,
+            PARAM_RAW, 60, 15);
     }
 
     /**
@@ -4105,21 +4110,6 @@ class admin_setting_special_frontpagedesc extends admin_setting {
         format_base::reset_course_cache($SITE->id);
 
         return '';
-    }
-
-    /**
-     * Returns XHTML for the field plus wrapping div
-     *
-     * @param string $data The current value
-     * @param string $query
-     * @return string The XHTML output
-     */
-    public function output_html($data, $query='') {
-        global $CFG;
-
-        $return = '<div class="form-htmlarea">'.print_textarea(true, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true, 'summary') .'</div>';
-
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }
 }
 
@@ -4196,72 +4186,48 @@ class admin_setting_emoticons extends admin_setting {
     public function output_html($data, $query='') {
         global $OUTPUT;
 
-        $out  = html_writer::start_tag('table', array('id' => 'emoticonsetting', 'class' => 'admintable generaltable'));
-        $out .= html_writer::start_tag('thead');
-        $out .= html_writer::start_tag('tr');
-        $out .= html_writer::tag('th', get_string('emoticontext', 'admin'));
-        $out .= html_writer::tag('th', get_string('emoticonimagename', 'admin'));
-        $out .= html_writer::tag('th', get_string('emoticoncomponent', 'admin'));
-        $out .= html_writer::tag('th', get_string('emoticonalt', 'admin'), array('colspan' => 2));
-        $out .= html_writer::tag('th', '');
-        $out .= html_writer::end_tag('tr');
-        $out .= html_writer::end_tag('thead');
-        $out .= html_writer::start_tag('tbody');
+        $context = (object) [
+            'name' => $this->get_full_name(),
+            'emoticons' => [],
+        ];
+
         $i = 0;
-        foreach($data as $field => $value) {
-            switch ($i) {
-            case 0:
-                $out .= html_writer::start_tag('tr');
-                $current_text = $value;
-                $current_filename = '';
-                $current_imagecomponent = '';
-                $current_altidentifier = '';
-                $current_altcomponent = '';
-            case 1:
-                $current_filename = $value;
-            case 2:
-                $current_imagecomponent = $value;
-            case 3:
-                $current_altidentifier = $value;
-            case 4:
-                $current_altcomponent = $value;
-            }
+        foreach ($data as $field => $value) {
 
-            $out .= html_writer::tag('td',
-                html_writer::empty_tag('input',
-                    array(
-                        'type'  => 'text',
-                        'class' => 'form-text',
-                        'name'  => $this->get_full_name().'['.$field.']',
-                        'value' => $value,
-                    )
-                ), array('class' => 'c'.$i)
-            );
+            // When $i == 0: text.
+            // When $i == 1: imagename.
+            // When $i == 2: imagecomponent.
+            // When $i == 3: altidentifier.
+            // When $i == 4: altcomponent.
+            $fields[$i] = (object) [
+                'field' => $field,
+                'value' => $value,
+                'index' => $i
+            ];
+            $i++;
 
-            if ($i == 4) {
-                if (get_string_manager()->string_exists($current_altidentifier, $current_altcomponent)) {
-                    $alt = get_string($current_altidentifier, $current_altcomponent);
-                } else {
-                    $alt = $current_text;
+            if ($i > 4) {
+                $icon = null;
+                if (!empty($fields[1]->value)) {
+                    if (get_string_manager()->string_exists($fields[3]->value, $fields[4]->value)) {
+                        $alt = get_string($fields[3]->value, $fields[4]->value);
+                    } else {
+                        $alt = $fields[0]->value;
+                    }
+                    $icon = new pix_emoticon($fields[1]->value, $alt, $fields[2]->value);
                 }
-                if ($current_filename) {
-                    $out .= html_writer::tag('td', $OUTPUT->render(new pix_emoticon($current_filename, $alt, $current_imagecomponent)));
-                } else {
-                    $out .= html_writer::tag('td', '');
-                }
-                $out .= html_writer::end_tag('tr');
+                $context->emoticons[] = [
+                    'fields' => $fields,
+                    'icon' => $icon ? $icon->export_for_template($OUTPUT) : null
+                ];
+                $fields = [];
                 $i = 0;
-            } else {
-                $i++;
             }
-
         }
-        $out .= html_writer::end_tag('tbody');
-        $out .= html_writer::end_tag('table');
-        $out  = html_writer::tag('div', $out, array('class' => 'form-group'));
-        $out .= html_writer::tag('div', html_writer::link(new moodle_url('/admin/resetemoticons.php'), get_string('emoticonsreset', 'admin')));
 
-        return format_admin_setting($this, $this->visiblename, $out, $this->description, false, '', NULL, $query);
+        $context->reseturl = new moodle_url('/admin/resetemoticons.php');
+        $element = $OUTPUT->render_from_template('core_admin/setting_emoticons', $context);
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', NULL, $query);
     }
 
     /**
@@ -4623,20 +4589,25 @@ class admin_setting_special_calendar_weekend extends admin_setting {
      * @return string XHTML for display (field + wrapping div(s)
      */
     public function output_html($data, $query='') {
-    // The order matters very much because of the implied numeric keys
-        $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-        $return = '<table><thead><tr>';
-        $return .= '<input type="hidden" name="'.$this->get_full_name().'[xxxxx]" value="1" />'; // something must be submitted even if nothing selected
-        foreach($days as $index => $day) {
-            $return .= '<td><label for="'.$this->get_id().$index.'">'.get_string($day, 'calendar').'</label></td>';
-        }
-        $return .= '</tr></thead><tbody><tr>';
-        foreach($days as $index => $day) {
-            $return .= '<td><input type="checkbox" class="form-checkbox" id="'.$this->get_id().$index.'" name="'.$this->get_full_name().'[]" value="'.$index.'" '.(in_array("$index", $data) ? 'checked="checked"' : '').' /></td>';
-        }
-        $return .= '</tr></tbody></table>';
+        global $OUTPUT;
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
+        // The order matters very much because of the implied numeric keys.
+        $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+        $context = (object) [
+            'name' => $this->get_full_name(),
+            'id' => $this->get_id(),
+            'days' => array_map(function($index) use ($days, $data) {
+                return [
+                    'index' => $index,
+                    'label' => get_string($days[$index], 'calendar'),
+                    'checked' => in_array($index, $data)
+                ];
+            }, array_keys($days))
+        ];
+
+        $element = $OUTPUT->render_from_template('core_admin/setting_special_calendar_weekend', $context);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', NULL, $query);
 
     }
 }
@@ -5175,21 +5146,21 @@ class admin_setting_special_gradepointmax extends admin_setting_configtext {
      * @return string XHTML to display control
      */
     public function output_html($data, $query = '') {
-        $default = $this->get_defaultsetting();
+        global $OUTPUT;
 
-        $attr = array(
-            'type' => 'text',
+        $default = $this->get_defaultsetting();
+        $context = (object) [
             'size' => $this->size,
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
-            'value' => s($data),
-            'maxlength' => '5'
-        );
-        $input = html_writer::empty_tag('input', $attr);
+            'value' => $data,
+            'attributes' => [
+                'maxlength' => 5
+            ]
+        ];
+        $element = $OUTPUT->render_from_template('core_admin/setting_configtext', $context);
 
-        $attr = array('class' => 'form-text defaultsnext');
-        $div = html_writer::tag('div', $input, $attr);
-        return format_admin_setting($this, $this->visiblename, $div, $this->description, true, '', $default, $query);
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 }
 
@@ -5286,9 +5257,9 @@ class admin_setting_gradecat_combo extends admin_setting {
      * @return string XHTML to display control
      */
     public function output_html($data, $query='') {
+        global $OUTPUT;
+
         $value  = $data['value'];
-        $forced = !empty($data['forced']);
-        $adv    = !empty($data['adv']);
 
         $default = $this->get_defaultsetting();
         if (!is_null($default)) {
@@ -5308,21 +5279,24 @@ class admin_setting_gradecat_combo extends admin_setting {
             $defaultinfo = NULL;
         }
 
+        $options = $this->choices;
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'forced' => !empty($data['forced']),
+            'advanced' => !empty($data['adv']),
+            'options' => array_map(function($option) use ($options, $value) {
+                return [
+                    'value' => $option,
+                    'name' => $options[$option],
+                    'selected' => $option == $value
+                ];
+            }, array_keys($options)),
+        ];
 
-        $return = '<div class="form-group">';
-        $return .= '<select class="form-select" id="'.$this->get_id().'" name="'.$this->get_full_name().'[value]">';
-        foreach ($this->choices as $key => $val) {
-        // the string cast is needed because key may be integer - 0 is equal to most strings!
-            $return .= '<option value="'.$key.'"'.((string)$key==$value ? ' selected="selected"' : '').'>'.$val.'</option>';
-        }
-        $return .= '</select>';
-        $return .= '<input type="checkbox" class="form-checkbox" id="'.$this->get_id().'force" name="'.$this->get_full_name().'[forced]" value="1" '.($forced ? 'checked="checked"' : '').' />'
-            .'<label for="'.$this->get_id().'force">'.get_string('force').'</label>';
-        $return .= '<input type="checkbox" class="form-checkbox" id="'.$this->get_id().'adv" name="'.$this->get_full_name().'[adv]" value="1" '.($adv ? 'checked="checked"' : '').' />'
-            .'<label for="'.$this->get_id().'adv">'.get_string('advanced').'</label>';
-        $return .= '</div>';
+        $element = $OUTPUT->render_from_template('core_admin/setting_gradecat_combo', $context);
 
-        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, '', $defaultinfo, $query);
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $defaultinfo, $query);
     }
 }
 
@@ -7540,34 +7514,34 @@ function admin_output_new_settings_by_page($node) {
  * @return string XHTML
  */
 function format_admin_setting($setting, $title='', $form='', $description='', $label=true, $warning='', $defaultinfo=NULL, $query='') {
-    global $CFG;
+    global $CFG, $OUTPUT;
 
-    $name     = empty($setting->plugin) ? $setting->name : "$setting->plugin | $setting->name";
-    $fullname = $setting->get_full_name();
+    $context = (object) [
+        'name' => empty($setting->plugin) ? $setting->name : "$setting->plugin | $setting->name",
+        'fullname' => $setting->get_full_name(),
+    ];
 
-    // sometimes the id is not id_s_name, but id_s_name_m or something, and this does not validate
+    // Sometimes the id is not id_s_name, but id_s_name_m or something, and this does not validate.
     if ($label === true) {
-        $labelfor = 'for = "'.$setting->get_id().'"';
+        $context->labelfor = $setting->get_id();
     } else if ($label === false) {
-        $labelfor = '';
+        $context->labelfor = '';
     } else {
-        $labelfor = 'for="' . $label . '"';
+        $context->labelfor = $label;
     }
+
     $form .= $setting->output_setting_flags();
 
-    $override = '';
+    $context->warning = $warning;
+    $context->override = '';
     if (empty($setting->plugin)) {
         if (array_key_exists($setting->name, $CFG->config_php_settings)) {
-            $override = '<div class="form-overridden">'.get_string('configoverride', 'admin').'</div>';
+            $context->override = get_string('configoverride', 'admin');
         }
     } else {
         if (array_key_exists($setting->plugin, $CFG->forced_plugin_settings) and array_key_exists($setting->name, $CFG->forced_plugin_settings[$setting->plugin])) {
-            $override = '<div class="form-overridden">'.get_string('configoverride', 'admin').'</div>';
+            $context->override = get_string('configoverride', 'admin');
         }
-    }
-
-    if ($warning !== '') {
-        $warning = '<div class="form-warning">'.$warning.'</div>';
     }
 
     $defaults = array();
@@ -7578,32 +7552,28 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
         $defaults[] = $defaultinfo;
     }
 
+    $context->default = null;
     $setting->get_setting_flag_defaults($defaults);
-
     if (!empty($defaults)) {
         $defaultinfo = implode(', ', $defaults);
         $defaultinfo = highlight($query, nl2br(s($defaultinfo)));
-        $defaultinfo = '<div class="form-defaultinfo">'.get_string('defaultsettinginfo', 'admin', $defaultinfo).'</div>';
+        $context->default = get_string('defaultsettinginfo', 'admin', $defaultinfo);
     }
 
 
+    $context->error = '';
     $adminroot = admin_get_root();
-    $error = '';
-    if (array_key_exists($fullname, $adminroot->errors)) {
-        $error = '<div><span class="error">' . $adminroot->errors[$fullname]->error . '</span></div>';
+    if (array_key_exists($context->fullname, $adminroot->errors)) {
+        $context->error = $adminroot->errors[$fullname]->error;
     }
 
-    $str = '
-<div class="form-item clearfix" id="admin-'.$setting->name.'">
-  <div class="form-label">
-    <label '.$labelfor.'>'.highlightfast($query, $title).$override.$warning.'</label>
-    <span class="form-shortname">'.highlightfast($query, $name).'</span>
-  </div>
-  <div class="form-setting">'.$error.$form.$defaultinfo.'</div>
-  <div class="form-description">'.highlight($query, markdown_to_html($description)).'</div>
-</div>';
+    $context->id = 'admin-' . $setting->name;
+    $context->title = highlightfast($query, $title);
+    $context->name = highlightfast($query, $context->name);
+    $context->description = highlight($query, markdown_to_html($description));
+    $context->element = $form;
 
-    return $str;
+    return $OUTPUT->render_from_template('core_admin/setting', $context);
 }
 
 /**
@@ -9035,15 +9005,20 @@ class admin_setting_configcolourpicker extends admin_setting {
      */
     public function output_html($data, $query = '') {
         global $PAGE, $OUTPUT;
+
+        $icon = new pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', ['class'=>'loadingicon']);
+        $context = (object) [
+            'id' => $this->get_id(),
+            'name' => $this->get_full_name(),
+            'icon' => $icon->export_for_template($OUTPUT),
+            'haspreviewconfig' => !empty($this->previewconfig)
+        ];
+
+        $element = $OUTPUT->render_from_template('core_admin/setting_configcolourpicker', $context);
         $PAGE->requires->js_init_call('M.util.init_colour_picker', array($this->get_id(), $this->previewconfig));
-        $content  = html_writer::start_tag('div', array('class'=>'form-colourpicker defaultsnext'));
-        $content .= html_writer::tag('div', $OUTPUT->pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', array('class'=>'loadingicon')), array('class'=>'admin_colourpicker clearfix'));
-        $content .= html_writer::empty_tag('input', array('type'=>'text','id'=>$this->get_id(), 'name'=>$this->get_full_name(), 'value'=>$data, 'size'=>'12'));
-        if (!empty($this->previewconfig)) {
-            $content .= html_writer::empty_tag('input', array('type'=>'button','id'=>$this->get_id().'_preview', 'value'=>get_string('preview'), 'class'=>'admin_colourpicker_preview'));
-        }
-        $content .= html_writer::end_tag('div');
-        return format_admin_setting($this, $this->visiblename, $content, $this->description, true, '', $this->get_defaultsetting(), $query);
+
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '',
+            $this->get_defaultsetting(), $query);
     }
 }
 
@@ -9289,14 +9264,10 @@ class admin_setting_devicedetectregex extends admin_setting {
     public function output_html($data, $query='') {
         global $OUTPUT;
 
-        $out  = html_writer::start_tag('table', array('class' => 'generaltable'));
-        $out .= html_writer::start_tag('thead');
-        $out .= html_writer::start_tag('tr');
-        $out .= html_writer::tag('th', get_string('devicedetectregexexpression', 'admin'));
-        $out .= html_writer::tag('th', get_string('devicedetectregexvalue', 'admin'));
-        $out .= html_writer::end_tag('tr');
-        $out .= html_writer::end_tag('thead');
-        $out .= html_writer::start_tag('tbody');
+        $context = (object) [
+            'expressions' => [],
+            'name' => $this->get_full_name()
+        ];
 
         if (empty($data)) {
             $looplimit = 1;
@@ -9305,7 +9276,6 @@ class admin_setting_devicedetectregex extends admin_setting {
         }
 
         for ($i=0; $i<$looplimit; $i++) {
-            $out .= html_writer::start_tag('tr');
 
             $expressionname = 'expression'.$i;
 
@@ -9315,17 +9285,6 @@ class admin_setting_devicedetectregex extends admin_setting {
                 $expression = '';
             }
 
-            $out .= html_writer::tag('td',
-                html_writer::empty_tag('input',
-                    array(
-                        'type'  => 'text',
-                        'class' => 'form-text',
-                        'name'  => $this->get_full_name().'[expression'.$i.']',
-                        'value' => $expression,
-                    )
-                ), array('class' => 'c'.$i)
-            );
-
             $valuename = 'value'.$i;
 
             if (!empty($data[$valuename])){
@@ -9334,24 +9293,16 @@ class admin_setting_devicedetectregex extends admin_setting {
                 $value= '';
             }
 
-            $out .= html_writer::tag('td',
-                html_writer::empty_tag('input',
-                    array(
-                        'type'  => 'text',
-                        'class' => 'form-text',
-                        'name'  => $this->get_full_name().'[value'.$i.']',
-                        'value' => $value,
-                    )
-                ), array('class' => 'c'.$i)
-            );
-
-            $out .= html_writer::end_tag('tr');
+            $context->expressions[] = [
+                'index' => $i,
+                'expression' => $expression,
+                'value' => $value
+            ];
         }
 
-        $out .= html_writer::end_tag('tbody');
-        $out .= html_writer::end_tag('table');
+        $element = $OUTPUT->render_from_template('core_admin/setting_devicedetectregex', $context);
 
-        return format_admin_setting($this, $this->visiblename, $out, $this->description, false, '', null, $query);
+        return format_admin_setting($this, $this->visiblename, $element, $this->description, false, '', null, $query);
     }
 
     /**
