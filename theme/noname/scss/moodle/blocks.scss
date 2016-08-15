@@ -7,3 +7,8 @@
     /* Override plugin's default. */
     text-align: left;
 }
+
+.block.block_navigation .block_tree ul,
+.block_settings .block_tree ul {
+    margin-left: 0;
+}
