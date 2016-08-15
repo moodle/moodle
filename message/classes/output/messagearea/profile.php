@@ -61,7 +61,7 @@ class profile implements templatable, renderable {
         global $USER;
 
         $data = new \stdClass();
-        $data->iscurrentuser = $USER->id == $this->currentuserid;
+        $data->iscurrentuser = $USER->id == $this->otheruser->userid;
         $data->currentuserid = $this->currentuserid;
         $data->otheruserid = $this->otheruser->userid;
         $data->fullname = $this->otheruser->fullname;

@@ -316,18 +316,33 @@ class api {
             // Create the data we are going to pass to the renderable.
             $userfields = user_get_user_details($user, null, array('city', 'country', 'email',
                 'profileimageurl', 'profileimageurlsmall', 'lastaccess'));
-            $data = new \stdClass();
-            $data->userid = $userfields['id'];
-            $data->fullname = $userfields['fullname'];
-            $data->city = isset($userfields['city']) ? $userfields['city'] : '';
-            $data->country = isset($userfields['country']) ? $userfields['country'] : '';
-            $data->email = isset($userfields['email']) ? $userfields['email'] : '';
-            $data->profileimageurl = isset($userfields['profileimageurl']) ? $userfields['profileimageurl'] : '';
-            $data->profileimageurlsmall = isset($userfields['profileimageurlsmall']) ?
-                $userfields['profileimageurlsmall'] : '';
-            if (isset($userfields['lastaccess'])) {
-                $data->isonline = \core_message\helper::is_online($userfields['lastaccess']);
+            if ($userfields) {
+                $data = new \stdClass();
+                $data->userid = $userfields['id'];
+                $data->fullname = $userfields['fullname'];
+                $data->city = isset($userfields['city']) ? $userfields['city'] : '';
+                $data->country = isset($userfields['country']) ? $userfields['country'] : '';
+                $data->email = isset($userfields['email']) ? $userfields['email'] : '';
+                $data->profileimageurl = isset($userfields['profileimageurl']) ? $userfields['profileimageurl'] : '';
+                $data->profileimageurlsmall = isset($userfields['profileimageurlsmall']) ?
+                    $userfields['profileimageurlsmall'] : '';
+                if (isset($userfields['lastaccess'])) {
+                    $data->isonline = \core_message\helper::is_online($userfields['lastaccess']);
+                } else {
+                    $data->isonline = 0;
+                }
             } else {
+                // Technically the access checks in user_get_user_details are correct,
+                // but messaging has never obeyed them. In order to keep messaging working
+                // we at least need to return a minimal user record.
+                $data = new \stdClass();
+                $data->userid = $otheruserid;
+                $data->fullname = fullname($user);
+                $data->city = '';
+                $data->country = '';
+                $data->email = '';
+                $data->profileimageurl = '';
+                $data->profileimageurlsmall = '';
                 $data->isonline = 0;
             }
             // Check if the contact has been blocked.
