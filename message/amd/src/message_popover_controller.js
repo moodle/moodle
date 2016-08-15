@@ -39,7 +39,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         CONTENT_ITEM_CONTAINER: '.content-item-container',
         EMPTY_MESSAGE: '.empty-message',
         LINK_URL: '[data-link-url]',
-        BLOCK_NON_CONTACTS_BUTTON: '[data-block-non-contacts]',
     };
 
     /**
@@ -277,70 +276,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Update the block messages from non-contacts user preference in the DOM and
-     * send a request to update on the server.
-     *
-     * @method toggleBlockNonContactsStatus
-     */
-    MessagePopoverController.prototype.toggleBlockNonContactsStatus = function() {
-        var button = this.blockNonContactsButton;
-        var ischecked = (button.attr('aria-checked') === 'true');
-        var blockstring = '';
-        var unblockstring = '';
-
-        if (button.hasClass('loading')) {
-            return $.Deferred().resolve();
-        }
-
-        button.addClass('loading');
-
-        return Str.get_strings([
-                {
-                    key: 'blocknoncontacts',
-                    component: 'message',
-                },
-                {
-                    key: 'unblocknoncontacts',
-                    component: 'message',
-                }
-            ]).then(function(strings) {
-                // If we could load the strings then update the user preferences.
-                blockstring = strings[0];
-                unblockstring = strings[1];
-
-                var request = {
-                    methodname: 'core_user_update_user',
-                    args: {
-                        user: {
-                            preferences: [
-                                {
-                                    type: button.attr('data-preference-key'),
-                                    value: ischecked ? 0 : 1,
-                                }
-                            ]
-                        }
-                    }
-                };
-
-                return Ajax.call([request])[0];
-            })
-            .done(function() {
-                // If everything executed correctly then update the DOM.
-                if (ischecked) {
-                    button.attr('aria-checked', false);
-                    button.attr('data-original-title', blockstring);
-                } else {
-                    button.attr('aria-checked', true);
-                    button.attr('data-original-title', unblockstring);
-                }
-            })
-            .fail(Notification.exception)
-            .always(function() {
-                button.removeClass('loading');
-            });
-    };
-
-    /**
      * Add all of the required event listeners for this messages popover.
      *
      * @method registerEventListeners
@@ -389,14 +324,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
             this.navigateToLinkURL(linkItem, false);
             e.stopPropagation();
-        }.bind(this));
-
-        // Update the state of non-contact blocking when button is activated.
-        this.root.on(CustomEvents.events.activate, SELECTORS.BLOCK_NON_CONTACTS_BUTTON, function(e, data) {
-            this.toggleBlockNonContactsStatus();
-
-            e.stopPropagation();
-            data.originalEvent.preventDefault();
         }.bind(this));
 
         // Mark all messages as read when button is activated.

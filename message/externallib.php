@@ -2312,6 +2312,8 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function message_processor_config_form($userid, $name, $formvalues) {
+        global $USER;
+
         $params = self::validate_parameters(
             self::message_processor_config_form_parameters(),
             array(
@@ -2351,5 +2353,70 @@ class core_message_external extends external_api {
      */
     public static function message_processor_config_form_returns() {
         return null;
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since 3.2
+     */
+    public static function get_message_processor_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user'),
+                'name' => new external_value(PARAM_TEXT, 'The name of the message processor', VALUE_REQUIRED),
+            )
+        );
+    }
+
+    /**
+     * Get a message processor.
+     *
+     * @param  string $name the name of the processor
+     * @return external_description
+     * @throws moodle_exception
+     * @since 3.2
+     */
+    public static function get_message_processor($userid = 0, $name) {
+        global $USER, $PAGE;
+
+        $params = self::validate_parameters(
+            self::get_message_processor_parameters(),
+            array(
+                'userid' => $userid,
+                'name' => $name,
+            )
+        );
+
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+        self::validate_context(context_user::instance($params['userid']));
+
+        $processor = get_message_processor($name);
+
+        $processoroutput = new \core_message\output\processor($processor, $user);
+        $renderer = $PAGE->get_renderer('core_message');
+
+        return $processoroutput->export_for_template($renderer);
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since 3.2
+     */
+    public static function get_message_processor_returns() {
+        return new external_function_parameters(
+            array(
+                'systemconfigured' => new external_value(PARAM_BOOL, 'Site configuration status'),
+                'userconfigured' => new external_value(PARAM_BOOL, 'The user configuration status'),
+            )
+        );
     }
 }

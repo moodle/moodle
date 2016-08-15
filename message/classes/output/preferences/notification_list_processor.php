@@ -118,6 +118,7 @@ class notification_list_processor implements templatable, renderable {
             'displayname' => get_string('pluginname', 'message_'.$processor->name),
             'name' => $processor->name,
             'locked' => false,
+            'userconfigured' => $processor->object->is_user_configured(),
             'loggedin' => [
                 'name' => 'loggedin',
                 'displayname' => get_string('loggedindescription', 'message'),

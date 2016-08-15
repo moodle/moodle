@@ -788,6 +788,14 @@ $functions = array(
         'type' => 'write',
         'ajax' => true,
     ),
+    'core_message_get_message_processor' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_message_processor',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Get a message processor',
+        'type' => 'read',
+        'ajax' => true,
+    ),
     'core_message_search_contacts' => array(
         'classname' => 'core_message_external',
         'methodname' => 'search_contacts',

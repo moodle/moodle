@@ -82,13 +82,17 @@
             <tr>
                 <th>{{displayname}}</th>
                 {{#processors}}
-                    <th>
+                    <th {{^userconfigured}}class="unconfigured"{{/userconfigured}} data-processor-name="{{name}}">
                         {{#hassettings}}
                             <a href="#"
                                 data-processor-setting
                                 data-user-id="{{userid}}"
                                 data-context-id="{{contextid}}"
                                 data-name="{{name}}">
+
+                                <span class="config-warning" data-toggle="tooltip" title="{{#str}} requiresconfiguration, message {{/str}}">
+                                    {{#pix}} i/risk_xss, core {{/pix}}
+                                </span>
                                 {{displayname}} {{#pix}} i/settings {{/pix}}
                             </a>
                         {{/hassettings}}
@@ -120,7 +124,7 @@
                             {{displayname}}
                         </td>
                         {{#processors}}
-                            <td data-processor-name="{{name}}">
+                        <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
                                 {{#locked}}
                                     <div class="dimmed_text">{{lockedmessage}}</div>
                                 {{/locked}}

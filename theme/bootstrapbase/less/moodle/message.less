@@ -621,6 +621,16 @@
         thead {
             th {
                 text-align: center;
+
+                .config-warning {
+                    display: none;
+                }
+
+                &.unconfigured {
+                    .config-warning {
+                        display: inline-block;
+                    }
+                }
             }
         }
         tr {
@@ -642,7 +652,6 @@
                 vertical-align: middle;
             }
             .disabled-message {
-                display: none;
                 text-align: center;
                 height: 30px;
                 line-height: 30px;
@@ -710,20 +719,22 @@
             }
         }
     }
+}
 
-    &.disabled {
-        .preference-table {
-            .preference-row {
-                .disabled-message {
-                    display: block;
-                }
-                form {
-                    display: none;
-                }
-            }
+.disabled-message {
+    display: none;
+}
+
+.disabled {
+    .disabled-message {
+        display: block;
+
+        + form {
+            display: none;
         }
     }
 }
+
 .general-settings-container {
     .loading-icon {
         display: none;
@@ -764,4 +775,26 @@
 }
 .title-case {
     text-transform: capitalize;
+}
+
+.message-preferences-container {
+    .block-non-contacts-container {
+        margin: 30px 5px;
+        line-height: 20px;
+
+        input {
+            line-height: 20px;
+            margin: 0;
+        }
+
+        .loading-icon {
+            display: none;
+        }
+
+        &.loading {
+            .loading-icon {
+                display: inline-block;
+            }
+        }
+    }
 }

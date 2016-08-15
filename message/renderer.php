@@ -216,21 +216,44 @@ class core_message_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Display the interface for messaging options
+     * Display the interface for notification preferences
      *
      * @param object $user instance of a user
      * @return string The text to render
      */
-    public function render_user_preferences($user) {
-        // Filter out enabled, available system_configured and user_configured processors only.
-        $readyprocessors = array_filter(get_message_processors(), function($processor) {
-            return $processor->enabled && $processor->configured && $processor->object->is_user_configured();
-        });
-
+    public function render_user_notification_preferences($user) {
+        $processors = get_message_processors();
         $providers = message_get_providers_for_user($user->id);
-        $preferences = get_all_message_preferences($readyprocessors, $providers, $user);
-        $notificationlistoutput = new \core_message\output\preferences\notification_list($readyprocessors, $providers, $preferences, $user);
+        $preferences = get_all_message_preferences($processors, $providers, $user);
+        $notificationlistoutput = new \core_message\output\preferences\notification_list($processors, $providers, $preferences, $user);
 
         return $this->render_from_template('message/preferences_notifications_list', $notificationlistoutput->export_for_template($this));
+    }
+
+    /**
+     * Display the interface for message preferences
+     *
+     * @param object $user instance of a user
+     * @return string The text to render
+     */
+    public function render_user_message_preferences($user) {
+        // Filter out enabled, available system_configured and user_configured processors only.
+        $readyprocessors = array_filter(get_message_processors(), function($processor) {
+            return $processor->enabled &&
+                $processor->configured &&
+                $processor->object->is_user_configured() &&
+                // Filter out the popup processor because the notification preferences aren't
+                // considered for that.
+                $processor->name != 'popup';
+        });
+
+        $providers = array_filter(message_get_providers_for_user($user->id), function($provider) {
+            return $provider->component === 'moodle';
+        });
+        $preferences = get_all_message_preferences($readyprocessors, $providers, $user);
+        $notificationlistoutput = new \core_message\output\preferences\message_notification_list($readyprocessors, $providers, $preferences, $user);
+        $context = $notificationlistoutput->export_for_template($this);
+
+        return $this->render_from_template('message/message_preferences', $notificationlistoutput->export_for_template($this));
     }
 }

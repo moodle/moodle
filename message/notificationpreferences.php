@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit user message preferences
+ * Edit user notification preferences
  *
  * @package    core_message
- * @copyright  2008 Luis Rodrigues and Martin Dougiamas
+ * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ if (!$userid) {
     $userid = $USER->id;
 }
 
-$url = new moodle_url('/message/edit.php');
+$url = new moodle_url('/message/notificationpreferences.php');
 $url->param('id', $userid);
 
 $PAGE->set_url($url);
@@ -73,13 +73,13 @@ if ($user->id == $USER->id) {
 }
 
 /// Display page header
-$strmessaging = get_string('messaging', 'message');
+$strmessaging = get_string('notificationpreferences', 'message');
 $PAGE->set_title($strmessaging);
 $PAGE->set_heading(fullname($user));
 
 // Grab the renderer
 $renderer = $PAGE->get_renderer('core', 'message');
-$messagingoptions = $renderer->render_user_message_preferences($user);
+$messagingoptions = $renderer->render_user_notification_preferences($user);
 
 echo $OUTPUT->header();
 echo $messagingoptions;

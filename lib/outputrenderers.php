@@ -3207,7 +3207,7 @@ EOD;
                 'userid' => $USER->id,
                 'allnotificationsdisabled' => !empty($USER->emailstop),
                 'urls' => [
-                    'preferences' => (new moodle_url('/message/edit.php', ['id' => $USER->id]))->out(),
+                    'preferences' => (new moodle_url('/message/notificationpreferences.php', ['id' => $USER->id]))->out(),
                 ],
             ];
             return $this->render_from_template('message/notification_popover', $context);

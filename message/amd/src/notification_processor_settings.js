@@ -23,8 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define(['jquery', 'core/fragment', 'core/templates', 'core/str', 'tool_lp/dialogue'],
-        function($, Fragment, Templates, Str, Dialogue) {
+define(['jquery', 'core/ajax', 'core/notification', 'core/fragment', 'core/templates', 'core/str', 'tool_lp/dialogue'],
+        function($, Ajax, Notification, Fragment, Templates, Str, Dialogue) {
+
+    var SELECTORS = {
+        PROCESSOR: '[data-processor-name]',
+        PREFERENCE_ROW: '.preference-row',
+    };
+
     /**
      * Constructor for the notification processor settings.
      *
@@ -64,13 +70,49 @@ define(['jquery', 'core/fragment', 'core/templates', 'core/str', 'tool_lp/dialog
 
                 $(document).on('mpp:formsubmitted', function() {
                     dialogue.close();
-                });
+                    this.updateConfiguredStatus();
+                }.bind(this));
 
                 $(document).on('mpp:formcancelled', function() {
                     dialogue.close();
                 });
+            }.bind(this));
+        }.bind(this));
+    };
+
+    /**
+     * Checks if the processor has been configured. If so then remove the unconfigured
+     * status from the interface.
+     *
+     * @method updateConfiguredStatus
+     */
+    NotificationProcessorSettings.prototype.updateConfiguredStatus = function() {
+        var processorHeader = this.root.closest(SELECTORS.PROCESSOR);
+
+        if (!processorHeader.hasClass('unconfigured')) {
+            return;
+        }
+
+        var processorName = processorHeader.attr('data-processor-name');
+        var request = {
+            methodname: 'core_message_get_message_processor',
+            args: {
+                name: processorName,
+                userid: this.userId,
+            },
+        };
+
+        return Ajax.call([request])[0]
+            .fail(Notification.exception)
+            .done(function(result) {
+                // Check if the user has figured configuring the processor.
+                if (result.userconfigured) {
+                    // If they have then we can enable the settings.
+                    var notifications = $(SELECTORS.PREFERENCE_ROW + ' [data-processor-name="' + processorName + '"]');
+                    processorHeader.removeClass('unconfigured');
+                    notifications.removeClass('disabled');
+                }
             });
-        });
     };
 
     return NotificationProcessorSettings;

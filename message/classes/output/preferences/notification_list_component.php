@@ -101,6 +101,16 @@ class notification_list_component implements templatable, renderable {
         return get_string('messageprovider:'.$provider->name, $provider->component);
     }
 
+    /**
+     * Determine if the preference should be displayed.
+     *
+     * @param string $preferencekey
+     * @return bool
+     */
+    protected function should_show_preference_key($preferencekey) {
+        return $preferencekey !== 'message_provider_moodle_instantmessage';
+    }
+
     public function export_for_template(\renderer_base $output) {
         $processors = $this->processors;
         $providers = $this->providers;
@@ -121,6 +131,14 @@ class notification_list_component implements templatable, renderable {
 
         foreach ($providers as $provider) {
             $preferencebase = $this->get_preference_base($provider);
+            $preferencekey = 'message_provider_'.$preferencebase;
+
+            // Hack to stop this one specific preference from showing up in the
+            // notification list because it belongs to the message preferences page.
+            if (!$this->should_show_preference_key($preferencekey)) {
+                continue;
+            }
+
             // If provider component is not same or provider disabled then don't show.
             if (($provider->component != $component) ||
                     (!empty($defaultpreferences->{$preferencebase.'_disable'}))) {
@@ -129,7 +147,7 @@ class notification_list_component implements templatable, renderable {
 
             $notificationcontext = [
                 'displayname' => $this->get_provider_display_name($provider),
-                'preferencekey' => 'message_provider_'.$preferencebase,
+                'preferencekey' => $preferencekey,
                 'processors' => [],
             ];
 

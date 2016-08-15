@@ -6283,6 +6283,12 @@ a.ygtvspacer:hover {
 .preferences-container .preference-table thead th {
   text-align: center;
 }
+.preferences-container .preference-table thead th .config-warning {
+  display: none;
+}
+.preferences-container .preference-table thead th.unconfigured .config-warning {
+  display: inline-block;
+}
 .preferences-container .preference-table tr td:not(:first-child) {
   width: 150px;
   text-align: center;
@@ -6297,7 +6303,6 @@ a.ygtvspacer:hover {
   vertical-align: middle;
 }
 .preferences-container .preference-table .preference-row .disabled-message {
-  display: none;
   text-align: center;
   height: 30px;
   line-height: 30px;
@@ -6349,10 +6354,13 @@ a.ygtvspacer:hover {
 .preferences-container .preference-table .preference-row.loading .preference-name .loading-icon {
   display: block;
 }
-.preferences-container.disabled .preference-table .preference-row .disabled-message {
+.disabled-message {
+  display: none;
+}
+.disabled .disabled-message {
   display: block;
 }
-.preferences-container.disabled .preference-table .preference-row form {
+.disabled .disabled-message + form {
   display: none;
 }
 .general-settings-container .loading-icon {
@@ -6386,6 +6394,20 @@ a.ygtvspacer:hover {
 }
 .title-case {
   text-transform: capitalize;
+}
+.message-preferences-container .block-non-contacts-container {
+  margin: 30px 5px;
+  line-height: 20px;
+}
+.message-preferences-container .block-non-contacts-container input {
+  line-height: 20px;
+  margin: 0;
+}
+.message-preferences-container .block-non-contacts-container .loading-icon {
+  display: none;
+}
+.message-preferences-container .block-non-contacts-container.loading .loading-icon {
+  display: inline-block;
 }
 /* Question */
 .questionbank h2 {

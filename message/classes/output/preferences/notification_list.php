@@ -74,23 +74,49 @@ class notification_list implements templatable, renderable {
         $this->user = $user;
     }
 
+    /**
+     * Create the list component output object.
+     *
+     * @param string $component
+     * @param array $readyprocessors
+     * @param array $providers
+     * @param stdClass $preferences
+     * @param stdClass $user
+     */
+    protected function create_list_component($component, $readyprocessors, $providers, $preferences, $user) {
+        return new \core_message\output\preferences\notification_list_component(
+            $component, $readyprocessors, $providers, $preferences, $user);
+    }
+
     public function export_for_template(\renderer_base $output) {
         $processors = $this->processors;
         $providers = $this->providers;
         $preferences = $this->preferences;
         $user = $this->user;
         $usercontext = context_user::instance($user->id);
+        $activitycomponents = [];
+        $othercomponents = [];
 
-        foreach($providers as $provider) {
-            if($provider->component != 'moodle') {
-                $components[] = $provider->component;
+        // Order the components so that the activities appear first, followed
+        // by the system and then anything else.
+        foreach ($providers as $provider) {
+            if ($provider->component != 'moodle') {
+                if (substr($provider->component, 0, 4) == 'mod_') {
+                    // Activities
+                    $activitycomponents[] = $provider->component;
+                } else {
+                    // Other stuff.
+                    $othercomponents[] = $provider->component;
+                }
             }
         }
 
-        // Lets arrange by components so that core settings (moodle) appear as the first table.
-        $components = array_unique($components);
-        asort($components);
-        array_unshift($components, 'moodle'); // pop it in front! phew!
+
+        $activitycomponents = array_unique($activitycomponents);
+        asort($activitycomponents);
+        $othercomponents = array_unique($othercomponents);
+        asort($othercomponents);
+        $components = array_merge($activitycomponents, ['moodle'], $othercomponents);
         asort($providers);
 
         $context = [
@@ -99,18 +125,41 @@ class notification_list implements templatable, renderable {
             'processors' => [],
         ];
 
+        $readyprocessors = [];
+        // Make the unconfigured processors appear last in the array.
+        uasort($processors, function($a, $b) {
+            $aconf = $a->object->is_user_configured();
+            $bconf = $b->object->is_user_configured();
+
+            if ($aconf == $bconf) {
+                return 0;
+            }
+
+            return ($aconf < $bconf) ? 1 : -1;
+        });
+
         foreach ($processors as $processor) {
+            if (!$processor->enabled || !$processor->configured) {
+                // If the processor isn't enabled and configured at the site
+                // level then we should ignore it.
+                continue;
+            }
+
             $context['processors'][] = [
                 'displayname' => get_string('pluginname', 'message_'.$processor->name),
                 'name' => $processor->name,
                 'hassettings' => !empty($processor->object->config_form($preferences)),
                 'contextid' => $usercontext->id,
+                'userconfigured' => $processor->object->is_user_configured(),
             ];
+
+            $readyprocessors[] = $processor;
         }
 
         foreach ($components as $component) {
-            $notificationcomponent = new \core_message\output\preferences\notification_list_component(
-                $component, $processors, $providers, $preferences, $user);
+            $notificationcomponent = $this->create_list_component($component, $readyprocessors,
+                $providers, $preferences, $user);
+
             $context['components'][] = $notificationcomponent->export_for_template($output);
         }
 
