@@ -14155,6 +14155,9 @@ input[size] {
   padding: 0.5em;
   font-size: large;
 }
+textarea[data-auto-rows] {
+  overflow-x: hidden;
+}
 body.modal-open {
   overflow: hidden;
 }
