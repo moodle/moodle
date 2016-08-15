@@ -793,7 +793,7 @@ abstract class restore_dbops {
                      // Prepare the query
                      list($stamp_sql, $stamp_params) = $DB->get_in_or_equal($stamps);
                      list($context_sql, $context_params) = $DB->get_in_or_equal($contexts);
-                     $sql = "SELECT contextid
+                     $sql = "SELECT DISTINCT contextid
                                FROM {question_categories}
                               WHERE stamp $stamp_sql
                                 AND contextid $context_sql";
