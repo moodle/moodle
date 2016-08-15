@@ -6084,6 +6084,7 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .messages-area .messages .message .content .text {
   display: inline-block;
   margin-right: 60px;
+  width: 90%;
 }
 .messaging-area-container .messaging-area .messages-area .messages .message .content .text p {
   margin: 0;
