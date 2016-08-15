@@ -52,7 +52,7 @@ class core_message_external extends external_api {
                         array(
                             'touserid' => new external_value(PARAM_INT, 'id of the user to send the private message'),
                             'text' => new external_value(PARAM_RAW, 'the text of the message'),
-                            'textformat' => new external_format_value('text', VALUE_DEFAULT),
+                            'textformat' => new external_format_value('text', VALUE_DEFAULT, FORMAT_MOODLE),
                             'clientmsgid' => new external_value(PARAM_ALPHANUMEXT, 'your own client id for the message. If this id is provided, the fail message id will be returned to you', VALUE_OPTIONAL),
                         )
                     )
