@@ -87,7 +87,7 @@ function xmldb_enrol_self_upgrade($oldversion) {
                     array($role->id, 'enrol/self:holdkey', CAP_PROHIBIT));
             }
         }
-        upgrade_mod_savepoint(true, 2015111601, 'enrol_self');
+        upgrade_plugin_savepoint(true, 2015111601, 'enrol', 'self');
     }
 
     // Moodle v3.1.0 release upgrade line.
