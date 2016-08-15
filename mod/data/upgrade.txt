@@ -1,0 +1,7 @@
+This files describes API changes in /mod/data - plugins,
+information provided here is intended especially for developers.
+
+=== 3.2 ===
+
+* New hook - update_content_import - Can be implemented by field subplugins data_field_* class
+    This can be used to pre-process data from a csv file before it is inserted into the database.
