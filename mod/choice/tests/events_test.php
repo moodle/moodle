@@ -64,8 +64,37 @@ class mod_choice_events_testcase extends advanced_testcase {
     /**
      * Test to ensure that event data is being stored correctly.
      */
-    public function test_answer_submitted() {
+    public function test_answer_created() {
         global $DB;
+        // Generate user data.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $optionids = array_keys($DB->get_records('choice_options', array('choiceid' => $this->choice->id)));
+        // Redirect event.
+        $sink = $this->redirectEvents();
+        choice_user_submit_response($optionids[3], $this->choice, $user->id, $this->course, $this->cm);
+        $events = $sink->get_events();
+        $answer = $DB->get_record('choice_answers', ['userid' => $user->id, 'choiceid' => $this->choice->id]);
+
+        // Data checking.
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf('\mod_choice\event\answer_created', $events[0]);
+        $this->assertEquals($user->id, $events[0]->userid);
+        $this->assertEquals($user->id, $events[0]->relateduserid);
+        $this->assertEquals(context_module::instance($this->choice->cmid), $events[0]->get_context());
+        $this->assertEquals($answer->id, $events[0]->objectid);
+        $this->assertEquals($this->choice->id, $events[0]->other['choiceid']);
+        $this->assertEquals($optionids[3], $events[0]->other['optionid']);
+        $this->assertEventContextNotUsed($events[0]);
+        $sink->close();
+    }
+
+    /**
+     * Test to ensure that event data is being stored correctly.
+     */
+    public function test_answer_submitted_by_another_user() {
+        global $DB, $USER;
         // Generate user data.
         $user = $this->getDataGenerator()->create_user();
 
@@ -74,16 +103,17 @@ class mod_choice_events_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         choice_user_submit_response($optionids[3], $this->choice, $user->id, $this->course, $this->cm);
         $events = $sink->get_events();
+        $answer = $DB->get_record('choice_answers', ['userid' => $user->id, 'choiceid' => $this->choice->id]);
 
         // Data checking.
         $this->assertCount(1, $events);
-        $this->assertInstanceOf('\mod_choice\event\answer_submitted', $events[0]);
-        $this->assertEquals($user->id, $events[0]->userid);
+        $this->assertInstanceOf('\mod_choice\event\answer_created', $events[0]);
+        $this->assertEquals($USER->id, $events[0]->userid);
+        $this->assertEquals($user->id, $events[0]->relateduserid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $events[0]->get_context());
+        $this->assertEquals($answer->id, $events[0]->objectid);
         $this->assertEquals($this->choice->id, $events[0]->other['choiceid']);
-        $this->assertEquals(array($optionids[3]), $events[0]->other['optionid']);
-        $expected = array($this->course->id, "choice", "choose", 'view.php?id=' . $this->cm->id, $this->choice->id, $this->cm->id);
-        $this->assertEventLegacyLogData($expected, $events[0]);
+        $this->assertEquals($optionids[3], $events[0]->other['optionid']);
         $this->assertEventContextNotUsed($events[0]);
         $sink->close();
     }
@@ -91,11 +121,12 @@ class mod_choice_events_testcase extends advanced_testcase {
     /**
      * Test to ensure that multiple choice data is being stored correctly.
      */
-    public function test_answer_submitted_multiple() {
+    public function test_answer_created_multiple() {
         global $DB;
 
         // Generate user data.
         $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
 
         // Create multiple choice.
         $choice = $this->getDataGenerator()->create_module('choice', array('course' => $this->course->id,
@@ -110,17 +141,28 @@ class mod_choice_events_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         choice_user_submit_response($submittedoptionids, $choice, $user->id, $this->course, $cm);
         $events = $sink->get_events();
+        $answers = $DB->get_records('choice_answers', ['userid' => $user->id, 'choiceid' => $choice->id], 'id');
+        $answers = array_values($answers);
 
         // Data checking.
-        $this->assertCount(1, $events);
-        $this->assertInstanceOf('\mod_choice\event\answer_submitted', $events[0]);
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf('\mod_choice\event\answer_created', $events[0]);
         $this->assertEquals($user->id, $events[0]->userid);
+        $this->assertEquals($user->id, $events[0]->relateduserid);
         $this->assertEquals(context_module::instance($choice->cmid), $events[0]->get_context());
+        $this->assertEquals($answers[0]->id, $events[0]->objectid);
         $this->assertEquals($choice->id, $events[0]->other['choiceid']);
-        $this->assertEquals($submittedoptionids, $events[0]->other['optionid']);
-        $expected = array($this->course->id, "choice", "choose", 'view.php?id=' . $cm->id, $choice->id, $cm->id);
-        $this->assertEventLegacyLogData($expected, $events[0]);
+        $this->assertEquals($optionids[1], $events[0]->other['optionid']);
         $this->assertEventContextNotUsed($events[0]);
+
+        $this->assertInstanceOf('\mod_choice\event\answer_created', $events[1]);
+        $this->assertEquals($user->id, $events[1]->userid);
+        $this->assertEquals($user->id, $events[1]->relateduserid);
+        $this->assertEquals(context_module::instance($choice->cmid), $events[1]->get_context());
+        $this->assertEquals($answers[1]->id, $events[1]->objectid);
+        $this->assertEquals($choice->id, $events[1]->other['choiceid']);
+        $this->assertEquals($optionids[3], $events[1]->other['optionid']);
+        $this->assertEventContextNotUsed($events[1]);
         $sink->close();
     }
 
@@ -129,7 +171,7 @@ class mod_choice_events_testcase extends advanced_testcase {
      *
      * @expectedException coding_exception
      */
-    public function test_answer_submitted_other_exception() {
+    public function test_answer_created_other_exception() {
         // Generate user data.
         $user = $this->getDataGenerator()->create_user();
 
@@ -141,7 +183,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $eventdata['other'] = array();
 
         // Make sure content identifier is always set.
-        $event = \mod_choice\event\answer_submitted::create($eventdata);
+        $event = \mod_choice\event\answer_created::create($eventdata);
         $event->trigger();
         $this->assertEventContextNotUsed($event);
     }
@@ -153,53 +195,41 @@ class mod_choice_events_testcase extends advanced_testcase {
         global $DB;
         // Generate user data.
         $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
 
         $optionids = array_keys($DB->get_records('choice_options', array('choiceid' => $this->choice->id)));
 
         // Create the first answer.
         choice_user_submit_response($optionids[2], $this->choice, $user->id, $this->course, $this->cm);
+        $oldanswer = $DB->get_record('choice_answers', ['userid' => $user->id, 'choiceid' => $this->choice->id]);
 
         // Redirect event.
         $sink = $this->redirectEvents();
         // Now choose a different answer.
         choice_user_submit_response($optionids[3], $this->choice, $user->id, $this->course, $this->cm);
+        $newanswer = $DB->get_record('choice_answers', ['userid' => $user->id, 'choiceid' => $this->choice->id]);
 
         $events = $sink->get_events();
 
         // Data checking.
-        $this->assertCount(1, $events);
-        $this->assertInstanceOf('\mod_choice\event\answer_updated', $events[0]);
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf('\mod_choice\event\answer_deleted', $events[0]);
         $this->assertEquals($user->id, $events[0]->userid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $events[0]->get_context());
+        $this->assertEquals($oldanswer->id, $events[0]->objectid);
         $this->assertEquals($this->choice->id, $events[0]->other['choiceid']);
-        $this->assertEquals($optionids[3], $events[0]->other['optionid']);
-        $expected = array($this->course->id, "choice", "choose again", 'view.php?id=' . $this->cm->id,
-                $this->choice->id, $this->cm->id);
-        $this->assertEventLegacyLogData($expected, $events[0]);
+        $this->assertEquals($optionids[2], $events[0]->other['optionid']);
         $this->assertEventContextNotUsed($events[0]);
+
+        $this->assertInstanceOf('\mod_choice\event\answer_created', $events[1]);
+        $this->assertEquals($user->id, $events[1]->userid);
+        $this->assertEquals(context_module::instance($this->choice->cmid), $events[1]->get_context());
+        $this->assertEquals($newanswer->id, $events[1]->objectid);
+        $this->assertEquals($this->choice->id, $events[1]->other['choiceid']);
+        $this->assertEquals($optionids[3], $events[1]->other['optionid']);
+        $this->assertEventContextNotUsed($events[1]);
+
         $sink->close();
-    }
-
-    /**
-     * Test custom validations for answer_updated event.
-     *
-     * @expectedException coding_exception
-     */
-    public function test_answer_updated_other_exception() {
-        // Generate user data.
-        $user = $this->getDataGenerator()->create_user();
-
-        $eventdata = array();
-        $eventdata['context'] = $this->context;
-        $eventdata['objectid'] = 2;
-        $eventdata['userid'] = $user->id;
-        $eventdata['courseid'] = $this->course->id;
-        $eventdata['other'] = array();
-
-        // Make sure content identifier is always set.
-        $event = \mod_choice\event\answer_updated::create($eventdata);
-        $event->trigger();
-        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -216,7 +246,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         choice_user_submit_response($optionids[2], $this->choice, $user->id, $this->course, $this->cm);
         // Get the users response.
         $answer = $DB->get_record('choice_answers', array('userid' => $user->id, 'choiceid' => $this->choice->id),
-                '*', $strictness = IGNORE_MULTIPLE);
+            '*', $strictness = IGNORE_MULTIPLE);
 
         // Redirect event.
         $sink = $this->redirectEvents();
@@ -269,7 +299,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertEquals($USER->id, $event[0]->userid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $event[0]->get_context());
         $expected = array($this->course->id, "choice", "report", 'report.php?id=' . $this->context->instanceid,
-                $this->choice->id, $this->context->instanceid);
+            $this->choice->id, $this->context->instanceid);
         $this->assertEventLegacyLogData($expected, $event[0]);
         $this->assertEventContextNotUsed($event[0]);
         $sink->close();
@@ -341,7 +371,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertEquals($USER->id, $event[0]->userid);
         $this->assertEquals(context_module::instance($this->choice->cmid), $event[0]->get_context());
         $expected = array($this->course->id, "choice", "view", 'view.php?id=' . $this->context->instanceid,
-                $this->choice->id, $this->context->instanceid);
+            $this->choice->id, $this->context->instanceid);
         $this->assertEventLegacyLogData($expected, $event[0]);
         $this->assertEventContextNotUsed($event[0]);
         $sink->close();

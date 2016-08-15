@@ -245,6 +245,61 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
 }
 
 /**
+ * Modifies responses of other users adding the option $newoptionid to them
+ *
+ * @param array $userids list of users to add option to (must be users without any answers yet)
+ * @param array $answerids list of existing attempt ids of users (will be either appended or
+ *      substituted with the newoptionid, depending on $choice->allowmultiple)
+ * @param int $newoptionid
+ * @param stdClass $choice choice object, result of {@link choice_get_choice()}
+ * @param stdClass $cm
+ * @param stdClass $course
+ */
+function choice_modify_responses($userids, $answerids, $newoptionid, $choice, $cm, $course) {
+    // Get all existing responses and the list of non-respondents.
+    $groupmode = groups_get_activity_groupmode($cm);
+    $onlyactive = $choice->includeinactive ? false : true;
+    $allresponses = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);
+
+    // Check that the option value is valid.
+    if (!$newoptionid || !isset($choice->option[$newoptionid])) {
+        return;
+    }
+
+    // First add responses for users who did not make any choice yet.
+    foreach ($userids as $userid) {
+        if (isset($allresponses[0][$userid])) {
+            choice_user_submit_response($newoptionid, $choice, $userid, $course, $cm);
+        }
+    }
+
+    // Create the list of all options already selected by each user.
+    $optionsbyuser = []; // Mapping userid=>array of chosen choice options.
+    $usersbyanswer = []; // Mapping answerid=>userid (which answer belongs to each user).
+    foreach ($allresponses as $optionid => $responses) {
+        if ($optionid > 0) {
+            foreach ($responses as $userid => $userresponse) {
+                $optionsbyuser += [$userid => []];
+                $optionsbyuser[$userid][] = $optionid;
+                $usersbyanswer[$userresponse->answerid] = $userid;
+            }
+        }
+    }
+
+    // Go through the list of submitted attemptids and find which users answers need to be updated.
+    foreach ($answerids as $answerid) {
+        if (isset($usersbyanswer[$answerid])) {
+            $userid = $usersbyanswer[$answerid];
+            if (!in_array($newoptionid, $optionsbyuser[$userid])) {
+                $options = $choice->allowmultiple ?
+                        array_merge($optionsbyuser[$userid], [$newoptionid]) : $newoptionid;
+                choice_user_submit_response($options, $choice, $userid, $course, $cm);
+            }
+        }
+    }
+}
+
+/**
  * Process user submitted answers for a choice,
  * and either updating them or saving new answers.
  *
@@ -256,7 +311,7 @@ function choice_prepare_options($choice, $user, $coursemodule, $allresponses) {
  * @return void
  */
 function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm) {
-    global $DB, $CFG;
+    global $DB, $CFG, $USER;
     require_once($CFG->libdir.'/completionlib.php');
 
     $continueurl = new moodle_url('/mod/choice/view.php', array('id' => $cm->id));
@@ -349,8 +404,9 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
     }
 
     // Check the user hasn't exceeded the maximum selections for the choice(s) they have selected.
+    $answersnapshots = array();
+    $deletedanswersnapshots = array();
     if (!($choice->limitanswers && $choicesexceeded)) {
-        $answersnapshots = array();
         if ($current) {
             // Update an existing answer.
             $existingchoices = array();
@@ -358,8 +414,8 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
                 if (in_array($c->optionid, $formanswers)) {
                     $existingchoices[] = $c->optionid;
                     $DB->set_field('choice_answers', 'timemodified', time(), array('id' => $c->id));
-                    $answersnapshots[] = $c;
                 } else {
+                    $deletedanswersnapshots[] = $c;
                     $DB->delete_records('choice_answers', array('id' => $c->id));
                 }
             }
@@ -376,9 +432,6 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
                     $answersnapshots[] = $newanswer;
                 }
             }
-
-            // Initialised as true, meaning we updated the answer.
-            $answerupdated = true;
         } else {
             // Add new answer.
             foreach ($formanswers as $answer) {
@@ -396,9 +449,6 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
             if ($completion->is_enabled($cm) && $choice->completionsubmit) {
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
-
-            // Initalised as false, meaning we submitted a new answer.
-            $answerupdated = false;
         }
     } else {
         // Check to see if current choice already selected - if not display error.
@@ -416,30 +466,12 @@ function choice_user_submit_response($formanswer, $choice, $userid, $course, $cm
         $choicelock->release();
     }
 
-    // Now record completed event.
-    if (isset($answerupdated)) {
-        $eventdata = array();
-        $eventdata['context'] = $context;
-        $eventdata['objectid'] = $choice->id;
-        $eventdata['userid'] = $userid;
-        $eventdata['courseid'] = $course->id;
-        $eventdata['other'] = array();
-        $eventdata['other']['choiceid'] = $choice->id;
-
-        if ($answerupdated) {
-            $eventdata['other']['optionid'] = $formanswer;
-            $event = \mod_choice\event\answer_updated::create($eventdata);
-        } else {
-            $eventdata['other']['optionid'] = $formanswers;
-            $event = \mod_choice\event\answer_submitted::create($eventdata);
-        }
-        $event->add_record_snapshot('course', $course);
-        $event->add_record_snapshot('course_modules', $cm);
-        $event->add_record_snapshot('choice', $choice);
-        foreach ($answersnapshots as $record) {
-            $event->add_record_snapshot('choice_answers', $record);
-        }
-        $event->trigger();
+    // Trigger events.
+    foreach ($deletedanswersnapshots as $answer) {
+        \mod_choice\event\answer_deleted::create_from_object($answer, $choice, $cm, $course)->trigger();
+    }
+    foreach ($answersnapshots as $answer) {
+        \mod_choice\event\answer_created::create_from_object($answer, $choice, $cm, $course)->trigger();
     }
 }
 
@@ -478,6 +510,17 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses) {
     $display = clone($choice);
     $display->coursemoduleid = $cm->id;
     $display->courseid = $course->id;
+
+    if (!empty($choice->showunanswered)) {
+        $choice->option[0] = get_string('notanswered', 'choice');
+        $choice->maxanswers[0] = 0;
+    }
+
+    // Remove from the list of non-respondents the users who do not have access to this activity.
+    if (!empty($display->showunanswered) && $allresponses[0]) {
+        $info = new \core_availability\info_module(cm_info::create($cm));
+        $allresponses[0] = $info->filter_user_list($allresponses[0]);
+    }
 
     //overwrite options value;
     $display->options = array();
@@ -531,27 +574,11 @@ function choice_delete_responses($attemptids, $choice, $cm, $course) {
         }
     }
 
-    $context = context_module::instance($cm->id);
     $completion = new completion_info($course);
     foreach($attemptids as $attemptid) {
         if ($todelete = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'id' => $attemptid))) {
             // Trigger the event answer deleted.
-            $eventdata = array();
-            $eventdata['objectid'] = $todelete->id;
-            $eventdata['context'] = $context;
-            $eventdata['userid'] = $USER->id;
-            $eventdata['courseid'] = $course->id;
-            $eventdata['relateduserid'] = $todelete->userid;
-            $eventdata['other'] = array();
-            $eventdata['other']['choiceid'] = $choice->id;
-            $eventdata['other']['optionid'] = $todelete->optionid;
-            $event = \mod_choice\event\answer_deleted::create($eventdata);
-            $event->add_record_snapshot('course', $course);
-            $event->add_record_snapshot('course_modules', $cm);
-            $event->add_record_snapshot('choice', $choice);
-            $event->add_record_snapshot('choice_answers', $todelete);
-            $event->trigger();
-
+            \mod_choice\event\answer_deleted::create_from_object($todelete, $choice, $cm, $course)->trigger();
             $DB->delete_records('choice_answers', array('choiceid' => $choice->id, 'id' => $attemptid));
         }
     }

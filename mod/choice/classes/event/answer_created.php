@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_choice answer deleted event.
+ * The mod_choice answer created event.
  *
  * @package    mod_choice
- * @copyright  2016 Stephen Bourget
+ * @copyright  2016 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,7 +27,7 @@ namespace mod_choice\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_choice answer deleted event class.
+ * The mod_choice answer created event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -37,11 +37,11 @@ defined('MOODLE_INTERNAL') || die();
  * }
  *
  * @package    mod_choice
- * @since      Moodle 3.1
- * @copyright  2016 Stephen Bourget
+ * @since      Moodle 3.2
+ * @copyright  2016 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class answer_deleted extends \core\event\base {
+class answer_created extends \core\event\base {
 
     /**
      * Creates an instance of the event from the records
@@ -77,7 +77,7 @@ class answer_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has deleted the option with id '" . $this->other['optionid'] . "' for the
+        return "The user with id '$this->userid' has added the option with id '" . $this->other['optionid'] . "' for the
             user with id '$this->relateduserid' from the choice activity with course module id '$this->contextinstanceid'.";
     }
 
@@ -87,7 +87,7 @@ class answer_deleted extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventanswerdeleted', 'mod_choice');
+        return get_string('eventanswercreated', 'mod_choice');
     }
 
     /**
@@ -106,7 +106,7 @@ class answer_deleted extends \core\event\base {
      */
     protected function init() {
         $this->data['objecttable'] = 'choice_answers';
-        $this->data['crud'] = 'd';
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
@@ -128,10 +128,22 @@ class answer_deleted extends \core\event\base {
         }
     }
 
+    /**
+     * This is used when restoring course logs where it is required that we
+     * map the objectid to it's new value in the new course.
+     *
+     * @return string the name of the restore mapping the objectid links to
+     */
     public static function get_objectid_mapping() {
-        return array('db' => 'choice_answers', 'restore' => \core\event\base::NOT_MAPPED);
+        return array('db' => 'choice_answers', 'restore' => 'answer');
     }
 
+    /**
+     * This is used when restoring course logs where it is required that we
+     * map the information in 'other' to it's new value in the new course.
+     *
+     * @return array an array of other values and their corresponding mapping
+     */
     public static function get_other_mapping() {
         $othermapped = array();
         $othermapped['choiceid'] = array('db' => 'choice', 'restore' => 'choice');
