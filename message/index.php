@@ -253,10 +253,21 @@ if (!$user2realuser) {
         $otheruserid = $contact->get_contact()->userid;
         $conversations->set_otheruserid($otheruserid);
         $messages = \core_message\api::get_messages($user1->id, $otheruserid);
+
+        // Mark the conversation as read.
+        if ($currentuser) {
+            $contact->isread = 1;
+            message_mark_all_read_for_user($user1->id, $otheruserid);
+        }
     } else {
         $messages = null;
     }
 } else {
+    // Mark the conversation as read.
+    if ($currentuser) {
+        message_mark_all_read_for_user($user1->id, $user2->id);
+    }
+
     $conversations = \core_message\api::get_conversations($user1->id, $user2->id, 0, 20);
     $messages = \core_message\api::get_messages($user1->id, $user2->id);
 }

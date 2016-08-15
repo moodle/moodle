@@ -112,11 +112,30 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // We are viewing another user, or re-loading the panel, so set number of messages displayed to 0.
             this._numMessagesDisplayed = 0;
 
+            // Mark all the messages as read.
+            var markMessagesAsRead = ajax.call([{
+                methodname: 'core_message_mark_all_messages_as_read',
+                args: {
+                    useridto: this.messageArea.getCurrentUserId(),
+                    useridfrom: userid
+                }
+            }]);
+
             // Keep track of the number of messages received.
             var numberreceived = 0;
             // Show loading template.
             return templates.render('core/loading', {}).then(function(html, js) {
                 templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+                return markMessagesAsRead[0];
+            }.bind(this)).then(function() {
+                var conversationnode = this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
+                    this.messageArea.SELECTORS.CONTACT + "[data-userid='" + userid + "']");
+                if (conversationnode.hasClass('unread')) {
+                    // Remove the class.
+                    conversationnode.removeClass('unread');
+                    // Trigger an event letting the notification popover (and whoever else) know.
+                    $(document).trigger('messagearea:conversationselected', userid);
+                }
                 return this._getMessages(userid);
             }.bind(this)).then(function(data) {
                 numberreceived = data.messages.length;

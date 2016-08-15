@@ -5869,6 +5869,9 @@ a.ygtvspacer:hover {
   border-bottom: 1px solid #e3e3e3;
   box-sizing: border-box;
 }
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.unread {
+  background-color: #F1F1F1;
+}
 .messaging-area-container .messaging-area .contacts-area .contacts .contact:hover {
   background-color: #4f94cd;
   color: #fff;

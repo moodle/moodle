@@ -406,6 +406,12 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             e.stopPropagation();
             data.originalEvent.preventDefault();
         }.bind(this));
+
+        // Check if we have marked a conversation as read in the messaging area.
+        $(document).on('messagearea:conversationselected', function() {
+            this.unreadCount--;
+            this.renderUnreadCount();
+        }.bind(this));
     };
 
     return MessagePopoverController;

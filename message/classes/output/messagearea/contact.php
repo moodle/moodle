@@ -79,4 +79,16 @@ class contact implements templatable, renderable {
 
         return $contact;
     }
+
+    /**
+     * Magic setter method.
+     *
+     * @param $name
+     * @param $value
+     */
+    public function __set($name, $value) {
+        if (property_exists($this->contact, $name)) {
+            $this->contact->$name = $value;
+        }
+    }
 }
