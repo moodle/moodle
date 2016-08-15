@@ -95,6 +95,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 this._sendMessageHandler.bind(this));
 
             $(document).on(AutoRows.events.ROW_CHANGE, this._adjustMessagesAreaHeight.bind(this));
+
+            // Scroll to the bottom of the messages when first initialised.
+            this._scrollBottom();
         };
 
         /**
@@ -425,7 +428,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         Messages.prototype._scrollBottom = function() {
             // Scroll to the bottom.
             var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES);
-            messages.scrollTop(messages[0].scrollHeight);
+            if (messages.length !== 0) {
+                messages.scrollTop(messages[0].scrollHeight);
+            }
         };
 
         /**
