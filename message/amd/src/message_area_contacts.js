@@ -163,13 +163,19 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Get the text we will display on the contact panel.
             text = this._getContactText(text);
             // Get the user node.
-            var user = this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
-                this.messageArea.SELECTORS.CONTACT + "[data-userid='" + userid + "']");
-            // If the user has not been loaded yet, let's copy the element from contact panel to the conversation panel.
+            var user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
+            // If the user has not been loaded yet, let's copy the element from contact or search panel to the conversation panel.
             if (user.length === 0) {
                 // Let's clone the data on the contact page.
-                var usercontact = this.messageArea.find(this.messageArea.SELECTORS.CONTACTS + " " +
-                    this.messageArea.SELECTORS.CONTACT + "[data-userid='" + userid + "']");
+                var usercontact = this._getUserNode(this.messageArea.SELECTORS.CONTACTS, userid);
+                if (usercontact.length === 0) {
+                    // No luck, maybe we sent the message to a user we searched for - check search page.
+                    usercontact = this._getUserNode(this.messageArea.SELECTORS.SEARCHRESULTSAREA, userid);
+                }
+                if (usercontact.length == 0) {
+                    // Can't do much.
+                    return;
+                }
                 user = usercontact.clone();
                 // Change the data action attribute.
                 user.attr('data-action', 'view-contact-msg');
@@ -402,8 +408,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }
 
             // Check if the last message needs updating.
-            var user = this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
-                this.messageArea.SELECTORS.CONTACT + "[data-userid='" + userid + "']");
+            var user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
             if (user.length !== 0) {
                 var lastmessagelisted = user.find(this.messageArea.SELECTORS.LASTMESSAGE);
                 lastmessagelisted = lastmessagelisted.html();
@@ -437,11 +442,27 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._addContact = function(userid) {
-            var user = this.messageArea.find(this.messageArea.SELECTORS.CONTACTS + " " + this.messageArea.SELECTORS.CONTACT +
-                "[data-userid='" + userid + "']").hide();
+            var user = this._getUserNode(this.messageArea.SELECTORS.CONTACTS, userid);
             if (user.length !== 0) {
                 user.show();
+            } else {
+                // Must have added contact we searched for that wasn't in the contact list. Let's just refresh the contact panel.
+                this.messageArea.find(this.messageArea.SELECTORS.CONTACTS).empty();
+                this._numContactsDisplayed = 0;
+                this._loadContacts();
             }
+        };
+
+        /**
+         * Handles retrieving a user node from a list.
+         *
+         * @param {String} selector
+         * @param {int} userid
+         * @private
+         */
+        Contacts.prototype._getUserNode = function(selector, userid) {
+            return this.messageArea.find(selector + " " + this.messageArea.SELECTORS.CONTACT +
+                "[data-userid='" + userid + "']");
         };
 
         /**
@@ -452,8 +473,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._removeContact = function(selector, userid) {
-            this.messageArea.find(selector + " " + this.messageArea.SELECTORS.CONTACT +
-                "[data-userid='" + userid + "']").hide();
+            this._getUserNode(selector, userid).hide();
         };
 
         /**
