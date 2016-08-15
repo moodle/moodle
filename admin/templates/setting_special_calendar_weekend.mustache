@@ -1,0 +1,40 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Setting special_calendar_weekend.
+}}
+<table>
+    <thead>
+        <tr>
+            <input type="hidden" name="{{name}}[xxxxx]" value="1">
+            {{#days}}
+                <td>
+                    <label for="{{id}}{{index}}">{{label}}</label>
+                </td>
+            {{/days}}
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {{#days}}
+                <td>
+                    <input type="checkbox" class="form-checkbox" id="{{id}}{{index}}" name="{{name}}[]" value="{{index}}" {{#checked}}checked{{/checked}}>
+                </td>
+            {{/days}}
+        </tr>
+    </tbody>
+</table>
