@@ -56,13 +56,16 @@
     display: none;
 }
 .statusok {
+    @extend .tag;
     @extend .tag-success;
 }
 .statuswarning {
+    @extend .tag;
     @extend .tag-warning;
 }
 .statusserious,
 .statuscritical {
+    @extend .tag;
     @extend .tag-danger;
 }
 
@@ -363,10 +366,6 @@
     margin-right: 7px;
 }
 
-.form-description {
-    clear: right;
-}
-
 .form-item .form-setting .form-htmlarea {
     display: inline;
 }
@@ -383,7 +382,6 @@
 }
 
 .form-item .form-setting .defaultsnext {
-    margin-right: 0.5em;
     display: inline;
 }
 
@@ -396,11 +394,11 @@
 .form-item .form-setting .form-password .unmask,
 .form-item .form-setting .form-defaultinfo {
     display: inline-block;
-}
 
-.form-item .pathok,
-.form-item .patherror {
-    margin-left: 0.5em;
+}
+.form-item .form-setting .form-defaultinfo {
+    max-width: 100%;
+    word-wrap: break-word;
 }
 
 #admin-emoticons td input {
@@ -435,6 +433,7 @@
     height: 102px;
     width: 410px;
     margin-bottom: 10px;
+    box-sizing: content-box;
 }
 
 .admin_colourpicker .loadingicon {

@@ -46,3 +46,12 @@
 .navbar .search-input-wrapper > form {
     margin: 5px 0 5px 25px;
 }
+
+.search-areas-actions {
+    margin-bottom: $spacer;
+}
+
+.search-areas-actions > div {
+    margin-right: $spacer;
+    display: inline-block;
+}
