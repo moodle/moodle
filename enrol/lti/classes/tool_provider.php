@@ -164,8 +164,6 @@ class tool_provider extends ToolProvider\ToolProvider {
     function onLaunch() {
         global $DB, $SESSION, $CFG;
 
-        // TODO Remove any references to ltirequest.
-
         // Before we do anything check that the context is valid.
         $tool = $this->tool;
         $context = \context::instance_by_id($tool->contextid);
@@ -222,10 +220,10 @@ class tool_provider extends ToolProvider\ToolProvider {
 
         // Update user image. TODO
         $image = false;
-        if (!empty($ltirequest->info['user_image'])) {
-            $image = $ltirequest->info['user_image'];
-        } else if (!empty($ltirequest->info['custom_user_image'])) {
-            $image = $ltirequest->info['custom_user_image'];
+        if (!empty($this->resourceLink->getSetting('user_image'))) {
+            $image = $this->resourceLink->getSetting('user_image');
+        } else if (!empty($this->resourceLink->getSetting('custom_user_image'))) {
+            $image = $this->resourceLink->getSetting('custom_user_image');
         }
 
         // Check if there is an image to process.
@@ -274,8 +272,8 @@ class tool_provider extends ToolProvider\ToolProvider {
         role_assign($roleid, $user->id, $tool->contextid);
 
         // Login user.
-        $sourceid = (!empty($ltirequest->info['lis_result_sourcedid'])) ? $ltirequest->info['lis_result_sourcedid'] : '';
-        $serviceurl = (!empty($ltirequest->info['lis_outcome_service_url'])) ? $ltirequest->info['lis_outcome_service_url'] : '';
+        $sourceid = $this->user->ltiResultSourcedId;
+        $serviceurl = $this->resourceLink->getSetting('lis_outcome_service_url');
 
         // Check if we have recorded this user before.
         if ($userlog = $DB->get_record('enrol_lti_users', array('toolid' => $tool->id, 'userid' => $user->id))) {
@@ -299,20 +297,9 @@ class tool_provider extends ToolProvider\ToolProvider {
             $userlog->lastgrade = 0;
             $userlog->lastaccess = time();
             $userlog->timecreated = time();
+            $userlog->membershipsurl = $this->resourceLink->getSetting('ext_ims_lis_memberships_url');
+            $userlog->membershipsid = $this->resourceLink->getSetting('ext_ims_lis_memberships_id');
 
-            // TODO look for resource link memberships
-            if (!empty($ltirequest->info['ext_ims_lis_memberships_url'])) {
-                $userlog->membershipsurl = $ltirequest->info['ext_ims_lis_memberships_url'];
-            } else {
-                $userlog->membershipsurl = '';
-            }
-
-            // TODO look for resource link memberships
-            if (!empty($ltirequest->info['ext_ims_lis_memberships_id'])) {
-                $userlog->membershipsid = $ltirequest->info['ext_ims_lis_memberships_id'];
-            } else {
-                $userlog->membershipsid = '';
-            }
             $DB->insert_record('enrol_lti_users', $userlog);
         }
 
