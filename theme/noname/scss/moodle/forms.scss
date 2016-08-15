@@ -54,12 +54,6 @@ input#id_externalurl {
     display: inline;
 }
 
-// Copying in Bootstrap styles.
-.form-item {
-    margin-bottom: 10px;
-    // Theres's a mysterious extra 10px inside this item,
-    // so reduce margin by 10px from 20px standard to compensate.
-}
 .form-defaultinfo,
 .form-label .form-shortname {
     @extend .text-muted;
@@ -68,27 +62,26 @@ input#id_externalurl {
     font-size: $font-size-xs;
     display: block;
 }
-.form-item .form-setting,
-.form-item .form-description,
+
 #page-mod-forum-search .c1 .form-horizontal {
     @extend .controls;
 }
 
+.form-item .form-inline {
+    display: inline;
+}
 
 .formsettingheading .form-horizontal {
     @extend .text-muted;
 }
+
 // Moodle doesn't differentiate between what Bootstrap calls
 // .uneditable-inputs and form help text. Styling them both as
 // uneditable looks ugly, styling both as form help is fairly
 // subtle in it's impact. Going for the latter as the best option.
-.form-item .form-description,
 .no-felement.fstatic {
     @extend .text-muted;
     padding-top: 5px;
-}
-.form-item .form-description {
-    padding-top: 0;
 }
 .no-fitem .fstaticlabel {
     font-weight: bold;
@@ -108,6 +101,9 @@ div.backup-section + form,
 .path-admin .buttons,
 .form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
     padding-left: $display1-size;
+}
+.form-item .form-setting .defaultsnext > input {
+    display: inline-block;
 }
 .form-item .form-setting .form-checkbox.defaultsnext {
     // Need to specify .defaultsnext and the .form-checkbox class
