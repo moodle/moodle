@@ -87,6 +87,25 @@ function require_sesskey() {
 }
 
 /**
+ * Determine wether the secure flag should be set on cookies
+ * @return bool
+ */
+function is_moodle_cookie_secure() {
+    global $CFG;
+
+    if (!isset($CFG->cookiesecure)) {
+        return false;
+    }
+    if (!empty($CFG->loginhttps)) {
+        return false;
+    }
+    if (!is_https() and empty($CFG->sslproxy)) {
+        return false;
+    }
+    return !empty($CFG->cookiesecure);
+}
+
+/**
  * Sets a moodle cookie with a weakly encrypted username
  *
  * @param string $username to encrypt and place in a cookie, '' means delete current cookie
@@ -111,12 +130,14 @@ function set_moodle_cookie($username) {
 
     $cookiename = 'MOODLEID1_'.$CFG->sessioncookie;
 
-    // delete old cookie
-    setcookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
+    $cookiesecure = is_moodle_cookie_secure();
+
+    // Delete old cookie.
+    setcookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $cookiesecure, $CFG->cookiehttponly);
 
     if ($username !== '') {
-        // set username cookie for 60 days
-        setcookie($cookiename, rc4encrypt($username), time()+(DAYSECS*60), $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
+        // Set username cookie for 60 days.
+        setcookie($cookiename, rc4encrypt($username), time() + (DAYSECS * 60), $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $cookiesecure, $CFG->cookiehttponly);
     }
 }
 
