@@ -3205,7 +3205,6 @@ EOD;
         if (isloggedin() && $processor->enabled) {
             $context = [
                 'userid' => $USER->id,
-                'allnotificationsdisabled' => !empty($USER->emailstop),
                 'urls' => [
                     'preferences' => (new moodle_url('/message/notificationpreferences.php', ['id' => $USER->id]))->out(),
                 ],

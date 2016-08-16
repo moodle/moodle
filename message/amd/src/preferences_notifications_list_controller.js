@@ -24,11 +24,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define(['jquery', 'core/custom_interaction_events', 'core_message/notification_preference',
+define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_events', 'core_message/notification_preference',
         'core_message/notification_processor_settings'],
-        function($, CustomEvents, NotificationPreference, NotificationProcessorSettings) {
+        function($, Ajax, Notification, CustomEvents, NotificationPreference, NotificationProcessorSettings) {
 
     var SELECTORS = {
+        DISABLE_NOTIFICATIONS: '.disable-notification-container [data-disable-notifications]',
+        DISABLE_NOTIFICATIONS_CONTAINER: '.disable-notification-container',
         PREFERENCE: '[data-state]',
         PREFERENCE_ROW: '.preference-row',
         PREFERENCE_INPUT: '[data-state] input',
@@ -78,7 +80,49 @@ define(['jquery', 'core/custom_interaction_events', 'core_message/notification_p
         this.root.find(SELECTORS.PREFERENCE_INPUT).prop('disabled', false);
     };
 
+    /**
+      * Update the disable all notifications user property in the DOM and
+      * send a request to update on the server.
+      *
+      * @method toggleDisableAllStatus
+      */
+    PreferencesController.prototype.toggleDisableAllStatus = function() {
+        var checkbox = $(SELECTORS.DISABLE_NOTIFICATIONS);
+        var container = $(SELECTORS.DISABLE_NOTIFICATIONS_CONTAINER);
+        var ischecked = checkbox.prop('checked');
+
+        if (container.hasClass('loading')) {
+            return $.Deferred().resolve();
+        }
+
+        container.addClass('loading');
+
+        var request = {
+            methodname: 'core_user_update_user',
+            args: {
+                user: {
+                    emailstop: ischecked ? 1 : 0,
+                }
+            }
+        };
+
+        return Ajax.call([request])[0]
+            .done(function() {
+                if (ischecked) {
+                    this.setDisabled();
+                } else {
+                    this.setEnabled();
+                }
+            }.bind(this))
+            .always(function() {
+                container.removeClass('loading');
+            })
+            .fail(Notification.exception);
+    };
+
     PreferencesController.prototype.registerEventListeners = function() {
+        var disabledNotificationsElement = $(SELECTORS.DISABLE_NOTIFICATIONS);
+
         CustomEvents.define(this.root, [
             CustomEvents.events.activate,
         ]);
@@ -102,12 +146,12 @@ define(['jquery', 'core/custom_interaction_events', 'core_message/notification_p
             processorSettings.show();
         });
 
-        $(document).on('messageprefs:disableall', function() {
-            this.setDisabled();
-        }.bind(this));
+        CustomEvents.define(disabledNotificationsElement, [
+            CustomEvents.events.activate
+        ]);
 
-        $(document).on('messageprefs:enableall', function() {
-            this.setEnabled();
+        disabledNotificationsElement.on(CustomEvents.events.activate, function(e) {
+            this.toggleDisableAllStatus();
         }.bind(this));
     };
 

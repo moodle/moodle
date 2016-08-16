@@ -56,7 +56,6 @@ $string['discussion'] = 'Discussion';
 $string['emailmessages'] = 'Email messages when I am offline';
 $string['emailtagline'] = 'This is a copy of a message sent to you at "{$a->sitename}". Go to {$a->url} to reply.';
 $string['emptysearchstring'] = 'You must search for something';
-$string['enableall'] = 'Enable notifications';
 $string['enabled'] = 'Enabled';
 $string['errorcallingprocessor'] = 'Error calling defined output';
 $string['errorwhilesendingmessage'] = 'An error occurred while sending the message; please try again later.';

@@ -45,7 +45,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         CONTENT_BODY_SHORT: '.content-body-short',
         CONTENT_BODY_FULL: '.content-body-full',
         LINK_URL: '[data-link-url]',
-        DISABLE_ALL_BUTTON: '[data-disable-all]',
     };
 
     var PROCESSOR_NAME = 'popup';
@@ -62,7 +61,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         PopoverController.call(this, element);
 
         this.markAllReadButton = this.root.find(SELECTORS.MARK_ALL_READ_BUTTON);
-        this.disableAllButton = this.root.find(SELECTORS.DISABLE_ALL_BUTTON);
         this.unreadCount = 0;
         this.userId = this.root.attr(SELECTORS.USER_ID);
         this.modeToggle = this.root.find(SELECTORS.MODE_TOGGLE);
@@ -390,63 +388,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
-     * Update the disable all notifications user property in the DOM and
-     * send a request to update on the server.
-     *
-     * @method toggleDisableAllStatus
-     */
-    NotificationPopoverController.prototype.toggleDisableAllStatus = function() {
-        var button = this.disableAllButton;
-        var ischecked = (button.attr('aria-checked') === 'true');
-        var disablestring = '';
-        var enablestring = '';
-
-        button.addClass('loading');
-
-        return Str.get_strings([
-                {
-                    key: 'disableall',
-                    component: 'message',
-                },
-                {
-                    key: 'enableall',
-                    component: 'message',
-                }
-            ]).then(function(strings) {
-                // If we could load the strings then update the user preferences.
-                disablestring = strings[0];
-                enablestring = strings[1];
-
-                var request = {
-                    methodname: 'core_user_update_user',
-                    args: {
-                        user: {
-                            emailstop: ischecked ? 0 : 1,
-                        }
-                    }
-                };
-
-                return Ajax.call([request])[0];
-            })
-            .done(function() {
-                // If everything executed correctly then update the DOM.
-                if (ischecked) {
-                    button.attr('aria-checked', false);
-                    button.attr('data-original-title', disablestring);
-                    $(document).trigger('messageprefs:enableall');
-                } else {
-                    button.attr('aria-checked', true);
-                    button.attr('data-original-title', enablestring);
-                    $(document).trigger('messageprefs:disableall');
-                }
-            })
-            .fail(DebugNotification.exception)
-            .always(function() {
-                button.removeClass('loading');
-            });
-    };
-
-    /**
      * Shift focus to the next content item in the list if the content item
      * list current contains focus, otherwise the first item in the list is
      * given focus.
@@ -770,14 +711,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         this.root.on(CustomEvents.events.activate, SELECTORS.MARK_ALL_READ_BUTTON, function(e) {
             this.markAllAsRead();
             e.stopPropagation();
-        }.bind(this));
-
-        // Update the state of preferences when disable all notifications button is activated.
-        this.root.on(CustomEvents.events.activate, SELECTORS.DISABLE_ALL_BUTTON, function(e, data) {
-            this.toggleDisableAllStatus();
-
-            e.stopPropagation();
-            data.originalEvent.preventDefault();
         }.bind(this));
 
         // Expand all the currently visible content items if the user hits the

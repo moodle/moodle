@@ -6392,18 +6392,32 @@ a.ygtvspacer:hover {
 .processor-container.loading .loading-container {
   display: block;
 }
-.message-preferences-container .block-non-contacts-container {
+.preferences-container .block-non-contacts-container {
   margin: 30px 5px;
   line-height: 20px;
 }
-.message-preferences-container .block-non-contacts-container input {
+.preferences-container .block-non-contacts-container input {
   line-height: 20px;
   margin: 0;
 }
-.message-preferences-container .block-non-contacts-container .loading-icon {
+.preferences-container .block-non-contacts-container .loading-icon {
   display: none;
 }
-.message-preferences-container .block-non-contacts-container.loading .loading-icon {
+.preferences-container .block-non-contacts-container.loading .loading-icon {
+  display: inline-block;
+}
+.preferences-container .disable-notification-container {
+  margin: 30px 5px;
+  line-height: 20px;
+}
+.preferences-container .disable-notification-container input {
+  line-height: 20px;
+  margin: 0;
+}
+.preferences-container .disable-notification-container .loading-icon {
+  display: none;
+}
+.preferences-container .disable-notification-container.loading .loading-icon {
   display: inline-block;
 }
 /* Question */

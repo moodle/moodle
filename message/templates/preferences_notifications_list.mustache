@@ -77,6 +77,14 @@
 }}
 <h2>{{#str}} notificationpreferences, message {{/str}}</h2>
 <div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
+    <div class="disable-notification-container">
+        <input id="disable-notifications"
+           type="checkbox"
+           data-disable-notifications
+           {{#disableall}}checked{{/disableall}} />
+        <label for="disable-notifications">{{#str}} disableall, message {{/str}}</label>
+        {{> core/loading }}
+    </div>
     <table class="table table-hover preference-table">
         <thead>
             <tr>

@@ -774,8 +774,9 @@
     }
 }
 
-.message-preferences-container {
-    .block-non-contacts-container {
+.preferences-container {
+
+    .container() {
         margin: 30px 5px;
         line-height: 20px;
 
@@ -793,5 +794,13 @@
                 display: inline-block;
             }
         }
+    }
+
+    .block-non-contacts-container {
+        .container();
+    }
+
+    .disable-notification-container {
+        .container();
     }
 }
