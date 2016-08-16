@@ -2,8 +2,8 @@
     {{$element}}
         <input type="submit" {{#element.frozen}}readonly{{/element.frozen}}
                 class="btn
-                    {{^element.iscancel}}btn-primary{{/element.iscancel}}
-                    {{#element.iscancel}}btn-secondary{{/element.iscancel}}
+                    {{^element.secondary}}btn-primary{{/element.secondary}}
+                    {{#element.secondary}}btn-secondary{{/element.secondary}}
                     {{#error}} btn-danger {{/error}}"
                 name="{{element.name}}"
                 id="{{element.id}}"

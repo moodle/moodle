@@ -116,7 +116,7 @@ class MoodleQuickForm_submit extends HTML_QuickForm_submit implements templatabl
     public function export_for_template(renderer_base $output) {
         $context = $this->export_for_template_base($output);
         if ($this->getName() == 'cancel') {
-            $context['iscancel'] = true;
+            $context['secondary'] = true;
         }
         return $context;
     }
