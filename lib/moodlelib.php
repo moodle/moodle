@@ -7808,20 +7808,21 @@ function random_bytes_emulate($length) {
         }
     }
     if (function_exists('openssl_random_pseudo_bytes')) {
-        // For PHP 5.3 and later with openssl extension.
+        // If you have the openssl extension enabled.
         $hash = openssl_random_pseudo_bytes($length);
         if ($hash !== false) {
             return $hash;
         }
     }
 
-    // Bad luck, there is no reliable random generator, let's just hash some unique stuff that is hard to guess.
-    $hash = sha1(serialize($CFG) . serialize($_SERVER) . microtime(true) . uniqid('', true), true);
-    // NOTE: the last param in sha1() is true, this means we are getting 20 bytes, not 40 chars as usual.
-    if ($length <= 20) {
-        return substr($hash, 0, $length);
-    }
-    return $hash . random_bytes_emulate($length - 20);
+    // Bad luck, there is no reliable random generator, let's just slowly hash some unique stuff that is hard to guess.
+    $staticdata = serialize($CFG) . serialize($_SERVER);
+    $hash = '';
+    do {
+        $hash .= sha1($staticdata . microtime(true) . uniqid('', true), true);
+    } while (strlen($hash) < $length);
+
+    return substr($hash, 0, $length);
 }
 
 /**
