@@ -38,7 +38,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         CONTENT: '.messages',
         CONTENT_ITEM_CONTAINER: '.content-item-container',
         EMPTY_MESSAGE: '.empty-message',
-        LINK_URL: '[data-link-url]',
     };
 
     /**
@@ -115,26 +114,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                 Str.get_string('showmessagewindownonew', 'message').done(function(string) {
                     this.menuToggle.attr('aria-label', string);
                 }.bind(this));
-            }
-        }
-    };
-
-    /**
-     * Navigate the browser to the link URL for the item, if it has one.
-     *
-     * @method navigateToLinkURL
-     * @param {jQuery} item The link element
-     * @param {bool} item Should the URL be opened in a new tab or not.
-     */
-    MessagePopoverController.prototype.navigateToLinkURL = function(item, newTab) {
-        var url = item.attr('data-link-url');
-        newTab = newTab || false;
-
-        if (url) {
-            if (newTab) {
-                window.open(url, '_blank');
-            } else {
-                window.location.assign(url);
             }
         }
     };
@@ -304,26 +283,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         // Load more messages when we scroll to the bottom of the open menu.
         this.root.on(CustomEvents.events.scrollBottom, function() {
             this.loadMoreMessages();
-        }.bind(this));
-
-        // Follow the link URL if the user activates it.
-        this.root.on('click', SELECTORS.LINK_URL, function(e) {
-            var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
-            // Open link in a new tab if the user ctrl + click or command + click.
-            if (e.ctrlKey || e.metaKey) {
-                this.navigateToLinkURL(linkItem, true);
-            } else {
-                this.navigateToLinkURL(linkItem, false);
-            }
-            e.stopPropagation();
-            e.preventDefault();
-        }.bind(this));
-
-        // Follow the link URL if the user activates it.
-        this.root.on(CustomEvents.events.keyboardActivate, SELECTORS.LINK_URL, function(e) {
-            var linkItem = $(e.target).closest(SELECTORS.LINK_URL);
-            this.navigateToLinkURL(linkItem, false);
-            e.stopPropagation();
         }.bind(this));
 
         // Mark all messages as read when button is activated.
