@@ -14,3 +14,14 @@
         </select>
     {{/element}}
 {{/ core_form/element-template }}
+{{#js}}
+require(['core/form-autocomplete'], function(module) {
+    module.enhance({{#quote}}#{{element.id}}{{/quote}},
+                   {{#quote}}{{element.tags}}{{/quote}},
+                   {{#quote}}{{element.ajax}}{{/quote}},
+                   {{#quote}}{{element.placeholder}}{{/quote}},
+                   {{#quote}}{{element.casesensitive}}{{/quote}},
+                   {{#quote}}{{element.showsuggestions}}{{/quote}},
+                   {{#quote}}{{element.noselectionstring}}{{/quote}});
+});
+{{/js}}
