@@ -400,59 +400,24 @@ class grade_edit_tree {
         $str = '';
 
         if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef' || $aggcoef == 'aggregationcoefextraweight') {
-            return '<label class="accesshide" for="weight_'.$item->id.'">' .
-                get_string('extracreditvalue', 'grades', $itemname).'</label>' .
-                html_writer::empty_tag('input', [
-                    'type'          => 'text',
-                    'size'          => 6,
-                    'id'            => 'weight_' . $item->id,
-                    'name'          => 'weight_' . $item->id,
-                    'value'         => self::format_number($item->aggregationcoef),
-                ]);
+
+            return $OUTPUT->render_from_template('core_grades/weight_field', [
+                'id' => $item->id,
+                'itemname' => $itemname,
+                'value' => self::format_number($item->aggregationcoef)
+            ]);
 
         } else if ($aggcoef == 'aggregationcoefextraweightsum') {
 
-            $checkboxname = 'weightoverride_' . $item->id;
-            $checkboxlbl = html_writer::tag('label', get_string('overrideweightofa', 'grades', $itemname),
-                array('for' => $checkboxname, 'class' => 'accesshide'));
-            $checkbox = html_writer::empty_tag('input', [
-                'name'          => $checkboxname,
-                'type'          => 'hidden',
-                'value'         => 0,
-            ]);
+            $tpldata = [
+                'id' => $item->id,
+                'itemname' => $itemname,
+                'value' => grade_edit_tree::format_number($item->aggregationcoef2 * 100.0),
+                'checked' => $item->weightoverride,
+                'disabled' => !$item->weightoverride
+            ];
+            $str .= $OUTPUT->render_from_template('core_grades/weight_override_field', $tpldata);
 
-            $checkbox .= html_writer::empty_tag('input', [
-                'name' => $checkboxname,
-                'type' => 'checkbox',
-                'value' => 1,
-                'id' => $checkboxname,
-                'class' => 'weightoverride',
-                'checked' => ($item->weightoverride ? 'checked' : null),
-            ]);
-
-            $name = 'weight_' . $item->id;
-            $hiddenlabel = html_writer::tag(
-                'label',
-                get_string('weightofa', 'grades', $itemname),
-                array(
-                    'class' => 'accesshide',
-                    'for' => $name
-                )
-            );
-
-            $input = html_writer::empty_tag(
-                'input',
-                array(
-                    'type' =>   'text',
-                    'size' =>   6,
-                    'id' =>     $name,
-                    'name' =>   $name,
-                    'value' =>  grade_edit_tree::format_number($item->aggregationcoef2 * 100.0),
-                    'disabled' => ($item->weightoverride ? null : 'disabled')
-                )
-            );
-
-            $str .= $checkboxlbl . $checkbox . $hiddenlabel . $input;
         }
 
         return $str;

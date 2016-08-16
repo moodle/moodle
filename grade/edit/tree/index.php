@@ -237,42 +237,34 @@ print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');
 
-echo '<form id="gradetreeform" method="post" action="'.$returnurl.'">';
-echo '<div>';
-echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-
 //did we update something in the db and thus invalidate $grade_edit_tree?
 if ($recreatetree) {
     $grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
 }
 
+$bulkmoveoptions = ['' => get_string('choosedots')] + $grade_edit_tree->categories;
+$tpldata = (object) [
+    'actionurl' => $returnurl,
+    'sesskey' => sesskey(),
+    'showsave' => !$moving,
+    'showbulkmove' => !$moving && count($grade_edit_tree->categories) > 1,
+    'bulkmoveoptions' => array_map(function($option) use ($bulkmoveoptions) {
+        return [
+            'name' => $bulkmoveoptions[$option],
+            'value' => $option
+        ];
+    }, array_keys($bulkmoveoptions))
+];
+
 // Check to see if we have a normalisation message to send.
 if ($weightsadjusted) {
-    echo $OUTPUT->notification(get_string('weightsadjusted', 'grades'), 'notifymessage');
+    $notification = new \core\output\notification(get_string('weightsadjusted', 'grades'), \core\output\notification::NOTIFY_INFO);
+    $tpldata->notification = $notification->export_for_template($OUTPUT);
 }
 
-echo html_writer::table($grade_edit_tree->table);
+$tpldata->table = html_writer::table($grade_edit_tree->table);
 
-echo '<div id="gradetreesubmit">';
-if (!$moving) {
-    echo '<input class="advanced" type="submit" value="'.get_string('savechanges').'" />';
-}
-
-// We don't print a bulk move menu if there are no other categories than course category
-if (!$moving && count($grade_edit_tree->categories) > 1) {
-    echo '<br /><br />';
-    echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
-    $attributes = array('id'=>'menumoveafter', 'class' => 'ignoredirty singleselect');
-    echo html_writer::label(get_string('moveselectedto', 'grades'), 'menumoveafter');
-    echo html_writer::select($grade_edit_tree->categories, 'moveafter', '', array(''=>'choosedots'), $attributes);
-    echo '<div id="noscriptgradetreeform" class="hiddenifjs">
-            <input type="submit" value="'.get_string('go').'" />
-          </div>';
-}
-
-echo '</div>';
-
-echo '</div></form>';
+echo $OUTPUT->render_from_template('core_grades/edit_tree', $tpldata);
 
 echo $OUTPUT->box_end();
 
