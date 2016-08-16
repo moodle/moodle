@@ -286,7 +286,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         if ($this->isupdate && $this->hasgrades && $this->canrescale && $this->currentgradetype == 'point' && empty($rescalegrades)) {
             // If the maxgrade field is disabled with javascript, no value is sent with the form and mform assumes the default.
             // If the user was forced to choose a rescale option - and they haven't - prevent any changes to the max grade.
-            return $this->currentgrade;
+            return (string)unformat_float($this->currentgrade);
         }
         switch ($type) {
             case 'point':
