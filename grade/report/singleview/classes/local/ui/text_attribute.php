@@ -65,38 +65,24 @@ class text_attribute extends element {
      * @return string The HTML.
      */
     public function html() {
-        $attributes = array(
-            'type' => 'text',
+        global $OUTPUT;
+
+        $context = (object) [
+            'id' => $this->name,
             'name' => $this->name,
             'value' => $this->value,
-            'id' => $this->name
-        );
+            'disabled' => $this->isdisabled,
+        ];
 
-        if ($this->isdisabled) {
-            $attributes['disabled'] = 'DISABLED';
-        }
-
-        $hidden = array(
-            'type' => 'hidden',
-            'name' => 'old' . $this->name,
-            'value' => $this->value
-        );
-
-        $label = '';
+        $context->label = '';
         if (preg_match("/^feedback/", $this->name)) {
-            $labeltitle = get_string('feedbackfor', 'gradereport_singleview', $this->label);
-            $attributes['tabindex'] = '2';
-            $label = html_writer::tag('label', $labeltitle,  array('for' => $this->name, 'class' => 'accesshide'));
+            $context->label = get_string('feedbackfor', 'gradereport_singleview', $this->label);
+            $context->tabindex = '2';
         } else if (preg_match("/^finalgrade/", $this->name)) {
-            $labeltitle = get_string('gradefor', 'gradereport_singleview', $this->label);
-            $attributes['tabindex'] = '1';
-            $label = html_writer::tag('label', $labeltitle,  array('for' => $this->name, 'class' => 'accesshide'));
+            $context->label = get_string('gradefor', 'gradereport_singleview', $this->label);
+            $context->tabindex = '1';
         }
 
-        return (
-            $label .
-            html_writer::empty_tag('input', $attributes) .
-            html_writer::empty_tag('input', $hidden)
-        );
+        return $OUTPUT->render_from_template('gradereport_singleview/text_attribute', $context);
     }
 }
