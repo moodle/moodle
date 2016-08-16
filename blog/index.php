@@ -92,7 +92,7 @@ if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
     require_login();
     if (isguestuser()) {
         // They must have entered the url manually.
-        print_error('blogdisable', 'blog');
+        print_error('noguest');
     }
 
 } else if ($CFG->bloglevel == BLOG_USER_LEVEL) {
