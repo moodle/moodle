@@ -18,7 +18,7 @@ require_once(dirname(__FILE__) . '/../paymentprovider.php');
 require_once(dirname(__FILE__) . '/paypalfunctions.php');
 require_once(dirname(__FILE__) . '/config.php');
 
-public function setprop($basket, $propname, $arrayindex, $array, $default = null) {
+function setprop($basket, $propname, $arrayindex, $array, $default = null) {
     if (array_key_exists($arrayindex, $array)) {
         $basket->$propname = $array[$arrayindex];
     } else if ($default) {

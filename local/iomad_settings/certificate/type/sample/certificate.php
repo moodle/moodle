@@ -38,10 +38,10 @@ if ($iomadcertificate->printdate > 0) {
     if ($iomadcertificate->datefmt == 3) {
         $iomadcertificatedate = str_replace(' 0', '', strftime('%d %B %Y', $certdate));
     }
-    iif ($iomadcertificate->datefmt == 4) {
+    if ($iomadcertificate->datefmt == 4) {
         $iomadcertificatedate = strftime('%B %Y', $certdate);
     }
-    iif ($iomadcertificate->datefmt == 5) {
+    if ($iomadcertificate->datefmt == 5) {
         $timeformat = get_string('strftimedate');
         $iomadcertificatedate = userdate($certdate, $timeformat);
     }

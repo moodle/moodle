@@ -245,7 +245,7 @@ function confirmpayment($finalpaymentamt) {
                '&PAYERID=' . $payerid .
                '&PAYMENTREQUEST_0_PAYMENTACTION=' . $paymenttype .
                '&PAYMENTREQUEST_0_AMT=' . $finalpaymentamt;
-    $nvpstr . = '&PAYMENTREQUEST_0_CURRENCYCODE=' . $currencycodetype . '&IPADDRESS=' . $servername;
+    $nvpstr .= '&PAYMENTREQUEST_0_CURRENCYCODE=' . $currencycodetype . '&IPADDRESS=' . $servername;
 
      /* Make the call to PayPal to finalize payment
         If an error occured, show the resulting errors.
