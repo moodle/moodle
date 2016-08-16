@@ -116,6 +116,7 @@ class notification_list_processor implements templatable, renderable {
         $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
         $context = [
             'displayname' => get_string('pluginname', 'message_'.$processor->name),
+            'ispopup' => ($processor->name == 'popup'),
             'name' => $processor->name,
             'locked' => false,
             'userconfigured' => $processor->object->is_user_configured(),
