@@ -15,21 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * APC cache store language strings.
+ * APCu cache store language strings.
  *
- * @package    cachestore_apc
+ * @package    cachestore_apcu
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clusternotice'] = 'Please be aware that APC is not a suitable choice on sites running clustered web servers. Use of it in such a setup is highly likely to lead to cached content ending up out of sync with other nodes in the cluster, unless very carefully managed.
-We recommend you only make use of APC in situations where a single web server is being used.
+$string['clusternotice'] = 'Please be aware that APCu only a suitable choice for single node sites or caches that can be stored locally.
 For more information see <a href="{$a}">Moodle docs</a>';
 $string['notice'] = 'Notice';
-$string['pluginname'] = 'Alternative PHP cache (APC)';
+$string['pluginname'] = 'APC User Cache (APCu)';
 $string['prefix'] = 'Prefix';
 $string['prefix_help'] = 'The above prefix gets used for all keys being stored in this APC store instance. By default the database prefix is used.';
 $string['prefixinvalid'] = 'The prefix you have selected is invalid. You can only use a-z A-Z 0-9-_.';
 $string['prefixnotunique'] = 'The prefix you have selected is not unique. Please choose a unique prefix.';
 $string['testperformance'] = 'Test performance';
-$string['testperformance_desc'] = 'If enabled APC performance will be included when viewing the Test performance page in the administration block. Enabling this on a production site is not recommended.';
+$string['testperformance_desc'] = 'If enabled APCu performance will be included when viewing the Test performance page in the administration block. Enabling this on a production site is not recommended.';

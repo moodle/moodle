@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The settings for the APC store.
+ * The settings for the APCu store.
  *
- * This file is part of the APC cache store, it contains the API for interacting with an instance of the store.
+ * This file is part of the APCu cache store, it contains the API for interacting with an instance of the store.
  *
- * @package    cachestore_apc
+ * @package    cachestore_apcu
  * @copyright  2014 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,9 +28,9 @@ defined('MOODLE_INTERNAL') || die;
 
 $settings->add(
     new admin_setting_configcheckbox(
-        'cachestore_apc/testperformance',
-        new lang_string('testperformance', 'cachestore_apc'),
-        new lang_string('testperformance_desc', 'cachestore_apc'),
+        'cachestore_apcu/testperformance',
+        new lang_string('testperformance', 'cachestore_apcu'),
+        new lang_string('testperformance_desc', 'cachestore_apcu'),
         false
     )
 );
