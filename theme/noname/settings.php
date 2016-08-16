@@ -32,7 +32,10 @@ if ($ADMIN->fulltree) {
     $description = get_string('preset_desc', 'theme_noname');
     $choices = [
         // A file named 'preset-' . key . '.scss' is expected.
-        'default' => get_string('presetdefault', 'theme_noname')
+        'default' => get_string('presetdefault', 'theme_noname'),
+        'flatly' => get_string('presetflatly', 'theme_noname'),
+        'paper' => get_string('presetpaper', 'theme_noname'),
+        'readable' => get_string('presetreadable', 'theme_noname')
     ];
     $default = 'default';
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
