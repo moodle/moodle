@@ -109,7 +109,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // "httpsecurity" settingpage
     $temp = new admin_settingpage('httpsecurity', new lang_string('httpsecurity', 'admin'));
     $temp->add(new admin_setting_configcheckbox('loginhttps', new lang_string('loginhttps', 'admin'), new lang_string('configloginhttps', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('cookiesecure', new lang_string('cookiesecure', 'admin'), new lang_string('configcookiesecure', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('cookiesecure', new lang_string('cookiesecure', 'admin'), new lang_string('configcookiesecure', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('cookiehttponly', new lang_string('cookiehttponly', 'admin'), new lang_string('configcookiehttponly', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowframembedding', new lang_string('allowframembedding', 'admin'), new lang_string('allowframembedding_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('loginpasswordautocomplete', new lang_string('loginpasswordautocomplete', 'admin'), new lang_string('loginpasswordautocomplete_help', 'admin'), 0));
