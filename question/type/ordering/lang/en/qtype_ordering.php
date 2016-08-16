@@ -89,4 +89,6 @@ $string['selectcount'] = 'Size of subset';
 $string['selectrandom'] = 'Select a random subset of items';
 $string['selecttype_help'] = 'Choose whether to display all the items or a subset of the items.';
 $string['selecttype'] = 'Item selection type';
+$string['showgrading_help'] = 'Choose whether to show or hide details of the score calculation when a student reviews a response to this Ordering question.';
+$string['showgrading'] = 'Grading details';
 $string['vertical'] = 'Vertical';

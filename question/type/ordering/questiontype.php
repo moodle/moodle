@@ -216,7 +216,8 @@ class qtype_ordering extends question_type {
             'layouttype' => $question->layouttype,
             'selecttype' => $question->selecttype,
             'selectcount' => $question->selectcount,
-            'gradingtype' => $question->gradingtype
+            'gradingtype' => $question->gradingtype,
+            'showgrading' => $question->showgrading
         );
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
         $this->save_hints($question, false);
@@ -379,14 +380,16 @@ class qtype_ordering extends question_type {
                           'RELATIVE|REL'.
                           'LONGEST_ORDERED_SUBSET|'.
                           'LONGEST_CONTIGUOUS_SUBSET)?';
+        $showgrading = '(?:SHOW|TRUE|YES|1|HIDE|FALSE|NO|0)?';
         $search = '/^(' . $questionname . ')\s*\{>\s*(' . $selectcount . ')\s*(' . $selecttype . ')\s*' .
-                '(' . $layouttype . ')\s*(' . $gradingtype . ')\s*(.*?)\s*\}\s*$/s';
+                '(' . $layouttype . ')\s*(' . $gradingtype . ')\s*(' . $showgrading . ')\s*(.*?)\s*\}\s*$/s';
         // Item $1 the question name.
         // Item $2 the number of items to be shown.
-        // Item  $3 the extraction/grading type.
+        // Item $3 the extraction/grading type.
         // Item $4 the layout type.
-        // Item  $5 the grading type.
-        // Item $6 the lines of items to be ordered.
+        // Item $5 the grading type.
+        // Item $6 show the grading details (SHOW/HIDE).
+        // Item $7 the lines of items to be ordered.
         if (empty($extra) || ! preg_match($search, $lines, $matches)) {
             return false; // Format not recognized.
         }
@@ -396,7 +399,8 @@ class qtype_ordering extends question_type {
         $selecttype = trim($matches[3]);
         $layouttype = trim($matches[4]);
         $gradingtype = trim($matches[5]);
-        $lines = explode(PHP_EOL, $matches[6]);
+        $showgrading = trim($matches[6]);
+        $lines = explode(PHP_EOL, $matches[7]);
         unset($matches);
 
         $question->qtype = 'ordering';
@@ -411,7 +415,7 @@ class qtype_ordering extends question_type {
         } else {
             $selectcount = min(6, count($lines));
         }
-        $this->set_layout_select_count_grading($question, $layouttype, $selecttype, $selectcount, $gradingtype);
+        $this->set_layout_select_count_grading($question, $layouttype, $selecttype, $selectcount, $gradingtype, $showgrading);
 
         // Remove blank items.
         $lines = array_map('trim', $lines);
@@ -456,8 +460,8 @@ class qtype_ordering extends question_type {
     }
 
     /**
-     * Given question object, returns array with array layouttype, selecttype, selectcount, gradingtype, where
-     * layouttype, selecttype, gradingtype are string representation.
+     * Given question object, returns array with array layouttype, selecttype, selectcount, gradingtype, showgrading
+     * where layouttype, selecttype, gradingtype and showgrading are string representations.
      *
      * @param object $question
      * @return array(layouttype, selecttype, selectcount, gradingtype)
@@ -518,10 +522,21 @@ class qtype_ordering extends question_type {
                 $grading = ''; // Shouldn't happen !!
         }
 
+        switch ($question->options->showgrading) {
+            case 0:
+                $show = 'HIDE';
+                break;
+            case 1:
+                $show = 'SHOW';
+                break;
+            default:
+                $show = ''; // Shouldn't happen !!
+        }
+
         // Note: this used to be (selectcount + 2).
         $count = $question->options->selectcount;
 
-        return array($layout, $select, $count, $grading);
+        return array($layout, $select, $count, $grading, $show);
     }
 
     /**
@@ -536,11 +551,12 @@ class qtype_ordering extends question_type {
         global $CFG;
         require_once($CFG->dirroot.'/question/type/ordering/question.php');
 
-        list($layouttype, $selecttype, $selectcount, $gradingtype) = $this->extract_layout_select_count_grading($question);
+        list($layouttype, $selecttype, $selectcount, $gradingtype, $showgrading) = $this->extract_layout_select_count_grading($question);
         $output = $question->questiontext.'{>'.$selectcount.' '.
                                                $selecttype.' '.
                                                $layouttype.' '.
-                                               $gradingtype."\n";
+                                               $gradingtype.' '.
+                                               $showgrading."\n";
         foreach ($question->options->answers as $answer) {
             $output .= $answer->answer."\n";
         }
@@ -560,13 +576,14 @@ class qtype_ordering extends question_type {
         global $CFG;
         require_once($CFG->dirroot.'/question/type/ordering/question.php');
 
-        list($layouttype, $selecttype, $selectcount, $gradingtype) = $this->extract_layout_select_count_grading($question);
+        list($layouttype, $selecttype, $selectcount, $gradingtype, $showgrading) = $this->extract_layout_select_count_grading($question);
 
         $output = '';
         $output .= "    <layouttype>$layouttype</layouttype>\n";
         $output .= "    <selecttype>$selecttype</selecttype>\n";
         $output .= "    <selectcount>$selectcount</selectcount>\n";
         $output .= "    <gradingtype>$gradingtype</gradingtype>\n";
+        $output .= "    <showgrading>$showgrading</showgrading>\n";
         $output .= $format->write_combined_feedback($question->options, $question->id, $question->contextid);
 
         foreach ($question->options->answers as $answer) {
@@ -626,7 +643,8 @@ class qtype_ordering extends question_type {
         $selecttype = $format->getpath($data, array('#', $selecttype, 0, '#'), 'RANDOM');
         $selectcount = $format->getpath($data, array('#', $selectcount, 0, '#'), 6);
         $gradingtype = $format->getpath($data, array('#', 'gradingtype', 0, '#'), 'RELATIVE');
-        $this->set_layout_select_count_grading($newquestion, $layouttype, $selecttype, $selectcount, $gradingtype);
+        $showgrading = $format->getpath($data, array('#', 'showgrading', 0, '#'), '1');
+        $this->set_layout_select_count_grading($newquestion, $layouttype, $selecttype, $selectcount, $gradingtype, $showgrading);
 
         $newquestion->answer = array();
         $newquestion->answerformat = array();
@@ -679,21 +697,23 @@ class qtype_ordering extends question_type {
     }
 
     /**
-     * Set layouttype, selecttype, selectcount, gradingtype based on their textual representation
+     * Set layouttype, selecttype, selectcount, gradingtype, showgrading based on their textual representation
      *
      * @param object $question (passed by reference)
      * @param string $layout the layout type
      * @param string $select the select type
      * @param string $count the number of items to display
      * @param string $grading the grading type
+     * @param string $show the grading details or not
      */
-    public function set_layout_select_count_grading(&$question, $layout, $select, $count, $grading) {
+    public function set_layout_select_count_grading(&$question, $layout, $select, $count, $grading, $show) {
 
         // Set default values.
         $layouttype  = qtype_ordering_question::LAYOUT_VERTICAL;
         $selecttype  = qtype_ordering_question::SELECT_RANDOM;
         $selectcount = 3;
         $gradingtype = qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST;
+        $showgrading = 1;
 
         switch (strtoupper($layout)) {
 
@@ -766,9 +786,24 @@ class qtype_ordering extends question_type {
                 break;
         }
 
+        // Set "showgrading" from $show.
+        switch (strtoupper($show)) {
+            case 'SHOW':
+            case 'TRUE':
+            case 'YES':
+                $showgrading = 1;
+                break;
+            case 'HIDE':
+            case 'FALSE':
+            case 'NO':
+                $showgrading = 0;
+                break;
+        }
+
         $question->layouttype  = $layouttype;
         $question->selecttype  = $selecttype;
         $question->selectcount = $selectcount;
         $question->gradingtype = $gradingtype;
+        $question->showgrading = $showgrading;
     }
 }

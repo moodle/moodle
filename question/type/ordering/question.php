@@ -451,6 +451,7 @@ class qtype_ordering_question extends question_graded_automatically {
                     'selecttype' => self::SELECT_ALL,
                     'selectcount' => 0,
                     'gradingtype' => self::GRADING_ABSOLUTE_POSITION,
+                    'showgradingdetails' => 1,
                     'correctfeedback' => '',
                     'correctfeedbackformat' => FORMAT_MOODLE,
                     'incorrectfeedback' => '',

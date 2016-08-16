@@ -8,8 +8,9 @@
         <FIELD NAME="layouttype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="questionid" NEXT="selecttype"/>
         <FIELD NAME="selecttype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="layouttype" NEXT="selectcount"/>
         <FIELD NAME="selectcount" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="selecttype" NEXT="gradingtype"/>
-        <FIELD NAME="gradingtype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="selectcount" NEXT="correctfeedback"/>
-        <FIELD NAME="correctfeedback" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="gradingtype" NEXT="correctfeedbackformat"/>
+        <FIELD NAME="gradingtype" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="selectcount" NEXT="showgrading"/>
+        <FIELD NAME="showgrading" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="gradingtype" NEXT="correctfeedback"/>
+        <FIELD NAME="correctfeedback" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="showgrading" NEXT="correctfeedbackformat"/>
         <FIELD NAME="correctfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="correctfeedback" NEXT="incorrectfeedback"/>
         <FIELD NAME="incorrectfeedback" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="correctfeedbackformat" NEXT="incorrectfeedbackformat"/>
         <FIELD NAME="incorrectfeedbackformat" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="incorrectfeedback" NEXT="partiallycorrectfeedback"/>
