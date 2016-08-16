@@ -145,4 +145,8 @@ class answer_submitted extends \core\event\base {
 
         return $othermapped;
     }
+
+    public static function is_deprecated() {
+        return true;
+    }
 }
