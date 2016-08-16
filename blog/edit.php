@@ -78,7 +78,7 @@ if (empty($CFG->enableblogs)) {
 }
 
 if (isguestuser()) {
-    print_error('noguestentry', 'blog');
+    print_error('noguest');
 }
 
 $returnurl = new moodle_url('/blog/index.php');
