@@ -191,9 +191,7 @@ class manager {
     protected static function prepare_cookies() {
         global $CFG;
 
-        if (!isset($CFG->cookiesecure) or (!is_https() and empty($CFG->sslproxy))) {
-            $CFG->cookiesecure = 0;
-        }
+        $cookiesecure = is_moodle_cookie_secure();
 
         if (!isset($CFG->cookiehttponly)) {
             $CFG->cookiehttponly = 0;
@@ -254,7 +252,7 @@ class manager {
 
         // Set configuration.
         session_name($sessionname);
-        session_set_cookie_params(0, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $CFG->cookiesecure, $CFG->cookiehttponly);
+        session_set_cookie_params(0, $CFG->sessioncookiepath, $CFG->sessioncookiedomain, $cookiesecure, $CFG->cookiehttponly);
         ini_set('session.use_trans_sid', '0');
         ini_set('session.use_only_cookies', '1');
         ini_set('session.hash_function', '0');        // For now MD5 - we do not have room for sha-1 in sessions table.
