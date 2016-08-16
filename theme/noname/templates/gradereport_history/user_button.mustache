@@ -1,0 +1,21 @@
+<div class="{{classes}}">
+    <div method="{{method}}" action="{{url}}" id="{{formid}}">
+        {{#params}}
+            <input type="hidden" name="{{name}}" value="{{value}}">
+        {{/params}}
+        <input type="button" class="btn btn-secondary selectortrigger"
+            id="{{id}}"
+            title={{#quote}}{{tooltip}}{{/quote}}
+            value={{#quote}}{{label}}{{/quote}}
+            {{#disabled}}disabled{{/disabled}}>
+    </div>
+</div>
+{{#hasactions}}
+    {{#js}}
+        require(['core/yui'], function(Y) {
+            {{#actions}}
+                Y.on('{{event}}', {{{jsfunction}}}, '#{{id}}', null{{#jsfunctionargs}}, {{{jsfunctionargs}}}{{/jsfunctionargs}});
+            {{/actions}}
+        });
+    {{/js}}
+{{/hasactions}}

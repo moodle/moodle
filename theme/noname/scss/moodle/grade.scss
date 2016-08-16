@@ -310,7 +310,7 @@
         tr:nth-of-type(even) .cell,
         .floater .cell,
         .avg {
-            background-color: $table-bg-accent;
+            background-color: $gray-lightest;
         }
         table .clickable {
             cursor: pointer;
@@ -333,3 +333,9 @@
     }
 }
 
+/**
+ * Single view.
+ */
+.path-grade-report-singleview input[name^="finalgrade"] {
+    width: 80px;
+}
