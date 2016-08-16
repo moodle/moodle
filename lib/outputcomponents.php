@@ -948,9 +948,9 @@ class single_select implements renderable, templatable {
             $nothing = ['' => $this->nothing];
             $hasnothing = true;
         } else if (is_array($this->nothing)) {
-            $key = key($this->nothing);
-            if ($key === 'choose' || $key === 'choosedots') {
-                $nothing = [$key => get_string('choosedots')];
+            $nothingvalue = reset($this->nothing);
+            if ($nothingvalue === 'choose' || $nothingvalue === 'choosedots') {
+                $nothing = [key($this->nothing) => get_string('choosedots')];
             } else {
                 $nothing = $this->nothing;
             }
