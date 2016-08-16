@@ -56,11 +56,8 @@ class edit_outcomeitem_form extends moodleform {
                 $options[$outcome->id] = $outcome->get_name();
             }
         }
-        $url = new moodle_url('/grade/edit/outcome/course.php', array('id' => $COURSE->id));
-        $label = get_string('outcomeassigntocourse', 'grades');
-
-        $mform->addElement('select', 'outcomeid', get_string('outcome', 'grades'), $options);
-        $mform->addElement('static', 'outcomeidlink', '', html_writer::link($url, $label));
+        $mform->addElement('selectwithlink', 'outcomeid', get_string('outcome', 'grades'), $options, null,
+            array('link' => $CFG->wwwroot.'/grade/edit/outcome/course.php?id='.$COURSE->id, 'label' => get_string('outcomeassigntocourse', 'grades')));
         $mform->addHelpButton('outcomeid', 'outcome', 'grades');
         $mform->addRule('outcomeid', get_string('required'), 'required');
 

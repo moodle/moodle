@@ -415,11 +415,11 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
         $context['value'] = $text;
         $context['format'] = $format;
 
-        $str .= $OUTPUT->render_from_template('core_form/editor_textarea', $context);
-
         if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
             $context['changelistener'] = true;
         }
+
+        $str .= $OUTPUT->render_from_template('core_form/editor_textarea', $context);
 
         // during moodle installation, user area doesn't exist
         // so we need to disable filepicker here.

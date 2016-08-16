@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/select.php');
+require_once('templatable_form_element.php');
 
 /**
  * select type form element
@@ -38,7 +39,11 @@ require_once('HTML/QuickForm/select.php');
  * @copyright 2008 Nicolas Connault <nicolasconnault@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select{
+class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select implements templatable {
+
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
@@ -64,7 +69,6 @@ class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select{
      * @param bool $linkdata data to be posted
      */
     public function __construct($elementName=null, $elementLabel=null, $options=null, $attributes=null, $linkdata=null) {
-        debugging('Element type selectwithlink is deprecated. Use 2 elements.', DEBUG_DEVELOPER);
         if (!empty($linkdata['link']) && !empty($linkdata['label'])) {
             $this->_link = $linkdata['link'];
             $this->_linklabel = $linkdata['label'];
@@ -75,6 +79,8 @@ class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select{
         }
 
         parent::__construct($elementName, $elementLabel, $options, $attributes);
+
+        $this->_type = 'selectwithlink';
     }
 
     /**
@@ -219,5 +225,40 @@ class MoodleQuickForm_selectwithlink extends HTML_QuickForm_select{
         } else {
             return $this->_prepareValue($cleaned[0], $assoc);
         }
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+
+        $options = [];
+        foreach ($this->_options as $option) {
+            if (is_array($this->_values) && in_array( (string) $option['attr']['value'], $this->_values)) {
+                $this->_updateAttrArray($option['attr'], ['selected' => 'selected']);
+            }
+            $o = [
+                'text' => $option['text'],
+                'value' => $option['attr']['value'],
+                'selected' => !empty($option['attr']['selected'])
+            ];
+            $options[] = $o;
+        }
+        $context['options'] = $options;
+        if (!empty($this->_link)) {
+            if (!empty($this->_linkreturn) && is_array($this->_linkreturn)) {
+                $appendchar = '?';
+                if (strstr($this->_link, '?')) {
+                    $appendchar = '&amp;';
+                }
+
+                foreach ($this->_linkreturn as $key => $val) {
+                    $this->_link .= $appendchar."$key=$val";
+                    $appendchar = '&amp;';
+                }
+            }
+        }
+        $context['link'] = $this->_link;
+        $context['linklabel'] = $this->_linklabel;
+
+        return $context;
     }
 }
