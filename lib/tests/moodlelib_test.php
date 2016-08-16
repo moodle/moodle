@@ -2930,6 +2930,9 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = random_bytes_emulate(666);
         $this->assertSame(666, strlen($result));
 
+        $result = random_bytes_emulate(40);
+        $this->assertSame(40, strlen($result));
+
         $this->assertDebuggingNotCalled();
 
         $result = random_bytes_emulate(0);

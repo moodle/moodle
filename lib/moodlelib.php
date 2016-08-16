@@ -7637,12 +7637,12 @@ function random_bytes_emulate($length) {
     }
 
     // Bad luck, there is no reliable random generator, let's just hash some unique stuff that is hard to guess.
-    $hash = sha1(serialize($CFG) . serialize($_SERVER) . microtime(true) . uniqid('', true), true);
-    // NOTE: the last param in sha1() is true, this means we are getting 20 bytes, not 40 chars as usual.
-    if ($length <= 20) {
-        return substr($hash, 0, $length);
-    }
-    return $hash . random_bytes_emulate($length - 20);
+    $staticdata = serialize($CFG) . serialize($_SERVER);
+    $hash = '';
+    do {
+        $hash .= sha1($staticdata . microtime(true) . uniqid('', true), true);
+    } while (strlen($hash) < $length);
+    return substr($hash, 0, $length);
 }
 
 /**
