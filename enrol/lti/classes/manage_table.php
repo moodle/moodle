@@ -96,12 +96,7 @@ class manage_table extends \table_sql {
      * @return string
      */
     public function col_name($tool) {
-        if (empty($tool->name)) {
-            $toolcontext = \context::instance_by_id($tool->contextid);
-            $name = $toolcontext->get_context_name();
-        } else {
-            $name = $tool->name;
-        };
+        $name = helper::get_name($tool);
 
         return $this->get_display_text($tool, $name);
     }
@@ -113,8 +108,9 @@ class manage_table extends \table_sql {
      * @return string
      */
     public function col_url($tool) {
-        $url = new \moodle_url('/enrol/lti/tool.php', array('id' => $tool->id));
-        return $this->get_display_text($tool, $url);
+        $url = helper::get_cartridge_url($tool);
+
+        return $this->get_copyable_text($tool, $url);
     }
 
     /**
@@ -124,7 +120,7 @@ class manage_table extends \table_sql {
      * @return string
      */
     public function col_secret($tool) {
-        return $this->get_display_text($tool, $tool->secret);
+        return $this->get_copyable_text($tool, $tool->secret);
     }
 
 
@@ -214,5 +210,23 @@ class manage_table extends \table_sql {
         }
 
         return $text;
+    }
+
+    /**
+     * Returns text to display in the columns.
+     *
+     * @param \stdClass $tool the tool
+     * @param string $text the text to alter
+     * @return string
+     * @since Moodle 3.2
+     */
+    protected function get_copyable_text($tool, $text) {
+        global $OUTPUT;
+        $copyable = $OUTPUT->render_from_template('core/copy_box', array('text' => $text));
+        if ($tool->status != ENROL_INSTANCE_ENABLED) {
+            return \html_writer::tag('span', $copyable, array('class' => 'dimmed_text', 'style' => 'overflow: scroll'));
+        }
+
+        return $copyable;
     }
 }
