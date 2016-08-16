@@ -797,7 +797,8 @@ class mod_wiki_external extends external_api {
         return new external_function_parameters (
             array(
                 'pageid' => new external_value(PARAM_INT, 'Page ID to edit.'),
-                'section' => new external_value(PARAM_RAW, 'Section page title.', VALUE_DEFAULT, null)
+                'section' => new external_value(PARAM_RAW, 'Section page title.', VALUE_DEFAULT, null),
+                'lockonly' => new external_value(PARAM_BOOL, 'Just renew lock and not return content.', VALUE_DEFAULT, false)
             )
         );
     }
@@ -807,16 +808,18 @@ class mod_wiki_external extends external_api {
      *
      * @param int $pageid The page ID.
      * @param string $section Section page title.
+     * @param boolean $lockonly If true: Just renew lock and not return content.
      * @return array of warnings and page data.
      * @since Moodle 3.1
      */
-    public static function get_page_for_editing($pageid, $section = null) {
+    public static function get_page_for_editing($pageid, $section = null, $lockonly = false) {
         global $USER;
 
         $params = self::validate_parameters(self::get_page_for_editing_parameters(),
                                             array(
                                                 'pageid' => $pageid,
-                                                'section' => $section
+                                                'section' => $section,
+                                                'lockonly' => $lockonly
                                             )
             );
 
@@ -855,16 +858,20 @@ class mod_wiki_external extends external_api {
             throw new moodle_exception('versionerror', 'wiki');
         }
 
-        if (!is_null($params['section'])) {
-            $content = wiki_parser_proxy::get_section($version->content, $version->contentformat, $params['section']);
-        } else {
-            $content = $version->content;
-        }
-
         $pagesection = array();
-        $pagesection['content'] = $content;
-        $pagesection['contentformat'] = $version->contentformat;
         $pagesection['version'] = $version->version;
+
+        // Content requested to be returned.
+        if (!$lockonly) {
+            if (!is_null($params['section'])) {
+                $content = wiki_parser_proxy::get_section($version->content, $version->contentformat, $params['section']);
+            } else {
+                $content = $version->content;
+            }
+
+            $pagesection['content'] = $content;
+            $pagesection['contentformat'] = $version->contentformat;
+        }
 
         $result = array();
         $result['pagesection'] = $pagesection;
@@ -884,8 +891,10 @@ class mod_wiki_external extends external_api {
             array(
                 'pagesection' => new external_single_structure(
                     array(
-                        'content' => new external_value(PARAM_RAW, 'The contents of the page-section to be edited.'),
-                        'contentformat' => new external_value(PARAM_TEXT, 'Format of the original content of the page.'),
+                        'content' => new external_value(PARAM_RAW, 'The contents of the page-section to be edited.',
+                            VALUE_OPTIONAL),
+                        'contentformat' => new external_value(PARAM_TEXT, 'Format of the original content of the page.',
+                            VALUE_OPTIONAL),
                         'version' => new external_value(PARAM_INT, 'Latest version of the page.'),
                         'warnings' => new external_warnings()
                     )
