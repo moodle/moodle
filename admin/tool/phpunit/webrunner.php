@@ -24,7 +24,7 @@
 
 define('NO_OUTPUT_BUFFERING', true);
 
-require(dirname(__FILE__) . '/../../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $testpath  = optional_param('testpath', '', PARAM_PATH);
@@ -35,7 +35,7 @@ navigation_node::override_active_url(new moodle_url('/admin/tool/phpunit/index.p
 admin_externalpage_setup('toolphpunitwebrunner');
 
 if (!$CFG->debugdeveloper) {
-    error('Not available on production sites, sorry.');
+    print_error('notlocalisederrormessage', 'error', '', null, 'Not available on production sites, sorry.');
 }
 
 core_php_time_limit::raise(60*30);

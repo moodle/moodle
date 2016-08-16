@@ -136,8 +136,11 @@ class grade_edit_tree {
         if (!$is_category_item && ($icon = $this->gtree->get_edit_icon($element, $this->gpr, true))) {
             $actionsmenu->add($icon);
         }
-
-        if ($this->show_calculations && ($icon = $this->gtree->get_calculation_icon($element, $this->gpr, true))) {
+        // MDL-49281 if grade_item already has calculation, it should be editable even if global setting is off.
+        $type = $element['type'];
+        $iscalculated = ($type == 'item' or $type == 'courseitem' or $type == 'categoryitem') && $object->is_calculated();
+        $icon = $this->gtree->get_calculation_icon($element, $this->gpr, true);
+        if ($iscalculated || ($this->show_calculations && $icon)) {
             $actionsmenu->add($icon);
         }
 
@@ -292,6 +295,8 @@ class grade_edit_tree {
             $row = new html_table_row();
             $row->id = 'grade-item-' . $eid;
             $row->attributes['class'] = $courseclass . ' category ' . $dimmed;
+            $row->attributes['data-category'] = $eid;
+            $row->attributes['data-itemid'] = $category->get_grade_item()->id;
             foreach ($rowclasses as $class) {
                 $row->attributes['class'] .= ' ' . $class;
             }
@@ -306,9 +311,14 @@ class grade_edit_tree {
 
             foreach ($this->columns as $column) {
                 if (!($this->moving && $column->hide_when_moving)) {
-                    $row->cells[] = $column->get_category_cell($category, $levelclass, array('id' => $id,
-                        'name' => $object->name, 'level' => $level, 'actions' => $actions,
-                        'moveaction' => $moveaction, 'eid' => $eid));
+                    $row->cells[] = $column->get_category_cell($category, $levelclass, [
+                        'id' => $id,
+                        'name' => $object->name,
+                        'level' => $level,
+                        'actions' => $actions,
+                        'moveaction' => $moveaction,
+                        'eid' => $eid,
+                    ]);
                 }
             }
 
@@ -341,6 +351,7 @@ class grade_edit_tree {
             $gradeitemrow = new html_table_row();
             $gradeitemrow->id = 'grade-item-' . $eid;
             $gradeitemrow->attributes['class'] = $categoryitemclass . ' item ' . $dimmed;
+            $gradeitemrow->attributes['data-itemid'] = $object->id;
             foreach ($rowclasses as $class) {
                 $gradeitemrow->attributes['class'] .= ' ' . $class;
             }
@@ -389,20 +400,35 @@ class grade_edit_tree {
         $str = '';
 
         if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef' || $aggcoef == 'aggregationcoefextraweight') {
-            return '<label class="accesshide" for="weight_'.$item->id.'">'.
-                get_string('extracreditvalue', 'grades', $itemname).'</label>'.
-                '<input type="text" size="6" id="weight_'.$item->id.'" name="weight_'.$item->id.'"
-                value="'.grade_edit_tree::format_number($item->aggregationcoef).'" />';
+            return '<label class="accesshide" for="weight_'.$item->id.'">' .
+                get_string('extracreditvalue', 'grades', $itemname).'</label>' .
+                html_writer::empty_tag('input', [
+                    'type'          => 'text',
+                    'size'          => 6,
+                    'id'            => 'weight_' . $item->id,
+                    'name'          => 'weight_' . $item->id,
+                    'value'         => self::format_number($item->aggregationcoef),
+                ]);
+
         } else if ($aggcoef == 'aggregationcoefextraweightsum') {
 
             $checkboxname = 'weightoverride_' . $item->id;
             $checkboxlbl = html_writer::tag('label', get_string('overrideweightofa', 'grades', $itemname),
                 array('for' => $checkboxname, 'class' => 'accesshide'));
-            $checkbox = html_writer::empty_tag('input', array('name' => $checkboxname,
-                'type' => 'hidden', 'value' => 0));
-            $checkbox .= html_writer::empty_tag('input', array('name' => $checkboxname,
-                'type' => 'checkbox', 'value' => 1, 'id' => $checkboxname, 'class' => 'weightoverride',
-                'checked' => ($item->weightoverride ? 'checked' : null)));
+            $checkbox = html_writer::empty_tag('input', [
+                'name'          => $checkboxname,
+                'type'          => 'hidden',
+                'value'         => 0,
+            ]);
+
+            $checkbox .= html_writer::empty_tag('input', [
+                'name' => $checkboxname,
+                'type' => 'checkbox',
+                'value' => 1,
+                'id' => $checkboxname,
+                'class' => 'weightoverride',
+                'checked' => ($item->weightoverride ? 'checked' : null),
+            ]);
 
             $name = 'weight_' . $item->id;
             $hiddenlabel = html_writer::tag(
@@ -427,19 +453,14 @@ class grade_edit_tree {
             );
 
             $str .= $checkboxlbl . $checkbox . $hiddenlabel . $input;
-
-            if ($item->aggregationcoef > 0) {
-                $str .= ' ' . html_writer::tag('abbr', get_string('aggregationcoefextrasumabbr', 'grades'),
-                        array('title' => get_string('aggregationcoefextrasum', 'grades')));
-            }
         }
 
         return $str;
     }
 
-    //Trims trailing zeros
-    //Used on the 'categories and items' page for grade items settings like aggregation co-efficient
-    //Grader report has its own decimal place settings so they are handled elsewhere
+    // Trims trailing zeros.
+    // Used on the 'Gradebook setup' page for grade items settings like aggregation co-efficient.
+    // Grader report has its own decimal place settings so they are handled elsewhere.
     static function format_number($number) {
         $formatted = rtrim(format_float($number, 4),'0');
         if (substr($formatted, -1)==get_string('decsep', 'langconfig')) { //if last char is the decimal point
@@ -539,6 +560,13 @@ class grade_edit_tree {
                     $deepest_level = $level;
                 }
                 $deepest_level = $this->get_deepest_level($child_el, $level, $deepest_level);
+            }
+
+            $category = grade_category::fetch(array('id' => $object->id));
+            $item = $category->get_grade_item();
+            if ($item->gradetype == GRADE_TYPE_NONE) {
+                // Add 1 more level for grade category that has no total.
+                $deepest_level++;
             }
         }
 
@@ -750,7 +778,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
 
         // If the parent aggregation is Natural, we should show the number, even for scales, as that value is used...
         // ...in the computation. For text grades, the grademax is not used, so we can still show the no value string.
-        $parent_cat = $item->get_parent_category();
+        $parentcat = $item->get_parent_category();
         if ($item->gradetype == GRADE_TYPE_TEXT) {
             $grademax = ' - ';
         } else if ($item->gradetype == GRADE_TYPE_SCALE) {
@@ -761,7 +789,7 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
             } else {
                 $scale_items = explode(',', $scale->scale);
             }
-            if ($parent_cat->aggregation == GRADE_AGGREGATE_SUM) {
+            if ($parentcat->aggregation == GRADE_AGGREGATE_SUM) {
                 $grademax = end($scale_items) . ' (' .
                         format_float($item->grademax, $item->get_decimals()) . ')';
             } else {
@@ -769,6 +797,24 @@ class grade_edit_tree_column_range extends grade_edit_tree_column {
             }
         } else {
             $grademax = format_float($item->grademax, $item->get_decimals());
+        }
+
+        $isextracredit = false;
+        if ($item->aggregationcoef > 0) {
+            // For category grade items, we need the grandparent category.
+            // The parent is just category the grade item represents.
+            if ($item->is_category_item()) {
+                $grandparentcat = $parentcat->get_parent_category();
+                if ($grandparentcat->is_extracredit_used()) {
+                    $isextracredit = true;
+                }
+            } else if ($parentcat->is_extracredit_used()) {
+                $isextracredit = true;
+            }
+        }
+        if ($isextracredit) {
+            $grademax .= ' ' . html_writer::tag('abbr', get_string('aggregationcoefextrasumabbr', 'grades'),
+                array('title' => get_string('aggregationcoefextrasum', 'grades')));
         }
 
         $itemcell = parent::get_item_cell($item, $params);
@@ -831,21 +877,26 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
     }
 
     public function get_category_cell($category, $levelclass, $params) {
-        global $OUTPUT;
         if (empty($params['eid'])) {
             throw new Exception('Array key (eid) missing from 3rd param of grade_edit_tree_column_select::get_category_cell($category, $levelclass, $params)');
         }
-        $selectall  = new action_link(new moodle_url('#'), get_string('all'), new component_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => true)));
-        $selectnone = new action_link(new moodle_url('#'), get_string('none'), new component_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => false)));
+        $selectall = html_writer::link('#', get_string('all'), [
+            'data-action' => 'grade_edittree-index-bulkselect',
+            'data-checked' => true,
+        ]);
+        $selectnone = html_writer::link('#', get_string('none'), [
+            'data-action' => 'grade_edittree-index-bulkselect',
+            'data-checked' => false,
+        ]);
 
         $categorycell = parent::get_category_cell($category, $levelclass, $params);
-        $categorycell->text = $OUTPUT->render($selectall) . ' / ' . $OUTPUT->render($selectnone);
+        $categorycell->text = $selectall . ' / ' . $selectnone;
         return $categorycell;
     }
 
     public function get_item_cell($item, $params) {
         if (empty($params['itemtype']) || empty($params['eid'])) {
-            error('Array key (itemtype or eid) missing from 2nd param of grade_edit_tree_column_select::get_item_cell($item, $params)');
+            print_error('missingitemtypeoreid', 'core_grades');
         }
         $itemcell = parent::get_item_cell($item, $params);
 
@@ -853,7 +904,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
             $itemcell->text = '<label class="accesshide" for="select_'.$params['eid'].'">'.
                 get_string('select', 'grades', $item->itemname).'</label>
                 <input class="itemselect ignoredirty" type="checkbox" name="select_'.$params['eid'].'" id="select_'.$params['eid'].
-                '" onchange="toggleCategorySelector();"/>'; // TODO: convert to YUI handler
+                '"/>';
         }
         return $itemcell;
     }

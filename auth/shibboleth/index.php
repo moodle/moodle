@@ -10,7 +10,7 @@
 
     // Support for WAYFless URLs.
     $target = optional_param('target', '', PARAM_LOCALURL);
-    if (!empty($target)) {
+    if (!empty($target) && empty($SESSION->wantsurl)) {
         $SESSION->wantsurl = $target;
     }
 

@@ -29,7 +29,7 @@ $newattempt = optional_param('newattempt', 'off', PARAM_ALPHA);     // the user 
 $displaymode = optional_param('display', '', PARAM_ALPHA);
 
 if (!empty($id)) {
-    if (! $cm = get_coursemodule_from_id('scorm', $id)) {
+    if (! $cm = get_coursemodule_from_id('scorm', $id, 0, true)) {
         print_error('invalidcoursemodule');
     }
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
@@ -45,17 +45,29 @@ if (!empty($id)) {
     if (! $course = $DB->get_record("course", array("id" => $scorm->course))) {
         print_error('coursemisconf');
     }
-    if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
+    if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id, true)) {
         print_error('invalidcoursemodule');
     }
 } else {
     print_error('missingparameter');
 }
+
+// PARAM_RAW is used for $currentorg, validate it against records stored in the table.
+if (!empty($currentorg)) {
+    if (!$DB->record_exists('scorm_scoes', array('scorm' => $scorm->id, 'identifier' => $currentorg))) {
+        $currentorg = '';
+    }
+}
+
 // If new attempt is being triggered set normal mode and increment attempt number.
 $attempt = scorm_get_last_attempt($scorm->id, $USER->id);
 
 // Check mode is correct and set/validate mode/attempt/newattempt (uses pass by reference).
 scorm_check_mode($scorm, $newattempt, $attempt, $USER->id, $mode);
+
+if (!empty($scoid)) {
+    $scoid = scorm_check_launchable_sco($scorm, $scoid);
+}
 
 $url = new moodle_url('/mod/scorm/player.php', array('scoid' => $scoid, 'cm' => $cm->id));
 if ($mode !== 'normal') {
@@ -104,22 +116,16 @@ if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', cont
     die;
 }
 
-// Check if scorm closed.
-$timenow = time();
-if ($scorm->timeclose != 0) {
-    if ($scorm->timeopen > $timenow) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->box(get_string("notopenyet", "scorm", userdate($scorm->timeopen)), "generalbox boxaligncenter");
-        echo $OUTPUT->footer();
-        die;
-    } else if ($timenow > $scorm->timeclose) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->box(get_string("expired", "scorm", userdate($scorm->timeclose)), "generalbox boxaligncenter");
-        echo $OUTPUT->footer();
-
-        die;
-    }
+// Check if SCORM available.
+list($available, $warnings) = scorm_get_availability_status($scorm);
+if (!$available) {
+    $reason = current(array_keys($warnings));
+    echo $OUTPUT->header();
+    echo $OUTPUT->box(get_string($reason, "scorm", $warnings[$reason]), "generalbox boxaligncenter");
+    echo $OUTPUT->footer();
+    die;
 }
+
 // TOC processing
 $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe.
 if (!file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'lib.php')) {
@@ -151,7 +157,10 @@ $completion->set_module_viewed($cm);
 
 // Print the page header.
 if (empty($scorm->popup) || $displaymode == 'popup') {
-    $exitlink = html_writer::link($CFG->wwwroot.'/course/view.php?id='.$scorm->course, $strexit, array('title' => $strexit));
+    // Redirect back to the correct section if one section per page is being used.
+    $exiturl = course_get_url($course, $cm->sectionnum);
+
+    $exitlink = html_writer::link($exiturl, $strexit, array('title' => $strexit));
     $PAGE->set_button($exitlink);
 }
 

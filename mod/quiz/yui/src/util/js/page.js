@@ -1,3 +1,5 @@
+/* global YUI */
+
 /**
  * A collection of utility classes for use with pages.
  *
@@ -15,7 +17,7 @@ Y.namespace('Moodle.mod_quiz.util.page');
  */
 Y.Moodle.mod_quiz.util.page = {
     CSS: {
-        PAGE : 'page'
+        PAGE: 'page'
     },
     CONSTANTS: {
         ACTIONMENUIDPREFIX: 'action-menu-',
@@ -30,7 +32,7 @@ Y.Moodle.mod_quiz.util.page = {
         ACTIONMENUMENU: 'ul.menu',
         PAGE: 'li.page',
         INSTANCENAME: '.instancename',
-        NUMBER: 'span.text'
+        NUMBER: 'h4'
     },
 
     /**
@@ -140,7 +142,9 @@ Y.Moodle.mod_quiz.util.page = {
      * @return {node[]} An array containing page nodes.
      */
     getPages: function() {
-        return Y.all(Y.Moodle.mod_quiz.util.slot.SELECTORS.PAGECONTENT + ' ' + Y.Moodle.mod_quiz.util.slot.SELECTORS.SECTIONUL + ' ' + this.SELECTORS.PAGE);
+        return Y.all(Y.Moodle.mod_quiz.util.slot.SELECTORS.PAGECONTENT + ' ' +
+                     Y.Moodle.mod_quiz.util.slot.SELECTORS.SECTIONUL + ' ' +
+                    this.SELECTORS.PAGE);
     },
 
     /**
@@ -230,7 +234,8 @@ Y.Moodle.mod_quiz.util.page = {
      */
     reorderPages: function() {
         // Get list of page nodes.
-        var pages = this.getPages(), currentpagenumber = 0;
+        var pages = this.getPages();
+        var currentpagenumber = 0;
         // Loop through pages incrementing the number each time.
         pages.each(function(page) {
             // Is the page empty?
@@ -261,7 +266,7 @@ Y.Moodle.mod_quiz.util.page = {
         var actionmenus = this.getActionMenus();
         // Loop through pages incrementing the number each time.
         actionmenus.each(function(actionmenu, key) {
-            var previousActionMenu = actionmenus.item(key - 1);
+            var previousActionMenu = actionmenus.item(key - 1),
                 previousActionMenunumber = 0;
             if (previousActionMenu) {
                 previousActionMenunumber = this.getActionMenuId(previousActionMenu);
@@ -274,9 +279,15 @@ Y.Moodle.mod_quiz.util.page = {
             // Update action-menu-1-menubar
             var menubar = actionmenu.one(this.SELECTORS.ACTIONMENUBAR);
             menubar.set('id', this.CONSTANTS.ACTIONMENUIDPREFIX + id + this.CONSTANTS.ACTIONMENUBARIDSUFFIX);
+
             // Update action-menu-1-menu
             var menumenu = actionmenu.one(this.SELECTORS.ACTIONMENUMENU);
             menumenu.set('id', this.CONSTANTS.ACTIONMENUIDPREFIX + id + this.CONSTANTS.ACTIONMENUMENUIDSUFFIX);
+
+            // Update the URL of the add-section action.
+            menumenu.one('a.addasection').set('href',
+                    menumenu.one('a.addasection').get('href').replace(/\baddsectionatpage=\d/, 'addsectionatpage=' + id));
+
         }, this);
     },
 
@@ -287,7 +298,9 @@ Y.Moodle.mod_quiz.util.page = {
      * @return {node[]} An array containing page nodes.
      */
     getActionMenus: function() {
-        return Y.all(Y.Moodle.mod_quiz.util.slot.SELECTORS.PAGECONTENT + ' ' + Y.Moodle.mod_quiz.util.slot.SELECTORS.SECTIONUL + ' ' + this.SELECTORS.ACTIONMENU);
+        return Y.all(Y.Moodle.mod_quiz.util.slot.SELECTORS.PAGECONTENT + ' ' +
+                     Y.Moodle.mod_quiz.util.slot.SELECTORS.SECTIONUL + ' ' +
+                     this.SELECTORS.ACTIONMENU);
     },
 
     /**

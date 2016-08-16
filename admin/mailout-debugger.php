@@ -29,7 +29,7 @@
    */
 
 // Security check.
-if (!file_exists(dirname(__FILE__).'/mailout-debugger.enable')) {
+if (!file_exists(__DIR__.'/mailout-debugger.enable')) {
     mdie("Disabled.");
 }
 $tmpdir=sys_get_temp_dir(); // default

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Resource and activity toolbox class.
  *
@@ -9,56 +10,62 @@
  */
 
 // The CSS classes we use.
-    var CSS = {
-        ACTIVITYINSTANCE : 'activityinstance',
-        AVAILABILITYINFODIV : 'div.availabilityinfo',
-        CONTENTWITHOUTLINK : 'contentwithoutlink',
-        CONDITIONALHIDDEN : 'conditionalhidden',
-        DIMCLASS : 'dimmed',
-        DIMMEDTEXT : 'dimmed_text',
-        EDITINSTRUCTIONS : 'editinstructions',
+var CSS = {
+        ACTIVITYINSTANCE: 'activityinstance',
+        AVAILABILITYINFODIV: 'div.availabilityinfo',
+        CONTENTWITHOUTLINK: 'contentwithoutlink',
+        CONDITIONALHIDDEN: 'conditionalhidden',
+        DIMCLASS: 'dimmed',
+        DIMMEDTEXT: 'dimmed_text',
+        EDITINSTRUCTIONS: 'editinstructions',
         EDITINGMAXMARK: 'editor_displayed',
-        HIDE : 'hide',
+        HIDE: 'hide',
         JOIN: 'page_join',
-        MODINDENTCOUNT : 'mod-indent-',
-        MODINDENTHUGE : 'mod-indent-huge',
-        MODULEIDPREFIX : 'slot-',
+        MODINDENTCOUNT: 'mod-indent-',
+        MODINDENTHUGE: 'mod-indent-huge',
         PAGE: 'page',
-        SECTIONHIDDENCLASS : 'hidden',
-        SECTIONIDPREFIX : 'section-',
-        SLOT : 'slot',
-        SHOW : 'editing_show',
-        TITLEEDITOR : 'titleeditor'
+        SECTIONHIDDENCLASS: 'hidden',
+        SECTIONIDPREFIX: 'section-',
+        SLOT: 'slot',
+        SHOW: 'editing_show',
+        TITLEEDITOR: 'titleeditor'
     },
     // The CSS selectors we use.
     SELECTOR = {
         ACTIONAREA: '.actions',
-        ACTIONLINKTEXT : '.actionlinktext',
-        ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_maxmark',
-        ACTIVITYFORM : 'span.instancemaxmarkcontainer form',
-        ACTIVITYICON : 'img.activityicon',
-        ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
-        ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a',
-        ACTIVITYLI : 'li.activity',
-        ACTIVITYMAXMARK : 'input[name=maxmark]',
-        COMMANDSPAN : '.commands',
-        CONTENTAFTERLINK : 'div.contentafterlink',
-        CONTENTWITHOUTLINK : 'div.contentwithoutlink',
+        ACTIONLINKTEXT: '.actionlinktext',
+        ACTIVITYACTION: 'a.cm-edit-action[data-action], a.editing_maxmark, a.editing_section, input.shuffle_questions',
+        ACTIVITYFORM: 'span.instancemaxmarkcontainer form',
+        ACTIVITYINSTANCE: '.' + CSS.ACTIVITYINSTANCE,
+        SECTIONINSTANCE: '.sectioninstance',
+        ACTIVITYLI: 'li.activity, li.section',
+        ACTIVITYMAXMARK: 'input[name=maxmark]',
+        COMMANDSPAN: '.commands',
+        CONTENTAFTERLINK: 'div.contentafterlink',
+        CONTENTWITHOUTLINK: 'div.contentwithoutlink',
+        DELETESECTIONICON: 'a.editing_delete img',
         EDITMAXMARK: 'a.editing_maxmark',
-        HIDE : 'a.editing_hide',
-        HIGHLIGHT : 'a.editing_highlight',
-        INSTANCENAME : 'span.instancename',
-        INSTANCEMAXMARK : 'span.instancemaxmark',
-        MODINDENTDIV : '.mod-indent',
-        MODINDENTOUTER : '.mod-indent-outer',
-        NUMQUESTIONS : '.numberofquestions',
-        PAGECONTENT : 'div#page-content',
-        PAGELI : 'li.page',
-        SECTIONUL : 'ul.section',
-        SHOW : 'a.' + CSS.SHOW,
-        SHOWHIDE : 'a.editing_showhide',
-        SLOTLI : 'li.slot',
-        SUMMARKS : '.mod_quiz_summarks'
+        EDITSECTION: 'a.editing_section',
+        EDITSECTIONICON: 'a.editing_section img',
+        EDITSHUFFLEQUESTIONSACTION: 'input.cm-edit-action[data-action]',
+        EDITSHUFFLEAREA: '.instanceshufflequestions .shuffle-progress',
+        HIDE: 'a.editing_hide',
+        HIGHLIGHT: 'a.editing_highlight',
+        INSTANCENAME: 'span.instancename',
+        INSTANCEMAXMARK: 'span.instancemaxmark',
+        INSTANCESECTION: 'span.instancesection',
+        INSTANCESECTIONAREA: 'div.section-heading',
+        MODINDENTDIV: '.mod-indent',
+        MODINDENTOUTER: '.mod-indent-outer',
+        NUMQUESTIONS: '.numberofquestions',
+        PAGECONTENT: 'div#page-content',
+        PAGELI: 'li.page',
+        SECTIONUL: 'ul.section',
+        SECTIONFORM: '.instancesectioncontainer form',
+        SECTIONINPUT: 'input[name=section]',
+        SHOW: 'a.' + CSS.SHOW,
+        SLOTLI: 'li.slot',
+        SUMMARKS: '.mod_quiz_summarks'
     },
     BODY = Y.one(document.body);
 
@@ -119,14 +126,18 @@ Y.extend(TOOLBOX, Y.Base, {
                         if (responsetext.error) {
                             new M.core.ajaxException(responsetext);
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
 
                     // Run the callback if we have one.
                     if (responsetext.hasOwnProperty('newsummarks')) {
                         Y.one(SELECTOR.SUMMARKS).setHTML(responsetext.newsummarks);
                     }
                     if (responsetext.hasOwnProperty('newnumquestions')) {
-                        Y.one(SELECTOR.NUMQUESTIONS).setHTML(M.util.get_string('numquestionsx', 'quiz', responsetext.newnumquestions));
+                        Y.one(SELECTOR.NUMQUESTIONS).setHTML(
+                                M.util.get_string('numquestionsx', 'quiz', responsetext.newnumquestions)
+                            );
                     }
                     if (success_callback) {
                         Y.bind(success_callback, this, responsetext)();

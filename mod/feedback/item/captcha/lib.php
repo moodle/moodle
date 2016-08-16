@@ -19,14 +19,6 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
 class feedback_item_captcha extends feedback_item_base {
     protected $type = "captcha";
-    private $commonparams;
-    private $item_form = false;
-    private $item = false;
-    private $feedback = false;
-
-    public function init() {
-
-    }
 
     public function build_editform($item, $feedback, $cm) {
         global $DB;
@@ -47,7 +39,6 @@ class feedback_item_captcha extends feedback_item_base {
         }
 
         $this->item = $item;
-        $this->feedback = $feedback;
         $this->item_form = true; //dummy
 
         $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
@@ -55,7 +46,7 @@ class feedback_item_captcha extends feedback_item_base {
         $this->item->feedback = $feedback->id;
         $this->item->template = 0;
         $this->item->name = get_string('captcha', 'feedback');
-        $this->item->label = get_string('captcha', 'feedback');
+        $this->item->label = '';
         $this->item->presentation = '';
         $this->item->typ = $this->type;
         $this->item->hasvalue = $this->get_hasvalue();
@@ -93,11 +84,6 @@ class feedback_item_captcha extends feedback_item_base {
         return $DB->get_record('feedback_item', array('id'=>$this->item->id));
     }
 
-    //liefert eine Struktur ->name, ->data = array(mit Antworten)
-    public function get_analysed($item, $groupid = false, $courseid = false) {
-        return null;
-    }
-
     public function get_printval($item, $value) {
         return '';
     }
@@ -113,217 +99,61 @@ class feedback_item_captcha extends feedback_item_base {
     }
 
     /**
-     * print the item at the edit-page of feedback
+     * Returns the formatted name of the item for the complete form or response view
      *
-     * @global object
-     * @param object $item
-     * @return void
+     * @param stdClass $item
+     * @param bool $withpostfix
+     * @return string
      */
-    public function print_item_preview($item) {
-        global $DB, $OUTPUT;
-
-        $align = right_to_left() ? 'right' : 'left';
-
-        $cmid = 0;
-        $feedbackid = $item->feedback;
-        if ($feedbackid > 0) {
-            $feedback = $DB->get_record('feedback', array('id'=>$feedbackid));
-            $cm = get_coursemodule_from_instance("feedback", $feedback->id, $feedback->course);
-            if ($cm) {
-                $cmid = $cm->id;
-            }
-        }
-
-        $requiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        //print the question and label
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '('.$item->label.') ';
-        echo format_text($item->name.$requiredmark, true, false, false);
-        echo '</div>';
-
+    public function get_display_name($item, $withpostfix = true) {
+        return get_string('captcha', 'feedback');
     }
 
     /**
-     * print the item at the complete-page of feedback
+     * Adds an input element to the complete form
      *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @param bool $highlightrequire
-     * @return void
+     * @param stdClass $item
+     * @param mod_feedback_complete_form $form
      */
-    public function print_item_complete($item, $value = '', $highlightrequire = false) {
-        global $SESSION, $CFG, $DB, $USER, $OUTPUT;
-        require_once($CFG->libdir.'/recaptchalib.php');
+    public function complete_form_element($item, $form) {
+        $name = $this->get_display_name($item);
+        $inputname = $item->typ . '_' . $item->id;
 
-        $align = right_to_left() ? 'right' : 'left';
+        if ($form->get_mode() != mod_feedback_complete_form::MODE_COMPLETE) {
+            $form->add_form_element($item,
+                    ['static', $inputname, $name],
+                    false,
+                    false);
+        } else {
+            $form->add_form_element($item,
+                    ['recaptcha', $inputname, $name],
+                    false,
+                    false);
+        }
 
-        $cmid = 0;
-        $feedbackid = $item->feedback;
-        if ($feedbackid > 0) {
-            $feedback = $DB->get_record('feedback', array('id'=>$feedbackid));
-            $cm = get_coursemodule_from_instance("feedback", $feedback->id, $feedback->course);
-            if ($cm) {
-                $cmid = $cm->id;
+        // Add recaptcha validation to the form.
+        $form->add_validation_rule(function($values, $files) use ($item, $form) {
+            $elementname = $item->typ . '_' . $item->id;
+            $recaptchaelement = $form->get_form_element($elementname);
+            if (empty($values['recaptcha_response_field'])) {
+                return array($elementname => get_string('required'));
+            } else if (!empty($values['recaptcha_challenge_field'])) {
+                $challengefield = $values['recaptcha_challenge_field'];
+                $responsefield = $values['recaptcha_response_field'];
+                if (true !== ($result = $recaptchaelement->verify($challengefield, $responsefield))) {
+                    return array($elementname => $result);
+                }
+            } else {
+                return array($elementname => get_string('missingrecaptchachallengefield'));
             }
-        }
-
-        //check if an false value even the value is not required
-        if ($highlightrequire AND !$this->check_value($value, $item)) {
-            $falsevalue = true;
-        } else {
-            $falsevalue = false;
-        }
-
-        if ($falsevalue) {
-            $highlight = '<br class="error"><span id="id_error_recaptcha_response_field" class="error"> '.
-                get_string('err_required', 'form').'</span><br id="id_error_break_recaptcha_response_field" class="error" >';
-        } else {
-            $highlight = '';
-        }
-        $requiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        if (isset($SESSION->feedback->captchacheck) AND
-                $SESSION->feedback->captchacheck == $USER->sesskey AND
-                $value == $USER->sesskey) {
-
-            //print the question and label
-            echo '<div class="feedback_item_label_'.$align.'">';
-            echo '('.$item->label.') ';
-            echo format_text($item->name.$requiredmark, true, false, false);
-            $inputname = 'name="'.$item->typ.'_'.$item->id.'"';
-            echo '<input type="hidden" value="'.$USER->sesskey.'" '.$inputname.' />';
-            echo '</div>';
-            return;
-        }
-
-        $strincorrectpleasetryagain = get_string('incorrectpleasetryagain', 'auth');
-        $strenterthewordsabove = get_string('enterthewordsabove', 'auth');
-        $strenterthenumbersyouhear = get_string('enterthenumbersyouhear', 'auth');
-        $strgetanothercaptcha = get_string('getanothercaptcha', 'auth');
-        $strgetanaudiocaptcha = get_string('getanaudiocaptcha', 'auth');
-        $strgetanimagecaptcha = get_string('getanimagecaptcha', 'auth');
-
-        $recaptureoptions = Array('theme'=>'custom', 'custom_theme_widget'=>'recaptcha_widget');
-        $html = html_writer::script(js_writer::set_variable('RecaptchaOptions', $recaptureoptions));
-        $html .= '
-
-        <div id="recaptcha_widget" style="display:none">
-
-        <div id="recaptcha_image"></div>
-        <div class="recaptcha_only_if_incorrect_sol" style="color:red">'.
-        $strincorrectpleasetryagain.
-        '</div>
-        <span class="recaptcha_only_if_image">
-        <label for="recaptcha_response_field">'.$strenterthewordsabove.$requiredmark.'</label>
-        </span>
-        <span class="recaptcha_only_if_audio">
-        <label for="recaptcha_response_field">'.$strenterthenumbersyouhear.'</label>
-        </span>
-        <label for="recaptcha_response_field">'.$highlight.'</label>
-
-        <input type="text" id="recaptcha_response_field" name="'.$item->typ.'_'.$item->id.'" />
-
-        <div><a href="javascript:Recaptcha.reload()">' . $strgetanothercaptcha . '</a></div>
-        <div class="recaptcha_only_if_image">
-        <a href="javascript:Recaptcha.switch_type(\'audio\')">' . $strgetanaudiocaptcha . '</a>
-        </div>
-        <div class="recaptcha_only_if_audio">
-        <a href="javascript:Recaptcha.switch_type(\'image\')">' . $strgetanimagecaptcha . '</a>
-        </div>
-        </div>';
-
-        // Check if we are using SSL.
-        if (is_https()) {
-            $ssl = true;
-        } else {
-            $ssl = false;
-        }
-
-        //we have to rename the challengefield
-        if (!empty($CFG->recaptchaprivatekey) AND !empty($CFG->recaptchapublickey)) {
-            $captchahtml = recaptcha_get_html($CFG->recaptchapublickey, null, $ssl);
-            echo $html.$captchahtml;
-        }
-    }
-
-    /**
-     * print the item at the complete-page of feedback
-     *
-     * @global object
-     * @param object $item
-     * @param string $value
-     * @return void
-     */
-    public function print_item_show_value($item, $value = '') {
-        global $DB;
-
-        $align = right_to_left() ? 'right' : 'left';
-
-        $cmid = 0;
-        $feedbackid = $item->feedback;
-        if ($feedbackid > 0) {
-            $feedback = $DB->get_record('feedback', array('id'=>$feedbackid));
-            if ($cm = get_coursemodule_from_instance("feedback", $feedback->id, $feedback->course)) {
-                $cmid = $cm->id;
-            }
-        }
-
-        $requiredmark = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
-
-        //print the question and label
-        echo '<div class="feedback_item_label_'.$align.'">';
-        echo '('.$item->label.') ';
-        echo format_text($item->name.$requiredmark, true, false, false);
-        echo '</div>';
-    }
-
-
-    public function check_value($value, $item) {
-        global $SESSION, $CFG, $USER;
-        require_once($CFG->libdir.'/recaptchalib.php');
-
-        //is recaptcha configured in moodle?
-        if (empty($CFG->recaptchaprivatekey) OR empty($CFG->recaptchapublickey)) {
             return true;
-        }
-        $challenge = optional_param('recaptcha_challenge_field', '', PARAM_RAW);
+        });
 
-        if ($value == $USER->sesskey AND $challenge == '') {
-            return true;
-        }
-        $remoteip = getremoteaddr(null);
-        $response = recaptcha_check_answer($CFG->recaptchaprivatekey, $remoteip, $challenge, $value);
-        if ($response->is_valid) {
-            $SESSION->feedback->captchacheck = $USER->sesskey;
-            return true;
-        }
-        unset($SESSION->feedback->captchacheck);
-
-        return false;
     }
 
     public function create_value($data) {
         global $USER;
         return $USER->sesskey;
-    }
-
-    //compares the dbvalue with the dependvalue
-    //dbvalue is value stored in the db
-    //dependvalue is the value to check
-    public function compare_value($item, $dbvalue, $dependvalue) {
-        if ($dbvalue == $dependvalue) {
-            return true;
-        }
-        return false;
-    }
-
-    public function get_presentation($data) {
-        return '';
     }
 
     public function get_hasvalue() {
@@ -340,11 +170,17 @@ class feedback_item_captcha extends feedback_item_base {
         return false;
     }
 
-    public function value_type() {
-        return PARAM_RAW;
-    }
-
-    public function clean_input_value($value) {
-        return clean_param($value, $this->value_type());
+    /**
+     * Returns the list of actions allowed on this item in the edit mode
+     *
+     * @param stdClass $item
+     * @param stdClass $feedback
+     * @param cm_info $cm
+     * @return action_menu_link[]
+     */
+    public function edit_actions($item, $feedback, $cm) {
+        $actions = parent::edit_actions($item, $feedback, $cm);
+        unset($actions['update']);
+        return $actions;
     }
 }

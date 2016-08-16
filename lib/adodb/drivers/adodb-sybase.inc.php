@@ -1,6 +1,8 @@
 <?php
 /*
-V5.19  23-Apr-2014  (c) 2000-2014 John Lim. All rights reserved.
+@version   v5.20.3  01-Jan-2016
+@copyright (c) 2000-2013 John Lim. All rights reserved.
+@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -42,7 +44,7 @@ class ADODB_sybase extends ADOConnection {
 
 	var $port;
 
-	function ADODB_sybase()
+	function __construct()
 	{
 	}
 
@@ -278,7 +280,7 @@ class ADODB_sybase extends ADOConnection {
 	# Added 2003-10-07 by Chris Phillipson
 	# Used ASA SQL Reference Manual -- http://sybooks.sybase.com/onlinebooks/group-aw/awg0800e/dbrfen8/@ebt-link;pt=5981;uf=0?target=0;window=new;showtoc=true;book=dbrfen8
 	# to convert similar Microsoft SQL*Server (mssql) API into Sybase compatible version
-	function MetaPrimaryKeys($table)
+	function MetaPrimaryKeys($table, $owner = false)
 	{
 		$sql = "SELECT c.column_name " .
 			   "FROM syscolumn c, systable t " .
@@ -308,7 +310,7 @@ class ADORecordset_sybase extends ADORecordSet {
 	// _mths works only in non-localised system
 	var  $_mths = array('JAN'=>1,'FEB'=>2,'MAR'=>3,'APR'=>4,'MAY'=>5,'JUN'=>6,'JUL'=>7,'AUG'=>8,'SEP'=>9,'OCT'=>10,'NOV'=>11,'DEC'=>12);
 
-	function ADORecordset_sybase($id,$mode=false)
+	function __construct($id,$mode=false)
 	{
 		if ($mode === false) {
 			global $ADODB_FETCH_MODE;
@@ -316,7 +318,7 @@ class ADORecordset_sybase extends ADORecordSet {
 		}
 		if (!$mode) $this->fetchMode = ADODB_FETCH_ASSOC;
 		else $this->fetchMode = $mode;
-		$this->ADORecordSet($id,$mode);
+		parent::__construct($id,$mode);
 	}
 
 	/*	Returns: an object containing field information.
@@ -356,7 +358,7 @@ class ADORecordset_sybase extends ADORecordSet {
 			$this->fields = @sybase_fetch_assoc($this->_queryID);
 
 			if (is_array($this->fields)) {
-				$this->fields = $this->GetRowAssoc(ADODB_ASSOC_CASE);
+				$this->fields = $this->GetRowAssoc();
 				return true;
 			}
 			return false;
@@ -389,9 +391,9 @@ class ADORecordset_sybase extends ADORecordSet {
 }
 
 class ADORecordSet_array_sybase extends ADORecordSet_array {
-	function ADORecordSet_array_sybase($id=-1)
+	function __construct($id=-1)
 	{
-		$this->ADORecordSet_array($id);
+		parent::__construct($id);
 	}
 
 		// sybase/mssql uses a default date like Dec 30 2000 12:00AM

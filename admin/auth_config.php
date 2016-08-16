@@ -64,6 +64,8 @@ echo "<form id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
 echo "<div>\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n";
 echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";
+// HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
+echo prevent_form_autofill_password();
 
 // auth plugin description
 echo $OUTPUT->box_start();
@@ -146,8 +148,6 @@ function print_auth_lock_options($auth, $user_fields, $helptext, $retrieveopts, 
             // If custom field then pick name from database.
             $fieldshortname = str_replace('profile_field_', '', $fieldname);
             $fieldname = $customfieldname[$fieldshortname]->name;
-        } elseif (preg_match('/^(.+?)(\d+)$/', $fieldname, $matches)) {
-            $fieldname =  get_string($matches[1]) . ' ' . $matches[2];
         } elseif ($fieldname == 'url') {
             $fieldname = get_string('webpage');
         } else {

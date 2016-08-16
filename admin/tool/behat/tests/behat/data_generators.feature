@@ -27,6 +27,7 @@ Feature: Set up contextual data for tests
       | Course 2 | COURSE2 | CAT3 |
       | Course 3 | COURSE3 | 0 |
     When I log in as "admin"
+    And I am on site homepage
     Then I should see "Course 1"
     And I should see "Course 2"
     And I should see "Course 3"
@@ -56,6 +57,7 @@ Feature: Set up contextual data for tests
       | Grouping 1 | C1 | GG1 |
       | Grouping 2 | C1 | GG2 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Groups"
@@ -69,8 +71,8 @@ Feature: Set up contextual data for tests
   Scenario: Role overrides
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
@@ -86,6 +88,7 @@ Feature: Set up contextual data for tests
       | mod/forum:editanypost | Allow | student | Course | C1 |
       | mod/forum:replynews | Prevent | editingteacher | Course | C1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Permissions"
@@ -99,7 +102,7 @@ Feature: Set up contextual data for tests
   Scenario: Add course enrolments
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -117,11 +120,11 @@ Feature: Set up contextual data for tests
       | Custom student         | custom2   |                  |                |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | user1 | User | 1 | user1@moodlemoodle.com |
-      | user2 | User | 2 | user2@moodlemoodle.com |
-      | user3 | User | 3 | user3@moodlemoodle.com |
-      | user4 | User | 4 | user4@moodlemoodle.com |
-      | user5 | User | 5 | user5@moodlemoodle.com |
+      | user1 | User | 1 | user1@example.com |
+      | user2 | User | 2 | user2@example.com |
+      | user3 | User | 3 | user3@example.com |
+      | user4 | User | 4 | user4@example.com |
+      | user5 | User | 5 | user5@example.com |
     And the following "categories" exist:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
@@ -138,22 +141,27 @@ Feature: Set up contextual data for tests
       | user3 | editingteacher | Course       | C1        |
       | user5 | custom2        | System       |           |
     When I log in as "user1"
+    And I am on site homepage
     Then I should see "Front page settings"
     And I log out
     And I log in as "user2"
+    And I am on site homepage
     And I follow "Course 1"
     And I should see "Turn editing on"
     And I log out
     And I log in as "user3"
+    And I am on site homepage
     And I follow "Course 1"
     And I should see "Turn editing on"
     And I log out
     And I log in as "user4"
+    And I am on site homepage
     And I follow "Course 1"
     And I should see "Turn editing on"
     And I log out
     And I log in as "user5"
     And I should see "You are logged in as"
+    And I am on site homepage
     And I follow "Course 1"
     And I should see "You can not enrol yourself in this course."
 
@@ -192,6 +200,7 @@ Feature: Set up contextual data for tests
       | activity   | name                            | intro                         | course | idnumber    | grade |
       | assign     | Test assignment name with scale | Test assignment description   | C1     | assign1     | Test Scale 1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should see "Test assignment name"
     # Assignment 2.2 module type is disabled by default
@@ -229,8 +238,8 @@ Feature: Set up contextual data for tests
   Scenario: Add relations between users and groups
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1 |
@@ -253,6 +262,7 @@ Feature: Set up contextual data for tests
       | grouping | group |
       | GG1 | G1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I expand "Users" node
     And I follow "Groups"
@@ -269,8 +279,8 @@ Feature: Set up contextual data for tests
       | Cat 1 | 0        | CAT1     |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "cohorts" exist:
       | name            | idnumber |
       | System cohort A | CHSA     |
@@ -312,6 +322,7 @@ Feature: Set up contextual data for tests
       | fullname | course | gradecategory |
       | Grade sub category 2 | C1 | Grade category 1 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Courses"
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
@@ -336,10 +347,11 @@ Feature: Set up contextual data for tests
       | Test Grade Item 2 | C1 | Grade category 1 |
       | Test Grade Item 3 | C1 | Grade sub category 2 |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     Then I should see "Test Grade Item 1"
     And I follow "Edit   Test Grade Item 1"
     And I expand all fieldsets
@@ -366,8 +378,9 @@ Feature: Set up contextual data for tests
       | name | scale |
       | Test Scale 1 | Disappointing, Good, Very good, Excellent |
     When I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I follow "Scales"
     Then I should see "Test Scale 1"
     And I should see "Disappointing,  Good,  Very good,  Excellent"
@@ -385,10 +398,10 @@ Feature: Set up contextual data for tests
     And the following "grade outcomes" exist:
       | fullname        | shortname | course | scale        |
       | Grade outcome 2 | OT2       | C1     | Test Scale 1 |
+    And the following config values are set as admin:
+      | enableoutcomes | 1 |
     When I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Outcomes"
     Then I should see "Grade outcome 1" in the "#addoutcomes" "css_element"
@@ -411,20 +424,32 @@ Feature: Set up contextual data for tests
     And the following "grade categories" exist:
       | fullname         | course |
       | Grade category 1 | C1     |
-     And the following "grade items" exist:
-       | itemname                  | course | outcome | gradecategory    |
-       | Test Outcome Grade Item 1 | C1     | OT1     | Grade category 1 |
+    And the following "grade items" exist:
+      | itemname                  | course | outcome | gradecategory    |
+      | Test Outcome Grade Item 1 | C1     | OT1     | Grade category 1 |
+    And the following config values are set as admin:
+      | enableoutcomes | 1 |
     When I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
-    And I follow "Home"
+    And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     Then I should see "Test Outcome Grade Item 1"
     And I follow "Edit   Test Outcome Grade Item 1"
     And the field "Outcome" matches value "Grade outcome 1"
     And I expand all fieldsets
     And "//div[contains(@class, 'fitem')]/div[contains(@class, 'fitemtitle')]/div[contains(@class, fstaticlabel) and contains(., 'Grade category')]/../../div[contains(@class, 'felement') and contains(., 'Grade category 1')]" "xpath_element" should exist
     And I press "Cancel"
+
+  Scenario: Add a block
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+    And the following "blocks" exist:
+      | blockname    | contextlevel | reference | pagetypepattern | defaultregion |
+      | online_users | Course       | C1        | course-view-*   | site-pre      |
+    When I log in as "admin"
+    And I am on site homepage
+    And I follow "Course 1"
+    Then I should see "Online users"

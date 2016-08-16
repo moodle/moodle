@@ -30,6 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Kan ikke oprette databasen.</p> <p>Den specificerede database eksisterer ikke og brugeren har ikke tilladelse til at oprette den.</p> <p>Administrator bør verificere databasekonfigurationen.</p>';
 $string['cannotcreatelangdir'] = 'Kan ikke oprette sprogmappe';
 $string['cannotcreatetempdir'] = 'Kan ikke oprette temp-mappe';
 $string['cannotdownloadcomponents'] = 'Kan ikke downloade komponenter';
@@ -39,9 +40,12 @@ $string['cannotsavemd5file'] = 'Kan ikke gemme md5-fil';
 $string['cannotsavezipfile'] = 'Kan ikke gemme zip-fil';
 $string['cannotunzipfile'] = 'Kan ikke pakke filen ud';
 $string['componentisuptodate'] = 'Komponenten er ajour';
+$string['dmlexceptiononinstall'] = '<p>En database fejl er opstået [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Downloadet fil-tjek fejlede';
 $string['invalidmd5'] = 'Tjekvariablen var forkert - prøv igen';
 $string['missingrequiredfield'] = 'Der mangler nogle obligatoriske felter';
+$string['remotedownloaderror'] = '<p> Download af komponent til din server fejlede. Venligst verificer proxy indstillilnger; PHP cURL filtypen anbefales kraftigt. </p>
+<p>Du må downloade <a href="{$a->url}">{$a->url}</a> filen manuelt, kopier den til "{$a->dest}" på din server og udpak den her </p>';
 $string['wrongdestpath'] = 'Forkert destinationssti';
 $string['wrongsourcebase'] = 'Forkert kilde-URL';
 $string['wrongzipfilename'] = 'Forkert zip-filnavn';

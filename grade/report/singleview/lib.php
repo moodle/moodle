@@ -52,7 +52,7 @@ class gradereport_singleview extends grade_report {
      * @return array List of warnings
      */
     public function process_data($data) {
-        if (has_capability('moodle/grade:manage', $this->context)) {
+        if (has_capability('moodle/grade:edit', $this->context)) {
             return $this->screen->process($data);
         }
     }
@@ -107,7 +107,7 @@ class gradereport_singleview extends grade_report {
      */
     public function output() {
         global $OUTPUT;
-        return $OUTPUT->box($this->screen->html());
+        return $OUTPUT->container($this->screen->html(), 'reporttable');
     }
 }
 

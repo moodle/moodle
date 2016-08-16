@@ -73,7 +73,9 @@ class report_log_renderer extends plugin_renderer_base {
         if (empty($readers)) {
             $readers = array(get_string('nologreaderenabled', 'report_log'));
         }
-        $select = new single_select($reportlog->url, 'logreader', $readers, $reportlog->selectedlogreader, null);
+        $url = fullclone ($reportlog->url);
+        $url->remove_params(array('logreader'));
+        $select = new single_select($url, 'logreader', $readers, $reportlog->selectedlogreader, null);
         $select->set_label(get_string('selectlogreader', 'report_log'));
         echo $this->output->render($select);
     }
@@ -162,10 +164,15 @@ class report_log_renderer extends plugin_renderer_base {
         echo html_writer::label(get_string('actions'), 'menumodaction', false, array('class' => 'accesshide'));
         echo html_writer::select($reportlog->get_actions(), 'modaction', $reportlog->action, get_string("allactions"));
 
+        // Add origin.
+        $origin = $reportlog->get_origin_options();
+        echo html_writer::label(get_string('origin', 'report_log'), 'menuorigin', false, array('class' => 'accesshide'));
+        echo html_writer::select($origin, 'origin', $reportlog->origin, false);
+
         // Add edulevel.
         $edulevel = $reportlog->get_edulevel_options();
         echo html_writer::label(get_string('edulevel'), 'menuedulevel', false, array('class' => 'accesshide'));
-        echo html_writer::select($edulevel, 'edulevel', $reportlog->edulevel, false);
+        echo html_writer::select($edulevel, 'edulevel', $reportlog->edulevel, false).$this->help_icon('edulevel');
 
         // Add reader option.
         // If there is some reader available then only show submit button.

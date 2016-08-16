@@ -1,6 +1,8 @@
 <?php
 /**
- * @version V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+ * @version   v5.20.3  01-Jan-2016
+ * @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+ * @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
  * Released under both BSD license and Lesser GPL library license.
  * Whenever there is any discrepancy between the two licenses,
  * the BSD license will take precedence.
@@ -51,10 +53,6 @@ include_once ADODB_PEAR."/adodb.inc.php";
 if (!defined('DB_OK')) {
 define("DB_OK",	1);
 define("DB_ERROR",-1);
-
-// autoExecute constants
-define('DB_AUTOQUERY_INSERT', 1);
-define('DB_AUTOQUERY_UPDATE', 2);
 
 /**
  * This is a special constant that tells DB the user hasn't specified

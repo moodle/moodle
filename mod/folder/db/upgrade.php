@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -48,78 +47,30 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_folder_upgrade($oldversion) {
     global $CFG, $DB;
 
-    $dbman = $DB->get_manager();
-
-
-    // Moodle v2.2.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.3.0 release upgrade line
-    // Put any upgrade step following this
-
-    // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
-
-    if ($oldversion < 2013012100) {
-
-        // Define field display to be added to folder
-        $table = new xmldb_table('folder');
-        $field = new xmldb_field('display', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'timemodified');
-
-        // Conditionally launch add field display
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // folder savepoint reached
-        upgrade_mod_savepoint(true, 2013012100, 'folder');
-    }
-
-    if ($oldversion < 2013031500) {
-
-        // Define field showexpanded to be added to folder
-        $table = new xmldb_table('folder');
-        $field = new xmldb_field('showexpanded', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'revision');
-
-        // Conditionally launch add field showexpanded
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // folder savepoint reached
-        upgrade_mod_savepoint(true, 2013031500, 'folder');
-    }
-
-    // Rename show_expanded to showexpanded (see MDL-38646).
-    if ($oldversion < 2013040700) {
-
-        // Rename site config setting.
-        $showexpanded = get_config('folder', 'show_expanded');
-        set_config('showexpanded', $showexpanded, 'folder');
-        set_config('show_expanded', null, 'folder');
-
-        // Rename table column.
-        $table = new xmldb_table('folder');
-        $field = new xmldb_field('show_expanded', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'revision');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->rename_field($table, $field, 'showexpanded');
-        }
-
-        // folder savepoint reached
-        upgrade_mod_savepoint(true, 2013040700, 'folder');
-    }
-
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
-
-    // Moodle v2.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v2.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
+
+    // Add showdownloadfolder option.
+    if ($oldversion < 2016020201) {
+        $table = new xmldb_table('folder');
+        $field = new xmldb_field('showdownloadfolder', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'showexpanded');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field, 'showdownloadfolder');
+        }
+
+        upgrade_mod_savepoint(true, 2016020201, 'folder');
+    }
+
+    // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

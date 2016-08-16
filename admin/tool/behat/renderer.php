@@ -165,7 +165,7 @@ class tool_behat_renderer extends plugin_renderer_base {
         // Info.
         $installurl = behat_command::DOCS_URL . '#Installation';
         $installlink = html_writer::tag('a', $installurl, array('href' => $installurl, 'target' => '_blank'));
-        $writetestsurl = behat_command::DOCS_URL . '#Writting_features';
+        $writetestsurl = behat_command::DOCS_URL . '#Writing_features';
         $writetestslink = html_writer::tag('a', $writetestsurl, array('href' => $writetestsurl, 'target' => '_blank'));
         $writestepsurl = behat_command::DOCS_URL . '#Adding_steps_definitions';
         $writestepslink = html_writer::tag('a', $writestepsurl, array('href' => $writestepsurl, 'target' => '_blank'));

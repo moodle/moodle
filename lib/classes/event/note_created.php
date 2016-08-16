@@ -106,4 +106,14 @@ class note_created extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Notes are not backed up, so no need to map on restore.
+        return array('db' => 'post', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
+    }
 }

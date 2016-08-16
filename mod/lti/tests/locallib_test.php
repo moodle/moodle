@@ -63,8 +63,11 @@ require_once($CFG->dirroot . '/mod/lti/servicelib.php');
 class mod_lti_locallib_testcase extends advanced_testcase {
 
     public function test_split_custom_parameters() {
+        $this->resetAfterTest();
+
         $tool = new stdClass();
         $tool->enabledcapability = '';
+        $tool->parameter = '';
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(), "x=1\ny=2", false),
             array('custom_x' => '1', 'custom_y' => '2'));
 
@@ -76,6 +79,12 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals(lti_split_custom_parameters(null, $tool, array(),
             'Complex!@#$^*(){}[]KEY=Complex!@#$^*;(){}[]½Value', false),
             array('custom_complex____________key' => 'Complex!@#$^*;(){}[]½Value'));
+
+        // Test custom parameter that returns $USER property.
+        $user = $this->getDataGenerator()->create_user(array('middlename' => 'SOMETHING'));
+        $this->setUser($user);
+        $this->assertEquals(array('custom_x' => '1', 'custom_y' => 'SOMETHING'),
+            lti_split_custom_parameters(null, $tool, array(), "x=1\ny=\$Person.name.middle", false));
     }
 
     /**
@@ -179,6 +188,44 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar'));
     }
 
+    /*
+     * Verify that lti_build_request does handle resource_link_id as expected
+     */
+    public function test_lti_buid_request_resource_link_id() {
+        $this->resetAfterTest();
+
+        self::setUser($this->getDataGenerator()->create_user());
+        $course   = $this->getDataGenerator()->create_course();
+        $instance = $this->getDataGenerator()->create_module('lti', array(
+            'intro'       => "<p>This</p>\nhas\r\n<p>some</p>\nnew\n\rlines",
+            'introformat' => FORMAT_HTML,
+            'course'      => $course->id,
+        ));
+
+        $typeconfig = array(
+            'acceptgrades'     => 1,
+            'forcessl'         => 0,
+            'sendname'         => 2,
+            'sendemailaddr'    => 2,
+            'customparameters' => '',
+        );
+
+        // Normal call, we expect $instance->id to be used as resource_link_id.
+        $params = lti_build_request($instance, $typeconfig, $course, null);
+        $this->assertSame($instance->id, $params['resource_link_id']);
+
+        // If there is a resource_link_id set, it gets precedence.
+        $instance->resource_link_id = $instance->id + 99;
+        $params = lti_build_request($instance, $typeconfig, $course, null);
+        $this->assertSame($instance->resource_link_id, $params['resource_link_id']);
+
+        // With none set, resource_link_id is not set either.
+        unset($instance->id);
+        unset($instance->resource_link_id);
+        $params = lti_build_request($instance, $typeconfig, $course, null);
+        $this->assertArrayNotHasKey('resource_link_id', $params);
+    }
+
     /**
      * Test lti_build_request's resource_link_description and ensure
      * that the newlines in the description are correct.
@@ -216,5 +263,66 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertGreaterThan(0, $rncount);
 
         $this->assertEquals($ncount, $rncount, 'All newline characters should be a combination of \r\n');
+    }
+
+    /**
+     * Tests lti_prepare_type_for_save's handling of the "Force SSL" configuration.
+     */
+    public function test_lti_prepare_type_for_save_forcessl() {
+        $type = new stdClass();
+        $config = new stdClass();
+
+        // Try when the forcessl config property is not set.
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(0, $config->lti_forcessl);
+        $this->assertEquals(0, $type->forcessl);
+
+        // Try when forcessl config property is set.
+        $config->lti_forcessl = 1;
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(1, $config->lti_forcessl);
+        $this->assertEquals(1, $type->forcessl);
+
+        // Try when forcessl config property is set to 0.
+        $config->lti_forcessl = 0;
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(0, $config->lti_forcessl);
+        $this->assertEquals(0, $type->forcessl);
+    }
+
+    /**
+     * Tests lti_load_type_from_cartridge and lti_load_type_if_cartridge
+     */
+    public function test_lti_load_type_from_cartridge() {
+        $type = new stdClass();
+        $type->lti_toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
+
+        lti_load_type_if_cartridge($type);
+
+        $this->assertEquals('Example tool', $type->lti_typename);
+        $this->assertEquals('Example tool description', $type->lti_description);
+        $this->assertEquals('http://www.example.com/lti/provider.php', $type->lti_toolurl);
+        $this->assertEquals('http://download.moodle.org/unittest/test.jpg', $type->lti_icon);
+        $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $type->lti_secureicon);
+    }
+
+    /**
+     * Tests lti_load_tool_from_cartridge and lti_load_tool_if_cartridge
+     */
+    public function test_lti_load_tool_from_cartridge() {
+        $lti = new stdClass();
+        $lti->toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
+
+        lti_load_tool_if_cartridge($lti);
+
+        $this->assertEquals('Example tool', $lti->name);
+        $this->assertEquals('Example tool description', $lti->intro);
+        $this->assertEquals('http://www.example.com/lti/provider.php', $lti->toolurl);
+        $this->assertEquals('https://www.example.com/lti/provider.php', $lti->securetoolurl);
+        $this->assertEquals('http://download.moodle.org/unittest/test.jpg', $lti->icon);
+        $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $lti->secureicon);
     }
 }

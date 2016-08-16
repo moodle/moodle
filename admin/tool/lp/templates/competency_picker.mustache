@@ -1,0 +1,30 @@
+<div data-region="competencylinktree">
+{{^singleFramework}}
+<h3>{{#str}}competencyframeworks, tool_lp{{/str}}</h3>
+<select data-action="chooseframework">
+{{#frameworks}}
+<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{shortname}}} <em>{{idnumber}}</em></option>
+{{/frameworks}}
+</select>
+{{/singleFramework}}
+<h3>{{#str}}locatecompetency, tool_lp{{/str}}</h3>
+
+<form data-region="filtercompetencies" data-frameworkid="{{framework.id}}">
+    <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
+    <input type="text" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
+    <button>{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>
+</form>
+<ul data-enhance="linktree" style="display: none;">
+    <li><span>{{{framework.shortname}}}</span>
+        <ul>
+            {{#competencies}}
+                {{> tool_lp/competencies_tree }}
+            {{/competencies}}
+        </ul>
+    </li>
+</ul>
+<div data-region="link-buttons">
+    <input type="button" data-action="add" value="{{#str}}add{{/str}}"/>
+    <input type="button" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
+</div>
+</div>

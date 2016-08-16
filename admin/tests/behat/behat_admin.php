@@ -28,8 +28,7 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../lib/behat/behat_field_manager.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode,
+use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
@@ -75,7 +74,7 @@ class behat_admin extends behat_base {
             $exception = new ElementNotFoundException($this->getSession(), '"' . $label . '" administration setting ');
 
             // The argument should be converted to an xpath literal.
-            $label = $this->getSession()->getSelectorsHandler()->xpathLiteral($label);
+            $label = behat_context_helper::escape($label);
 
             // Single element settings.
             try {
@@ -111,6 +110,30 @@ class behat_admin extends behat_base {
             $field->set_value($value);
 
             $this->find_button(get_string('savechanges'))->press();
+        }
+    }
+
+    /**
+     * Sets the specified site settings. A table with | config | value | (optional)plugin | is expected.
+     *
+     * @Given /^the following config values are set as admin:$/
+     * @param TableNode $table
+     */
+    public function the_following_config_values_are_set_as_admin(TableNode $table) {
+
+        if (!$data = $table->getRowsHash()) {
+            return;
+        }
+
+        foreach ($data as $config => $value) {
+            // Default plugin value is null.
+            $plugin = null;
+
+            if (is_array($value)) {
+                $plugin = $value[1];
+                $value = $value[0];
+            }
+            set_config($config, $value, $plugin);
         }
     }
 

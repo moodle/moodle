@@ -8,8 +8,8 @@ Feature: A teacher can set whether glossary entries are always editable or not
   Scenario: Glossary entries are not always editable
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -17,10 +17,8 @@ Feature: A teacher can set whether glossary entries are always editable or not
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Maximum time to edit posts | 1 minutes |
-    And I log out
+    And the following config values are set as admin:
+      | maxeditingtime | 60 |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on

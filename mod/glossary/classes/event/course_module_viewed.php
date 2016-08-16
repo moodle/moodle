@@ -28,6 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The mod_glossary course module viewed event class.
  *
+ * @property-read array $other {
+ *     Extra information about event.
+ *
+ *     - string mode: (optional)
+ * }
+ *
  * @package    mod_glossary
  * @since      Moodle 2.7
  * @copyright  2014 Marina Glancy
@@ -67,5 +73,14 @@ class course_module_viewed extends \core\event\course_module_viewed {
         return array($this->courseid, $this->objecttable, 'view',
             'view.php?id=' . $this->contextinstanceid . '&amp;tab=-1',
             $this->objectid, $this->contextinstanceid);
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'glossary', 'restore' => 'glossary');
+    }
+
+    public static function get_other_mapping() {
+        // Nothing to map.
+        return false;
     }
 }

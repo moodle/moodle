@@ -1,6 +1,12 @@
 This files describes API changes in /report/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+* The report_log_print_graph signature and behaviour has changed to generate charts using
+  the new Chart API. The third argument has been renamed to $typeormode and it accepts
+  the type (usercourse.png, userday.png) or the mode (today, all).
+
 === 2.7 ===
 * How to migrate reports accessing table 'log':
   http://docs.moodle.org/dev/Migrating_log_access_in_reports

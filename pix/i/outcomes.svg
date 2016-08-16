@@ -1,15 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 15.1.0, SVG Export Plug-In  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
 	<!ENTITY ns_flows "http://ns.adobe.com/Flows/1.0/">
-]>
-<svg version="1.1"
-	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-	 x="0px" y="0px" width="16px" height="16px" viewBox="0 -0.2 16 16" style="overflow:visible;enable-background:new 0 -0.2 16 16;"
-	 xml:space="preserve" preserveAspectRatio="xMinYMid meet">
-<defs>
-</defs>
-<path style="fill:#999999;" d="M12.2,0c1.6,0.7,2.9,2,3.5,3.5L9.8,6L12.2,0z M12.5,6.7l-6,2.5l0,0l0,0l6,2.5c0,0,0,0,0,0h0
-	C13.3,9.8,13.1,8.2,12.5,6.7z M12.5,11.7C12.5,11.7,12.5,11.7,12.5,11.7l-12-5c0,0,0,0,0,0C-0.9,10,0.7,13.8,4,15.2
-	C7.3,16.6,11.1,15,12.5,11.7z M9,3.2C5.3,1.7,2,3,0.5,6.7l6,2.5L9,3.2z"/>
-</svg>
+]><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -0.2 16 16" preserveAspectRatio="xMinYMid meet" overflow="visible"><path d="M12.2 0c1.6.7 2.9 2 3.5 3.5L9.8 6l2.4-6zm.3 6.7l-6 2.5 6 2.5c.8-1.9.6-3.5 0-5zm0 5l-12-5C-.9 10 .7 13.8 4 15.2c3.3 1.4 7.1-.2 8.5-3.5zM9 3.2C5.3 1.7 2 3 .5 6.7l6 2.5 2.5-6z" fill="#999"/></svg>

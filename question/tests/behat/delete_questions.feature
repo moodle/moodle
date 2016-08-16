@@ -7,7 +7,7 @@ Feature: A teacher can delete questions in the question bank
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | weeks |
@@ -27,7 +27,7 @@ Feature: A teacher can delete questions in the question bank
   @javascript
   Scenario: A question not used anywhere can really be deleted
     When I click on "Delete" "link" in the "Test question to be deleted" "table_row"
-    And I press "Continue"
+    And I press "Delete"
     And I click on "Also show old questions" "checkbox"
     Then I should not see "Test question to be deleted"
 
@@ -48,7 +48,7 @@ Feature: A teacher can delete questions in the question bank
       | Question text | Write about whatever you want    |
     And I navigate to "Questions" node in "Course administration > Question bank"
     When I click on "Delete" "link" in the "Test used question to be deleted" "table_row"
-    And I press "Continue"
+    And I press "Delete"
     Then I should not see "Test used question to be deleted"
     And I click on "Also show old questions" "checkbox"
     And I should see "Test used question to be deleted"

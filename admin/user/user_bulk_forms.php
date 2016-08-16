@@ -24,10 +24,6 @@ class user_bulk_action_form extends moodleform {
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions[5] = get_string('download', 'admin');
         }
-        if (has_capability('moodle/role:assign', $syscontext)){
-             //TODO: MDL-24064
-            //$actions[6] = get_string('enrolmultipleusers', 'admin');
-        }
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions[7] = get_string('forcepasswordchange');
         }

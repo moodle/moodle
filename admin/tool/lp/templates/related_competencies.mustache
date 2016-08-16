@@ -1,0 +1,29 @@
+<div data-region="relatedcompetencies">
+<p>
+    <strong>{{#str}}crossreferencedcompetencies, tool_lp{{/str}}:</strong>
+</p>
+<ul>
+    {{#relatedcompetencies}}
+        <li>
+            {{#showdeleterelatedaction}}
+                <div class="pull-right">
+                    <a href="#" data-action="deleterelation" id="id-related-{{id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
+                </div>
+            {{/showdeleterelatedaction}}
+            <p>
+                <a href="#" data-action="competency-dialogue" data-id="{{id}}">
+                    {{{shortname}}}{{#idnumber}} {{idnumber}}{{/idnumber}}
+                </a>
+            </p>
+        </li>
+    {{/relatedcompetencies}}
+</ul>
+{{^relatedcompetencies}}
+    {{#str}}nocrossreferencedcompetencies, tool_lp{{/str}}
+{{/relatedcompetencies}}
+</div>
+{{#js}}
+require(['tool_lp/competencydialogue'], function(Compdialogue) {
+    Compdialogue.init();
+});
+{{/js}}

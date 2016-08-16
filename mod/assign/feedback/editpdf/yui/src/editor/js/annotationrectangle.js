@@ -12,6 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* global STROKEWEIGHT, ANNOTATIONCOLOUR */
 
 /**
  * Provides an in browser PDF editor.
@@ -26,7 +27,7 @@
  * @class annotationrectangle
  * @extends M.assignfeedback_editpdf.annotation
  */
-ANNOTATIONRECTANGLE = function(config) {
+var ANNOTATIONRECTANGLE = function(config) {
     ANNOTATIONRECTANGLE.superclass.constructor.apply(this, [config]);
 };
 
@@ -40,8 +41,9 @@ Y.extend(ANNOTATIONRECTANGLE, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable,
+            bounds,
             shape;
 
         drawable = new M.assignfeedback_editpdf.drawable(this.editor);
@@ -74,7 +76,7 @@ Y.extend(ANNOTATIONRECTANGLE, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             shape,
             bounds;

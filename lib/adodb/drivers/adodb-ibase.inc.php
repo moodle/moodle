@@ -1,6 +1,8 @@
 <?php
 /*
-V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+@version   v5.20.3  01-Jan-2016
+@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -54,13 +56,13 @@ class ADODB_ibase extends ADOConnection {
 	var $blobEncodeType = 'C';
 	var $role = false;
 
-	function ADODB_ibase()
+	function __construct()
 	{
-		 if (defined('IBASE_DEFAULT')) $this->ibasetrans = IBASE_DEFAULT;
-  	}
+		if (defined('IBASE_DEFAULT')) $this->ibasetrans = IBASE_DEFAULT;
+	}
 
 
-	   // returns true or false
+	// returns true or false
 	function _connect($argHostname, $argUsername, $argPassword, $argDatabasename,$persist=false)
 	{
 		if (!function_exists('ibase_pconnect')) return null;
@@ -84,8 +86,12 @@ class ADODB_ibase extends ADOConnection {
 		// PHP5 change.
 		if (function_exists('ibase_timefmt')) {
 			ibase_timefmt($this->ibase_datefmt,IBASE_DATE );
-			if ($this->dialect == 1) ibase_timefmt($this->ibase_datefmt,IBASE_TIMESTAMP );
-			else ibase_timefmt($this->ibase_timestampfmt,IBASE_TIMESTAMP );
+			if ($this->dialect == 1) {
+				ibase_timefmt($this->ibase_datefmt,IBASE_TIMESTAMP );
+			}
+			else {
+				ibase_timefmt($this->ibase_timestampfmt,IBASE_TIMESTAMP );
+			}
 			ibase_timefmt($this->ibase_timefmt,IBASE_TIME );
 
 		} else {
@@ -95,7 +101,8 @@ class ADODB_ibase extends ADOConnection {
 		}
 		return true;
 	}
-	   // returns true or false
+
+	// returns true or false
 	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	{
 		return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename,true);
@@ -104,7 +111,9 @@ class ADODB_ibase extends ADOConnection {
 
 	function MetaPrimaryKeys($table,$owner_notused=false,$internalKey=false)
 	{
-		if ($internalKey) return array('RDB$DB_KEY');
+		if ($internalKey) {
+			return array('RDB$DB_KEY');
+		}
 
 		$table = strtoupper($table);
 
@@ -138,19 +147,25 @@ class ADODB_ibase extends ADOConnection {
 		if ($this->transOff) return true;
 		$this->transCnt += 1;
 		$this->autoCommit = false;
-	 	$this->_transactionID = $this->_connectionID;//ibase_trans($this->ibasetrans, $this->_connectionID);
+		$this->_transactionID = $this->_connectionID;//ibase_trans($this->ibasetrans, $this->_connectionID);
 		return $this->_transactionID;
 	}
 
 	function CommitTrans($ok=true)
 	{
-		if (!$ok) return $this->RollbackTrans();
-		if ($this->transOff) return true;
-		if ($this->transCnt) $this->transCnt -= 1;
+		if (!$ok) {
+			return $this->RollbackTrans();
+		}
+		if ($this->transOff) {
+			return true;
+		}
+		if ($this->transCnt) {
+			$this->transCnt -= 1;
+		}
 		$ret = false;
 		$this->autoCommit = true;
 		if ($this->_transactionID) {
-			   		//print ' commit ';
+			//print ' commit ';
 			$ret = ibase_commit($this->_transactionID);
 		}
 		$this->_transactionID = false;
@@ -180,8 +195,9 @@ class ADODB_ibase extends ADOConnection {
 		if ($this->transCnt) $this->transCnt -= 1;
 		$ret = false;
 		$this->autoCommit = true;
-		if ($this->_transactionID)
-				  $ret = ibase_rollback($this->_transactionID);
+		if ($this->_transactionID) {
+			$ret = ibase_rollback($this->_transactionID);
+		}
 		$this->_transactionID = false;
 
 		return $ret;
@@ -189,75 +205,79 @@ class ADODB_ibase extends ADOConnection {
 
 	function MetaIndexes ($table, $primary = FALSE, $owner=false)
 	{
-        // save old fetch mode
-        global $ADODB_FETCH_MODE;
-        $false = false;
-        $save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-               $savem = $this->SetFetchMode(FALSE);
-        }
-        $table = strtoupper($table);
-        $sql = "SELECT * FROM RDB\$INDICES WHERE RDB\$RELATION_NAME = '".$table."'";
-        if (!$primary) {
-        	$sql .= " AND RDB\$INDEX_NAME NOT LIKE 'RDB\$%'";
-        } else {
-        	$sql .= " AND RDB\$INDEX_NAME NOT LIKE 'RDB\$FOREIGN%'";
-        }
-        // get index details
-        $rs = $this->Execute($sql);
-        if (!is_object($rs)) {
-	        // restore fetchmode
-	        if (isset($savem)) {
-	            $this->SetFetchMode($savem);
-	        }
-	        $ADODB_FETCH_MODE = $save;
-            return $false;
-        }
+		// save old fetch mode
+		global $ADODB_FETCH_MODE;
+		$false = false;
+		$save = $ADODB_FETCH_MODE;
+		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+		if ($this->fetchMode !== FALSE) {
+				$savem = $this->SetFetchMode(FALSE);
+		}
+		$table = strtoupper($table);
+		$sql = "SELECT * FROM RDB\$INDICES WHERE RDB\$RELATION_NAME = '".$table."'";
+		if (!$primary) {
+			$sql .= " AND RDB\$INDEX_NAME NOT LIKE 'RDB\$%'";
+		} else {
+			$sql .= " AND RDB\$INDEX_NAME NOT LIKE 'RDB\$FOREIGN%'";
+		}
+		// get index details
+		$rs = $this->Execute($sql);
+		if (!is_object($rs)) {
+			// restore fetchmode
+			if (isset($savem)) {
+				$this->SetFetchMode($savem);
+			}
+			$ADODB_FETCH_MODE = $save;
+			return $false;
+		}
 
-        $indexes = array();
+		$indexes = array();
 		while ($row = $rs->FetchRow()) {
 			$index = $row[0];
-             if (!isset($indexes[$index])) {
-             		if (is_null($row[3])) {$row[3] = 0;}
-                     $indexes[$index] = array(
-                             'unique' => ($row[3] == 1),
-                             'columns' => array()
-                     );
-             }
+			if (!isset($indexes[$index])) {
+				if (is_null($row[3])) {
+					$row[3] = 0;
+				}
+				$indexes[$index] = array(
+					'unique' => ($row[3] == 1),
+					'columns' => array()
+				);
+			}
 			$sql = "SELECT * FROM RDB\$INDEX_SEGMENTS WHERE RDB\$INDEX_NAME = '".$index."' ORDER BY RDB\$FIELD_POSITION ASC";
 			$rs1 = $this->Execute($sql);
-            while ($row1 = $rs1->FetchRow()) {
-             	$indexes[$index]['columns'][$row1[2]] = $row1[1];
-        	}
+			while ($row1 = $rs1->FetchRow()) {
+				$indexes[$index]['columns'][$row1[2]] = $row1[1];
+			}
 		}
-        // restore fetchmode
-        if (isset($savem)) {
-            $this->SetFetchMode($savem);
-        }
-        $ADODB_FETCH_MODE = $save;
+		// restore fetchmode
+		if (isset($savem)) {
+			$this->SetFetchMode($savem);
+		}
+		$ADODB_FETCH_MODE = $save;
 
-        return $indexes;
+		return $indexes;
 	}
 
 
 	// See http://community.borland.com/article/0,1410,25844,00.html
 	function RowLock($tables,$where,$col=false)
 	{
-		if ($this->autoCommit) $this->BeginTrans();
+		if ($this->autoCommit) {
+			$this->BeginTrans();
+		}
 		$this->Execute("UPDATE $table SET $col=$col WHERE $where "); // is this correct - jlim?
 		return 1;
 	}
 
 
-	function CreateSequence($seqname,$startID=1)
+	function CreateSequence($seqname = 'adodbseq', $startID = 1)
 	{
 		$ok = $this->Execute(("INSERT INTO RDB\$GENERATORS (RDB\$GENERATOR_NAME) VALUES (UPPER('$seqname'))" ));
 		if (!$ok) return false;
 		return $this->Execute("SET GENERATOR $seqname TO ".($startID-1).';');
 	}
 
-	function DropSequence($seqname)
+	function DropSequence($seqname = 'adodbseq')
 	{
 		$seqname = strtoupper($seqname);
 		$this->Execute("delete from RDB\$GENERATORS where RDB\$GENERATOR_NAME='$seqname'");
@@ -272,17 +292,23 @@ class ADODB_ibase extends ADOConnection {
 			$this->Execute("SET GENERATOR $seqname TO ".($startID-1).';');
 			$rs = $this->Execute($getnext);
 		}
-		if ($rs && !$rs->EOF) $this->genID = (integer) reset($rs->fields);
-		else $this->genID = 0; // false
+		if ($rs && !$rs->EOF) {
+			$this->genID = (integer) reset($rs->fields);
+		}
+		else {
+			$this->genID = 0; // false
+		}
 
-		if ($rs) $rs->Close();
+		if ($rs) {
+			$rs->Close();
+		}
 
 		return $this->genID;
 	}
 
 	function SelectDB($dbName)
 	{
-		   return false;
+		return false;
 	}
 
 	function _handleerror()
@@ -308,8 +334,8 @@ class ADODB_ibase extends ADOConnection {
 		return array($sql,$stmt);
 	}
 
-	   // returns query ID if successful, otherwise false
-	   // there have been reports of problems with nested queries - the code is probably not re-entrant?
+	// returns query ID if successful, otherwise false
+	// there have been reports of problems with nested queries - the code is probably not re-entrant?
 	function _query($sql,$iarr=false)
 	{
 
@@ -365,18 +391,22 @@ class ADODB_ibase extends ADOConnection {
 				}
 			} else $ret = $fn($conn,$sql);
 		}
-		if ($docommit && $ret === true) ibase_commit($this->_connectionID);
+		if ($docommit && $ret === true) {
+			ibase_commit($this->_connectionID);
+		}
 
 		$this->_handleerror();
 		return $ret;
 	}
 
-	 // returns true or false
-	 function _close()
-	 {
-		if (!$this->autoCommit) @ibase_rollback($this->_connectionID);
+	// returns true or false
+	function _close()
+	{
+		if (!$this->autoCommit) {
+			@ibase_rollback($this->_connectionID);
+		}
 		return @ibase_close($this->_connectionID);
-	 }
+	}
 
 	//OPN STUFF start
 	function _ConvertFieldType(&$fld, $ftype, $flen, $fscale, $fsubtype, $fprecision, $dialect3)
@@ -388,24 +418,24 @@ class ADODB_ibase extends ADOConnection {
 			case 7:
 			case 8:
 				if ($dialect3) {
-				    switch($fsubtype){
-				    	case 0:
-				    		$fld->type = ($ftype == 7 ? 'smallint' : 'integer');
-				    		break;
-				    	case 1:
-				    		$fld->type = 'numeric';
+					switch($fsubtype){
+						case 0:
+							$fld->type = ($ftype == 7 ? 'smallint' : 'integer');
+							break;
+						case 1:
+							$fld->type = 'numeric';
 							$fld->max_length = $fprecision;
 							$fld->scale = $fscale;
-				    		break;
-				    	case 2:
-				    		$fld->type = 'decimal';
+							break;
+						case 2:
+							$fld->type = 'decimal';
 							$fld->max_length = $fprecision;
 							$fld->scale = $fscale;
-				    		break;
-				    } // switch
+							break;
+					} // switch
 				} else {
 					if ($fscale !=0) {
-					    $fld->type = 'decimal';
+						$fld->type = 'decimal';
 						$fld->scale = $fscale;
 						$fld->max_length = ($ftype == 7 ? 4 : 9);
 					} else {
@@ -415,23 +445,23 @@ class ADODB_ibase extends ADOConnection {
 				break;
 			case 16:
 				if ($dialect3) {
-				    switch($fsubtype){
-				    	case 0:
-				    		$fld->type = 'decimal';
+					switch($fsubtype){
+						case 0:
+							$fld->type = 'decimal';
 							$fld->max_length = 18;
 							$fld->scale = 0;
-				    		break;
-				    	case 1:
-				    		$fld->type = 'numeric';
+							break;
+						case 1:
+							$fld->type = 'numeric';
 							$fld->max_length = $fprecision;
 							$fld->scale = $fscale;
-				    		break;
-				    	case 2:
-				    		$fld->type = 'decimal';
+							break;
+						case 2:
+							$fld->type = 'decimal';
 							$fld->max_length = $fprecision;
 							$fld->scale = $fscale;
-				    		break;
-				    } // switch
+							break;
+					} // switch
 				}
 				break;
 			case 10:
@@ -442,7 +472,7 @@ class ADODB_ibase extends ADOConnection {
 				break;
 			case 27:
 				if ($fscale !=0) {
-				    $fld->type = 'decimal';
+					$fld->type = 'decimal';
 					$fld->max_length = 15;
 					$fld->scale = 5;
 				} else {
@@ -451,7 +481,7 @@ class ADODB_ibase extends ADOConnection {
 				break;
 			case 35:
 				if ($dialect3) {
-				    $fld->type = 'timestamp';
+					$fld->type = 'timestamp';
 				} else {
 					$fld->type = 'date';
 				}
@@ -475,7 +505,8 @@ class ADODB_ibase extends ADOConnection {
 		} // switch
 	}
 	//OPN STUFF end
-		// returns array of ADOFieldObjects for current table
+
+	// returns array of ADOFieldObjects for current table
 	function MetaColumns($table, $normalize=true)
 	{
 	global $ADODB_FETCH_MODE;
@@ -569,29 +600,29 @@ class ADODB_ibase extends ADOConnection {
 	}
 
 	function _BlobDecode( $blob )
-    {
-        if  (ADODB_PHPVER >= 0x5000) {
-            $blob_data = ibase_blob_info($this->_connectionID, $blob );
-            $blobid = ibase_blob_open($this->_connectionID, $blob );
-        } else {
+	{
+		if  (ADODB_PHPVER >= 0x5000) {
+			$blob_data = ibase_blob_info($this->_connectionID, $blob );
+			$blobid = ibase_blob_open($this->_connectionID, $blob );
+		} else {
 
-            $blob_data = ibase_blob_info( $blob );
-            $blobid = ibase_blob_open( $blob );
-        }
+			$blob_data = ibase_blob_info( $blob );
+			$blobid = ibase_blob_open( $blob );
+		}
 
-        if( $blob_data[0] > $this->maxblobsize ) {
+		if( $blob_data[0] > $this->maxblobsize ) {
 
-            $realblob = ibase_blob_get($blobid, $this->maxblobsize);
+			$realblob = ibase_blob_get($blobid, $this->maxblobsize);
 
-            while($string = ibase_blob_get($blobid, 8192)){
-                $realblob .= $string;
-            }
-        } else {
-            $realblob = ibase_blob_get($blobid, $blob_data[0]);
-        }
+			while($string = ibase_blob_get($blobid, 8192)){
+				$realblob .= $string;
+			}
+		} else {
+			$realblob = ibase_blob_get($blobid, $blob_data[0]);
+		}
 
-        ibase_blob_close( $blobid );
-        return( $realblob );
+		ibase_blob_close( $blobid );
+		return( $realblob );
 	}
 
 	function UpdateBlobFile($table,$column,$path,$where,$blobtype='BLOB')
@@ -695,16 +726,16 @@ class ADODB_ibase extends ADOConnection {
 				break;
 			case 'H':
 			case 'h':
-			  $s .= "(extract(hour from $col))";
-			  break;
+				$s .= "(extract(hour from $col))";
+				break;
 			case 'I':
 			case 'i':
-			  $s .= "(extract(minute from $col))";
-			  break;
+				$s .= "(extract(minute from $col))";
+				break;
 			case 'S':
 			case 's':
-			  $s .= "CAST((extract(second from $col)) AS INTEGER)";
-			  break;
+				$s .= "CAST((extract(second from $col)) AS INTEGER)";
+				break;
 
 			default:
 				if ($ch == '\\') {
@@ -720,7 +751,7 @@ class ADODB_ibase extends ADOConnection {
 }
 
 /*--------------------------------------------------------------------------------------
-		 Class Name: Recordset
+	Class Name: Recordset
 --------------------------------------------------------------------------------------*/
 
 class ADORecordset_ibase extends ADORecordSet
@@ -730,12 +761,12 @@ class ADORecordset_ibase extends ADORecordSet
 	var $bind=false;
 	var $_cacheType;
 
-	function ADORecordset_ibase($id,$mode=false)
+	function __construct($id,$mode=false)
 	{
 	global $ADODB_FETCH_MODE;
 
 			$this->fetchMode = ($mode === false) ? $ADODB_FETCH_MODE : $mode;
-			$this->ADORecordSet($id);
+			parent::__construct($id);
 	}
 
 	/*		Returns: an object containing field information.
@@ -745,31 +776,32 @@ class ADORecordset_ibase extends ADORecordSet
 
 	function FetchField($fieldOffset = -1)
 	{
-			 $fld = new ADOFieldObject;
-			 $ibf = ibase_field_info($this->_queryID,$fieldOffset);
-			 switch (ADODB_ASSOC_CASE) {
-			 case 2: // the default
-			 	$fld->name = ($ibf['alias']);
-				 if (empty($fld->name)) $fld->name = ($ibf['name']);
-				 break;
-			 case 0:
-				 $fld->name = strtoupper($ibf['alias']);
-				 if (empty($fld->name)) $fld->name = strtoupper($ibf['name']);
-				 break;
-			 case 1:
-			 	$fld->name = strtolower($ibf['alias']);
-				 if (empty($fld->name)) $fld->name = strtolower($ibf['name']);
-				 break;
-			 }
+			$fld = new ADOFieldObject;
+			$ibf = ibase_field_info($this->_queryID,$fieldOffset);
 
-			 $fld->type = $ibf['type'];
-			 $fld->max_length = $ibf['length'];
+			$name = empty($ibf['alias']) ? $ibf['name'] : $ibf['alias'];
 
-			 /*       This needs to be populated from the metadata */
-			 $fld->not_null = false;
-			 $fld->has_default = false;
-			 $fld->default_value = 'null';
-			 return $fld;
+			switch (ADODB_ASSOC_CASE) {
+				case ADODB_ASSOC_CASE_UPPER:
+					$fld->name = strtoupper($name);
+					break;
+				case ADODB_ASSOC_CASE_LOWER:
+					$fld->name = strtolower($name);
+					break;
+				case ADODB_ASSOC_CASE_NATIVE:
+				default:
+					$fld->name = $name;
+					break;
+			}
+
+			$fld->type = $ibf['type'];
+			$fld->max_length = $ibf['length'];
+
+			/*       This needs to be populated from the metadata */
+			$fld->not_null = false;
+			$fld->has_default = false;
+			$fld->default_value = 'null';
+			return $fld;
 	}
 
 	function _initrs()
@@ -822,9 +854,9 @@ class ADORecordset_ibase extends ADORecordSet
 
 		$this->fields = $f;
 		if ($this->fetchMode == ADODB_FETCH_ASSOC) {
-			$this->fields = $this->GetRowAssoc(ADODB_ASSOC_CASE);
+			$this->fields = $this->GetRowAssoc();
 		} else if ($this->fetchMode == ADODB_FETCH_BOTH) {
-			$this->fields = array_merge($this->fields,$this->GetRowAssoc(ADODB_ASSOC_CASE));
+			$this->fields = array_merge($this->fields,$this->GetRowAssoc());
 		}
 		return true;
 	}

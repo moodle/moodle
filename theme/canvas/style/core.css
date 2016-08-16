@@ -16,6 +16,7 @@ body {
 .sitetopic {
     border: none;
 }
+
 #site-news-forum h2,
 #frontpage-course-list h2,
 #frontpage-category-names h2,
@@ -52,7 +53,7 @@ body {
 
 .noticebox .generalbox {
     border: none;
-    margin:2em 0;
+    margin: 2em 0;
 }
 
 .expired,
@@ -233,14 +234,19 @@ body {
 
 .userinfobox {
     border-color: #ddd;
-    padding: 0
+    padding: 0;
 }
 
 .userinfobox .content {
     text-align: left;
-    padding-left:10px
+    padding-left: 10px;
 }
-.dir-rtl .userinfobox .content {text-align: right;padding-right:10px;padding-left:0px;}
+
+.dir-rtl .userinfobox .content {
+    text-align: right;
+    padding-right: 10px;
+    padding-left: 0px;
+}
 
 .userinfobox .links {
     vertical-align: top;
@@ -252,13 +258,21 @@ body {
     display: block;
     text-align: left;
 }
-.dir-rtl .userinfobox .links a {text-align: right;}
+
+.dir-rtl .userinfobox .links a {
+    text-align: right;
+}
 
 .profilepicture {
     float: left;
     margin-right: 10px;
 }
-.dir-rtl .profilepicture {float: right;margin-left: 10px;margin-right: 0px;}
+
+.dir-rtl .profilepicture {
+    float: right;
+    margin-left: 10px;
+    margin-right: 0px;
+}
 
 .descriptionbox {
     margin-left: 110px;
@@ -277,13 +291,15 @@ body {
     display: inline-block;
 }
 
-.userprofile dl dt, .userprofile dl dd {
+.userprofile dl dt,
+.userprofile dl dd {
     padding-top: 3px;
     padding-bottom: 3px;
     float: left;
 }
 
-.dir-rtl .userprofile dl dt, .dir-rtl  .userprofile dl dd {
+.dir-rtl .userprofile dl dt,
+.dir-rtl  .userprofile dl dd {
     float: right;
 }
 
@@ -319,7 +335,7 @@ body {
 }
 
 #page-user-index .controls {
-    width: 100%
+    width: 100%;
 }
 
 #page-user-index .controls .singleselect {
@@ -362,10 +378,6 @@ body {
 /* Roles
 ------------------------*/
 
-.path-admin-roles .generaltable {
-    /* width: 65%; hiding because it's causing problems on role/assign */
-}
-
 .path-admin-roles .generaltable th {
     vertical-align: middle;
 }
@@ -394,27 +406,13 @@ body {
 /* Tags
 ------------------------*/
 
-#big-tag-cloud-box {
-    padding: 10px;
-}
-
-#tag-management-box {
-    text-align: center;
-}
-
 .tag-management-form {
     border: none;
     padding: 0 0 1em;
 }
 
 #tag-management-list {
-    margin: 1em 0
-}
-
-#page-tag-index #tag-blogs {
-    border-width: 0 0 1px;
-    width: 65%;
-    margin: 1em auto;
+    margin: 1em 0;
 }
 
 #tagblogentries {
@@ -424,44 +422,7 @@ body {
 #tagblogentries li {
     list-style: none;
     padding: 0.25em 0;
-    margin: 0
-}
-
-#big-tag-cloud-box {
-    border: none;
-}
-
-#tag-user-table {
-    width: 95%;
-    margin: 0 auto;
-    border-width: 0 0 1px;
-}
-
-.managelink {
-    text-align: right;
-}
-
-#page-tag-index h2 {
-    text-align: center;
-    margin-bottom: 0;
-}
-
-#page-tag-index #tag-management-box {
-    border-bottom: 1px solid #ddd;
-    padding: 4px 0;
-}
-
-#page-tag-index .relatedpages {
-    text-align: center;
-}
-
-#page-tag-manage .lastinitial {
-    margin-bottom: 0.5em;
-}
-
-#page-tag-manage .green {
-    text-align: center;
-    padding: 0 0 1em;
+    margin: 0;
 }
 
 /* Embedded Pages
@@ -500,23 +461,27 @@ body {
 }
 
 .path-backup .mform .grouped_settings {
-    margin:1em;
+    margin: 1em;
 }
+
 .path-backup .mform .grouped_settings .grouped_settings {
-    margin:0;
+    margin: 0;
 }
 
 .mform .btn-cancel {
     color: #0000EE;
     text-decoration: none;
 }
-.mform .btn-cancel:hover, .mform .btn-cancel:focus {
+
+.mform .btn-cancel:hover,
+.mform .btn-cancel:focus {
     color: #0000EE;
     text-decoration: none;
 }
 
 /* Comments
 -----------------------*/
+/*csslint important:false */
 
 .comment-list li {
     background: #eee !important;
@@ -559,7 +524,10 @@ table#user-grades tr.avg td.vmarked {
 .path-grade-report-grader form {
     text-align: left;
 }
-.path-grade-report-grader.dir-rtl form { text-align: right; }
+
+.path-grade-report-grader.dir-rtl form {
+    text-align: right;
+}
 
 /* Footer
 -----------------------*/
@@ -593,15 +561,18 @@ table#user-grades tr.avg td.vmarked {
 -------------------------*/
 
 .userenrolment {
-    font-size:90%;
-    border:1px solid #999;
+    font-size: 90%;
+    border: 1px solid #999;
 }
+
 .userenrolment > tbody > tr:nth-of-type(odd) {
     background-color: #F9F9F9;
 }
+
 .userenrolment > tbody > tr:nth-of-type(even) {
     background-color: #F3F3F3;
 }
+
 .userenrolment td {
     border-width: 1px;
     border-style: solid;
@@ -610,63 +581,78 @@ table#user-grades tr.avg td.vmarked {
     border-bottom-color: #E9E9E9;
     border-left-color: #F3F3F3;
 }
+
 .userenrolment td.c0 {
-    border-left-color:#999;
+    border-left-color: #999;
 }
+
 .userenrolment td.c4 {
-    border-right-color:#999;
+    border-right-color: #999;
 }
+
 .userenrolment .col_userdetails {
-    padding:3px;
-    min-width:35%;
+    padding: 3px;
+    min-width: 35%;
 }
+
 .userenrolment .col_role .roles {
-    position:relative;
+    position: relative;
 }
+
 .userenrolment .col_role .role {
     line-height: 10px;
     font-size: 10px;
 }
+
 .userenrolment .col_role .role a img {
-    height:8px;
+    height: 8px;
 }
+
 .userenrolment .col_role .addrole {
     background-color: #DDD;
     border: 1px outset #EEE;
     -moz-border-radius: 5px;
 }
+
 .userenrolment .col_group {
     max-width: 300px;
 }
+
 .userenrolment .col_group .group {
-    line-height:10px;
-    font-size:10px;
+    line-height: 10px;
+    font-size: 10px;
 }
+
 .userenrolment .col_group .group a img {
-    height:8px;
+    height: 8px;
 }
+
 .userenrolment .col_group .addgroup {
-    background-color:#DDD;
-    border:1px outset #EEE;
-    -moz-border-radius:5px;
+    background-color: #DDD;
+    border: 1px outset #EEE;
+    -moz-border-radius: 5px;
 }
+
 .userenrolment .col_enrol {
-    max-width:300px;
+    max-width: 300px;
 }
+
 .userenrolment .col_enrol .enrolment {
-    border:1px outset #E6E6E6;
-    background-color:#EEE;
-    line-height:10px;
-    font-size:10px;
-    -moz-border-radius:5px;
+    border: 1px outset #E6E6E6;
+    background-color: #EEE;
+    line-height: 10px;
+    font-size: 10px;
+    -moz-border-radius: 5px;
 }
+
 .path-enrol .enrolusersbutton,
 .path-enrol .enrolcohortbutton {
-    float:left;
+    float: left;
 }
+
 .path-enrol .enrolusersbutton.instance1,
 .path-enrol .enrolcohortbutton.instance1 {
-    float:right;
+    float: right;
 }
 
 /* Registration
@@ -685,4 +671,6 @@ table#user-grades tr.avg td.vmarked {
     margin: 10% auto;
 }
 
-.path-grade-report.dir-rtl #graded_users_selector .singleselect {margin: 0px;}
+.path-grade-report.dir-rtl #graded_users_selector .singleselect {
+    margin: 0px;
+}

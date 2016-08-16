@@ -61,6 +61,9 @@ $context = context_module::instance($cm->id);
 require_login($course, true, $cm);
 require_capability('mod/lti:view', $context);
 
+// Completion and trigger events.
+lti_view($lti, $course, $cm, $context);
+
 $lti->cmid = $cm->id;
-lti_view($lti);
+lti_launch_tool($lti);
 

@@ -108,4 +108,13 @@ class webservice_token_created extends base {
             throw new \coding_exception('The \'auto\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Webservices are not included in backups.
+        return array('db' => 'external_tokens', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }

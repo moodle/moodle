@@ -7,8 +7,8 @@ Feature: In a lesson activity, students can navigate through a series of pages i
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -20,7 +20,6 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Student navigation with pages and questions
     Given I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
@@ -33,7 +32,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -84,13 +83,11 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I set the following fields to these values:
       | Your answer | 2 |
     And I press "Submit"
-    And I should see "Correct answer"
-    And I should not see "Incorrect answer"
+    And I should see "Maximum number of attempts reached - Moving to next page"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
     And I should see "Your score is 0 (out of 1)."
 
-  @javascript
   Scenario: Student reattempts a question until out of attempts
     Given I add a "Lesson" to section "1" and I fill the form with:
       | Name | Test lesson name |
@@ -128,6 +125,6 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I set the following fields to these values:
       | wrong | 1 |
     And I press "Submit"
-    And I should see "(Maximum number of attempts reached - Moving to next page)"
+    And I should not see "Yes, I'd like to try again"
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"

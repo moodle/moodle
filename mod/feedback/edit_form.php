@@ -29,57 +29,15 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir.'/formslib.php');
 
-class feedback_edit_add_question_form extends moodleform {
-    public function definition() {
-        $mform = $this->_form;
-
-        //headline
-        $mform->addElement('header', 'general', get_string('content'));
-        // visible elements
-        $feedback_names_options = feedback_load_feedback_items_options();
-
-        $attributes = 'onChange="M.core_formchangechecker.set_form_submitted(); this.form.submit()"';
-        $mform->addElement('select', 'typ', '', $feedback_names_options, $attributes);
-
-        // hidden elements
-        $mform->addElement('hidden', 'cmid');
-        $mform->setType('cmid', PARAM_INT);
-        $mform->addElement('hidden', 'position');
-        $mform->setType('position', PARAM_INT);
-
-        // buttons
-        $mform->addElement('submit', 'add_item', get_string('add_item', 'feedback'), array('class' => 'hiddenifjs'));
-    }
-}
-
 class feedback_edit_use_template_form extends moodleform {
-    private $feedbackdata;
 
+    /**
+     * Form definition
+     */
     public function definition() {
-        $this->feedbackdata = new stdClass();
-        //this function can not be called, because not all data are available at this time
-        //I use set_form_elements instead
-    }
-
-    //this function set the data used in set_form_elements()
-    //in this form the only value have to set is course
-    //eg: array('course' => $course)
-    public function set_feedbackdata($data) {
-        if (is_array($data)) {
-            if (!isset($this->feedbackdata)) {
-                $this->feedbackdata = new stdClass();
-            }
-            foreach ($data as $key => $val) {
-                $this->feedbackdata->{$key} = $val;
-            }
-        }
-    }
-
-    //here the elements will be set
-    //this function have to be called manually
-    //the advantage is that the data are already set
-    public function set_form_elements() {
         $mform =& $this->_form;
+
+        $course = $this->_customdata['course'];
 
         $elementgroup = array();
         //headline
@@ -90,17 +48,17 @@ class feedback_edit_use_template_form extends moodleform {
 
         // visible elements
         $templates_options = array();
-        $owntemplates = feedback_get_template_list($this->feedbackdata->course, 'own');
-        $publictemplates = feedback_get_template_list($this->feedbackdata->course, 'public');
+        $owntemplates = feedback_get_template_list($course, 'own');
+        $publictemplates = feedback_get_template_list($course, 'public');
 
         $options = array();
         if ($owntemplates or $publictemplates) {
-            $options[''] = array('' => get_string('choose'));
+            $options[''] = array('' => get_string('choosedots'));
 
             if ($owntemplates) {
                 $courseoptions = array();
                 foreach ($owntemplates as $template) {
-                    $courseoptions[$template->id] = $template->name;
+                    $courseoptions[$template->id] = format_string($template->name);
                 }
                 $options[get_string('course')] = $courseoptions;
             }
@@ -108,7 +66,7 @@ class feedback_edit_use_template_form extends moodleform {
             if ($publictemplates) {
                 $publicoptions = array();
                 foreach ($publictemplates as $template) {
-                    $publicoptions[$template->id] = $template->name;
+                    $publicoptions[$template->id] = format_string($template->name);
                 }
                 $options[get_string('public', 'feedback')] = $publicoptions;
             }
@@ -116,62 +74,44 @@ class feedback_edit_use_template_form extends moodleform {
             $attributes = 'onChange="M.core_formchangechecker.set_form_submitted(); this.form.submit()"';
             $elementgroup[] = $mform->createElement('selectgroups',
                                                      'templateid',
-                                                     '',
+                                                     get_string('using_templates', 'feedback'),
                                                      $options,
                                                      $attributes);
 
             $elementgroup[] = $mform->createElement('submit',
                                                      'use_template',
-                                                     get_string('use_this_template', 'feedback'));
+                                                     get_string('use_this_template', 'feedback'),
+                                                     array('class' => 'hiddenifjs'));
 
             $mform->addGroup($elementgroup, 'elementgroup', '', array(' '), false);
         } else {
             $mform->addElement('static', 'info', get_string('no_templates_available_yet', 'feedback'));
         }
+
+        $this->set_data(array('id' => $this->_customdata['id']));
     }
 }
 
 class feedback_edit_create_template_form extends moodleform {
-    private $feedbackdata;
 
+    /**
+     * Form definition
+     */
     public function definition() {
-    }
-
-    public function data_preprocessing(&$default_values) {
-        $default_values['templatename'] = '';
-    }
-
-    public function set_feedbackdata($data) {
-        if (is_array($data)) {
-            if (!isset($this->feedbackdata)) {
-                $this->feedbackdata = new stdClass();
-            }
-            foreach ($data as $key => $val) {
-                $this->feedbackdata->{$key} = $val;
-            }
-        }
-    }
-
-    public function set_form_elements() {
         $mform =& $this->_form;
 
         // hidden elements
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'do_show');
-        $mform->setType('do_show', PARAM_INT);
-        $mform->addElement('hidden', 'savetemplate', 1);
-        $mform->setType('savetemplate', PARAM_INT);
+        $mform->setType('do_show', PARAM_ALPHANUMEXT);
+        $mform->setConstant('do_show', 'templates');
 
         //headline
         $mform->addElement('header', 'creating_templates', get_string('creating_templates', 'feedback'));
 
         // visible elements
         $elementgroup = array();
-
-        $elementgroup[] = $mform->createElement('static',
-                                                 'templatenamelabel',
-                                                 get_string('name', 'feedback'));
 
         $elementgroup[] = $mform->createElement('text',
                                                  'templatename',
@@ -198,6 +138,23 @@ class feedback_edit_create_template_form extends moodleform {
 
         $mform->setType('templatename', PARAM_TEXT);
 
+        $this->set_data(array('id' => $this->_customdata['id']));
+    }
+
+    /**
+     * Form validation
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        if (!isset($data['templatename']) || trim(strval($data['templatename'])) === '') {
+            $errors['elementgroup'] = get_string('name_required', 'feedback');
+        }
+        return $errors;
     }
 }
 

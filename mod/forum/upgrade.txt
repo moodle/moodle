@@ -1,6 +1,49 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+ * The following functions have been finally deprecated and should no longer be used.
+  - forum_count_unrated_posts
+  - forum_tp_count_discussion_read_records
+  - forum_get_user_discussions
+  - forum_tp_count_forum_posts
+  - forum_tp_count_forum_read_records
+  - forum_get_open_modes
+  - forum_get_child_posts
+  - forum_get_discussion_posts
+  - forum_get_ratings
+  - forum_get_tracking_link
+  - forum_tp_count_discussion_unread_posts
+  - forum_convert_to_roles
+  - forum_tp_get_read_records
+  - forum_tp_get_discussion_read_records
+  - forum_user_enrolled
+  - forum_user_can_view_post
+  - forum_shorten_post
+  - forum_is_subscribed
+  - forum_subscribe
+  - forum_unsubscribe
+  - forum_subscribed_users
+  - forum_is_forcesubscribed
+  - forum_forcesubscribe
+  - forum_get_forcesubscribed
+  - forum_get_subscribed_forums
+  - forum_get_optional_subscribed_forums
+  - forum_get_potential_subscribers
+ * External functions that were returning file information now return the following file fields:
+   filename, filepath, mimetype, filesize, timemodified and fileurl.
+   Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+
+=== 3.1 ===
+ * The inteface to forum_get_email_message_id() has changed and no longer needs the $host argument.
+
+=== 3.0 ===
+ * External function get_forums_by_courses now returns and additional field "cancreatediscussions" that indicates if the user
+   can create discussions in the forum.
+ * A new optional parameter (groupid) has been added to get_forum_discussions.
+   This parameter can override the automatically calculated current group.
+ * New constant FORUM_POSTS_ALL_USER_GROUPS, to be used as parameter in functions where we'd need to retrieve all the user posts.
+
 === 2.8 ===
  * The following functions have all been marked as deprecated. Many of
    these have not been supported in many releases and should not be relied
@@ -32,6 +75,8 @@ information provided here is intended especially for developers.
    * forum_get_subscribed_forums
    * forum_get_optional_subscribed_forums
    * forum_get_potential_subscribers
+ * External function mod_forum_external::get_forum_discussions has been deprecated.
+   Use mod_forum_external::get_forum_discussions_paginated instead.
 
 === 2.6 ===
 

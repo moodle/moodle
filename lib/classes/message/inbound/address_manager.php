@@ -325,8 +325,8 @@ class address_manager {
             if ($content['handlerid1'] > 0 || $content['userid1'] > 0 || $content['datavalue1'] > 0) {
                 // Any 64-bit integer which is greater than the 32-bit integer size will have a non-zero value in the first
                 // half of the integer.
-                throw new moodle_exception('Mixed environment.' +
-                        ' Key generated with a 64-bit machine but received into a 32-bit machine');
+                throw new \moodle_exception('Mixed environment.' .
+                    ' Key generated with a 64-bit machine but received into a 32-bit machine.');
             }
             $content['handlerid'] = $content['handlerid2'];
             $content['userid']    = $content['userid2'];

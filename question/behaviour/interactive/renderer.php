@@ -36,6 +36,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class qbehaviour_interactive_renderer extends qbehaviour_renderer {
     public function controls(question_attempt $qa, question_display_options $options) {
+        if ($options->readonly === qbehaviour_interactive::READONLY_EXCEPT_TRY_AGAIN) {
+            return '';
+        }
         return $this->submit_button($qa, $options);
     }
 

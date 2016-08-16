@@ -28,8 +28,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../../../engine/lib.php');
-require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
+require_once(__DIR__ . '/../../../engine/lib.php');
+require_once(__DIR__ . '/../../../engine/tests/helpers.php');
 
 
 /**
@@ -55,6 +55,10 @@ class qbehaviour_deferredcbm_type_test extends qbehaviour_walkthrough_test_base 
     public function test_get_unused_display_options() {
         $this->assertEquals(array('correctness', 'marks', 'specificfeedback', 'generalfeedback', 'rightanswer'),
                 $this->behaviourtype->get_unused_display_options());
+    }
+
+    public function test_can_questions_finish_during_the_attempt() {
+        $this->assertFalse($this->behaviourtype->can_questions_finish_during_the_attempt());
     }
 
     public function test_adjust_random_guess_score() {

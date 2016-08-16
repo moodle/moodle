@@ -99,11 +99,7 @@ class filter_mathjaxloader extends moodle_text_filter {
         static $jsinitialised = false;
 
         if (empty($jsinitialised)) {
-            if (is_https()) {
-                $url = get_config('filter_mathjaxloader', 'httpsurl');
-            } else {
-                $url = get_config('filter_mathjaxloader', 'httpurl');
-            }
+            $url = get_config('filter_mathjaxloader', 'httpsurl');
             $lang = $this->map_language_code(current_language());
             $url = new moodle_url($url, array('delayStartupUntil' => 'configured'));
 
@@ -143,7 +139,7 @@ class filter_mathjaxloader extends moodle_text_filter {
             $text = str_replace('[tex]', '\\(', $text);
             $text = str_replace('[/tex]', '\\)', $text);
             // E.g. "$$ blah $$".
-            $text = preg_replace('|\$\$[\S\s]\$\$|u', '\\(\1\\)', $text);
+            $text = preg_replace('|\$\$([\S\s]*?)\$\$|u', '\\(\1\\)', $text);
             // E.g. "\[ blah \]".
             $text = str_replace('\\[', '\\(', $text);
             $text = str_replace('\\]', '\\)', $text);
@@ -163,7 +159,22 @@ class filter_mathjaxloader extends moodle_text_filter {
         }
         if ($hasinline || $hasdisplay || $hasextra) {
             $PAGE->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.typeset');
-            return '<span class="nolink"><span class="filter_mathjaxloader_equation">' . $text . '</span></span>';
+            if ($hasextra) {
+                // If custom dilimeters are used, wrap whole text to prevent autolinking.
+                $text = '<span class="nolink">' + $text + '</span>';
+            } else {
+                if ($hasinline) {
+                    // If the default inline TeX delimiters \( \) are present, wrap each pair in nolink.
+                    $text = preg_replace('/\\\\\\([\S\s]*?\\\\\\)/u',
+                        '<span class="nolink">\0</span>', $text);
+                }
+                if ($hasdisplay) {
+                    // If default display TeX is used, wrap $$ $$ or \[ \] individually.
+                    $text = preg_replace('/\$\$[\S\s]*?\$\$|\\\\\\[[\S\s]*?\\\\\\]/u',
+                        '<span class="nolink">\0</span>', $text);
+                }
+            }
+            return '<span class="filter_mathjaxloader_equation">' . $text . '</span>';
         }
         return $text;
     }

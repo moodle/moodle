@@ -28,6 +28,7 @@ body.has_dock {
 }
 
 #dock {
+    z-index: 12000; // Required to place the dock panel above the fixed pos navbar.
     width: (@dockWidth + (@dockTitleMargin * 2));
     position: fixed;
     top: 0;
@@ -50,7 +51,7 @@ body.has_dock {
         display: block;
         width: @dockWidth;
         margin: @dockTitleMargin;
-        padding:0;
+        padding: 0;
         cursor: pointer;
         h2 {
             .transform-test-heading;
@@ -78,7 +79,6 @@ body.has_dock {
 }
 
 #dockeditempanel {
-    z-index: 12000; /** Required to place the dock panel above the fixed pos navbar */
     &.dockitempanel_hidden {
         display: none;
     }
@@ -108,7 +108,7 @@ body.has_dock {
         h2 {
             .nav-header;
             font-size: 1.1em;
-            padding:0;
+            padding: 0;
             margin: 0;
         }
         .commands {

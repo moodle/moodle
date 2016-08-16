@@ -151,6 +151,11 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         $DB->set_field($moduleinfo->modulename, 'intro', $moduleinfo->intro, array('id'=>$moduleinfo->instance));
     }
 
+    // Add module tags.
+    if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
+        core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
+    }
+
     // Course_modules and course_sections each contain a reference to each other.
     // So we have to update one of them twice.
     $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
@@ -169,6 +174,23 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     return $moduleinfo;
 }
 
+/**
+ * Hook for plugins to take action when a module is created or updated.
+ *
+ * @param stdClass $moduleinfo the module info
+ * @param stdClass $course the course of the module
+ *
+ * @return stdClass moduleinfo updated by plugins.
+ */
+function plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course) {
+    $callbacks = get_plugins_with_function('coursemodule_edit_post_actions', 'lib.php');
+    foreach ($callbacks as $type => $plugins) {
+        foreach ($plugins as $plugin => $pluginfunction) {
+            $moduleinfo = $pluginfunction($moduleinfo, $course);
+        }
+    }
+    return $moduleinfo;
+}
 
 /**
  * Common create/update module module actions that need to be processed as soon as a module is created/updaded.
@@ -191,8 +213,16 @@ function edit_module_post_actions($moduleinfo, $course) {
     // Sync idnumber with grade_item.
     if ($hasgrades && $grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
                  'iteminstance'=>$moduleinfo->instance, 'itemnumber'=>0, 'courseid'=>$course->id))) {
+        $gradeupdate = false;
         if ($grade_item->idnumber != $moduleinfo->cmidnumber) {
             $grade_item->idnumber = $moduleinfo->cmidnumber;
+            $gradeupdate = true;
+        }
+        if (isset($moduleinfo->gradepass) && $grade_item->gradepass != $moduleinfo->gradepass) {
+            $grade_item->gradepass = $moduleinfo->gradepass;
+            $gradeupdate = true;
+        }
+        if ($gradeupdate) {
             $grade_item->update();
         }
     }
@@ -217,22 +247,12 @@ function edit_module_post_actions($moduleinfo, $course) {
             }
             $moduleinfo->gradecat = $grade_category->id;
         }
-        $gradecategory = $grade_item->get_parent_category();
+
         foreach ($items as $itemid=>$unused) {
             $items[$itemid]->set_parent($moduleinfo->gradecat);
             if ($itemid == $grade_item->id) {
                 // Use updated grade_item.
                 $grade_item = $items[$itemid];
-            }
-            if (!empty($moduleinfo->add)) {
-                if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                    if ($gradecategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                        $grade_item->aggregationcoef = 1;
-                    } else {
-                        $grade_item->aggregationcoef = 0;
-                    }
-                    $grade_item->update();
-                }
             }
         }
     }
@@ -292,17 +312,6 @@ function edit_module_post_actions($moduleinfo, $course) {
                 } else if (isset($moduleinfo->gradecat)) {
                     $outcome_item->set_parent($moduleinfo->gradecat);
                 }
-                $gradecategory = $outcome_item->get_parent_category();
-                if ($outcomeexists == false) {
-                    if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                        if ($gradecategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                            $outcome_item->aggregationcoef = 1;
-                        } else {
-                            $outcome_item->aggregationcoef = 0;
-                        }
-                        $outcome_item->update();
-                    }
-                }
             }
         }
     }
@@ -335,6 +344,9 @@ function edit_module_post_actions($moduleinfo, $course) {
     }
     require_once($CFG->libdir.'/plagiarismlib.php');
     plagiarism_save_form_elements($moduleinfo);
+
+    // Allow plugins to extend the course module form.
+    $moduleinfo = plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course);
 
     return $moduleinfo;
 }
@@ -466,6 +478,11 @@ function can_update_moduleinfo($cm) {
 function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     global $DB, $CFG;
 
+    $data = new stdClass();
+    if ($mform) {
+        $data = $mform->get_data();
+    }
+
     // Attempt to include module library before we make any changes to DB.
     include_modulelib($moduleinfo->modulename);
 
@@ -483,12 +500,17 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     }
 
     $completion = new completion_info($course);
-    if ($completion->is_enabled() && !empty($moduleinfo->completionunlocked)) {
-        // Update completion settings.
-        $cm->completion                = $moduleinfo->completion;
-        $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
-        $cm->completionview            = $moduleinfo->completionview;
-        $cm->completionexpected        = $moduleinfo->completionexpected;
+    if ($completion->is_enabled()) {
+        // Completion settings that would affect users who have already completed
+        // the activity may be locked; if so, these should not be updated.
+        if (!empty($moduleinfo->completionunlocked)) {
+            $cm->completion = $moduleinfo->completion;
+            $cm->completiongradeitemnumber = $moduleinfo->completiongradeitemnumber;
+            $cm->completionview = $moduleinfo->completionview;
+        }
+        // The expected date does not affect users who have completed the activity,
+        // so it is safe to update it regardless of the lock status.
+        $cm->completionexpected = $moduleinfo->completionexpected;
     }
     if (!empty($CFG->enableavailability)) {
         // This code is used both when submitting the form, which uses a long
@@ -531,9 +553,44 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $moduleinfo->introformat = $moduleinfo->introeditor['format'];
         unset($moduleinfo->introeditor);
     }
+    // Get the a copy of the grade_item before it is modified incase we need to scale the grades.
+    $oldgradeitem = null;
+    $newgradeitem = null;
+    if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
+        // Fetch the grade item before it is updated.
+        $oldgradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                                                'itemmodule' => $moduleinfo->modulename,
+                                                'iteminstance' => $moduleinfo->instance,
+                                                'itemnumber' => 0,
+                                                'courseid' => $moduleinfo->course));
+    }
+
     $updateinstancefunction = $moduleinfo->modulename."_update_instance";
     if (!$updateinstancefunction($moduleinfo, $mform)) {
-        print_error('cannotupdatemod', '', course_get_url($course, $cw->section), $moduleinfo->modulename);
+        print_error('cannotupdatemod', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+    }
+
+    // This needs to happen AFTER the grademin/grademax have already been updated.
+    if (!empty($data->grade_rescalegrades) && $data->grade_rescalegrades == 'yes') {
+        // Get the grade_item after the update call the activity to scale the grades.
+        $newgradeitem = grade_item::fetch(array('itemtype' => 'mod',
+                                                'itemmodule' => $moduleinfo->modulename,
+                                                'iteminstance' => $moduleinfo->instance,
+                                                'itemnumber' => 0,
+                                                'courseid' => $moduleinfo->course));
+        if ($newgradeitem && $oldgradeitem->gradetype == GRADE_TYPE_VALUE && $newgradeitem->gradetype == GRADE_TYPE_VALUE) {
+            $params = array(
+                $course,
+                $cm,
+                $oldgradeitem->grademin,
+                $oldgradeitem->grademax,
+                $newgradeitem->grademin,
+                $newgradeitem->grademax
+            );
+            if (!component_callback('mod_' . $moduleinfo->modulename, 'rescale_activity_grades', $params)) {
+                print_error('cannotreprocessgrades', '', course_get_url($course, $cm->section), $moduleinfo->modulename);
+            }
+        }
     }
 
     // Make sure visibility is set correctly (in particular in calendar).
@@ -544,6 +601,11 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     if (isset($moduleinfo->cmidnumber)) { // Label.
         // Set cm idnumber - uniqueness is already verified by form validation.
         set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
+    }
+
+    // Update module tags.
+    if (core_tag_tag::is_enabled('core', 'course_modules') && isset($moduleinfo->tags)) {
+        core_tag_tag::set_item_tags('core', 'course_modules', $moduleinfo->coursemodule, $modcontext, $moduleinfo->tags);
     }
 
     // Now that module is fully updated, also update completion data if required.

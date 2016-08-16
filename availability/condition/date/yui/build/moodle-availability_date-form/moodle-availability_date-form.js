@@ -47,8 +47,8 @@ M.availability_date.form.getNode = function(json) {
 
         var url = M.cfg.wwwroot + '/availability/condition/date/ajax.php?action=fromtime' +
             '&time=' + json.t;
-        Y.io(url, { on : {
-            success : function(id, response) {
+        Y.io(url, {on: {
+            success: function(id, response) {
                 var fields = Y.JSON.parse(response.responseText);
                 for (var field in fields) {
                     var select = node.one('select[name=x\\[' + field + '\\]]');
@@ -56,7 +56,7 @@ M.availability_date.form.getNode = function(json) {
                     select.set('disabled', false);
                 }
             },
-            failure : function() {
+            failure: function() {
                 window.alert(M.util.get_string('ajaxerror', 'availability_date'));
             }
         }});
@@ -125,12 +125,12 @@ M.availability_date.form.updateTime = function(node) {
             '&day=' + node.one('select[name=x\\[day\\]]').get('value') +
             '&hour=' + node.one('select[name=x\\[hour\\]]').get('value') +
             '&minute=' + node.one('select[name=x\\[minute\\]]').get('value');
-    Y.io(url, { on : {
-        success : function(id, response) {
+    Y.io(url, {on: {
+        success: function(id, response) {
             node.setData('time', response.responseText);
             M.core_availability.form.update();
         },
-        failure : function() {
+        failure: function() {
             window.alert(M.util.get_string('ajaxerror', 'availability_date'));
         }
     }});

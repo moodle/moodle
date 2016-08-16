@@ -52,6 +52,7 @@ Options:
 --lang=CODE           Installation and default site language. Default is en.
 --adminuser=USERNAME  Username for the moodle admin account. Default is admin.
 --adminpass=PASSWORD  Password for the moodle admin account.
+--adminemail=STRING   Email address for the moodle admin account.
 --agree-license       Indicates agreement with software license.
 --fullname=STRING     Name of the site
 --shortname=STRING    Name of the site
@@ -62,16 +63,16 @@ Example:
 ";
 
 // Check that PHP is of a sufficient version
-if (version_compare(phpversion(), "5.4.4") < 0) {
+if (version_compare(phpversion(), "5.6.5") < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN NOT move it after installib
-    fwrite(STDERR, "Moodle 2.7 or later requires at least PHP 5.4.4 (currently using version $phpversion).\n");
+    fwrite(STDERR, "Moodle 3.2 or later requires at least PHP 5.6.5 (currently using version $phpversion).\n");
     fwrite(STDERR, "Please upgrade your server software or install older Moodle version.\n");
     exit(1);
 }
 
 // Nothing to do if config.php does not exist
-$configfile = dirname(dirname(dirname(__FILE__))).'/config.php';
+$configfile = __DIR__.'/../../config.php';
 if (!file_exists($configfile)) {
     fwrite(STDERR, 'config.php does not exist, can not continue'); // do not localize
     fwrite(STDERR, "\n");
@@ -102,6 +103,7 @@ list($options, $unrecognized) = cli_get_params(
         'lang'              => 'en',
         'adminuser'         => 'admin',
         'adminpass'         => '',
+        'adminemail'        => '',
         'fullname'          => '',
         'shortname'         => '',
         'agree-license'     => false,
@@ -124,6 +126,12 @@ if (!$options['agree-license']) {
 
 if ($options['adminpass'] === true or $options['adminpass'] === '') {
     cli_error('You have to specify admin password. --help prints out the help'); // TODO: localize
+}
+
+// Validate that the address provided was an e-mail address.
+if (!empty($options['adminemail']) && !validate_email($options['adminemail'])) {
+    $a = (object) array('option' => 'adminemail', 'value' => $options['adminemail']);
+    cli_error(get_string('cliincorrectvalueerror', 'admin', $a));
 }
 
 $options['lang'] = clean_param($options['lang'], PARAM_SAFEDIR);

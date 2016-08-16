@@ -35,7 +35,7 @@ require_once($CFG->dirroot .'/blog/lib.php');
  * @param int    $tagid        The id of the row in the tag table that identifies the RSS Feed
  * @return string
  */
-function blog_rss_get_url($contextid, $userid, $filtertype, $filterselect=0, $tagid=0) {
+function blog_rss_get_url($contextid, $userid, $filtertype, $filterselect = 0, $tagid = 0) {
     $componentname = 'blog';
 
     $additionalargs = null;
@@ -70,7 +70,7 @@ function blog_rss_get_url($contextid, $userid, $filtertype, $filterselect=0, $ta
  * @param int         $tagid        The id of the row in the tag table that identifies the RSS Feed
  * @param string      $tooltiptext  The tooltip to be displayed with the link
  */
-function blog_rss_print_link($context, $filtertype, $filterselect=0, $tagid=0, $tooltiptext='') {
+function blog_rss_print_link($context, $filtertype, $filterselect = 0, $tagid = 0, $tooltiptext = '') {
     global $CFG, $USER, $OUTPUT;
 
     if (!isloggedin()) {
@@ -93,7 +93,7 @@ function blog_rss_print_link($context, $filtertype, $filterselect=0, $tagid=0, $
  * @param int         $filterselect The id of the item defined by $filtertype
  * @param int         $tagid        The id of the row in the tag table that identifies the RSS Feed
  */
-function blog_rss_add_http_header($context, $title, $filtertype, $filterselect=0, $tagid=0) {
+function blog_rss_add_http_header($context, $title, $filtertype, $filterselect = 0, $tagid = 0) {
     global $PAGE, $USER, $CFG;
 
     if (!isloggedin()) {
@@ -168,7 +168,7 @@ function blog_rss_get_feed($context, $args) {
     $type  = clean_param($args[3], PARAM_ALPHA);
     $id = clean_param($args[4], PARAM_INT);  // Could be groupid / courseid  / userid  depending on $type.
 
-    $tagid=0;
+    $tagid = 0;
     if ($args[5] != 'rss.xml') {
         $tagid = clean_param($args[5], PARAM_INT);
     } else {
@@ -217,10 +217,8 @@ function blog_rss_get_feed($context, $args) {
             $summary = file_rewrite_pluginfile_urls($blogentry->summary, 'pluginfile.php',
                 $sitecontext->id, 'blog', 'post', $blogentry->id);
             $item->description = format_text($summary, $blogentry->format);
-            if ( !empty($CFG->usetags) && ($blogtags = tag_get_tags_array('post', $blogentry->id)) ) {
-                if ($blogtags) {
-                    $item->tags = $blogtags;
-                }
+            if ($blogtags = core_tag_tag::get_item_tags_array('core', 'post', $blogentry->id)) {
+                $item->tags = $blogtags;
                 $item->tagscheme = $CFG->wwwroot . '/tag';
             }
             $items[] = $item;
@@ -234,10 +232,10 @@ function blog_rss_get_feed($context, $args) {
 
     switch ($type) {
         case 'user':
-            $info = fullname($DB->get_record('user', array('id'=>$id), 'firstname,lastname'));
+            $info = fullname($DB->get_record('user', array('id' => $id), 'firstname,lastname'));
             break;
         case 'course':
-            $info = $DB->get_field('course', 'fullname', array('id'=>$id));
+            $info = $DB->get_field('course', 'fullname', array('id' => $id));
             $info = format_string($info, true, array('context' => context_course::instance($id)));
             break;
         case 'site':
@@ -245,7 +243,7 @@ function blog_rss_get_feed($context, $args) {
             break;
         case 'group':
             $group = groups_get_group($id);
-            $info = $group->name; // TODO: $DB->get_field('groups', 'name', array('id'=>$id)).
+            $info = $group->name; // TODO: $DB->get_field('groups', 'name', array('id' => $id)).
             break;
         default:
             $info = '';
@@ -253,7 +251,7 @@ function blog_rss_get_feed($context, $args) {
     }
 
     if ($tagid) {
-        $info .= ': '.$DB->get_field('tags', 'text', array('id'=>$tagid));
+        $info .= ': '.$DB->get_field('tags', 'text', array('id' => $tagid));
     }
 
     $header = rss_standard_header(get_string($type.'blog', 'blog', $info),
@@ -279,7 +277,7 @@ function blog_rss_get_feed($context, $args) {
  * @param int    $tagid The id of the row in the tag table that identifies the RSS Feed
  * @return string
  */
-function blog_rss_file_name($type, $id, $tagid=0) {
+function blog_rss_file_name($type, $id, $tagid = 0) {
     global $CFG;
 
     if ($tagid) {
@@ -298,7 +296,7 @@ function blog_rss_file_name($type, $id, $tagid=0) {
  * @param string $contents The contents of the RSS Feed file
  * @return bool whether the save was successful or not
  */
-function blog_rss_save_file($type, $id, $tagid=0, $contents='') {
+function blog_rss_save_file($type, $id, $tagid = 0, $contents = '') {
     global $CFG;
 
     $status = true;

@@ -112,7 +112,7 @@ class blog_entry implements renderable {
 
         $this->renderable = new StdClass();
 
-        $this->renderable->user = $DB->get_record('user', array('id'=>$this->userid));
+        $this->renderable->user = $DB->get_record('user', array('id' => $this->userid));
 
         // Entry comments.
         if (!empty($CFG->usecomments) and $CFG->blogusecomments) {
@@ -163,7 +163,7 @@ class blog_entry implements renderable {
                     $associations[$key]->contextlevel = $context->contextlevel;
 
                     // Course associations.
-                    if ($context->contextlevel ==  CONTEXT_COURSE) {
+                    if ($context->contextlevel == CONTEXT_COURSE) {
                         // TODO: performance!!!!
                         $instancename = $DB->get_field('course', 'shortname', array('id' => $context->instanceid));
 
@@ -174,7 +174,7 @@ class blog_entry implements renderable {
                     }
 
                     // Mod associations.
-                    if ($context->contextlevel ==  CONTEXT_MODULE) {
+                    if ($context->contextlevel == CONTEXT_MODULE) {
 
                         // Getting the activity type and the activity instance id.
                         $sql = 'SELECT cm.instance, m.name FROM {course_modules} cm
@@ -256,14 +256,11 @@ class blog_entry implements renderable {
         // Insert the new blog entry.
         $this->id = $DB->insert_record('post', $this);
 
-        // Update tags.
-        $this->add_tags_info();
-
         if (!empty($CFG->useblogassociations)) {
             $this->add_associations();
         }
 
-        tag_set('post', $this->id, $this->tags, 'core', context_user::instance($this->userid)->id);
+        core_tag_tag::set_item_tags('core', 'post', $this->id, context_user::instance($this->userid), $this->tags);
 
         // Trigger an event for the new entry.
         $event = \core\event\blog_entry_created::create(array(
@@ -312,7 +309,7 @@ class blog_entry implements renderable {
 
         // Update record.
         $DB->update_record('post', $entry);
-        tag_set('post', $entry->id, $entry->tags, 'core', context_user::instance($this->userid)->id);
+        core_tag_tag::set_item_tags('core', 'post', $entry->id, context_user::instance($this->userid), $entry->tags);
 
         $event = \core\event\blog_entry_updated::create(array(
             'objectid'      => $entry->id,
@@ -336,7 +333,7 @@ class blog_entry implements renderable {
         // Get record to pass onto the event.
         $record = $DB->get_record('post', array('id' => $this->id));
         $DB->delete_records('post', array('id' => $this->id));
-        tag_set('post', $this->id, array(), 'core', context_user::instance($this->userid)->id);
+        core_tag_tag::remove_all_item_tags('core', 'post', $this->id);
 
         $event = \core\event\blog_entry_deleted::create(array(
             'objectid'      => $this->id,
@@ -349,14 +346,13 @@ class blog_entry implements renderable {
 
     /**
      * Function to add all context associations to an entry.
-     * TODO : Remove $action in 2.9 (MDL-41330)
      *
-     * @param string $action - This does nothing, do not use it. This is present only for Backward compatibility.
+     * @param string $unused This does nothing, do not use it.
      */
-    public function add_associations($action = null) {
+    public function add_associations($unused = null) {
 
-        if (!empty($action)) {
-            debugging('blog_entry->add_associations() does not accept any argument', DEBUG_DEVELOPER);
+        if ($unused !== null) {
+            debugging('Illegal argument used in blog_entry->add_associations()', DEBUG_DEVELOPER);
         }
 
         $this->remove_associations();
@@ -372,16 +368,15 @@ class blog_entry implements renderable {
 
     /**
      * Add a single association for a blog entry
-     * TODO : Remove $action in 2.9 (MDL-41330)
      *
      * @param int $contextid - id of context to associate with the blog entry.
-     * @param string $action - This does nothing, do not use it. This is present only for Backward compatibility.
+     * @param string $unused This does nothing, do not use it.
      */
-    public function add_association($contextid, $action = null) {
+    public function add_association($contextid, $unused = null) {
         global $DB;
 
-        if (!empty($action)) {
-            debugging('blog_entry->add_association() accepts only one argument', DEBUG_DEVELOPER);
+        if ($unused !== null) {
+            debugging('Illegal argument used in blog_entry->add_association()', DEBUG_DEVELOPER);
         }
 
         $assocobject = new StdClass;
@@ -424,26 +419,6 @@ class blog_entry implements renderable {
         $fs = get_file_storage();
         $fs->delete_area_files(SYSCONTEXTID, 'blog', 'attachment', $this->id);
         $fs->delete_area_files(SYSCONTEXTID, 'blog', 'post', $this->id);
-    }
-
-    /**
-     * function to attach tags into an entry
-     * @return void
-     */
-    public function add_tags_info() {
-
-        $tags = array();
-
-        if ($otags = optional_param('otags', '', PARAM_INT)) {
-            foreach ($otags as $tagid) {
-                // TODO : make this use the tag name in the form.
-                if ($tag = tag_get('id', $tagid)) {
-                    $tags[] = $tag->name;
-                }
-            }
-        }
-
-        tag_set('post', $this->id, $tags, 'core', context_user::instance($this->userid)->id);
     }
 
     /**
@@ -572,7 +547,13 @@ class blog_listing {
      * Array of blog_entry objects.
      * @var array $entries
      */
-    public $entries = array();
+    public $entries = null;
+
+    /**
+     * Caches the total number of the entries.
+     * @var int
+     */
+    public $totalentries = null;
 
     /**
      * An array of blog_filter_* objects
@@ -610,15 +591,35 @@ class blog_listing {
     public function get_entries($start=0, $limit=10) {
         global $DB;
 
-        if (empty($this->entries)) {
+        if ($this->entries === null) {
             if ($sqlarray = $this->get_entry_fetch_sql(false, 'created DESC')) {
                 $this->entries = $DB->get_records_sql($sqlarray['sql'], $sqlarray['params'], $start, $limit);
+                if (!$start && count($this->entries) < $limit) {
+                    $this->totalentries = count($this->entries);
+                }
             } else {
                 return false;
             }
         }
 
         return $this->entries;
+    }
+
+    /**
+     * Finds total number of blog entries
+     *
+     * @return int
+     */
+    public function count_entries() {
+        global $DB;
+        if ($this->totalentries === null) {
+            if ($sqlarray = $this->get_entry_fetch_sql(true)) {
+                $this->totalentries = $DB->count_records_sql($sqlarray['sql'], $sqlarray['params']);
+            } else {
+                $this->totalentries = 0;
+            }
+        }
+        return $this->totalentries;
     }
 
     public function get_entry_fetch_sql($count=false, $sort='lastmodified DESC', $userid = false) {
@@ -628,9 +629,9 @@ class blog_listing {
             $userid = $USER->id;
         }
 
-        $allnamefields = get_all_user_name_fields(true, 'u');
+        $allnamefields = \user_picture::fields('u', null, 'useridalias');
         // The query used to locate blog entries is complicated.  It will be built from the following components:
-        $requiredfields = "p.*, $allnamefields, u.email";  // The SELECT clause.
+        $requiredfields = "p.*, $allnamefields";  // The SELECT clause.
         $tables = array('p' => 'post', 'u' => 'user');   // Components of the FROM clause (table_id => table_name).
         // Components of the WHERE clause (conjunction).
         $conditions = array('u.deleted = 0', 'p.userid = u.id', '(p.module = \'blog\' OR p.module = \'blog_external\')');
@@ -655,7 +656,7 @@ class blog_listing {
                 $assocexists = $DB->record_exists('blog_association', array());
 
                 // Begin permission sql clause.
-                $permissionsql =  '(p.userid = ? ';
+                $permissionsql = '(p.userid = ? ';
                 $params[] = $userid;
 
                 if ($CFG->bloglevel >= BLOG_SITE_LEVEL) { // Add permission to view site-level entries.
@@ -709,13 +710,8 @@ class blog_listing {
 
         $morelink = '<br />&nbsp;&nbsp;';
 
-        if ($sqlarray = $this->get_entry_fetch_sql(true)) {
-            $totalentries = $DB->count_records_sql($sqlarray['sql'], $sqlarray['params']);
-        } else {
-            $totalentries = 0;
-        }
-
         $entries = $this->get_entries($start, $limit);
+        $totalentries = $this->count_entries();
         $pagingbar = new paging_bar($totalentries, $page, $limit, $this->get_baseurl());
         $pagingbar->pagevar = 'blogpage';
         $blogheaders = blog_get_headers();
@@ -911,13 +907,14 @@ class blog_filter_context extends blog_filter {
 
         $this->availabletypes = array('site' => get_string('site'),
                                       'course' => get_string('course'),
-                                      'module' => get_string('activity'));
+                                      'module' => get_string('activity'),
+                                      'context' => get_string('coresystem'));
 
         switch ($this->type) {
             case 'course': // Careful of site course!
                 // Ignore course filter if blog associations are not enabled.
                 if ($this->id != $SITE->id && !empty($CFG->useblogassociations)) {
-                    $this->overrides = array('site');
+                    $this->overrides = array('site', 'context');
                     $context = context_course::instance($this->id);
                     $this->tables['ba'] = 'blog_association';
                     $this->conditions[] = 'p.id = ba.blogid';
@@ -932,7 +929,7 @@ class blog_filter_context extends blog_filter {
                 break;
             case 'module':
                 if (!empty($CFG->useblogassociations)) {
-                    $this->overrides = array('course', 'site');
+                    $this->overrides = array('course', 'site', 'context');
 
                     $context = context_module::instance($this->id);
                     $this->tables['ba'] = 'blog_association';
@@ -941,6 +938,19 @@ class blog_filter_context extends blog_filter {
                     $this->params = array($context->id);
                 }
                 break;
+            case 'context':
+                if ($id != context_system::instance()->id && !empty($CFG->useblogassociations)) {
+                    $this->overrides = array('site');
+                    $context = context::instance_by_id($this->id);
+                    $this->tables['ba'] = 'blog_association';
+                    $this->tables['ctx'] = 'context';
+                    $this->conditions[] = 'p.id = ba.blogid';
+                    $this->conditions[] = 'ctx.id = ba.contextid';
+                    $this->conditions[] = 'ctx.path LIKE ?';
+                    $this->params = array($context->path . '%');
+                }
+                break;
+
         }
     }
 }
@@ -1014,6 +1024,7 @@ class blog_filter_tag extends blog_filter {
 
         $this->conditions = array('ti.tagid = t.id',
                                   "ti.itemtype = 'post'",
+                                  "ti.component = 'core'",
                                   'ti.itemid = p.id',
                                   't.id = ?');
         $this->params = array($this->id);

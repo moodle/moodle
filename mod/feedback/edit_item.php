@@ -27,53 +27,36 @@ require_once("lib.php");
 
 feedback_init_feedback_session();
 
-$cmid = required_param('cmid', PARAM_INT);
-$typ = optional_param('typ', false, PARAM_ALPHA);
-$id = optional_param('id', false, PARAM_INT);
-$action = optional_param('action', false, PARAM_ALPHA);
-
-$editurl = new moodle_url('/mod/feedback/edit.php', array('id'=>$cmid));
-
-if (!$typ) {
-    redirect($editurl->out(false));
+$itemid = optional_param('id', false, PARAM_INT);
+if (!$itemid) {
+    $cmid = required_param('cmid', PARAM_INT);
+    $typ = required_param('typ', PARAM_ALPHA);
 }
 
-$url = new moodle_url('/mod/feedback/edit_item.php', array('cmid'=>$cmid));
-if ($typ !== false) {
-    $url->param('typ', $typ);
+if ($itemid) {
+    $item = $DB->get_record('feedback_item', array('id' => $itemid), '*', MUST_EXIST);
+    list($course, $cm) = get_course_and_cm_from_instance($item->feedback, 'feedback');
+    $url = new moodle_url('/mod/feedback/edit_item.php', array('id' => $itemid));
+    $typ = $item->typ;
+} else {
+    $item = null;
+    list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'feedback');
+    $url = new moodle_url('/mod/feedback/edit_item.php', array('cmid' => $cm->id, 'typ' => $typ));
+    $item = (object)['id' => null, 'position' => -1, 'typ' => $typ, 'options' => ''];
 }
-if ($id !== false) {
-    $url->param('id', $id);
-}
-$PAGE->set_url($url);
-
-// set up some general variables
-
-
-if (($formdata = data_submitted()) AND !confirm_sesskey()) {
-    print_error('invalidsesskey');
-}
-
-if (! $cm = get_coursemodule_from_id('feedback', $cmid)) {
-    print_error('invalidcoursemodule');
-}
-
-if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error('coursemisconf');
-}
-
-if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-    print_error('invalidcoursemodule');
-}
-
-$context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
-
+$context = context_module::instance($cm->id);
 require_capability('mod/feedback:edititems', $context);
+$feedback = $PAGE->activityrecord;
 
-//if the typ is pagebreak so the item will be saved directly
-if ($typ == 'pagebreak') {
+$editurl = new moodle_url('/mod/feedback/edit.php', array('id' => $cm->id));
+
+$PAGE->set_url($url);
+
+// If the typ is pagebreak so the item will be saved directly.
+if (!$item->id && $typ === 'pagebreak') {
+    require_sesskey();
     feedback_create_pagebreak($feedback->id);
     redirect($editurl->out(false));
     exit;
@@ -81,17 +64,8 @@ if ($typ == 'pagebreak') {
 
 //get the existing item or create it
 // $formdata->itemid = isset($formdata->itemid) ? $formdata->itemid : NULL;
-if ($id and $item = $DB->get_record('feedback_item', array('id'=>$id))) {
-    $typ = $item->typ;
-} else {
-    $item = new stdClass();
-    $item->id = null;
-    $item->position = -1;
-    if (!$typ) {
-        print_error('typemissing', 'feedback', $editurl->out(false));
-    }
-    $item->typ = $typ;
-    $item->options = '';
+if (!$typ || !file_exists($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php')) {
+    print_error('typemissing', 'feedback', $editurl->out(false));
 }
 
 require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
@@ -101,13 +75,13 @@ $itemobj = feedback_get_item_class($typ);
 $itemobj->build_editform($item, $feedback, $cm);
 
 if ($itemobj->is_cancelled()) {
-    redirect($editurl->out(false));
+    redirect($editurl);
     exit;
 }
 if ($itemobj->get_data()) {
     if ($item = $itemobj->save_item()) {
         feedback_move_item($item, $item->position);
-        redirect($editurl->out(false));
+        redirect($editurl);
     }
 }
 
@@ -116,6 +90,8 @@ if ($itemobj->get_data()) {
 $strfeedbacks = get_string("modulenameplural", "feedback");
 $strfeedback  = get_string("modulename", "feedback");
 
+navigation_node::override_active_url(new moodle_url('/mod/feedback/edit.php',
+        array('id' => $cm->id, 'do_show' => 'edit')));
 if ($item->id) {
     $PAGE->navbar->add(get_string('edit_item', 'feedback'));
 } else {
@@ -129,6 +105,8 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($feedback->name));
 
 /// print the tabs
+$current_tab = 'edit';
+$id = $cm->id;
 require('tabs.php');
 
 //print errormsg
@@ -136,11 +114,6 @@ if (isset($error)) {
     echo $error;
 }
 $itemobj->show_editform();
-
-if ($typ!='label') {
-    $PAGE->requires->js('/mod/feedback/feedback.js');
-    $PAGE->requires->js_function_call('set_item_focus', Array('id_itemname'));
-}
 
 /// Finish the page
 ///////////////////////////////////////////////////////////////////////////

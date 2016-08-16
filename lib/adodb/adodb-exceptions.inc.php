@@ -1,7 +1,9 @@
 <?php
 
 /**
- * @version V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+ * @version   v5.20.3  01-Jan-2016
+ * @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+ * @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
  * Released under both BSD license and Lesser GPL library license.
  * Whenever there is any discrepancy between the two licenses,
  * the BSD license will take precedence.
@@ -29,9 +31,9 @@ var $database = '';
 	{
 		switch($fn) {
 		case 'EXECUTE':
-			$this->sql = $p1;
+			$this->sql = is_array($p1) ? $p1[0] : $p1;
 			$this->params = $p2;
-			$s = "$dbms error: [$errno: $errmsg] in $fn(\"$p1\")\n";
+			$s = "$dbms error: [$errno: $errmsg] in $fn(\"$this->sql\")\n";
 			break;
 
 		case 'PCONNECT':

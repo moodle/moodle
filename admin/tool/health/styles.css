@@ -26,10 +26,10 @@
 .path-admin-tool-health dl.notice dd {
     background-color: #e5db36;
 }
-.path-admin-tool-health dt.solution,
-.path-admin-tool-health dd.solution,
+.path-admin-tool-health dl dt.solution,
+.path-admin-tool-health dl dd.solution,
 .path-admin-tool-health div#healthnoproblemsfound {
-    background-color: #5BB83E !important;
+    background-color: #5BB83E;
 }
 .path-admin-tool-health dl.healthissues dt,
 .path-admin-tool-health dl.healthissues dd {

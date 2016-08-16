@@ -25,12 +25,9 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    require_once(dirname(__FILE__).'/lib.php');
+    require_once(__DIR__.'/lib.php');
 
     // General settings
-
-    $settings->add(new admin_setting_configcheckbox('book/requiremodintro',
-        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
 
     $options = book_get_numbering_types();
 

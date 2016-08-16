@@ -60,6 +60,16 @@ abstract class testing_util {
     protected static $tablestructure = null;
 
     /**
+     * @var array keep list of sequenceid used in a table.
+     */
+    private static $tablesequences = array();
+
+    /**
+     * @var array list of updated tables.
+     */
+    public static $tableupdated = array();
+
+    /**
      * @var array original structure of all database tables
      */
     protected static $sequencenames = null;
@@ -78,6 +88,7 @@ abstract class testing_util {
      * @var int next sequence value for a single test cycle.
      */
     protected static $sequencenextstartingid = null;
+
     /**
      * Return the name of the JSON file containing the init filenames.
      *
@@ -263,17 +274,15 @@ abstract class testing_util {
      * @return array  $table=>$records
      */
     protected static function get_tabledata() {
-        global $CFG;
-
-        $framework = self::get_framework();
-
-        $datafile = self::get_dataroot() . '/' . $framework . '/tabledata.ser';
-        if (!file_exists($datafile)) {
-            // Not initialised yet.
-            return array();
-        }
-
         if (!isset(self::$tabledata)) {
+            $framework = self::get_framework();
+
+            $datafile = self::get_dataroot() . '/' . $framework . '/tabledata.ser';
+            if (!file_exists($datafile)) {
+                // Not initialised yet.
+                return array();
+            }
+
             $data = file_get_contents($datafile);
             self::$tabledata = unserialize($data);
         }
@@ -291,17 +300,15 @@ abstract class testing_util {
      * @return array $table=>$records
      */
     public static function get_tablestructure() {
-        global $CFG;
-
-        $framework = self::get_framework();
-
-        $structurefile = self::get_dataroot() . '/' . $framework . '/tablestructure.ser';
-        if (!file_exists($structurefile)) {
-            // Not initialised yet.
-            return array();
-        }
-
         if (!isset(self::$tablestructure)) {
+            $framework = self::get_framework();
+
+            $structurefile = self::get_dataroot() . '/' . $framework . '/tablestructure.ser';
+            if (!file_exists($structurefile)) {
+                // Not initialised yet.
+                return array();
+            }
+
             $data = file_get_contents($structurefile);
             self::$tablestructure = unserialize($data);
         }
@@ -361,11 +368,10 @@ abstract class testing_util {
                     // incorrect table match caused by _
                     continue;
                 }
-                if (!is_null($info->auto_increment)) {
+
+                if (!is_null($info->auto_increment) && $info->rows == 0 && ($info->auto_increment == 1)) {
                     $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
-                    if ($info->auto_increment == 1) {
-                        $empties[$table] = $table;
-                    }
+                    $empties[$table] = $table;
                 }
             }
             $rs->close();
@@ -418,9 +424,14 @@ abstract class testing_util {
      *
      * @static
      * @param array $records The records to use to determine the starting value for the table.
+     * @param string $table table name.
      * @return int The value the sequence should be set to.
      */
-    private static function get_next_sequence_starting_value($records) {
+    private static function get_next_sequence_starting_value($records, $table) {
+        if (isset(self::$tablesequences[$table])) {
+            return self::$tablesequences[$table];
+        }
+
         $id = self::$sequencenextstartingid;
 
         // If there are records, calculate the minimum id we can use.
@@ -431,6 +442,9 @@ abstract class testing_util {
         }
 
         self::$sequencenextstartingid = $id + 1000;
+
+        self::$tablesequences[$table] = $id;
+
         return $id;
     }
 
@@ -453,6 +467,8 @@ abstract class testing_util {
             return;
         }
 
+        $updatedtables = self::$tableupdated;
+
         // If all starting Id's are the same, it's difficult to detect coding and testing
         // errors that use the incorrect id in tests.  The classic case is cmid vs instance id.
         // To reduce the chance of the coding error, we start sequences at different values where possible.
@@ -469,8 +485,12 @@ abstract class testing_util {
             $queries = array();
             $prefix = $DB->get_prefix();
             foreach ($data as $table => $records) {
+                // If table is not modified then no need to do anything.
+                if (!isset($updatedtables[$table])) {
+                    continue;
+                }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
-                    $nextid = self::get_next_sequence_starting_value($records);
+                    $nextid = self::get_next_sequence_starting_value($records, $table);
                     $queries[] = "ALTER SEQUENCE {$prefix}{$table}_id_seq RESTART WITH $nextid";
                 }
             }
@@ -479,6 +499,7 @@ abstract class testing_util {
             }
 
         } else if ($dbfamily === 'mysql') {
+            $queries = array();
             $sequences = array();
             $prefix = $DB->get_prefix();
             $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
@@ -496,18 +517,24 @@ abstract class testing_util {
             $rs->close();
             $prefix = $DB->get_prefix();
             foreach ($data as $table => $records) {
+                // If table is not modified then no need to do anything.
+                if (!isset($updatedtables[$table])) {
+                    continue;
+                }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     if (isset($sequences[$table])) {
-                        $nextid = self::get_next_sequence_starting_value($records);
+                        $nextid = self::get_next_sequence_starting_value($records, $table);
                         if ($sequences[$table] != $nextid) {
-                            $DB->change_database_structure("ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = $nextid");
+                            $queries[] = "ALTER TABLE {$prefix}{$table} AUTO_INCREMENT = $nextid";
                         }
-
                     } else {
                         // some problem exists, fallback to standard code
                         $DB->get_manager()->reset_sequence($table);
                     }
                 }
+            }
+            if ($queries) {
+                $DB->change_database_structure(implode(';', $queries));
             }
 
         } else if ($dbfamily === 'oracle') {
@@ -526,6 +553,10 @@ abstract class testing_util {
             $rs->close();
 
             foreach ($data as $table => $records) {
+                // If table is not modified then no need to do anything.
+                if (!isset($updatedtables[$table])) {
+                    continue;
+                }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
                     $lastrecord = end($records);
                     if ($lastrecord) {
@@ -549,11 +580,12 @@ abstract class testing_util {
         } else {
             // note: does mssql support any kind of faster reset?
             // This also implies mssql will not use unique sequence values.
-            if (is_null($empties)) {
+            if (is_null($empties) and (empty($updatedtables))) {
                 $empties = self::guess_unmodified_empty_tables();
             }
             foreach ($data as $table => $records) {
-                if (isset($empties[$table])) {
+                // If table is not modified then no need to do anything.
+                if (isset($empties[$table]) or (!isset($updatedtables[$table]))) {
                     continue;
                 }
                 if (isset($structure[$table]['id']) and $structure[$table]['id']->auto_increment) {
@@ -586,7 +618,26 @@ abstract class testing_util {
             return false;
         }
 
-        $empties = self::guess_unmodified_empty_tables();
+        $empties = array();
+        // Use local copy of self::$tableupdated, as list gets updated in for loop.
+        $updatedtables = self::$tableupdated;
+
+        // If empty tablesequences list then it's the very first run.
+        if (empty(self::$tablesequences) && (($DB->get_dbfamily() != 'mysql') && ($DB->get_dbfamily() != 'postgres'))) {
+            // Only Mysql and Postgres support random sequence, so don't guess, just reset everything on very first run.
+            $empties = self::guess_unmodified_empty_tables();
+        }
+
+        // Check if any table has been modified by behat selenium process.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            // Crazy way to reset :(.
+            $tablesupdatedfile = self::get_tables_updated_by_scenario_list_path();
+            if ($tablesupdated = @json_decode(file_get_contents($tablesupdatedfile), true)) {
+                self::$tableupdated = array_merge(self::$tableupdated, $tablesupdated);
+                unlink($tablesupdatedfile);
+            }
+            $updatedtables = self::$tableupdated;
+        }
 
         $borkedmysql = false;
         if ($DB->get_dbfamily() === 'mysql') {
@@ -627,8 +678,18 @@ abstract class testing_util {
         }
 
         foreach ($data as $table => $records) {
+            // If table is not modified then no need to do anything.
+            // $updatedtables tables is set after the first run, so check before checking for specific table update.
+            if (!empty($updatedtables) && !isset($updatedtables[$table])) {
+                continue;
+            }
+
             if ($borkedmysql) {
-                if (empty($records) and isset($empties[$table])) {
+                if (empty($records)) {
+                    if (!isset($empties[$table])) {
+                        // Table has been modified and is not empty.
+                        $DB->delete_records($table, null);
+                    }
                     continue;
                 }
 
@@ -650,9 +711,8 @@ abstract class testing_util {
             }
 
             if (empty($records)) {
-                if (isset($empties[$table])) {
-                    // table was not modified and is empty
-                } else {
+                if (!isset($empties[$table])) {
+                    // Table has been modified and is not empty.
                     $DB->delete_records($table, array());
                 }
                 continue;
@@ -699,6 +759,8 @@ abstract class testing_util {
             }
         }
 
+        self::reset_updated_table_list();
+
         return true;
     }
 
@@ -736,7 +798,7 @@ abstract class testing_util {
         if (file_exists(self::get_dataroot() . '/filedir')) {
             $handle = opendir(self::get_dataroot() . '/filedir');
             while (false !== ($item = readdir($handle))) {
-                if (in_array('filedir/' . $item, $childclassname::$datarootskiponreset)) {
+                if (in_array('filedir' . DIRECTORY_SEPARATOR . $item, $childclassname::$datarootskiponreset)) {
                     continue;
                 }
                 if (is_dir(self::get_dataroot()."/filedir/$item")) {
@@ -770,15 +832,23 @@ abstract class testing_util {
         $output = '';
 
         // All developers have to understand English, do not localise!
+        $env = self::get_environment();
 
-        $release = null;
-        require("$CFG->dirroot/version.php");
-
-        $output .= "Moodle $release, $CFG->dbtype";
+        $output .= "Moodle ".$env['moodleversion'];
         if ($hash = self::get_git_hash()) {
             $output .= ", $hash";
         }
         $output .= "\n";
+
+        // Add php version.
+        require_once($CFG->libdir.'/environmentlib.php');
+        $output .= "Php: ". normalize_version($env['phpversion']);
+
+        // Add database type and version.
+        $output .= ", " . $env['dbtype'] . ": " . $env['dbversion'];
+
+        // OS details.
+        $output .= ", OS: " . $env['os'] . "\n";
 
         return $output;
     }
@@ -831,6 +901,50 @@ abstract class testing_util {
         }
 
         return $hash;
+    }
+
+    /**
+     * Set state of modified tables.
+     *
+     * @param string $sql sql which is updating the table.
+     */
+    public static function set_table_modified_by_sql($sql) {
+        global $DB;
+
+        $prefix = $DB->get_prefix();
+
+        preg_match('/( ' . $prefix . '\w*)(.*)/', $sql, $matches);
+        // Ignore random sql for testing like "XXUPDATE SET XSSD".
+        if (!empty($matches[1])) {
+            $table = trim($matches[1]);
+            $table = preg_replace('/^' . preg_quote($prefix, '/') . '/', '', $table);
+            self::$tableupdated[$table] = true;
+
+            if (defined('BEHAT_SITE_RUNNING')) {
+                $tablesupdatedfile = self::get_tables_updated_by_scenario_list_path();
+                if ($tablesupdated = @json_decode(file_get_contents($tablesupdatedfile), true)) {
+                    $tablesupdated[$table] = true;
+                } else {
+                    $tablesupdated[$table] = true;
+                }
+                @file_put_contents($tablesupdatedfile, json_encode($tablesupdated, JSON_PRETTY_PRINT));
+            }
+        }
+    }
+
+    /**
+     * Reset updated table list. This should be done after every reset.
+     */
+    public static function reset_updated_table_list() {
+        self::$tableupdated = array();
+    }
+
+    /**
+     * Returns the path to the file which holds list of tables updated in scenario.
+     * @return string
+     */
+    protected final static function get_tables_updated_by_scenario_list_path() {
+        return self::get_dataroot() . '/tablesupdatedbyscenario.txt';
     }
 
     /**
@@ -940,8 +1054,10 @@ abstract class testing_util {
         if (!file_exists($jsonfilepath)) {
 
             $listfiles = array();
-            $listfiles['filedir/.'] = 'filedir/.';
-            $listfiles['filedir/..'] = 'filedir/..';
+            $currentdir = 'filedir' . DIRECTORY_SEPARATOR . '.';
+            $parentdir = 'filedir' . DIRECTORY_SEPARATOR . '..';
+            $listfiles[$currentdir] = $currentdir;
+            $listfiles[$parentdir] = $parentdir;
 
             $filedir = self::get_dataroot() . '/filedir';
             if (file_exists($filedir)) {
@@ -961,5 +1077,44 @@ abstract class testing_util {
             fwrite($fp, json_encode(array_values($listfiles)));
             fclose($fp);
         }
+    }
+
+    /**
+     * Return list of environment versions on which tests will run.
+     * Environment includes:
+     * - moodleversion
+     * - phpversion
+     * - dbtype
+     * - dbversion
+     * - os
+     *
+     * @return array
+     */
+    public static function get_environment() {
+        global $CFG, $DB;
+
+        $env = array();
+
+        // Add moodle version.
+        $release = null;
+        require("$CFG->dirroot/version.php");
+        $env['moodleversion'] = $release;
+
+        // Add php version.
+        $phpversion = phpversion();
+        $env['phpversion'] = $phpversion;
+
+        // Add database type and version.
+        $dbtype = $CFG->dbtype;
+        $dbinfo = $DB->get_server_info();
+        $dbversion = $dbinfo['version'];
+        $env['dbtype'] = $dbtype;
+        $env['dbversion'] = $dbversion;
+
+        // OS details.
+        $osdetails = php_uname('s') . " " . php_uname('r') . " " . php_uname('m');
+        $env['os'] = $osdetails;
+
+        return $env;
     }
 }

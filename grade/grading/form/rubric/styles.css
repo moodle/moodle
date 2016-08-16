@@ -95,9 +95,11 @@
 
 /* replace buttons with images */
 .gradingform_rubric.editor .delete input,
+.gradingform_rubric.editor .duplicate input,
 .gradingform_rubric.editor .moveup input,
 .gradingform_rubric.editor .movedown input{text-indent: -1000em;cursor:pointer;border:none;}
 .gradingform_rubric.editor .criterion .controls .delete input {width:12px;height:12px;background: transparent url([[pix:t/delete]]) no-repeat center top; margin: .3em .3em 0 .3em;}
+.gradingform_rubric.editor .criterion .controls .duplicate input {width:12px;height:12px;background: transparent url([[pix:t/copy]]) no-repeat center top; margin: .3em .3em 0 .3em;}
 .gradingform_rubric.editor .levels .level .delete input {width:12px;height:16px;background: transparent url([[pix:t/delete]]) no-repeat center center; }
 .dir-rtl .gradingform_rubric.editor .levels .level .delete input { margin-right: .45em; margin-left: 0; }
 .gradingform_rubric.editor .moveup input {width:12px;height:12px;background: transparent url([[pix:t/up]]) no-repeat center top; margin: .3em .3em 0 .3em; }

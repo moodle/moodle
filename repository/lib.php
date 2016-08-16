@@ -571,35 +571,6 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Magic method for non-existing (usually deprecated) class methods.
-     *
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     * @throws coding_exception
-     */
-    public function __call($name, $arguments) {
-        if ($name === 'sync_individual_file') {
-            // Method repository::sync_individual_file() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::sync_individual_file() is deprecated.', DEBUG_DEVELOPER);
-            return true;
-        } else if ($name === 'get_file_by_reference') {
-            // Method repository::get_file_by_reference() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::get_file_by_reference() is deprecated.', DEBUG_DEVELOPER);
-            return null;
-        } else if ($name === 'get_reference_file_lifetime') {
-            // Method repository::get_file_by_reference() was deprecated in Moodle 2.6.
-            // See repository::sync_reference().
-            debugging('Function repository::get_reference_file_lifetime() is deprecated.', DEBUG_DEVELOPER);
-            return 24 * 60 * 60;
-        } else {
-            throw new coding_exception('Tried to call unknown method '.get_class($this).'::'.$name);
-        }
-    }
-
-    /**
      * Get repository instance using repository id
      *
      * Note that this function does not check permission to access repository contents
@@ -917,7 +888,9 @@ abstract class repository implements cacheable_object {
         // the file needs to copied to draft area
         $stored_file = self::get_moodle_file($source);
         if ($maxbytes != -1 && $stored_file->get_filesize() > $maxbytes) {
-            throw new file_exception('maxbytes');
+            $maxbytesdisplay = display_size($maxbytes);
+            throw new file_exception('maxbytesfile', (object) array('file' => $filerecord['filename'],
+                                                                    'size' => $maxbytesdisplay));
         }
         // Validate the size of the draft area.
         if (file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $stored_file->get_filesize())) {
@@ -1214,72 +1187,14 @@ abstract class repository implements cacheable_object {
      * permissions of the file are not modified here!
      *
      * @static
+     * @deprecated since Moodle 3.0
      * @param string $thefile
      * @param string $filename name of the file
      * @param bool $deleteinfected
      */
     public static function antivir_scan_file($thefile, $filename, $deleteinfected) {
-        global $CFG;
-
-        if (!is_readable($thefile)) {
-            // this should not happen
-            return;
-        }
-
-        if (empty($CFG->runclamonupload) or empty($CFG->pathtoclam)) {
-            // clam not enabled
-            return;
-        }
-
-        $CFG->pathtoclam = trim($CFG->pathtoclam);
-
-        if (!file_exists($CFG->pathtoclam) or !is_executable($CFG->pathtoclam)) {
-            // misconfigured clam - use the old notification for now
-            require("$CFG->libdir/uploadlib.php");
-            $notice = get_string('clamlost', 'moodle', $CFG->pathtoclam);
-            clam_message_admins($notice);
-            return;
-        }
-
-        $clamparam = ' --stdout ';
-        // If we are dealing with clamdscan, clamd is likely run as a different user
-        // that might not have permissions to access your file.
-        // To make clamdscan work, we use --fdpass parameter that passes the file
-        // descriptor permissions to clamd, which allows it to scan given file
-        // irrespective of directory and file permissions.
-        if (basename($CFG->pathtoclam) == 'clamdscan') {
-            $clamparam .= '--fdpass ';
-        }
-        // execute test
-        $cmd = escapeshellcmd($CFG->pathtoclam).$clamparam.escapeshellarg($thefile);
-        exec($cmd, $output, $return);
-
-        if ($return == 0) {
-            // perfect, no problem found
-            return;
-
-        } else if ($return == 1) {
-            // infection found
-            if ($deleteinfected) {
-                unlink($thefile);
-            }
-            throw new moodle_exception('virusfounduser', 'moodle', '', array('filename'=>$filename));
-
-        } else {
-            //unknown problem
-            require("$CFG->libdir/uploadlib.php");
-            $notice = get_string('clamfailed', 'moodle', get_clam_error_code($return));
-            $notice .= "\n\n". implode("\n", $output);
-            clam_message_admins($notice);
-            if ($CFG->clamfailureonupload === 'actlikevirus') {
-                if ($deleteinfected) {
-                    unlink($thefile);
-                }
-                throw new moodle_exception('virusfounduser', 'moodle', '', array('filename'=>$filename));
-            } else {
-                return;
-            }
-        }
+        debugging('Please upgrade your code to use \core\antivirus\manager::scan_file instead', DEBUG_DEVELOPER);
+        \core\antivirus\manager::scan_file($thefile, $filename, $deleteinfected);
     }
 
     /**
@@ -1406,7 +1321,8 @@ abstract class repository implements cacheable_object {
         global $DB, $CFG, $USER, $OUTPUT;
 
         // scan for viruses if possible, throws exception if problem found
-        self::antivir_scan_file($thefile, $record->filename, empty($CFG->repository_no_delete)); //TODO: MDL-28637 this repository_no_delete is a bloody hack!
+        // TODO: MDL-28637 this repository_no_delete is a bloody hack!
+        \core\antivirus\manager::scan_file($thefile, $record->filename, empty($CFG->repository_no_delete));
 
         $fs = get_file_storage();
         // If file name being used.
@@ -1692,18 +1608,19 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Decide where to save the file, can be overwriten by subclass
+     * Get a unique file path in which to save the file.
+     *
+     * The filename returned will be removed at the end of the request and
+     * should not be relied upon to exist in subsequent requests.
      *
      * @param string $filename file name
      * @return file path
      */
     public function prepare_file($filename) {
-        global $CFG;
-        $dir = make_temp_directory('download/'.get_class($this).'/');
-        while (empty($filename) || file_exists($dir.$filename)) {
-            $filename = uniqid('', true).'_'.time().'.tmp';
+        if (empty($filename)) {
+            $filename = 'file';
         }
-        return $dir.$filename;
+        return sprintf('%s/%s', make_request_directory(), $filename);
     }
 
     /**
@@ -1787,13 +1704,17 @@ abstract class repository implements cacheable_object {
             // files that are references to local files are already in moodle filepool
             // just validate the size
             if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
-                throw new file_exception('maxbytes');
+                $maxbytesdisplay = display_size($maxbytes);
+                throw new file_exception('maxbytesfile', (object) array('file' => $file->get_filename(),
+                                                                        'size' => $maxbytesdisplay));
             }
             return;
         } else {
             if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
                 // note that stored_file::get_filesize() also calls synchronisation
-                throw new file_exception('maxbytes');
+                $maxbytesdisplay = display_size($maxbytes);
+                throw new file_exception('maxbytesfile', (object) array('file' => $file->get_filename(),
+                                                                        'size' => $maxbytesdisplay));
             }
             $fs = get_file_storage();
             $contentexists = $fs->content_exists($file->get_contenthash());
@@ -2713,26 +2634,22 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Method deprecated, cache is handled by MUC now.
-     * @deprecated since 2.6
+     * Function repository::reset_caches() is deprecated, cache is handled by MUC now.
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      */
     public static function reset_caches() {
-        debugging('Function repository::reset_caches() is deprecated.', DEBUG_DEVELOPER);
+        throw new coding_exception('Function repository::reset_caches() can not be used any more, cache is handled by MUC now.');
     }
 
     /**
-     * Method deprecated
-     * @deprecated since 2.6
+     * Function repository::sync_external_file() is deprecated. Use repository::sync_reference instead
+     *
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      * @see repository::sync_reference()
      */
     public static function sync_external_file($file, $resetsynchistory = false) {
-        debugging('Function repository::sync_external_file() is deprecated.',
-                DEBUG_DEVELOPER);
-        if ($resetsynchistory || !$file || !$file->get_repository_id() ||
-                !($repository = self::get_repository_by_id($file->get_repository_id(), SYSCONTEXTID))) {
-            return false;
-        }
-        return $repository->sync_reference($file);
+        throw new coding_exception('Function repository::sync_external_file() can not be used any more. ' .
+            'Use repository::sync_reference instead.');
     }
 
     /**
@@ -2785,119 +2702,12 @@ abstract class repository implements cacheable_object {
                     $params['filename']))) {
                 $file->set_missingsource();
             } else {
-                $file->set_synchronized($storedfile->get_contenthash(), $storedfile->get_filesize());
+                $file->set_synchronized($storedfile->get_contenthash(), $storedfile->get_filesize(), 0, $storedfile->get_timemodified());
             }
             return true;
         }
 
-        // Backward compatibility (Moodle 2.3-2.5) implementation that calls
-        // methods repository::get_reference_file_lifetime(), repository::sync_individual_file()
-        // and repository::get_file_by_reference(). These methods are removed from the
-        // base repository class but may still be implemented by the child classes.
-
-        // THIS IS NOT A GOOD EXAMPLE of implementation. For good examples see the overwriting methods.
-
-        if (!method_exists($this, 'get_file_by_reference')) {
-            // Function get_file_by_reference() is not implemented. No synchronisation.
-            return false;
-        }
-
-        // Check if the previous sync result is still valid.
-        if (method_exists($this, 'get_reference_file_lifetime')) {
-            $lifetime = $this->get_reference_file_lifetime($file->get_reference());
-        } else {
-            // Default value that was hardcoded in Moodle 2.3 - 2.5.
-            $lifetime =  60 * 60 * 24;
-        }
-        if (($lastsynced = $file->get_referencelastsync()) && $lastsynced + $lifetime >= time()) {
-            return false;
-        }
-
-        $cache = cache::make('core', 'repositories');
-        if (($lastsyncresult = $cache->get('sync:'.$file->get_referencefileid())) !== false) {
-            if ($lastsyncresult === true) {
-                // We are in the process of synchronizing this reference.
-                // Avoid recursion when calling $file->get_filesize() and $file->get_contenthash().
-                return false;
-            } else {
-                // We have synchronised the same reference inside this request already.
-                // It looks like the object $file was created before the synchronisation and contains old data.
-                if (!empty($lastsyncresult['missing'])) {
-                    $file->set_missingsource();
-                } else {
-                    $cache->set('sync:'.$file->get_referencefileid(), true);
-                    if ($file->get_contenthash() != $lastsyncresult['contenthash'] ||
-                            $file->get_filesize() != $lastsyncresult['filesize']) {
-                        $file->set_synchronized($lastsyncresult['contenthash'], $lastsyncresult['filesize']);
-                    }
-                    $cache->set('sync:'.$file->get_referencefileid(), $lastsyncresult);
-                }
-                return true;
-            }
-        }
-
-        // Weird function sync_individual_file() that was present in API in 2.3 - 2.5, default value was true.
-        if (method_exists($this, 'sync_individual_file') && !$this->sync_individual_file($file)) {
-            return false;
-        }
-
-        // Set 'true' into the cache to indicate that file is in the process of synchronisation.
-        $cache->set('sync:'.$file->get_referencefileid(), true);
-
-        // Create object with the structure that repository::get_file_by_reference() expects.
-        $reference = new stdClass();
-        $reference->id = $file->get_referencefileid();
-        $reference->reference = $file->get_reference();
-        $reference->referencehash = sha1($file->get_reference());
-        $reference->lastsync = $file->get_referencelastsync();
-        $reference->lifetime = $lifetime;
-
-        $fileinfo = $this->get_file_by_reference($reference);
-
-        $contenthash = null;
-        $filesize = null;
-        $fs = get_file_storage();
-        if (!empty($fileinfo->filesize)) {
-            // filesize returned
-            if (!empty($fileinfo->contenthash) && $fs->content_exists($fileinfo->contenthash)) {
-                // contenthash is specified and valid
-                $contenthash = $fileinfo->contenthash;
-            } else if ($fileinfo->filesize == $file->get_filesize()) {
-                // we don't know the new contenthash but the filesize did not change,
-                // assume the contenthash did not change either
-                $contenthash = $file->get_contenthash();
-            } else {
-                // we can't save empty contenthash so generate contenthash from empty string
-                list($contenthash, $unused1, $unused2) = $fs->add_string_to_pool('');
-            }
-            $filesize = $fileinfo->filesize;
-        } else if (!empty($fileinfo->filepath)) {
-            // File path returned
-            list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($fileinfo->filepath);
-        } else if (!empty($fileinfo->handle) && is_resource($fileinfo->handle)) {
-            // File handle returned
-            $contents = '';
-            while (!feof($fileinfo->handle)) {
-                $contents .= fread($fileinfo->handle, 8192);
-            }
-            fclose($fileinfo->handle);
-            list($contenthash, $filesize, $newfile) = $fs->add_string_to_pool($contents);
-        } else if (isset($fileinfo->content)) {
-            // File content returned
-            list($contenthash, $filesize, $newfile) = $fs->add_string_to_pool($fileinfo->content);
-        }
-
-        if (!isset($contenthash) or !isset($filesize)) {
-            $file->set_missingsource(null);
-            $cache->set('sync:'.$file->get_referencefileid(), array('missing' => true));
-        } else {
-            // update files table
-            $file->set_synchronized($contenthash, $filesize);
-            $cache->set('sync:'.$file->get_referencefileid(),
-                    array('contenthash' => $contenthash, 'filesize' => $filesize));
-        }
-
-        return true;
+        return false;
     }
 
     /**
@@ -2966,6 +2776,17 @@ abstract class repository implements cacheable_object {
      * @return true|false
      */
     public function supports_relative_file() {
+        return false;
+    }
+
+    /**
+     * Helper function to indicate if this repository uses post requests for uploading files.
+     *
+     * @deprecated since Moodle 3.2, 3.1.1, 3.0.5
+     * @return bool
+     */
+    public function uses_post_requests() {
+        debugging('The method repository::uses_post_requests() is deprecated and must not be used anymore.', DEBUG_DEVELOPER);
         return false;
     }
 }

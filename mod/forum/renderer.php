@@ -48,15 +48,15 @@ class mod_forum_renderer extends plugin_renderer_base {
             if ($prev) {
                 $url = new moodle_url('/mod/forum/discuss.php', array('d' => $prev->id));
                 $html .= html_writer::start_tag('li', array('class' => 'prev-discussion'));
-                $html .= html_writer::link($url, $prev->name,
-                    array('aria-label' => get_string('prevdiscussiona', 'mod_forum', $prev->name)));
+                $html .= html_writer::link($url, format_string($prev->name),
+                    array('aria-label' => get_string('prevdiscussiona', 'mod_forum', format_string($prev->name))));
                 $html .= html_writer::end_tag('li');
             }
             if ($next) {
                 $url = new moodle_url('/mod/forum/discuss.php', array('d' => $next->id));
                 $html .= html_writer::start_tag('li', array('class' => 'next-discussion'));
-                $html .= html_writer::link($url, $next->name,
-                    array('aria-label' => get_string('nextdiscussiona', 'mod_forum', $next->name)));
+                $html .= html_writer::link($url, format_string($next->name),
+                    array('aria-label' => get_string('nextdiscussiona', 'mod_forum', format_string($next->name))));
                 $html .= html_writer::end_tag('li');
             }
             $html .= html_writer::end_tag('ul');
@@ -124,7 +124,10 @@ class mod_forum_renderer extends plugin_renderer_base {
         } else {
             $cm = $modinfo->instances['forum'][$forum->id];
             $canviewemail = in_array('email', get_extra_user_fields(context_module::instance($cm->id)));
-            $output .= $this->output->heading(get_string("subscribersto","forum", "'".format_string($forum->name)."'"));
+            $strparams = new stdclass();
+            $strparams->name = format_string($forum->name);
+            $strparams->count = count($users);
+            $output .= $this->output->heading(get_string("subscriberstowithcount", "forum", $strparams));
             $table = new html_table();
             $table->cellpadding = 5;
             $table->cellspacing = 5;
@@ -157,5 +160,47 @@ class mod_forum_renderer extends plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Generate the HTML for an icon to be displayed beside the subject of a timed discussion.
+     *
+     * @param object $discussion
+     * @param bool $visiblenow Indicicates that the discussion is currently
+     * visible to all users.
+     * @return string
+     */
+    public function timed_discussion_tooltip($discussion, $visiblenow) {
+        $dates = array();
+        if ($discussion->timestart) {
+            $dates[] = get_string('displaystart', 'mod_forum').': '.userdate($discussion->timestart);
+        }
+        if ($discussion->timeend) {
+            $dates[] = get_string('displayend', 'mod_forum').': '.userdate($discussion->timeend);
+        }
 
+        $str = $visiblenow ? 'timedvisible' : 'timedhidden';
+        $dates[] = get_string($str, 'mod_forum');
+
+        $tooltip = implode("\n", $dates);
+        return $this->pix_icon('i/calendar', $tooltip, 'moodle', array('class' => 'smallicon timedpost'));
+    }
+
+    /**
+     * Display a forum post in the relevant context.
+     *
+     * @param \mod_forum\output\forum_post $post The post to display.
+     * @return string
+     */
+    public function render_forum_post_email(\mod_forum\output\forum_post_email $post) {
+        $data = $post->export_for_template($this, $this->target === RENDERER_TARGET_TEXTEMAIL);
+        return $this->render_from_template('mod_forum/' . $this->forum_post_template(), $data);
+    }
+
+    /**
+     * The template name for this renderer.
+     *
+     * @return string
+     */
+    public function forum_post_template() {
+        return 'forum_post';
+    }
 }

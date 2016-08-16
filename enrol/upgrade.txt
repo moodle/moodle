@@ -1,6 +1,36 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+
+* External function core_enrol_external::get_users_courses now return the category id as an additional optional field.
+
+=== 3.1 ===
+
+* core_enrol_external::get_enrolled_users now supports two additional parameters for ordering: sortby and sortdirection.
+* Enrolment plugins UI have been consolidated. Plugins can implement use_standard_editing_ui() function
+  and add edit_instance_form() and edit_instance_validation() methods instead of providing their own edit.php and form.
+  They can then rely on the default implementation of get_action_icons and get_course_navigation. In future this will
+  mean they can be called by webservices/user upload tools because they can validate their data.
+
+=== 3.0 ===
+
+* Added new events enrol_instance_created, enrol_instance_updated and
+  enrol_instance_deleted . Always trigger them when changing records in the
+  DB table 'enrol'.
+* Constant CACHE_COURSE_CONTACTS_TTL was deleted.
+* External function core_enrol_external::get_enrolled_users now returns only the viewable participants if the course has groups enabled and no groupid is passed.
+
+=== 2.9 ===
+
+* External function core_enrol_external::get_users_courses now returns additional optional fields:
+   - summary: Course summary.
+   - summaryformat: Course summary format.
+   - format: Course format.
+   - showgrades: True if grades are shown, otherwise false.
+   - lang: Forced course language.
+   - enablecompletion: Control or not via completion and activity settings.
+
 === 2.8 ===
 
 * enrol_plugin::instance_deleteable() is deprecated and has been replaced by enrol_plugin::can_delete_instance()

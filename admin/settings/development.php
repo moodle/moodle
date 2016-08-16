@@ -18,15 +18,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $enablecssoptimiser->set_updatedcallback('theme_reset_all_caches');
     $temp->add($enablecssoptimiser);
 
-    // Backup archive .mbz format: switching to .tar.gz enables larger files, better
-    // progress reporting and possibly better performance. This is an experimental
-    // setting but if successful, should be removed and enabled by default in a future
-    // version. Note: this setting controls newly-created backups only; restore always
-    // supports both formats.
-    $temp->add(new admin_setting_configcheckbox('enabletgzbackups',
-            new lang_string('enabletgzbackups', 'admin'),
-            new lang_string('enabletgzbackups_desc', 'admin'), 0));
-
     $ADMIN->add('experimental', $temp);
 
     // "debugging" settingpage
@@ -41,7 +32,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('development', $temp);
 
     // "Profiling" settingpage (conditionally if the 'xhprof' extension is available only).
-    $xhprofenabled = extension_loaded('xhprof') && function_exists('xhprof_enable');
+    $xhprofenabled = extension_loaded('xhprof') || extension_loaded('tideways');
     $temp = new admin_settingpage('profiling', new lang_string('profiling', 'admin'), 'moodle/site:config', !$xhprofenabled);
     // Main profiling switch.
     $temp->add(new admin_setting_configcheckbox('profilingenabled', new lang_string('profilingenabled', 'admin'), new lang_string('profilingenabled_help', 'admin'), false));

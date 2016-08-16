@@ -7,12 +7,11 @@ Feature: Comment on a blog entry
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | testuser | Test | User | moodle@moodlemoodle.com |
-      | testuser2 | Test2 | User2 | moodle2@moodlemoodle.com |
+      | testuser | Test | User | moodle@example.com |
+      | testuser2 | Test2 | User2 | moodle2@example.com |
     And I log in as "testuser"
-    And I am on homepage
-    And I expand "My profile" node
-    And I expand "Blogs" node
+    And I expand "Site pages" node
+    And I follow "Site blogs"
     And I follow "Add a new entry"
     And I set the following fields to these values:
       | Entry title | Blog post from user 1 |
@@ -22,12 +21,10 @@ Feature: Comment on a blog entry
 
   @javascript
   Scenario: Commenting on my own blog entry
-    Given I am on homepage
+    Given I am on site homepage
     And I log in as "testuser"
-    And I am on homepage
-    And I expand "My profile" node
-    And I expand "Blogs" node
-    And I follow "View all of my entries"
+    And I expand "Site pages" node
+    And I follow "Site blogs"
     And I follow "Blog post from user 1"
     And I should see "User 1 blog post content"
     And I follow "Comments (0)"
@@ -40,12 +37,10 @@ Feature: Comment on a blog entry
 
   @javascript
   Scenario: Deleting my own comment
-    Given I am on homepage
+    Given I am on site homepage
     And I log in as "testuser"
-    And I am on homepage
-    And I expand "My profile" node
-    And I expand "Blogs" node
-    And I follow "View all of my entries"
+    And I expand "Site pages" node
+    And I follow "Site blogs"
     And I follow "Blog post from user 1"
     And I should see "User 1 blog post content"
     And I follow "Comments (0)"
@@ -62,9 +57,9 @@ Feature: Comment on a blog entry
 
   @javascript
   Scenario: Commenting on someone's blog post
-    Given I am on homepage
+    Given I am on site homepage
     And I log in as "testuser2"
-    And I am on homepage
+    And I am on site homepage
     And I expand "Site pages" node
     And I follow "Site blogs"
     And I follow "Blog post from user 1"

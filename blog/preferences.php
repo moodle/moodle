@@ -55,7 +55,8 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 
 $sitecontext = context_system::instance();
-$PAGE->set_context($sitecontext);
+$usercontext = context_user::instance($USER->id);
+$PAGE->set_context($usercontext);
 require_login($courseid);
 
 if (empty($CFG->enableblogs)) {
@@ -80,7 +81,7 @@ if (!$mform->is_cancelled() && $data = $mform->get_data()) {
 }
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->wwwroot . '/blog/index.php');
+    redirect($CFG->wwwroot . '/user/preferences.php');
 }
 
 $site = get_site();
@@ -90,7 +91,7 @@ $strblogs       = get_string('blogs', 'blog');
 
 $title = "$site->shortname: $strblogs : $strpreferences";
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_heading(fullname($USER));
 
 echo $OUTPUT->header();
 

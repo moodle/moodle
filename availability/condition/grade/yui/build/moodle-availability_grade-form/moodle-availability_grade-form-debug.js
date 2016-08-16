@@ -94,6 +94,7 @@ M.availability_grade.form.getNode = function(json) {
 
         root.delegate('click', function() {
             updateCheckbox(this, true);
+            M.core_availability.form.update();
         }, '.availability_grade input[type=checkbox]');
 
         root.delegate('valuechange', function() {
@@ -150,8 +151,8 @@ M.availability_grade.form.fillErrors = function(errors, node) {
     }
 
     // Check numeric values.
-    if ((value.min !== undefined && typeof(value.min) === 'string') ||
-            (value.max !== undefined && typeof(value.max) === 'string')) {
+    if ((value.min !== undefined && typeof (value.min) === 'string') ||
+            (value.max !== undefined && typeof (value.max) === 'string')) {
         errors.push('availability_grade:error_invalidnumber');
     } else if (value.min !== undefined && value.max !== undefined &&
             value.min >= value.max) {

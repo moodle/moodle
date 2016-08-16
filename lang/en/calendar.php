@@ -86,13 +86,18 @@ $string['eventsimported'] = 'Events imported: {$a}';
 $string['eventsupdated'] = 'Events updated: {$a}';
 $string['eventsfor'] = '{$a} events';
 $string['eventskey'] = 'Events key';
+$string['eventspersonal'] = 'My personal events';
 $string['eventsrelatedtocourses'] = 'Events related to courses';
+$string['eventsrelatedtogroups'] = 'Events related to groups';
 $string['eventstarttime'] = 'Start time';
 $string['eventtime'] = 'Time';
 $string['eventview'] = 'Event details';
 $string['eventcalendareventcreated'] = 'Calendar event created';
 $string['eventcalendareventupdated'] = 'Calendar event updated';
 $string['eventcalendareventdeleted'] = 'Calendar event deleted';
+$string['eventsubscriptioncreated'] = 'Calendar subscription created';
+$string['eventsubscriptionupdated'] = 'Calendar subscription updated';
+$string['eventsubscriptiondeleted'] = 'Calendar subscription deleted';
 $string['expired'] = 'Expired';
 $string['explain_site_timeformat'] = 'You can choose to see times in either 12 or 24 hour format for the whole site. If you choose "default", then the format will be automatically chosen according to the language you use in the site. This setting can be overridden by user preferences.';
 $string['export'] = 'Export';
@@ -215,7 +220,3 @@ $string['weeknext'] = 'Next week';
 $string['weekthis'] = 'This week';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
-
-// Deprecated since Moodle 2.8.
-
-$string['hidden'] = 'hidden';

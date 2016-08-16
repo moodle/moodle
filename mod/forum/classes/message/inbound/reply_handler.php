@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
+require_once($CFG->libdir . '/completionlib.php');
 
 /**
  * A Handler to process replies to forum posts.
@@ -117,7 +118,7 @@ class reply_handler extends \core\message\inbound\handler {
         }
 
         // And check the availability.
-        if (!\core_availability\info_module::is_user_visible($cm, $USER, true)) {
+        if (!\core_availability\info_module::is_user_visible($cm)) {
             $data = new \stdClass();
             $data->forum = $forum;
             throw new \core\message\inbound\processing_failed_exception('messageinboundforumhidden', 'mod_forum', $data);
@@ -162,13 +163,9 @@ class reply_handler extends \core\message\inbound\handler {
         $addpost->parent       = $post->id;
         $addpost->itemid       = file_get_unused_draft_itemid();
 
-        if (!empty($messagedata->html)) {
-            $addpost->message = $messagedata->html;
-            $addpost->messageformat = FORMAT_HTML;
-        } else {
-            $addpost->message = $messagedata->plain;
-            $addpost->messageformat = FORMAT_PLAIN;
-        }
+        list ($message, $format) = self::remove_quoted_text($messagedata);
+        $addpost->message = $message;
+        $addpost->messageformat = $format;
 
         // We don't trust text coming from e-mail.
         $addpost->messagetrust = false;
@@ -248,6 +245,14 @@ class reply_handler extends \core\message\inbound\handler {
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
 
+        // Update completion state.
+        $completion = new \completion_info($course);
+        if ($completion->is_enabled($cm) && ($forum->completionreplies || $forum->completionposts)) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+
+            mtrace("--> Updating completion status for user {$USER->id} in forum {$forum->id} for post {$addpost->id}.");
+        }
+
         mtrace("--> Created a post {$addpost->id} in {$discussion->id}.");
         return $addpost;
     }
@@ -288,7 +293,6 @@ class reply_handler extends \core\message\inbound\handler {
         return $fs->create_file_from_string($record, $attachment->content);
     }
 
-
     /**
      * Return the content of any success notification to be sent.
      * Both an HTML and Plain Text variant must be provided.
@@ -301,6 +305,7 @@ class reply_handler extends \core\message\inbound\handler {
         $a = new \stdClass();
         $a->subject = $handlerresult->subject;
         $discussionurl = new \moodle_url('/mod/forum/discuss.php', array('d' => $handlerresult->discussion));
+        $discussionurl->set_anchor('p' . $handlerresult->id);
         $a->discussionurl = $discussionurl->out();
 
         $message = new \stdClass();
@@ -308,5 +313,4 @@ class reply_handler extends \core\message\inbound\handler {
         $message->html = get_string('postbymailsuccess_html', 'mod_forum', $a);
         return $message;
     }
-
 }

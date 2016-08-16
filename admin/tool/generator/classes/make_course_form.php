@@ -51,6 +51,12 @@ class tool_generator_make_course_form extends moodleform {
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_TEXT);
 
+        $mform->addElement('text', 'fullname', get_string('fullnamecourse'));
+        $mform->setType('fullname', PARAM_TEXT);
+
+        $mform->addElement('editor', 'summary', get_string('coursesummary'));
+        $mform->setType('summary', PARAM_RAW);
+
         $mform->addElement('submit', 'submit', get_string('createcourse', 'tool_generator'));
     }
 

@@ -51,8 +51,18 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
      * @param string $elementLabel (optional) text field label
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array
      */
-    function MoodleQuickForm_text($elementName=null, $elementLabel=null, $attributes=null) {
-        parent::HTML_QuickForm_text($elementName, $elementLabel, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
+        parent::__construct($elementName, $elementLabel, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_text($elementName=null, $elementLabel=null, $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $attributes);
     }
 
     /**
@@ -114,5 +124,4 @@ class MoodleQuickForm_text extends HTML_QuickForm_text{
     function getHelpButton(){
         return $this->_helpbutton;
     }
-
 }

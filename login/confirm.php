@@ -63,7 +63,6 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
         $PAGE->set_heading($COURSE->fullname);
         echo $OUTPUT->header();
         echo $OUTPUT->box_start('generalbox centerpara boxwidthnormal boxaligncenter');
-        echo "<h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
         echo "<p>".get_string("alreadyconfirmed")."</p>\n";
         echo $OUTPUT->single_button("$CFG->wwwroot/course/", get_string('courses'));
         echo $OUTPUT->box_end();
@@ -78,14 +77,16 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
             print_error('cannotfinduser', '', '', s($username));
         }
 
-        complete_user_login($user);
+        if (!$user->suspended) {
+            complete_user_login($user);
 
-        \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
+            \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
 
-        if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
-            $goto = $SESSION->wantsurl;
-            unset($SESSION->wantsurl);
-            redirect($goto);
+            if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going.
+                $goto = $SESSION->wantsurl;
+                unset($SESSION->wantsurl);
+                redirect($goto);
+            }
         }
 
         $PAGE->navbar->add(get_string("confirmed"));

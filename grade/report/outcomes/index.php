@@ -40,7 +40,7 @@ $context = context_course::instance($course->id);
 require_capability('gradereport/outcomes:view', $context);
 
 // First make sure we have proper final grades.
-grade_regrade_final_grades($courseid);
+grade_regrade_final_grades_if_required($course);
 
 // Grab all outcomes used in course.
 $report_info = array();
@@ -74,7 +74,7 @@ foreach ($outcomes as $outcomeid => $outcome) {
                       FROM {grade_grades}
                      WHERE itemid = ?".
                      $hidesuspendedsql.
-                  "GROUP BY itemid";
+                  " GROUP BY itemid";
             $info = $DB->get_records_sql($sql, $params);
 
             if (!$info) {

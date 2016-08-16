@@ -200,7 +200,7 @@ abstract class screen {
      * @return string
      */
     public function heading() {
-        return get_string('pluginname', 'gradereport_singleview');
+        return get_string('entrypage', 'gradereport_singleview');
     }
 
     /**
@@ -326,6 +326,13 @@ abstract class screen {
 
             // Same value; skip.
             if (isset($data->$oldname) && $data->$oldname == $posted) {
+                continue;
+            }
+
+            // If the user submits Exclude grade elements without the proper.
+            // permissions then we should refuse to update.
+            if ($matches[1] === 'exclude' && !has_capability('moodle/grade:manage', $this->context)){
+                $warnings[] = get_string('nopermissions', 'error', get_string('grade:manage', 'role'));
                 continue;
             }
 

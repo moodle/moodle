@@ -68,6 +68,7 @@ class mod_scorm_generator extends testing_module_generator {
             'forcenewattempt' => $cfgscorm->forcenewattempt,
             'lastattemptlock' => $cfgscorm->lastattemptlock,
             'forcecompleted' => $cfgscorm->forcecompleted,
+            'masteryoverride' => $cfgscorm->masteryoverride,
             'auto' => $cfgscorm->auto,
             'displayactivityname' => $cfgscorm->displayactivityname
         );

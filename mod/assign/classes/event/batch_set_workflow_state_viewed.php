@@ -123,4 +123,11 @@ class batch_set_workflow_state_viewed extends base {
             throw new \coding_exception('The \'assignid\' value must be set in other.');
         }
     }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['assignid'] = array('db' => 'assign', 'restore' => 'assign');
+
+        return $othermapped;
+    }
 }

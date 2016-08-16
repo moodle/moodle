@@ -106,7 +106,8 @@ if (!empty($add)) {
         $optionsyes = array('confirm'=>1, 'delete'=>$cm->id, 'sesskey'=>sesskey(), 'sr' => $sectionreturn);
 
         $strdeletecheck = get_string('deletecheck', '', $fullmodulename);
-        $strdeletecheckfull = get_string('deletecheckfull', '', "$fullmodulename '$cm->name'");
+        $strparams = (object)array('type' => $fullmodulename, 'name' => $cm->name);
+        $strdeletechecktypename = get_string('deletechecktypename', '', $strparams);
 
         $PAGE->set_pagetype('mod-' . $cm->modname . '-delete');
         $PAGE->set_title($strdeletecheck);
@@ -117,7 +118,7 @@ if (!empty($add)) {
         echo $OUTPUT->box_start('noticebox');
         $formcontinue = new single_button(new moodle_url("$CFG->wwwroot/course/mod.php", $optionsyes), get_string('yes'));
         $formcancel = new single_button($return, get_string('no'), 'get');
-        echo $OUTPUT->confirm($strdeletecheckfull, $formcontinue, $formcancel);
+        echo $OUTPUT->confirm($strdeletechecktypename, $formcontinue, $formcancel);
         echo $OUTPUT->box_end();
         echo $OUTPUT->footer();
 

@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../deferredcbm/behaviourtype.php');
+require_once(__DIR__ . '/../deferredcbm/behaviourtype.php');
 
 
 /**
@@ -38,5 +38,9 @@ class qbehaviour_immediatecbm_type extends qbehaviour_deferredcbm_type {
 
     public function get_unused_display_options() {
         return array();
+    }
+
+    public function can_questions_finish_during_the_attempt() {
+        return true;
     }
 }

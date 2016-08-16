@@ -66,5 +66,8 @@ class course_module_viewed extends \core\event\course_module_viewed {
             $this->objectid, $this->contextinstanceid);
     }
 
+    public static function get_objectid_mapping() {
+        return array('db' => 'forum', 'restore' => 'forum');
+    }
 }
 

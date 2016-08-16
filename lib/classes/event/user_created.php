@@ -133,4 +133,8 @@ class user_created extends base {
         $event = self::create($data);
         return $event;
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'user', 'restore' => 'user');
+    }
 }

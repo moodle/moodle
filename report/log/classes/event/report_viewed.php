@@ -123,4 +123,12 @@ class report_viewed extends \core\event\base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['modid'] = array('db' => 'course_modules', 'restore' => 'course_module');
+        $othermapped['groupid'] = array('db' => 'groups', 'restore' => 'group');
+
+        return $othermapped;
+    }
 }

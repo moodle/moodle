@@ -177,6 +177,8 @@ class quiz_statistics_question_table extends flexible_table {
             } else {
                 return 0;
             }
+        } else if ($colname == 'part' || $colname == 'responseclass' || $colname == 'response') {
+            return s($response->$colname);
         } else {
             return null;
         }

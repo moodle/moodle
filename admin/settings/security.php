@@ -35,7 +35,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $params = new stdClass();
     $params->bytes = $defaultuserquota;
     $params->displaysize = display_size($defaultuserquota);
-    $temp->add(new admin_setting_configtext('userquota', new lang_string('userquota', 'admin'), new lang_string('configuserquota', 'admin', $params), $defaultuserquota));
+    $temp->add(new admin_setting_configtext('userquota', new lang_string('userquota', 'admin'),
+                new lang_string('configuserquota', 'admin', $params), $defaultuserquota, PARAM_INT, 30));
 
     $temp->add(new admin_setting_configcheckbox('allowobjectembed', new lang_string('allowobjectembed', 'admin'), new lang_string('configallowobjectembed', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enabletrusttext', new lang_string('enabletrusttext', 'admin'), new lang_string('configenabletrusttext', 'admin'), 0));
@@ -55,7 +56,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $temp->add(new admin_setting_configcheckbox('profilesforenrolledusersonly', new lang_string('profilesforenrolledusersonly','admin'),new lang_string('configprofilesforenrolledusersonly', 'admin'),'1'));
 
-    $temp->add(new admin_setting_configcheckbox('cronclionly', new lang_string('cronclionly', 'admin'), new lang_string('configcronclionly', 'admin'), 0));
+    $temp->add(new admin_setting_configcheckbox('cronclionly', new lang_string('cronclionly', 'admin'), new lang_string
+            ('configcronclionly', 'admin'), 1));
     $temp->add(new admin_setting_configpasswordunmask('cronremotepassword', new lang_string('cronremotepassword', 'admin'), new lang_string('configcronremotepassword', 'admin'), ''));
 
     $options = array(0=>get_string('no'), 3=>3, 5=>5, 7=>7, 10=>10, 20=>20, 30=>30, 50=>50, 100=>100);
@@ -125,19 +127,4 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     }
     $temp->add(new admin_setting_configselect('notifyloginthreshold', new lang_string('notifyloginthreshold', 'admin'), new lang_string('confignotifyloginthreshold', 'admin'), '10', $options));
     $ADMIN->add('security', $temp);
-
-
-
-
-
-
-    // "antivirus" settingpage
-    $temp = new admin_settingpage('antivirus', new lang_string('antivirus', 'admin'));
-    $temp->add(new admin_setting_configcheckbox('runclamonupload', new lang_string('runclamavonupload', 'admin'), new lang_string('configrunclamavonupload', 'admin'), 0));
-    $temp->add(new admin_setting_configexecutable('pathtoclam', new lang_string('pathtoclam', 'admin'), new lang_string('configpathtoclam', 'admin'), ''));
-    $temp->add(new admin_setting_configdirectory('quarantinedir', new lang_string('quarantinedir', 'admin'), new lang_string('configquarantinedir', 'admin'), ''));
-    $temp->add(new admin_setting_configselect('clamfailureonupload', new lang_string('clamfailureonupload', 'admin'), new lang_string('configclamfailureonupload', 'admin'), 'donothing', array('donothing' => new lang_string('configclamdonothing', 'admin'),
-                                                                                                                                                                                      'actlikevirus' => new lang_string('configclamactlikevirus', 'admin'))));
-    $ADMIN->add('security', $temp);
-
 } // end of speedup

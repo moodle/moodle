@@ -25,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(dirname(__FILE__))).'/lib.php');   // module library
-require_once(dirname(dirname(__FILE__)).'/edit_form.php');    // parent class definition
+require_once(__DIR__ . '/../../lib.php');    // Module library.
+require_once(__DIR__ . '/../edit_form.php'); // Parent class definition.
 
 /**
  * Class for editing comments grading strategy forms.

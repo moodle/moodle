@@ -24,53 +24,6 @@
  */
 
 require_once("$CFG->dirroot/webservice/lib.php");
-require_once 'Zend/XmlRpc/Server.php';
-
-/**
- * The Zend XMLRPC server but with a fault that return debuginfo
- *
- * @package    webservice_xmlrpc
- * @copyright  2011 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.2
- */
-class moodle_zend_xmlrpc_server extends Zend_XmlRpc_Server {
-
-    /**
-     * Raise an xmlrpc server fault
-     *
-     * Moodle note: the difference with the Zend server is that we throw a plain PHP Exception
-     * with the debuginfo integrated to the exception message when DEBUG >= NORMAL
-     *
-     * @param string|Exception $fault
-     * @param int $code
-     * @return Zend_XmlRpc_Server_Fault
-     */
-    public function fault($fault = null, $code = 404)
-    {
-        // Intercept any exceptions with debug info and transform it in Moodle exception.
-        if ($fault instanceof Exception) {
-            // Code php exception must be a long
-            // we obtain a hash of the errorcode, and then to get an integer hash.
-            $code = base_convert(md5($fault->errorcode), 16, 10);
-            // Code php exception being a long, it has a maximum number of digits.
-            // we strip the $code to 8 digits, and hope for no error code collisions.
-            // Collisions should be pretty rare, and if needed the client can retrieve
-            // the accurate errorcode from the last | in the exception message.
-            $code = substr($code, 0, 8);
-            // Add the debuginfo to the exception message if debuginfo must be returned.
-            if (debugging() and isset($fault->debuginfo)) {
-                $fault = new Exception($fault->getMessage() . ' | DEBUG INFO: ' . $fault->debuginfo
-                        . ' | ERRORCODE: ' . $fault->errorcode, $code);
-            } else {
-                $fault = new Exception($fault->getMessage()
-                        . ' | ERRORCODE: ' . $fault->errorcode, $code);
-            }
-        }
-
-        return parent::fault($fault, $code);
-    }
-}
 
 /**
  * XML-RPC service server implementation.
@@ -80,7 +33,10 @@ class moodle_zend_xmlrpc_server extends Zend_XmlRpc_Server {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.0
  */
-class webservice_xmlrpc_server extends webservice_zend_server {
+class webservice_xmlrpc_server extends webservice_base_server {
+
+    /** @var string $response The XML-RPC response string. */
+    private $response;
 
     /**
      * Contructor
@@ -88,25 +44,167 @@ class webservice_xmlrpc_server extends webservice_zend_server {
      * @param string $authmethod authentication method of the web service (WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN, ...)
      */
     public function __construct($authmethod) {
-        require_once 'Zend/XmlRpc/Server.php';
-        parent::__construct($authmethod, 'moodle_zend_xmlrpc_server');
+        parent::__construct($authmethod);
         $this->wsname = 'xmlrpc';
     }
 
     /**
-     * Set up zend service class
+     * This method parses the request input, it needs to get:
+     *  1/ user authentication - username+password or token
+     *  2/ function name
+     *  3/ function parameters
      */
-    protected function init_zend_server() {
-        parent::init_zend_server();
-        // this exception indicates request failed
-        Zend_XmlRpc_Server_Fault::attachFaultException('moodle_exception');
-        //when DEBUG >= NORMAL then the thrown exceptions are "casted" into a plain PHP Exception class
-        //in order to display the $debuginfo (see moodle_zend_xmlrpc_server class - MDL-29435)
-        if (debugging()) {
-            Zend_XmlRpc_Server_Fault::attachFaultException('Exception');
+    protected function parse_request() {
+        // Retrieve and clean the POST/GET parameters from the parameters specific to the server.
+        parent::set_web_service_call_settings();
+
+        // Get GET and POST parameters.
+        $methodvariables = array_merge($_GET, $_POST);
+
+        if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
+            $this->username = isset($methodvariables['wsusername']) ? $methodvariables['wsusername'] : null;
+            unset($methodvariables['wsusername']);
+
+            $this->password = isset($methodvariables['wspassword']) ? $methodvariables['wspassword'] : null;
+            unset($methodvariables['wspassword']);
+        } else {
+            $this->token = isset($methodvariables['wstoken']) ? $methodvariables['wstoken'] : null;
+            unset($methodvariables['wstoken']);
+        }
+
+        // Get the XML-RPC request data.
+        $rawpostdata = $this->fetch_input_content();
+        $methodname = null;
+
+        // Decode the request to get the decoded parameters and the name of the method to be called.
+        $decodedparams = xmlrpc_decode_request($rawpostdata, $methodname, 'UTF-8');
+        $methodinfo = external_api::external_function_info($methodname);
+        $methodparams = array_keys($methodinfo->parameters_desc->keys);
+
+        // Add the decoded parameters to the methodvariables array.
+        if (is_array($decodedparams)) {
+            foreach ($decodedparams as $index => $param) {
+                // See MDL-53962 - XML-RPC requests will usually be sent as an array (as in, one with indicies).
+                // We need to use a bit of "magic" to add the correct index back. Zend used to do this for us.
+                $methodvariables[$methodparams[$index]] = $param;
+            }
+        }
+
+        $this->functionname = $methodname;
+        $this->parameters = $methodvariables;
+    }
+
+    /**
+     * Fetch content from the client.
+     *
+     * @return string
+     */
+    protected function fetch_input_content() {
+        return file_get_contents('php://input');
+    }
+
+    /**
+     * Prepares the response.
+     */
+    protected function prepare_response() {
+        try {
+            if (!empty($this->function->returns_desc)) {
+                $validatedvalues = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
+                $encodingoptions = array(
+                    "encoding" => "UTF-8",
+                    "verbosity" => "no_white_space",
+                    // See MDL-54868.
+                    "escaping" => ["markup"]
+                );
+                // We can now convert the response to the requested XML-RPC format.
+                $this->response = xmlrpc_encode_request(null, $validatedvalues, $encodingoptions);
+            }
+        } catch (invalid_response_exception $ex) {
+            $this->response = $this->generate_error($ex);
         }
     }
 
+    /**
+     * Send the result of function call to the WS client.
+     */
+    protected function send_response() {
+        $this->prepare_response();
+        $this->send_headers();
+        echo $this->response;
+    }
+
+    /**
+     * Send the error information to the WS client.
+     *
+     * @param Exception $ex
+     */
+    protected function send_error($ex = null) {
+        $this->send_headers();
+        echo $this->generate_error($ex);
+    }
+
+    /**
+     * Sends the headers for the XML-RPC response.
+     */
+    protected function send_headers() {
+        // Standard headers.
+        header('HTTP/1.1 200 OK');
+        header('Connection: close');
+        header('Content-Length: ' . strlen($this->response));
+        header('Content-Type: text/xml; charset=utf-8');
+        header('Date: ' . gmdate('D, d M Y H:i:s', 0) . ' GMT');
+        header('Server: Moodle XML-RPC Server/1.0');
+        // Other headers.
+        header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+        header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+        header('Pragma: no-cache');
+        header('Accept-Ranges: none');
+        // Allow cross-origin requests only for Web Services.
+        // This allow to receive requests done by Web Workers or webapps in different domains.
+        header('Access-Control-Allow-Origin: *');
+    }
+
+    /**
+     * Generate the XML-RPC fault response.
+     *
+     * @param Exception $ex The exception.
+     * @param int $faultcode The faultCode to be included in the fault response
+     * @return string The XML-RPC fault response xml containing the faultCode and faultString.
+     */
+    protected function generate_error(Exception $ex, $faultcode = 404) {
+        $error = $ex->getMessage();
+
+        if (!empty($ex->errorcode)) {
+            // The faultCode must be an int, so we obtain a hash of the errorcode then get an integer value of the hash.
+            $faultcode = base_convert(md5($ex->errorcode), 16, 10);
+
+            // We strip the $code to 8 digits (and hope for no error code collisions).
+            // Collisions should be pretty rare, and if needed the client can retrieve
+            // the accurate errorcode from the last | in the exception message.
+            $faultcode = substr($faultcode, 0, 8);
+
+            // Add the debuginfo to the exception message if debuginfo must be returned.
+            if (debugging() and isset($ex->debuginfo)) {
+                $error .= ' | DEBUG INFO: ' . $ex->debuginfo . ' | ERRORCODE: ' . $ex->errorcode;
+            } else {
+                $error .= ' | ERRORCODE: ' . $ex->errorcode;
+            }
+        }
+
+        $fault = array(
+            'faultCode' => (int) $faultcode,
+            'faultString' => $error
+        );
+
+        $encodingoptions = array(
+            "encoding" => "UTF-8",
+            "verbosity" => "no_white_space",
+            // See MDL-54868.
+            "escaping" => ["markup"]
+        );
+
+        return xmlrpc_encode_request(null, $fault, $encodingoptions);
+    }
 }
 
 /**
@@ -126,11 +224,12 @@ class webservice_xmlrpc_test_client implements webservice_test_client_interface 
      * @return mixed
      */
     public function simpletest($serverurl, $function, $params) {
-        //zend expects 0 based array with numeric indexes
-        $params = array_values($params);
+        global $CFG;
 
-        require_once 'Zend/XmlRpc/Client.php';
-        $client = new Zend_XmlRpc_Client($serverurl);
+        $url = new moodle_url($serverurl);
+        $token = $url->get_param('wstoken');
+        require_once($CFG->dirroot . '/webservice/xmlrpc/lib.php');
+        $client = new webservice_xmlrpc_client($serverurl, $token);
         return $client->call($function, $params);
     }
 }

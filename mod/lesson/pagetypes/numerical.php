@@ -57,6 +57,18 @@ class lesson_page_type_numerical extends lesson_page {
             $data->answer = s($attempt->useranswer);
         }
         $mform->set_data($data);
+
+        // Trigger an event question viewed.
+        $eventparams = array(
+            'context' => context_module::instance($PAGE->cm->id),
+            'objectid' => $this->properties->id,
+            'other' => array(
+                    'pagetype' => $this->get_typestring()
+                )
+            );
+
+        $event = \mod_lesson\event\question_viewed::create($eventparams);
+        $event->trigger();
         return $mform->display();
     }
     public function check_answer() {
@@ -66,6 +78,10 @@ class lesson_page_type_numerical extends lesson_page {
         $mform = new lesson_display_answer_form_shortanswer($CFG->wwwroot.'/mod/lesson/continue.php', array('contents'=>$this->get_contents()));
         $data = $mform->get_data();
         require_sesskey();
+
+        $formattextdefoptions = new stdClass();
+        $formattextdefoptions->noclean = true;
+        $formattextdefoptions->para = false;
 
         // set defaults
         $result->response = '';
@@ -81,6 +97,7 @@ class lesson_page_type_numerical extends lesson_page {
         $result->studentanswer = $result->userresponse = $result->useranswer;
         $answers = $this->get_answers();
         foreach ($answers as $answer) {
+            $answer = parent::rewrite_answers_urls($answer);
             if (strpos($answer->answer, ':')) {
                 // there's a pairs of values
                 list($min, $max) = explode(':', $answer->answer);
@@ -93,7 +110,7 @@ class lesson_page_type_numerical extends lesson_page {
             }
             if (($result->useranswer >= $minimum) && ($result->useranswer <= $maximum)) {
                 $result->newpageid = $answer->jumpto;
-                $result->response = trim($answer->response);
+                $result->response = format_text($answer->response, $answer->responseformat, $formattextdefoptions);
                 if ($this->lesson->jumpto_is_correct($this->properties->id, $result->newpageid)) {
                     $result->correctanswer = true;
                 }
@@ -245,6 +262,8 @@ class lesson_add_page_form_numerical extends lesson_add_page_form_base {
 
     public $qtype = 'numerical';
     public $qtypestring = 'numerical';
+    protected $answerformat = '';
+    protected $responseformat = LESSON_ANSWER_HTML;
 
     public function custom_definition() {
         for ($i = 0; $i < $this->_customdata['lesson']->maxanswers; $i++) {
@@ -263,6 +282,9 @@ class lesson_display_answer_form_numerical extends moodleform {
         global $USER, $OUTPUT;
         $mform = $this->_form;
         $contents = $this->_customdata['contents'];
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
 
         $mform->addElement('header', 'pageheader');
 

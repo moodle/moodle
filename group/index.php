@@ -170,8 +170,7 @@ echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</s
 
 $onchange = 'M.core_group.membersCombo.refreshMembers();';
 
-echo '<select name="groups[]" multiple="multiple" id="groups" size="15" class="select" onchange="'.$onchange.'"'."\n";
-echo ' onclick="window.status=this.selectedIndex==-1 ? \'\' : this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
+echo '<select name="groups[]" multiple="multiple" id="groups" size="15" class="select" onchange="'.$onchange.'">'."\n";
 
 $groups = groups_get_all_groups($courseid);
 $selectedname = '&nbsp;';

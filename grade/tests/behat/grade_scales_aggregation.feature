@@ -10,8 +10,8 @@ Feature: Control the aggregation of the scales
       | Course 1 | C1        |
     And the following "users" exist:
       | username | firstname | lastname | email            | idnumber |
-      | teacher1 | Teacher   | 1        | teacher1@asd.com | t1       |
-      | student1 | Student   | 1        | student1@asd.com | s1       |
+      | teacher1 | Teacher   | 1        | teacher1@example.com | t1       |
+      | student1 | Student   | 1        | student1@example.com | s1       |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
@@ -32,15 +32,14 @@ Feature: Control the aggregation of the scales
     And the following "grade items" exist:
       | itemname | course | scale       |
       | Scale me | C1     | Letterscale |
-
-  @javascript
-  Scenario Outline: Scales can be exluded from aggregation
-    Given I set the following administration settings values:
+    And the following config values are set as admin:
       | grade_includescalesinaggregation | 0 |
     And I log out
-    And I log in as "teacher1"
+
+  Scenario Outline: Scales can be excluded from aggregation
+    Given I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     When I give the grade "10" to the user "Student 1" for the grade item "Grade me"
     And I give the grade "B" to the user "Student 1" for the grade item "Scale me"
@@ -48,7 +47,7 @@ Feature: Control the aggregation of the scales
     And I set the following settings for grade item "Course 1":
       | Aggregation | <aggregation> |
     And I follow "User report"
-    And I set the field "Select all or one user" to "Student 1"
+    And I select "Student 1" from the "Select all or one user" singleselect
     Then the following should exist in the "user-grade" table:
       | Grade item             | Grade          | Percentage  | Contribution to course total |
       | Grade me               | 10.00          | 10.00 %     | <gradecontrib>               |
@@ -61,9 +60,9 @@ Feature: Control the aggregation of the scales
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I follow "User report"
-    And I set the field "Select all or one user" to "Student 1"
+    And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item             | Grade          | Percentage  | Contribution to course total |
       | Grade me               | 10.00          | 10.00 %     | <gradecontrib2>              |
@@ -84,16 +83,13 @@ Feature: Control the aggregation of the scales
 
   @javascript
   Scenario: Weights of scales cannot be edited when they are not aggregated
-    Given I set the following administration settings values:
-      | grade_includescalesinaggregation | 0 |
-    And I log out
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     When I set the following settings for grade item "Course 1":
       | Aggregation | Natural |
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Override weight of Grade me" to "1"
     Then the field "Override weight of Grade me" matches value "100.00"
     And I click on "Edit" "link" in the "Scale me" "table_row"
@@ -101,15 +97,11 @@ Feature: Control the aggregation of the scales
     And I follow "Show more..."
     And I should not see "Weight adjusted"
     And I should not see "Weight"
-    And I log out
-    And I log in as "admin"
-    And I set the following administration settings values:
+    And the following config values are set as admin:
       | grade_includescalesinaggregation | 1 |
-    And I log out
-    And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Grades" node in "Course administration"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the field "Override weight of Grade me" to "1"
     And the field "Override weight of Grade me" matches value "95.238"
     And I set the field "Override weight of Scale me" to "1"

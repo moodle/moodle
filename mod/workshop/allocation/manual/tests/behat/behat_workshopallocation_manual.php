@@ -28,8 +28,7 @@
 require_once(__DIR__ . '/../../../../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../../../../lib/behat/behat_field_manager.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-    Behat\Gherkin\Node\TableNode as TableNode,
+use Behat\Gherkin\Node\TableNode as TableNode,
     Behat\Mink\Exception\ElementTextException as ElementTextException;
 
 /**
@@ -51,7 +50,7 @@ class behat_workshopallocation_manual extends behat_base {
      * @param string $participantname
      */
     public function i_add_a_reviewer_for_workshop_participant($reviewername, $participantname) {
-        $participantnameliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($participantname);
+        $participantnameliteral = behat_context_helper::escape($participantname);
         $xpathtd = "//table[contains(concat(' ', normalize-space(@class), ' '), ' allocations ')]/".
                 "tbody/tr[./td[contains(concat(' ', normalize-space(@class), ' '), ' peer ')]".
                 "[contains(.,$participantnameliteral)]]/".
@@ -63,20 +62,22 @@ class behat_workshopallocation_manual extends behat_base {
             $this->find_button(get_string('showallparticipants', 'workshopallocation_manual'))->press();
             $selectnode = $this->find('xpath', $xpathselect);
         }
-        $selectid = $selectnode->getAttribute('id');
+
         $selectformfield = behat_field_manager::get_form_field($selectnode, $this->getSession());
         $selectformfield->set_value($reviewername);
 
         if (!$this->running_javascript()) {
             // Without Javascript we need to press the "Go" button.
-            $go = $this->getSession()->getSelectorsHandler()->xpathLiteral(get_string('go'));
+            $go = behat_context_helper::escape(get_string('go'));
             $this->find('xpath', $xpathtd."/descendant::input[@value=$go]")->click();
         } else {
-            // With Javascript we just wait for the page to reload and the success string to appear.
-            $allocatedtext = $this->getSession()->getSelectorsHandler()->xpathLiteral(
-                    get_string('allocationadded', 'workshopallocation_manual'));
-            $this->find('xpath', "//*[contains(.,$allocatedtext)]");
+            // With Javascript we just wait for the page to reload.
+            $this->getSession()->wait(self::EXTENDED_TIMEOUT, self::PAGE_READY_JS);
         }
+        // Check the success string to appear.
+        $allocatedtext = behat_context_helper::escape(
+            get_string('allocationadded', 'workshopallocation_manual'));
+        $this->find('xpath', "//*[contains(.,$allocatedtext)]");
     }
 
     /**

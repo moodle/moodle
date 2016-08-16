@@ -48,6 +48,22 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
+    // Small logo file setting.
+    $name = 'theme_clean/smalllogo';
+    $title = get_string('smalllogo', 'theme_clean');
+    $description = get_string('smalllogodesc', 'theme_clean');
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'smalllogo');
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
+    // Show site name along with small logo.
+    $name = 'theme_clean/sitename';
+    $title = get_string('sitename', 'theme_clean');
+    $description = get_string('sitenamedesc', 'theme_clean');
+    $setting = new admin_setting_configcheckbox($name, $title, $description, 1);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $settings->add($setting);
+
     // Custom CSS file.
     $name = 'theme_clean/customcss';
     $title = get_string('customcss', 'theme_clean');

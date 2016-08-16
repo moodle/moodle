@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
+use \mod_assign\output\grading_app;
+
 /**
  * A custom renderer class that extends the plugin_renderer_base and is used by the assign module.
  *
@@ -271,6 +273,10 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         // Status.
         if ($summary->teamsubmission) {
+            if ($summary->warnofungroupedusers) {
+                $o .= $this->output->notification(get_string('ungroupedusers', 'assign'));
+            }
+
             $this->add_table_row_tuple($t, get_string('numberofteams', 'assign'),
                                        $summary->participantcount);
         } else {
@@ -314,7 +320,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $cutoffdate = $summary->cutoffdate;
                 if ($cutoffdate) {
                     if ($cutoffdate > $time) {
-                        $late = get_string('latesubmissionsaccepted', 'assign');
+                        $late = get_string('latesubmissionsaccepted', 'assign', userdate($summary->cutoffdate));
                     } else {
                         $late = get_string('nomoresubmissionsaccepted', 'assign');
                     }
@@ -329,14 +335,19 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->box_end();
 
         // Link to the grading page.
+        $o .= '<center>';
         $o .= $this->output->container_start('submissionlinks');
-        $urlparams = array('id' => $summary->coursemoduleid, 'action'=>'grading');
+        $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grading');
         $url = new moodle_url('/mod/assign/view.php', $urlparams);
-        $o .= $this->output->action_link($url, get_string('viewgrading', 'assign'));
+        $o .= '<a href="' . $url . '" class="btn">' . get_string('viewgrading', 'mod_assign') . '</a> ';
+        $urlparams = array('id' => $summary->coursemoduleid, 'action' => 'grader');
+        $url = new moodle_url('/mod/assign/view.php', $urlparams);
+        $o .= '<a href="' . $url . '" class="btn btn-primary">' . get_string('grade') . '</a>';
         $o .= $this->output->container_end();
 
         // Close the container and insert a spacer.
         $o .= $this->output->container_end();
+        $o .= '</center>';
 
         return $o;
     }
@@ -414,6 +425,189 @@ class mod_assign_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render a compact view of the current status of the submission.
+     *
+     * @param assign_submission_status_compact $status
+     * @return string
+     */
+    public function render_assign_submission_status_compact(assign_submission_status_compact $status) {
+        $o = '';
+        $o .= $this->output->container_start('submissionstatustable');
+        $o .= $this->output->heading(get_string('submission', 'assign'), 3);
+        $time = time();
+
+        if ($status->teamsubmissionenabled) {
+            $group = $status->submissiongroup;
+            if ($group) {
+                $team = format_string($group->name, false, $status->context);
+            } else if ($status->preventsubmissionnotingroup) {
+                if (count($status->usergroups) == 0) {
+                    $team = '<span class="alert alert-error">' . get_string('noteam', 'assign') . '</span>';
+                } else if (count($status->usergroups) > 1) {
+                    $team = '<span class="alert alert-error">' . get_string('multipleteams', 'assign') . '</span>';
+                }
+            } else {
+                $team = get_string('defaultteam', 'assign');
+            }
+            $o .= $this->output->container(get_string('teamname', 'assign', $team), 'teamname');
+        }
+
+        if (!$status->teamsubmissionenabled) {
+            if ($status->submission && $status->submission->status != ASSIGN_SUBMISSION_STATUS_NEW) {
+                $statusstr = get_string('submissionstatus_' . $status->submission->status, 'assign');
+                $o .= $this->output->container($statusstr, 'submissionstatus' . $status->submission->status);
+            } else {
+                if (!$status->submissionsenabled) {
+                    $o .= $this->output->container(get_string('noonlinesubmissions', 'assign'), 'submissionstatus');
+                } else {
+                    $o .= $this->output->container(get_string('noattempt', 'assign'), 'submissionstatus');
+                }
+            }
+        } else {
+            $group = $status->submissiongroup;
+            if (!$group && $status->preventsubmissionnotingroup) {
+                $o .= $this->output->container(get_string('nosubmission', 'assign'), 'submissionstatus');
+            } else if ($status->teamsubmission && $status->teamsubmission->status != ASSIGN_SUBMISSION_STATUS_NEW) {
+                $teamstatus = $status->teamsubmission->status;
+                $submissionsummary = get_string('submissionstatus_' . $teamstatus, 'assign');
+                $groupid = 0;
+                if ($status->submissiongroup) {
+                    $groupid = $status->submissiongroup->id;
+                }
+
+                $members = $status->submissiongroupmemberswhoneedtosubmit;
+                $userslist = array();
+                foreach ($members as $member) {
+                    $urlparams = array('id' => $member->id, 'course' => $status->courseid);
+                    $url = new moodle_url('/user/view.php', $urlparams);
+                    if ($status->view == assign_submission_status::GRADER_VIEW && $status->blindmarking) {
+                        $userslist[] = $member->alias;
+                    } else {
+                        $fullname = fullname($member, $status->canviewfullnames);
+                        $userslist[] = $this->output->action_link($url, $fullname);
+                    }
+                }
+                if (count($userslist) > 0) {
+                    $userstr = join(', ', $userslist);
+                    $formatteduserstr = get_string('userswhoneedtosubmit', 'assign', $userstr);
+                    $submissionsummary .= $this->output->container($formatteduserstr);
+                }
+                $o .= $this->output->container($submissionsummary, 'submissionstatus' . $status->teamsubmission->status);
+            } else {
+                if (!$status->submissionsenabled) {
+                    $o .= $this->output->container(get_string('noonlinesubmissions', 'assign'), 'submissionstatus');
+                } else {
+                    $o .= $this->output->container(get_string('nosubmission', 'assign'), 'submissionstatus');
+                }
+            }
+        }
+
+        // Is locked?
+        if ($status->locked) {
+            $o .= $this->output->container(get_string('submissionslocked', 'assign'), 'submissionlocked');
+        }
+
+        // Grading status.
+        $statusstr = '';
+        $classname = 'gradingstatus';
+        if ($status->gradingstatus == ASSIGN_GRADING_STATUS_GRADED ||
+            $status->gradingstatus == ASSIGN_GRADING_STATUS_NOT_GRADED) {
+            $statusstr = get_string($status->gradingstatus, 'assign');
+        } else {
+            $gradingstatus = 'markingworkflowstate' . $status->gradingstatus;
+            $statusstr = get_string($gradingstatus, 'assign');
+        }
+        if ($status->gradingstatus == ASSIGN_GRADING_STATUS_GRADED ||
+            $status->gradingstatus == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+            $classname = 'submissiongraded';
+        } else {
+            $classname = 'submissionnotgraded';
+        }
+        $o .= $this->output->container($statusstr, $classname);
+
+        $submission = $status->teamsubmission ? $status->teamsubmission : $status->submission;
+        $duedate = $status->duedate;
+        if ($duedate > 0) {
+
+            if ($status->extensionduedate) {
+                // Extension date.
+                $duedate = $status->extensionduedate;
+            }
+
+            // Time remaining.
+            $classname = 'timeremaining';
+            if ($duedate - $time <= 0) {
+                if (!$submission ||
+                        $submission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                    if ($status->submissionsenabled) {
+                        $remaining = get_string('overdue', 'assign', format_time($time - $duedate));
+                        $classname = 'overdue';
+                    } else {
+                        $remaining = get_string('duedatereached', 'assign');
+                    }
+                } else {
+                    if ($submission->timemodified > $duedate) {
+                        $remaining = get_string('submittedlate',
+                                              'assign',
+                                              format_time($submission->timemodified - $duedate));
+                        $classname = 'latesubmission';
+                    } else {
+                        $remaining = get_string('submittedearly',
+                                               'assign',
+                                               format_time($submission->timemodified - $duedate));
+                        $classname = 'earlysubmission';
+                    }
+                }
+            } else {
+                $remaining = get_string('paramtimeremaining', 'assign', format_time($duedate - $time));
+            }
+            $o .= $this->output->container($remaining, $classname);
+        }
+
+        // Show graders whether this submission is editable by students.
+        if ($status->view == assign_submission_status::GRADER_VIEW) {
+            if ($status->canedit) {
+                $o .= $this->output->container(get_string('submissioneditable', 'assign'), 'submissioneditable');
+            } else {
+                $o .= $this->output->container(get_string('submissionnoteditable', 'assign'), 'submissionnoteditable');
+            }
+        }
+
+        // Grading criteria preview.
+        if (!empty($status->gradingcontrollerpreview)) {
+            $o .= $this->output->container($status->gradingcontrollerpreview, 'gradingmethodpreview');
+        }
+
+        if ($submission) {
+
+            if (!$status->teamsubmission || $status->submissiongroup != false || !$status->preventsubmissionnotingroup) {
+                foreach ($status->submissionplugins as $plugin) {
+                    $pluginshowsummary = !$plugin->is_empty($submission) || !$plugin->allow_submissions();
+                    if ($plugin->is_enabled() &&
+                        $plugin->is_visible() &&
+                        $plugin->has_user_summary() &&
+                        $pluginshowsummary
+                    ) {
+
+                        $displaymode = assign_submission_plugin_submission::SUMMARY;
+                        $pluginsubmission = new assign_submission_plugin_submission($plugin,
+                            $submission,
+                            $displaymode,
+                            $status->coursemoduleid,
+                            $status->returnaction,
+                            $status->returnparams);
+                        $plugincomponent = $plugin->get_subtype() . '_' . $plugin->get_type();
+                        $o .= $this->output->container($this->render($pluginsubmission), 'assignsubmission ' . $plugincomponent);
+                    }
+                }
+            }
+        }
+
+        $o .= $this->output->container_end();
+        return $o;
+    }
+
+    /**
      * Render a table containing the current status of the submission.
      *
      * @param assign_submission_status $status
@@ -447,6 +641,16 @@ class mod_assign_renderer extends plugin_renderer_base {
             $group = $status->submissiongroup;
             if ($group) {
                 $cell2 = new html_table_cell(format_string($group->name, false, $status->context));
+            } else if ($status->preventsubmissionnotingroup) {
+                if (count($status->usergroups) == 0) {
+                    $cell2 = new html_table_cell(
+                        html_writer::span(get_string('noteam', 'assign'), 'alert alert-error')
+                    );
+                } else if (count($status->usergroups) > 1) {
+                    $cell2 = new html_table_cell(
+                        html_writer::span(get_string('multipleteams', 'assign'), 'alert alert-error')
+                    );
+                }
             } else {
                 $cell2 = new html_table_cell(get_string('defaultteam', 'assign'));
             }
@@ -499,7 +703,10 @@ class mod_assign_renderer extends plugin_renderer_base {
         } else {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('submissionstatus', 'assign'));
-            if ($status->teamsubmission && $status->teamsubmission->status != ASSIGN_SUBMISSION_STATUS_NEW) {
+            $group = $status->submissiongroup;
+            if (!$group && $status->preventsubmissionnotingroup) {
+                $cell2 = new html_table_cell(get_string('nosubmission', 'assign'));
+            } else if ($status->teamsubmission && $status->teamsubmission->status != ASSIGN_SUBMISSION_STATUS_NEW) {
                 $teamstatus = $status->teamsubmission->status;
                 $submissionsummary = get_string('submissionstatus_' . $teamstatus, 'assign');
                 $groupid = 0;
@@ -553,12 +760,18 @@ class mod_assign_renderer extends plugin_renderer_base {
         $row = new html_table_row();
         $cell1 = new html_table_cell(get_string('gradingstatus', 'assign'));
 
-        if ($status->graded) {
-            $cell2 = new html_table_cell(get_string('graded', 'assign'));
-            $cell2->attributes = array('class'=>'submissiongraded');
+        if ($status->gradingstatus == ASSIGN_GRADING_STATUS_GRADED ||
+            $status->gradingstatus == ASSIGN_GRADING_STATUS_NOT_GRADED) {
+            $cell2 = new html_table_cell(get_string($status->gradingstatus, 'assign'));
         } else {
-            $cell2 = new html_table_cell(get_string('notgraded', 'assign'));
-            $cell2->attributes = array('class'=>'submissionnotgraded');
+            $gradingstatus = 'markingworkflowstate' . $status->gradingstatus;
+            $cell2 = new html_table_cell(get_string($gradingstatus, 'assign'));
+        }
+        if ($status->gradingstatus == ASSIGN_GRADING_STATUS_GRADED ||
+            $status->gradingstatus == ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
+            $cell2->attributes = array('class' => 'submissiongraded');
+        } else {
+            $cell2->attributes = array('class' => 'submissionnotgraded');
         }
         $row->cells = array($cell1, $cell2);
         $t->data[] = $row;
@@ -657,29 +870,38 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($submission) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('timemodified', 'assign'));
-            $cell2 = new html_table_cell(userdate($submission->timemodified));
+
+            if ($submission->status != ASSIGN_SUBMISSION_STATUS_NEW) {
+                $cell2 = new html_table_cell(userdate($submission->timemodified));
+            } else {
+                $cell2 = new html_table_cell('-');
+            }
+
             $row->cells = array($cell1, $cell2);
             $t->data[] = $row;
 
-            foreach ($status->submissionplugins as $plugin) {
-                $pluginshowsummary = !$plugin->is_empty($submission) || !$plugin->allow_submissions();
-                if ($plugin->is_enabled() &&
-                    $plugin->is_visible() &&
-                    $plugin->has_user_summary() &&
-                    $pluginshowsummary) {
+            if (!$status->teamsubmission || $status->submissiongroup != false || !$status->preventsubmissionnotingroup) {
+                foreach ($status->submissionplugins as $plugin) {
+                    $pluginshowsummary = !$plugin->is_empty($submission) || !$plugin->allow_submissions();
+                    if ($plugin->is_enabled() &&
+                        $plugin->is_visible() &&
+                        $plugin->has_user_summary() &&
+                        $pluginshowsummary
+                    ) {
 
-                    $row = new html_table_row();
-                    $cell1 = new html_table_cell($plugin->get_name());
-                    $displaymode = assign_submission_plugin_submission::SUMMARY;
-                    $pluginsubmission = new assign_submission_plugin_submission($plugin,
-                                                                                $submission,
-                                                                                $displaymode,
-                                                                                $status->coursemoduleid,
-                                                                                $status->returnaction,
-                                                                                $status->returnparams);
-                    $cell2 = new html_table_cell($this->render($pluginsubmission));
-                    $row->cells = array($cell1, $cell2);
-                    $t->data[] = $row;
+                        $row = new html_table_row();
+                        $cell1 = new html_table_cell($plugin->get_name());
+                        $displaymode = assign_submission_plugin_submission::SUMMARY;
+                        $pluginsubmission = new assign_submission_plugin_submission($plugin,
+                            $submission,
+                            $displaymode,
+                            $status->coursemoduleid,
+                            $status->returnaction,
+                            $status->returnparams);
+                        $cell2 = new html_table_cell($this->render($pluginsubmission));
+                        $row->cells = array($cell1, $cell2);
+                        $t->data[] = $row;
+                    }
                 }
             }
         }
@@ -747,6 +969,21 @@ class mod_assign_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Output the attempt history chooser for this assignment
+     *
+     * @param assign_attempt_history_chooser $history
+     * @return string
+     */
+    public function render_assign_attempt_history_chooser(assign_attempt_history_chooser $history) {
+        $o = '';
+
+        $context = $history->export_for_template($this);
+        $o .= $this->render_from_template('mod_assign/attempt_history_chooser', $context);
+
+        return $o;
+    }
+
+    /**
      * Output the attempt history for this assignment
      *
      * @param assign_attempt_history $history
@@ -771,7 +1008,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         }
 
         $containerid = 'attempthistory' . uniqid();
-        $o .= $this->heading(get_string('attempthistory', 'assign'), 3);
+        $o .= $this->output->heading(get_string('attempthistory', 'assign'), 3);
         $o .= $this->box_start('attempthistory', $containerid);
 
         foreach ($history->submissions as $i => $submission) {
@@ -985,6 +1222,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $this->page->requires->string_for_js('batchoperationconfirmreverttodraft', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmunlock', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmaddattempt', 'assign');
+        $this->page->requires->string_for_js('batchoperationconfirmdownloadselected', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmsetmarkingworkflowstate', 'assign');
         $this->page->requires->string_for_js('batchoperationconfirmsetmarkingallocation', 'assign');
         $this->page->requires->string_for_js('editaction', 'assign');
@@ -1222,5 +1460,14 @@ class mod_assign_renderer extends plugin_renderer_base {
         return $o;
     }
 
+    /**
+     * Defer to template..
+     *
+     * @param grading_app $app - All the data to render the grading app.
+     */
+    public function render_grading_app(grading_app $app) {
+        $context = $app->export_for_template($this);
+        return $this->render_from_template('mod_assign/grading_app', $context);
+    }
 }
 

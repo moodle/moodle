@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/backup/util/dbops/backup_dbops.class.php');
 require_once($CFG->dirroot . '/backup/util/dbops/backup_controller_dbops.class.php');
 require_once($CFG->dirroot . '/backup/util/dbops/restore_dbops.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/contenttransformer/xml_contenttransformer.class.php');
-require_once(dirname(__FILE__) . '/handlerlib.php');
+require_once(__DIR__ . '/handlerlib.php');
 
 /**
  * Converter of Moodle 1.9 backup into Moodle 2.x format

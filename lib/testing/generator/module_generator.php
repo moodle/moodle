@@ -248,6 +248,10 @@ abstract class testing_module_generator extends component_generator_base {
             $record->introformat = FORMAT_MOODLE;
         }
 
+        if (isset($record->tags) && !is_array($record->tags)) {
+            $record->tags = preg_split('/\s*,\s*/', trim($record->tags), -1, PREG_SPLIT_NO_EMPTY);
+        }
+
         // Before Moodle 2.6 it was possible to create a module with completion tracking when
         // it is not setup for course and/or site-wide. Display debugging message so it is
         // easier to trace an error in unittests.

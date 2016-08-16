@@ -51,28 +51,53 @@ class tag_edit_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
         $systemcontext   = context_system::instance();
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
             $mform->addElement('text', 'rawname', get_string('name', 'tag'),
                     'maxlength="'.TAG_MAX_LENGTH.'" size="'.TAG_MAX_LENGTH.'"');
-            $mform->setType('rawname', PARAM_NOTAGS);
+            $mform->setType('rawname', PARAM_TAG);
         }
 
         $mform->addElement('editor', 'description_editor', get_string('description', 'tag'), null, $this->_customdata['editoroptions']);
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
-           $mform->addElement('checkbox', 'tagtype', get_string('officialtag', 'tag'));
+            $mform->addElement('checkbox', 'isstandard', get_string('standardtag', 'tag'));
         }
 
-        $mform->addElement('html', '<br/><div id="relatedtags-autocomplete-container">');
-        $mform->addElement('textarea', 'relatedtags', get_string('relatedtags','tag'), 'cols="50" rows="3"');
-        $mform->setType('relatedtags', PARAM_TAGLIST);
-        $mform->addElement('html', '<div id="relatedtags-autocomplete"></div>');
-        $mform->addElement('html', '</div>');
+        $mform->addElement('tags', 'relatedtags', get_string('relatedtags', 'tag'),
+                array('tagcollid' => $this->_customdata['tag']->tagcollid));
 
-        $this->add_action_buttons(false, get_string('updatetag', 'tag'));
+        $this->add_action_buttons(true, get_string('updatetag', 'tag'));
 
+    }
+
+    /**
+     * Custom form validation
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        if (isset($data['rawname'])) {
+            $newname = core_text::strtolower($data['rawname']);
+            $tag = $this->_customdata['tag'];
+            if ($tag->name != $newname) {
+                // The name has changed, let's make sure it's not another existing tag.
+                if (core_tag_tag::get_by_name($tag->tagcollid, $newname)) {
+                    // Something exists already, so flag an error.
+                    $errors['rawname'] = get_string('namesalreadybeeingused', 'tag');
+                }
+            }
+        }
+
+        return $errors;
     }
 
 }

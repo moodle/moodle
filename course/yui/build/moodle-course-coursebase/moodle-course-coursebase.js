@@ -21,7 +21,7 @@ var COURSEBASE = function() {
  */
 Y.extend(COURSEBASE, Y.Base, {
     // Registered Modules
-    registermodules : [],
+    registermodules: [],
 
     /**
      * Register a new Javascript Module
@@ -30,7 +30,7 @@ Y.extend(COURSEBASE, Y.Base, {
      * @param {Object} The instantiated module to call functions on
      * @chainable
      */
-    register_module : function(object) {
+    register_module: function(object) {
         this.registermodules.push(object);
 
         return this;
@@ -44,7 +44,7 @@ Y.extend(COURSEBASE, Y.Base, {
      * @param {mixed} args The argument supplied to the function
      * @chainable
      */
-    invoke_function : function(functionname, args) {
+    invoke_function: function(functionname, args) {
         var module;
         for (module in this.registermodules) {
             if (functionname in this.registermodules[module]) {
@@ -55,8 +55,8 @@ Y.extend(COURSEBASE, Y.Base, {
         return this;
     }
 }, {
-    NAME : COURSEBASENAME,
-    ATTRS : {}
+    NAME: COURSEBASENAME,
+    ATTRS: {}
 });
 
 // Ensure that M.course exists and that coursebase is initialised correctly
@@ -104,12 +104,12 @@ M.course.format.process_sections = M.course.format.process_sections || function(
 */
 M.course.format.get_config = M.course.format.get_config || function() {
     return {
-        container_node : null, // compulsory
-        container_class : null, // compulsory
-        section_wrapper_node : null, // optional
-        section_wrapper_class : null, // optional
-        section_node : null,  // compulsory
-        section_class : null  // compulsory
+        container_node: null, // compulsory
+        container_class: null, // compulsory
+        section_wrapper_node: null, // optional
+        section_wrapper_class: null, // optional
+        section_node: null,  // compulsory
+        section_class: null  // compulsory
     };
 };
 

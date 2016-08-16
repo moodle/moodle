@@ -23,8 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/locallib.php');
 
 $cmid       = required_param('cmid', PARAM_INT);            // course module id
 $id         = required_param('id', PARAM_INT);              // example submission id, 0 for the new one
@@ -113,26 +113,16 @@ if ($id and $assess and $canassess) {
 }
 
 if ($edit and $canmanage) {
-    require_once(dirname(__FILE__).'/submission_form.php');
+    require_once(__DIR__.'/submission_form.php');
 
-    $maxfiles       = $workshop->nattachments;
-    $maxbytes       = $workshop->maxbytes;
-    $contentopts    = array(
-                        'trusttext' => true,
-                        'subdirs'   => false,
-                        'maxfiles'  => $maxfiles,
-                        'maxbytes'  => $maxbytes,
-                        'context'   => $workshop->context
-                      );
+    $example = file_prepare_standard_editor($example, 'content', $workshop->submission_content_options(),
+        $workshop->context, 'mod_workshop', 'submission_content', $example->id);
 
-    $attachmentopts = array('subdirs' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
-    $example        = file_prepare_standard_editor($example, 'content', $contentopts, $workshop->context,
-                                        'mod_workshop', 'submission_content', $example->id);
-    $example        = file_prepare_standard_filemanager($example, 'attachment', $attachmentopts, $workshop->context,
-                                        'mod_workshop', 'submission_attachment', $example->id);
+    $example = file_prepare_standard_filemanager($example, 'attachment', $workshop->submission_attachment_options(),
+        $workshop->context, 'mod_workshop', 'submission_attachment', $example->id);
 
-    $mform          = new workshop_submission_form($PAGE->url, array('current' => $example, 'workshop' => $workshop,
-                                                    'contentopts' => $contentopts, 'attachmentopts' => $attachmentopts));
+    $mform = new workshop_submission_form($PAGE->url, array('current' => $example, 'workshop' => $workshop,
+        'contentopts' => $workshop->submission_content_options(), 'attachmentopts' => $workshop->submission_attachment_options()));
 
     if ($mform->is_cancelled()) {
         redirect($workshop->view_url());
@@ -164,11 +154,13 @@ if ($edit and $canmanage) {
                 throw new moodle_exception('err_examplesubmissionid', 'workshop');
             }
         }
-        // save and relink embedded images and save attachments
-        $formdata = file_postupdate_standard_editor($formdata, 'content', $contentopts, $workshop->context,
-                                                      'mod_workshop', 'submission_content', $example->id);
-        $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $attachmentopts, $workshop->context,
-                                                           'mod_workshop', 'submission_attachment', $example->id);
+
+        // Save and relink embedded images and save attachments.
+        $formdata = file_postupdate_standard_editor($formdata, 'content', $workshop->submission_content_options(),
+            $workshop->context, 'mod_workshop', 'submission_content', $example->id);
+        $formdata = file_postupdate_standard_filemanager($formdata, 'attachment', $workshop->submission_attachment_options(),
+            $workshop->context, 'mod_workshop', 'submission_attachment', $example->id);
+
         if (empty($formdata->attachment)) {
             // explicit cast to zero integer
             $formdata->attachment = 0;

@@ -39,7 +39,7 @@ class award_criteria_course extends award_criteria {
     public $criteriatype = BADGE_CRITERIA_TYPE_COURSE;
 
     private $courseid;
-    private $coursestartdate;
+    private $course;
 
     public $required_param = 'course';
     public $optional_params = array('grade', 'bydate');
@@ -48,11 +48,10 @@ class award_criteria_course extends award_criteria {
         global $DB;
         parent::__construct($record);
 
-        $course = $DB->get_record_sql('SELECT b.courseid, c.startdate
+        $this->course = $DB->get_record_sql('SELECT c.id, c.enablecompletion, c.cacherev, c.startdate
                         FROM {badge} b INNER JOIN {course} c ON b.courseid = c.id
                         WHERE b.id = :badgeid ', array('badgeid' => $this->badgeid));
-        $this->courseid = $course->courseid;
-        $this->coursestartdate = $course->startdate;
+        $this->courseid = $this->course->id;
     }
 
     /**
@@ -74,6 +73,15 @@ class award_criteria_course extends award_criteria {
             echo $OUTPUT->box($deleteaction . $editaction, array('criteria-header'));
         }
         echo $OUTPUT->heading($this->get_title() . $OUTPUT->help_icon('criteria_' . $this->criteriatype, 'badges'), 3, 'main help');
+
+        if (!empty($this->description)) {
+            echo $OUTPUT->box(
+                format_text($this->description, $this->descriptionformat,
+                        array('context' => context_course::instance($this->courseid))
+                ),
+                'criteria-description'
+            );
+        }
 
         if (!empty($this->params)) {
             echo $OUTPUT->box(get_string('criteria_descr_' . $this->criteriatype, 'badges') . $this->get_details(), array('clearfix'));
@@ -171,10 +179,9 @@ class award_criteria_course extends award_criteria {
      * @return bool Whether criteria is complete
      */
     public function review($userid, $filtered = false) {
-        $course = new stdClass();
-        $course->id = $this->courseid;
+        $course = $this->course;
 
-        if ($this->coursestartdate > time()) {
+        if ($this->course->startdate > time()) {
             return false;
         }
 

@@ -109,6 +109,10 @@ class info_module extends info {
         return parent::filter_user_list($filtered);
     }
 
+    protected function get_view_hidden_capability() {
+        return 'moodle/course:viewhiddenactivities';
+    }
+
     public function get_user_list_sql($onlyactive = true) {
         global $CFG, $DB;
         if (!$CFG->enableavailability) {
@@ -180,7 +184,12 @@ class info_module extends info {
             if (is_object($cmorid)) {
                 $cmorid = $cmorid->id;
             }
-            $cm = $DB->get_record('course_modules', array('id' => $cmorid), '*', MUST_EXIST);
+            $cm = $DB->get_record('course_modules', array('id' => $cmorid));
+            if (!$cm) {
+                // In some error cases, the course module may not exist.
+                debugging('info_module::is_user_visible called with invalid cmid ' . $cmorid, DEBUG_DEVELOPER);
+                return false;
+            }
         }
 
         // If requested, check user can access the course.

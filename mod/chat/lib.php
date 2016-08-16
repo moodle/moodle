@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/calendar/lib.php');
 
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output.
@@ -413,7 +415,7 @@ function chat_refresh_events($courseid = 0) {
     $moduleid = $DB->get_field('modules', 'id', array('name' => 'chat'));
 
     foreach ($chats as $chat) {
-        $cm = get_coursemodule_from_id('chat', $chat->id);
+        $cm = get_coursemodule_from_instance('chat', $chat->id, $chat->course);
         $event = new stdClass();
         $event->name        = $chat->name;
         $event->description = format_module_intro('chat', $chat, $cm->id);
@@ -634,7 +636,7 @@ function chat_update_chat_times($chatid=0) {
         $event = new stdClass(); // Update calendar too.
 
         $cond = "modulename='chat' AND instance = :chatid AND timestart <> :chattime";
-        $params = array('chattime' => $chat->chattime, 'chatid' => $chatid);
+        $params = array('chattime' => $chat->chattime, 'chatid' => $chat->id);
 
         if ($event->id = $DB->get_field_select('event', 'id', $cond, $params)) {
             $event->timestart   = $chat->chattime;
@@ -706,17 +708,9 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $output->beep = false;       // By default.
     $output->refreshusers = false; // By default.
 
-    // Use get_user_timezone() to find the correct timezone for displaying this message.
-    // It's either the current user's timezone or else decided by some Moodle config setting.
-    // First, "reset" $USER->timezone (which could have been set by a previous call to here)
-    // because otherwise the value for the previous $currentuser will take precedence over $CFG->timezone.
-    $USER->timezone = 99;
-    $tz = get_user_timezone($currentuser->timezone);
+    // Find the correct timezone for displaying this message.
+    $tz = core_date::get_user_timezone($currentuser);
 
-    // Before formatting the message time string, set $USER->timezone to the above.
-    // This will allow dst_offset_on (called by userdate) to work correctly, otherwise the
-    // message times appear off because DST is not taken into account when it should be.
-    $USER->timezone = $tz;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
     $message->picture = $OUTPUT->user_picture($sender, array('size' => false, 'courseid' => $courseid, 'link' => false));
@@ -752,21 +746,25 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     }
 
     // It's not a system event.
-    $text = trim($message->message);
+    $rawtext = trim($message->message);
 
-    // Parse the text to clean and filter it.
+    // Options for format_text, when we get to it...
+    // format_text call will parse the text to clean and filter it.
+    // It cannot be called here as HTML-isation interferes with special case
+    // recognition, but *must* be called on any user-sourced text to be inserted
+    // into $outmain.
     $options = new stdClass();
     $options->para = false;
-    $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
+    $options->blanktarget = true;
 
     // And now check for special cases.
     $patternto = '#^\s*To\s([^:]+):(.*)#';
     $special = false;
 
-    if (substr($text, 0, 5) == 'beep ') {
+    if (substr($rawtext, 0, 5) == 'beep ') {
         // It's a beep!
         $special = true;
-        $beepwho = trim(substr($text, 5));
+        $beepwho = trim(substr($rawtext, 5));
 
         if ($beepwho == 'all') {   // Everyone.
             $outinfobasic = get_string('messagebeepseveryone', 'chat', fullname($sender));
@@ -784,29 +782,31 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         } else {  // Something is not caught?
             return false;
         }
-    } else if (substr($text, 0, 1) == '/') {     // It's a user command.
+    } else if (substr($rawtext, 0, 1) == '/') {     // It's a user command.
         $special = true;
         $pattern = '#(^\/)(\w+).*#';
-        preg_match($pattern, $text, $matches);
+        preg_match($pattern, $rawtext, $matches);
         $command = isset($matches[2]) ? $matches[2] : false;
         // Support some IRC commands.
         switch ($command) {
             case 'me':
                 $outinfo = $message->strtime;
-                $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
+                $text = '*** <b>'.$sender->firstname.' '.substr($rawtext, 4).'</b>';
+                $outmain = format_text($text, FORMAT_MOODLE, $options, $courseid);
                 break;
             default:
                 // Error, we set special back to false to use the classic message output.
                 $special = false;
                 break;
         }
-    } else if (preg_match($patternto, $text)) {
+    } else if (preg_match($patternto, $rawtext)) {
         $special = true;
         $matches = array();
-        preg_match($patternto, $text, $matches);
+        preg_match($patternto, $rawtext, $matches);
         if (isset($matches[1]) && isset($matches[2])) {
+            $text = format_text($matches[2], FORMAT_MOODLE, $options, $courseid);
             $outinfo = $message->strtime;
-            $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$matches[2];
+            $outmain = $sender->firstname.' '.get_string('saidto', 'chat').' <i>'.$matches[1].'</i>: '.$text;
         } else {
             // Error, we set special back to false to use the classic message output.
             $special = false;
@@ -814,6 +814,7 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     }
 
     if (!$special) {
+        $text = format_text($rawtext, FORMAT_MOODLE, $options, $courseid);
         $outinfo = $message->strtime.' '.$sender->firstname;
         $outmain = $text;
     }
@@ -895,9 +896,8 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
         return null;
     }
 
-    $USER->timezone = 99;
-    $tz = get_user_timezone($currentuser->timezone);
-    $USER->timezone = $tz;
+    // Find the correct timezone for displaying this message.
+    $tz = core_date::get_user_timezone($currentuser);
 
     if (empty($chatuser->course)) {
         $courseid = $COURSE->id;
@@ -926,12 +926,16 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     }
 
     // It's not a system event.
-    $text = trim($message->message);
+    $rawtext = trim($message->message);
 
-    // Parse the text to clean and filter it.
+    // Options for format_text, when we get to it...
+    // format_text call will parse the text to clean and filter it.
+    // It cannot be called here as HTML-isation interferes with special case
+    // recognition, but *must* be called on any user-sourced text to be inserted
+    // into $outmain.
     $options = new stdClass();
     $options->para = false;
-    $text = format_text($text, FORMAT_MOODLE, $options, $courseid);
+    $options->blanktarget = true;
 
     // And now check for special cases.
     $special = false;
@@ -941,11 +945,11 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     $outmain = '';
     $patternto = '#^\s*To\s([^:]+):(.*)#';
 
-    if (substr($text, 0, 5) == 'beep ') {
+    if (substr($rawtext, 0, 5) == 'beep ') {
         $special = true;
         // It's a beep!
         $result->type = 'beep';
-        $beepwho = trim(substr($text, 5));
+        $beepwho = trim(substr($rawtext, 5));
 
         if ($beepwho == 'all') {   // Everyone.
             $outmain = get_string('messagebeepseveryone', 'chat', fullname($sender));
@@ -964,29 +968,31 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
                 $outmain = get_string('messageyoubeep', 'chat', $beepwho);
             }
         }
-    } else if (substr($text, 0, 1) == '/') {     // It's a user command.
+    } else if (substr($rawtext, 0, 1) == '/') {     // It's a user command.
         $special = true;
         $result->type = 'command';
         $pattern = '#(^\/)(\w+).*#';
-        preg_match($pattern, $text, $matches);
+        preg_match($pattern, $rawtext, $matches);
         $command = isset($matches[2]) ? $matches[2] : false;
         // Support some IRC commands.
         switch ($command) {
             case 'me':
-                $outmain = '*** <b>'.$sender->firstname.' '.substr($text, 4).'</b>';
+                $text = '*** <b>'.$sender->firstname.' '.substr($rawtext, 4).'</b>';
+                $outmain = format_text($text, FORMAT_MOODLE, $options, $courseid);
                 break;
             default:
                 // Error, we set special back to false to use the classic message output.
                 $special = false;
                 break;
         }
-    } else if (preg_match($patternto, $text)) {
+    } else if (preg_match($patternto, $rawtext)) {
         $special = true;
         $result->type = 'dialogue';
         $matches = array();
-        preg_match($patternto, $text, $matches);
+        preg_match($patternto, $rawtext, $matches);
         if (isset($matches[1]) && isset($matches[2])) {
-            $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$matches[2];
+            $text = format_text($matches[2], FORMAT_MOODLE, $options, $courseid);
+            $outmain = $sender->firstname.' <b>'.get_string('saidto', 'chat').'</b> <i>'.$matches[1].'</i>: '.$text;
         } else {
             // Error, we set special back to false to use the classic message output.
             $special = false;
@@ -994,6 +1000,7 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     }
 
     if (!$special) {
+        $text = format_text($rawtext, FORMAT_MOODLE, $options, $courseid);
         $outmain = $text;
     }
 
@@ -1274,7 +1281,7 @@ function chat_extend_settings_navigation(settings_navigation $settings, navigati
     if ($chat->chattime && $chat->schedule) {
         $nextsessionnode = $chatnode->add(get_string('nextsession', 'chat').
                                           ': '.userdate($chat->chattime).
-                                          ' ('.usertimezone($USER->timezone));
+                                          ' ('.usertimezone($USER->timezone).')');
         $nextsessionnode->add_class('note');
     }
 
@@ -1312,4 +1319,51 @@ function chat_user_logout(\core\event\user_loggedout $event) {
 function chat_page_type_list($pagetype, $parentcontext, $currentcontext) {
     $modulepagetype = array('mod-chat-*' => get_string('page-mod-chat-x', 'chat'));
     return $modulepagetype;
+}
+
+/**
+ * Return a list of the latest messages in the given chat session.
+ *
+ * @param  stdClass $chatuser     chat user session data
+ * @param  int      $chatlasttime last time messages were retrieved
+ * @return array    list of messages
+ * @since  Moodle 3.0
+ */
+function chat_get_latest_messages($chatuser, $chatlasttime) {
+    global $DB;
+
+    $params = array('groupid' => $chatuser->groupid, 'chatid' => $chatuser->chatid, 'lasttime' => $chatlasttime);
+
+    $groupselect = $chatuser->groupid ? " AND (groupid=" . $chatuser->groupid . " OR groupid=0) " : "";
+
+    return $DB->get_records_select('chat_messages_current', 'chatid = :chatid AND timestamp > :lasttime ' . $groupselect,
+                                    $params, 'timestamp ASC');
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $chat       chat object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function chat_view($chat, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $chat->id
+    );
+
+    $event = \mod_chat\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('chat', $chat);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
 }

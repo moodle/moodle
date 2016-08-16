@@ -56,7 +56,7 @@ class report_loglive_table_log extends table_sql {
      *     - int userid: user id
      *     - int|string modid: Module id or "site_errors" to view site errors
      *     - int groupid: Group id
-     *     - \core\log\sql_select_reader logreader: reader from which data will be fetched.
+     *     - \core\log\sql_reader logreader: reader from which data will be fetched.
      *     - int edulevel: educational level.
      *     - string action: view action
      *     - int date: Date from which logs to be viewed.

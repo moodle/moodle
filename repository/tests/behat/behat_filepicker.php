@@ -87,7 +87,7 @@ class behat_filepicker extends behat_files {
             $this->getSession()
         );
 
-        $folderliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($foldername);
+        $folderliteral = behat_context_helper::escape($foldername);
 
         // We look both in the pathbar and in the contents.
         try {
@@ -210,7 +210,7 @@ class behat_filepicker extends behat_files {
      * @param string $filemanagerelement
      */
     public function i_add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement) {
-        $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, new TableNode(), false);
+        $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, new TableNode(array()), false);
     }
 
     /**
@@ -223,7 +223,7 @@ class behat_filepicker extends behat_files {
      * @param string $filemanagerelement
      */
     public function i_add_and_overwrite_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement) {
-        $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, new TableNode(),
+        $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, new TableNode(array()),
                 get_string('overwrite', 'repository'));
     }
 
@@ -288,7 +288,9 @@ class behat_filepicker extends behat_files {
             $field->set_value($value);
         }
 
-        $this->find_button(get_string('getfile', 'repository'))->click();
+        $selectfilebutton = $this->find_button(get_string('getfile', 'repository'));
+        $this->ensure_node_is_visible($selectfilebutton);
+        $selectfilebutton->click();
 
         // We wait for all the JS to finish as it is performing an action.
         $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);

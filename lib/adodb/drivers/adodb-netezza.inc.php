@@ -1,6 +1,8 @@
 <?php
 /*
-  V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+  @version   v5.20.3  01-Jan-2016
+  @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+  @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
   First cut at the Netezza Driver by Josh Eldridge joshuae74#hotmail.com
  Based on the previous postgres drivers.
@@ -48,7 +50,7 @@ class ADODB_netezza extends ADODB_postgres64 {
 							// http://bugs.php.net/bug.php?id=25404
 
 
-	function ADODB_netezza()
+	function __construct()
 	{
 
 	}
@@ -139,31 +141,17 @@ class ADORecordSet_netezza extends ADORecordSet_postgres64
 	var $databaseType = "netezza";
 	var $canSeek = true;
 
-	function ADORecordSet_netezza($queryID,$mode=false)
+	function __construct($queryID,$mode=false)
 	{
-		if ($mode === false) {
-			global $ADODB_FETCH_MODE;
-			$mode = $ADODB_FETCH_MODE;
-		}
-		switch ($mode)
-		{
-		case ADODB_FETCH_NUM: $this->fetchMode = PGSQL_NUM; break;
-		case ADODB_FETCH_ASSOC:$this->fetchMode = PGSQL_ASSOC; break;
-
-		case ADODB_FETCH_DEFAULT:
-		case ADODB_FETCH_BOTH:
-		default: $this->fetchMode = PGSQL_BOTH; break;
-		}
-		$this->adodbFetchMode = $mode;
-		$this->ADORecordSet($queryID);
+		parent::__construct($queryID,$mode);
 	}
 
 	// _initrs modified to disable blob handling
 	function _initrs()
 	{
 	global $ADODB_COUNTRECS;
-		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_numrows($this->_queryID):-1;
-		$this->_numOfFields = @pg_numfields($this->_queryID);
+		$this->_numOfRows = ($ADODB_COUNTRECS)? @pg_num_rows($this->_queryID):-1;
+		$this->_numOfFields = @pg_num_fields($this->_queryID);
 	}
 
 }

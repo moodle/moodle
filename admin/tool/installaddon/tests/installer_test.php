@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once(__DIR__.'/fixtures/testable_installer.php');
 
 /**
  * Unit tests for the {@link tool_installaddon_installer} class
@@ -47,29 +49,6 @@ class tool_installaddon_installer_testcase extends advanced_testcase {
         $this->assertSame('Nasty site', $site['fullname']);
         $this->assertSame('file:///etc/passwd', $site['url']);
         $this->assertSame("2.5'; DROP TABLE mdl_user; --", $site['majorversion']);
-    }
-
-    public function test_extract_installfromzip_file() {
-        $jobid = md5(rand().uniqid('test_', true));
-        $sourcedir = make_temp_directory('tool_installaddon/'.$jobid.'/source');
-        $contentsdir = make_temp_directory('tool_installaddon/'.$jobid.'/contents');
-        copy(dirname(__FILE__).'/fixtures/zips/invalidroot.zip', $sourcedir.'/testinvalidroot.zip');
-
-        $installer = tool_installaddon_installer::instance();
-        $files = $installer->extract_installfromzip_file($sourcedir.'/testinvalidroot.zip', $contentsdir, 'fixed_root');
-        $this->assertInternalType('array', $files);
-        $this->assertCount(4, $files);
-        $this->assertSame(true, $files['fixed_root/']);
-        $this->assertSame(true, $files['fixed_root/lang/']);
-        $this->assertSame(true, $files['fixed_root/lang/en/']);
-        $this->assertSame(true, $files['fixed_root/lang/en/fixed_root.php']);
-        foreach ($files as $file => $status) {
-            if (substr($file, -1) === '/') {
-                $this->assertTrue(is_dir($contentsdir.'/'.$file));
-            } else {
-                $this->assertTrue(is_file($contentsdir.'/'.$file));
-            }
-        }
     }
 
     public function test_decode_remote_request() {
@@ -130,47 +109,51 @@ class tool_installaddon_installer_testcase extends advanced_testcase {
         $this->assertSame(false, $installer->testable_decode_remote_request($request));
     }
 
-    public function test_move_directory() {
-        $jobid = md5(rand().uniqid('test_', true));
-        $jobroot = make_temp_directory('tool_installaddon/'.$jobid);
-        $contentsdir = make_temp_directory('tool_installaddon/'.$jobid.'/contents/sub/folder');
-        file_put_contents($contentsdir.'/readme.txt', 'Hello world!');
+    public function test_detect_plugin_component() {
+        global $CFG;
 
         $installer = tool_installaddon_installer::instance();
-        $installer->move_directory($jobroot.'/contents', $jobroot.'/moved', 0777, 0666);
 
-        $this->assertFalse(is_dir($jobroot.'/contents'));
-        $this->assertTrue(is_file($jobroot.'/moved/sub/folder/readme.txt'));
-        $this->assertSame('Hello world!', file_get_contents($jobroot.'/moved/sub/folder/readme.txt'));
-    }
-}
+        $zipfile = $CFG->libdir.'/tests/fixtures/update_validator/zips/bar.zip';
+        $this->assertEquals('foo_bar', $installer->detect_plugin_component($zipfile));
 
-
-/**
- * Testable subclass of the tested class
- *
- * @copyright 2013 David Mudrak <david@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class testable_tool_installaddon_installer extends tool_installaddon_installer {
-
-    public function get_site_fullname() {
-        return strip_tags('<h1 onmouseover="alert(\'Hello Moodle.org!\');">Nasty site</h1>');
+        $zipfile = $CFG->libdir.'/tests/fixtures/update_validator/zips/invalidroot.zip';
+        $this->assertFalse($installer->detect_plugin_component($zipfile));
     }
 
-    public function get_site_url() {
-        return 'file:///etc/passwd';
+    public function test_detect_plugin_component_from_versionphp() {
+        global $CFG;
+
+        $installer = testable_tool_installaddon_installer::instance();
+        $fixtures = $CFG->libdir.'/tests/fixtures/update_validator/';
+
+        $this->assertEquals('bar_bar_conan', $installer->testable_detect_plugin_component_from_versionphp('
+$plugin->version  = 2014121300;
+  $plugin->component=   "bar_bar_conan"  ; // Go Arnie go!'));
+
+        $versionphp = file_get_contents($fixtures.'/github/moodle-repository_mahara-master/version.php');
+        $this->assertEquals('repository_mahara', $installer->testable_detect_plugin_component_from_versionphp($versionphp));
+
+        $versionphp = file_get_contents($fixtures.'/nocomponent/baz/version.php');
+        $this->assertFalse($installer->testable_detect_plugin_component_from_versionphp($versionphp));
     }
 
-    public function get_site_major_version() {
-        return "2.5'; DROP TABLE mdl_user; --";
-    }
+    public function test_make_installfromzip_storage() {
+        $installer = testable_tool_installaddon_installer::instance();
 
-    public function testable_decode_remote_request($request) {
-        return parent::decode_remote_request($request);
-    }
+        // Check we get writable directory.
+        $storage1 = $installer->make_installfromzip_storage();
+        $this->assertTrue(is_dir($storage1));
+        $this->assertTrue(is_writable($storage1));
+        file_put_contents($storage1.'/hello.txt', 'Find me if you can!');
 
-    protected function should_send_site_info() {
-        return true;
+        // Check we get unique directory on each call.
+        $storage2 = $installer->make_installfromzip_storage();
+        $this->assertTrue(is_dir($storage2));
+        $this->assertTrue(is_writable($storage2));
+        $this->assertFalse(file_exists($storage2.'/hello.txt'));
+
+        // Check both are in the same parent directory.
+        $this->assertEquals(dirname($storage1), dirname($storage2));
     }
 }

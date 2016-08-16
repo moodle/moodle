@@ -27,8 +27,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../lib.php');
-require_once(dirname(__FILE__) . '/helpers.php');
+require_once(__DIR__ . '/../lib.php');
+require_once(__DIR__ . '/helpers.php');
 
 
 /**
@@ -104,8 +104,10 @@ class question_attempt_step_iterator_test extends advanced_testcase {
         $this->assertFalse(isset($this->iterator[3]));
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_offsetGet_before_start() {
-        $this->setExpectedException('moodle_exception');
         $step = $this->iterator[-1];
     }
 
@@ -119,18 +121,24 @@ class question_attempt_step_iterator_test extends advanced_testcase {
         $this->assertEquals(2, $step->get_qt_var('i'));
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_offsetGet_past_end() {
-        $this->setExpectedException('moodle_exception');
         $step = $this->iterator[3];
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_cannot_set() {
-        $this->setExpectedException('moodle_exception');
         $this->iterator[0] = null;
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_cannot_unset() {
-        $this->setExpectedException('moodle_exception');
         unset($this->iterator[2]);
     }
 }

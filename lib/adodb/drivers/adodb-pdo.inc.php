@@ -1,19 +1,24 @@
 <?php
-/*
-V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
-  Released under both BSD license and Lesser GPL library license.
-  Whenever there is any discrepancy between the two licenses,
-  the BSD license will take precedence.
-Set tabs to 4 for best viewing.
+/**
+	@version   v5.20.3  01-Jan-2016
+	@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+	@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
-  Latest version is available at http://adodb.sourceforge.net
+	Released under both BSD license and Lesser GPL library license.
+	Whenever there is any discrepancy between the two licenses,
+	the BSD license will take precedence.
 
-  Requires ODBC. Works on Windows and Unix.
+	Set tabs to 4 for best viewing.
+
+	Latest version is available at http://adodb.sourceforge.net
+
+	Requires ODBC. Works on Windows and Unix.
 
 	Problems:
 		Where is float/decimal type in pdo_param_type
 		LOB handling for CLOB/BLOB differs significantly
 */
+
 // security - hide paths
 if (!defined('ADODB_DIR')) die();
 
@@ -57,14 +62,7 @@ function adodb_pdo_type($t)
 	}
 }
 
-/*--------------------------------------------------------------------------------------
---------------------------------------------------------------------------------------*/
-
-////////////////////////////////////////////////
-
-
-
-
+/*----------------------------------------------------------------------------*/
 
 
 class ADODB_pdo extends ADOConnection {
@@ -75,7 +73,9 @@ class ADODB_pdo extends ADOConnection {
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $hasAffectedRows = true;
 	var $_bindInputArray = true;
+	var $_genIDSQL;
 	var $_genSeqSQL = "create table %s (id integer)";
+	var $_dropSeqSQL;
 	var $_autocommit = true;
 	var $_haserrorfunctions = true;
 	var $_lastAffectedRows = 0;
@@ -85,8 +85,9 @@ class ADODB_pdo extends ADOConnection {
 
 	var $dsnType = '';
 	var $stmt = false;
+	var $_driver;
 
-	function ADODB_pdo()
+	function __construct()
 	{
 	}
 
@@ -112,11 +113,17 @@ class ADODB_pdo extends ADOConnection {
 
 	function Time()
 	{
-		if (!empty($this->_driver->_hasdual)) $sql = "select $this->sysTimeStamp from dual";
-		else $sql = "select $this->sysTimeStamp";
+		if (!empty($this->_driver->_hasdual)) {
+			$sql = "select $this->sysTimeStamp from dual";
+		}
+		else {
+			$sql = "select $this->sysTimeStamp";
+		}
 
 		$rs = $this->_Execute($sql);
-		if ($rs && !$rs->EOF) return $this->UnixTimeStamp(reset($rs->fields));
+		if ($rs && !$rs->EOF) {
+			return $this->UnixTimeStamp(reset($rs->fields));
+		}
 
 		return false;
 	}
@@ -128,7 +135,18 @@ class ADODB_pdo extends ADOConnection {
 		$this->dsnType = substr($argDSN,0,$at);
 
 		if ($argDatabasename) {
-			$argDSN .= ';dbname='.$argDatabasename;
+			switch($this->dsnType){
+				case 'sqlsrv':
+					$argDSN .= ';database='.$argDatabasename;
+					break;
+				case 'mssql':
+				case 'mysql':
+				case 'oci':
+				case 'pgsql':
+				case 'sqlite':
+				default:
+					$argDSN .= ';dbname='.$argDatabasename;
+			}
 		}
 		try {
 			$this->_connectionID = new PDO($argDSN, $argUsername, $argPassword);
@@ -142,10 +160,16 @@ class ADODB_pdo extends ADOConnection {
 
 		if ($this->_connectionID) {
 			switch(ADODB_ASSOC_CASE){
-			case 0: $m = PDO::CASE_LOWER; break;
-			case 1: $m = PDO::CASE_UPPER; break;
-			default:
-			case 2: $m = PDO::CASE_NATURAL; break;
+				case ADODB_ASSOC_CASE_LOWER:
+					$m = PDO::CASE_LOWER;
+					break;
+				case ADODB_ASSOC_CASE_UPPER:
+					$m = PDO::CASE_UPPER;
+					break;
+				default:
+				case ADODB_ASSOC_CASE_NATIVE:
+					$m = PDO::CASE_NATURAL;
+					break;
 			}
 
 			//$this->_connectionID->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_SILENT );
@@ -154,18 +178,21 @@ class ADODB_pdo extends ADOConnection {
 			$class = 'ADODB_pdo_'.$this->dsnType;
 			//$this->_connectionID->setAttribute(PDO::ATTR_AUTOCOMMIT,true);
 			switch($this->dsnType) {
-			case 'oci':
-			case 'mysql':
-			case 'pgsql':
-			case 'mssql':
-			case 'sqlite':
-				include_once(ADODB_DIR.'/drivers/adodb-pdo_'.$this->dsnType.'.inc.php');
-				break;
+				case 'mssql':
+				case 'mysql':
+				case 'oci':
+				case 'pgsql':
+				case 'sqlite':
+				case 'sqlsrv':
+					include_once(ADODB_DIR.'/drivers/adodb-pdo_'.$this->dsnType.'.inc.php');
+					break;
 			}
-			if (class_exists($class))
+			if (class_exists($class)) {
 				$this->_driver = new $class();
-			else
+			}
+			else {
 				$this->_driver = new ADODB_pdo_base();
+			}
 
 			$this->_driver->_connectionID = $this->_connectionID;
 			$this->_UpdatePDO();
@@ -178,10 +205,13 @@ class ADODB_pdo extends ADOConnection {
 	function Concat()
 	{
 		$args = func_get_args();
-		if(method_exists($this->_driver, 'Concat'))
+		if(method_exists($this->_driver, 'Concat')) {
 			return call_user_func_array(array($this->_driver, 'Concat'), $args);
+		}
 
-		if (PHP_VERSION >= 5.3) return call_user_func_array('parent::Concat', $args);
+		if (PHP_VERSION >= 5.3) {
+			return call_user_func_array('parent::Concat', $args);
+		}
 		return call_user_func_array(array($this,'parent::Concat'), $args);
 	}
 
@@ -198,7 +228,7 @@ class ADODB_pdo extends ADOConnection {
 	{
 		$save = $this->_driver->fetchMode;
 		$this->_driver->fetchMode = $this->fetchMode;
-	 	$this->_driver->debug = $this->debug;
+		$this->_driver->debug = $this->debug;
 		$ret = $this->_driver->SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 		$this->_driver->fetchMode = $save;
 		return $ret;
@@ -223,76 +253,123 @@ class ADODB_pdo extends ADOConnection {
 	function InParameter(&$stmt,&$var,$name,$maxLen=4000,$type=false)
 	{
 		$obj = $stmt[1];
-		if ($type) $obj->bindParam($name,$var,$type,$maxLen);
-		else $obj->bindParam($name, $var);
+		if ($type) {
+			$obj->bindParam($name, $var, $type, $maxLen);
+		}
+		else {
+			$obj->bindParam($name, $var);
+		}
 	}
 
 	function OffsetDate($dayFraction,$date=false)
-    {
-        return $this->_driver->OffsetDate($dayFraction,$date);
-    }
+	{
+		return $this->_driver->OffsetDate($dayFraction,$date);
+	}
 
 	function ErrorMsg()
 	{
-		if ($this->_errormsg !== false) return $this->_errormsg;
-		if (!empty($this->_stmt)) $arr = $this->_stmt->errorInfo();
-		else if (!empty($this->_connectionID)) $arr = $this->_connectionID->errorInfo();
-		else return 'No Connection Established';
-
+		if ($this->_errormsg !== false) {
+			return $this->_errormsg;
+		}
+		if (!empty($this->_stmt)) {
+			$arr = $this->_stmt->errorInfo();
+		}
+		else if (!empty($this->_connectionID)) {
+			$arr = $this->_connectionID->errorInfo();
+		}
+		else {
+			return 'No Connection Established';
+		}
 
 		if ($arr) {
-		 	if (sizeof($arr)<2) return '';
-			if ((integer)$arr[0]) return $arr[2];
-			else return '';
-		} else return '-1';
+			if (sizeof($arr)<2) {
+				return '';
+			}
+			if ((integer)$arr[0]) {
+				return $arr[2];
+			}
+			else {
+				return '';
+			}
+		}
+		else {
+			return '-1';
+		}
 	}
 
 
 	function ErrorNo()
 	{
-		if ($this->_errorno !== false) return $this->_errorno;
-		if (!empty($this->_stmt)) $err = $this->_stmt->errorCode();
+		if ($this->_errorno !== false) {
+			return $this->_errorno;
+		}
+		if (!empty($this->_stmt)) {
+			$err = $this->_stmt->errorCode();
+		}
 		else if (!empty($this->_connectionID)) {
 			$arr = $this->_connectionID->errorInfo();
-			if (isset($arr[0])) $err = $arr[0];
-			else $err = -1;
-		} else
+			if (isset($arr[0])) {
+				$err = $arr[0];
+			}
+			else {
+				$err = -1;
+			}
+		} else {
 			return 0;
+		}
 
-		if ($err == '00000') return 0; // allows empty check
+		if ($err == '00000') {
+			return 0; // allows empty check
+		}
 		return $err;
 	}
 
 	function SetTransactionMode($transaction_mode)
 	{
-		if(method_exists($this->_driver, 'SetTransactionMode'))
+		if(method_exists($this->_driver, 'SetTransactionMode')) {
 			return $this->_driver->SetTransactionMode($transaction_mode);
+		}
 
 		return parent::SetTransactionMode($seqname);
 	}
 
 	function BeginTrans()
 	{
-		if(method_exists($this->_driver, 'BeginTrans'))
+		if(method_exists($this->_driver, 'BeginTrans')) {
 			return $this->_driver->BeginTrans();
+		}
 
-		if (!$this->hasTransactions) return false;
-		if ($this->transOff) return true;
+		if (!$this->hasTransactions) {
+			return false;
+		}
+		if ($this->transOff) {
+			return true;
+		}
 		$this->transCnt += 1;
 		$this->_autocommit = false;
 		$this->_connectionID->setAttribute(PDO::ATTR_AUTOCOMMIT,false);
+
 		return $this->_connectionID->beginTransaction();
 	}
 
 	function CommitTrans($ok=true)
 	{
-		if(method_exists($this->_driver, 'CommitTrans'))
+		if(method_exists($this->_driver, 'CommitTrans')) {
 			return $this->_driver->CommitTrans($ok);
+		}
 
-		if (!$this->hasTransactions) return false;
-		if ($this->transOff) return true;
-		if (!$ok) return $this->RollbackTrans();
-		if ($this->transCnt) $this->transCnt -= 1;
+		if (!$this->hasTransactions) {
+			return false;
+		}
+		if ($this->transOff) {
+			return true;
+		}
+		if (!$ok) {
+			return $this->RollbackTrans();
+		}
+		if ($this->transCnt) {
+			$this->transCnt -= 1;
+		}
 		$this->_autocommit = true;
 
 		$ret = $this->_connectionID->commit();
@@ -302,12 +379,19 @@ class ADODB_pdo extends ADOConnection {
 
 	function RollbackTrans()
 	{
-		if(method_exists($this->_driver, 'RollbackTrans'))
+		if(method_exists($this->_driver, 'RollbackTrans')) {
 			return $this->_driver->RollbackTrans();
+		}
 
-		if (!$this->hasTransactions) return false;
-		if ($this->transOff) return true;
-		if ($this->transCnt) $this->transCnt -= 1;
+		if (!$this->hasTransactions) {
+			return false;
+		}
+		if ($this->transOff) {
+			return true;
+		}
+		if ($this->transCnt) {
+			$this->transCnt -= 1;
+		}
 		$this->_autocommit = true;
 
 		$ret = $this->_connectionID->rollback();
@@ -318,7 +402,9 @@ class ADODB_pdo extends ADOConnection {
 	function Prepare($sql)
 	{
 		$this->_stmt = $this->_connectionID->prepare($sql);
-		if ($this->_stmt) return array($sql,$this->_stmt);
+		if ($this->_stmt) {
+			return array($sql,$this->_stmt);
+		}
 
 		return false;
 	}
@@ -326,31 +412,36 @@ class ADODB_pdo extends ADOConnection {
 	function PrepareStmt($sql)
 	{
 		$stmt = $this->_connectionID->prepare($sql);
-		if (!$stmt) return false;
+		if (!$stmt) {
+			return false;
+		}
 		$obj = new ADOPDOStatement($stmt,$this);
 		return $obj;
 	}
 
 	function CreateSequence($seqname='adodbseq',$startID=1)
 	{
-		if(method_exists($this->_driver, 'CreateSequence'))
+		if(method_exists($this->_driver, 'CreateSequence')) {
 			return $this->_driver->CreateSequence($seqname, $startID);
+		}
 
 		return parent::CreateSequence($seqname, $startID);
 	}
 
 	function DropSequence($seqname='adodbseq')
 	{
-		if(method_exists($this->_driver, 'DropSequence'))
+		if(method_exists($this->_driver, 'DropSequence')) {
 			return $this->_driver->DropSequence($seqname);
+		}
 
 		return parent::DropSequence($seqname);
 	}
 
 	function GenID($seqname='adodbseq',$startID=1)
 	{
-		if(method_exists($this->_driver, 'GenID'))
+		if(method_exists($this->_driver, 'GenID')) {
 			return $this->_driver->GenID($seqname, $startID);
+		}
 
 		return parent::GenID($seqname, $startID);
 	}
@@ -368,8 +459,12 @@ class ADODB_pdo extends ADOConnection {
 		#var_dump($this->_bindInputArray);
 		if ($stmt) {
 			$this->_driver->debug = $this->debug;
-			if ($inputarr) $ok = $stmt->execute($inputarr);
-			else $ok = $stmt->execute();
+			if ($inputarr) {
+				$ok = $stmt->execute($inputarr);
+			}
+			else {
+				$ok = $stmt->execute();
+			}
 		}
 
 
@@ -437,12 +532,12 @@ class ADODB_pdo_base extends ADODB_pdo {
 		return $ret;
 	}
 
-	function MetaTables()
+	function MetaTables($ttype=false,$showSchema=false,$mask=false)
 	{
 		return false;
 	}
 
-	function MetaColumns()
+	function MetaColumns($table,$normalize=true)
 	{
 		return false;
 	}
@@ -455,7 +550,7 @@ class ADOPDOStatement {
 	var $_stmt;
 	var $_connectionID;
 
-	function ADOPDOStatement($stmt,$connection)
+	function __construct($stmt,$connection)
 	{
 		$this->_stmt = $stmt;
 		$this->_connectionID = $connection;
@@ -472,8 +567,12 @@ class ADOPDOStatement {
 	function InParameter(&$var,$name,$maxLen=4000,$type=false)
 	{
 
-		if ($type) $this->_stmt->bindParam($name,$var,$type,$maxLen);
-		else $this->_stmt->bindParam($name, $var);
+		if ($type) {
+			$this->_stmt->bindParam($name,$var,$type,$maxLen);
+		}
+		else {
+			$this->_stmt->bindParam($name, $var);
+		}
 	}
 
 	function Affected_Rows()
@@ -483,13 +582,23 @@ class ADOPDOStatement {
 
 	function ErrorMsg()
 	{
-		if ($this->_stmt) $arr = $this->_stmt->errorInfo();
-		else $arr = $this->_connectionID->errorInfo();
+		if ($this->_stmt) {
+			$arr = $this->_stmt->errorInfo();
+		}
+		else {
+			$arr = $this->_connectionID->errorInfo();
+		}
 
 		if (is_array($arr)) {
-			if ((integer) $arr[0] && isset($arr[2])) return $arr[2];
-			else return '';
-		} else return '-1';
+			if ((integer) $arr[0] && isset($arr[2])) {
+				return $arr[2];
+			}
+			else {
+				return '';
+			}
+		} else {
+			return '-1';
+		}
 	}
 
 	function NumCols()
@@ -499,13 +608,17 @@ class ADOPDOStatement {
 
 	function ErrorNo()
 	{
-		if ($this->_stmt) return $this->_stmt->errorCode();
-		else return $this->_connectionID->errorInfo();
+		if ($this->_stmt) {
+			return $this->_stmt->errorCode();
+		}
+		else {
+			return $this->_connectionID->errorInfo();
+		}
 	}
 }
 
 /*--------------------------------------------------------------------------------------
-	 Class Name: Recordset
+	Class Name: Recordset
 --------------------------------------------------------------------------------------*/
 
 class ADORecordSet_pdo extends ADORecordSet {
@@ -514,7 +627,7 @@ class ADORecordSet_pdo extends ADORecordSet {
 	var $databaseType = "pdo";
 	var $dataProvider = "pdo";
 
-	function ADORecordSet_pdo($id,$mode=false)
+	function __construct($id,$mode=false)
 	{
 		if ($mode === false) {
 			global $ADODB_FETCH_MODE;
@@ -531,15 +644,19 @@ class ADORecordSet_pdo extends ADORecordSet {
 		$this->fetchMode = $mode;
 
 		$this->_queryID = $id;
-		$this->ADORecordSet($id);
+		parent::__construct($id);
 	}
 
 
 	function Init()
 	{
-		if ($this->_inited) return;
+		if ($this->_inited) {
+			return;
+		}
 		$this->_inited = true;
-		if ($this->_queryID) @$this->_initrs();
+		if ($this->_queryID) {
+			@$this->_initrs();
+		}
 		else {
 			$this->_numOfRows = 0;
 			$this->_numOfFields = 0;
@@ -559,7 +676,9 @@ class ADORecordSet_pdo extends ADORecordSet {
 	global $ADODB_COUNTRECS;
 
 		$this->_numOfRows = ($ADODB_COUNTRECS) ? @$this->_queryID->rowCount() : -1;
-		if (!$this->_numOfRows) $this->_numOfRows = -1;
+		if (!$this->_numOfRows) {
+			$this->_numOfRows = -1;
+		}
 		$this->_numOfFields = $this->_queryID->columnCount();
 	}
 
@@ -580,13 +699,23 @@ class ADORecordSet_pdo extends ADORecordSet {
 		}
 		//adodb_pr($arr);
 		$o->name = $arr['name'];
-		if (isset($arr['native_type']) && $arr['native_type'] <> "null") $o->type = $arr['native_type'];
-		else $o->type = adodb_pdo_type($arr['pdo_type']);
+		if (isset($arr['native_type']) && $arr['native_type'] <> "null") {
+			$o->type = $arr['native_type'];
+		}
+		else {
+			$o->type = adodb_pdo_type($arr['pdo_type']);
+		}
 		$o->max_length = $arr['len'];
 		$o->precision = $arr['precision'];
 
-		if (ADODB_ASSOC_CASE == 0) $o->name = strtolower($o->name);
-		else if (ADODB_ASSOC_CASE == 1) $o->name = strtoupper($o->name);
+		switch(ADODB_ASSOC_CASE) {
+			case ADODB_ASSOC_CASE_LOWER:
+				$o->name = strtolower($o->name);
+				break;
+			case ADODB_ASSOC_CASE_UPPER:
+				$o->name = strtoupper($o->name);
+				break;
+		}
 		return $o;
 	}
 
@@ -597,7 +726,9 @@ class ADORecordSet_pdo extends ADORecordSet {
 
 	function _fetch()
 	{
-		if (!$this->_queryID) return false;
+		if (!$this->_queryID) {
+			return false;
+		}
 
 		$this->fields = $this->_queryID->fetch($this->fetchMode);
 		return !empty($this->fields);
@@ -610,7 +741,9 @@ class ADORecordSet_pdo extends ADORecordSet {
 
 	function Fields($colname)
 	{
-		if ($this->adodbFetchMode != ADODB_FETCH_NUM) return @$this->fields[$colname];
+		if ($this->adodbFetchMode != ADODB_FETCH_NUM) {
+			return @$this->fields[$colname];
+		}
 
 		if (!$this->bind) {
 			$this->bind = array();
@@ -619,7 +752,7 @@ class ADORecordSet_pdo extends ADORecordSet {
 				$this->bind[strtoupper($o->name)] = $i;
 			}
 		}
-		 return $this->fields[$this->bind[strtoupper($colname)]];
+		return $this->fields[$this->bind[strtoupper($colname)]];
 	}
 
 }

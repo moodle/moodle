@@ -25,7 +25,7 @@
 
 define('AJAX_SCRIPT', true);
 
-require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 
 // Initialise ALL the incoming parameters here, up front.
 $id         = required_param('id', PARAM_INT);

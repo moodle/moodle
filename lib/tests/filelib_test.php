@@ -504,6 +504,45 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('OK', $contents);
     }
 
+    public function test_curl_protocols() {
+
+        // HTTP and HTTPS requests were verified in previous requests. Now check
+        // that we can selectively disable some protocols.
+        $curl = new curl();
+
+        // Other protocols than HTTP(S) are disabled by default.
+        $testurl = 'file:///';
+        $curl->get($testurl);
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        $testurl = 'ftp://nowhere';
+        $curl->get($testurl);
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        $testurl = 'telnet://somewhere';
+        $curl->get($testurl);
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        // Protocols are also disabled during redirections.
+        $testurl = $this->getExternalTestFileUrl('/test_redir_proto.php');
+        $curl->get($testurl, array('proto' => 'file'));
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        $testurl = $this->getExternalTestFileUrl('/test_redir_proto.php');
+        $curl->get($testurl, array('proto' => 'ftp'));
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+
+        $testurl = $this->getExternalTestFileUrl('/test_redir_proto.php');
+        $curl->get($testurl, array('proto' => 'telnet'));
+        $this->assertNotEmpty($curl->error);
+        $this->assertEquals(CURLE_UNSUPPORTED_PROTOCOL, $curl->errno);
+    }
+
     /**
      * Testing prepare draft area
      *
@@ -784,5 +823,435 @@ EOF;
         $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexample));
         // Test it does nothing to the 'plain' data.
         $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
+    }
+
+    /**
+     * Tests the get_mimetype_description function.
+     */
+    public function test_get_mimetype_description() {
+        $this->resetAfterTest();
+
+        // Test example type (.doc).
+        $this->assertEquals(get_string('application/msword', 'mimetypes'),
+                get_mimetype_description(array('filename' => 'test.doc')));
+
+        // Test an unknown file type.
+        $this->assertEquals(get_string('document/unknown', 'mimetypes'),
+                get_mimetype_description(array('filename' => 'test.frog')));
+
+        // Test a custom filetype with no lang string specified.
+        core_filetypes::add_type('frog', 'application/x-frog', 'document');
+        $this->assertEquals('application/x-frog',
+                get_mimetype_description(array('filename' => 'test.frog')));
+
+        // Test custom description.
+        core_filetypes::update_type('frog', 'frog', 'application/x-frog', 'document',
+                array(), '', 'Froggy file');
+        $this->assertEquals('Froggy file',
+                get_mimetype_description(array('filename' => 'test.frog')));
+
+        // Test custom description using multilang filter.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+        core_filetypes::update_type('frog', 'frog', 'application/x-frog', 'document',
+                array(), '', '<span lang="en" class="multilang">Green amphibian</span>' .
+                '<span lang="fr" class="multilang">Amphibian vert</span>');
+        $this->assertEquals('Green amphibian',
+                get_mimetype_description(array('filename' => 'test.frog')));
+    }
+
+    /**
+     * Tests the get_mimetypes_array function.
+     */
+    public function test_get_mimetypes_array() {
+        $mimeinfo = get_mimetypes_array();
+
+        // Test example MIME type (doc).
+        $this->assertEquals('application/msword', $mimeinfo['doc']['type']);
+        $this->assertEquals('document', $mimeinfo['doc']['icon']);
+        $this->assertEquals(array('document'), $mimeinfo['doc']['groups']);
+        $this->assertFalse(isset($mimeinfo['doc']['string']));
+        $this->assertFalse(isset($mimeinfo['doc']['defaulticon']));
+        $this->assertFalse(isset($mimeinfo['doc']['customdescription']));
+
+        // Check the less common fields using other examples.
+        $this->assertEquals('image', $mimeinfo['png']['string']);
+        $this->assertEquals(true, $mimeinfo['txt']['defaulticon']);
+    }
+
+    /**
+     * Tests for get_mimetype_for_sending function.
+     */
+    public function test_get_mimetype_for_sending() {
+        // Without argument.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending());
+
+        // Argument is null.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending(null));
+
+        // Filename having no extension.
+        $this->assertEquals('application/octet-stream', get_mimetype_for_sending('filenamewithoutextension'));
+
+        // Test using the extensions listed from the get_mimetypes_array function.
+        $mimetypes = get_mimetypes_array();
+        foreach ($mimetypes as $ext => $info) {
+            if ($ext === 'xxx') {
+                $this->assertEquals('application/octet-stream', get_mimetype_for_sending('SampleFile.' . $ext));
+            } else {
+                $this->assertEquals($info['type'], get_mimetype_for_sending('SampleFile.' . $ext));
+            }
+        }
+    }
+
+    /**
+     * Test curl agent settings.
+     */
+    public function test_curl_useragent() {
+        $curl = new testable_curl();
+        $options = $curl->get_options();
+        $this->assertNotEmpty($options);
+
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: Test/1.0', $curl->header));
+
+        $options['CURLOPT_USERAGENT'] = 'Test/1.0';
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: Test/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+
+        $curl->set_option('CURLOPT_USERAGENT', 'AnotherUserAgent/1.0');
+        $curl->call_apply_opt();
+        $this->assertTrue(in_array('User-Agent: AnotherUserAgent/1.0', $curl->header));
+        $this->assertFalse(in_array('User-Agent: Test/1.0', $curl->header));
+
+        $curl->set_option('CURLOPT_USERAGENT', 'AnotherUserAgent/1.1');
+        $options = $curl->get_options();
+        $curl->call_apply_opt($options);
+        $this->assertTrue(in_array('User-Agent: AnotherUserAgent/1.1', $curl->header));
+        $this->assertFalse(in_array('User-Agent: AnotherUserAgent/1.0', $curl->header));
+
+        $curl->unset_option('CURLOPT_USERAGENT');
+        $curl->call_apply_opt();
+        $this->assertTrue(in_array('User-Agent: MoodleBot/1.0', $curl->header));
+
+        // Finally, test it via exttests, to ensure the agent is sent properly.
+        // Matching.
+        $testurl = $this->getExternalTestFileUrl('/test_agent.php');
+        $extcurl = new curl();
+        $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'AnotherUserAgent/1.2'));
+        $response = $extcurl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $extcurl->get_errno());
+        $this->assertSame('OK', $contents);
+        // Not matching.
+        $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'NonMatchingUserAgent/1.2'));
+        $response = $extcurl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $extcurl->get_errno());
+        $this->assertSame('', $contents);
+    }
+
+    /**
+     * Test file_rewrite_pluginfile_urls.
+     */
+    public function test_file_rewrite_pluginfile_urls() {
+
+        $syscontext = context_system::instance();
+        $originaltext = 'Fake test with an image <img src="@@PLUGINFILE@@/image.png">';
+
+        // Do the rewrite.
+        $finaltext = file_rewrite_pluginfile_urls($originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0);
+        $this->assertContains("pluginfile.php", $finaltext);
+
+        // Now undo.
+        $options = array('reverse' => true);
+        $finaltext = file_rewrite_pluginfile_urls($finaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        // Compare the final text is the same that the original.
+        $this->assertEquals($originaltext, $finaltext);
+    }
+
+    /**
+     * Helpter function to create draft files
+     *
+     * @param  array  $filedata data for the file record (to not use defaults)
+     * @return stored_file the stored file instance
+     */
+    public static function create_draft_file($filedata = array()) {
+        global $USER;
+
+        self::setAdminUser();
+        $fs = get_file_storage();
+
+        $filerecord = array(
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => isset($filedata['itemid']) ? $filedata['itemid'] : file_get_unused_draft_itemid(),
+            'author'    => isset($filedata['author']) ? $filedata['author'] : fullname($USER),
+            'filepath'  => isset($filedata['filepath']) ? $filedata['filepath'] : '/',
+            'filename'  => isset($filedata['filename']) ? $filedata['filename'] : 'file.txt',
+        );
+
+        if (isset($filedata['contextid'])) {
+            $filerecord['contextid'] = $filedata['contextid'];
+        } else {
+            $usercontext = context_user::instance($USER->id);
+            $filerecord['contextid'] = $usercontext->id;
+        }
+        $source = isset($filedata['source']) ? $filedata['source'] : serialize((object)array('source' => 'From string'));
+        $content = isset($filedata['content']) ? $filedata['content'] : 'some content here';
+
+        $file = $fs->create_file_from_string($filerecord, $content);
+        $file->set_source($source);
+
+        return $file;
+    }
+
+    /**
+     * Test file_merge_files_from_draft_area_into_filearea
+     */
+    public function test_file_merge_files_from_draft_area_into_filearea() {
+        global $USER, $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+        $usercontext = context_user::instance($USER->id);
+
+        // Create a draft file.
+        $filename = 'data.txt';
+        $filerecord = array(
+            'filename'  => $filename,
+        );
+        $file = self::create_draft_file($filerecord);
+        $draftitemid = $file->get_itemid();
+
+        $maxbytes = $CFG->userquota;
+        $maxareabytes = $CFG->userquota;
+        $options = array('subdirs' => 1,
+                         'maxbytes' => $maxbytes,
+                         'maxfiles' => -1,
+                         'areamaxbytes' => $maxareabytes);
+
+        // Add new file.
+        file_merge_files_from_draft_area_into_filearea($draftitemid, $usercontext->id, 'user', 'private', 0, $options);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        // Directory and file.
+        $this->assertCount(2, $files);
+        $found = false;
+        foreach ($files as $file) {
+            if (!$file->is_directory()) {
+                $found = true;
+                $this->assertEquals($filename, $file->get_filename());
+                $this->assertEquals('some content here', $file->get_content());
+            }
+        }
+        $this->assertTrue($found);
+
+        // Add two more files.
+        $filerecord = array(
+            'itemid'  => $draftitemid,
+            'filename'  => 'second.txt',
+        );
+        self::create_draft_file($filerecord);
+        $filerecord = array(
+            'itemid'  => $draftitemid,
+            'filename'  => 'third.txt',
+        );
+        $file = self::create_draft_file($filerecord);
+
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $usercontext->id, 'user', 'private', 0, $options);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(4, $files);
+
+        // Update contents of one file.
+        $filerecord = array(
+            'filename'  => 'second.txt',
+            'content'  => 'new content',
+        );
+        $file = self::create_draft_file($filerecord);
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $usercontext->id, 'user', 'private', 0, $options);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(4, $files);
+        $found = false;
+        foreach ($files as $file) {
+            if ($file->get_filename() == 'second.txt') {
+                $found = true;
+                $this->assertEquals('new content', $file->get_content());
+            }
+        }
+        $this->assertTrue($found);
+
+        // Update author.
+        // Set different author in the current file.
+        foreach ($files as $file) {
+            if ($file->get_filename() == 'second.txt') {
+                $file->set_author('Nobody');
+            }
+        }
+        $filerecord = array(
+            'filename'  => 'second.txt',
+        );
+        $file = self::create_draft_file($filerecord);
+
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $usercontext->id, 'user', 'private', 0, $options);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(4, $files);
+        $found = false;
+        foreach ($files as $file) {
+            if ($file->get_filename() == 'second.txt') {
+                $found = true;
+                $this->assertEquals(fullname($USER), $file->get_author());
+            }
+        }
+        $this->assertTrue($found);
+
+    }
+
+    /**
+     * Test max area bytes for file_merge_files_from_draft_area_into_filearea
+     */
+    public function test_file_merge_files_from_draft_area_into_filearea_max_area_bytes() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $file = self::create_draft_file();
+        $options = array('subdirs' => 1,
+                         'maxbytes' => 5,
+                         'maxfiles' => -1,
+                         'areamaxbytes' => 10);
+
+        // Add new file.
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $file->get_contextid(), 'user', 'private', 0, $options);
+        $usercontext = context_user::instance($USER->id);
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(0, $files);
+    }
+
+    /**
+     * Test max file bytes for file_merge_files_from_draft_area_into_filearea
+     */
+    public function test_file_merge_files_from_draft_area_into_filearea_max_file_bytes() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $file = self::create_draft_file();
+        $options = array('subdirs' => 1,
+                         'maxbytes' => 1,
+                         'maxfiles' => -1,
+                         'areamaxbytes' => 100);
+
+        // Add new file.
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $file->get_contextid(), 'user', 'private', 0, $options);
+        $usercontext = context_user::instance($USER->id);
+        // Check we only get the base directory, not a new file.
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(1, $files);
+        $file = array_shift($files);
+        $this->assertTrue($file->is_directory());
+    }
+
+    /**
+     * Test max file number for file_merge_files_from_draft_area_into_filearea
+     */
+    public function test_file_merge_files_from_draft_area_into_filearea_max_files() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $file = self::create_draft_file();
+        $options = array('subdirs' => 1,
+                         'maxbytes' => 1000,
+                         'maxfiles' => 0,
+                         'areamaxbytes' => 1000);
+
+        // Add new file.
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $file->get_contextid(), 'user', 'private', 0, $options);
+        $usercontext = context_user::instance($USER->id);
+        // Check we only get the base directory, not a new file.
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(1, $files);
+        $file = array_shift($files);
+        $this->assertTrue($file->is_directory());
+    }
+}
+
+/**
+ * Test-specific class to allow easier testing of curl functions.
+ *
+ * @copyright 2015 Dave Cooper
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class testable_curl extends curl {
+    /**
+     * Accessor for private options array using reflection.
+     *
+     * @return array
+     */
+    public function get_options() {
+        // Access to private property.
+        $rp = new ReflectionProperty('curl', 'options');
+        $rp->setAccessible(true);
+        return $rp->getValue($this);
+    }
+
+    /**
+     * Setter for private options array using reflection.
+     *
+     * @param array $options
+     */
+    public function set_options($options) {
+        // Access to private property.
+        $rp = new ReflectionProperty('curl', 'options');
+        $rp->setAccessible(true);
+        $rp->setValue($this, $options);
+    }
+
+    /**
+     * Setter for individual option.
+     * @param string $option
+     * @param string $value
+     */
+    public function set_option($option, $value) {
+        $options = $this->get_options();
+        $options[$option] = $value;
+        $this->set_options($options);
+    }
+
+    /**
+     * Unsets an option on the curl object
+     * @param string $option
+     */
+    public function unset_option($option) {
+        $options = $this->get_options();
+        unset($options[$option]);
+        $this->set_options($options);
+    }
+
+    /**
+     * Wrapper to access the private curl::apply_opt() method using reflection.
+     *
+     * @param array $options
+     * @return resource The curl handle
+     */
+    public function call_apply_opt($options = null) {
+        // Access to private method.
+        $rm = new ReflectionMethod('curl', 'apply_opt');
+        $rm->setAccessible(true);
+        $ch = curl_init();
+        return $rm->invoke($this, $ch, $options);
     }
 }

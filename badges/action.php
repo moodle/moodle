@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 $badgeid = required_param('id', PARAM_INT);
@@ -115,8 +115,7 @@ if ($activate) {
     $url = new moodle_url('/badges/action.php', $params);
 
     if (!$badge->has_criteria()) {
-        echo $OUTPUT->notification(get_string('error:cannotact', 'badges') . get_string('nocriteria', 'badges'));
-        echo $OUTPUT->continue_button($returnurl);
+        redirect($returnurl, get_string('error:cannotact', 'badges') . get_string('nocriteria', 'badges'), null, \core\output\notification::NOTIFY_ERROR);
     } else {
         $message = get_string('reviewconfirm', 'badges', $badge->name);
         echo $OUTPUT->confirm($message, $url, $returnurl);

@@ -1,5 +1,5 @@
 .block {
-    padding: 0
+    padding: 0;
 }
 
 .block .footer {
@@ -23,7 +23,10 @@
     text-align: left;
     font-size: 1.1em;
 }
-.dir-rtl .block h3 {text-align: right;}
+
+.dir-rtl .block h3 {
+    text-align: right;
+}
 
 /* Login
 ------------------------------*/
@@ -34,19 +37,22 @@
 
 .block_login #login_username,
 .block_login #login_password {
-    width:90%;
+    width: 90%;
     margin-bottom: 0.5em;
     padding: 2px 5px;
 }
 
 .block_login .btn {
-    margin-top:1em;
+    margin-top: 1em;
 }
 
 .block_login .footer {
     text-align: left;
 }
-.dir-rtl .block_login .footer {text-align: right;}
+
+.dir-rtl .block_login .footer {
+    text-align: right;
+}
 
 /* News
 -------------------------------*/

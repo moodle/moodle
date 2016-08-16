@@ -28,6 +28,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('smtphosts', get_string('smtphosts', 'message_email'), get_string('configsmtphosts', 'message_email'), '', PARAM_RAW));
     $options = array('' => get_string('none', 'message_email'), 'ssl' => 'SSL', 'tls' => 'TLS');
     $settings->add(new admin_setting_configselect('smtpsecure', get_string('smtpsecure', 'message_email'), get_string('configsmtpsecure', 'message_email'), '', $options));
+    $authtypeoptions = array('LOGIN' => 'LOGIN', 'PLAIN' => 'PLAIN', 'NTLM' => 'NTLM', 'CRAM-MD5' => 'CRAM-MD5');
+    $settings->add(new admin_setting_configselect('smtpauthtype', get_string('smtpauthtype', 'message_email'), get_string('configsmtpauthtype', 'message_email'), 'LOGIN', $authtypeoptions));
     $settings->add(new admin_setting_configtext('smtpuser', get_string('smtpuser', 'message_email'), get_string('configsmtpuser', 'message_email'), '', PARAM_NOTAGS));
     $settings->add(new admin_setting_configpasswordunmask('smtppass', get_string('smtppass', 'message_email'), get_string('configsmtpuser', 'message_email'), ''));
     $settings->add(new admin_setting_configtext('smtpmaxbulk', get_string('smtpmaxbulk', 'message_email'), get_string('configsmtpmaxbulk', 'message_email'), 1, PARAM_INT));

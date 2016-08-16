@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Course module completion event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int relateduserid: (optional) the related user id.
+ * }
+ *
  * @package    core
  * @since      Moodle 2.6
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
@@ -106,5 +112,17 @@ class course_module_completion_updated extends base {
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        // Sorry mapping info is not available for course modules completion records.
+        return array('db' => 'course_modules_completion', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['relateduserid'] = array('db' => 'user', 'restore' => 'user');
+
+        return $othermapped;
     }
 }

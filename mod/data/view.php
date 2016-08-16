@@ -22,7 +22,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once(dirname(__FILE__) . '/../../config.php');
+    require_once(__DIR__ . '/../../config.php');
     require_once($CFG->dirroot . '/mod/data/lib.php');
     require_once($CFG->libdir . '/rsslib.php');
     require_once($CFG->libdir . '/completionlib.php');
@@ -373,13 +373,15 @@
 
 /// Delete any requested records
 
-    if ($delete && confirm_sesskey() && ($canmanageentries or data_isowner($delete))) {
+    if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
             if (data_delete_record($delete, $data, $course->id, $cm->id)) {
                 echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
             }
         } else {   // Print a confirmation page
-            $allnamefields = get_all_user_name_fields(true, 'u');
+            $allnamefields = user_picture::fields('u');
+            // Remove the id from the string. This already exists in the sql statement.
+            $allnamefields = str_replace('u.id,', '', $allnamefields);
             $dbparams = array($delete);
             if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
                                                        FROM {data_records} dr
@@ -415,14 +417,20 @@
             $validrecords = array();
             $recordids = array();
             foreach ($multidelete as $value) {
-                if ($deleterecord = $DB->get_record('data_records', array('id'=>$value))) {   // Need to check this is valid
-                    if ($deleterecord->dataid == $data->id) {                       // Must be from this database
+                $allnamefields = user_picture::fields('u');
+                // Remove the id from the string. This already exists in the sql statement.
+                $allnamefields = str_replace('u.id,', '', $allnamefields);
+                $dbparams = array('id' => $value);
+                if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
+                                                           FROM {data_records} dr
+                                                           JOIN {user} u ON dr.userid = u.id
+                                                          WHERE dr.id = ?", $dbparams)) { // Need to check this is valid.
+                    if ($deleterecord->dataid == $data->id) {  // Must be from this database.
                         $validrecords[] = $deleterecord;
                         $recordids[] = $deleterecord->id;
                     }
                 }
             }
-
             $serialiseddata = json_encode($recordids);
             $submitactions = array('d' => $data->id, 'sesskey' => sesskey(), 'confirm' => '1', 'serialdelete' => $serialiseddata);
             $action = new moodle_url('/mod/data/view.php', $submitactions);
@@ -461,11 +469,9 @@ if ($showactivity) {
     }
     include('tabs.php');
 
-    $url = new moodle_url('/mod/data/view.php', array('d' => $data->id, 'sesskey' => sesskey()));
-    echo html_writer::start_tag('form', array('action' => $url, 'method' => 'post'));
-
     if ($mode == 'asearch') {
         $maxcount = 0;
+        data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
 
     } else {
         // Approve or disapprove any requested records
@@ -542,7 +548,9 @@ if ($showactivity) {
         $advparams       = array();
         // This is used for the initial reduction of advanced search results with required entries.
         $entrysql        = '';
-        $namefields = get_all_user_name_fields(true, 'u');
+        $namefields = user_picture::fields('u');
+        // Remove the id from the string. This already exists in the sql statement.
+        $namefields = str_replace('u.id,', '', $namefields);
 
     /// Find the field we are sorting on
         if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
@@ -704,6 +712,11 @@ if ($showactivity) {
             $nowperpage = $perpage;
         }
 
+        // Advanced search form doesn't make sense for single (redirects list view).
+        if ($maxcount && $mode != 'single') {
+            data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
+        }
+
     /// Get the actual records
 
         if (!$records = $DB->get_records_sql($sqlselect, $allparams, $page * $nowperpage, $nowperpage)) {
@@ -730,7 +743,10 @@ if ($showactivity) {
                 echo $OUTPUT->notification(get_string('norecords','data'));
             }
 
-        } else { //  We have some records to print
+        } else {
+            //  We have some records to print.
+            $url = new moodle_url('/mod/data/view.php', array('d' => $data->id, 'sesskey' => sesskey()));
+            echo html_writer::start_tag('form', array('action' => $url, 'method' => 'post'));
 
             if ($maxcount != $totalcount) {
                 $a = new stdClass();
@@ -802,6 +818,28 @@ if ($showactivity) {
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
             }
 
+            if ($mode != 'single' && $canmanageentries) {
+                echo html_writer::empty_tag('input', array(
+                        'type' => 'button',
+                        'id' => 'checkall',
+                        'value' => get_string('selectall'),
+                    ));
+                echo html_writer::empty_tag('input', array(
+                        'type' => 'button',
+                        'id' => 'checknone',
+                        'value' => get_string('deselectall'),
+                    ));
+                echo html_writer::empty_tag('input', array(
+                        'class' => 'form-submit',
+                        'type' => 'submit',
+                        'value' => get_string('deleteselected'),
+                    ));
+
+                $module = array('name' => 'mod_data', 'fullpath' => '/mod/data/module.js');
+                $PAGE->requires->js_init_call('M.mod_data.init_view', null, false, $module);
+            }
+
+            echo html_writer::end_tag('form');
         }
     }
 
@@ -810,29 +848,25 @@ if ($showactivity) {
         $records = array();
     }
 
-    if ($mode != 'single' && $canmanageentries) {
-        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'value' => get_string('selectall')));
-        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checknone', 'value' => get_string('deselectall')));
-        echo html_writer::empty_tag('input', array('class' => 'form-submit', 'type' => 'submit', 'value' => get_string('deleteselected')));
-
-        $module = array('name'=>'mod_data', 'fullpath'=>'/mod/data/module.js');
-        $PAGE->requires->js_init_call('M.mod_data.init_view', null, false, $module);
-    }
-    echo html_writer::end_tag('form');
-
+    // Check to see if we can export records to a portfolio. This is for exporting all records, not just the ones in the search.
     if ($mode == '' && !empty($CFG->enableportfolios) && !empty($records)) {
-        require_once($CFG->libdir . '/portfoliolib.php');
-        $button = new portfolio_add_button();
-        $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), 'mod_data');
-        if (data_portfolio_caller::has_files($data)) {
-            $button->set_formats(array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_LEAP2A)); // no plain html for us
+        $canexport = false;
+        // Exportallentries and exportentry are basically the same capability.
+        if (has_capability('mod/data:exportallentries', $context) || has_capability('mod/data:exportentry', $context)) {
+            $canexport = true;
+        } else if (has_capability('mod/data:exportownentry', $context) &&
+                $DB->record_exists('data_records', array('userid' => $USER->id))) {
+            $canexport = true;
         }
-        echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
-    }
-
-    //Advanced search form doesn't make sense for single (redirects list view)
-    if (($maxcount || $mode == 'asearch') && $mode != 'single') {
-        data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
+        if ($canexport) {
+            require_once($CFG->libdir . '/portfoliolib.php');
+            $button = new portfolio_add_button();
+            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id), 'mod_data');
+            if (data_portfolio_caller::has_files($data)) {
+                $button->set_formats(array(PORTFOLIO_FORMAT_RICHHTML, PORTFOLIO_FORMAT_LEAP2A)); // No plain html for us.
+            }
+            echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
+        }
     }
 }
 

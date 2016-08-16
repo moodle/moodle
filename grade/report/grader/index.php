@@ -40,8 +40,8 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 $toggle        = optional_param('toggle', null, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
-$graderreportsifirst  = optional_param('sifirst', null, PARAM_ALPHA);
-$graderreportsilast   = optional_param('silast', null, PARAM_ALPHA);
+$graderreportsifirst  = optional_param('sifirst', null, PARAM_NOTAGS);
+$graderreportsilast   = optional_param('silast', null, PARAM_NOTAGS);
 
 // The report object is recreated each time, save search information to SESSION object for future use.
 if (isset($graderreportsifirst)) {
@@ -115,15 +115,15 @@ if (!is_null($toggle) && !empty($toggle_type)) {
     set_user_preferences(array('grade_report_show'.$toggle_type => $toggle));
 }
 
-//first make sure we have proper final grades - this must be done before constructing of the grade tree
-grade_regrade_final_grades($courseid);
-
 // Perform actions
 if (!empty($target) && !empty($action) && confirm_sesskey()) {
     grade_report_grader::do_process_action($target, $action, $courseid);
 }
 
 $reportname = get_string('pluginname', 'gradereport_grader');
+
+// Do this check just before printing the grade header (and only do it once).
+grade_regrade_final_grades_if_required($course);
 
 // Print header
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);

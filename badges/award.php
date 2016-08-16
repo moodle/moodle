@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->dirroot . '/badges/lib/awardlib.php');
 
@@ -110,14 +110,16 @@ if (count($acceptedroles) > 1) {
         if (!$role) {
             $pageurl = new moodle_url('/badges/award.php', array('id' => $badgeid));
             echo $OUTPUT->header();
-            echo $OUTPUT->box(get_string('selectaward', 'badges') . $OUTPUT->single_select(new moodle_url($pageurl), 'role', $select));
+            echo $OUTPUT->box($OUTPUT->single_select(new moodle_url($pageurl), 'role', $select, '', array('' => 'choosedots'),
+                null, array('label' => get_string('selectaward', 'badges'))));
             echo $OUTPUT->footer();
             die();
         } else {
             $pageurl = new moodle_url('/badges/award.php', array('id' => $badgeid));
             $issuerrole = new stdClass();
             $issuerrole->roleid = $role;
-            $roleselect = get_string('selectaward', 'badges') . $OUTPUT->single_select(new moodle_url($pageurl), 'role', $select, $role, null);
+            $roleselect = $OUTPUT->single_select(new moodle_url($pageurl), 'role', $select, $role, null, null,
+                array('label' => get_string('selectaward', 'badges')));
         }
     } else {
         echo $OUTPUT->header();

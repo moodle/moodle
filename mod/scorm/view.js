@@ -83,6 +83,7 @@ M.mod_scormform.init = function(Y) {
         winobj = window.open(launch_url,'Popup', poptions);
         this.target = 'Popup';
         scormredirect(winobj);
+        winobj.opener = null;
     }
     // Listen for view form submit and generate popup on user interaction.
     if (scormform) {
@@ -91,6 +92,7 @@ M.mod_scormform.init = function(Y) {
             winobj = window.open(launch_url, 'Popup', poptions);
             this.target = 'Popup';
             scormredirect(winobj);
+            winobj.opener = null;
             e.preventDefault();
         }, scormform);
     }

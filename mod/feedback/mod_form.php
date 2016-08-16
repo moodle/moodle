@@ -46,7 +46,7 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('description', 'feedback'));
+        $this->standard_intro_elements(get_string('description', 'feedback'));
 
         //-------------------------------------------------------------------------------
         $mform->addElement('header', 'timinghdr', get_string('availability'));
@@ -179,8 +179,21 @@ class mod_feedback_mod_form extends moodleform_mod {
         return $data;
     }
 
+    /**
+     * Enforce validation rules here
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array
+     **/
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+
+        // Check open and close times are consistent.
+        if ($data['timeopen'] && $data['timeclose'] &&
+                $data['timeclose'] < $data['timeopen']) {
+            $errors['timeclose'] = get_string('closebeforeopen', 'feedback');
+        }
         return $errors;
     }
 

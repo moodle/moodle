@@ -322,7 +322,7 @@ function profile_delete_field($id) {
     // but show the field as missing until manually corrected to something else.
 
     // Need to rebuild course cache to update the info.
-    rebuild_course_cache();
+    rebuild_course_cache(0, true);
 
     // Try to remove the record from the database.
     $DB->delete_records('user_info_field', array('id' => $id));

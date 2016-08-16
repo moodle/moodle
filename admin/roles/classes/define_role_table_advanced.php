@@ -413,7 +413,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     public function save_changes() {
-        global $DB;
+        global $DB, $CFG;
 
         if (!$this->roleid) {
             // Creating role.
@@ -422,6 +422,13 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         } else {
             // Updating role.
             $DB->update_record('role', $this->role);
+
+            // This will ensure the course contacts cache is purged so name changes get updated in
+            // the UI. It would be better to do this only when we know that fields affected are
+            // updated. But thats getting into the weeds of the coursecat cache and role edits
+            // should not be that frequent, so here is the ugly brutal approach.
+            require_once($CFG->libdir . '/coursecatlib.php');
+            coursecat::role_assignment_changed($this->role->id, context_system::instance());
         }
 
         // Assignable contexts.
@@ -472,7 +479,9 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     protected function get_description_field($id) {
-        return print_textarea(true, 10, 50, 50, 10, 'description', $this->role->description, 0, true);
+        return '<textarea class="form-textarea" id="'. s($id) .'" name="description" rows="10" cols="50">' .
+            htmlspecialchars($this->role->description) .
+            '</textarea>';
     }
 
     protected function get_archetype_field($id) {
@@ -626,6 +635,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
 
     protected function add_permission_cells($capability) {
         // One cell for each possible permission.
+        $content = '';
         foreach ($this->displaypermissions as $perm => $permname) {
             $strperm = $this->strperms[$permname];
             $extraclass = '';
@@ -636,11 +646,12 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
             if ($this->permissions[$capability->name] == $perm) {
                 $checked = 'checked="checked" ';
             }
-            echo '<td class="' . $permname . $extraclass . '">';
-            echo '<label><input type="radio" name="' . $capability->name .
+            $content .= '<td class="' . $permname . $extraclass . '">';
+            $content .= '<label><input type="radio" name="' . $capability->name .
                 '" value="' . $perm . '" ' . $checked . '/> ';
-            echo '<span class="note">' . $strperm . '</span>';
-            echo '</label></td>';
+            $content .= '<span class="note">' . $strperm . '</span>';
+            $content .= '</label></td>';
         }
+        return $content;
     }
 }

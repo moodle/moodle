@@ -57,7 +57,7 @@ if (!$showcoursetheme && $theme === 'course_theme') { // Set compact as default 
 }
 
 // If requested theme doesn't exist, use default 'bubble' theme.
-if ($theme != 'course_theme' and !file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
+if ($theme != 'course_theme' and !file_exists(__DIR__ . '/theme/'.$theme.'/chat.css')) {
     $theme = 'compact';
 }
 

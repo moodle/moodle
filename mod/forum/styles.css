@@ -63,6 +63,7 @@
 .path-mod-forum .forumheaderlist th.header.replies .iconsmall { margin: 0 .3em;}
 .path-mod-forum .forumheaderlist .picture {width: 35px;}
 .path-mod-forum .forumheaderlist .discussion .starter {vertical-align: middle;}
+.path-mod-forum .forumheaderlist .discussion .pinned img {padding: 5px;}
 .path-mod-forum .forumheaderlist .discussion .lastpost {white-space: nowrap;text-align: right;}
 .path-mod-forum .forumheaderlist .replies,
 .path-mod-forum .forumheaderlist .discussion .author {white-space: nowrap;}
@@ -81,11 +82,11 @@
 
 /** Styles for discuss.php **/
 #page-mod-forum-discuss .discussioncontrols {width:100%;margin:5px;}
-#page-mod-forum-discuss .discussioncontrols .discussioncontrol {width:33%;float:left;}
+#page-mod-forum-discuss .discussioncontrols .controlscontainer {width:100%;float:right;}
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol {float:left;}
 #page-mod-forum-discuss .discussioncontrol.exporttoportfolio {text-align:left;}
-#page-mod-forum-discuss .discussioncontrol.displaymode {text-align:center;}
-#page-mod-forum-discuss .discussioncontrol.movediscussion {float:right;width:auto;text-align:right;padding-right:10px;}
-#page-mod-forum-discuss .discussioncontrol.movediscussion .movediscussionoption {}
+#page-mod-forum-discuss .discussioncontrol.displaymode {padding-right:10px;}
+#page-mod-forum-discuss .discussioncontrol.movediscussion {padding-right:10px;}
 
 /** Styles for view.php **/
 #page-mod-forum-view .forumaddnew {margin-bottom: 20px;}
@@ -116,6 +117,18 @@ span.unread {
 }
 .forumpost.unread .row.header {
     border-bottom: 1px solid #DDD;
+}
+
+/* Forumpost hash anchor target */
+.path-mod-forum :target ~ .forumpost:before {
+    display: block;
+    content: '';
+    width: 4px;
+    position: absolute;
+    background: #0070a8;
+    left: -1px;
+    top: -1px;
+    bottom: -1px;
 }
 
 /* Discussion navigation */
@@ -164,4 +177,13 @@ span.unread {
 
 .dir-rtl .path-mod-forum .discussionsubscription {
     text-align: left;
+}
+
+#page-mod-forum-view img.timedpost {
+    margin-right: 5px;
+}
+
+.dir-rtl#page-mod-forum-view img.timedpost {
+    margin: 3px 0 0 5px;
+    float: right;
 }

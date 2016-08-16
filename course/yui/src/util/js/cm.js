@@ -15,7 +15,7 @@ Y.namespace('Moodle.core_course.util.cm');
  */
 Y.Moodle.core_course.util.cm = {
     CONSTANTS: {
-        MODULEIDPREFIX : 'module-'
+        MODULEIDPREFIX: 'module-'
     },
     SELECTORS: {
         COURSEMODULE: '.activity',

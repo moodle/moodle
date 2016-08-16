@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/inplace_editable
+
+    Displays the value that can be edited inline.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-inplaceeditable
+    * data-inplaceeditablelink
+    * data-component
+    * data-itemtype
+    * data-itemid
+    * data-value
+    * data-editlabel
+    * data-type
+    * data-options
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+        "displayvalue" : "<a href=\"#\">Moodle</a>",
+        "value" : "Moodle",
+        "itemid" : "1",
+        "component" : "core_unknown",
+        "itemtype" : "unknown",
+        "edithint" : "Edit this",
+        "editlabel" : "New name for this",
+        "type" : "text",
+        "options" : "",
+        "linkeverything": 0
+    }
+}}
+{{#component}}
+<span class="inplaceeditable inplaceeditable-{{type}}" data-inplaceeditable="1" data-component="{{component}}" data-itemtype="{{itemtype}}" data-itemid="{{itemid}}"
+    data-value="{{value}}" data-editlabel="{{editlabel}}" data-type="{{type}}" data-options="{{options}}">
+        {{^ linkeverything }}{{{displayvalue}}}{{/ linkeverything }}
+        <a href="#" class="quickeditlink" data-inplaceeditablelink="1" title="{{edithint}}">
+            {{# linkeverything }}{{{displayvalue}}}{{/ linkeverything }}
+            <span class="quickediticon visibleifjs">{{#pix}}t/editstring,core,{{edithint}}{{/pix}}</span>
+        </a>
+</span>
+{{#js}}
+    require(['core/inplace_editable']);
+{{/js}}
+{{/component}}
+{{^component}}
+    {{{displayvalue}}}
+{{/component}}
+

@@ -54,7 +54,7 @@ class block_edit_form extends moodleform {
         global $CFG;
         $this->block = $block;
         $this->page = $page;
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     function definition() {

@@ -16,6 +16,10 @@
 
 /**
  * Library of functions and constants for notes
+ *
+ * @package    core_notes
+ * @copyright  2007 onwards Yu Zhang
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
@@ -150,7 +154,7 @@ function note_save(&$note) {
  * Deletes a note object based on its id.
  *
  * @param int|object    $note id of the note to delete, or a note object which is to be deleted.
- * @return boolean true if the object was deleted; false otherwise
+ * @return boolean true always
  */
 function note_delete($note) {
     global $DB;
@@ -346,4 +350,62 @@ function note_delete_all($courseid) {
  */
 function note_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array('notes-*' => get_string('page-notes-x', 'notes'));
+}
+
+/**
+ * Trigger notes viewed event
+ *
+ * @param  stdClass $context context object
+ * @param  int $userid  user id (the user we are viewing the notes)
+ * @since Moodle 2.9
+ */
+function note_view($context, $userid) {
+
+    $event = \core\event\notes_viewed::create(array(
+        'relateduserid' => $userid,
+        'context' => $context
+    ));
+    $event->trigger();
+}
+
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ *
+ * @return bool
+ */
+function core_notes_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    global $CFG;
+
+    if (empty($CFG->enablenotes)) {
+        // Notes are disabled, nothing to do.
+        return false;
+    }
+
+    if (isguestuser($user)) {
+        // No notes for guest users.
+        return false;
+    }
+
+    $url = new moodle_url("/notes/index.php", array('user' => $user->id));
+    $title = get_string('notes', 'core_notes');
+    if (empty($course)) {
+        // Site level profile.
+        if (!has_capability('moodle/notes:view', context_system::instance())) {
+            // No cap, nothing to do.
+            return false;
+        }
+    } else {
+        if (!has_capability('moodle/notes:view', context_course::instance($course->id))) {
+            // No cap, nothing to do.
+            return false;
+        }
+        $url->param('course', $course->id);
+    }
+    $notesnode = new core_user\output\myprofile\node('miscellaneous', 'notes', $title, null, $url);
+    $tree->add_node($notesnode);
 }

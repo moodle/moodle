@@ -1,6 +1,8 @@
 <?php
 /*
-V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+@version   v5.20.3  01-Jan-2016
+@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -19,12 +21,6 @@ include_once(ADODB_DIR."/drivers/adodb-ibase.inc.php");
 
 class ADODB_borland_ibase extends ADODB_ibase {
 	var $databaseType = "borland_ibase";
-
-
-	function ADODB_borland_ibase()
-	{
-		$this->ADODB_ibase();
-	}
 
 	function BeginTrans()
 	{
@@ -84,8 +80,8 @@ class  ADORecordSet_borland_ibase extends ADORecordSet_ibase {
 
 	var $databaseType = "borland_ibase";
 
-	function ADORecordSet_borland_ibase($id,$mode=false)
+	function __construct($id,$mode=false)
 	{
-		$this->ADORecordSet_ibase($id,$mode);
+		parent::__construct($id,$mode);
 	}
 }

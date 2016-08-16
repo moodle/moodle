@@ -131,6 +131,8 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test delete_calendar_events
+     *
+     * @expectedException moodle_exception
      */
     public function test_delete_calendar_events() {
         global $DB, $USER;
@@ -247,7 +249,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $groupevent = $this->create_calendar_event('group', $USER->id, 'group', 0, time(), $record);
 
         $this->setGuestUser();
-        $this->setExpectedException('moodle_exception');
+
         $events = array(
             array('eventid' => $siteevent->id, 'repeat' => 0),
             array('eventid' => $courseevent->id, 'repeat' => 0),
@@ -277,8 +279,28 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         // Let's create a few events.
         $siteevent = $this->create_calendar_event('site', $USER->id, 'site');
+
+        // This event will have description with an inline fake image.
+        $draftidfile = file_get_unused_draft_itemid();
+        $usercontext = context_course::instance($course->id);
+        $filerecord = array(
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidfile,
+            'filepath'  => '/',
+            'filename'  => 'fakeimage.png',
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecord, 'img contents');
+
         $record = new stdClass();
         $record->courseid = $course->id;
+        $record->description = array(
+            'format' => FORMAT_HTML,
+            'text' => 'Text with img <img src="@@PLUGINFILE@@/fakeimage.png">',
+            'itemid' => $draftidfile
+        );
         $courseevent = $this->create_calendar_event('course', $USER->id, 'course', 2, time(), $record);
         $userevent = $this->create_calendar_event('user', $USER->id);
         $record = new stdClass();
@@ -299,6 +321,18 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(5, count($events['events']));
         $this->assertEquals(0, count($events['warnings']));
+
+        // Expect the same URL in the description of two different events (because they are repeated).
+        $coursecontext = context_course::instance($course->id);
+        $expectedurl = "webservice/pluginfile.php/$coursecontext->id/calendar/event_description/$courseevent->id/fakeimage.png";
+        $withdescription = 0;
+        foreach ($events['events'] as $event) {
+            if (!empty($event['description'])) {
+                $withdescription++;
+                $this->assertContains($expectedurl, $event['description']);
+            }
+        }
+        $this->assertEquals(2, $withdescription);
 
         // Let's play around with caps.
         $this->setUser($user);
@@ -328,6 +362,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
 
         $paramevents = array ('courseids' => array($course->id), 'groupids' => array($group->id));
         $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(4, count($events['events'])); // site, user, group, one course event.
         $this->assertEquals(0, count($events['warnings']));
 
@@ -362,6 +397,37 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
         $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
         $this->assertEquals(1, count($events['events'])); // site.
         $this->assertEquals(0, count($events['warnings']));
+
+        // Try getting a course event by its id.
+        $paramevents = array ('eventids' => array($courseevent->id));
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        $this->assertEquals(1, count($events['events']));
+        $this->assertEquals(0, count($events['warnings']));
+
+        // Now, create an activity event.
+        $this->setAdminUser();
+        $nexttime = time() + DAYSECS;
+        $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id, 'duedate' => $nexttime));
+
+        $this->setUser($user);
+        $paramevents = array ('courseids' => array($course->id));
+        $options = array ('siteevents' => true, 'userevents' => true, 'timeend' => time() + WEEKSECS);
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+
+        $this->assertCount(5, $events['events']);
+
+        // Hide the assignment.
+        set_coursemodule_visible($assign->cmid, 0);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        $events = core_calendar_external::get_calendar_events($paramevents, $options);
+        $events = external_api::clean_returnvalue(core_calendar_external::get_calendar_events_returns(), $events);
+        // Expect one less.
+        $this->assertCount(4, $events['events']);
     }
 
     /**
@@ -390,6 +456,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
                 array('name' => 'user')
                 );
         $eventsret = core_calendar_external::create_calendar_events($events);
+        $eventsret = external_api::clean_returnvalue(core_calendar_external::create_calendar_events_returns(), $eventsret);
 
         // Check to see if things were created properly.
         $aftercount = $DB->count_records('event');

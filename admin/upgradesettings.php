@@ -24,7 +24,6 @@ $adminroot = admin_get_root(); // need all settings
 // now we'll deal with the case that the admin has submitted the form with new settings
 if ($data = data_submitted() and confirm_sesskey()) {
     $count = admin_write_settings($data);
-    $adminroot = admin_get_root(true); //reload tree
 }
 
 $newsettings = admin_output_new_settings_by_page($adminroot);
@@ -64,6 +63,8 @@ echo '<form action="upgradesettings.php" method="post" id="adminsettings">';
 echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '<input type="hidden" name="return" value="'.$return.'" />';
+// HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
+echo prevent_form_autofill_password();
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
 echo $newsettingshtml;

@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2011 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_url_lib_testcase extends basic_testcase {
+class mod_url_lib_testcase extends advanced_testcase {
 
     /**
      * Prepares things before this test case is initialised
@@ -42,6 +42,7 @@ class mod_url_lib_testcase extends basic_testcase {
      */
     public static function setUpBeforeClass() {
         global $CFG;
+        require_once($CFG->dirroot . '/mod/url/lib.php');
         require_once($CFG->dirroot . '/mod/url/locallib.php');
     }
 
@@ -71,5 +72,48 @@ class mod_url_lib_testcase extends basic_testcase {
         $this->assertFalse(url_appears_valid_url('http://user:@www.example.com'));
 
         $this->assertTrue(url_appears_valid_url('lalala://@:@/'));
+    }
+
+    /**
+     * Test url_view
+     * @return void
+     */
+    public function test_url_view() {
+        global $CFG;
+
+        $CFG->enablecompletion = 1;
+        $this->resetAfterTest();
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $url = $this->getDataGenerator()->create_module('url', array('course' => $course->id),
+                                                            array('completion' => 2, 'completionview' => 1));
+        $context = context_module::instance($url->cmid);
+        $cm = get_coursemodule_from_instance('url', $url->id);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $this->setAdminUser();
+        url_view($url, $course, $cm, $context);
+
+        $events = $sink->get_events();
+        // 2 additional events thanks to completion.
+        $this->assertCount(3, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_url\event\course_module_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $url = new \moodle_url('/mod/url/view.php', array('id' => $cm->id));
+        $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        // Check completion status.
+        $completion = new completion_info($course);
+        $completiondata = $completion->get_data($cm);
+        $this->assertEquals(1, $completiondata->completionstate);
+
     }
 }

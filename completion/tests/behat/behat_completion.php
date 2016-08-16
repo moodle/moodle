@@ -27,8 +27,7 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Behat\Behat\Context\Step\Given as Given,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 
 /**
  * Steps definitions to deal with course and activities completion.
@@ -50,13 +49,13 @@ class behat_completion extends behat_base {
     public function user_has_completed_activity($userfullname, $activityname) {
 
         // Will throw an exception if the element can not be hovered.
-        $titleliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname . ", " . $activityname . ": Completed");
+        $titleliteral = behat_context_helper::escape($userfullname . ", " . $activityname . ": Completed");
         $xpath = "//table[@id='completion-progress']" .
             "/descendant::img[contains(@title, $titleliteral)]";
 
-        return array(
-            new Given('I go to the current course activity completion report'),
-            new Given('I hover "' . $this->escape($xpath) . '" "xpath_element"')
+        $this->execute("behat_completion::go_to_the_current_course_activity_completion_report");
+        $this->execute("behat_general::should_exist",
+            array($this->escape($xpath), "xpath_element")
         );
     }
 
@@ -70,15 +69,12 @@ class behat_completion extends behat_base {
     public function user_has_not_completed_activity($userfullname, $activityname) {
 
         // Will throw an exception if the element can not be hovered.
-        $titleliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname . ", " . $activityname . ": Not completed");
+        $titleliteral = behat_context_helper::escape($userfullname . ", " . $activityname . ": Not completed");
         $xpath = "//table[@id='completion-progress']" .
             "/descendant::img[contains(@title, $titleliteral)]";
-        return array(
-            new Given('I go to the current course activity completion report'),
-            new Given('I hover "' . $this->escape($xpath) . '" "xpath_element"')
-        );
 
-        return $steps;
+        $this->execute("behat_completion::go_to_the_current_course_activity_completion_report");
+        $this->execute("behat_general::should_exist", array($this->escape($xpath), "xpath_element"));
     }
 
     /**
@@ -87,22 +83,10 @@ class behat_completion extends behat_base {
      * @Given /^I go to the current course activity completion report$/
      */
     public function go_to_the_current_course_activity_completion_report() {
+        $completionnode = get_string('pluginname', 'report_progress');
+        $reportsnode = get_string('courseadministration') . ' > ' . get_string('reports');
 
-        $steps = array();
-
-        // Expand reports node if we can't see the link.
-        try {
-            $this->find('xpath', "//div[@id='settingsnav']" .
-                "/descendant::li" .
-                "/descendant::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed '))]" .
-                "/descendant::p[contains(., '" . get_string('pluginname', 'report_progress') . "')]");
-        } catch (ElementNotFoundException $e) {
-            $steps[] = new Given('I expand "' . get_string('reports') . '" node');
-        }
-
-        $steps[] = new Given('I follow "' . get_string('pluginname', 'report_progress') . '"');
-
-        return $steps;
+        $this->execute("behat_navigation::i_navigate_to_node_in", array($completionnode, $reportsnode));
     }
 
     /**
@@ -115,10 +99,57 @@ class behat_completion extends behat_base {
 
         $toggle = strtolower($completionstatus) == 'enabled' ? get_string('yes') : get_string('no');
 
-        return array(
-            new Given('I follow "'.get_string('editsettings').'"'),
-            new Given('I set the field "'.get_string('enablecompletion', 'completion').'" to "'.$toggle.'"'),
-            new Given('I press "'.get_string('savechangesanddisplay').'"')
+        // Go to course editing.
+        $this->execute("behat_general::click_link", get_string('editsettings'));
+
+        // Expand all the form fields.
+        $this->execute("behat_forms::i_expand_all_fieldsets");
+
+        // Enable completion.
+        $this->execute("behat_forms::i_set_the_field_to",
+            array(get_string('enablecompletion', 'completion'), $toggle));
+
+        // Save course settings.
+        $this->execute("behat_forms::press_button", get_string('savechangesanddisplay'));
+    }
+
+    /**
+     * Checks if the activity with specified name is maked as complete.
+     *
+     * @Given /^the "(?P<activityname_string>(?:[^"]|\\")*)" "(?P<activitytype_string>(?:[^"]|\\")*)" activity with "(manual|auto)" completion should be marked as complete$/
+     */
+    public function activity_marked_as_complete($activityname, $activitytype, $completiontype) {
+        if ($completiontype == "manual") {
+            $imgalttext = get_string("completion-alt-manual-y", 'core_completion', $activityname);
+        } else {
+            $imgalttext = get_string("completion-alt-auto-y", 'core_completion', $activityname);
+        }
+        $csselementforactivitytype = "li.modtype_".strtolower($activitytype);
+
+        $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
+        $this->execute("behat_general::should_exist_in_the",
+            array($xpathtocheck, "xpath_element", $csselementforactivitytype, "css_element")
         );
+
+    }
+
+    /**
+     * Checks if the activity with specified name is maked as complete.
+     *
+     * @Given /^the "(?P<activityname_string>(?:[^"]|\\")*)" "(?P<activitytype_string>(?:[^"]|\\")*)" activity with "(manual|auto)" completion should be marked as not complete$/
+     */
+    public function activity_marked_as_not_complete($activityname, $activitytype, $completiontype) {
+        if ($completiontype == "manual") {
+            $imgalttext = get_string("completion-alt-manual-n", 'core_completion', $activityname);
+        } else {
+            $imgalttext = get_string("completion-alt-auto-n", 'core_completion', $activityname);
+        }
+        $csselementforactivitytype = "li.modtype_".strtolower($activitytype);
+
+        $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
+        $this->execute("behat_general::should_exist_in_the",
+            array($xpathtocheck, "xpath_element", $csselementforactivitytype, "css_element")
+        );
+
     }
 }

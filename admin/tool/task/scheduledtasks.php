@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
@@ -87,13 +87,9 @@ if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchange
 
         try {
             \core\task\manager::configure_scheduled_task($task);
-            $url = $PAGE->url;
-            $url->params(array('success'=>get_string('changessaved')));
-            redirect($url);
+            redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
         } catch (Exception $e) {
-            $url = $PAGE->url;
-            $url->params(array('error'=>$e->getMessage()));
-            redirect($url);
+            redirect($PAGE->url, $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
         }
     } else {
         echo $OUTPUT->header();
@@ -104,19 +100,7 @@ if ($mform && ($mform->is_cancelled() || !empty($CFG->preventscheduledtaskchange
 
 } else {
     echo $OUTPUT->header();
-    $error = optional_param('error', '', PARAM_NOTAGS);
-    if ($error) {
-        echo $OUTPUT->notification($error, 'notifyerror');
-    }
-    $success = optional_param('success', '', PARAM_NOTAGS);
-    if ($success) {
-        echo $OUTPUT->notification($success, 'notifysuccess');
-    }
     $tasks = core\task\manager::get_all_scheduled_tasks();
     echo $renderer->scheduled_tasks_table($tasks);
     echo $OUTPUT->footer();
 }
-
-
-
-

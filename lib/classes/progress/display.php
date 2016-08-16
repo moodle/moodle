@@ -126,6 +126,11 @@ class display extends base {
                     $this->direction = -$this->direction;
                     $this->currentstate += 2 * $this->direction;
                 }
+                $buffersize = ini_get('output_buffering');
+                if ($buffersize) {
+                    // Force the buffer full.
+                    echo str_pad('', $buffersize);
+                }
             }
 
             // Get progress.

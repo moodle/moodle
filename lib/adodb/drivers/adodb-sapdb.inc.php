@@ -1,6 +1,8 @@
 <?php
 /*
-V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+@version   v5.20.3  01-Jan-2016
+@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -31,10 +33,10 @@ class ADODB_SAPDB extends ADODB_odbc {
 	var $hasInsertId = true;
 	var $_bindInputArray = true;
 
-	function ADODB_SAPDB()
+	function __construct()
 	{
 		//if (strncmp(PHP_OS,'WIN',3) === 0) $this->curmode = SQL_CUR_USE_ODBC;
-		$this->ADODB_odbc();
+		parent::__construct();
 	}
 
 	function ServerInfo()
@@ -46,7 +48,7 @@ class ADODB_SAPDB extends ADODB_odbc {
 		return $info;
 	}
 
-	function MetaPrimaryKeys($table)
+	function MetaPrimaryKeys($table, $owner = false)
 	{
 		$table = $this->Quote(strtoupper($table));
 
@@ -92,7 +94,7 @@ class ADODB_SAPDB extends ADODB_odbc {
         return $indexes;
 	}
 
- 	function MetaColumns ($table)
+	function MetaColumns ($table, $normalize = true)
 	{
 		global $ADODB_FETCH_MODE;
 		$save = $ADODB_FETCH_MODE;
@@ -140,7 +142,7 @@ class ADODB_SAPDB extends ADODB_odbc {
 		return $retarr;
 	}
 
-	function MetaColumnNames($table)
+	function MetaColumnNames($table, $numIndexes = false, $useattnum = false)
 	{
 		$table = $this->Quote(strtoupper($table));
 
@@ -174,9 +176,9 @@ class  ADORecordSet_sapdb extends ADORecordSet_odbc {
 
 	var $databaseType = "sapdb";
 
-	function ADORecordSet_sapdb($id,$mode=false)
+	function __construct($id,$mode=false)
 	{
-		$this->ADORecordSet_odbc($id,$mode);
+		parent::__construct($id,$mode);
 	}
 }
 

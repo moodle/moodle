@@ -125,4 +125,15 @@ class group_member_added extends base {
             throw new \coding_exception('The \'itemid\' value must be set in other, even if empty.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'groups', 'restore' => 'group');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['itemid'] = base::NOT_MAPPED;
+
+        return $othermapped;
+    }
 }

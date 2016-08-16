@@ -54,8 +54,8 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
      * @param array $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
      */
-    function MoodleQuickForm_htmleditor($elementName=null, $elementLabel=null, $options=array(), $attributes=null){
-        parent::MoodleQuickForm_textarea($elementName, $elementLabel, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $options=array(), $attributes=null){
+        parent::__construct($elementName, $elementLabel, $attributes);
         // set the options, do not bother setting bogus ones
         if (is_array($options)) {
             foreach ($options as $name => $value) {
@@ -71,6 +71,16 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
         $this->_type='htmleditor';
 
         editors_head_setup();
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_htmleditor($elementName=null, $elementLabel=null, $options=array(), $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $options, $attributes);
     }
 
     /**

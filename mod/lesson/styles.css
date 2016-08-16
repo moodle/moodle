@@ -26,14 +26,18 @@
 
 .path-mod-lesson .resourcecontent {text-align: center;}
 
-.path-mod-lesson .answeroption .fcheckbox > span,
-.path-mod-lesson .answeroption .fradio > span {
+.path-mod-lesson .answeroption .fcheckbox > span {
     position: relative;
     float: left;
 }
 
+.path-mod-lesson .answeroptiongroup .fgroup > span {
+    position: relative;
+    width: 100%;
+}
+
 .path-mod-lesson .answeroption .fcheckbox input,
-.path-mod-lesson .answeroption .fradio input {
+.path-mod-lesson .answeroptiongroup input {
     position: absolute;
     top: 2px;
     margin-top: 0px;
@@ -41,28 +45,28 @@
 }
 
 .path-mod-lesson .answeroption .fcheckbox label,
-.path-mod-lesson .answeroption .fradio label {
+.path-mod-lesson .mform .fitem.answeroptiongroup fieldset.fgroup label {
     padding-left: 20px;
     float: left;
 }
 
-.path-mod-lesson .answeroption .felement label p:last-child {
+.path-mod-lesson .answeroption .felement label p:last-child,
+.path-mod-lesson .answeroptiongroup .felement label p:last-child {
     margin-bottom: 0px;
 }
 
-.path-mod-lesson.dir-rtl .answeroption .fcheckbox > span,
-.path-mod-lesson.dir-rtl .answeroption .fradio > span {
+.path-mod-lesson.dir-rtl .answeroption .fcheckbox > span {
     float: right;
 }
 
 .path-mod-lesson.dir-rtl .answeroption .fcheckbox input,
-.path-mod-lesson.dir-rtl .answeroption .fradio input {
+.path-mod-lesson.dir-rtl .answeroptiongroup .fgroup input {
     left: inherit;
     right: 0;
 }
 
 .path-mod-lesson.dir-rtl .answeroption .fcheckbox label,
-.path-mod-lesson.dir-rtl .answeroption .fradio label {
+.path-mod-lesson.dir-rtl .mform .fitem.answeroptiongroup fieldset.fgroup label {
     padding-left: 0;
     padding-right: 20px;
     float: right;

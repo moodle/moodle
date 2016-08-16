@@ -9,7 +9,7 @@ select {
     width: auto;
 }
 
-// Forum
+// Forum module
 
 .path-mod-forum .forumsearch {
     input,
@@ -45,7 +45,7 @@ select {
             text-align: right;
         }
         thead .header th,
-        tbody .discussion td{
+        tbody .discussion td {
             &.discussionsubscription {
                 width: 16px;
                 padding-left: 0.5em;
@@ -53,7 +53,9 @@ select {
             }
         }
         .discussion {
-            .author, .replies, .lastpost {
+            .author,
+            .replies,
+            .lastpost {
                 white-space: normal;
             }
             .discussionsubscription,
@@ -71,10 +73,6 @@ select {
             }
         }
     }
-}
-
-.path-mod-feedback .feedback_bar_image {
-    height: 5px; // we should remove the bar height specification in core
 }
 
 .forumpost {
@@ -138,7 +136,7 @@ select {
 
 // Override hardcoded forum modules styling
 .forumsearch input[type=text] {
-     margin-bottom: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 #page-mod-forum-discuss .discussioncontrols {
@@ -152,7 +150,8 @@ select {
     border-top: 2px solid @tableBorder;
 }
 
-.maincalendar .calendarmonth td,.maincalendar .calendarmonth th {
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th {
     border: 1px dotted @tableBorder;
 }
 
@@ -193,6 +192,7 @@ select {
     }
 }
 .dir-rtl .navbar .brand {
+    padding: 10px 0 10px 20px;
     float: right;
 }
 
@@ -217,6 +217,12 @@ select {
 .dir-rtl .breadcrumb-button .singlebutton {
     float: right;
     margin-right: 4px;
+    margin-left: 0;
+}
+.dir-rtl .breadcrumb-button .singlebutton div,
+.dir-rtl .breadcrumb-button .singlebutton div input[type="submit"] {
+    margin-right: 5px;
+    margin-left: 0;
 }
 
 .ie .row-fluid .desktop-first-column {
@@ -238,6 +244,8 @@ div#dock {
     display: none;
 }
 
+// Choice module
+
 .path-mod-choice {
     .horizontal  .choices {
         margin: 0;
@@ -250,6 +258,8 @@ div#dock {
         white-space: normal;
     }
 }
+
+// Lesson module
 
 .path-mod-lesson .firstpageoptions {
     margin: auto;
@@ -284,7 +294,7 @@ div#dock {
     }
 }
 .dir-rtl .dropdown-submenu > .dropdown-menu {
-  .border-radius(6px 0px 6px 6px);
+    .border-radius(6px 0px 6px 6px);
 }
 
 
@@ -292,12 +302,22 @@ div#dock {
 
 .path-mod-survey {
     .surveytable {
-      > tbody > tr:nth-of-type(odd) {background-color: @tableBackground;}
-      > tbody > tr:nth-of-type(even) {background-color: @tableBackgroundAccent;}
-        .rblock label {text-align: center;}
+        > tbody > tr:nth-of-type(odd) {
+            background-color: @tableBackground;
+        }
+        > tbody > tr:nth-of-type(even) {
+            background-color: @tableBackgroundAccent;
+        }
+        .rblock label {
+            text-align: center;
+        }
     }
-    .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
-        text-align:center;
+    .resultgraph,
+    .reportsummary,
+    .studentreport,
+    .reportbuttons,
+    .centerpara {
+        text-align: center;
     }
 }
 // rtl overrides
@@ -326,18 +346,25 @@ div#dock {
     .divider {
         overflow: hidden;
         width: 0;
-        height: 40px;
-        border-left: 1px solid #e5e5e5;
-        border-right: 1px solid #fff;
+        height: @navbarHeight;
+        border-left: 1px solid @navbarBackground;
+        border-right: 1px solid @navbarBackgroundHighlight;
     }
 }
-
+.navbar-inverse {
+    .nav {
+        .divider {
+            border-left-color: @navbarInverseBackground;
+            border-right-color: lighten(@navbarInverseBackground, 25%);
+        }
+    }
+}
 .dropdown-menu {
     .divider {
         width: auto;
         height: 1px;
-        border-left: 0px none;
-        border-right: 0px none;
+        border-left: 0 none;
+        border-right: 0 none;
     }
 }
 
@@ -370,7 +397,7 @@ div#dock {
             .userbutton {
                 height: 40px;
                 line-height: 40px;
-                .avatars{
+                .avatars {
                     display: inline-block;
                     height: 36px;
                     width: 36px;
@@ -530,7 +557,7 @@ div#dock {
 
             > .menubar {
                 display: block;
-                margin: 0px 0px 2px 0px;
+                margin: 0px;
             }
             > .menu {
                 min-width: 160px;
@@ -549,8 +576,8 @@ div#dock {
                     &:before {
                         content: '';
                         display: inline-block;
-                        border-left:   7px solid transparent;
-                        border-right:  7px solid transparent;
+                        border-left: 7px solid transparent;
+                        border-right: 7px solid transparent;
                         border-bottom: 7px solid #ccc;
                         border-bottom-color: @dropdownBorder;
                         position: absolute;
@@ -559,8 +586,8 @@ div#dock {
                     &:after {
                         content: '';
                         display: inline-block;
-                        border-left:   6px solid transparent;
-                        border-right:  6px solid transparent;
+                        border-left: 6px solid transparent;
+                        border-right: 6px solid transparent;
                         border-bottom: 6px solid @dropdownBackground;
                         position: absolute;
                         top: -6px;
@@ -582,7 +609,6 @@ div#dock {
                     }
                     .box-shadow (0 5px 10px rgba(0, 0, 0, 0.2));
                 }
-                &:hover .toggle-display {}
             }
         }
     }
@@ -664,12 +690,95 @@ div#dock {
             margin-bottom: -34px;
             border: 1px solid #fff;
             border-radius: 50%;
-            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+            box-shadow: -2px -2px 16px rgba(0, 0, 0, 0.25);
         }
         img {
             width: inherit;
             height: inherit;
         }
         overflow: hidden;
+    }
+}
+
+// Quiz module
+
+// Question navigation block.
+.path-mod-quiz #mod_quiz_navblock {
+    .qnbutton {
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: normal;
+        background-color: @white;
+        background-image: none;
+        height: 40px;
+        width: 30px;
+        border-radius: 3px;
+        border: 0;
+        overflow: visible;
+        margin: 0 6px 6px 0;
+    }
+    span.qnbutton {
+        cursor: default;
+        background-color: @inputDisabledBackground;
+        color: @gray;
+    }
+    a.qnbutton:hover,
+    a.qnbutton:active,
+    a.qnbutton:focus {
+        text-decoration: underline;
+    }
+
+    .qnbutton .thispageholder {
+        border: 1px solid;
+        border-radius: 3px;
+        z-index: 1;
+    }
+    .qnbutton.thispage .thispageholder {
+        border-width: 3px;
+    }
+    .allquestionsononepage .qnbutton.thispage .thispageholder {
+        border-width: 1px;
+    }
+
+    .qnbutton.flagged .thispageholder {
+        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0px no-repeat;
+    }
+
+    .qnbutton .trafficlight {
+        border: 0;
+        background: @white none center/10px no-repeat scroll;
+        height: 20px;
+        margin-top: 20px;
+        border-radius: 0 0 3px 3px;
+    }
+
+    .qnbutton.notyetanswered .trafficlight,
+    .qnbutton.invalidanswer .trafficlight {
+        background-color: @white;
+    }
+    .qnbutton.invalidanswer .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
+    }
+    .qnbutton.correct .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/checkmark]]);
+        background-color: @successText;
+    }
+    .qnbutton.blocked .trafficlight {
+        background-image: url([[pix:core|t/locked]]);
+        background-color: @inputDisabledBackground;
+    }
+    .qnbutton.notanswered .trafficlight,
+    .qnbutton.incorrect .trafficlight {
+        background-color: @errorText;
+    }
+    .qnbutton.partiallycorrect .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/whitecircle]]);
+        background-color: @orange;
+    }
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: @grayLight;
     }
 }

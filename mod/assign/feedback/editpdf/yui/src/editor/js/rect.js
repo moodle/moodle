@@ -29,7 +29,7 @@
  * @param int height
  * @class rect
  */
-RECT = function(x, y, width, height) {
+var RECT = function(x, y, width, height) {
 
     /**
      * X coordinate.

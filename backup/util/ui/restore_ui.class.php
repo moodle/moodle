@@ -185,11 +185,11 @@ class restore_ui extends base_ui {
      * there are long-running tasks even though there is no restore controller
      * in use.
      *
-     * @return \core\progress\null
+     * @return \core\progress\none
      */
     public function get_progress_reporter() {
         if (!$this->progressreporter) {
-            $this->progressreporter = new \core\progress\null();
+            $this->progressreporter = new \core\progress\none();
         }
         return $this->progressreporter;
     }
@@ -231,9 +231,11 @@ class restore_ui extends base_ui {
      * Delete course which is created by restore process
      */
     public function cleanup() {
+        global $DB;
         $courseid = $this->controller->get_courseid();
-        if ($this->is_temporary_course_created($courseid)) {
-            delete_course($courseid, false);
+        if ($this->is_temporary_course_created($courseid) && $course = $DB->get_record('course', array('id' => $courseid))) {
+            $course->deletesource = 'restore';
+            delete_course($course, false);
         }
     }
 

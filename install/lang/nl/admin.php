@@ -42,3 +42,4 @@ gebruik --help optie.';
 $string['cliyesnoprompt'] = 'typ j (ja) of n (nee)';
 $string['environmentrequireinstall'] = 'moet geïnstalleerd/ingeschakeld zijn';
 $string['environmentrequireversion'] = 'versie {$a->needed} is vereist en je gebruikt nu versie {$a->current}';
+$string['upgradekeyset'] = 'Upgrade-sleutel (leeg laten om er geen in te stellen)';

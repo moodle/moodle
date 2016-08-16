@@ -114,14 +114,16 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                 event.detach();
                 var confirmation = {
                     modal:  true,
-                    visible  :  true,
+                    visible  :  false,
                     centered :  true,
                     title    :  M.util.get_string('confirmunassigntitle', 'role'),
                     question :  M.util.get_string('confirmunassign', 'role'),
                     yesLabel :  M.util.get_string('confirmunassignyes', 'role'),
                     noLabel  :  M.util.get_string('confirmunassignno', 'role')
                 };
-                new M.core.confirm(confirmation).on('complete-yes', this.removeRoleCallback, this, user.get(USERID), roleid);
+                new M.core.confirm(confirmation)
+                        .show()
+                        .on('complete-yes', this.removeRoleCallback, this, user.get(USERID), roleid);
             }, this);
             this._loadAssignableRoles();
         },

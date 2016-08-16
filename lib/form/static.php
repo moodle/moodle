@@ -51,8 +51,18 @@ class MoodleQuickForm_static extends HTML_QuickForm_static{
      * @param string $elementLabel (optional) text field label
      * @param string $text (optional) Text to put in text field
      */
-    function MoodleQuickForm_static($elementName=null, $elementLabel=null, $text=null) {
-        parent::HTML_QuickForm_static($elementName, $elementLabel, $text);
+    public function __construct($elementName=null, $elementLabel=null, $text=null) {
+        parent::__construct($elementName, $elementLabel, $text);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_static($elementName=null, $elementLabel=null, $text=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $text);
     }
 
     /**

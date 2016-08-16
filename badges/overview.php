@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 $badgeid = required_param('id', PARAM_INT);
@@ -60,6 +60,8 @@ $PAGE->set_url($currenturl);
 $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
 $PAGE->navbar->add($badge->name);
+
+require_capability('moodle/badges:viewbadges', $context);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(print_badge_image($badge, $context, 'small') . ' ' . $badge->name);

@@ -7,8 +7,8 @@ Feature: Users can view and search database entries
   Scenario: Students can add view, list and search entries
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@asd.com |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | student1 | Student | 1 | student1@example.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -27,13 +27,13 @@ Feature: Users can view and search database entries
     # To generate the default templates.
     And I follow "Templates"
     And I add an entry to "Test database name" database with:
-      | Test field description | Teacher entry 1 |
+      | Test field name | Teacher entry 1 |
     And I press "Save and add another"
     And I add an entry to "Test database name" database with:
-      | Test field description | Teacher entry 2 |
+      | Test field name | Teacher entry 2 |
     And I press "Save and add another"
     And I add an entry to "Test database name" database with:
-      | Test field description | Teacher entry 3 |
+      | Test field name | Teacher entry 3 |
     And I press "Save and view"
     And I log out
     When I log in as "student1"

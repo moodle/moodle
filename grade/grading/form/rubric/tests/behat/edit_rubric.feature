@@ -4,11 +4,12 @@ Feature: Rubrics can be created and edited
   As a teacher
   I need to edit previously used rubrics
 
-  Background:
+  @javascript
+  Scenario: I can use rubrics to grade and edit them later updating students grades
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
@@ -35,9 +36,9 @@ Feature: Rubrics can be created and edited
       | TMP Criterion 4 | TMP Level 41 | 41 | TMP Level 42 | 42 |
     # Checking that only the last ones are saved.
     And I define the following rubric:
-      | Criterion 1 | Level 11 | 1 | Level 12 | 20 | Level 13 | 40 | Level 14 | 50 |
-      | Criterion 2 | Level 21 | 10 | Level 22 | 20 | Level 23 | 30 |
-      | Criterion 3 | Level 31 | 5 | Level 32 | 20 |
+      | Criterion 1 | Level 11 | 1  | Level 12 | 20 | Level 13 | 40 | Level 14  | 50  |
+      | Criterion 2 | Level 21 | 10 | Level 22 | 20 | Level 23 | 30 |           |     |
+      | Criterion 3 | Level 31 | 5  | Level 32 | 20 |          |    |           |     |
     And I press "Save as draft"
     And I go to "Test assignment 1 name" advanced grading definition page
     And I click on "Move down" "button" in the "Criterion 1" "table_row"
@@ -152,8 +153,3 @@ Feature: Rubrics can be created and edited
     And I should not see "Criterion 2" in the ".submissionstatustable" "css_element"
     And I should not see "Criterion 3" in the ".submissionstatustable" "css_element"
     And I should not see "Rubric test description" in the ".feedback" "css_element"
-
-  @javascript
-  Scenario: I can use rubrics to grade and edit them later updating students grades with Javascript enabled
-
-  Scenario: I can use rubrics to grade and edit them later updating students grades with Javascript disabled

@@ -60,6 +60,11 @@ class manager {
     const MESSAGE_DELETED = '\deleted';
 
     /**
+     * @var \string IMAP folder namespace.
+     */
+    protected $imapnamespace = null;
+
+    /**
      * @var \Horde_Imap_Client_Socket A reference to the IMAP client.
      */
     protected $client = null;
@@ -95,13 +100,27 @@ class manager {
             'password' => $CFG->messageinbound_hostpass,
             'hostspec' => $CFG->messageinbound_host,
             'secure'   => $CFG->messageinbound_hostssl,
+            'debug'    => empty($CFG->debugimap) ? null : fopen('php://stderr', 'w'),
         );
+
+        if (strpos($configuration['hostspec'], ':')) {
+            $hostdata = explode(':', $configuration['hostspec']);
+            if (count($hostdata) === 2) {
+                // A hostname in the format hostname:port has been provided.
+                $configuration['hostspec'] = $hostdata[0];
+                $configuration['port'] = $hostdata[1];
+            }
+        }
 
         $this->client = new \Horde_Imap_Client_Socket($configuration);
 
         try {
             $this->client->login();
             mtrace("Connection established.");
+
+            // Ensure that mailboxes exist.
+            $this->ensure_mailboxes_exist();
+
             return true;
 
         } catch (\Horde_Imap_Client_Exception $e) {
@@ -120,6 +139,25 @@ class manager {
             $this->client->close();
         }
         $this->client = null;
+    }
+
+    /**
+     * Get the confirmation folder imap name
+     *
+     * @return string
+     */
+    protected function get_confirmation_folder() {
+
+        if ($this->imapnamespace === null) {
+            if ($this->client->queryCapability('NAMESPACE')) {
+                $namespaces = $this->client->getNamespaces(array(), array('ob_return' => true));
+                $this->imapnamespace = $namespaces->getNamespace('INBOX');
+            } else {
+                $this->imapnamespace = '';
+            }
+        }
+
+        return $this->imapnamespace . self::CONFIRMATIONFOLDER;
     }
 
     /**
@@ -194,13 +232,13 @@ class manager {
         // When dealing with Inbound Message messages, we mark them as flagged and seen. Restrict the search to those criterion.
         $search->flag(self::MESSAGE_SEEN, true);
         $search->flag(self::MESSAGE_FLAGGED, true);
-        mtrace("Searching for a Seen, Flagged message in the folder '" . self::CONFIRMATIONFOLDER . "'");
+        mtrace("Searching for a Seen, Flagged message in the folder '" . $this->get_confirmation_folder() . "'");
 
         // Match the message ID.
         $search->headerText('message-id', $maildata->messageid);
         $search->headerText('to', $maildata->address);
 
-        $results = $this->client->search(self::CONFIRMATIONFOLDER, $search);
+        $results = $this->client->search($this->get_confirmation_folder(), $search);
 
         // Build the base query.
         $query = new \Horde_Imap_Client_Fetch_Query();
@@ -209,7 +247,7 @@ class manager {
 
 
         // Fetch the first message from the client.
-        $messages = $this->client->fetch(self::CONFIRMATIONFOLDER, $query, array('ids' => $results['match']));
+        $messages = $this->client->fetch($this->get_confirmation_folder(), $query, array('ids' => $results['match']));
         $this->addressmanager = new \core\message\inbound\address_manager();
         if ($message = $messages->first()) {
             mtrace("--> Found the message. Passing back to the pickup system.");
@@ -244,8 +282,8 @@ class manager {
 
         // Open the mailbox.
         mtrace("Searching for messages older than 24 hours in the '" .
-                self::CONFIRMATIONFOLDER . "' folder.");
-        $this->client->openMailbox(self::CONFIRMATIONFOLDER);
+                $this->get_confirmation_folder() . "' folder.");
+        $this->client->openMailbox($this->get_confirmation_folder());
 
         $mailbox = $this->get_mailbox();
 
@@ -294,6 +332,11 @@ class manager {
 
         // First flag this message to prevent another running hitting this message while we look at the headers.
         $this->add_flag_to_message($messageid, self::MESSAGE_FLAGGED);
+
+        if ($this->is_bulk_message($message, $messageid)) {
+            mtrace("- The message has a bulk header set. This is likely an auto-generated reply - discarding.");
+            return;
+        }
 
         // Record the user that this script is currently being run as.  This is important when re-processing existing
         // messages, as cron_setup_user is called multiple times.
@@ -367,7 +410,10 @@ class manager {
 
             // Process and retrieve the message data for this message.
             // This includes fetching the full content, as well as all headers, and attachments.
-            $this->process_message_data($envelope, $messagedata, $messageid);
+            if (!$this->process_message_data($envelope, $messagedata, $messageid)) {
+                mtrace("--- Message could not be found on the server. Is another process removing messages?");
+                return;
+            }
 
             // When processing validation replies, we need to skip the sender verification phase as this has been
             // manually completed.
@@ -407,7 +453,7 @@ class manager {
                 mtrace("-- Returning to the original user.");
                 cron_setup_user($originaluser);
                 return;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // An unknown error occurred. The user is not informed, but the administrator is.
                 mtrace("-- Message processing failed. An unexpected exception was thrown. Details follow.");
                 mtrace($e->getMessage());
@@ -461,36 +507,25 @@ class manager {
         $query = new \Horde_Imap_Client_Fetch_Query();
         $query->imapDate();
 
-        // Fetch all of the message parts too.
-        $typemap = $structure->contentTypeMap();
-        foreach ($typemap as $part => $type) {
-            // The header.
-            $query->headerText(array(
-                'id' => $part,
-            ));
-        }
+        // Fetch the message header.
+        $query->headerText();
 
+        // Retrieve the message with the above components.
         $messagedata = $this->client->fetch($mailbox, $query, array('ids' => $messageid))->first();
 
-        // Store the data for this message.
-        $headers = '';
-
-        foreach ($typemap as $part => $type) {
-            // Grab all of the header data into a string.
-            $headers .= $messagedata->getHeaderText($part);
-
-            // We don't handle any of the other MIME content at this stage.
+        if (!$messagedata) {
+            // Message was not found! Somehow it has been removed or is no longer returned.
+            return null;
         }
 
-        $data = new \stdClass();
-
         // The message ID should always be in the first part.
+        $data = new \stdClass();
         $data->messageid = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('Message-ID');
         $data->subject = $envelope->subject;
         $data->timestamp = $messagedata->getImapDate()->__toString();
         $data->envelope = $envelope;
         $data->data = $this->addressmanager->get_data();
-        $data->headers = $headers;
+        $data->headers = $messagedata->getHeaderText();
 
         $this->currentmessagedata = $data;
 
@@ -500,8 +535,8 @@ class manager {
     /**
      * Process a message again to add body and attachment data.
      *
-     * @param Horde_Imap_Client_Data_Fetch $basemessagedata The structure and part of the message body
-     * @param string|Horde_Imap_Client_Ids $messageid The Hore message Uid
+     * @param \Horde_Imap_Client_Data_Fetch $basemessagedata The structure and part of the message body
+     * @param string|\Horde_Imap_Client_Ids $messageid The Hore message Uid
      * @return \stdClass The current value of the messagedata
      */
     private function process_message_data_body(
@@ -631,7 +666,7 @@ class manager {
         $attachment->contentid      = $partdata->getContentId();
         $attachment->filesize       = $messagedata->getBodyPartSize($part);
 
-        if (empty($CFG->runclamonupload) or empty($CFG->pathtoclam)) {
+        if (!empty($CFG->antiviruses)) {
             mtrace("--> Attempting virus scan of '{$attachment->filename}'");
 
             // Store the file on disk - it will need to be virus scanned first.
@@ -651,8 +686,8 @@ class manager {
 
             // Perform a virus scan now.
             try {
-                \repository::antivir_scan_file($filepath, $attachment->filename, true);
-            } catch (moodle_exception $e) {
+                \core\antivirus\manager::scan_file($filepath, $attachment->filename, true);
+            } catch (\core\antivirus\scanner_exception $e) {
                 mtrace("--> A virus was found in the attachment '{$attachment->filename}'.");
                 $this->inform_attachment_virus();
                 return;
@@ -742,6 +777,65 @@ class manager {
     }
 
     /**
+     * Ensure that all mailboxes exist.
+     */
+    private function ensure_mailboxes_exist() {
+
+        $requiredmailboxes = array(
+            self::MAILBOX,
+            $this->get_confirmation_folder(),
+        );
+
+        $existingmailboxes = $this->client->listMailboxes($requiredmailboxes);
+        foreach ($requiredmailboxes as $mailbox) {
+            if (isset($existingmailboxes[$mailbox])) {
+                // This mailbox was found.
+                continue;
+            }
+
+            mtrace("Unable to find the '{$mailbox}' mailbox - creating it.");
+            $this->client->createMailbox($mailbox);
+        }
+    }
+
+    /**
+     * Attempt to determine whether this message is a bulk message (e.g. automated reply).
+     *
+     * @param \Horde_Imap_Client_Data_Fetch $message The message to process
+     * @param string|\Horde_Imap_Client_Ids $messageid The Hore message Uid
+     * @return boolean
+     */
+    private function is_bulk_message(
+            \Horde_Imap_Client_Data_Fetch $message,
+            $messageid) {
+        $query = new \Horde_Imap_Client_Fetch_Query();
+        $query->headerText(array('peek' => true));
+
+        $messagedata = $this->client->fetch($this->get_mailbox(), $query, array('ids' => $messageid))->first();
+
+        // Assume that this message is not bulk to begin with.
+        $isbulk = false;
+
+        // An auto-reply may itself include the Bulk Precedence.
+        $precedence = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('Precedence');
+        $isbulk = $isbulk || strtolower($precedence) == 'bulk';
+
+        // If the X-Autoreply header is set, and not 'no', then this is an automatic reply.
+        $autoreply = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('X-Autoreply');
+        $isbulk = $isbulk || ($autoreply && $autoreply != 'no');
+
+        // If the X-Autorespond header is set, and not 'no', then this is an automatic response.
+        $autorespond = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('X-Autorespond');
+        $isbulk = $isbulk || ($autorespond && $autorespond != 'no');
+
+        // If the Auto-Submitted header is set, and not 'no', then this is a non-human response.
+        $autosubmitted = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('Auto-Submitted');
+        $isbulk = $isbulk || ($autosubmitted && $autosubmitted != 'no');
+
+        return $isbulk;
+    }
+
+    /**
      * Send the message to the appropriate handler.
      *
      * @return bool
@@ -765,7 +859,7 @@ class manager {
             $error->message     = $e->getMessage();
             throw new \core\message\inbound\processing_failed_exception('messageprocessingfailed', 'tool_messageinbound', $error);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             mtrace("-> The Inbound Message handler threw an exception. Unable to process this message. User informed.");
             mtrace("--> " . $e->getMessage());
             // An unknown error occurred. Still inform the user but, this time do not include the specific
@@ -807,7 +901,7 @@ class manager {
         }
 
         // Move the message into a new mailbox.
-        $this->client->copy(self::MAILBOX, self::CONFIRMATIONFOLDER, array(
+        $this->client->copy(self::MAILBOX, $this->get_confirmation_folder(), array(
                 'create'    => true,
                 'ids'       => $messageids,
                 'move'      => true,
@@ -836,7 +930,7 @@ class manager {
         $userfrom->customheaders[] = 'In-Reply-To: ' . $messageid;
 
         // The message will be sent from the intended user.
-        $eventdata->userfrom            = \core_user::get_noreply_user();
+        $eventdata->userfrom            = \core_user::get_support_user();
         $eventdata->userto              = $USER;
         $eventdata->subject             = $this->get_reply_subject($this->currentmessagedata->envelope->subject);
         $eventdata->fullmessage         = get_string('invalidrecipientdescription', 'tool_messageinbound', $this->currentmessagedata);

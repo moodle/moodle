@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (file_exists(dirname(dirname(__FILE__)).'/config.php')) {
+if (file_exists(__DIR__.'/../config.php')) {
     // already installed
     die;
 }
@@ -33,12 +33,12 @@ if (file_exists(dirname(dirname(__FILE__)).'/config.php')) {
 // MDL-43839 IE9 cannot handle all of our css.
 // Once IE9 is no longer supported we can include 'bootstrapbase/style/moodle.css'
 // and remove some of the CSS in $content.
-$files = array('');
+$files = array();
 
 $content = '';
 
 foreach($files as $file) {
-    $content .= file_get_contents(dirname(dirname(__FILE__)).'/theme/'.$file) . "\n";
+    $content .= file_get_contents(__DIR__.'/../theme/'.$file) . "\n";
 }
 
 $content .= <<<EOF

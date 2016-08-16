@@ -54,11 +54,13 @@ if (!empty($users) && confirm_sesskey()) {
     $note->courseid = $id;
     $note->format = FORMAT_PLAIN;
     foreach ($users as $k => $v) {
-        if (!$user = $DB->get_record('user', array('id' => $v)) || empty($contents[$k])) {
+        $user = $DB->get_record('user', array('id' => $v));
+        $content = trim($contents[$k]);
+        if (!$user || empty($content)) {
             continue;
         }
         $note->id = 0;
-        $note->content = $contents[$k];
+        $note->content = $content;
         $note->publishstate = $states[$k];
         $note->userid = $v;
         note_save($note);
@@ -101,9 +103,9 @@ foreach ($users as $k => $v) {
     if (!$user = $DB->get_record('user', array('id' => $v))) {
         continue;
     }
-    $checkbox = html_writer::label(get_string('selectnotestate', 'notes'), 'menustates', false, array('class' => 'accesshide'));
+    $checkbox = html_writer::label(get_string('selectnotestate', 'notes'), 'menustates_'.$v, false, array('class' => 'accesshide'));
     $checkbox .= html_writer::select($statenames, 'states[' . $k . ']',
-        empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false, array('id' => 'menustates'));
+        empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], false, array('id' => 'menustates_'.$v));
     $table->data[] = array(
         '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />'. fullname($user, true),
         '<textarea name="contents['. $k . ']" rows="2" cols="40" spellcheck="true">' . strip_tags(@$contents[$k]) . '</textarea>',

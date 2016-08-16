@@ -1,14 +1,18 @@
 <?php
 
 /*
-V5.19  23-Apr-2014  (c) 2000-2014 John Lim (jlim#natsoft.com). All rights reserved.
+@version   v5.20.3  01-Jan-2016
+@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
+@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
   Set tabs to 8.
 
-  MySQL code that supports transactions. For MySQL 3.23 or later.
-  Code from James Poon <jpoon88@yahoo.com>
+  This driver only supports the original MySQL driver in transactional mode. It
+  is deprected in PHP version 5.5 and removed in PHP version 7. It is deprecated
+  as of ADOdb version 5.20.0. Use the mysqli driver instead, which supports both
+  transactional and non-transactional updates
 
   Requires mysql client. Works on Windows and Unix.
 */
@@ -25,7 +29,7 @@ class ADODB_mysqlt extends ADODB_mysql {
 	var $hasTransactions = true;
 	var $autoRollback = true; // apparently mysql does not autorollback properly
 
-	function ADODB_mysqlt()
+	function __construct()
 	{
 	global $ADODB_EXTENSION; if ($ADODB_EXTENSION) $this->rsPrefix .= 'ext_';
 	}
@@ -89,7 +93,7 @@ class ADODB_mysqlt extends ADODB_mysql {
 class ADORecordSet_mysqlt extends ADORecordSet_mysql{
 	var $databaseType = "mysqlt";
 
-	function ADORecordSet_mysqlt($queryID,$mode=false)
+	function __construct($queryID,$mode=false)
 	{
 		if ($mode === false) {
 			global $ADODB_FETCH_MODE;
@@ -107,7 +111,7 @@ class ADORecordSet_mysqlt extends ADORecordSet_mysql{
 		}
 
 		$this->adodbFetchMode = $mode;
-		$this->ADORecordSet($queryID);
+		parent::__construct($queryID);
 	}
 
 	function MoveNext()
@@ -125,26 +129,6 @@ class ADORecordSet_mysqlt extends ADORecordSet_mysql{
 }
 
 class ADORecordSet_ext_mysqlt extends ADORecordSet_mysqlt {
-
-	function ADORecordSet_ext_mysqlt($queryID,$mode=false)
-	{
-		if ($mode === false) {
-			global $ADODB_FETCH_MODE;
-			$mode = $ADODB_FETCH_MODE;
-		}
-		switch ($mode)
-		{
-		case ADODB_FETCH_NUM: $this->fetchMode = MYSQL_NUM; break;
-		case ADODB_FETCH_ASSOC:$this->fetchMode = MYSQL_ASSOC; break;
-
-		case ADODB_FETCH_DEFAULT:
-		case ADODB_FETCH_BOTH:
-		default:
-			$this->fetchMode = MYSQL_BOTH; break;
-		}
-		$this->adodbFetchMode = $mode;
-		$this->ADORecordSet($queryID);
-	}
 
 	function MoveNext()
 	{

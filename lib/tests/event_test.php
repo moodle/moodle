@@ -29,6 +29,8 @@ require_once(__DIR__.'/fixtures/event_fixtures.php');
 
 class core_event_testcase extends advanced_testcase {
 
+    const DEBUGGING_MSG = 'Events API using $handlers array has been deprecated in favour of Events 2 API, please use it instead.';
+
     public function test_event_properties() {
         global $USER;
 
@@ -591,6 +593,7 @@ class core_event_testcase extends advanced_testcase {
 
         $DB->delete_records('log', array());
         events_update_definition('unittest');
+        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
         $DB->delete_records_select('events_handlers', "component <> 'unittest'");
         events_get_handlers('reset');
         $this->assertEquals(3, $DB->count_records('events_handlers'));
@@ -601,10 +604,12 @@ class core_event_testcase extends advanced_testcase {
 
         $event1 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)));
         $event1->trigger();
+        $this->assertDebuggingCalled(self::DEBUGGING_MSG, DEBUG_DEVELOPER);
 
         $event2 = \core_tests\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>6, 'xx'=>11)));
         $event2->nest = true;
         $event2->trigger();
+        $this->assertDebuggingCalledCount(2, array(self::DEBUGGING_MSG, self::DEBUGGING_MSG), array(DEBUG_DEVELOPER, DEBUG_DEVELOPER));
 
         $this->assertSame(
             array('observe_all-5', 'observe_one-5', 'legacy_handler-0', 'observe_all-nesting-6', 'legacy_handler-0', 'observe_one-6', 'observe_all-666', 'observe_one-666', 'legacy_handler-0'),
@@ -923,5 +928,54 @@ and nothing else.";
             'objecttable' => 'mod_unittest'
         );
         $this->assertEquals($staticinfo, $expected);
+    }
+
+    /**
+     * This tests the internal method of \core\event\manager::get_observing_classes.
+     *
+     * What we are testing is if we can subscribe to a parent event class, instead of only
+     * the base event class or the final, implemented event class.  This enables us to subscribe
+     * to things like all course module view events, all comment created events, etc.
+     */
+    public function test_observe_parent_event() {
+        $this->resetAfterTest();
+
+        // Ensure this has been reset prior to using it.
+        \core_tests\event\unittest_observer::reset();
+
+        $course  = $this->getDataGenerator()->create_course();
+        $feed    = $this->getDataGenerator()->create_module('feedback', ['course' => $course->id]);
+        $context = context_module::instance($feed->cmid);
+        $data    = [
+            'context'  => $context,
+            'courseid' => $course->id,
+            'objectid' => $feed->id
+        ];
+
+        // This assertion ensures that basic observe use case did not break.
+        \core\event\manager::phpunit_replace_observers([[
+            'eventname' => '\core_tests\event\course_module_viewed',
+            'callback'  => ['\core_tests\event\unittest_observer', 'observe_all_alt'],
+        ]]);
+
+        $pageevent = \core_tests\event\course_module_viewed::create($data);
+        $pageevent->trigger();
+
+        $this->assertSame(['observe_all_alt'], \core_tests\event\unittest_observer::$info, 'Error observing triggered event');
+
+        \core_tests\event\unittest_observer::reset();
+
+        // This assertion tests that we can observe an abstract (parent) class instead of the implemented class.
+        \core\event\manager::phpunit_replace_observers([[
+            'eventname' => '\core\event\course_module_viewed',
+            'callback'  => ['\core_tests\event\unittest_observer', 'observe_all_alt'],
+        ]]);
+
+        $pageevent = \core_tests\event\course_module_viewed::create($data);
+        $pageevent->trigger();
+
+        $this->assertSame(['observe_all_alt'], \core_tests\event\unittest_observer::$info, 'Error observing parent class event');
+
+        \core_tests\event\unittest_observer::reset();
     }
 }

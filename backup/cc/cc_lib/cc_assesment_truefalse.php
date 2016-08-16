@@ -27,8 +27,18 @@ class cc_assesment_question_truefalse extends cc_assesment_question_proc_base {
     public function __construct($quiz, $questions, $manifest, $section, $question_node, $rootpath, $contextid, $outdir) {
         parent::__construct($quiz, $questions, $manifest, $section, $question_node, $rootpath, $contextid, $outdir);
         $this->qtype = cc_qti_profiletype::true_false;
-        $this->correct_answer_node_id = $this->questions->nodeValue(
-            'plugin_qtype_truefalse_question/truefalse/trueanswer', $this->question_node);
+
+        // Determine the correct answer by finding out which answer has the non zero fraction...
+        // This is because a true / false question type can have 'false' as the correct answer.
+        $answers = $this->questions->nodeList('plugin_qtype_truefalse_question/answers/answer', $this->question_node);
+        foreach ($answers as $answer) {
+            $fraction = $this->questions->nodeValue('fraction', $answer);
+
+            if ($fraction != 0) {
+                $this->correct_answer_node_id = (int)$this->questions->nodeValue('@id', $answer);
+            }
+        }
+
         $maximum_quiz_grade = (int)$this->quiz->nodeValue('/activity/quiz/grade');
         $this->total_grade_value = ($maximum_quiz_grade + 1).'.0000000';
     }

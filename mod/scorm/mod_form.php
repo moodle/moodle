@@ -46,7 +46,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         // Summary.
-        $this->add_intro_editor(true);
+        $this->standard_intro_elements();
 
         // Package.
         $mform->addElement('header', 'packagehdr', get_string('packagehdr', 'scorm'));
@@ -261,6 +261,11 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addHelpButton('autocommit', 'autocommit', 'scorm');
         $mform->setDefault('autocommit', $cfgscorm->autocommit);
 
+        // Mastery score overrides status.
+        $mform->addElement('selectyesno', 'masteryoverride', get_string('masteryoverride', 'scorm'));
+        $mform->addHelpButton('masteryoverride', 'masteryoverride', 'scorm');
+        $mform->setDefault('masteryoverride', $cfgscorm->masteryoverride);
+
         // Hidden Settings.
         $mform->addElement('hidden', 'datadir', null);
         $mform->setType('datadir', PARAM_RAW);
@@ -435,6 +440,13 @@ class mod_scorm_mod_form extends moodleform_mod {
                 }
             }
 
+        }
+
+        // Validate availability dates.
+        if ($data['timeopen'] && $data['timeclose']) {
+            if ($data['timeopen'] > $data['timeclose']) {
+                $errors['timeclose'] = get_string('closebeforeopen', 'scorm');
+            }
         }
 
         return $errors;

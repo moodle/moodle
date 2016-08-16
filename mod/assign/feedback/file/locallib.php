@@ -78,6 +78,70 @@ class assign_feedback_file extends assign_feedback_plugin {
     }
 
     /**
+     * Has the feedback file been modified?
+     *
+     * @param stdClass $grade Grade object.
+     * @param stdClass $data Form data.
+     * @return boolean True if the file area has been modified, else false.
+     */
+    public function is_feedback_modified(stdClass $grade, stdClass $data) {
+        global $USER;
+
+        $filekey = null;
+        $draftareainfo = null;
+        foreach ($data as $key => $value) {
+            if (strpos($key, 'files_') === 0 && strpos($key, '_filemanager')) {
+                $filekey = $key;
+            }
+        }
+        if (isset($filekey)) {
+            $draftareainfo = file_get_draft_area_info($data->$filekey);
+            $filecount = $this->count_files($grade->id, ASSIGNFEEDBACK_FILE_FILEAREA);
+            if ($filecount != $draftareainfo['filecount']) {
+                return true;
+            } else {
+                // We need to check that the files in the draft area are the same as in the file area.
+                $usercontext = context_user::instance($USER->id);
+                $fs = get_file_storage();
+                $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $data->$filekey, 'id', true);
+                $files = $fs->get_area_files($this->assignment->get_context()->id,
+                                     'assignfeedback_file',
+                                     ASSIGNFEEDBACK_FILE_FILEAREA,
+                                     $grade->id,
+                                     'id',
+                                     false);
+                foreach ($files as $key => $file) {
+                    // Flag for recording if we have a matching file.
+                    $matchflag = false;
+                    foreach ($draftfiles as $draftkey => $draftfile) {
+                        if (!$file->is_directory()) {
+                            // File name is the same, but it could be a different file with the same name.
+                            if ($draftfile->get_filename() == $file->get_filename()) {
+                                // If the file name is the same but the content hash is different, or
+                                // The file path for the file has changed, then we have a modification.
+                                if ($draftfile->get_contenthash() != $file->get_contenthash() ||
+                                        $draftfile->get_filepath() != $file->get_filepath()) {
+                                    return true;
+                                }
+                                // These files match. Check the next file.
+                                $matchflag = true;
+                                // We have a match on the file name so we can move to the next file and not
+                                // proceed through the other draftfiles.
+                                break;
+                            }
+                        }
+                    }
+                    // If the file does not match then there has been a modification.
+                    if (!$matchflag) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Copy all the files from one file area to another.
      *
      * @param file_storage $fs - The source context id
@@ -618,7 +682,8 @@ class assign_feedback_file extends assign_feedback_plugin {
         return array(
             'files_filemanager' => new external_value(
                 PARAM_INT,
-                'The id of a draft area containing files for this feedback.'
+                'The id of a draft area containing files for this feedback.',
+                VALUE_OPTIONAL
             )
         );
     }

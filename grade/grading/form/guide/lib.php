@@ -213,6 +213,16 @@ class gradingform_guide_controller extends gradingform_controller {
                 $data = array('definitionid' => $this->definition->id, 'descriptionformat' => FORMAT_MOODLE);
                 foreach ($commentfields as $key) {
                     if (array_key_exists($key, $comment)) {
+                        // Check if key is the comment's description.
+                        if ($key === 'description') {
+                            // Get a trimmed value for the comment description.
+                            $description = trim($comment[$key]);
+                            // Check if the comment description is empty.
+                            if (empty($description)) {
+                                // Continue to the next comment object if the description is empty.
+                                continue 2;
+                            }
+                        }
                         $data[$key] = $comment[$key];
                     }
                 }
@@ -563,8 +573,8 @@ class gradingform_guide_controller extends gradingform_controller {
             return $this->get_instance($instance);
         }
         if ($itemid && $raterid) {
-            if ($rs = $DB->get_records('grading_instances', array('raterid' => $raterid, 'itemid' => $itemid),
-                'timemodified DESC', '*', 0, 1)) {
+            $params = array('definitionid' => $this->definition->id, 'raterid' => $raterid, 'itemid' => $itemid);
+            if ($rs = $DB->get_records('grading_instances', $params, 'timemodified DESC', '*', 0, 1)) {
                 $record = reset($rs);
                 $currentinstance = $this->get_current_instance($raterid, $itemid);
                 if ($record->status == gradingform_guide_instance::INSTANCE_STATUS_INCOMPLETE &&
@@ -757,6 +767,26 @@ class gradingform_guide_instance extends gradingform_instance {
     }
 
     /**
+     * Determines whether the submitted form was empty.
+     *
+     * @param array $elementvalue value of element submitted from the form
+     * @return boolean true if the form is empty
+     */
+    public function is_empty_form($elementvalue) {
+        $criteria = $this->get_controller()->get_definition()->guide_criteria;
+        foreach ($criteria as $id => $criterion) {
+            $score = $elementvalue['criteria'][$id]['score'];
+            $remark = $elementvalue['criteria'][$id]['remark'];
+
+            if ((isset($score) && $score !== '')
+                    || ((isset($remark) && $remark !== ''))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Validates that guide is fully completed and contains valid grade on each criterion
      *
      * @param array $elementvalue value of element as came in form submit
@@ -775,7 +805,7 @@ class gradingform_guide_instance extends gradingform_instance {
                     || $criterion['maxscore'] < $elementvalue['criteria'][$id]['score']
                     || !is_numeric($elementvalue['criteria'][$id]['score'])
                     || $elementvalue['criteria'][$id]['score'] < 0) {
-                $this->validationerrors[$id]['score'] =  $elementvalue['criteria'][$id]['score'];
+                $this->validationerrors[$id]['score'] = $elementvalue['criteria'][$id]['score'];
             }
         }
         if (!empty($this->validationerrors)) {
@@ -841,6 +871,19 @@ class gradingform_guide_instance extends gradingform_instance {
             }
         }
         $this->get_guide_filling(true);
+    }
+
+    /**
+     * Removes the attempt from the gradingform_guide_fillings table
+     * @param array $data the attempt data
+     */
+    public function clear_attempt($data) {
+        global $DB;
+
+        foreach ($data['criteria'] as $criterionid => $record) {
+            $DB->delete_records('gradingform_guide_fillings',
+                array('criterionid' => $criterionid, 'instanceid' => $this->get_id()));
+        }
     }
 
     /**
@@ -910,15 +953,20 @@ class gradingform_guide_instance extends gradingform_instance {
                     $a = new stdClass();
                     $a->criterianame = s($criteria[$id]['shortname']);
                     $a->maxscore = $criteria[$id]['maxscore'];
-                    $html .= html_writer::tag('div', get_string('err_scoreinvalid', 'gradingform_guide', $a),
+                    if ($this->validationerrors[$id]['score'] < 0) {
+                        $html .= html_writer::tag('div', get_string('err_scoreisnegative', 'gradingform_guide', $a),
                         array('class' => 'gradingform_guide-error'));
+                    } else {
+                        $html .= html_writer::tag('div', get_string('err_scoreinvalid', 'gradingform_guide', $a),
+                        array('class' => 'gradingform_guide-error'));
+                    }
                 }
             }
         }
         $currentinstance = $this->get_current_instance();
         if ($currentinstance && $currentinstance->get_status() == gradingform_instance::INSTANCE_STATUS_NEEDUPDATE) {
             $html .= html_writer::tag('div', get_string('needregrademessage', 'gradingform_guide'),
-                array('class' => 'gradingform_guide-regrade'));
+                array('class' => 'gradingform_guide-regrade', 'role' => 'alert'));
         }
         $haschanges = false;
         if ($currentinstance) {

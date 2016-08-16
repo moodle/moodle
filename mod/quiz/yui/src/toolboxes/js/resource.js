@@ -1,3 +1,5 @@
+/* global TOOLBOX, BODY, SELECTOR */
+
 /**
  * Resource and activity toolbox class.
  *
@@ -60,8 +62,8 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      */
     initializer: function() {
         M.mod_quiz.quizbase.register_module(this);
-        BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
         Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
+        Y.delegate('click', this.handle_data_action, BODY, SELECTOR.DEPENDENCY_LINK, this);
     },
 
     /**
@@ -106,6 +108,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                 // The user is adding or removing a page break.
                 this.update_page_break(ev, node, activity, action);
                 break;
+            case 'adddependency':
+            case 'removedependency':
+                // The user is adding or removing a dependency between questions.
+                this.update_dependency(ev, node, activity, action);
+                break;
             default:
                 // Nothing to do here!
                 break;
@@ -144,7 +151,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         ev.preventDefault();
 
         // Get the element we're working on.
-        var element   = activity,
+        var element = activity,
             // Create confirm string (different if element has or does not have name)
             confirmstring = '',
             qtypename = M.util.get_string('pluginname',
@@ -172,10 +179,8 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     Y.Moodle.mod_quiz.util.slot.remove(element);
                     this.reorganise_edit_page();
                     if (M.core.actionmenu && M.core.actionmenu.instance) {
-                        M.core.actionmenu.instance.hideMenu();
+                        M.core.actionmenu.instance.hideMenu(ev);
                     }
-                } else {
-                    window.location.reload(true);
                 }
             });
 
@@ -196,20 +201,19 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {String} action The action that has been requested.
      * @return Boolean
      */
-    edit_maxmark : function(ev, button, activity) {
+    edit_maxmark: function(ev, button, activity) {
         // Get the element we're working on
-        var activityid = Y.Moodle.mod_quiz.util.slot.getId(activity),
-            instancemaxmark  = activity.one(SELECTOR.INSTANCEMAXMARK),
+        var instancemaxmark = activity.one(SELECTOR.INSTANCEMAXMARK),
             instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
             currentmaxmark = instancemaxmark.get('firstChild'),
             oldmaxmark = currentmaxmark.get('data'),
             maxmarktext = oldmaxmark,
             thisevent,
-            anchor = instancemaxmark,// Grab the anchor so that we can swap it with the edit form.
+            anchor = instancemaxmark, // Grab the anchor so that we can swap it with the edit form.
             data = {
-                'class'   : 'resource',
-                'field'   : 'getmaxmark',
-                'id'      : activityid
+                'class': 'resource',
+                'field': 'getmaxmark',
+                'id': Y.Moodle.mod_quiz.util.slot.getId(activity)
             };
 
         // Prevent the default actions.
@@ -217,7 +221,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 
         this.send_request(data, null, function(response) {
             if (M.core.actionmenu && M.core.actionmenu.instance) {
-                M.core.actionmenu.instance.hideMenu();
+                M.core.actionmenu.instance.hideMenu(ev);
             }
 
             // Try to retrieve the existing string from the server.
@@ -230,11 +234,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             var editinstructions = Y.Node.create('<span class="' + CSS.EDITINSTRUCTIONS + '" id="id_editinstructions" />')
                 .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
             var editor = Y.Node.create('<input name="maxmark" type="text" class="' + CSS.TITLEEDITOR + '" />').setAttrs({
-                'value' : maxmarktext,
-                'autocomplete' : 'off',
-                'aria-describedby' : 'id_editinstructions',
-                'maxLength' : '12',
-                'size' : parseInt(this.get('config').questiondecimalpoints, 10) + 2
+                'value': maxmarktext,
+                'autocomplete': 'off',
+                'aria-describedby': 'id_editinstructions',
+                'maxLength': '12',
+                'size': parseInt(this.get('config').questiondecimalpoints, 10) + 2
             });
 
             // Clear the existing content and put the editor in.
@@ -242,12 +246,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             editform.setData('anchor', anchor);
             instance.insert(editinstructions, 'before');
             anchor.replace(editform);
-
-            // Force the editing instruction to match the mod-indent position.
-            var padside = 'left';
-            if (right_to_left()) {
-                padside = 'right';
-            }
 
             // We hide various components whilst editing:
             activity.addClass(CSS.EDITINGMAXMARK);
@@ -276,7 +274,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {String} originalmaxmark The original maxmark the activity or resource had.
      */
-    edit_maxmark_submit : function(ev, activity, originalmaxmark) {
+    edit_maxmark_submit: function(ev, activity, originalmaxmark) {
         // We don't actually want to submit anything.
         ev.preventDefault();
         var newmaxmark = Y.Lang.trim(activity.one(SELECTOR.ACTIVITYFORM + ' ' + SELECTOR.ACTIVITYMAXMARK).get('value'));
@@ -285,10 +283,10 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         activity.one(SELECTOR.INSTANCEMAXMARK).setContent(newmaxmark);
         if (newmaxmark !== null && newmaxmark !== "" && newmaxmark !== originalmaxmark) {
             var data = {
-                'class'   : 'resource',
-                'field'   : 'updatemaxmark',
-                'maxmark'   : newmaxmark,
-                'id'      : Y.Moodle.mod_quiz.util.slot.getId(activity)
+                'class': 'resource',
+                'field': 'updatemaxmark',
+                'maxmark': newmaxmark,
+                'id': Y.Moodle.mod_quiz.util.slot.getId(activity)
             };
             this.send_request(data, spinner, function(response) {
                 if (response.instancemaxmark) {
@@ -307,7 +305,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {Boolean} preventdefault If true we should prevent the default action from occuring.
      */
-    edit_maxmark_cancel : function(ev, activity, preventdefault) {
+    edit_maxmark_cancel: function(ev, activity, preventdefault) {
         if (preventdefault) {
             ev.preventDefault();
         }
@@ -321,7 +319,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @method edit_maxmark_clear
      * @param {Node} activity  The activity whose maxmark we were altering.
      */
-    edit_maxmark_clear : function(activity) {
+    edit_maxmark_clear: function(activity) {
         // Detach all listen events to prevent duplicate triggers
         new Y.EventHandle(this.editmaxmarkevents).detach();
 
@@ -342,7 +340,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             activity.one(SELECTOR.EDITMAXMARK).focus();
         });
 
-        // This hack is to keep Behat happy until they release a version of
+        // TODO MDL-50768 This hack is to keep Behat happy until they release a version of
         // MinkSelenium2Driver that fixes
         // https://github.com/Behat/MinkSelenium2Driver/issues/80.
         if (!Y.one('input[name=maxmark')) {
@@ -359,28 +357,24 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {EventFacade} ev The event that was fired.
      * @param {Node} button The button that triggered this action.
      * @param {Node} activity The activity node that this action will be performed on.
+     * @param {String} action The action, addpagebreak or removepagebreak.
      * @chainable
      */
     update_page_break: function(ev, button, activity, action) {
         // Prevent the default button action
         ev.preventDefault();
 
-        nextactivity = activity.next('li.activity.slot');
-        var spinner = this.add_spinner(nextactivity),
-            slotid = 0;
+        var nextactivity = activity.next('li.activity.slot');
+        var spinner = this.add_spinner(nextactivity);
         var value = action === 'removepagebreak' ? 1 : 2;
 
         var data = {
             'class': 'resource',
             'field': 'updatepagebreak',
-            'id':    slotid,
+            'id':    Y.Moodle.mod_quiz.util.slot.getId(nextactivity),
             'value': value
         };
 
-        slotid = Y.Moodle.mod_quiz.util.slot.getId(nextactivity);
-        if (slotid) {
-            data.id = Number(slotid);
-        }
         this.send_request(data, spinner, function(response) {
             if (response.slots) {
                 if (action === 'addpagebreak') {
@@ -390,8 +384,39 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
                     Y.Moodle.mod_quiz.util.page.remove(page, true);
                 }
                 this.reorganise_edit_page();
-            } else {
-                window.location.reload(true);
+            }
+        });
+
+        return this;
+    },
+
+    /**
+     * Updates a slot to either require the question in the previous slot to
+     * have been answered, or not,
+     *
+     * @protected
+     * @method update_page_break
+     * @param {EventFacade} ev The event that was fired.
+     * @param {Node} button The button that triggered this action.
+     * @param {Node} activity The activity node that this action will be performed on.
+     * @param {String} action The action, adddependency or removedependency.
+     * @chainable
+     */
+    update_dependency: function(ev, button, activity, action) {
+        // Prevent the default button action.
+        ev.preventDefault();
+        var spinner = this.add_spinner(activity);
+
+        var data = {
+            'class': 'resource',
+            'field': 'updatedependency',
+            'id':    Y.Moodle.mod_quiz.util.slot.getId(activity),
+            'value': action === 'adddependency' ? 1 : 0
+        };
+
+        this.send_request(data, spinner, function(response) {
+            if (response.hasOwnProperty('requireprevious')) {
+                Y.Moodle.mod_quiz.util.slot.updateDependencyIcon(activity, response.requireprevious);
             }
         });
 
@@ -408,15 +433,17 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         Y.Moodle.mod_quiz.util.slot.reorderSlots();
         Y.Moodle.mod_quiz.util.slot.reorderPageBreaks();
         Y.Moodle.mod_quiz.util.page.reorderPages();
+        Y.Moodle.mod_quiz.util.slot.updateOneSlotSections();
+        Y.Moodle.mod_quiz.util.slot.updateAllDependencyIcons();
     },
 
-    NAME : 'mod_quiz-resource-toolbox',
-    ATTRS : {
-        courseid : {
-            'value' : 0
+    NAME: 'mod_quiz-resource-toolbox',
+    ATTRS: {
+        courseid: {
+            'value': 0
         },
-        quizid : {
-            'value' : 0
+        quizid: {
+            'value': 0
         }
     }
 });

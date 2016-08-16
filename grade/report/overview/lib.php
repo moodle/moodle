@@ -62,6 +62,18 @@ class grade_report_overview extends grade_report {
     var $showtotalsifcontainhidden;
 
     /**
+     * An array of course ids that the user is a student in.
+     * @var array $studentcourseids
+     */
+    public $studentcourseids;
+
+    /**
+     * An array of courses that the user is a teacher in.
+     * @var array $teachercourses
+     */
+    public $teachercourses;
+
+    /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
      * @param int $userid
      * @param object $gpr grade plugin return tracking object
@@ -82,6 +94,10 @@ class grade_report_overview extends grade_report {
 
         $this->showtotalsifcontainhidden = array();
 
+        $this->studentcourseids = array();
+        $this->teachercourses = array();
+        $roleids = explode(',', get_config('moodle', 'gradebookroles'));
+
         if ($this->courses) {
             foreach ($this->courses as $course) {
                 $this->showrank[$course->id] = grade_get_setting($course->id, 'report_overview_showrank', !empty($CFG->grade_report_overview_showrank));
@@ -90,6 +106,20 @@ class grade_report_overview extends grade_report {
                 }
 
                 $this->showtotalsifcontainhidden[$course->id] = grade_get_setting($course->id, 'report_overview_showtotalsifcontainhidden', $CFG->grade_report_overview_showtotalsifcontainhidden);
+
+                $coursecontext = context_course::instance($course->id);
+
+                foreach ($roleids as $roleid) {
+                    if (user_has_role_assignment($userid, $roleid, $coursecontext->id)) {
+                        $this->studentcourseids[$course->id] = $course->id;
+                        // We only need to check if one of the roleids has been assigned.
+                        break;
+                    }
+                }
+
+                if (has_capability('moodle/grade:viewall', $coursecontext, $userid)) {
+                    $this->teachercourses[$course->id] = $course;
+                }
             }
         }
 
@@ -134,8 +164,18 @@ class grade_report_overview extends grade_report {
         $this->table->setup();
     }
 
-    public function fill_table() {
+    /**
+     * Fill the table for displaying.
+     *
+     * @param bool $activitylink If this report link to the activity report or the user report.
+     * @param bool $studentcoursesonly Only show courses that the user is a student of.
+     */
+    public function fill_table($activitylink = false, $studentcoursesonly = false) {
         global $CFG, $DB, $OUTPUT, $USER;
+
+        if ($studentcoursesonly && count($this->studentcourseids) == 0) {
+            return false;
+        }
 
         // Only show user's courses instead of all courses.
         if ($this->courses) {
@@ -146,6 +186,11 @@ class grade_report_overview extends grade_report {
                     continue;
                 }
 
+                // If we are only showing student courses and this course isn't part of the group, then move on.
+                if ($studentcoursesonly && !isset($this->studentcourseids[$course->id])) {
+                    continue;
+                }
+
                 $coursecontext = context_course::instance($course->id);
 
                 if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
@@ -153,13 +198,21 @@ class grade_report_overview extends grade_report {
                     continue;
                 }
 
-                if ((!has_capability('moodle/grade:view', $coursecontext) || $this->user->id != $USER->id) &&
-                        !has_capability('moodle/grade:viewall', $coursecontext)) {
+                if (!has_capability('moodle/user:viewuseractivitiesreport', context_user::instance($this->user->id)) &&
+                        ((!has_capability('moodle/grade:view', $coursecontext) || $this->user->id != $USER->id) &&
+                        !has_capability('moodle/grade:viewall', $coursecontext))) {
                     continue;
                 }
 
-                $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
-                $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id, 'userid' => $this->user->id)), $courseshortname);
+                $coursename = format_string(get_course_display_name_for_list($course), true, array('context' => $coursecontext));
+                // Link to the activity report version of the user grade report.
+                if ($activitylink) {
+                    $courselink = html_writer::link(new moodle_url('/course/user.php', array('mode' => 'grade', 'id' => $course->id,
+                        'user' => $this->user->id)), $coursename);
+                } else {
+                    $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id,
+                        'userid' => $this->user->id)), $coursename);
+                }
                 $canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);
 
                 // Get course grade_item
@@ -185,11 +238,11 @@ class grade_report_overview extends grade_report {
                         $course_item->grademin = $adjustedgrade['grademin'];
                     }
                 } else {
-                    // We must use the rawgrademin / rawgrademax because it can be different for
+                    // We must use the specific max/min because it can be different for
                     // each grade_grade when items are excluded from sum of grades.
                     if (!is_null($finalgrade)) {
-                        $course_item->grademin = $course_grade->rawgrademin;
-                        $course_item->grademax = $course_grade->rawgrademax;
+                        $course_item->grademin = $course_grade->get_grade_min();
+                        $course_item->grademax = $course_grade->get_grade_max();
                     }
                 }
 
@@ -221,7 +274,7 @@ class grade_report_overview extends grade_report {
             return true;
 
         } else {
-            echo $OUTPUT->notification(get_string('nocourses', 'grades'));
+            echo $OUTPUT->notification(get_string('notenrolled', 'grades'), 'notifymessage');
             return false;
         }
     }
@@ -243,13 +296,34 @@ class grade_report_overview extends grade_report {
     }
 
     /**
+     * Print a table to show courses that the user is able to grade.
+     */
+    public function print_teacher_table() {
+        $table = new html_table();
+        $table->head = array(get_string('coursename', 'grades'));
+        $table->data = null;
+        foreach ($this->teachercourses as $courseid => $course) {
+            $url = new moodle_url('/grade/report/index.php', array('id' => $courseid));
+            $table->data[] = array(html_writer::link($url, $course->fullname));
+        }
+        echo html_writer::table($table);
+    }
+
+    /**
      * Processes the data sent by the form (grades and feedbacks).
-     * @var array $data
+     * @param array $data
      * @return bool Success or Failure (array of errors).
      */
     function process_data($data) {
     }
     function process_action($target, $action) {
+    }
+
+    /**
+     * This report supports being set as the 'grades' report.
+     */
+    public static function supports_mygrades() {
+        return true;
     }
 }
 
@@ -276,10 +350,10 @@ function grade_report_overview_settings_definition(&$mform) {
                       GRADE_REPORT_SHOW_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowexhiddenitems', 'grades'),
                       GRADE_REPORT_SHOW_REAL_TOTAL_IF_CONTAINS_HIDDEN => get_string('hidetotalshowinchiddenitems', 'grades') );
 
-    if (empty($CFG->grade_report_overview_showtotalsifcontainhidden)) {
+    if (!array_key_exists($CFG->grade_report_overview_showtotalsifcontainhidden, $options)) {
         $options[-1] = get_string('defaultprev', 'grades', $options[0]);
     } else {
-        $options[-1] = get_string('defaultprev', 'grades', $options[1]);
+        $options[-1] = get_string('defaultprev', 'grades', $options[$CFG->grade_report_overview_showtotalsifcontainhidden]);
     }
 
     $mform->addElement('select', 'report_overview_showtotalsifcontainhidden', get_string('hidetotalifhiddenitems', 'grades'), $options);

@@ -1,0 +1,134 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Manage competencies template.
+
+    Classes required for JS:
+
+    Data attibutes required for JS:
+    * data-action=add
+    * data-enhance=tree
+    * data-region=term
+    * data-region=selected-competency
+
+    Context variables required for this template:
+    * framework -
+    * competencies - array of objects containing id, shortname, idnumber, sortorder, parentid, competencyframeworkid, path
+    * canmanage - true if this user has permission to manage the competencies
+}}
+<div data-region="managecompetencies">
+<h2>
+    {{{framework.shortname}}}
+    {{#canmanage}}
+            <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{framework.id}}&pagecontextid={{pagecontextid}}&return=competencies">{{#pix}}t/edit, core, {{#str}}editcompetencyframework, tool_lp{{/str}}{{/pix}}</a>
+    {{/canmanage}}
+</h2>
+<div>{{{framework.description}}}</div>
+<h3>{{#str}}competencies, core_competency{{/str}}</h3>
+<div class="row-fluid">
+<div class="span6">
+<p>
+<form data-region="filtercompetencies" data-frameworkid="{{framework.id}}">
+    <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
+    <input type="text" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
+    <button>{{#pix}}a/search, , {{#str}}search{{/str}}{{/pix}}</button>
+</form>
+</p>
+<ul data-enhance="tree">
+    {{> tool_lp/loading }}
+</ul>
+</div>
+
+<div class="span6 well">
+<h4 data-region="selected-competency">{{#str}}selectedcompetency, tool_lp{{/str}}</h4>
+<p data-region="competencyinfo">
+{{#str}}nocompetencyselected, tool_lp{{/str}}
+</p>
+{{#canmanage}}
+<div data-region="competencyactions">
+<button class="btn" data-action="add">{{#pix}}t/add{{/pix}} <span data-region="term"></span></button>
+            <span data-region="competencyactionsmenu">
+            <ul title="{{#str}}edit{{/str}}" class="competencyactionsmenu">
+                <li>
+                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#" data-action="edit">
+                                {{#pix}}t/edit{{/pix}} {{#str}}edit{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="move">
+                                {{#pix}}t/move{{/pix}} {{#str}}movetonewparent, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="delete">
+                                {{#pix}}t/delete{{/pix}} {{#str}}delete{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="moveup">
+                                {{#pix}}t/up{{/pix}} {{#str}}moveup{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="movedown">
+                                {{#pix}}t/down{{/pix}} {{#str}}movedown{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="linkedcourses">
+                                {{#pix}}t/viewdetails{{/pix}} {{#str}}linkedcourses, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="relatedcompetencies">
+                                {{#pix}}t/add{{/pix}} {{#str}}addcrossreferencedcompetency, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-action="competencyrules">
+                                {{#pix}}t/edit{{/pix}} {{#str}}competencyrule, tool_lp{{/str}}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            </span>
+</div>
+</div>
+{{/canmanage}}
+</div>
+
+{{#js}}
+// Initialise the JS.
+require(['tool_lp/tree', 'tool_lp/competencytree', 'tool_lp/competencyactions', 'jquery'],
+        function(ariatree, treeModel, actions, $) {
+
+    treeModel.init({{framework.id}},
+                   {{#quote}} {{{framework.shortname}}} {{/quote}},
+                   '{{search}}',
+                   '[data-enhance=tree]',
+                   {{canmanage}});
+
+    actions.init(treeModel, {{pagecontextid}}, '{{{framework.taxonomies}}}', {{{rulesmodules}}});
+
+});
+{{/js}}
+
+</div>

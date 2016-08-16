@@ -39,11 +39,21 @@ class auth_plugin_cas extends auth_plugin_ldap {
     /**
      * Constructor.
      */
-    function auth_plugin_cas() {
+    public function __construct() {
         $this->authtype = 'cas';
         $this->roleauth = 'auth_cas';
         $this->errorlogtag = '[AUTH CAS] ';
         $this->init_plugin($this->authtype);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function auth_plugin_cas() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
     }
 
     function prevent_local_passwords() {
@@ -113,6 +123,12 @@ class auth_plugin_cas extends auth_plugin_ldap {
 
         // If the multi-authentication setting is used, check for the param before connecting to CAS.
         if ($this->config->multiauth) {
+
+            // If there is an authentication error, stay on the default authentication page.
+            if (!empty($SESSION->loginerrormsg)) {
+                return;
+            }
+
             $authCAS = optional_param('authCAS', '', PARAM_RAW);
             if ($authCAS == 'NOCAS') {
                 return;
@@ -177,11 +193,16 @@ class auth_plugin_cas extends auth_plugin_ldap {
             } else {
                 phpCAS::client($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
             }
+            // Some CAS installs require SSLv3 that should be explicitly set.
+            if (!empty($this->config->curl_ssl_version)) {
+                phpCAS::setExtraCurlOption(CURLOPT_SSLVERSION, $this->config->curl_ssl_version);
+            }
+
             $connected = true;
         }
 
         // If Moodle is configured to use a proxy, phpCAS needs some curl options set.
-        if (!empty($CFG->proxyhost) && !is_proxybypass($this->config->hostname)) {
+        if (!empty($CFG->proxyhost) && !is_proxybypass(phpCAS::getServerLoginURL())) {
             phpCAS::setExtraCurlOption(CURLOPT_PROXY, $CFG->proxyhost);
             if (!empty($CFG->proxyport)) {
                 phpCAS::setExtraCurlOption(CURLOPT_PROXYPORT, $CFG->proxyport);
@@ -296,6 +317,9 @@ class auth_plugin_cas extends auth_plugin_ldap {
         if (!isset($config->certificate_path)) {
             $config->certificate_path = '';
         }
+        if (!isset($config->curl_ssl_version)) {
+            $config->curl_ssl_version = '';
+        }
         if (!isset($config->logout_return_url)) {
             $config->logout_return_url = '';
         }
@@ -368,6 +392,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         set_config('multiauth', $config->multiauth, $this->pluginconfig);
         set_config('certificate_check', $config->certificate_check, $this->pluginconfig);
         set_config('certificate_path', $config->certificate_path, $this->pluginconfig);
+        set_config('curl_ssl_version', $config->curl_ssl_version, $this->pluginconfig);
         set_config('logout_return_url', $config->logout_return_url, $this->pluginconfig);
 
         // save LDAP settings

@@ -265,8 +265,8 @@ class repository_boxnet extends repository {
             }
         }
 
-        collatorlib::ksort($folders, core_collator::SORT_NATURAL);
-        collatorlib::ksort($files, core_collator::SORT_NATURAL);
+        core_collator::ksort($folders, core_collator::SORT_NATURAL);
+        core_collator::ksort($files, core_collator::SORT_NATURAL);
         $ret['list'] = array_merge($folders, $files);
         $ret['list'] = array_filter($ret['list'], array($this, 'filter'));
 
@@ -336,12 +336,6 @@ class repository_boxnet extends repository {
 
         if (!is_https()) {
             $mform->addElement('static', null, '',  get_string('warninghttps', 'repository_boxnet'));
-        }
-
-        if (get_config('boxnet', 'api_key')) {
-            $url = new moodle_url('/repository/boxnet/migrationv1.php');
-            $url = $url->out();
-            $mform->addElement('static', null, '', get_string('migrationadvised', 'repository_boxnet', $url));
         }
     }
 

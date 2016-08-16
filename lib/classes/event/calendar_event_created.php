@@ -104,11 +104,22 @@ class calendar_event_created extends base {
         if (!isset($this->other['repeatid'])) {
             throw new \coding_exception('The \'repeatid\' value must be set in other.');
         }
-        if (empty($this->other['name'])) {
+        if (!isset($this->other['name'])) {
             throw new \coding_exception('The \'name\' value must be set in other.');
         }
         if (!isset($this->other['timestart'])) {
             throw new \coding_exception('The \'timestart\' value must be set in other.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'event', 'restore' => 'event');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['repeatid'] = array('db' => 'event', 'restore' => 'event');
+
+        return $othermapped;
     }
 }

@@ -1,28 +1,25 @@
-.singlebutton div {
-    display: inline-block;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-bottom: 5px;
+.singlebutton {
+    div {
+        display: inline-block;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        margin-left: 5px;
+    }
 }
-// Two singlebutton's side by side for ok/cancel.
-#notice .buttons .singlebutton {
-    display: inline-block;
+
+// Two singlebuttons side by side for ok/cancel.
+#notice {
+    .buttons {
+        .singlebutton {
+            display: inline-block;
+        }
+    }
 }
+
 .continuebutton {
     text-align: center;
 }
 
-.btn-lineup {
-    margin: 0 0 10px 5px;
-}
-input[name="searchwikicontent"] + input[type="submit"],
-select + input[type="submit"],
-input[type="text"] + input[type="button"],
-input[type="password"] + input[type="submit"],
-input[type="text"] + button,
-input[type="text"] + input[type="submit"] {
-    .btn-lineup
-}
 p.arrow_button {
     margin-top: 5em;
     text-align: center;
@@ -33,6 +30,7 @@ p.arrow_button {
         .btn-block;
     }
 }
+
 #addcontrols {
     // The margin top is equal the combination of the line-height and margin of a <p>,
     // because the visual parent is a <p>.
@@ -43,45 +41,74 @@ p.arrow_button {
         display: inline;
     }
 }
-#addcontrols input,
-#removecontrols input {
-    .btn-block;
-    margin-right: auto;
-    margin-left: auto;
+
+#addcontrols,
+#removecontrols {
+    input {
+        .btn-block;
+        margin: auto;
+    }
 }
 
-button,
-input.form-submit,
-input[type="button"],
-input[type="submit"],
-input[type="reset"]
-{
-    .btn
+.btn-lineup {
+    margin: 0 0 10px 5px;
 }
-button,
-input.form-submit,
-input[type="button"],
-input[type="submit"],
-input[type="reset"]
-{
+
+input[name="searchwikicontent"] + input[type="submit"],
+select + input[type="submit"],
+input[type="text"] + input[type="button"],
+input[type="password"] + input[type="submit"],
+input[type="text"] + button,
+input[type="text"] + input[type="submit"] {
     .btn-lineup
 }
-button.yui3-button.closebutton,
-button.yui3-button.closebutton:hover {
-    background-position: 0 0;
-    // Because we assign button looks to every button tag above,
-    // we need to remove some styles from non-standard looking
-    // buttons. Correct fix, assign .btn class to every actual
-    // button in Moodle so we don't need to carpet bomb the
-    // bare button tag.
+
+button,
+input.form-submit,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    .btn;
+}
+button,
+input.form-submit,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    .btn-lineup;
 }
 
-input.fp-btn-choose {
-    .btn-small;
+button {
+    &.yui3-button {
+        &.closebutton {
+            background-position: 0 0;
+            &:hover {
+                background-position: 0 0;
+                // Because we assign the button look to every button tag
+                // above, we need to remove some styles from non-standard
+                // looking buttons. Correct fix, assign .btn class to every
+                // actual button in Moodle so we don't need to carpet bomb the
+                // bare button tag.
+            }
+        }
+    }
 }
-.user-enroller-panel .uep-search-results .user .options .enrol {
-    .btn-mini
+
+input {
+    &.fp-btn-choose {
+        .btn-small
+    }
 }
-.user-enroller-panel .uep-search-results .cohort .options .enrol {
-  .btn-mini
+
+.user-enroller-panel {
+    .uep-search-results {
+        .user,
+        .cohort {
+            .options {
+                .enrol {
+                    .btn-mini
+                }
+            }
+        }
+    }
 }

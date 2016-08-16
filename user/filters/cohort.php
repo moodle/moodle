@@ -37,8 +37,18 @@ class user_filter_cohort extends user_filter_type {
      * Constructor
      * @param boolean $advanced advanced form element flag
      */
+    public function __construct($advanced) {
+        parent::__construct('cohort', get_string('idnumber', 'core_cohort'), $advanced);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
     public function user_filter_cohort($advanced) {
-        parent::user_filter_type('cohort', get_string('idnumber', 'core_cohort'), $advanced);
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($advanced);
     }
 
     /**
@@ -60,8 +70,10 @@ class user_filter_cohort extends user_filter_type {
      */
     public function setupForm(&$mform) {
         $objs = array();
-        $objs[] = $mform->createElement('select', $this->_name.'_op', null, $this->getOperators());
-        $objs[] = $mform->createElement('text', $this->_name, null);
+        $objs['select'] = $mform->createElement('select', $this->_name.'_op', null, $this->getOperators());
+        $objs['text'] = $mform->createElement('text', $this->_name, null);
+        $objs['select']->setLabel(get_string('limiterfor', 'filters', $this->_label));
+        $objs['text']->setLabel(get_string('valuefor', 'filters', $this->_label));
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $mform->setType($this->_name, PARAM_RAW);
         $mform->disabledIf($this->_name, $this->_name.'_op', 'eq', 5);

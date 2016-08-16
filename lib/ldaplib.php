@@ -64,7 +64,7 @@ function ldap_getdefaults() {
                         'rfc2307' => 'posixaccount',
                         'rfc2307bis' => 'posixaccount',
                         'samba' => 'sambasamaccount',
-                        'ad' => 'user',
+                        'ad' => '(samaccounttype=805306368)',
                         'default' => '*'
                         );
     $default['user_attribute'] = array(
@@ -74,6 +74,14 @@ function ldap_getdefaults() {
                         'samba' => 'uid',
                         'ad' => 'cn',
                         'default' => 'cn'
+                        );
+    $default['suspended_attribute'] = array(
+                        'edir' => '',
+                        'rfc2307' => '',
+                        'rfc2307bis' => '',
+                        'samba' => '',
+                        'ad' => '',
+                        'default' => ''
                         );
     $default['memberattribute'] = array(
                         'edir' => 'member',
@@ -268,6 +276,42 @@ function ldap_find_userdn($ldapconnection, $username, $contexts, $objectclass, $
     }
 
     return $ldap_user_dn;
+}
+
+/**
+ * Normalise the supplied objectclass filter.
+ *
+ * This normalisation is a rudimentary attempt to format the objectclass filter correctly.
+ *
+ * @param string $objectclass The objectclass to normalise
+ * @param string $default The default objectclass value to use if no objectclass was supplied
+ * @return string The normalised objectclass.
+ */
+function ldap_normalise_objectclass($objectclass, $default = '*') {
+    if (empty($objectclass)) {
+        // Can't send empty filter.
+        $return = sprintf('(objectClass=%s)', $default);
+    } else if (stripos($objectclass, 'objectClass=') === 0) {
+        // Value is 'objectClass=some-string-here', so just add () around the value (filter _must_ have them).
+        $return = sprintf('(%s)', $objectclass);
+    } else if (stripos($objectclass, '(') !== 0) {
+        // Value is 'some-string-not-starting-with-left-parentheses', which is assumed to be the objectClass matching value.
+        // Build a valid filter using the value it.
+        $return = sprintf('(objectClass=%s)', $objectclass);
+    } else {
+        // There is an additional possible value '(some-string-here)', that can be used to specify any valid filter
+        // string, to select subsets of users based on any criteria.
+        //
+        // For example, we could select the users whose objectClass is 'user' and have the 'enabledMoodleUser'
+        // attribute, with something like:
+        //
+        // (&(objectClass=user)(enabledMoodleUser=1))
+        //
+        // In this particular case we don't need to do anything, so leave $this->config->objectclass as is.
+        $return = $objectclass;
+    }
+
+    return $return;
 }
 
 /**

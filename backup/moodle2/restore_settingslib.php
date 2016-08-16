@@ -44,6 +44,15 @@ class restore_generic_setting extends root_backup_setting {}
 class restore_users_setting extends restore_generic_setting {}
 
 /**
+ * root setting to control if restore will create groups/grouping information. Depends on @restore_users_setting
+ *
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2014 Matt Sammarco
+ */
+class restore_groups_setting extends restore_generic_setting {
+}
+
+/**
  * root setting to control if restore will create role assignments
  * or no (any level), depends of @restore_users_setting
  */
@@ -68,6 +77,30 @@ class restore_comments_setting extends restore_role_assignments_setting {}
  * depends on @restore_activities_setting
  */
 class restore_badges_setting extends restore_generic_setting {}
+
+/**
+ * root setting to control if competencies will also be restored.
+ */
+class restore_competencies_setting extends restore_generic_setting {
+
+    /**
+     * restore_competencies_setting constructor.
+     * @param bool $hascompetencies Flag whether to set the restore setting as checked and unlocked.
+     */
+    public function __construct($hascompetencies) {
+        $defaultvalue = false;
+        $visibility = base_setting::HIDDEN;
+        $status = base_setting::LOCKED_BY_CONFIG;
+        if (\core_competency\api::is_enabled()) {
+            $visibility = base_setting::VISIBLE;
+            if ($hascompetencies) {
+                $defaultvalue = true;
+                $status = base_setting::NOT_LOCKED;
+            }
+        }
+        parent::__construct('competencies', base_setting::IS_BOOLEAN, $defaultvalue, $visibility, $status);
+    }
+}
 
 /**
  * root setting to control if restore will create

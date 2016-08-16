@@ -491,8 +491,12 @@ function scorm_aicc_generate_simple_sco($scorm) {
  */
 function get_scorm_default (&$userdata, $scorm, $scoid, $attempt, $mode) {
     global $USER;
-
-    $userdata->student_id = $USER->username;
+    $aiccuserid = get_config('scorm', 'aiccuserid');
+    if (!empty($aiccuserid)) {
+        $userdata->student_id = $USER->id;
+    } else {
+        $userdata->student_id = $USER->username;
+    }
     $userdata->student_name = $USER->lastname .', '. $USER->firstname;
 
     if ($usertrack = scorm_get_tracks($scoid, $USER->id, $attempt)) {

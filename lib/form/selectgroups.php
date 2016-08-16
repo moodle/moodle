@@ -63,15 +63,25 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      * @param bool $showchoose add standard moodle "Choose..." option as first item
      */
-    function MoodleQuickForm_selectgroups($elementName=null, $elementLabel=null, $optgrps=null, $attributes=null, $showchoose=false)
+    public function __construct($elementName=null, $elementLabel=null, $optgrps=null, $attributes=null, $showchoose=false)
     {
         $this->showchoose = $showchoose;
-        HTML_QuickForm_element::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
+        parent::__construct($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_type = 'selectgroups';
         if (isset($optgrps)) {
             $this->loadArrayOptGroups($optgrps);
         }
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_selectgroups($elementName=null, $elementLabel=null, $optgrps=null, $attributes=null, $showchoose=false) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $optgrps, $attributes, $showchoose);
     }
 
     /**

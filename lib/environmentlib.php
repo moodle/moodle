@@ -327,6 +327,10 @@ function get_list_of_environment_versions($contents) {
         }
     }
 
+    if (isset($contents['COMPATIBILITY_MATRIX']['#']['PLUGIN'])) {
+        $versions[] = 'all';
+    }
+
     return $versions;
 }
 
@@ -396,6 +400,14 @@ function get_environment_for_version($version, $env_select) {
         return false;
     }
 
+    // If $env_select is not numeric then this is being called on a plugin, and not the core environment.xml
+    // If a version of 'all' is in the arry is also means that the new <PLUGIN> tag was found, this should
+    // be matched against any version of Moodle.
+    if (!is_numeric($env_select) && in_array('all', $versions)
+            && environment_verify_plugin($env_select, $contents['COMPATIBILITY_MATRIX']['#']['PLUGIN'][0])) {
+        return $contents['COMPATIBILITY_MATRIX']['#']['PLUGIN'][0];
+    }
+
 /// If the version requested is available
     if (!in_array($version, $versions)) {
         return false;
@@ -407,6 +419,19 @@ function get_environment_for_version($version, $env_select) {
     return $contents['COMPATIBILITY_MATRIX']['#']['MOODLE'][$fl_arr[$version]];
 }
 
+/**
+ * Checks if a plugin tag has a name attribute and it matches the plugin being tested.
+ *
+ * @param string $plugin the name of the plugin.
+ * @param array $pluginxml the xmlised structure for the plugin tag being tested.
+ * @return boolean true if the name attribute exists and matches the plugin being tested.
+ */
+function environment_verify_plugin($plugin, $pluginxml) {
+    if (!isset($pluginxml['@']['name']) || $pluginxml['@']['name'] != $plugin) {
+        return false;
+    }
+    return true;
+}
 
 /**
  * This function will check for everything (DB, PHP and PHP extensions for now)
@@ -1235,7 +1260,7 @@ class environment_results {
      *
      * @param string $part
      */
-    function environment_results($part) {
+    public function __construct($part) {
         $this->part=$part;
         $this->status=false;
         $this->error_code=NO_ERROR;
@@ -1246,6 +1271,16 @@ class environment_results {
         $this->feedback_str='';
         $this->bypass_str='';
         $this->restrict_str='';
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function environment_results($part) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($part);
     }
 
     /**
@@ -1512,4 +1547,38 @@ function process_environment_result($element, &$result) {
     process_environment_bypass($element, $result);
 /// Process restrict, modifying $result if needed.
     process_environment_restrict($element, $result);
+}
+
+/**
+ * Check if the current PHP version is greater than or equal to
+ * PHP version 7.
+ *
+ * @param object $result an environment_results instance
+ * @return bool result of version check
+ */
+function restrict_php_version_7(&$result) {
+    return restrict_php_version($result, '7');
+}
+
+/**
+ * Check if the current PHP version is greater than or equal to an
+ * unsupported version.
+ *
+ * @param object $result an environment_results instance
+ * @param string $version the version of PHP that can't be used
+ * @return bool result of version check
+ */
+function restrict_php_version(&$result, $version) {
+
+    // Get the current PHP version.
+    $currentversion = normalize_version(phpversion());
+
+    // Confirm we're using a supported PHP version.
+    if (version_compare($currentversion, $version, '<')) {
+        // Everything is ok, the restriction doesn't apply.
+        return false;
+    } else {
+        // We're using an unsupported PHP version, apply restriction.
+        return true;
+    }
 }

@@ -27,6 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The mod_quiz attempt started event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - int quizid: (optional) the id of the quiz.
+ * }
+ *
  * @package    mod_quiz
  * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -124,5 +130,16 @@ class attempt_started extends \core\event\base {
         if (!isset($this->relateduserid)) {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
+    }
+
+    public static function get_objectid_mapping() {
+        return array('db' => 'quiz_attempts', 'restore' => 'quiz_attempt');
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
+
+        return $othermapped;
     }
 }

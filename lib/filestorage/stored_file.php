@@ -223,23 +223,14 @@ class stored_file {
     }
 
     /**
-     * Replace the content by providing another stored_file instance
+     * Function stored_file::replace_content_with() is deprecated. Please use stored_file::replace_file_with()
      *
-     * @deprecated since 2.6
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      * @see stored_file::replace_file_with()
-     * @param stored_file $storedfile
      */
     public function replace_content_with(stored_file $storedfile) {
-        debugging('Function stored_file::replace_content_with() is deprecated. Please use stored_file::replace_file_with()', DEBUG_DEVELOPER);
-        $filerecord = new stdClass;
-        $contenthash = $storedfile->get_contenthash();
-        if ($this->fs->content_exists($contenthash)) {
-            $filerecord->contenthash = $contenthash;
-        } else {
-            throw new file_exception('storedfileproblem', 'Invalid contenthash, content must be already in filepool', $contenthash);
-        }
-        $filerecord->filesize = $storedfile->get_filesize();
-        $this->update($filerecord);
+        throw new coding_exception('Function stored_file::replace_content_with() can not be used any more . ' .
+            'Please use stored_file::replace_file_with()');
     }
 
     /**
@@ -734,15 +725,14 @@ class stored_file {
     }
 
      /**
-     * Returns the size of file in bytes.
+     * Function stored_file::set_filesize() is deprecated. Please use stored_file::replace_file_with
      *
-     * @param int $filesize bytes
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
+     * @see stored_file::replace_file_with()
      */
     public function set_filesize($filesize) {
-        debugging('Function stored_file::set_filesize() is deprecated. Please use stored_file::replace_file_with()', DEBUG_DEVELOPER);
-        $filerecord = new stdClass;
-        $filerecord->filesize = $filesize;
-        $this->update($filerecord);
+        throw new coding_exception('Function stored_file::set_filesize() can not be used any more. ' .
+            'Please use stored_file::replace_file_with()');
     }
 
     /**
@@ -933,26 +923,16 @@ class stored_file {
     }
 
     /**
-     * Get reference life time (in seconds) after which sync is required
-     *
-     * This data is no longer stored in DB or returned by repository. Each
+     * Function stored_file::get_referencelifetime() is deprecated as reference
+     * life time is no longer stored in DB or returned by repository. Each
      * repository should decide by itself when to synchronise the references.
      *
-     * @deprecated since 2.6
+     * @deprecated since Moodle 2.6 MDL-42016 - please do not use this function any more.
      * @see repository::sync_reference()
-     * @return int
      */
     public function get_referencelifetime() {
-        debugging('Function stored_file::get_referencelifetime() is deprecated.', DEBUG_DEVELOPER);
-        if ($this->repository) {
-            if (method_exists($this->repository, 'get_reference_file_lifetime')) {
-                return $this->repository->get_reference_file_lifetime($this->get_reference());
-            } else {
-                return 24 * 60 * 60;
-            }
-        } else {
-            return 0;
-        }
+        throw new coding_exception('Function stored_file::get_referencelifetime() can not be used any more. ' .
+            'See repository::sync_reference().');
     }
     /**
      * Returns file reference
@@ -981,8 +961,9 @@ class stored_file {
      * @param null|string $contenthash if set to null contenthash is not changed
      * @param int $filesize new size of the file
      * @param int $status new status of the file (0 means OK, 666 - source missing)
+     * @param int $timemodified last time modified of the source, if known
      */
-    public function set_synchronized($contenthash, $filesize, $status = 0) {
+    public function set_synchronized($contenthash, $filesize, $status = 0, $timemodified = null) {
         if (!$this->is_external_file()) {
             return;
         }
@@ -994,12 +975,15 @@ class stored_file {
             $oldcontenthash = $this->file_record->contenthash;
         }
         // this will update all entries in {files} that have the same filereference id
-        $this->fs->update_references($this->file_record->referencefileid, $now, null, $contenthash, $filesize, $status);
+        $this->fs->update_references($this->file_record->referencefileid, $now, null, $contenthash, $filesize, $status, $timemodified);
         // we don't need to call update() for this object, just set the values of changed fields
         $this->file_record->contenthash = $contenthash;
         $this->file_record->filesize = $filesize;
         $this->file_record->status = $status;
         $this->file_record->referencelastsync = $now;
+        if ($timemodified) {
+            $this->file_record->timemodified = $timemodified;
+        }
         if (isset($oldcontenthash)) {
             $this->fs->deleted_file_cleanup($oldcontenthash);
         }
@@ -1049,5 +1033,34 @@ class stored_file {
         } else {
             send_file_not_found();
         }
+    }
+
+    /**
+     * Generates a thumbnail for this stored_file.
+     *
+     * If the GD library has at least version 2 and PNG support is available, the returned data
+     * is the content of a transparent PNG file containing the thumbnail. Otherwise, the function
+     * returns contents of a JPEG file with black background containing the thumbnail.
+     *
+     * @param   int $width the width of the requested thumbnail
+     * @param   int $height the height of the requested thumbnail
+     * @return  string|bool false if a problem occurs, the thumbnail image data otherwise
+     */
+    public function generate_image_thumbnail($width, $height) {
+        if (empty($width) or empty($height)) {
+            return false;
+        }
+
+        // Fetch the image information for this image.
+        $imageinfo = @getimagesizefromstring($this->get_content());
+        if (empty($imageinfo)) {
+            return false;
+        }
+
+        // Create a new image from the file.
+        $original = @imagecreatefromstring($this->get_content());
+
+        // Generate the thumbnail.
+        return generate_image_thumbnail_from_image($original, $imageinfo, $width, $height);
     }
 }

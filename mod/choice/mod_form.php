@@ -24,7 +24,7 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('description', 'choice'));
+        $this->standard_intro_elements(get_string('description', 'choice'));
 
         $mform->addElement('select', 'display', get_string("displaymode","choice"), $CHOICE_DISPLAY);
 
@@ -70,14 +70,16 @@ class mod_choice_mod_form extends moodleform_mod {
         }
 
 //-------------------------------------------------------------------------------
-        $mform->addElement('header', 'timerestricthdr', get_string('availability'));
-        $mform->addElement('checkbox', 'timerestrict', get_string('timerestrict', 'choice'));
+        $mform->addElement('header', 'availabilityhdr', get_string('availability'));
+        $mform->addElement('date_time_selector', 'timeopen', get_string("choiceopen", "choice"),
+            array('optional' => true));
 
-        $mform->addElement('date_time_selector', 'timeopen', get_string("choiceopen", "choice"));
-        $mform->disabledIf('timeopen', 'timerestrict');
+        $mform->addElement('date_time_selector', 'timeclose', get_string("choiceclose", "choice"),
+            array('optional' => true));
 
-        $mform->addElement('date_time_selector', 'timeclose', get_string("choiceclose", "choice"));
-        $mform->disabledIf('timeclose', 'timerestrict');
+        $mform->addElement('advcheckbox', 'showpreview', get_string('showpreview', 'choice'));
+        $mform->addHelpButton('showpreview', 'showpreview', 'choice');
+        $mform->disabledIf('showpreview', 'timeopen[enabled]');
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'resultshdr', get_string('results', 'choice'));
@@ -89,6 +91,8 @@ class mod_choice_mod_form extends moodleform_mod {
 
         $mform->addElement('selectyesno', 'showunanswered', get_string("showunanswered", "choice"));
 
+        $mform->addElement('selectyesno', 'includeinactive', get_string('includeinactive', 'choice'));
+        $mform->setDefault('includeinactive', 0);
 
 //-------------------------------------------------------------------------------
         $this->standard_coursemodule_elements();
@@ -111,11 +115,6 @@ class mod_choice_mod_form extends moodleform_mod {
             }
 
         }
-        if (empty($default_values['timeopen'])) {
-            $default_values['timerestrict'] = 0;
-        } else {
-            $default_values['timerestrict'] = 1;
-        }
 
     }
 
@@ -131,6 +130,25 @@ class mod_choice_mod_form extends moodleform_mod {
             }
         }
         return $data;
+    }
+
+    /**
+     * Enforce validation rules here
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @return array
+     **/
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+
+        // Check open and close times are consistent.
+        if ($data['timeopen'] && $data['timeclose'] &&
+                $data['timeclose'] < $data['timeopen']) {
+            $errors['timeclose'] = get_string('closebeforeopen', 'choice');
+        }
+
+        return $errors;
     }
 
     function add_completion_rules() {

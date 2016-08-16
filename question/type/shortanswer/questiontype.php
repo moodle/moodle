@@ -78,6 +78,12 @@ class qtype_shortanswer extends question_type {
         $this->save_hints($question);
     }
 
+    protected function fill_answer_fields($answer, $questiondata, $key, $context) {
+        $answer = parent::fill_answer_fields($answer, $questiondata, $key, $context);
+        $answer->answer = trim($answer->answer);
+        return $answer;
+    }
+
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $this->initialise_question_answers($question, $questiondata);

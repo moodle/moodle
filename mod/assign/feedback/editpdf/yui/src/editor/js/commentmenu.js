@@ -28,7 +28,7 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var commentlinks,
             link,
             body,
@@ -38,15 +38,27 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
         // Build the list of menu items.
         commentlinks = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
 
-        link = Y.Node.create('<li><a tabindex="-1" href="#">' + M.util.get_string('addtoquicklist', 'assignfeedback_editpdf') + '</a></li>');
+        link = Y.Node.create('<li><a tabindex="-1" href="#">' +
+               M.util.get_string('addtoquicklist', 'assignfeedback_editpdf') +
+               '</a></li>');
         link.on('click', comment.add_to_quicklist, comment);
         link.on('key', comment.add_to_quicklist, 'enter,space', comment);
 
         commentlinks.append(link);
 
-        link = Y.Node.create('<li><a tabindex="-1" href="#">' + M.util.get_string('deletecomment', 'assignfeedback_editpdf') + '</a></li>');
-        link.on('click', function(e) { e.preventDefault(); this.menu.hide(); this.remove(); }, comment);
-        link.on('key', function() { comment.menu.hide(); comment.remove(); }, 'enter,space', comment);
+        link = Y.Node.create('<li><a tabindex="-1" href="#">' +
+               M.util.get_string('deletecomment', 'assignfeedback_editpdf') +
+               '</a></li>');
+        link.on('click', function(e) {
+            e.preventDefault();
+            this.menu.hide();
+            this.remove();
+        }, comment);
+
+        link.on('key', function() {
+            comment.menu.hide();
+            comment.remove();
+        }, 'enter,space', comment);
 
         commentlinks.append(link);
 
@@ -71,10 +83,10 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
      * @method show
      * @return void
      */
-    show : function() {
+    show: function() {
         var commentlinks = this.get('boundingBox').one('ul');
-            commentlinks.all('.quicklist_comment').remove(true),
-            comment = this.get('comment');
+            commentlinks.all('.quicklist_comment').remove(true);
+        var comment = this.get('comment');
 
         comment.deleteme = false; // Cancel the deleting of blank comments.
 
@@ -101,8 +113,8 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
         COMMENTMENU.superclass.show.call(this);
     }
 }, {
-    NAME : COMMENTMENUNAME,
-    ATTRS : {
+    NAME: COMMENTMENUNAME,
+    ATTRS: {
         /**
          * The comment this menu is attached to.
          *
@@ -110,8 +122,8 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
          * @type M.assignfeedback_editpdf.comment
          * @default null
          */
-        comment : {
-            value : null
+        comment: {
+            value: null
         }
 
     }

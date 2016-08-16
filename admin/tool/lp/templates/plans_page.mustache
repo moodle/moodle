@@ -1,0 +1,174 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    User learning plans page.
+
+    Classes required for JS:
+    * planactions
+
+    Data attributes required for JS:
+    * data-region = plans
+    * data-planid = plans.id
+    * data-userid = userid
+    * data-action = deleteplan
+
+    Context variables required for this template:
+    * userid - The plan user id
+    * pluginbaseurl - tool_lp base url
+    * plans - The list of learning plans
+    * navigation - array of strings containing buttons for navigation
+}}
+
+<div data-region="plans">
+<div class="pull-left">
+    {{#navigation}}
+    {{{.}}}
+    {{/navigation}}
+</div>
+<table class="generaltable fullwidth">
+    <caption>{{#str}}listplanscaption, tool_lp{{/str}}</caption>
+    <thead>
+        <tr>
+            <th scope="col">{{#str}}planname, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}templatebased, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#plans}}
+        <tr data-region="plan-node" data-id="{{id}}" data-userid="{{userid}}">
+            <td>
+                <span><a href="{{pluginbaseurl}}/plan.php?id={{id}}">{{{name}}}</a></span>
+            </td>
+             <td>
+               {{#isbasedontemplate}}
+               <span class="label label-info">{{#str}}yes{{/str}}</span>
+               {{/isbasedontemplate}}
+               {{^isbasedontemplate}}
+               <span class="label">{{#str}}no{{/str}}</span>
+               {{/isbasedontemplate}}
+            </td>
+            <td>{{statusname}}</td>
+            <td>
+            {{#canmanage}}
+                <div style="display: inline-block;">
+                <ul title="{{#str}}edit{{/str}}" class="planactions">
+                <li>
+                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                    <ul class="dropdown-menu">
+                    <li {{^canbeedited}} class="disabled" {{/canbeedited}}>
+                        <a href="{{#canbeedited}}
+                                    {{pluginbaseurl}}/editplan.php?id={{id}}&amp;userid={{userid}}&amp;return=plans
+                                 {{/canbeedited}}
+                                 {{^canbeedited}}
+                                    #
+                                 {{/canbeedited}}
+                                 ">
+                            {{#pix}}t/edit{{/pix}} {{#str}}editthisplan, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    {{#isreopenallowed}}
+                    <li>
+                        <a data-action="plan-reopen" href="#">
+                            {{#pix}}t/edit{{/pix}} {{#str}}reopenplan, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    {{/isreopenallowed}}
+                    {{#iscompleteallowed}}
+                    <li>
+                        <a data-action="plan-complete" href="#">
+                            {{#pix}}t/edit{{/pix}} {{#str}}completeplan, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    {{/iscompleteallowed}}
+                    {{#isrequestreviewallowed}}
+                    <li>
+                        <a data-action="plan-request-review" href="#">{{#pix}}t/edit{{/pix}} {{#str}}requestreview, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isrequestreviewallowed}}
+                    {{#iscancelreviewrequestallowed}}
+                    <li>
+                        <a data-action="plan-cancel-review-request" href="#">{{#pix}}t/edit{{/pix}} {{#str}}cancelreviewrequest, tool_lp{{/str}}</a>
+                    </li>
+                    {{/iscancelreviewrequestallowed}}
+                    {{#isstartreviewallowed}}
+                    <li>
+                        <a data-action="plan-start-review" href="#">{{#pix}}t/edit{{/pix}} {{#str}}startreview, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isstartreviewallowed}}
+                    {{#isstopreviewallowed}}
+                    <li>
+                        <a data-action="plan-stop-review" href="#">{{#pix}}t/edit{{/pix}} {{#str}}stopreview, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isstopreviewallowed}}
+                    {{#isapproveallowed}}
+                    <li>
+                        <a data-action="plan-approve" href="#">{{#pix}}t/edit{{/pix}} {{#str}}planapprove, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isapproveallowed}}
+                    {{#isunapproveallowed}}
+                    <li>
+                        <a data-action="plan-unapprove" href="#">{{#pix}}t/edit{{/pix}} {{#str}}planunapprove, tool_lp{{/str}}</a>
+                    </li>
+                    {{/isunapproveallowed}}
+                    {{#isunlinkallowed}}
+                    <li>
+                        <a data-action="plan-unlink" href="#">
+                            {{#pix}}t/edit{{/pix}} {{#str}}unlinkplantemplate, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    {{/isunlinkallowed}}
+                    <li>
+                        <a data-action="plan-delete" href="#">
+                            {{#pix}}t/delete{{/pix}} {{#str}}deletethisplan, tool_lp{{/str}}
+                        </a>
+                    </li>
+                    </ul>
+                </ul>
+            </div>
+            {{/canmanage}}
+            </td>
+        </tr>
+        {{/plans}}
+    </tbody>
+</table>
+
+{{^plans}}
+<p class="alert alert-info">
+    {{#str}}nouserplans, tool_lp{{/str}}
+</p>
+{{/plans}}
+
+{{#canreaduserevidence}}
+<div class="pull-left">
+    <a href="{{pluginbaseurl}}/user_evidence_list.php?userid={{userid}}">{{#str}}userevidence, tool_lp{{/str}}</a>
+</div>
+{{/canreaduserevidence}}
+
+{{#js}}
+// Initialise the JS.
+require(['tool_lp/planactions'],
+        function(actionsMod) {
+
+    var planActions = new actionsMod('plans');
+    planActions.enhanceMenubar('.planactions');
+});
+
+{{/js}}
+
+</div>

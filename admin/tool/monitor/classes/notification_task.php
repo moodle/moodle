@@ -82,15 +82,16 @@ class notification_task extends \core\task\adhoc_task {
 
         $template = $subscription->template;
         $template = $this->replace_placeholders($template, $subscription, $eventobj, $context);
+        $htmlmessage = format_text($template, $subscription->templateformat, array('context' => $context));
         $msgdata = new \stdClass();
         $msgdata->component         = 'tool_monitor'; // Your component name.
         $msgdata->name              = 'notification'; // This is the message name from messages.php.
         $msgdata->userfrom          = \core_user::get_noreply_user();
         $msgdata->userto            = $user;
         $msgdata->subject           = $subscription->get_name($context);
-        $msgdata->fullmessage       = format_text($template, $subscription->templateformat, array('context' => $context));
-        $msgdata->fullmessageformat = $subscription->templateformat;
-        $msgdata->fullmessagehtml   = format_text($template, $subscription->templateformat, array('context' => $context));
+        $msgdata->fullmessage       = html_to_text($htmlmessage);
+        $msgdata->fullmessageformat = FORMAT_PLAIN;
+        $msgdata->fullmessagehtml   = $htmlmessage;
         $msgdata->smallmessage      = '';
         $msgdata->notification      = 1; // This is only set to 0 for personal messages between users.
 

@@ -28,7 +28,7 @@ require_once("lib.php");
 
 $contextid  = required_param('contextid', PARAM_INT);
 $component  = required_param('component', PARAM_COMPONENT);
-$ratingarea = optional_param('ratingarea', null, PARAM_AREA);
+$ratingarea = required_param('ratingarea', PARAM_AREA);
 $itemid     = required_param('itemid', PARAM_INT);
 $scaleid    = required_param('scaleid', PARAM_INT);
 $sort       = optional_param('sort', '', PARAM_ALPHA);
@@ -39,11 +39,9 @@ require_login($course, false, $cm);
 
 $url = new moodle_url('/rating/index.php', array('contextid' => $contextid,
                                                  'component' => $component,
+                                                 'ratingarea' => $ratingarea,
                                                  'itemid' => $itemid,
                                                  'scaleid' => $scaleid));
-if (!empty($ratingarea)) {
-    $url->param('ratingarea', $ratingarea);
-}
 if (!empty($sort)) {
     $url->param('sort', $sort);
 }
@@ -57,12 +55,17 @@ if ($popup) {
     $PAGE->set_pagelayout('popup');
 }
 
-if (!has_capability('moodle/rating:view', $context)) {
+$params = array('contextid' => $contextid,
+                'component' => $component,
+                'ratingarea' => $ratingarea,
+                'itemid' => $itemid,
+                'scaleid' => $scaleid);
+if (!has_capability('moodle/rating:view', $context) ||
+        !component_callback($component, 'rating_can_see_item_ratings', array($params), true)) {
     print_error('noviewrate', 'rating');
 }
-if (!has_capability('moodle/rating:viewall', $context) and $USER->id != $item->userid) {
-    print_error('noviewanyrate', 'rating');
-}
+
+$canviewallratings = has_capability('moodle/rating:viewall', $context);
 
 switch ($sort) {
     case 'firstname':
@@ -119,6 +122,10 @@ if (!$ratings) {
     $maxrating = max(array_keys($scalemenu));
 
     foreach ($ratings as $rating) {
+        if (!$canviewallratings and $USER->id != $rating->userid) {
+            continue;
+        }
+
         // Undo the aliasing of the user id column from user_picture::fields().
         // We could clone the rating object or preserve the rating id if we needed it again
         // but we don't.

@@ -96,6 +96,7 @@ $STD_FIELDS = array('id', 'username', 'email',
         'suspended',   // 1 means suspend user account, 0 means activate user account, nothing means keep as is for existing users
         'deleted',     // 1 means delete user
         'mnethostid',  // Can not be used for adding, updating or deleting of users - only for enrolments, groups, cohorts and suspending.
+        'interests',
     );
 // Include all name fields.
 $STD_FIELDS = array_merge($STD_FIELDS, get_all_user_name_fields());
@@ -168,7 +169,7 @@ if ($formdata = $mform2->is_cancelled()) {
     $allowdeletes      = (!empty($formdata->uuallowdeletes) and $optype != UU_USER_ADDNEW and $optype != UU_USER_ADDINC);
     $allowsuspends     = (!empty($formdata->uuallowsuspends));
     $bulk              = $formdata->uubulk;
-    $noemailduplicates = $formdata->uunoemailduplicates;
+    $noemailduplicates = empty($CFG->allowaccountssameemail) ? 1 : $formdata->uunoemailduplicates;
     $standardusernames = $formdata->uustandardusernames;
     $resetpasswords    = isset($formdata->uuforcepasswordchange) ? $formdata->uuforcepasswordchange : UU_PWRESET_NONE;
 
@@ -187,7 +188,8 @@ if ($formdata = $mform2->is_cancelled()) {
     // caches
     $ccache         = array(); // course cache - do not fetch all courses here, we  will not probably use them all anyway!
     $cohorts        = array();
-    $rolecache      = uu_allowed_roles_cache(); // roles lookup cache
+    $rolecache      = uu_allowed_roles_cache(); // Course roles lookup cache.
+    $sysrolecache   = uu_allowed_sysroles_cache(); // System roles lookup cache.
     $manualcache    = array(); // cache of used manual enrol plugins in each course
     $supportedauths = uu_supported_auths(); // officially supported plugins that are enabled
 
@@ -210,7 +212,7 @@ if ($formdata = $mform2->is_cancelled()) {
     // init upload progress tracker
     $upt = new uu_progress_tracker();
     $upt->start(); // start table
-
+    $validation = array();
     while ($line = $cir->next()) {
         $upt->flush();
         $linenum++;
@@ -231,8 +233,8 @@ if ($formdata = $mform2->is_cancelled()) {
                 if (isset($USER->$key) and is_array($USER->$key)) {
                     // this must be some hacky field that is abusing arrays to store content and format
                     $user->$key = array();
-                    $user->$key['text']   = $value;
-                    $user->$key['format'] = FORMAT_MOODLE;
+                    $user->{$key['text']}   = $value;
+                    $user->{$key['format']} = FORMAT_MOODLE;
                 } else {
                     $user->$key = trim($value);
                 }
@@ -278,7 +280,7 @@ if ($formdata = $mform2->is_cancelled()) {
         // normalize username
         $originalusername = $user->username;
         if ($standardusernames) {
-            $user->username = clean_param($user->username, PARAM_USERNAME);
+            $user->username = core_user::clean_field($user->username, 'username');
         }
 
         // make sure we really have username
@@ -293,7 +295,7 @@ if ($formdata = $mform2->is_cancelled()) {
             continue;
         }
 
-        if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
+        if ($user->username !== core_user::clean_field($user->username, 'username')) {
             $upt->track('status', get_string('invalidusername', 'error', 'username'), 'error');
             $upt->track('username', $errorstr, 'error');
             $userserrors++;
@@ -441,7 +443,7 @@ if ($formdata = $mform2->is_cancelled()) {
             }
 
             if ($standardusernames) {
-                $oldusername = clean_param($user->oldusername, PARAM_USERNAME);
+                $oldusername = core_user::clean_field($user->oldusername, 'username');
             } else {
                 $oldusername = $user->oldusername;
             }
@@ -566,8 +568,18 @@ if ($formdata = $mform2->is_cancelled()) {
                     }
                     if ($existinguser->$column !== $user->$column) {
                         if ($column === 'email') {
-                            if ($DB->record_exists('user', array('email'=>$user->email))) {
-                                if ($noemailduplicates) {
+                            $select = $DB->sql_like('email', ':email', false, true, false, '|');
+                            $params = array('email' => $DB->sql_like_escape($user->email, '|'));
+                            if ($DB->record_exists_select('user', $select , $params)) {
+
+                                $changeincase = core_text::strtolower($existinguser->$column) === core_text::strtolower(
+                                                $user->$column);
+
+                                if ($changeincase) {
+                                    // If only case is different then switch to lower case and carry on.
+                                    $user->$column = core_text::strtolower($user->$column);
+                                    continue;
+                                } else if ($noemailduplicates) {
                                     $upt->track('email', $stremailduplicate, 'error');
                                     $upt->track('status', $strusernotupdated, 'error');
                                     $userserrors++;
@@ -585,7 +597,7 @@ if ($formdata = $mform2->is_cancelled()) {
                             if (empty($user->lang)) {
                                 // Do not change to not-set value.
                                 continue;
-                            } else if (clean_param($user->lang, PARAM_LANG) === '') {
+                            } else if (core_user::clean_field($user->lang, 'lang') === '') {
                                 $upt->track('status', get_string('cannotfindlang', 'error', $user->lang), 'warning');
                                 continue;
                             }
@@ -762,7 +774,7 @@ if ($formdata = $mform2->is_cancelled()) {
 
             if (empty($user->lang)) {
                 $user->lang = '';
-            } else if (clean_param($user->lang, PARAM_LANG) === '') {
+            } else if (core_user::clean_field($user->lang, 'lang') === '') {
                 $upt->track('status', get_string('cannotfindlang', 'error', $user->lang), 'warning');
                 $user->lang = '';
             }
@@ -835,6 +847,10 @@ if ($formdata = $mform2->is_cancelled()) {
             }
         }
 
+        // Update user interests.
+        if (isset($user->interests) && strval($user->interests) !== '') {
+            useredit_update_interests($user, preg_split('/\s*,\s*/', $user->interests, -1, PREG_SPLIT_NO_EMPTY));
+        }
 
         // add to cohort first, it might trigger enrolments indirectly - do NOT create cohorts here!
         foreach ($filecolumns as $column) {
@@ -889,6 +905,41 @@ if ($formdata = $mform2->is_cancelled()) {
         // find course enrolments, groups, roles/types and enrol periods
         // this is again a special case, we always do this for any updated or created users
         foreach ($filecolumns as $column) {
+            if (preg_match('/^sysrole\d+$/', $column)) {
+
+                if (!empty($user->$column)) {
+                    $sysrolename = $user->$column;
+                    if ($sysrolename[0] == '-') {
+                        $removing = true;
+                        $sysrolename = substr($sysrolename, 1);
+                    } else {
+                        $removing = false;
+                    }
+
+                    if (array_key_exists($sysrolename, $sysrolecache)) {
+                        $sysroleid = $sysrolecache[$sysrolename]->id;
+                    } else {
+                        $upt->track('enrolments', get_string('unknownrole', 'error', s($sysrolename)), 'error');
+                        continue;
+                    }
+
+                    if ($removing) {
+                        if (user_has_role_assignment($user->id, $sysroleid, SYSCONTEXTID)) {
+                            role_unassign($sysroleid, $user->id, SYSCONTEXTID);
+                            $upt->track('enrolments', get_string('unassignedsysrole',
+                                    'tool_uploaduser', $sysrolecache[$sysroleid]->name));
+                        }
+                    } else {
+                        if (!user_has_role_assignment($user->id, $sysroleid, SYSCONTEXTID)) {
+                            role_assign($sysroleid, $user->id, SYSCONTEXTID);
+                            $upt->track('enrolments', get_string('assignedsysrole',
+                                    'tool_uploaduser', $sysrolecache[$sysroleid]->name));
+                        }
+                    }
+                }
+
+                continue;
+            }
             if (!preg_match('/^course\d+$/', $column)) {
                 continue;
             }
@@ -927,32 +978,32 @@ if ($formdata = $mform2->is_cancelled()) {
                 // let's not invent new lang strings here for this rarely used feature.
 
                 if (!empty($user->{'role'.$i})) {
-                    $addrole = $user->{'role'.$i};
-                    if (array_key_exists($addrole, $rolecache)) {
-                        $rid = $rolecache[$addrole]->id;
+                    $rolename = $user->{'role'.$i};
+                    if (array_key_exists($rolename, $rolecache)) {
+                        $roleid = $rolecache[$rolename]->id;
                     } else {
-                        $upt->track('enrolments', get_string('unknownrole', 'error', s($addrole)), 'error');
+                        $upt->track('enrolments', get_string('unknownrole', 'error', s($rolename)), 'error');
                         continue;
                     }
 
-                    role_assign($rid, $user->id, context_course::instance($courseid));
+                    role_assign($roleid, $user->id, context_course::instance($courseid));
 
                     $a = new stdClass();
                     $a->course = $shortname;
-                    $a->role   = $rolecache[$rid]->name;
+                    $a->role   = $rolecache[$roleid]->name;
                     $upt->track('enrolments', get_string('enrolledincourserole', 'enrol_manual', $a));
                 }
 
             } else if ($manual and $manualcache[$courseid]) {
 
                 // find role
-                $rid = false;
+                $roleid = false;
                 if (!empty($user->{'role'.$i})) {
-                    $addrole = $user->{'role'.$i};
-                    if (array_key_exists($addrole, $rolecache)) {
-                        $rid = $rolecache[$addrole]->id;
+                    $rolename = $user->{'role'.$i};
+                    if (array_key_exists($rolename, $rolecache)) {
+                        $roleid = $rolecache[$rolename]->id;
                     } else {
-                        $upt->track('enrolments', get_string('unknownrole', 'error', s($addrole)), 'error');
+                        $upt->track('enrolments', get_string('unknownrole', 'error', s($rolename)), 'error');
                         continue;
                     }
 
@@ -965,14 +1016,14 @@ if ($formdata = $mform2->is_cancelled()) {
                     } else if (empty($formdata->{'uulegacy'.$addtype})) {
                         continue;
                     } else {
-                        $rid = $formdata->{'uulegacy'.$addtype};
+                        $roleid = $formdata->{'uulegacy'.$addtype};
                     }
                 } else {
                     // no role specified, use the default from manual enrol plugin
-                    $rid = $manualcache[$courseid]->roleid;
+                    $roleid = $manualcache[$courseid]->roleid;
                 }
 
-                if ($rid) {
+                if ($roleid) {
                     // Find duration and/or enrol status.
                     $timeend = 0;
                     $status = null;
@@ -999,11 +1050,11 @@ if ($formdata = $mform2->is_cancelled()) {
                         $timeend = $today + $manualcache[$courseid]->enrolperiod;
                     }
 
-                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, $status);
+                    $manual->enrol_user($manualcache[$courseid], $user->id, $roleid, $today, $timeend, $status);
 
                     $a = new stdClass();
                     $a->course = $shortname;
-                    $a->role   = $rolecache[$rid]->name;
+                    $a->role   = $rolecache[$roleid]->name;
                     $upt->track('enrolments', get_string('enrolledincourserole', 'enrol_manual', $a));
                 }
             }
@@ -1064,9 +1115,16 @@ if ($formdata = $mform2->is_cancelled()) {
                 }
             }
         }
+        $validation[$user->username] = core_user::validate($user);
     }
     $upt->close(); // close table
-
+    if (!empty($validation)) {
+        foreach ($validation as $username => $result) {
+            if ($result !== true) {
+                \core\notification::warning(get_string('invaliduserdata', 'tool_uploaduser', s($username)));
+            }
+        }
+    }
     $cir->close();
     $cir->cleanup(true);
 
@@ -1126,7 +1184,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     $rowcols['status'] = array();
 
     if (isset($rowcols['username'])) {
-        $stdusername = clean_param($rowcols['username'], PARAM_USERNAME);
+        $stdusername = core_user::clean_field($rowcols['username'], 'username');
         if ($rowcols['username'] !== $stdusername) {
             $rowcols['status'][] = get_string('invalidusernameupload');
         }
@@ -1141,7 +1199,10 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
         if (!validate_email($rowcols['email'])) {
             $rowcols['status'][] = get_string('invalidemail');
         }
-        if ($DB->record_exists('user', array('email'=>$rowcols['email']))) {
+
+        $select = $DB->sql_like('email', ':email', false, true, false, '|');
+        $params = array('email' => $DB->sql_like_escape($rowcols['email'], '|'));
+        if ($DB->record_exists_select('user', $select , $params)) {
             $rowcols['status'][] = $stremailduplicate;
         }
     }

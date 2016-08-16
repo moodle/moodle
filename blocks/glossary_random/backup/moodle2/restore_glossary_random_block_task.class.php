@@ -60,12 +60,27 @@ class restore_glossary_random_block_task extends restore_block_task {
         if ($configdata = $DB->get_field('block_instances', 'configdata', array('id' => $blockid))) {
             $config = unserialize(base64_decode($configdata));
             if (!empty($config->glossary)) {
-                // Get glossary mapping and replace it in config
                 if ($glossarymap = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'glossary', $config->glossary)) {
+                    // Get glossary mapping and replace it in config
                     $config->glossary = $glossarymap->newitemid;
-                    $configdata = base64_encode(serialize($config));
-                    $DB->set_field('block_instances', 'configdata', $configdata, array('id' => $blockid));
+                } else if ($this->is_samesite()) {
+                    // We are restoring on the same site, check if glossary can be used in the block in this course.
+                    $glossaryid = $DB->get_field_sql("SELECT id FROM {glossary} " .
+                        "WHERE id = ? AND (course = ? OR globalglossary = 1)",
+                        [$config->glossary, $this->get_courseid()]);
+                    if (!$glossaryid) {
+                        unset($config->glossary);
+                    }
+                } else {
+                    // The block refers to a glossary not present in the backup file.
+                    unset($config->glossary);
                 }
+                // Unset config variables that are no longer used.
+                unset($config->globalglossary);
+                unset($config->courseid);
+                // Save updated config.
+                $configdata = base64_encode(serialize($config));
+                $DB->set_field('block_instances', 'configdata', $configdata, array('id' => $blockid));
             }
         }
     }

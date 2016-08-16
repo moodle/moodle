@@ -144,36 +144,21 @@ if ($themerev <= 0 or $rev != $themerev) {
 
 make_localcache_directory('theme', false);
 
-// We're not using SVG and there is no cached version of this file (in any format).
-// As we're going to be caching a format other than svg, and because svg use is conditional we need to ensure that at the same
-// time we cache a version of the SVG if it exists. If we don't do this other users who ask for SVG would not ever get it as
-// there is a cached image already of another format.
-// Remember this only gets run once before any candidate exists, and only if we want a cached revision.
-if (!$usesvg) {
-    $imagefile = $theme->resolve_image_location($image, $component, true);
-    if (!empty($imagefile) && is_readable($imagefile)) {
-        $cacheimage = cache_image($image, $imagefile, $candidatelocation);
-        $pathinfo = pathinfo($imagefile);
-        // There is no SVG equivalent, we've just successfully cached an image of another format.
-        if ($pathinfo['extension'] !== 'svg') {
-            // Serve the file as we would in a normal request.
-            if (connection_aborted()) {
-                die;
-            }
-            // Make sure nothing failed.
-            clearstatcache();
-            if (file_exists($cacheimage)) {
-                send_cached_image($cacheimage, $etag);
-            }
-            send_uncached_image($imagefile);
-            exit;
-        }
-    }
-}
+// At this stage caching is enabled, and either:
+// * we have no cached copy of the image in any format (either SVG, or non-SVG); or
+// * we have a cached copy of the SVG, but the non-SVG was requested by the browser.
+//
+// Because of the way in which the cache return code works above:
+// * if we are allowed to return SVG, we do not need to cache the non-SVG version; however
+// * if the browser has requested the non-SVG version, we *must* cache _both_ the SVG, and the non-SVG versions.
 
-// Either SVG was requested or we've cached a SVG version and are ready to serve a regular format.
-$imagefile = $theme->resolve_image_location($image, $component, $usesvg);
-if (empty($imagefile) or !is_readable($imagefile)) {
+// First get all copies - including, potentially, the SVG version.
+$imagefile = $theme->resolve_image_location($image, $component, true);
+
+if (empty($imagefile) || !is_readable($imagefile)) {
+    // Unable to find a copy of the image file in any format.
+    // We write a .error file for the image now - this will be used above when searching for cached copies to prevent
+    // trying to find the image in the future.
     if (!file_exists($candidatelocation)) {
         @mkdir($candidatelocation, $CFG->directorypermissions, true);
     }
@@ -184,18 +169,46 @@ if (empty($imagefile) or !is_readable($imagefile)) {
     image_not_found();
 }
 
-$cacheimage = cache_image($image, $imagefile, $candidatelocation);
+// The image was found, and it is readable.
+$pathinfo = pathinfo($imagefile);
+
+// Attempt to cache it if necessary.
+// We don't really want to overwrite any existing cache items just for the sake of it.
+$cacheimage = "$candidatelocation/$image.{$pathinfo['extension']}";
+if (!file_exists($cacheimage)) {
+    // We don't already hold a cached copy of this image. Cache it now.
+    $cacheimage = cache_image($image, $imagefile, $candidatelocation);
+}
+
+if (!$usesvg && $pathinfo['extension'] === 'svg') {
+    // The browser has requested that a non-SVG version be returned.
+    // The version found so far is the SVG version - try and find the non-SVG version.
+    $imagefile = $theme->resolve_image_location($image, $component, false);
+    if (empty($imagefile) || !is_readable($imagefile)) {
+        // A non-SVG file could not be found at all.
+        // The browser has requested a non-SVG version, so we must return image_not_found().
+        // We must *not* write an .error file because the SVG is available.
+        image_not_found();
+    }
+
+    // An non-SVG version of image was found - cache it.
+    // This will be used below in the image serving code.
+    $cacheimage = cache_image($image, $imagefile, $candidatelocation);
+}
+
 if (connection_aborted()) {
+    // Request was cancelled - do not send anything.
     die;
 }
+
 // Make sure nothing failed.
 clearstatcache();
 if (file_exists($cacheimage)) {
+    // The cached copy was found, and is accessible. Serve it.
     send_cached_image($cacheimage, $etag);
 }
 
 send_uncached_image($imagefile);
-
 
 //=================================================================================
 //=== utility functions ==

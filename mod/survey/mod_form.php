@@ -37,7 +37,7 @@ class mod_survey_mod_form extends moodleform_mod {
         $mform->addRule('template', $strrequired, 'required', null, 'client');
         $mform->addHelpButton('template', 'surveytype', 'survey');
 
-        $this->add_intro_editor(false, get_string('customintro', 'survey'));
+        $this->standard_intro_elements(get_string('customintro', 'survey'));
 
         $this->standard_coursemodule_elements();
 
@@ -46,6 +46,46 @@ class mod_survey_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * Return submitted data if properly submitted or returns NULL if validation fails or
+     * if there is no submitted data.
+     *
+     * @return stdClass submitted data; NULL if not valid or not submitted or cancelled
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if (!$data) {
+            return false;
+        }
 
+        if (!empty($data->completionunlocked)) {
+            // Turn off completion settings if the checkboxes aren't ticked.
+            $autocompletion = !empty($data->completion) &&
+                $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (!$autocompletion || empty($data->completionsubmit)) {
+                $data->completionsubmit = 0;
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Add completion rules to form.
+     * @return array
+     */
+    public function add_completion_rules() {
+        $mform =& $this->_form;
+        $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'survey'));
+        return array('completionsubmit');
+    }
+
+    /**
+     * Enable completion rules
+     * @param stdclass $data
+     * @return array
+     */
+    public function completion_rule_enabled($data) {
+        return !empty($data['completionsubmit']);
+    }
 }
 

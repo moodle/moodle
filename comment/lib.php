@@ -153,7 +153,11 @@ class comment {
         } else if (!empty($options->courseid)) {
             $this->courseid = $options->courseid;
         } else {
-            $this->courseid = SITEID;
+            if ($coursecontext = $this->context->get_course_context(false)) {
+                $this->courseid = $coursecontext->instanceid;
+            } else {
+                $this->courseid = SITEID;
+            }
         }
 
         // setup coursemodule
@@ -706,7 +710,7 @@ class comment {
             $newcmt->fullname = fullname($USER);
             $url = new moodle_url('/user/view.php', array('id' => $USER->id, 'course' => $this->courseid));
             $newcmt->profileurl = $url->out();
-            $newcmt->content = format_text($newcmt->content, $format, array('overflowdiv'=>true));
+            $newcmt->content = format_text($newcmt->content, $newcmt->format, array('overflowdiv'=>true));
             $newcmt->avatar = $OUTPUT->user_picture($USER, array('size'=>16));
 
             $commentlist = array($newcmt);
@@ -1039,6 +1043,87 @@ class comment {
     public function set_fullwidth($fullwidth = true) {
         $this->fullwidth = (bool)$fullwidth;
     }
+
+    /**
+     * Return the template.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_template() {
+        return $this->template;
+    }
+
+    /**
+     * Return the cid.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_cid() {
+        return $this->cid;
+    }
+
+    /**
+     * Return the link text.
+     *
+     * @since 3.1
+     * @return string
+     */
+    public function get_linktext() {
+        return $this->linktext;
+    }
+
+    /**
+     * Return no toggle.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_notoggle() {
+        return $this->notoggle;
+    }
+
+    /**
+     * Return display total count.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_displaytotalcount() {
+        return $this->displaytotalcount;
+    }
+
+    /**
+     * Return display cancel.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_displaycancel() {
+        return $this->displaycancel;
+    }
+
+    /**
+     * Return fullwidth.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_fullwidth() {
+        return $this->fullwidth;
+    }
+
+    /**
+     * Return autostart.
+     *
+     * @since 3.1
+     * @return bool
+     */
+    public function get_autostart() {
+        return $this->autostart;
+    }
+
 }
 
 /**

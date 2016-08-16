@@ -221,6 +221,83 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades = 'error') 
 }
 
 /**
+ * Remove stale questions from a category.
+ *
+ * While questions should not be left behind when they are not used any more,
+ * it does happen, maybe via restore, or old logic, or uncovered scenarios. When
+ * this happens, the users are unable to delete the question category unless
+ * they move those stale questions to another one category, but to them the
+ * category is empty as it does not contain anything. The purpose of this function
+ * is to detect the questions that may have gone stale and remove them.
+ *
+ * You will typically use this prior to checking if the category contains questions.
+ *
+ * The stale questions (unused and hidden to the user) handled are:
+ * - hidden questions
+ * - random questions
+ *
+ * @param int $categoryid The category ID.
+ */
+function question_remove_stale_questions_from_category($categoryid) {
+    global $DB;
+
+    $select = 'category = :categoryid AND (qtype = :qtype OR hidden = :hidden)';
+    $params = ['categoryid' => $categoryid, 'qtype' => 'random', 'hidden' => 1];
+    $questions = $DB->get_recordset_select("question", $select, $params, '', 'id');
+    foreach ($questions as $question) {
+        // The function question_delete_question does not delete questions in use.
+        question_delete_question($question->id);
+    }
+    $questions->close();
+}
+
+/**
+ * Category is about to be deleted,
+ * 1/ All questions are deleted for this question category.
+ * 2/ Any questions that can't be deleted are moved to a new category
+ * NOTE: this function is called from lib/db/upgrade.php
+ *
+ * @param object|coursecat $category course category object
+ */
+function question_category_delete_safe($category) {
+    global $DB;
+    $criteria = array('category' => $category->id);
+    $context = context::instance_by_id($category->contextid, IGNORE_MISSING);
+    $rescue = null; // See the code around the call to question_save_from_deletion.
+
+    // Deal with any questions in the category.
+    if ($questions = $DB->get_records('question', $criteria, '', 'id,qtype')) {
+
+        // Try to delete each question.
+        foreach ($questions as $question) {
+            question_delete_question($question->id);
+        }
+
+        // Check to see if there were any questions that were kept because
+        // they are still in use somehow, even though quizzes in courses
+        // in this category will already have been deleted. This could
+        // happen, for example, if questions are added to a course,
+        // and then that course is moved to another category (MDL-14802).
+        $questionids = $DB->get_records_menu('question', $criteria, '', 'id, 1');
+        if (!empty($questionids)) {
+            $parentcontextid = SYSCONTEXTID;
+            $name = get_string('unknown', 'question');
+            if ($context !== false) {
+                $name = $context->get_context_name();
+                $parentcontext = $context->get_parent_context();
+                if ($parentcontext) {
+                    $parentcontextid = $parentcontext->id;
+                }
+            }
+            question_save_from_deletion(array_keys($questionids), $parentcontextid, $name, $rescue);
+        }
+    }
+
+    // Now delete the category.
+    $DB->delete_records('question_categories', array('id' => $category->id));
+}
+
+/**
  * Tests whether any question in a category is used by any part of Moodle.
  *
  * @param integer $categoryid a question category id.
@@ -288,7 +365,7 @@ function question_delete_question($questionid) {
             $questionid, $question->contextid);
 
     // Delete all tag instances.
-    $DB->delete_records('tag_instance', array('component' => 'core_question', 'itemid' => $question->id));
+    core_tag_tag::remove_all_item_tags('core_question', 'question', $question->id);
 
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
@@ -306,6 +383,36 @@ function question_delete_question($questionid) {
 }
 
 /**
+ * All question categories and their questions are deleted for this context id.
+ *
+ * @param object $contextid The contextid to delete question categories from
+ * @return array Feedback from deletes (if any)
+ */
+function question_delete_context($contextid) {
+    global $DB;
+
+    //To store feedback to be showed at the end of the process
+    $feedbackdata   = array();
+
+    //Cache some strings
+    $strcatdeleted = get_string('unusedcategorydeleted', 'question');
+    $fields = 'id, parent, name, contextid';
+    if ($categories = $DB->get_records('question_categories', array('contextid' => $contextid), 'parent', $fields)) {
+        //Sort categories following their tree (parent-child) relationships
+        //this will make the feedback more readable
+        $categories = sort_categories_by_tree($categories);
+
+        foreach ($categories as $category) {
+            question_category_delete_safe($category);
+
+            //Fill feedback
+            $feedbackdata[] = array($category->name, $strcatdeleted);
+        }
+    }
+    return $feedbackdata;
+}
+
+/**
  * All question categories and their questions are deleted for this course.
  *
  * @param stdClass $course an object representing the activity
@@ -313,47 +420,15 @@ function question_delete_question($questionid) {
  * @return boolean
  */
 function question_delete_course($course, $feedback=true) {
-    global $DB, $OUTPUT;
-
-    //To store feedback to be showed at the end of the process
-    $feedbackdata   = array();
-
-    //Cache some strings
-    $strcatdeleted = get_string('unusedcategorydeleted', 'question');
     $coursecontext = context_course::instance($course->id);
-    $categoriescourse = $DB->get_records('question_categories',
-            array('contextid' => $coursecontext->id), 'parent', 'id, parent, name, contextid');
+    $feedbackdata = question_delete_context($coursecontext->id, $feedback);
 
-    if ($categoriescourse) {
-
-        //Sort categories following their tree (parent-child) relationships
-        //this will make the feedback more readable
-        $categoriescourse = sort_categories_by_tree($categoriescourse);
-
-        foreach ($categoriescourse as $category) {
-
-            //Delete it completely (questions and category itself)
-            //deleting questions
-            if ($questions = $DB->get_records('question',
-                    array('category' => $category->id), '', 'id,qtype')) {
-                foreach ($questions as $question) {
-                    question_delete_question($question->id);
-                }
-                $DB->delete_records("question", array("category" => $category->id));
-            }
-            //delete the category
-            $DB->delete_records('question_categories', array('id' => $category->id));
-
-            //Fill feedback
-            $feedbackdata[] = array($category->name, $strcatdeleted);
-        }
-        //Inform about changes performed if feedback is enabled
-        if ($feedback) {
-            $table = new html_table();
-            $table->head = array(get_string('category', 'question'), get_string('action'));
-            $table->data = $feedbackdata;
-            echo html_writer::table($table);
-        }
+    // Inform about changes performed if feedback is enabled.
+    if ($feedback && $feedbackdata) {
+        $table = new html_table();
+        $table->head = array(get_string('category', 'question'), get_string('action'));
+        $table->data = $feedbackdata;
+        echo html_writer::table($table);
     }
     return true;
 }
@@ -374,58 +449,10 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 
     $context = context_coursecat::instance($category->id);
     if (empty($newcategory)) {
-        $feedbackdata   = array(); // To store feedback to be showed at the end of the process
-        $rescueqcategory = null; // See the code around the call to question_save_from_deletion.
-        $strcatdeleted = get_string('unusedcategorydeleted', 'question');
-
-        // Loop over question categories.
-        if ($categories = $DB->get_records('question_categories',
-                array('contextid'=>$context->id), 'parent', 'id, parent, name')) {
-            foreach ($categories as $category) {
-
-                // Deal with any questions in the category.
-                if ($questions = $DB->get_records('question',
-                        array('category' => $category->id), '', 'id,qtype')) {
-
-                    // Try to delete each question.
-                    foreach ($questions as $question) {
-                        question_delete_question($question->id);
-                    }
-
-                    // Check to see if there were any questions that were kept because
-                    // they are still in use somehow, even though quizzes in courses
-                    // in this category will already have been deleted. This could
-                    // happen, for example, if questions are added to a course,
-                    // and then that course is moved to another category (MDL-14802).
-                    $questionids = $DB->get_records_menu('question',
-                            array('category'=>$category->id), '', 'id, 1');
-                    if (!empty($questionids)) {
-                        $parentcontextid = false;
-                        $parentcontext = $context->get_parent_context();
-                        if ($parentcontext) {
-                            $parentcontextid = $parentcontext->id;
-                        }
-                        if (!$rescueqcategory = question_save_from_deletion(
-                                array_keys($questionids), $parentcontextid,
-                                $context->get_context_name(), $rescueqcategory)) {
-                            return false;
-                        }
-                        $feedbackdata[] = array($category->name,
-                            get_string('questionsmovedto', 'question', $rescueqcategory->name));
-                    }
-                }
-
-                // Now delete the category.
-                if (!$DB->delete_records('question_categories', array('id'=>$category->id))) {
-                    return false;
-                }
-                $feedbackdata[] = array($category->name, $strcatdeleted);
-
-            } // End loop over categories.
-        }
+        $feedbackdata = question_delete_context($context->id, $feedback);
 
         // Output feedback if requested.
-        if ($feedback and $feedbackdata) {
+        if ($feedback && $feedbackdata) {
             $table = new html_table();
             $table->head = array(get_string('questioncategory', 'question'), get_string('action'));
             $table->data = $feedbackdata;
@@ -439,8 +466,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         }
 
         // Update the contextid for any tag instances for questions in the old context.
-        $DB->set_field('tag_instance', 'contextid', $newcontext->id, array('component' => 'core_question',
-            'contextid' => $context->id));
+        core_tag_tag::move_context('core_question', 'question', $context, $newcontext);
 
         $DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid' => $context->id));
 
@@ -460,7 +486,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
  * Enter description here...
  *
  * @param array $questionids of question ids
- * @param object $newcontext the context to create the saved category in.
+ * @param object $newcontextid the context to create the saved category in.
  * @param string $oldplace a textual description of the think being deleted,
  *      e.g. from get_context_name
  * @param object $newcategory
@@ -497,44 +523,16 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace,
  * @return boolean
  */
 function question_delete_activity($cm, $feedback=true) {
-    global $DB, $OUTPUT;
+    global $DB;
 
-    //To store feedback to be showed at the end of the process
-    $feedbackdata   = array();
-
-    //Cache some strings
-    $strcatdeleted = get_string('unusedcategorydeleted', 'question');
     $modcontext = context_module::instance($cm->id);
-    if ($categoriesmods = $DB->get_records('question_categories',
-            array('contextid' => $modcontext->id), 'parent', 'id, parent, name, contextid')) {
-        //Sort categories following their tree (parent-child) relationships
-        //this will make the feedback more readable
-        $categoriesmods = sort_categories_by_tree($categoriesmods);
-
-        foreach ($categoriesmods as $category) {
-
-            //Delete it completely (questions and category itself)
-            //deleting questions
-            if ($questions = $DB->get_records('question',
-                    array('category' => $category->id), '', 'id,qtype')) {
-                foreach ($questions as $question) {
-                    question_delete_question($question->id);
-                }
-                $DB->delete_records("question", array("category"=>$category->id));
-            }
-            //delete the category
-            $DB->delete_records('question_categories', array('id'=>$category->id));
-
-            //Fill feedback
-            $feedbackdata[] = array($category->name, $strcatdeleted);
-        }
-        //Inform about changes performed if feedback is enabled
-        if ($feedback) {
-            $table = new html_table();
-            $table->head = array(get_string('category', 'question'), get_string('action'));
-            $table->data = $feedbackdata;
-            echo html_writer::table($table);
-        }
+    $feedbackdata = question_delete_context($modcontext->id, $feedback);
+    // Inform about changes performed if feedback is enabled.
+    if ($feedback && $feedbackdata) {
+        $table = new html_table();
+        $table->head = array(get_string('category', 'question'), get_string('action'));
+        $table->data = $feedbackdata;
+        echo html_writer::table($table);
     }
     return true;
 }
@@ -576,8 +574,7 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
             "parent $questionidcondition", $params);
 
     // Update the contextid for any tag instances that may exist for these questions.
-    $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
-        "component = 'core_question' AND itemid $questionidcondition", $params);
+    core_tag_tag::change_items_context('core_question', 'question', $questionids, $newcontextid);
 
     // TODO Deal with datasets.
 
@@ -609,12 +606,8 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
         question_bank::notify_question_edited($questionid);
     }
 
-    if ($questionids) {
-        // Update the contextid for any tag instances that may exist for these questions.
-        list($questionids, $params) = $DB->get_in_or_equal(array_keys($questionids));
-        $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
-            "component = 'core_question' AND itemid $questionids", $params);
-    }
+    core_tag_tag::change_items_context('core_question', 'question',
+            array_keys($questionids), $newcontextid);
 
     $subcatids = $DB->get_records_menu('question_categories',
             array('parent' => $categoryid), '', 'id,1');
@@ -797,9 +790,8 @@ function _tidy_question($question, $loadtags = false) {
         unset($question->_partiallyloaded);
     }
 
-    if ($loadtags && !empty($CFG->usetags)) {
-        require_once($CFG->dirroot . '/tag/lib.php');
-        $question->tags = tag_get_tags_array('question', $question->id);
+    if ($loadtags && core_tag_tag::is_enabled('core_question', 'question')) {
+        $question->tags = core_tag_tag::get_item_tags_array('core_question', 'question', $question->id);
     }
 }
 
@@ -1343,7 +1335,7 @@ function question_has_capability_on($question, $cap, $cachecat = -1) {
     if (!isset($categories[$question->category])) {
         if (!$categories[$question->category] = $DB->get_record('question_categories',
                 array('id'=>$question->category))) {
-            print_error('invalidcategory', 'quiz');
+            print_error('invalidcategory', 'question');
         }
     }
     $category = $categories[$question->category];
@@ -1427,24 +1419,24 @@ function question_extend_settings_navigation(navigation_node $navigationnode, $c
     }
 
     $questionnode = $navigationnode->add(get_string('questionbank', 'question'),
-            new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER);
+            new moodle_url('/question/edit.php', $params), navigation_node::TYPE_CONTAINER, null, 'questionbank');
 
     $contexts = new question_edit_contexts($context);
     if ($contexts->have_one_edit_tab_cap('questions')) {
         $questionnode->add(get_string('questions', 'question'), new moodle_url(
-                '/question/edit.php', $params), navigation_node::TYPE_SETTING);
+                '/question/edit.php', $params), navigation_node::TYPE_SETTING, null, 'questions');
     }
     if ($contexts->have_one_edit_tab_cap('categories')) {
         $questionnode->add(get_string('categories', 'question'), new moodle_url(
-                '/question/category.php', $params), navigation_node::TYPE_SETTING);
+                '/question/category.php', $params), navigation_node::TYPE_SETTING, null, 'categories');
     }
     if ($contexts->have_one_edit_tab_cap('import')) {
         $questionnode->add(get_string('import', 'question'), new moodle_url(
-                '/question/import.php', $params), navigation_node::TYPE_SETTING);
+                '/question/import.php', $params), navigation_node::TYPE_SETTING, null, 'import');
     }
     if ($contexts->have_one_edit_tab_cap('export')) {
         $questionnode->add(get_string('export', 'question'), new moodle_url(
-                '/question/export.php', $params), navigation_node::TYPE_SETTING);
+                '/question/export.php', $params), navigation_node::TYPE_SETTING, null, 'export');
     }
 
     return $questionnode;
@@ -1833,6 +1825,9 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
 
     $module = $DB->get_field('question_usages', 'component',
             array('id' => $qubaid));
+    if (!$module) {
+        send_file_not_found();
+    }
 
     if ($module === 'core_question_preview') {
         require_once($CFG->dirroot . '/question/previewlib.php');

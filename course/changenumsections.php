@@ -25,7 +25,7 @@
  * @since Moodle 2.3
  */
 
-require_once(dirname(__FILE__).'/../config.php');
+require_once(__DIR__.'/../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
@@ -52,8 +52,8 @@ if (isset($courseformatoptions['numsections'])) {
     // Don't go less than 0, intentionally redirect silently (for the case of
     // double clicks).
     if ($courseformatoptions['numsections'] >= 0) {
-        course_get_format($course)->update_course_format_options(
-                array('numsections' => $courseformatoptions['numsections']));
+        update_course((object)array('id' => $course->id,
+            'numsections' => $courseformatoptions['numsections']));
     }
 }
 

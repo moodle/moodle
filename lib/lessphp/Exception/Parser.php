@@ -54,7 +54,7 @@ class Less_Exception_Parser extends Exception{
 
 	protected function getInput(){
 
-		if( !$this->input && $this->currentFile && $this->currentFile['filename'] ){
+		if( !$this->input && $this->currentFile && $this->currentFile['filename'] && file_exists($this->currentFile['filename']) ){
 			$this->input = file_get_contents( $this->currentFile['filename'] );
 		}
 	}
@@ -99,7 +99,12 @@ class Less_Exception_Parser extends Exception{
 	 */
 	public function getLineNumber(){
 		if( $this->index ){
-			return substr_count($this->input, "\n", 0, $this->index) + 1;
+			// https://bugs.php.net/bug.php?id=49790
+			if (ini_get("mbstring.func_overload")) {
+				return substr_count(substr($this->input, 0, $this->index), "\n") + 1;
+			} else {
+				return substr_count($this->input, "\n", 0, $this->index) + 1;
+			}
 		}
 		return 1;
 	}

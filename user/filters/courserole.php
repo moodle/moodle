@@ -37,8 +37,18 @@ class user_filter_courserole extends user_filter_type {
      * @param string $label the label of the filter instance
      * @param boolean $advanced advanced form element flag
      */
+    public function __construct($name, $label, $advanced) {
+        parent::__construct($name, $label, $advanced);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
     public function user_filter_courserole($name, $label, $advanced) {
-        parent::user_filter_type($name, $label, $advanced);
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($name, $label, $advanced);
     }
 
     /**
@@ -67,9 +77,12 @@ class user_filter_courserole extends user_filter_type {
      */
     public function setupForm(&$mform) {
         $objs = array();
-        $objs[] = $mform->createElement('select', $this->_name .'_rl', null, $this->get_roles());
-        $objs[] = $mform->createElement('select', $this->_name .'_ct', null, $this->get_course_categories());
-        $objs[] = $mform->createElement('text', $this->_name, null);
+        $objs['role'] = $mform->createElement('select', $this->_name .'_rl', null, $this->get_roles());
+        $objs['role']->setLabel(get_string('courserole', 'filters'));
+        $objs['category'] = $mform->createElement('select', $this->_name .'_ct', null, $this->get_course_categories());
+        $objs['category']->setLabel(get_string('coursecategory', 'filters'));
+        $objs['value'] = $mform->createElement('text', $this->_name, null);
+        $objs['value']->setLabel(get_string('coursevalue', 'filters'));
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $mform->setType($this->_name, PARAM_TEXT);
         if ($this->_advanced) {

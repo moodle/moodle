@@ -1,0 +1,204 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Plan page template.
+}}
+<div data-region="plan-page" data-id="{{plan.id}}" data-userid="{{plan.userid}}">
+    <h2>
+        {{{plan.name}}}
+        {{#plan.canbeedited}}
+            <a href="{{pluginbaseurl}}/editplan.php?id={{plan.id}}&amp;userid={{plan.userid}}">{{#pix}}t/edit, core, {{#str}}editplan, tool_lp{{/str}}{{/pix}}</a>
+        {{/plan.canbeedited}}
+    </h2>
+    {{#plan.canbeedited}}
+    <div data-region="actions" class="clearfix">
+        <div class="pull-left">
+            <!-- Button to add competencies to the plan -->
+            <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
+        </div>
+    </div>
+    {{/plan.canbeedited}}
+    <div data-region="plan-summary">
+        {{{plan.description}}}
+        <dl>
+            <dt>{{#str}}status, tool_lp{{/str}}</dt>
+            <dd>
+                {{plan.statusname}}
+
+                {{#plan.isinreview}}
+                    - {{plan.reviewer.fullname}}
+                {{/plan.isinreview}}
+
+                {{#plan.iscompleteallowed}}
+                    (<a data-action="plan-complete" href="#">{{#str}}completeplan, tool_lp{{/str}}</a>)
+                {{/plan.iscompleteallowed}}
+                {{#plan.isreopenallowed}}
+                    (<a data-action="plan-reopen" href="#">{{#str}}reopenplan, tool_lp{{/str}}</a>)
+                {{/plan.isreopenallowed}}
+                {{#plan.isrequestreviewallowed}}
+                    (<a data-action="plan-request-review" href="#">{{#str}}requestreview, tool_lp{{/str}}</a>)
+                {{/plan.isrequestreviewallowed}}
+                {{#plan.iscancelreviewrequestallowed}}
+                    (<a data-action="plan-cancel-review-request" href="#">{{#str}}cancelreviewrequest, tool_lp{{/str}}</a>)
+                {{/plan.iscancelreviewrequestallowed}}
+                {{#plan.isstartreviewallowed}}
+                    (<a data-action="plan-start-review" href="#">{{#str}}startreview, tool_lp{{/str}}</a>)
+                {{/plan.isstartreviewallowed}}
+                {{#plan.isstopreviewallowed}}
+                    (<a data-action="plan-stop-review" href="#">{{#str}}stopreview, tool_lp{{/str}}</a>)
+                {{/plan.isstopreviewallowed}}
+                {{#plan.isapproveallowed}}
+                    (<a data-action="plan-approve" href="#">{{#str}}planapprove, tool_lp{{/str}}</a>)
+                {{/plan.isapproveallowed}}
+                {{#plan.isunapproveallowed}}
+                    (<a data-action="plan-unapprove" href="#">{{#str}}planunapprove, tool_lp{{/str}}</a>)
+                {{/plan.isunapproveallowed}}
+
+            </dd>
+            {{#plan.duedate}}
+                <dt>{{#str}}duedate, tool_lp{{/str}}</dt>
+                <dd>{{plan.duedateformatted}}</dd>
+            {{/plan.duedate}}
+            {{#plan.template}}
+                <dt>{{#str}}template, tool_lp{{/str}}</dt>
+                <dd>
+                    {{#canread}}
+                        <a href="{{pluginbaseurl}}/templatecompetencies.php?templateid={{id}}&amp;pagecontextid={{contextid}}">
+                    {{/canread}}
+                    {{{plan.template.shortname}}}{{#canread}}</a>{{/canread}}
+                    {{#plan.isunlinkallowed}}
+                        (<a data-action="plan-unlink" href="#">{{#str}}unlinkplantemplate, tool_lp{{/str}}</a>)
+                    {{/plan.isunlinkallowed}}
+                </dd>
+            {{/plan.template}}
+            {{#description}}
+                <dt>{{#str}}description{{/str}}</dt>
+                <dd>{{{plan.description}}}</dd>
+            {{/description}}
+            <dt>{{#str}}progress, tool_lp{{/str}}</dt>
+            <dd>
+            {{< tool_lp/progress_bar}}
+                {{$progresstext}}
+                    {{#str}}xcompetenciesproficientoutofy, tool_lp, { "x": "{{proficientcompetencycount}}", "y": "{{competencycount}}" }{{/str}}
+                {{/progresstext}}
+                {{$percentage}}{{proficientcompetencypercentage}}{{/percentage}}
+                {{$percentlabel}}{{proficientcompetencypercentageformatted}}&nbsp;%{{/percentlabel}}
+            {{/tool_lp/progress_bar}}
+            </dd>
+        </dl>
+    </div>
+    {{#plan.commentarea}}
+        {{#canpostorhascomments}}
+            <div data-region="comments">
+                {{>tool_lp/comment_area}}
+            </div>
+        {{/canpostorhascomments}}
+    {{/plan.commentarea}}
+    <div data-region="plan-competencies">
+        <h3>{{#str}}learningplancompetencies, tool_lp{{/str}}</h3>
+        <table class="generaltable fullwidth managecompetencies">
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}}shortname, tool_lp{{/str}}</th>
+                    <th scope="col">{{#str}}rating, tool_lp{{/str}}</th>
+                    <th scope="col">{{#str}}proficient, tool_lp{{/str}}</th>
+                    {{^plan.iscompleted}}
+                        <th scope="col">{{#str}}status, tool_lp{{/str}}</th>
+                        <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+                    {{/plan.iscompleted}}
+                </tr>
+            </thead>
+            <tbody class="drag-parentnode">
+                {{#competencies}}
+                <tr class="drag-samenode" data-node="user-competency" data-id="{{competency.id}}"
+                        data-competencyid="{{competency.id}}"
+                        data-userid="{{plan.userid}}">
+                    <td>
+                        {{#plan.canbeedited}}
+                        <span class="drag-handlecontainer pull-left"></span>
+                        {{/plan.canbeedited}}
+                        <a data-usercompetency="true" href="#">{{{competency.shortname}}}</a>
+                        <em>{{competency.idnumber}}</em>
+                        {{#comppath}}
+                            <br>
+                            <span class="pull-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
+                        {{/comppath}}
+                    </td>
+                    {{#plan.iscompleted}}
+                        <td>{{usercompetencyplan.gradename}}</td>
+                        <td>{{usercompetencyplan.proficiencyname}}</td>
+                    {{/plan.iscompleted}}
+                    {{^plan.iscompleted}}
+                        <td>{{usercompetency.gradename}}</td>
+                        <td>{{usercompetency.proficiencyname}}</td>
+                        <td>{{usercompetency.statusname}}</td>
+                    {{/plan.iscompleted}}
+                    {{^plan.iscompleted}}
+                        <td>
+                            <ul title="{{#str}}edit{{/str}}" class="user-competency-actions">
+                                <li>
+                                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                                    <ul class="dropdown-menu">
+                                        {{#usercompetency.isrequestreviewallowed}}
+                                            <li>
+                                                <a href="#" data-action="request-review">{{#pix}}t/edit, core{{/pix}} {{#str}}requestreview, tool_lp{{/str}}</a>
+                                            </li>
+                                        {{/usercompetency.isrequestreviewallowed}}
+                                        {{#usercompetency.iscancelreviewrequestallowed}}
+                                            <li>
+                                                <a href="#" data-action="cancel-review-request">{{#pix}}t/edit, core{{/pix}} {{#str}}cancelreviewrequest, tool_lp{{/str}}</a>
+                                            </li>
+                                        {{/usercompetency.iscancelreviewrequestallowed}}
+                                        {{#plan.canbeedited}}
+                                            <li>
+                                                <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core{{/pix}} {{#str}}delete{{/str}}</a>
+                                            </li>
+                                        {{/plan.canbeedited}}
+                                        <li>
+                                            <a href="#" data-action="find-courses-link" data-id="{{competency.id}}">{{#pix}}t/preview, core{{/pix}} {{#str}}findcourses, tool_lp{{/str}}</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </td>
+                    {{/plan.iscompleted}}
+                </tr>
+                {{/competencies}}
+            </tbody>
+        </table>
+        {{^competencies}}
+            <p class="alert alert-info">
+                {{#str}}nocompetenciesinlearningplan, tool_lp{{/str}}
+            </p>
+        {{/competencies}}
+    </div>
+</div>
+{{#js}}
+require(['tool_lp/competencies', 'tool_lp/planactions', 'tool_lp/user_competency_workflow', 'tool_lp/user_competency_plan_popup'], function(mod, actionsMod, UserCompWorkflow, Popup) {
+    var planActions = new actionsMod('plan');
+
+    (new mod({{plan.id}}, 'plan', {{contextid}}));
+    (new Popup('[data-region=plan-page]', '[data-usercompetency=true]', {{plan.id}}));
+    planActions.registerEvents();
+
+    var ucw = new UserCompWorkflow();
+    ucw.enhanceMenubar('.user-competency-actions');
+    ucw.on('status-changed', planActions.refresh.bind(planActions, '[data-region="plan-summary"]'));
+    ucw.on('error-occured', planActions.refresh.bind(planActions, '[data-region="plan-summary"]'));
+});
+{{/js}}
+

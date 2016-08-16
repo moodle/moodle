@@ -2,6 +2,28 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.2 ===
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+
+=== 3.1 ===
+* Course format may use the inplace_editable template to allow quick editing of section names, see
+  https://docs.moodle.org/dev/Inplace_editable and MDL-51802 for example implementation.
+
+=== 3.0 ===
+* Course formats should now use section_edit_control_items and use the returned array of controls items and their attributes to create a
+  renderable menu or array of links.  Plugin calls to section_edit_controls will now include the section edit control in the returned array.
+* The section name is now wrapped in a new span (.sectionname > span), process_sections method in format.js should be updated so .sectionname
+  DOM node's wraps the section title in a span. You can look at how to implement the change in course/format/topics/format.js or MDL-48947.
+* New method format_base::get_default_section_name retrieves the default section name for the given course format. The base
+  implementation basically uses the implementation of format_base::get_section_name. The method can be overridden in
+  format_base subclasses that use sections (i.e. format_topics, format_weeks). In relation to the changes made for the default
+  section name, the default section name is now being shown when editing the section information.
+
+=== 2.9 ===
+* Course formats may support deleting sections, see MDL-10405 for more details.
+  format_section_renderer_base::section_edit_controls() is now also called for
+  stealth sections and it also returns "delete" control.
+
 === 2.8 ===
 * The activity chooser now uses M.course.format.get_sectionwrapperclass()
   to determine the section selector, rather than a hard-coded `li.section`.

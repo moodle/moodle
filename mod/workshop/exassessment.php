@@ -23,8 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/locallib.php');
 
 $asid       = required_param('asid', PARAM_INT);  // assessment id
 $assessment = $DB->get_record('workshop_assessments', array('id' => $asid), '*', MUST_EXIST);

@@ -9,6 +9,7 @@ Scenario: Admin can add random glossary block to the frontpage
     | activity   | name             | intro                          | course               | idnumber  |
     | glossary   | Tips and Tricks  | Frontpage glossary description | Acceptance test site | glossary0 |
   And I log in as "admin"
+  And I am on site homepage
   And I click on "Turn editing on" "link" in the "Administration" "block"
   And I add the "Random glossary entry" block
   And I configure the "block_glossary_random" block

@@ -1,0 +1,10 @@
+{
+  "name": "moodle-core-languninstallconfirm",
+  "builds": {
+    "moodle-core-languninstallconfirm": {
+      "jsfiles": [
+        "languninstallconfirm.js"
+      ]
+    }
+  }
+}

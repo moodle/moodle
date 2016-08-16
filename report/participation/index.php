@@ -79,7 +79,7 @@ $PAGE->set_title($course->shortname .': '. $strparticipation);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
-$uselegacyreader = false; // Use legacy reader with sql_internal_reader to aggregate records.
+$uselegacyreader = false; // Use legacy reader with sql_internal_table_reader to aggregate records.
 $onlyuselegacyreader = false; // Use only legacy log table to aggregate records.
 
 $logtable = report_participation_get_log_table_name(); // Log table to use for fetaching records.
@@ -100,7 +100,7 @@ if (!$onlyuselegacyreader && empty($logtable)) {
 
 $modinfo = get_fast_modinfo($course);
 
-$minloginternalreader = 0; // Time of first record in sql_internal_reader.
+$minloginternalreader = 0; // Time of first record in sql_internal_table_reader.
 
 if ($onlyuselegacyreader) {
     // If no sql_inrenal_reader enabled then get min. time from log table.
@@ -119,7 +119,7 @@ if ($onlyuselegacyreader) {
         $minlog = $minloginternalreader;
     }
 
-    // If timefrom is greater then first record in sql_internal_reader then get record from sql_internal_reader only.
+    // If timefrom is greater then first record in sql_internal_table_reader then get record from sql_internal_table_reader only.
     if (!empty($timefrom) && ($minloginternalreader < $timefrom)) {
         $uselegacyreader = false;
     }
@@ -173,8 +173,15 @@ if (!empty($instanceid) && !empty($roleid)) {
     $table = new flexible_table('course-participation-'.$course->id.'-'.$cm->id.'-'.$roleid);
     $table->course = $course;
 
-    $table->define_columns(array('fullname','count','select'));
-    $table->define_headers(array(get_string('user'),((!empty($action)) ? get_string($action) : get_string('allactions')),get_string('select')));
+    $actionheader = !empty($action) ? get_string($action) : get_string('allactions');
+
+    if (empty($CFG->messaging)) {
+        $table->define_columns(array('fullname', 'count'));
+        $table->define_headers(array(get_string('user'), $actionheader));
+    } else {
+        $table->define_columns(array('fullname', 'count', 'select'));
+        $table->define_headers(array(get_string('user'), $actionheader, get_string('select')));
+    }
     $table->define_baseurl($baseurl);
 
     $table->set_attribute('cellpadding','5');
@@ -270,22 +277,20 @@ if (!empty($instanceid) && !empty($roleid)) {
         }
     }
 
-    // Get record from sql_internal_reader and merge with records got from legacy log (if needed).
+    // Get record from sql_internal_table_reader and merge with records got from legacy log (if needed).
     if (!$onlyuselegacyreader) {
-        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, COUNT(l.actioncount) AS count
-                  FROM (SELECT DISTINCT userid FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
-                  JOIN {user} u ON u.id = ra.userid
+        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, COUNT(DISTINCT l.timecreated) AS count
+                  FROM {user} u
+                  JOIN {role_assignments} ra ON u.id = ra.userid AND ra.contextid $relatedctxsql AND ra.roleid = :roleid
              $groupsql
-             LEFT JOIN (
-                    SELECT userid, COUNT(crud) AS actioncount
-                      FROM {" . $logtable . "}
-                     WHERE contextinstanceid = :instanceid
-                       AND timecreated > :timefrom" . $crudsql ."
-                       AND edulevel = :edulevel
-                       AND anonymous = 0
-                       AND contextlevel = :contextlevel
-                       AND (origin = 'web' OR origin = 'ws')
-                  GROUP BY userid,timecreated) l ON (l.userid = ra.userid)";
+                  LEFT JOIN {" . $logtable . "} l
+                     ON l.contextinstanceid = :instanceid
+                       AND l.timecreated > :timefrom" . $crudsql ."
+                       AND l.edulevel = :edulevel
+                       AND l.anonymous = 0
+                       AND l.contextlevel = :contextlevel
+                       AND (l.origin = 'web' OR l.origin = 'ws')
+                       AND l.userid = ra.userid";
         // We add this after the WHERE statement that may come below.
         $groupbysql = " GROUP BY ra.userid, $usernamefields, u.idnumber";
 
@@ -338,10 +343,14 @@ if (!empty($instanceid) && !empty($roleid)) {
     echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
 
     foreach ($users as $u) {
-        $data = array('<a href="'.$CFG->wwwroot.'/user/view.php?id='.$u->userid.'&amp;course='.$course->id.'">'.fullname($u,true).'</a>'."\n",
-                      ((!empty($u->count)) ? get_string('yes').' ('.$u->count.') ' : get_string('no')),
-                      '<input type="checkbox" class="usercheckbox" name="user'.$u->userid.'" value="'.$u->count.'" />'."\n",
-                      );
+        $data = array();
+        $data[] = html_writer::link(new moodle_url('/user/view.php', array('id' => $u->userid, 'course' => $course->id)),
+            fullname($u, true));
+        $data[] = !empty($u->count) ? get_string('yes').' ('.$u->count.') ' : get_string('no');
+
+        if (!empty($CFG->messaging)) {
+            $data[] = '<input type="checkbox" class="usercheckbox" name="user'.$u->userid.'" value="'.$u->count.'" />';
+        }
         $table->add_data($data);
     }
 
@@ -359,25 +368,27 @@ if (!empty($instanceid) && !empty($roleid)) {
         echo html_writer::end_div();
     }
 
-    echo '<div class="selectbuttons">';
-    echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> '."\n";
-    echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> '."\n";
-    if ($perpage >= $matchcount) {
-        echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" />'."\n";
-    }
-    echo '</div>';
-    echo '<div>';
-    echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
-    $displaylist['messageselect.php'] = get_string('messageselectadd');
-    echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionselect'));
-    echo $OUTPUT->help_icon('withselectedusers');
-    echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
-    echo '</div>';
-    echo '</div>'."\n";
-    echo '</form>'."\n";
-    echo '</div>'."\n";
+    if (!empty($CFG->messaging)) {
+        echo '<div class="selectbuttons">';
+        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> '."\n";
+        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> '."\n";
+        if ($perpage >= $matchcount) {
+            echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" />'."\n";
+        }
+        echo '</div>';
+        echo '<div>';
+        echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
+        $displaylist['messageselect.php'] = get_string('messageselectadd');
+        echo html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionselect'));
+        echo $OUTPUT->help_icon('withselectedusers');
+        echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
+        echo '</div>';
+        echo '</div>'."\n";
+        echo '</form>'."\n";
+        echo '</div>'."\n";
 
-    $PAGE->requires->js_init_call('M.report_participation.init');
+        $PAGE->requires->js_init_call('M.report_participation.init');
+    }
 }
 
 echo $OUTPUT->footer();

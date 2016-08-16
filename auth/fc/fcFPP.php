@@ -30,12 +30,18 @@ class fcFPP
     var $_debug = FALSE;    // set to true to see some debug info
 
     // class constructor
-    function fcFPP($host="localhost", $port="3333")
+    public function __construct($host="localhost", $port="3333")
     {
     $this->_hostname = $host;
     $this->_port = $port;
     $this->_user = "";
     $this->_pwd = "";
+    }
+
+    function fcFPP($host="localhost", $port="3333")
+    {
+           debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+           self::__construct($host, $port);
     }
 
     // open a connection to the FirstClass server

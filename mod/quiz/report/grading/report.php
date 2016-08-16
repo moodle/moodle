@@ -409,6 +409,7 @@ class quiz_grading_report extends quiz_default_report {
             $quba = question_engine::load_questions_usage_by_activity($qubaid);
             $displayoptions = quiz_get_review_options($this->quiz, $attempt, $this->context);
             $displayoptions->hide_all_feedback();
+            $displayoptions->rightanswer = question_display_options::VISIBLE;
             $displayoptions->history = question_display_options::HIDDEN;
             $displayoptions->manualcomment = question_display_options::EDITABLE;
 
@@ -475,20 +476,41 @@ class quiz_grading_report extends quiz_default_report {
         global $DB;
 
         $qubaids = optional_param('qubaids', null, PARAM_SEQUENCE);
+        $assumedslotforevents = optional_param('slot', null, PARAM_INT);
+
         if (!$qubaids) {
             return;
         }
 
         $qubaids = clean_param_array(explode(',', $qubaids), PARAM_INT);
         $attempts = $this->load_attempts_by_usage_ids($qubaids);
+        $events = array();
 
         $transaction = $DB->start_delegated_transaction();
         foreach ($qubaids as $qubaid) {
             $attempt = $attempts[$qubaid];
             $attemptobj = new quiz_attempt($attempt, $this->quiz, $this->cm, $this->course);
             $attemptobj->process_submitted_actions(time());
+
+            // Add the event we will trigger later.
+            $params = array(
+                'objectid' => $attemptobj->get_question_attempt($assumedslotforevents)->get_question()->id,
+                'courseid' => $attemptobj->get_courseid(),
+                'context' => context_module::instance($attemptobj->get_cmid()),
+                'other' => array(
+                    'quizid' => $attemptobj->get_quizid(),
+                    'attemptid' => $attemptobj->get_attemptid(),
+                    'slot' => $assumedslotforevents
+                )
+            );
+            $events[] = \mod_quiz\event\question_manually_graded::create($params);
         }
         $transaction->allow_commit();
+
+        // Trigger events for all the questions we manually marked.
+        foreach ($events as $event) {
+            $event->trigger();
+        }
     }
 
     /**

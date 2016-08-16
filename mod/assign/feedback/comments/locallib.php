@@ -96,8 +96,31 @@ class assign_feedback_comments extends assign_feedback_plugin {
         }
         // Note that this handles the difference between empty and not in the quickgrading
         // form at all (hidden column).
-        $newvalue = optional_param('quickgrade_comments_' . $userid, false, PARAM_TEXT);
+        $newvalue = optional_param('quickgrade_comments_' . $userid, false, PARAM_RAW);
         return ($newvalue !== false) && ($newvalue != $commenttext);
+    }
+
+    /**
+     * Has the comment feedback been modified?
+     *
+     * @param stdClass $grade The grade object.
+     * @param stdClass $data Data from the form submission.
+     * @return boolean True if the comment feedback has been modified, else false.
+     */
+    public function is_feedback_modified(stdClass $grade, stdClass $data) {
+        $commenttext = '';
+        if ($grade) {
+            $feedbackcomments = $this->get_feedback_comments($grade->id);
+            if ($feedbackcomments) {
+                $commenttext = $feedbackcomments->commenttext;
+            }
+        }
+
+        if ($commenttext == $data->assignfeedbackcomments_editor['text']) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 
@@ -176,17 +199,16 @@ class assign_feedback_comments extends assign_feedback_plugin {
     public function save_quickgrading_changes($userid, $grade) {
         global $DB;
         $feedbackcomment = $this->get_feedback_comments($grade->id);
-        $feedbackpresent = optional_param('quickgrade_comments_' . $userid, false, PARAM_TEXT) !== false;
-        if (!$feedbackpresent) {
-            // Nothing to save (e.g. hidden column).
+        $quickgradecomments = optional_param('quickgrade_comments_' . $userid, null, PARAM_RAW);
+        if (!$quickgradecomments) {
             return true;
         }
         if ($feedbackcomment) {
-            $feedbackcomment->commenttext = optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT);
+            $feedbackcomment->commenttext = $quickgradecomments;
             return $DB->update_record('assignfeedback_comments', $feedbackcomment);
         } else {
             $feedbackcomment = new stdClass();
-            $feedbackcomment->commenttext = optional_param('quickgrade_comments_' . $userid, '', PARAM_TEXT);
+            $feedbackcomment->commenttext = $quickgradecomments;
             $feedbackcomment->commentformat = FORMAT_HTML;
             $feedbackcomment->grade = $grade->id;
             $feedbackcomment->assignment = $this->assignment->get_instance()->id;
@@ -213,6 +235,10 @@ class assign_feedback_comments extends assign_feedback_plugin {
      */
     public function get_settings(MoodleQuickForm $mform) {
         $default = $this->get_config('commentinline');
+        if ($default === false) {
+            // Apply the admin default if we don't have a value yet.
+            $default = get_config('assignfeedback_comments', 'inline');
+        }
         $mform->addElement('selectyesno',
                            'assignfeedback_comments_commentinline',
                            get_string('commentinline', 'assignfeedback_comments'));
@@ -485,9 +511,9 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @return external_description|null
      */
     public function get_external_parameters() {
-        $editorparams = array('text' => new external_value(PARAM_TEXT, 'The text for this feedback.'),
+        $editorparams = array('text' => new external_value(PARAM_RAW, 'The text for this feedback.'),
                               'format' => new external_value(PARAM_INT, 'The format for this feedback'));
-        $editorstructure = new external_single_structure($editorparams);
+        $editorstructure = new external_single_structure($editorparams, 'Editor structure', VALUE_OPTIONAL);
         return array('assignfeedbackcomments_editor' => $editorstructure);
     }
 

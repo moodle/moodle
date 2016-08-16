@@ -1,0 +1,7 @@
+This files describes API changes in /dataformat/ download system,
+information provided here is intended especially for developers.
+
+=== 3.1 ===
+* Added new plugin system with low memory support for csv, ods, xls and json
+
+

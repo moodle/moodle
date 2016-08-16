@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/modinfolib.php');
-require_once($CFG->libdir . '/conditionlib.php');
 
 /**
  * Unit tests for modinfolib.php
@@ -201,10 +200,6 @@ class core_modinfolib_testcase extends advanced_testcase {
         $this->assertEquals($modnamesplural['assign'], $cm->modplural);
         $this->assertEquals(new moodle_url('/mod/assign/view.php', array('id' => $moduledb->id)), $cm->url);
         $this->assertEquals($cachedcminfo->customdata, $cm->customdata);
-
-        // Deprecated field.
-        $this->assertEquals(0, $cm->groupmembersonly);
-        $this->assertDebuggingCalled();
 
         // Dynamic fields, just test that they can be retrieved (must be carefully tested in each activity type).
         $this->assertNotEmpty($cm->availableinfo); // Lists all unmet availability conditions.
@@ -416,88 +411,6 @@ class core_modinfolib_testcase extends advanced_testcase {
         $this->assertNotEquals('Illegal overwriting', $modinfo->cms);
     }
 
-    /**
-     * Test is_user_access_restricted_by_conditional_access()
-     *
-     * The underlying conditional access system is more thoroughly tested in lib/tests/conditionlib_test.php
-     */
-    public function test_is_user_access_restricted_by_conditional_access() {
-        global $DB, $CFG;
-
-        $this->resetAfterTest();
-
-        // Enable conditional availability before creating modules, otherwise the condition data is not written in DB.
-        $CFG->enableavailability = true;
-
-        // Create a course.
-        $course = $this->getDataGenerator()->create_course();
-        // 1. Create an activity that is currently unavailable and hidden entirely (for students).
-        $assign1 = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id),
-                array('availability' => '{"op":"|","show":false,"c":[' .
-                '{"type":"date","d":">=","t":' . (time() + 10000) . '}]}'));
-        // 2. Create an activity that is currently available.
-        $assign2 = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
-        // 3. Create an activity that is currently unavailable and set to be greyed out.
-        $assign3 = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id),
-                array('availability' => '{"op":"|","show":true,"c":[' .
-                '{"type":"date","d":">=","t":' . (time() + 10000) . '}]}'));
-
-        // Set up a teacher.
-        $coursecontext = context_course::instance($course->id);
-        $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
-        $teacher = $this->getDataGenerator()->create_user();
-        role_assign($teacherrole->id, $teacher->id, $coursecontext);
-
-        // If conditional availability is disabled the activity will always be unrestricted.
-        $CFG->enableavailability = false;
-        $cm = get_fast_modinfo($course)->instances['assign'][$assign1->id];
-        $this->assertTrue($cm->uservisible);
-
-        // Test deprecated function.
-        $this->assertFalse($cm->is_user_access_restricted_by_conditional_access());
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
-        // Turn on conditional availability and reset the get_fast_modinfo cache.
-        $CFG->enableavailability = true;
-        get_fast_modinfo($course, 0, true);
-
-        // The unavailable, hidden entirely activity should now be restricted.
-        $cm = get_fast_modinfo($course)->instances['assign'][$assign1->id];
-        $this->assertFalse($cm->uservisible);
-        $this->assertFalse($cm->available);
-        $this->assertEquals('', $cm->availableinfo);
-
-        // Test deprecated function.
-        $this->assertTrue($cm->is_user_access_restricted_by_conditional_access());
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
-        // If the activity is available it should not be restricted.
-        $cm = get_fast_modinfo($course)->instances['assign'][$assign2->id];
-        $this->assertTrue($cm->uservisible);
-        $this->assertTrue($cm->available);
-
-        // If the activity is unavailable and set to be greyed out it should not be restricted.
-        $cm = get_fast_modinfo($course)->instances['assign'][$assign3->id];
-        $this->assertFalse($cm->uservisible);
-        $this->assertFalse($cm->available);
-        $this->assertNotEquals('', (string)$cm->availableinfo);
-
-        // Test deprecated function (weird case, it actually checks visibility).
-        $this->assertFalse($cm->is_user_access_restricted_by_conditional_access());
-        $this->assertEquals(1, count(phpunit_util::get_debugging_messages()));
-        phpunit_util::reset_debugging();
-
-        // If the activity is unavailable and set to be hidden entirely its restricted unless user has 'moodle/course:viewhiddenactivities'.
-        // Switch to a teacher and reload the context info.
-        $this->setUser($teacher);
-        $this->assertTrue(has_capability('moodle/course:viewhiddenactivities', $coursecontext));
-        $cm = get_fast_modinfo($course)->instances['assign'][$assign1->id];
-        $this->assertTrue($cm->uservisible);
-        $this->assertFalse($cm->available);
-    }
-
     public function test_is_user_access_restricted_by_capability() {
         global $DB;
 
@@ -551,44 +464,6 @@ class core_modinfolib_testcase extends advanced_testcase {
         $cm = get_fast_modinfo($course->id, $student->id)->instances['assign'][$assign->id];
         $this->assertFalse($cm->uservisible);
         $this->assertTrue($cm->is_user_access_restricted_by_capability());
-    }
-
-    /**
-     * Tests that various deprecated cm_info methods are throwing debuggign messages
-     */
-    public function test_cm_info_property_deprecations() {
-        global $DB, $CFG;
-
-        $this->resetAfterTest();
-
-        $course = $this->getDataGenerator()->create_course( array('format' => 'topics', 'numsections' => 3),
-                array('createsections' => true));
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
-        $cm = get_fast_modinfo($course->id)->instances['forum'][$forum->id];
-
-        $cm->get_url();
-        $this->assertDebuggingCalled('cm_info::get_url() is deprecated, please use the property cm_info->url instead.');
-
-        $cm->get_content();
-        $this->assertDebuggingCalled('cm_info::get_content() is deprecated, please use the property cm_info->content instead.');
-
-        $cm->get_extra_classes();
-        $this->assertDebuggingCalled('cm_info::get_extra_classes() is deprecated, please use the property cm_info->extraclasses instead.');
-
-        $cm->get_on_click();
-        $this->assertDebuggingCalled('cm_info::get_on_click() is deprecated, please use the property cm_info->onclick instead.');
-
-        $cm->get_custom_data();
-        $this->assertDebuggingCalled('cm_info::get_custom_data() is deprecated, please use the property cm_info->customdata instead.');
-
-        $cm->get_after_link();
-        $this->assertDebuggingCalled('cm_info::get_after_link() is deprecated, please use the property cm_info->afterlink instead.');
-
-        $cm->get_after_edit_icons();
-        $this->assertDebuggingCalled('cm_info::get_after_edit_icons() is deprecated, please use the property cm_info->afterediticons instead.');
-
-        $cm->obtain_dynamic_data();
-        $this->assertDebuggingCalled('cm_info::obtain_dynamic_data() is deprecated and should not be used.');
     }
 
     /**
@@ -745,75 +620,6 @@ class core_modinfolib_testcase extends advanced_testcase {
         $this->assertNull($cm->availability);
         $section = $modinfo->get_section_info(2, MUST_EXIST);
         $this->assertNull($section->availability);
-    }
-
-    /**
-     * Some properties have been deprecated from both the section and module
-     * classes. This checks they still work (and show warnings).
-     */
-    public function test_availability_deprecations() {
-        global $CFG, $DB;
-        $this->resetAfterTest();
-        $CFG->enableavailability = true;
-
-        // Create a course with two modules. The modules are not available to
-        // users. One of them is set to show this information, the other is not.
-        // Same setup for sections.
-        $generator = $this->getDataGenerator();
-        $course = $this->getDataGenerator()->create_course(
-                array('format' => 'topics', 'numsections' => 2),
-                array('createsections' => true));
-        $show = '{"op":"|","show":true,"c":[{"type":"date","d":"<","t":1395857332}]}';
-        $noshow = '{"op":"|","show":false,"c":[{"type":"date","d":"<","t":1395857332}]}';
-        $forum1 = $generator->create_module('forum',
-                array('course' => $course->id, 'availability' => $show));
-        $forum2 = $generator->create_module('forum',
-                array('course' => $course->id, 'availability' => $noshow));
-        $DB->set_field('course_sections', 'availability',
-                $show, array('course' => $course->id, 'section' => 1));
-        $DB->set_field('course_sections', 'availability',
-                $noshow, array('course' => $course->id, 'section' => 2));
-
-        // Create a user without special permissions.
-        $user = $generator->create_user();
-        $generator->enrol_user($user->id, $course->id);
-
-        // Get modinfo and cm objects.
-        $modinfo = get_fast_modinfo($course, $user->id);
-        $cm1 = $modinfo->get_cm($forum1->cmid);
-        $cm2 = $modinfo->get_cm($forum2->cmid);
-
-        // Check the showavailability property.
-        $this->assertEquals(1, $cm1->showavailability);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
-        $this->assertEquals(0, $cm2->showavailability);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
-
-        // Check the dates (these always return 0 now).
-        $this->assertEquals(0, $cm1->availablefrom);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
-        $this->assertEquals(0, $cm1->availableuntil);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
-
-        // Get section objects.
-        $section1 = $modinfo->get_section_info(1);
-        $section2 = $modinfo->get_section_info(2);
-
-        // Check showavailability.
-        $this->assertEquals(1, $section1->showavailability);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
-        $this->assertEquals(0, $section2->showavailability);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
-
-        // Check dates (zero).
-        $this->assertEquals(0, $section1->availablefrom);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
-                $this->assertEquals(0, $section1->availableuntil);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
-
-        // Check groupingid (zero).
-        $this->assertEquals(0, $section1->groupingid);
-        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
     }
 
     /**

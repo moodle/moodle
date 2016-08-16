@@ -1,10 +1,10 @@
 PHP Markdown
 ============
 
-PHP Markdown Lib 1.4.1 - 4 May 2013
+PHP Markdown Lib 1.5.0 - 1 Mar 2015
 
 by Michel Fortin  
-<http://michelf.ca/>
+<https://michelf.ca/>
 
 based on Markdown by John Gruber  
 <http://daringfireball.net/>
@@ -25,10 +25,10 @@ software tool, originally written in Perl, that converts the plain text
 markup to HTML. PHP Markdown is a port to PHP of the original Markdown 
 program by John Gruber.
 
-*	[Full documentation of the Markdown syntax](<http://daringfireball.net/projects/markdown/>)
-	- Daring Fireball (John Gruber)
-*	[Markdown Extra syntax additions](<http://michelf.ca/projects/php-markdown/extra/>)
-	- Michel Fortin
+*	[Full documentation of the Markdown syntax](<http://daringfireball.net/projects/markdown/>)  
+	— Daring Fireball (John Gruber)
+*	[Markdown Extra syntax additions](<https://michelf.ca/projects/php-markdown/extra/>)  
+	— Michel Fortin
 
 
 Requirement
@@ -83,7 +83,7 @@ configuration variables:
 
 To learn more, see the full list of [configuration variables].
 
- [configuration variables]: http://michelf.ca/projects/php-markdown/configuration/
+ [configuration variables]: https://michelf.ca/projects/php-markdown/configuration/
 
 
 ### Usage without an autoloader
@@ -160,8 +160,41 @@ too.
  [MDTest]: https://github.com/michelf/mdtest/
 
 
+Donations
+---------
+
+If you wish to make a donation that will help me devote more time to 
+PHP Markdown, please visit [michelf.ca/donate] or send Bitcoin to
+[1HiuX34czvVPPdhXbUAsAu7pZcesniDCGH].
+
+ [michelf.ca/donate]: https://michelf.ca/donate/#!Thanks%20for%20PHP%20Markdown
+ [1HiuX34czvVPPdhXbUAsAu7pZcesniDCGH]: bitcoin:1HiuX34czvVPPdhXbUAsAu7pZcesniDCGH
+
+
 Version History
 ---------------
+
+PHP Markdown Lib 1.5.0 (1 Mar 2015)
+
+*	Added the ability start ordered lists with a number different from 1 and
+	and have that reflected in the HTML output. This can be enabled with
+	the `enhanced_ordered_lists` configuration variable for the Markdown 
+	parser; it is enabled by default for Markdown Extra.
+	Credits to Matt Gorle for providing the implementation.
+
+*	Added the ability to insert custom HTML attributes with simple values 
+	everywhere an extra attribute block is allowed (links, images, headers).
+	The value must be unquoted, cannot contains spaces and is limited to 
+	alphanumeric ASCII characters.
+	Credits to Peter Droogmans for providing the implementation.
+
+*	Added a `header_id_func` configuration variable which takes a function
+	that can generate an `id` attribute value from the header text.
+	Credits to Evert Pot for providing the implementation.
+
+*	Added a `url_filter_func` configuration variable which takes a function
+	that can rewrite any link or image URL to something different.
+
 
 PHP Markdown Lib 1.4.1 (4 May 2014)
 
@@ -218,7 +251,7 @@ PHP Markdown Extra 1.2.6:
 
 *	Plugin interface for WordPress and other systems is no longer present in
 	the Lib package. The classic package is still available if you need it:
-	<http://michelf.ca/projects/php-markdown/classic/>
+	<https://michelf.ca/projects/php-markdown/classic/>
 
 *	Added `public` and `protected` protection attributes, plus a section about
 	what is "public API" and what isn't in the Readme file.
@@ -256,8 +289,8 @@ Copyright and License
 ---------------------
 
 PHP Markdown Lib
-Copyright (c) 2004-2014 Michel Fortin
-<http://michelf.ca/>  
+Copyright (c) 2004-2015 Michel Fortin
+<https://michelf.ca/>  
 All rights reserved.
 
 Based on Markdown  

@@ -55,7 +55,7 @@ class frontend extends \core_availability\frontend {
                     && $item->itemtype == 'mod') {
                 continue;
             }
-            $gradeoptions[$id] = $item->get_name();
+            $gradeoptions[$id] = $item->get_name(true);
         }
         \core_collator::asort($gradeoptions);
 

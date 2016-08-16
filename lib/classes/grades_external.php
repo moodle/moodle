@@ -38,6 +38,8 @@ class core_grades_external extends external_api {
      *
      * @return external_function_parameters
      * @since Moodle 2.7
+     * @deprecated Moodle 3.2 MDL-51373 - Please do not call this function any more.
+     * @see gradereport_user_external::get_grades_table for a similar function
      */
     public static function get_grades_parameters() {
         return new external_function_parameters(
@@ -65,6 +67,8 @@ class core_grades_external extends external_api {
      * @param  array  $userids      Array of user ids
      * @return array                Array of grades
      * @since Moodle 2.7
+     * @deprecated Moodle 3.2 MDL-51373 - Please do not call this function any more.
+     * @see gradereport_user_external::get_grades_table for a similar function
      */
     public static function get_grades($courseid, $component = null, $activityid = null, $userids = array()) {
         global $CFG, $USER, $DB;
@@ -155,6 +159,8 @@ class core_grades_external extends external_api {
                     continue;
                 }
 
+                $context = $coursecontext;
+
                 if ($activitygrade->itemtype == 'course') {
                     $item = grade_get_course_grades($course->id, $params['userids']);
                     $item->itemnumber = 0;
@@ -166,6 +172,8 @@ class core_grades_external extends external_api {
                 } else {
                     $cm = $activityinstances[$activitygrade->itemmodule][$activitygrade->iteminstance];
                     $instance = $cm->instance;
+                    $context = context_module::instance($cm->id, IGNORE_MISSING);
+
                     $grades = grade_get_grades($params['courseid'], $activitygrade->itemtype,
                                                 $activitygrade->itemmodule, $instance, $params['userids']);
                 }
@@ -211,7 +219,7 @@ class core_grades_external extends external_api {
                             if ($gradeiteminstance->itemtype != 'course' and !empty($studentgrade->feedback)) {
                                 list($studentgrade->feedback, $studentgrade->feedbackformat) =
                                     external_format_text($studentgrade->feedback, $studentgrade->feedbackformat,
-                                    $cm->id, $params['component'], 'feedback', null);
+                                    $context->id, $params['component'], 'feedback', null);
                             }
 
                             $gradeitemarray['grades'][$studentid] = (array)$studentgrade;
@@ -265,7 +273,7 @@ class core_grades_external extends external_api {
                             if (!empty($studentgrade->feedback)) {
                                 list($studentgrade->feedback, $studentgrade->feedbackformat) =
                                     external_format_text($studentgrade->feedback, $studentgrade->feedbackformat,
-                                    $cm->id, $params['component'], 'feedback', null);
+                                    $context->id, $params['component'], 'feedback', null);
                             }
 
                             $gradesarray['outcomes'][$cm->id]['grades'][$studentid] = (array)$studentgrade;
@@ -289,6 +297,8 @@ class core_grades_external extends external_api {
      * @param  int $iteminstance    Item instance
      * @param  int $itemnumber      Item number
      * @return grade_item           A grade_item instance
+     * @deprecated Moodle 3.2 MDL-51373 - Please do not call this function any more.
+     * @see gradereport_user_external::get_grades_table for a similar function
      */
     private static function get_grade_item($courseid, $itemtype, $itemmodule = null, $iteminstance = null, $itemnumber = null) {
         $gradeiteminstance = null;
@@ -307,6 +317,8 @@ class core_grades_external extends external_api {
      *
      * @return external_description
      * @since Moodle 2.7
+     * @deprecated Moodle 3.2 MDL-51373 - Please do not call this function any more.
+     * @see gradereport_user_external::get_grades_table for a similar function
      */
     public static function get_grades_returns() {
         return new external_single_structure(
@@ -399,6 +411,15 @@ class core_grades_external extends external_api {
             )
         );
 
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_grades_is_deprecated() {
+        return true;
     }
 
     /**

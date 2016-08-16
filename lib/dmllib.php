@@ -52,7 +52,7 @@ define('IGNORE_MULTIPLE', 1);
 define('MUST_EXIST', 2);
 
 /**
- * DML exception class, use instead of error() in dml code.
+ * DML exception class, use instead of print_error() in dml code.
  *
  * @package    core
  * @category   dml
@@ -205,7 +205,7 @@ class dml_missing_record_exception extends dml_exception {
             case 'course':
                 $errcode = empty($sql) ? 'invalidcourseid' : 'invalidrecord';
                 break;
-            case 'course_module':
+            case 'course_modules':
                 $errcode = 'invalidcoursemodule';
                 break;
             case 'user':

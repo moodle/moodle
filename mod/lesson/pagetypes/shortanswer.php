@@ -57,6 +57,18 @@ class lesson_page_type_shortanswer extends lesson_page {
             $data->answer = s($attempt->useranswer);
         }
         $mform->set_data($data);
+
+        // Trigger an event question viewed.
+        $eventparams = array(
+            'context' => context_module::instance($PAGE->cm->id),
+            'objectid' => $this->properties->id,
+            'other' => array(
+                    'pagetype' => $this->get_typestring()
+                )
+            );
+
+        $event = \mod_lesson\event\question_viewed::create($eventparams);
+        $event->trigger();
         return $mform->display();
     }
     public function check_answer() {
@@ -316,6 +328,8 @@ class lesson_page_type_shortanswer extends lesson_page {
 class lesson_add_page_form_shortanswer extends lesson_add_page_form_base {
     public $qtype = 'shortanswer';
     public $qtypestring = 'shortanswer';
+    protected $answerformat = '';
+    protected $responseformat = LESSON_ANSWER_HTML;
 
     public function custom_definition() {
 
@@ -325,7 +339,8 @@ class lesson_add_page_form_shortanswer extends lesson_add_page_form_base {
 
         for ($i = 0; $i < $this->_customdata['lesson']->maxanswers; $i++) {
             $this->_form->addElement('header', 'answertitle'.$i, get_string('answer').' '.($i+1));
-            $this->add_answer($i);
+            // Only first answer is required.
+            $this->add_answer($i, null, ($i < 1));
             $this->add_response($i);
             $this->add_jumpto($i, null, ($i == 0 ? LESSON_NEXTPAGE : LESSON_THISPAGE));
             $this->add_score($i, null, ($i===0)?1:0);
@@ -350,21 +365,34 @@ class lesson_display_answer_form_shortanswer extends moodleform {
             }
         }
 
+        $placeholder = false;
+        if (preg_match('/_____+/', $contents, $matches)) {
+            $placeholder = $matches[0];
+            $contentsparts = explode( $placeholder, $contents, 2);
+            $attrs['size'] = round(strlen($placeholder) * 1.1);
+        }
+
+        // Disable shortforms.
+        $mform->setDisableShortforms();
+
         $mform->addElement('header', 'pageheader');
-
-        $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
-
-        $options = new stdClass;
-        $options->para = false;
-        $options->noclean = true;
-
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 
         $mform->addElement('hidden', 'pageid');
         $mform->setType('pageid', PARAM_INT);
 
-        $mform->addElement('text', 'answer', get_string('youranswer', 'lesson'), $attrs);
+        if ($placeholder) {
+            $contentsgroup = array();
+            $contentsgroup[] = $mform->createElement('static', '', '', $contentsparts[0]);
+            $contentsgroup[] = $mform->createElement('text', 'answer', '', $attrs);
+            $contentsgroup[] = $mform->createElement('static', '', '', $contentsparts[1]);
+            $mform->addGroup($contentsgroup, '', '', '', false);
+        } else {
+            $mform->addElement('html', $OUTPUT->container($contents, 'contents'));
+            $mform->addElement('text', 'answer', get_string('youranswer', 'lesson'), $attrs);
+
+        }
         $mform->setType('answer', PARAM_TEXT);
 
         if ($hasattempt) {

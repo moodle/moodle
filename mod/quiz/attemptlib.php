@@ -60,15 +60,22 @@ class moodle_quiz_exception extends moodle_exception {
  * @since      Moodle 2.0
  */
 class quiz {
-    // Fields initialised in the constructor.
+    /** @var stdClass the course settings from the database. */
     protected $course;
+    /** @var stdClass the course_module settings from the database. */
     protected $cm;
+    /** @var stdClass the quiz settings from the database. */
     protected $quiz;
+    /** @var context the quiz context. */
     protected $context;
 
-    // Fields set later if that data is needed.
+    /** @var array of questions augmented with slot information. */
     protected $questions = null;
+    /** @var array of quiz_section rows. */
+    protected $sections = null;
+    /** @var quiz_access_manager the access manager for this quiz. */
     protected $accessmanager = null;
+    /** @var bool whether the current user has capability mod/quiz:preview. */
     protected $ispreviewuser = null;
 
     // Constructor =============================================================
@@ -262,6 +269,21 @@ class quiz {
     }
 
     /**
+     * Get all the sections in this quiz.
+     * @return array 0, 1, 2, ... => quiz_sections row from the database.
+     */
+    public function get_sections() {
+        global $DB;
+        if ($this->sections === null) {
+            $this->sections = array_values($DB->get_records('quiz_sections',
+                    array('quizid' => $this->get_quizid()), 'firstslot'));
+        }
+        return $this->sections;
+    }
+
+    /**
+     * Return quiz_access_manager and instance of the quiz_access_manager class
+     * for this quiz at this time.
      * @param int $timenow the current time as a unix timestamp.
      * @return quiz_access_manager and instance of the quiz_access_manager class
      *      for this quiz at this time.
@@ -349,23 +371,13 @@ class quiz {
     // Bits of content =========================================================
 
     /**
-     * @param bool $unfinished whether there is currently an unfinished attempt active.
-     * @return string if the quiz policies merit it, return a warning string to
-     *      be displayed in a javascript alert on the start attempt button.
+     * @param bool $notused not used.
+     * @return string an empty string.
+     * @deprecated since 3.1. This sort of functionality is now entirely handled by quiz access rules.
      */
-    public function confirm_start_attempt_message($unfinished) {
-        if ($unfinished) {
-            return '';
-        }
-
-        if ($this->quiz->timelimit && $this->quiz->attempts) {
-            return get_string('confirmstartattempttimelimit', 'quiz', $this->quiz->attempts);
-        } else if ($this->quiz->timelimit) {
-            return get_string('confirmstarttimelimit', 'quiz');
-        } else if ($this->quiz->attempts) {
-            return get_string('confirmstartattemptlimit', 'quiz', $this->quiz->attempts);
-        }
-
+    public function confirm_start_attempt_message($notused) {
+        debugging('confirm_start_attempt_message is deprecated. ' .
+                'This sort of functionality is now entirely handled by quiz access rules.');
         return '';
     }
 
@@ -421,6 +433,57 @@ class quiz {
             throw new moodle_quiz_exception($this, 'questionnotloaded', $id);
         }
     }
+
+    /**
+     * Return all the question types used in this quiz.
+     *
+     * @param  boolean $includepotential if the quiz include random questions, setting this flag to true will make the function to
+     * return all the possible question types in the random questions category
+     * @return array a sorted array including the different question types
+     * @since  Moodle 3.1
+     */
+    public function get_all_question_types_used($includepotential = false) {
+        $questiontypes = array();
+
+        // To control if we need to look in categories for questions.
+        $qcategories = array();
+
+        // We must be careful with random questions, if we find a random question we must assume that the quiz may content
+        // any of the questions in the referenced category (or subcategories).
+        foreach ($this->get_questions() as $questiondata) {
+            if ($questiondata->qtype == 'random' and $includepotential) {
+                $includesubcategories = (bool) $questiondata->questiontext;
+                if (!isset($qcategories[$questiondata->category])) {
+                    $qcategories[$questiondata->category] = false;
+                }
+                if ($includesubcategories) {
+                    $qcategories[$questiondata->category] = true;
+                }
+            } else {
+                if (!in_array($questiondata->qtype, $questiontypes)) {
+                    $questiontypes[] = $questiondata->qtype;
+                }
+            }
+        }
+
+        if (!empty($qcategories)) {
+            // We have to look for all the question types in these categories.
+            $categoriestolook = array();
+            foreach ($qcategories as $cat => $includesubcats) {
+                if ($includesubcats) {
+                    $categoriestolook = array_merge($categoriestolook, question_categorylist($cat));
+                } else {
+                    $categoriestolook[] = $cat;
+                }
+            }
+            $questiontypesincategories = question_bank::get_all_question_types_in_categories($categoriestolook);
+            $questiontypes = array_merge($questiontypes, $questiontypesincategories);
+        }
+        $questiontypes = array_unique($questiontypes);
+        sort($questiontypes);
+
+        return $questiontypes;
+    }
 }
 
 
@@ -446,12 +509,26 @@ class quiz_attempt {
     /** @var int maximum number of slots in the quiz for the review page to default to show all. */
     const MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL = 50;
 
-    // Basic data.
+    /** @var quiz object containing the quiz settings. */
     protected $quizobj;
+
+    /** @var stdClass the quiz_attempts row. */
     protected $attempt;
 
     /** @var question_usage_by_activity the question usage for this quiz attempt. */
     protected $quba;
+
+    /**
+     * @var array of slot information. These objects contain ->slot (int),
+     *      ->requireprevious (bool), ->questionids (int) the original question for random questions,
+     *      ->firstinsection (bool), ->section (stdClass from $this->sections).
+     *      This does not contain page - get that from {@link get_question_page()} -
+     *      or maxmark - get that from $this->quba.
+     */
+    protected $slots;
+
+    /** @var array of quiz_sections rows, with a ->lastslot field added. */
+    protected $sections;
 
     /** @var array page no => array of slot numbers on the page in order. */
     protected $pagelayout;
@@ -477,6 +554,8 @@ class quiz_attempt {
      *      of the state of each question. Else just set up the basic details of the attempt.
      */
     public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
+        global $DB;
+
         $this->attempt = $attempt;
         $this->quizobj = new quiz($quiz, $cm, $course);
 
@@ -485,6 +564,13 @@ class quiz_attempt {
         }
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
+        $this->slots = $DB->get_records('quiz_slots',
+                array('quizid' => $this->get_quizid()), 'slot',
+                'slot, requireprevious, questionid');
+        $this->sections = array_values($DB->get_records('quiz_sections',
+                array('quizid' => $this->get_quizid()), 'firstslot'));
+
+        $this->link_sections_and_slots();
         $this->determine_layout();
         $this->number_questions();
     }
@@ -536,6 +622,22 @@ class quiz_attempt {
     }
 
     /**
+     * Let each slot know which section it is part of.
+     */
+    protected function link_sections_and_slots() {
+        foreach ($this->sections as $i => $section) {
+            if (isset($this->sections[$i + 1])) {
+                $section->lastslot = $this->sections[$i + 1]->firstslot - 1;
+            } else {
+                $section->lastslot = count($this->slots);
+            }
+            for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
+                $this->slots[$slot]->section = $section;
+            }
+        }
+    }
+
+    /**
      * Parse attempt->layout to populate the other arrays the represent the layout.
      */
     protected function determine_layout() {
@@ -550,6 +652,11 @@ class quiz_attempt {
         }
 
         // File the ids into the arrays.
+        // Tracking which is the first slot in each section in this attempt is
+        // trickier than you might guess, since the slots in this section
+        // may be shuffled, so $section->firstslot (the lowest numbered slot in
+        // the section) may not be the first one.
+        $unseensections = $this->sections;
         $this->pagelayout = array();
         foreach ($pagelayouts as $page => $pagelayout) {
             $pagelayout = trim($pagelayout, ',');
@@ -557,6 +664,15 @@ class quiz_attempt {
                 continue;
             }
             $this->pagelayout[$page] = explode(',', $pagelayout);
+            foreach ($this->pagelayout[$page] as $slot) {
+                $sectionkey = array_search($this->slots[$slot]->section, $unseensections);
+                if ($sectionkey !== false) {
+                    $this->slots[$slot]->firstinsection = true;
+                    unset($unseensections[$sectionkey]);
+                } else {
+                    $this->slots[$slot]->firstinsection = false;
+                }
+            }
         }
     }
 
@@ -713,16 +829,13 @@ class quiz_attempt {
     }
 
     /**
-     * Is this a student dealing with their own attempt/teacher previewing,
-     * or someone with 'mod/quiz:viewreports' reviewing someone elses attempt.
+     * Is this someone dealing with their own attempt or preview?
      *
-     * @return bool whether this situation should be treated as someone looking at their own
-     * attempt. The distinction normally only matters when an attempt is being reviewed.
+     * @return bool true => own attempt/preview. false => reviewing someone elses.
      */
     public function is_own_attempt() {
         global $USER;
-        return $this->attempt->userid == $USER->id &&
-                (!$this->is_preview_user() || $this->attempt->preview);
+        return $this->attempt->userid == $USER->id;
     }
 
     /**
@@ -730,7 +843,7 @@ class quiz_attempt {
      */
     public function is_own_preview() {
         global $USER;
-        return $this->attempt->userid == $USER->id &&
+        return $this->is_own_attempt() &&
                 $this->is_preview_user() && $this->attempt->preview;
     }
 
@@ -886,6 +999,11 @@ class quiz_attempt {
             if (is_null($this->reviewoptions)) {
                 $this->reviewoptions = quiz_get_review_options($this->get_quiz(),
                         $this->attempt, $this->quizobj->get_context());
+                if ($this->is_own_preview()) {
+                    // It should  always be possible for a teacher to review their
+                    // own preview irrespective of the review options settings.
+                    $this->reviewoptions->attempt = true;
+                }
             }
             return $this->reviewoptions;
 
@@ -940,11 +1058,11 @@ class quiz_attempt {
     }
 
     /**
-     * Return the list of question ids for either a given page of the quiz, or for the
+     * Return the list of slot numbers for either a given page of the quiz, or for the
      * whole quiz.
      *
      * @param mixed $page string 'all' or integer page number.
-     * @return array the reqested list of question ids.
+     * @return array the requested list of slot numbers.
      */
     public function get_slots($page = 'all') {
         if ($page === 'all') {
@@ -959,12 +1077,45 @@ class quiz_attempt {
     }
 
     /**
+     * Return the list of slot numbers for either a given page of the quiz, or for the
+     * whole quiz.
+     *
+     * @param mixed $page string 'all' or integer page number.
+     * @return array the requested list of slot numbers.
+     */
+    public function get_active_slots($page = 'all') {
+        $activeslots = array();
+        foreach ($this->get_slots($page) as $slot) {
+            if (!$this->is_blocked_by_previous_question($slot)) {
+                $activeslots[] = $slot;
+            }
+        }
+        return $activeslots;
+    }
+
+    /**
      * Get the question_attempt object for a particular question in this attempt.
      * @param int $slot the number used to identify this question within this attempt.
      * @return question_attempt
      */
     public function get_question_attempt($slot) {
         return $this->quba->get_question_attempt($slot);
+    }
+
+    /**
+     * Get the question_attempt object for a particular question in this attempt.
+     * @param int $slot the number used to identify this question within this attempt.
+     * @return question_attempt
+     */
+    public function all_question_attempts_originally_in_slot($slot) {
+        $qas = array();
+        foreach ($this->quba->get_attempt_iterator() as $qa) {
+            if ($qa->get_metadata('originalslot') == $slot) {
+                $qas[] = $qa;
+            }
+        }
+        $qas[] = $this->quba->get_question_attempt($slot);
+        return $qas;
     }
 
     /**
@@ -987,6 +1138,48 @@ class quiz_attempt {
     }
 
     /**
+     * Checks whether the question in this slot requires the previous question to have been completed.
+     *
+     * @param int $slot the number used to identify this question within this attempt.
+     * @return bool whether the previous question must have been completed before this one can be seen.
+     */
+    public function is_blocked_by_previous_question($slot) {
+        return $slot > 1 && isset($this->slots[$slot]) && $this->slots[$slot]->requireprevious &&
+                !$this->slots[$slot]->section->shufflequestions &&
+                !$this->slots[$slot - 1]->section->shufflequestions &&
+                $this->get_navigation_method() != QUIZ_NAVMETHOD_SEQ &&
+                !$this->get_question_state($slot - 1)->is_finished() &&
+                $this->quba->can_question_finish_during_attempt($slot - 1);
+    }
+
+    /**
+     * Is it possible for this question to be re-started within this attempt?
+     *
+     * @param int $slot the number used to identify this question within this attempt.
+     * @return whether the student should be given the option to restart this question now.
+     */
+    public function can_question_be_redone_now($slot) {
+        return $this->get_quiz()->canredoquestions && !$this->is_finished() &&
+                $this->get_question_state($slot)->is_finished();
+    }
+
+    /**
+     * Given a slot in this attempt, which may or not be a redone question, return the original slot.
+     *
+     * @param int $slot identifies a particular question in this attempt.
+     * @return int the slot where this question was originally.
+     */
+    public function get_original_slot($slot) {
+        $originalslot = $this->quba->get_question_attempt_metadata($slot, 'originalslot');
+        if ($originalslot) {
+            return $originalslot;
+        } else {
+            return $slot;
+        }
+    }
+
+    /**
+     * Get the displayed question number for a slot.
      * @param int $slot the number used to identify this question within this attempt.
      * @return string the displayed question number for the question in this slot.
      *      For example '1', '2', '3' or 'i'.
@@ -996,6 +1189,20 @@ class quiz_attempt {
     }
 
     /**
+     * If the section heading, if any, that should come just before this slot.
+     * @param int $slot identifies a particular question in this attempt.
+     * @return string the required heading, or null if there is not one here.
+     */
+    public function get_heading_before_slot($slot) {
+        if ($this->slots[$slot]->firstinsection) {
+            return $this->slots[$slot]->section->heading;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Return the page of the quiz where this question appears.
      * @param int $slot the number used to identify this question within this attempt.
      * @return int the page of the quiz this question appears on.
      */
@@ -1014,6 +1221,16 @@ class quiz_attempt {
      */
     public function get_question_name($slot) {
         return $this->quba->get_question($slot)->name;
+    }
+
+    /**
+     * Return the {@link question_state} that this question is in.
+     *
+     * @param int $slot the number used to identify this question within this attempt.
+     * @return question_state the state this question is in.
+     */
+    public function get_question_state($slot) {
+        return $this->quba->get_question_state($slot);
     }
 
     /**
@@ -1064,6 +1281,17 @@ class quiz_attempt {
      */
     public function get_question_action_time($slot) {
         return $this->quba->get_question_action_time($slot);
+    }
+
+    /**
+     * Return the question type name for a given slot within the current attempt.
+     *
+     * @param int $slot the number used to identify this question within this attempt.
+     * @return string the question type name
+     * @since  Moodle 3.1
+     */
+    public function get_question_type_name($slot) {
+        return $this->quba->get_question($slot)->get_type_name();
     }
 
     /**
@@ -1249,15 +1477,112 @@ class quiz_attempt {
      * Generate the HTML that displayes the question in its current state, with
      * the appropriate display options.
      *
-     * @param int $id the id of a question in this quiz attempt.
+     * @param int $slot identifies the question in the attempt.
      * @param bool $reviewing is the being printed on an attempt or a review page.
+     * @param mod_quiz_renderer $renderer the quiz renderer.
      * @param moodle_url $thispageurl the URL of the page this question is being printed on.
      * @return string HTML for the question in its current state.
      */
-    public function render_question($slot, $reviewing, $thispageurl = null) {
-        return $this->quba->render_question($slot,
-                $this->get_display_options_with_edit_link($reviewing, $slot, $thispageurl),
-                $this->get_question_number($slot));
+    public function render_question($slot, $reviewing, mod_quiz_renderer $renderer, $thispageurl = null) {
+        if ($this->is_blocked_by_previous_question($slot)) {
+            $placeholderqa = $this->make_blocked_question_placeholder($slot);
+
+            $displayoptions = $this->get_display_options($reviewing);
+            $displayoptions->manualcomment = question_display_options::HIDDEN;
+            $displayoptions->history = question_display_options::HIDDEN;
+            $displayoptions->readonly = true;
+
+            return html_writer::div($placeholderqa->render($displayoptions,
+                    $this->get_question_number($this->get_original_slot($slot))),
+                    'mod_quiz-blocked_question_warning');
+        }
+
+        return $this->render_question_helper($slot, $reviewing, $thispageurl, $renderer, null);
+    }
+
+    /**
+     * Helper used by {@link render_question()} and {@link render_question_at_step()}.
+     *
+     * @param int $slot identifies the question in the attempt.
+     * @param bool $reviewing is the being printed on an attempt or a review page.
+     * @param moodle_url $thispageurl the URL of the page this question is being printed on.
+     * @param mod_quiz_renderer $renderer the quiz renderer.
+     * @param int|null $seq the seq number of the past state to display.
+     * @return string HTML fragment.
+     */
+    protected function render_question_helper($slot, $reviewing, $thispageurl, mod_quiz_renderer $renderer, $seq) {
+        $originalslot = $this->get_original_slot($slot);
+        $number = $this->get_question_number($originalslot);
+        $displayoptions = $this->get_display_options_with_edit_link($reviewing, $slot, $thispageurl);
+
+        if ($slot != $originalslot) {
+            $originalmaxmark = $this->get_question_attempt($slot)->get_max_mark();
+            $this->get_question_attempt($slot)->set_max_mark($this->get_question_attempt($originalslot)->get_max_mark());
+        }
+
+        if ($this->can_question_be_redone_now($slot)) {
+            $displayoptions->extrainfocontent = $renderer->redo_question_button(
+                    $slot, $displayoptions->readonly);
+        }
+
+        if ($displayoptions->history && $displayoptions->questionreviewlink) {
+            $links = $this->links_to_other_redos($slot, $displayoptions->questionreviewlink);
+            if ($links) {
+                $displayoptions->extrahistorycontent = html_writer::tag('p',
+                        get_string('redoesofthisquestion', 'quiz', $renderer->render($links)));
+            }
+        }
+
+        if ($seq === null) {
+            $output = $this->quba->render_question($slot, $displayoptions, $number);
+        } else {
+            $output = $this->quba->render_question_at_step($slot, $seq, $displayoptions, $number);
+        }
+
+        if ($slot != $originalslot) {
+            $this->get_question_attempt($slot)->set_max_mark($originalmaxmark);
+        }
+
+        return $output;
+    }
+
+    /**
+     * Create a fake question to be displayed in place of a question that is blocked
+     * until the previous question has been answered.
+     *
+     * @param int $slot int slot number of the question to replace.
+     * @return question_definition the placeholde question.
+     */
+    protected function make_blocked_question_placeholder($slot) {
+        $replacedquestion = $this->get_question_attempt($slot)->get_question();
+
+        question_bank::load_question_definition_classes('description');
+        $question = new qtype_description_question();
+        $question->id = $replacedquestion->id;
+        $question->category = null;
+        $question->parent = 0;
+        $question->qtype = question_bank::get_qtype('description');
+        $question->name = '';
+        $question->questiontext = get_string('questiondependsonprevious', 'quiz');
+        $question->questiontextformat = FORMAT_HTML;
+        $question->generalfeedback = '';
+        $question->defaultmark = $this->quba->get_question_max_mark($slot);
+        $question->length = $replacedquestion->length;
+        $question->penalty = 0;
+        $question->stamp = '';
+        $question->version = 0;
+        $question->hidden = 0;
+        $question->timecreated = null;
+        $question->timemodified = null;
+        $question->createdby = null;
+        $question->modifiedby = null;
+
+        $placeholderqa = new question_attempt($question, $this->quba->get_id(),
+                null, $this->quba->get_question_max_mark($slot));
+        $placeholderqa->set_slot($slot);
+        $placeholderqa->start($this->get_quiz()->preferredbehaviour, 1);
+        $placeholderqa->set_flagged($this->is_question_flagged($slot));
+        return $placeholderqa;
     }
 
     /**
@@ -1267,13 +1592,12 @@ class quiz_attempt {
      * @param int $id the id of a question in this quiz attempt.
      * @param int $seq the seq number of the past state to display.
      * @param bool $reviewing is the being printed on an attempt or a review page.
+     * @param mod_quiz_renderer $renderer the quiz renderer.
      * @param string $thispageurl the URL of the page this question is being printed on.
      * @return string HTML for the question in its current state.
      */
-    public function render_question_at_step($slot, $seq, $reviewing, $thispageurl = '') {
-        return $this->quba->render_question_at_step($slot, $seq,
-                $this->get_display_options_with_edit_link($reviewing, $slot, $thispageurl),
-                $this->get_question_number($slot));
+    public function render_question_at_step($slot, $seq, $reviewing, mod_quiz_renderer $renderer, $thispageurl = '') {
+        return $this->render_question_helper($slot, $reviewing, $thispageurl, $renderer, $seq);
     }
 
     /**
@@ -1299,7 +1623,19 @@ class quiz_attempt {
      */
     public function check_file_access($slot, $reviewing, $contextid, $component,
             $filearea, $args, $forcedownload) {
-        return $this->quba->check_file_access($slot, $this->get_display_options($reviewing),
+        $options = $this->get_display_options($reviewing);
+
+        // Check permissions - warning there is similar code in review.php and
+        // reviewquestion.php. If you change on, change them all.
+        if ($reviewing && $this->is_own_attempt() && !$options->attempt) {
+            return false;
+        }
+
+        if ($reviewing && !$this->is_own_attempt() && !$this->is_review_allowed()) {
+            return false;
+        }
+
+        return $this->quba->check_file_access($slot, $options,
                 $component, $filearea, $args, $forcedownload);
     }
 
@@ -1317,17 +1653,26 @@ class quiz_attempt {
 
         $bc = new block_contents();
         $bc->attributes['id'] = 'mod_quiz_navblock';
-        $bc->title = get_string('quiznavigation', 'quiz');
+        $bc->attributes['role'] = 'navigation';
+        $bc->attributes['aria-labelledby'] = 'mod_quiz_navblock_title';
+        $bc->title = html_writer::span(get_string('quiznavigation', 'quiz'), '', array('id' => 'mod_quiz_navblock_title'));
         $bc->content = $output->navigation_panel($panel);
         return $bc;
     }
 
     /**
-     * Given a URL containing attempt={this attempt id}, return an array of variant URLs
+     * Return an array of variant URLs to other attempts at this quiz.
+     *
+     * The $url passed in must contain an attempt parameter.
+     *
+     * The {@link mod_quiz_links_to_other_attempts} object returned contains an
+     * array with keys that are the attempt number, 1, 2, 3.
+     * The array values are either a {@link moodle_url} with the attmept parameter
+     * updated to point to the attempt id of the other attempt, or null corresponding
+     * to the current attempt number.
+     *
      * @param moodle_url $url a URL.
-     * @return string HTML fragment. Comma-separated list of links to the other
-     * attempts with the attempt number as the link text. The curent attempt is
-     * included but is not a link.
+     * @return mod_quiz_links_to_other_attempts containing array int => null|moodle_url.
      */
     public function links_to_other_attempts(moodle_url $url) {
         $attempts = quiz_get_user_attempts($this->get_quiz()->id, $this->attempt->userid, 'all');
@@ -1342,6 +1687,47 @@ class quiz_attempt {
             } else {
                 $links->links[$at->attempt] = new moodle_url($url, array('attempt' => $at->id));
             }
+        }
+        return $links;
+    }
+
+    /**
+     * Return an array of variant URLs to other redos of the question in a particular slot.
+     *
+     * The $url passed in must contain a slot parameter.
+     *
+     * The {@link mod_quiz_links_to_other_attempts} object returned contains an
+     * array with keys that are the redo number, 1, 2, 3.
+     * The array values are either a {@link moodle_url} with the slot parameter
+     * updated to point to the slot that has that redo of this question; or null
+     * corresponding to the redo identified by $slot.
+     *
+     * @param int $slot identifies a question in this attempt.
+     * @param moodle_url $baseurl the base URL to modify to generate each link.
+     * @return mod_quiz_links_to_other_attempts|null containing array int => null|moodle_url,
+     *      or null if the question in this slot has not been redone.
+     */
+    public function links_to_other_redos($slot, moodle_url $baseurl) {
+        $originalslot = $this->get_original_slot($slot);
+
+        $qas = $this->all_question_attempts_originally_in_slot($originalslot);
+        if (count($qas) <= 1) {
+            return null;
+        }
+
+        $links = new mod_quiz_links_to_other_attempts();
+        $index = 1;
+        foreach ($qas as $qa) {
+            if ($qa->get_slot() == $slot) {
+                $links->links[$index] = null;
+            } else {
+                $url = new moodle_url($baseurl, array('slot' => $qa->get_slot()));
+                $links->links[$index] = new action_link($url, $index,
+                        new popup_action('click', $url, 'reviewquestion',
+                                array('width' => 450, 'height' => 650)),
+                        array('title' => get_string('reviewresponse', 'question')));
+            }
+            $index++;
         }
         return $links;
     }
@@ -1450,6 +1836,62 @@ class quiz_attempt {
     }
 
     /**
+     * Replace a question in an attempt with a new attempt at the same qestion.
+     * @param int $slot the questoin to restart.
+     * @param int $timestamp the timestamp to record for this action.
+     */
+    public function process_redo_question($slot, $timestamp) {
+        global $DB;
+
+        if (!$this->can_question_be_redone_now($slot)) {
+            throw new coding_exception('Attempt to restart the question in slot ' . $slot .
+                    ' when it is not in a state to be restarted.');
+        }
+
+        $qubaids = new \mod_quiz\question\qubaids_for_users_attempts(
+                $this->get_quizid(), $this->get_userid());
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // Choose the replacement question.
+        $questiondata = $DB->get_record('question',
+                array('id' => $this->slots[$slot]->questionid));
+        if ($questiondata->qtype != 'random') {
+            $newqusetionid = $questiondata->id;
+        } else {
+            $randomloader = new \core_question\bank\random_question_loader($qubaids, array());
+            $newqusetionid = $randomloader->get_next_question_id($questiondata->category,
+                    (bool) $questiondata->questiontext);
+            if ($newqusetionid === null) {
+                throw new moodle_exception('notenoughrandomquestions', 'quiz',
+                        $quizobj->view_url(), $questiondata);
+            }
+        }
+
+        // Add the question to the usage. It is important we do this before we choose a variant.
+        $newquestion = question_bank::load_question($newqusetionid);
+        $newslot = $this->quba->add_question_in_place_of_other($slot, $newquestion);
+
+        // Choose the variant.
+        if ($newquestion->get_num_variants() == 1) {
+            $variant = 1;
+        } else {
+            $variantstrategy = new core_question\engine\variants\least_used_strategy(
+                    $this->quba, $qubaids);
+            $variant = $variantstrategy->choose_variant($newquestion->get_num_variants(),
+                    $newquestion->get_variants_selection_seed());
+        }
+
+        // Start the question.
+        $this->quba->start_question($slot, $variant);
+        $this->quba->set_max_mark($newslot, 0);
+        $this->quba->set_question_attempt_metadata($newslot, 'originalslot', $slot);
+        question_engine::save_questions_usage_by_activity($this->quba);
+
+        $transaction->allow_commit();
+    }
+
+    /**
      * Process all the autosaved data that was part of the current request.
      *
      * @param int $timestamp the timestamp that should be stored as the modifed
@@ -1519,7 +1961,7 @@ class quiz_attempt {
         global $DB;
         if ($this->attempt->timecheckstate !== $time) {
             $this->attempt->timecheckstate = $time;
-            $DB->set_field('quiz_attempts', 'timecheckstate', $time, array('id'=>$this->attempt->id));
+            $DB->set_field('quiz_attempts', 'timecheckstate', $time, array('id' => $this->attempt->id));
         }
     }
 
@@ -1592,23 +2034,6 @@ class quiz_attempt {
         $event->trigger();
     }
 
-    /**
-     * Print the fields of the comment form for questions in this attempt.
-     * @param $slot which question to output the fields for.
-     * @param $prefix Prefix to add to all field names.
-     */
-    public function question_print_comment_fields($slot, $prefix) {
-        // Work out a nice title.
-        $student = get_record('user', 'id', $this->get_userid());
-        $a = new object();
-        $a->fullname = fullname($student, true);
-        $a->attempt = $this->get_attempt_number();
-
-        question_print_comment_fields($this->quba->get_question_attempt($slot),
-                $prefix, $this->get_display_options(true)->markdp,
-                get_string('gradingattempt', 'quiz_grading', $a));
-    }
-
     // Private methods =========================================================
 
     /**
@@ -1672,6 +2097,250 @@ class quiz_attempt {
             return $url;
         }
     }
+
+    /**
+     * Process responses during an attempt at a quiz.
+     *
+     * @param  int $timenow time when the processing started
+     * @param  bool $finishattempt whether to finish the attempt or not
+     * @param  bool $timeup true if form was submitted by timer
+     * @param  int $thispage current page number
+     * @return string the attempt state once the data has been processed
+     * @since  Moodle 3.1
+     * @throws  moodle_exception
+     */
+    public function process_attempt($timenow, $finishattempt, $timeup, $thispage) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // If there is only a very small amount of time left, there is no point trying
+        // to show the student another page of the quiz. Just finish now.
+        $graceperiodmin = null;
+        $accessmanager = $this->get_access_manager($timenow);
+        $timeclose = $accessmanager->get_end_time($this->get_attempt());
+
+        // Don't enforce timeclose for previews.
+        if ($this->is_preview()) {
+            $timeclose = false;
+        }
+        $toolate = false;
+        if ($timeclose !== false && $timenow > $timeclose - QUIZ_MIN_TIME_TO_CONTINUE) {
+            $timeup = true;
+            $graceperiodmin = get_config('quiz', 'graceperiodmin');
+            if ($timenow > $timeclose + $graceperiodmin) {
+                $toolate = true;
+            }
+        }
+
+        // If time is running out, trigger the appropriate action.
+        $becomingoverdue = false;
+        $becomingabandoned = false;
+        if ($timeup) {
+            if ($this->get_quiz()->overduehandling == 'graceperiod') {
+                if (is_null($graceperiodmin)) {
+                    $graceperiodmin = get_config('quiz', 'graceperiodmin');
+                }
+                if ($timenow > $timeclose + $this->get_quiz()->graceperiod + $graceperiodmin) {
+                    // Grace period has run out.
+                    $finishattempt = true;
+                    $becomingabandoned = true;
+                } else {
+                    $becomingoverdue = true;
+                }
+            } else {
+                $finishattempt = true;
+            }
+        }
+
+        // Don't log - we will end with a redirect to a page that is logged.
+
+        if (!$finishattempt) {
+            // Just process the responses for this page and go to the next page.
+            if (!$toolate) {
+                try {
+                    $this->process_submitted_actions($timenow, $becomingoverdue);
+
+                } catch (question_out_of_sequence_exception $e) {
+                    throw new moodle_exception('submissionoutofsequencefriendlymessage', 'question',
+                            $this->attempt_url(null, $thispage));
+
+                } catch (Exception $e) {
+                    // This sucks, if we display our own custom error message, there is no way
+                    // to display the original stack trace.
+                    $debuginfo = '';
+                    if (!empty($e->debuginfo)) {
+                        $debuginfo = $e->debuginfo;
+                    }
+                    throw new moodle_exception('errorprocessingresponses', 'question',
+                            $this->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
+                }
+
+                if (!$becomingoverdue) {
+                    foreach ($this->get_slots() as $slot) {
+                        if (optional_param('redoslot' . $slot, false, PARAM_BOOL)) {
+                            $this->process_redo_question($slot, $timenow);
+                        }
+                    }
+                }
+
+            } else {
+                // The student is too late.
+                $this->process_going_overdue($timenow, true);
+            }
+
+            $transaction->allow_commit();
+
+            return $becomingoverdue ? self::OVERDUE : self::IN_PROGRESS;
+        }
+
+        // Update the quiz attempt record.
+        try {
+            if ($becomingabandoned) {
+                $this->process_abandon($timenow, true);
+            } else {
+                $this->process_finish($timenow, !$toolate);
+            }
+
+        } catch (question_out_of_sequence_exception $e) {
+            throw new moodle_exception('submissionoutofsequencefriendlymessage', 'question',
+                    $this->attempt_url(null, $thispage));
+
+        } catch (Exception $e) {
+            // This sucks, if we display our own custom error message, there is no way
+            // to display the original stack trace.
+            $debuginfo = '';
+            if (!empty($e->debuginfo)) {
+                $debuginfo = $e->debuginfo;
+            }
+            throw new moodle_exception('errorprocessingresponses', 'question',
+                    $this->attempt_url(null, $thispage), $e->getMessage(), $debuginfo);
+        }
+
+        // Send the user to the review page.
+        $transaction->allow_commit();
+
+        return $becomingabandoned ? self::ABANDONED : self::FINISHED;
+    }
+
+    /**
+     * Check a page access to see if is an out of sequence access.
+     *
+     * @param  int $page page number
+     * @return boolean false is is an out of sequence access, true otherwise.
+     * @since Moodle 3.1
+     */
+    public function check_page_access($page) {
+        global $DB;
+
+        if ($this->get_currentpage() != $page) {
+            if ($this->get_navigation_method() == QUIZ_NAVMETHOD_SEQ && $this->get_currentpage() > $page) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Update attempt page.
+     *
+     * @param  int $page page number
+     * @return boolean true if everything was ok, false otherwise (out of sequence access).
+     * @since Moodle 3.1
+     */
+    public function set_currentpage($page) {
+        global $DB;
+
+        if ($this->check_page_access($page)) {
+            $DB->set_field('quiz_attempts', 'currentpage', $page, array('id' => $this->get_attemptid()));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Trigger the attempt_viewed event.
+     *
+     * @since Moodle 3.1
+     */
+    public function fire_attempt_viewed_event() {
+        $params = array(
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => array(
+                'quizid' => $this->get_quizid()
+            )
+        );
+        $event = \mod_quiz\event\attempt_viewed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
+     * Trigger the attempt_summary_viewed event.
+     *
+     * @since Moodle 3.1
+     */
+    public function fire_attempt_summary_viewed_event() {
+
+        $params = array(
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => array(
+                'quizid' => $this->get_quizid()
+            )
+        );
+        $event = \mod_quiz\event\attempt_summary_viewed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+    /**
+     * Trigger the attempt_reviewed event.
+     *
+     * @since Moodle 3.1
+     */
+    public function fire_attempt_reviewed_event() {
+
+        $params = array(
+            'objectid' => $this->get_attemptid(),
+            'relateduserid' => $this->get_userid(),
+            'courseid' => $this->get_courseid(),
+            'context' => context_module::instance($this->get_cmid()),
+            'other' => array(
+                'quizid' => $this->get_quizid()
+            )
+        );
+        $event = \mod_quiz\event\attempt_reviewed::create($params);
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
+    }
+
+}
+
+
+/**
+ * Represents a heading in the navigation panel.
+ *
+ * @copyright  2015 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 2.9
+ */
+class quiz_nav_section_heading implements renderable {
+    /** @var string the heading text. */
+    public $heading;
+
+    /**
+     * Constructor.
+     * @param string $heading the heading text
+     */
+    public function __construct($heading) {
+        $this->heading = $heading;
+    }
 }
 
 
@@ -1683,12 +2352,21 @@ class quiz_attempt {
  * @since      Moodle 2.1
  */
 class quiz_nav_question_button implements renderable {
+    /** @var string id="..." to add to the HTML for this button. */
     public $id;
+    /** @var string number to display in this button. Either the question number of 'i'. */
     public $number;
+    /** @var string class to add to the class="" attribute to represnt the question state. */
     public $stateclass;
+    /** @var string Textual description of the question state, e.g. to use as a tool tip. */
     public $statestring;
+    /** @var int the page number this question is on. */
+    public $page;
+    /** @var bool true if this question is on the current page. */
     public $currentpage;
+    /** @var bool true if this question has been flagged. */
     public $flagged;
+    /** @var moodle_url the link this button goes to, or null if there should not be a link. */
     public $url;
 }
 
@@ -1719,9 +2397,17 @@ abstract class quiz_nav_panel_base {
         $this->showall = $showall;
     }
 
+    /**
+     * Get the buttons and section headings to go in the quiz navigation block.
+     * @return renderable[] the buttons, possibly interleaved with section headings.
+     */
     public function get_question_buttons() {
         $buttons = array();
         foreach ($this->attemptobj->get_slots() as $slot) {
+            if ($heading = $this->attemptobj->get_heading_before_slot($slot)) {
+                $buttons[] = new quiz_nav_section_heading(format_string($heading));
+            }
+
             $qa = $this->attemptobj->get_question_attempt($slot);
             $showcorrectness = $this->options->correctness && $qa->has_marks();
 
@@ -1734,9 +2420,15 @@ abstract class quiz_nav_panel_base {
                 $button->stateclass = 'complete';
             }
             $button->statestring = $this->get_state_string($qa, $showcorrectness);
-            $button->currentpage = $this->showall || $this->attemptobj->get_question_page($slot) == $this->page;
+            $button->page        = $this->attemptobj->get_question_page($slot);
+            $button->currentpage = $this->showall || $button->page == $this->page;
             $button->flagged     = $qa->is_flagged();
             $button->url         = $this->get_question_url($slot);
+            if ($this->attemptobj->is_blocked_by_previous_question($slot)) {
+                $button->url = null;
+                $button->stateclass = 'blocked';
+                $button->statestring = get_string('questiondependsonprevious', 'quiz');
+            }
             $buttons[] = $button;
         }
 

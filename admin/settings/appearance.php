@@ -27,9 +27,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         'customusermenuitems',
         new lang_string('customusermenuitems', 'admin'),
         new lang_string('configcustomusermenuitems', 'admin'),
-        'messages,message|/message/index.php|message
-myfiles,moodle|/user/files.php|download
-mybadges,badges|/badges/mybadges.php|award',
+        'grades,grades|/grade/report/mygrades.php|grades
+messages,message|/message/index.php|message
+preferences,moodle|/user/preferences.php|preferences',
         PARAM_TEXT,
         '50',
         '10'
@@ -64,7 +64,8 @@ mybadges,badges|/badges/mybadges.php|award',
                                               array('0'        => new lang_string('default', 'calendar'),
                                                     '%I:%M %p' => new lang_string('timeformat_12', 'calendar'),
                                                     '%H:%M'    => new lang_string('timeformat_24', 'calendar'))));
-    $temp->add(new admin_setting_configselect('calendar_startwday', new lang_string('configstartwday', 'admin'), new lang_string('helpstartofweek', 'admin'), 0,
+    $temp->add(new admin_setting_configselect('calendar_startwday', new lang_string('configstartwday', 'admin'),
+        new lang_string('helpstartofweek', 'admin'), get_string('firstdayofweek', 'langconfig'),
     array(
             0 => new lang_string('sunday', 'calendar'),
             1 => new lang_string('monday', 'calendar'),
@@ -75,11 +76,24 @@ mybadges,badges|/badges/mybadges.php|award',
             6 => new lang_string('saturday', 'calendar')
         )));
     $temp->add(new admin_setting_special_calendar_weekend());
-    $options = array();
-    for ($i=1; $i<=99; $i++) {
-        $options[$i] = $i;
-    }
-    $temp->add(new admin_setting_configselect('calendar_lookahead',new lang_string('configlookahead','admin'),new lang_string('helpupcominglookahead', 'admin'),21,$options));
+    $options = array(365 => new lang_string('numyear', '', 1),
+            270 => new lang_string('nummonths', '', 9),
+            180 => new lang_string('nummonths', '', 6),
+            150 => new lang_string('nummonths', '', 5),
+            120 => new lang_string('nummonths', '', 4),
+            90  => new lang_string('nummonths', '', 3),
+            60  => new lang_string('nummonths', '', 2),
+            30  => new lang_string('nummonth', '', 1),
+            21  => new lang_string('numweeks', '', 3),
+            14  => new lang_string('numweeks', '', 2),
+            7  => new lang_string('numweek', '', 1),
+            6  => new lang_string('numdays', '', 6),
+            5  => new lang_string('numdays', '', 5),
+            4  => new lang_string('numdays', '', 4),
+            3  => new lang_string('numdays', '', 3),
+            2  => new lang_string('numdays', '', 2),
+            1  => new lang_string('numday', '', 1));
+    $temp->add(new admin_setting_configselect('calendar_lookahead', new lang_string('configlookahead', 'admin'), new lang_string('helpupcominglookahead', 'admin'), 21, $options));
     $options = array();
     for ($i=1; $i<=20; $i++) {
         $options[$i] = $i;
@@ -127,7 +141,8 @@ mybadges,badges|/badges/mybadges.php|award',
         HOMEPAGE_MY => new lang_string('mymoodle', 'admin'),
         HOMEPAGE_USER => new lang_string('userpreference', 'admin')
     );
-    $temp->add(new admin_setting_configselect('defaulthomepage', new lang_string('defaulthomepage', 'admin'), new lang_string('configdefaulthomepage', 'admin'), HOMEPAGE_SITE, $choices));
+    $temp->add(new admin_setting_configselect('defaulthomepage', new lang_string('defaulthomepage', 'admin'),
+            new lang_string('configdefaulthomepage', 'admin'), HOMEPAGE_MY, $choices));
     $temp->add(new admin_setting_configcheckbox('allowguestmymoodle', new lang_string('allowguestmymoodle', 'admin'), new lang_string('configallowguestmymoodle', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('navshowfullcoursenames', new lang_string('navshowfullcoursenames', 'admin'), new lang_string('navshowfullcoursenames_help', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('navshowcategories', new lang_string('navshowcategories', 'admin'), new lang_string('confignavshowcategories', 'admin'), 1));

@@ -1,0 +1,34 @@
+<div data-region="competencylinktree">
+{{^singlePlan}}
+    <h3>{{#str}}learningplans, tool_lp{{/str}}</h3>
+    <select data-action="chooseplan">
+    {{#plans}}
+        <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{name}}}</option>
+    {{/plans}}
+    </select>
+{{/singlePlan}}
+
+<h3>{{#str}}locatecompetency, tool_lp{{/str}}</h3>
+
+<form data-region="filtercompetencies" data-planid="{{plan.id}}">
+    <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
+    <input type="text" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
+    <button>{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>
+</form>
+
+<ul data-enhance="linktree" style="display: none;">
+    <li><span>{{{plan.name}}}</span>
+        <ul>
+            {{#competencies}}
+                {{> tool_lp/competencies_tree }}
+            {{/competencies}}
+        </ul>
+    </li>
+</ul>
+
+<div data-region="link-buttons">
+    <input type="button" data-action="add" value="{{#str}}add{{/str}}"/>
+    <input type="button" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
+</div>
+
+</div>

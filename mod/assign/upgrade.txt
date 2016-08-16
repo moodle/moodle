@@ -1,4 +1,35 @@
 This files describes API changes in the assign code.
+
+=== 3.2 ===
+* External function mod_assign_external::get_assignments now returns additional optional fields:
+   - preventsubmissionnotingroup: Prevent submission not in group.
+   - submissionstatement and submissionstatementformat: When there is a submission statement defined.
+* Proper checking for empty submissions
+* Submission modification time checking - this will help students working in groups not clobber each others'
+  submissions
+* External functions that were returning file information now return the following file fields:
+  filename, filepath, mimetype, filesize, timemodified and fileurl.
+  Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+  Please, note that previously the filename was part of the filepath field, now they are separated.
+
+=== 3.1 ===
+* The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true
+  for backwards compatibiltiy.
+* When downloading all submissions as a zip each students' files are in a separate folder, are no longer renamed
+  and the folder structure is kept intact.
+
+=== 3.0 ===
+* assign_submission_status renderable now requires $usergroups in its constructor
+* External function mod_assign_external::get_assignments now have a new optional parameter: includenotenrolledcourses.
+  Its default value is false, setting it to true will return assignments for courses a user can see even if it's not enroled.
+
+=== 2.9 ===
+* External parameter now returns PARAM_RAW instead of PARAM_TEXT for webservices using feedback comments.
+* External function mod_assign_external::get_assignments now returns additional optional fields:
+   - intro: Assignment intro.
+   - introformat: Intro format.
+   - introattachments: Intro attachments files.
+
 === 2.8 ===
 * Some DB changes were made to simplify the SQL required to query the latest attempt.
   - The assign_submission table now has a column "latest" which is set to 1 for the latest submission attempt.

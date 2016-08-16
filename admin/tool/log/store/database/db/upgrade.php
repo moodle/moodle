@@ -22,21 +22,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 function xmldb_logstore_database_upgrade($oldversion) {
-
-    if ($oldversion < 2014041700) {
-        // Clean up old config.
-        unset_config('excludelevels', 'logstore_database');
-        unset_config('excludeactions', 'logstore_database');
-
-        // Savepoint reached.
-        upgrade_plugin_savepoint(true, 2014041700, 'logstore', 'database');
-    }
-
-    // Moodle v2.7.0 release upgrade line.
-    // Put any upgrade step following this.
+    global $CFG;
 
     // Moodle v2.8.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v2.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v3.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

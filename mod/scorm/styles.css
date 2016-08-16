@@ -85,7 +85,7 @@
 }
 
 #page-mod-scorm-player #scormpage .scoframe {
-    frameborder: 0;
+    border: 0;
 }
 
 #page-mod-scorm-player #scormpage #scorm_object {
@@ -282,3 +282,5 @@
 #page-mod-scorm-player #scormpage div.yui3-g-r img {
     max-width: 100%;
 }
+
+.dir-rtl#page-mod-scorm-player #scormpage span.yui3-treeview-icon {float:right;}

@@ -80,4 +80,9 @@ class course_category_created extends base {
     protected function get_legacy_logdata() {
         return array(SITEID, 'category', 'add', 'editcategory.php?id=' . $this->objectid, $this->objectid);
     }
+
+    public static function get_objectid_mapping() {
+        // Categories are not backed up, so no need to map them on restore.
+        return array('db' => 'course_categories', 'restore' => base::NOT_MAPPED);
+    }
 }

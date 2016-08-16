@@ -43,7 +43,7 @@ class message_output_airnotifier extends message_output {
      * @return true if ok, false if error
      */
     public function send_message($eventdata) {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->libdir . '/filelib.php');
 
         if (!empty($CFG->noemailever)) {
@@ -57,6 +57,11 @@ class message_output_airnotifier extends message_output {
             $eventdata->userto->suspended or
             $eventdata->userto->deleted) {
             return true;
+        }
+
+        // If username is empty we try to retrieve it, since it's required to generate the siteid.
+        if (empty($eventdata->userto->username)) {
+            $eventdata->userto->username = $DB->get_field('user', 'username', array('id' => $eventdata->userto->id));
         }
 
         // Site id, to map with Moodle Mobile stored sites.
@@ -80,6 +85,22 @@ class message_output_airnotifier extends message_output {
         $extra->site            = $siteid;
         $extra->date            = (!empty($eventdata->timecreated)) ? $eventdata->timecreated : time();
         $extra->notification    = (!empty($eventdata->notification)) ? 1 : 0;
+
+        // Site name.
+        $site = get_site();
+        $extra->sitefullname = clean_param(format_string($site->fullname), PARAM_NOTAGS);
+        $extra->siteshortname = clean_param(format_string($site->shortname), PARAM_NOTAGS);
+
+        // Clean HTML, push notifications must arrive clean.
+        if (!empty($extra->smallmessage)) {
+            $extra->smallmessage = clean_param($extra->smallmessage, PARAM_NOTAGS);
+        }
+        if (!empty($extra->fullmessage)) {
+            $extra->fullmessage = clean_param($extra->fullmessage, PARAM_NOTAGS);
+        }
+        if (!empty($extra->fullmessagehtml)) {
+            $extra->fullmessagehtml = clean_param($extra->fullmessagehtml, PARAM_NOTAGS);
+        }
 
         // We are sending to message to all devices.
         $airnotifiermanager = new message_airnotifier_manager();

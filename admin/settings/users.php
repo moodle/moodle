@@ -157,6 +157,7 @@ if ($hassiteconfig
                        array('description' => new lang_string('description'),
                              'city' => new lang_string('city'),
                              'country' => new lang_string('country'),
+                             'timezone' => new lang_string('timezone'),
                              'webpage' => new lang_string('webpage'),
                              'icqnumber' => new lang_string('icqnumber'),
                              'skypeid' => new lang_string('skypeid'),
@@ -184,7 +185,7 @@ if ($hassiteconfig
                 new lang_string('showuseridentity_desc', 'admin'), array('email' => 1), array(
                     'idnumber'    => new lang_string('idnumber'),
                     'email'       => new lang_string('email'),
-                    'phone1'      => new lang_string('phone'),
+                    'phone1'      => new lang_string('phone1'),
                     'phone2'      => new lang_string('phone2'),
                     'department'  => new lang_string('department'),
                     'institution' => new lang_string('institution'),

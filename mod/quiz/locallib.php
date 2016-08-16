@@ -36,7 +36,8 @@ require_once($CFG->dirroot . '/mod/quiz/accessmanager.php');
 require_once($CFG->dirroot . '/mod/quiz/accessmanager_form.php');
 require_once($CFG->dirroot . '/mod/quiz/renderer.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
-require_once($CFG->libdir  . '/eventslib.php');
+require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->libdir . '/eventslib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
@@ -158,46 +159,90 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
  */
 function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
                                 $questionids = array(), $forcedvariantsbyslot = array()) {
+
+    // Usages for this user's previous quiz attempts.
+    $qubaids = new \mod_quiz\question\qubaids_for_users_attempts(
+            $quizobj->get_quizid(), $attempt->userid);
+
     // Fully load all the questions in this quiz.
     $quizobj->preload_questions();
     $quizobj->load_questions();
 
-    // Add them all to the $quba.
-    $questionsinuse = array_keys($quizobj->get_questions());
+    // First load all the non-random questions.
+    $randomfound = false;
+    $slot = 0;
+    $questions = array();
+    $maxmark = array();
+    $page = array();
     foreach ($quizobj->get_questions() as $questiondata) {
-        if ($questiondata->qtype != 'random') {
-            if (!$quizobj->get_quiz()->shuffleanswers) {
-                $questiondata->options->shuffleanswers = false;
-            }
-            $question = question_bank::make_question($questiondata);
+        $slot += 1;
+        $maxmark[$slot] = $questiondata->maxmark;
+        $page[$slot] = $questiondata->page;
+        if ($questiondata->qtype == 'random') {
+            $randomfound = true;
+            continue;
+        }
+        if (!$quizobj->get_quiz()->shuffleanswers) {
+            $questiondata->options->shuffleanswers = false;
+        }
+        $questions[$slot] = question_bank::make_question($questiondata);
+    }
 
-        } else {
-            if (!isset($questionids[$quba->next_slot_number()])) {
-                $forcequestionid = null;
+    // Then find a question to go in place of each random question.
+    if ($randomfound) {
+        $slot = 0;
+        $usedquestionids = array();
+        foreach ($questions as $question) {
+            if (isset($usedquestions[$question->id])) {
+                $usedquestionids[$question->id] += 1;
             } else {
-                $forcequestionid = $questionids[$quba->next_slot_number()];
+                $usedquestionids[$question->id] = 1;
+            }
+        }
+        $randomloader = new \core_question\bank\random_question_loader($qubaids, $usedquestionids);
+
+        foreach ($quizobj->get_questions() as $questiondata) {
+            $slot += 1;
+            if ($questiondata->qtype != 'random') {
+                continue;
             }
 
-            $question = question_bank::get_qtype('random')->choose_other_question(
-                $questiondata, $questionsinuse, $quizobj->get_quiz()->shuffleanswers, $forcequestionid);
-            if (is_null($question)) {
+            // Deal with fixed random choices for testing.
+            if (isset($questionids[$quba->next_slot_number()])) {
+                if ($randomloader->is_question_available($questiondata->category,
+                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()])) {
+                    $questions[$slot] = question_bank::load_question(
+                            $questionids[$quba->next_slot_number()], $quizobj->get_quiz()->shuffleanswers);
+                    continue;
+                } else {
+                    throw new coding_exception('Forced question id not available.');
+                }
+            }
+
+            // Normal case, pick one at random.
+            $questionid = $randomloader->get_next_question_id($questiondata->category,
+                        (bool) $questiondata->questiontext);
+            if ($questionid === null) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                                            $quizobj->view_url(), $questiondata);
             }
-        }
 
-        $quba->add_question($question, $questiondata->maxmark);
-        $questionsinuse[] = $question->id;
+            $questions[$slot] = question_bank::load_question($questionid,
+                    $quizobj->get_quiz()->shuffleanswers);
+        }
+    }
+
+    // Finally add them all to the usage.
+    ksort($questions);
+    foreach ($questions as $slot => $question) {
+        $newslot = $quba->add_question($question, $maxmark[$slot]);
+        if ($newslot != $slot) {
+            throw new coding_exception('Slot numbers have got confused.');
+        }
     }
 
     // Start all the questions.
-    if ($attempt->preview) {
-        $variantoffset = rand(1, 100);
-    } else {
-        $variantoffset = $attemptnumber;
-    }
-    $variantstrategy = new question_variant_pseudorandom_no_repeats_strategy(
-            $variantoffset, $attempt->userid, $quizobj->get_quizid());
+    $variantstrategy = new core_question\engine\variants\least_used_strategy($quba, $qubaids);
 
     if (!empty($forcedvariantsbyslot)) {
         $forcedvariantsbyseed = question_variant_forced_choices_selection_strategy::prepare_forced_choices_array(
@@ -209,33 +254,47 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
     $quba->start_all_questions($variantstrategy, $timenow);
 
     // Work out the attempt layout.
-    $layout = array();
-    if ($quizobj->get_quiz()->shufflequestions) {
-        $slots = $quba->get_slots();
-        shuffle($slots);
-
-        $questionsonthispage = 0;
-        foreach ($slots as $slot) {
-            if ($questionsonthispage && $questionsonthispage == $quizobj->get_quiz()->questionsperpage) {
-                $layout[] = 0;
-                $questionsonthispage = 0;
-            }
-            $layout[] = $slot;
-            $questionsonthispage += 1;
-        }
-
-    } else {
-        $currentpage = null;
-        foreach ($quizobj->get_questions() as $slot) {
-            if ($currentpage !== null && $slot->page != $currentpage) {
-                $layout[] = 0;
-            }
-            $layout[] = $slot->slot;
-            $currentpage = $slot->page;
+    $sections = $quizobj->get_sections();
+    foreach ($sections as $i => $section) {
+        if (isset($sections[$i + 1])) {
+            $sections[$i]->lastslot = $sections[$i + 1]->firstslot - 1;
+        } else {
+            $sections[$i]->lastslot = count($questions);
         }
     }
 
-    $layout[] = 0;
+    $layout = array();
+    foreach ($sections as $section) {
+        if ($section->shufflequestions) {
+            $questionsinthissection = array();
+            for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
+                $questionsinthissection[] = $slot;
+            }
+            shuffle($questionsinthissection);
+            $questionsonthispage = 0;
+            foreach ($questionsinthissection as $slot) {
+                if ($questionsonthispage && $questionsonthispage == $quizobj->get_quiz()->questionsperpage) {
+                    $layout[] = 0;
+                    $questionsonthispage = 0;
+                }
+                $layout[] = $slot;
+                $questionsonthispage += 1;
+            }
+
+        } else {
+            $currentpage = $page[$section->firstslot];
+            for ($slot = $section->firstslot; $slot <= $section->lastslot; $slot += 1) {
+                if ($currentpage !== null && $page[$slot] != $currentpage) {
+                    $layout[] = 0;
+                }
+                $layout[] = $slot;
+                $currentpage = $page[$slot];
+            }
+        }
+
+        // Each section ends with a page break.
+        $layout[] = 0;
+    }
     $attempt->layout = implode(',', $layout);
 
     return $attempt;
@@ -362,18 +421,20 @@ function quiz_delete_attempt($attempt, $quiz) {
     question_engine::delete_questions_usage_by_activity($attempt->uniqueid);
     $DB->delete_records('quiz_attempts', array('id' => $attempt->id));
 
-    // Log the deletion of the attempt.
-    $params = array(
-        'objectid' => $attempt->id,
-        'relateduserid' => $attempt->userid,
-        'context' => context_module::instance($quiz->cmid),
-        'other' => array(
-            'quizid' => $quiz->id
-        )
-    );
-    $event = \mod_quiz\event\attempt_deleted::create($params);
-    $event->add_record_snapshot('quiz_attempts', $attempt);
-    $event->trigger();
+    // Log the deletion of the attempt if not a preview.
+    if (!$attempt->preview) {
+        $params = array(
+            'objectid' => $attempt->id,
+            'relateduserid' => $attempt->userid,
+            'context' => context_module::instance($quiz->cmid),
+            'other' => array(
+                'quizid' => $quiz->id
+            )
+        );
+        $event = \mod_quiz\event\attempt_deleted::create($params);
+        $event->add_record_snapshot('quiz_attempts', $attempt);
+        $event->trigger();
+    }
 
     // Search quiz_attempts for other instances by this user.
     // If none, then delete record for this quiz, this user from quiz_grades
@@ -426,13 +487,22 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
     global $DB;
     $trans = $DB->start_delegated_transaction();
 
+    $sections = $DB->get_records('quiz_sections', array('quizid' => $quizid), 'firstslot ASC');
+    $firstslots = array();
+    foreach ($sections as $section) {
+        if ((int)$section->firstslot === 1) {
+            continue;
+        }
+        $firstslots[] = $section->firstslot;
+    }
+
     $slots = $DB->get_records('quiz_slots', array('quizid' => $quizid),
             'slot');
-
     $currentpage = 1;
     $slotsonthispage = 0;
     foreach ($slots as $slot) {
-        if ($slotsonthispage && $slotsonthispage == $slotsperpage) {
+        if (($firstslots && in_array($slot->slot, $firstslots)) ||
+            ($slotsonthispage && $slotsonthispage == $slotsperpage)) {
             $currentpage += 1;
             $slotsonthispage = 0;
         }
@@ -475,6 +545,27 @@ function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
 }
 
 /**
+ * Get the feedback object for this grade on this quiz.
+ *
+ * @param float $grade a grade on this quiz.
+ * @param object $quiz the quiz settings.
+ * @return false|stdClass the record object or false if there is not feedback for the given grade
+ * @since  Moodle 3.1
+ */
+function quiz_feedback_record_for_grade($grade, $quiz) {
+    global $DB;
+
+    // With CBM etc, it is possible to get -ve grades, which would then not match
+    // any feedback. Therefore, we replace -ve grades with 0.
+    $grade = max($grade, 0);
+
+    $feedback = $DB->get_record_select('quiz_feedback',
+            'quizid = ? AND mingrade <= ? AND ? < maxgrade', array($quiz->id, $grade, $grade));
+
+    return $feedback;
+}
+
+/**
  * Get the feedback text that should be show to a student who
  * got this grade on this quiz. The feedback is processed ready for diplay.
  *
@@ -484,18 +575,12 @@ function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_feedback_for_grade($grade, $quiz, $context) {
-    global $DB;
 
     if (is_null($grade)) {
         return '';
     }
 
-    // With CBM etc, it is possible to get -ve grades, which would then not match
-    // any feedback. Therefore, we replace -ve grades with 0.
-    $grade = max($grade, 0);
-
-    $feedback = $DB->get_record_select('quiz_feedback',
-            'quizid = ? AND mingrade <= ? AND ? < maxgrade', array($quiz->id, $grade, $grade));
+    $feedback = quiz_feedback_record_for_grade($grade, $quiz);
 
     if (empty($feedback->feedbacktext)) {
         return '';
@@ -1160,11 +1245,12 @@ function quiz_attempt_state_name($state) {
  * @param int $cmid the course_module object for this quiz.
  * @param object $question the question.
  * @param string $returnurl url to return to after action is done.
+ * @param int $variant which question variant to preview (optional).
  * @return string html for a number of icons linked to action pages for a
  * question - preview and edit / view icons depending on user capabilities.
  */
-function quiz_question_action_icons($quiz, $cmid, $question, $returnurl) {
-    $html = quiz_question_preview_button($quiz, $question) . ' ' .
+function quiz_question_action_icons($quiz, $cmid, $question, $returnurl, $variant = null) {
+    $html = quiz_question_preview_button($quiz, $question, false, $variant) . ' ' .
             quiz_question_edit_button($cmid, $question, $returnurl);
     return $html;
 }
@@ -1221,9 +1307,10 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
 /**
  * @param object $quiz the quiz settings
  * @param object $question the question
+ * @param int $variant which question variant to preview (optional).
  * @return moodle_url to preview this question with the options from this quiz.
  */
-function quiz_question_preview_url($quiz, $question) {
+function quiz_question_preview_url($quiz, $question, $variant = null) {
     // Get the appropriate display options.
     $displayoptions = mod_quiz_display_options::make_from_quiz($quiz,
             mod_quiz_display_options::DURING);
@@ -1235,22 +1322,23 @@ function quiz_question_preview_url($quiz, $question) {
 
     // Work out the correcte preview URL.
     return question_preview_url($question->id, $quiz->preferredbehaviour,
-            $maxmark, $displayoptions);
+            $maxmark, $displayoptions, $variant);
 }
 
 /**
  * @param object $quiz the quiz settings
  * @param object $question the question
  * @param bool $label if true, show the preview question label after the icon
+ * @param int $variant which question variant to preview (optional).
  * @return the HTML for a preview question icon.
  */
-function quiz_question_preview_button($quiz, $question, $label = false) {
+function quiz_question_preview_button($quiz, $question, $label = false, $variant = null) {
     global $PAGE;
     if (!question_has_capability_on($question, 'use', $question->category)) {
         return '';
     }
 
-    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon($quiz, $question, $label);
+    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon($quiz, $question, $label, $variant);
 }
 
 /**
@@ -1346,8 +1434,6 @@ function quiz_get_review_options($quiz, $attempt, $context) {
  *
  * @param object $quiz the quiz instance.
  * @param array $attempts an array of attempt objects.
- * @param $context the roles and permissions context,
- *          normally the context for the quiz module instance.
  *
  * @return array of two options objects, one showing which options are true for
  *          at least one of the attempts, the other showing which options are true
@@ -1363,6 +1449,11 @@ function quiz_get_combined_reviewoptions($quiz, $attempts) {
     }
     $someoptions->marks = question_display_options::HIDDEN;
     $alloptions->marks = question_display_options::MARK_AND_MAX;
+
+    // This shouldn't happen, but we need to prevent reveal information.
+    if (empty($attempts)) {
+        return array($someoptions, $someoptions);
+    }
 
     foreach ($attempts as $attempt) {
         $attemptoptions = mod_quiz_display_options::make_from_quiz($quiz,
@@ -1481,9 +1572,10 @@ function quiz_send_notification_messages($course, $quiz, $attempt, $context, $cm
     }
 
     // Check for notifications required.
-    $notifyfields = 'u.id, u.username, u.idnumber, u.email, u.emailstop, u.lang, u.timezone, u.mailformat, u.maildisplay, ';
+    $notifyfields = 'u.id, u.username, u.idnumber, u.email, u.emailstop, u.lang,
+            u.timezone, u.mailformat, u.maildisplay, u.auth, u.suspended, u.deleted, ';
     $notifyfields .= get_all_user_name_fields(true, 'u');
-    $groups = groups_get_all_groups($course->id, $submitter->id);
+    $groups = groups_get_all_groups($course->id, $submitter->id, $cm->groupingid);
     if (is_array($groups) && count($groups) > 0) {
         $groups = array_keys($groups);
     } else if (groups_get_activity_groupmode($cm, $course) != NOGROUPS) {
@@ -1965,6 +2057,13 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $slot->slot = $lastslotbefore + 1;
         $slot->page = min($page, $maxpage + 1);
 
+        $DB->execute("
+                UPDATE {quiz_sections}
+                   SET firstslot = firstslot + 1
+                 WHERE quizid = ?
+                   AND firstslot > ?
+                ", array($quiz->id, max($lastslotbefore, 1)));
+
     } else {
         $lastslot = end($slots);
         if ($lastslot) {
@@ -2042,4 +2141,151 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
         }
         quiz_add_quiz_question($question->id, $quiz, $addonpage);
     }
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $quiz       quiz object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.1
+ */
+function quiz_view($quiz, $course, $cm, $context) {
+
+    $params = array(
+        'objectid' => $quiz->id,
+        'context' => $context
+    );
+
+    $event = \mod_quiz\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('quiz', $quiz);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
+}
+
+/**
+ * Validate permissions for creating a new attempt and start a new preview attempt if required.
+ *
+ * @param  quiz $quizobj quiz object
+ * @param  quiz_access_manager $accessmanager quiz access manager
+ * @param  bool $forcenew whether was required to start a new preview attempt
+ * @param  int $page page to jump to in the attempt
+ * @param  bool $redirect whether to redirect or throw exceptions (for web or ws usage)
+ * @return array an array containing the attempt information, access error messages and the page to jump to in the attempt
+ * @throws moodle_quiz_exception
+ * @since Moodle 3.1
+ */
+function quiz_validate_new_attempt(quiz $quizobj, quiz_access_manager $accessmanager, $forcenew, $page, $redirect) {
+    global $DB, $USER;
+    $timenow = time();
+
+    if ($quizobj->is_preview_user() && $forcenew) {
+        $accessmanager->current_attempt_finished();
+    }
+
+    // Check capabilities.
+    if (!$quizobj->is_preview_user()) {
+        $quizobj->require_capability('mod/quiz:attempt');
+    }
+
+    // Check to see if a new preview was requested.
+    if ($quizobj->is_preview_user() && $forcenew) {
+        // To force the creation of a new preview, we mark the current attempt (if any)
+        // as finished. It will then automatically be deleted below.
+        $DB->set_field('quiz_attempts', 'state', quiz_attempt::FINISHED,
+                array('quiz' => $quizobj->get_quizid(), 'userid' => $USER->id));
+    }
+
+    // Look for an existing attempt.
+    $attempts = quiz_get_user_attempts($quizobj->get_quizid(), $USER->id, 'all', true);
+    $lastattempt = end($attempts);
+
+    $attemptnumber = null;
+    // If an in-progress attempt exists, check password then redirect to it.
+    if ($lastattempt && ($lastattempt->state == quiz_attempt::IN_PROGRESS ||
+            $lastattempt->state == quiz_attempt::OVERDUE)) {
+        $currentattemptid = $lastattempt->id;
+        $messages = $accessmanager->prevent_access();
+
+        // If the attempt is now overdue, deal with that.
+        $quizobj->create_attempt_object($lastattempt)->handle_if_time_expired($timenow, true);
+
+        // And, if the attempt is now no longer in progress, redirect to the appropriate place.
+        if ($lastattempt->state == quiz_attempt::ABANDONED || $lastattempt->state == quiz_attempt::FINISHED) {
+            if ($redirect) {
+                redirect($quizobj->review_url($lastattempt->id));
+            } else {
+                throw new moodle_quiz_exception($quizobj, 'attemptalreadyclosed');
+            }
+        }
+
+        // If the page number was not explicitly in the URL, go to the current page.
+        if ($page == -1) {
+            $page = $lastattempt->currentpage;
+        }
+
+    } else {
+        while ($lastattempt && $lastattempt->preview) {
+            $lastattempt = array_pop($attempts);
+        }
+
+        // Get number for the next or unfinished attempt.
+        if ($lastattempt) {
+            $attemptnumber = $lastattempt->attempt + 1;
+        } else {
+            $lastattempt = false;
+            $attemptnumber = 1;
+        }
+        $currentattemptid = null;
+
+        $messages = $accessmanager->prevent_access() +
+            $accessmanager->prevent_new_attempt(count($attempts), $lastattempt);
+
+        if ($page == -1) {
+            $page = 0;
+        }
+    }
+    return array($currentattemptid, $attemptnumber, $lastattempt, $messages, $page);
+}
+
+/**
+ * Prepare and start a new attempt deleting the previous preview attempts.
+ *
+ * @param  quiz $quizobj quiz object
+ * @param  int $attemptnumber the attempt number
+ * @param  object $lastattempt last attempt object
+ * @return object the new attempt
+ * @since  Moodle 3.1
+ */
+function quiz_prepare_and_start_new_attempt(quiz $quizobj, $attemptnumber, $lastattempt) {
+    global $DB, $USER;
+
+    // Delete any previous preview attempts belonging to this user.
+    quiz_delete_previews($quizobj->get_quiz(), $USER->id);
+
+    $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+    $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+    // Create the new attempt and initialize the question sessions
+    $timenow = time(); // Update time now, in case the server is running really slowly.
+    $attempt = quiz_create_attempt($quizobj, $attemptnumber, $lastattempt, $timenow, $quizobj->is_preview_user());
+
+    if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
+        $attempt = quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow);
+    } else {
+        $attempt = quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt);
+    }
+
+    $transaction = $DB->start_delegated_transaction();
+
+    $attempt = quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+    $transaction->allow_commit();
+
+    return $attempt;
 }

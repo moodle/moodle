@@ -1,4 +1,4 @@
-@mod @mod_wiki
+@mod @mod_wiki @core_tag @javascript
 Feature: Edited wiki pages handle tags correctly
   In order to get wiki pages properly labelled
   As a user
@@ -7,8 +7,8 @@ Feature: Edited wiki pages handle tags correctly
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -33,38 +33,45 @@ Feature: Edited wiki pages handle tags correctly
     And I press "Create page"
     When I set the following fields to these values:
       | HTML format | Student page contents to be tagged |
-      | Other tags (enter tags separated by commas) | Example, Page, Cool |
+      | Tags | Example, Page, Cool |
     And I press "Save"
     Then I should see "Example" in the ".wiki-tags" "css_element"
     And I should see "Page" in the ".wiki-tags" "css_element"
     And I should see "Cool" in the ".wiki-tags" "css_element"
     And I follow "Edit"
-    And the field "Other tags (enter tags separated by commas)" matches value "Example, Page, Cool"
+    Then I should see "Example" in the ".form-autocomplete-selection" "css_element"
+    Then I should see "Page" in the ".form-autocomplete-selection" "css_element"
+    Then I should see "Cool" in the ".form-autocomplete-selection" "css_element"
     And I press "Cancel"
 
-  Scenario: Wiki page edition of official tags works as expected
+  @javascript
+  Scenario: Wiki page edition of standard tags works as expected
     Given I log in as "admin"
     And I expand "Site administration" node
     And I expand "Appearance" node
     And I follow "Manage tags"
-    And I set the field "otagsadd" to "OT1, OT2, OT3"
-    And I press "Add official tags"
+    And I follow "Default collection"
+    And I follow "Add standard tags"
+    And I set the field "Enter comma-separated list of new tags" to "OT1, OT2, OT3"
+    And I press "Continue"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test wiki name"
     And I press "Create page"
-    And the "tags[officialtags][]" select box should contain "OT1"
-    And the "tags[officialtags][]" select box should contain "OT2"
-    And the "tags[officialtags][]" select box should contain "OT3"
+    And I click on ".form-autocomplete-downarrow" "css_element"
+    And I should see "OT1" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "OT2" in the ".form-autocomplete-suggestions" "css_element"
+    And I should see "OT3" in the ".form-autocomplete-suggestions" "css_element"
     When I set the following fields to these values:
       | HTML format | Student page contents to be tagged |
-      | tags[officialtags][] | OT1, OT3 |
+      | Tags | OT1, OT3 |
     And I press "Save"
     Then I should see "OT1" in the ".wiki-tags" "css_element"
     And I should see "OT3" in the ".wiki-tags" "css_element"
     And I should not see "OT2" in the ".wiki-tags" "css_element"
     And I follow "Edit"
-    And the field "tags[officialtags][]" matches value "OT1, OT3"
-    And the field "tags[officialtags][]" does not match value "OT2"
+    And I should see "OT1" in the ".form-autocomplete-selection" "css_element"
+    And I should see "OT3" in the ".form-autocomplete-selection" "css_element"
+    And I should not see "OT2" in the ".form-autocomplete-selection" "css_element"
     And I press "Cancel"

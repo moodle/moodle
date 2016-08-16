@@ -172,7 +172,7 @@ foreach ($quizzes as $quiz) {
         // Grade and feedback.
         $attempts = quiz_get_user_attempts($quiz->id, $USER->id, 'all');
         list($someoptions, $alloptions) = quiz_get_combined_reviewoptions(
-                $quiz, $attempts, $context);
+                $quiz, $attempts);
 
         $grade = '';
         $feedback = '';

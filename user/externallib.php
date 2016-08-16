@@ -51,50 +51,53 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'username' =>
-                                new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.'),
+                                new external_value(core_user::get_property_type('username'), 'Username policy is defined in Moodle security config.'),
                             'password' =>
-                                new external_value(PARAM_RAW, 'Plain text password consisting of any characters'),
+                                new external_value(core_user::get_property_type('password'), 'Plain text password consisting of any characters', VALUE_OPTIONAL),
+                            'createpassword' =>
+                                new external_value(PARAM_BOOL, 'True if password should be created and mailed to user.',
+                                    VALUE_OPTIONAL),
                             'firstname' =>
-                                new external_value(PARAM_NOTAGS, 'The first name(s) of the user'),
+                                new external_value(core_user::get_property_type('firstname'), 'The first name(s) of the user'),
                             'lastname' =>
-                                new external_value(PARAM_NOTAGS, 'The family name of the user'),
+                                new external_value(core_user::get_property_type('lastname'), 'The family name of the user'),
                             'email' =>
-                                new external_value(PARAM_EMAIL, 'A valid and unique email address'),
+                                new external_value(core_user::get_property_type('email'), 'A valid and unique email address'),
                             'auth' =>
-                                new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_DEFAULT,
-                                    'manual', NULL_NOT_ALLOWED),
+                                new external_value(core_user::get_property_type('auth'), 'Auth plugins include manual, ldap, imap, etc', VALUE_DEFAULT,
+                                    'manual', core_user::get_property_null('auth')),
                             'idnumber' =>
-                                new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution',
+                                new external_value(core_user::get_property_type('idnumber'), 'An arbitrary ID code number perhaps from the institution',
                                     VALUE_DEFAULT, ''),
                             'lang' =>
-                                new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server', VALUE_DEFAULT,
-                                    $CFG->lang, NULL_NOT_ALLOWED),
+                                new external_value(core_user::get_property_type('lang'), 'Language code such as "en", must exist on server', VALUE_DEFAULT,
+                                    core_user::get_property_default('lang'), core_user::get_property_null('lang')),
                             'calendartype' =>
-                                new external_value(PARAM_PLUGIN, 'Calendar type such as "gregorian", must exist on server',
+                                new external_value(core_user::get_property_type('calendartype'), 'Calendar type such as "gregorian", must exist on server',
                                     VALUE_DEFAULT, $CFG->calendartype, VALUE_OPTIONAL),
                             'theme' =>
-                                new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server',
+                                new external_value(core_user::get_property_type('theme'), 'Theme name such as "standard", must exist on server',
                                     VALUE_OPTIONAL),
                             'timezone' =>
-                                new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default',
+                                new external_value(core_user::get_property_type('timezone'), 'Timezone code such as Australia/Perth, or 99 for default',
                                     VALUE_OPTIONAL),
                             'mailformat' =>
-                                new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc',
+                                new external_value(core_user::get_property_type('mailformat'), 'Mail format code is 0 for plain text, 1 for HTML etc',
                                     VALUE_OPTIONAL),
                             'description' =>
-                                new external_value(PARAM_TEXT, 'User profile description, no HTML', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('description'), 'User profile description, no HTML', VALUE_OPTIONAL),
                             'city' =>
-                                new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('city'), 'Home city of the user', VALUE_OPTIONAL),
                             'country' =>
-                                new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('country'), 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
                             'firstnamephonetic' =>
-                                new external_value(PARAM_NOTAGS, 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('firstnamephonetic'), 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
                             'lastnamephonetic' =>
-                                new external_value(PARAM_NOTAGS, 'The family name phonetically of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('lastnamephonetic'), 'The family name phonetically of the user', VALUE_OPTIONAL),
                             'middlename' =>
-                                new external_value(PARAM_NOTAGS, 'The middle name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('middlename'), 'The middle name of the user', VALUE_OPTIONAL),
                             'alternatename' =>
-                                new external_value(PARAM_NOTAGS, 'The alternate name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('alternatename'), 'The alternate name of the user', VALUE_OPTIONAL),
                             'preferences' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
@@ -149,6 +152,7 @@ class core_user_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         $userids = array();
+        $createpassword = false;
         foreach ($params['users'] as $user) {
             // Make sure that the username doesn't already exist.
             if ($DB->record_exists('user', array('username' => $user['username'], 'mnethostid' => $CFG->mnet_localhost_id))) {
@@ -173,6 +177,11 @@ class core_user_external extends external_api {
                 throw new invalid_parameter_exception('Invalid theme: '.$user['theme']);
             }
 
+            // Make sure we have a password or have to create one.
+            if (empty($user['password']) && empty($user['createpassword'])) {
+                throw new invalid_parameter_exception('Invalid password: you must provide a password, or set createpassword.');
+            }
+
             $user['confirmed'] = true;
             $user['mnethostid'] = $CFG->mnet_localhost_id;
 
@@ -180,13 +189,23 @@ class core_user_external extends external_api {
             // Make sure we validate current user info as handled by current GUI. See user/editadvanced_form.php func validation().
             if (!validate_email($user['email'])) {
                 throw new invalid_parameter_exception('Email address is invalid: '.$user['email']);
-            } else if ($DB->record_exists('user', array('email' => $user['email'], 'mnethostid' => $user['mnethostid']))) {
+            } else if (empty($CFG->allowaccountssameemail) &&
+                    $DB->record_exists('user', array('email' => $user['email'], 'mnethostid' => $user['mnethostid']))) {
                 throw new invalid_parameter_exception('Email address already exists: '.$user['email']);
             }
             // End of user info validation.
 
+            $createpassword = !empty($user['createpassword']);
+            unset($user['createpassword']);
+            if ($createpassword) {
+                $user['password'] = '';
+                $updatepassword = false;
+            } else {
+                $updatepassword = true;
+            }
+
             // Create the user data now!
-            $user['id'] = user_create_user($user, true, false);
+            $user['id'] = user_create_user($user, $updatepassword, false);
 
             // Custom fields.
             if (!empty($user['customfields'])) {
@@ -196,6 +215,13 @@ class core_user_external extends external_api {
                     $user["profile_field_".$customfield['type']] = $customfield['value'];
                 }
                 profile_save_data((object) $user);
+            }
+
+            if ($createpassword) {
+                $userobject = (object)$user;
+                setnew_password_and_mail($userobject);
+                unset_user_preference('create_password', $userobject);
+                set_user_preference('auth_forcepasswordchange', 1, $userobject);
             }
 
             // Trigger event.
@@ -226,8 +252,8 @@ class core_user_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id'       => new external_value(PARAM_INT, 'user id'),
-                    'username' => new external_value(PARAM_USERNAME, 'user name'),
+                    'id'       => new external_value(core_user::get_property_type('id'), 'user id'),
+                    'username' => new external_value(core_user::get_property_type('username'), 'user name'),
                 )
             )
         );
@@ -243,7 +269,7 @@ class core_user_external extends external_api {
     public static function delete_users_parameters() {
         return new external_function_parameters(
             array(
-                'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user ID')),
+                'userids' => new external_multiple_structure(new external_value(core_user::get_property_type('id'), 'user ID')),
             )
         );
     }
@@ -310,56 +336,59 @@ class core_user_external extends external_api {
                     new external_single_structure(
                         array(
                             'id' =>
-                                new external_value(PARAM_INT, 'ID of the user'),
+                                new external_value(core_user::get_property_type('id'), 'ID of the user'),
                             'username' =>
-                                new external_value(PARAM_USERNAME, 'Username policy is defined in Moodle security config.',
+                                new external_value(core_user::get_property_type('username'), 'Username policy is defined in Moodle security config.',
                                     VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
                             'password' =>
-                                new external_value(PARAM_RAW, 'Plain text password consisting of any characters', VALUE_OPTIONAL,
+                                new external_value(core_user::get_property_type('password'), 'Plain text password consisting of any characters', VALUE_OPTIONAL,
                                     '', NULL_NOT_ALLOWED),
                             'firstname' =>
-                                new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL, '',
+                                new external_value(core_user::get_property_type('firstname'), 'The first name(s) of the user', VALUE_OPTIONAL, '',
                                     NULL_NOT_ALLOWED),
                             'lastname' =>
-                                new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('lastname'), 'The family name of the user', VALUE_OPTIONAL),
                             'email' =>
-                                new external_value(PARAM_EMAIL, 'A valid and unique email address', VALUE_OPTIONAL, '',
+                                new external_value(core_user::get_property_type('email'), 'A valid and unique email address', VALUE_OPTIONAL, '',
                                     NULL_NOT_ALLOWED),
                             'auth' =>
-                                new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL, '',
+                                new external_value(core_user::get_property_type('auth'), 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL, '',
                                     NULL_NOT_ALLOWED),
                             'idnumber' =>
-                                new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution',
+                                new external_value(core_user::get_property_type('idnumber'), 'An arbitrary ID code number perhaps from the institution',
                                     VALUE_OPTIONAL),
                             'lang' =>
-                                new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server',
+                                new external_value(core_user::get_property_type('lang'), 'Language code such as "en", must exist on server',
                                     VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
                             'calendartype' =>
-                                new external_value(PARAM_PLUGIN, 'Calendar type such as "gregorian", must exist on server',
+                                new external_value(core_user::get_property_type('calendartype'), 'Calendar type such as "gregorian", must exist on server',
                                     VALUE_OPTIONAL, '', NULL_NOT_ALLOWED),
                             'theme' =>
-                                new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server',
+                                new external_value(core_user::get_property_type('theme'), 'Theme name such as "standard", must exist on server',
                                     VALUE_OPTIONAL),
                             'timezone' =>
-                                new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default',
+                                new external_value(core_user::get_property_type('timezone'), 'Timezone code such as Australia/Perth, or 99 for default',
                                     VALUE_OPTIONAL),
                             'mailformat' =>
-                                new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc',
+                                new external_value(core_user::get_property_type('mailformat'), 'Mail format code is 0 for plain text, 1 for HTML etc',
                                     VALUE_OPTIONAL),
                             'description' =>
-                                new external_value(PARAM_TEXT, 'User profile description, no HTML', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('description'), 'User profile description, no HTML', VALUE_OPTIONAL),
                             'city' =>
-                                new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('city'), 'Home city of the user', VALUE_OPTIONAL),
                             'country' =>
-                                new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('country'), 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
                             'firstnamephonetic' =>
-                                new external_value(PARAM_NOTAGS, 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('firstnamephonetic'), 'The first name(s) phonetically of the user', VALUE_OPTIONAL),
                             'lastnamephonetic' =>
-                                new external_value(PARAM_NOTAGS, 'The family name phonetically of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('lastnamephonetic'), 'The family name phonetically of the user', VALUE_OPTIONAL),
                             'middlename' =>
-                                new external_value(PARAM_NOTAGS, 'The middle name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('middlename'), 'The middle name of the user', VALUE_OPTIONAL),
                             'alternatename' =>
-                                new external_value(PARAM_NOTAGS, 'The alternate name of the user', VALUE_OPTIONAL),
+                                new external_value(core_user::get_property_type('alternatename'), 'The alternate name of the user', VALUE_OPTIONAL),
+                            'userpicture' =>
+                                new external_value(PARAM_INT, 'The itemid where the new user picture '.
+                                    'has been uploaded to, 0 to delete', VALUE_OPTIONAL),
                             'customfields' => new external_multiple_structure(
                                 new external_single_structure(
                                     array(
@@ -400,10 +429,31 @@ class core_user_external extends external_api {
 
         $params = self::validate_parameters(self::update_users_parameters(), array('users' => $users));
 
+        $filemanageroptions = array('maxbytes' => $CFG->maxbytes,
+                'subdirs'        => 0,
+                'maxfiles'       => 1,
+                'accepted_types' => 'web_image');
+
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['users'] as $user) {
             user_update_user($user, true, false);
+
+            // Update user picture if it was specified for this user.
+            if (empty($CFG->disableuserimages) && isset($user['userpicture'])) {
+                $userobject = (object)$user;
+
+                $userobject->deletepicture = null;
+
+                if ($user['userpicture'] == 0) {
+                    $userobject->deletepicture = true;
+                } else {
+                    $userobject->imagefile = $user['userpicture'];
+                }
+
+                core_user::update_picture($userobject, $filemanageroptions);
+            }
+
             // Update user custom fields.
             if (!empty($user['customfields'])) {
 
@@ -481,16 +531,16 @@ class core_user_external extends external_api {
 
         switch ($field) {
             case 'id':
-                $paramtype = PARAM_INT;
+                $paramtype = core_user::get_property_type('id');
                 break;
             case 'idnumber':
-                $paramtype = PARAM_RAW;
+                $paramtype = core_user::get_property_type('idnumber');
                 break;
             case 'username':
-                $paramtype = PARAM_RAW;
+                $paramtype = core_user::get_property_type('username');
                 break;
             case 'email':
-                $paramtype = PARAM_EMAIL;
+                $paramtype = core_user::get_property_type('email');
                 break;
             default:
                 throw new coding_exception('invalid field parameter',
@@ -509,6 +559,9 @@ class core_user_external extends external_api {
 
         // Retrieve the users.
         $users = $DB->get_records_list('user', $field, $cleanedvalues, 'id');
+
+        $context = context_system::instance();
+        self::validate_context($context);
 
         // Finally retrieve each users information.
         $returnedusers = array();
@@ -609,24 +662,24 @@ class core_user_external extends external_api {
             $paramtype = PARAM_RAW;
             switch ($criteria['key']) {
                 case 'id':
-                    $paramtype = PARAM_INT;
+                    $paramtype = core_user::get_property_type('id');
                     break;
                 case 'idnumber':
-                    $paramtype = PARAM_RAW;
+                    $paramtype = core_user::get_property_type('idnumber');
                     break;
                 case 'username':
-                    $paramtype = PARAM_RAW;
+                    $paramtype = core_user::get_property_type('username');
                     break;
                 case 'email':
                     // We use PARAM_RAW to allow searches with %.
-                    $paramtype = PARAM_RAW;
+                    $paramtype = core_user::get_property_type('email');
                     break;
                 case 'auth':
-                    $paramtype = PARAM_AUTH;
+                    $paramtype = core_user::get_property_type('auth');
                     break;
                 case 'lastname':
                 case 'firstname':
-                    $paramtype = PARAM_TEXT;
+                    $paramtype = core_user::get_property_type('firstname');
                     break;
                 default:
                     // Send back a warning that this search key is not supported in this version.
@@ -717,101 +770,6 @@ class core_user_external extends external_api {
      *
      * @return external_function_parameters
      * @since Moodle 2.2
-     * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
-     * @see core_user_external::get_users_by_field_parameters()
-     */
-    public static function get_users_by_id_parameters() {
-        return new external_function_parameters(
-            array(
-                'userids' => new external_multiple_structure(new external_value(PARAM_INT, 'user ID')),
-            )
-        );
-    }
-
-    /**
-     * Get user information
-     * - This function is matching the permissions of /user/profil.php
-     * - It is also matching some permissions from /user/editadvanced.php for the following fields:
-     *   auth, confirmed, idnumber, lang, theme, timezone, mailformat
-     *
-     * @param array $userids  array of user ids
-     * @return array An array of arrays describing users
-     * @since Moodle 2.2
-     * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
-     * @see core_user_external::get_users_by_field()
-     */
-    public static function get_users_by_id($userids) {
-        global $CFG, $USER, $DB;
-        require_once($CFG->dirroot . "/user/lib.php");
-
-        $params = self::validate_parameters(self::get_users_by_id_parameters(),
-                array('userids' => $userids));
-
-        list($sqluserids, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
-        $uselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-        $ujoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
-        $params['contextlevel'] = CONTEXT_USER;
-        $usersql = "SELECT u.* $uselect
-                      FROM {user} u $ujoin
-                     WHERE u.id $sqluserids";
-        $users = $DB->get_recordset_sql($usersql, $params);
-
-        $result = array();
-        $hasuserupdatecap = has_capability('moodle/user:update', context_system::instance());
-        foreach ($users as $user) {
-            if (!empty($user->deleted)) {
-                continue;
-            }
-            context_helper::preload_from_record($user);
-            $usercontext = context_user::instance($user->id, IGNORE_MISSING);
-            self::validate_context($usercontext);
-            $currentuser = ($user->id == $USER->id);
-
-            if ($userarray  = user_get_user_details($user)) {
-                // Fields matching permissions from /user/editadvanced.php.
-                if ($currentuser or $hasuserupdatecap) {
-                    $userarray['auth']       = $user->auth;
-                    $userarray['confirmed']  = $user->confirmed;
-                    $userarray['idnumber']   = $user->idnumber;
-                    $userarray['lang']       = $user->lang;
-                    $userarray['theme']      = $user->theme;
-                    $userarray['timezone']   = $user->timezone;
-                    $userarray['mailformat'] = $user->mailformat;
-                }
-                $result[] = $userarray;
-            }
-        }
-        $users->close();
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.2
-     * @deprecated Moodle 2.5 MDL-38030 - Please do not call this function any more.
-     * @see core_user_external::get_users_by_field_returns()
-     */
-    public static function get_users_by_id_returns() {
-        $additionalfields = array (
-            'enrolledcourses' => new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id'  => new external_value(PARAM_INT, 'Id of the course'),
-                    'fullname'  => new external_value(PARAM_RAW, 'Fullname of the course'),
-                    'shortname' => new external_value(PARAM_RAW, 'Shortname of the course')
-                )
-            ), 'Courses where the user is enrolled - limited by which courses the user is able to see', VALUE_OPTIONAL));
-        return new external_multiple_structure(self::user_description($additionalfields));
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.2
      */
     public static function get_course_user_profiles_parameters() {
         return new external_function_parameters(
@@ -819,7 +777,7 @@ class core_user_external extends external_api {
                 'userlist' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'userid'    => new external_value(PARAM_INT, 'userid'),
+                            'userid'    => new external_value(core_user::get_property_type('id'), 'userid'),
                             'courseid'    => new external_value(PARAM_INT, 'courseid'),
                         )
                     )
@@ -939,38 +897,38 @@ class core_user_external extends external_api {
      */
     public static function user_description($additionalfields = array()) {
         $userfields = array(
-            'id'    => new external_value(PARAM_INT, 'ID of the user'),
-            'username'    => new external_value(PARAM_RAW, 'The username', VALUE_OPTIONAL),
-            'firstname'   => new external_value(PARAM_NOTAGS, 'The first name(s) of the user', VALUE_OPTIONAL),
-            'lastname'    => new external_value(PARAM_NOTAGS, 'The family name of the user', VALUE_OPTIONAL),
-            'fullname'    => new external_value(PARAM_NOTAGS, 'The fullname of the user'),
-            'email'       => new external_value(PARAM_TEXT, 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
-            'address'     => new external_value(PARAM_TEXT, 'Postal address', VALUE_OPTIONAL),
-            'phone1'      => new external_value(PARAM_NOTAGS, 'Phone 1', VALUE_OPTIONAL),
-            'phone2'      => new external_value(PARAM_NOTAGS, 'Phone 2', VALUE_OPTIONAL),
-            'icq'         => new external_value(PARAM_NOTAGS, 'icq number', VALUE_OPTIONAL),
-            'skype'       => new external_value(PARAM_NOTAGS, 'skype id', VALUE_OPTIONAL),
-            'yahoo'       => new external_value(PARAM_NOTAGS, 'yahoo id', VALUE_OPTIONAL),
-            'aim'         => new external_value(PARAM_NOTAGS, 'aim id', VALUE_OPTIONAL),
-            'msn'         => new external_value(PARAM_NOTAGS, 'msn number', VALUE_OPTIONAL),
-            'department'  => new external_value(PARAM_TEXT, 'department', VALUE_OPTIONAL),
-            'institution' => new external_value(PARAM_TEXT, 'institution', VALUE_OPTIONAL),
-            'idnumber'    => new external_value(PARAM_RAW, 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
+            'id'    => new external_value(core_user::get_property_type('id'), 'ID of the user'),
+            'username'    => new external_value(core_user::get_property_type('username'), 'The username', VALUE_OPTIONAL),
+            'firstname'   => new external_value(core_user::get_property_type('firstname'), 'The first name(s) of the user', VALUE_OPTIONAL),
+            'lastname'    => new external_value(core_user::get_property_type('lastname'), 'The family name of the user', VALUE_OPTIONAL),
+            'fullname'    => new external_value(core_user::get_property_type('firstname'), 'The fullname of the user'),
+            'email'       => new external_value(core_user::get_property_type('email'), 'An email address - allow email as root@localhost', VALUE_OPTIONAL),
+            'address'     => new external_value(core_user::get_property_type('address'), 'Postal address', VALUE_OPTIONAL),
+            'phone1'      => new external_value(core_user::get_property_type('phone1'), 'Phone 1', VALUE_OPTIONAL),
+            'phone2'      => new external_value(core_user::get_property_type('phone2'), 'Phone 2', VALUE_OPTIONAL),
+            'icq'         => new external_value(core_user::get_property_type('icq'), 'icq number', VALUE_OPTIONAL),
+            'skype'       => new external_value(core_user::get_property_type('skype'), 'skype id', VALUE_OPTIONAL),
+            'yahoo'       => new external_value(core_user::get_property_type('yahoo'), 'yahoo id', VALUE_OPTIONAL),
+            'aim'         => new external_value(core_user::get_property_type('aim'), 'aim id', VALUE_OPTIONAL),
+            'msn'         => new external_value(core_user::get_property_type('msn'), 'msn number', VALUE_OPTIONAL),
+            'department'  => new external_value(core_user::get_property_type('department'), 'department', VALUE_OPTIONAL),
+            'institution' => new external_value(core_user::get_property_type('institution'), 'institution', VALUE_OPTIONAL),
+            'idnumber'    => new external_value(core_user::get_property_type('idnumber'), 'An arbitrary ID code number perhaps from the institution', VALUE_OPTIONAL),
             'interests'   => new external_value(PARAM_TEXT, 'user interests (separated by commas)', VALUE_OPTIONAL),
-            'firstaccess' => new external_value(PARAM_INT, 'first access to the site (0 if never)', VALUE_OPTIONAL),
-            'lastaccess'  => new external_value(PARAM_INT, 'last access to the site (0 if never)', VALUE_OPTIONAL),
-            'auth'        => new external_value(PARAM_PLUGIN, 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL),
-            'confirmed'   => new external_value(PARAM_INT, 'Active user: 1 if confirmed, 0 otherwise', VALUE_OPTIONAL),
-            'lang'        => new external_value(PARAM_SAFEDIR, 'Language code such as "en", must exist on server', VALUE_OPTIONAL),
-            'calendartype' => new external_value(PARAM_PLUGIN, 'Calendar type such as "gregorian", must exist on server', VALUE_OPTIONAL),
-            'theme'       => new external_value(PARAM_PLUGIN, 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
-            'timezone'    => new external_value(PARAM_TIMEZONE, 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
-            'mailformat'  => new external_value(PARAM_INT, 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
-            'description' => new external_value(PARAM_RAW, 'User profile description', VALUE_OPTIONAL),
-            'descriptionformat' => new external_format_value('description', VALUE_OPTIONAL),
-            'city'        => new external_value(PARAM_NOTAGS, 'Home city of the user', VALUE_OPTIONAL),
-            'url'         => new external_value(PARAM_URL, 'URL of the user', VALUE_OPTIONAL),
-            'country'     => new external_value(PARAM_ALPHA, 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
+            'firstaccess' => new external_value(core_user::get_property_type('firstaccess'), 'first access to the site (0 if never)', VALUE_OPTIONAL),
+            'lastaccess'  => new external_value(core_user::get_property_type('lastaccess'), 'last access to the site (0 if never)', VALUE_OPTIONAL),
+            'auth'        => new external_value(core_user::get_property_type('auth'), 'Auth plugins include manual, ldap, imap, etc', VALUE_OPTIONAL),
+            'confirmed'   => new external_value(core_user::get_property_type('confirmed'), 'Active user: 1 if confirmed, 0 otherwise', VALUE_OPTIONAL),
+            'lang'        => new external_value(core_user::get_property_type('lang'), 'Language code such as "en", must exist on server', VALUE_OPTIONAL),
+            'calendartype' => new external_value(core_user::get_property_type('calendartype'), 'Calendar type such as "gregorian", must exist on server', VALUE_OPTIONAL),
+            'theme'       => new external_value(core_user::get_property_type('theme'), 'Theme name such as "standard", must exist on server', VALUE_OPTIONAL),
+            'timezone'    => new external_value(core_user::get_property_type('timezone'), 'Timezone code such as Australia/Perth, or 99 for default', VALUE_OPTIONAL),
+            'mailformat'  => new external_value(core_user::get_property_type('mailformat'), 'Mail format code is 0 for plain text, 1 for HTML etc', VALUE_OPTIONAL),
+            'description' => new external_value(core_user::get_property_type('description'), 'User profile description', VALUE_OPTIONAL),
+            'descriptionformat' => new external_format_value(core_user::get_property_type('descriptionformat'), VALUE_OPTIONAL),
+            'city'        => new external_value(core_user::get_property_type('city'), 'Home city of the user', VALUE_OPTIONAL),
+            'url'         => new external_value(core_user::get_property_type('url'), 'URL of the user', VALUE_OPTIONAL),
+            'country'     => new external_value(core_user::get_property_type('country'), 'Home country code of the user, such as AU or CZ', VALUE_OPTIONAL),
             'profileimageurlsmall' => new external_value(PARAM_URL, 'User image profile URL - small version'),
             'profileimageurl' => new external_value(PARAM_URL, 'User image profile URL - big version'),
             'customfields' => new external_multiple_structure(
@@ -1019,9 +977,9 @@ class core_user_external extends external_api {
      * @since Moodle 2.6
      */
     public static function add_user_private_files($draftid) {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER;
+        require_once($CFG->libdir . "/filelib.php");
 
-        require_once($CFG->dirroot . "/user/lib.php");
         $params = self::validate_parameters(self::add_user_private_files_parameters(), array('draftid' => $draftid));
 
         if (isguestuser()) {
@@ -1041,10 +999,9 @@ class core_user_external extends external_api {
         $options = array('subdirs' => 1,
                          'maxbytes' => $maxbytes,
                          'maxfiles' => -1,
-                         'accepted_types' => '*',
                          'areamaxbytes' => $maxareabytes);
 
-        file_save_draft_area_files($draftid, $context->id, 'user', 'private', 0, $options);
+        file_merge_files_from_draft_area_into_filearea($draftid, $context->id, 'user', 'private', 0, $options);
 
         return null;
     }
@@ -1119,20 +1076,34 @@ class core_user_external extends external_api {
             return $warnings;
         }
 
-        $userdevice = new stdclass;
-        $userdevice->userid     = $USER->id;
-        $userdevice->appid      = $params['appid'];
-        $userdevice->name       = $params['name'];
-        $userdevice->model      = $params['model'];
-        $userdevice->platform   = $params['platform'];
-        $userdevice->version    = $params['version'];
-        $userdevice->pushid     = $params['pushid'];
-        $userdevice->uuid       = $params['uuid'];
-        $userdevice->timecreated  = time();
-        $userdevice->timemodified = $userdevice->timecreated;
+        // Notice that we can have multiple devices because previously it was allowed to have repeated ones.
+        // Since we don't have a clear way to decide which one is the more appropiate, we update all.
+        if ($userdevices = $DB->get_records('user_devices', array('uuid' => $params['uuid'],
+                'appid' => $params['appid'], 'userid' => $USER->id))) {
 
-        if (!$DB->insert_record('user_devices', $userdevice)) {
-            throw new moodle_exception("There was a problem saving in the database the device with key: " . $params['pushid']);
+            foreach ($userdevices as $userdevice) {
+                $userdevice->version    = $params['version'];   // Maybe the user upgraded the device.
+                $userdevice->pushid     = $params['pushid'];
+                $userdevice->timemodified  = time();
+                $DB->update_record('user_devices', $userdevice);
+            }
+
+        } else {
+            $userdevice = new stdclass;
+            $userdevice->userid     = $USER->id;
+            $userdevice->appid      = $params['appid'];
+            $userdevice->name       = $params['name'];
+            $userdevice->model      = $params['model'];
+            $userdevice->platform   = $params['platform'];
+            $userdevice->version    = $params['version'];
+            $userdevice->pushid     = $params['pushid'];
+            $userdevice->uuid       = $params['uuid'];
+            $userdevice->timecreated  = time();
+            $userdevice->timemodified = $userdevice->timecreated;
+
+            if (!$DB->insert_record('user_devices', $userdevice)) {
+                throw new moodle_exception("There was a problem saving in the database the device with key: " . $params['pushid']);
+            }
         }
 
         return $warnings;
@@ -1150,252 +1121,339 @@ class core_user_external extends external_api {
         );
     }
 
-}
-
- /**
-  * Deprecated user external functions
-  *
-  * @package    core_user
-  * @copyright  2009 Petr Skodak
-  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-  * @since Moodle 2.0
-  * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
-  * @see core_user_external
-  */
-class moodle_user_external extends external_api {
-
     /**
-     * Returns description of method parameters
+     * Returns description of method parameters.
      *
      * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::create_users_parameters()
+     * @since Moodle 2.9
      */
-    public static function create_users_parameters() {
-        return core_user_external::create_users_parameters();
+    public static function remove_user_device_parameters() {
+        return new external_function_parameters(
+            array(
+                'uuid'  => new external_value(PARAM_RAW, 'the device UUID'),
+                'appid' => new external_value(PARAM_NOTAGS,
+                                                'the app id, if empty devices matching the UUID for the user will be removed',
+                                                VALUE_DEFAULT, ''),
+            )
+        );
     }
 
     /**
-     * Create one or more users
+     * Remove a user device from the Moodle database (for PUSH notifications usually).
      *
-     * @param array $users  An array of users to create.
-     * @return array An array of arrays
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::create_users()
+     * @param string $uuid The device UUID.
+     * @param string $appid The app id, opitonal parameter. If empty all the devices fmatching the UUID or the user will be removed.
+     * @return array List of possible warnings and removal status.
+     * @since Moodle 2.9
      */
-    public static function create_users($users) {
-        return core_user_external::create_users($users);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::create_users_returns()
-     */
-    public static function create_users_returns() {
-        return core_user_external::create_users_returns();
-    }
-
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::delete_users_parameters()
-     */
-    public static function delete_users_parameters() {
-        return core_user_external::delete_users_parameters();
-    }
-
-    /**
-     * Delete users
-     *
-     * @param array $userids
-     * @return null
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::delete_users()
-     */
-    public static function delete_users($userids) {
-        return core_user_external::delete_users($userids);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return null
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::delete_users_returns()
-     */
-    public static function delete_users_returns() {
-        return core_user_external::delete_users_returns();
-    }
-
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::update_users_parameters()
-     */
-    public static function update_users_parameters() {
-        return core_user_external::update_users_parameters();
-    }
-
-    /**
-     * Update users
-     *
-     * @param array $users
-     * @return null
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::update_users()
-     */
-    public static function update_users($users) {
-        return core_user_external::update_users($users);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return null
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::update_users_returns()
-     */
-    public static function update_users_returns() {
-        return core_user_external::update_users_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::get_users_by_id_parameters()
-     */
-    public static function get_users_by_id_parameters() {
-        return core_user_external::get_users_by_id_parameters();
-    }
-
-    /**
-     * Get user information
-     * - This function is matching the permissions of /user/profil.php
-     * - It is also matching some permissions from /user/editadvanced.php for the following fields:
-     *   auth, confirmed, idnumber, lang, theme, timezone, mailformat
-     *
-     * @param array $userids  array of user ids
-     * @return array An array of arrays describing users
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::get_users_by_id()
-     */
-    public static function get_users_by_id($userids) {
-        return core_user_external::get_users_by_id($userids);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::get_users_by_id_returns()
-     */
-    public static function get_users_by_id_returns() {
-        return core_user_external::get_users_by_id_returns();
-    }
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::get_course_user_profiles_parameters()
-     */
-    public static function get_course_participants_by_id_parameters() {
-        return core_user_external::get_course_user_profiles_parameters();
-    }
-
-    /**
-     * Get course participant's details
-     *
-     * @param array $userlist  array of user ids and according course ids
-     * @return array An array of arrays describing course participants
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::get_course_user_profiles()
-     */
-    public static function get_course_participants_by_id($userlist) {
-        return core_user_external::get_course_user_profiles($userlist);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_user_external::get_course_user_profiles_returns()
-     */
-    public static function get_course_participants_by_id_returns() {
-        return core_user_external::get_course_user_profiles_returns();
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users_parameters()
-     */
-    public static function get_users_by_courseid_parameters() {
+    public static function remove_user_device($uuid, $appid = "") {
         global $CFG;
-        require_once($CFG->dirroot . '/enrol/externallib.php');
-        return core_enrol_external::get_enrolled_users_parameters();
+        require_once($CFG->dirroot . "/user/lib.php");
+
+        $params = self::validate_parameters(self::remove_user_device_parameters(), array('uuid' => $uuid, 'appid' => $appid));
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Warnings array, it can be empty at the end but is mandatory.
+        $warnings = array();
+
+        $removed = user_remove_user_device($params['uuid'], $params['appid']);
+
+        if (!$removed) {
+            $warnings[] = array(
+                'item' => $params['uuid'],
+                'warningcode' => 'devicedoesnotexist',
+                'message' => 'The device doesn\'t exists in the database'
+            );
+        }
+
+        $result = array(
+            'removed' => $removed,
+            'warnings' => $warnings
+        );
+
+        return $result;
     }
 
     /**
-     * Get course participants details
+     * Returns description of method result value.
      *
-     * @param int $courseid  course id
-     * @param array $options options {
-     *                                'name' => option name
-     *                                'value' => option value
-     *                               }
-     * @return array An array of users
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users()
+     * @return external_multiple_structure
+     * @since Moodle 2.9
      */
-    public static function get_users_by_courseid($courseid, $options) {
-        global $CFG;
-        require_once($CFG->dirroot . '/enrol/externallib.php');
-        return core_enrol_external::get_enrolled_users($courseid, $options);
+    public static function remove_user_device_returns() {
+        return new external_single_structure(
+            array(
+                'removed' => new external_value(PARAM_BOOL, 'True if removed, false if not removed because it doesn\'t exists'),
+                'warnings' => new external_warnings(),
+            )
+        );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function view_user_list_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'id of the course, 0 for site')
+            )
+        );
+    }
+
+    /**
+     * Trigger the user_list_viewed event.
+     *
+     * @param int $courseid id of course
+     * @return array of warnings and status result
+     * @since Moodle 2.9
+     * @throws moodle_exception
+     */
+    public static function view_user_list($courseid) {
+        global $CFG;
+        require_once($CFG->dirroot . "/user/lib.php");
+
+        $params = self::validate_parameters(self::view_user_list_parameters(),
+                                            array(
+                                                'courseid' => $courseid
+                                            ));
+
+        $warnings = array();
+
+        if (empty($params['courseid'])) {
+            $params['courseid'] = SITEID;
+        }
+
+        $course = get_course($params['courseid']);
+
+        if ($course->id == SITEID) {
+            $context = context_system::instance();
+        } else {
+            $context = context_course::instance($course->id);
+        }
+        self::validate_context($context);
+
+        if ($course->id == SITEID) {
+            require_capability('moodle/site:viewparticipants', $context);
+        } else {
+            require_capability('moodle/course:viewparticipants', $context);
+        }
+
+        user_list_view($course, $context);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
     /**
      * Returns description of method result value
      *
      * @return external_description
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users_returns()
+     * @since Moodle 2.9
      */
-    public static function get_users_by_courseid_returns() {
-        global $CFG;
-        require_once($CFG->dirroot . '/enrol/externallib.php');
-        return core_enrol_external::get_enrolled_users_returns();
+    public static function view_user_list_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function view_user_profile_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user', VALUE_REQUIRED),
+                'courseid' => new external_value(PARAM_INT, 'id of the course, default site course', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Trigger the user profile viewed event.
+     *
+     * @param int $userid id of user
+     * @param int $courseid id of course
+     * @return array of warnings and status result
+     * @since Moodle 2.9
+     * @throws moodle_exception
+     */
+    public static function view_user_profile($userid, $courseid = 0) {
+        global $CFG, $USER;
+        require_once($CFG->dirroot . "/user/profile/lib.php");
+
+        $params = self::validate_parameters(self::view_user_profile_parameters(),
+                                            array(
+                                                'userid' => $userid,
+                                                'courseid' => $courseid
+                                            ));
+
+        $warnings = array();
+
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        if (empty($params['courseid'])) {
+            $params['courseid'] = SITEID;
+        }
+
+        $course = get_course($params['courseid']);
+        $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+        core_user::require_active_user($user);
+
+        if ($course->id == SITEID) {
+            $coursecontext = context_system::instance();;
+        } else {
+            $coursecontext = context_course::instance($course->id);
+        }
+        self::validate_context($coursecontext);
+
+        $currentuser = $USER->id == $user->id;
+        $usercontext = context_user::instance($user->id);
+
+        if (!$currentuser and
+                !has_capability('moodle/user:viewdetails', $coursecontext) and
+                !has_capability('moodle/user:viewdetails', $usercontext)) {
+            throw new moodle_exception('cannotviewprofile');
+        }
+
+        // Case like user/profile.php.
+        if ($course->id == SITEID) {
+            profile_view($user, $usercontext);
+        } else {
+            // Case like user/view.php.
+            if (!$currentuser and !can_access_course($course, $user, '', true)) {
+                throw new moodle_exception('notenrolledprofile');
+            }
+
+            profile_view($user, $coursecontext, $course);
+        }
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.9
+     */
+    public static function view_user_profile_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function get_user_preferences_parameters() {
+        return new external_function_parameters(
+            array(
+                'name' => new external_value(PARAM_RAW, 'preference name, empty for all', VALUE_DEFAULT, ''),
+                'userid' => new external_value(PARAM_INT, 'id of the user, default to current user', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Return user preferences.
+     *
+     * @param string $name preference name, empty for all
+     * @param int $userid id of the user, 0 for current user
+     * @return array of warnings and preferences
+     * @since Moodle 3.2
+     * @throws moodle_exception
+     */
+    public static function get_user_preferences($name = '', $userid = 0) {
+        global $USER;
+
+        $params = self::validate_parameters(self::get_user_preferences_parameters(),
+                                            array(
+                                                'name' => $name,
+                                                'userid' => $userid
+                                            ));
+        $preferences = array();
+        $warnings = array();
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        if (empty($params['name'])) {
+            $name = null;
+        }
+        if (empty($params['userid'])) {
+            $user = null;
+        } else {
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            if ($user->id != $USER->id) {
+                // Only admins can retrieve other users preferences.
+                require_capability('moodle/site:config', $context);
+            }
+        }
+
+        $userpreferences = get_user_preferences($name, null, $user);
+        // Check if we received just one preference.
+        if (!is_array($userpreferences)) {
+            $userpreferences = array($name => $userpreferences);
+        }
+
+        foreach ($userpreferences as $name => $value) {
+            $preferences[] = array(
+                'name' => $name,
+                'value' => $value,
+            );
+        }
+
+        $result = array();
+        $result['preferences'] = $preferences;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.2
+     */
+    public static function get_user_preferences_returns() {
+        return new external_single_structure(
+            array(
+                'preferences' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'The name of the preference'),
+                            'value' => new external_value(PARAM_RAW, 'The value of the preference'),
+                        )
+                    ),
+                    'User custom fields (also known as user profile fields)'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 }

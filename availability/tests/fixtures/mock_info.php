@@ -60,6 +60,10 @@ class mock_info extends info {
         return \context_course::instance($this->get_course()->id);
     }
 
+    protected function get_view_hidden_capability() {
+        return 'moodle/course:viewhiddensections';
+    }
+
     protected function set_in_database($availability) {
     }
 

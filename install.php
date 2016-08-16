@@ -48,22 +48,24 @@ define('AJAX_SCRIPT', false); // prevents some warnings later
 define('CACHE_DISABLE_ALL', true); // Disables caching.. just in case.
 define('PHPUNIT_TEST', false);
 define('IGNORE_COMPONENT_CACHE', true);
+define('MDL_PERF_TEST', false);
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
-// This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.
-if (function_exists('date_default_timezone_set') and function_exists('date_default_timezone_get')) {
-    @date_default_timezone_set(@date_default_timezone_get());
+if (!function_exists('date_default_timezone_set') or !function_exists('date_default_timezone_get')) {
+    echo("Timezone functions are not available.");
+    die;
 }
+date_default_timezone_set(@date_default_timezone_get());
 
 // make sure PHP errors are displayed - helps with diagnosing of problems
 @error_reporting(E_ALL);
 @ini_set('display_errors', '1');
 
 // Check that PHP is of a sufficient version.
-if (version_compare(phpversion(), '5.4.4') < 0) {
+if (version_compare(phpversion(), '5.6.5') < 0) {
     $phpversion = phpversion();
     // do NOT localise - lang strings would not work here and we CAN not move it after installib
-    echo "Moodle 2.7 or later requires at least PHP 5.4.4 (currently using version $phpversion).<br />";
+    echo "Moodle 3.2 or later requires at least PHP 5.6.5 (currently using version $phpversion).<br />";
     echo "Please upgrade your server software or install older Moodle version.";
     die;
 }
@@ -160,7 +162,7 @@ if (!empty($_POST)) {
 global $CFG;
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
-$CFG->dirroot              = dirname(__FILE__);
+$CFG->dirroot              = __DIR__;
 $CFG->libdir               = "$CFG->dirroot/lib";
 $CFG->wwwroot              = install_guess_wwwroot(); // can not be changed - ppl must use the real address when installing
 $CFG->httpswwwroot         = $CFG->wwwroot;
@@ -215,8 +217,6 @@ require_once($CFG->dirroot.'/cache/lib.php');
 //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
 //the problem is that we need specific version of quickforms and hacked excel files :-(
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
-//point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
-ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
 
 // Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
 // Required because the database checks below lead to session interaction which is going to lead us to requiring autoloaded classes.
@@ -252,7 +252,7 @@ if (isset($_GET['help'])) {
 
 //first time here? find out suitable dataroot
 if (is_null($CFG->dataroot)) {
-    $CFG->dataroot = dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'moodledata';
+    $CFG->dataroot = __DIR__.'/../moodledata';
 
     $i = 0; //safety check - dirname might return some unexpected results
     while(is_dataroot_insecure()) {

@@ -14,7 +14,7 @@
             padding: 3px 15px;
             float: right;
             > * {
-                margin-left:3px;
+                margin-left: 3px;
             }
             .block-hider-show,
             .block-hider-hide {
@@ -22,23 +22,6 @@
             }
             .block-hider-show {
                 display: none;
-            }
-        }
-        .commands {
-            clear: both;
-            text-align: right;
-            display: block;
-            padding: 3px 15px;
-
-            > a {
-                margin: 0 3px;
-            }
-            .icon img {
-                width: 12px;
-                height: 12px;
-            }
-            img.actionmenu {
-                width:auto;
             }
         }
     }
@@ -81,7 +64,9 @@
         border-style: dashed;
     }
     &.invisible {
-        .opacity(50);
+        .header h2 {
+            .opacity(50);
+        }
     }
 
     &.hidden .header .block_action {
@@ -95,6 +80,40 @@
     &.list_block .unlist > li > .column {
         display: inline-block;
         .ie7-inline-block();
+    }
+}
+.editing {
+    .block {
+        .header {
+            .commands {
+                clear: both;
+                text-align: right;
+                display: block;
+                padding: 3px 15px;
+
+                > a {
+                    margin: 0 3px;
+                }
+                .icon img {
+                    width: 12px;
+                    height: 12px;
+                }
+                img.actionmenu {
+                    width: auto;
+                }
+            }
+        }
+    }
+}
+.dir-rtl {
+    &.editing {
+        .block {
+            .header {
+                .commands {
+                    text-align: left;
+                }
+            }
+        }
     }
 }
 
@@ -177,7 +196,7 @@
         padding-bottom: 10px;
     }
     ul li {
-        border-top: 1px rgba(0,0,0,0.05) solid;
+        border-top: 1px rgba(0, 0, 0, 0.05) solid;
         padding: 2px;
         display: table;
         width: 100%;
@@ -233,19 +252,16 @@
     // RTL styles for blocks in general.
     .block {
         .header {
-            text-align:right;
+            text-align: right;
             h2 {
-                text-align:right;
-            }
-            .commands {
-                text-align: left;
-                > * {
-                    margin-left:0;
-                    margin-right:3px;
-                }
+                text-align: right;
             }
             .block_action {
                 float: left;
+                > * {
+                    margin-left: 0;
+                    margin-right: 3px;
+                }
             }
         }
     }

@@ -15,22 +15,26 @@ Y.namespace('Moodle.mod_quiz.util.slot');
  */
 Y.Moodle.mod_quiz.util.slot = {
     CSS: {
-        SLOT : 'slot',
-        QUESTIONTYPEDESCRIPTION : 'qtype_description'
+        SLOT: 'slot',
+        QUESTIONTYPEDESCRIPTION: 'qtype_description',
+        CANNOT_DEPEND: 'question_dependency_cannot_depend'
     },
     CONSTANTS: {
-        SLOTIDPREFIX : 'slot-',
-        QUESTION : M.util.get_string('question', 'moodle')
+        SLOTIDPREFIX: 'slot-',
+        QUESTION: M.util.get_string('question', 'moodle')
     },
     SELECTORS: {
         SLOT: 'li.slot',
         INSTANCENAME: '.instancename',
         NUMBER: 'span.slotnumber',
-        PAGECONTENT : 'div#page-content',
-        PAGEBREAK : 'span.page_split_join_wrapper',
-        ICON : 'img.smallicon',
-        QUESTIONTYPEDESCRIPTION : '.qtype_description',
-        SECTIONUL : 'ul.section'
+        PAGECONTENT: 'div#page-content',
+        PAGEBREAK: 'span.page_split_join_wrapper',
+        ICON: 'img.smallicon',
+        QUESTIONTYPEDESCRIPTION: '.qtype_description',
+        SECTIONUL: 'ul.section',
+        DEPENDENCY_WRAPPER: '.question_dependency_wrapper',
+        DEPENDENCY_LINK: '.question_dependency_wrapper .cm-edit-action',
+        DEPENDENCY_ICON: '.question_dependency_wrapper img'
     },
 
     /**
@@ -156,7 +160,20 @@ Y.Moodle.mod_quiz.util.slot = {
      * @return {node|false} The previous slot node or false.
      */
     getPreviousNumbered: function(slot) {
-        return slot.previous(this.SELECTORS.SLOT + ':not(' + this.SELECTORS.QUESTIONTYPEDESCRIPTION + ')');
+        var previous = slot.previous(this.SELECTORS.SLOT + ':not(' + this.SELECTORS.QUESTIONTYPEDESCRIPTION + ')');
+        if (previous) {
+            return previous;
+        }
+
+        var section = slot.ancestor('li.section').previous('li.section');
+        while (section) {
+            var questions = section.all(this.SELECTORS.SLOT + ':not(' + this.SELECTORS.QUESTIONTYPEDESCRIPTION + ')');
+            if (questions.size() > 0) {
+                return questions.item(questions.size() - 1);
+            }
+            section = section.previous('li.section');
+        }
+        return false;
     },
 
     /**
@@ -177,8 +194,8 @@ Y.Moodle.mod_quiz.util.slot = {
                 slot.swap(nextpage);
             }
 
-            var previousSlot = this.getPreviousNumbered(slot);
-            previousslotnumber = 0;
+            var previousSlot = this.getPreviousNumbered(slot),
+                previousslotnumber = 0;
             if (slot.hasClass(this.CSS.QUESTIONTYPEDESCRIPTION)) {
                 return;
             }
@@ -189,6 +206,22 @@ Y.Moodle.mod_quiz.util.slot = {
 
             // Set slot number.
             this.setNumber(slot, previousslotnumber + 1);
+        }, this);
+    },
+
+    /**
+     * Add class only-has-one-slot to those sections that need it.
+     *
+     * @method updateOneSlotSections
+     * @return void
+     */
+    updateOneSlotSections: function() {
+        Y.all('.mod-quiz-edit-content ul.slots li.section').each(function(section) {
+            if (section.all(this.SELECTORS.SLOT).size() > 1) {
+                section.removeClass('only-has-one-slot');
+            } else {
+                section.addClass('only-has-one-slot');
+            }
         }, this);
     },
 
@@ -272,18 +305,20 @@ Y.Moodle.mod_quiz.util.slot = {
      */
     reorderPageBreaks: function() {
         // Get list of slot nodes.
-        var slots = this.getSlots(), slotnumber = 0;
+        var slots = this.getSlots();
+        var slotnumber = 0;
         // Loop through slots incrementing the number each time.
-        slots.each (function(slot, key) {
+        slots.each(function(slot, key) {
             slotnumber++;
             var pagebreak = this.getPageBreak(slot);
-            // Last slot won't have a page break.
-            if (!pagebreak && key === slots.size() - 1) {
+            var nextitem = slot.next('li.activity');
+            if (!nextitem) {
+                // Last slot in a section. Should not have an icon.
                 return;
             }
 
             // No pagebreak and not last slot. Add one.
-            if (!pagebreak && key !== slots.size() - 1) {
+            if (!pagebreak) {
                 pagebreak = this.addPageBreak(slot);
             }
 
@@ -296,8 +331,9 @@ Y.Moodle.mod_quiz.util.slot = {
             var pagebreaklink = pagebreak.get('childNodes').item(0);
 
             // Get the correct title.
-            var action = '', iconname = '';
-            if (Y.Moodle.mod_quiz.util.page.isPage(slot.next('li.activity'))) {
+            var action = '';
+            var iconname = '';
+            if (Y.Moodle.mod_quiz.util.page.isPage(nextitem)) {
                 action = 'removepagebreak';
                 iconname = 'e/remove_page_break';
             } else {
@@ -331,5 +367,64 @@ Y.Moodle.mod_quiz.util.slot = {
             // Update the anchor.
             pagebreaklink.set('href', newurl);
         }, this);
+    },
+
+    /**
+     * Update the dependency icons.
+     *
+     * @method updateAllDependencyIcons
+     * @return void
+     */
+    updateAllDependencyIcons: function() {
+        // Get list of slot nodes.
+        var slots = this.getSlots(),
+            slotnumber = 0,
+            previousslot = null;
+        // Loop through slots incrementing the number each time.
+        slots.each(function(slot) {
+            slotnumber++;
+
+            if (slotnumber == 1 || previousslot.getData('canfinish') === '0') {
+                slot.one(this.SELECTORS.DEPENDENCY_WRAPPER).addClass(this.CSS.CANNOT_DEPEND);
+            } else {
+                slot.one(this.SELECTORS.DEPENDENCY_WRAPPER).removeClass(this.CSS.CANNOT_DEPEND);
+            }
+            this.updateDependencyIcon(slot, null);
+
+            previousslot = slot;
+        }, this);
+    },
+
+    /**
+     * Update the slot icon to indicate the new requiresprevious state.
+     *
+     * @method slot Slot node
+     * @method requiresprevious Whether this node now requires the previous one.
+     * @return void
+     */
+    updateDependencyIcon: function(slot, requiresprevious) {
+        var link = slot.one(this.SELECTORS.DEPENDENCY_LINK);
+        var icon = slot.one(this.SELECTORS.DEPENDENCY_ICON);
+        var previousSlot = this.getPrevious(slot);
+        var a = {thisq: this.getNumber(slot)};
+        if (previousSlot) {
+            a.previousq = this.getNumber(previousSlot);
+        }
+
+        if (requiresprevious === null) {
+            requiresprevious = link.getData('action') === 'removedependency';
+        }
+
+        if (requiresprevious) {
+            link.set('title', M.util.get_string('questiondependencyremove', 'quiz', a));
+            link.setData('action', 'removedependency');
+            icon.set('alt', M.util.get_string('questiondependsonprevious', 'quiz'));
+            icon.set('src', M.util.image_url('t/locked', 'moodle'));
+        } else {
+            link.set('title', M.util.get_string('questiondependencyadd', 'quiz', a));
+            link.setData('action', 'adddependency');
+            icon.set('alt', M.util.get_string('questiondependencyfree', 'quiz'));
+            icon.set('src', M.util.image_url('t/unlocked', 'moodle'));
+        }
     }
 };

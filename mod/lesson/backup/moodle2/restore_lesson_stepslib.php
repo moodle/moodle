@@ -42,6 +42,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $paths[] = new restore_path_element('lesson', '/activity/lesson');
         $paths[] = new restore_path_element('lesson_page', '/activity/lesson/pages/page');
         $paths[] = new restore_path_element('lesson_answer', '/activity/lesson/pages/page/answers/answer');
+        $paths[] = new restore_path_element('lesson_override', '/activity/lesson/overrides/override');
         if ($userinfo) {
             $paths[] = new restore_path_element('lesson_attempt', '/activity/lesson/pages/page/answers/answer/attempts/attempt');
             $paths[] = new restore_path_element('lesson_grade', '/activity/lesson/grades/grade');
@@ -65,13 +66,36 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->deadline = $this->apply_date_offset($data->deadline);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // lesson->highscores can come both in data->highscores and
-        // data->showhighscores, handle both. MDL-26229
+        // The lesson->highscore code was removed in MDL-49581.
+        // Remove it if found in the backup file.
         if (isset($data->showhighscores)) {
-            $data->highscores = $data->showhighscores;
             unset($data->showhighscores);
         }
+        if (isset($data->highscores)) {
+            unset($data->highscores);
+        }
 
+        // Supply items that maybe missing from previous versions.
+        if (!isset($data->completionendreached)) {
+            $data->completionendreached = 0;
+        }
+        if (!isset($data->completiontimespent)) {
+            $data->completiontimespent = 0;
+        }
+
+        if (!isset($data->intro)) {
+            $data->intro = '';
+            $data->introformat = FORMAT_HTML;
+        }
+
+        // Compatibility with old backups with maxtime and timed fields.
+        if (!isset($data->timelimit)) {
+            if (isset($data->timed) && isset($data->maxtime) && $data->timed) {
+                $data->timelimit = 60 * $data->maxtime;
+            } else {
+                $data->timelimit = 0;
+            }
+        }
         // insert the lesson record
         $newitemid = $DB->insert_record('lesson', $data);
         // immediately after inserting "activity" record, call this
@@ -126,6 +150,7 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->timeseen = $this->apply_date_offset($data->timeseen);
 
         $newitemid = $DB->insert_record('lesson_attempts', $data);
+        $this->set_mapping('lesson_attempt', $oldid, $newitemid, true); // Has related fileareas.
     }
 
     protected function process_lesson_grade($data) {
@@ -155,15 +180,8 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
     }
 
     protected function process_lesson_highscore($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $oldid = $data->id;
-        $data->lessonid = $this->get_new_parentid('lesson');
-        $data->userid = $this->get_mappingid('user', $data->userid);
-        $data->gradeid = $this->get_mappingid('lesson_grade', $data->gradeid);
-
-        $newitemid = $DB->insert_record('lesson_high_scores', $data);
+        // Do not process any high score data.
+        // high scores were removed in Moodle 3.0 See MDL-49581.
     }
 
     protected function process_lesson_timer($data) {
@@ -175,8 +193,48 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
         $data->userid = $this->get_mappingid('user', $data->userid);
         $data->starttime = $this->apply_date_offset($data->starttime);
         $data->lessontime = $this->apply_date_offset($data->lessontime);
-
+        // Supply item that maybe missing from previous versions.
+        if (!isset($data->completed)) {
+            $data->completed = 0;
+        }
         $newitemid = $DB->insert_record('lesson_timer', $data);
+    }
+
+    /**
+     * Process a lesson override restore
+     * @param object $data The data in object form
+     * @return void
+     */
+    protected function process_lesson_override($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Based on userinfo, we'll restore user overides or no.
+        $userinfo = $this->get_setting_value('userinfo');
+
+        // Skip user overrides if we are not restoring userinfo.
+        if (!$userinfo && !is_null($data->userid)) {
+            return;
+        }
+
+        $data->lessonid = $this->get_new_parentid('lesson');
+
+        if (!is_null($data->userid)) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+        if (!is_null($data->groupid)) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
+
+        $data->available = $this->apply_date_offset($data->available);
+        $data->deadline = $this->apply_date_offset($data->deadline);
+
+        $newitemid = $DB->insert_record('lesson_overrides', $data);
+
+        // Add mapping, restore of logs needs it.
+        $this->set_mapping('lesson_override', $oldid, $newitemid);
     }
 
     protected function after_execute() {
@@ -195,12 +253,14 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
                     'answerid' => $answer->id));
         }
 
-        // Add lesson mediafile, no need to match by itemname (just internally handled context)
+        // Add lesson files, no need to match by itemname (just internally handled context).
+        $this->add_related_files('mod_lesson', 'intro', null);
         $this->add_related_files('mod_lesson', 'mediafile', null);
         // Add lesson page files, by lesson_page itemname
         $this->add_related_files('mod_lesson', 'page_contents', 'lesson_page');
         $this->add_related_files('mod_lesson', 'page_answers', 'lesson_answer');
         $this->add_related_files('mod_lesson', 'page_responses', 'lesson_answer');
+        $this->add_related_files('mod_lesson', 'essay_responses', 'lesson_attempt');
 
         // Remap all the restored prevpageid and nextpageid now that we have all the pages and their mappings
         $rs = $DB->get_recordset('lesson_pages', array('lessonid' => $this->task->get_activityid()),
@@ -222,6 +282,54 @@ class restore_lesson_activity_structure_step extends restore_activity_structure_
             }
         }
         $rs->close();
+
+        // Remap all the restored 'nextpageid' fields now that we have all the pages and their mappings.
+        $rs = $DB->get_recordset('lesson_branch', array('lessonid' => $this->task->get_activityid()),
+                                 '', 'id, nextpageid');
+        foreach ($rs as $answer) {
+            if ($answer->nextpageid > 0) {
+                $answer->nextpageid = $this->get_mappingid('lesson_page', $answer->nextpageid);
+                $DB->update_record('lesson_branch', $answer);
+            }
+        }
+        $rs->close();
+
+        // Replay the upgrade step 2015030301
+        // to clean lesson answers that should be plain text.
+        // 1 = LESSON_PAGE_SHORTANSWER, 8 = LESSON_PAGE_NUMERICAL, 20 = LESSON_PAGE_BRANCHTABLE.
+
+        $sql = 'SELECT a.*
+                  FROM {lesson_answers} a
+                  JOIN {lesson_pages} p ON p.id = a.pageid
+                 WHERE a.answerformat <> :format
+                   AND a.lessonid = :lessonid
+                   AND p.qtype IN (1, 8, 20)';
+        $badanswers = $DB->get_recordset_sql($sql, array('lessonid' => $this->task->get_activityid(), 'format' => FORMAT_MOODLE));
+
+        foreach ($badanswers as $badanswer) {
+            // Strip tags from answer text and convert back the format to FORMAT_MOODLE.
+            $badanswer->answer = strip_tags($badanswer->answer);
+            $badanswer->answerformat = FORMAT_MOODLE;
+            $DB->update_record('lesson_answers', $badanswer);
+        }
+        $badanswers->close();
+
+        // Replay the upgrade step 2015032700.
+        // Delete any orphaned lesson_branch record.
+        if ($DB->get_dbfamily() === 'mysql') {
+            $sql = "DELETE {lesson_branch}
+                      FROM {lesson_branch}
+                 LEFT JOIN {lesson_pages}
+                        ON {lesson_branch}.pageid = {lesson_pages}.id
+                     WHERE {lesson_pages}.id IS NULL";
+        } else {
+            $sql = "DELETE FROM {lesson_branch}
+               WHERE NOT EXISTS (
+                         SELECT 'x' FROM {lesson_pages}
+                          WHERE {lesson_branch}.pageid = {lesson_pages}.id)";
+        }
+
+        $DB->execute($sql);
 
         // Re-map the dependency and activitylink information
         // If a depency or activitylink has no mapping in the backup data then it could either be a duplication of a

@@ -26,10 +26,17 @@ class data_field_multimenu extends data_field_base {
 
     var $type = 'multimenu';
 
-    function display_add_field($recordid=0) {
-        global $DB;
+    function display_add_field($recordid = 0, $formdata = null) {
+        global $DB, $OUTPUT;
 
-        if ($recordid){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id;
+            if (isset($formdata->$fieldname)) {
+                $content = $formdata->$fieldname;
+            } else {
+                $content = array();
+            }
+        } else if ($recordid) {
             $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
             $content = explode('##', $content);
         } else {
@@ -38,10 +45,20 @@ class data_field_multimenu extends data_field_base {
 
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<input name="field_' . $this->field->id . '[xxx]" type="hidden" value="xxx"/>'; // hidden field - needed for empty selection
-        $str .= '<label class="accesshide" for="field_' . $this->field->id . '">' . $this->field->name. '</label>';
-        $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '" multiple="multiple">';
 
-        foreach (explode("\n",$this->field->param1) as $option) {
+        $str .= '<label for="field_' . $this->field->id . '">';
+        $str .= html_writer::span($this->field->name, 'accesshide');
+        if ($this->field->required) {
+            $str .= '<div class="inline-req">';
+            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= '</div>';
+        }
+        $str .= '</label>';
+        $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '"';
+        $str .= ' multiple="multiple" class="mod-data-input">';
+
+        foreach (explode("\n", $this->field->param1) as $option) {
             $option = trim($option);
             $str .= '<option value="' . s($option) . '"';
 
@@ -218,7 +235,7 @@ class data_field_multimenu extends data_field_base {
         global $DB;
 
         if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            if (empty($content->content)) {
+            if (strval($content->content) === '') {
                 return false;
             }
 
@@ -238,5 +255,16 @@ class data_field_multimenu extends data_field_base {
         }
         return false;
     }
-}
 
+    /**
+     * Check if a field from an add form is empty
+     *
+     * @param mixed $value
+     * @param mixed $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        unset($value['xxx']);
+        return !empty($value);
+    }
+}

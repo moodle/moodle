@@ -8,3 +8,4 @@ List of changes:
 * Moved static files to /tinymce/ subfolder.
 * MDL-25736 - French spellchecker fixes.
 * Fix htmlentities conversion in GoogleSpell.php
+* Constructors in Moxiecode_JSONReader, Moxiecode_JSON, Moxiecode_Logger, SpellChecker are renamed to __construct()

@@ -1,0 +1,39 @@
+<div data-region="competencyruleconfig">
+    <div data-region="content">
+
+        {{^config}}
+        <p>{{#str}}cannotaddrules, tool_lp{{/str}}</p>
+        {{/config}}
+
+        {{#config}}
+        <div data-region="rule-base">
+            <div data-region="rule-outcome">
+                <label>{{#str}}outcome, tool_lp{{/str}}</label>
+                <select name="outcome" ng-label="{{#str}}outcome, tool_lp{{/str}}">
+                    {{#outcomes}}
+                    <option value="{{code}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/outcomes}}
+                </select>
+            </div>
+            <div data-region="rule-type">
+                <label>{{#str}}when, tool_lp{{/str}}</label>
+                <select name="rule" ng-label="{{#str}}when, tool_lp{{/str}}">
+                    <option value="-1">{{#str}}choosedots{{/str}}</option>
+                    {{#rules}}
+                    <option value="{{type}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/rules}}
+                </select>
+            </div>
+        </div>
+        <div data-region="rule-config">
+        </div>
+        {{/config}}
+    </div>
+
+    <div data-region="footer">
+        {{#config}}
+        <input type="button" data-action="save" value="{{#str}}savechanges{{/str}}"/>
+        {{/config}}
+        <input type="button" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
+    </div>
+</div>

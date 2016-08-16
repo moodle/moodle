@@ -39,6 +39,7 @@ $string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL
     This will fix admin links in Moodle.';
 $string['availablelangs'] = 'Available language packs';
 $string['caution'] = 'Caution';
+$string['cliadminemail'] = 'New admin user email address';
 $string['cliadminpassword'] = 'New admin user password';
 $string['cliadminusername'] = 'Admin account username';
 $string['clialreadyconfigured'] = 'The configuration file config.php already exists. Please use admin/cli/install_database.php to install Moodle for this site.';
@@ -46,6 +47,7 @@ $string['clialreadyinstalled'] = 'The configuration file config.php already exis
 $string['cliinstallfinished'] = 'Installation completed successfully.';
 $string['cliinstallheader'] = 'Moodle {$a} command line installation program';
 $string['climustagreelicense'] = 'In non interactive mode you must agree to license by specifying --agree-license option';
+$string['cliskipdatabase'] = 'Skipping database installation.';
 $string['clitablesexist'] = 'Database tables already present, cli installation can not continue.';
 $string['compatibilitysettings'] = 'Checking your PHP settings ...';
 $string['compatibilitysettingshead'] = 'Checking your PHP settings ...';
@@ -170,11 +172,13 @@ $string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configu
 $string['nativemariadb'] = 'MariaDB (native/mariadb)';
 $string['nativemariadbhelp'] = '<p>The database is where most of the Moodle settings and data are stored and must be configured here.</p>
 <p>The database name, username, and password are required fields; table prefix is optional.</p>
+<p>The database name may contain only alphanumeric characters, dollar ($) and underscore (_).</p>
 <p>If the database currently does not exist, and the user you specify has permission, Moodle will attempt to create a new database with the correct permissions and settings.</p>
 <p>This driver is not compatible with legacy MyISAM engine.</p>';
 $string['nativemysqli'] = 'Improved MySQL (native/mysqli)';
 $string['nativemysqlihelp'] = '<p>The database is where most of the Moodle settings and data are stored and must be configured here.</p>
 <p>The database name, username, and password are required fields; table prefix is optional.</p>
+<p>The database name may contain only alphanumeric characters, dollar ($) and underscore (_).</p>
 <p>If the database currently does not exist, and the user you specify has permission, Moodle will attempt to create a new database with the correct permissions and settings.</p>';
 $string['nativemssql'] = 'SQL*Server FreeTDS (native/mssql)';
 $string['nativemssqlhelp'] = 'Now you need to configure the database where most Moodle data will be stored.

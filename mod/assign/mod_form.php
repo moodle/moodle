@@ -56,7 +56,7 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $this->add_intro_editor(true, get_string('description', 'assign'));
+        $this->standard_intro_elements(get_string('description', 'assign'));
 
         $mform->addElement('filemanager', 'introattachments',
                             get_string('introattachments', 'assign'),
@@ -138,6 +138,14 @@ class mod_assign_mod_form extends moodleform_mod {
             $mform->freeze('teamsubmission');
         }
 
+        $name = get_string('preventsubmissionnotingroup', 'assign');
+        $mform->addElement('selectyesno', 'preventsubmissionnotingroup', $name);
+        $mform->addHelpButton('preventsubmissionnotingroup',
+            'preventsubmissionnotingroup',
+            'assign');
+        $mform->setType('preventsubmissionnotingroup', PARAM_BOOL);
+        $mform->disabledIf('preventsubmissionnotingroup', 'teamsubmission', 'eq', 0);
+
         $name = get_string('requireallteammemberssubmit', 'assign');
         $mform->addElement('selectyesno', 'requireallteammemberssubmit', $name);
         $mform->addHelpButton('requireallteammemberssubmit', 'requireallteammemberssubmit', 'assign');
@@ -201,32 +209,6 @@ class mod_assign_mod_form extends moodleform_mod {
         $this->apply_admin_defaults();
 
         $this->add_action_buttons();
-
-        // Add warning popup/noscript tag, if grades are changed by user.
-        $hasgrade = false;
-        if (!empty($this->_instance)) {
-            $hasgrade = $DB->record_exists_select('assign_grades',
-                                                  'assignment = ? AND grade <> -1',
-                                                  array($this->_instance));
-        }
-
-        if ($mform->elementExists('grade') && $hasgrade) {
-            $module = array(
-                'name' => 'mod_assign',
-                'fullpath' => '/mod/assign/module.js',
-                'requires' => array('node', 'event'),
-                'strings' => array(array('changegradewarning', 'mod_assign'))
-                );
-            $PAGE->requires->js_init_call('M.mod_assign.init_grade_change', null, false, $module);
-
-            // Add noscript tag in case.
-            $noscriptwarning = $mform->createElement('static',
-                                                     'warning',
-                                                     null,
-                                                     html_writer::tag('noscript',
-                                                     get_string('changegradewarning', 'mod_assign')));
-            $mform->insertElementBefore($noscriptwarning, 'grade');
-        }
     }
 
     /**

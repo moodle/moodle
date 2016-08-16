@@ -108,7 +108,7 @@ $capabilities = array(
 
     // Manually grade and comment on student attempts at a question.
     'mod/quiz:grade' => array(
-        'riskbitmask' => RISK_SPAM,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(

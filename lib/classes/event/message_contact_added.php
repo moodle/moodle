@@ -94,4 +94,9 @@ class message_contact_added extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Messaging contacts are not backed up, so no need to map them on restore.
+        return array('db' => 'message_contacts', 'restore' => base::NOT_MAPPED);
+    }
 }

@@ -119,6 +119,15 @@ class core_message_events_testcase extends advanced_testcase {
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
 
+        // Make sure that the contact blocked event is not triggered again.
+        $sink->clear();
+        message_block_contact($user->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertEmpty($event);
+        // Make sure that we still have 1 blocked user.
+        $this->assertEquals(1, message_count_blocked_users());
+
         // Now blocking a user that is not a contact.
         $sink->clear();
         message_block_contact($user2->id);
@@ -147,6 +156,11 @@ class core_message_events_testcase extends advanced_testcase {
         // Add the user to the admin's contact list.
         message_add_contact($user->id);
 
+        // Block the user.
+        message_block_contact($user->id);
+        // Make sure that we have 1 blocked user.
+        $this->assertEquals(1, message_count_blocked_users());
+
         // Trigger and capture the event when unblocking a contact.
         $sink = $this->redirectEvents();
         message_unblock_contact($user->id);
@@ -160,6 +174,19 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
+
+        // Make sure that we have no blocked users.
+        $this->assertEmpty(message_count_blocked_users());
+
+        // Make sure that the contact unblocked event is not triggered again.
+        $sink->clear();
+        message_unblock_contact($user->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertEmpty($event);
+
+        // Make sure that we still have no blocked users.
+        $this->assertEmpty(message_count_blocked_users());
     }
 
     /**
@@ -218,5 +245,63 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEquals(context_user::instance(2), $event->get_context());
         $url = new moodle_url('/message/index.php', array('user1' => $event->userid, 'user2' => $event->relateduserid));
         $this->assertEquals($url, $event->get_url());
+    }
+
+    /**
+     * Test the message deleted event.
+     */
+    public function test_message_deleted() {
+        global $DB;
+
+        // Create a message.
+        $message = new stdClass();
+        $message->useridfrom = '1';
+        $message->useridto = '2';
+        $message->subject = 'Subject';
+        $message->message = 'Message';
+        $message->timeuserfromdeleted = 0;
+        $message->timeusertodeleted = 0;
+        $message->id = $DB->insert_record('message', $message);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        message_delete_message($message, $message->useridfrom);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\message_deleted', $event);
+        $this->assertEquals($message->useridfrom, $event->userid); // The user who deleted it.
+        $this->assertEquals($message->useridto, $event->relateduserid);
+        $this->assertEquals('message', $event->other['messagetable']);
+        $this->assertEquals($message->id, $event->other['messageid']);
+        $this->assertEquals($message->useridfrom, $event->other['useridfrom']);
+        $this->assertEquals($message->useridto, $event->other['useridto']);
+
+        // Create a read message.
+        $message = new stdClass();
+        $message->useridfrom = '2';
+        $message->useridto = '1';
+        $message->subject = 'Subject';
+        $message->message = 'Message';
+        $message->timeuserfromdeleted = 0;
+        $message->timeusertodeleted = 0;
+        $message->timeread = time();
+        $message->id = $DB->insert_record('message_read', $message);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        message_delete_message($message, $message->useridto);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\message_deleted', $event);
+        $this->assertEquals($message->useridto, $event->userid);
+        $this->assertEquals($message->useridfrom, $event->relateduserid);
+        $this->assertEquals('message_read', $event->other['messagetable']);
+        $this->assertEquals($message->id, $event->other['messageid']);
+        $this->assertEquals($message->useridfrom, $event->other['useridfrom']);
+        $this->assertEquals($message->useridto, $event->other['useridto']);
     }
 }

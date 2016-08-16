@@ -1,5 +1,6 @@
 YUI.add('moodle-mod_quiz-dragdrop', function (Y, NAME) {
 
+/* eslint-disable no-unused-vars */
 /**
  * Drag and Drop for Quiz sections and slots.
  *
@@ -19,10 +20,10 @@ var CSS = {
     LIGHTBOX: 'lightbox',
     MOVEDOWN: 'movedown',
     MOVEUP: 'moveup',
-    PAGE : 'page',
+    PAGE: 'page',
     PAGECONTENT: 'page-content',
     RIGHT: 'right',
-    SECTION: 'section',
+    SECTION: 'slots',
     SECTIONADDMENUS: 'section_add_menus',
     SECTIONHANDLE: 'section-handle',
     SLOTS: 'slots',
@@ -49,16 +50,16 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
 
     initializer: function() {
         // Set group for parent class
-        this.groups = [ CSS.SECTIONDRAGGABLE ];
-        this.samenodeclass = M.mod_quiz.edit.get_sectionwrapperclass();
-        this.parentnodeclass = M.mod_quiz.edit.get_containerclass();
+        this.groups = [CSS.SECTIONDRAGGABLE];
+        this.samenodeclass = 'section';
+        this.parentnodeclass = 'slots';
 
         // Check if we are in single section mode
         if (Y.Node.one('.' + CSS.JUMPMENU)) {
             return false;
         }
         // Initialise sections dragging
-        this.sectionlistselector = M.mod_quiz.edit.get_section_wrapper(Y);
+        this.sectionlistselector = 'li.section';
         if (this.sectionlistselector) {
             this.sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + this.sectionlistselector;
 
@@ -131,10 +132,8 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
         // Get our drag object
         var drag = e.target;
         // Creat a dummy structure of the outer elemnents for clean styles application
-        var containernode = Y.Node.create('<' + M.mod_quiz.edit.get_containernode() + '></' + M.mod_quiz.edit.get_containernode() + '>');
-        containernode.addClass(M.mod_quiz.edit.get_containerclass());
-        var sectionnode = Y.Node.create('<' + M.mod_quiz.edit.get_sectionwrappernode() + '></' + M.mod_quiz.edit.get_sectionwrappernode() + '>');
-        sectionnode.addClass( M.mod_quiz.edit.get_sectionwrapperclass());
+        var containernode = Y.Node.create('<ul class="slots"></ul>');
+        var sectionnode = Y.Node.create('<ul class="section"></ul>');
         sectionnode.setStyle('margin', 0);
         sectionnode.setContent(drag.get('node').get('innerHTML'));
         containernode.appendChild(sectionnode);
@@ -150,7 +149,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
     },
 
     get_section_index: function(node) {
-        var sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + M.mod_quiz.edit.get_section_selector(Y),
+        var sectionlistselector = '.' + CSS.COURSECONTENT + ' li.section',
             sectionList = Y.all(sectionlistselector),
             nodeIndex = sectionList.indexOf(node),
             zeroIndex = sectionList.indexOf(Y.one('#section-0'));
@@ -170,7 +169,8 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
             loopend = dropnodeindex;
 
         if (dragnodeid === dropnodeindex) {
-            Y.log("Skipping move - same location moving " + dragnodeid + " to " + dropnodeindex, 'debug', 'moodle-mod_quiz-dragdrop');
+            Y.log("Skipping move - same location moving " + dragnodeid + " to " + dropnodeindex,
+                  'debug', 'moodle-mod_quiz-dragdrop');
             return;
         }
 
@@ -229,7 +229,9 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                             new M.core.ajaxException(responsetext);
                         }
                         M.mod_quiz.edit.process_sections(Y, sectionlist, responsetext, loopstart, loopend);
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
 
                     // Update all of the section IDs - first unset them, then set them
                     // to avoid duplicates in the DOM.
@@ -271,7 +273,7 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                     lightbox.hide();
                 }
             },
-            context:this
+            context: this
         });
     }
 
@@ -297,6 +299,7 @@ M.mod_quiz = M.mod_quiz || {};
 M.mod_quiz.init_section_dragdrop = function(params) {
     new DRAGSECTION(params);
 };
+/* global SELECTOR */
 /**
  * Resource drag and drop.
  *
@@ -325,34 +328,30 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         };
 
         // Go through all sections
-        var sectionlistselector = M.mod_quiz.edit.get_section_selector(Y);
-        if (sectionlistselector) {
-            sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + sectionlistselector;
-            this.setup_for_section(sectionlistselector);
+        this.setup_for_section();
 
-            // Initialise drag & drop for all resources/activities
-            var nodeselector = sectionlistselector.slice(CSS.COURSECONTENT.length + 2) + ' li.' + CSS.ACTIVITY;
-            var del = new Y.DD.Delegate({
-                container: '.' + CSS.COURSECONTENT,
-                nodes: nodeselector,
-                target: true,
-                handles: ['.' + CSS.EDITINGMOVE],
-                dragConfig: {groups: this.groups}
-            });
-            del.dd.plug(Y.Plugin.DDProxy, {
-                // Don't move the node at the end of the drag
-                moveOnEnd: false,
-                cloneNode: true
-            });
-            del.dd.plug(Y.Plugin.DDConstrained, {
-                // Keep it inside the .mod-quiz-edit-content
-                constrain: '#' + CSS.SLOTS
-            });
-            del.dd.plug(Y.Plugin.DDWinScroll);
+        // Initialise drag & drop for all resources/activities
+        var nodeselector = 'li.' + CSS.ACTIVITY;
+        var del = new Y.DD.Delegate({
+            container: '.' + CSS.COURSECONTENT,
+            nodes: nodeselector,
+            target: true,
+            handles: ['.' + CSS.EDITINGMOVE],
+            dragConfig: {groups: this.groups}
+        });
+        del.dd.plug(Y.Plugin.DDProxy, {
+            // Don't move the node at the end of the drag
+            moveOnEnd: false,
+            cloneNode: true
+        });
+        del.dd.plug(Y.Plugin.DDConstrained, {
+            // Keep it inside the .mod-quiz-edit-content
+            constrain: '#' + CSS.SLOTS
+        });
+        del.dd.plug(Y.Plugin.DDWinScroll);
 
-            M.mod_quiz.quizbase.register_module(this);
-            M.mod_quiz.dragres = this;
-        }
+        M.mod_quiz.quizbase.register_module(this);
+        M.mod_quiz.dragres = this;
     },
 
     /**
@@ -361,15 +360,8 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
      * @method setup_for_section
      * @param {String} baseselector The CSS selector or node to limit scope to
      */
-    setup_for_section: function(baseselector) {
-        Y.Node.all(baseselector).each(function(sectionnode) {
-            var resources = sectionnode.one('.' + CSS.CONTENT + ' ul.' + CSS.SECTION);
-            // See if resources ul exists, if not create one.
-            if (!resources) {
-                resources = Y.Node.create('<ul></ul>');
-                resources.addClass(CSS.SECTION);
-                sectionnode.one('.' + CSS.CONTENT + ' div.' + CSS.SUMMARY).insert(resources, 'after');
-            }
+    setup_for_section: function() {
+        Y.Node.all('.mod-quiz-edit-content ul.slots ul.section').each(function(resources) {
             resources.setAttribute('data-draggroups', this.groups.join(' '));
             // Define empty ul as droptarget, so that item could be moved to empty list
             new Y.DD.Drop({
@@ -379,7 +371,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             });
 
             // Initialise each resource/activity in this section
-            this.setup_for_resource('#' + sectionnode.get('id') + ' li.' + CSS.ACTIVITY);
+            this.setup_for_resource('li.activity');
         }, this);
     },
 
@@ -439,7 +431,7 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
         params['class'] = 'resource';
         params.field = 'move';
         params.id = Number(Y.Moodle.mod_quiz.util.slot.getId(dragnode));
-        params.sectionId = Y.Moodle.core_course.util.section.getId(dropnode.ancestor(M.mod_quiz.edit.get_section_wrapper(Y), true));
+        params.sectionId = Y.Moodle.core_course.util.section.getId(dropnode.ancestor('li.section', true));
 
         var previousslot = dragnode.previous(SELECTOR.SLOT);
         if (previousslot) {
@@ -479,12 +471,12 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
                     window.location.reload(true);
                 }
             },
-            context:this
+            context: this
         });
     },
 
     global_drop_over: function(e) {
-        //Overriding parent method so we can stop the slots being dragged before the first page node.
+        // Overriding parent method so we can stop the slots being dragged before the first page node.
 
         // Check that drop object belong to correct group.
         if (!e.drop || !e.drop.inGroup(this.groups)) {

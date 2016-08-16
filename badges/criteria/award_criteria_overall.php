@@ -45,19 +45,31 @@ class award_criteria_overall extends award_criteria {
         $prefix = 'criteria-' . $this->id;
         if (count($data->criteria) > 2) {
             echo $OUTPUT->box_start();
+            if (!empty($this->description)) {
+                $badge = new badge($this->badgeid);
+                echo $OUTPUT->box(
+                    format_text($this->description, $this->descriptionformat, array('context' => $badge->get_context())),
+                    'criteria-description');
+            }
             echo $OUTPUT->heading($this->get_title(), 2);
 
             $agg = $data->get_aggregation_methods();
             if (!$data->is_locked() && !$data->is_active()) {
-                $url = new moodle_url('criteria.php', array('id' => $data->id, 'sesskey' => sesskey()));
-                $table = new html_table();
-                $table->attributes = array('class' => 'clearfix');
-                $table->colclasses = array('', 'activatebadge');
-                $table->data[] = array(
-                        $OUTPUT->single_select($url, 'update', $agg, $data->get_aggregation_method($this->criteriatype), null),
-                        get_string('overallcrit', 'badges')
+                $editurl = new moodle_url('/badges/criteria_settings.php',
+                               array('badgeid' => $this->badgeid,
+                                   'edit' => true,
+                                   'type' => $this->criteriatype,
+                                   'crit' => $this->id
+                               )
                         );
-                echo html_writer::table($table);
+                $editaction = $OUTPUT->action_icon($editurl, new pix_icon('t/edit', get_string('edit')), null,
+                              array('class' => 'criteria-action'));
+                echo $OUTPUT->box($editaction, array('criteria-header'));
+
+                $url = new moodle_url('criteria.php', array('id' => $data->id, 'sesskey' => sesskey()));
+                echo $OUTPUT->single_select($url, 'update', $agg, $data->get_aggregation_method($this->criteriatype),
+                    null, null, array('aria-describedby' => 'overall'));
+                echo html_writer::span(get_string('overallcrit', 'badges'), '', array('id' => 'overall'));
             } else {
                 echo $OUTPUT->box(get_string('criteria_descr_' . $this->criteriatype, 'badges',
                         core_text::strtoupper($agg[$data->get_aggregation_method()])), 'clearfix');
@@ -154,5 +166,39 @@ class award_criteria_overall extends award_criteria {
      * @return array
      */
     public function get_params($cid) {
+    }
+
+    /**
+     * Saves overall badge criteria description.
+     *
+     * @param array $params Values from the form or any other array.
+     */
+    public function save($params = array()) {
+        global $DB;
+
+        // Sort out criteria description.
+        // If it is coming from the form editor, it is an array of (text, format).
+        $description = '';
+        $descriptionformat = FORMAT_HTML;
+        if (isset($params['description']['text'])) {
+            $description = $params['description']['text'];
+            $descriptionformat = $params['description']['format'];
+        } else if (isset($params['description'])) {
+            $description = $params['description'];
+        }
+
+        $fordb = new stdClass();
+        $fordb->criteriatype = $this->criteriatype;
+        $fordb->badgeid = $this->badgeid;
+        $fordb->description = $description;
+        $fordb->descriptionformat = $descriptionformat;
+        if ($this->id !== 0) {
+            $fordb->id = $this->id;
+            $DB->update_record('badge_criteria', $fordb);
+        } else {
+            // New record in DB, set aggregation to ALL by default.
+            $fordb->method = BADGE_CRITERIA_AGGREGATION_ALL;
+            $DB->insert_record('badge_criteria', $fordb);
+        }
     }
 }

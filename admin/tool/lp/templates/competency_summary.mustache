@@ -1,0 +1,31 @@
+<div class='competency-heading'>
+    <h4 id="competency_link_{{competency.id}}">{{{competency.shortname}}}
+        <small>{{competency.idnumber}}</small>
+    </h4>
+    {{#framework}}
+        <div class='competency-origin'>
+            <p><small>{{{framework.shortname}}} - {{taxonomyterm}}</small>
+        </div>
+    {{/framework}}
+</div>
+
+{{#competency.description}}
+<p>{{{competency.description}}}</p>
+{{/competency.description}}
+{{#comppath}}
+    <span class="pull-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
+{{/comppath}}
+{{#showrelatedcompetencies}}
+    {{> tool_lp/related_competencies }}
+{{/showrelatedcompetencies}}
+
+{{#showrule}}
+    <h5>{{#str}}competencyrule, tool_lp{{/str}}</h5>
+    <dl>
+        <dt>{{#str}}outcome, tool_lp{{/str}}</dt>
+        <dd>{{rule.outcome}}</dd>
+        <dt>{{#str}}when, tool_lp{{/str}}</dt>
+        <dd>{{rule.type}}</dd>
+    </dl>
+{{/showrule}}
+

@@ -27,17 +27,14 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     /** @var stdClass a dummy event */
     protected $event;
 
-    /** @var string system timezone */
-    protected $tz;
-
     /**
      * Set up method.
      */
     protected function setUp() {
-        global $DB;
+        global $DB, $CFG;
         $this->resetAfterTest();
-        $this->tz = date_default_timezone_get();
-        date_default_timezone_set('Australia/Perth');
+
+        $this->setTimezone('Australia/Perth');
 
         $user = $this->getDataGenerator()->create_user();
         $sub = new stdClass();
@@ -66,13 +63,6 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
     }
 
     /**
-     * Tear down method.
-     */
-    protected function tearDown() {
-        date_default_timezone_set($this->tz);
-    }
-
-    /**
      * Test parse_rrule() method.
      */
     public function test_parse_rrule() {
@@ -96,22 +86,24 @@ class core_calendar_rrule_manager_testcase extends advanced_testcase {
 
     /**
      * Test exception is thrown for invalid property.
+     *
+     * @expectedException moodle_exception
      */
     public function test_parse_rrule_validation() {
 
         $rrule = "RANDOM=PROPERTY;";
-        $this->setExpectedException('moodle_exception');
         $mang = new core_tests_calendar_rrule_manager($rrule);
         $mang->parse_rrule();
     }
 
     /**
      * Test exception is thrown for invalid frequency.
+     *
+     * @expectedException moodle_exception
      */
     public function test_freq_validation() {
 
         $rrule = "FREQ=RANDOMLY;";
-        $this->setExpectedException('moodle_exception');
         $mang = new core_tests_calendar_rrule_manager($rrule);
         $mang->parse_rrule();
     }

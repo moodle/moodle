@@ -170,33 +170,31 @@ class award_criteria_profile extends award_criteria {
         }
 
         $join = '';
-        $where = '';
+        $whereparts = array();
         $sqlparams = array();
         $rule = ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) ? ' OR ' : ' AND ';
 
         foreach ($this->params as $param) {
             if (is_numeric($param['field'])) {
-                $infodata[] = " uid.fieldid = :fieldid{$param['field']} ";
-                $sqlparams["fieldid{$param['field']}"] = $param['field'];
+                // This is a custom field.
+                $idx = count($whereparts) + 1;
+                $join .= " LEFT JOIN {user_info_data} uid{$idx} ON uid{$idx}.userid = u.id AND uid{$idx}.fieldid = :fieldid{$idx} ";
+                $sqlparams["fieldid{$idx}"] = $param['field'];
+                $whereparts[] = "uid{$idx}.id IS NOT NULL";
             } else {
-                $userdata[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
+                // This is a field from {user} table.
+                $whereparts[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
             }
         }
 
-        // Add user custom field parameters if there are any.
-        if (!empty($infodata)) {
-            $extraon = implode($rule, $infodata);
-            $join = " LEFT JOIN {user_info_data} uid ON uid.userid = u.id AND ({$extraon})";
-        }
-
-        // Add user table field parameters if there are any.
-        if (!empty($userdata)) {
-            $extraon = implode($rule, $userdata);
-            $where = " AND ({$extraon})";
-        }
-
         $sqlparams['userid'] = $userid;
-        $sql = "SELECT u.* FROM {user} u " . $join . " WHERE u.id = :userid " . $where;
+
+        if ($whereparts) {
+            $where = " AND (" . implode($rule, $whereparts) . ")";
+        } else {
+            $where = '';
+        }
+        $sql = "SELECT 1 FROM {user} u " . $join . " WHERE u.id = :userid $where";
         $overall = $DB->record_exists_sql($sql, $sqlparams);
 
         return $overall;
@@ -212,29 +210,26 @@ class award_criteria_profile extends award_criteria {
         global $DB;
 
         $join = '';
-        $where = '';
+        $whereparts = array();
         $params = array();
         $rule = ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) ? ' OR ' : ' AND ';
 
         foreach ($this->params as $param) {
             if (is_numeric($param['field'])) {
-                $infodata[] = " uid.fieldid = :fieldid{$param['field']} ";
-                $params["fieldid{$param['field']}"] = $param['field'];
+                // This is a custom field.
+                $idx = count($whereparts);
+                $join .= " LEFT JOIN {user_info_data} uid{$idx} ON uid{$idx}.userid = u.id AND uid{$idx}.fieldid = :fieldid{$idx} ";
+                $params["fieldid{$idx}"] = $param['field'];
+                $whereparts[] = "uid{$idx}.id IS NOT NULL";
             } else {
-                $userdata[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
+                $whereparts[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
             }
         }
 
-        // Add user custom fields if there are any.
-        if (!empty($infodata)) {
-            $extraon = implode($rule, $infodata);
-            $join = " LEFT JOIN {user_info_data} uid ON uid.userid = u.id AND ({$extraon})";
-        }
-
-        // Add user table fields if there are any.
-        if (!empty($userdata)) {
-            $extraon = implode($rule, $userdata);
-            $where = " AND ({$extraon})";
+        if ($whereparts) {
+            $where = " AND (" . implode($rule, $whereparts) . ")";
+        } else {
+            $where = '';
         }
         return array($join, $where, $params);
     }

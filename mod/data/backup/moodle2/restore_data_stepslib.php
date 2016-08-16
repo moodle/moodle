@@ -61,6 +61,8 @@ class restore_data_activity_structure_step extends restore_activity_structure_st
         $data->timeviewto = $this->apply_date_offset($data->timeviewto);
         $data->assesstimestart = $this->apply_date_offset($data->assesstimestart);
         $data->assesstimefinish = $this->apply_date_offset($data->assesstimefinish);
+        // Added in 3.1, hence conditional.
+        $data->timemodified = isset($data->timemodified) ? $this->apply_date_offset($data->timemodified) : time();
 
         if ($data->scale < 0) { // scale found, get mapping
             $data->scale = -($this->get_mappingid('scale', abs($data->scale)));

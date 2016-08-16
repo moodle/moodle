@@ -58,17 +58,14 @@ if (!empty($registeredhub) and $registeredhub->token == $token) {
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('registrationconfirmed', 'hub'), 3, 'main');
-    $hublink = html_writer::tag('a', $hubname, array('href' => $url));
 
     $registeredhub->token = $newtoken;
     $registeredhub->confirmed = 1;
     $registeredhub->hubname = $hubname;
     $registrationmanager->update_registeredhub($registeredhub);
 
-    //display notficiation message
-    $notificationmessage = $OUTPUT->notification(
-            get_string('registrationconfirmedon', 'hub', $hublink), 'notifysuccess');
-    echo $notificationmessage;
+    // Display notification message.
+    echo $OUTPUT->notification(get_string('registrationconfirmedon', 'hub'), 'notifysuccess');
 
     //display continue button
     $registrationpage = new moodle_url('/admin/registration/index.php');

@@ -95,13 +95,15 @@ class mbz_packer extends file_packer {
      * @param string $pathname target directory
      * @param array $onlyfiles only extract files present in the array
      * @param file_progress $progress Progress indicator callback or null if not required
+     * @param bool $returnbool Whether to return a basic true/false indicating error state, or full per-file error
+     * details.
      * @return array list of processed files (name=>true)
      * @throws moodle_exception If error
      */
     public function extract_to_pathname($archivefile, $pathname,
-            array $onlyfiles = null, file_progress $progress = null) {
+            array $onlyfiles = null, file_progress $progress = null, $returnbool = false) {
         return $this->get_packer_for_read_operation($archivefile)->extract_to_pathname(
-                $archivefile, $pathname, $onlyfiles, $progress);
+                $archivefile, $pathname, $onlyfiles, $progress, $returnbool);
     }
 
     /**
@@ -146,10 +148,11 @@ class mbz_packer extends file_packer {
         global $CFG;
         require_once($CFG->dirroot . '/lib/filestorage/tgz_packer.php');
 
-        if ($CFG->enabletgzbackups) {
-            return get_file_packer('application/x-gzip');
-        } else {
+        if (!empty($CFG->usezipbackups)) {
+            // Allow forced use of zip backups.
             return get_file_packer('application/zip');
+        } else {
+            return get_file_packer('application/x-gzip');
         }
     }
 

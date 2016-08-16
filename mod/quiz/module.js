@@ -226,7 +226,6 @@ M.mod_quiz.secure_window = {
         Y.delegate('cut',         M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('copy',        M.mod_quiz.secure_window.prevent, document, '*');
         Y.delegate('paste',       M.mod_quiz.secure_window.prevent, document, '*');
-        M.mod_quiz.secure_window.clear_status;
         Y.on('beforeprint', function() {
             Y.one(document.body).setStyle('display', 'none');
         }, window);
@@ -239,11 +238,6 @@ M.mod_quiz.secure_window = {
         Y.on('key', M.mod_quiz.secure_window.prevent, '*', 'press:67,86,88+meta');
         Y.on('key', M.mod_quiz.secure_window.prevent, '*', 'up:67,86,88+meta');
         Y.on('key', M.mod_quiz.secure_window.prevent, '*', 'down:67,86,88+meta');
-    },
-
-    clear_status: function() {
-        window.status = '';
-        setTimeout(M.mod_quiz.secure_window.clear_status, 10);
     },
 
     is_content_editable: function(n) {
@@ -276,23 +270,6 @@ M.mod_quiz.secure_window = {
             return;
         }
         e.halt();
-    },
-
-    /**
-     * Event handler for the quiz start attempt button.
-     */
-    start_attempt_action: function(e, args) {
-        if (args.startattemptwarning == '') {
-            openpopup(e, args);
-        } else {
-            M.util.show_confirm_dialog(e, {
-                message: args.startattemptwarning,
-                callback: function() {
-                    openpopup(e, args);
-                },
-                continuelabel: M.util.get_string('startattempt', 'quiz')
-            });
-        }
     },
 
     init_close_button: function(Y, url) {

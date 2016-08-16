@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
-require_once(dirname(__FILE__).'/lib.php');
-require_once(dirname(__FILE__).'/edit_form.php');
+require_once(__DIR__.'/../../../../config.php');
+require_once(__DIR__.'/lib.php');
+require_once(__DIR__.'/edit_form.php');
 require_once($CFG->dirroot.'/grade/grading/lib.php');
 
 $areaid = required_param('areaid', PARAM_INT);
@@ -56,6 +56,10 @@ if ($mform->is_cancelled()) {
     $controller->update_definition($mform->get_data());
     redirect($returnurl);
 }
+
+// Try to keep the session alive on this page as it may take some time
+// before significant interaction happens with the server.
+\core\session\manager::keepalive();
 
 echo $OUTPUT->header();
 $mform->display();

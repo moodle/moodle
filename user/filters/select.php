@@ -52,11 +52,21 @@ class user_filter_select extends user_filter_type {
      * @param array $options select options
      * @param mixed $default option
      */
-    public function user_filter_select($name, $label, $advanced, $field, $options, $default=null) {
-        parent::user_filter_type($name, $label, $advanced);
+    public function __construct($name, $label, $advanced, $field, $options, $default=null) {
+        parent::__construct($name, $label, $advanced);
         $this->_field   = $field;
         $this->_options = $options;
         $this->_default = $default;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function user_filter_select($name, $label, $advanced, $field, $options, $default=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($name, $label, $advanced, $field, $options, $default=null);
     }
 
     /**
@@ -75,8 +85,10 @@ class user_filter_select extends user_filter_type {
      */
     public function setupForm(&$mform) {
         $objs = array();
-        $objs[] = $mform->createElement('select', $this->_name.'_op', null, $this->get_operators());
-        $objs[] = $mform->createElement('select', $this->_name, null, $this->_options);
+        $objs['limiter'] = $mform->createElement('select', $this->_name.'_op', null, $this->get_operators());
+        $objs['limiter']->setLabel(get_string('limiterfor', 'filters', $this->_label));
+        $objs['country'] = $mform->createElement('select', $this->_name, null, $this->_options);
+        $objs['country']->setLabel(get_string('valuefor', 'filters', $this->_label));
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $mform->disabledIf($this->_name, $this->_name.'_op', 'eq', 0);
         if (!is_null($this->_default)) {

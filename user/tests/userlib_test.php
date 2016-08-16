@@ -38,6 +38,43 @@ require_once($CFG->dirroot.'/user/lib.php');
  */
 class core_userliblib_testcase extends advanced_testcase {
     /**
+     * Test user_get_user_details_courses
+     */
+    public function test_user_get_user_details_courses() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create user and modify user profile.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course1->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        role_assign($teacherrole->id, $user1->id, $coursecontext->id);
+        role_assign($teacherrole->id, $user2->id, $coursecontext->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Get user2 details as a user with super system capabilities.
+        $result = user_get_user_details_courses($user2);
+        $this->assertEquals($user2->id, $result['id']);
+        $this->assertEquals(fullname($user2), $result['fullname']);
+        $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
+
+        $this->setUser($user1);
+        // Get user2 details as a user who can only see this user in a course.
+        $result = user_get_user_details_courses($user2);
+        $this->assertEquals($user2->id, $result['id']);
+        $this->assertEquals(fullname($user2), $result['fullname']);
+        $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
+
+    }
+
+    /**
      * Test user_update_user.
      */
     public function test_user_update_user() {
@@ -92,6 +129,29 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\user_password_updated', $event);
+
+        // Test user data validation.
+        $user->username = 'johndoe123';
+        $user->auth = 'shibolth';
+        $user->country = 'WW';
+        $user->lang = 'xy';
+        $user->theme = 'somewrongthemename';
+        $user->timezone = '30.5';
+        $user->url = 'wwww.somewrong@#$url.com.aus';
+        $debugmessages = $this->getDebuggingMessages();
+        user_update_user($user, true, false);
+        $this->assertDebuggingCalledCount(6, $debugmessages);
+
+        // Now, with valid user data.
+        $user->username = 'johndoe321';
+        $user->auth = 'shibboleth';
+        $user->country = 'AU';
+        $user->lang = 'en';
+        $user->theme = 'clean';
+        $user->timezone = 'Australia/Perth';
+        $user->url = 'www.moodle.org';
+        user_update_user($user, true, false);
+        $this->assertDebuggingNotCalled();
     }
 
     /**
@@ -112,10 +172,10 @@ class core_userliblib_testcase extends advanced_testcase {
             'lastnamephonetic' => '最後のお名前のテスト一号',
             'firstnamephonetic' => 'お名前のテスト一号',
             'alternatename' => 'Alternate Name User Test 1',
-            'email' => 'usertest1@email.com',
+            'email' => 'usertest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
-            'country' => 'au'
+            'country' => 'AU'
             );
 
         // Create user and capture event.
@@ -152,6 +212,33 @@ class core_userliblib_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $sink->close();
         $this->assertCount(0, $events);
+
+        // Test user data validation, first some invalid data.
+        $user['username'] = 'johndoe123';
+        $user['auth'] = 'shibolth';
+        $user['country'] = 'WW';
+        $user['lang'] = 'xy';
+        $user['theme'] = 'somewrongthemename';
+        $user['timezone'] = '-30.5';
+        $user['url'] = 'wwww.somewrong@#$url.com.aus';
+        $debugmessages = $this->getDebuggingMessages();
+        $user['id'] = user_create_user($user, true, false);
+        $this->assertDebuggingCalledCount(6, $debugmessages);
+        $dbuser = $DB->get_record('user', array('id' => $user['id']));
+        $this->assertEquals($dbuser->country, 0);
+        $this->assertEquals($dbuser->lang, 'en');
+        $this->assertEquals($dbuser->timezone, '');
+
+        // Now, with valid user data.
+        $user['username'] = 'johndoe321';
+        $user['auth'] = 'shibboleth';
+        $user['country'] = 'AU';
+        $user['lang'] = 'en';
+        $user['theme'] = 'clean';
+        $user['timezone'] = 'Australia/Perth';
+        $user['url'] = 'www.moodle.org';
+        user_create_user($user, true, false);
+        $this->assertDebuggingNotCalled();
     }
 
     /**
@@ -346,5 +433,146 @@ class core_userliblib_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('user_password_history'));
         $this->assertEquals(1, $DB->count_records('user_password_history', array('userid' => $user1->id)));
         $this->assertEquals(0, $DB->count_records('user_password_history', array('userid' => $user2->id)));
+    }
+
+    /**
+     * Test user_list_view function
+     */
+    public function test_user_list_view() {
+
+        $this->resetAfterTest();
+
+        // Course without sections.
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $this->setAdminUser();
+
+        // Redirect events to the sink, so we can recover them later.
+        $sink = $this->redirectEvents();
+
+        user_list_view($course, $context);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\core\event\user_list_viewed', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($course->shortname, $event->other['courseshortname']);
+        $this->assertEquals($course->fullname, $event->other['coursefullname']);
+
+    }
+
+    /**
+     * Test setting the user menu avatar size.
+     */
+    public function test_user_menu_custom_avatar_size() {
+        global $PAGE;
+        $this->resetAfterTest(true);
+
+        $testsize = 100;
+
+        $user = $this->getDataGenerator()->create_user();
+        $opts = user_get_user_navigation_info($user, $PAGE, array('avatarsize' => $testsize));
+        $avatarhtml = $opts->metadata['useravatar'];
+
+        $matches = [];
+        preg_match('/(?:.*width=")(\d*)(?:" height=")(\d*)(?:".*\/>)/', $avatarhtml, $matches);
+        $this->assertCount(3, $matches);
+
+        $this->assertEquals(intval($matches[1]), $testsize);
+        $this->assertEquals(intval($matches[2]), $testsize);
+    }
+
+    /**
+     * Test user_can_view_profile
+     */
+    public function test_user_can_view_profile() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        // Create five users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+        $user5 = $this->getDataGenerator()->create_user();
+        $user6 = $this->getDataGenerator()->create_user(array('deleted' => 1));
+        $user7 = $this->getDataGenerator()->create_user();
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        // Add the course creator role to the course contact and assign a user to that role.
+        $CFG->coursecontact = '2';
+        $coursecreatorrole = $DB->get_record('role', array('shortname' => 'coursecreator'));
+        $this->getDataGenerator()->role_assign($coursecreatorrole->id, $user7->id);
+
+         // Create two courses.
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course2->id);
+        // Prepare another course with separate groups and groupmodeforce set to true.
+        $record = new stdClass();
+        $record->groupmode = 1;
+        $record->groupmodeforce = 1;
+        $course3 = $this->getDataGenerator()->create_course($record);
+        // Enrol users 1 and 2 in first course.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+        // Enrol users 2 and 3 in second course.
+        $this->getDataGenerator()->enrol_user($user2->id, $course2->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course2->id);
+        // Enrol users 1, 4, and 5 into course 3.
+        $this->getDataGenerator()->enrol_user($user1->id, $course3->id);
+        $this->getDataGenerator()->enrol_user($user4->id, $course3->id);
+        $this->getDataGenerator()->enrol_user($user5->id, $course3->id);
+
+        // Remove capability moodle/user:viewdetails in course 2.
+        assign_capability('moodle/user:viewdetails', CAP_PROHIBIT, $studentrole->id, $coursecontext);
+        $coursecontext->mark_dirty();
+        // Set current user to user 1.
+        $this->setUser($user1);
+        // User 1 can see User 1's profile.
+        $this->assertTrue(user_can_view_profile($user1));
+
+        $tempcfg = $CFG->forceloginforprofiles;
+        $CFG->forceloginforprofiles = 0;
+        // Not forced to log in to view profiles, should be able to see all profiles besides user 6.
+        $users = array($user1, $user2, $user3, $user4, $user5, $user7);
+        foreach ($users as $user) {
+            $this->assertTrue(user_can_view_profile($user));
+        }
+        // Restore setting.
+        $CFG->forceloginforprofiles = $tempcfg;
+
+        // User 1 can not see user 6 as they have been deleted.
+        $this->assertFalse(user_can_view_profile($user6));
+        // User 1 can see User 7 as they are a course contact.
+        $this->assertTrue(user_can_view_profile($user7));
+        // User 1 is in a course with user 2 and has the right capability - return true.
+        $this->assertTrue(user_can_view_profile($user2));
+        // User 1 is not in a course with user 3 - return false.
+        $this->assertFalse(user_can_view_profile($user3));
+
+        // Set current user to user 2.
+        $this->setUser($user2);
+        // User 2 is in a course with user 3 but does not have the right capability - return false.
+        $this->assertFalse(user_can_view_profile($user3));
+
+        // Set user 1 in one group and users 4 and 5 in another group.
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course3->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course3->id));
+        groups_add_member($group1->id, $user1->id);
+        groups_add_member($group2->id, $user4->id);
+        groups_add_member($group2->id, $user5->id);
+        $this->setUser($user1);
+        // Check that user 1 can not see user 4.
+        $this->assertFalse(user_can_view_profile($user4));
+        // Check that user 5 can see user 4.
+        $this->setUser($user5);
+        $this->assertTrue(user_can_view_profile($user4));
+
+        $CFG->coursecontact = null;
     }
 }

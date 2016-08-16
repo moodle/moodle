@@ -196,6 +196,8 @@ class grade_export_form extends moodleform {
         $submitstring = get_string('download');
         if (empty($features['simpleui'])) {
             $submitstring = get_string('submit');
+        } else if (!empty($CFG->gradepublishing)) {
+            $submitstring = get_string('export', 'grades');
         }
 
         $this->add_action_buttons(false, $submitstring);

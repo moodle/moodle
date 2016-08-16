@@ -69,7 +69,7 @@ class core_event_grade_deleted_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         course_delete_module($quiz->cmid);
         $events = $sink->get_events();
-        $event = reset($events);
+        $event = $events[1];
         $sink->close();
 
         // Check the event details are correct.

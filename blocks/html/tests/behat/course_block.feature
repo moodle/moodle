@@ -7,8 +7,8 @@ Feature: HTML blocks in a course
   Scenario: Adding HTML block in a course
     Given the following "users" exist:
       | username | firstname | lastname | email            |
-      | teacher1 | Terry1    | Teacher1 | teacher@asd.com  |
-      | student1 | Sam1      | Student1 | student1@asd.com |
+      | teacher1 | Terry1    | Teacher1 | teacher@example.com  |
+      | student1 | Sam1      | Student1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname |
       | Course 1 | C1        |

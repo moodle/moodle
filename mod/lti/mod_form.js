@@ -179,6 +179,10 @@
                         automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.warning_icon_url + '" />' + M.util.get_string('tool_config_not_found', 'lti'));
                     }
                 }
+                if (toolInfo.cartridge) {
+                    automatchToolDisplay.set('innerHTML', '<img style="vertical-align:text-bottom" src="' + self.settings.green_check_icon_url +
+                                             '" />' + M.util.get_string('using_tool_cartridge', 'lti'));
+                }
             };
 
             // Cache urls which have already been checked to increase performance
@@ -403,6 +407,14 @@
             this.clearToolCache();
             this.updateAutomaticToolMatch(Y.one('#id_toolurl'));
             this.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
+            this.toggleEditButtons();
+
+            require(["core/notification"], function (notification) {
+                notification.addNotification({
+                    message: M.util.get_string('tooltypeadded', 'lti'),
+                    type: "success"
+                });
+            });
         },
 
         updateToolType: function(toolType){
@@ -416,6 +428,13 @@
             this.clearToolCache();
             this.updateAutomaticToolMatch(Y.one('#id_toolurl'));
             this.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
+
+            require(["core/notification"], function (notification) {
+                notification.addNotification({
+                    message: M.util.get_string('tooltypeupdated', 'lti'),
+                    type: "success"
+                });
+            });
         },
 
         deleteTool: function(toolTypeId){
@@ -430,9 +449,21 @@
                         self.clearToolCache();
                         self.updateAutomaticToolMatch(Y.one('#id_toolurl'));
                         self.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
+
+                        require(["core/notification"], function (notification) {
+                            notification.addNotification({
+                                message: M.util.get_string('tooltypedeleted', 'lti'),
+                                type: "success"
+                            });
+                        });
                     },
                     failure: function(){
-
+                        require(["core/notification"], function (notification) {
+                            notification.addNotification({
+                                message: M.util.get_string('tooltypenotdeleted', 'lti'),
+                                type: "problem"
+                            });
+                        });
                     }
                 }
             });

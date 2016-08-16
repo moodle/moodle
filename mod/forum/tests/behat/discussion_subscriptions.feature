@@ -15,6 +15,7 @@ Feature: A user can control their own subscription preferences for a discussion
       | user | course | role |
       | student1 | C1 | student |
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 
@@ -38,27 +39,27 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Subscribe to this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I click on "You are subscribed to this discussion. Click to unsubscribe." "link" in the "Test post subject one" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Subscribe to this forum"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Subscribe to this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I follow "Subscribe to this forum"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test forum name'"
     And I should see "Unsubscribe from this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
     And I follow "Unsubscribe from this forum"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
     And I should see "Subscribe to this forum"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
@@ -83,27 +84,27 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
     And I click on "You are subscribed to this discussion. Click to unsubscribe." "link" in the "Test post subject one" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Unsubscribe from this forum"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
     And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Unsubscribe from this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
     And I click on "You are subscribed to this discussion. Click to unsubscribe." "link" in the "Test post subject one" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Unsubscribe from this forum"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
     And I follow "Unsubscribe from this forum"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
     And I should see "Subscribe to this forum"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I follow "Subscribe to this forum"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test forum name'"
     And I should see "Unsubscribe from this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
@@ -128,12 +129,13 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Subscribe to this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I log out
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Test forum name"
     And I click on "Edit settings" "link" in the "Administration" "block"
@@ -148,8 +150,8 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
     When I follow "Unsubscribe from this forum"
-    And I follow "Continue"
-    Then I should see "Subscribe to this forum"
+    Then I should see "Student One will NOT be notified of new posts in 'Test forum name'"
+    And I should see "Subscribe to this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
 
@@ -173,12 +175,13 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I click on "You are not subscribed to this discussion. Click to subscribe." "link" in the "Test post subject one" "table_row"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Subscribe to this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
     And I log out
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Test forum name"
     And I click on "Edit settings" "link" in the "Administration" "block"
@@ -193,7 +196,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject two" "table_row"
     When I follow "Unsubscribe from this forum"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
     Then I should see "Subscribe to this forum"
     And "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
@@ -218,11 +221,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And I reply "Test post subject one" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | Send me notifications of new posts in this discussion |
+      | Discussion subscription | 1 |
     And I reply "Test post subject two" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | I don't want to be notified of new posts in this discussion |
+      | Discussion subscription | 0 |
     And I follow "Test forum name"
     Then "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
@@ -254,11 +257,11 @@ Feature: A user can control their own subscription preferences for a discussion
     And I reply "Test post subject one" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | Send me notifications of new posts in this discussion |
+      | Discussion subscription | 1 |
     And I reply "Test post subject two" post from "Test forum name" forum with:
       | Subject | Reply 1 to discussion 1 |
       | Message | Discussion contents 1, second message |
-      | Discussion subscription | I don't want to be notified of new posts in this discussion |
+      | Discussion subscription | 0 |
     And I follow "Test forum name"
     Then "You are subscribed to this discussion. Click to unsubscribe." "link" should exist in the "Test post subject one" "table_row"
     And "You are not subscribed to this discussion. Click to subscribe." "link" should exist in the "Test post subject two" "table_row"
@@ -271,7 +274,7 @@ Feature: A user can control their own subscription preferences for a discussion
     And the field "Discussion subscription" matches value "I don't want to be notified of new posts in this discussion"
 
  Scenario: A guest should not be able to subscribe to a discussion
-   Given I click on "Home" "link" in the "Navigation" "block"
+   Given I am on site homepage
    And I add a "Forum" to section "1" and I fill the form with:
      | Forum name        | Test forum name |
      | Forum type        | Standard forum for general use |
@@ -289,7 +292,7 @@ Feature: A user can control their own subscription preferences for a discussion
    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
 
  Scenario: A user who is not logged in should not be able to subscribe to a discussion
-   Given I click on "Home" "link" in the "Navigation" "block"
+   Given I am on site homepage
    And I add a "Forum" to section "1" and I fill the form with:
      | Forum name        | Test forum name |
      | Forum type        | Standard forum for general use |
@@ -322,31 +325,31 @@ Feature: A user can control their own subscription preferences for a discussion
     Then I should see "Subscribe to this forum"
     And I should see "Subscribe to this discussion"
     And I follow "Subscribe to this forum"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test forum name'"
     And I follow "Test post subject one"
     And I should see "Unsubscribe from this forum"
     And I should see "Unsubscribe from this discussion"
     And I follow "Unsubscribe from this discussion"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I follow "Test post subject one"
     And I should see "Unsubscribe from this forum"
     And I should see "Subscribe to this discussion"
     And I follow "Unsubscribe from this forum"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
     And I follow "Test post subject one"
     And I should see "Subscribe to this forum"
     And I should see "Subscribe to this discussion"
     And I follow "Subscribe to this discussion"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test post subject one' of 'Test forum name'"
     And I should see "Subscribe to this forum"
     And I should see "Unsubscribe from this discussion"
     And I follow "Subscribe to this forum"
-    And I follow "Continue"
+    And I should see "Student One will be notified of new posts in 'Test forum name'"
     And I follow "Test post subject one"
     And I should see "Unsubscribe from this forum"
     And I should see "Unsubscribe from this discussion"
     And I follow "Unsubscribe from this forum"
-    And I follow "Continue"
+    And I should see "Student One will NOT be notified of new posts in 'Test forum name'"
     And I follow "Test post subject one"
     And I should see "Subscribe to this forum"
     And I should see "Subscribe to this discussion"

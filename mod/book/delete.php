@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__).'/../../config.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/locallib.php');
 
 $id        = required_param('id', PARAM_INT);        // Course Module ID
 $chapterid = required_param('chapterid', PARAM_INT); // Chapter ID
@@ -90,6 +90,7 @@ if ($chapter->subchapter) {
 echo '<br />';
 $continue = new moodle_url('/mod/book/delete.php', array('id'=>$cm->id, 'chapterid'=>$chapter->id, 'confirm'=>1));
 $cancel = new moodle_url('/mod/book/view.php', array('id'=>$cm->id, 'chapterid'=>$chapter->id));
-echo $OUTPUT->confirm("<strong>$chapter->title</strong><p>$strconfirm</p>", $continue, $cancel);
+$title = format_string($chapter->title);
+echo $OUTPUT->confirm("<strong>$title</strong><p>$strconfirm</p>", $continue, $cancel);
 
 echo $OUTPUT->footer();

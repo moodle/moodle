@@ -48,6 +48,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'comment' => 'z',
             'commentcolour' => 'x',
             'select' => 'c',
+            'drag' => 'd',
             'pen' => 'y',
             'line' => 'u',
             'rectangle' => 'i',
@@ -118,10 +119,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
                                               array('id'=>$linkid, 'class'=>'btn', 'href'=>'#'));
         }
         $links = $launcheditorlink;
-
-        $links .= html_writer::tag('div',
-                                   get_string('unsavedchanges', 'assignfeedback_editpdf'),
-                                   array('class'=>'assignfeedback_editpdf_unsavedchanges warning'));
+        $html .= '<input type="hidden" name="assignfeedback_editpdf_haschanges" value="false"/>';
 
         $html .= html_writer::div($links, 'visibleifjs');
         $header = get_string('pluginname', 'assignfeedback_editpdf');
@@ -129,6 +127,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         // Create the page navigation.
         $navigation1 = '';
         $navigation2 = '';
+        $navigation3 = '';
 
         // Pick the correct arrow icons for right to left mode.
         if (right_to_left()) {
@@ -156,6 +155,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $navigation2 .= $this->render_toolbar_button('comment_search', 'searchcomments', $this->get_shortcut('searchcomments'));
         $navigation2 = html_writer::div($navigation2, 'navigation-search', array('role'=>'navigation'));
 
+
         $toolbar1 = '';
         $toolbar2 = '';
         $toolbar3 = '';
@@ -169,6 +169,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             $toolbar1 = html_writer::div($toolbar1, 'toolbar', array('role'=>'toolbar'));
 
             // Select Tool.
+            $toolbar2 .= $this->render_toolbar_button('drag', 'drag', $this->get_shortcut('drag'));
             $toolbar2 .= $this->render_toolbar_button('select', 'select', $this->get_shortcut('select'));
             $toolbar2 = html_writer::div($toolbar2, 'toolbar', array('role'=>'toolbar'));
 
@@ -209,9 +210,17 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $loading = html_writer::div($progressbar . $progressbarlabel, 'loading');
 
         $canvas = html_writer::div($loading, 'drawingcanvas');
-        $body .= html_writer::div($canvas, 'drawingregion');
+        $canvas = html_writer::div($canvas, 'drawingregion');
+        $changesmessage = html_writer::tag('div',
+                                           get_string('draftchangessaved', 'assignfeedback_editpdf'),
+                                           array(
+                                               'class' => 'assignfeedback_editpdf_unsavedchanges warning label label-info'
+                                           ));
 
-        $body .= '<hr/>';
+        $changesmessage = html_writer::div($changesmessage, 'unsaved-changes');
+        $canvas .= $changesmessage;
+
+        $body .= $canvas;
 
         $footer = '';
 

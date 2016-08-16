@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 $type       = required_param('type', PARAM_INT);
@@ -48,7 +48,7 @@ if (!in_array($sortby, array('name', 'dateissued'))) {
 }
 
 if ($sorthow != 'ASC' && $sorthow != 'DESC') {
-    $sorthow = 'ACS';
+    $sorthow = 'ASC';
 }
 
 if ($page < 0) {
@@ -62,18 +62,20 @@ if ($course = $DB->get_record('course', array('id' => $courseid))) {
 }
 
 if ($type == BADGE_TYPE_SITE) {
-    $title = get_string('sitebadges', 'badges');
     $PAGE->set_context(context_system::instance());
     $PAGE->set_pagelayout('admin');
-    $PAGE->set_heading($title);
+    $PAGE->set_heading($SITE->fullname);
+    $title = get_string('sitebadges', 'badges');
 } else {
     require_login($course);
     $coursename = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
     $title = $coursename . ': ' . get_string('coursebadges', 'badges');
     $PAGE->set_context(context_course::instance($course->id));
     $PAGE->set_pagelayout('incourse');
-    $PAGE->set_heading($title);
+    $PAGE->set_heading($coursename);
 }
+
+require_capability('moodle/badges:viewbadges', $PAGE->context);
 
 $PAGE->set_title($title);
 $output = $PAGE->get_renderer('core', 'badges');

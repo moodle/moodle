@@ -28,7 +28,6 @@ require_once('../config.php');
 require_once('lib.php');
 require_once('external_blog_edit_form.php');
 require_once($CFG->libdir . '/simplepie/moodle_simplepie.php');
-require_once($CFG->dirroot.'/tag/lib.php');
 
 require_login();
 $context = context_system::instance();
@@ -44,7 +43,7 @@ if ($id !== null) {
     $url->param('id', $id);
 }
 $PAGE->set_url($url);
-$PAGE->set_context($context);
+$PAGE->set_context(context_user::instance($USER->id));
 $PAGE->set_pagelayout('admin');
 
 $returnurl = new moodle_url('/blog/external_blogs.php');
@@ -58,6 +57,7 @@ if (!empty($id) && !$DB->record_exists('blog_external', array('id' => $id))) {
     print_error('wrongexternalid', 'blog');
 } else if (!empty($id)) {
     $external = $DB->get_record('blog_external', array('id' => $id));
+    $external->autotags = core_tag_tag::get_item_tags_array('core', 'blog_external', $id);
 }
 
 $strformheading = ($action == 'edit') ? get_string('editexternalblog', 'blog') : get_string('addnewexternalblog', 'blog');
@@ -84,12 +84,9 @@ if ($externalblogform->is_cancelled()) {
             $newexternal->timemodified = time();
 
             $newexternal->id = $DB->insert_record('blog_external', $newexternal);
+            core_tag_tag::set_item_tags('core', 'blog_external', $newexternal->id,
+                    context_user::instance($newexternal->userid), $data->autotags);
             blog_sync_external_entries($newexternal);
-            if ($CFG->usetags) {
-                $autotags = (!empty($data->autotags)) ? $data->autotags : null;
-                tag_set('blog_external', $newexternal->id, explode(',', $autotags), 'core',
-                    context_user::instance($newexternal->userid)->id);
-            }
 
             break;
 
@@ -107,11 +104,8 @@ if ($externalblogform->is_cancelled()) {
                 $external->timemodified = time();
 
                 $DB->update_record('blog_external', $external);
-                if ($CFG->usetags) {
-                    $autotags = (!empty($data->autotags)) ? $data->autotags : null;
-                    tag_set('blog_external', $external->id, explode(',', $autotags), 'core',
-                        context_user::instance($external->userid)->id);
-                }
+                core_tag_tag::set_item_tags('core', 'blog_external', $external->id,
+                        context_user::instance($external->userid), $data->autotags);
             } else {
                 print_error('wrongexternalid', 'blog');
             }
@@ -125,7 +119,10 @@ if ($externalblogform->is_cancelled()) {
     redirect($returnurl);
 }
 
-$PAGE->set_heading("$SITE->shortname: $strblogs: $strexternalblogs", $SITE->fullname);
+navigation_node::override_active_url(new moodle_url('/blog/external_blogs.php'));
+$PAGE->navbar->add(get_string('addnewexternalblog', 'blog'));
+
+$PAGE->set_heading(fullname($USER));
 $PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
 
 echo $OUTPUT->header();

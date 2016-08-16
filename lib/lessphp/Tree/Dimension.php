@@ -24,7 +24,7 @@ class Less_Tree_Dimension extends Less_Tree{
 		}
     }
 
-	function accept( $visitor ){
+    public function accept( $visitor ){
 		$this->unit = $visitor->visitObj( $this->unit );
 	}
 
@@ -98,7 +98,7 @@ class Less_Tree_Dimension extends Less_Tree{
 				$other = $other->convertTo( $this->unit->usedUnits());
 
 				if( Less_Parser::$options['strictUnits'] && $other->unit->toString() !== $unit->toCSS() ){
-					throw new Less_Exception_Compiler("Incompatible units. Change the units or use the unit function. Bad units: '".$unit->toString() . "' and ".$other->unit->toString()+"'.");
+					throw new Less_Exception_Compiler("Incompatible units. Change the units or use the unit function. Bad units: '" . $unit->toString() . "' and " . $other->unit->toString() . "'.");
 				}
 
 				$value = Less_Functions::operate( $op, $this->value, $other->value);
@@ -147,11 +147,11 @@ class Less_Tree_Dimension extends Less_Tree{
 		}
 	}
 
-	function unify() {
+    public function unify() {
 		return $this->convertTo(array('length'=> 'px', 'duration'=> 's', 'angle' => 'rad' ));
 	}
 
-    function convertTo($conversions) {
+    public function convertTo($conversions) {
 		$value = $this->value;
 		$unit = clone $this->unit;
 

@@ -114,7 +114,9 @@
     padding-top: 0.5em;
 }
 
-.plugincheckwrapper {text-align: center;}
+.plugincheckwrapper {
+    text-align: center;
+}
 
 
 /* Web services
@@ -124,10 +126,12 @@
     color: #ff6600;
     font-size: 90%;
 }
+
 #page-admin-setting-webservicetokens .missingcaps {
     color: #ff6600;
     font-size: 90%;
 }
+
 #page-admin-webservice-service_functions .functiondesc {
     font-size: 90%;
 }

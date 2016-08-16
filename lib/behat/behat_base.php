@@ -74,7 +74,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * The JS code to check that the page is ready.
      */
-    const PAGE_READY_JS = '(M && M.util && M.util.pending_js && !Boolean(M.util.pending_js.length)) && (document.readyState === "complete")';
+    const PAGE_READY_JS = '(typeof M !== "undefined" && M.util && M.util.pending_js && !Boolean(M.util.pending_js.length)) && (document.readyState === "complete")';
 
     /**
      * Locates url, based on provided path.
@@ -102,6 +102,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     protected function find($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
+        // Throw exception, so dev knows it is not supported.
+        if ($selector === 'named') {
+            $exception = 'Using the "named" selector is deprecated as of 3.1. '
+                .' Use the "named_partial" or use the "named_exact" selector instead.';
+            throw new ExpectationException($exception, $this->getSession());
+        }
+
         // Returns the first match.
         $items = $this->find_all($selector, $locator, $exception, $node, $timeout);
         return count($items) ? reset($items) : null;
@@ -122,11 +129,18 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     protected function find_all($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
+        // Throw exception, so dev knows it is not supported.
+        if ($selector === 'named') {
+            $exception = 'Using the "named" selector is deprecated as of 3.1. '
+                .' Use the "named_partial" or use the "named_exact" selector instead.';
+            throw new ExpectationException($exception, $this->getSession());
+        }
+
         // Generic info.
         if (!$exception) {
 
             // With named selectors we can be more specific.
-            if ($selector == 'named') {
+            if (($selector == 'named_exact') || ($selector == 'named_partial')) {
                 $exceptiontype = $locator[0];
                 $exceptionlocator = $locator[1];
 
@@ -236,10 +250,10 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         // Redirecting execution to the find method with the specified selector.
         // It will detect if it's pointing to an unexisting named selector.
-        return $this->find('named',
+        return $this->find('named_partial',
             array(
                 $cleanname,
-                $this->getSession()->getSelectorsHandler()->xpathLiteral($arguments[0])
+                behat_context_helper::escape($arguments[0])
             )
         );
     }
@@ -302,6 +316,11 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             $loops = $timeout;
         }
 
+        // DOM will never change on non-javascript case; do not wait or try again.
+        if (!$this->running_javascript()) {
+            $loops = 1;
+        }
+
         for ($i = 0; $i < $loops; $i++) {
             // We catch the exception thrown by the step definition to execute it again.
             try {
@@ -320,10 +339,12 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 continue;
             }
 
-            if ($microsleep) {
-                usleep(100000);
-            } else {
-                sleep(1);
+            if ($this->running_javascript()) {
+                if ($microsleep) {
+                    usleep(100000);
+                } else {
+                    sleep(1);
+                }
             }
         }
 
@@ -598,9 +619,10 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      *   - large: 2560x1600
      *
      * @param string $windowsize size of window.
+     * @param bool $viewport If true, changes viewport rather than window size
      * @throws ExpectationException
      */
-    protected function resize_window($windowsize) {
+    protected function resize_window($windowsize, $viewport = false) {
         // Non JS don't support resize window.
         if (!$this->running_javascript()) {
             return;
@@ -628,6 +650,217 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 $width = (int) $size[0];
                 $height = (int) $size[1];
         }
+        if ($viewport) {
+            // When setting viewport size, we set it so that the document width will be exactly
+            // as specified, assuming that there is a vertical scrollbar. (In cases where there is
+            // no scrollbar it will be slightly wider. We presume this is rare and predictable.)
+            // The window inner height will be as specified, which means the available viewport will
+            // actually be smaller if there is a horizontal scrollbar. We assume that horizontal
+            // scrollbars are rare so this doesn't matter.
+            $offset = $this->getSession()->getDriver()->evaluateScript(
+                    'return (function() { var before = document.body.style.overflowY;' .
+                    'document.body.style.overflowY = "scroll";' .
+                    'var result = {};' .
+                    'result.x = window.outerWidth - document.body.offsetWidth;' .
+                    'result.y = window.outerHeight - window.innerHeight;' .
+                    'document.body.style.overflowY = before;' .
+                    'return result; })();');
+            $width += $offset['x'];
+            $height += $offset['y'];
+        }
+
         $this->getSession()->getDriver()->resizeWindow($width, $height);
+    }
+
+    /**
+     * Waits for all the JS to be loaded.
+     *
+     * @throws \Exception
+     * @throws NoSuchWindow
+     * @throws UnknownError
+     * @return bool True or false depending whether all the JS is loaded or not.
+     */
+    public function wait_for_pending_js() {
+        // Waiting for JS is only valid for JS scenarios.
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // We don't use behat_base::spin() here as we don't want to end up with an exception
+        // if the page & JSs don't finish loading properly.
+        for ($i = 0; $i < self::EXTENDED_TIMEOUT * 10; $i++) {
+            $pending = '';
+            try {
+                $jscode = '
+                    return function() {
+                        if (typeof M === "undefined") {
+                            if (document.readyState === "complete") {
+                                return "";
+                            } else {
+                                return "incomplete";
+                            }
+                        } else if (' . self::PAGE_READY_JS . ') {
+                            return "";
+                        } else if (typeof M.util !== "undefined") {
+                            return M.util.pending_js.join(":");
+                        } else {
+                            return "incomplete"
+                        }
+                    }();';
+                $pending = $this->getSession()->evaluateScript($jscode);
+            } catch (NoSuchWindow $nsw) {
+                // We catch an exception here, in case we just closed the window we were interacting with.
+                // No javascript is running if there is no window right?
+                $pending = '';
+            } catch (UnknownError $e) {
+                // M is not defined when the window or the frame don't exist anymore.
+                if (strstr($e->getMessage(), 'M is not defined') != false) {
+                    $pending = '';
+                }
+            }
+
+            // If there are no pending JS we stop waiting.
+            if ($pending === '') {
+                return true;
+            }
+
+            // 0.1 seconds.
+            usleep(100000);
+        }
+
+        // Timeout waiting for JS to complete. It will be catched and forwarded to behat_hooks::i_look_for_exceptions().
+        // It is unlikely that Javascript code of a page or an AJAX request needs more than self::EXTENDED_TIMEOUT seconds
+        // to be loaded, although when pages contains Javascript errors M.util.js_complete() can not be executed, so the
+        // number of JS pending code and JS completed code will not match and we will reach this point.
+        throw new \Exception('Javascript code and/or AJAX requests are not ready after ' . self::EXTENDED_TIMEOUT .
+            ' seconds. There is a Javascript error or the code is extremely slow.');
+    }
+
+    /**
+     * Internal step definition to find exceptions, debugging() messages and PHP debug messages.
+     *
+     * Part of behat_hooks class as is part of the testing framework, is auto-executed
+     * after each step so no features will splicitly use it.
+     *
+     * @throws Exception Unknown type, depending on what we caught in the hook or basic \Exception.
+     * @see Moodle\BehatExtension\Tester\MoodleStepTester
+     */
+    public function look_for_exceptions() {
+        // Wrap in try in case we were interacting with a closed window.
+        try {
+
+            // Exceptions.
+            $exceptionsxpath = "//div[@data-rel='fatalerror']";
+            // Debugging messages.
+            $debuggingxpath = "//div[@data-rel='debugging']";
+            // PHP debug messages.
+            $phperrorxpath = "//div[@data-rel='phpdebugmessage']";
+            // Any other backtrace.
+            $othersxpath = "(//*[contains(., ': call to ')])[1]";
+
+            $xpaths = array($exceptionsxpath, $debuggingxpath, $phperrorxpath, $othersxpath);
+            $joinedxpath = implode(' | ', $xpaths);
+
+            // Joined xpath expression. Most of the time there will be no exceptions, so this pre-check
+            // is faster than to send the 4 xpath queries for each step.
+            if (!$this->getSession()->getDriver()->find($joinedxpath)) {
+                return;
+            }
+
+            // Exceptions.
+            if ($errormsg = $this->getSession()->getPage()->find('xpath', $exceptionsxpath)) {
+
+                // Getting the debugging info and the backtrace.
+                $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-error');
+                // If errorinfoboxes is empty, try find notifytiny (original) class.
+                if (empty($errorinfoboxes)) {
+                    $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
+                }
+                $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
+                    $this->get_debug_text($errorinfoboxes[1]->getHtml());
+
+                $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
+                throw new \Exception(html_entity_decode($msg));
+            }
+
+            // Debugging messages.
+            if ($debuggingmessages = $this->getSession()->getPage()->findAll('xpath', $debuggingxpath)) {
+                $msgs = array();
+                foreach ($debuggingmessages as $debuggingmessage) {
+                    $msgs[] = $this->get_debug_text($debuggingmessage->getHtml());
+                }
+                $msg = "debugging() message/s found:\n" . implode("\n", $msgs);
+                throw new \Exception(html_entity_decode($msg));
+            }
+
+            // PHP debug messages.
+            if ($phpmessages = $this->getSession()->getPage()->findAll('xpath', $phperrorxpath)) {
+
+                $msgs = array();
+                foreach ($phpmessages as $phpmessage) {
+                    $msgs[] = $this->get_debug_text($phpmessage->getHtml());
+                }
+                $msg = "PHP debug message/s found:\n" . implode("\n", $msgs);
+                throw new \Exception(html_entity_decode($msg));
+            }
+
+            // Any other backtrace.
+            // First looking through xpath as it is faster than get and parse the whole page contents,
+            // we get the contents and look for matches once we found something to suspect that there is a backtrace.
+            if ($this->getSession()->getDriver()->find($othersxpath)) {
+                $backtracespattern = '/(line [0-9]* of [^:]*: call to [\->&;:a-zA-Z_\x7f-\xff][\->&;:a-zA-Z0-9_\x7f-\xff]*)/';
+                if (preg_match_all($backtracespattern, $this->getSession()->getPage()->getContent(), $backtraces)) {
+                    $msgs = array();
+                    foreach ($backtraces[0] as $backtrace) {
+                        $msgs[] = $backtrace . '()';
+                    }
+                    $msg = "Other backtraces found:\n" . implode("\n", $msgs);
+                    throw new \Exception(htmlentities($msg));
+                }
+            }
+
+        } catch (NoSuchWindow $e) {
+            // If we were interacting with a popup window it will not exists after closing it.
+        }
+    }
+
+    /**
+     * Converts HTML tags to line breaks to display the info in CLI
+     *
+     * @param string $html
+     * @return string
+     */
+    protected function get_debug_text($html) {
+
+        // Replacing HTML tags for new lines and keeping only the text.
+        $notags = preg_replace('/<+\s*\/*\s*([A-Z][A-Z0-9]*)\b[^>]*\/*\s*>*/i', "\n", $html);
+        return preg_replace("/(\n)+/s", "\n", $notags);
+    }
+
+    /**
+     * Helper function to execute api in a given context.
+     *
+     * @param string $contextapi context in which api is defined.
+     * @param array $params list of params to pass.
+     * @throws Exception
+     */
+    protected function execute($contextapi, $params = array()) {
+        if (!is_array($params)) {
+            $params = array($params);
+        }
+
+        // Get required context and execute the api.
+        $contextapi = explode("::", $contextapi);
+        $context = behat_context_helper::get($contextapi[0]);
+        call_user_func_array(array($context, $contextapi[1]), $params);
+
+        // NOTE: Wait for pending js and look for exception are not optional, as this might lead to unexpected results.
+        // Don't make them optional for performance reasons.
+
+        // Wait for pending js.
+        $this->wait_for_pending_js();
+
+        // Look for exceptions.
+        $this->look_for_exceptions();
     }
 }

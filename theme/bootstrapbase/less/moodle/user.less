@@ -3,8 +3,28 @@
     text-align: center;
     margin: 10px;
 }
+.userprofile .page-context-header {
+    margin-bottom: 10px;
+}
 .userprofile .description {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+.userprofile .profile_tree {
+    .content-columns(2);
+}
+.userprofile .profile_tree section {
+    display: inline-block;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: @baseBorderRadius;
+    padding: 0 15px;
     margin-bottom: 20px;
+    .box-sizing(border-box);
+}
+.userprofile .profile_tree section h3 {
+    font-size: round(@baseFontSize * 1.30);
+    line-height: @baseLineHeight;
 }
 .userprofile dl.list {
     .dl-horizontal;
@@ -17,22 +37,45 @@
     float: left;
     clear: none;
 }
-.dir-rtl {
-    .userprofile .description {
-        margin-right:0;
+#page-user-profile .node_category,
+.path-user .node_category {
+    ul {
+        margin-left: 0;
+        margin-right: 0;
+        list-style: none;
     }
-    .user-box {
-        float:right;
+    li {
+        margin-top: 5px;
     }
-    .userprofile dl.list dt {
-        float:right;
-        text-align: left;
-        padding-left: 10px;
-    }
-    .userprofile dl.list dd {
-        margin-left:0;
+    .editprofile,
+    .viewmore {
+        text-align: right;
     }
 }
+
+.dir-rtl {
+    .user-box {
+        float: right;
+    }
+    .userprofile .node_category {
+        .editprofile,
+        .viewmore {
+            text-align: left;
+        }
+    }
+    .userprofile dl dd {
+        margin-left: 0;
+        margin-right: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .userprofile .profile_tree {
+        /** Display the profile on one column on phones. */
+        .content-columns(1);
+    }
+}
+
 .userlist .action-icon img {
     vertical-align: middle;
 }
@@ -177,9 +220,6 @@
     margin-right: auto;
 }
 /** Overide for RTL layout **/
-.dir-rtl .userprofilebox .descriptionbox {
-    margin: 0;
-}
 .dir-rtl .userlist table#participants td,
 .dir-rtl .userlist table#participants th {
     text-align: right;
@@ -198,7 +238,8 @@
     > .singlebutton {
         display: inline-block;
         margin: 0 0 0 0.5em;
-        div, input {
+        div,
+        input {
             margin: 0;
         }
     }
@@ -211,12 +252,18 @@
         margin: 0 0.5em 0 0;
     }
 }
+
 #groupeditform {
     .groups,
     .members {
+        min-width: 175px;
         width: 49%;
         float: left;
         text-align: left;
+
+        select {
+            min-width: 175px;
+        }
     }
 }
 .dir-rtl #groupeditform {
@@ -224,5 +271,19 @@
     .members {
         float: right;
         text-align: right;
+    }
+}
+
+/** Preferences page */
+.preferences-group {
+    ul {
+        list-style: none;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+.dir-rtl {
+    .preferences-group {
+        float: right;
     }
 }

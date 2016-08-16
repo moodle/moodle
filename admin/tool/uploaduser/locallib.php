@@ -196,7 +196,7 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
             // hack: somebody wrote uppercase in csv file, but the system knows only lowercase profile field
             $newfield = $lcfield;
 
-        } else if (preg_match('/^(cohort|course|group|type|role|enrolperiod|enrolstatus)\d+$/', $lcfield)) {
+        } else if (preg_match('/^(sysrole|cohort|course|group|type|role|enrolperiod|enrolstatus)\d+$/', $lcfield)) {
             // special fields for enrolments
             $newfield = $lcfield;
 
@@ -366,6 +366,25 @@ function uu_allowed_roles_cache() {
 }
 
 /**
+ * Returns mapping of all system roles using short role name as index.
+ * @return array
+ */
+function uu_allowed_sysroles_cache() {
+    $allowedroles = get_assignable_roles(context_system::instance(), ROLENAME_SHORT);
+    foreach ($allowedroles as $rid => $rname) {
+        $rolecache[$rid] = new stdClass();
+        $rolecache[$rid]->id   = $rid;
+        $rolecache[$rid]->name = $rname;
+        if (!is_numeric($rname)) { // Only non-numeric shortnames are supported!
+            $rolecache[$rname] = new stdClass();
+            $rolecache[$rname]->id   = $rid;
+            $rolecache[$rname]->name = $rname;
+        }
+    }
+    return $rolecache;
+}
+
+/**
  * Pre process custom profile data, and update it with corrected value
  *
  * @param stdClass $data user profile data
@@ -402,8 +421,14 @@ function uu_pre_process_custom_profile_data($data) {
 function uu_check_custom_profile_data(&$data) {
     global $CFG, $DB;
     $noerror = true;
+    $testuserid = null;
 
-    // find custom profile fields and check if data needs to converted.
+    if (!empty($data['username'])) {
+        if (preg_match('/id=(.*)"/i', $data['username'], $result)) {
+            $testuserid = $result[1];
+        }
+    }
+    // Find custom profile fields and check if data needs to converted.
     foreach ($data as $key => $value) {
         if (preg_match('/^profile_field_/', $key)) {
             $shortname = str_replace('profile_field_', '', $key);
@@ -416,6 +441,17 @@ function uu_check_custom_profile_data(&$data) {
                             is_null($formfield->convert_external_data($value))) {
                         $data['status'][] = get_string('invaliduserfield', 'error', $shortname);
                         $noerror = false;
+                    }
+                    // Check for duplicate value.
+                    if (method_exists($formfield, 'edit_validate_field') ) {
+                        $testuser = new stdClass();
+                        $testuser->{$key} = $value;
+                        $testuser->id = $testuserid;
+                        $err = $formfield->edit_validate_field($testuser);
+                        if (!empty($err[$key])) {
+                            $data['status'][] = $err[$key].' ('.$key.')';
+                            $noerror = false;
+                        }
                     }
                 }
             }

@@ -335,9 +335,9 @@ class question_type {
         $question->generalfeedbackformat = !empty($form->generalfeedback['format']) ?
                 $form->generalfeedback['format'] : 0;
 
-        if (empty($question->name)) {
+        if ($question->name === '') {
             $question->name = shorten_text(strip_tags($form->questiontext['text']), 15);
-            if (empty($question->name)) {
+            if ($question->name === '') {
                 $question->name = '-';
             }
         }

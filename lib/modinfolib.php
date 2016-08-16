@@ -250,7 +250,7 @@ class course_modinfo {
         $modnames = get_module_types_names($plural);
         $modnamesused = array();
         foreach ($this->get_cms() as $cmid => $mod) {
-            if (isset($modnames[$mod->modname]) && $mod->uservisible) {
+            if (!isset($modnamesused[$mod->modname]) && isset($modnames[$mod->modname]) && $mod->uservisible) {
                 $modnamesused[$mod->modname] = $modnames[$mod->modname];
             }
         }
@@ -492,7 +492,7 @@ class course_modinfo {
         // Loop through each piece of module data, constructing it
         static $modexists = array();
         foreach ($coursemodinfo->modinfo as $mod) {
-            if (empty($mod->name)) {
+            if (!isset($mod->name) || strval($mod->name) === '') {
                 // something is wrong here
                 continue;
             }
@@ -531,22 +531,14 @@ class course_modinfo {
     }
 
     /**
-     * Builds a list of information about sections on a course to be stored in
-     * the course cache. (Does not include information that is already cached
-     * in some other way.)
+     * This method can not be used anymore.
      *
-     * This function will be removed in 2.7
-     *
+     * @see course_modinfo::build_course_cache()
      * @deprecated since 2.6
-     * @param int $courseid Course ID
-     * @return array Information about sections, indexed by section number (not id)
      */
     public static function build_section_cache($courseid) {
-        global $DB;
-        debugging('Function course_modinfo::build_section_cache() is deprecated. It can only be used internally to build course cache.');
-        $course = $DB->get_record('course', array('id' => $course->id),
-                        array_merge(array('id'), self::$cachedfields), MUST_EXIST);
-        return self::build_course_section_cache($course);
+        throw new coding_exception('Function course_modinfo::build_section_cache() can not be used anymore.' .
+            ' Please use course_modinfo::build_course_cache() whenever applicable.');
     }
 
     /**
@@ -1065,9 +1057,7 @@ class cm_info implements IteratorAggregate {
         'added' => false,
         'availability' => false,
         'available' => 'get_available',
-        'availablefrom' => 'get_deprecated_available_date',
         'availableinfo' => 'get_available_info',
-        'availableuntil' => 'get_deprecated_available_date',
         'completion' => false,
         'completionexpected' => false,
         'completiongradeitemnumber' => false,
@@ -1095,7 +1085,6 @@ class cm_info implements IteratorAggregate {
         'score' => false,
         'section' => false,
         'sectionnum' => false,
-        'showavailability' => 'get_show_availability',
         'showdescription' => false,
         'uservisible' => 'get_user_visible',
         'visible' => false,
@@ -1127,28 +1116,21 @@ class cm_info implements IteratorAggregate {
     );
 
     /**
-     * Magic method to call functions that are now declared as private now but
-     * were public in Moodle before 2.6. Developers can access them without
-     * any warnings but they are not listed in the class methods list.
+     * Magic method to call functions that are now declared as private but were public in Moodle before 2.6.
+     * These private methods can not be used anymore.
      *
      * @param string $name
      * @param array $arguments
      * @return mixed
+     * @throws coding_exception
      */
     public function __call($name, $arguments) {
-        global $CFG;
-
         if (in_array($name, self::$standardmethods)) {
-            if ($CFG->debugdeveloper) {
-                if ($alternative = array_search($name, self::$standardproperties)) {
-                    // All standard methods do not have arguments anyway.
-                    debugging("cm_info::$name() is deprecated, please use the property cm_info->$alternative instead.", DEBUG_DEVELOPER);
-                } else {
-                    debugging("cm_info::$name() is deprecated and should not be used.", DEBUG_DEVELOPER);
-                }
+            $message = "cm_info::$name() can not be used anymore.";
+            if ($alternative = array_search($name, self::$standardproperties)) {
+                $message .= " Please use the property cm_info->$alternative instead.";
             }
-            // All standard methods do not have arguments anyway.
-            return $this->$name();
+            throw new coding_exception($message);
         }
         throw new coding_exception("Method cm_info::{$name}() does not exist");
     }
@@ -1185,9 +1167,6 @@ class cm_info implements IteratorAggregate {
 
         // Do not iterate over deprecated properties.
         $props = self::$standardproperties;
-        unset($props['showavailability']);
-        unset($props['availablefrom']);
-        unset($props['availableuntil']);
         unset($props['groupmembersonly']);
 
         foreach ($props as $key => $unused) {
@@ -1798,7 +1777,6 @@ class cm_info implements IteratorAggregate {
         $this->state = self::STATE_BUILDING_DYNAMIC;
 
         if (!empty($CFG->enableavailability)) {
-            require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information.
             $ci = new \core_availability\info_module($this);
 
@@ -1848,47 +1826,15 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * Getter method for property $showavailability. Works by checking the
-     * availableinfo property to see if it's empty or not.
+     * This method can not be used anymore.
      *
-     * @return int
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_show_availability() {
-        debugging('$cm->showavailability property has been deprecated. You ' .
-                'can replace it by checking if $cm->availableinfo has content.',
-                DEBUG_DEVELOPER);
-        return ($this->get_available_info() !== '') ? 1 : 0;
-    }
-
-    /**
-     * Getter method for $availablefrom and $availableuntil. Just returns zero
-     * as these are no longer supported.
-     *
-     * @return int Zero
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_deprecated_available_date() {
-        debugging('$cm->availablefrom and $cm->availableuntil have been deprecated. This ' .
-                'information is no longer available as the system provides more complex ' .
-                'options (for example, there might be different dates for different users).',
-                DEBUG_DEVELOPER);
-        return 0;
-    }
-
-    /**
-     * Getter method for $availablefrom and $availableuntil. Just returns zero
-     * as these are no longer supported.
-     *
-     * @return int Zero
+     * @see \core_availability\info_module::filter_user_list()
      * @deprecated Since Moodle 2.8
      */
     private function get_deprecated_group_members_only() {
-        debugging('$cm->groupmembersonly has been deprecated and always returns zero. ' .
+        throw new coding_exception('$cm->groupmembersonly can not be used anymore. ' .
                 'If used to restrict a list of enrolled users to only those who can ' .
-                'access the module, consider \core_availability\info_module::filter_user_list.',
-                DEBUG_DEVELOPER);
-        return 0;
+                'access the module, consider \core_availability\info_module::filter_user_list.');
     }
 
     /**
@@ -1906,7 +1852,6 @@ class cm_info implements IteratorAggregate {
      *
      * If the activity is unavailable, additional checks are required to determine if its hidden or greyed out
      *
-     * @see is_user_access_restricted_by_conditional_access()
      * @return void
      */
     private function update_user_visible() {
@@ -1934,20 +1879,14 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * Checks whether the module's group settings restrict the current user's
-     * access. This function is not necessary now that all access restrictions
-     * are handled by the availability API. You can use $cm->uservisible to
-     * find out if the current user can access an activity, or $cm->availableinfo
-     * to get information about why not.
+     * This method has been deprecated and should not be used.
      *
-     * @return bool False
+     * @see $uservisible
      * @deprecated Since Moodle 2.8
      */
     public function is_user_access_restricted_by_group() {
-        debugging('cm_info::is_user_access_restricted_by_group() ' .
-                'is deprecated and always returns false; use $cm->uservisible ' .
-                'to decide whether the current user can access an activity', DEBUG_DEVELOPER);
-        return false;
+        throw new coding_exception('cm_info::is_user_access_restricted_by_group() can not be used any more.' .
+            ' Use $cm->uservisible to decide whether the current user can access an activity.');
     }
 
     /**
@@ -1975,33 +1914,13 @@ class cm_info implements IteratorAggregate {
      * Checks whether the module's conditional access settings mean that the
      * user cannot see the activity at all
      *
-     * This is deprecated because it is confusing (name sounds like it's about
-     * access restriction but it is actually about display), is not used
-     * anywhere, and is not necessary. Nobody (outside conditional libraries)
-     * should care what it is that restricted something.
-     *
-     * @return bool True if the user cannot see the module. False if the activity is either available or should be greyed out.
-     * @deprecated since 2.7
+     * @deprecated since 2.7 MDL-44070
      */
     public function is_user_access_restricted_by_conditional_access() {
-        global $CFG;
-        debugging('cm_info::is_user_access_restricted_by_conditional_access() ' .
-                'is deprecated; this function is not needed (use $cm->uservisible ' .
+        throw new coding_exception('cm_info::is_user_access_restricted_by_conditional_access() ' .
+                'can not be used any more; this function is not needed (use $cm->uservisible ' .
                 'and $cm->availableinfo to decide whether it should be available ' .
-                'or appear)', DEBUG_DEVELOPER);
-
-        if (empty($CFG->enableavailability)) {
-            return false;
-        }
-
-        $userid = $this->modinfo->get_user_id();
-        if ($userid == -1) {
-            return null;
-        }
-
-        // Return false if user can access the activity, or if its availability
-        // info is set (= should be displayed even though not accessible).
-        return !$this->get_user_visible() && !$this->get_available_info();
+                'or appear)');
     }
 
     /**
@@ -2698,7 +2617,6 @@ class section_info implements IteratorAggregate {
         $this->_available = true;
         $this->_availableinfo = '';
         if (!empty($CFG->enableavailability)) {
-            require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information.
             $ci = new \core_availability\info_section($this);
             $this->_available = $ci->is_available($this->_availableinfo, true,
@@ -2770,62 +2688,6 @@ class section_info implements IteratorAggregate {
             }
         }
         return $this->_uservisible;
-    }
-
-    /**
-     * Getter method for property $showavailability. Works by checking the
-     * availableinfo property to see if it's empty or not.
-     *
-     * @return int
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_showavailability() {
-        debugging('$section->showavailability property has been deprecated. You ' .
-                'can replace it by checking if $section->availableinfo has content.',
-                DEBUG_DEVELOPER);
-        return ($this->get_availableinfo() !== '') ? 1 : 0;
-    }
-
-    /**
-     * Getter method for $availablefrom. Just returns zero as no longer supported.
-     *
-     * @return int Zero
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_availablefrom() {
-        debugging('$section->availablefrom has been deprecated. This ' .
-                'information is no longer available as the system provides more complex ' .
-                'options (for example, there might be different dates for different users).',
-                DEBUG_DEVELOPER);
-        return 0;
-    }
-
-    /**
-     * Getter method for $availablefrom. Just returns zero as no longer supported.
-     *
-     * @return int Zero
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_availableuntil() {
-        debugging('$section->availableuntil has been deprecated. This ' .
-                'information is no longer available as the system provides more complex ' .
-                'options (for example, there might be different dates for different users).',
-                DEBUG_DEVELOPER);
-        return 0;
-    }
-
-    /**
-     * Getter method for $groupingid. Just returns zero as no longer supported.
-     *
-     * @return int Zero
-     * @deprecated Since Moodle 2.7
-     */
-    private function get_groupingid() {
-        debugging('$section->groupingid has been deprecated. This ' .
-                'information is no longer available as the system provides more complex ' .
-                'options (for example, combining multiple groupings).',
-                DEBUG_DEVELOPER);
-        return 0;
     }
 
     /**

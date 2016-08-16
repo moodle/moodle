@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * Resource and activity toolbox class.
  *
@@ -10,47 +11,44 @@
 
 // The CSS classes we use.
 var CSS = {
-        ACTIVITYINSTANCE : 'activityinstance',
-        AVAILABILITYINFODIV : 'div.availabilityinfo',
-        CONTENTWITHOUTLINK : 'contentwithoutlink',
-        CONDITIONALHIDDEN : 'conditionalhidden',
-        DIMCLASS : 'dimmed',
-        DIMMEDTEXT : 'dimmed_text',
-        EDITINSTRUCTIONS : 'editinstructions',
-        EDITINGTITLE: 'editor_displayed',
-        HIDE : 'hide',
-        MODINDENTCOUNT : 'mod-indent-',
-        MODINDENTHUGE : 'mod-indent-huge',
-        MODULEIDPREFIX : 'module-',
-        SECTIONHIDDENCLASS : 'hidden',
-        SECTIONIDPREFIX : 'section-',
-        SHOW : 'editing_show',
-        TITLEEDITOR : 'titleeditor'
+        ACTIVITYINSTANCE: 'activityinstance',
+        AVAILABILITYINFODIV: 'div.availabilityinfo',
+        CONTENTWITHOUTLINK: 'contentwithoutlink',
+        CONDITIONALHIDDEN: 'conditionalhidden',
+        DIMCLASS: 'dimmed',
+        DIMMEDTEXT: 'dimmed_text',
+        EDITINSTRUCTIONS: 'editinstructions',
+        HIDE: 'hide',
+        MODINDENTCOUNT: 'mod-indent-',
+        MODINDENTHUGE: 'mod-indent-huge',
+        MODULEIDPREFIX: 'module-',
+        SECTIONHIDDENCLASS: 'hidden',
+        SECTIONIDPREFIX: 'section-',
+        SHOW: 'editing_show'
     },
     // The CSS selectors we use.
     SELECTOR = {
         ACTIONAREA: '.actions',
-        ACTIONLINKTEXT : '.actionlinktext',
-        ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_title',
-        ACTIVITYFORM : '.' + CSS.ACTIVITYINSTANCE + ' form',
-        ACTIVITYICON : 'img.activityicon',
-        ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
-        ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a',
-        ACTIVITYLI : 'li.activity',
-        ACTIVITYTITLE : 'input[name=title]',
-        COMMANDSPAN : '.commands',
-        CONTENTAFTERLINK : 'div.contentafterlink',
-        CONTENTWITHOUTLINK : 'div.contentwithoutlink',
-        EDITTITLE: 'a.editing_title',
-        HIDE : 'a.editing_hide',
-        HIGHLIGHT : 'a.editing_highlight',
-        INSTANCENAME : 'span.instancename',
-        MODINDENTDIV : '.mod-indent',
-        MODINDENTOUTER : '.mod-indent-outer',
-        PAGECONTENT : 'body',
-        SECTIONLI : 'li.section',
-        SHOW : 'a.'+CSS.SHOW,
-        SHOWHIDE : 'a.editing_showhide'
+        ACTIONLINKTEXT: '.actionlinktext',
+        ACTIVITYACTION: 'a.cm-edit-action[data-action]',
+        ACTIVITYICON: 'img.activityicon',
+        ACTIVITYINSTANCE: '.' + CSS.ACTIVITYINSTANCE,
+        ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a, .' + CSS.ACTIVITYINSTANCE +
+            ' > span[data-inplaceeditable] > a:not([data-inplaceeditablelink])',
+        ACTIVITYLI: 'li.activity',
+        COMMANDSPAN: '.commands',
+        CONTENTAFTERLINK: 'div.contentafterlink',
+        CONTENTWITHOUTLINK: 'div.contentwithoutlink',
+        GROUPINGLABEL: '.' + CSS.ACTIVITYINSTANCE + ' .groupinglabel',
+        HIDE: 'a.editing_hide',
+        HIGHLIGHT: 'a.editing_highlight',
+        INSTANCENAME: 'span.instancename',
+        MODINDENTDIV: '.mod-indent',
+        MODINDENTOUTER: '.mod-indent-outer',
+        PAGECONTENT: 'body',
+        SECTIONLI: 'li.section',
+        SHOW: 'a.' + CSS.SHOW,
+        SHOWHIDE: 'a.editing_showhide'
     },
     INDENTLIMITS = {
         MIN: 0,
@@ -114,7 +112,9 @@ Y.extend(TOOLBOX, Y.Base, {
                         if (responsetext.error) {
                             new M.core.ajaxException(responsetext);
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
 
                     // Run the callback if we have one.
                     if (success_callback) {
@@ -199,4 +199,3 @@ Y.extend(TOOLBOX, Y.Base, {
     }
 }
 );
-

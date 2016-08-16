@@ -58,7 +58,7 @@ function my_get_page($userid, $private=MY_PAGE_PRIVATE) {
 function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
     global $DB;
 
-    if ($customised = $DB->record_exists('my_pages', array('userid' => $userid, 'private' => $private))) {
+    if ($customised = $DB->get_record('my_pages', array('userid' => $userid, 'private' => $private))) {
         return $customised;  // We're done!
     }
 
@@ -81,11 +81,17 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
                                                                 'pagetypepattern' => $pagetype,
                                                                 'subpagepattern' => $systempage->id));
     foreach ($blockinstances as $instance) {
+        $originalid = $instance->id;
         unset($instance->id);
         $instance->parentcontextid = $usercontext->id;
         $instance->subpagepattern = $page->id;
         $instance->id = $DB->insert_record('block_instances', $instance);
         $blockcontext = context_block::instance($instance->id);  // Just creates the context record
+        $block = block_instance($instance->blockname, $instance);
+        if (!$block->instance_copy($originalid)) {
+            debugging("Unable to copy block-specific data for original block instance: $originalid
+                to new block instance: $instance->id", DEBUG_DEVELOPER);
+        }
     }
 
     // FIXME: block position overrides should be merged in with block instance
@@ -127,7 +133,58 @@ function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') 
     if (!$systempage = $DB->get_record('my_pages', array('userid' => null, 'private' => $private))) {
         return false; // error
     }
+
+    // Trigger dashboard has been reset event.
+    $eventparams = array('context' => context_user::instance($userid));
+    $event = \core\event\dashboard_reset::create($eventparams);
+    $event->trigger();
     return $systempage;
+}
+
+/**
+ * Resets the page customisations for all users.
+ *
+ * @param int $private Either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC.
+ * @param string $pagetype Either my-index or user-profile.
+ * @return void
+ */
+function my_reset_page_for_all_users($private = MY_PAGE_PRIVATE, $pagetype = 'my-index') {
+    global $DB;
+
+    // This may take a while. Raise the execution time limit.
+    core_php_time_limit::raise();
+
+    // Find all the user pages and all block instances in them.
+    $sql = "SELECT bi.id
+        FROM {my_pages} p
+        JOIN {context} ctx ON ctx.instanceid = p.userid AND ctx.contextlevel = :usercontextlevel
+        JOIN {block_instances} bi ON bi.parentcontextid = ctx.id AND
+            bi.pagetypepattern = :pagetypepattern AND
+            (bi.subpagepattern IS NULL OR bi.subpagepattern = " . $DB->sql_concat("''", 'p.id') . ")
+        WHERE p.private = :private";
+    $params = array('private' => $private,
+        'usercontextlevel' => CONTEXT_USER,
+        'pagetypepattern' => $pagetype);
+    $blockids = $DB->get_fieldset_sql($sql, $params);
+
+    // Wrap the SQL queries in a transaction.
+    $transaction = $DB->start_delegated_transaction();
+
+    // Delete the block instances.
+    if (!empty($blockids)) {
+        blocks_delete_instances($blockids);
+    }
+
+    // Finally delete the pages.
+    $DB->delete_records_select('my_pages', 'userid IS NOT NULL AND private = :private', ['private' => $private]);
+
+    // We should be good to go now.
+    $transaction->allow_commit();
+
+    // Trigger dashboard has been reset event.
+    $eventparams = array('context' => context_system::instance());
+    $event = \core\event\dashboards_reset::create($eventparams);
+    $event->trigger();
 }
 
 class my_syspage_block_manager extends block_manager {

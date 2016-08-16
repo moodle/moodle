@@ -90,4 +90,9 @@ class cohort_updated extends base {
     protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('cohort', $this->objectid);
     }
+
+    public static function get_objectid_mapping() {
+        // Cohorts are not included in backups, so no mapping is needed for restore.
+        return array('db' => 'cohort', 'restore' => base::NOT_MAPPED);
+    }
 }

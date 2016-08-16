@@ -73,4 +73,9 @@ class rule_deleted extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/admin/tool/monitor/managerules.php', array('courseid' => $this->courseid));
     }
+
+    public static function get_objectid_mapping() {
+        // No mapping required for this event because event monitor rules are not backed up.
+        return array('db' => 'tool_monitor_rules', 'restore' => \core\event\base::NOT_MAPPED);
+    }
 }

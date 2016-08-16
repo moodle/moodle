@@ -69,7 +69,7 @@ function workshop_supports($feature) {
  */
 function workshop_add_instance(stdclass $workshop) {
     global $CFG, $DB;
-    require_once(dirname(__FILE__) . '/locallib.php');
+    require_once(__DIR__ . '/locallib.php');
 
     $workshop->phase                 = workshop::PHASE_SETUP;
     $workshop->timecreated           = time();
@@ -80,6 +80,22 @@ function workshop_add_instance(stdclass $workshop) {
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
     $workshop->evaluation            = 'best';
+
+    if (isset($workshop->gradinggradepass)) {
+        $workshop->gradinggradepass = (float)unformat_float($workshop->gradinggradepass);
+    }
+
+    if (isset($workshop->submissiongradepass)) {
+        $workshop->submissiongradepass = (float)unformat_float($workshop->submissiongradepass);
+    }
+
+    if (isset($workshop->submissionfiletypes)) {
+        $workshop->submissionfiletypes = workshop::clean_file_extensions($workshop->submissionfiletypes);
+    }
+
+    if (isset($workshop->overallfeedbackfiletypes)) {
+        $workshop->overallfeedbackfiletypes = workshop::clean_file_extensions($workshop->overallfeedbackfiletypes);
+    }
 
     // insert the new record so we get the id
     $workshop->id = $DB->insert_record('workshop', $workshop);
@@ -131,7 +147,7 @@ function workshop_add_instance(stdclass $workshop) {
  */
 function workshop_update_instance(stdclass $workshop) {
     global $CFG, $DB;
-    require_once(dirname(__FILE__) . '/locallib.php');
+    require_once(__DIR__ . '/locallib.php');
 
     $workshop->timemodified          = time();
     $workshop->id                    = $workshop->instance;
@@ -140,6 +156,22 @@ function workshop_update_instance(stdclass $workshop) {
     $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
+
+    if (isset($workshop->gradinggradepass)) {
+        $workshop->gradinggradepass = (float)unformat_float($workshop->gradinggradepass);
+    }
+
+    if (isset($workshop->submissiongradepass)) {
+        $workshop->submissiongradepass = (float)unformat_float($workshop->submissiongradepass);
+    }
+
+    if (isset($workshop->submissionfiletypes)) {
+        $workshop->submissionfiletypes = workshop::clean_file_extensions($workshop->submissionfiletypes);
+    }
+
+    if (isset($workshop->overallfeedbackfiletypes)) {
+        $workshop->overallfeedbackfiletypes = workshop::clean_file_extensions($workshop->overallfeedbackfiletypes);
+    }
 
     // todo - if the grading strategy is being changed, we may want to replace all aggregated peer grades with nulls
 
@@ -248,6 +280,35 @@ function workshop_delete_instance($id) {
 }
 
 /**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
+ * @return array
+ */
+function workshop_get_view_actions() {
+    return array('view', 'view all', 'view submission', 'view example');
+}
+
+/**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
+ * @return array
+ */
+function workshop_get_post_actions() {
+    return array('add', 'add assessment', 'add example', 'add submission',
+                 'update', 'update assessment', 'update example', 'update submission');
+}
+
+/**
  * Return a small object with summary information about what a
  * user has done with a given particular instance of this module
  * Used for user activity reports.
@@ -305,7 +366,7 @@ function workshop_user_outline($course, $user, $mod, $workshop) {
  */
 function workshop_user_complete($course, $user, $mod, $workshop) {
     global $CFG, $DB, $OUTPUT;
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(__DIR__.'/locallib.php');
     require_once($CFG->libdir.'/gradelib.php');
 
     $workshop   = new workshop($workshop, $mod, $course);
@@ -1140,23 +1201,22 @@ function workshop_grade_item_category_update($workshop) {
     if (!empty($gradeitems)) {
         foreach ($gradeitems as $gradeitem) {
             if ($gradeitem->itemnumber == 0) {
+                if (isset($workshop->submissiongradepass) &&
+                        $gradeitem->gradepass != $workshop->submissiongradepass) {
+                    $gradeitem->gradepass = $workshop->submissiongradepass;
+                    $gradeitem->update();
+                }
                 if ($gradeitem->categoryid != $workshop->gradecategory) {
                     $gradeitem->set_parent($workshop->gradecategory);
                 }
             } else if ($gradeitem->itemnumber == 1) {
+                if (isset($workshop->gradinggradepass) &&
+                        $gradeitem->gradepass != $workshop->gradinggradepass) {
+                    $gradeitem->gradepass = $workshop->gradinggradepass;
+                    $gradeitem->update();
+                }
                 if ($gradeitem->categoryid != $workshop->gradinggradecategory) {
                     $gradeitem->set_parent($workshop->gradinggradecategory);
-                }
-            }
-            if (!empty($workshop->add)) {
-                $gradecategory = $gradeitem->get_parent_category();
-                if (grade_category::aggregation_uses_aggregationcoef($gradecategory->aggregation)) {
-                    if ($gradecategory->aggregation == GRADE_AGGREGATE_WEIGHTED_MEAN) {
-                        $gradeitem->aggregationcoef = 1;
-                    } else {
-                        $gradeitem->aggregationcoef = 0;
-                    }
-                    $gradeitem->update();
                 }
             }
         }

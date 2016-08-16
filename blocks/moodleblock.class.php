@@ -326,11 +326,6 @@ class block_base {
             $correct = false;
         }
 
-        $width = $this->preferred_width();
-        if (!is_int($width) || $width <= 0) {
-            $errors[] = 'invalid_width';
-            $correct = false;
-        }
         return $correct;
     }
 
@@ -348,14 +343,10 @@ class block_base {
      * Default behavior: save all variables as $CFG properties
      * You don't need to override this if you 're satisfied with the above
      *
-     * @param array $data
-     * @return boolean
+     * @deprecated since Moodle 2.9 MDL-49385 - Please use Admin Settings functionality to save block configuration.
      */
     function config_save($data) {
-        foreach ($data as $name => $value) {
-            set_config($name, $value);
-        }
-        return true;
+        throw new coding_exception('config_save() can not be used any more, use Admin Settings functionality to save block configuration.');
     }
 
     /**
@@ -504,6 +495,15 @@ class block_base {
     }
 
     /**
+     * Copy any block-specific data when copying to a new block instance.
+     * @param int $fromid the id number of the block instance to copy from
+     * @return boolean
+     */
+    public function instance_copy($fromid) {
+        return true;
+    }
+
+    /**
      * Delete everything related to this instance if you have been using persistent storage other than the configdata field.
      * @return boolean
      */
@@ -552,9 +552,21 @@ class block_base {
             && $page->context->contextlevel == CONTEXT_USER // Page belongs to a user
             && $page->context->instanceid == $USER->id // Page belongs to this user
             && $page->pagetype == 'my-index') { // Ensure we are on the My Moodle page
-            $capability = 'block/' . $this->name() . ':myaddinstance';
-            return $this->has_add_block_capability($page, $capability)
-                    && has_capability('moodle/my:manageblocks', $page->context);
+
+            // If the block cannot be displayed on /my it is ok if the myaddinstance capability is not defined.
+            $formats = $this->applicable_formats();
+            // Is 'my' explicitly forbidden?
+            // If 'all' has not been allowed, has 'my' been explicitly allowed?
+            if ((isset($formats['my']) && $formats['my'] == false)
+                || (empty($formats['all']) && empty($formats['my']))) {
+
+                // Block cannot be added to /my regardless of capabilities.
+                return false;
+            } else {
+                $capability = 'block/' . $this->name() . ':myaddinstance';
+                return $this->has_add_block_capability($page, $capability)
+                       && has_capability('moodle/my:manageblocks', $page->context);
+            }
         }
 
         $capability = 'block/' . $this->name() . ':addinstance';
@@ -592,17 +604,6 @@ class block_base {
 
     static function get_extra_capabilities() {
         return array('moodle/block:view', 'moodle/block:edit');
-    }
-
-    // Methods deprecated in Moodle 2.0 ========================================
-
-    /**
-     * Default case: the block wants to be 180 pixels wide
-     * @deprecated since Moodle 2.0.
-     * @return int
-     */
-    function preferred_width() {
-        return 180;
     }
 
     /**

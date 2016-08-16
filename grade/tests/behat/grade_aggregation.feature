@@ -10,8 +10,8 @@ Feature: We can use calculated grade totals
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email | idnumber |
-      | teacher1 | Teacher | 1 | teacher1@asd.com | t1 |
-      | student1 | Student | 1 | student1@asd.com | s1 |
+      | teacher1 | Teacher | 1 | teacher1@example.com | t1 |
+      | student1 | Student | 1 | student1@example.com | s1 |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -42,8 +42,9 @@ Feature: We can use calculated grade totals
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
+    And I change window size to "large"
     And I give the grade "60.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "40.00" to the user "Student 1" for the grade item "Test assignment three"
@@ -58,11 +59,11 @@ Feature: We can use calculated grade totals
       | Hidden | 1 |
     And I set the following settings for grade item "Test assignment eight":
       | Hidden | 1 |
+    And I change window size to "medium"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Grade display type" to "Real (percentage)"
     And I press "Save changes"
 
-  @javascript
   Scenario: Mean of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Mean of grades |
@@ -78,12 +79,9 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "30.42 (30.42 %)" in the "overview-grade" "table"
 
-  @javascript
   Scenario: Weighted mean of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Weighted mean of grades |
@@ -103,12 +101,9 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "26.94 (26.94 %)" in the "overview-grade" "table"
 
-  @javascript
   Scenario: Simple weighted mean of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Simple weighted mean of grades |
@@ -126,12 +121,9 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "48.57 (48.57 %)" in the "overview-grade" "table"
 
-  @javascript
   Scenario: Mean of grades (with extra credits) aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Mean of grades (with extra credits) |
@@ -149,12 +141,9 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "47.22 (47.22 %)" in the "overview-grade" "table"
 
-  @javascript
   Scenario: Median of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation | Median of grades |
@@ -170,12 +159,9 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "25.83 (25.83 %)" in the "overview-grade" "table"
 
-  @javascript
   Scenario: Lowest grade aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation | Lowest grade |
@@ -195,12 +181,9 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "0.00 (0.00 %)" in the "overview-grade" "table"
 
-  @javascript
   Scenario: Highest grade aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Highest grade |
@@ -218,12 +201,9 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "50.00 (50.00 %)" in the "overview-grade" "table"
 
-  @javascript
   Scenario: Mode of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Mode of grades |
@@ -241,17 +221,12 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "50.00 (50.00 %)" in the "overview-grade" "table"
 
-  @javascript
   Scenario: Natural aggregation on outcome items with natural weights
-    And I log out
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
+    And the following config values are set as admin:
+      | enableoutcomes | 1 |
     And the following "scales" exist:
       | name       | scale                                     |
       | Test Scale | Disappointing, Good, Very good, Excellent |
@@ -261,19 +236,13 @@ Feature: We can use calculated grade totals
     And the following "grade items" exist:
       | itemname              | course | outcome | gradetype | scale      |
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
-    And I log out
-    When I log in as "teacher1"
-    And I follow "Course 1"
-    And I follow "Grades"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 1       |
       | Exclude empty grades            | 0       |
     And I follow "Grader report"
-    And I turn editing mode on
-    And I press "Save changes"
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
@@ -282,49 +251,43 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
+    And I follow "Grades" in the user menu
+    Then I should see "114.82 (18.27 %)" in the "overview-grade" "table"
     And I follow "Course 1"
-    And I follow "Grades"
-    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I set the field "Grade report" to "Overview report"
-    And I should see "114.82 (18.27 %)" in the "overview-grade" "table"
+    And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     And I set the following settings for grade item "Test outcome item one":
      | Extra credit     | 1   |
     And I log out
     And I log in as "student1"
+    And I follow "Grades" in the user menu
+    Then I should see "114.00 (18.39 %)" in the "overview-grade" "table"
     And I follow "Course 1"
-    And I follow "Grades"
-    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I set the field "Grade report" to "Overview report"
-    And I should see "114.00 (18.39 %)" in the "overview-grade" "table"
+    And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 0       |
     And I log out
     And I log in as "student1"
+    And I follow "Grades" in the user menu
+    Then I should see "110.00 (17.74 %)" in the "overview-grade" "table"
     And I follow "Course 1"
-    And I follow "Grades"
-    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I set the field "Grade report" to "Overview report"
-    And I should see "110.00 (17.74 %)" in the "overview-grade" "table"
+    And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
 
-  @javascript
   Scenario: Natural aggregation on outcome items with modified weights
-    And I log out
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable outcomes | 1 |
+    And the following config values are set as admin:
+      | enableoutcomes | 1 |
     And the following "scales" exist:
       | name       | scale                                     |
       | Test Scale | Disappointing, Good, Very good, Excellent |
@@ -334,12 +297,9 @@ Feature: We can use calculated grade totals
     And the following "grade items" exist:
       | itemname              | course | outcome | gradetype | scale      |
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
-    And I log out
-    When I log in as "teacher1"
-    And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I expand "Setup" node
-    And I follow "Categories and items"
+    And I follow "Gradebook setup"
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 1       |
@@ -348,8 +308,6 @@ Feature: We can use calculated grade totals
      | Weight adjusted  | 1   |
      | aggregationcoef2 | 100 |
     And I follow "Grader report"
-    And I turn editing mode on
-    And I press "Save changes"
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
@@ -358,13 +316,11 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     And I log out
     And I log in as "student1"
+    And I follow "Grades" in the user menu
+    Then I should see "4.00 (100.00 %)" in the "overview-grade" "table"
     And I follow "Course 1"
-    And I follow "Grades"
-    Then "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I set the field "Grade report" to "Overview report"
-    And I should see "4.00 (100.00 %)" in the "overview-grade" "table"
+    And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
 
-  @javascript
   Scenario: Natural aggregation
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |
@@ -388,8 +344,8 @@ Feature: We can use calculated grade totals
     And I set the field "Show contribution to course total" to "Show"
     And I set the field "Show weightings" to "Show"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
-    And I set the field "Select all or one user" to "Student 1"
+    And I select "User report" from the "Grade report" singleselect
+    And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Contribution to course total |
       | Test assignment five | 28.57 % | 10.00 (50.00 %) | 0–20 | 1.03 % |
@@ -404,11 +360,9 @@ Feature: We can use calculated grade totals
       | Test assignment four | 24.00 % | - | 0–150 | 0.00 % |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "113.75 (23.45 %)" in the "overview-grade" "table"
-    And I set the field "Grade report" to "User report"
+    And I follow "Course 1"
     And the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Contribution to course total |
       | Test assignment six | 70.00 % | 5.00 (50.00 %) | 0–10 | 1.80 % |
@@ -419,12 +373,12 @@ Feature: We can use calculated grade totals
       | Test assignment three | 30.93 %( Extra credit ) | 40.00 (26.67 %) | 0–150 | 8.25 % |
       | Test assignment four | 30.93 % | - | 0–150 | 0.00 % |
 
-  @javascript
   Scenario: Natural aggregation with drop lowest
     When I log out
     And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
-    And I follow "Grades"
+    And I navigate to "Grades" node in "Course administration"
     And I turn editing mode on
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |
@@ -435,9 +389,8 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add category"
-    And I click on "Show more" "link"
     And I set the following fields to these values:
       | Category name | Sub category 3 |
       | Aggregation | Natural |
@@ -474,6 +427,7 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Manual item 2":
       | Extra credit  | 0   |
       | Maximum grade | 200 |
+      | Rescale existing grades | No |
     And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
@@ -484,13 +438,14 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Manual item 2":
       | Extra credit  | 0   |
       | Maximum grade | 100 |
+      | Rescale existing grades | No |
     And I give the grade "21.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
     And I press "Save changes"
     And I turn editing mode off
     And I should see "250.00 (25.25 %)" in the ".course" "css_element"
-    And I navigate to "Categories and items" node in "Grade administration > Setup"
+    And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Sub sub category 1 |
@@ -501,7 +456,7 @@ Feature: We can use calculated grade totals
 
   @javascript
   Scenario: Natural aggregation from the setup screen
-    And I set the field "Grade report" to "Categories and items"
+    And I select "Gradebook setup" from the "Grade report" singleselect
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Natural |
     And I set the following settings for grade item "Sub category 1":
@@ -563,7 +518,7 @@ Feature: We can use calculated grade totals
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
     And I turn editing mode off
-    And I set the field "Grade report" to "Categories and items"
+    And I select "Gradebook setup" from the "Grade report" singleselect
     And I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "0"
     And I set the field "Override weight of Test assignment six" to "1"
@@ -578,8 +533,8 @@ Feature: We can use calculated grade totals
     And I set the field "Show weightings" to "Show"
     And I press "Save changes"
     Then I should see "75.00 (16.85 %)" in the ".course" "css_element"
-    And I set the field "Grade report" to "User report"
-    And I set the field "Select all or one user" to "Student 1"
+    And I select "User report" from the "Grade report" singleselect
+    And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item            | Calculated weight | Grade           | Contribution to course total |
       | Test assignment five  | 57.14 %           | 10.00 (50.00 %) | 2.25 %                        |
@@ -594,11 +549,9 @@ Feature: We can use calculated grade totals
       | Test assignment four  | 33.71 %           | -               | 0.00                         |
     And I log out
     And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "Grades"
-    And I set the field "Grade report" to "Overview report"
+    And I follow "Grades" in the user menu
     And I should see "45.00 (13.85 %)" in the "overview-grade" "table"
-    And I set the field "Grade report" to "User report"
+    And I follow "Course 1"
     And the following should exist in the "user-grade" table:
       | Grade item            | Calculated weight | Grade           | Contribution to course total |
       | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00 %                         |

@@ -664,6 +664,11 @@ class view {
             $showquestiontext = false, $addcontexts = array()) {
         global $CFG, $DB, $OUTPUT;
 
+        // This function can be moderately slow with large question counts and may time out.
+        // We probably do not want to raise it to unlimited, so randomly picking 5 minutes.
+        // Note: We do not call this in the loop because quiz ob_ captures this function (see raise() PHP doc).
+        \core_php_time_limit::raise(300);
+
         $category = $this->get_current_category($categoryandcontext);
 
         $strselectall = get_string('selectall');
@@ -710,8 +715,13 @@ class view {
         echo $OUTPUT->render($pagingbar);
         if ($totalnumber > DEFAULT_QUESTIONS_PER_PAGE) {
             if ($perpage == DEFAULT_QUESTIONS_PER_PAGE) {
-                $url = new \moodle_url('edit.php', array_merge($pageurl->params(), array('qperpage' => 1000)));
-                $showall = '<a href="'.$url.'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+                $url = new \moodle_url('edit.php', array_merge($pageurl->params(),
+                        array('qperpage' => MAXIMUM_QUESTIONS_PER_PAGE)));
+                if ($totalnumber > MAXIMUM_QUESTIONS_PER_PAGE) {
+                    $showall = '<a href="'.$url.'">'.get_string('showperpage', 'moodle', MAXIMUM_QUESTIONS_PER_PAGE).'</a>';
+                } else {
+                    $showall = '<a href="'.$url.'">'.get_string('showall', 'moodle', $totalnumber).'</a>';
+                }
             } else {
                 $url = new \moodle_url('edit.php', array_merge($pageurl->params(),
                                               array('qperpage' => DEFAULT_QUESTIONS_PER_PAGE)));
@@ -873,7 +883,7 @@ class view {
             $DB->set_field('question', 'hidden', 0, array('id' => $unhide));
 
             // Purge these questions from the cache.
-            \core_question_bank::notify_question_edited($unhide);
+            \question_bank::notify_question_edited($unhide);
 
             redirect($this->baseurl);
         }
@@ -913,7 +923,8 @@ class view {
             $deleteurl = new \moodle_url($baseurl, array('deleteselected' => $questionlist, 'confirm' => md5($questionlist),
                                                  'sesskey' => sesskey()));
 
-            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $deleteurl, $baseurl);
+            $continue = new \single_button($deleteurl, get_string('delete'), 'post');
+            echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $continue, $baseurl);
 
             return true;
         }

@@ -193,12 +193,12 @@ if (optional_param('executesearch', 0, PARAM_INT) and confirm_sesskey()) {
 
     $function = 'hub_get_courses';
     $params = array('search' => $search, 'downloadable' => $downloadable,
-        'enrollable' => !$downloadable, 'options' => $options);
+        'enrollable' => intval(!$downloadable), 'options' => $options);
     $serverurl = $huburl . "/local/hub/webservice/webservices.php";
     require_once($CFG->dirroot . "/webservice/xmlrpc/lib.php");
     $xmlrpcclient = new webservice_xmlrpc_client($serverurl, $token);
     try {
-        $result = $xmlrpcclient->call($function, $params);
+        $result = $xmlrpcclient->call($function, array_values($params));
         $courses = $result['courses'];
         $coursetotal = $result['coursetotal'];
     } catch (Exception $e) {

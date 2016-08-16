@@ -144,4 +144,17 @@ class message_sent extends base {
             throw new \coding_exception('The \'messageid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Messages are not backed up, so no need to map them.
+        return false;
+    }
+
+    public static function get_other_mapping() {
+        // Messages are not backed up, so no need to map them on restore.
+        $othermapped = array();
+        // The messages table could vary for older events - so cannot be mapped.
+        $othermapped['messageid'] = array('db' => base::NOT_MAPPED, 'restore' => base::NOT_MAPPED);
+        return $othermapped;
+    }
 }

@@ -24,6 +24,8 @@
 
 namespace assignfeedback_editpdf;
 
+use DOMDocument;
+
 /**
  * Functions for generating the annotated pdf.
  *
@@ -40,12 +42,40 @@ class document_services {
     const FINAL_PDF_FILEAREA = 'download';
     /** File area for combined pdf */
     const COMBINED_PDF_FILEAREA = 'combined';
+    /** File area for importing html */
+    const IMPORT_HTML_FILEAREA = 'importhtml';
     /** File area for page images */
     const PAGE_IMAGE_FILEAREA = 'pages';
     /** File area for readonly page images */
     const PAGE_IMAGE_READONLY_FILEAREA = 'readonlypages';
+    /** File area for the stamps */
+    const STAMPS_FILEAREA = 'stamps';
     /** Filename for combined pdf */
     const COMBINED_PDF_FILENAME = 'combined.pdf';
+
+    /** Base64 encoded blank pdf. This is the most reliable/fastest way to generate a blank pdf. */
+    const BLANK_PDF_BASE64 = <<<EOD
+JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSL0ZpbHRlci9GbGF0ZURl
+Y29kZT4+CnN0cmVhbQp4nDPQM1Qo5ypUMFAwALJMLU31jBQsTAz1LBSKUrnCtRTyuAIVAIcdB3IK
+ZW5kc3RyZWFtCmVuZG9iagoKMyAwIG9iago0MgplbmRvYmoKCjUgMCBvYmoKPDwKPj4KZW5kb2Jq
+Cgo2IDAgb2JqCjw8L0ZvbnQgNSAwIFIKL1Byb2NTZXRbL1BERi9UZXh0XQo+PgplbmRvYmoKCjEg
+MCBvYmoKPDwvVHlwZS9QYWdlL1BhcmVudCA0IDAgUi9SZXNvdXJjZXMgNiAwIFIvTWVkaWFCb3hb
+MCAwIDU5NSA4NDJdL0dyb3VwPDwvUy9UcmFuc3BhcmVuY3kvQ1MvRGV2aWNlUkdCL0kgdHJ1ZT4+
+L0NvbnRlbnRzIDIgMCBSPj4KZW5kb2JqCgo0IDAgb2JqCjw8L1R5cGUvUGFnZXMKL1Jlc291cmNl
+cyA2IDAgUgovTWVkaWFCb3hbIDAgMCA1OTUgODQyIF0KL0tpZHNbIDEgMCBSIF0KL0NvdW50IDE+
+PgplbmRvYmoKCjcgMCBvYmoKPDwvVHlwZS9DYXRhbG9nL1BhZ2VzIDQgMCBSCi9PcGVuQWN0aW9u
+WzEgMCBSIC9YWVogbnVsbCBudWxsIDBdCi9MYW5nKGVuLUFVKQo+PgplbmRvYmoKCjggMCBvYmoK
+PDwvQ3JlYXRvcjxGRUZGMDA1NzAwNzIwMDY5MDA3NDAwNjUwMDcyPgovUHJvZHVjZXI8RkVGRjAw
+NEMwMDY5MDA2MjAwNzIwMDY1MDA0RjAwNjYwMDY2MDA2OTAwNjMwMDY1MDAyMDAwMzQwMDJFMDAz
+ND4KL0NyZWF0aW9uRGF0ZShEOjIwMTYwMjI2MTMyMzE0KzA4JzAwJyk+PgplbmRvYmoKCnhyZWYK
+MCA5CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDIyNiAwMDAwMCBuIAowMDAwMDAwMDE5IDAw
+MDAwIG4gCjAwMDAwMDAxMzIgMDAwMDAgbiAKMDAwMDAwMDM2OCAwMDAwMCBuIAowMDAwMDAwMTUx
+IDAwMDAwIG4gCjAwMDAwMDAxNzMgMDAwMDAgbiAKMDAwMDAwMDQ2NiAwMDAwMCBuIAowMDAwMDAw
+NTYyIDAwMDAwIG4gCnRyYWlsZXIKPDwvU2l6ZSA5L1Jvb3QgNyAwIFIKL0luZm8gOCAwIFIKL0lE
+IFsgPEJDN0REQUQwRDQyOTQ1OTQ2OUU4NzJCMjI1ODUyNkU4Pgo8QkM3RERBRDBENDI5NDU5NDY5
+RTg3MkIyMjU4NTI2RTg+IF0KL0RvY0NoZWNrc3VtIC9BNTYwMEZCMDAzRURCRTg0MTNBNTk3RTZF
+MURDQzJBRgo+PgpzdGFydHhyZWYKNzM2CiUlRU9GCg==
+EOD;
 
     /**
      * This function will take an int or an assignment instance and
@@ -83,6 +113,33 @@ class document_services {
     }
 
     /**
+     * Use a DOM parser to accurately replace images with their alt text.
+     * @param string $html
+     * @return string New html with no image tags.
+     */
+    protected static function strip_images($html) {
+        $dom = new DOMDocument();
+        $dom->loadHTML("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" . $html);
+        $images = $dom->getElementsByTagName('img');
+        $i = 0;
+
+        for ($i = ($images->length - 1); $i >= 0; $i--) {
+            $node = $images->item($i);
+
+            if ($node->hasAttribute('alt')) {
+                $replacement = ' [ ' . $node->getAttribute('alt') . ' ] ';
+            } else {
+                $replacement = ' ';
+            }
+
+            $text = $dom->createTextNode($replacement);
+            $node->parentNode->replaceChild($text, $node);
+        }
+        $count = 1;
+        return str_replace("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>", "", $dom->saveHTML(), $count);
+    }
+
+    /**
      * This function will search for all files that can be converted
      * and concatinated into a PDF (1.4) - for any submission plugin
      * for this students attempt.
@@ -114,13 +171,38 @@ class document_services {
         if (!$submission) {
             return $files;
         }
+
+        $fs = get_file_storage();
         // Ask each plugin for it's list of files.
         foreach ($assignment->get_submission_plugins() as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 $pluginfiles = $plugin->get_files($submission, $user);
                 foreach ($pluginfiles as $filename => $file) {
-                    if (($file instanceof \stored_file) && ($file->get_mimetype() === 'application/pdf')) {
-                        $files[$filename] = $file;
+                    if ($file instanceof \stored_file) {
+                        if ($file->get_mimetype() === 'application/pdf') {
+                            $files[$filename] = $file;
+                        } else if ($convertedfile = $fs->get_converted_document($file, 'pdf')) {
+                            $files[$filename] = $convertedfile;
+                        }
+                    } else {
+                        // Create a tmp stored_file from this html string.
+                        $file = reset($file);
+                        // Strip image tags, because they will not be resolvable.
+                        $file = self::strip_images($file);
+                        $record = new \stdClass();
+                        $record->contextid = $assignment->get_context()->id;
+                        $record->component = 'assignfeedback_editpdf';
+                        $record->filearea = self::IMPORT_HTML_FILEAREA;
+                        $record->itemid = $submission->id;
+                        $record->filepath = '/';
+                        $record->filename = $plugin->get_type() . '-' . $filename;
+
+                        $htmlfile = $fs->create_file_from_string($record, $file);
+                        $convertedfile = $fs->get_converted_document($htmlfile, 'pdf');
+                        $htmlfile->delete();
+                        if ($convertedfile) {
+                            $files[$filename] = $convertedfile;
+                        }
                     }
                 }
             }
@@ -191,11 +273,7 @@ class document_services {
         $files = self::list_compatible_submission_files_for_attempt($assignment, $userid, $attemptnumber);
 
         $pdf = new pdf();
-        if (!$files) {
-            // No valid submission files - create an empty pdf.
-            $pdf->AddPage();
-        } else {
-
+        if ($files) {
             // Create a mega joined PDF.
             $compatiblepdfs = array();
             foreach ($files as $file) {
@@ -219,12 +297,11 @@ class document_services {
             if ($pagecount == 0) {
                 // We at least want a single blank page.
                 debugging('TCPDF did not produce a valid pdf:' . $tmpfile . '. Replacing with a blank pdf.', DEBUG_DEVELOPER);
-                $pdf = new pdf();
-                $pdf->AddPage();
                 @unlink($tmpfile);
                 $files = false;
             }
         }
+        $pdf->Close(); // No real need to close this pdf, because it has been saved by combine_pdfs(), but for clarity.
 
         $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
         $record = new \stdClass();
@@ -241,18 +318,16 @@ class document_services {
 
         // Detect corrupt generated pdfs and replace with a blank one.
         if ($files) {
-            $pagecount = $pdf->load_pdf($tmpfile);
+            $verifypdf = new pdf();
+            $pagecount = $verifypdf->load_pdf($tmpfile);
             if ($pagecount <= 0) {
                 $files = false;
             }
+            $verifypdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
         }
 
         if (!$files) {
-            // This was a blank pdf.
-            unset($pdf);
-            $pdf = new pdf();
-            $content = $pdf->Output(self::COMBINED_PDF_FILENAME, 'S');
-            $file = $fs->create_file_from_string($record, $content);
+            $file = $fs->create_file_from_string($record, base64_decode(self::BLANK_PDF_BASE64));
         } else {
             // This was a combined pdf.
             $file = $fs->create_file_from_pathname($record, $tmpfile);
@@ -312,6 +387,7 @@ class document_services {
         // Get the total number of pages.
         $pdf = new pdf();
         $pagecount = $pdf->set_pdf($combined);
+        $pdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
 
         // Delete temporary folders and files.
         @unlink($combined);
@@ -363,6 +439,9 @@ class document_services {
         $record->filepath = '/';
         $fs = \get_file_storage();
 
+        // Remove the existing content of the filearea.
+        $fs->delete_area_files($record->contextid, $record->component, $record->filearea, $record->itemid);
+
         $files = array();
         for ($i = 0; $i < $pagecount; $i++) {
             $image = $pdf->get_image($i);
@@ -370,6 +449,7 @@ class document_services {
             $files[$i] = $fs->create_file_from_pathname($record, $tmpdir . '/' . $image);
             @unlink($tmpdir . '/' . $image);
         }
+        $pdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
 
         @unlink($combined);
         @rmdir($tmpdir);
@@ -421,14 +501,13 @@ class document_services {
         $fs = \get_file_storage();
 
         // If we are after the readonly pages...
-        $copytoreadonly = false;
         if ($readonly) {
             $filearea = self::PAGE_IMAGE_READONLY_FILEAREA;
             if ($fs->is_area_empty($contextid, $component, $filearea, $itemid)) {
-                // We have a problem here, we were supposed to find the files...
-                // let's fallback on the other area, and copy the files to the readonly area.
-                $copytoreadonly = true;
-                $filearea = self::PAGE_IMAGE_FILEAREA;
+                // We have a problem here, we were supposed to find the files.
+                // Attempt to re-generate the pages from the combined images.
+                self::generate_page_images_for_attempt($assignment, $userid, $attemptnumber);
+                self::copy_pages_to_readonly_area($assignment, $grade);
             }
         }
 
@@ -460,10 +539,6 @@ class document_services {
                     $pages[$pagenumber] = $file;
                 }
                 ksort($pages);
-
-                if ($copytoreadonly) {
-                    self::copy_pages_to_readonly_area($assignment, $grade);
-                }
             }
         }
 

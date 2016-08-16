@@ -289,8 +289,9 @@ class qformat_default {
     public function importprocess($category) {
         global $USER, $CFG, $DB, $OUTPUT;
 
-        // reset the timer in case file upload was slow
+        // Raise time and memory, as importing can be quite intensive.
         core_php_time_limit::raise();
+        raise_memory_limit(MEMORY_EXTRA);
 
         // STAGE 1: Parse the file
         echo $OUTPUT->notification(get_string('parsingquestions', 'question'), 'notifysuccess');
@@ -424,9 +425,8 @@ class qformat_default {
 
             $result = question_bank::get_qtype($question->qtype)->save_question_options($question);
 
-            if (!empty($CFG->usetags) && isset($question->tags)) {
-                require_once($CFG->dirroot . '/tag/lib.php');
-                tag_set('question', $question->id, $question->tags, 'core_question', $question->context->id);
+            if (isset($question->tags)) {
+                core_tag_tag::set_item_tags('core_question', 'question', $question->id, $question->context, $question->tags);
             }
 
             if (!empty($result->error)) {

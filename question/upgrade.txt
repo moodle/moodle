@@ -1,5 +1,11 @@
 This files describes API changes for code that uses the question API.
 
+=== 3.1 ===
+
+1) The argument $requirecourseid was removed from question_edit_setup() and
+   is no longer respected. The behaviour was found to be buggy and now throws
+   debugging notices if passed.
+
 === 2.9 ===
 
 1) Some functions in questionlib.php which were deprecated in the past have now
@@ -22,7 +28,7 @@ This files describes API changes for code that uses the question API.
 
 === 2.8 ===
 
-1) This is jsut a warning that some methods of the question_engine_data_mapper
+1) This is just a warning that some methods of the question_engine_data_mapper
    class have changed. All these methods are ones that you should not have been
    calling directly from your code, so this should not cause any problems.
    The changed methods are:

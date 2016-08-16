@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-
+require_once($CFG->dirroot . '/question/type/multianswer/questiontype.php');
 /**
  * restore plugin class that provides the necessary information
  * needed to restore one multianswer qtype plugin
@@ -102,13 +102,36 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
                    AND bi.itemname = 'question_created'",
                 array($this->get_restoreid()));
         foreach ($rs as $rec) {
-            $sequencearr = explode(',', $rec->sequence);
+            $sequencearr = preg_split('/,/', $rec->sequence, -1, PREG_SPLIT_NO_EMPTY);
+            if (substr_count($rec->sequence, ',') + 1 != count($sequencearr)) {
+                $this->task->log('Invalid sequence found in restored multianswer question ' . $rec->id, backup::LOG_WARNING);
+            }
+
             foreach ($sequencearr as $key => $question) {
                 $sequencearr[$key] = $this->get_mappingid('question', $question);
             }
             $sequence = implode(',', $sequencearr);
             $DB->set_field('question_multianswer', 'sequence', $sequence,
                     array('id' => $rec->id));
+            if (!empty($sequence)) {
+                // Get relevant data indexed by positionkey from the multianswers table.
+                $wrappedquestions = $DB->get_records_list('question', 'id',
+                    explode(',', $sequence), 'id ASC');
+                foreach ($wrappedquestions as $wrapped) {
+                    if ($wrapped->qtype == 'multichoice') {
+                        question_bank::get_qtype($wrapped->qtype)->get_question_options($wrapped);
+                        if (isset($wrapped->options->shuffleanswers)) {
+                            preg_match('/'.ANSWER_REGEX.'/s', $wrapped->questiontext, $answerregs);
+                            if (isset($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]) &&
+                                    $answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE] !== '') {
+                                $wrapped->options->shuffleanswers = 0;
+                                $DB->set_field_select('qtype_multichoice_options', 'shuffleanswers', '0', "id =:select",
+                                    array('select' => $wrapped->options->id) );
+                            }
+                        }
+                    }
+                }
+            }
         }
         $rs->close();
     }
@@ -163,7 +186,7 @@ class restore_qtype_multianswer_plugin extends restore_qtype_plugin {
             $subanswer = $pairarr[1];
             // Calculate the questionid based on sequenceid.
             // Note it is already one *new* questionid that doesn't need mapping.
-            $questionid = $sequencearr[$sequenceid-1];
+            $questionid = $sequencearr[$sequenceid - 1];
             // Fetch qtype of the question (needed for delegation).
             $questionqtype = $DB->get_field('question', 'qtype', array('id' => $questionid));
             // Delegate subanswer recode to proper qtype, faking one question_states record.

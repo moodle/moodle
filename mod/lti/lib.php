@@ -97,6 +97,8 @@ function lti_add_instance($lti, $mform) {
         $lti->toolurl = '';
     }
 
+    lti_load_tool_if_cartridge($lti);
+
     $lti->timecreated = time();
     $lti->timemodified = $lti->timecreated;
     $lti->servicesalt = uniqid('', true);
@@ -136,6 +138,8 @@ function lti_add_instance($lti, $mform) {
 function lti_update_instance($lti, $mform) {
     global $DB, $CFG;
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
+
+    lti_load_tool_if_cartridge($lti);
 
     $lti->timemodified = time();
     $lti->id = $lti->instance;
@@ -188,53 +192,62 @@ function lti_delete_instance($id) {
     lti_grade_item_delete($basiclti);
 
     $ltitype = $DB->get_record('lti_types', array('id' => $basiclti->typeid));
-    $DB->delete_records('lti_tool_settings',
-        array('toolproxyid' => $ltitype->toolproxyid, 'course' => $basiclti->course, 'coursemoduleid' => $id));
+    if ($ltitype) {
+        $DB->delete_records('lti_tool_settings',
+            array('toolproxyid' => $ltitype->toolproxyid, 'course' => $basiclti->course, 'coursemoduleid' => $id));
+    }
 
     return $DB->delete_records("lti", array("id" => $basiclti->id));
 }
 
-function lti_get_types() {
-    global $OUTPUT;
+/**
+ * Return aliases of this activity. LTI should have an alias for each configured tool type
+ * This is so you can add an external tool types directly to the activity chooser
+ *
+ * @param stdClass $defaultitem default item that would be added to the activity chooser if this callback was not present.
+ *     It has properties: archetype, name, title, help, icon, link
+ * @return array An array of aliases for this activity. Each element is an object with same list of properties as $defaultitem,
+ *     plus an additional property, helplink.
+ *     Properties title and link are required
+ **/
+function lti_get_shortcuts($defaultitem) {
+    global $CFG, $COURSE;
+    require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
-    $subtypes = array();
-    foreach (get_plugin_list('ltisource') as $name => $dir) {
-        if ($moretypes = component_callback("ltisource_$name", 'get_types')) {
-            $subtypes = array_merge($subtypes, $moretypes);
+    $types = lti_get_configured_types($COURSE->id, $defaultitem->link->param('sr'));
+    $types[] = $defaultitem;
+
+    // Add items defined in ltisource plugins.
+    foreach (core_component::get_plugin_list('ltisource') as $pluginname => $dir) {
+        if ($moretypes = component_callback("ltisource_$pluginname", 'get_types')) {
+            // Callback 'get_types()' in 'ltisource' plugins is deprecated in 3.1 and will be removed in 3.5, TODO MDL-53697.
+            debugging('Deprecated callback get_types() is found in ltisource_' . $pluginname .
+                ', use get_shortcuts() instead', DEBUG_DEVELOPER);
+            $grouptitle = get_string('modulenameplural', 'mod_lti');
+            foreach ($moretypes as $subtype) {
+                // Instead of adding subitems combine the name of the group with the name of the subtype.
+                $subtype->title = get_string('activitytypetitle', '',
+                    (object)['activity' => $grouptitle, 'type' => $subtype->typestr]);
+                // Re-implement the logic of get_module_metadata() in Moodle 3.0 and below for converting
+                // subtypes into items in activity chooser.
+                $subtype->type = str_replace('&amp;', '&', $subtype->type);
+                $subtype->name = preg_replace('/.*type=/', '', $subtype->type);
+                $subtype->link = new moodle_url($defaultitem->link, array('type' => $subtype->name));
+                if (empty($subtype->help) && !empty($subtype->name) &&
+                        get_string_manager()->string_exists('help' . $subtype->name, $pluginname)) {
+                    $subtype->help = get_string('help' . $subtype->name, $pluginname);
+                }
+                unset($subtype->typestr);
+                $types[] = $subtype;
+            }
+        }
+        // LTISOURCE plugins can also implement callback get_shortcuts() to add items to the activity chooser.
+        // The return values are the same as of the 'mod' callbacks except that $defaultitem is only passed for reference and
+        // should not be added to the return value.
+        if ($moretypes = component_callback("ltisource_$pluginname", 'get_shortcuts', array($defaultitem))) {
+            $types = array_merge($types, $moretypes);
         }
     }
-    if (empty($subtypes)) {
-        return MOD_SUBTYPE_NO_CHILDREN;
-    }
-
-    $types = array();
-
-    $type           = new stdClass();
-    $type->modclass = MOD_CLASS_ACTIVITY;
-    $type->type     = 'lti_group_start';
-    $type->typestr  = '--'.get_string('modulenameplural', 'mod_lti');
-    $types[]        = $type;
-
-    $link     = get_string('modulename_link', 'mod_lti');
-    $linktext = get_string('morehelp');
-    $help     = get_string('modulename_help', 'mod_lti');
-    $help    .= html_writer::tag('div', $OUTPUT->doc_link($link, $linktext, true), array('class' => 'helpdoclink'));
-
-    $type           = new stdClass();
-    $type->modclass = MOD_CLASS_ACTIVITY;
-    $type->type     = '';
-    $type->typestr  = get_string('generaltool', 'mod_lti');
-    $type->help     = $help;
-    $types[]        = $type;
-
-    $types = array_merge($types, $subtypes);
-
-    $type           = new stdClass();
-    $type->modclass = MOD_CLASS_ACTIVITY;
-    $type->type     = 'lti_group_end';
-    $type->typestr  = '--';
-    $types[]        = $type;
-
     return $types;
 }
 
@@ -252,36 +265,45 @@ function lti_get_coursemodule_info($coursemodule) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     if (!$lti = $DB->get_record('lti', array('id' => $coursemodule->instance),
-            'icon, secureicon, intro, introformat, name, toolurl, launchcontainer')) {
+            'icon, secureicon, intro, introformat, name, typeid, toolurl, launchcontainer')) {
         return null;
     }
 
     $info = new cached_cm_info();
-
-    // We want to use the right icon based on whether the
-    // current page is being requested over http or https.
-    if (lti_request_is_using_ssl() && !empty($lti->secureicon)) {
-        $info->iconurl = new moodle_url($lti->secureicon);
-    } else if (!empty($lti->icon)) {
-        $info->iconurl = new moodle_url($lti->icon);
-    }
 
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
         $info->content = format_module_intro('lti', $lti, $coursemodule->id, false);
     }
 
-    // Does the link open in a new window?
-    $tool = lti_get_tool_by_url_match($lti->toolurl);
-    if ($tool) {
+    if (!empty($lti->typeid)) {
+        $toolconfig = lti_get_type_config($lti->typeid);
+    } else if ($tool = lti_get_tool_by_url_match($lti->toolurl)) {
         $toolconfig = lti_get_type_config($tool->id);
     } else {
         $toolconfig = array();
     }
+
+    // We want to use the right icon based on whether the
+    // current page is being requested over http or https.
+    if (lti_request_is_using_ssl() &&
+        (!empty($lti->secureicon) || (isset($toolconfig['secureicon']) && !empty($toolconfig['secureicon'])))) {
+        if (!empty($lti->secureicon)) {
+            $info->iconurl = new moodle_url($lti->secureicon);
+        } else {
+            $info->iconurl = new moodle_url($toolconfig['secureicon']);
+        }
+    } else if (!empty($lti->icon)) {
+        $info->iconurl = new moodle_url($lti->icon);
+    } else if (isset($toolconfig['icon']) && !empty($toolconfig['icon'])) {
+        $info->iconurl = new moodle_url($toolconfig['icon']);
+    }
+
+    // Does the link open in a new window?
     $launchcontainer = lti_get_launch_container($lti, $toolconfig);
     if ($launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW) {
         $launchurl = new moodle_url('/mod/lti/launch.php', array('id' => $coursemodule->id));
-        $info->onclick = "window.open('" . $launchurl->out(false) . "', 'lti'); return false;";
+        $info->onclick = "window.open('" . $launchurl->out(false) . "', 'lti-".$coursemodule->id."'); return false;";
     }
 
     $info->name = $lti->name;
@@ -428,7 +450,20 @@ function lti_uninstall() {
 function lti_get_lti_types() {
     global $DB;
 
-    return $DB->get_records('lti_types');
+    return $DB->get_records('lti_types', null, 'state DESC, timemodified DESC');
+}
+
+/**
+ * Returns available Basic LTI types that match the given
+ * tool proxy id
+ *
+ * @param int $toolproxyid Tool proxy id
+ * @return array of basicLTI types
+ */
+function lti_get_lti_types_from_proxy_id($toolproxyid) {
+    global $DB;
+
+    return $DB->get_records('lti_types', array('toolproxyid' => $toolproxyid), 'state DESC, timemodified DESC');
 }
 
 /**
@@ -480,20 +515,6 @@ function lti_grade_item_delete($basiclti) {
     return grade_update('mod/lti', $basiclti->course, 'mod', 'lti', $basiclti->id, 0, null, array('deleted' => 1));
 }
 
-function lti_extend_settings_navigation($settings, $parentnode) {
-    global $PAGE;
-
-    if (has_capability('mod/lti:manage', context_module::instance($PAGE->cm->id))) {
-        $keys = $parentnode->get_children_key_list();
-
-        $node = navigation_node::create('Submissions',
-            new moodle_url('/mod/lti/grade.php', array('id' => $PAGE->cm->id)),
-            navigation_node::TYPE_SETTING, null, 'mod_lti_submissions');
-
-        $parentnode->add_node($node, $keys[1]);
-    }
-}
-
 /**
  * Log post actions
  *
@@ -510,4 +531,32 @@ function lti_get_post_actions() {
  */
 function lti_get_view_actions() {
     return array('view all', 'view');
+}
+
+/**
+ * Mark the activity completed (if required) and trigger the course_module_viewed event.
+ *
+ * @param  stdClass $lti        lti object
+ * @param  stdClass $course     course object
+ * @param  stdClass $cm         course module object
+ * @param  stdClass $context    context object
+ * @since Moodle 3.0
+ */
+function lti_view($lti, $course, $cm, $context) {
+
+    // Trigger course_module_viewed event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $lti->id
+    );
+
+    $event = \mod_lti\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
+    $event->add_record_snapshot('lti', $lti);
+    $event->trigger();
+
+    // Completion.
+    $completion = new completion_info($course);
+    $completion->set_module_viewed($cm);
 }

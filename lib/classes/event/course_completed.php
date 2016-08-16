@@ -134,4 +134,15 @@ class course_completed extends base {
             throw new \coding_exception('The \'relateduserid\' value must be set in other.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // Sorry - there is no mapping available for completion records.
+        return array('db' => 'course_completions', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        $othermapped = array();
+        $othermapped['relateduserid'] = array('db' => 'user', 'restore' => 'user');
+        return $othermapped;
+    }
 }

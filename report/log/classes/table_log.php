@@ -36,9 +36,6 @@ class report_log_table_log extends table_sql {
     /** @var array list of user fullnames shown in report */
     private $userfullnames = array();
 
-    /** @var array list of course short names shown in report */
-    private $courseshortnames = array();
-
     /** @var array list of context name shown in report */
     private $contextname = array();
 
@@ -54,7 +51,7 @@ class report_log_table_log extends table_sql {
      *     - int userid: user id
      *     - int|string modid: Module id or "site_errors" to view site errors
      *     - int groupid: Group id
-     *     - \core\log\sql_select_reader logreader: reader from which data will be fetched.
+     *     - \core\log\sql_reader logreader: reader from which data will be fetched.
      *     - int edulevel: educational level.
      *     - string action: view action
      *     - int date: Date from which logs to be viewed.
@@ -94,15 +91,47 @@ class report_log_table_log extends table_sql {
     /**
      * Generate the course column.
      *
-     * @param stdClass $event event data.
-     * @return string HTML for the course column.
+     * @deprecated since Moodle 2.9 MDL-48595 - please do not use this function any more.
      */
     public function col_course($event) {
-        if (empty($event->courseid) || empty($this->courseshortnames[$event->courseid])) {
-            return '-';
-        } else {
-            return $this->courseshortnames[$event->courseid];
+        throw new coding_exception('col_course() can not be used any more, there is no such column.');
+    }
+
+    /**
+     * Gets the user full name.
+     *
+     * This function is useful because, in the unlikely case that the user is
+     * not already loaded in $this->userfullnames it will fetch it from db.
+     *
+     * @since Moodle 2.9
+     * @param int $userid
+     * @return string|false
+     */
+    protected function get_user_fullname($userid) {
+        global $DB;
+
+        if (empty($userid)) {
+            return false;
         }
+
+        if (!empty($this->userfullnames[$userid])) {
+            return $this->userfullnames[$userid];
+        }
+
+        // We already looked for the user and it does not exist.
+        if ($this->userfullnames[$userid] === false) {
+            return false;
+        }
+
+        // If we reach that point new users logs have been generated since the last users db query.
+        list($usql, $uparams) = $DB->get_in_or_equal($userid);
+        $sql = "SELECT id," . get_all_user_name_fields(true) . " FROM {user} WHERE id " . $usql;
+        if (!$user = $DB->get_records_sql($sql, $uparams)) {
+            return false;
+        }
+
+        $this->userfullnames[$userid] = fullname($user);
+        return $this->userfullnames[$userid];
     }
 
     /**
@@ -112,8 +141,13 @@ class report_log_table_log extends table_sql {
      * @return string HTML for the time column
      */
     public function col_time($event) {
-        $recenttimestr = get_string('strftimerecent', 'core_langconfig');
-        return userdate($event->timecreated, $recenttimestr);
+
+        if (empty($this->download)) {
+            $dateformat = get_string('strftimerecent', 'core_langconfig');
+        } else {
+            $dateformat = get_string('strftimedatetimeshort', 'core_langconfig');
+        }
+        return userdate($event->timecreated, $dateformat);
     }
 
     /**
@@ -129,25 +163,29 @@ class report_log_table_log extends table_sql {
         // Add username who did the action.
         if (!empty($logextra['realuserid'])) {
             $a = new stdClass();
-            $params = array('id' => $logextra['realuserid']);
-            if ($event->courseid) {
-                $params['course'] = $event->courseid;
+            if (!$a->realusername = $this->get_user_fullname($logextra['realuserid'])) {
+                $a->realusername = '-';
             }
-            $a->realusername = $this->userfullnames[$logextra['realuserid']];
-            $a->asusername = $this->userfullnames[$event->userid];
+            if (!$a->asusername = $this->get_user_fullname($event->userid)) {
+                $a->asusername = '-';
+            }
             if (empty($this->download)) {
+                $params = array('id' => $logextra['realuserid']);
+                if ($event->courseid) {
+                    $params['course'] = $event->courseid;
+                }
                 $a->realusername = html_writer::link(new moodle_url('/user/view.php', $params), $a->realusername);
                 $params['id'] = $event->userid;
                 $a->asusername = html_writer::link(new moodle_url('/user/view.php', $params), $a->asusername);
             }
             $username = get_string('eventloggedas', 'report_log', $a);
-        } else if (!empty($event->userid) && !empty($this->userfullnames[$event->userid])) {
-            $params = array('id' => $event->userid);
-            if ($event->courseid) {
-                $params['course'] = $event->courseid;
-            }
-            $username = $this->userfullnames[$event->userid];
+
+        } else if (!empty($event->userid) && $username = $this->get_user_fullname($event->userid)) {
             if (empty($this->download)) {
+                $params = array('id' => $event->userid);
+                if ($event->courseid) {
+                    $params['course'] = $event->courseid;
+                }
                 $username = html_writer::link(new moodle_url('/user/view.php', $params), $username);
             }
         } else {
@@ -164,13 +202,12 @@ class report_log_table_log extends table_sql {
      */
     public function col_relatedfullnameuser($event) {
         // Add affected user.
-        if (!empty($event->relateduserid) && isset($this->userfullnames[$event->relateduserid])) {
-            $params = array('id' => $event->relateduserid);
-            if ($event->courseid) {
-                $params['course'] = $event->courseid;
-            }
-            $username = $this->userfullnames[$event->relateduserid];
+        if (!empty($event->relateduserid) && $username = $this->get_user_fullname($event->relateduserid)) {
             if (empty($this->download)) {
+                $params = array('id' => $event->relateduserid);
+                if ($event->courseid) {
+                    $params['course'] = $event->courseid;
+                }
                 $username = html_writer::link(new moodle_url('/user/view.php', $params), $username);
             }
         } else {
@@ -195,7 +232,7 @@ class report_log_table_log extends table_sql {
                 $context = context::instance_by_id($event->contextid, IGNORE_MISSING);
                 if ($context) {
                     $contextname = $context->get_context_name(true);
-                    if ($url = $context->get_url() && empty($this->download)) {
+                    if (empty($this->download) && $url = $context->get_url()) {
                         $contextname = html_writer::link($url, $contextname);
                     }
                 } else {
@@ -343,8 +380,9 @@ class report_log_table_log extends table_sql {
                 $params['action'] = '%'.$action.'%';
             }
         } else if (!empty($this->filterparams->action)) {
-            $sql = "crud = :crud";
-            $params['crud'] = $this->filterparams->action;
+             list($sql, $params) = $DB->get_in_or_equal(str_split($this->filterparams->action),
+                    SQL_PARAMS_NAMED, 'crud');
+            $sql = "crud " . $sql;
         } else {
             // Add condition for all possible values of crud (to use db index).
             list($sql, $params) = $DB->get_in_or_equal(array('c', 'r', 'u', 'd'),
@@ -448,6 +486,11 @@ class report_log_table_log extends table_sql {
             $joins[] = "edulevel ".$edulevelsql;
             $params = array_merge($params, $edulevelparams);
         }
+        // Origin.
+        if (isset($this->filterparams->origin) && ($this->filterparams->origin != '')) {
+            $joins[] = "origin = :origin";
+            $params['origin'] = $this->filterparams->origin;
+        }
 
         if (!($this->filterparams->logreader instanceof logstore_legacy\log\store)) {
             // Filter out anonymous actions, this is N/A for legacy log because it never stores them.
@@ -463,48 +506,68 @@ class report_log_table_log extends table_sql {
             $this->pageable(false);
         }
 
-        $this->rawdata = $this->filterparams->logreader->get_events_select($selector, $params, $this->filterparams->orderby,
-                $this->get_page_start(), $this->get_page_size());
+        // Get the users and course data.
+        $this->rawdata = $this->filterparams->logreader->get_events_select_iterator($selector, $params,
+            $this->filterparams->orderby, $this->get_page_start(), $this->get_page_size());
+
+        // Update list of users which will be displayed on log page.
+        $this->update_users_used();
+
+        // Get the events. Same query than before; even if it is not likely, logs from new users
+        // may be added since last query so we will need to work around later to prevent problems.
+        // In almost most of the cases this will be better than having two opened recordsets.
+        $this->rawdata = $this->filterparams->logreader->get_events_select_iterator($selector, $params,
+            $this->filterparams->orderby, $this->get_page_start(), $this->get_page_size());
 
         // Set initial bars.
         if ($useinitialsbar && !$this->is_downloading()) {
             $this->initialbars($total > $pagesize);
         }
 
-        // Update list of users and courses list which will be displayed on log page.
-        $this->update_users_and_courses_used();
     }
 
     /**
      * Helper function to create list of course shortname and user fullname shown in log report.
+     *
      * This will update $this->userfullnames and $this->courseshortnames array with userfullname and courseshortname (with link),
      * which will be used to render logs in table.
+     *
+     * @deprecated since Moodle 2.9 MDL-48595 - please do not use this function any more.
      */
     public function update_users_and_courses_used() {
-        global $SITE, $DB;
+        throw new coding_exception('update_users_and_courses_used() can not be used any more, please use update_users_used() instead.');
+    }
+
+    /**
+     * Helper function to create list of user fullnames shown in log report.
+     *
+     * This will update $this->userfullnames array with userfullname,
+     * which will be used to render logs in table.
+     *
+     * @since   Moodle 2.9
+     * @return  void
+     */
+    protected function update_users_used() {
+        global $DB;
 
         $this->userfullnames = array();
-        $this->courseshortnames = array($SITE->id => $SITE->shortname);
         $userids = array();
-        $courseids = array();
-        // For each event cache full username and course.
-        // Get list of userids and courseids which will be shown in log report.
+
+        // For each event cache full username.
+        // Get list of userids which will be shown in log report.
         foreach ($this->rawdata as $event) {
             $logextra = $event->get_logextra();
-            if (!empty($event->userid) && !in_array($event->userid, $userids)) {
-                $userids[] = $event->userid;
+            if (!empty($event->userid) && empty($userids[$event->userid])) {
+                $userids[$event->userid] = $event->userid;
             }
-            if (!empty($logextra['realuserid']) && !in_array($logextra['realuserid'], $userids)) {
-                $userids[] = $logextra['realuserid'];
+            if (!empty($logextra['realuserid']) && empty($userids[$logextra['realuserid']])) {
+                $userids[$logextra['realuserid']] = $logextra['realuserid'];
             }
-            if (!empty($event->relateduserid) && !in_array($event->relateduserid, $userids)) {
-                $userids[] = $event->relateduserid;
-            }
-
-            if (!empty($event->courseid) && ($event->courseid != $SITE->id) && !in_array($event->courseid, $courseids)) {
-                $courseids[] = $event->courseid;
+            if (!empty($event->relateduserid) && empty($userids[$event->relateduserid])) {
+                $userids[$event->relateduserid] = $event->relateduserid;
             }
         }
+        $this->rawdata->close();
 
         // Get user fullname and put that in return list.
         if (!empty($userids)) {
@@ -513,27 +576,13 @@ class report_log_table_log extends table_sql {
                     $uparams);
             foreach ($users as $userid => $user) {
                 $this->userfullnames[$userid] = fullname($user);
+                unset($userids[$userid]);
             }
-        }
 
-        // Get course shortname and put that in return list.
-        if (!empty($courseids)) { // If all logs don't belog to site level then get course info.
-            list($coursesql, $courseparams) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-            $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
-            $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
-            $courseparams['contextlevel'] = CONTEXT_COURSE;
-            $sql = "SELECT c.id,c.shortname $ccselect FROM {course} c
-                   $ccjoin
-                     WHERE c.id " . $coursesql;
-
-            $courses = $DB->get_records_sql($sql, $courseparams);
-            foreach ($courses as $courseid => $course) {
-                $url = new moodle_url("/course/view.php", array('id' => $courseid));
-                context_helper::preload_from_record($course);
-                $context = context_course::instance($courseid, IGNORE_MISSING);
-                // Method format_string() takes care of missing contexts.
-                $this->courseshortnames[$courseid] = html_writer::link($url, format_string($course->shortname, true,
-                        array('context' => $context)));
+            // We fill the array with false values for the users that don't exist anymore
+            // in the database so we don't need to query the db again later.
+            foreach ($userids as $userid) {
+                $this->userfullnames[$userid] = false;
             }
         }
     }

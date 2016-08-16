@@ -86,13 +86,13 @@ function theme_clean_set_logo($css, $logo) {
  * @return bool
  */
 function theme_clean_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'logo') {
+    if ($context->contextlevel == CONTEXT_SYSTEM and ($filearea === 'logo' || $filearea === 'smalllogo')) {
         $theme = theme_config::load('clean');
         // By default, theme files must be cache-able by both browsers and proxies.
         if (!array_key_exists('cacheability', $options)) {
             $options['cacheability'] = 'public';
         }
-        return $theme->setting_file_serve('logo', $args, $forcedownload, $options);
+        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
     } else {
         send_file_not_found();
     }
@@ -139,8 +139,10 @@ function theme_clean_get_html_for_settings(renderer_base $output, moodle_page $p
         $return->navbarclass .= ' navbar-inverse';
     }
 
-    if (!empty($page->theme->settings->logo)) {
-        $return->heading = html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'logo'));
+    // Only display the logo on the front page and login page, if one is defined.
+    if (!empty($page->theme->settings->logo) &&
+            ($page->pagelayout == 'frontpage' || $page->pagelayout == 'login')) {
+        $return->heading = html_writer::tag('div', '', array('class' => 'logo'));
     } else {
         $return->heading = $output->page_heading();
     }

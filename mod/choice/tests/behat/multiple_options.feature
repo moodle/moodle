@@ -4,12 +4,11 @@ Feature: Multiple option choice response
   As a teacher
   I need to add choice activities to courses with multiple options enabled
 
-  @javascript
   Scenario: Complete a choice with multiple options enabled
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -33,13 +32,12 @@ Feature: Multiple option choice response
     Then I should see "Your selection: Option 1; Option 2"
     And I should see "Your choice has been saved"
 
-  @javascript
   Scenario: Complete a choice with multiple options enabled and limited responses set
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
-      | student2 | Student | 2 | student2@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |

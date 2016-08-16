@@ -118,10 +118,19 @@ class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
     *
     * @access public
     */
-    function HTML_QuickForm_Renderer_Tableless()
-    {
-        $this->HTML_QuickForm_Renderer_Default();
+    public function __construct() {
+        parent::__construct();
     } // end constructor
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function HTML_QuickForm_Renderer_Tableless() {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct();
+    }
 
    /**
     * Called when visiting a header element
@@ -186,7 +195,7 @@ class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
             } else {
                 $id = $element->getName();
             }
-            if (!empty($id) and !$element->isFrozen() and !is_a($element, 'MoodleQuickForm_group') and !is_a($element, 'HTML_QuickForm_static')) { // moodle hack
+            if (!empty($id) and !is_a($element, 'MoodleQuickForm_group') and !is_a($element, 'HTML_QuickForm_static')) { // moodle hack
                 $html = str_replace('<label', '<label for="' . $id . '"', $html);
                 $element_html = preg_replace('#name="' . $id . '#',
                                              'id="' . $id . '" name="' . $id . '',
@@ -258,7 +267,7 @@ class HTML_QuickForm_Renderer_Tableless extends HTML_QuickForm_Renderer_Default
         $this->_html = str_replace('></label>', '>&nbsp;</label>', $this->_html);
         // add a validation script
         if ('' != ($script = $form->getValidationScript())) {
-            $this->_html = $script . "\n" . $this->_html;
+            $this->_html = $this->_html . "\n" . $script;
         }
     } // end func finishForm
 

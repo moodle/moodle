@@ -311,17 +311,25 @@ abstract class info {
      * @param int $courseid Target course id
      * @param \base_logger $logger Logger for any warnings
      * @param int $dateoffset Date offset to be added to any dates (0 = none)
+     * @param \base_task $task Restore task
      */
-    public function update_after_restore($restoreid, $courseid, \base_logger $logger, $dateoffset) {
+    public function update_after_restore($restoreid, $courseid, \base_logger $logger,
+            $dateoffset, \base_task $task) {
         $tree = $this->get_availability_tree();
         // Set static data for use by get_restore_date_offset function.
-        self::$restoreinfo = array('restoreid' => $restoreid, 'dateoffset' => $dateoffset);
+        self::$restoreinfo = array('restoreid' => $restoreid, 'dateoffset' => $dateoffset,
+                'task' => $task);
         $changed = $tree->update_after_restore($restoreid, $courseid, $logger,
                 $this->get_thing_name());
         if ($changed) {
             // Save modified data.
-            $structure = $tree->save();
-            $this->set_in_database(json_encode($structure));
+            if ($tree->is_empty()) {
+                // If the tree is empty, but the tree has changed, remove this condition.
+                $this->set_in_database(null);
+            } else {
+                $structure = $tree->save();
+                $this->set_in_database(json_encode($structure));
+            }
         }
     }
 
@@ -341,6 +349,24 @@ abstract class info {
             throw new coding_exception('Data not available for that restore id');
         }
         return self::$restoreinfo['dateoffset'];
+    }
+
+    /**
+     * Gets the restore task (specifically, the task that calls the
+     * update_after_restore method) for the current restore.
+     *
+     * @param string $restoreid Restore identifier
+     * @return \base_task Restore task
+     * @throws coding_exception If not in a restore (or not in that restore)
+     */
+    public static function get_restore_task($restoreid) {
+        if (!self::$restoreinfo) {
+            throw new coding_exception('Only valid during restore');
+        }
+        if (self::$restoreinfo['restoreid'] !== $restoreid) {
+            throw new coding_exception('Data not available for that restore id');
+        }
+        return self::$restoreinfo['task'];
     }
 
     /**
@@ -608,17 +634,39 @@ abstract class info {
         }
         $tree = $this->get_availability_tree();
         $checker = new capability_checker($this->get_context());
+
+        // Filter using availability tree.
         $this->modinfo = get_fast_modinfo($this->get_course());
-        $result = $tree->filter_user_list($users, false, $this, $checker);
+        $filtered = $tree->filter_user_list($users, false, $this, $checker);
         $this->modinfo = null;
+
+        // Include users in the result if they're either in the filtered list,
+        // or they have viewhidden. This logic preserves ordering of the
+        // passed users array.
+        $result = array();
+        $canviewhidden = $checker->get_users_by_capability($this->get_view_hidden_capability());
+        foreach ($users as $userid => $data) {
+            if (array_key_exists($userid, $filtered) || array_key_exists($userid, $canviewhidden)) {
+                $result[$userid] = $users[$userid];
+            }
+        }
+
         return $result;
     }
+
+    /**
+     * Gets the capability used to view hidden activities/sections (as
+     * appropriate).
+     *
+     * @return string Name of capability used to view hidden items of this type
+     */
+    protected abstract function get_view_hidden_capability();
 
     /**
      * Obtains SQL that returns a list of enrolled users that has been filtered
      * by the conditions applied in the availability API, similar to calling
      * get_enrolled_users and then filter_user_list. As for filter_user_list,
-     * this ONLY filteres out users with conditions that are marked as applying
+     * this ONLY filters out users with conditions that are marked as applying
      * to user lists. For example, group conditions are included but date
      * conditions are not included.
      *
@@ -640,8 +688,22 @@ abstract class info {
         if (is_null($this->availability) || !$CFG->enableavailability) {
             return array('', array());
         }
+
+        // Get SQL for the availability filter.
         $tree = $this->get_availability_tree();
-        return $tree->get_user_list_sql(false, $this, $onlyactive);
+        list ($filtersql, $filterparams) = $tree->get_user_list_sql(false, $this, $onlyactive);
+        if ($filtersql === '') {
+            // No restrictions, so return empty query.
+            return array('', array());
+        }
+
+        // Get SQL for the view hidden list.
+        list ($viewhiddensql, $viewhiddenparams) = get_enrolled_sql(
+                $this->get_context(), $this->get_view_hidden_capability(), 0, $onlyactive);
+
+        // Result is a union of the two.
+        return array('(' . $filtersql . ') UNION (' . $viewhiddensql . ')',
+                array_merge($filterparams, $viewhiddenparams));
     }
 
     /**
@@ -651,11 +713,21 @@ abstract class info {
      * that we can guarantee does not happen from within building the modinfo
      * object.
      *
-     * @param string $info Info string
+     * @param \renderable|string $inforenderable Info string or renderable
      * @param int|\stdClass $courseorid
      * @return string Correctly formatted info string
      */
-    public static function format_info($info, $courseorid) {
+    public static function format_info($inforenderable, $courseorid) {
+        global $PAGE;
+
+        // Use renderer if required.
+        if (is_string($inforenderable)) {
+            $info = $inforenderable;
+        } else {
+            $renderer = $PAGE->get_renderer('core', 'availability');
+            $info = $renderer->render($inforenderable);
+        }
+
         // Don't waste time if there are no special tags.
         if (strpos($info, '<AVAILABILITY_') === false) {
             return $info;

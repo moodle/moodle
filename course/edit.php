@@ -55,6 +55,9 @@ if ($returnto === 'url' && confirm_sesskey() && $returnurl) {
             case 'topcat':
                 $returnurl = new moodle_url($CFG->wwwroot . '/course/');
                 break;
+            case 'pending':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/pending.php');
+                break;
         }
     }
 }
@@ -122,6 +125,9 @@ if (!empty($course)) {
         $course->{'role_'.$alias->roleid} = $alias->name;
     }
 
+    // Populate course tags.
+    $course->tags = core_tag_tag::get_item_tags_array('core', 'course', $course->id);
+
 } else {
     // Editor should respect category context if course context is not set.
     $editoroptions['context'] = $catcontext;
@@ -169,7 +175,7 @@ if ($editform->is_cancelled()) {
                 if ($plugin = enrol_get_plugin($instance->enrol)) {
                     if ($plugin->get_manual_enrol_link($instance)) {
                         // We know that the ajax enrol UI will have an option to enrol.
-                        $courseurl = new moodle_url('/enrol/users.php', array('id' => $course->id));
+                        $courseurl = new moodle_url('/enrol/users.php', array('id' => $course->id, 'newcourse' => 1));
                         break;
                     }
                 }

@@ -29,7 +29,10 @@ Feature: edit_availability
       | student1 | C1     | student        |
 
   Scenario: Confirm the 'enable availability' option is working
+    Given the following config values are set as admin:
+      | enableavailability | 0 |
     When I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Page" to section "1"
@@ -39,15 +42,11 @@ Feature: edit_availability
     When I edit the section "1"
     Then "Restrict access" "fieldset" should not exist
 
-    When I log out
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
+    And the following config values are set as admin:
+      | enableavailability | 1 |
 
-    When I log out
-    And I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
-    And I turn editing mode on
     And I add a "Page" to section "1"
     Then "Restrict access" "fieldset" should exist
 
@@ -58,11 +57,7 @@ Feature: edit_availability
   @javascript
   Scenario: Edit availability using settings in activity form
     # Set up.
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I log out
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
     And I follow "Course 1"
 
     # Add a Page and check it has None in so far.
@@ -153,11 +148,8 @@ Feature: edit_availability
   @javascript
   Scenario: Edit availability using settings in section form
     # Set up.
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And I log out
-    And I log in as "teacher1"
+    Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
 
@@ -176,7 +168,10 @@ Feature: edit_availability
   @javascript
   Scenario: 'Add group/grouping access restriction' button unavailable
     # Button does not exist when conditional access restrictions are turned off.
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | enableavailability | 0 |
+    And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1"
@@ -186,13 +181,11 @@ Feature: edit_availability
   @javascript
   Scenario: Use the 'Add group/grouping access restriction' button
     # Button should initially be disabled.
-    Given I log in as "admin"
-    And I set the following administration settings values:
-      | Enable conditional access | 1 |
-    And the following "groupings" exist:
+    Given the following "groupings" exist:
       | name | course | idnumber |
       | GX1  | C1     | GXI1     |
-    And I am on homepage
+    And I log in as "admin"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Forum" to section "1"

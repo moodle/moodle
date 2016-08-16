@@ -113,6 +113,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $output .=  '<form id="password" method="post" action="'.$CFG->wwwroot.'/mod/lesson/view.php" autocomplete="off">';
         $output .=  '<fieldset class="invisiblefieldset center">';
         $output .=  '<input type="hidden" name="id" value="'. $this->page->cm->id .'" />';
+        $output .=  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         if ($failedattempt) {
             $output .=  $this->output->notification(get_string('loginfail', 'lesson'));
         }
@@ -224,7 +225,12 @@ class mod_lesson_renderer extends plugin_renderer_base {
         while ($pageid != 0) {
             $page = $lesson->load_page($pageid);
             $data = array();
-            $data[] = "<a href=\"$CFG->wwwroot/mod/lesson/edit.php?id=".$this->page->cm->id."&amp;mode=single&amp;pageid=".$page->id."\">".format_string($page->title,true).'</a>';
+            $url = new moodle_url('/mod/lesson/edit.php', array(
+                'id'     => $this->page->cm->id,
+                'mode'   => 'single',
+                'pageid' => $page->id
+            ));
+            $data[] = html_writer::link($url, format_string($page->title, true), array('id' => 'lesson-' . $page->id));
             $data[] = $qtypes[$page->qtype];
             $data[] = implode("<br />\n", $page->jumps);
             if ($canedit) {
@@ -274,6 +280,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $pagetable->cellspacing = 0;
             $pagetable->cellpadding = '5px';
             $pagetable->data = array();
+            $pagetable->id = 'lesson-' . $pageid;
 
             $pageheading = new html_table_cell();
 
@@ -396,17 +403,27 @@ class mod_lesson_renderer extends plugin_renderer_base {
         $actions = array();
 
         if ($printmove) {
-            $printmovehtml = new moodle_url('/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'move', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
-            $actions[] = html_writer::link($printmovehtml, '<img src="'.$this->output->pix_url('t/move').'" class="iconsmall" alt="'.get_string('move').'" />');
+            $url = new moodle_url('/mod/lesson/lesson.php',
+                    array('id' => $this->page->cm->id, 'action' => 'move', 'pageid' => $page->id, 'sesskey' => sesskey()));
+            $label = get_string('movepagenamed', 'lesson', format_string($page->title));
+            $img = html_writer::img($this->output->pix_url('t/move'), $label, array('class' => 'iconsmall'));
+            $actions[] = html_writer::link($url, $img, array('title' => $label));
         }
-        $url = new moodle_url('/mod/lesson/editpage.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id, 'edit'=>1));
-        $actions[] = html_writer::link($url, '<img src="'.$this->output->pix_url('t/edit').'" class="iconsmall" alt="'.get_string('update').'" />');
+        $url = new moodle_url('/mod/lesson/editpage.php', array('id' => $this->page->cm->id, 'pageid' => $page->id, 'edit' => 1));
+        $label = get_string('updatepagenamed', 'lesson', format_string($page->title));
+        $img = html_writer::img($this->output->pix_url('t/edit'), $label, array('class' => 'iconsmall'));
+        $actions[] = html_writer::link($url, $img, array('title' => $label));
 
-        $url = new moodle_url('/mod/lesson/view.php', array('id'=>$this->page->cm->id, 'pageid'=>$page->id));
-        $actions[] = html_writer::link($url, '<img src="'.$this->output->pix_url('t/preview').'" class="iconsmall" alt="'.get_string('preview').'" />');
+        $url = new moodle_url('/mod/lesson/view.php', array('id' => $this->page->cm->id, 'pageid' => $page->id));
+        $label = get_string('previewpagenamed', 'lesson', format_string($page->title));
+        $img = html_writer::img($this->output->pix_url('t/preview'), $label, array('class' => 'iconsmall'));
+        $actions[] = html_writer::link($url, $img, array('title' => $label));
 
-        $url = new moodle_url('/mod/lesson/lesson.php', array('id'=>$this->page->cm->id, 'action'=>'confirmdelete', 'pageid'=>$page->id, 'sesskey'=>sesskey()));
-        $actions[] = html_writer::link($url, '<img src="'.$this->output->pix_url('t/delete').'" class="iconsmall" alt="'.get_string('delete').'" />');
+        $url = new moodle_url('/mod/lesson/lesson.php',
+                array('id' => $this->page->cm->id, 'action' => 'confirmdelete', 'pageid' => $page->id, 'sesskey' => sesskey()));
+        $label = get_string('deletepagenamed', 'lesson', format_string($page->title));
+        $img = html_writer::img($this->output->pix_url('t/delete'), $label, array('class' => 'iconsmall'));
+        $actions[] = html_writer::link($url, $img, array('title' => $label));
 
         if ($printaddpage) {
             $options = array();
@@ -560,14 +577,17 @@ class mod_lesson_renderer extends plugin_renderer_base {
     public function slideshow_start(lesson $lesson) {
         $attributes = array();
         $attributes['class'] = 'slideshow';
-        $attributes['style'] = 'background-color:'.$lesson->bgcolor.';height:'.$lesson->height.'px;width:'.$lesson->width.'px;';
+        $attributes['style'] = 'background-color:'.$lesson->properties()->bgcolor.';height:'.
+                $lesson->properties()->height.'px;width:'.$lesson->properties()->width.'px;';
         $output = html_writer::start_tag('div', $attributes);
+        return $output;
     }
     /**
      * Returns HTML to show the end of a slideshow
      */
     public function slideshow_end() {
         $output = html_writer::end_tag('div');
+        return $output;
     }
     /**
      * Returns a P tag containing contents
@@ -580,26 +600,6 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $attributes['class'] = $class;
         }
         $output = html_writer::tag('p', $contents, $attributes);
-        return $output;
-    }
-    /**
-     * Returns HTML to display add_highscores_form
-     * @param lesson $lesson
-     * @return string
-     */
-    public function add_highscores_form(lesson $lesson) {
-        global $CFG;
-        $output  = $this->output->box_start('generalbox boxaligncenter');
-        $output .= $this->output->box_start('mdl-align');
-        $output .= '<form id="nickname" method ="post" action="'.$CFG->wwwroot.'/mod/lesson/highscores.php" autocomplete="off">
-             <input type="hidden" name="id" value="'.$this->page->cm->id.'" />
-             <input type="hidden" name="mode" value="save" />
-             <input type="hidden" name="sesskey" value="'.sesskey().'" />';
-        $output .= get_string("entername", "lesson").": <input type=\"text\" name=\"name\" size=\"7\" maxlength=\"5\" />";
-        $output .= $this->output->box("<input type='submit' value='".get_string('submitname', 'lesson')."' />", 'lessonbutton center');
-        $output .= "</form>";
-        $output .= $this->output->box_end();
-        $output .= $this->output->box_end();
         return $output;
     }
 }

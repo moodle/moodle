@@ -12,6 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* global ANNOTATIONCOLOUR */
 
 /**
  * Provides an in browser PDF editor.
@@ -27,7 +28,7 @@
  * @extends M.assignfeedback_editpdf.annotation
  * @module moodle-assignfeedback_editpdf-editor
  */
-ANNOTATIONHIGHLIGHT = function(config) {
+var ANNOTATIONHIGHLIGHT = function(config) {
     ANNOTATIONHIGHLIGHT.superclass.constructor.apply(this, [config]);
 };
 
@@ -41,7 +42,7 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
      * @method draw
      * @return M.assignfeedback_editpdf.drawable
      */
-    draw : function() {
+    draw: function() {
         var drawable,
             shape,
             bounds,
@@ -84,7 +85,7 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
      * @method draw_current_edit
      * @param M.assignfeedback_editpdf.edit edit
      */
-    draw_current_edit : function(edit) {
+    draw_current_edit: function(edit) {
         var drawable = new M.assignfeedback_editpdf.drawable(this.editor),
             shape,
             bounds,
@@ -131,7 +132,7 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
      * @param M.assignfeedback_editpdf.edit edit
      * @return bool true if highlight bound is more than min width/height, else false.
      */
-    init_from_edit : function(edit) {
+    init_from_edit: function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
         bounds.bound([edit.start, edit.end]);
 

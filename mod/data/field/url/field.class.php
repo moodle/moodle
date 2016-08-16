@@ -25,7 +25,7 @@
 class data_field_url extends data_field_base {
     var $type = 'url';
 
-    function display_add_field($recordid=0) {
+    function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE;
 
         require_once($CFG->dirroot. '/repository/lib.php'); // necessary for the constants used in args
@@ -43,25 +43,55 @@ class data_field_url extends data_field_base {
         $straddlink = get_string('choosealink', 'repository');
         $url = '';
         $text = '';
-        if ($recordid) {
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id . '_0';
+            $url = $formdata->$fieldname;
+            $fieldname = 'field_' . $this->field->id . '_1';
+            if (isset($formdata->$fieldname)) {
+                $text = $formdata->$fieldname;
+            }
+        } else if ($recordid) {
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $url  = $content->content;
                 $text = $content->content1;
             }
         }
-        $str = '<div title="'.s($this->field->description).'">';
-        if (!empty($this->field->param1) and empty($this->field->param2)) {
+
+        $autolinkable = !empty($this->field->param1) and empty($this->field->param2);
+
+        $str = '<div title="' . s($this->field->description) . '">';
+
+        $label = '<label for="' . $fieldid . '"><span class="accesshide">' . $this->field->name . '</span>';
+        if ($this->field->required) {
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            if ($autolinkable) {
+                $label .= html_writer::div(get_string('requiredelement', 'form'), 'accesshide');
+            } else {
+                $label .= html_writer::div($image, 'inline-req');
+            }
+        }
+        $label .= '</label>';
+
+        if ($autolinkable) {
             $str .= '<table><tr><td align="right">';
-            $str .= get_string('url','data').':</td><td>';
-            $str .= '<label class="accesshide" for="' . $fieldid . '">'. $this->field->name .'</label>';
-            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.$url.'" size="60" />';
+            $str .= '<span class="mod-data-input">' . get_string('url', 'data') . ':</span>';
+            if (!empty($image)) {
+                $str .= $image;
+            }
+            $str .= '</td><td>';
+            $str .= $label;
+            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'" size="60" />';
             $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button></td></tr>';
-            $str .= '<tr><td align="right">'.get_string('text','data').':</td><td><input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($text).'" size="60" /></td></tr>';
+            $str .= '<tr><td align="right"><span class="mod-data-input">'.get_string('text', 'data').':</span></td><td>';
+            $str .= '<input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($text).'"';
+            $str .= ' size="60" /></td></tr>';
             $str .= '</table>';
         } else {
             // Just the URL field
-            $str .= '<label class="accesshide" for="' . $fieldid . '">'. $this->field->name .'</label>';
-            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'" size="60" />';
+            $str .= $label;
+            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'"';
+            $str .= ' size="60" class="mod-data-input" />';
             if (count($options->repositories) > 0) {
                 $str .= '<button id="filepicker-button-'.$options->client_id.'" class="visibleifjs">'.$straddlink.'</button>';
             }
@@ -72,14 +102,13 @@ class data_field_url extends data_field_base {
 
         $module = array('name'=>'data_urlpicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
         $PAGE->requires->js_init_call('M.data_urlpicker.init', array($options), true, $module);
-
         $str .= '</div>';
         return $str;
     }
 
     function display_search_field($value = '') {
         return '<label class="accesshide" for="f_'.$this->field->id.'">' . get_string('fieldname', 'data') . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.$value.'" />';
+               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
     }
 
     function parse_search_field() {
@@ -114,6 +143,7 @@ class data_field_url extends data_field_base {
                 if ($this->field->param3) {
                     // param3 defines whether this URL should open in a new window.
                     $attributes['target'] = '_blank';
+                    $attributes['rel'] = 'noreferrer';
                 }
 
                 if (empty($text)) {
@@ -150,7 +180,8 @@ class data_field_url extends data_field_base {
                 break;
         }
 
-        if (!empty($content->content) && (strpos($content->content, '://') === false) && (strpos($content->content, '/', 0) === false)) {
+        if (!empty($content->content) && (strpos($content->content, '://') === false)
+                && (strpos($content->content, '/') !== 0)) {
             $content->content = 'http://' . $content->content;
         }
 
@@ -177,5 +208,3 @@ class data_field_url extends data_field_base {
     }
 
 }
-
-

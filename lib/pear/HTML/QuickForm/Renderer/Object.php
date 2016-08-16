@@ -78,11 +78,20 @@ class HTML_QuickForm_Renderer_Object extends HTML_QuickForm_Renderer
      * @param collecthidden bool    true: collect all hidden elements
      * @access public
      */
-    function HTML_QuickForm_Renderer_Object($collecthidden = false) 
-    {
-        $this->HTML_QuickForm_Renderer();
+    public function __construct($collecthidden = false) {
+        parent::__construct();
         $this->_collectHidden = $collecthidden;
         $this->_obj = new QuickformForm;
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function HTML_QuickForm_Renderer_Object($collecthidden = false) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($collecthidden);
     }
 
     /**

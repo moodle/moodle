@@ -45,7 +45,7 @@
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
+abstract class database_driver_testcase extends base_testcase {
     /** @var moodle_database connection to extra database */
     private static $extradb = null;
 
@@ -142,7 +142,14 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
         try {
             parent::runBare();
 
-        } catch (Exception $e) {
+        } catch (Exception $ex) {
+            $e = $ex;
+        } catch (Throwable $ex) {
+            // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
+            $e = $ex;
+        }
+
+        if (isset($e)) {
             if ($this->tdb->is_transaction_started()) {
                 $this->tdb->force_transaction_rollback();
             }
@@ -176,7 +183,7 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
      * @param string $message
      */
     public function assertDebuggingCalled($debugmessage = null, $debuglevel = null, $message = '') {
-        $debugging = phpunit_util::get_debugging_messages();
+        $debugging = $this->getDebuggingMessages();
         $count = count($debugging);
 
         if ($count == 0) {
@@ -201,7 +208,7 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
             $this->assertSame($debuglevel, $debug->level, $message);
         }
 
-        phpunit_util::reset_debugging();
+        $this->resetDebugging();
     }
 
     /**
@@ -209,7 +216,7 @@ abstract class database_driver_testcase extends PHPUnit_Framework_TestCase {
      * @param string $message
      */
     public function assertDebuggingNotCalled($message = '') {
-        $debugging = phpunit_util::get_debugging_messages();
+        $debugging = $this->getDebuggingMessages();
         $count = count($debugging);
 
         if ($message === '') {

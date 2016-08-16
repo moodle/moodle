@@ -328,7 +328,14 @@ class tree extends tree_node {
         // Loop through all valid children.
         foreach ($this->children as $index => $child) {
             if (!$child->is_applied_to_user_lists()) {
-                continue;
+                if ($andoperator) {
+                    continue;
+                } else {
+                    // OR condition with one option that doesn't restrict user
+                    // lists = everyone is allowed.
+                    $anyconditions = false;
+                    break;
+                }
             }
             $childresult = $child->filter_user_list($users, $innernot, $info, $checker);
             if ($andoperator) {
@@ -359,7 +366,14 @@ class tree extends tree_node {
         $childresults = array();
         foreach ($this->children as $index => $child) {
             if (!$child->is_applied_to_user_lists()) {
-                continue;
+                if ($andoperator) {
+                    continue;
+                } else {
+                    // OR condition with one option that doesn't restrict user
+                    // lists = everyone is allowed.
+                    $childresults = array();
+                    break;
+                }
             }
             $childresult = $child->get_user_list_sql($innernot, $info, $onlyactive);
             if ($childresult[0]) {
@@ -471,11 +485,10 @@ class tree extends tree_node {
      * @param result $result Result object if this is a student display, else null
      * @param bool $root True if this is the root item
      * @param bool $hidden Staff display; true if this tree has show=false (from parent)
+     * @return string|renderable Information to render
      */
     protected function get_full_information_recursive(
             $not, info $info, result $result = null, $root, $hidden = false) {
-        global $PAGE;
-
         // Get list of children - either full list, or those which are shown.
         $children = $this->children;
         $staff = true;
@@ -550,8 +563,7 @@ class tree extends tree_node {
         }
 
         // Format output for display.
-        $renderer = $PAGE->get_renderer('core', 'availability');
-        return $renderer->multiple_messages($root, $andoperator, $treehidden, $items);
+        return new \core_availability_multiple_messages($root, $andoperator, $treehidden, $items);
     }
 
     /**
@@ -663,10 +675,18 @@ class tree extends tree_node {
     public function update_after_restore($restoreid, $courseid,
             \base_logger $logger, $name) {
         $changed = false;
-        foreach ($this->children as $child) {
-            $thischanged = $child->update_after_restore($restoreid, $courseid,
-                    $logger, $name);
-            $changed = $changed || $thischanged;
+        foreach ($this->children as $index => $child) {
+            if ($child->include_after_restore($restoreid, $courseid, $logger, $name,
+                    info::get_restore_task($restoreid))) {
+                $thischanged = $child->update_after_restore($restoreid, $courseid,
+                        $logger, $name);
+                $changed = $changed || $thischanged;
+            } else {
+                unset($this->children[$index]);
+                unset($this->showchildren[$index]);
+                $this->showchildren = array_values($this->showchildren);
+                $changed = true;
+            }
         }
         return $changed;
     }

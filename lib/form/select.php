@@ -52,8 +52,18 @@ class MoodleQuickForm_select extends HTML_QuickForm_select{
      * @param mixed $options Data to be used to populate options
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
-    function MoodleQuickForm_select($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
-        parent::HTML_QuickForm_select($elementName, $elementLabel, $options, $attributes);
+    public function __construct($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        parent::__construct($elementName, $elementLabel, $options, $attributes);
+    }
+
+    /**
+     * Old syntax of class constructor. Deprecated in PHP7.
+     *
+     * @deprecated since Moodle 3.1
+     */
+    public function MoodleQuickForm_select($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
+        debugging('Use of class name as constructor is deprecated', DEBUG_DEVELOPER);
+        self::__construct($elementName, $elementLabel, $options, $attributes);
     }
 
     /**

@@ -9,6 +9,7 @@ Feature: The context of a block can always be returned to it's original state.
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
+    And I am on site homepage
     When I follow "Course 1"
     And I follow "Turn editing on"
     And I add the "Tags" block

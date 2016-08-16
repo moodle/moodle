@@ -32,6 +32,7 @@ $slot = required_param('slot', PARAM_INT); // The question number in the attempt
 $PAGE->set_url('/mod/quiz/comment.php', array('attempt' => $attemptid, 'slot' => $slot));
 
 $attemptobj = quiz_attempt::create($attemptid);
+$student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
 
 // Can only grade finished attempts.
 if (!$attemptobj->is_finished()) {
@@ -44,12 +45,25 @@ $attemptobj->require_capability('mod/quiz:grade');
 
 // Print the page header.
 $PAGE->set_pagelayout('popup');
+$PAGE->set_title(get_string('manualgradequestion', 'quiz', array(
+        'question' => format_string($attemptobj->get_question_name($slot)),
+        'quiz' => format_string($attemptobj->get_quiz_name()), 'user' => fullname($student))));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 $output = $PAGE->get_renderer('mod_quiz');
 echo $output->header();
 
 // Prepare summary information about this question attempt.
 $summarydata = array();
+
+// Student name.
+$userpicture = new user_picture($student);
+$userpicture->courseid = $attemptobj->get_courseid();
+$summarydata['user'] = array(
+    'title'   => $userpicture,
+    'content' => new action_link(new moodle_url('/user/view.php', array(
+            'id' => $student->id, 'course' => $attemptobj->get_courseid())),
+            fullname($student, true)),
+);
 
 // Quiz name.
 $summarydata['quizname'] = array(

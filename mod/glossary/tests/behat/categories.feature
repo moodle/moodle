@@ -8,8 +8,8 @@ Feature: Glossary entries can be organised in categories
   Scenario: Glossary entries can be organised in categories and categories can be autolinked
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
-      | student1 | Student | 1 | student1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -18,8 +18,10 @@ Feature: Glossary entries can be organised in categories
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
+      | activity | name       | intro                     | displayformat | course | idnumber  |
+      | glossary | MyGlossary | Test glossary description | encyclopedia  | C1     | glossary1 |
+    And the following "activities" exist:
       | activity | name       | intro                                                           | course | idnumber  |
-      | glossary | MyGlossary | Test glossary description                                       | C1     | glossary1 |
       | label    | name       | check autolinking of CategoryAutoLinks and CategoryNoLinks text | C1     | label1    |
 # Log in as admin and enable autolinking filter
     And I log in as "admin"
@@ -110,6 +112,8 @@ Feature: Glossary entries can be organised in categories
     And I should see "2 Entries" in the "CategoryAutoLinks" "table_row"
     And I click on "Delete" "link" in the "CategoryAutoLinks" "table_row"
     And I press "Yes"
+    And I wait to be redirected
+    And I follow "MyGlossary"
     And I follow "Browse by category"
     And I should see "EntryCategoryNL"
     And I should not see "EntryNoCategory"

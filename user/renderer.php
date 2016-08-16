@@ -164,6 +164,40 @@ class core_user_renderer extends plugin_renderer_base {
         return $content;
     }
 
+    /**
+     * Displays the list of tagged users
+     *
+     * @param array $userlist
+     * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+     *             are displayed on the page and the per-page limit may be bigger
+     * @return string
+     */
+    public function user_list($userlist, $exclusivemode) {
+        $tagfeed = new core_tag\output\tagfeed();
+        foreach ($userlist as $user) {
+            $userpicture = $this->output->user_picture($user, array('size' => $exclusivemode ? 100 : 35));
+            $fullname = fullname($user);
+            if (user_can_view_profile($user)) {
+                $profilelink = new moodle_url('/user/view.php', array('id' => $user->id));
+                $fullname = html_writer::link($profilelink, $fullname);
+            }
+            $tagfeed->add($userpicture, $fullname);
+        }
+
+        $items = $tagfeed->export_for_template($this->output);
+
+        if ($exclusivemode) {
+            $output = '<div><ul class="inline-list">';
+            foreach ($items['items'] as $item) {
+                $output .= '<li><div class="user-box">'. $item['img'] . $item['heading'] ."</div></li>\n";
+            }
+            $output .= "</ul></div>\n";
+            return $output;
+        }
+
+        return $this->output->render_from_template('core_tag/tagfeed', $items);
+    }
+
 }
 
 /**

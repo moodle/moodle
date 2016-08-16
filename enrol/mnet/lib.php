@@ -62,31 +62,31 @@ class enrol_mnet_plugin extends enrol_plugin {
     }
 
     /**
-     * Returns link to page which may be used to add new instance of enrolment plugin into the course
+     * Returns true if a new instance can be added to this course.
      *
      * The link is returned only if there are some MNet peers that we publish enrolment service to.
      *
      * @param int $courseid id of the course to add the instance to
-     * @return moodle_url|null page url or null if instance can not be created
+     * @return boolean
      */
-    public function get_newinstance_link($courseid) {
+    public function can_add_instance($courseid) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
 
         $service = mnetservice_enrol::get_instance();
         if (!$service->is_available()) {
-            return null;
+            return false;
         }
         $coursecontext = context_course::instance($courseid);
         if (!has_capability('moodle/course:enrolconfig', $coursecontext)) {
-            return null;
+            return false;
         }
         $subscribers = $service->get_remote_subscribers();
         if (empty($subscribers)) {
-            return null;
+            return false;
         }
 
-        return new moodle_url('/enrol/mnet/addinstance.php', array('id'=>$courseid));
+        return true;
     }
 
     /**
@@ -109,5 +109,105 @@ class enrol_mnet_plugin extends enrol_plugin {
     public function can_hide_show_instance($instance) {
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/mnet:config', $context);
+    }
+
+    /**
+     * Return an array of valid options for the hosts property.
+     *
+     * @return array
+     */
+    protected function get_valid_hosts_options() {
+        global $CFG;
+        require_once($CFG->dirroot.'/mnet/service/enrol/locallib.php');
+
+        $service = mnetservice_enrol::get_instance();
+
+        $subscribers = $service->get_remote_subscribers();
+        $hosts = array(0 => get_string('remotesubscribersall', 'enrol_mnet'));
+        foreach ($subscribers as $hostid => $subscriber) {
+            $hosts[$hostid] = $subscriber->appname.': '.$subscriber->hostname.' ('.$subscriber->hosturl.')';
+        }
+        return $hosts;
+    }
+
+    /**
+     * Return an array of valid options for the roles property.
+     *
+     * @param context $context
+     * @return array
+     */
+    protected function get_valid_roles_options($context) {
+        $roles = get_assignable_roles($context);
+        return $roles;
+    }
+
+    /**
+     * Add elements to the edit instance form.
+     *
+     * @param stdClass $instance
+     * @param MoodleQuickForm $mform
+     * @param context $context
+     * @return bool
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
+        global $CFG;
+
+        $hosts = $this->get_valid_hosts_options();
+        $mform->addElement('select', 'customint1', get_string('remotesubscriber', 'enrol_mnet'), $hosts);
+        $mform->addHelpButton('customint1', 'remotesubscriber', 'enrol_mnet');
+        $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
+
+        $roles = $this->get_valid_roles_options($context);
+        $mform->addElement('select', 'roleid', get_string('roleforremoteusers', 'enrol_mnet'), $roles);
+        $mform->addHelpButton('roleid', 'roleforremoteusers', 'enrol_mnet');
+        $mform->addRule('roleid', get_string('required'), 'required', null, 'client');
+        $mform->setDefault('roleid', $this->get_config('roleid'));
+
+        $mform->addElement('text', 'name', get_string('instancename', 'enrol_mnet'));
+        $mform->addHelpButton('name', 'instancename', 'enrol_mnet');
+        $mform->setType('name', PARAM_TEXT);
+    }
+
+    /**
+     * We are a good plugin and don't invent our own UI/validation code path.
+     *
+     * @return boolean
+     */
+    public function use_standard_editing_ui() {
+        return true;
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param object $instance The instance loaded from the DB
+     * @param context $context The context of the instance we are editing
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     * @return void
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+        global $DB;
+        $errors = array();
+
+        $validroles = array_keys($this->get_valid_roles_options($context));
+        $validhosts = array_keys($this->get_valid_hosts_options());
+
+        $params = array('enrol' => 'mnet', 'courseid' => $instance->courseid, 'customint1' => $data['customint1']);
+        if ($DB->record_exists('enrol', $params)) {
+            $errors['customint1'] = get_string('error_multiplehost', 'enrol_mnet');
+        }
+
+        $tovalidate = array(
+            'customint1' => $validhosts,
+            'roleid' => $validroles,
+            'name' => PARAM_TEXT
+        );
+        $typeerrors = $this->validate_param_types($data, $tovalidate);
+        $errors = array_merge($errors, $typeerrors);
+
+        return $errors;
     }
 }

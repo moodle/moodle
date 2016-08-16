@@ -36,11 +36,6 @@ Feature: Test importing questions from Moodle XML format.
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     And following "click here" should download between "57000" and "58000" bytes
-    # If the download step is the last in the scenario then we can sometimes run
-    # into the situation where the download page causes a http redirect but behat
-    # has already conducted its reset (generating an error). By putting a logout
-    # step we avoid behat doing the reset until we are off that page.
-    And I log out
 
   @javascript @_file_upload
   Scenario: import some multiple choice questions from Moodle XML format

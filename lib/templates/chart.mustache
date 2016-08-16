@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Chart rendering.
+}}
+<div class="chart-area" id="chart-area-{{uniqid}}">
+    <div class="chart-image" role="decoration" aria-describedby="chart-table-data-{{uniqid}}"></div>
+    <div class="chart-table {{^withtable}}accesshide{{/withtable}}">
+        <p class="chart-table-expand">
+            <a href="#" aria-controls="chart-table-data-{{uniqid}}" role="button">
+                {{#str}}showchartdata, moodle{{/str}}
+            </a>
+        </p>
+        <div class="chart-table-data" id="chart-table-data-{{uniqid}}" {{#withtable}}aria-expanded="false"{{/withtable}}></div>
+    </div>
+</div>
+
+{{#js}}
+require([
+    'jquery',
+    'core/chart_builder',
+    'core/chart_output_chartjs',
+    'core/chart_output_htmltable',
+], function($, Builder, Output, OutputTable) {
+    var data = {{{chartdata}}},
+        uniqid = "{{uniqid}}",
+        chartArea = $('#chart-area-' + uniqid),
+        chartImage = chartArea.find('.chart-image'),
+        chartTable = chartArea.find('.chart-table-data'),
+        chartLink = chartArea.find('.chart-table-expand a');
+    Builder.make(data).then(function(ChartInst) {
+        new Output(chartImage, ChartInst);
+        new OutputTable(chartTable, ChartInst);
+    });
+
+    chartLink.on('click', function(e) {
+        e.preventDefault();
+        if (chartTable.is(':visible')) {
+            chartTable.hide();
+            chartLink.text({{#quote}}{{#str}}showchartdata, moodle{{/str}}{{/quote}});
+            chartTable.attr('aria-expanded', false);
+        } else {
+            chartTable.show();
+            chartLink.text({{#quote}}{{#str}}hidechartdata, moodle{{/str}}{{/quote}});
+            chartTable.attr('aria-expanded', true);
+        }
+    });
+});
+{{/js}}

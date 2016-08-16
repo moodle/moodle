@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
+require_once(__DIR__ . '/../message/lib.php');
 
 /**
  * Called when a message provider wants to send a message.
@@ -51,7 +51,7 @@ require_once(dirname(dirname(__FILE__)) . '/message/lib.php');
  *       earlier versions did not do it consistently either.
  *
  * @category message
- * @param stdClass $eventdata information about the message (component, userfrom, userto, ...)
+ * @param stdClass|\core\message\message $eventdata information about the message (component, userfrom, userto, ...)
  * @return mixed the integer ID of the new message or false if there was a problem with submitted data
  */
 function message_send($eventdata) {

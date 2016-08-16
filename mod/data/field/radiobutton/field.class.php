@@ -26,26 +26,44 @@ class data_field_radiobutton extends data_field_base {
 
     var $type = 'radiobutton';
 
-    function display_add_field($recordid=0) {
-        global $CFG, $DB;
+    function display_add_field($recordid = 0, $formdata = null) {
+        global $CFG, $DB, $OUTPUT;
 
-        if ($recordid){
+        if ($formdata) {
+            $fieldname = 'field_' . $this->field->id;
+            if (isset($formdata->$fieldname)) {
+                $content = $formdata->$fieldname;
+            } else {
+                $content = '';
+            }
+        } else if ($recordid) {
             $content = trim($DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid)));
         } else {
             $content = '';
         }
 
-        $str = '<div title="'.s($this->field->description).'">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
+        $str = '<div title="' . s($this->field->description) . '">';
+        $str .= '<fieldset><legend><span class="accesshide">' . $this->field->name;
+
+        if ($this->field->required) {
+            $str .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
+            $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
+                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= html_writer::div($image, 'inline-req');
+        } else {
+            $str .= '</span></legend>';
+        }
 
         $i = 0;
-        foreach (explode("\n",$this->field->param1) as $radio) {
+        $requiredstr = '';
+        $options = explode("\n", $this->field->param1);
+        foreach ($options as $radio) {
             $radio = trim($radio);
             if ($radio === '') {
                 continue; // skip empty lines
             }
             $str .= '<input type="radio" id="field_'.$this->field->id.'_'.$i.'" name="field_' . $this->field->id . '" ';
-            $str .= 'value="' . s($radio) . '" ';
+            $str .= 'value="' . s($radio) . '" class="mod-data-input" ';
 
             if ($content == $radio) {
                 // Selected by user.
@@ -78,7 +96,8 @@ class data_field_radiobutton extends data_field_base {
                 $options[$rec->content] = $rec->content;  //Build following indicies from the sql.
             }
         }
-        $return = html_writer::label(get_string('nameradiobutton', 'data'), 'menuf_'. $this->field->id, false, array('class' => 'accesshide'));
+        $return = html_writer::label(get_string('fieldtypelabel', "datafield_" . $this->type),
+            'menuf_' . $this->field->id, false, array('class' => 'accesshide'));
         $return .= html_writer::select($options, 'f_'.$this->field->id, $value);
         return $return;
     }
@@ -98,5 +117,15 @@ class data_field_radiobutton extends data_field_base {
         return array(" ({$tablealias}.fieldid = {$this->field->id} AND $varcharcontent = :$name) ", array($name=>$value));
     }
 
+    /**
+     * Check if a field from an add form is empty
+     *
+     * @param mixed $value
+     * @param mixed $name
+     * @return bool
+     */
+    function notemptyfield($value, $name) {
+        return strval($value) !== '';
+    }
 }
 

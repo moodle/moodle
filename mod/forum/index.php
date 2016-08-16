@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 require_once($CFG->libdir . '/rsslib.php');
@@ -174,8 +174,13 @@ foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
 // Do course wide subscribe/unsubscribe if requested
 if (!is_null($subscribe)) {
     if (isguestuser() or !$can_subscribe) {
-        // there should not be any links leading to this place, just redirect
-        redirect(new moodle_url('/mod/forum/index.php', array('id' => $id)), get_string('subscribeenrolledonly', 'forum'));
+        // There should not be any links leading to this place, just redirect.
+        redirect(
+                new moodle_url('/mod/forum/index.php', array('id' => $id)),
+                get_string('subscribeenrolledonly', 'forum'),
+                null,
+                \core\output\notification::NOTIFY_ERROR
+            );
     }
     // Can proceed now, the user is not guest and is enrolled
     foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
@@ -201,12 +206,22 @@ if (!is_null($subscribe)) {
             }
         }
     }
-    $returnto = forum_go_back_to("index.php?id=$course->id");
+    $returnto = forum_go_back_to(new moodle_url('/mod/forum/index.php', array('id' => $course->id)));
     $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
     if ($subscribe) {
-        redirect($returnto, get_string('nowallsubscribed', 'forum', $shortname), 1);
+        redirect(
+                $returnto,
+                get_string('nowallsubscribed', 'forum', $shortname),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
     } else {
-        redirect($returnto, get_string('nowallunsubscribed', 'forum', $shortname), 1);
+        redirect(
+                $returnto,
+                get_string('nowallunsubscribed', 'forum', $shortname),
+                null,
+                \core\output\notification::NOTIFY_SUCCESS
+            );
     }
 }
 
@@ -230,7 +245,7 @@ if ($generalforums) {
                 } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                     $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
-                                   $forum->id.'&amp;mark=read"><img src="'.$OUTPUT->pix_url('t/markasread') . '" alt="'.$strmarkallread.'" class="iconsmall" /></a></span>';
+                                   $forum->id.'&amp;mark=read&amp;sesskey=' . sesskey() . '"><img src="'.$OUTPUT->pix_url('t/markasread') . '" alt="'.$strmarkallread.'" class="iconsmall" /></a></span>';
                 } else {
                     $unreadlink = '<span class="read">0</span>';
                 }
@@ -368,7 +383,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                     } else if ($unread = forum_tp_count_forum_unread_posts($cm, $course)) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                         $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?f='.
-                                       $forum->id.'&amp;mark=read"><img src="'.$OUTPUT->pix_url('t/markasread') . '" alt="'.$strmarkallread.'" class="iconsmall" /></a></span>';
+                                       $forum->id.'&amp;mark=read&sesskey=' . sesskey() . '"><img src="'.$OUTPUT->pix_url('t/markasread') . '" alt="'.$strmarkallread.'" class="iconsmall" /></a></span>';
                     } else {
                         $unreadlink = '<span class="read">0</span>';
                     }

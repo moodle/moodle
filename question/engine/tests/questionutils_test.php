@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../lib.php');
+require_once(__DIR__ . '/../lib.php');
 
 
 /**
@@ -177,23 +177,30 @@ class question_utils_test extends advanced_testcase {
         $this->assertSame('mmmcmxcix', question_utils::int_to_roman(3999));
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_int_to_roman_too_small() {
-        $this->setExpectedException('moodle_exception');
         question_utils::int_to_roman(0);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_int_to_roman_too_big() {
-        $this->setExpectedException('moodle_exception');
         question_utils::int_to_roman(4000);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_int_to_roman_not_int() {
-        $this->setExpectedException('moodle_exception');
         question_utils::int_to_roman(1.5);
     }
 
     public function test_clean_param_mark() {
         $this->assertNull(question_utils::clean_param_mark(null));
+        $this->assertNull(question_utils::clean_param_mark('frog'));
         $this->assertSame('', question_utils::clean_param_mark(''));
         $this->assertSame(0.0, question_utils::clean_param_mark('0'));
         $this->assertSame(1.5, question_utils::clean_param_mark('1.5'));

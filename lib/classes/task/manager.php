@@ -55,7 +55,7 @@ class manager {
         }
 
         $tasks = null;
-        require_once($file);
+        include($file);
 
         if (!isset($tasks)) {
             return array();
@@ -85,50 +85,44 @@ class manager {
      */
     public static function reset_scheduled_tasks_for_component($componentname) {
         global $DB;
-        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
-
-        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10, 60)) {
-            throw new \moodle_exception('locktimeout');
-        }
         $tasks = self::load_default_scheduled_tasks_for_component($componentname);
+        $validtasks = array();
 
-        $tasklocks = array();
         foreach ($tasks as $taskid => $task) {
             $classname = get_class($task);
             if (strpos($classname, '\\') !== 0) {
                 $classname = '\\' . $classname;
             }
 
-            // If there is an existing task with a custom schedule, do not override it.
-            $currenttask = self::get_scheduled_task($classname);
-            if ($currenttask && $currenttask->is_customised()) {
-                $tasks[$taskid] = $currenttask;
-            }
+            $validtasks[] = $classname;
 
-            if (!$lock = $cronlockfactory->get_lock($classname, 10, 60)) {
-                // Could not get all the locks required - release all locks and fail.
-                foreach ($tasklocks as $tasklock) {
-                    $tasklock->release();
+            if ($currenttask = self::get_scheduled_task($classname)) {
+                if ($currenttask->is_customised()) {
+                    // If there is an existing task with a custom schedule, do not override it.
+                    continue;
                 }
-                $cronlock->release();
-                throw new \moodle_exception('locktimeout');
+
+                // Update the record from the default task data.
+                self::configure_scheduled_task($task);
+            } else {
+                // Ensure that the first run follows the schedule.
+                $task->set_next_run_time($task->get_next_scheduled_time());
+
+                // Insert the new task in the database.
+                $record = self::record_from_scheduled_task($task);
+                $DB->insert_record('task_scheduled', $record);
             }
-            $tasklocks[] = $lock;
         }
 
-        // Got a lock on cron and all the tasks for this component, time to reset the config.
-        $DB->delete_records('task_scheduled', array('component' => $componentname));
-        foreach ($tasks as $task) {
-            $record = self::record_from_scheduled_task($task);
-            $DB->insert_record('task_scheduled', $record);
+        // Delete any task that is not defined in the component any more.
+        $sql = "component = :component";
+        $params = array('component' => $componentname);
+        if (!empty($validtasks)) {
+            list($insql, $inparams) = $DB->get_in_or_equal($validtasks, SQL_PARAMS_NAMED, 'param', false);
+            $sql .= ' AND classname ' . $insql;
+            $params = array_merge($params, $inparams);
         }
-
-        // Release the locks.
-        foreach ($tasklocks as $tasklock) {
-            $tasklock->release();
-        }
-
-        $cronlock->release();
+        $DB->delete_records_select('task_scheduled', $sql, $params);
     }
 
     /**
@@ -141,8 +135,10 @@ class manager {
         global $DB;
 
         $record = self::record_from_adhoc_task($task);
-        // Schedule it immediately.
-        $record->nextruntime = time() - 1;
+        // Schedule it immediately if nextruntime not explicitly set.
+        if (!$task->get_next_run_time()) {
+            $record->nextruntime = time() - 1;
+        }
         $result = $DB->insert_record('task_adhoc', $record);
 
         return $result;
@@ -157,19 +153,10 @@ class manager {
      */
     public static function configure_scheduled_task(scheduled_task $task) {
         global $DB;
-        $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
-
-        if (!$cronlock = $cronlockfactory->get_lock('core_cron', 10, 60)) {
-            throw new \moodle_exception('locktimeout');
-        }
 
         $classname = get_class($task);
         if (strpos($classname, '\\') !== 0) {
             $classname = '\\' . $classname;
-        }
-        if (!$lock = $cronlockfactory->get_lock($classname, 10, 60)) {
-            $cronlock->release();
-            throw new \moodle_exception('locktimeout');
         }
 
         $original = $DB->get_record('task_scheduled', array('classname'=>$classname), 'id', MUST_EXIST);
@@ -179,8 +166,6 @@ class manager {
         $record->nextruntime = $task->get_next_scheduled_time();
         $result = $DB->update_record('task_scheduled', $record);
 
-        $lock->release();
-        $cronlock->release();
         return $result;
     }
 
@@ -478,7 +463,8 @@ class manager {
 
         $where = "(lastruntime IS NULL OR lastruntime < :timestart1)
                   AND (nextruntime IS NULL OR nextruntime < :timestart2)
-                  AND disabled = 0";
+                  AND disabled = 0
+                  ORDER BY lastruntime, id ASC";
         $params = array('timestart1' => $timestart, 'timestart2' => $timestart);
         $records = $DB->get_records_select('task_scheduled', $where, $params);
 
@@ -502,10 +488,15 @@ class manager {
 
                 if ($plugininfo) {
                     if (($plugininfo->is_enabled() === false) && !$task->get_run_if_component_disabled()) {
-                        mtrace($task->get_name().' skipped - the component '.$task->get_component().' is disabled');
                         $lock->release();
                         continue;
                     }
+                }
+
+                // Make sure the task data is unchanged.
+                if (!$DB->record_exists('task_scheduled', (array) $record)) {
+                    $lock->release();
+                    continue;
                 }
 
                 if (!$task->is_blocking()) {

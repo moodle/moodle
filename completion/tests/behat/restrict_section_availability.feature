@@ -10,21 +10,17 @@ Feature: Restrict sections availability through completion or grade conditions
       | Course 1 | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | Frist | teacher1@asd.com |
-      | student1 | Student | First | student1@asd.com |
+      | teacher1 | Teacher | Frist | teacher1@example.com |
+      | student1 | Student | First | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I set the following administration settings values:
-      | Enable completion tracking | 1 |
-      | Enable conditional access | 1 |
-    And I log out
 
   @javascript
   Scenario: Show section greyed-out to student when completion condition is not satisfied
     Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I click on "Edit settings" "link" in the "Administration" "block"
@@ -48,6 +44,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I press "Save changes"
     And I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should see "Not available unless: The activity Test label is marked complete"
     And I should not see "Test page name"
@@ -58,6 +55,7 @@ Feature: Restrict sections availability through completion or grade conditions
   @javascript
   Scenario: Show section greyed-out to student when grade condition is not satisfied
     Given I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
@@ -73,13 +71,14 @@ Feature: Restrict sections availability through completion or grade conditions
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Grade" "button" in the "Add restriction..." "dialogue"
-    And I click on "min" "checkbox"
     And I set the following fields to these values:
-      | id | Grade assignment |
-      | minval | 20 |
+      | id     | Grade assignment |
+      | min    | 1                |
+      | minval | 20               |
     And I press "Save changes"
     And I log out
     When I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
     Then I should see "Not available unless: You achieve a required score in Grade assignment"
     And "Test page name" activity should be hidden
@@ -91,15 +90,19 @@ Feature: Restrict sections availability through completion or grade conditions
     And I should see "Submitted for grading"
     And I log out
     And I log in as "teacher1"
+    And I am on site homepage
     And I follow "Course 1"
     And I follow "Grade assignment"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student First" "link" in the "Student First" "table_row"
+    And I follow "View all submissions"
+    And I click on "Grade" "link" in the "Student First" "table_row"
     And I set the following fields to these values:
       | Grade | 21 |
     And I press "Save changes"
+    And I press "Ok"
+    And I follow "Edit settings"
     And I log out
     And I log in as "student1"
+    And I am on site homepage
     And I follow "Course 1"
     And "Test page name" activity should be visible
     And I should not see "Not available unless: You achieve a required score in Grade assignment"

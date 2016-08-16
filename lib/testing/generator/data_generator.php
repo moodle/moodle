@@ -272,7 +272,17 @@ EOD;
             context_user::instance($userid);
         }
 
-        return $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
+        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+
+        if (!$record['deleted'] && isset($record['interests'])) {
+            require_once($CFG->dirroot . '/user/editlib.php');
+            if (!is_array($record['interests'])) {
+                $record['interests'] = preg_split('/\s*,\s*/', trim($record['interests']), -1, PREG_SPLIT_NO_EMPTY);
+            }
+            useredit_update_interests($user, $record['interests']);
+        }
+
+        return $user;
     }
 
     /**
@@ -405,6 +415,10 @@ EOD;
             $record['category'] = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
         }
 
+        if (isset($record['tags']) && !is_array($record['tags'])) {
+            $record['tags'] = preg_split('/\s*,\s*/', trim($record['tags']), -1, PREG_SPLIT_NO_EMPTY);
+        }
+
         $course = create_course((object)$record);
         context_course::instance($course->id);
         if (!empty($options['createsections'])) {
@@ -443,23 +457,45 @@ EOD;
     }
 
     /**
-     * Create a test block
-     * @param string $blockname
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass block instance record
+     * Create a test block.
+     *
+     * The $record passed in becomes the basis for the new row added to the
+     * block_instances table. You only need to supply the values of interest.
+     * Any missing values have sensible defaults filled in, and ->blockname will be set based on $blockname.
+     *
+     * The $options array provides additional data, not directly related to what
+     * will be inserted in the block_instance table, which may affect the block
+     * that is created. The meanings of any data passed here depends on the particular
+     * type of block being created.
+     *
+     * @param string $blockname the type of block to create. E.g. 'html'.
+     * @param array|stdClass $record forms the basis for the entry to be inserted in the block_instances table.
+     * @param array $options further, block-specific options to control how the block is created.
+     * @return stdClass new block_instance record.
      */
-    public function create_block($blockname, $record=null, array $options=null) {
+    public function create_block($blockname, $record=null, array $options=array()) {
         $generator = $this->get_plugin_generator('block_'.$blockname);
         return $generator->create_instance($record, $options);
     }
 
     /**
-     * Create a test module
-     * @param string $modulename
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass activity record
+     * Create a test activity module.
+     *
+     * The $record should contain the same data that you would call from
+     * ->get_data() when the mod_[type]_mod_form is submitted, except that you
+     * only need to supply values of interest. The only required value is
+     * 'course'. Any missing values will have a sensible default supplied.
+     *
+     * The $options array provides additional data, not directly related to what
+     * would come back from the module edit settings form, which may affect the activity
+     * that is created. The meanings of any data passed here depends on the particular
+     * type of activity being created.
+     *
+     * @param string $modulename the type of activity to create. E.g. 'forum' or 'quiz'.
+     * @param array|stdClass $record data, as if from the module edit settings form.
+     * @param array $options additional data that may affect how the module is created.
+     * @return stdClass activity record new new record that was just inserted in the table
+     *      like 'forum' or 'quiz', with a ->cmid field added.
      */
     public function create_module($modulename, $record=null, array $options=null) {
         $generator = $this->get_plugin_generator('mod_'.$modulename);
@@ -792,16 +828,23 @@ EOD;
             $record['userid'] = $USER->id;
         }
 
-        if (!isset($record['name'])) {
-            $record['name'] = 'Tag name ' . $i;
-        }
-
         if (!isset($record['rawname'])) {
-            $record['rawname'] = 'Raw tag name ' . $i;
+            if (isset($record['name'])) {
+                $record['rawname'] = $record['name'];
+            } else {
+                $record['rawname'] = 'Tag name ' . $i;
+            }
         }
 
-        if (!isset($record['tagtype'])) {
-            $record['tagtype'] = 'default';
+        // Attribute 'name' should be a lowercase version of 'rawname', if not set.
+        if (!isset($record['name'])) {
+            $record['name'] = core_text::strtolower($record['rawname']);
+        } else {
+            $record['name'] = core_text::strtolower($record['name']);
+        }
+
+        if (!isset($record['tagcollid'])) {
+            $record['tagcollid'] = core_tag_collection::get_default();
         }
 
         if (!isset($record['description'])) {
@@ -852,7 +895,7 @@ EOD;
      *
      * @param int $userid
      * @param int $courseid
-     * @param int $roleid optional role id, use only with manual plugin
+     * @param int|string $roleidorshortname optional role id or role shortname, use only with manual plugin
      * @param string $enrol name of enrol plugin,
      *     there must be exactly one instance in course,
      *     it must support enrol_user() method.
@@ -861,8 +904,16 @@ EOD;
      * @param int $status (optional) default to ENROL_USER_ACTIVE for new enrolments
      * @return bool success
      */
-    public function enrol_user($userid, $courseid, $roleid = null, $enrol = 'manual', $timestart = 0, $timeend = 0, $status = null) {
+    public function enrol_user($userid, $courseid, $roleidorshortname = null, $enrol = 'manual',
+            $timestart = 0, $timeend = 0, $status = null) {
         global $DB;
+
+        // If role is specified by shortname, convert it into an id.
+        if (!is_numeric($roleidorshortname) && is_string($roleidorshortname)) {
+            $roleid = $DB->get_field('role', 'id', array('shortname' => $roleidorshortname), MUST_EXIST);
+        } else {
+            $roleid = $roleidorshortname;
+        }
 
         if (!$plugin = enrol_get_plugin($enrol)) {
             return false;

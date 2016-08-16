@@ -1,0 +1,104 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_lti/tool_proxy_card
+
+    This template provides the layout for a single tool card on the tool
+    configuration page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * hascapabilitygroups
+    * state
+    ** pending|configured|rejected|unknown
+    ** text
+    * courseid
+    * urls
+    ** course
+    ** icon
+    * name
+    * description
+    * instancecount
+
+}}
+<div class="tool-card" data-proxy-id="{{id}}">
+    <div class="overlay-container">
+        <div class="img-container">
+            {{> mod_lti/loader }}
+            <div class="success-icon-container">{{#pix}} i/valid, core, {{#str}} success {{/str}}{{/pix}}</div>
+            <div class="fail-icon-container">{{#pix}} i/invalid, core, {{#str}} error {{/str}}{{/pix}}</div>
+        </div>
+        {{#hascapabilitygroups}}
+            {{> mod_lti/tool_type_capabilities_agree }}
+        {{/hascapabilitygroups}}
+    </div>
+    <div class="tool-card-content">
+        <div class="tool-card-header">
+            <div class="tool-card-subheader">
+                <div class="label
+                            {{#state.pending}}label-info{{/state.pending}}
+                            {{#state.configured}}label-success{{/state.configured}}
+                            {{#state.rejected}}label-important{{/state.rejected}}
+                            {{#state.unknown}}label-warning{{/state.unknown}}">
+                    {{state.text}}
+                </div>
+                <div class="tool-card-actions pull-right">
+                    {{#courseid}}
+                        <a href="{{{urls.course}}}" title="{{#str}} courselink, mod_lti {{/str}}">{{#pix}} i/course, core, {{#str}} courselink, mod_lti {{/str}}{{/pix}}</a>
+                    {{/courseid}}
+                    <a class="edit" href="{{{urls.edit}}}" title="{{#str}} edit {{/str}}">{{#pix}} t/edit, core, {{#str}} edit {{/str}}{{/pix}}</a>
+                    <a class="delete" href="#" title="{{#str}} delete {{/str}}">{{#pix}} t/delete, core, {{#str}} delete {{/str}}{{/pix}}</a>
+                </div>
+            </div>
+            <img class="tool-card-icon" src="{{{urls.icon}}}" alt="{{name}}"></img>
+            <div class="contenteditable-container">
+                <h4 class="name">{{name}}</h4>
+                <div class="overlay-container">{{> mod_lti/loader }}</div>
+            </div>
+        </div>
+        <div class="tool-card-body">
+            <div class="contenteditable-container">
+                <p class="description">{{description}}</p>
+                <div class="overlay-container">{{> mod_lti/loader }}</div>
+            </div>
+        </div>
+        <div class="tool-card-footer">
+            {{#state.pending}}
+                <a class="activate btn btn-success" href="#">{{#str}} activate, mod_lti {{/str}}</a>
+            {{/state.pending}}
+            {{^state.pending}}
+                {{#instancecount}}
+                    <p>{{#str}} toolisbeingused, mod_lti, {{instancecount}} {{/str}}</p>
+                {{/instancecount}}
+                {{^instancecount}}
+                    <p>{{#str}} toolisnotbeingused, mod_lti{{/str}}</p>
+                {{/instancecount}}
+            {{/state.pending}}
+        </div>
+    </div>
+</div>
+{{#js}}
+    require(['jquery', 'mod_lti/tool_proxy_card_controller'], function($, controller) {
+        var cardElement = $('[data-proxy-id={{id}}]');
+        controller.init(cardElement);
+    });
+{{/js}}

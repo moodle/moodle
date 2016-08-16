@@ -114,14 +114,15 @@ class workshopallocation_random_testcase extends advanced_testcase {
         ), $submissions);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_index_submissions_by_authors_duplicate_author() {
         // fixture setup
         $submissions = array(
             14 => (object)array('id' => 676, 'authorid' => 3),
             87 => (object)array('id' => 121, 'authorid' => 3),
         );
-        // set expectation
-        $this->setExpectedException('moodle_exception');
         // exercise SUT
         $submissions = $this->allocator->index_submissions_by_authors($submissions);
     }

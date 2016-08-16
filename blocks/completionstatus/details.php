@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(__DIR__.'/../../config.php');
 require_once("{$CFG->libdir}/completionlib.php");
 
 // Load data.
@@ -133,7 +133,7 @@ if (empty($completions)) {
     echo html_writer::start_tag('tr');
     echo html_writer::start_tag('td', array('colspan' => '2'));
     echo html_writer::start_tag('br');
-    echo $OUTPUT->box(get_string('err_nocriteria', 'completion'), 'noticebox');
+    echo $OUTPUT->box(get_string('nocriteriaset', 'completion'), 'noticebox');
     echo html_writer::end_tag('td');
     echo html_writer::end_tag('tr');
     echo html_writer::end_tag('tbody');

@@ -31,6 +31,11 @@
 #page-mod-data-preset .overwritesettings {margin-bottom: 1em;}
 #page-mod-data-preset table.presets {margin-left: auto;margin-right: auto;}
 
+/** Styles for the search form **/
+#page-mod-data-view .datapreferences label {
+    display: inline-block;
+}
+
 /** Styles for field.php **/
 .path-mod-data-field .fieldadd,
 .path-mod-data-field .sortdefault {margin:1em 0;}
@@ -59,6 +64,7 @@
 .mod-data-default-template .template-token {text-align:left;}
 .mod-data-default-template .controls {text-align:center;}
 .mod-data-default-template searchcontrols {text-align:right;}
+.mod-data-default-template.notapproved {background-color:#FFCCCC;}
 #page-mod-data-templates td.save_template,
 #page-mod-data-templates .template_heading {
      text-align:center;
@@ -68,3 +74,24 @@
 .dir-rtl .mod-data-default-template .template-field {text-align:left;}
 .dir-rtl .mod-data-default-template .template-token {text-align:right;}
 .dir-rtl .mod-data-default-template searchcontrols {text-align:left;}
+
+#page-mod-data-edit .req {
+    cursor: help;
+}
+#page-mod-data-edit .inline-req .req {
+    position: absolute;
+}
+#page-mod-data-edit .inline-req {
+    text-align: left;
+}
+#page-mod-data-edit .mod-data-input {
+    margin-left: 10px;
+}
+
+.dir-rtl#page-mod-data-edit .inline-req {
+    text-align: right;
+}
+.dir-rtl#page-mod-data-edit .mod-data-input {
+    margin-left: 0px;
+    margin-right: 10px;
+}

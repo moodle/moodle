@@ -1,0 +1,19 @@
+<li data-id="{{id}}">
+    {{#canmanage}}
+    <span draggable="true">
+        {{{shortname}}}
+    </span>
+    {{/canmanage}}
+    {{^canmanage}}
+    <span>
+        {{{shortname}}}
+    </span>
+    {{/canmanage}}
+    {{#haschildren}}
+    <ul>
+    {{#children}}
+    {{> tool_lp/competencies_tree }}
+    {{/children}}
+    </ul>
+    {{/haschildren}}
+</li>

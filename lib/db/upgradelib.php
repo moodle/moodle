@@ -77,387 +77,6 @@ function upgrade_mysql_get_supported_tables() {
 }
 
 /**
- * Remove all signed numbers from current database and change
- * text fields to long texts - mysql only.
- */
-function upgrade_mysql_fix_unsigned_and_lob_columns() {
-    // We are not using standard API for changes of column
-    // because everything 'signed'-related will be removed soon.
-
-    // If anybody already has numbers higher than signed limit the execution stops
-    // and tables must be fixed manually before continuing upgrade.
-
-    global $DB;
-
-    if ($DB->get_dbfamily() !== 'mysql') {
-        return;
-    }
-
-    $pbar = new progress_bar('mysqlconvertunsignedlobs', 500, true);
-
-    $prefix = $DB->get_prefix();
-    $tables = upgrade_mysql_get_supported_tables();
-
-    $tablecount = count($tables);
-    $i = 0;
-    foreach ($tables as $table) {
-        $i++;
-
-        $changes = array();
-
-        $sql = "SHOW COLUMNS FROM `{{$table}}`";
-        $rs = $DB->get_recordset_sql($sql);
-        foreach ($rs as $column) {
-            $column = (object)array_change_key_case((array)$column, CASE_LOWER);
-            if (stripos($column->type, 'unsigned') !== false) {
-                $maxvalue = 0;
-                if (preg_match('/^int/i', $column->type)) {
-                    $maxvalue = 2147483647;
-                } else if (preg_match('/^medium/i', $column->type)) {
-                    $maxvalue = 8388607;
-                } else if (preg_match('/^smallint/i', $column->type)) {
-                    $maxvalue = 32767;
-                } else if (preg_match('/^tinyint/i', $column->type)) {
-                    $maxvalue = 127;
-                }
-                if ($maxvalue) {
-                    // Make sure nobody is abusing our integer ranges - moodle int sizes are in digits, not bytes!!!
-                    $invalidcount = $DB->get_field_sql("SELECT COUNT('x') FROM `{{$table}}` WHERE `$column->field` > :maxnumber", array('maxnumber'=>$maxvalue));
-                    if ($invalidcount) {
-                        throw new moodle_exception('notlocalisederrormessage', 'error', new moodle_url('/admin/'), "Database table '{$table}'' contains unsigned column '{$column->field}' with $invalidcount values that are out of allowed range, upgrade can not continue.");
-                    }
-                }
-                $type = preg_replace('/unsigned/i', 'signed', $column->type);
-                $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
-                $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
-                $autoinc = (stripos($column->extra, 'auto_increment') !== false) ? 'AUTO_INCREMENT' : '';
-                // Primary and unique not necessary here, change_database_structure does not add prefix.
-                $changes[] = "MODIFY COLUMN `$column->field` $type $notnull $default $autoinc";
-
-            } else if ($column->type === 'tinytext' or $column->type === 'mediumtext' or $column->type === 'text') {
-                $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
-                $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
-                // Primary, unique and inc are not supported for texts.
-                $changes[] = "MODIFY COLUMN `$column->field` LONGTEXT $notnull $default";
-
-            } else if ($column->type === 'tinyblob' or $column->type === 'mediumblob' or $column->type === 'blob') {
-                $notnull = ($column->null === 'NO') ? 'NOT NULL' : 'NULL';
-                $default = (!is_null($column->default) and $column->default !== '') ? "DEFAULT '$column->default'" : '';
-                // Primary, unique and inc are not supported for blobs.
-                $changes[] = "MODIFY COLUMN `$column->field` LONGBLOB $notnull $default";
-            }
-
-        }
-        $rs->close();
-
-        if ($changes) {
-            // Set appropriate timeout - 1 minute per thousand of records should be enough, min 60 minutes just in case.
-            $count = $DB->count_records($table, array());
-            $timeout = ($count/1000)*60;
-            $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
-            upgrade_set_timeout($timeout);
-
-            $sql = "ALTER TABLE `{$prefix}$table` ".implode(', ', $changes);
-            $DB->change_database_structure($sql);
-        }
-
-        $pbar->update($i, $tablecount, "Converted unsigned/lob columns in MySQL database - $i/$tablecount.");
-    }
-}
-
-/**
- * Migrate NTEXT to NVARCHAR(MAX).
- */
-function upgrade_mssql_nvarcharmax() {
-    global $DB;
-
-    if ($DB->get_dbfamily() !== 'mssql') {
-        return;
-    }
-
-    $pbar = new progress_bar('mssqlconvertntext', 500, true);
-
-    $prefix = $DB->get_prefix();
-    $tables = $DB->get_tables(false);
-
-    $tablecount = count($tables);
-    $i = 0;
-    foreach ($tables as $table) {
-        $i++;
-
-        $columns = array();
-
-        $sql = "SELECT column_name
-                  FROM INFORMATION_SCHEMA.COLUMNS
-                 WHERE table_name = '{{$table}}' AND UPPER(data_type) = 'NTEXT'";
-        $rs = $DB->get_recordset_sql($sql);
-        foreach ($rs as $column) {
-            $columns[] = $column->column_name;
-        }
-        $rs->close();
-
-        if ($columns) {
-            // Set appropriate timeout - 1 minute per thousand of records should be enough, min 60 minutes just in case.
-            $count = $DB->count_records($table, array());
-            $timeout = ($count/1000)*60;
-            $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
-            upgrade_set_timeout($timeout);
-
-            $updates = array();
-            foreach ($columns as $column) {
-                // Change the definition.
-                $sql = "ALTER TABLE {$prefix}$table ALTER COLUMN $column NVARCHAR(MAX)";
-                $DB->change_database_structure($sql);
-                $updates[] = "$column = $column";
-            }
-
-            // Now force the migration of text data to new optimised storage.
-            $sql = "UPDATE {{$table}} SET ".implode(', ', $updates);
-            $DB->execute($sql);
-        }
-
-        $pbar->update($i, $tablecount, "Converted NTEXT to NVARCHAR(MAX) columns in MS SQL Server database - $i/$tablecount.");
-    }
-}
-
-/**
- * Migrate IMAGE to VARBINARY(MAX).
- */
-function upgrade_mssql_varbinarymax() {
-    global $DB;
-
-    if ($DB->get_dbfamily() !== 'mssql') {
-        return;
-    }
-
-    $pbar = new progress_bar('mssqlconvertimage', 500, true);
-
-    $prefix = $DB->get_prefix();
-    $tables = $DB->get_tables(false);
-
-    $tablecount = count($tables);
-    $i = 0;
-    foreach ($tables as $table) {
-        $i++;
-
-        $columns = array();
-
-        $sql = "SELECT column_name
-                  FROM INFORMATION_SCHEMA.COLUMNS
-                 WHERE table_name = '{{$table}}' AND UPPER(data_type) = 'IMAGE'";
-        $rs = $DB->get_recordset_sql($sql);
-        foreach ($rs as $column) {
-            $columns[] = $column->column_name;
-        }
-        $rs->close();
-
-        if ($columns) {
-            // Set appropriate timeout - 1 minute per thousand of records should be enough, min 60 minutes just in case.
-            $count = $DB->count_records($table, array());
-            $timeout = ($count/1000)*60;
-            $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
-            upgrade_set_timeout($timeout);
-
-            foreach ($columns as $column) {
-                // Change the definition.
-                $sql = "ALTER TABLE {$prefix}$table ALTER COLUMN $column VARBINARY(MAX)";
-                $DB->change_database_structure($sql);
-            }
-
-            // Binary columns should not be used, do not waste time optimising the storage.
-        }
-
-        $pbar->update($i, $tablecount, "Converted IMAGE to VARBINARY(MAX) columns in MS SQL Server database - $i/$tablecount.");
-    }
-}
-
-/**
- * This upgrade script fixes the mismatches between DB fields course_modules.section
- * and course_sections.sequence. It makes sure that each module is included
- * in the sequence of at least one section.
- * Note that this script is different from admin/cli/fix_course_sortorder.php
- * in the following ways:
- * 1. It does not fix the cases when module appears several times in section(s) sequence(s) -
- *    it will be done automatically on the next viewing of the course.
- * 2. It does not remove non-existing modules from section sequences - administrator
- *    has to run the CLI script to do it.
- * 3. When this script finds an orphaned module it adds it to the section but makes hidden
- *    where CLI script does not change the visiblity specified in the course_modules table.
- */
-function upgrade_course_modules_sequences() {
-    global $DB;
-
-    // Find all modules that point to the section which does not point back to this module.
-    $sequenceconcat = $DB->sql_concat("','", "s.sequence", "','");
-    $moduleconcat = $DB->sql_concat("'%,'", "m.id", "',%'");
-    $sql = "SELECT m.id, m.course, m.section, s.sequence
-        FROM {course_modules} m LEFT OUTER JOIN {course_sections} s
-        ON m.course = s.course and m.section = s.id
-        WHERE s.sequence IS NULL OR ($sequenceconcat NOT LIKE $moduleconcat)
-        ORDER BY m.course";
-    $rs = $DB->get_recordset_sql($sql);
-    $sections = null;
-    foreach ($rs as $cm) {
-        if (!isset($sections[$cm->course])) {
-            // Retrieve all sections for the course (only once for each corrupt course).
-            $sections = array($cm->course =>
-                    $DB->get_records('course_sections', array('course' => $cm->course),
-                            'section', 'id, section, sequence, visible'));
-            if (empty($sections[$cm->course])) {
-                // Very odd - the course has a module in it but has no sections. Create 0-section.
-                $newsection = array('sequence' => '', 'section' => 0, 'visible' => 1);
-                $newsection['id'] = $DB->insert_record('course_sections',
-                        $newsection + array('course' => $cm->course, 'summary' => '', 'summaryformat' => FORMAT_HTML));
-                $sections[$cm->course] = array($newsection['id'] => (object)$newsection);
-            }
-        }
-        // Attempt to find the section that has this module in it's sequence.
-        // If there are several of them, pick the last because this is what get_fast_modinfo() does.
-        $sectionid = null;
-        foreach ($sections[$cm->course] as $section) {
-            if (!empty($section->sequence) && in_array($cm->id, preg_split('/,/', $section->sequence))) {
-                $sectionid = $section->id;
-            }
-        }
-        if ($sectionid) {
-            // Found the section. Update course_module to point to the correct section.
-            $params = array('id' => $cm->id, 'section' => $sectionid);
-            if (!$sections[$cm->course][$sectionid]->visible) {
-                $params['visible'] = 0;
-            }
-            $DB->update_record('course_modules', $params);
-        } else {
-            // No section in the course has this module in it's sequence.
-            if (isset($sections[$cm->course][$cm->section])) {
-                // Try to add module to the section it points to (if it is valid).
-                $sectionid = $cm->section;
-            } else {
-                // Section not found. Just add to the first available section.
-                reset($sections[$cm->course]);
-                $sectionid = key($sections[$cm->course]);
-            }
-            $newsequence = ltrim($sections[$cm->course][$sectionid]->sequence . ',' . $cm->id, ',');
-            $sections[$cm->course][$sectionid]->sequence = $newsequence;
-            $DB->update_record('course_sections', array('id' => $sectionid, 'sequence' => $newsequence));
-            // Make module invisible because it was not displayed at all before this upgrade script.
-            $DB->update_record('course_modules', array('id' => $cm->id, 'section' => $sectionid, 'visible' => 0, 'visibleold' => 0));
-        }
-    }
-    $rs->close();
-    unset($sections);
-
-    // Note that we don't need to reset course cache here because it is reset automatically after upgrade.
-}
-
-/**
- * Updates a single item (course module or course section) to transfer the
- * availability settings from the old to the new format.
- *
- * Note: We do not convert groupmembersonly for modules at present. If we did,
- * $groupmembersonly would be set to the groupmembersonly option for the
- * module. Since we don't, it will be set to 0 for modules, and 1 for sections
- * if they have a grouping.
- *
- * @param int $groupmembersonly 1 if activity has groupmembersonly option
- * @param int $groupingid Grouping id (0 = none)
- * @param int $availablefrom Available from time (0 = none)
- * @param int $availableuntil Available until time (0 = none)
- * @param int $showavailability Show availability (1) or hide activity entirely
- * @param array $availrecs Records from course_modules/sections_availability
- * @param array $fieldrecs Records from course_modules/sections_avail_fields
- */
-function upgrade_availability_item($groupmembersonly, $groupingid,
-        $availablefrom, $availableuntil, $showavailability,
-        array $availrecs, array $fieldrecs) {
-    global $CFG, $DB;
-    $conditions = array();
-    $shows = array();
-
-    // Group members only condition (if enabled).
-    if ($CFG->enablegroupmembersonly && $groupmembersonly) {
-        if ($groupingid) {
-            $conditions[] = '{"type":"grouping"' .
-                    ($groupingid ? ',"id":' . $groupingid : '') . '}';
-        } else {
-            // No grouping specified, so allow any group.
-            $conditions[] = '{"type":"group"}';
-        }
-        // Group members only condition was not displayed to students.
-        $shows[] = 'false';
-
-        // In the unlikely event that the site had enablegroupmembers only
-        // but NOT enableavailability, we need to turn this on now.
-        if (!$CFG->enableavailability) {
-            set_config('enableavailability', 1);
-        }
-    }
-
-    // Date conditions.
-    if ($availablefrom) {
-        $conditions[] = '{"type":"date","d":">=","t":' . $availablefrom . '}';
-        $shows[] = $showavailability ? 'true' : 'false';
-    }
-    if ($availableuntil) {
-        $conditions[] = '{"type":"date","d":"<","t":' . $availableuntil . '}';
-        // Until dates never showed to students.
-        $shows[] = 'false';
-    }
-
-    // Conditions from _availability table.
-    foreach ($availrecs as $rec) {
-        if (!empty($rec->sourcecmid)) {
-            // Completion condition.
-            $conditions[] = '{"type":"completion","cm":' . $rec->sourcecmid .
-                    ',"e":' . $rec->requiredcompletion . '}';
-        } else {
-            // Grade condition.
-            $minmax = '';
-            if (!empty($rec->grademin)) {
-                $minmax .= ',"min":' . sprintf('%.5f', $rec->grademin);
-            }
-            if (!empty($rec->grademax)) {
-                $minmax .= ',"max":' . sprintf('%.5f', $rec->grademax);
-            }
-            $conditions[] = '{"type":"grade","id":' . $rec->gradeitemid . $minmax . '}';
-        }
-        $shows[] = $showavailability ? 'true' : 'false';
-    }
-
-    // Conditions from _fields table.
-    foreach ($fieldrecs as $rec) {
-        if (isset($rec->userfield)) {
-            // Standard field.
-            $fieldbit = ',"sf":' . json_encode($rec->userfield);
-        } else {
-            // Custom field.
-            $fieldbit = ',"cf":' . json_encode($rec->shortname);
-        }
-        // Value is not included for certain operators.
-        switch($rec->operator) {
-            case 'isempty':
-            case 'isnotempty':
-                $valuebit = '';
-                break;
-
-            default:
-                $valuebit = ',"v":' . json_encode($rec->value);
-                break;
-        }
-        $conditions[] = '{"type":"profile","op":"' . $rec->operator . '"' .
-                $fieldbit . $valuebit . '}';
-        $shows[] = $showavailability ? 'true' : 'false';
-    }
-
-    // If there are some conditions, set them into database.
-    if ($conditions) {
-        return '{"op":"&","showc":[' . implode(',', $shows) . '],' .
-                '"c":[' . implode(',', $conditions) . ']}';
-    } else {
-        return null;
-    }
-}
-
-/**
  * Using data for a single course-module that has groupmembersonly enabled,
  * returns the new availability value that incorporates the correct
  * groupmembersonly option.
@@ -529,4 +148,382 @@ function upgrade_mimetypes($filetypes) {
             array($extension)
         );
     }
+}
+
+/**
+ * Marks all courses with changes in extra credit weight calculation
+ *
+ * Used during upgrade and in course restore process
+ *
+ * This upgrade script is needed because we changed the algorithm for calculating the automatic weights of extra
+ * credit items and want to prevent changes in the existing student grades.
+ *
+ * @param int $onlycourseid
+ */
+function upgrade_extra_credit_weightoverride($onlycourseid = 0) {
+    global $DB;
+
+    // Find all courses that have categories in Natural aggregation method where there is at least one extra credit
+    // item and at least one item with overridden weight.
+    $courses = $DB->get_fieldset_sql(
+        "SELECT DISTINCT gc.courseid
+          FROM {grade_categories} gc
+          INNER JOIN {grade_items} gi ON gc.id = gi.categoryid AND gi.weightoverride = :weightoverriden
+          INNER JOIN {grade_items} gie ON gc.id = gie.categoryid AND gie.aggregationcoef = :extracredit
+          WHERE gc.aggregation = :naturalaggmethod" . ($onlycourseid ? " AND gc.courseid = :onlycourseid" : ''),
+        array('naturalaggmethod' => 13,
+            'weightoverriden' => 1,
+            'extracredit' => 1,
+            'onlycourseid' => $onlycourseid,
+        )
+    );
+    foreach ($courses as $courseid) {
+        $gradebookfreeze = get_config('core', 'gradebook_calculations_freeze_' . $courseid);
+        if (!$gradebookfreeze) {
+            set_config('gradebook_calculations_freeze_' . $courseid, 20150619);
+        }
+    }
+}
+
+/**
+ * Marks all courses that require calculated grade items be updated.
+ *
+ * Used during upgrade and in course restore process.
+ *
+ * This upgrade script is needed because the calculated grade items were stuck with a maximum of 100 and could be changed.
+ * This flags the courses that are affected and the grade book is frozen to retain grade integrity.
+ *
+ * @param int $courseid Specify a course ID to run this script on just one course.
+ */
+function upgrade_calculated_grade_items($courseid = null) {
+    global $DB, $CFG;
+
+    $affectedcourses = array();
+    $possiblecourseids = array();
+    $params = array();
+    $singlecoursesql = '';
+    if (isset($courseid)) {
+        $singlecoursesql = "AND ns.id = :courseid";
+        $params['courseid'] = $courseid;
+    }
+    $siteminmaxtouse = 1;
+    if (isset($CFG->grade_minmaxtouse)) {
+        $siteminmaxtouse = $CFG->grade_minmaxtouse;
+    }
+    $courseidsql = "SELECT ns.id
+                      FROM (
+                        SELECT c.id, coalesce(" . $DB->sql_compare_text('gs.value') . ", :siteminmax) AS gradevalue
+                          FROM {course} c
+                          LEFT JOIN {grade_settings} gs
+                            ON c.id = gs.courseid
+                           AND ((gs.name = 'minmaxtouse' AND " . $DB->sql_compare_text('gs.value') . " = '2'))
+                        ) ns
+                    WHERE " . $DB->sql_compare_text('ns.gradevalue') . " = '2' $singlecoursesql";
+    $params['siteminmax'] = $siteminmaxtouse;
+    $courses = $DB->get_records_sql($courseidsql, $params);
+    foreach ($courses as $course) {
+        $possiblecourseids[$course->id] = $course->id;
+    }
+
+    if (!empty($possiblecourseids)) {
+        list($sql, $params) = $DB->get_in_or_equal($possiblecourseids);
+        // A calculated grade item grade min != 0 and grade max != 100 and the course setting is set to
+        // "Initial min and max grades".
+        $coursesql = "SELECT DISTINCT courseid
+                        FROM {grade_items}
+                       WHERE calculation IS NOT NULL
+                         AND itemtype = 'manual'
+                         AND (grademax <> 100 OR grademin <> 0)
+                         AND courseid $sql";
+        $affectedcourses = $DB->get_records_sql($coursesql, $params);
+    }
+
+    // Check for second type of affected courses.
+    // If we already have the courseid parameter set in the affectedcourses then there is no need to run through this section.
+    if (!isset($courseid) || !in_array($courseid, $affectedcourses)) {
+        $singlecoursesql = '';
+        $params = array();
+        if (isset($courseid)) {
+            $singlecoursesql = "AND courseid = :courseid";
+            $params['courseid'] = $courseid;
+        }
+        $nestedsql = "SELECT id
+                        FROM {grade_items}
+                       WHERE itemtype = 'category'
+                         AND calculation IS NOT NULL $singlecoursesql";
+        $calculatedgradecategories = $DB->get_records_sql($nestedsql, $params);
+        $categoryids = array();
+        foreach ($calculatedgradecategories as $key => $gradecategory) {
+            $categoryids[$key] = $gradecategory->id;
+        }
+
+        if (!empty($categoryids)) {
+            list($sql, $params) = $DB->get_in_or_equal($categoryids);
+            // A category with a calculation where the raw grade min and the raw grade max don't match the grade min and grade max
+            // for the category.
+            $coursesql = "SELECT DISTINCT gi.courseid
+                            FROM {grade_grades} gg, {grade_items} gi
+                           WHERE gi.id = gg.itemid
+                             AND (gg.rawgrademax <> gi.grademax OR gg.rawgrademin <> gi.grademin)
+                             AND gi.id $sql";
+            $additionalcourses = $DB->get_records_sql($coursesql, $params);
+            foreach ($additionalcourses as $key => $additionalcourse) {
+                if (!array_key_exists($key, $affectedcourses)) {
+                    $affectedcourses[$key] = $additionalcourse;
+                }
+            }
+        }
+    }
+
+    foreach ($affectedcourses as $affectedcourseid) {
+        if (isset($CFG->upgrade_calculatedgradeitemsonlyregrade) && !($courseid)) {
+            $DB->set_field('grade_items', 'needsupdate', 1, array('courseid' => $affectedcourseid->courseid));
+        } else {
+            // Check to see if the gradebook freeze is already in affect.
+            $gradebookfreeze = get_config('core', 'gradebook_calculations_freeze_' . $affectedcourseid->courseid);
+            if (!$gradebookfreeze) {
+                set_config('gradebook_calculations_freeze_' . $affectedcourseid->courseid, 20150627);
+            }
+        }
+    }
+}
+
+/**
+ * This upgrade script merges all tag instances pointing to the same course tag
+ *
+ * User id is no longer used for those tag instances
+ */
+function upgrade_course_tags() {
+    global $DB;
+    $sql = "SELECT min(ti.id)
+        FROM {tag_instance} ti
+        LEFT JOIN {tag_instance} tii on tii.itemtype = ? and tii.itemid = ti.itemid and tii.tiuserid = 0 and tii.tagid = ti.tagid
+        where ti.itemtype = ? and ti.tiuserid <> 0 AND tii.id is null
+        group by ti.tagid, ti.itemid";
+    $ids = $DB->get_fieldset_sql($sql, array('course', 'course'));
+    if ($ids) {
+        list($idsql, $idparams) = $DB->get_in_or_equal($ids);
+        $DB->execute('UPDATE {tag_instance} SET tiuserid = 0 WHERE id ' . $idsql, $idparams);
+    }
+    $DB->execute("DELETE FROM {tag_instance} WHERE itemtype = ? AND tiuserid <> 0", array('course'));
+}
+
+/**
+ * This function creates a default separated/connected scale
+ * so there's something in the database.  The locations of
+ * strings and files is a bit odd, but this is because we
+ * need to maintain backward compatibility with many different
+ * existing language translations and older sites.
+ *
+ * @global object
+ * @return void
+ */
+function make_default_scale() {
+    global $DB;
+
+    $defaultscale = new stdClass();
+    $defaultscale->courseid = 0;
+    $defaultscale->userid = 0;
+    $defaultscale->name  = get_string('separateandconnected');
+    $defaultscale->description = get_string('separateandconnectedinfo');
+    $defaultscale->scale = get_string('postrating1', 'forum').','.
+                           get_string('postrating2', 'forum').','.
+                           get_string('postrating3', 'forum');
+    $defaultscale->timemodified = time();
+
+    $defaultscale->id = $DB->insert_record('scale', $defaultscale);
+    return $defaultscale;
+}
+
+
+/**
+ * Create another default scale.
+ *
+ * @param int $oldversion
+ * @return bool always true
+ */
+function make_competence_scale() {
+    global $DB;
+
+    $defaultscale = new stdClass();
+    $defaultscale->courseid = 0;
+    $defaultscale->userid = 0;
+    $defaultscale->name  = get_string('defaultcompetencescale');
+    $defaultscale->description = get_string('defaultcompetencescaledesc');
+    $defaultscale->scale = get_string('defaultcompetencescalenotproficient').','.
+                           get_string('defaultcompetencescaleproficient');
+    $defaultscale->timemodified = time();
+
+    $defaultscale->id = $DB->insert_record('scale', $defaultscale);
+    return $defaultscale;
+}
+
+/**
+ * Marks all courses that require rounded grade items be updated.
+ *
+ * Used during upgrade and in course restore process.
+ *
+ * This upgrade script is needed because it has been decided that if a grade is rounded up, and it will changed a letter
+ * grade or satisfy a course completion grade criteria, then it should be set as so, and the letter will be awarded and or
+ * the course completion grade will be awarded.
+ *
+ * @param int $courseid Specify a course ID to run this script on just one course.
+ */
+function upgrade_course_letter_boundary($courseid = null) {
+    global $DB, $CFG;
+
+    $coursesql = '';
+    $params = array('contextlevel' => CONTEXT_COURSE);
+    if (!empty($courseid)) {
+        $coursesql = 'AND c.id = :courseid';
+        $params['courseid'] = $courseid;
+    }
+
+    // Check to see if the system letter boundaries are borked.
+    $systemcontext = context_system::instance();
+    $systemneedsfreeze = upgrade_letter_boundary_needs_freeze($systemcontext);
+
+    // Check the setting for showing the letter grade in a column (default is false).
+    $usergradelettercolumnsetting = 0;
+    if (isset($CFG->grade_report_user_showlettergrade)) {
+        $usergradelettercolumnsetting = (int)$CFG->grade_report_user_showlettergrade;
+    }
+    $lettercolumnsql = '';
+    if ($usergradelettercolumnsetting) {
+        // the system default is to show a column with letters (and the course uses the defaults).
+        $lettercolumnsql = '(gss.value is NULL OR ' . $DB->sql_compare_text('gss.value') .  ' <> \'0\')';
+    } else {
+        // the course displays a column with letters.
+        $lettercolumnsql = $DB->sql_compare_text('gss.value') .  ' = \'1\'';
+    }
+
+    // 3, 13, 23, 31, and 32 are the grade display types that incorporate showing letters. See lib/grade/constants/php.
+    $systemusesletters = (int) (isset($CFG->grade_displaytype) && in_array($CFG->grade_displaytype, array(3, 13, 23, 31, 32)));
+    $systemletters = $systemusesletters || $usergradelettercolumnsetting;
+
+    $contextselect = context_helper::get_preload_record_columns_sql('ctx');
+
+    if ($systemletters && $systemneedsfreeze) {
+        // Select courses with no grade setting for display and a grade item that is using the default display,
+        // but have not altered the course letter boundary configuration. These courses are definitely affected.
+
+        $sql = "SELECT DISTINCT c.id AS courseid
+                  FROM {course} c
+                  JOIN {grade_items} gi ON c.id = gi.courseid
+                  JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+             LEFT JOIN {grade_settings} gs ON gs.courseid = c.id AND gs.name = 'displaytype'
+             LEFT JOIN {grade_settings} gss ON gss.courseid = c.id AND gss.name = 'report_user_showlettergrade'
+             LEFT JOIN {grade_letters} gl ON gl.contextid = ctx.id
+                 WHERE gi.display = 0
+                 AND ((gs.value is NULL)
+                      AND ($lettercolumnsql))
+                 AND gl.id is NULL $coursesql";
+        $affectedcourseids = $DB->get_recordset_sql($sql, $params);
+        foreach ($affectedcourseids as $courseid) {
+            set_config('gradebook_calculations_freeze_' . $courseid->courseid, 20160518);
+        }
+        $affectedcourseids->close();
+    }
+
+    // If the system letter boundary is okay proceed to check grade item and course grade display settings.
+    $sql = "SELECT DISTINCT c.id AS courseid, $contextselect
+              FROM {course} c
+              JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel
+              JOIN {grade_items} gi ON c.id = gi.courseid
+         LEFT JOIN {grade_settings} gs ON c.id = gs.courseid AND gs.name = 'displaytype'
+         LEFT JOIN {grade_settings} gss ON gss.courseid = c.id AND gss.name = 'report_user_showlettergrade'
+             WHERE
+                (
+                    -- A grade item is using letters
+                    (gi.display IN (3, 13, 23, 31, 32))
+                    -- OR the course is using letters
+                    OR (" . $DB->sql_compare_text('gs.value') . " IN ('3', '13', '23', '31', '32')
+                        -- OR the course using the system default which is letters
+                        OR (gs.value IS NULL AND $systemusesletters = 1)
+                    )
+                    OR ($lettercolumnsql)
+                )
+                -- AND the course matches
+                $coursesql";
+
+    $potentialcourses = $DB->get_recordset_sql($sql, $params);
+
+    foreach ($potentialcourses as $value) {
+        $gradebookfreeze = 'gradebook_calculations_freeze_' . $value->courseid;
+
+        // Check also if this course id has already been frozen.
+        // If we already have this course ID then move on to the next record.
+        if (!property_exists($CFG, $gradebookfreeze)) {
+            // Check for 57 letter grade issue.
+            context_helper::preload_from_record($value);
+            $coursecontext = context_course::instance($value->courseid);
+            if (upgrade_letter_boundary_needs_freeze($coursecontext)) {
+                // We have a course with a possible score standardisation problem. Flag for freeze.
+                // Flag this course as being frozen.
+                set_config('gradebook_calculations_freeze_' . $value->courseid, 20160518);
+            }
+        }
+    }
+    $potentialcourses->close();
+}
+
+/**
+ * Checks the letter boundary of the provided context to see if it needs freezing.
+ * Each letter boundary is tested to see if receiving that boundary number will
+ * result in achieving the cosponsoring letter.
+ *
+ * @param object $context Context object
+ * @return bool if the letter boundary for this context should be frozen.
+ */
+function upgrade_letter_boundary_needs_freeze($context) {
+    global $DB;
+
+    $contexts = $context->get_parent_context_ids();
+    array_unshift($contexts, $context->id);
+
+    foreach ($contexts as $ctxid) {
+
+        $letters = $DB->get_records_menu('grade_letters', array('contextid' => $ctxid), 'lowerboundary DESC',
+                'lowerboundary, letter');
+
+        if (!empty($letters)) {
+            foreach ($letters as $boundary => $notused) {
+                $standardisedboundary = upgrade_standardise_score($boundary, 0, 100, 0, 100);
+                if ($standardisedboundary < $boundary) {
+                    return true;
+                }
+            }
+            // We found letters but we have no boundary problem.
+            return false;
+        }
+    }
+    return false;
+}
+
+/**
+ * Given a float value situated between a source minimum and a source maximum, converts it to the
+ * corresponding value situated between a target minimum and a target maximum. Thanks to Darlene
+ * for the formula :-)
+ *
+ * @param float $rawgrade
+ * @param float $sourcemin
+ * @param float $sourcemax
+ * @param float $targetmin
+ * @param float $targetmax
+ * @return float Converted value
+ */
+function upgrade_standardise_score($rawgrade, $sourcemin, $sourcemax, $targetmin, $targetmax) {
+    if (is_null($rawgrade)) {
+        return null;
+    }
+
+    if ($sourcemax == $sourcemin or $targetmin == $targetmax) {
+        // Prevent division by 0.
+        return $targetmax;
+    }
+
+    $factor = ($rawgrade - $sourcemin) / ($sourcemax - $sourcemin);
+    $diff = $targetmax - $targetmin;
+    $standardisedvalue = $factor * $diff + $targetmin;
+    return $standardisedvalue;
 }

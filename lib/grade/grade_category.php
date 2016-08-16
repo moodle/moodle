@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once('grade_object.php');
+require_once(__DIR__ . '/grade_object.php');
 
 /**
  * grade_category is an object mapped to DB table {prefix}grade_categories
@@ -188,7 +188,22 @@ class grade_category extends grade_object {
      * @return grade_category The retrieved grade_category instance or false if none found.
      */
     public static function fetch($params) {
-        return grade_object::fetch_helper('grade_categories', 'grade_category', $params);
+        if ($records = self::retrieve_record_set($params)) {
+            return reset($records);
+        }
+
+        $record = grade_object::fetch_helper('grade_categories', 'grade_category', $params);
+
+        // We store it as an array to keep a key => result set interface in the cache, grade_object::fetch_helper is
+        // managing exceptions. We return only the first element though.
+        $records = false;
+        if ($record) {
+            $records = array($record->id => $record);
+        }
+
+        self::set_record_set($params, $records);
+
+        return $record;
     }
 
     /**
@@ -198,7 +213,14 @@ class grade_category extends grade_object {
      * @return array array of grade_category insatnces or false if none found.
      */
     public static function fetch_all($params) {
-        return grade_object::fetch_all_helper('grade_categories', 'grade_category', $params);
+        if ($records = self::retrieve_record_set($params)) {
+            return $records;
+        }
+
+        $records = grade_object::fetch_all_helper('grade_categories', 'grade_category', $params);
+        self::set_record_set($params, $records);
+
+        return $records;
     }
 
     /**
@@ -465,6 +487,9 @@ class grade_category extends grade_object {
                       FROM {grade_items}
                      WHERE id $usql";
             $items = $DB->get_records_sql($sql, $params);
+            foreach ($items as $id => $item) {
+                $items[$id] = new grade_item($item, false);
+            }
         }
 
         $grade_inst = new grade_grade();
@@ -498,8 +523,15 @@ class grade_category extends grade_object {
             $grademinoverrides = array();
 
             foreach ($rs as $used) {
-
-                if ($used->userid != $prevuser) {
+                $grade = new grade_grade($used, false);
+                if (isset($items[$grade->itemid])) {
+                    // Prevent grade item to be fetched from DB.
+                    $grade->grade_item =& $items[$grade->itemid];
+                } else if ($grade->itemid == $this->grade_item->id) {
+                    // This grade's grade item is not in $items.
+                    $grade->grade_item =& $this->grade_item;
+                }
+                if ($grade->userid != $prevuser) {
                     $this->aggregate_grades($prevuser,
                                             $items,
                                             $grade_values,
@@ -507,23 +539,23 @@ class grade_category extends grade_object {
                                             $excluded,
                                             $grademinoverrides,
                                             $grademaxoverrides);
-                    $prevuser = $used->userid;
+                    $prevuser = $grade->userid;
                     $grade_values = array();
                     $excluded     = array();
                     $oldgrade     = null;
                     $grademaxoverrides = array();
                     $grademinoverrides = array();
                 }
-                $grade_values[$used->itemid] = $used->finalgrade;
-                $grademaxoverrides[$used->itemid] = $used->rawgrademax;
-                $grademinoverrides[$used->itemid] = $used->rawgrademin;
+                $grade_values[$grade->itemid] = $grade->finalgrade;
+                $grademaxoverrides[$grade->itemid] = $grade->get_grade_max();
+                $grademinoverrides[$grade->itemid] = $grade->get_grade_min();
 
-                if ($used->excluded) {
-                    $excluded[] = $used->itemid;
+                if ($grade->excluded) {
+                    $excluded[] = $grade->itemid;
                 }
 
-                if ($this->grade_item->id == $used->itemid) {
-                    $oldgrade = $used;
+                if ($this->grade_item->id == $grade->itemid) {
+                    $oldgrade = $grade;
                 }
             }
             $this->aggregate_grades($prevuser,
@@ -767,6 +799,8 @@ class grade_category extends grade_object {
      * Set the flags on the grade_grade items to indicate how individual grades are used
      * in the aggregation.
      *
+     * WARNING: This function is called a lot during gradebook recalculation, be very performance considerate.
+     *
      * @param int $userid The user we have aggregated the grades for.
      * @param array $usedweights An array with keys for each of the grade_item columns included in the aggregation. The value are the relative weight.
      * @param array $novalue An array with keys for each of the grade_item columns skipped because
@@ -779,74 +813,152 @@ class grade_category extends grade_object {
     private function set_usedinaggregation($userid, $usedweights, $novalue, $dropped, $extracredit) {
         global $DB;
 
-        // First set them all to weight null and status = 'unknown'.
-        if ($allitems = grade_item::fetch_all(array('categoryid'=>$this->id))) {
-            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($allitems), SQL_PARAMS_NAMED, 'g');
+        // We want to know all current user grades so we can decide whether they need to be updated or they already contain the
+        // expected value.
+        $sql = "SELECT gi.id, gg.aggregationstatus, gg.aggregationweight FROM {grade_grades} gg
+                  JOIN {grade_items} gi ON (gg.itemid = gi.id)
+                 WHERE gg.userid = :userid";
+        $params = array('categoryid' => $this->id, 'userid' => $userid);
+
+        // These are all grade_item ids which grade_grades will NOT end up being 'unknown' (because they are not unknown or
+        // because we will update them to something different that 'unknown').
+        $giids = array_keys($usedweights + $novalue + $dropped + $extracredit);
+
+        if ($giids) {
+            // We include grade items that might not be in categoryid.
+            list($itemsql, $itemlist) = $DB->get_in_or_equal($giids, SQL_PARAMS_NAMED, 'gg');
+            $sql .= ' AND (gi.categoryid = :categoryid OR gi.id ' . $itemsql . ')';
+            $params = $params + $itemlist;
+        } else {
+            $sql .= ' AND gi.categoryid = :categoryid';
+        }
+        $currentgrades = $DB->get_recordset_sql($sql, $params);
+
+        // We will store here the grade_item ids that need to be updated on db.
+        $toupdate = array();
+
+        if ($currentgrades->valid()) {
+
+            // Iterate through the user grades to see if we really need to update any of them.
+            foreach ($currentgrades as $currentgrade) {
+
+                // Unset $usedweights that we do not need to update.
+                if (!empty($usedweights) && isset($usedweights[$currentgrade->id]) && $currentgrade->aggregationstatus === 'used') {
+                    // We discard the ones that already have the contribution specified in $usedweights and are marked as 'used'.
+                    if (grade_floats_equal($currentgrade->aggregationweight, $usedweights[$currentgrade->id])) {
+                        unset($usedweights[$currentgrade->id]);
+                    }
+                    // Used weights can be present in multiple set_usedinaggregation arguments.
+                    if (!isset($novalue[$currentgrade->id]) && !isset($dropped[$currentgrade->id]) &&
+                            !isset($extracredit[$currentgrade->id])) {
+                        continue;
+                    }
+                }
+
+                // No value grades.
+                if (!empty($novalue) && isset($novalue[$currentgrade->id])) {
+                    if ($currentgrade->aggregationstatus !== 'novalue' ||
+                            grade_floats_different($currentgrade->aggregationweight, 0)) {
+                        $toupdate['novalue'][] = $currentgrade->id;
+                    }
+                    continue;
+                }
+
+                // Dropped grades.
+                if (!empty($dropped) && isset($dropped[$currentgrade->id])) {
+                    if ($currentgrade->aggregationstatus !== 'dropped' ||
+                            grade_floats_different($currentgrade->aggregationweight, 0)) {
+                        $toupdate['dropped'][] = $currentgrade->id;
+                    }
+                    continue;
+                }
+
+                // Extra credit grades.
+                if (!empty($extracredit) && isset($extracredit[$currentgrade->id])) {
+
+                    // If this grade item is already marked as 'extra' and it already has the provided $usedweights value would be
+                    // silly to update to 'used' to later update to 'extra'.
+                    if (!empty($usedweights) && isset($usedweights[$currentgrade->id]) &&
+                            grade_floats_equal($currentgrade->aggregationweight, $usedweights[$currentgrade->id])) {
+                        unset($usedweights[$currentgrade->id]);
+                    }
+
+                    // Update the item to extra if it is not already marked as extra in the database or if the item's
+                    // aggregationweight will be updated when going through $usedweights items.
+                    if ($currentgrade->aggregationstatus !== 'extra' ||
+                            (!empty($usedweights) && isset($usedweights[$currentgrade->id]))) {
+                        $toupdate['extracredit'][] = $currentgrade->id;
+                    }
+                    continue;
+                }
+
+                // If is not in any of the above groups it should be set to 'unknown', checking that the item is not already
+                // unknown, if it is we don't need to update it.
+                if ($currentgrade->aggregationstatus !== 'unknown' || grade_floats_different($currentgrade->aggregationweight, 0)) {
+                    $toupdate['unknown'][] = $currentgrade->id;
+                }
+            }
+            $currentgrades->close();
+        }
+
+        // Update items to 'unknown' status.
+        if (!empty($toupdate['unknown'])) {
+            list($itemsql, $itemlist) = $DB->get_in_or_equal($toupdate['unknown'], SQL_PARAMS_NAMED, 'g');
 
             $itemlist['userid'] = $userid;
 
-            $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'unknown',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
-            $DB->set_field_select('grade_grades',
-                                  'aggregationweight',
-                                  0,
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
+            $sql = "UPDATE {grade_grades}
+                       SET aggregationstatus = 'unknown',
+                           aggregationweight = 0
+                     WHERE itemid $itemsql AND userid = :userid";
+            $DB->execute($sql, $itemlist);
         }
 
-        // Included.
+        // Update items to 'used' status and setting the proper weight.
         if (!empty($usedweights)) {
             // The usedweights items are updated individually to record the weights.
             foreach ($usedweights as $gradeitemid => $contribution) {
-                $DB->set_field_select('grade_grades',
-                                      'aggregationweight',
-                                      $contribution,
-                                      "itemid = :itemid AND userid = :userid",
-                                      array('itemid'=>$gradeitemid, 'userid'=>$userid));
+                $sql = "UPDATE {grade_grades}
+                           SET aggregationstatus = 'used',
+                               aggregationweight = :contribution
+                         WHERE itemid = :itemid AND userid = :userid";
+
+                $params = array('contribution' => $contribution, 'itemid' => $gradeitemid, 'userid' => $userid);
+                $DB->execute($sql, $params);
             }
-
-            // Now set the status flag for all these weights.
-            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($usedweights), SQL_PARAMS_NAMED, 'g');
-            $itemlist['userid'] = $userid;
-
-            $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'used',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
         }
 
-        // No value.
-        if (!empty($novalue)) {
-            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($novalue), SQL_PARAMS_NAMED, 'g');
+        // Update items to 'novalue' status.
+        if (!empty($toupdate['novalue'])) {
+            list($itemsql, $itemlist) = $DB->get_in_or_equal($toupdate['novalue'], SQL_PARAMS_NAMED, 'g');
 
             $itemlist['userid'] = $userid;
 
-            $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'novalue',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
+            $sql = "UPDATE {grade_grades}
+                       SET aggregationstatus = 'novalue',
+                           aggregationweight = 0
+                     WHERE itemid $itemsql AND userid = :userid";
+
+            $DB->execute($sql, $itemlist);
         }
 
-        // Dropped.
-        if (!empty($dropped)) {
-            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($dropped), SQL_PARAMS_NAMED, 'g');
+        // Update items to 'dropped' status.
+        if (!empty($toupdate['dropped'])) {
+            list($itemsql, $itemlist) = $DB->get_in_or_equal($toupdate['dropped'], SQL_PARAMS_NAMED, 'g');
 
             $itemlist['userid'] = $userid;
 
-            $DB->set_field_select('grade_grades',
-                                  'aggregationstatus',
-                                  'dropped',
-                                  "itemid $itemsql AND userid = :userid",
-                                  $itemlist);
+            $sql = "UPDATE {grade_grades}
+                       SET aggregationstatus = 'dropped',
+                           aggregationweight = 0
+                     WHERE itemid $itemsql AND userid = :userid";
+
+            $DB->execute($sql, $itemlist);
         }
-        // Extra credit.
-        if (!empty($extracredit)) {
-            list($itemsql, $itemlist) = $DB->get_in_or_equal(array_keys($extracredit), SQL_PARAMS_NAMED, 'g');
+
+        // Update items to 'extracredit' status.
+        if (!empty($toupdate['extracredit'])) {
+            list($itemsql, $itemlist) = $DB->get_in_or_equal($toupdate['extracredit'], SQL_PARAMS_NAMED, 'g');
 
             $itemlist['userid'] = $userid;
 
@@ -884,7 +996,7 @@ class grade_category extends grade_object {
                                                        & $weights = null,
                                                        $grademinoverrides = array(),
                                                        $grademaxoverrides = array()) {
-        $category_item = $this->get_grade_item();
+        $category_item = $this->load_grade_item();
         $grademin = $category_item->grademin;
         $grademax = $category_item->grademax;
 
@@ -1168,6 +1280,12 @@ class grade_category extends grade_object {
                 $this->load_grade_item();
                 $num = count($grade_values);
                 $sum = 0;
+
+                // This setting indicates if we should use algorithm prior to MDL-49257 fix for calculating extra credit weights.
+                // Even though old algorith has bugs in it, we need to preserve existing grades.
+                $gradebookcalculationfreeze = (int)get_config('core', 'gradebook_calculations_freeze_' . $this->courseid);
+                $oldextracreditcalculation = $gradebookcalculationfreeze && ($gradebookcalculationfreeze <= 20150619);
+
                 $sumweights = 0;
                 $grademin = 0;
                 $grademax = 0;
@@ -1207,7 +1325,11 @@ class grade_category extends grade_object {
                             $userweights[$itemid] = 0;
                             continue;
                         }
-                        $userweights[$itemid] = $items[$itemid]->aggregationcoef2 / $sumweights;
+                        $userweights[$itemid] = $sumweights ? ($items[$itemid]->aggregationcoef2 / $sumweights) : 0;
+                        if (!$oldextracreditcalculation && isset($extracredititems[$itemid])) {
+                            // Extra credit items do not affect totals.
+                            continue;
+                        }
                         $totaloverriddenweight += $userweights[$itemid];
                         $usergrademax = $items[$itemid]->grademax;
                         if (isset($grademaxoverrides[$itemid])) {
@@ -1218,9 +1340,9 @@ class grade_category extends grade_object {
                 }
                 $nonoverriddenpoints = $grademax - $totaloverriddengrademax;
 
-                // Then we need to recalculate the automatic weights.
+                // Then we need to recalculate the automatic weights except for extra credit items.
                 foreach ($grade_values as $itemid => $gradevalue) {
-                    if (!$items[$itemid]->weightoverride) {
+                    if (!$items[$itemid]->weightoverride && ($oldextracreditcalculation || !isset($extracredititems[$itemid]))) {
                         $usergrademax = $items[$itemid]->grademax;
                         if (isset($grademaxoverrides[$itemid])) {
                             $usergrademax = $grademaxoverrides[$itemid];
@@ -1234,6 +1356,19 @@ class grade_category extends grade_object {
                                 // though this only applies if the weight was changed to 0.
                                 $grademax -= $usergrademax;
                             }
+                        }
+                    }
+                }
+
+                // Now when we finally know the grademax we can adjust the automatic weights of extra credit items.
+                if (!$oldextracreditcalculation) {
+                    foreach ($grade_values as $itemid => $gradevalue) {
+                        if (!$items[$itemid]->weightoverride && isset($extracredititems[$itemid])) {
+                            $usergrademax = $items[$itemid]->grademax;
+                            if (isset($grademaxoverrides[$itemid])) {
+                                $usergrademax = $grademaxoverrides[$itemid];
+                            }
+                            $userweights[$itemid] = $grademax ? ($usergrademax / $grademax) : 0;
                         }
                     }
                 }
@@ -1353,6 +1488,19 @@ class grade_category extends grade_object {
         // Find grade items of immediate children (category or grade items) and force site settings.
         $this->load_grade_item();
         $depends_on = $this->grade_item->depends_on();
+
+        // Check to see if the gradebook is frozen. This allows grades to not be altered at all until a user verifies that they
+        // wish to update the grades.
+        $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->courseid);
+        // Only run if the gradebook isn't frozen.
+        if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
+            // Do nothing.
+        } else{
+            // Don't automatically update the max for calculated items.
+            if ($this->grade_item->is_calculated()) {
+                return;
+            }
+        }
 
         $items = false;
         if (!empty($depends_on)) {
@@ -1519,6 +1667,11 @@ class grade_category extends grade_object {
 
         $totalnonoverriddengrademax = $totalgrademax - $totaloverriddengrademax;
 
+        // This setting indicates if we should use algorithm prior to MDL-49257 fix for calculating extra credit weights.
+        // Even though old algorith has bugs in it, we need to preserve existing grades.
+        $gradebookcalculationfreeze = (int)get_config('core', 'gradebook_calculations_freeze_' . $this->courseid);
+        $oldextracreditcalculation = $gradebookcalculationfreeze && ($gradebookcalculationfreeze <= 20150619);
+
         reset($children);
         foreach ($children as $sortorder => $child) {
             $gradeitem = null;
@@ -1539,9 +1692,20 @@ class grade_category extends grade_object {
             } else if (empty($CFG->grade_includescalesinaggregation) && $gradeitem->gradetype == GRADE_TYPE_SCALE) {
                 // We will not aggregate the scales, so we can ignore upating their weights.
                 continue;
+            } else if (!$oldextracreditcalculation && $gradeitem->aggregationcoef > 0 && $gradeitem->weightoverride) {
+                // For an item with extra credit ignore other weigths and overrides but do not change anything at all
+                // if it's weight was already overridden.
+                continue;
             }
 
-            if (!$gradeitem->weightoverride) {
+            // Store the previous value here, no need to update if it is the same value.
+            $prevaggregationcoef2 = $gradeitem->aggregationcoef2;
+
+            if (!$oldextracreditcalculation && $gradeitem->aggregationcoef > 0 && !$gradeitem->weightoverride) {
+                // For an item with extra credit ignore other weigths and overrides.
+                $gradeitem->aggregationcoef2 = $totalgrademax ? ($gradeitem->grademax / $totalgrademax) : 0;
+
+            } else if (!$gradeitem->weightoverride) {
                 // Calculations with a grade maximum of zero will cause problems. Just set the weight to zero.
                 if ($totaloverriddenweight >= 1 || $totalnonoverriddengrademax == 0 || $gradeitem->grademax == 0) {
                     // There is no more weight to distribute.
@@ -1552,7 +1716,7 @@ class grade_category extends grade_object {
                     $gradeitem->aggregationcoef2 = ($gradeitem->grademax/$totalnonoverriddengrademax) *
                             (1 - $totaloverriddenweight);
                 }
-                $gradeitem->update();
+
             } else if ((!$automaticgradeitemspresent && $normalisetotal != 1) || ($requiresnormalising)
                     || $overridearray[$gradeitem->id]['weight'] < 0) {
                 // Just divide the overriden weight for this item against the total weight override of all
@@ -1564,6 +1728,9 @@ class grade_category extends grade_object {
                 } else {
                     $gradeitem->aggregationcoef2 = $overridearray[$gradeitem->id]['weight'] / $normalisetotal;
                 }
+            }
+
+            if (grade_floatval($prevaggregationcoef2) !== grade_floatval($gradeitem->aggregationcoef2)) {
                 // Update the grade item to reflect these changes.
                 $gradeitem->update();
             }
@@ -1856,12 +2023,6 @@ class grade_category extends grade_object {
      * @return array An array containing 'object', 'type', 'depth' and optionally 'children'
      */
     static private function _fetch_course_tree_recursion($category_array, &$sortorder) {
-        // update the sortorder in db if needed
-        //NOTE: This leads to us resetting sort orders every time the categories and items page is viewed :(
-        //if ($category_array['object']->sortorder != $sortorder) {
-            //$category_array['object']->set_sortorder($sortorder);
-        //}
-
         if (isset($category_array['object']->gradetype) && $category_array['object']->gradetype==GRADE_TYPE_NONE) {
             return null;
         }
@@ -2008,9 +2169,11 @@ class grade_category extends grade_object {
         unset($items); // not needed
         unset($cats); // not needed
 
-        $children_array = grade_category::_get_children_recursion($category);
-
-        ksort($children_array);
+        $children_array = array();
+        if (is_object($category)) {
+            $children_array = grade_category::_get_children_recursion($category);
+            ksort($children_array);
+        }
 
         return $children_array;
 
@@ -2379,32 +2542,35 @@ class grade_category extends grade_object {
     public static function set_properties(&$instance, $params) {
         global $DB;
 
+        $fromaggregation = $instance->aggregation;
+
         parent::set_properties($instance, $params);
 
-        //if they've changed aggregation type we made need to do some fiddling to provide appropriate defaults
-        if (!empty($params->aggregation)) {
+        // The aggregation method is changing and this category has already been saved.
+        if (isset($params->aggregation) && !empty($instance->id)) {
+            $achildwasdupdated = false;
 
-            //weight and extra credit share a column :( Would like a default of 1 for weight and 0 for extra credit
-            //Flip from the default of 0 to 1 (or vice versa) if ALL items in the category are still set to the old default.
-            if (self::aggregation_uses_aggregationcoef($params->aggregation)) {
-                $sql = $defaultaggregationcoef = null;
-
-                if (!self::aggregation_uses_extracredit($params->aggregation)) {
-                    //if all items in this category have aggregation coefficient of 0 we can change it to 1 ie evenly weighted
-                    $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=0";
-                    $defaultaggregationcoef = 1;
-                } else {
-                    //if all items in this category have aggregation coefficient of 1 we can change it to 0 ie no extra credit
-                    $sql = "select count(id) from {grade_items} where categoryid=:categoryid and aggregationcoef!=1";
-                    $defaultaggregationcoef = 0;
+            // Get all its children.
+            $children = $instance->get_children();
+            foreach ($children as $child) {
+                $item = $child['object'];
+                if ($child['type'] == 'category') {
+                    $item = $item->load_grade_item();
                 }
 
-                $params = array('categoryid'=>$instance->id);
-                $count = $DB->count_records_sql($sql, $params);
-                if ($count===0) { //category is either empty or all items are set to a default value so we can switch defaults
-                    $params['aggregationcoef'] = $defaultaggregationcoef;
-                    $DB->execute("update {grade_items} set aggregationcoef=:aggregationcoef where categoryid=:categoryid",$params);
+                // Set the new aggregation fields.
+                if ($item->set_aggregation_fields_for_aggregation($fromaggregation, $params->aggregation)) {
+                    $item->update();
+                    $achildwasdupdated = true;
                 }
+            }
+
+            // If this is the course category, it is possible that its grade item was set as needsupdate
+            // by one of its children. If we keep a reference to that stale object we might cause the
+            // needsupdate flag to be lost. It's safer to just reload the grade_item from the database.
+            if ($achildwasdupdated && !empty($instance->grade_item) && $instance->is_course_category()) {
+                $instance->grade_item = null;
+                $instance->load_grade_item();
             }
         }
     }
@@ -2512,5 +2678,93 @@ class grade_category extends grade_object {
         $params = array(1, 'course', 'category');
         $sql = "UPDATE {grade_items} SET needsupdate=? WHERE itemtype=? or itemtype=?";
         $DB->execute($sql, $params);
+    }
+
+    /**
+     * Determine the default aggregation values for a given aggregation method.
+     *
+     * @param int $aggregationmethod The aggregation method constant value.
+     * @return array Containing the keys 'aggregationcoef', 'aggregationcoef2' and 'weightoverride'.
+     */
+    public static function get_default_aggregation_coefficient_values($aggregationmethod) {
+        $defaultcoefficients = array(
+            'aggregationcoef' => 0,
+            'aggregationcoef2' => 0,
+            'weightoverride' => 0
+        );
+
+        switch ($aggregationmethod) {
+            case GRADE_AGGREGATE_WEIGHTED_MEAN:
+                $defaultcoefficients['aggregationcoef'] = 1;
+                break;
+            case GRADE_AGGREGATE_SUM:
+                $defaultcoefficients['aggregationcoef2'] = 1;
+                break;
+        }
+
+        return $defaultcoefficients;
+    }
+
+    /**
+     * Cleans the cache.
+     *
+     * We invalidate them all so it can be completely reloaded.
+     *
+     * Being conservative here, if there is a new grade_category we purge them, the important part
+     * is that this is not purged when there are no changes in grade_categories.
+     *
+     * @param bool $deleted
+     * @return void
+     */
+    protected function notify_changed($deleted) {
+        self::clean_record_set();
+    }
+
+    /**
+     * Generates a unique key per query.
+     *
+     * Not unique between grade_object children. self::retrieve_record_set and self::set_record_set will be in charge of
+     * selecting the appropriate cache.
+     *
+     * @param array $params An array of conditions like $fieldname => $fieldvalue
+     * @return string
+     */
+    protected static function generate_record_set_key($params) {
+        return sha1(json_encode($params));
+    }
+
+    /**
+     * Tries to retrieve a record set from the cache.
+     *
+     * @param array $params The query params
+     * @return grade_object[]|bool An array of grade_objects or false if not found.
+     */
+    protected static function retrieve_record_set($params) {
+        $cache = cache::make('core', 'grade_categories');
+        return $cache->get(self::generate_record_set_key($params));
+    }
+
+    /**
+     * Sets a result to the records cache, even if there were no results.
+     *
+     * @param string $params The query params
+     * @param grade_object[]|bool $records An array of grade_objects or false if there are no records matching the $key filters
+     * @return void
+     */
+    protected static function set_record_set($params, $records) {
+        $cache = cache::make('core', 'grade_categories');
+        return $cache->set(self::generate_record_set_key($params), $records);
+    }
+
+    /**
+     * Cleans the cache.
+     *
+     * Aggressive deletion to be conservative given the gradebook design.
+     * The key is based on the requested params, not easy nor worth to purge selectively.
+     *
+     * @return void
+     */
+    public static function clean_record_set() {
+        cache_helper::purge_by_event('changesingradecategories');
     }
 }

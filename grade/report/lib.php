@@ -55,7 +55,7 @@ abstract class grade_report {
 
     /**
      * The grade_tree object.
-     * @var object $gtree
+     * @var grade_tree $gtree
      */
     public $gtree;
 
@@ -354,6 +354,13 @@ abstract class grade_report {
     }
 
     /**
+     * Shows support for being used as a 'Grades' report.
+     */
+    public static function supports_mygrades() {
+        return false;
+    }
+
+    /**
      * Sets up this object's group variables, mainly to restrict the selection of users to display.
      */
     protected function setup_groups() {
@@ -430,8 +437,8 @@ abstract class grade_report {
         $grademin = $course_item->grademin;
         $grademax = $course_item->grademax;
         if ($coursegradegrade) {
-            $grademin = $coursegradegrade->rawgrademin;
-            $grademax = $coursegradegrade->rawgrademax;
+            $grademin = $coursegradegrade->get_grade_min();
+            $grademax = $coursegradegrade->get_grade_max();
         } else {
             $coursegradegrade = new grade_grade(array('userid'=>$this->user->id, 'itemid'=>$course_item->id), false);
         }

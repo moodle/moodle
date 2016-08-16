@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
 
@@ -58,8 +58,11 @@ if (empty($classname)) {
     if ($mform->is_cancelled()) {
         redirect($PAGE->url);
     } else if ($data = $mform->get_data()) {
+
         // Update the record from the form.
-        $record->defaultexpiration = (int) $data->defaultexpiration;
+        if ($handler->can_change_defaultexpiration()) {
+            $record->defaultexpiration = (int) $data->defaultexpiration;
+        }
 
         if ($handler->can_change_validateaddress()) {
             $record->validateaddress = !empty($data->validateaddress);

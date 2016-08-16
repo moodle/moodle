@@ -20,14 +20,13 @@ Feature: View cohort list
       | Cohort in category 3 | CH3      | Category     | CAT3      |
     Given the following "users" exist:
       | username | firstname | lastname | email           |
-      | user1    | First     | User     | first@user.com  |
-      | user2    | Second    | User     | second@user.com |
+      | user1    | First     | User     | first@example.com  |
+      | user2    | Second    | User     | second@example.com |
     And the following "role assigns" exist:
       | user  | role    | contextlevel | reference |
       | user1 | manager | System       |           |
       | user2 | manager | Category     | CAT1      |
 
-  @javascript
   Scenario: Admin can see system cohorts and all cohorts
     When I log in as "admin"
     And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
@@ -40,7 +39,6 @@ Feature: View cohort list
     And I should see "Cohort in category 3"
     And I log out
 
-  @javascript
   Scenario: Manager can see system cohorts and all cohorts
     When I log in as "user1"
     And I navigate to "Cohorts" node in "Site administration > Users > Accounts"
@@ -53,7 +51,6 @@ Feature: View cohort list
     And I should see "Cohort in category 3"
     And I log out
 
-  @javascript
   Scenario: Manager in category can see cohorts in the category
     When I log in as "user2"
     And I follow "Courses"

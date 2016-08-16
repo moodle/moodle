@@ -101,9 +101,11 @@ abstract class restore_dbops {
 
             // If included, add it
             if ($included) {
-                $includedtasks[] = $task;
+                $includedtasks[] = clone($task); // A clone is enough. In fact we only need the basepath.
             }
         }
+        $rc->destroy(); // Always need to destroy.
+
         return $includedtasks;
     }
 
@@ -123,7 +125,7 @@ abstract class restore_dbops {
 
         // Set up progress tracking (indeterminate).
         if (!$progress) {
-            $progress = new \core\progress\null();
+            $progress = new \core\progress\none();
         }
         $progress->start_progress('Loading inforef.xml file');
 
@@ -430,7 +432,7 @@ abstract class restore_dbops {
 
         // Set up progress tracking (indeterminate).
         if (!$progress) {
-            $progress = new \core\progress\null();
+            $progress = new \core\progress\none();
         }
         $progress->start_progress('Loading users into temporary table');
 
@@ -1209,16 +1211,14 @@ abstract class restore_dbops {
                 }
 
                 // Process tags
-                if (!empty($CFG->usetags) && isset($user->tags)) { // if enabled in server and present in backup
+                if (core_tag_tag::is_enabled('core', 'user') && isset($user->tags)) { // If enabled in server and present in backup.
                     $tags = array();
                     foreach($user->tags['tag'] as $usertag) {
                         $usertag = (object)$usertag;
                         $tags[] = $usertag->rawname;
                     }
-                    if (empty($newuserctxid)) {
-                        $newuserctxid = null; // Tag apis expect a null contextid not 0.
-                    }
-                    tag_set('user', $newuserid, $tags, 'core', $newuserctxid);
+                    core_tag_tag::set_item_tags('core', 'user', $newuserid,
+                            context_user::instance($newuserid), $tags);
                 }
 
                 // Process preferences
@@ -1287,7 +1287,11 @@ abstract class restore_dbops {
     *      1F - None of the above, return true => User needs to be created
     *
     *  if restoring from another site backup (cannot match by id here, replace it by email/firstaccess combination):
-    *      2A - Normal check: If match by username and mnethost and (email or non-zero firstaccess) => ok, return target user
+    *      2A - Normal check:
+    *           2A1 - If match by username and mnethost and (email or non-zero firstaccess) => ok, return target user
+    *           2A2 - Exceptional handling (MDL-21912): Match "admin" username. Then, if import_general_duplicate_admin_allowed is
+    *                 enabled, attempt to map the admin user to the user 'admin_[oldsiteid]' if it exists. If not,
+    *                 the user 'admin_[oldsiteid]' will be created in precheck_included users
     *      2B - Handle users deleted in DB and "alive" in backup file:
     *           2B1 - If match by mnethost and user is deleted in DB and not empty email = md5(username) and
     *                 (username LIKE 'backup_email.%' or non-zero firstaccess) => ok, return target user
@@ -1305,7 +1309,7 @@ abstract class restore_dbops {
     * Note: for DB deleted users md5(username) is stored *sometimes* in the email field,
     *       hence we are looking there for usernames if not empty. See delete_user()
     */
-    protected static function precheck_user($user, $samesite) {
+    protected static function precheck_user($user, $samesite, $siteid = null) {
         global $CFG, $DB;
 
         // Handle checks from same site backups
@@ -1376,7 +1380,7 @@ abstract class restore_dbops {
         // Handle checks from different site backups
         } else {
 
-            // 2A - If match by username and mnethost and
+            // 2A1 - If match by username and mnethost and
             //     (email or non-zero firstaccess) => ok, return target user
             if ($rec = $DB->get_record_sql("SELECT *
                                               FROM {user} u
@@ -1391,6 +1395,14 @@ abstract class restore_dbops {
                                                    )",
                                            array($user->username, $user->mnethostid, $user->email, $user->firstaccess))) {
                 return $rec; // Matching user found, return it
+            }
+
+            // 2A2 - If we're allowing conflicting admins, attempt to map user to admin_[oldsiteid].
+            if (get_config('backup', 'import_general_duplicate_admin_allowed') && $user->username === 'admin' && $siteid
+                    && $user->mnethostid == $CFG->mnet_localhost_id) {
+                if ($rec = $DB->get_record('user', array('username' => 'admin_' . $siteid))) {
+                    return $rec;
+                }
             }
 
             // 2B - Handle users deleted in DB and "alive" in backup file
@@ -1500,6 +1512,13 @@ abstract class restore_dbops {
         // Calculate the context we are going to use for capability checking
         $context = context_course::instance($courseid);
 
+        // TODO: Some day we must kill this dependency and change the process
+        // to pass info around without loading a controller copy.
+        // When conflicting users are detected we may need original site info.
+        $rc = restore_controller_dbops::load_controller($restoreid);
+        $restoreinfo = $rc->get_info();
+        $rc->destroy(); // Always need to destroy.
+
         // Calculate if we have perms to create users, by checking:
         // to 'moodle/restore:createuser' and 'moodle/restore:userinfo'
         // and also observe $CFG->disableusercreationonrestore
@@ -1535,14 +1554,28 @@ abstract class restore_dbops {
             }
 
             // Now, precheck that user and, based on returned results, annotate action/problem
-            $usercheck = self::precheck_user($user, $samesite);
+            $usercheck = self::precheck_user($user, $samesite, $restoreinfo->original_site_identifier_hash);
 
             if (is_object($usercheck)) { // No problem, we have found one user in DB to be mapped to
                 // Annotate it, for later process. Set newitemid to mapping user->id
                 self::set_backup_ids_record($restoreid, 'user', $recuser->itemid, $usercheck->id);
 
             } else if ($usercheck === false) { // Found conflict, report it as problem
-                 $problems[] = get_string('restoreuserconflict', '', $user->username);
+                if (!get_config('backup', 'import_general_duplicate_admin_allowed')) {
+                    $problems[] = get_string('restoreuserconflict', '', $user->username);
+                } else if ($user->username == 'admin') {
+                    if (!$cancreateuser) {
+                        $problems[] = get_string('restorecannotcreateuser', '', $user->username);
+                    }
+                    if ($user->mnethostid != $CFG->mnet_localhost_id) {
+                        $problems[] = get_string('restoremnethostidmismatch', '', $user->username);
+                    }
+                    if (!$problems) {
+                        // Duplicate admin allowed, append original site idenfitier to username.
+                        $user->username .= '_' . $restoreinfo->original_site_identifier_hash;
+                        self::set_backup_ids_record($restoreid, 'user', $recuser->itemid, 0, null, (array)$user);
+                    }
+                }
 
             } else if ($usercheck === true) { // User needs to be created, check if we are able
                 if ($cancreateuser) { // Can create user, set newitemid to 0 so will be created later

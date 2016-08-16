@@ -1,19 +1,22 @@
 M.mod_assign = {};
 
 M.mod_assign.init_tree = function(Y, expand_all, htmlid) {
-    Y.use('yui2-treeview', function(Y) {
-        var tree = new Y.YUI2.widget.TreeView(htmlid);
+    var treeElement = Y.one('#'+htmlid);
+    if (treeElement) {
+        Y.use('yui2-treeview', function(Y) {
+            var tree = new Y.YUI2.widget.TreeView(htmlid);
 
-        tree.subscribe("clickEvent", function(node, event) {
-            // We want normal clicking which redirects to url.
-            return false;
+            tree.subscribe("clickEvent", function(node, event) {
+                // We want normal clicking which redirects to url.
+                return false;
+            });
+
+            if (expand_all) {
+                tree.expandAll();
+            }
+            tree.render();
         });
-
-        if (expand_all) {
-            tree.expandAll();
-        }
-        tree.render();
-    });
+    }
 };
 
 M.mod_assign.init_grading_table = function(Y) {
@@ -79,7 +82,7 @@ M.mod_assign.init_grading_table = function(Y) {
                 usersinput = Y.one('input.selectedusers');
                 usersinput.set('value', selectedusers.join(','));
                 if (selectedusers.length == 0) {
-                    alert(M.str.assign.nousersselected);
+                    alert(M.util.get_string('nousersselected', 'assign'));
                     e.preventDefault();
                 } else {
                     action = operation.get('value');
@@ -88,9 +91,9 @@ M.mod_assign.init_grading_table = function(Y) {
                         pluginaction = action.substr(prefix.length);
                         plugin = pluginaction.split('_')[0];
                         action = pluginaction.substr(plugin.length + 1);
-                        confirmmessage = eval('M.str.assignfeedback_' + plugin + '.batchoperationconfirm' + action);
+                        confirmmessage = M.util.get_string('batchoperationconfirm' + action, 'assignfeedback_' + plugin);
                     } else {
-                        confirmmessage = eval('M.str.assign.batchoperationconfirm' + operation.get('value'));
+                        confirmmessage = M.util.get_string('batchoperationconfirm' + operation.get('value'), 'assign');
                     }
                     if (!confirm(confirmmessage)) {
                         e.preventDefault();
@@ -145,18 +148,6 @@ M.mod_assign.init_grading_options = function(Y) {
             });
         }
     });
-};
-
-M.mod_assign.init_grade_change = function(Y) {
-    var gradenode = Y.one('#id_grade');
-    if (gradenode) {
-        var originalvalue = gradenode.get('value');
-        gradenode.on('change', function() {
-            if (gradenode.get('value') != originalvalue) {
-                alert(M.str.mod_assign.changegradewarning);
-            }
-        });
-    }
 };
 
 M.mod_assign.init_plugin_summary = function(Y, subtype, type, submissionid) {

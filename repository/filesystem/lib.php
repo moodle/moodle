@@ -60,45 +60,40 @@ class repository_filesystem extends repository {
     /**
      * Get the list of files and directories in that repository.
      *
-     * @param string $path to browse.
-     * @param string $page page number.
-     * @return array list of files and folders.
+     * @param string $fullpath Path to explore. This is assembled by {@link self::build_node_path()}.
+     * @param string $page Page number.
+     * @return array List of files and folders.
      */
-    public function get_listing($path = '', $page = '') {
+    public function get_listing($fullpath = '', $page = '') {
         global $OUTPUT;
 
-        $list = array();
-        $list['list'] = array();
-        $list['manage'] = false;
-        $list['dynload'] = true;
-        $list['nologin'] = true;
-        $list['nosearch'] = true;
-        $list['path'] = array(
-            array('name' => get_string('root', 'repository_filesystem'), 'path' => '')
+        $list = array(
+            'list' => array(),
+            'manage' => false,
+            'dynload' => true,
+            'nologin' => true,
+            'path' => array()
         );
 
+        // We analyse the path to extract what to browse.
+        $fullpath = empty($fullpath) ? $this->build_node_path('root') : $fullpath;
+        $trail = explode('|', $fullpath);
+        $trail = array_pop($trail);
+        list($mode, $path, $unused) = $this->explode_node_path($trail);
+
+        // Is that a search?
+        if ($mode === 'search') {
+            return $this->search($path, $page);
+        }
+
+        // Cleaning up the requested path.
         $path = trim($path, '/');
         if (!$this->is_in_repository($path)) {
             // In case of doubt on the path, reset to default.
             $path = '';
         }
-        $abspath = rtrim($this->get_rootpath() . $path, '/') . '/';
-
-        // Construct the breadcrumb.
-        $trail = '';
-        if ($path !== '') {
-            $parts = explode('/', $path);
-            if (count($parts) > 1) {
-                foreach ($parts as $part) {
-                    if (!empty($part)) {
-                        $trail .= '/' . $part;
-                        $list['path'][] = array('name' => $part, 'path' => $trail);
-                    }
-                }
-            } else {
-                $list['path'][] = array('name' => $path, 'path' => $path);
-            }
-        }
+        $rootpath = $this->get_rootpath();
+        $abspath = rtrim($rootpath . $path, '/') . '/';
 
         // Retrieve list of files and directories and sort them.
         $fileslist = array();
@@ -117,41 +112,261 @@ class repository_filesystem extends repository {
         core_collator::asort($fileslist, core_collator::SORT_NATURAL);
         core_collator::asort($dirslist, core_collator::SORT_NATURAL);
 
-        // Fill the $list['list'].
+        // Fill the results.
         foreach ($dirslist as $file) {
-            $list['list'][] = array(
-                'title' => $file,
-                'children' => array(),
-                'datecreated' => filectime($abspath . $file),
-                'datemodified' => filemtime($abspath . $file),
-                'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
-                'path' => $path . '/' . $file
-            );
+            $list['list'][] = $this->build_node($rootpath, $path, $file, true, $fullpath);
         }
         foreach ($fileslist as $file) {
-            $node = array(
-                'title' => $file,
-                'source' => $path . '/' . $file,
-                'size' => filesize($abspath . $file),
-                'datecreated' => filectime($abspath . $file),
-                'datemodified' => filemtime($abspath . $file),
-                'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file, 90))->out(false),
-                'icon' => $OUTPUT->pix_url(file_extension_icon($file, 24))->out(false)
-            );
-            if (file_extension_in_typegroup($file, 'image') && ($imageinfo = @getimagesize($abspath . $file))) {
-                // This means it is an image and we can return dimensions and try to generate thumbnail/icon.
-                $token = $node['datemodified'] . $node['size']; // To prevent caching by browser.
-                $node['realthumbnail'] = $this->get_thumbnail_url($path . '/' . $file, 'thumb', $token)->out(false);
-                $node['realicon'] = $this->get_thumbnail_url($path . '/' . $file, 'icon', $token)->out(false);
-                $node['image_width'] = $imageinfo[0];
-                $node['image_height'] = $imageinfo[1];
-            }
-            $list['list'][] = $node;
+            $list['list'][] = $this->build_node($rootpath, $path, $file, false, $fullpath);
         }
+
+        $list['path'] = $this->build_breadcrumb($fullpath);
         $list['list'] = array_filter($list['list'], array($this, 'filter'));
+
         return $list;
     }
 
+    /**
+     * Search files in repository.
+     *
+     * This search works by walking through the directories returning the files that match. Once
+     * the limit of files is reached the walk stops. Whenever more files are requested, the walk
+     * starts from the beginning until it reaches an additional set of files to return.
+     *
+     * @param string $query The query string.
+     * @param int $page The page number.
+     * @return mixed
+     */
+    public function search($query, $page = 1) {
+        global $OUTPUT, $SESSION;
+
+        $query = core_text::strtolower($query);
+        $remainingdirs = 1000;
+        $remainingobjects = 5000;
+        $perpage = 50;
+
+        // Because the repository API is weird, the first page is 0, but it should be 1.
+        if (!$page) {
+            $page = 1;
+        }
+
+        // Initialise the session variable in which we store the search related things.
+        if (!isset($SESSION->repository_filesystem_search)) {
+            $SESSION->repository_filesystem_search = array();
+        }
+
+        // Restore, or initialise the session search variables.
+        if ($page <= 1) {
+            $SESSION->repository_filesystem_search['query'] = $query;
+            $SESSION->repository_filesystem_search['from'] = 0;
+            $from = 0;
+        } else {
+            // Yes, the repository does not send the query again...
+            $query = $SESSION->repository_filesystem_search['query'];
+            $from = (int) $SESSION->repository_filesystem_search['from'];
+        }
+        $limit = $from + $perpage;
+        $searchpath = $this->build_node_path('search', $query);
+
+        // Pre-search initialisation.
+        $rootpath = $this->get_rootpath();
+        $found = 0;
+        $toexplore = array('');
+
+        // Retrieve list of matching files and directories.
+        $matches = array();
+        while (($path = array_shift($toexplore)) !== null) {
+            $remainingdirs--;
+
+            if ($objects = scandir($rootpath . $path)) {
+                foreach ($objects as $object) {
+                    $objectabspath = $rootpath . $path . $object;
+                    if ($object == '.' || $object == '..') {
+                        continue;
+                    }
+
+                    $remainingobjects--;
+                    $isdir = is_dir($objectabspath);
+
+                    // It is a match!
+                    if (strpos(core_text::strtolower($object), $query) !== false) {
+                        $found++;
+                        $matches[] = array($path, $object, $isdir);
+
+                        // That's enough, no need to find more.
+                        if ($found >= $limit) {
+                            break 2;
+                        }
+                    }
+
+                    // I've seen enough files, I give up!
+                    if ($remainingobjects <= 0) {
+                        break 2;
+                    }
+
+                    // Add the directory to things to explore later.
+                    if ($isdir) {
+                        $toexplore[] = $path . trim($object, '/') . '/';
+                    }
+                }
+            }
+
+            if ($remainingdirs <= 0) {
+                break;
+            }
+        }
+
+        // Extract the results from all the matches.
+        $matches = array_slice($matches, $from, $perpage);
+
+        // If we didn't reach our limits of browsing, and we appear to still have files to find.
+        if ($remainingdirs > 0 && $remainingobjects > 0 && count($matches) >= $perpage) {
+            $SESSION->repository_filesystem_search['from'] = $limit;
+            $pages = -1;
+
+        // We reached the end of the repository, or our limits.
+        } else {
+            $SESSION->repository_filesystem_search['from'] = 0;
+            $pages = 0;
+        }
+
+        // Organise the nodes.
+        $results = array();
+        foreach ($matches as $match) {
+            list($path, $name, $isdir) = $match;
+            $results[] = $this->build_node($rootpath, $path, $name, $isdir, $searchpath);
+        }
+
+        $list = array();
+        $list['list'] = array_filter($results, array($this, 'filter'));
+        $list['dynload'] = true;
+        $list['nologin'] = true;
+        $list['page'] = $page;
+        $list['pages'] = $pages;
+        $list['path'] = $this->build_breadcrumb($searchpath);
+
+        return $list;
+    }
+
+    /**
+     * Build the breadcrumb from a full path.
+     *
+     * @param string $path A path generated by {@link self::build_node_path()}.
+     * @return array
+     */
+    protected function build_breadcrumb($path) {
+        $breadcrumb = array(array(
+            'name' => get_string('root', 'repository_filesystem'),
+            'path' => $this->build_node_path('root')
+        ));
+
+        $crumbs = explode('|', $path);
+        $trail = '';
+
+        foreach ($crumbs as $crumb) {
+            list($mode, $nodepath, $display) = $this->explode_node_path($crumb);
+            switch ($mode) {
+                case 'search':
+                    $breadcrumb[] = array(
+                        'name' => get_string('searchresults', 'repository_filesystem'),
+                        'path' => $this->build_node_path($mode, $nodepath, $display, $trail),
+                    );
+                    break;
+
+                case 'browse':
+                    $breadcrumb[] = array(
+                        'name' => $display,
+                        'path' => $this->build_node_path($mode, $nodepath, $display, $trail),
+                    );
+                    break;
+            }
+
+            $lastcrumb = end($breadcrumb);
+            $trail = $lastcrumb['path'];
+        }
+
+        return $breadcrumb;
+    }
+
+    /**
+     * Build a file or directory node.
+     *
+     * @param string $rootpath The absolute path to the repository.
+     * @param string $path The relative path of the object
+     * @param string $name The name of the object
+     * @param string $isdir Is the object a directory?
+     * @param string $rootnodepath The node leading to this node (for breadcrumb).
+     * @return array
+     */
+    protected function build_node($rootpath, $path, $name, $isdir, $rootnodepath) {
+        global $OUTPUT;
+
+        $relpath = trim($path, '/') . '/' . $name;
+        $abspath = $rootpath . $relpath;
+        $node = array(
+            'title' => $name,
+            'datecreated' => filectime($abspath),
+            'datemodified' => filemtime($abspath),
+        );
+
+        if ($isdir) {
+            $node['children'] = array();
+            $node['thumbnail'] = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
+            $node['path'] = $this->build_node_path('browse', $relpath, $name, $rootnodepath);
+
+        } else {
+            $node['source'] = $relpath;
+            $node['size'] = filesize($abspath);
+            $node['thumbnail'] = $OUTPUT->pix_url(file_extension_icon($name, 90))->out(false);
+            $node['icon'] = $OUTPUT->pix_url(file_extension_icon($name, 24))->out(false);
+            $node['path'] = $relpath;
+
+            if (file_extension_in_typegroup($name, 'image') && ($imageinfo = @getimagesize($abspath))) {
+                // This means it is an image and we can return dimensions and try to generate thumbnail/icon.
+                $token = $node['datemodified'] . $node['size']; // To prevent caching by browser.
+                $node['realthumbnail'] = $this->get_thumbnail_url($relpath, 'thumb', $token)->out(false);
+                $node['realicon'] = $this->get_thumbnail_url($relpath, 'icon', $token)->out(false);
+                $node['image_width'] = $imageinfo[0];
+                $node['image_height'] = $imageinfo[1];
+            }
+        }
+
+        return $node;
+    }
+
+    /**
+     * Build the path to a browsable node.
+     *
+     * @param string $mode The type of browse mode.
+     * @param string $realpath The path, or similar.
+     * @param string $display The way to display the node.
+     * @param string $root The path preceding this node.
+     * @return string
+     */
+    protected function build_node_path($mode, $realpath = '', $display = '', $root = '') {
+        $path = $mode . ':' . base64_encode($realpath) . ':' . base64_encode($display);
+        if (!empty($root)) {
+            $path = $root . '|' . $path;
+        }
+        return $path;
+    }
+
+    /**
+     * Extract information from a node path.
+     *
+     * Note, this should not include preceding paths.
+     *
+     * @param string $path The path of the node.
+     * @return array Contains the mode, the relative path, and the display text.
+     */
+    protected function explode_node_path($path) {
+        list($mode, $realpath, $display) = explode(':', $path);
+        return array(
+            $mode,
+            base64_decode($realpath),
+            base64_decode($display)
+        );
+    }
 
     /**
      * To check whether the user is logged in.
@@ -349,7 +564,7 @@ class repository_filesystem extends repository {
         static $issyncing = false;
         if ($issyncing) {
             // Avoid infinite recursion when calling $file->get_filesize() and get_contenthash().
-            return;
+            return false;
         }
         $filepath = $this->get_rootpath() . ltrim($file->get_reference(), '/');
         if ($this->is_in_repository($file->get_reference()) && file_exists($filepath) && is_readable($filepath)) {
@@ -366,11 +581,17 @@ class repository_filesystem extends repository {
                 }
             } else {
                 // Update only file size so file will NOT be copied into moodle filepool.
-                $contenthash = null;
+                $emptyfile = $contenthash = sha1('');
+                $currentcontenthash = $file->get_contenthash();
+                if ($currentcontenthash !== $emptyfile && $currentcontenthash === sha1_file($filepath)) {
+                    // File content was synchronised and has not changed since then, leave it.
+                    $contenthash = null;
+                }
                 $filesize = filesize($filepath);
             }
             $issyncing = false;
-            $file->set_synchronized($contenthash, $filesize);
+            $modified = filemtime($filepath);
+            $file->set_synchronized($contenthash, $filesize, 0, $modified);
         } else {
             $file->set_missingsource();
         }
@@ -481,7 +702,6 @@ class repository_filesystem extends repository {
             return null;
         }
         $filename = sha1($filecontents);
-        unset($filecontents);
 
         // Try to get generated thumbnail for this file.
         $fs = get_file_storage();
@@ -494,7 +714,7 @@ class repository_filesystem extends repository {
             } else {
                 $size = 24;
             }
-            if (!$data = @generate_image_thumbnail($origfile, $size, $size)) {
+            if (!$data = generate_image_thumbnail_from_string($filecontents, $size, $size)) {
                 // Generation failed.
                 return null;
             }
@@ -575,7 +795,7 @@ class repository_filesystem extends repository {
             $fullrelativefilepath = realpath($this->get_rootpath().$basepath.$relativepath);
 
             // Sanity check to make sure this path is inside this repository and the file exists.
-            if (strpos($fullrelativefilepath, $this->get_rootpath()) === 0 && file_exists($fullrelativefilepath)) {
+            if (strpos($fullrelativefilepath, realpath($this->get_rootpath())) === 0 && file_exists($fullrelativefilepath)) {
                 send_file($fullrelativefilepath, basename($relativepath), null, 0);
             }
         }

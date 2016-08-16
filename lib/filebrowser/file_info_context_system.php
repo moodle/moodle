@@ -52,14 +52,64 @@ class file_info_context_system extends file_info {
      * @param int $itemid item ID
      * @param string $filepath file path
      * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
      */
     public function get_file_info($component, $filearea, $itemid, $filepath, $filename) {
         if (empty($component)) {
             return $this;
         }
 
-        // no components supported at this level yet
+        $methodname = "get_area_{$component}_{$filearea}";
+
+        if (method_exists($this, $methodname)) {
+            return $this->$methodname($itemid, $filepath, $filename);
+        }
+
         return null;
+    }
+
+    /**
+     * Gets a stored file for the backup course filearea directory.
+     *
+     * @param int $itemid item ID
+     * @param string $filepath file path
+     * @param string $filename file name
+     * @return file_info|null file_info instance or null if not found or access not allowed
+     */
+    protected function get_area_backup_course($itemid, $filepath, $filename) {
+        global $CFG;
+
+        if (!isloggedin()) {
+            return null;
+        }
+
+        if (!has_any_capability(array('moodle/backup:backupcourse', 'moodle/restore:restorecourse'), $this->context)) {
+            return null;
+        }
+
+        if (is_null($itemid)) {
+            return $this;
+        }
+
+        $fs = get_file_storage();
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+        if (!$storedfile = $fs->get_file($this->context->id, 'backup', 'course', 0, $filepath, $filename)) {
+            if ($filepath === '/' && $filename === '.') {
+                $storedfile = new virtual_root_file($this->context->id, 'backup', 'course', 0);
+            } else {
+                // Not found.
+                return null;
+            }
+        }
+
+        $downloadable = has_capability('moodle/backup:downloadfile', $this->context);
+        $uploadable = has_capability('moodle/restore:uploadfile', $this->context);
+
+        $urlbase = $CFG->wwwroot . '/pluginfile.php';
+        return new file_info_stored($this->browser, $this->context, $storedfile, $urlbase,
+            get_string('coursebackup', 'repository'), false, $downloadable, $uploadable, false);
     }
 
     /**
@@ -95,10 +145,11 @@ class file_info_context_system extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
-        global $DB, $USER;
+        global $DB;
 
         $children = array();
 
+        // Add course categories on the top level that are either visible or user is able to view hidden categories.
         $course_cats = $DB->get_records('course_categories', array('parent'=>0), 'sortorder', 'id,visible');
         foreach ($course_cats as $category) {
             $context = context_coursecat::instance($category->id);
@@ -110,18 +161,47 @@ class file_info_context_system extends file_info {
             }
         }
 
-        $courses = $DB->get_records('course', array('category'=>0), 'sortorder', 'id,visible');
-        foreach ($courses as $course) {
-            if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
-                continue;
-            }
-            $context = context_course::instance($course->id);
-            if ($child = $this->browser->get_file_info($context)) {
-                $children[] = $child;
+        // Add courses where user is enrolled that are located in hidden course categories because they would not
+        // be present in the above tree but user may still be able to access files in them.
+        if ($hiddencontexts = $this->get_inaccessible_coursecat_contexts()) {
+            $courses = enrol_get_my_courses();
+            foreach ($courses as $course) {
+                $context = context_course::instance($course->id);
+                $parents = $context->get_parent_context_ids();
+                if (array_intersect($hiddencontexts, $parents)) {
+                    // This course has hidden parent category.
+                    if ($child = $this->browser->get_file_info($context)) {
+                        $children[] = $child;
+                    }
+                }
             }
         }
 
         return $children;
+    }
+
+    /**
+     * Returns list of course categories contexts that current user can not see
+     *
+     * @return array array of course categories contexts ids
+     */
+    protected function get_inaccessible_coursecat_contexts() {
+        global $DB;
+
+        $sql = context_helper::get_preload_record_columns_sql('ctx');
+        $records = $DB->get_records_sql("SELECT ctx.id, $sql
+            FROM {course_categories} c
+            JOIN {context} ctx ON c.id = ctx.instanceid AND ctx.contextlevel = ?
+            WHERE c.visible = ?", [CONTEXT_COURSECAT, 0]);
+        $hiddencontexts = [];
+        foreach ($records as $record) {
+            context_helper::preload_from_record($record);
+            $context = context::instance_by_id($record->id);
+            if (!has_capability('moodle/category:viewhiddencategories', $context)) {
+                $hiddencontexts[] = $record->id;
+            }
+        }
+        return $hiddencontexts;
     }
 
     /**

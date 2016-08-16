@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/formslib.php');
-require_once(dirname(dirname(__FILE__)) . '/random/settings_form.php'); // parent form
+require_once(__DIR__ . '/../random/settings_form.php'); // parent form
 
 /**
  * Allocator settings form

@@ -114,4 +114,13 @@ class user_enrolment_updated extends base {
             throw new \coding_exception('The \'relateduserid\' must be set.');
         }
     }
+
+    public static function get_objectid_mapping() {
+        // User enrolments table is not mappable.
+        return array('db' => 'user_enrolments', 'restore' => base::NOT_MAPPED);
+    }
+
+    public static function get_other_mapping() {
+        return false;
+    }
 }

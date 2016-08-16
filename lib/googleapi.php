@@ -94,6 +94,7 @@ class google_docs {
             // return a more specific Exception, that's why the global Exception class is caught here.
             return $files;
         }
+        date_default_timezone_set(core_date::get_user_timezone());
         foreach ($xml->entry as $gdoc) {
             $docid  = (string) $gdoc->children('http://schemas.google.com/g/2005')->resourceId;
             list($type, $docid) = explode(':', $docid);
@@ -129,10 +130,11 @@ class google_docs {
             $files[] =  array( 'title' => $title,
                 'url' => "{$gdoc->link[0]->attributes()->href}",
                 'source' => $source,
-                'date'   => usertime(strtotime($gdoc->updated)),
+                'date'   => strtotime($gdoc->updated),
                 'thumbnail' => (string) $OUTPUT->pix_url(file_extension_icon($title, 32))
             );
         }
+        core_date::set_default_server_timezone();
 
         return $files;
     }

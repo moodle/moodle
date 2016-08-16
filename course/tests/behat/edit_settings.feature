@@ -8,7 +8,7 @@ Feature: Edit course settings
   Scenario: Edit course settings
     Given the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | summary | format |
       | Course 1 | C1 | <p>Course summary</p> | topics |

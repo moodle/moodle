@@ -260,7 +260,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         }
         var params;
         if (append) {
-            this.set(USP.PAGE, this.get(USP.PAGE)+1);
+            this.set(USP.PAGE, this.get(USP.PAGE) + 1);
         } else {
             this.set(USP.USERCOUNT, 0);
             this.set(USP.PAGE, 0);
@@ -273,14 +273,14 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         params.perpage = this.get(USP.PERPAGE);
 
         Y.io(M.cfg.wwwroot + this.get(USP.AJAXURL), {
-            method:'POST',
-            data:build_querystring(params),
+            method: 'POST',
+            data: window.build_querystring(params),
             on: {
                 start: this.preSearch,
                 complete: this.processSearchResults,
                 end: this.postSearch
             },
-            context:this,
+            context: this,
             "arguments": {      // Quoted because this is a reserved keyword.
                 append: append
             }
@@ -376,7 +376,9 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
 
         // Create the div containing the users when it is a fresh search.
         if (!args.append) {
-            users = Y.Node.create('<div role="listbox" aria-activedescendant="" aria-multiselectable="true" class="'+CSS.USERS+'"></div>');
+            users = Y.Node.create('<div role="listbox" aria-activedescendant="" aria-multiselectable="true" class="' +
+                                   CSS.USERS +
+                                   '"></div>');
         } else {
             users = bb.one(SELECTORS.RESULTSUSERS);
         }
@@ -405,6 +407,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
         // Append the users one by one.
         count = this.get(USP.USERCOUNT);
         selected = '';
+        var user;
         for (i in result.response.users) {
             count++;
             user = result.response.users[i];
@@ -454,11 +457,11 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
                     bb.one(SELECTORS.RESULTSCOUNT).setHTML(M.util.get_string('foundnusers', COMPONENT, totalUsers));
                 }
 
-                content = Y.Node.create('<div class="'+CSS.SEARCHRESULTS+'"></div>')
+                content = Y.Node.create('<div class="' + CSS.SEARCHRESULTS + '"></div>')
                     .append(users);
-                if (result.response.totalusers > (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
-                    fetchmore = Y.Node.create('<div class="'+CSS.MORERESULTS+'">' +
-                        '<a href="#" role="button">'+M.util.get_string('loadmoreusers', COMPONENT)+'</a></div>');
+                if (result.response.totalusers > (this.get(USP.PAGE) + 1) * this.get(USP.PERPAGE)) {
+                    fetchmore = Y.Node.create('<div class="' + CSS.MORERESULTS + '">' +
+                        '<a href="#" role="button">' + M.util.get_string('loadmoreusers', COMPONENT) + '</a></div>');
                     fetchmore.one('a').on('click', this.search, this, true);
                     fetchmore.one('a').on('key', this.search, 'space', this, true);
                     content.append(fetchmore);
@@ -466,7 +469,7 @@ Y.namespace('M.gradereport_history').UserSelector = Y.extend(USERSELECTOR, M.cor
             }
             this.setContent(content);
         } else {
-            if (totalUsers <= (this.get(USP.PAGE)+1)*this.get(USP.PERPAGE)) {
+            if (totalUsers <= (this.get(USP.PAGE) + 1) * this.get(USP.PERPAGE)) {
                 bb.one(SELECTORS.MORERESULTS).remove();
             }
         }

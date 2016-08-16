@@ -45,7 +45,7 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
             }
         }
         // Fallback if something goes wrong.
-        parent::__construct(null, false, false, false);
+        parent::__construct(null, false, self::COLOR_DEFAULT, false);
     }
 
     protected function printDefectTrace(PHPUnit_Framework_TestFailure $defect) {
@@ -135,7 +135,7 @@ class Hacky_TextUI_Command_reader extends PHPUnit_TextUI_Command {
         $verbose = isset($config['verbose']) ? $config['verbose'] : false;
         $verbose = isset($arguments['verbose']) ? $arguments['verbose'] : $verbose;
 
-        $colors = isset($config['colors']) ? $config['colors'] : false;
+        $colors = isset($config['colors']) ? $config['colors'] : Hint_ResultPrinter::COLOR_DEFAULT;
         $colors = isset($arguments['colors']) ? $arguments['colors'] : $colors;
 
         $debug = isset($config['debug']) ? $config['debug'] : false;

@@ -23,7 +23,7 @@
  */
 
 require_once('../config.php');
-require_once(dirname(__FILE__) . '/restorefile_form.php');
+require_once(__DIR__ . '/restorefile_form.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
 // current context

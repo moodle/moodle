@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_online_users\fetcher;
+
 /**
  * This block needs to be reworked.
  * The new roles system does away with the concepts of rigid student and
@@ -37,7 +39,7 @@ class block_online_users extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $DB, $OUTPUT;
+        global $USER, $CFG, $DB, $OUTPUT, $PAGE;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -56,7 +58,6 @@ class block_online_users extends block_base {
             $timetoshowusers = $CFG->block_online_users_timetosee * 60;
         }
         $now = time();
-        $timefrom = 100 * floor(($now - $timetoshowusers) / 100); // Round to nearest 100 seconds for better query cache
 
         //Calculate if we are in separate groups
         $isseparategroups = ($this->page->course->groupmode == SEPARATEGROUPS
@@ -66,82 +67,24 @@ class block_online_users extends block_base {
         //Get the user current group
         $currentgroup = $isseparategroups ? groups_get_course_group($this->page->course) : NULL;
 
-        $groupmembers = "";
-        $groupselect  = "";
-        $params = array();
+        $sitelevel = $this->page->course->id == SITEID || $this->page->context->contextlevel < CONTEXT_COURSE;
 
-        //Add this to the SQL to show only group users
-        if ($currentgroup !== NULL) {
-            $groupmembers = ", {groups_members} gm";
-            $groupselect = "AND u.id = gm.userid AND gm.groupid = :currentgroup";
-            $params['currentgroup'] = $currentgroup;
-        }
-
-        $userfields = user_picture::fields('u', array('username'));
-        $params['now'] = $now;
-        $params['timefrom'] = $timefrom;
-        if ($this->page->course->id == SITEID or $this->page->context->contextlevel < CONTEXT_COURSE) {  // Site-level
-            $sql = "SELECT $userfields, MAX(u.lastaccess) AS lastaccess
-                      FROM {user} u $groupmembers
-                     WHERE u.lastaccess > :timefrom
-                           AND u.lastaccess <= :now
-                           AND u.deleted = 0
-                           $groupselect
-                  GROUP BY $userfields
-                  ORDER BY lastaccess DESC ";
-
-           $csql = "SELECT COUNT(u.id)
-                      FROM {user} u $groupmembers
-                     WHERE u.lastaccess > :timefrom
-                           AND u.lastaccess <= :now
-                           AND u.deleted = 0
-                           $groupselect";
-
-        } else {
-            // Course level - show only enrolled users for now
-            // TODO: add a new capability for viewing of all users (guests+enrolled+viewing)
-
-            list($esqljoin, $eparams) = get_enrolled_sql($this->page->context);
-            $params = array_merge($params, $eparams);
-
-            $sql = "SELECT $userfields, MAX(ul.timeaccess) AS lastaccess
-                      FROM {user_lastaccess} ul $groupmembers, {user} u
-                      JOIN ($esqljoin) euj ON euj.id = u.id
-                     WHERE ul.timeaccess > :timefrom
-                           AND u.id = ul.userid
-                           AND ul.courseid = :courseid
-                           AND ul.timeaccess <= :now
-                           AND u.deleted = 0
-                           $groupselect
-                  GROUP BY $userfields
-                  ORDER BY lastaccess DESC";
-
-           $csql = "SELECT COUNT(u.id)
-                      FROM {user_lastaccess} ul $groupmembers, {user} u
-                      JOIN ($esqljoin) euj ON euj.id = u.id
-                     WHERE ul.timeaccess > :timefrom
-                           AND u.id = ul.userid
-                           AND ul.courseid = :courseid
-                           AND ul.timeaccess <= :now
-                           AND u.deleted = 0
-                           $groupselect";
-
-            $params['courseid'] = $this->page->course->id;
-        }
+        $onlineusers = new fetcher($currentgroup, $now, $timetoshowusers, $this->page->context,
+                $sitelevel, $this->page->course->id);
 
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
 
         // Verify if we can see the list of users, if not just print number of users
         if (!has_capability('block/online_users:viewlist', $this->page->context)) {
-            if (!$usercount = $DB->count_records_sql($csql, $params)) {
+            if (!$usercount = $onlineusers->count_users()) {
                 $usercount = get_string("none");
             }
             $this->content->text = "<div class=\"info\">".get_string("periodnminutes","block_online_users",$minutes).": $usercount</div>";
             return $this->content;
         }
-
-        if ($users = $DB->get_records_sql($sql, $params, 0, 50)) {   // We'll just take the most recent 50 maximum
+        $userlimit = 50; // We'll just take the most recent 50 maximum.
+        if ($users = $onlineusers->get_users($userlimit)) {
             foreach ($users as $user) {
                 $users[$user->id]->fullname = fullname($user);
             }
@@ -149,12 +92,8 @@ class block_online_users extends block_base {
             $users = array();
         }
 
-        if (count($users) < 50) {
-            $usercount = "";
-        } else {
-            $usercount = $DB->count_records_sql($csql, $params);
-            $usercount = ": $usercount";
-        }
+        $usercount = $onlineusers->count_users();
+        $usercount = ": $usercount";
 
         $this->content->text = "<div class=\"info\">(".get_string("periodnminutes","block_online_users",$minutes)."$usercount)</div>";
 
@@ -167,6 +106,7 @@ class block_online_users extends block_base {
             if (isloggedin() && has_capability('moodle/site:sendmessage', $this->page->context)
                            && !empty($CFG->messaging) && !isguestuser()) {
                 $canshowicon = true;
+                message_messenger_requirejs();
             } else {
                 $canshowicon = false;
             }
@@ -185,7 +125,11 @@ class block_online_users extends block_base {
                 }
                 if ($canshowicon and ($USER->id != $user->id) and !isguestuser($user)) {  // Only when logged in and messaging active etc
                     $anchortagcontents = '<img class="iconsmall" src="'.$OUTPUT->pix_url('t/message') . '" alt="'. get_string('messageselectadd') .'" />';
-                    $anchortag = '<a href="'.$CFG->wwwroot.'/message/index.php?id='.$user->id.'" title="'.get_string('messageselectadd').'">'.$anchortagcontents .'</a>';
+                    $anchorurl = new moodle_url('/message/index.php', array('id' => $user->id));
+                    $anchortag = html_writer::link($anchorurl, $anchortagcontents, array_merge(
+                      message_messenger_sendmessage_link_params($user),
+                      array('title' => get_string('messageselectadd'))
+                    ));
 
                     $this->content->text .= '<div class="message">'.$anchortag.'</div>';
                 }
