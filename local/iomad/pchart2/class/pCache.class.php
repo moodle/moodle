@@ -21,7 +21,7 @@
    var $CacheDB;
 
    /* Class creator */
-   function pCache($Settings="")
+   function __construct($Settings="")
     {
      $CacheFolder	= isset($Settings["CacheFolder"]) ? $Settings["CacheFolder"] : "cache";
      $CacheIndex	= isset($Settings["CacheIndex"]) ? $Settings["CacheIndex"] : "index.db";

@@ -27,7 +27,7 @@
    var $pChartObject;
 
    /* Class creator */
-   function pRadar()
+   function __construct()
     { }
 
    /* Draw a radar chart */

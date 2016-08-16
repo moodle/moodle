@@ -23,6 +23,6 @@ function xmldb_block_iomad_company_admin_uninstall() {
     // Remove table entries for this block in iomad_modules
     // (yes, I know this isn't really what this is for!!).
 
-    $DB->delete_records_select('iomad_modules', 'module_name' = 'iomad_company_admin');
+    $DB->delete_records_select('iomad_modules', "module_name = 'iomad_company_admin'");
     return true;
 }

@@ -30,7 +30,7 @@
    var $Points;
 
    /* Class creator */
-   function pSurface($pChartObject)
+   function __construct($pChartObject)
     {
      $this->pChartObject = $pChartObject;
      $this->GridSize     = 10;

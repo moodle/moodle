@@ -159,7 +159,7 @@ class company_select_form extends company_moodleform {
 
         $this->submitlabel = get_string($submitlabelstring, 'block_iomad_company_admin');
 
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     public function definition() {

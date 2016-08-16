@@ -70,7 +70,7 @@ class user_edit_form extends company_moodleform {
         $this->currentcourses = new potential_subdepartment_course_selector('currentcourses', $options);
         $this->currentcourses->set_rows(20);
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     public function definition() {
@@ -378,16 +378,9 @@ $blockpage->setup();
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
-$companyform = new company_select_form($PAGE->url, $companyid, 'createuserforcompany');
 $mform = new user_edit_form($PAGE->url, $companyid, $departmentid, $licenseid);
 
-if ($companyform->is_cancelled() || $mform->is_cancelled()) {
-    if ($returnurl) {
-        redirect($returnurl);
-    } else {
-        redirect($dashboardurl);
-    }
-} else if ($data = $mform->get_data()) {
+if ($data = $mform->get_data()) {
     $data->userid = $USER->id;
     if ($companyid > 0) {
         $data->companyid = $companyid;

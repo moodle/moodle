@@ -33,7 +33,7 @@ class company_edit_form extends company_moodleform {
         $this->isadding = $isadding;
         $this->companyid = $companyid;
         $this->companyrecord = $companyrecord;
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     public function definition() {

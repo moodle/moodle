@@ -46,7 +46,7 @@ class department_display_form extends company_moodleform {
         }
 
         $this->departmentid = $userhierarchylevel;
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     public function definition() {
@@ -126,7 +126,7 @@ class department_edit_form extends company_moodleform {
         $this->departmentid = $departmentid;
         $this->chosenid = $chosenid;
         $this->action = $action;
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     public function definition() {

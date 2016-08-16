@@ -29,7 +29,7 @@ class confirmation_form extends moodleform {
 
         $this->basket = $basket;
         $this->paymentprovider = $paymentprovider;
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
     function definition() {

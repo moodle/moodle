@@ -43,7 +43,7 @@ $montharray = array('jan' => '01',
                     'jun' => '06',
                     'jul' => '07',
                     'aug' => '08',
-                    'sep' => 09,
+                    'sep' => '09',
                     'oct' => '10',
                     'nov' => '11',
                     'dec' => '12');
@@ -281,7 +281,7 @@ if ($mform->is_cancelled()) {
                         $upt->track($key, $value);
                     }
                 } else {
-                    $user->$columns[$key] = '';
+                    $user->{$columns[$key]} = '';
                 }
             }
     

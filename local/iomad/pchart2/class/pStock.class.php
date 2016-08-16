@@ -22,7 +22,7 @@
    var $pDataObject;
 
    /* Class creator */
-   function pStock($pChartObject,$pDataObject)
+   function __construct($pChartObject,$pDataObject)
     {
      $this->pChartObject = $pChartObject;
      $this->pDataObject  = $pDataObject;

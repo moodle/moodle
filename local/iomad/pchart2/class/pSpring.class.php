@@ -43,7 +43,7 @@
    var $Labels;
 
    /* Class creator */
-   function pSpring()
+   function __construct()
     {
      /* Initialise data arrays */
      $this->Data = "";

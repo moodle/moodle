@@ -23,7 +23,7 @@
    var $pDataObject;
 
    /* Class creator */
-   function pBubble($pChartObject,$pDataObject)
+   function __construct($pChartObject,$pDataObject)
     {
      $this->pChartObject = $pChartObject;
      $this->pDataObject  = $pDataObject;

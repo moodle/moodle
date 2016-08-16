@@ -64,7 +64,7 @@ class company_license_form extends company_moodleform {
                          'license' => true);
         $this->currentcourses = new all_department_course_selector('currentcourselicense', $options);
 
-        parent::moodleform($actionurl);
+        parent::__construct($actionurl);
     }
 
 

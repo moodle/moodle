@@ -28,7 +28,7 @@
    var $pChartObject;
 
    /* Class creator */
-   function pIndicator($pChartObject)
+   function __construct($pChartObject)
     {
      $this->pChartObject = $pChartObject;
     }
