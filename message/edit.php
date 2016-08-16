@@ -73,7 +73,7 @@ if ($user->id == $USER->id) {
 }
 
 /// Display page header
-$strmessaging = get_string('messaging', 'message');
+$strmessaging = get_string('messagepreferences', 'message');
 $PAGE->set_title($strmessaging);
 $PAGE->set_heading(fullname($user));
 

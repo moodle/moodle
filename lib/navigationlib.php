@@ -4535,8 +4535,10 @@ class settings_navigation extends navigation_node {
         // Messaging.
         if (($currentuser && has_capability('moodle/user:editownmessageprofile', $systemcontext)) || (!isguestuser($user) &&
                 has_capability('moodle/user:editmessageprofile', $usercontext) && !is_primary_admin($user->id))) {
-            $url = new moodle_url('/message/edit.php', array('id'=>$user->id));
-            $useraccount->add(get_string('messaging', 'message'), $url, self::TYPE_SETTING);
+            $messagingurl = new moodle_url('/message/edit.php', array('id' => $user->id));
+            $notificationsurl = new moodle_url('/message/notificationpreferences.php', array('id' => $user->id));
+            $useraccount->add(get_string('messagepreferences', 'message'), $messagingurl, self::TYPE_SETTING);
+            $useraccount->add(get_string('notificationpreferences', 'message'), $notificationsurl, self::TYPE_SETTING);
         }
 
         // Blogs.
