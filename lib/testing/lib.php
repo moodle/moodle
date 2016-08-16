@@ -52,13 +52,17 @@ function testing_cli_argument_path($moodlepath) {
         // This is the real CLI script, work with relative paths.
         $cwd = getcwd();
     }
+
+    // In sub path, we want to remove leading Directory separator.
+    $removeseparator = 0;
     if (substr($cwd, -1) !== DIRECTORY_SEPARATOR) {
-        $cwd .= DIRECTORY_SEPARATOR;
+        $removeseparator = 1;
     }
+
     $path = realpath($CFG->dirroot.$moodlepath);
 
     if (strpos($path, $cwd) === 0) {
-        $path = substr($path, strlen($cwd));
+        $path = substr($path, strlen($cwd) + $removeseparator);
     }
 
     if (testing_is_cygwin()) {
