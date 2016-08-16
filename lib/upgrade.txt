@@ -71,6 +71,10 @@ information provided here is intended especially for developers.
   - 3. Run: Which process behat should be initialise for.
 * behat_context_helper::set_session() has been deprecated, please use behat_context_helper::set_environment() instead.
 * data-fieldtype="type" attribute has been added to form field default template.
+* Relative paths in $CFG->alternateloginurl will be resolved to absolute path within moodle site. That means:
+  - $CFG->wwwroot: http://example.com/moodle
+  - $CFG->alternateloginurl : /my/super/login.php
+  - Login url will be: http://example.com/moodle/my/super/login.php (moodle root based)
 
 === 3.1 ===
 
