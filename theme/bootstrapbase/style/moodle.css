@@ -6392,9 +6392,6 @@ a.ygtvspacer:hover {
 .processor-container.loading .loading-container {
   display: block;
 }
-.title-case {
-  text-transform: capitalize;
-}
 .message-preferences-container .block-non-contacts-container {
   margin: 30px 5px;
   line-height: 20px;
