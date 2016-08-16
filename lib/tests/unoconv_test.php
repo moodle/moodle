@@ -79,11 +79,16 @@ class core_unoconv_testcase extends advanced_testcase {
 
         $result = $fs->get_converted_document($this->testfile1, 'pdf');
         $this->assertNotFalse($result);
-        $this->assertSame($result->get_mimetype(), 'application/pdf');
+        $this->assertSame('application/pdf', $result->get_mimetype());
         $this->assertGreaterThan(0, $result->get_filesize());
         $result = $fs->get_converted_document($this->testfile2, 'pdf');
         $this->assertNotFalse($result);
-        $this->assertSame($result->get_mimetype(), 'application/pdf');
+        $this->assertSame('application/pdf', $result->get_mimetype());
+        $this->assertGreaterThan(0, $result->get_filesize());
+        // Test forcing a refresh of the document.
+        $result = $fs->get_converted_document($this->testfile2, 'pdf', true);
+        $this->assertNotFalse($result);
+        $this->assertSame('application/pdf', $result->get_mimetype());
         $this->assertGreaterThan(0, $result->get_filesize());
     }
 
@@ -98,11 +103,17 @@ class core_unoconv_testcase extends advanced_testcase {
 
         $result = $fs->get_converted_document($this->testfile1, 'txt');
         $this->assertNotFalse($result);
-        $this->assertSame($result->get_mimetype(), 'text/plain');
+        $this->assertSame('text/plain', $result->get_mimetype());
         $this->assertGreaterThan(0, $result->get_filesize());
         $result = $fs->get_converted_document($this->testfile2, 'txt');
         $this->assertNotFalse($result);
-        $this->assertSame($result->get_mimetype(), 'text/plain');
+        $this->assertSame('text/plain', $result->get_mimetype());
+        $this->assertGreaterThan(0, $result->get_filesize());
+
+        // Test forcing a refresh of the document.
+        $result = $fs->get_converted_document($this->testfile2, 'txt', true);
+        $this->assertNotFalse($result);
+        $this->assertSame('text/plain', $result->get_mimetype());
         $this->assertGreaterThan(0, $result->get_filesize());
     }
 }
