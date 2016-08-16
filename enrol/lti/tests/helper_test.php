@@ -248,7 +248,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
-     * Test getting the launch url of a tool
+     * Test getting the launch url of a tool.
      */
     public function test_get_launch_url() {
         $course1 = $this->getDataGenerator()->create_course();
@@ -262,7 +262,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
-     * Test getting the cartridge url of a tool
+     * Test getting the cartridge url of a tool.
      */
     public function test_get_cartridge_url() {
         global $CFG;
@@ -292,7 +292,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
-     * Test getting the name of a tool
+     * Test getting the name of a tool.
      */
     public function test_get_name() {
         $course1 = $this->getDataGenerator()->create_course();
@@ -309,7 +309,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
-     * Test getting the description of a tool
+     * Test getting the description of a tool.
      */
     public function test_get_description() {
         $course1 = $this->getDataGenerator()->create_course();
@@ -345,7 +345,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
-     * Data provider for the set_xpath test
+     * Data provider for the set_xpath test.
      */
     public function set_xpath_provider() {
         return [
