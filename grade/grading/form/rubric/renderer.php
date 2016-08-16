@@ -633,6 +633,9 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         if (!$scores) {
             return $html;
         }
+        if ($scores['minscore'] <> 0) {
+            $html .= $this->output->notification(get_string('zerolevelsabsent', 'gradingform_rubric'), 'error');
+        }
         $html .= $this->box(
                 html_writer::tag('h4', get_string('rubricmapping', 'gradingform_rubric')).
                 html_writer::tag('div', get_string('rubricmappingexplained', 'gradingform_rubric', (object)$scores))
