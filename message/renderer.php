@@ -253,7 +253,8 @@ class core_message_renderer extends plugin_renderer_base {
         $preferences = get_all_message_preferences($readyprocessors, $providers, $user);
         $notificationlistoutput = new \core_message\output\preferences\message_notification_list($readyprocessors, $providers, $preferences, $user);
         $context = $notificationlistoutput->export_for_template($this);
+        $context['blocknoncontacts'] = get_user_preferences('message_blocknoncontacts', '', $user->id) ? true : false;
 
-        return $this->render_from_template('message/message_preferences', $notificationlistoutput->export_for_template($this));
+        return $this->render_from_template('message/message_preferences', $context);
     }
 }
