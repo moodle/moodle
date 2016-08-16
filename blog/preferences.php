@@ -63,6 +63,10 @@ if (empty($CFG->enableblogs)) {
     print_error('blogdisable', 'blog');
 }
 
+if (isguestuser()) {
+    print_error('noguest');
+}
+
 // The preference is site wide not blog specific. Hence user should have permissions in site level.
 require_capability('moodle/blog:view', $sitecontext);
 
