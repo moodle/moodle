@@ -35,6 +35,22 @@ defined('MOODLE_INTERNAL') || die();
 class message_sent extends base_message {
 
     /**
+     * Returns recordset containing message records.
+     *
+     * @param int $modifiedfrom timestamp
+     * @return \moodle_recordset
+     */
+    public function get_recordset_by_timestamp($modifiedfrom = 0) {
+        global $DB;
+
+        // We don't want to index messages sent by noreply and support users.
+        $params = array('modifiedfrom' => $modifiedfrom, 'noreplyuser' => \core_user::NOREPLY_USER,
+            'supportuser' => \core_user::SUPPORT_USER);
+        return $DB->get_recordset_select('message_read', 'timecreated >= :modifiedfrom AND
+            useridfrom != :noreplyuser AND useridfrom != :supportuser', $params, 'timecreated ASC');
+    }
+
+    /**
      * Returns the document associated with this message record.
      *
      * @param stdClass $record
@@ -63,8 +79,8 @@ class message_sent extends base_message {
             return \core_search\manager::ACCESS_DELETED;
         }
 
-        $userfrom = $DB->get_record('user', array('id' => $message->useridfrom));
-        $userto = $DB->get_record('user', array('id' => $message->useridto));
+        $userfrom = \core_user::get_user($message->useridfrom, 'id, deleted');
+        $userto = \core_user::get_user($message->useridto, 'id, deleted');
 
         if (!$userfrom || !$userto || $userfrom->deleted || $userto->deleted) {
             return \core_search\manager::ACCESS_DELETED;

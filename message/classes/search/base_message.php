@@ -44,17 +44,6 @@ abstract class base_message extends \core_search\base {
     protected static $levels = [CONTEXT_USER];
 
     /**
-     * Returns recordset containing message records.
-     *
-     * @param int $modifiedfrom timestamp
-     * @return \moodle_recordset
-     */
-    public function get_recordset_by_timestamp($modifiedfrom = 0) {
-        global $DB;
-        return $DB->get_recordset_select('message_read', 'timecreated >= ?', array($modifiedfrom), 'timecreated ASC');
-    }
-
-    /**
      * Returns the document associated with this message record.
      *
      * @param stdClass $record
