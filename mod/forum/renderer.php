@@ -236,4 +236,14 @@ class mod_forum_renderer extends plugin_renderer_base {
     public function render_quick_search_form(\mod_forum\output\quick_search_form $form) {
         return $this->render_from_template('mod_forum/quick_search_form', $form->export_for_template($this));
     }
+
+    /**
+     * Render big search form.
+     *
+     * @param \mod_forum\output\big_search_form $form The renderable.
+     * @return string
+     */
+    public function render_big_search_form(\mod_forum\output\big_search_form $form) {
+        return $this->render_from_template('mod_forum/big_search_form', $form->export_for_template($this));
+    }
 }
