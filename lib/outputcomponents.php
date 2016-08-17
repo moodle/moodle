@@ -499,6 +499,8 @@ class help_icon implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
+        global $CFG;
+
         $title = get_string($this->identifier, $this->component);
 
         if (empty($this->linktext)) {
@@ -508,7 +510,16 @@ class help_icon implements renderable, templatable {
         }
 
         $data = get_formatted_help_string($this->identifier, $this->component, false);
+
         $data->alt = $alt;
+        $data->icon = (new pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($output);
+        $data->linktext = $this->linktext;
+        $data->title = get_string('helpprefix2', '', trim($title, ". \t"));
+        $data->url = (new moodle_url($CFG->httpswwwroot . '/help.php', [
+            'component' => $this->component,
+            'identifier' => $this->identifier,
+            'lang' => current_language()
+        ]))->out(false);
 
         $data->ltr = !right_to_left();
         return $data;

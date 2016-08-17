@@ -2412,39 +2412,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_help_icon(help_icon $helpicon) {
-        global $CFG;
-
-        // first get the help image icon
-        $src = $this->pix_url('help');
-
-        $title = get_string($helpicon->identifier, $helpicon->component);
-
-        if (empty($helpicon->linktext)) {
-            $alt = get_string('helpprefix2', '', trim($title, ". \t"));
-        } else {
-            $alt = get_string('helpwiththis');
-        }
-
-        $attributes = array('src'=>$src, 'alt'=>$alt, 'class'=>'iconhelp');
-        $output = html_writer::empty_tag('img', $attributes);
-
-        // add the link text if given
-        if (!empty($helpicon->linktext)) {
-            // the spacing has to be done through CSS
-            $output .= $helpicon->linktext;
-        }
-
-        // now create the link around it - we need https on loginhttps pages
-        $url = new moodle_url($CFG->httpswwwroot.'/help.php', array('component' => $helpicon->component, 'identifier' => $helpicon->identifier, 'lang'=>current_language()));
-
-        // note: this title is displayed only if JS is disabled, otherwise the link will have the new ajax tooltip
-        $title = get_string('helpprefix2', '', trim($title, ". \t"));
-
-        $attributes = array('href' => $url, 'title' => $title, 'aria-haspopup' => 'true', 'target'=>'_blank');
-        $output = html_writer::tag('a', $output, $attributes);
-
-        // and finally span
-        return html_writer::tag('span', $output, array('class' => 'helptooltip'));
+        return $this->render_from_template('core/help_icon', $helpicon->export_for_template($this));
     }
 
     /**
