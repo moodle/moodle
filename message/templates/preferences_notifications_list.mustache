@@ -75,9 +75,9 @@
         ]
     }
 }}
-<h2>{{#str}} notificationpreferences, message {{/str}}</h2>
-<div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
-    <div class="disable-notification-container">
+<div class="preferences-page-container">
+    <h2>{{#str}} notificationpreferences, message {{/str}}</h2>
+    <div class="disable-notification-container checkbox-container">
         <input id="disable-notifications"
            type="checkbox"
            data-disable-notifications
@@ -85,91 +85,70 @@
         <label for="disable-notifications">{{#str}} disableall, message {{/str}}</label>
         {{> core/loading }}
     </div>
-    <table class="table table-hover preference-table">
-        <thead>
-            <tr>
-                <th>{{displayname}}</th>
-                {{#processors}}
-                    <th {{^userconfigured}}class="unconfigured"{{/userconfigured}} data-processor-name="{{name}}">
-                        {{#hassettings}}
-                            <a href="#"
-                                data-processor-setting
-                                data-user-id="{{userid}}"
-                                data-context-id="{{contextid}}"
-                                data-name="{{name}}">
-
-                                <span class="config-warning" data-toggle="tooltip" title="{{#str}} requiresconfiguration, message {{/str}}">
-                                    {{#pix}} i/risk_xss, core {{/pix}}
-                                </span>
-                                {{displayname}} {{#pix}} i/settings {{/pix}}
-                            </a>
-                        {{/hassettings}}
-                        {{^hassettings}}
-                            {{displayname}}
-                        {{/hassettings}}
-                    </th>
-                {{/processors}}
-            </tr>
-        </thead>
-        <tbody>
-            {{#components}}
+    <div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
+        <table class="table table-hover preference-table">
+            <thead>
                 <tr>
-                    <th><h4>{{displayname}}</h4></th>
+                    <th>{{displayname}}</th>
                     {{#processors}}
-                        <td class="align-bottom">
-                            <div class="container-fluid">
-                                <div class="row-fluid">
-                                    {{#ispopup}}
-                                        <div class="span12">{{#str}} online, message {{/str}}</div>
-                                    {{/ispopup}}
-                                    {{^ispopup}}
-                                        <div class="span6">{{#str}} online, message {{/str}}</div>
-                                        <div class="span6">{{#str}} offline, message {{/str}}</div>
-                                    {{/ispopup}}
-                                </div>
-                            </div>
-                        </td>
+                        <th {{^userconfigured}}class="unconfigured"{{/userconfigured}} data-processor-name="{{name}}">
+                            {{#hassettings}}
+                                <a href="#"
+                                    data-processor-setting
+                                    data-user-id="{{userid}}"
+                                    data-context-id="{{contextid}}"
+                                    data-name="{{name}}">
+
+                                    <span class="config-warning" data-toggle="tooltip" title="{{#str}} requiresconfiguration, message {{/str}}">
+                                        {{#pix}} i/risk_xss, core {{/pix}}
+                                    </span>
+                                    {{displayname}} {{#pix}} i/settings {{/pix}}
+                                </a>
+                            {{/hassettings}}
+                            {{^hassettings}}
+                                {{displayname}}
+                            {{/hassettings}}
+                        </th>
                     {{/processors}}
                 </tr>
-                {{#notifications}}
-                    <tr class="preference-row" data-preference-key="{{preferencekey}}">
-                        <td class="preference-name">
-                            {{displayname}}
-                        </td>
+            </thead>
+            <tbody>
+                {{#components}}
+                    <tr>
+                        <th><h4>{{displayname}}</h4></th>
                         {{#processors}}
-                        <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
-                                {{#locked}}
-                                    <div class="dimmed_text">{{lockedmessage}}</div>
-                                {{/locked}}
-                                {{^locked}}
-                                    <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
-                                    <form>
-                                        <div class="container-fluid">
-                                            <div class="row-fluid">
-                                                <div {{#ispopup}}class="span12"{{/ispopup}}{{^ispopup}}class="span6"{{/ispopup}}>
-                                                    {{#loggedin}}
-                                                        <label class="preference-state"
-                                                            data-toggle="tooltip"
-                                                            title="{{displayname}}"
-                                                            data-state="{{name}}">
-
-                                                            <span class="accesshide">{{displayname}}</span>
-                                                            <input type="checkbox"
-                                                                tabindex="-1"
-                                                                class="accesshide"
-                                                                {{#checked}}checked{{/checked}}
-                                                                {{#disableall}}disabled{{/disableall}} />
-                                                            <div class="preference-state-status-container" tabindex="0">
-                                                                <span class="on-text">{{#str}} on, message {{/str}}</span>
-                                                                <span class="off-text">{{#str}} off, message {{/str}}</span>
-                                                                {{> core/loading }}
-                                                            </div>
-                                                        </label>
-                                                    {{/loggedin}}
-                                                </div>
-                                                {{^ispopup}}
-                                                    <div class="span6">
-                                                        {{#loggedoff}}
+                            <td class="align-bottom">
+                                <div class="container-fluid">
+                                    <div class="row-fluid">
+                                        {{#ispopup}}
+                                            <div class="span12">{{#str}} online, message {{/str}}</div>
+                                        {{/ispopup}}
+                                        {{^ispopup}}
+                                            <div class="span6">{{#str}} online, message {{/str}}</div>
+                                            <div class="span6">{{#str}} offline, message {{/str}}</div>
+                                        {{/ispopup}}
+                                    </div>
+                                </div>
+                            </td>
+                        {{/processors}}
+                    </tr>
+                    {{#notifications}}
+                        <tr class="preference-row" data-preference-key="{{preferencekey}}">
+                            <td class="preference-name">
+                                {{displayname}}
+                            </td>
+                            {{#processors}}
+                            <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
+                                    {{#locked}}
+                                        <div class="dimmed_text">{{lockedmessage}}</div>
+                                    {{/locked}}
+                                    {{^locked}}
+                                        <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
+                                        <form>
+                                            <div class="container-fluid">
+                                                <div class="row-fluid">
+                                                    <div {{#ispopup}}class="span12"{{/ispopup}}{{^ispopup}}class="span6"{{/ispopup}}>
+                                                        {{#loggedin}}
                                                             <label class="preference-state"
                                                                 data-toggle="tooltip"
                                                                 title="{{displayname}}"
@@ -187,20 +166,43 @@
                                                                     {{> core/loading }}
                                                                 </div>
                                                             </label>
-                                                        {{/loggedoff}}
+                                                        {{/loggedin}}
                                                     </div>
-                                                {{/ispopup}}
+                                                    {{^ispopup}}
+                                                        <div class="span6">
+                                                            {{#loggedoff}}
+                                                                <label class="preference-state"
+                                                                    data-toggle="tooltip"
+                                                                    title="{{displayname}}"
+                                                                    data-state="{{name}}">
+
+                                                                    <span class="accesshide">{{displayname}}</span>
+                                                                    <input type="checkbox"
+                                                                        tabindex="-1"
+                                                                        class="accesshide"
+                                                                        {{#checked}}checked{{/checked}}
+                                                                        {{#disableall}}disabled{{/disableall}} />
+                                                                    <div class="preference-state-status-container" tabindex="0">
+                                                                        <span class="on-text">{{#str}} on, message {{/str}}</span>
+                                                                        <span class="off-text">{{#str}} off, message {{/str}}</span>
+                                                                        {{> core/loading }}
+                                                                    </div>
+                                                                </label>
+                                                            {{/loggedoff}}
+                                                        </div>
+                                                    {{/ispopup}}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                {{/locked}}
-                            </td>
-                        {{/processors}}
-                    </tr>
-                {{/notifications}}
-            {{/components}}
-        </tbody>
-    </table>
+                                        </form>
+                                    {{/locked}}
+                                </td>
+                            {{/processors}}
+                        </tr>
+                    {{/notifications}}
+                {{/components}}
+            </tbody>
+        </table>
+    </div>
 </div>
 {{#js}}
 require(['jquery', 'theme_bootstrapbase/bootstrap', 'core_message/preferences_notifications_list_controller'],
