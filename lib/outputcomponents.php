@@ -1689,6 +1689,8 @@ class html_writer {
      * @return HTML fragment
      */
     public static function select_time($type, $name, $currenttime = 0, $step = 5, array $attributes = null) {
+        global $OUTPUT;
+
         if (!$currenttime) {
             $currenttime = time();
         }
@@ -1729,13 +1731,30 @@ class html_writer {
                 throw new coding_exception("Time type $type is not supported by html_writer::select_time().");
         }
 
-        if (empty($attributes['id'])) {
-            $attributes['id'] = self::random_id('ts_');
-        }
-        $timerselector = self::select($timeunits, $name, $currentdate[$userdatetype], null, $attributes);
-        $label = self::tag('label', get_string(substr($type, 0, -1), 'form'), array('for'=>$attributes['id'], 'class'=>'accesshide'));
+        $attributes = (array) $attributes;
+        $data = (object) [
+            'name' => $name,
+            'id' => !empty($attributes['id']) ? $attributes['id'] : self::random_id('ts_'),
+            'label' => get_string(substr($type, 0, -1), 'form'),
+            'options' => array_map(function($value) use ($timeunits, $currentdate, $userdatetype) {
+                return [
+                    'name' => $timeunits[$value],
+                    'value' => $value,
+                    'selected' => $currentdate[$userdatetype] == $value
+                ];
+            }, array_keys($timeunits)),
+        ];
 
-        return $label.$timerselector;
+        unset($attributes['id']);
+        unset($attributes['name']);
+        $data->attributes = array_map(function($name) use ($attributes) {
+            return [
+                'name' => $name,
+                'value' => $attributes[$name]
+            ];
+        }, array_keys($attributes));
+
+        return $OUTPUT->render_from_template('core/select_time', $data);
     }
 
     /**
