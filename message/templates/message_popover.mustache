@@ -40,7 +40,7 @@
     {{$togglelabel}}{{#str}} showmessagewindownonew, message {{/str}}{{/togglelabel}}
     {{$togglecontent}}
         {{#pix}} t/message, core, {{#str}} togglemessagemenu, message {{/str}} {{/pix}}
-        <div class="count-container hidden"></div>
+        <div class="count-container hidden" data-region="count-container"></div>
     {{/togglecontent}}
 
     {{$containerlabel}}{{#str}} notificationwindow, message {{/str}}{{/containerlabel}}
@@ -50,6 +50,7 @@
         <a class="mark-all-read-button"
             href="#"
             role="button"
+            data-action="mark-all-read"
             data-toggle="tooltip"
             data-placement="top"
             data-original-title="{{#str}} markallread {{/str}}">
@@ -65,8 +66,8 @@
     {{/headeractions}}
 
     {{$content}}
-        <div class="messages" role="log" aria-busy="false" aria-atomic="false" aria-relevant="additions"></div>
-        <div class="empty-message" tabindex="0">{{#str}} nomessagesfound, message {{/str}}</div>
+        <div class="messages" data-region="messages" role="log" aria-busy="false" aria-atomic="false" aria-relevant="additions"></div>
+        <div class="empty-message" data-region="empty-message" tabindex="0">{{#str}} nomessagesfound, message {{/str}}</div>
     {{/content}}
 {{/ core/popover_region }}
 {{#js}}

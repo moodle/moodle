@@ -77,7 +77,7 @@
 }}
 <div class="preferences-page-container">
     <h2>{{#str}} notificationpreferences, message {{/str}}</h2>
-    <div class="disable-notification-container checkbox-container">
+    <div class="checkbox-container" data-region="disable-notification-container">
         <input id="disable-notifications"
            type="checkbox"
            data-disable-notifications
@@ -133,7 +133,7 @@
                         {{/processors}}
                     </tr>
                     {{#notifications}}
-                        <tr class="preference-row" data-preference-key="{{preferencekey}}">
+                        <tr class="preference-row" data-region="preference-row" data-preference-key="{{preferencekey}}">
                             <td class="preference-name">
                                 {{displayname}}
                             </td>

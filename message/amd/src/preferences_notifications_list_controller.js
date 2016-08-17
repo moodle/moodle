@@ -29,10 +29,10 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
         function($, Ajax, Notification, CustomEvents, NotificationPreference, NotificationProcessorSettings) {
 
     var SELECTORS = {
-        DISABLE_NOTIFICATIONS: '.disable-notification-container [data-disable-notifications]',
-        DISABLE_NOTIFICATIONS_CONTAINER: '.disable-notification-container',
+        DISABLE_NOTIFICATIONS: '[data-region="disable-notification-container"] [data-disable-notifications]',
+        DISABLE_NOTIFICATIONS_CONTAINER: '[data-region="disable-notification-container"]',
         PREFERENCE: '[data-state]',
-        PREFERENCE_ROW: '.preference-row',
+        PREFERENCE_ROW: '[data-region="preference-row"]',
         PREFERENCE_INPUT: '[data-state] input',
         PROCESSOR_SETTING: '[data-processor-setting]',
     };

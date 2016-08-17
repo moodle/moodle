@@ -28,9 +28,9 @@ define(['jquery', 'core/ajax', 'core/notification',
         function($, Ajax, Notification, ListController, CustomEvents) {
 
     var SELECTORS = {
-        PREFERENCES_CONTAINER: '.preferences-container',
-        BLOCK_NON_CONTACTS: '.block-non-contacts-container [data-block-non-contacts]',
-        BLOCK_NON_CONTACTS_CONTAINER: '.block-non-contacts-container',
+        PREFERENCES_CONTAINER: '[data-region="preferences-container"]',
+        BLOCK_NON_CONTACTS: '[data-region="block-non-contacts-container"] [data-block-non-contacts]',
+        BLOCK_NON_CONTACTS_CONTAINER: '[data-region="block-non-contacts-container"]',
     };
 
     /**

@@ -28,7 +28,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/fragment', 'core/templ
 
     var SELECTORS = {
         PROCESSOR: '[data-processor-name]',
-        PREFERENCE_ROW: '.preference-row',
+        PREFERENCE_ROW: '[data-region="preference-row"]',
     };
 
     /**

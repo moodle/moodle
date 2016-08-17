@@ -32,19 +32,19 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             PopoverController, NotificationRepo) {
 
     var SELECTORS = {
-        MARK_ALL_READ_BUTTON: '.mark-all-read-button',
-        USER_ID: 'data-userid',
-        MODE_TOGGLE: '.popover-region-header-actions .fancy-toggle',
-        UNREAD_NOTIFICATIONS_CONTAINER: '.unread-notifications',
-        ALL_NOTIFICATIONS_CONTAINER: '.all-notifications',
-        BLOCK_BUTTON: '.block-button',
-        SHOW_BUTTON: '.show-button',
-        HIDE_BUTTON: '.hide-button',
-        CONTENT_ITEM_CONTAINER: '.content-item-container',
-        EMPTY_MESSAGE: '.empty-message',
-        CONTENT_BODY_SHORT: '.content-body-short',
-        CONTENT_BODY_FULL: '.content-body-full',
+        MARK_ALL_READ_BUTTON: '[data-action="mark-all-read"]',
+        MODE_TOGGLE: '[data-region="popover-region-header-actions"] [data-region="fancy-toggle"]',
+        UNREAD_NOTIFICATIONS_CONTAINER: '[data-region="unread-notifications"]',
+        ALL_NOTIFICATIONS_CONTAINER: '[data-region="all-notifications"]',
+        BLOCK_BUTTON: '[data-action="block-button"]',
+        SHOW_BUTTON: '[data-action="show-button"]',
+        HIDE_BUTTON: '[data-action="hide-button"]',
+        CONTENT_ITEM_CONTAINER: '[data-region="notification-content-item-container"]',
+        EMPTY_MESSAGE: '[data-region="empty-message"]',
+        CONTENT_BODY_SHORT: '[data-region="content-body-short"]',
+        CONTENT_BODY_FULL: '[data-region="content-body-full"]',
         LINK_URL: '[data-link-url]',
+        COUNT_CONTAINER: '[data-region="count-container"]',
     };
 
     var PROCESSOR_NAME = 'popup';
@@ -62,7 +62,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
         this.markAllReadButton = this.root.find(SELECTORS.MARK_ALL_READ_BUTTON);
         this.unreadCount = 0;
-        this.userId = this.root.attr(SELECTORS.USER_ID);
+        this.userId = this.root.attr('data-userid');
         this.modeToggle = this.root.find(SELECTORS.MODE_TOGGLE);
         this.state = {
             unread: {
@@ -248,7 +248,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method renderUnreadCount
      */
     NotificationPopoverController.prototype.renderUnreadCount = function() {
-        var element = this.root.find('.count-container');
+        var element = this.root.find(SELECTORS.COUNT_CONTAINER);
 
         if (this.unreadCount) {
             element.text(this.unreadCount);
@@ -264,7 +264,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method hideUnreadCount
      */
     NotificationPopoverController.prototype.hideUnreadCount = function() {
-        this.root.find('.count-container').addClass('hidden');
+        this.root.find(SELECTORS.COUNT_CONTAINER).addClass('hidden');
     };
 
     /**

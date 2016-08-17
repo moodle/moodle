@@ -33,8 +33,11 @@
     }
 
 }}
-<div class="popover-region popover-region-{{uniqid}} collapsed {{$classes}}{{/classes}}" {{$attributes}}{{/attributes}}>
+<div class="popover-region popover-region-{{uniqid}} collapsed {{$classes}}{{/classes}}"
+    {{$attributes}}{{/attributes}}
+    data-region="popover-region">
     <div class="popover-region-toggle"
+        data-region="popover-region-toggle"
         aria-role="button"
         aria-controls="popover-region-container-{{uniqid}}"
         aria-haspopup="true"
@@ -45,16 +48,17 @@
     <div {{$containerattributes}}{{/containerattributes}}
         id="popover-region-container-{{uniqid}}"
         class="popover-region-container"
+        data-region="popover-region-container"
         aria-expanded="false"
         aria-hidden="true"
         aria-label="{{$containerlabel}}{{/containerlabel}}"
         role="region">
         <div class="popover-region-header-container">
-            <h3 class="popover-region-header-text">{{$headertext}}{{/headertext}}</h3>
-            <div class="popover-region-header-actions">{{$headeractions}}{{/headeractions}}</div>
+            <h3 class="popover-region-header-text" data-region="popover-region-header-text">{{$headertext}}{{/headertext}}</h3>
+            <div class="popover-region-header-actions" data-region="popover-region-header-actions">{{$headeractions}}{{/headeractions}}</div>
         </div>
-        <div class="popover-region-content-container">
-            <div class="popover-region-content">
+        <div class="popover-region-content-container" data-region="popover-region-content-container">
+            <div class="popover-region-content" data-region="popover-region-content">
                 {{$content}}{{/content}}
             </div>
             {{> core/loading }}

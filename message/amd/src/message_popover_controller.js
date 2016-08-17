@@ -32,12 +32,11 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             PopoverController, MessageRepo, URL) {
 
     var SELECTORS = {
-        MARK_ALL_READ_BUTTON: '.mark-all-read-button',
-        USER_ID: 'data-userid',
-        MODE_TOGGLE: '.popover-region-header-actions .fancy-toggle',
-        CONTENT: '.messages',
-        CONTENT_ITEM_CONTAINER: '.content-item-container',
-        EMPTY_MESSAGE: '.empty-message',
+        MARK_ALL_READ_BUTTON: '[data-action="mark-all-read"]',
+        CONTENT: '[data-region="messages"]',
+        CONTENT_ITEM_CONTAINER: '[data-region="message-content-item-container"]',
+        EMPTY_MESSAGE: '[data-region="empty-message"]',
+        COUNT_CONTAINER: '[data-region="count-container"]',
     };
 
     /**
@@ -54,7 +53,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         this.markAllReadButton = this.root.find(SELECTORS.MARK_ALL_READ_BUTTON);
         this.blockNonContactsButton = this.root.find(SELECTORS.BLOCK_NON_CONTACTS_BUTTON);
         this.content = this.root.find(SELECTORS.CONTENT);
-        this.userId = this.root.attr(SELECTORS.USER_ID);
+        this.userId = this.root.attr('data-userid');
         this.limit = 20;
         this.offset = 0;
         this.loadedAll = false;
@@ -125,7 +124,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method renderUnreadCount
      */
     MessagePopoverController.prototype.renderUnreadCount = function() {
-        var element = this.root.find('.count-container');
+        var element = this.root.find(SELECTORS.COUNT_CONTAINER);
 
         if (this.unreadCount) {
             element.text(this.unreadCount);
@@ -141,7 +140,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      * @method hideUnreadCount
      */
     MessagePopoverController.prototype.hideUnreadCount = function() {
-        this.root.find('.count-container').addClass('hidden');
+        this.root.find(SELECTORS.COUNT_CONTAINER).addClass('hidden');
     };
 
     /**

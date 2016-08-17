@@ -35,6 +35,7 @@
 
 }}
 <div class="content-item-container"
+    data-region="notification-content-item-container"
     role="listitem"
     aria-expanded="false"
     aria-label="{{subject}}"
@@ -48,13 +49,13 @@
             <h3 {{#userfromprofileurl}}data-link-url="{{{.}}}" role="link"{{/userfromprofileurl}}>{{userfromfullname}}</h3>
         </div>
         <div class="content-item-body">
-            <div class="content-body-short">
+            <div class="content-body-short" data-region="content-body-short">
                 <div class="notification-image">
                     <img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/>
                 </div>
                 <p class="notification-message">{{subject}}</p>
             </div>
-            <div class="content-body-full" aria-hidden="true">
+            <div class="content-body-full" aria-hidden="true" data-region="content-body-full">
                 <pre>{{fullmessage}}</pre>
             </div>
         </div>
@@ -66,6 +67,7 @@
         {{#preferenceenabled}}
             {{#preference}}
                 <span class="block-button"
+                    data-action="block-button"
                     data-preference-key="{{key}}"
                     data-preference-loggedin="{{loggedin}}"
                     data-preference-loggedoff="{{loggedoff}}">
@@ -76,12 +78,14 @@
         {{/preferenceenabled}}
         <div class="expand-buttons">
             <span class="show-button"
+                data-action="show-button"
                 tabindex="0"
                 role="button"
                 aria-label="{{#str}} expandnotification, message {{/str}}">
                 {{#pix}} t/sort_desc {{/pix}}
             </span>
             <span class="hide-button"
+                data-action="hide-button"
                 tabindex="0"
                 role="button"
                 aria-hidden="true"
