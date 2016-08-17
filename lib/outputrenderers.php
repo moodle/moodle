@@ -261,6 +261,51 @@ class renderer_base {
     public function pix_url($imagename, $component = 'moodle') {
         return $this->page->theme->pix_url($imagename, $component);
     }
+
+    /**
+     * Return the site's logo URL, if any.
+     *
+     * @param int $maxwidth The maximum width, or null when the maximum width does not matter.
+     * @param int $maxheight The maximum height, or null when the maximum height does not matter.
+     * @return moodle_url|false
+     */
+    public function get_logo_url($maxwidth = null, $maxheight = 100) {
+        global $CFG;
+        $logo = get_config('core_admin', 'logo');
+        if (empty($logo)) {
+            return false;
+        }
+
+        // Hide the requested size in the file path.
+        $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
+
+        // Use $CFG->themerev to prevent browser caching when the file changes.
+        return moodle_url::make_pluginfile_url(context_system::instance()->id, 'core_admin', 'logo', $filepath,
+            theme_get_revision(), $logo);
+    }
+
+    /**
+     * Return the site's compact logo URL, if any.
+     *
+     * @param int $maxwidth The maximum width, or null when the maximum width does not matter.
+     * @param int $maxheight The maximum height, or null when the maximum height does not matter.
+     * @return moodle_url|false
+     */
+    public function get_compact_logo_url($maxwidth = 100, $maxheight = 100) {
+        global $CFG;
+        $logo = get_config('core_admin', 'logocompact');
+        if (empty($logo)) {
+            return false;
+        }
+
+        // Hide the requested size in the file path.
+        $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
+
+        // Use $CFG->themerev to prevent browser caching when the file changes.
+        return moodle_url::make_pluginfile_url(context_system::instance()->id, 'core_admin', 'logocompact', $filepath,
+            theme_get_revision(), $logo);
+    }
+
 }
 
 

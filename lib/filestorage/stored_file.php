@@ -1063,4 +1063,28 @@ class stored_file {
         // Generate the thumbnail.
         return generate_image_thumbnail_from_image($original, $imageinfo, $width, $height);
     }
+
+    /**
+     * Generate a resized image for this stored_file.
+     *
+     * @param int|null $width The desired width, or null to only use the height.
+     * @param int|null $height The desired height, or null to only use the width.
+     * @return string|false False when a problem occurs, else the image data.
+     */
+    public function resize_image($width, $height) {
+        global $CFG;
+        require_once($CFG->libdir . '/gdlib.php');
+
+        // Fetch the image information for this image.
+        $imageinfo = @getimagesizefromstring($this->get_content());
+        if (empty($imageinfo)) {
+            return false;
+        }
+
+        // Create a new image from the file.
+        $original = @imagecreatefromstring($this->get_content());
+
+        // Generate the resized image.
+        return resize_image_from_image($original, $imageinfo, $width, $height);
+    }
 }

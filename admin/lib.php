@@ -24,6 +24,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Return a list of page types
  * @param string $pagetype current page type
@@ -36,4 +38,87 @@ function admin_page_type_list($pagetype, $parentcontext, $currentcontext) {
         $pagetype => get_string('page-admin-current', 'pagetype')
     );
     return $array;
+}
+
+/**
+ * File serving.
+ *
+ * @param stdClass $course The course object.
+ * @param stdClass $cm The cm object.
+ * @param context $context The context object.
+ * @param string $filearea The file area.
+ * @param array $args List of arguments.
+ * @param bool $forcedownload Whether or not to force the download of the file.
+ * @param array $options Array of options.
+ * @return void|false
+ */
+function core_admin_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    global $CFG;
+
+    if (in_array($filearea, ['logo', 'logocompact'])) {
+        $size = array_shift($args); // The path hides the size.
+        $itemid = clean_param(array_shift($args), PARAM_INT);
+        $filename = clean_param(array_shift($args), PARAM_FILE);
+        $themerev = theme_get_revision();
+        if ($themerev <= 0) {
+            // Normalise to 0 as -1 doesn't place well with paths.
+             $themerev = 0;
+        }
+
+        // Extract the requested width and height.
+        $maxwidth = 0;
+        $maxheight = 0;
+        if (preg_match('/^\d+x\d+$/', $size)) {
+            list($maxwidth, $maxheight) = explode('x', $size);
+            $maxwidth = clean_param($maxwidth, PARAM_INT);
+            $maxheight = clean_param($maxheight, PARAM_INT);
+        }
+
+        $lifetime = 0;
+        if ($itemid > 0 && $themerev == $itemid) {
+            // The itemid is $CFG->themerev, when 0 or less no caching. Also no caching when they don't match.
+            $lifetime = DAYSECS * 60;
+        }
+
+        // Anyone, including guests and non-logged in users, can view the logos.
+        $options = ['cacheability' => 'public'];
+
+        // Check if we've got a cached file to return. When lifetime is 0 then we don't want to cached one.
+        $candidate = $CFG->localcachedir . "/core_admin/$themerev/$filearea/{$maxwidth}x{$maxheight}/$filename";
+        if (file_exists($candidate) && $lifetime > 0) {
+            send_file($candidate, $filename, $lifetime, 0, false, false, '', false, $options);
+        }
+
+        // Find the original file.
+        $fs = get_file_storage();
+        $filepath = "/{$context->id}/core_admin/{$filearea}/0/{$filename}";
+        if (!$file = $fs->get_file_by_hash(sha1($filepath))) {
+            send_file_not_found();
+        }
+
+        // No need for resizing, but if the file should be cached we save it so we can serve it fast next time.
+        if (empty($maxwidth) && empty($maxheight)) {
+            if ($lifetime) {
+                file_safe_save_content($file->get_content(), $candidate);
+            }
+            send_stored_file($file, $lifetime, 0, false, $options);
+        }
+
+        // Proceed with the resizing.
+        $filedata = $file->resize_image($maxwidth, $maxheight);
+        if (!$filedata) {
+            send_file_not_found();
+        }
+
+        // If we don't want to cached the file, serve now and quit.
+        if (!$lifetime) {
+            send_content_uncached($filedata, $filename);
+        }
+
+        // Save, serve and quit.
+        file_safe_save_content($filedata, $candidate);
+        send_file($candidate, $filename, $lifetime, 0, false, false, '', false, $options);
+    }
+
+    send_file_not_found();
 }

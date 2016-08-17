@@ -51,6 +51,26 @@ preferences,moodle|/user/preferences.php|preferences',
         }
     }
 
+    // Logos section.
+    $temp = new admin_settingpage('logos', new lang_string('logossettings', 'admin'));
+
+    // Logo file setting.
+    $title = get_string('logo', 'admin');
+    $description = get_string('logo_desc', 'admin');
+    $setting = new admin_setting_configstoredfile('core_admin/logo', $title, $description, 'logo', 0,
+        ['maxfiles' => 1, 'accepted_types' => ['.jpg', '.png']]);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $temp->add($setting);
+
+    // Small logo file setting.
+    $title = get_string('logocompact', 'admin');
+    $description = get_string('logocompact_desc', 'admin');
+    $setting = new admin_setting_configstoredfile('core_admin/logocompact', $title, $description, 'logocompact', 0,
+        ['maxfiles' => 1, 'accepted_types' => ['.jpg', '.png']]);
+    $setting->set_updatedcallback('theme_reset_all_caches');
+    $temp->add($setting);
+
+    $ADMIN->add('appearance', $temp);
 
     // Calendar settings.
     $temp = new admin_settingpage('calendar', new lang_string('calendarsettings','admin'));

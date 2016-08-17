@@ -2071,6 +2071,70 @@ function send_temp_file_finished($path) {
 }
 
 /**
+ * Serve content which is not meant to be cached.
+ *
+ * This is only intended to be used for volatile public files, for instance
+ * when development is enabled, or when caching is not required on a public resource.
+ *
+ * @param string $content Raw content.
+ * @param string $filename The file name.
+ * @return void
+ */
+function send_content_uncached($content, $filename) {
+    $mimetype = mimeinfo('type', $filename);
+    $charset = strpos($mimetype, 'text/') === 0 ? '; charset=utf-8' : '';
+
+    header('Content-Disposition: inline; filename="' . $filename . '"');
+    header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
+    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 2) . ' GMT');
+    header('Pragma: ');
+    header('Accept-Ranges: none');
+    header('Content-Type: ' . $mimetype . $charset);
+    header('Content-Length: ' . strlen($content));
+
+    echo $content;
+    die();
+}
+
+/**
+ * Safely save content to a certain path.
+ *
+ * This function tries hard to be atomic by first copying the content
+ * to a separate file, and then moving the file across. It also prevents
+ * the user to abort a request to prevent half-safed files.
+ *
+ * This function is intended to be used when saving some content to cache like
+ * $CFG->localcachedir. If you're not caching a file you should use the File API.
+ *
+ * @param string $content The file content.
+ * @param string $destination The absolute path of the final file.
+ * @return void
+ */
+function file_safe_save_content($content, $destination) {
+    global $CFG;
+
+    clearstatcache();
+    if (!file_exists(dirname($destination))) {
+        @mkdir(dirname($destination), $CFG->directorypermissions, true);
+    }
+
+    // Prevent serving of incomplete file from concurrent request,
+    // the rename() should be more atomic than fwrite().
+    ignore_user_abort(true);
+    if ($fp = fopen($destination . '.tmp', 'xb')) {
+        fwrite($fp, $content);
+        fclose($fp);
+        rename($destination . '.tmp', $destination);
+        @chmod($destination, $CFG->filepermissions);
+        @unlink($destination . '.tmp'); // Just in case anything fails.
+    }
+    ignore_user_abort(false);
+    if (connection_aborted()) {
+        die();
+    }
+}
+
+/**
  * Handles the sending of file data to the user's browser, including support for
  * byteranges etc.
  *
@@ -2086,9 +2150,12 @@ function send_temp_file_finished($path) {
  *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
  *                        you must detect this case when control is returned using connection_aborted. Please not that session is closed
  *                        and should not be reopened.
+ * @param array $options An array of options, currently accepts:
+ *                       - (string) cacheability: public, or private.
  * @return null script execution stopped unless $dontdie is true
  */
-function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
+function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='',
+                   $dontdie=false, array $options = array()) {
     global $CFG, $COURSE;
 
     if ($dontdie) {
@@ -2122,7 +2189,13 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
 
     if ($lifetime > 0) {
         $cacheability = ' public,';
-        if (isloggedin() and !isguestuser()) {
+        if (!empty($options['cacheability']) && ($options['cacheability'] === 'public')) {
+            // This file must be cache-able by both browsers and proxies.
+            $cacheability = ' public,';
+        } else if (!empty($options['cacheability']) && ($options['cacheability'] === 'private')) {
+            // This file must be cache-able only by browsers.
+            $cacheability = ' private,';
+        } else if (isloggedin() and !isguestuser()) {
             // By default, under the conditions above, this file must be cache-able only by browsers.
             $cacheability = ' private,';
         }
