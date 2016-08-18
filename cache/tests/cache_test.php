@@ -188,6 +188,35 @@ class core_cache_testcase extends advanced_testcase {
     }
 
     /**
+     * Tests set_identifiers resets identifiers and static cache
+     */
+    public function test_set_identifiers() {
+        $instance = cache_config_testing::instance();
+        $instance->phpunit_add_definition('phpunit/identifier', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'identifier',
+            'simplekeys' => true,
+            'simpledata' => true,
+            'staticacceleration' => true
+        ));
+        $cache = cache::make('phpunit', 'identifier', array('area'));
+        $this->assertTrue($cache->set('contest', 'test data 1'));
+        $this->assertEquals('test data 1', $cache->get('contest'));
+
+        $cache->set_identifiers(array());
+        $this->assertFalse($cache->get('contest'));
+        $this->assertTrue($cache->set('contest', 'empty ident'));
+        $this->assertEquals('empty ident', $cache->get('contest'));
+
+        $cache->set_identifiers(array('area'));
+        $this->assertEquals('test data 1', $cache->get('contest'));
+
+        $cache->set_identifiers(array());
+        $this->assertEquals('empty ident', $cache->get('contest'));
+    }
+
+    /**
      * Tests the default application cache
      */
     public function test_default_application_cache() {
@@ -306,15 +335,17 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertTrue($cache->set($key, $dataobject));
         $this->assertEquals($dataobject, $cache->get($key));
 
-        $specobject = new cache_phpunit_dummy_object('red', 'blue');
+        $starttime = microtime(true);
+        $specobject = new cache_phpunit_dummy_object('red', 'blue', $starttime);
         $this->assertTrue($cache->set($key, $specobject));
         $result = $cache->get($key);
         $this->assertInstanceOf('cache_phpunit_dummy_object', $result);
         $this->assertEquals('red_ptc_wfc', $result->property1);
         $this->assertEquals('blue_ptc_wfc', $result->property2);
+        $this->assertGreaterThan($starttime, $result->propertytime);
 
         // Test array of objects.
-        $specobject = new cache_phpunit_dummy_object('red', 'blue');
+        $specobject = new cache_phpunit_dummy_object('red', 'blue', $starttime);
         $data = new cacheable_object_array(array(
             clone($specobject),
             clone($specobject),
@@ -328,6 +359,8 @@ class core_cache_testcase extends advanced_testcase {
             $this->assertInstanceOf('cache_phpunit_dummy_object', $item);
             $this->assertEquals('red_ptc_wfc', $item->property1);
             $this->assertEquals('blue_ptc_wfc', $item->property2);
+            // Ensure that wake from cache is called in all cases.
+            $this->assertGreaterThan($starttime, $item->propertytime);
         }
 
         // Test set many.
@@ -1846,6 +1879,43 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertEquals('C', $cache->phpunit_static_acceleration_get('c'));
         $this->assertEquals('D', $cache->phpunit_static_acceleration_get('d'));
         $this->assertEquals('E', $cache->phpunit_static_acceleration_get('e'));
+
+        // Store a cacheable_object, get many times and ensure each time wake_for_cache is used.
+        // Both get and get_many are tested.  Two cache entries are used to ensure the times aren't
+        // confused with multiple calls to get()/get_many().
+        $startmicrotime = microtime(true);
+        $cacheableobject = new cache_phpunit_dummy_object(1, 1, $startmicrotime);
+        $cacheableobject2 = new cache_phpunit_dummy_object(2, 2, $startmicrotime);
+        $this->assertTrue($cache->set('a', $cacheableobject));
+        $this->assertTrue($cache->set('b', $cacheableobject2));
+        $staticaccelerationreturntime = $cache->phpunit_static_acceleration_get('a')->propertytime;
+        $staticaccelerationreturntimeb = $cache->phpunit_static_acceleration_get('b')->propertytime;
+        $this->assertGreaterThan($startmicrotime, $staticaccelerationreturntime, 'Restore time of static must be newer.');
+
+        // Reset the static cache without resetting backing store.
+        $cache->phpunit_static_acceleration_purge();
+
+        // Get the value from the backend store, populating the static cache.
+        $cachevalue = $cache->get('a');
+        $this->assertInstanceOf('cache_phpunit_dummy_object', $cachevalue);
+        $this->assertGreaterThan($staticaccelerationreturntime, $cachevalue->propertytime);
+        $backingstorereturntime = $cachevalue->propertytime;
+
+        $results = $cache->get_many(array('b'));
+        $this->assertInstanceOf('cache_phpunit_dummy_object', $results['b']);
+        $this->assertGreaterThan($staticaccelerationreturntimeb, $results['b']->propertytime);
+        $backingstorereturntimeb = $results['b']->propertytime;
+
+        // Obtain the value again and confirm that static cache is using wake_from_cache.
+        // Upon failure, the times are not adjusted as wake_from_cache is skipped as the
+        // value is stored serialized in the static acceleration cache.
+        $cachevalue = $cache->phpunit_static_acceleration_get('a');
+        $this->assertInstanceOf('cache_phpunit_dummy_object', $cachevalue);
+        $this->assertGreaterThan($backingstorereturntime, $cachevalue->propertytime);
+
+        $results = $cache->get_many(array('b'));
+        $this->assertInstanceOf('cache_phpunit_dummy_object', $results['b']);
+        $this->assertGreaterThan($backingstorereturntimeb, $results['b']->propertytime);
 
         /** @var cache_phpunit_application $cache */
         $cache = cache::make('phpunit', 'accelerated2');
