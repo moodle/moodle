@@ -71,18 +71,6 @@ class admin_setting_configtext_trim_lower extends admin_setting_configtext {
         return ($this->config_write($this->name, trim($data)) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    /**
-     * Return an XHTML string for the setting
-     * @return string Returns an XHTML string
-     */
-    public function output_html($data, $query='') {
-        $default = $this->get_defaultsetting();
-        $disabled = $this->enabled ? '': ' disabled="disabled"';
-        return format_admin_setting($this, $this->visiblename,
-        '<div class="form-text defaultsnext"><input type="text" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" '.$disabled.' /></div>',
-        $this->description, true, '', $default, $query);
-    }
-
 }
 
 class admin_setting_ldap_rolemapping extends admin_setting {
@@ -169,7 +157,8 @@ class admin_setting_ldap_rolemapping extends admin_setting {
             $contextname = $this->get_full_name().'['.$role['id'].'][contexts]';
             $return .= html_writer::start_tag('div', array('style' => 'height: 2em;'));
             $return .= html_writer::label(get_string('role_mapping_context', 'enrol_ldap', $role['name']), $contextid, false, array('class' => 'accesshide'));
-            $attrs = array('type' => 'text', 'size' => '40', 'id' => $contextid, 'name' => $contextname, 'value' => s($role['contexts']));
+            $attrs = array('type' => 'text', 'size' => '40', 'id' => $contextid, 'name' => $contextname,
+                'value' => s($role['contexts']), 'class' => 'text-ltr');
             $return .= html_writer::empty_tag('input', $attrs);
             $return .= html_writer::end_tag('div');
         }
@@ -182,7 +171,8 @@ class admin_setting_ldap_rolemapping extends admin_setting {
             $memberattrname = $this->get_full_name().'['.$role['id'].'][memberattribute]';
             $return .= html_writer::start_tag('div', array('style' => 'height: 2em;'));
             $return .= html_writer::label(get_string('role_mapping_attribute', 'enrol_ldap', $role['name']), $memberattrid, false, array('class' => 'accesshide'));
-            $attrs = array('type' => 'text', 'size' => '15', 'id' => $memberattrid, 'name' => $memberattrname, 'value' => s($role['memberattribute']));
+            $attrs = array('type' => 'text', 'size' => '15', 'id' => $memberattrid, 'name' => $memberattrname,
+                'value' => s($role['memberattribute']), 'class' => 'text-ltr');
             $return .= html_writer::empty_tag('input', $attrs);
             $return .= html_writer::end_tag('div');
         }

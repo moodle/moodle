@@ -43,6 +43,11 @@ abbr {
     text-align: right;
 }
 
+/*rtl:ignore*/
+.text-ltr {
+    direction: ltr !important;
+}
+
 #add,
 #remove,
 .centerpara,

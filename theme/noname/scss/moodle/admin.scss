@@ -366,6 +366,12 @@
     margin-right: 7px;
 }
 
+.form-description pre,
+.formsettingheading pre {
+    /*rtl:ignore*/
+    direction: ltr;
+}
+
 .form-item .form-setting .form-htmlarea {
     display: inline;
 }

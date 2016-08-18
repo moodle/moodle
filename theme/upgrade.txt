@@ -17,6 +17,9 @@ information provided here is intended especially for theme designer.
   of the tool RTLCSS-PHP for more information: https://github.com/moodlehq/rtlcss-php
 * The class .dir-ltr should not be used any more. To force LTR styles use the directive
   to remove the rule when the language is RTL. See RTLCSS-PHP for more information.
+* A new class .text-ltr may be used to force the direction to LTR. This is especially useful
+  for forms fields (numbers, emails, URLs must not be RTL'd), and for displaying code
+  snippets or configuration samples.
 * A new callback can be defined to post process the CSS using an object representation
   of the CSS tree ($THEME->csstreepostprocess). This gives a lot more flexibility than a
   simplel find and replace. Refer to 'noname' for an example, and to PHP-CSS-Parser

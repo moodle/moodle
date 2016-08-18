@@ -70,6 +70,10 @@
 .mdl-right {
   text-align: right;
 }
+/*rtl:ignore*/
+.text-ltr {
+  direction: ltr !important;
+}
 #add,
 #remove,
 .centerpara,
@@ -2918,6 +2922,12 @@ img.iconsmall {
 }
 .form-description {
   clear: right;
+}
+.form-description pre,
+.formsettingheading pre {
+  /* Code examples should be left aligned. */
+  /*rtl:ignore*/
+  direction: ltr;
 }
 .form-item .form-setting .form-htmlarea {
   width: 640px;
@@ -13036,59 +13046,6 @@ div.backup-section + form:after,
   text-align: left;
   direction: ltr;
 }
-#id_s__pathtodu,
-#id_s__aspellpath,
-#id_s__pathtodot,
-#id_s__supportemail,
-#id_s__supportpage,
-#id_s__sessioncookie,
-#id_s__sessioncookiepath,
-#id_s__sessioncookiedomain,
-#id_s__proxyhost,
-#id_s__proxyuser,
-#id_s__proxypassword,
-#id_s__proxybypass,
-#id_s__jabberhost,
-#id_s__jabberserver,
-#id_s__jabberusername,
-#id_s__jabberpassword,
-#id_s__additionalhtmlhead,
-#id_s__additionalhtmltopofbody,
-#id_s__additionalhtmlfooter,
-#id_s__docroot,
-#id_s__filter_tex_latexpreamble,
-#id_s__filter_tex_latexbackground,
-#id_s__filter_tex_pathlatex,
-#id_s__filter_tex_pathdvips,
-#id_s__filter_tex_pathconvert,
-#id_s__blockedip,
-#id_s__pathtoclam,
-#id_s__quarantinedir,
-#id_s__sitepolicy,
-#id_s__sitepolicyguest,
-#id_s__cronremotepassword,
-#id_s__allowedip,
-#id_s__blockedip,
-#id_s_enrol_meta_nosyncroleids,
-#id_s_enrol_ldap_host_url,
-#id_s_enrol_ldap_ldapencoding,
-#id_s_enrol_ldap_bind_dn,
-#id_s_enrol_ldap_bind_pw,
-#admin-emoticons .form-text,
-#admin-role_mapping input[type=text],
-#id_s_enrol_paypal_paypalbusiness,
-#id_s_enrol_flatfile_location,
-#page-admin-setting-enrolsettingsflatfile input[type=text],
-#page-admin-setting-enrolsettingsdatabase input[type=text],
-#page-admin-auth-db input[type=text] {
-  /*rtl:ignore*/
-  direction: ltr;
-}
-/*rtl:ignore*/
-#page-admin-setting-enrolsettingsflatfile .informationbox {
-  direction: ltr;
-  text-align: left;
-}
 #page-grade-edit-outcome-course .courseoutcomes {
   margin-left: auto;
   margin-right: auto;
@@ -17250,7 +17207,6 @@ body.behat-site .navbar-fixed-top {
 .phpinfo th,
 .phpinfo h2 {
   margin: auto;
-  text-align: left;
 }
 .phpinfo h2 {
   width: 600px;

@@ -58,9 +58,18 @@ if (has_capability('moodle/grade:manage', $systemcontext)
                                                         GRADE_NAVMETHOD_TABS => new lang_string('tabs', 'grades'),
                                                         GRADE_NAVMETHOD_COMBO => new lang_string('combo', 'grades'))));
 
-        $temp->add(new admin_setting_configtext('grade_export_userprofilefields', new lang_string('gradeexportuserprofilefields', 'grades'), new lang_string('gradeexportuserprofilefields_desc', 'grades'), 'firstname,lastname,idnumber,institution,department,email', PARAM_TEXT));
+        $setting = new admin_setting_configtext('grade_export_userprofilefields',
+            new lang_string('gradeexportuserprofilefields', 'grades'),
+            new lang_string('gradeexportuserprofilefields_desc', 'grades'),
+            'firstname,lastname,idnumber,institution,department,email', PARAM_TEXT);
+        $setting->set_force_ltr(true);
+        $temp->add($setting);
 
-        $temp->add(new admin_setting_configtext('grade_export_customprofilefields', new lang_string('gradeexportcustomprofilefields', 'grades'), new lang_string('gradeexportcustomprofilefields_desc', 'grades'), '', PARAM_TEXT));
+        $setting = new admin_setting_configtext('grade_export_customprofilefields',
+            new lang_string('gradeexportcustomprofilefields', 'grades'),
+            new lang_string('gradeexportcustomprofilefields_desc', 'grades'), '', PARAM_TEXT);
+        $setting->set_force_ltr(true);
+        $temp->add($setting);
 
         $temp->add(new admin_setting_configcheckbox('recovergradesdefault', new lang_string('recovergradesdefault', 'grades'), new lang_string('recovergradesdefault_help', 'grades'), 0));
 
