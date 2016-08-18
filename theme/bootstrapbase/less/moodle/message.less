@@ -145,7 +145,16 @@
                     box-sizing: border-box;
 
                     &.unread {
-                        background-color: #F1F1F1;
+                        background-color: #f1f1f1;
+
+                        .information {
+                            // The span7 width to allow unread message count to show.
+                            width: 57.26495726%;
+                        }
+
+                        .unread-count-container {
+                            display: inline-block;
+                        }
                     }
 
                     &:hover {
@@ -159,8 +168,6 @@
                     .picture {
                         line-height: 66px;
                         text-align: center;
-                        width: 25.64102564%;
-                        margin: 0;
                         height: 66px;
                         border-bottom: 1px solid #fff;
 
@@ -171,7 +178,6 @@
                     }
 
                     .information {
-                        margin: 0;
                         padding: 6px 0;
                         height: 66px;
 
@@ -190,6 +196,12 @@
                             color: #a1a1a1;
                             padding-right: 10px;
                         }
+                    }
+
+                    .unread-count-container {
+                        display: none;
+                        line-height: 66px;
+                        text-align: center;
                     }
                 }
             }

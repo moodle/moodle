@@ -5870,7 +5870,13 @@ a.ygtvspacer:hover {
   box-sizing: border-box;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact.unread {
-  background-color: #F1F1F1;
+  background-color: #f1f1f1;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.unread .information {
+  width: 57.26495726%;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.unread .unread-count-container {
+  display: inline-block;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact:hover {
   background-color: #4f94cd;
@@ -5897,8 +5903,6 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .picture {
   line-height: 66px;
   text-align: center;
-  width: 25.64102564%;
-  margin: 0;
   height: 66px;
   border-bottom: 1px solid #fff;
 }
@@ -5907,7 +5911,6 @@ a.ygtvspacer:hover {
   height: 54px;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .information {
-  margin: 0;
   padding: 6px 0;
   height: 66px;
 }
@@ -5924,6 +5927,11 @@ a.ygtvspacer:hover {
   white-space: nowrap;
   color: #a1a1a1;
   padding-right: 10px;
+}
+.messaging-area-container .messaging-area .contacts-area .contacts .contact .unread-count-container {
+  display: none;
+  line-height: 66px;
+  text-align: center;
 }
 .messaging-area-container .messaging-area .contacts-area .tabs {
   border-top: 1px solid #e3e3e3;
