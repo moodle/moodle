@@ -151,6 +151,7 @@ class helper {
         // Check if the user is online.
         $data->isonline = \core_message\helper::is_online($userfields->lastaccess);
         $data->isread = isset($contact->isread) ? $contact->isread : 0;
+        $data->unreadcount = isset($contact->unreadcount) ? $contact->unreadcount : null;
 
         return new \core_message\output\messagearea\contact($data);
     }

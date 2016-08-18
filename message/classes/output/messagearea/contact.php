@@ -76,6 +76,7 @@ class contact implements templatable, renderable {
         }
         $contact->isonline = $this->contact->isonline;
         $contact->isread = $this->contact->isread;
+        $contact->unreadcount = $this->contact->unreadcount;
 
         return $contact;
     }

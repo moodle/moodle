@@ -752,6 +752,7 @@ class core_message_external extends external_api {
                             'lastmessage' => new external_value(PARAM_RAW, 'The user\'s last message, null if none.'),
                             'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                             'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
+                            'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation'),
                         )
                     )
                 )

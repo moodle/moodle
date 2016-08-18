@@ -7848,6 +7848,7 @@ body.path-question-type .mform fieldset.hidden {
   height: 100%;
   width: 20%;
   display: inline-block;
+  text-align: center;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .profile-image-container img {
   height: 100%;
@@ -7871,8 +7872,19 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .content-item-body p {
   margin: 0;
 }
+.popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .unread-count-container {
+  display: none;
+}
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread {
   background-color: #f1f1f1;
+}
+.popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread .content-item-body {
+  width: 65%;
+}
+.popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread .unread-count-container {
+  display: inline-block;
+  width: 10%;
+  text-align: center;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container.loading .popover-region-content .messages:empty + .empty-message {
   display: none;

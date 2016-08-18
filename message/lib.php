@@ -411,6 +411,12 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     $sql = str_replace('1 as readtable', '0 as readtable', $sql);
     $unread = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
+    $unreadcountssql = 'SELECT useridfrom, count(*) as count
+                        FROM {message}
+                        WHERE useridto = :userid
+                        GROUP BY useridfrom';
+    $unreadcounts = $DB->get_records_sql($unreadcountssql, array('userid' => $user->id));
+
     // Union the 2 result sets together looking for the message with the most
     // recent timecreated for each other user.
     // $conversation->id (the array key) is the other user's ID.
@@ -419,8 +425,9 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     foreach ($conversation_arrays as $conversation_array) {
         foreach ($conversation_array as $conversation) {
             // Only consider it unread if $user has unread messages.
-            if (!$conversation->readtable && $conversation->useridto == $user->id) {
+            if (isset($unreadcounts[$conversation->useridfrom])) {
                 $conversation->isread = 0;
+                $conversation->unreadcount = $unreadcounts[$conversation->useridfrom]->count;
             } else {
                 $conversation->isread = 1;
             }
@@ -429,6 +436,13 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
                 $conversations[$conversation->id] = $conversation;
             } else {
                 $current = $conversations[$conversation->id];
+                // We need to maintain the isread and unreadcount values from existing
+                // parts of the conversation if we're replacing it.
+                $conversation->isread = ($conversation->isread && $current->isread);
+                if (isset($current->unreadcount) && !isset($conversation->unreadcount)) {
+                    $conversation->unreadcount = $current->unreadcount;
+                }
+
                 if ($current->timecreated < $conversation->timecreated) {
                     $conversations[$conversation->id] = $conversation;
                 } else if ($current->timecreated == $conversation->timecreated) {

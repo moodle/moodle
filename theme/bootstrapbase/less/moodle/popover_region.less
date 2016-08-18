@@ -637,6 +637,7 @@
                                 height: 100%;
                                 width: 20%;
                                 display: inline-block;
+                                text-align: center;
 
                                 img {
                                     height: 100%;
@@ -664,9 +665,23 @@
                                     margin: 0;
                                 }
                             }
+
+                            .unread-count-container {
+                                display: none;
+                            }
                         }
                         &.unread {
                             background-color: #f1f1f1;
+
+                            .content-item-body {
+                                width: 65%;
+                            }
+
+                            .unread-count-container {
+                                display: inline-block;
+                                width: 10%;
+                                text-align: center;
+                            }
                         }
                     }
                 }
