@@ -161,7 +161,7 @@ class filter_mathjaxloader extends moodle_text_filter {
             $PAGE->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.typeset');
             if ($hasextra) {
                 // If custom dilimeters are used, wrap whole text to prevent autolinking.
-                $text = '<span class="nolink">' + $text + '</span>';
+                $text = '<span class="nolink">' . $text . '</span>';
             } else {
                 if ($hasinline) {
                     // If the default inline TeX delimiters \( \) are present, wrap each pair in nolink.
