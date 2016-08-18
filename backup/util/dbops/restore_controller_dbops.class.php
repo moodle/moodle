@@ -95,6 +95,12 @@ abstract class restore_controller_dbops extends restore_dbops {
             throw new backup_dbops_exception('restore_controller_dbops_nonexisting');
         }
         $controller = unserialize(base64_decode($controllerrec->controller));
+        if (!is_object($controller)) {
+            // The controller field of the table did not contain a serialized object.
+            // It is made empty after it has been used successfully, it is likely that
+            // the user has pressed the browser back button at some point.
+            throw new backup_dbops_exception('restore_controller_dbops_loading_invalid_controller');
+        }
         // Check checksum is ok. Sounds silly but it isn't ;-)
         if (!$controller->is_checksum_correct($controllerrec->checksum)) {
             throw new backup_dbops_exception('restore_controller_dbops_loading_checksum_mismatch');
