@@ -12,7 +12,10 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $ADMIN->add('appearance', new admin_category('themes', new lang_string('themes')));
     // "themesettings" settingpage
     $temp = new admin_settingpage('themesettings', new lang_string('themesettings', 'admin'));
-    $temp->add(new admin_setting_configtext('themelist', new lang_string('themelist', 'admin'), new lang_string('configthemelist','admin'), '', PARAM_NOTAGS));
+    $setting = new admin_setting_configtext('themelist', new lang_string('themelist', 'admin'),
+        new lang_string('configthemelist','admin'), '', PARAM_NOTAGS);
+    $setting->set_force_ltr(true);
+    $temp->add($setting);
     $setting = new admin_setting_configcheckbox('themedesignermode', new lang_string('themedesignermode', 'admin'), new lang_string('configthemedesignermode', 'admin'), 0);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $temp->add($setting);
@@ -22,7 +25,8 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $temp->add(new admin_setting_configcheckbox('allowthemechangeonurl',  new lang_string('allowthemechangeonurl', 'admin'), new lang_string('configallowthemechangeonurl', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', new lang_string('allowuserblockhiding', 'admin'), new lang_string('configallowuserblockhiding', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('allowblockstodock', new lang_string('allowblockstodock', 'admin'), new lang_string('configallowblockstodock', 'admin'), 1));
-    $temp->add(new admin_setting_configtextarea('custommenuitems', new lang_string('custommenuitems', 'admin'), new lang_string('configcustommenuitems', 'admin'), '', PARAM_TEXT, '50', '10'));
+    $temp->add(new admin_setting_configtextarea('custommenuitems', new lang_string('custommenuitems', 'admin'),
+        new lang_string('configcustommenuitems', 'admin'), '', PARAM_RAW, '50', '10'));
     $temp->add(new admin_setting_configtextarea(
         'customusermenuitems',
         new lang_string('customusermenuitems', 'admin'),
@@ -30,7 +34,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         'grades,grades|/grade/report/mygrades.php|grades
 messages,message|/message/index.php|message
 preferences,moodle|/user/preferences.php|preferences',
-        PARAM_TEXT,
+        PARAM_RAW,
         '50',
         '10'
     ));

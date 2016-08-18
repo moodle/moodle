@@ -1,0 +1,11 @@
+This files describes API changes in /admin/*.
+
+=== 3.2 ===
+
+* Admin settings have been refined to better support right-to-left languages. In RTL,
+  most fields should not have their direction flipped, a URL, a path to a file, ...
+  are always displayed LTR. Most of the admin_setting classes will now prefer LTR.
+  If you must not force left-to-right, here are a few options:
+  * Call admin_setting::set_force_ltr(false) on your setting;
+  * Use the class admin_setting_localisedtext for text inputs;
+  * Use the class admin_setting_localisedtextarea for larger text inputs.

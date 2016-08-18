@@ -8,7 +8,7 @@
 
     echo $OUTPUT->header();
 
-    echo '<div class="phpinfo">';
+    echo '<div class="phpinfo text-ltr">';
 
     ob_start();
     phpinfo(INFO_GENERAL + INFO_CONFIGURATION + INFO_MODULES + INFO_VARIABLES);
