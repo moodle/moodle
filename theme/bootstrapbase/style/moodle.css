@@ -5918,6 +5918,9 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .information .name {
   font-weight: bold;
 }
+.messaging-area-container .messaging-area .contacts-area .contacts .contact .information .name img {
+  vertical-align: baseline;
+}
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .information .lastmessage {
   word-wrap: break-word;
   margin: 0;
