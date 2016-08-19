@@ -78,6 +78,12 @@ information provided here is intended especially for developers.
   - $CFG->wwwroot: http://example.com/moodle
   - $CFG->alternateloginurl : /my/super/login.php
   - Login url will be: http://example.com/moodle/my/super/login.php (moodle root based)
+* Some form elements have been refined to better support right-to-left languages. In RTL,
+  most fields should not have their direction flipped, a URL, a path to a file, a number, ...
+  are always displayed LTR. Input fields and text areas now will best guess whether they
+  should be forced to be displayed in LTR based on the PARAM type associated with it. You
+  can call $mform->setForceLtr($elementName, true/false) on some form fields to manually
+  set the value.
 
 === 3.1 ===
 

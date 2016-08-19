@@ -1746,6 +1746,21 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     }
 
     /**
+     * Set an element to be forced to flow LTR.
+     *
+     * The element must exist and support this functionality. Also note that
+     * when setting the type of a field (@link self::setType} we try to guess the
+     * whether the field should be force to LTR or not. Make sure you're always
+     * calling this method last.
+     *
+     * @param string $elementname The element name.
+     * @param bool $value When false, disables force LTR, else enables it.
+     */
+    public function setForceLtr($elementname, $value = true) {
+        $this->getElement($elementname)->set_force_ltr($value);
+    }
+
+    /**
      * Should be used for all elements of a form except for select, radio and checkboxes which
      * clean their own data.
      *
@@ -1755,6 +1770,16 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      */
     function setType($elementname, $paramtype) {
         $this->_types[$elementname] = $paramtype;
+
+        // All param types, except TEXT and NOTAGS will be forced LTR. This will not always get
+        // it right, but it should be accurate in most cases. When inaccurate use setForceLtr().
+        if (!in_array($paramtype, [PARAM_TEXT, PARAM_NOTAGS])
+                && $this->elementExists($elementname)
+                && ($element =& $this->getElement($elementname))
+                && method_exists($element, 'set_force_ltr')) {
+
+            $element->set_force_ltr(true);
+        }
     }
 
     /**
@@ -1764,7 +1789,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @see MoodleQuickForm::setType
      */
     function setTypes($paramtypes) {
-        $this->_types = $paramtypes + $this->_types;
+        foreach ($paramtypes as $elementname => $paramtype) {
+            $this->setType($elementname, $paramtype);
+        }
     }
 
     /**

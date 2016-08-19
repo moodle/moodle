@@ -101,6 +101,15 @@ class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];
 
+        // Add the class at the last minute.
+        if ($this->get_force_ltr()) {
+            if (!isset($this->_attributes['class'])) {
+                $this->_attributes['class'] = 'text-ltr';
+            } else {
+                $this->_attributes['class'] .= ' text-ltr';
+            }
+        }
+
         if ($this->_hiddenLabel) {
             $this->_generateId();
             $str = '<label class="accesshide" for="'.$this->getAttribute('id').'" >'.
@@ -180,4 +189,14 @@ EOD;
         $context['filepickerhtml'] = $this->toHtml();
         return $context;
     }
+
+    /**
+     * Get force LTR option.
+     *
+     * @return bool
+     */
+    public function get_force_ltr() {
+        return true;
+    }
+
 }
