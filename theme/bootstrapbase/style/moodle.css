@@ -5861,7 +5861,7 @@ a.ygtvspacer:hover {
 }
 .messaging-area-container .messaging-area .contacts-area .contacts {
   height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact {
   height: 66px;
