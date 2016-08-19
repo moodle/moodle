@@ -133,8 +133,10 @@ class mod_data_generator extends testing_module_generator {
         }
 
         if (!isset($record['param1'])) {
-            if (in_array($record['type'], array('checkbox', 'menu', 'multimenu', 'radiobutton'))) {
-                $record['param1'] = implode("\n", array('one', 'two', 'three', 'four'));
+            if (in_array($record['type'], array('checkbox', 'radiobutton'))) {
+                $record['param1'] = implode("\n", array('opt1', 'opt2', 'opt3', 'opt4'));
+            } else if (in_array($record['type'], array('multimenu', 'menu'))) {
+                $record['param1'] = implode("\n", array('menu1', 'menu2', 'menu3', 'menu4'));
             } else if (($record['type'] === 'text') || ($record['type'] === 'url')) {
                 $record['param1'] = 1;
             } else {
@@ -185,6 +187,8 @@ class mod_data_generator extends testing_module_generator {
 
     /**
      * Creates a field for a mod_data instance.
+     * Keep in mind the default data field params created in create_field() function!
+     * ...if you haven't provided your own custom data field parameters there.
      * Currently, the field types in the ignoredfieldtypes array aren't supported.
      * The developers using the generator must adhere to the following format :
      *
@@ -203,12 +207,12 @@ class mod_data_generator extends testing_module_generator {
      * @param array $contents
      * @return data_field_{type}
      */
-    public function create_entry($data, array $contents) {
+    public function create_entry($data, array $contents, $groupid = 0) {
         global $DB;
 
         $this->databaserecordcount++;
 
-        $recordid = data_add_record($data);
+        $recordid = data_add_record($data, $groupid);
 
         $fields = $DB->get_records('data_fields', array('dataid' => $data->id));
 
@@ -254,11 +258,11 @@ class mod_data_generator extends testing_module_generator {
 
                 $contents[$fieldid] = $values;
 
-                foreach ($values as $fieldname => $value) {
-                    if (!$field->notemptyfield($value, $fieldname)) {
-                        $fieldhascontent = false;
-                    }
+                $fieldname = 'field_' . $fieldid;
+                if (!$field->notemptyfield($values[$fieldname], $fieldname)) {
+                    $fieldhascontent = false;
                 }
+
             } else if ($field->type === 'url') {
                 $values = array();
 
@@ -271,12 +275,11 @@ class mod_data_generator extends testing_module_generator {
                 }
 
                 $contents[$fieldid] = $values;
-
-                foreach ($values as $fieldname => $value) {
-                    if (!$field->notemptyfield($value, $fieldname)) {
-                        $fieldhascontent = false;
-                    }
+                $fieldname = 'field_' . $fieldid . '_0';
+                if (!$field->notemptyfield($values[$fieldname], $fieldname)) {
+                    $fieldhascontent = false;
                 }
+
             } else {
                 if ($field->notemptyfield($contents[$fieldid], 'field_' . $fieldid . '_0')) {
                     continue;
@@ -291,7 +294,7 @@ class mod_data_generator extends testing_module_generator {
         foreach ($contents as $fieldid => $content) {
             $field = data_get_field_from_id($fieldid, $data);
 
-            if (is_array($content)) {
+            if (is_array($content) and in_array($field->type, array('date', 'textarea', 'url'))) {
 
                 foreach ($content as $fieldname => $value) {
                     $field->update_content($recordid, $value, $fieldname);

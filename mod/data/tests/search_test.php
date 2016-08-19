@@ -28,8 +28,10 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/data/lib.php');
+require_once($CFG->dirroot . '/lib/datalib.php');
 require_once($CFG->dirroot . '/lib/csvlib.class.php');
-
+require_once($CFG->dirroot . '/search/tests/fixtures/testable_core_search.php');
+require_once($CFG->dirroot . '/mod/data/tests/generator/lib.php');
 
 /**
  * Unit tests for {@see data_get_all_recordids()}.
@@ -41,7 +43,7 @@ require_once($CFG->dirroot . '/lib/csvlib.class.php');
  * @copyright  2012 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class data_advanced_search_sql_test extends advanced_testcase {
+class mod_data_search_test extends advanced_testcase {
     /**
      * @var stdObject $recorddata An object that holds information from the table data.
      */
@@ -91,6 +93,11 @@ class data_advanced_search_sql_test extends advanced_testcase {
     public $approvedatarecordcount = 89;
 
     /**
+     * @var string Area id
+     */
+    protected $databaseentryareaid = null;
+
+    /**
      * Set up function. In this instance we are setting up database
      * records to be used in the unit tests.
      */
@@ -100,6 +107,43 @@ class data_advanced_search_sql_test extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        set_config('enableglobalsearch', true);
+
+        $this->databaseentryareaid = \core_search\manager::generate_areaid('mod_data', 'entry');
+
+        // Set \core_search::instance to the mock_search_engine as we don't require the search engine to be working to test this.
+        $search = testable_core_search::instance();
+
+    }
+
+    /**
+     * Test 1: The function data_get_all_recordids.
+     *
+     * Test 2: This tests the data_get_advance_search_ids() function. The function takes a set
+     * of all the record IDs in the database and then with the search details ($this->recordsearcharray)
+     * returns a comma seperated string of record IDs that match the search criteria.
+     *
+     * Test 3: This function tests data_get_recordids(). This is the function that is nested in the last
+     * function (see data_get_advance_search_ids). This function takes a couple of
+     * extra parameters. $alias is the field alias used in the sql query and $commaid
+     * is a comma seperated string of record IDs.
+     *
+     * Test 3.1: This tests that if no recordids are provided (In a situation where a search is done on an empty database)
+     * That an empty array is returned.
+     *
+     * Test 4: data_get_advanced_search_sql provides an array which contains an sql string to be used for displaying records
+     * to the user when they use the advanced search criteria and the parameters that go with the sql statement. This test
+     * takes that information and does a search on the database, returning a record.
+     *
+     * Test 5: Returning to data_get_all_recordids(). Here we are ensuring that the total amount of record ids is reduced to
+     * match the group conditions that are provided. There are 25 entries which relate to group 2. They are removed
+     * from the total so we should only have 75 records total.
+     *
+     * Test 6: data_get_all_recordids() again. This time we are testing approved database records. We only want to
+     * display the records that have been approved. In this record set we have 89 approved records.
+     */
+    public function test_advanced_search_sql_section() {
+        global $DB;
 
         // we already have 2 users, we need 98 more - let's ignore the fact that guest can not post anywhere
         // We reset the user sequence here to ensure we get the expected numbers.
@@ -116,9 +160,9 @@ class data_advanced_search_sql_test extends advanced_testcase {
 
         // Set up data for the test database.
         $files = array(
-            'data_fields'  => __DIR__.'/fixtures/test_data_fields.csv',
-            'data_records' => __DIR__.'/fixtures/test_data_records.csv',
-            'data_content' => __DIR__.'/fixtures/test_data_content.csv',
+                'data_fields'  => __DIR__.'/fixtures/test_data_fields.csv',
+                'data_records' => __DIR__.'/fixtures/test_data_records.csv',
+                'data_content' => __DIR__.'/fixtures/test_data_content.csv',
         );
         $this->loadDataSet($this->createCsvDataSet($files));
         // Set dataid to the correct value now the data has been inserted by csv file.
@@ -127,10 +171,10 @@ class data_advanced_search_sql_test extends advanced_testcase {
 
         // Create the search array which contains our advanced search criteria.
         $fieldinfo = array('0' => new stdClass(),
-            '1' => new stdClass(),
-            '2' => new stdClass(),
-            '3' => new stdClass(),
-            '4' => new stdClass());
+                '1' => new stdClass(),
+                '2' => new stdClass(),
+                '3' => new stdClass(),
+                '4' => new stdClass());
         $fieldinfo['0']->id = 1;
         $fieldinfo['0']->data = '3.721,46.6126';
         $fieldinfo['1']->id = 2;
@@ -175,36 +219,6 @@ class data_advanced_search_sql_test extends advanced_testcase {
         $this->finalrecord[6]->picture = $user->picture;
         $this->finalrecord[6]->imagealt = $user->imagealt;
         $this->finalrecord[6]->email = $user->email;
-    }
-
-    /**
-     * Test 1: The function data_get_all_recordids.
-     *
-     * Test 2: This tests the data_get_advance_search_ids() function. The function takes a set
-     * of all the record IDs in the database and then with the search details ($this->recordsearcharray)
-     * returns a comma seperated string of record IDs that match the search criteria.
-     *
-     * Test 3: This function tests data_get_recordids(). This is the function that is nested in the last
-     * function (@see data_get_advance_search_ids). This function takes a couple of
-     * extra parameters. $alias is the field alias used in the sql query and $commaid
-     * is a comma seperated string of record IDs.
-     *
-     * Test 3.1: This tests that if no recordids are provided (In a situation where a search is done on an empty database)
-     * That an empty array is returned.
-     *
-     * Test 4: data_get_advanced_search_sql provides an array which contains an sql string to be used for displaying records
-     * to the user when they use the advanced search criteria and the parameters that go with the sql statement. This test
-     * takes that information and does a search on the database, returning a record.
-     *
-     * Test 5: Returning to data_get_all_recordids(). Here we are ensuring that the total amount of record ids is reduced to
-     * match the group conditions that are provided. There are 25 entries which relate to group 2. They are removed
-     * from the total so we should only have 75 records total.
-     *
-     * Test 6: data_get_all_recordids() again. This time we are testing approved database records. We only want to
-     * display the records that have been approved. In this record set we have 89 approved records.
-     */
-    function test_advanced_search_sql_section() {
-        global $DB;
 
         // Test 1
         $recordids = data_get_all_recordids($this->recorddata->id);
@@ -242,4 +256,744 @@ class data_advanced_search_sql_test extends advanced_testcase {
         $recordids = data_get_all_recordids($this->recorddata->id, $approvesql, $params);
         $this->assertEquals($this->approvedatarecordcount, count($recordids));
     }
+
+    /**
+     * Indexing database entries contents.
+     *
+     * @return void
+     */
+    public function test_data_entries_indexing() {
+        global $DB;
+
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->databaseentryareaid);
+        $this->assertInstanceOf('\mod_data\search\entry', $searcharea);
+
+        $user1 = self::getDataGenerator()->create_user();
+
+        $course1 = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'student');
+
+        $record = new stdClass();
+        $record->course = $course1->id;
+
+        $this->setUser($user1);
+
+        // Available for both student and teacher.
+        $data1 = $this->getDataGenerator()->create_module('data', $record);
+
+        // Excluding LatLong and Picture as we aren't indexing LatLong and Picture fields any way
+        // ...and they're complex and not of any use to consider for this test.
+        // Excluding File as we are indexing files seperately and its complex to implement.
+        $fieldtypes = array( 'checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url' );
+
+        $this->create_default_data_fields($fieldtypes, $data1);
+
+        $data1record1id = $this->create_default_data_record($data1);
+        // All records.
+        $recordset = $searcharea->get_recordset_by_timestamp(0);
+
+        $this->assertTrue($recordset->valid());
+
+        $nrecords = 0;
+        foreach ($recordset as $record) {
+            $this->assertInstanceOf('stdClass', $record);
+            $doc = $searcharea->get_document($record);
+            $this->assertInstanceOf('\core_search\document', $doc);
+            $nrecords++;
+        }
+
+        // If there would be an error/failure in the foreach above the recordset would be closed on shutdown.
+        $recordset->close();
+        $this->assertEquals(1, $nrecords);
+
+        // The +2 is to prevent race conditions.
+        $recordset = $searcharea->get_recordset_by_timestamp(time() + 2);
+
+        // No new records.
+        $this->assertFalse($recordset->valid());
+        $recordset->close();
+    }
+
+    /**
+     * Document contents.
+     *
+     * @return void
+     */
+    public function test_data_entries_document() {
+        global $DB;
+
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->databaseentryareaid);
+        $this->assertInstanceOf('\mod_data\search\entry', $searcharea);
+
+        $user1 = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+
+        $record = new stdClass();
+        $record->course = $course->id;
+
+        $this->setAdminUser();
+
+        // First Case.
+        $data1 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array( 'checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url' );
+
+        $this->create_default_data_fields($fieldtypes, $data1);
+
+        $data1record1id = $this->create_default_data_record($data1);
+
+        $data1entry1 = $this->get_entry_for_id($data1record1id);
+
+        $data1doc = $searcharea->get_document($data1entry1);
+
+        $this->assertEquals($data1doc->get('courseid'), $course->id);
+        $this->assertEquals($data1doc->get('title'), 'text for testing');
+        $this->assertEquals($data1doc->get('content'), 'menu1');
+        $this->assertEquals($data1doc->get('description1'), 'opt1');
+        $this->assertEquals($data1doc->get('description2'), 'opt1 opt2 opt3 opt4');
+
+        // Second Case.
+        $data2 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array(
+                array('checkbox', 1),
+                array('textarea', 0),
+                array('menu', 0),
+                array('number', 1),
+                array('url', 0),
+                array('text', 0)
+        );
+
+        $this->create_default_data_fields($fieldtypes, $data2);
+
+        $data2record1id = $this->create_default_data_record($data2);
+
+        $data2entry1 = $this->get_entry_for_id($data2record1id);
+
+        $data2doc = $searcharea->get_document($data2entry1);
+
+        $this->assertEquals($data2doc->get('courseid'), $course->id);
+        $this->assertEquals($data2doc->get('title'), 'opt1 opt2 opt3 opt4');
+        $this->assertEquals($data2doc->get('content'), 'text for testing');
+        $this->assertEquals($data2doc->get('description1'), 'menu1');
+        $this->assertEquals($data2doc->get('description2'), 'text area testing');
+
+        // Third Case.
+        $data3 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array( 'url' );
+
+        $this->create_default_data_fields($fieldtypes, $data3);
+
+        $data3record1id = $this->create_default_data_record($data3);
+
+        $data3entry1 = $this->get_entry_for_id($data3record1id);
+
+        $this->assertFalse($searcharea->get_document($data3entry1));
+
+        // Fourth Case.
+        $data4 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array( array('date', 1), array('text', 1));
+
+        $this->create_default_data_fields($fieldtypes, $data4);
+
+        $data4record1id = $this->create_default_data_record($data4);
+
+        $data4entry1 = $this->get_entry_for_id($data4record1id);
+
+        $this->assertFalse($searcharea->get_document($data4entry1));
+
+        // Fifth Case.
+        $data5 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array(
+                array('checkbox', 0),
+                array('number', 1),
+                array('text', 0),
+                array('date', 1),
+                array('textarea', 0),
+                array('url', 1));
+
+        $this->create_default_data_fields($fieldtypes, $data5);
+
+        $data5record1id = $this->create_default_data_record($data5);
+
+        $data5entry1 = $this->get_entry_for_id($data5record1id);
+
+        $data5doc = $searcharea->get_document($data5entry1);
+
+        $this->assertEquals($data5doc->get('courseid'), $course->id);
+        $this->assertEquals($data5doc->get('title'), 'http://example.url');
+        $this->assertEquals($data5doc->get('content'), 'text for testing');
+        $this->assertEquals($data5doc->get('description1'), 'opt1 opt2 opt3 opt4');
+        $this->assertEquals($data5doc->get('description2'), 'text area testing');
+
+        // Sixth Case.
+        $data6 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array( array('date', 1), array('number', 1));
+
+        $this->create_default_data_fields($fieldtypes, $data6);
+
+        $data6record1id = $this->create_default_data_record($data6);
+
+        $data6entry1 = $this->get_entry_for_id($data6record1id);
+
+        $data6doc = $searcharea->get_document($data6entry1);
+
+        $this->assertFalse($data6doc);
+
+        // Seventh Case.
+        $data7 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array( array('date', 1), array('number', 1),
+                array('text', 0), array('textarea', 0));
+
+        $this->create_default_data_fields($fieldtypes, $data7);
+
+        $data7record1id = $this->create_default_data_record($data7);
+
+        $data7entry1 = $this->get_entry_for_id($data7record1id);
+
+        $data7doc = $searcharea->get_document($data7entry1);
+
+        $this->assertEquals($data7doc->get('courseid'), $course->id);
+        $this->assertEquals($data7doc->get('title'), 'text for testing');
+        $this->assertEquals($data7doc->get('content'), 'text area testing');
+
+        // Eight Case.
+        $data8 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array('url', 'url', 'url', 'text');
+
+        $this->create_default_data_fields($fieldtypes, $data8);
+
+        $data8record1id = $this->create_default_data_record($data8);
+
+        $data8entry1 = $this->get_entry_for_id($data8record1id);
+
+        $data8doc = $searcharea->get_document($data8entry1);
+
+        $this->assertEquals($data8doc->get('courseid'), $course->id);
+        $this->assertEquals($data8doc->get('title'), 'text for testing');
+        $this->assertEquals($data8doc->get('content'), 'http://example.url');
+        $this->assertEquals($data8doc->get('description1'), 'http://example.url');
+        $this->assertEquals($data8doc->get('description2'), 'http://example.url');
+
+        // Ninth Case.
+        $data9 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array('radiobutton', 'menu', 'multimenu');
+
+        $this->create_default_data_fields($fieldtypes, $data9);
+
+        $data9record1id = $this->create_default_data_record($data9);
+
+        $data9entry1 = $this->get_entry_for_id($data9record1id);
+
+        $data9doc = $searcharea->get_document($data9entry1);
+
+        $this->assertEquals($data9doc->get('courseid'), $course->id);
+        $this->assertEquals($data9doc->get('title'), 'opt1');
+        $this->assertEquals($data9doc->get('content'), 'menu1');
+        $this->assertEquals($data9doc->get('description1'), 'menu1 menu2 menu3 menu4');
+
+        // Tenth Case.
+        $data10 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array('checkbox', 'textarea', 'multimenu');
+
+        $this->create_default_data_fields($fieldtypes, $data10);
+
+        $data10record1id = $this->create_default_data_record($data10);
+
+        $data10entry1 = $this->get_entry_for_id($data10record1id);
+
+        $data10doc = $searcharea->get_document($data10entry1);
+
+        $this->assertEquals($data10doc->get('courseid'), $course->id);
+        $this->assertEquals($data10doc->get('title'), 'opt1 opt2 opt3 opt4');
+        $this->assertEquals($data10doc->get('content'), 'text area testing');
+        $this->assertEquals($data10doc->get('description1'), 'menu1 menu2 menu3 menu4');
+
+    }
+
+    /**
+     * Document accesses.
+     *
+     * @return void
+     */
+    public function test_data_entries_access() {
+        global $DB;
+
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->databaseentryareaid);
+        $this->assertInstanceOf('\mod_data\search\entry', $searcharea);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $userteacher1 = self::getDataGenerator()->create_user();
+
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($userteacher1->id, $course1->id, 'teacher');
+
+        $this->getDataGenerator()->enrol_user($user3->id, $course2->id, 'student');
+
+        $record = new stdClass();
+        $record->course = $course1->id;
+
+        $this->setUser($userteacher1);
+
+        $data1 = $this->getDataGenerator()->create_module('data', $record);
+
+        $fieldtypes = array( 'checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url' );
+
+        $this->create_default_data_fields($fieldtypes, $data1);
+
+        $this->setUser($user1);
+        $data1record1id = $this->create_default_data_record($data1);
+
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data1record1id));
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-1));
+
+        $this->setUser($user2);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data1record1id));
+
+        $this->setUser($user3);
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($data1record1id));
+
+        $this->setUser($userteacher1);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data1record1id));
+
+        $this->setAdminUser();
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data1record1id));
+
+        $this->setGuestUser();
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($data1record1id));
+
+        // Case with groups.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $userteacher1 = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course(array('groupmode' => 1, 'groupmodeforce' => 1));
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($userteacher1->id, $course->id, 'teacher');
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'student');
+
+        $groupa = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'groupA'));
+        $groupb = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'groupB'));
+
+        $this->getDataGenerator()->create_group_member(array('userid' => $user1->id, 'groupid' => $groupa->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user2->id, 'groupid' => $groupa->id));
+        $this->getDataGenerator()->create_group_member(array('userid' => $userteacher1->id, 'groupid' => $groupa->id));
+
+        $this->getDataGenerator()->create_group_member(array('userid' => $user3->id, 'groupid' => $groupb->id));
+
+        $record = new stdClass();
+        $record->course = $course->id;
+
+        $this->setUser($userteacher1);
+
+        $data2 = $this->getDataGenerator()->create_module('data', $record);
+
+        $cm = get_coursemodule_from_instance('data', $data2->id, $course->id);
+        $cm->groupmode = '1';
+        $cm->effectivegroupmode = '1';
+
+        $fieldtypes = array( 'checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url' );
+
+        $this->create_default_data_fields($fieldtypes, $data2);
+
+        $this->setUser($user1);
+
+        $data2record1id = $this->create_default_data_record($data2, $groupa->id);
+
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data2record1id));
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-1));
+
+        $this->setUser($user2);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data2record1id));
+
+        $this->setUser($user3);
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($data2record1id));
+
+        $this->setUser($userteacher1);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data2record1id));
+
+        $this->setAdminUser();
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data2record1id));
+
+        $this->setGuestUser();
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($data2record1id));
+
+        // Case with approval.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $userteacher1 = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($userteacher1->id, $course->id, 'teacher');
+
+        $record = new stdClass();
+        $record->course = $course->id;
+
+        $this->setUser($userteacher1);
+
+        $data3 = $this->getDataGenerator()->create_module('data', $record);
+
+        $DB->update_record('data', array('id' => $data3->id, 'approval' => 1));
+
+        $fieldtypes = array( 'checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url' );
+
+        $this->create_default_data_fields($fieldtypes, $data3);
+
+        $this->setUser($user1);
+
+        $data3record1id = $this->create_default_data_record($data3);
+
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data3record1id));
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-1));
+
+        $this->setUser($user2);
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($data3record1id));
+
+        $this->setUser($userteacher1);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data3record1id));
+
+        $this->setAdminUser();
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data3record1id));
+
+        $this->setGuestUser();
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($data3record1id));
+
+        $DB->update_record('data_records', array('id' => $data3record1id, 'approved' => 1));
+
+        $this->setUser($user1);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data3record1id));
+        $this->assertEquals(\core_search\manager::ACCESS_DELETED, $searcharea->check_access(-1));
+
+        $this->setUser($user2);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data3record1id));
+
+        $this->setUser($userteacher1);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data3record1id));
+
+        $this->setAdminUser();
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data3record1id));
+
+        $this->setGuestUser();
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($data3record1id));
+
+        // Case with requiredentriestoview.
+        $this->setAdminUser();
+
+        $record->requiredentriestoview = 2;
+
+        $data4 = $this->getDataGenerator()->create_module('data', $record);
+        $fieldtypes = array( 'checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url' );
+
+        $this->create_default_data_fields($fieldtypes, $data4);
+
+        $data4record1id = $this->create_default_data_record($data4);
+
+        $this->setUser($user1);
+        $this->assertEquals(\core_search\manager::ACCESS_DENIED, $searcharea->check_access($data4record1id));
+
+        $data4record2id = $this->create_default_data_record($data4);
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data4record1id));
+        $this->assertEquals(\core_search\manager::ACCESS_GRANTED, $searcharea->check_access($data4record2id));
+    }
+
+    /**
+     * Test for file contents.
+     *
+     * @return void
+     */
+    public function test_attach_files() {
+        global $DB, $USER;
+
+        $fs = get_file_storage();
+
+        // Returns the instance as long as the area is supported.
+        $searcharea = \core_search\manager::get_search_area($this->databaseentryareaid);
+        $this->assertInstanceOf('\mod_data\search\entry', $searcharea);
+
+        $user1 = self::getDataGenerator()->create_user();
+
+        $course = self::getDataGenerator()->create_course();
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+
+        $record = new stdClass();
+        $record->course = $course->id;
+
+        $this->setAdminUser();
+
+        // Creating database activity instance.
+        $data1 = $this->getDataGenerator()->create_module('data', $record);
+
+        // Creating file field.
+        $record = new stdClass;
+        $record->type = 'file';
+        $record->dataid = $data1->id;
+        $record->required = 0;
+        $record->name = 'FileFld';
+        $record->description = 'Just another file field';
+        $record->param3 = 0;
+        $record->param1 = '';
+        $record->param2 = '';
+
+        $data1filefieldid = $DB->insert_record('data_fields', $record);
+
+        // Creating text field.
+        $record = new stdClass;
+        $record->type = 'text';
+        $record->dataid = $data1->id;
+        $record->required = 0;
+        $record->name = 'TextFld';
+        $record->description = 'Just another text field';
+        $record->param3 = 0;
+        $record->param1 = '';
+        $record->param2 = '';
+
+        $data1textfieldid = $DB->insert_record('data_fields', $record);
+
+        // Creating textarea field.
+        $record = new stdClass;
+        $record->type = 'textarea';
+        $record->dataid = $data1->id;
+        $record->required = 0;
+        $record->name = 'TextAreaFld';
+        $record->description = 'Just another textarea field';
+        $record->param1 = '';
+        $record->param2 = 60;
+        $record->param3 = 35;
+        $record->param3 = 1;
+        $record->param3 = 0;
+
+        $data1textareafieldid = $DB->insert_record('data_fields', $record);
+
+        // Creating 1st entry.
+        $record = new stdClass;
+        $record->userid = $USER->id;
+        $record->dataid = $data1->id;
+        $record->groupid = 0;
+
+        $data1record1id = $DB->insert_record('data_records', $record);
+
+        $filerecord = array(
+                'contextid' => context_module::instance($data1->cmid)->id,
+                'component' => 'mod_data',
+                'filearea'  => 'content',
+                'itemid'    => $data1record1id,
+                'filepath'  => '/',
+                'filename'  => 'myfile1.txt'
+        );
+
+        $data1record1file = $fs->create_file_from_string($filerecord, 'Some contents 1');
+
+        $record = new stdClass;
+        $record->fieldid = $data1filefieldid;
+        $record->recordid = $data1record1id;
+        $record->content = 'myfile1.txt';
+        $DB->insert_record('data_content', $record);
+
+        $record = new stdClass;
+        $record->fieldid = $data1textfieldid;
+        $record->recordid = $data1record1id;
+        $record->content = 'sample text';
+        $DB->insert_record('data_content', $record);
+
+        $record = new stdClass;
+        $record->fieldid = $data1textareafieldid;
+        $record->recordid = $data1record1id;
+        $record->content = '<br>sample text<p /><br/>';
+        $record->content1 = 1;
+        $DB->insert_record('data_content', $record);
+
+        // Creating 2nd entry.
+        $record = new stdClass;
+        $record->userid = $USER->id;
+        $record->dataid = $data1->id;
+        $record->groupid = 0;
+        $data1record2id = $DB->insert_record('data_records', $record);
+
+        $filerecord['itemid'] = $data1record2id;
+        $filerecord['filename'] = 'myfile2.txt';
+        $data1record2file = $fs->create_file_from_string($filerecord, 'Some contents 2');
+
+        $record = new stdClass;
+        $record->fieldid = $data1filefieldid;
+        $record->recordid = $data1record2id;
+        $record->content = 'myfile2.txt';
+        $DB->insert_record('data_content', $record);
+
+        $record = new stdClass;
+        $record->fieldid = $data1textfieldid;
+        $record->recordid = $data1record2id;
+        $record->content = 'sample text';
+        $DB->insert_record('data_content', $record);
+
+        $record = new stdClass;
+        $record->fieldid = $data1textareafieldid;
+        $record->recordid = $data1record2id;
+        $record->content = '<br>sample text<p /><br/>';
+        $record->content1 = 1;
+        $DB->insert_record('data_content', $record);
+
+        // Now get all the posts and see if they have the right files attached.
+        $searcharea = \core_search\manager::get_search_area($this->databaseentryareaid);
+        $recordset = $searcharea->get_recordset_by_timestamp(0);
+        $nrecords = 0;
+        foreach ($recordset as $record) {
+            $doc = $searcharea->get_document($record);
+            $searcharea->attach_files($doc);
+            $files = $doc->get_files();
+            // Now check that each doc has the right files on it.
+            switch ($doc->get('itemid')) {
+                case ($data1record1id):
+                    $this->assertCount(1, $files);
+                    $this->assertEquals($data1record1file->get_id(), $files[$data1record1file->get_id()]->get_id());
+                    break;
+                case ($data1record2id):
+                    $this->assertCount(1, $files);
+                    $this->assertEquals($data1record2file->get_id(), $files[$data1record2file->get_id()]->get_id());
+                    break;
+                default:
+                    $this->fail('Unexpected entry returned');
+                    break;
+            }
+            $nrecords++;
+        }
+        $recordset->close();
+        $this->assertEquals(2, $nrecords);
+    }
+
+    /**
+     * Creates default fields for a database instance
+     *
+     * @param array $fieldtypes
+     * @param mod_data $data
+     * @return void
+     */
+    protected function create_default_data_fields($fieldtypes = array(), $data) {
+        $count = 1;
+
+        // Creating test Fields with default parameter values.
+        foreach ($fieldtypes as $fieldtype) {
+
+            // Creating variables dynamically.
+            $fieldname = 'field-'.$count;
+            $record = new stdClass();
+            $record->name = $fieldname;
+
+            if (is_array($fieldtype)) {
+                $record->type = $fieldtype[0];
+                $record->required = $fieldtype[1];
+            } else {
+                $record->type = $fieldtype;
+                $record->required = 0;
+            }
+
+            ${$fieldname} = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_field($record, $data);
+            $count++;
+        }
+    }
+
+    /**
+     * Creates default database entry content values for default field param values
+     *
+     * @param mod_data $data
+     * @param int $groupid
+     * @return int
+     */
+    protected function create_default_data_record($data, $groupid = 0) {
+        global $DB;
+
+        $fields = $DB->get_records('data_fields', array('dataid' => $data->id));
+
+        $fieldcontents = array();
+        foreach ($fields as $fieldrecord) {
+            switch ($fieldrecord->type) {
+                case 'checkbox':
+                    $fieldcontents[$fieldrecord->id] = array('opt1', 'opt2', 'opt3', 'opt4');
+                    break;
+
+                case 'multimenu':
+                    $fieldcontents[$fieldrecord->id] = array('menu1', 'menu2', 'menu3', 'menu4');
+                    break;
+
+                case 'date':
+                    $fieldcontents[$fieldrecord->id] = '27-07-2016';
+                    break;
+
+                case 'menu':
+                    $fieldcontents[$fieldrecord->id] = 'menu1';
+                    break;
+
+                case 'radiobutton':
+                    $fieldcontents[$fieldrecord->id] = 'opt1';
+                    break;
+
+                case 'number':
+                    $fieldcontents[$fieldrecord->id] = '12345';
+                    break;
+
+                case 'text':
+                    $fieldcontents[$fieldrecord->id] = 'text for testing';
+                    break;
+
+                case 'textarea':
+                    $fieldcontents[$fieldrecord->id] = '<p>text area testing<br /></p>';
+                    break;
+
+                case 'url':
+                    $fieldcontents[$fieldrecord->id] = array('example.url', 'sampleurl');
+                    break;
+
+                default:
+                    $this->fail('Unexpected field type');
+                    break;
+            }
+
+        }
+
+        return $this->getDataGenerator()->get_plugin_generator('mod_data')->create_entry($data, $fieldcontents, $groupid);
+    }
+
+    /**
+     * Creates default database entry content values for default field param values
+     *
+     * @param int $recordid
+     * @return stdClass
+     */
+    protected function get_entry_for_id($recordid ) {
+        global $DB;
+
+        $sql = "SELECT dr.*, d.course
+                  FROM {data_records} dr
+                  JOIN {data} d ON d.id = dr.dataid
+                 WHERE dr.id = :drid";
+        return $DB->get_record_sql($sql, array('drid' => $recordid));
+    }
+
 }

@@ -324,6 +324,7 @@ $string['savesuccess'] = 'Saved successfully. Your preset will now be available 
 $string['savetemplate'] = 'Save template';
 $string['search'] = 'Search';
 $string['search:activity'] = 'Database - activity information';
+$string['search:entry'] = 'Database - entries';
 $string['selectedrequired'] = 'All selected required';
 $string['showall'] = 'Show all entries';
 $string['single'] = 'View single';
