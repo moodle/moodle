@@ -190,7 +190,10 @@ abstract class quiz_attempts_report extends quiz_default_report {
     protected function configure_user_columns($table) {
         $table->column_suppress('picture');
         $table->column_suppress('fullname');
-        $table->column_suppress('idnumber');
+        $extrafields = get_extra_user_fields($this->context);
+        foreach ($extrafields as $field) {
+            $table->column_suppress($field);
+        }
 
         $table->column_class('picture', 'picture');
         $table->column_class('lastname', 'bold');
