@@ -40,10 +40,11 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
 class quiz_overview_report extends quiz_attempts_report {
 
     public function display($quiz, $cm, $course) {
-        global $CFG, $DB, $OUTPUT, $PAGE;
+        global $DB, $OUTPUT, $PAGE;
 
-        list($currentgroup, $students, $groupstudents, $allowed) =
-                $this->init('overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
+        list($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins) = $this->init(
+                'overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
+
         $options = new quiz_overview_options('overview', $quiz, $cm, $course);
 
         if ($fromform = $this->form->get_data()) {
@@ -55,13 +56,6 @@ class quiz_overview_report extends quiz_attempts_report {
 
         $this->form->set_data($options->get_initial_form_data());
 
-        if ($options->attempts == self::ALL_WITH) {
-            // This option is only available to users who can access all groups in
-            // groups mode, so setting allowed to empty (which means all quiz attempts
-            // are accessible, is not a security porblem.
-            $allowed = array();
-        }
-
         // Load the required questions.
         $questions = quiz_report_get_significant_questions($quiz);
 
@@ -69,7 +63,7 @@ class quiz_overview_report extends quiz_attempts_report {
         $courseshortname = format_string($course->shortname, true,
                 array('context' => context_course::instance($course->id)));
         $table = new quiz_overview_table($quiz, $this->context, $this->qmsubselect,
-                $options, $groupstudents, $students, $questions, $options->get_url());
+                $options, $groupstudentsjoins, $studentsjoins, $questions, $options->get_url());
         $filename = quiz_report_download_filename(get_string('overviewfilename', 'quiz_overview'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($options->download, $filename,
@@ -78,8 +72,31 @@ class quiz_overview_report extends quiz_attempts_report {
             raise_memory_limit(MEMORY_EXTRA);
         }
 
+        $this->hasgroupstudents = false;
+        if (!empty($groupstudentsjoins->joins)) {
+            $sql = "SELECT DISTINCT u.id
+                      FROM {user} u
+                    $groupstudentsjoins->joins
+                     WHERE $groupstudentsjoins->wheres";
+            $this->hasgroupstudents = $DB->record_exists_sql($sql, $groupstudentsjoins->params);
+        }
+        $hasstudents = false;
+        if (!empty($studentsjoins->joins)) {
+            $sql = "SELECT DISTINCT u.id
+                    FROM {user} u
+                    $studentsjoins->joins
+                    WHERE $studentsjoins->wheres";
+            $hasstudents = $DB->record_exists_sql($sql, $studentsjoins->params);
+        }
+        if ($options->attempts == self::ALL_WITH) {
+            // This option is only available to users who can access all groups in
+            // groups mode, so setting allowed to empty (which means all quiz attempts
+            // are accessible, is not a security porblem.
+            $allowedjoins = new \core\dml\sql_join();
+        }
+
         $this->course = $course; // Hack to make this available in process_actions.
-        $this->process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $options->get_url());
+        $this->process_actions($quiz, $cm, $currentgroup, $groupstudentsjoins, $allowedjoins, $options->get_url());
 
         // Start output.
         if (!$table->is_downloading()) {
@@ -106,9 +123,9 @@ class quiz_overview_report extends quiz_attempts_report {
         if (!$table->is_downloading()) {
             if (!$hasquestions) {
                 echo quiz_no_questions_message($quiz, $cm, $this->context);
-            } else if (!$students) {
+            } else if (!$hasstudents) {
                 echo $OUTPUT->notification(get_string('nostudentsyet'));
-            } else if ($currentgroup && !$groupstudents) {
+            } else if ($currentgroup && !$this->hasgroupstudents) {
                 echo $OUTPUT->notification(get_string('nostudentsingroup'));
             }
 
@@ -116,13 +133,10 @@ class quiz_overview_report extends quiz_attempts_report {
             $this->form->display();
         }
 
-        $hasstudents = $students && (!$currentgroup || $groupstudents);
+        $hasstudents = $hasstudents && (!$currentgroup || $this->hasgroupstudents);
         if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
             // Construct the SQL.
-            $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') .
-                    ' AS uniqueid, ';
-
-            list($fields, $from, $where, $params) = $table->base_sql($allowed);
+            list($fields, $from, $where, $params) = $table->base_sql($allowedjoins);
 
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
@@ -145,7 +159,7 @@ class quiz_overview_report extends quiz_attempts_report {
                 // Output the regrade buttons.
                 if (has_capability('mod/quiz:regrade', $this->context)) {
                     $regradesneeded = $this->count_question_attempts_needing_regrade(
-                            $quiz, $groupstudents);
+                            $quiz, $groupstudentsjoins);
                     if ($currentgroup) {
                         $a= new stdClass();
                         $a->groupname = groups_get_group_name($currentgroup);
@@ -235,11 +249,14 @@ class quiz_overview_report extends quiz_attempts_report {
             list($bands, $bandwidth) = self::get_bands_count_and_width($quiz);
             $labels = self::get_bands_labels($bands, $bandwidth, $quiz);
 
-            if ($currentgroup && $groupstudents) {
-                list($usql, $params) = $DB->get_in_or_equal($groupstudents);
-                $params[] = $quiz->id;
-                if ($DB->record_exists_select('quiz_grades', "userid $usql AND quiz = ?", $params)) {
-                    $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, $groupstudents);
+            if ($currentgroup && $this->hasgroupstudents) {
+                $sql = "SELECT qg.id
+                          FROM {quiz_grades} qg
+                          JOIN {user} u on u.id = qg.userid
+                        {$groupstudentsjoins->joins}
+                          WHERE qg.quiz = $quiz->id AND {$groupstudentsjoins->wheres}";
+                if ($DB->record_exists_sql($sql, $groupstudentsjoins->params)) {
+                    $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, $groupstudentsjoins);
                     $chart = self::get_chart($labels, $data);
                     $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', groups_get_group_name($currentgroup));
                     echo $output->chart($chart, $graphname);
@@ -247,7 +264,7 @@ class quiz_overview_report extends quiz_attempts_report {
             }
 
             if ($DB->record_exists('quiz_grades', array('quiz'=> $quiz->id))) {
-                $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, []);
+                $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, new \core\dml\sql_join());
                 $chart = self::get_chart($labels, $data);
                 $graphname = get_string('overviewreportgraph', 'quiz_overview');
                 echo $output->chart($chart, $graphname);
@@ -256,14 +273,25 @@ class quiz_overview_report extends quiz_attempts_report {
         return true;
     }
 
-    protected function process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $redirecturl) {
-        parent::process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $redirecturl);
+    /**
+     * Extends parent function processing any submitted actions.
+     *
+     * @param object $quiz
+     * @param object $cm
+     * @param int $currentgroup
+     * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params)
+     * @param \core\dml\sql_join $allowedjoins (joins, wheres, params)
+     * @param moodle_url $redirecturl
+     */
+    protected function process_actions($quiz, $cm, $currentgroup, \core\dml\sql_join $groupstudentsjoins,
+            \core\dml\sql_join $allowedjoins, $redirecturl) {
+        parent::process_actions($quiz, $cm, $currentgroup, $groupstudentsjoins, $allowedjoins, $redirecturl);
 
-        if (empty($currentgroup) || $groupstudents) {
+        if (empty($currentgroup) || $this->hasgroupstudents) {
             if (optional_param('regrade', 0, PARAM_BOOL) && confirm_sesskey()) {
                 if ($attemptids = optional_param_array('attemptid', array(), PARAM_INT)) {
                     $this->start_regrade($quiz, $cm);
-                    $this->regrade_attempts($quiz, false, $groupstudents, $attemptids);
+                    $this->regrade_attempts($quiz, false, $groupstudentsjoins, $attemptids);
                     $this->finish_regrade($redirecturl);
                 }
             }
@@ -271,17 +299,17 @@ class quiz_overview_report extends quiz_attempts_report {
 
         if (optional_param('regradeall', 0, PARAM_BOOL) && confirm_sesskey()) {
             $this->start_regrade($quiz, $cm);
-            $this->regrade_attempts($quiz, false, $groupstudents);
+            $this->regrade_attempts($quiz, false, $groupstudentsjoins);
             $this->finish_regrade($redirecturl);
 
         } else if (optional_param('regradealldry', 0, PARAM_BOOL) && confirm_sesskey()) {
             $this->start_regrade($quiz, $cm);
-            $this->regrade_attempts($quiz, true, $groupstudents);
+            $this->regrade_attempts($quiz, true, $groupstudentsjoins);
             $this->finish_regrade($redirecturl);
 
         } else if (optional_param('regradealldrydo', 0, PARAM_BOOL) && confirm_sesskey()) {
             $this->start_regrade($quiz, $cm);
-            $this->regrade_attempts_needing_it($quiz, $groupstudents);
+            $this->regrade_attempts_needing_it($quiz, $groupstudentsjoins);
             $this->finish_regrade($redirecturl);
         }
     }
@@ -292,7 +320,6 @@ class quiz_overview_report extends quiz_attempts_report {
      * @param object $cm the cm object for the quiz.
      */
     protected function start_regrade($quiz, $cm) {
-        global $OUTPUT, $PAGE;
         require_capability('mod/quiz:regrade', $this->context);
         $this->print_header_and_tabs($cm, $this->course, $quiz, $this->mode);
     }
@@ -379,37 +406,40 @@ class quiz_overview_report extends quiz_attempts_report {
      * controlled by the parameters.
      * @param object $quiz the quiz settings.
      * @param bool $dryrun if true, do a pretend regrade, otherwise do it for real.
-     * @param array $groupstudents blank for all attempts, otherwise regrade attempts
+     * @param \core\dml\sql_join|array $groupstudentsjoins empty for all attempts, otherwise regrade attempts
      * for these users.
      * @param array $attemptids blank for all attempts, otherwise only regrade
      * attempts whose id is in this list.
      */
     protected function regrade_attempts($quiz, $dryrun = false,
-            $groupstudents = array(), $attemptids = array()) {
+            \core\dml\sql_join$groupstudentsjoins = null, $attemptids = array()) {
         global $DB;
         $this->unlock_session();
 
-        $where = "quiz = ? AND preview = 0";
-        $params = array($quiz->id);
+        $sql = "SELECT quiza.*
+                  FROM {quiz_attempts} quiza";
+        $where = "quiz = :qid AND preview = 0";
+        $params = array('qid' => $quiz->id);
 
-        if ($groupstudents) {
-            list($usql, $uparams) = $DB->get_in_or_equal($groupstudents);
-            $where .= " AND userid $usql";
-            $params = array_merge($params, $uparams);
+        if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
+            $sql .= "\nJOIN {user} u ON u.id = quiza.userid
+                    {$groupstudentsjoins->joins}";
+            $where .= " AND {$groupstudentsjoins->wheres}";
+            $params += $groupstudentsjoins->params;
         }
 
         if ($attemptids) {
-            list($asql, $aparams) = $DB->get_in_or_equal($attemptids);
-            $where .= " AND id $asql";
-            $params = array_merge($params, $aparams);
+            $aids = join(',', $attemptids);
+            $where .= " AND quiza.id IN ({$aids})";
         }
 
-        $attempts = $DB->get_records_select('quiz_attempts', $where, $params);
+        $sql .= "\nWHERE {$where}";
+        $attempts = $DB->get_records_sql($sql, $params);
         if (!$attempts) {
             return;
         }
 
-        $this->clear_regrade_table($quiz, $groupstudents);
+        $this->clear_regrade_table($quiz, $groupstudentsjoins);
 
         $progressbar = new progress_bar('quiz_overview_regrade', 500, true);
         $a = array(
@@ -432,28 +462,30 @@ class quiz_overview_report extends quiz_attempts_report {
      * Regrade those questions in those attempts that are marked as needing regrading
      * in the quiz_overview_regrades table.
      * @param object $quiz the quiz settings.
-     * @param array $groupstudents blank for all attempts, otherwise regrade attempts
+     * @param \core\dml\sql_join $groupstudentsjoins empty for all attempts, otherwise regrade attempts
      * for these users.
      */
-    protected function regrade_attempts_needing_it($quiz, $groupstudents) {
+    protected function regrade_attempts_needing_it($quiz, \core\dml\sql_join $groupstudentsjoins) {
         global $DB;
         $this->unlock_session();
 
-        $where = "quiza.quiz = ? AND quiza.preview = 0 AND qqr.regraded = 0";
-        $params = array($quiz->id);
+        $join = '{quiz_overview_regrades} qqr ON qqr.questionusageid = quiza.uniqueid';
+        $where = "quiza.quiz = :qid AND quiza.preview = 0 AND qqr.regraded = 0";
+        $params = array('qid' => $quiz->id);
 
         // Fetch all attempts that need regrading.
-        if ($groupstudents) {
-            list($usql, $uparams) = $DB->get_in_or_equal($groupstudents);
-            $where .= " AND quiza.userid $usql";
-            $params = array_merge($params, $uparams);
+        if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
+            $join .= "\nJOIN {user} u ON u.id = quiza.userid
+                    {$groupstudentsjoins->joins}";
+            $where .= " AND {$groupstudentsjoins->wheres}";
+            $params += $groupstudentsjoins->params;
         }
 
         $toregrade = $DB->get_recordset_sql("
                 SELECT quiza.uniqueid, qqr.slot
-                FROM {quiz_attempts} quiza
-                JOIN {quiz_overview_regrades} qqr ON qqr.questionusageid = quiza.uniqueid
-                WHERE $where", $params);
+                  FROM {quiz_attempts} quiza
+                  JOIN $join
+                 WHERE $where", $params);
 
         $attemptquestions = array();
         foreach ($toregrade as $row) {
@@ -468,7 +500,7 @@ class quiz_overview_report extends quiz_attempts_report {
         $attempts = $DB->get_records_list('quiz_attempts', 'uniqueid',
                 array_keys($attemptquestions));
 
-        $this->clear_regrade_table($quiz, $groupstudents);
+        $this->clear_regrade_table($quiz, $groupstudentsjoins);
 
         $progressbar = new progress_bar('quiz_overview_regrade', 500, true);
         $a = array(
@@ -488,28 +520,32 @@ class quiz_overview_report extends quiz_attempts_report {
     /**
      * Count the number of attempts in need of a regrade.
      * @param object $quiz the quiz settings.
-     * @param array $groupstudents user ids. If this is given, only data relating
+     * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params) If this is given, only data relating
      * to these users is cleared.
      */
-    protected function count_question_attempts_needing_regrade($quiz, $groupstudents) {
+    protected function count_question_attempts_needing_regrade($quiz, \core\dml\sql_join $groupstudentsjoins) {
         global $DB;
 
+        $userjoin = '';
         $usertest = '';
         $params = array();
-        if ($groupstudents) {
-            list($usql, $params) = $DB->get_in_or_equal($groupstudents);
-            $usertest = "quiza.userid $usql AND ";
+        if ($this->hasgroupstudents) {
+            $userjoin = "JOIN {user} u ON u.id = quiza.userid
+                    {$groupstudentsjoins->joins}";
+            $usertest = "{$groupstudentsjoins->wheres} AND u.id = quiza.userid AND ";
+            $params = $groupstudentsjoins->params;
         }
 
-        $params[] = $quiz->id;
+        $params['cquiz'] = $quiz->id;
         $sql = "SELECT COUNT(DISTINCT quiza.id)
-                FROM {quiz_attempts} quiza
-                JOIN {quiz_overview_regrades} qqr ON quiza.uniqueid = qqr.questionusageid
-                WHERE
-                    $usertest
-                    quiza.quiz = ? AND
-                    quiza.preview = 0 AND
-                    qqr.regraded = 0";
+                  FROM {quiz_attempts} quiza
+                  JOIN {quiz_overview_regrades} qqr ON quiza.uniqueid = qqr.questionusageid
+                $userjoin
+                 WHERE
+                      $usertest
+                      quiza.quiz = :cquiz AND
+                      quiza.preview = 0 AND
+                      qqr.regraded = 0";
         return $DB->count_records_sql($sql, $params);
     }
 
@@ -532,27 +568,27 @@ class quiz_overview_report extends quiz_attempts_report {
     /**
      * Remove all information about pending/complete regrades from the database.
      * @param object $quiz the quiz settings.
-     * @param array $groupstudents user ids. If this is given, only data relating
+     * @param \core\dml\sql_join $groupstudentsjoins (joins, wheres, params). If this is given, only data relating
      * to these users is cleared.
      */
-    protected function clear_regrade_table($quiz, $groupstudents) {
+    protected function clear_regrade_table($quiz, \core\dml\sql_join $groupstudentsjoins) {
         global $DB;
 
         // Fetch all attempts that need regrading.
-        $where = '';
-        $params = array();
-        if ($groupstudents) {
-            list($usql, $params) = $DB->get_in_or_equal($groupstudents);
-            $where = "userid $usql AND ";
-        }
-
-        $params[] = $quiz->id;
-        $DB->delete_records_select('quiz_overview_regrades',
-                "questionusageid IN (
+        $select = "questionusageid IN (
                     SELECT uniqueid
-                    FROM {quiz_attempts}
-                    WHERE $where quiz = ?
-                )", $params);
+                      FROM {quiz_attempts} quiza";
+        $where = "WHERE quiza.quiz = :qid";
+        $params = array('qid' => $quiz->id);
+        if ($this->hasgroupstudents && !empty($groupstudentsjoins->joins)) {
+            $select .= "\nJOIN {user} u ON u.id = quiza.userid
+                    {$groupstudentsjoins->joins}";
+            $where .= " AND {$groupstudentsjoins->wheres}";
+            $params += $groupstudentsjoins->params;
+        }
+        $select .= "\n$where)";
+
+        $DB->delete_records_select('quiz_overview_regrades', $select, $params);
     }
 
     /**
