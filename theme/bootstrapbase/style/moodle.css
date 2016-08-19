@@ -5882,6 +5882,7 @@ a.ygtvspacer:hover {
   background-color: #4f94cd;
   color: #fff;
   border: none;
+  background-color: #79b5e6;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact:hover .information .lastmessage {
   color: #fff;
@@ -6184,6 +6185,13 @@ a.ygtvspacer:hover {
   color: #fff;
 }
 .messaging-area-container .messaging-area .messages-area.editing .messages .message[aria-checked="true"] .content .timesent {
+  color: #fff;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages .message[aria-checked="false"] .content:hover {
+  background-color: #79b5e6;
+  color: #fff;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages .message[aria-checked="false"] .content:hover .timesent {
   color: #fff;
 }
 .messaging-area-container .messaging-area .messages-area.editing .response .delete-confirmation {

@@ -159,6 +159,7 @@
 
                     &:hover {
                         .setSelectedContact();
+                        background-color: #79b5e6;
                     }
 
                     &.selected:not([aria-checked]) {
@@ -520,6 +521,19 @@
 
                                 .timesent {
                                     color: #fff;
+                                }
+                            }
+                        }
+
+                        &[aria-checked="false"] {
+                            .content {
+                                &:hover {
+                                    background-color: #79b5e6;
+                                    color: #fff;
+
+                                    .timesent {
+                                        color: #fff;
+                                    }
                                 }
                             }
                         }
