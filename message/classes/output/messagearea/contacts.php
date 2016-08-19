@@ -52,16 +52,23 @@ class contacts implements templatable, renderable {
     protected $contacts;
 
     /**
+     * Are we storing conversations or contacts?
+     */
+    protected $isconversation;
+
+    /**
      * Constructor.
      *
      * @param int $userid The id of the user the contacts belong to
      * @param int $otheruserid The id of the user we are viewing
+     * @param bool $isconversation Are we storing conversations or contacts?
      * @param \core_message\output\messagearea\contact[] $contacts
      */
-    public function __construct($userid, $otheruserid, $contacts) {
+    public function __construct($userid, $otheruserid, $contacts, $isconversation = true) {
         $this->userid = $userid;
         $this->otheruserid = $otheruserid;
         $this->contacts = $contacts;
+        $this->isconversation = $isconversation;
     }
 
     /**
@@ -93,7 +100,7 @@ class contacts implements templatable, renderable {
             }
             $data->contacts[] = $contactdata;
         }
-
+        $data->isconversation = $this->isconversation;
         return $data;
     }
 }

@@ -742,6 +742,7 @@ class core_message_external extends external_api {
         return new external_single_structure(
             array(
                 'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
+                'isconversation' => new external_value(PARAM_BOOL, 'Are we storing conversations or contacts?'),
                 'contacts' => new external_multiple_structure(
                     new external_single_structure(
                         array(

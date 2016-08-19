@@ -5863,6 +5863,10 @@ a.ygtvspacer:hover {
   height: 500px;
   overflow-y: auto;
 }
+.messaging-area-container .messaging-area .contacts-area .contacts .nocontacts {
+  padding-top: 20px;
+  text-align: center;
+}
 .messaging-area-container .messaging-area .contacts-area .contacts .contact {
   height: 66px;
   cursor: pointer;

@@ -1,3 +1,13 @@
 {{#contacts}}
     {{> core_message/message_area_contact }}
 {{/contacts}}
+{{^contacts}}
+    <div class="nocontacts" data-region="no-contacts">
+        {{#isconversation}}
+            {{#str}}noconversations, message{{/str}}
+        {{/isconversation}}
+        {{^isconversation}}
+            {{#str}}nocontacts, message{{/str}}
+        {{/isconversation}}
+    </div>
+{{/contacts}}

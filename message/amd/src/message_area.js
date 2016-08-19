@@ -57,6 +57,7 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             MESSAGESHEADERACTIONS: "[data-region='messages-header-actions']",
             MESSAGERESPONSE: "[data-region='response']",
             MESSAGETEXT: "[data-region='message-text']",
+            NOCONTACTS: "[data-region=no-contacts]",
             PROFILE: "[data-region='profile']",
             PROFILEADDCONTACT: "[data-action='profile-add-contact']",
             PROFILEBLOCKCONTACT: "[data-action='profile-block-contact']",

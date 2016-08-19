@@ -259,7 +259,7 @@ class api {
             }
         }
 
-        return new \core_message\output\messagearea\contacts($userid, 0, $arrcontacts);
+        return new \core_message\output\messagearea\contacts($userid, 0, $arrcontacts, false);
     }
 
     /**
