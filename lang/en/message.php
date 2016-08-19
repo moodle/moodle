@@ -122,7 +122,6 @@ $string['notificationwindow'] = 'Notification window';
 $string['notificationpreferences'] = 'Notification preferences';
 $string['notificationimage'] = 'Notification image';
 $string['notifications'] = 'Notifications';
-$string['notificationsnewmessages'] = 'Notifications of new messages';
 $string['off'] = 'Off';
 $string['offline'] = 'Offline';
 $string['offlinecontacts'] = 'Offline contacts ({$a})';

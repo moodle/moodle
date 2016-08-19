@@ -16,18 +16,19 @@
 /**
  * Controls the message preference page.
  *
- * @module     core_message/notification_preference
- * @class      notification_preference
+ * @module     core_message/message_preferences
+ * @class      message_preferences
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/notification',
-        'core_message/preferences_notifications_list_controller', 'core/custom_interaction_events'],
-        function($, Ajax, Notification, ListController, CustomEvents) {
+        'core_message/message_notification_preference', 'core/custom_interaction_events'],
+        function($, Ajax, Notification, MessageNotificationPreference, CustomEvents) {
 
     var SELECTORS = {
+        PREFERENCE: '[data-state]',
         PREFERENCES_CONTAINER: '[data-region="preferences-container"]',
         BLOCK_NON_CONTACTS: '[data-region="block-non-contacts-container"] [data-block-non-contacts]',
         BLOCK_NON_CONTACTS_CONTAINER: '[data-region="block-non-contacts-container"]',
@@ -36,19 +37,23 @@ define(['jquery', 'core/ajax', 'core/notification',
     /**
      * Constructor for the MessagePreferences.
      *
+     * @param {jQuery object} element The root element for the message preferences
      * @return object MessagePreferences
      */
-    var MessagePreferences = function() {
-        new ListController($(SELECTORS.PREFERENCES_CONTAINER));
-        var blockContactsElement = $(SELECTORS.BLOCK_NON_CONTACTS);
+    var MessagePreferences = function(element) {
+        this.root = $(element);
 
-        CustomEvents.define(blockContactsElement, [
-            CustomEvents.events.activate
-        ]);
+        this.registerEventListeners();
+    };
 
-        blockContactsElement.on(CustomEvents.events.activate, function(e) {
-            this.saveBlockNonContactsStatus();
-        }.bind(this));
+    /**
+     * Check if the preferences have been disabled on this page.
+     *
+     * @method preferencesDisabled
+     * @return bool
+     */
+    MessagePreferences.prototype.preferencesDisabled = function() {
+        return this.root.find(SELECTORS.PREFERENCES_CONTAINER).hasClass('disabled');
     };
 
     /**
@@ -58,8 +63,8 @@ define(['jquery', 'core/ajax', 'core/notification',
      * @method saveBlockNonContactsStatus
      */
     MessagePreferences.prototype.saveBlockNonContactsStatus = function() {
-        var checkbox = $(SELECTORS.BLOCK_NON_CONTACTS);
-        var container = $(SELECTORS.BLOCK_NON_CONTACTS_CONTAINER);
+        var checkbox = this.root.find(SELECTORS.BLOCK_NON_CONTACTS);
+        var container = this.root.find(SELECTORS.BLOCK_NON_CONTACTS_CONTAINER);
         var ischecked = checkbox.prop('checked');
 
         if (container.hasClass('loading')) {
@@ -87,6 +92,34 @@ define(['jquery', 'core/ajax', 'core/notification',
             .always(function() {
                 container.removeClass('loading');
             });
+    };
+
+    /**
+     * Create all of the event listeners for the message preferences page.
+     *
+     * @method registerEventListeners
+     */
+    MessagePreferences.prototype.registerEventListeners = function() {
+        CustomEvents.define(this.root, [
+            CustomEvents.events.activate
+        ]);
+
+        this.root.on(CustomEvents.events.activate, SELECTORS.BLOCK_NON_CONTACTS, function(e) {
+            this.saveBlockNonContactsStatus();
+        }.bind(this));
+
+        this.root.on('change', function(e) {
+            if (!this.preferencesDisabled()) {
+                var preferencesContainer = $(e.target).closest(SELECTORS.PREFERENCES_CONTAINER);
+                var preferenceElement = $(e.target).closest(SELECTORS.PREFERENCE);
+                var messagePreference = new MessageNotificationPreference(preferencesContainer);
+
+                preferenceElement.addClass('loading');
+                messagePreference.save().always(function() {
+                    preferenceElement.removeClass('loading');
+                });
+            }
+        }.bind(this));
     };
 
     return MessagePreferences;
