@@ -244,7 +244,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._sendMessage = function() {
-            var text = this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val();
+            var element = this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT);
+            var text = element.val();
 
             // Do not do anything if it is empty.
             if (text.trim() === '') {
@@ -272,6 +273,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 }
             }]);
 
+            element.prop('disabled', true);
+
             // Update the DOM when we get some data back.
             return promises[0].then(function(response) {
                 if (response.length < 0) {
@@ -288,7 +291,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }.bind(this)).then(function() {
                 // Ok, we are no longer sending a message.
                 this._isSendingMessage = false;
-            }.bind(this)).fail(notification.exception);
+            }.bind(this)).always(function() {
+                element.prop('disabled', false);
+            }).fail(notification.exception);
         };
 
         /**
