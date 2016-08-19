@@ -87,6 +87,12 @@ information provided here is intended especially for developers.
     ALTER DATABASE moodle SET standard_conforming_strings = on;
     ALTER DATABASE moodle SET search_path = 'moodle,public';  -- Optional, if you wish to use a custom schema.
   You can set these options against the database or the moodle user who connects.
+* Some form elements have been refined to better support right-to-left languages. In RTL,
+  most fields should not have their direction flipped, a URL, a path to a file, a number, ...
+  are always displayed LTR. Input fields and text areas now will best guess whether they
+  should be forced to be displayed in LTR based on the PARAM type associated with it. You
+  can call $mform->setForceLtr($elementName, true/false) on some form fields to manually
+  set the value.
 
 === 3.1 ===
 

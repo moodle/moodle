@@ -50,6 +50,9 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea implements templa
     /** @var bool if true label will be hidden */
     var $_hiddenLabel=false;
 
+    /** @var bool Whether to force the display of this element to flow LTR. */
+    protected $forceltr = false;
+
     /**
      * constructor
      *
@@ -95,6 +98,16 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea implements templa
      * @return string
      */
     function toHtml(){
+
+        // Add the class at the last minute.
+        if ($this->get_force_ltr()) {
+            if (!isset($this->_attributes['class'])) {
+                $this->_attributes['class'] = 'text-ltr';
+            } else {
+                $this->_attributes['class'] .= ' text-ltr';
+            }
+        }
+
         if ($this->_hiddenLabel){
             $this->_generateId();
             return '<label class="accesshide" for="' . $this->getAttribute('id') . '" >' .
@@ -132,5 +145,25 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea implements templa
         } else {
             return 'default';
         }
+    }
+
+    /**
+     * Get force LTR option.
+     *
+     * @return bool
+     */
+    public function get_force_ltr() {
+        return $this->forceltr;
+    }
+
+    /**
+     * Force the field to flow left-to-right.
+     *
+     * This is useful for fields such as code or configuration snippets.
+     *
+     * @param bool $value The value to set the option to.
+     */
+    public function set_force_ltr($value) {
+        $this->forceltr = (bool) $value;
     }
 }

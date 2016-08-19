@@ -47,6 +47,9 @@ class MoodleQuickForm_text extends HTML_QuickForm_text implements templatable {
     /** @var bool if true label will be hidden */
     var $_hiddenLabel=false;
 
+    /** @var bool Whether to force the display of this element to flow LTR. */
+    protected $forceltr = false;
+
     /**
      * constructor
      *
@@ -109,13 +112,28 @@ class MoodleQuickForm_text extends HTML_QuickForm_text implements templatable {
      *
      * @return string
      */
-    function toHtml(){
+    function toHtml() {
+
+        // Add the class at the last minute.
+        if ($this->get_force_ltr()) {
+            if (!isset($this->_attributes['class'])) {
+                $this->_attributes['class'] = 'text-ltr';
+            } else {
+                $this->_attributes['class'] .= ' text-ltr';
+            }
+        }
+
+        if ($this->_flagFrozen) {
+            return $this->getFrozenHtml();
+        }
+        $html = $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />';
+
         if ($this->_hiddenLabel){
             $this->_generateId();
             return '<label class="accesshide" for="'.$this->getAttribute('id').'" >'.
-                        $this->getLabel().'</label>'.parent::toHtml();
+                        $this->getLabel() . '</label>' . $html;
         } else {
-             return parent::toHtml();
+             return $html;
         }
     }
 
@@ -128,4 +146,23 @@ class MoodleQuickForm_text extends HTML_QuickForm_text implements templatable {
         return $this->_helpbutton;
     }
 
+    /**
+     * Get force LTR option.
+     *
+     * @return bool
+     */
+    public function get_force_ltr() {
+        return $this->forceltr;
+    }
+
+    /**
+     * Force the field to flow left-to-right.
+     *
+     * This is useful for fields such as URLs, passwords, settings, etc...
+     *
+     * @param bool $value The value to set the option to.
+     */
+    public function set_force_ltr($value) {
+        $this->forceltr = (bool) $value;
+    }
 }

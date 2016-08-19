@@ -114,7 +114,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input implements templata
 <span class="recaptcha_only_if_image"><label for="recaptcha_response_field">' . $strenterthewordsabove . '</label></span>
 <span class="recaptcha_only_if_audio"><label for="recaptcha_response_field">' . $strenterthenumbersyouhear . '</label></span>
 
-<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
+<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" class="text-ltr" />
 <input type="hidden" name="recaptcha_element" value="dummyvalue" /> <!-- Dummy value to fool formslib -->
 <div><a href="javascript:Recaptcha.reload()">' . $strgetanothercaptcha . '</a></div>
 <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type(\'audio\')">' . $strgetanaudiocaptcha . '</a></div>
@@ -162,4 +162,14 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input implements templata
         $context['html'] = $this->toHtml();
         return $context;
     }
+
+    /**
+     * Get force LTR option.
+     *
+     * @return bool
+     */
+    public function get_force_ltr() {
+        return true;
+    }
+
 }
