@@ -50,12 +50,6 @@
             margin: 0.5em;
             padding: 1em;
             border: 1px solid #aaa;
-            .action-icon {
-                display: inline-block;
-                position: relative;
-                height: 64px;
-                width: 64px;
-            }
             .action-text {
                 position: relative;
                 top: 0.4em;
@@ -209,9 +203,6 @@
     }
     td.column-name {
         padding-left: 24px;
-    }
-    .column-name h4 img.icon {
-        padding-left: 0;
     }
     .category input[type="text"],
     .category .column-range,

@@ -171,14 +171,6 @@ img.resize {
 .action-menu {
     white-space: nowrap;
 }
-.action-menu img {
-    width: 16px;
-    height: 16px;
-    box-sizing: content-box;
-}
-.action-menu .dropdown-menu img {
-    padding-right: 0.5rem;
-}
 .action-menu .userpicture {
     width: auto;
     height: auto;
@@ -193,32 +185,10 @@ img.resize {
     width: 0.8em;
 }
 /* Icon styles */
-img.icon,
-img.iconhelp, .helplink img {
-    height: 16px;
-    vertical-align: text-bottom;
-    width: 16px;
-    padding-right: 0.5rem;
-    box-sizing: content-box;
-}
-img.iconlarge {
+img.activityicon {
     height: 24px;
     width: 24px;
     vertical-align: middle;
-}
-img.iconsort {
-    vertical-align: text-bottom;
-    padding-left: .3em;
-    margin-bottom: .15em;
-}
-img.icontoggle {
-    height: 17px;
-    vertical-align: middle;
-    width: 50px;
-}
-img.iconkbhelp {
-    height: 17px;
-    width: 49px;
 }
 .boxaligncenter {
     margin-left: auto;
@@ -258,11 +228,6 @@ img.uihint {
 }
 table.flexible .emptyrow {
     display: none;
-}
-img.emoticon {
-    vertical-align: middle;
-    width: 15px;
-    height: 15px;
 }
 form.popupform,
 form.popupform div {
@@ -1305,9 +1270,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         input[type=radio] {
             display: inline-block;
         }
-        .modicon {
-            display: inline-block;
-        }
         .typename {
             display: inline-block;
             width: 65%;
@@ -1327,20 +1289,12 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     padding-bottom: 0.4em;
 }
 .choosercontainer #chooseform .option .typename,
-.choosercontainer #chooseform .option span.modicon img.icon,
-.choosercontainer #chooseform .nonoption .typename,
-.choosercontainer #chooseform .nonoption span.modicon img.icon {
+.choosercontainer #chooseform .nonoption .typename {
     padding: 0 0 0 0.5em;
 }
 
-.chooserdialogue-course-modchooser .choosercontainer #chooseform .option span.modicon img.icon,
-.chooserdialogue-course-modchooser .choosercontainer #chooseform .nonoption span.modicon img.icon {
-    height: 24px;
-    width: 24px;
-}
 .choosercontainer #chooseform .option input[type=radio],
-.choosercontainer #chooseform .option span.typename,
-.choosercontainer #chooseform .option span.modicon {
+.choosercontainer #chooseform .option span.typename {
     vertical-align: middle;
 }
 .choosercontainer #chooseform .option label {

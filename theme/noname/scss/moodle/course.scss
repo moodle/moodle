@@ -29,11 +29,6 @@
 .section_add_menus .urlselect select {
     margin-left: .2em;
 }
-.section_add_menus .urlselect img.iconhelp {
-    padding: 0;
-    margin: 0;
-    vertical-align: text-bottom;
-}
 
 .sitetopic ul.section {
     margin: 0;
@@ -90,13 +85,6 @@
             display: table-cell;
             padding-right: 4px;
             min-height: 2em;
-
-            .dimmed {
-                img.activityicon {
-                  opacity: 0.5;
-                  filter: alpha(opacity=50);
-                }
-            }
         }
     }
     .label {
@@ -437,10 +425,6 @@ span.editinstructions {
     margin-top: .2em;
     padding: .3em;
 }
-.dndupload-preview img.icon {
-    vertical-align: text-bottom;
-    padding: 0;
-}
 .dndupload-progress-outer {
     @extend progress;
 }
@@ -461,9 +445,6 @@ span.editinstructions {
 #page-admin-course-manage #movecourses td img {
     margin: 0 .22em;
     vertical-align: text-bottom;
-}
-#page-admin-course-manage #movecourses td img.icon {
-    padding: 0;
 }
 
 #coursesearch {
@@ -523,15 +504,10 @@ span.editinstructions {
     padding:0;
     margin:0;
 }
-.coursebox .enrolmenticons {
-    padding:3px 0;
-    float:right;
-}
 .coursebox .moreinfo {
     padding:3px 0;
     float:right;
 }
-.coursebox .enrolmenticons img,
 .coursebox .moreinfo img {
     margin:0 .2em;
 }
@@ -784,11 +760,6 @@ span.editinstructions {
                 background-color: $table-bg-hover;
             }
         }
-        .tree-icon {
-            margin: 2px 6px 0 0;
-            width:12px;
-            vertical-align:inherit;
-        }
         &[data-selected='1'] {
             > div {
                 background-color: $table-bg-accent;
@@ -798,15 +769,6 @@ span.editinstructions {
             }
         }
 
-        // Tree item indenting to represent depth.
-        .tree-icon {margin-left:0;}
-        li .tree-icon {margin-left:1em;}
-        li li .tree-icon {margin-left:2em;}
-        li li li .tree-icon {margin-left:3em;}
-        li li li li .tree-icon {margin-left:4em;}
-        li li li li li .tree-icon {margin-left:4.5em;}
-        li li li li li li .tree-icon {margin-left:5em;}
-        li li li li li li li .tree-icon {margin-left:5.5em;}
     }
 
     .item-actions {
