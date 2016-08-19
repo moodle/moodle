@@ -113,6 +113,18 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             this._searchArea = this._searchAreas.MESSAGES;
             this._setPlaceholderText('searchmessages');
         }.bind(this));
+        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, function() {
+            this._hideSearchResults();
+            this._searchArea = this._searchAreas.MESSAGES;
+            this._setPlaceholderText('searchmessages');
+            this._disableSearching();
+        }.bind(this));
+        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES, function() {
+            this._enableSearching();
+        }.bind(this));
+        this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESDELETED, function() {
+            this._enableSearching();
+        }.bind(this));
 
         // Event listeners for scrolling through messages and people in courses.
         customEvents.define(this.messageArea.SELECTORS.SEARCHRESULTSAREA, [
@@ -381,6 +393,30 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         this.messageArea.find(this.messageArea.SELECTORS.SEARCHTEXTAREA + ' input').val('');
         this._clearSearchArea();
         this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA).hide();
+    };
+
+    /**
+     * Disable search.
+     *
+     * @private
+     */
+    Search.prototype._disableSearching = function() {
+        this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).prop('disabled', true);
+
+        if (this._searchArea == this._searchAreas.MESSAGES) {
+            this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESEARCHCANCELED);
+        } else if (this._searchArea == this._searchAreas.PEOPLE) {
+            this.messageArea.trigger(this.messageArea.EVENTS.PEOPLESEARCHCANCELED);
+        }
+    };
+
+    /**
+     * Enable search.
+     *
+     * @private
+     */
+    Search.prototype._enableSearching = function() {
+        this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).prop('disabled', false);
     };
 
     return Search;
