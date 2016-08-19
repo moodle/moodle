@@ -223,6 +223,7 @@ $definitions = array(
     'completion' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
+        'simpledata' => true,
         'ttl' => 3600,
         'staticacceleration' => true,
         'staticaccelerationsize' => 2, // Should be current course and site course.
