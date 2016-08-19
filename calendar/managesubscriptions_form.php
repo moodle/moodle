@@ -60,6 +60,7 @@ class calendar_addsubscription_form extends moodleform {
         $mform->addElement('text', 'url', get_string('importfromurl', 'calendar'), array('maxsize' => '255', 'size' => '50'));
         // Cannot set as PARAM_URL since we need to allow webcal:// protocol.
         $mform->setType('url', PARAM_RAW);
+        $mform->setForceLtr('url');
 
         // Poll interval
         $choices = calendar_get_pollinterval_choices();

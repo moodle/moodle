@@ -121,10 +121,7 @@ form {
 .singleselect label {
     margin-right: .3em;
 }
-input#id_externalurl {
-    /*rtl:ignore*/
-    direction: ltr;
-}
+
 #portfolio-add-button {
     display: inline;
 }
@@ -216,18 +213,6 @@ div.backup-section + form,
     color: @textColor;
     text-decoration: none;
 }
-// I think this could be avoided (or at least tidied up) ifr
-// we used HTML5 input types like url, phone, email, number etc.
-/*rtl:ignore*/
-.mform .fitem .felement input[name=email],
-.mform .fitem .felement input[name=email2],
-.mform .fitem .felement input[name=url],
-.mform .fitem .felement input[name=idnumber],
-.mform .fitem .felement input[name=phone1],
-.mform .fitem .felement input[name=phone2] {
-    text-align: left;
-    direction: ltr;
-}
 
 #page-grade-edit-outcome-course .courseoutcomes {
     margin-left: auto;
@@ -236,18 +221,6 @@ div.backup-section + form,
 }
 #page-grade-edit-outcome-course .courseoutcomes td {
     text-align: center;
-}
-/* Install Process' text fields Forms, should always be justified to the left */
-/*rtl:ignore*/
-#installform #id_wwwroot,
-#installform #id_dirroot,
-#installform #id_dataroot,
-#installform #id_dbhost,
-#installform #id_dbname,
-#installform #id_dbuser,
-#installform #id_dbpass,
-#installform #id_prefix {
-    direction: ltr;
 }
 
 .mdl-right > label {

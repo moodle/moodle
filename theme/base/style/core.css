@@ -1115,11 +1115,6 @@ a.skip:active {
     text-decoration: none;
 }
 
-/*rtl:ignore*/;
-input#id_externalurl {
-    direction: ltr;
-}
-
 #portfolio-add-button {
     display: inline;
 }
@@ -2730,17 +2725,6 @@ x#fitem_id_availabilityconditionsjson input[type=text] {
     width: 480px;
 }
 
-/*rtl:ignore*/
-.mform .fitem .felement input[name=email],
-.mform .fitem .felement input[name=email2],
-.mform .fitem .felement input[name=url],
-.mform .fitem .felement input[name=idnumber],
-.mform .fitem .felement input[name=phone1],
-.mform .fitem .felement input[name=phone2] {
-    text-align: left;
-    direction: ltr;
-}
-
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {
     height: 25px;
@@ -2945,61 +2929,6 @@ sup {
 .course-content ul.weeks .content .summary ol,
 .course-content ul.topics .content .summary ol {
     list-style: decimal outside none;
-}
-
-/*rtl:ignore*/
-#adminsettings #id_s__pathtodu,
-#adminsettings #id_s__aspellpath,
-#adminsettings #id_s__pathtodot,
-#adminsettings #id_s__supportemail,
-#adminsettings #id_s__supportpage,
-#adminsettings #id_s__sessioncookie,
-#adminsettings #id_s__sessioncookiepath,
-#adminsettings #id_s__sessioncookiedomain,
-#adminsettings #id_s__proxyhost,
-#adminsettings #id_s__proxyuser,
-#adminsettings #id_s__proxypassword,
-#adminsettings #id_s__proxybypass,
-#adminsettings #id_s__jabberhost,
-#adminsettings #id_s__jabberserver,
-#adminsettings #id_s__jabberusername,
-#adminsettings #id_s__jabberpassword,
-#adminsettings #id_s__additionalhtmlhead,
-#adminsettings #id_s__additionalhtmltopofbody,
-#adminsettings #id_s__additionalhtmlfooter,
-#adminsettings #id_s__docroot,
-#adminsettings #id_s__filter_tex_latexpreamble,
-#adminsettings #id_s__filter_tex_latexbackground,
-#adminsettings #id_s__filter_tex_pathlatex,
-#adminsettings #id_s__filter_tex_pathdvips,
-#adminsettings #id_s__filter_tex_pathconvert,
-#adminsettings #id_s__blockedip,
-#adminsettings #id_s__pathtoclam,
-#adminsettings #id_s__quarantinedir,
-#adminsettings #id_s__sitepolicy,
-#adminsettings #id_s__sitepolicyguest,
-#adminsettings #id_s__cronremotepassword,
-#adminsettings #id_s__allowedip,
-#adminsettings #id_s__blockedip,
-#adminsettings #id_s_enrol_meta_nosyncroleids,
-#adminsettings #id_s_enrol_ldap_host_url,
-#adminsettings #id_s_enrol_ldap_ldapencoding,
-#adminsettings #id_s_enrol_ldap_bind_dn,
-#adminsettings #id_s_enrol_ldap_bind_pw,
-#adminsettings #admin-emoticons .form-text,
-#adminsettings #admin-role_mapping input[type=text],
-#adminsettings #id_s_enrol_paypal_paypalbusiness,
-#adminsettings #id_s_enrol_flatfile_location,
-#page-admin-setting-enrolsettingsflatfile input[type=text],
-#page-admin-setting-enrolsettingsdatabase input[type=text],
-#page-admin-auth-db input[type=text] {
-    direction: ltr;
-}
-
-/*rtl:ignore*/;
-#page-admin-setting-enrolsettingsflatfile .informationbox {
-    direction: ltr;
-    text-align: left;
 }
 
 .initialbar a {
@@ -3426,18 +3355,6 @@ sup {
 }
 
 /* Install Process' text fields Forms, should always be justified to the left */
-
-/*rtl:ignore*/;
-form#installform #id_wwwroot,
-form#installform #id_dirroot,
-form#installform #id_dataroot,
-form#installform #id_dbhost,
-form#installform #id_dbname,
-form#installform #id_dbuser,
-form#installform #id_dbpass,
-form#installform #id_prefix {
-    direction: ltr;
-}
 
 /*rtl:ignore*/;
 .configphp {

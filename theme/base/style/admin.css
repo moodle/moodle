@@ -615,13 +615,6 @@
     text-align: left;
 }
 
-/*rtl:ignore*/
-#admin-spelllanguagelist textarea,
-#page-admin-setting-editorsettingstinymce .form-textarea textarea {
-    text-align: left;
-    direction: ltr;
-}
-
 #adminsettings .form-item .form-setting .form-htmlarea {
     display: inline;
 }

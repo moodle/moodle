@@ -329,6 +329,7 @@ class site_registration_form extends moodleform {
                 array('class' => 'registration_textfield'));
         $mform->setType('contactphone', PARAM_TEXT);
         $mform->addHelpButton('contactphone', 'sitephone', 'hub');
+        $mform->setForceLtr('contactphone');
 
         $mform->addElement('text', 'contactemail', get_string('siteemail', 'hub'),
                 array('class' => 'registration_textfield'));

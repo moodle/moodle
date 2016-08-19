@@ -47,6 +47,10 @@ body {
     padding: 4px;
 }
 
+.text-ltr {
+    direction: ltr !important;
+}
+
 .headermain {
     margin: 15px;
 }

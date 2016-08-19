@@ -366,18 +366,23 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
 
     $mform->addElement('text', 'icq', get_string('icqnumber'), 'maxlength="15" size="25"');
     $mform->setType('icq', core_user::get_property_type('icq'));
+    $mform->setForceLtr('icq');
 
     $mform->addElement('text', 'skype', get_string('skypeid'), 'maxlength="50" size="25"');
     $mform->setType('skype', core_user::get_property_type('skype'));
+    $mform->setForceLtr('skype');
 
     $mform->addElement('text', 'aim', get_string('aimid'), 'maxlength="50" size="25"');
     $mform->setType('aim', core_user::get_property_type('aim'));
+    $mform->setForceLtr('aim');
 
     $mform->addElement('text', 'yahoo', get_string('yahooid'), 'maxlength="50" size="25"');
     $mform->setType('yahoo', core_user::get_property_type('yahoo'));
+    $mform->setForceLtr('yahoo');
 
     $mform->addElement('text', 'msn', get_string('msnid'), 'maxlength="50" size="25"');
     $mform->setType('msn', core_user::get_property_type('msn'));
+    $mform->setForceLtr('msn');
 
     $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
     $mform->setType('idnumber', core_user::get_property_type('idnumber'));
@@ -390,9 +395,11 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
 
     $mform->addElement('text', 'phone1', get_string('phone1'), 'maxlength="20" size="25"');
     $mform->setType('phone1', core_user::get_property_type('phone1'));
+    $mform->setForceLtr('phone1');
 
     $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
     $mform->setType('phone2', core_user::get_property_type('phone2'));
+    $mform->setForceLtr('phone2');
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
     $mform->setType('address', core_user::get_property_type('address'));

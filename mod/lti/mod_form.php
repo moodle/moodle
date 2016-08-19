@@ -158,6 +158,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setAdvanced('resourcekey');
         $mform->addHelpButton('resourcekey', 'resourcekey', 'lti');
         $mform->disabledIf('resourcekey', 'typeid', 'neq', '0');
+        $mform->setForceLtr('resourcekey');
 
         $mform->addElement('passwordunmask', 'password', get_string('password', 'lti'));
         $mform->setType('password', PARAM_TEXT);
@@ -169,6 +170,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setType('instructorcustomparameters', PARAM_TEXT);
         $mform->setAdvanced('instructorcustomparameters');
         $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
+        $mform->setForceLtr('instructorcustomparameters');
 
         $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), array('size' => '64'));
         $mform->setType('icon', PARAM_URL);

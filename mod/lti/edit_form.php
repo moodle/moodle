@@ -85,6 +85,7 @@ class mod_lti_edit_types_form extends moodleform{
             $mform->addElement('text', 'lti_resourcekey', get_string('resourcekey_admin', 'lti'));
             $mform->setType('lti_resourcekey', PARAM_TEXT);
             $mform->addHelpButton('lti_resourcekey', 'resourcekey_admin', 'lti');
+            $mform->setForceLtr('lti_resourcekey');
 
             $mform->addElement('passwordunmask', 'lti_password', get_string('password_admin', 'lti'));
             $mform->setType('lti_password', PARAM_TEXT);
@@ -96,11 +97,13 @@ class mod_lti_edit_types_form extends moodleform{
             $mform->setType('lti_parameters', PARAM_TEXT);
             $mform->addHelpButton('lti_parameters', 'parameter', 'lti');
             $mform->disabledIf('lti_parameters', null);
+            $mform->setForceLtr('lti_parameters');
         }
 
         $mform->addElement('textarea', 'lti_customparameters', get_string('custom', 'lti'), array('rows' => 4, 'cols' => 60));
         $mform->setType('lti_customparameters', PARAM_TEXT);
         $mform->addHelpButton('lti_customparameters', 'custom', 'lti');
+        $mform->setForceLtr('lti_customparameters');
 
         if (!empty($this->_customdata->isadmin)) {
             $options = array(
