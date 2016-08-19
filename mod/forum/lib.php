@@ -4294,16 +4294,13 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, $unused=null) {
 /**
  * Add a new post in an existing discussion.
  *
- * @global object
- * @global object
- * @global object
- * @param object $post
- * @param mixed $mform
- * @param string $unused formerly $message, renamed in 2.8 as it was unused.
+ * @param   stdClass    $post       The post data
+ * @param   mixed       $mform      The submitted form
+ * @param   string      $unused
  * @return int
  */
 function forum_add_new_post($post, $mform, $unused = null) {
-    global $USER, $CFG, $DB;
+    global $USER, $DB;
 
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
@@ -4342,18 +4339,15 @@ function forum_add_new_post($post, $mform, $unused = null) {
 }
 
 /**
- * Update a post
+ * Update a post.
  *
- * @global object
- * @global object
- * @global object
- * @param object $post
- * @param mixed $mform
- * @param string $message
- * @return bool
+ * @param   stdClass    $post       The post to update
+ * @param   mixed       $mform      The submitted form
+ * @param   string      $unused
+ * @return  bool
  */
-function forum_update_post($post, $mform, &$message) {
-    global $USER, $CFG, $DB;
+function forum_update_post($post, $mform, $unused = null) {
+    global $DB;
 
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
@@ -4378,7 +4372,7 @@ function forum_update_post($post, $mform, &$message) {
 
     $DB->update_record('forum_discussions', $discussion);
 
-    forum_add_attachment($post, $forum, $cm, $mform, $message);
+    forum_add_attachment($post, $forum, $cm, $mform);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);

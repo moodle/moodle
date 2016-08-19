@@ -716,7 +716,7 @@ if ($mform_post->is_cancelled()) {
 
         $updatepost = $fromform; //realpost
         $updatepost->forum = $forum->id;
-        if (!forum_update_post($updatepost, $mform_post, $message)) {
+        if (!forum_update_post($updatepost, $mform_post)) {
             print_error("couldnotupdate", "forum", $errordestination);
         }
 
@@ -733,10 +733,10 @@ if ($mform_post->is_cancelled()) {
         }
 
         if ($realpost->userid == $USER->id) {
-            $message .= '<br />'.get_string("postupdated", "forum");
+            $message .= get_string("postupdated", "forum");
         } else {
             $realuser = $DB->get_record('user', array('id' => $realpost->userid));
-            $message .= '<br />'.get_string("editedpostupdated", "forum", fullname($realuser));
+            $message .= get_string("editedpostupdated", "forum", fullname($realuser));
         }
 
         if ($subscribemessage = forum_post_subscription($fromform, $forum, $discussion)) {
@@ -782,7 +782,7 @@ if ($mform_post->is_cancelled()) {
         $message = '';
         $addpost = $fromform;
         $addpost->forum=$forum->id;
-        if ($fromform->id = forum_add_new_post($addpost, $mform_post, $message)) {
+        if ($fromform->id = forum_add_new_post($addpost, $mform_post)) {
             $timemessage = 2;
             if (!empty($message)) { // if we're printing stuff about the file upload
                 $timemessage = 4;
@@ -892,7 +892,7 @@ if ($mform_post->is_cancelled()) {
 
             $discussion->groupid = $group;
             $message = '';
-            if ($discussion->id = forum_add_discussion($discussion, $mform_post, $message)) {
+            if ($discussion->id = forum_add_discussion($discussion, $mform_post)) {
 
                 $params = array(
                     'context' => $modcontext,
