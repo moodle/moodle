@@ -143,27 +143,6 @@ div.c1.btn {
 #questionbank + .container {
     width: auto;
 }
-// In Moodle .hide is the eye icon
-// In Bootstrap it hides things
-img.hide {
-    display: inherit;
-}
-
-// Bootstrap adds a background sprite to anything with classname starting "icon-".
-// we only want to load it if we use them in content.
-.icon-bar,
-img.icon-post,
-img.icon-info,
-img.icon-warn,
-img.icon-pre {
-    background-image: none;
-}
-
-//Bootstrap needs tooltips to be specified. Moodle does not use this
-.tooltip {
-    opacity: 1;
-    display: inline;
-}
 
 // Allow the custom menu to expand/collapse when the user hovers over it with JS disabled.
 body:not(.jsenabled) .dropdown:hover > .dropdown-menu {

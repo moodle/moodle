@@ -346,32 +346,6 @@ div#dock {
         }
 
 
-        // A little bit of visual feedback for the action menu when Javascript is disabled.
-        .menu {
-            .menu-action.icon {
-                img {
-                    border-radius: 0;
-                    background: transparent;
-                    box-shadow: none;
-                }
-                &:hover img {
-                    background: #fff;
-                    border-radius: 4px;
-                    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.125);
-                }
-            }
-        }
-        &[data-enhanced] .menu {
-            .menu-action.icon,
-            .menu-action.icon:hover {
-                img {
-                    border-radius: 0;
-                    background: transparent;
-                    box-shadow: none;
-                }
-            }
-        }
-
     }
 }
 .jsenabled {

@@ -592,10 +592,6 @@
         }
 
         .displayname {
-            .pluginicon {
-                margin-right: 5px;
-                width: 16px;
-            }
             .plugindir {
                 @extend .text-muted;
                 font-size: $font-size-sm;

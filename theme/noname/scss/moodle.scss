@@ -14,6 +14,7 @@ $breadcrumb-divider-rtl: "◀" !default;
 // Old Moodle stuff from base theme.
 // Massive, needs broken up.
 @import "moodle/core";
+@import "moodle/icons";
 @import "moodle/admin";
 @import "moodle/blocks";
 @import "moodle/calendar";
