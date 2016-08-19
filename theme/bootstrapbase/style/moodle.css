@@ -7655,7 +7655,8 @@ body.path-question-type .mform fieldset.hidden {
   padding: 5px;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container:hover {
-  opacity: 0.8;
+  color: #fff;
+  background-color: #79b5e6;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container .content-item-link {
   color: inherit;
@@ -7846,7 +7847,8 @@ body.path-question-type .mform fieldset.hidden {
   cursor: pointer;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container:hover {
-  opacity: 0.8;
+  color: #fff;
+  background-color: #79b5e6;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item-link {
   color: inherit;
