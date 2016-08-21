@@ -187,6 +187,11 @@ XPATH
 .//*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']
     /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
+        ,
+             'passwordunmask' => <<<XPATH
+.//*[@data-passwordunmask='wrapper']
+    /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
+XPATH
         ],
     ];
 

@@ -228,6 +228,10 @@ class behat_field_manager {
             return $type;
         }
 
+        if (!empty($fieldnode->find('xpath', '/ancestor::*[@data-passwordunmaskid]'))) {
+            return 'passwordunmask';
+        }
+
         // We look for a parent node with 'felement' class.
         if ($class = $fieldnode->getParent()->getAttribute('class')) {
 

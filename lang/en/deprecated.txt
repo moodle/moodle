@@ -34,3 +34,4 @@ downloadoptions,core_table
 downloadtsv,core_table
 downloadxhtml,core_table
 invalidpersistent,core_competency
+revealpassword,core_form
