@@ -4426,11 +4426,12 @@ EOD;
      *
      * @param HTML_QuickForm_element $element element
      * @param bool $required if input is required field
+     * @param bool $advanced if input is an advanced field
      * @param string $error error message to display
      * @param bool $ingroup True if this element is rendered as part of a group
      * @return mixed string|bool
      */
-    public function mform_element($element, $required, $error, $ingroup) {
+    public function mform_element($element, $required, $advanced, $error, $ingroup) {
         $templatename = 'core_form/element-' . $element->getType();
         if ($ingroup) {
             $templatename .= "-inline";
@@ -4456,6 +4457,7 @@ EOD;
                     'element' => $elementcontext,
                     'label' => $label,
                     'required' => $required,
+                    'advanced' => $advanced,
                     'helpbutton' => $helpbutton,
                     'error' => $error
                 );

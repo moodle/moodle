@@ -1,6 +1,8 @@
-<div class="form-group {{#error}}has-danger{{/error}} fitem">
+<div class="form-group {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}}">
     <label class="col-form-label {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
         {{{label}}} {{{helpbutton}}}
+        {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">✲</abbr>{{/required}}
+        {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">❗</abbr>{{/advanced}}
     </label>
         {{$ element }}
             <!-- Element goes here -->
