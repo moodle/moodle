@@ -44,28 +44,19 @@ class stats_cron_task extends scheduled_task {
     public function execute() {
         global $CFG;
 
-        $timenow = time();
         // Run stats as at the end because they are known to take very long time on large sites.
         if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
             require_once($CFG->dirroot.'/lib/statslib.php');
-            // Check we're not before our runtime.
-            $timetocheck = stats_get_base_daily() + $CFG->statsruntimestarthour * 60 * 60 + $CFG->statsruntimestartminute * 60;
-
-            if ($timenow > $timetocheck) {
-                // Process configured number of days as max (defaulting to 31).
-                $maxdays = empty($CFG->statsruntimedays) ? 31 : abs($CFG->statsruntimedays);
-                if (stats_cron_daily($maxdays)) {
-                    if (stats_cron_weekly()) {
-                        if (stats_cron_monthly()) {
-                            stats_clean_old();
-                        }
+            // Process configured number of days as max (defaulting to 31).
+            $maxdays = empty($CFG->statsruntimedays) ? 31 : abs($CFG->statsruntimedays);
+            if (stats_cron_daily($maxdays)) {
+                if (stats_cron_weekly()) {
+                    if (stats_cron_monthly()) {
+                        stats_clean_old();
                     }
                 }
-                \core_php_time_limit::raise();
-            } else {
-                mtrace('Next stats run after:'. userdate($timetocheck));
             }
+            \core_php_time_limit::raise();
         }
     }
-
 }
