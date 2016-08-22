@@ -178,7 +178,7 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
                 }
             }
 
-            $out = $OUTPUT->mform_element($element, false, '', true);
+            $out = $OUTPUT->mform_element($element, false, false, '', true);
 
             if (empty($out)) {
                 $renderer = new HTML_QuickForm_Renderer_Default();

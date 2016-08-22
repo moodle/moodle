@@ -2774,8 +2774,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         // Update the ID.
         $group->updateAttributes(array('id' => $groupid));
+        $advanced = isset($this->_advancedElements[$group->getName()]);
 
-        $html = $OUTPUT->mform_element($group, $required, $error, false);
+        $html = $OUTPUT->mform_element($group, $required, $advanced, $error, false);
         $fromtemplate = !empty($html);
         if (!$fromtemplate) {
             if (method_exists($group, 'getElementTemplateType')) {
@@ -2833,8 +2834,9 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         // Make sure the element has an id.
         $element->_generateId();
+        $advanced = isset($this->_advancedElements[$element->getName()]);
 
-        $html = $OUTPUT->mform_element($element, $required, $error, false);
+        $html = $OUTPUT->mform_element($element, $required, $advanced, $error, false);
         $fromtemplate = !empty($html);
         if (!$fromtemplate) {
             // Adding stuff to place holders in template
