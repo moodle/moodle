@@ -81,6 +81,13 @@ if ($param->moveupcontext || $param->movedowncontext) {
         print_error('invalidcontext');
     }
     $oldcat = $DB->get_record('question_categories', array('id' => $catid), '*', MUST_EXIST);
+    // Log the move to another context.
+    $params = array(
+        'objectid' => explode(',',$pagevars['cat'], -1)[0],
+        'contextid' => $param->tocontext,
+    );
+    $event = \core\event\question_category_moved::create($params);
+    $event->trigger();
     $qcobject->update_category($catid, "{$newtopcat->id},{$param->tocontext}", $oldcat->name, $oldcat->info);
     // The previous line does a redirect().
 }

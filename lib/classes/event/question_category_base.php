@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question category created event.
+ * Base class for question category events.
  *
  * @package    core
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,54 +27,46 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Question category created event class.
+ * Base class for question category events
  *
  * @package    core
- * @since      Moodle 2.7
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @since      Moodle 3.6
+ * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_category_created extends question_category_base {
+class question_category_base extends base {
 
     /**
      * Init method.
      */
     protected function init() {
         $this->data['objecttable'] = 'question_categories';
-        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
-     * Returns localised general event name.
+     * Returns relevant URL.
      *
-     * @return string
+     * @return \moodle_url
      */
-    public static function get_name() {
-        return get_string('eventquestioncategorycreated', 'question');
-    }
-
-    /**
-     * Returns description of what happened.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return "The user with id '$this->userid' created the question category with id '$this->objectid'.";
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        if ($this->contextlevel == CONTEXT_MODULE) {
-            return array($this->courseid, 'quiz', 'addcategory', 'view.php?id=' . $this->contextinstanceid,
-                $this->objectid, $this->contextinstanceid);
+    public function get_url() {
+        if ($this->courseid) {
+            $cat = $this->objectid . ',' . $this->contextid;
+            if ($this->contextlevel == CONTEXT_MODULE) {
+                return new \moodle_url('/question/edit.php', array('cmid' => $this->contextinstanceid, 'cat' => $cat));
+            }
+            return new \moodle_url('/question/edit.php', array('courseid' => $this->courseid, 'cat' => $cat));
         }
-        // This is not related to individual quiz at all.
-        return null;
+        // Lets try viewing from the frontpage for contexts above course.
+        return new \moodle_url('/question/category.php', array('courseid' => SITEID, 'edit' => $this->objectid));
     }
 
+    /**
+     * Returns DB mappings used with backup / restore.
+     * @return array
+     */
+    public static function get_objectid_mapping() {
+        return array('db' => 'question_categories', 'restore' => 'question_categories');
+    }
 }
+

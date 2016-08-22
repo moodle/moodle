@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question category created event.
+ * Question created event.
  *
  * @package    core
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,20 +27,26 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Question category created event class.
+ * Question created event class.
+ *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - int categoryid: The ID of the category where the question resides
+ * }
  *
  * @package    core
- * @since      Moodle 2.7
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @since      Moodle 3.2
+ * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_category_created extends question_category_base {
+class question_created extends question_base {
 
     /**
      * Init method.
      */
     protected function init() {
-        $this->data['objecttable'] = 'question_categories';
+        $this->data['objecttable'] = 'question';
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
@@ -51,7 +57,7 @@ class question_category_created extends question_category_base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventquestioncategorycreated', 'question');
+        return get_string('eventquestioncreated', 'question');
     }
 
     /**
@@ -60,21 +66,23 @@ class question_category_created extends question_category_base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' created the question category with id '$this->objectid'.";
+        return "The user with id '$this->userid' created a question with the id of '$this->objectid'".
+                " in the category with the id '".$this->other['categoryid']."'.";
     }
 
     /**
-     * Return the legacy event log data.
+     * Returns relevant URL.
      *
-     * @return array|null
+     * @return \moodle_url
      */
-    protected function get_legacy_logdata() {
-        if ($this->contextlevel == CONTEXT_MODULE) {
-            return array($this->courseid, 'quiz', 'addcategory', 'view.php?id=' . $this->contextinstanceid,
-                $this->objectid, $this->contextinstanceid);
+    public function get_url() {
+        if ($this->courseid) {
+            if ($this->contextlevel == CONTEXT_MODULE) {
+                return new \moodle_url('/question/preview.php', array('cmid' => $this->contextinstanceid, 'id' => $this->objectid));
+            }
+            return new \moodle_url('/question/preview.php', array('courseid' => $this->courseid, 'id' => $this->objectid));
         }
-        // This is not related to individual quiz at all.
-        return null;
+        // Lets try editing from the frontpage for contexts above course.
+        return new \moodle_url('/question/preview.php', array('courseid' => SITEID, 'id' => $this->objectid));
     }
-
 }

@@ -280,6 +280,16 @@ if (question_has_capability_on($question, 'view')) {
             get_string('exportonequestion', 'question'));
 }
 
+// Log the preview of this question.
+$eventparams = array(
+    'context' => $context,
+    'objectid' => $question->id,
+    'other' => array('categoryid' => $question->category)
+);
+$newquestion = true;
+$event = \core\event\question_previewed::create($eventparams);
+$event->trigger();
+
 // Display the settings form.
 $optionsform->display();
 

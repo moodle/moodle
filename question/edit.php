@@ -39,8 +39,6 @@ $PAGE->set_url($url);
 $questionbank = new core_question\bank\view($contexts, $thispageurl, $COURSE, $cm);
 $questionbank->process_actions();
 
-// TODO log this page view.
-
 $context = $contexts->lowest();
 $streditingquestions = get_string('editquestions', 'question');
 $PAGE->set_title($streditingquestions);
@@ -56,5 +54,14 @@ $questionbank->display('questions', $pagevars['qpage'], $pagevars['qperpage'],
         $pagevars['cat'], $pagevars['recurse'], $pagevars['showhidden'],
         $pagevars['qbshowtext'], $pagevars['qtagids']);
 echo "</div>\n";
+
+// Log the view of this category.
+$categoryid = explode(',' , urldecode($pagevars['cat']));
+$params = array(
+    'objectid' => $categoryid[0],
+    'context' => $context
+);
+$event = \core\event\question_category_viewed::create($params);
+$event->trigger();
 
 echo $OUTPUT->footer();

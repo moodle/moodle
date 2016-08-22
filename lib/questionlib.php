@@ -380,6 +380,16 @@ function question_delete_question($questionid) {
     // Finally delete the question record itself
     $DB->delete_records('question', array('id' => $questionid));
     question_bank::notify_question_edited($questionid);
+
+    // Log the deletion of this question.
+    $eventparams = array(
+        'contextid' => $question->contextid,
+        'objectid' => $question->id,
+        'other' => array('categoryid' => $question->category)
+    );
+
+    $event = \core\event\question_deleted::create($eventparams);
+    $event->trigger();
 }
 
 /**
@@ -673,7 +683,7 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
             array('id' => $newcategoryid));
     list($questionidcondition, $params) = $DB->get_in_or_equal($questionids);
     $questions = $DB->get_records_sql("
-            SELECT q.id, q.qtype, qc.contextid, q.idnumber
+            SELECT q.id, q.qtype, qc.contextid, q.idnumber, q.category
               FROM {question} q
               JOIN {question_categories} qc ON q.category = qc.id
              WHERE  q.id $questionidcondition", $params);
@@ -703,6 +713,15 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
             $q->idnumber = $question->idnumber . '_' . $unique;
             $DB->update_record('question', $q);
         }
+
+        // Log this question move.
+        $eventparams = array(
+            'contextid' => $question->contextid,
+            'objectid' => $question->id,
+            'other' => array('oldcategoryid' => $question->category, 'newcategoryid' => $newcategoryid)
+        );
+        $event = \core\event\question_moved::create($eventparams);
+        $event->trigger();
     }
 
     // Move the questions themselves.
