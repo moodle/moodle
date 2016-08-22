@@ -7,7 +7,7 @@ Sample Packages downloaded from http://scorm.com/scorm-explained/technical-scorm
 * singlesco_scorm12.zip - Single SCO content packaging example. SCORM 1.2.
 * RuntimeMinimumCalls_SCORM12.zip - Multi-SCO packaging example. SCORM 1.2.
 
-These packages were downloaded from http://scorm.com/ website,  the website 
+These packages were downloaded from http://scorm.com/ website,  the website
 disclaimer states that *Content on this site is licensed under a Creative
 Commons Attribution 3.0 License*. http://creativecommons.org/licenses/by/3.0/
 
