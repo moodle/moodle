@@ -61,7 +61,6 @@ class core_statslib_testcase extends advanced_testcase {
         core_date::set_default_server_timezone();
         $CFG->statsfirstrun           = 'all';
         $CFG->statslastdaily          = 0;
-        $CFG->statslastexecution      = 0;
 
         // Figure out the broken day start so I can figure out when to the start time should be.
         $time   = time();
@@ -73,9 +72,6 @@ class core_statslib_testcase extends advanced_testcase {
         $stime -= $offset;
 
         $shour  = intval(($time - $stime) / (60*60));
-
-        $CFG->statsruntimestarthour   = $shour;
-        $CFG->statsruntimestartminute = 0;
 
         if ($DB->record_exists('user', array('username' => 'user1'))) {
             return;
@@ -393,6 +389,22 @@ class core_statslib_testcase extends advanced_testcase {
     public function test_statslib_get_next_day_start() {
         $this->setTimezone(0);
         $this->assertEquals(1272758400, stats_get_next_day_start(1272686410));
+
+        // Try setting timezone to some place in the US.
+        $this->setTimezone('America/New_York', 'America/New_York');
+        // Then set the time for midnight before daylight savings.
+        // 1425790800 is midnight in New York (2015-03-08) Daylight saving will occur in 2 hours time.
+        // 1425873600 is midnight the next day.
+        $this->assertEquals(1425873600, stats_get_next_day_start(1425790800));
+        $this->assertEquals(23, ((1425873600 - 1425790800) / 60 ) / 60);
+        // Then set the time for midnight before daylight savings ends.
+        // 1446350400 is midnight in New York (2015-11-01) Daylight saving will finish in 2 hours time.
+        // 1446440400 is midnight the next day.
+        $this->assertEquals(1446440400, stats_get_next_day_start(1446350400));
+        $this->assertEquals(25, ((1446440400 - 1446350400) / 60 ) / 60);
+        // The next day should be normal.
+        $this->assertEquals(1446526800, stats_get_next_day_start(1446440400));
+        $this->assertEquals(24, ((1446526800 - 1446440400) / 60 ) / 60);
     }
 
     /**
