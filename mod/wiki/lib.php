@@ -34,6 +34,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Given an object containing all the necessary data,
  * (defined by the form in mod.html) this function
