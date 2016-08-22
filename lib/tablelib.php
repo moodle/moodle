@@ -1598,7 +1598,8 @@ class table_sql extends flexible_table {
     function out($pagesize, $useinitialsbar, $downloadhelpbutton='') {
         global $DB;
         if (!$this->columns) {
-            $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}", $this->sql->params);
+            $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}",
+                $this->sql->params, IGNORE_MULTIPLE);
             //if columns is not set then define columns as the keys of the rows returned
             //from the db.
             $this->define_columns(array_keys((array)$onerow));
