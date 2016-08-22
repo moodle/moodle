@@ -731,7 +731,8 @@ class mod_scorm_external extends external_api {
                     if (has_capability('moodle/course:manageactivities', $context)) {
 
                         $additionalfields = array('updatefreq', 'options', 'completionstatusrequired', 'completionscorerequired',
-                                                    'autocommit', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
+                                                  'completionstatusallscos', 'autocommit', 'timemodified', 'section', 'visible',
+                                                  'groupmode', 'groupingid');
                         $viewablefields = array_merge($viewablefields, $additionalfields);
 
                     }
@@ -818,6 +819,7 @@ class mod_scorm_external extends external_api {
                             'completionstatusrequired' => new external_value(PARAM_INT, 'Status passed/completed required?',
                                                                                 VALUE_OPTIONAL),
                             'completionscorerequired' => new external_value(PARAM_INT, 'Minimum score required', VALUE_OPTIONAL),
+                            'completionstatusallscos' => new external_value(PARAM_INT, 'Require all scos to return completion status', VALUE_OPTIONAL),
                             'autocommit' => new external_value(PARAM_BOOL, 'Save track data automatically?', VALUE_OPTIONAL),
                             'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
                             'section' => new external_value(PARAM_INT, 'Course section id', VALUE_OPTIONAL),

@@ -770,8 +770,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         self::setUser($teacher);
 
         $additionalfields = array('updatefreq', 'timemodified', 'options',
-                                    'completionstatusrequired', 'completionscorerequired', 'autocommit',
-                                    'section', 'visible', 'groupmode', 'groupingid');
+                                    'completionstatusrequired', 'completionscorerequired', 'completionstatusallscos',
+                                    'autocommit', 'section', 'visible', 'groupmode', 'groupingid');
 
         foreach ($additionalfields as $field) {
             $fieldtype = $returndescription->keys['scorms']->content->keys[$field]->type;
