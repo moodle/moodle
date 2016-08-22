@@ -168,7 +168,7 @@ class quiz_statistics_report extends quiz_default_report {
             }
 
             if (!$this->table->is_downloading() && $quizstats->s() == 0) {
-                echo $OUTPUT->notification(get_string('noattempts', 'quiz'));
+                echo $OUTPUT->notification(get_string('nogradedattempts', 'quiz_statistics'));
             }
 
             foreach ($questionstats->any_error_messages() as $errormessage) {
