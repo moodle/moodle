@@ -394,7 +394,7 @@ function report_security_check_cookiesecure($detailed=false) {
     $result->status  = null;
     $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=httpsecurity\">".get_string('httpsecurity', 'admin').'</a>';
 
-    if (empty($CFG->cookiesecure)) {
+    if (!is_moodle_cookie_secure()) {
         $result->status = REPORT_SECURITY_SERIOUS;
         $result->info   = get_string('check_cookiesecure_error', 'report_security');
     } else {
