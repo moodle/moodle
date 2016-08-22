@@ -112,7 +112,7 @@ function xmldb_scorm_upgrade($oldversion) {
     if ($oldversion < 2016080900) {
         $table = new xmldb_table('scorm');
 
-        $field = new xmldb_field('completionstatusallscos', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'completionscorerequired');
+        $field = new xmldb_field('completionstatusallscos', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'completionscorerequired');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
