@@ -73,11 +73,11 @@ class workshop_numerrors_assessment_form extends workshop_assessment_form {
             $mform->addGroup(array(
                 $mform->createElement('radio', 'grade__idx_' . $i, '', $fields->{'grade0__idx_'.$i}, -1),
                 $mform->createElement('radio', 'grade__idx_' . $i, '', $fields->{'grade1__idx_'.$i}, 1),
-            ), 'group_grade__idx_' . $i, get_string('yourassessment', 'workshop'), '<br />', false);
+            ), 'group_grade__idx_' . $i, get_string('yourassessmentfor', 'workshop', $dimtitle), '<br />', false);
             $mform->addRule('group_grade__idx_' . $i, get_string('required'), 'required');
 
             // comment
-            $label = get_string('dimensioncomment', 'workshopform_numerrors');
+            $label = get_string('dimensioncommentfor', 'workshopform_numerrors', $dimtitle);
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
         }
         $this->set_data($current);
