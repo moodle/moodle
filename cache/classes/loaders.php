@@ -386,6 +386,9 @@ class cache implements cache_loader {
         $isusingpersist = $this->use_static_acceleration();
         foreach ($keys as $key) {
             $pkey = $this->parse_key($key);
+            if (is_array($pkey)) {
+                $pkey = $pkey['key'];
+            }
             $keysparsed[$key] = $pkey;
             $parsedkeys[$pkey] = $key;
             $keystofind[$pkey] = $key;

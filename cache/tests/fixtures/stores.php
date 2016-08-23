@@ -85,6 +85,8 @@ abstract class cachestore_tests extends advanced_testcase {
      * Test the store for basic functionality.
      */
     public function run_tests(cache_store $instance) {
+        $object = new stdClass;
+        $object->data = 1;
 
         // Test set with a string.
         $this->assertTrue($instance->set('test1', 'test1'));
@@ -112,6 +114,13 @@ abstract class cachestore_tests extends advanced_testcase {
         // Test get with an bool.
         $this->assertSame(true, $instance->get('test1'));
         $this->assertInternalType('boolean', $instance->get('test1'));
+
+        // Test with an object.
+        $this->assertTrue($instance->set('obj', $object));
+        if ($instance::get_supported_features() & cache_store::DEREFERENCES_OBJECTS) {
+            $this->assertNotSame($object, $instance->get('obj'), 'Objects must be dereferenced when returned.');
+        }
+        $this->assertEquals($object, $instance->get('obj'));
 
         // Test delete.
         $this->assertTrue($instance->delete('test1'));
