@@ -161,41 +161,6 @@ if ($showsubscriptioncolumns) {
     $generaltable->head[] = $stremaildigest . ' ' . $OUTPUT->help_icon('emaildigesttype', 'mod_forum');
     $generaltable->align[] = 'center';
 
-    // Retrieve the list of forum digest options for later.
-    $digestoptions = forum_get_user_digest_options();
-    $digestoptionsselector = new single_select(new moodle_url('/mod/forum/maildigest.php',
-        array(
-            'backtoindex' => 1,
-        )),
-        'maildigest',
-        $digestoptions,
-        null,
-        '');
-    $digestoptionsselector->method = 'post';
-
-    $forumsubscriptionhelper = function($forum, $row, $context) use ($digestoptionsselector, $stryes, $strno) {
-        global $OUTPUT;
-
-        $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
-            'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
-            'cantsubscribe' => '-'), false, false, true);
-
-        $digestoptionsselector->url->param('id', $forum->id);
-        if ($forum->maildigest === null) {
-            $digestoptionsselector->selected = -1;
-        } else {
-            $digestoptionsselector->selected = $forum->maildigest;
-        }
-
-        if ($forum->cansubscribe || $forum->issubscribed) {
-            $row[] = $OUTPUT->render($digestoptionsselector);
-        } else {
-            // This user can subscribe to some forums. Add the empty fields.
-            $row[] = '';
-        }
-
-        return $row;
-    };
 }
 
 if ($show_rss = (($showsubscriptioncolumns || $course->id == SITEID) &&
@@ -320,7 +285,10 @@ if ($generalforums) {
         }
 
         if ($showsubscriptioncolumns) {
-            $row = $forumsubscriptionhelper($forum, $row, $context);
+            $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
+                'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                'cantsubscribe' => '-'), false, false, true);
+            $row[] = forum_index_get_forum_subscription_selector($forum);
         }
 
         // If this forum has RSS activated, calculate it.
@@ -455,7 +423,10 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
             }
 
             if ($showsubscriptioncolumns) {
-                $row = $forumsubscriptionhelper($forum, $row, $context);
+                $row[] = forum_get_subscribe_link($forum, $context, array('subscribed' => $stryes,
+                    'unsubscribed' => $strno, 'forcesubscribed' => $stryes,
+                    'cantsubscribe' => '-'), false, false, true);
+                $row[] = forum_index_get_forum_subscription_selector($forum);
             }
 
             //If this forum has RSS activated, calculate it
@@ -522,3 +493,30 @@ if ($learningforums) {
 }
 
 echo $OUTPUT->footer();
+
+/**
+ * Get the content of the forum subscription options for this forum.
+ *
+ * @param   stdClass    $forum      The forum to return options for
+ * @return  string
+ */
+function forum_index_get_forum_subscription_selector($forum) {
+    global $OUTPUT;
+
+    if ($forum->cansubscribe || $forum->issubscribed) {
+        $digestoptionsselector = new single_select(new moodle_url('/mod/forum/maildigest.php', [
+                'id'            => $forum->id,
+                'backtoindex'   => 1,
+            ]),
+            'maildigest',
+            forum_get_user_digest_options(),
+            $forum->maildigest !== null ? $forum->maildigest : -1,
+            '');
+        $digestoptionsselector->method = 'post';
+
+        return $OUTPUT->render($digestoptionsselector);
+    } else {
+        // This user can subscribe to some forums. Add the empty fields.
+        return '';
+    }
+};
