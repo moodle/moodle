@@ -26,9 +26,13 @@
     * none
 
     Context variables required for this template:
-    * returnurl The url to return the page to.
+    * returnurl The url to return the page to. Can be null if no return url avaliable.
 
     Example context (json):
     {}
 }}
-Would you like to register this tool? <a href="{{{returnurl}}}">Register</a> <!-- TODO language strings -->
+{{#str}} successfulregistration, enrol_lti {{/str}}
+<br/>
+{{#returnurl}}
+<a href="{{{returnurl}}}">{{#str}} continue {{/str}}</a>
+{{/returnurl}}

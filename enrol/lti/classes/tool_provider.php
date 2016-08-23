@@ -40,19 +40,24 @@ require_once($CFG->dirroot . '/user/lib.php');
  */
 class tool_provider extends ToolProvider\ToolProvider {
 
+    /**
+     * Remove $this->baseUrl (wwwroot) from a given url string and return it.
+     *
+     * @param string url The url from which to remove the base url
+     * @return string|null A string of the relative path to the url, or null if it couldn't be determined.
+     */
     private function stripBaseUrl($url) {
         if (substr($url, 0, strlen($this->baseUrl)) == $this->baseUrl) {
             return substr($url, strlen($this->baseUrl));
         }
-        # TODO Oh no this will break!!
-        // TODO see if we can override something so it can serve icons and urls etc that are not from base Url
-        print_object($icon);
-        print_object($this->baseUrl);
-        print_object("no good!!");
-        die;
         return null;
     }
 
+    /**
+     * Create a new instance of tool_provider to handle all the LTI tool provider interactions.
+     *
+     * @param int toolid The id of the tool to be provided.
+     */
     function __construct($toolid) {
         global $CFG, $SITE;
 
@@ -65,9 +70,9 @@ class tool_provider extends ToolProvider\ToolProvider {
         $dataconnector = new data_connector();
         parent::__construct($dataconnector);
 
-        #$this->baseUrl = $CFG->wwwroot . '/enrol/lti/proxy.php';
         $this->baseUrl = $CFG->wwwroot;
-        $toolpath = $this->stripBaseUrl(\enrol_lti\helper::get_proxy_url($tool));
+        $toolpath = \enrol_lti\helper::get_proxy_url($tool);
+        $toolpath = $this->stripBaseUrl($toolpath);
 
         $vendorid = $SITE->shortname;
         $vendorname = $SITE->fullname;
@@ -77,7 +82,6 @@ class tool_provider extends ToolProvider\ToolProvider {
         $name = \enrol_lti\helper::get_name($tool);
         $description = \enrol_lti\helper::get_description($tool);
         $icon = \enrol_lti\helper::get_icon($tool)->out();
-        // Strip the baseUrl off the icon path.
         $icon = $this->stripBaseUrl($icon);
 
         $this->product = new Profile\Item(
@@ -88,11 +92,11 @@ class tool_provider extends ToolProvider\ToolProvider {
             '1.0'
         );
 
-        $requiredmessages = array(
+        $requiredmessages = [
             new Profile\Message(
                 'basic-lti-launch-request',
                 $toolpath,
-                array(
+                [
                    'Context.id',
                    'CourseSection.title',
                    'CourseSection.label',
@@ -120,13 +124,11 @@ class tool_provider extends ToolProvider\ToolProvider {
                    'Membership.role',
                    'Result.sourcedId',
                    'Result.autocreate'
-                )
+                ]
             )
-        );
-        $optionalmessages = array(
-            #new Profile\Message('ContentItemSelectionRequest', $toolpath, array('User.id', 'Membership.role')),
-            #new Profile\Message('DashboardRequest', $toolpath, array('User.id'), array('a' => 'User.id'), array('b' => 'User.id'))
-        );
+        ];
+        $optionalmessages = [
+        ];
 
         $this->resourceHandlers[] = new Profile\ResourceHandler(
              new Profile\Item(
@@ -139,13 +141,12 @@ class tool_provider extends ToolProvider\ToolProvider {
              $optionalmessages
         );
 
-        $this->requiredServices[] = new Profile\ServiceDefinition(array('application/vnd.ims.lti.v2.toolproxy+json'), array('POST'));
+        $this->requiredServices[] = new Profile\ServiceDefinition(['application/vnd.ims.lti.v2.toolproxy+json'], ['POST']);
 
-        # TODO should the other requests be here?
-        $this->setParameterConstraint('oauth_consumer_key', TRUE, 50, array('basic-lti-launch-request', 'ContentItemSelectionRequest', 'DashboardRequest'));
-        $this->setParameterConstraint('resource_link_id', TRUE, 50, array('basic-lti-launch-request'));
-        $this->setParameterConstraint('user_id', TRUE, 50, array('basic-lti-launch-request'));
-        $this->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
+        $this->setParameterConstraint('oauth_consumer_key', true, 50, ['basic-lti-launch-request']);
+        $this->setParameterConstraint('resource_link_id', true, 50, ['basic-lti-launch-request']);
+        $this->setParameterConstraint('user_id', true, 50, ['basic-lti-launch-request']);
+        $this->setParameterConstraint('roles', true, null, ['basic-lti-launch-request']);
 
     }
 
@@ -157,8 +158,7 @@ class tool_provider extends ToolProvider\ToolProvider {
             $message = $this->reason;
         }
 
-        $this->errorOutput = ''; # TODO remove this
-        \core\notification::error($message); # TODO is it better to have a generic, yet translatable error?
+        \core\notification::error(get_string('failedregistration', 'enrol_lti', ['reason' => $message]));
     }
 
     function onLaunch() {
@@ -179,7 +179,6 @@ class tool_provider extends ToolProvider\ToolProvider {
         if (!empty($this->user->lastname)) {
             $user->lastname = $this->user->lastname;
         } else {
-            // TODO is this actually the same as $ltirequest->info['context_id'];
             $user->lastname = $this->tool->contextid;
         }
 
@@ -189,7 +188,7 @@ class tool_provider extends ToolProvider\ToolProvider {
         $user = \enrol_lti\helper::assign_user_tool_data($tool, $user);
 
         // Check if the user exists.
-        if (!$dbuser = $DB->get_record('user', array('username' => $user->username, 'deleted' => 0))) {
+        if (!$dbuser = $DB->get_record('user', ['username' => $user->username, 'deleted' => 0])) {
             // If the email was stripped/not set then fill it with a default one. This
             // stops the user from being redirected to edit their profile page.
             if (empty($user->email)) {
@@ -200,7 +199,7 @@ class tool_provider extends ToolProvider\ToolProvider {
             $user->id = \user_create_user($user);
 
             // Get the updated user record.
-            $user = $DB->get_record('user', array('id' => $user->id));
+            $user = $DB->get_record('user', ['id' => $user->id]);
         } else {
             if (\enrol_lti\helper::user_match($user, $dbuser)) {
                 $user = $dbuser;
@@ -214,11 +213,11 @@ class tool_provider extends ToolProvider\ToolProvider {
                 \user_update_user($user);
 
                 // Get the updated user record.
-                $user = $DB->get_record('user', array('id' => $user->id));
+                $user = $DB->get_record('user', ['id' => $user->id]);
             }
         }
 
-        // Update user image. TODO
+        // Update user image.
         $image = false;
         if (!empty($this->resourceLink->getSetting('user_image'))) {
             $image = $this->resourceLink->getSetting('user_image');
@@ -236,14 +235,14 @@ class tool_provider extends ToolProvider\ToolProvider {
 
         if ($context->contextlevel == CONTEXT_COURSE) {
             $courseid = $context->instanceid;
-            $urltogo = new \moodle_url('/course/view.php', array('id' => $courseid));
+            $urltogo = new \moodle_url('/course/view.php', ['id' => $courseid]);
 
             // May still be set from previous session, so unset it.
             unset($SESSION->forcepagelayout);
         } else if ($context->contextlevel == CONTEXT_MODULE) {
             $cmid = $context->instanceid;
             $cm = get_coursemodule_from_id(false, $context->instanceid, 0, false, MUST_EXIST);
-            $urltogo = new \moodle_url('/mod/' . $cm->modname . '/view.php', array('id' => $cm->id));
+            $urltogo = new \moodle_url('/mod/' . $cm->modname . '/view.php', ['id' => $cm->id]);
 
             // If we are a student in the course module context we do not want to display blocks.
             if (!$isinstructor) {
@@ -276,7 +275,7 @@ class tool_provider extends ToolProvider\ToolProvider {
         $serviceurl = $this->resourceLink->getSetting('lis_outcome_service_url');
 
         // Check if we have recorded this user before.
-        if ($userlog = $DB->get_record('enrol_lti_users', array('toolid' => $tool->id, 'userid' => $user->id))) {
+        if ($userlog = $DB->get_record('enrol_lti_users', ['toolid' => $tool->id, 'userid' => $user->id])) {
             if ($userlog->sourceid != $sourceid) {
                 $userlog->sourceid = $sourceid;
             }
@@ -310,14 +309,14 @@ class tool_provider extends ToolProvider\ToolProvider {
             // Provide an alternative link.
             $stropentool = get_string('opentool', 'enrol_lti');
             echo \html_writer::tag('p', get_string('frameembeddingnotenabled', 'enrol_lti'));
-            echo \html_writer::link($urltogo, $stropentool, array('target' => '_blank'));
+            echo \html_writer::link($urltogo, $stropentool, ['target' => '_blank']);
         } else {
             // All done, redirect the user to where they want to go.
             redirect($urltogo);
         }
     }
     function onRegister() {
-        global $OUTPUT;
+        global $PAGE;
 
         $returnurl = $_POST['launch_presentation_return_url'];
         if (strpos($returnurl, '?') === false) {
@@ -326,12 +325,13 @@ class tool_provider extends ToolProvider\ToolProvider {
             $separator = '&';
         }
         $guid = $this->consumer->getKey();
-        $returnurl = $returnurl . $separator . 'lti_msg=Successful+registration';
+        $returnurl = $returnurl . $separator . 'lti_msg=' . urlencode(get_string("successfulregistration", "enrol_lti"));
         $returnurl = $returnurl . '&status=success';
         $returnurl = $returnurl . "&tool_proxy_guid=$guid";
-        $ok = $this->doToolProxyService($_POST['tc_profile_url']); # TODO only do this right before registering.
+        $ok = $this->doToolProxyService($_POST['tc_profile_url']);
 
-        echo $OUTPUT->render_from_template("enrol_lti/proxy_registration", array("returnurl" => $returnurl)); # TODO move out output
-
+        $registration = new output\registration($returnurl);
+        $output = $PAGE->get_renderer('enrol_lti');
+        echo $output->render($registration);
     }
 }
