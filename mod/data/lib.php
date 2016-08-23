@@ -64,6 +64,18 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     var $cm;
     /** @var object activity context */
     var $context;
+    /** @var priority for globalsearch indexing */
+    protected static $priority = self::NO_PRIORITY;
+    /** priority value for invalid fields regarding indexing */
+    const NO_PRIORITY = 0;
+    /** priority value for minimum priority */
+    const MIN_PRIORITY = 1;
+    /** priority value for low priority */
+    const LOW_PRIORITY = 2;
+    /** priority value for high priority */
+    const HIGH_PRIORITY = 3;
+    /** priority value for maximum priority */
+    const MAX_PRIORITY = 4;
 
     /**
      * Constructor function
@@ -526,6 +538,24 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
      */
     function file_ok($relativepath) {
         return false;
+    }
+
+    /**
+     * Returns the priority for being indexed by globalsearch
+     *
+     * @return int
+     */
+    public static function get_priority() {
+        return static::$priority;
+    }
+
+    /**
+     * Returns the presentable string value for a field content.
+     * @param string $value
+     * @return string
+     */
+    public static function get_content_value($value) {
+        return trim($value);
     }
 }
 

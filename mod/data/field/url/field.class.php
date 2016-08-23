@@ -24,6 +24,12 @@
 
 class data_field_url extends data_field_base {
     var $type = 'url';
+    /**
+     * priority for globalsearch indexing
+     *
+     * @var int
+     */
+    protected static $priority = self::MIN_PRIORITY;
 
     function display_add_field($recordid = 0, $formdata = null) {
         global $CFG, $DB, $OUTPUT, $PAGE;

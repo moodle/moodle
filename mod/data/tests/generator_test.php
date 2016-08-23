@@ -136,7 +136,12 @@ class mod_data_generator_testcase extends advanced_testcase {
         $this->setAdminUser();
         $this->assertEquals(0, $DB->count_records('data'));
 
+        $user1 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
+
+        $groupa = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'name' => 'groupA'));
+        $this->getDataGenerator()->create_group_member(array('userid' => $user1->id, 'groupid' => $groupa->id));
 
         /** @var mod_data_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
@@ -166,6 +171,7 @@ class mod_data_generator_testcase extends advanced_testcase {
             $record = new StdClass();
             $record->name = $fieldname;
             $record->type = $fieldtype;
+            $record->required = 1;
 
             ${$fieldname} = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_field($record, $data);
             $this->assertInstanceOf('data_field_' . $fieldtype, ${$fieldname});
@@ -177,12 +183,12 @@ class mod_data_generator_testcase extends advanced_testcase {
         $fields = $DB->get_records('data_fields', array('dataid' => $data->id), 'id');
 
         $contents = array();
-        $contents[] = array('one', 'two', 'three', 'four');
+        $contents[] = array('opt1', 'opt2', 'opt3', 'opt4');
         $contents[] = '01-01-2037'; // It should be lower than 2038, to avoid failing on 32-bit windows.
-        $contents[] = 'one';
-        $contents[] = array('one', 'two', 'three', 'four');
+        $contents[] = 'menu1';
+        $contents[] = array('menu1', 'menu2', 'menu3', 'menu4');
         $contents[] = '12345';
-        $contents[] = 'one';
+        $contents[] = 'opt1';
         $contents[] = 'text for testing';
         $contents[] = '<p>text area testing<br /></p>';
         $contents[] = array('example.url', 'sampleurl');
@@ -192,9 +198,36 @@ class mod_data_generator_testcase extends advanced_testcase {
             $fieldcontents[$fieldrecord->id] = $contents[$count++];
         }
 
-        $datarecordid = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_entry($data, $fieldcontents);
+        $datarecordid = $this->getDataGenerator()->get_plugin_generator('mod_data')->create_entry($data, $fieldcontents,
+                                                                                                    $groupa->id);
 
         $this->assertEquals(1, $DB->count_records('data_records', array('dataid' => $data->id)));
         $this->assertEquals(count($contents), $DB->count_records('data_content', array('recordid' => $datarecordid)));
+
+        $entry = $DB->get_record('data_records', array('id' => $datarecordid));
+        $this->assertEquals($entry->groupid, $groupa->id);
+
+        $contents = $DB->get_records('data_content', array('recordid' => $datarecordid));
+
+        $contentstartid = 0;
+        $flag = 0;
+        foreach ($contents as $key => $content) {
+            if (!$flag++) {
+                $contentstartid = $key;
+            }
+            $this->assertFalse($content->content == null);
+        }
+
+        $this->assertEquals($contents[$contentstartid]->content, 'opt1##opt2##opt3##opt4');
+        $this->assertEquals($contents[++$contentstartid]->content, '2114380800');
+        $this->assertEquals($contents[++$contentstartid]->content, 'menu1');
+        $this->assertEquals($contents[++$contentstartid]->content, 'menu1##menu2##menu3##menu4');
+        $this->assertEquals($contents[++$contentstartid]->content, '12345');
+        $this->assertEquals($contents[++$contentstartid]->content, 'opt1');
+        $this->assertEquals($contents[++$contentstartid]->content, 'text for testing');
+        $this->assertEquals($contents[++$contentstartid]->content, '<p>text area testing<br /></p>');
+        $this->assertEquals($contents[$contentstartid]->content1, '1');
+        $this->assertEquals($contents[++$contentstartid]->content, 'http://example.url');
+        $this->assertEquals($contents[$contentstartid]->content1, 'sampleurl');
     }
 }

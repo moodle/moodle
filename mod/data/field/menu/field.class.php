@@ -25,6 +25,12 @@
 class data_field_menu extends data_field_base {
 
     var $type = 'menu';
+    /**
+     * priority for globalsearch indexing
+     *
+     * @var int
+     */
+    protected static $priority = self::HIGH_PRIORITY;
 
     function display_add_field($recordid = 0, $formdata = null) {
         global $DB, $OUTPUT;
