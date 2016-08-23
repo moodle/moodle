@@ -153,6 +153,7 @@ class behat_hooks extends behat_base {
 
         // Reset all data, before checking for check_server_status.
         // If not done, then it can return apache error, while running tests.
+        behat_util::clean_tables_updated_by_scenario_list();
         behat_util::reset_all_data();
 
         // Check if server is running and using same version for cli and apache.

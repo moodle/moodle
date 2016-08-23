@@ -764,6 +764,17 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             // Joined xpath expression. Most of the time there will be no exceptions, so this pre-check
             // is faster than to send the 4 xpath queries for each step.
             if (!$this->getSession()->getDriver()->find($joinedxpath)) {
+                // Check if we have recorded any errors in driver process.
+                $phperrors = behat_get_shutdown_process_errors();
+                if (!empty($phperrors)) {
+                    foreach ($phperrors as $error) {
+                        $errnostring = behat_get_error_string($error['type']);
+                        $msgs[] = $errnostring . ": " .$error['message'] . " at " . $error['file'] . ": " . $error['line'];
+                    }
+                    $msg = "PHP errors found:\n" . implode("\n", $msgs);
+                    throw new \Exception(htmlentities($msg));
+                }
+
                 return;
             }
 
@@ -776,8 +787,20 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 if (empty($errorinfoboxes)) {
                     $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
                 }
-                $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
-                    $this->get_debug_text($errorinfoboxes[1]->getHtml());
+
+                // If errorinfoboxes is empty, try find ajax/JS exception in dialogue.
+                if (empty($errorinfoboxes)) {
+                    $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.moodle-exception-message');
+
+                    // If ajax/JS exception.
+                    if ($errorinfoboxes) {
+                        $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml());
+                    }
+
+                } else {
+                    $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
+                        $this->get_debug_text($errorinfoboxes[1]->getHtml());
+                }
 
                 $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
                 throw new \Exception(html_entity_decode($msg));

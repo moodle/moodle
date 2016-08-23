@@ -940,11 +940,22 @@ abstract class testing_util {
     }
 
     /**
+     * Delete tablesupdatedbyscenario file. This should be called before suite,
+     * to ensure full db reset.
+     */
+    public static function clean_tables_updated_by_scenario_list() {
+        $tablesupdatedfile = self::get_tables_updated_by_scenario_list_path();
+        if (file_exists($tablesupdatedfile)) {
+            unlink($tablesupdatedfile);
+        }
+    }
+
+    /**
      * Returns the path to the file which holds list of tables updated in scenario.
      * @return string
      */
     protected final static function get_tables_updated_by_scenario_list_path() {
-        return self::get_dataroot() . '/tablesupdatedbyscenario.txt';
+        return self::get_dataroot() . '/tablesupdatedbyscenario.json';
     }
 
     /**
