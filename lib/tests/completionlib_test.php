@@ -418,7 +418,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $result = $c->get_data($cm);
         $this->assertEquals($sillyrecord, $result);
         $cachevalue = $cache->get('314159_42');
-        $this->assertEquals($sillyrecord, $cachevalue[13]);
+        $this->assertEquals((array)$sillyrecord, $cachevalue[13]);
 
         // 4. Current user, 'whole course', but from cache.
         $result = $c->get_data($cm, true);
@@ -443,8 +443,8 @@ class core_completionlib_testcase extends advanced_testcase {
 
         // Check the cache contents.
         $cachevalue = $cache->get('314159_42');
-        $this->assertEquals($basicrecord, $cachevalue[13]);
-        $this->assertEquals((object)array('id'=>'0', 'coursemoduleid'=>14,
+        $this->assertEquals($basicrecord, (object)$cachevalue[13]);
+        $this->assertEquals(array('id' => '0', 'coursemoduleid' => 14,
             'userid'=>314159, 'completionstate'=>0, 'viewed'=>0, 'timemodified'=>0),
             $cachevalue[14]);
     }
