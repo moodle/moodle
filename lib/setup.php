@@ -1038,6 +1038,12 @@ if (isset($CFG->maintenance_later) and $CFG->maintenance_later <= time()) {
     }
 }
 
+// Add behat_shutdown_function to shutdown manager, so we can capture php errors,
+// but not necessary for behat CLI command as it's being captured by behat process.
+if (defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_TEST')) {
+    core_shutdown_manager::register_function('behat_shutdown_function');
+}
+
 // note: we can not block non utf-8 installations here, because empty mysql database
 // might be converted to utf-8 in admin/index.php during installation
 
