@@ -2673,39 +2673,17 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
     margin-top: -20px;
 }
 
-/** Chart output HTML table */
-.chart-output-htmltable {
-    width: 100%;
-    text-align: right;
-    th {
-        width: 20%;
-    }
-    td {
-        width: 80%;
-    }
-}
-.dir-rtl .chart-output-htmltable {
-    width: 100%;
-    text-align: left;
-    th {
-        width: 20%;
-    }
-    td {
-        width: 80%;
-    }
-}
-
 /** Chart area. */
 .chart-area {
 
     .chart-table-data {
         display: none;
     }
-    .chart-table-expand {
-        text-align: right;
-    }
 
     .chart-table {
+        .chart-output-htmltable caption {
+            white-space: nowrap;
+        }
         /** When accessible, we display the table only. */
         &.accesshide {
             .chart-table-expand {
@@ -2716,7 +2694,4 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
             }
         }
     }
-}
-.dir-rtl .chart-area .chart-table-expand {
-    text-align: left;
 }
