@@ -70,6 +70,7 @@ class tool_behat_manager_testcase extends advanced_testcase {
         );
 
         $array = testable_behat_config_manager::merge_config($array1, $array2);
+        $this->assertDebuggingCalled("Use of merge_config is deprecated, please see behat_config_util");
 
         // Overrides are applied.
         $this->assertEquals('OVERRIDDEN1', $array['simple']);
@@ -95,6 +96,7 @@ class tool_behat_manager_testcase extends advanced_testcase {
         );
 
         $array = testable_behat_config_manager::merge_config($array1, $array2);
+        $this->assertDebuggingCalled("Use of merge_config is deprecated, please see behat_config_util");
 
         // Overrides applied.
         $this->assertNotEmpty($array['simple']);
@@ -138,6 +140,7 @@ class tool_behat_manager_testcase extends advanced_testcase {
         );
 
         $contents = testable_behat_config_manager::get_config_file_contents($features, $stepsdefinitions);
+        $this->assertDebuggingCalled("Use of get_config_file_contents is deprecated, please see behat_config_util");
 
         // YAML decides when is is necessary to wrap strings between single quotes, so not controlled
         // values like paths should not be asserted including the key name as they would depend on the

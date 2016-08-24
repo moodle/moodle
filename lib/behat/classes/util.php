@@ -215,10 +215,13 @@ class behat_util extends testing_util {
      *
      * Stores a file in dataroot/behat to allow Moodle to switch
      * to the test environment when using cli-server.
+     * @param bool $themesuitewithallfeatures if only theme specific features need to be included in the suite.
+     * @param int $parallelruns number of parallel runs.
+     * @param int $run current run.
      * @throws coding_exception
      * @return void
      */
-    public static function start_test_mode() {
+    public static function start_test_mode($themesuitewithallfeatures = false, $parallelruns = 0, $run = 0) {
         global $CFG;
 
         if (!defined('BEHAT_UTIL')) {
@@ -234,7 +237,7 @@ class behat_util extends testing_util {
         self::test_environment_problem();
 
         // Updates all the Moodle features and steps definitions.
-        behat_config_manager::update_config_file();
+        behat_config_manager::update_config_file('', true, '', $themesuitewithallfeatures, $parallelruns, $run);
 
         if (self::is_test_mode_enabled()) {
             return;
