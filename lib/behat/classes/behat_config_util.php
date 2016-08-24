@@ -463,6 +463,15 @@ class behat_config_util {
             $allcontexts = $this->contexts;
         }
 
+        // Remove selectors from step definitions.
+        $themes = $this->get_list_of_themes();
+        foreach ($themes as $theme) {
+            $selectorclass = self::get_behat_theme_selector_override_classname($theme);
+            if (isset($allcontexts[$selectorclass])) {
+                unset($allcontexts[$selectorclass]);
+            }
+        }
+
         // Comments use black color, so failure path is not visible. Using color other then black/white is safer.
         // https://github.com/Behat/Behat/pull/628.
         $config = array(
@@ -922,6 +931,7 @@ class behat_config_util {
 
         $blacklistedfeatures = array();
         $themefeatures = array();
+        $themesuitecontexts = array();
         $themecontexts = array();
 
         $themes = $this->get_list_of_themes();
@@ -931,12 +941,29 @@ class behat_config_util {
             // Get theme features.
             list($blacklistedfeatures[$theme], $themefeatures[$theme]) = $this->get_behat_features_for_theme($theme);
 
-            $themecontexts[$theme] = $this->get_behat_contexts_for_theme($theme);
+            list($themecontexts[$theme], $themesuitecontexts[$theme]) = $this->get_behat_contexts_for_theme($theme);
         }
 
         // Remove list of theme features for default suite, as default suite should not run theme specific features.
         foreach ($themefeatures as $removethemefeatures) {
             $features = $this->remove_blacklisted_features_from_list($features, $removethemefeatures);
+        }
+
+        // Remove list of theme features for default suite, as default suite should not run theme specific features.
+        foreach ($themecontexts as $theme => $themeblacklistcontexts) {
+            if ($themeblacklistcontexts) {
+                foreach ($themeblacklistcontexts as $c) {
+                    // Remove theme specific contexts from default contexts.
+                    unset($contexts[$c]);
+
+                    // Remove theme specific contexts from other themes.
+                    foreach ($themes as $currenttheme) {
+                        if (($currenttheme != $theme) && isset($themesuitecontexts[$currenttheme][$c])) {
+                            unset($themesuitecontexts[$currenttheme][$c]);
+                        }
+                    }
+                }
+            }
         }
 
         // Return sub-set of features if parallel run.
@@ -976,7 +1003,7 @@ class behat_config_util {
             $suites = array_merge($suites, array(
                 $theme => array(
                     'paths'    => array_values($themesuitefeatures),
-                    'contexts' => array_values($themecontexts[$theme]),
+                    'contexts' => array_keys($themesuitecontexts[$theme]),
                 )
             ));
         }
@@ -1170,7 +1197,7 @@ class behat_config_util {
      * Return list of behat contexts for theme and update $this->stepdefinitions list.
      *
      * @param string $theme theme name.
-     * @return array list($features, $contexts)
+     * @return array list($themecontexts, $themesuitecontexts)
      */
     protected function get_behat_contexts_for_theme($theme) {
 
@@ -1186,12 +1213,13 @@ class behat_config_util {
         $contexts = $this->get_components_contexts();
 
         // Create list of contexts used by theme suite.
-        $overriddencontexts = $this->get_tests_for_theme($theme, 'contexts');
+        $themecontexts = $this->get_tests_for_theme($theme, 'contexts');
         $blacklistedcontexts = $this->get_blacklisted_tests_for_theme($theme, 'contexts');
 
         // Theme suite will use all core contexts, except the one overridden by theme.
         $themesuitecontexts = $contexts;
-        foreach ($overriddencontexts as $context => $path) {
+
+        foreach ($themecontexts as $context => $path) {
 
             // If a context in theme starts with behat_theme_{themename}_behat_* then it's overriding core context.
             if (preg_match('/^behat_theme_'.$theme.'_(\w+)$/', $context, $match)) {
@@ -1206,6 +1234,8 @@ class behat_config_util {
 
             // Don't include behat_selectors.
             if ($context === self::get_behat_theme_selector_override_classname($theme)) {
+                unset($this->contexts[$context]);
+                unset($themesuitecontexts[$context]);
                 continue;
             }
 
@@ -1221,8 +1251,8 @@ class behat_config_util {
         }
 
         // We are only interested in the class name of context.
-        $this->themecontexts[$theme] = array_keys($themesuitecontexts);
+        $this->themecontexts[$theme] = $themesuitecontexts;
 
-        return $this->themecontexts[$theme];
+        return array(array_keys($themecontexts), $themesuitecontexts);
     }
 }

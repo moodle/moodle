@@ -107,7 +107,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $this->behatconfigutil->expects($this->any())
             ->method('get_behat_contexts_for_theme')
             ->with($this->equalTo('testtheme'))
-            ->will($this->returnValue(array_keys($this->themecontexts)));
+            ->will($this->returnValue(array(array_keys($this->themecontexts), $this->themecontexts)));
 
     }
 
@@ -233,7 +233,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $behatconfigutil->expects($this->once())
             ->method('get_behat_contexts_for_theme')
             ->with($this->equalTo('testtheme'))
-            ->will($this->returnValue(array_keys($this->themecontexts)));
+            ->will($this->returnValue(array(array_keys($this->themecontexts), $this->themecontexts)));
 
         $behatconfigutil->expects($this->once())
             ->method('get_overridden_theme_contexts')
@@ -311,7 +311,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $behatconfigutil->expects($this->atLeastOnce())
             ->method('get_behat_contexts_for_theme')
             ->with($this->equalTo('testtheme'))
-            ->will($this->returnValue(array_keys($this->themecontexts)));
+            ->will($this->returnValue(array(array_keys($this->themecontexts), $this->themecontexts)));
 
         $CFG->behat_wwwroot = 'http://example.com/behat';
 

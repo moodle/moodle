@@ -148,6 +148,7 @@ class behat_hooks extends behat_base {
 
         // Now that we are MOODLE_INTERNAL.
         require_once(__DIR__ . '/../../behat/classes/behat_command.php');
+        require_once(__DIR__ . '/../../behat/classes/behat_selectors.php');
         require_once(__DIR__ . '/../../behat/classes/behat_context_helper.php');
         require_once(__DIR__ . '/../../behat/classes/util.php');
         require_once(__DIR__ . '/../../testing/classes/test_lock.php');
@@ -308,7 +309,10 @@ class behat_hooks extends behat_base {
             behat_context_helper::set_environment($scope->getEnvironment());
 
             // We need the Mink session to do it and we do it only before the first scenario.
-            $behatselectorclass = behat_config_util::get_behat_theme_selector_override_classname($suitename, true);
+            $behatselectorclass = 'behat_selectors';
+            if ($suitename !== 'default') {
+                $behatselectorclass = behat_config_util::get_behat_theme_selector_override_classname($suitename, true);
+            }
             if (class_exists($behatselectorclass)) {
                 $behatselectorclass = new $behatselectorclass();
                 $behatselectorclass::register_moodle_selectors($session);
