@@ -1892,7 +1892,7 @@ class core_cache_testcase extends advanced_testcase {
         $staticaccelerationreturntimeb = $cache->phpunit_static_acceleration_get('b')->propertytime;
         $this->assertGreaterThan($startmicrotime, $staticaccelerationreturntime, 'Restore time of static must be newer.');
 
-        // Use set_identifiers to reset the static cache without resetting backing store.
+        // Reset the static cache without resetting backing store.
         $cache->phpunit_static_acceleration_purge();
 
         // Get the value from the backend store, populating the static cache.
