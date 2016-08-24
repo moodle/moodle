@@ -283,7 +283,7 @@ class entry extends \core_search\base_mod {
         }
 
         foreach ($filteredcontents as $content) {
-            $classname = 'data_field_' . trim($content->fieldtype);
+            $classname = $this->get_field_class_name($content->fieldtype);
             $content->priority = $classname::get_priority();
             $content->addtemplateposition = strpos($template, '[['.$content->fldname.']]');
         }
@@ -319,7 +319,7 @@ class entry extends \core_search\base_mod {
         while ($contentqueue->valid()) {
 
             $content = $contentqueue->extract();
-            $classname = 'data_field_' . trim($content->fieldtype);
+            $classname = $this->get_field_class_name($content->fieldtype);
 
             $indexfields[] = $classname::get_content_value($content->content);
         }
@@ -327,4 +327,17 @@ class entry extends \core_search\base_mod {
         return $indexfields;
     }
 
+    /**
+     * Returns the class name for that field type and includes it.
+     *
+     * @param string $fieldtype
+     * @return string
+     */
+    protected function get_field_class_name($fieldtype) {
+        global $CFG;
+
+        $fieldtype = trim($fieldtype);
+        require_once($CFG->dirroot . '/mod/data/field/' . $fieldtype . '/field.class.php');
+        return 'data_field_' . $fieldtype;
+    }
 }
