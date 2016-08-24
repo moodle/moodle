@@ -306,13 +306,14 @@ class cache implements cache_loader {
                     $result = $result->data;
                 }
             }
-            if ($result instanceof cache_cached_object) {
-                $result = $result->restore_object();
-            }
             if ($this->use_static_acceleration()) {
                 $this->static_acceleration_set($parsedkey, $result);
             }
+            if ($result instanceof cache_cached_object) {
+                $result = $result->restore_object();
+            }
         }
+
         // 4. Load if from the loader/datasource if we don't already have it.
         $setaftervalidation = false;
         if ($result === false) {
@@ -405,11 +406,11 @@ class cache implements cache_loader {
                         $value = $value->data;
                     }
                 }
-                if ($value instanceof cache_cached_object) {
-                    $value = $value->restore_object();
-                }
                 if ($value !== false && $this->use_static_acceleration()) {
                     $this->static_acceleration_set($key, $value);
+                }
+                if ($value instanceof cache_cached_object) {
+                    $value = $value->restore_object();
                 }
                 $resultstore[$key] = $value;
             }
@@ -828,11 +829,7 @@ class cache implements cache_loader {
      */
     public function purge() {
         // 1. Purge the static acceleration array.
-        $this->staticaccelerationarray = array();
-        if ($this->staticaccelerationsize !== false) {
-            $this->staticaccelerationkeys = array();
-            $this->staticaccelerationcount = 0;
-        }
+        $this->static_acceleration_purge();
         // 2. Purge the store.
         $this->store->purge();
         // 3. Optionally pruge any stacked loaders.
@@ -1138,6 +1135,17 @@ class cache implements cache_loader {
             }
         }
         return true;
+    }
+
+    /**
+     * Purge the static acceleration cache.
+     */
+    protected function static_acceleration_purge() {
+        $this->staticaccelerationarray = array();
+        if ($this->staticaccelerationsize !== false) {
+            $this->staticaccelerationkeys = array();
+            $this->staticaccelerationcount = 0;
+        }
     }
 
     /**
