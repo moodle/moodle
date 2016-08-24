@@ -1222,15 +1222,13 @@ class url_select implements renderable, templatable {
         $nothing = false;
         if (is_string($this->nothing) && $this->nothing !== '') {
             $nothing = ['' => $this->nothing];
-            $hasnothing = true;
         } else if (is_array($this->nothing)) {
-            $key = key($this->nothing);
-            if ($key === 'choose' || $key === 'choosedots') {
-                $nothing = [$key => get_string('choosedots')];
+            $nothingvalue = reset($this->nothing);
+            if ($nothingvalue === 'choose' || $nothingvalue === 'choosedots') {
+                $nothing = [key($this->nothing) => get_string('choosedots')];
             } else {
-                $nothing = [$key => reset($this->nothing)];
+                $nothing = $this->nothing;
             }
-            $hasnothing = true;
         }
         $data->hasnothing = !empty($nothing);
         $data->nothingkey = $data->hasnothing ? key($nothing) : false;
