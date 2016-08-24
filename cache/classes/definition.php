@@ -807,10 +807,8 @@ class cache_definition {
             }
         }
 
-        if ($this->identifiers === null) {
-            // Initialize identifiers if they have not been.
-            $this->identifiers = array();
-        }
+        $this->identifiers = array();
+
         foreach ($identifiers as $name => $value) {
             $this->identifiers[$name] = (string)$value;
         }
