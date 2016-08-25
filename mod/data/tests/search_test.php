@@ -355,8 +355,8 @@ class mod_data_search_test extends advanced_testcase {
         $this->assertEquals($data1doc->get('courseid'), $course->id);
         $this->assertEquals($data1doc->get('title'), 'text for testing');
         $this->assertEquals($data1doc->get('content'), 'menu1');
-        $this->assertEquals($data1doc->get('description1'), 'opt1');
-        $this->assertEquals($data1doc->get('description2'), 'opt1 opt2 opt3 opt4');
+        $this->assertEquals($data1doc->get('description1'), 'radioopt1');
+        $this->assertEquals($data1doc->get('description2'), 'opt1 opt2 opt3 opt4 multimenu1 multimenu2 multimenu3 multimenu4 text area testing http://example.url');
 
         // Second Case.
         $data2 = $this->getDataGenerator()->create_module('data', $record);
@@ -382,7 +382,7 @@ class mod_data_search_test extends advanced_testcase {
         $this->assertEquals($data2doc->get('title'), 'opt1 opt2 opt3 opt4');
         $this->assertEquals($data2doc->get('content'), 'text for testing');
         $this->assertEquals($data2doc->get('description1'), 'menu1');
-        $this->assertEquals($data2doc->get('description2'), 'text area testing');
+        $this->assertEquals($data2doc->get('description2'), 'text area testing http://example.url');
 
         // Third Case.
         $data3 = $this->getDataGenerator()->create_module('data', $record);
@@ -501,9 +501,9 @@ class mod_data_search_test extends advanced_testcase {
         $data9doc = $searcharea->get_document($data9entry1);
 
         $this->assertEquals($data9doc->get('courseid'), $course->id);
-        $this->assertEquals($data9doc->get('title'), 'opt1');
+        $this->assertEquals($data9doc->get('title'), 'radioopt1');
         $this->assertEquals($data9doc->get('content'), 'menu1');
-        $this->assertEquals($data9doc->get('description1'), 'menu1 menu2 menu3 menu4');
+        $this->assertEquals($data9doc->get('description1'), 'multimenu1 multimenu2 multimenu3 multimenu4');
 
         // Tenth Case.
         $data10 = $this->getDataGenerator()->create_module('data', $record);
@@ -521,7 +521,7 @@ class mod_data_search_test extends advanced_testcase {
         $this->assertEquals($data10doc->get('courseid'), $course->id);
         $this->assertEquals($data10doc->get('title'), 'opt1 opt2 opt3 opt4');
         $this->assertEquals($data10doc->get('content'), 'text area testing');
-        $this->assertEquals($data10doc->get('description1'), 'menu1 menu2 menu3 menu4');
+        $this->assertEquals($data10doc->get('description1'), 'multimenu1 multimenu2 multimenu3 multimenu4');
 
     }
 
@@ -939,7 +939,7 @@ class mod_data_search_test extends advanced_testcase {
                     break;
 
                 case 'multimenu':
-                    $fieldcontents[$fieldrecord->id] = array('menu1', 'menu2', 'menu3', 'menu4');
+                    $fieldcontents[$fieldrecord->id] = array('multimenu1', 'multimenu2', 'multimenu3', 'multimenu4');
                     break;
 
                 case 'date':
@@ -951,7 +951,7 @@ class mod_data_search_test extends advanced_testcase {
                     break;
 
                 case 'radiobutton':
-                    $fieldcontents[$fieldrecord->id] = 'opt1';
+                    $fieldcontents[$fieldrecord->id] = 'radioopt1';
                     break;
 
                 case 'number':

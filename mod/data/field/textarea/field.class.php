@@ -284,11 +284,14 @@ class data_field_textarea extends data_field_base {
 
     /**
      * Returns the presentable string value for a field content.
-     * @param string $value
+     *
+     * The returned string should be plain text.
+     *
+     * @param stdClass $content
      * @return string
      */
-    public static function get_content_value($value) {
-        return clean_param($value, PARAM_NOTAGS);
+    public static function get_content_value($content) {
+        return content_to_text($content->content, $content->content1);
     }
 
 }
