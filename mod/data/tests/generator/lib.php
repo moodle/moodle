@@ -133,10 +133,14 @@ class mod_data_generator extends testing_module_generator {
         }
 
         if (!isset($record['param1'])) {
-            if (in_array($record['type'], array('checkbox', 'radiobutton'))) {
+            if ($record['type'] == 'checkbox') {
                 $record['param1'] = implode("\n", array('opt1', 'opt2', 'opt3', 'opt4'));
-            } else if (in_array($record['type'], array('multimenu', 'menu'))) {
+            } else if ($record['type'] == 'radiobutton') {
+                $record['param1'] = implode("\n", array('radioopt1', 'radioopt2', 'radioopt3', 'radioopt4'));
+            } else if ($record['type'] == 'menu') {
                 $record['param1'] = implode("\n", array('menu1', 'menu2', 'menu3', 'menu4'));
+            } else if ($record['type'] == 'multimenu') {
+                $record['param1'] = implode("\n", array('multimenu1', 'multimenu2', 'multimenu3', 'multimenu4'));
             } else if (($record['type'] === 'text') || ($record['type'] === 'url')) {
                 $record['param1'] = 1;
             } else {

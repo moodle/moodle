@@ -551,11 +551,14 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
     /**
      * Returns the presentable string value for a field content.
-     * @param string $value
+     *
+     * The returned string should be plain text.
+     *
+     * @param stdClass $content
      * @return string
      */
-    public static function get_content_value($value) {
-        return trim($value);
+    public static function get_content_value($content) {
+        return trim($content->content, "\r\n ");
     }
 }
 

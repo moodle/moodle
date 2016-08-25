@@ -276,18 +276,21 @@ class data_field_multimenu extends data_field_base {
 
     /**
      * Returns the presentable string value for a field content.
-     * @param string $value
+     *
+     * The returned string should be plain text.
+     *
+     * @param stdClass $content
      * @return string
      */
-    public static function get_content_value($value) {
-        $arr = explode('##', $value);
+    public static function get_content_value($content) {
+        $arr = explode('##', $content->content);
 
-        $content = '';
+        $strvalue = '';
         foreach ($arr as $a) {
-            $content .= $a.' ';
+            $strvalue .= $a . ' ';
         }
 
-        return trim($content);
+        return trim($strvalue, "\r\n ");
     }
 
 }

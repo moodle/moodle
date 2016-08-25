@@ -97,6 +97,7 @@ class entry extends \core_search\base_mod {
             return false;
         }
 
+        // All fields should be already returned as plain text by data_field_base::get_content_value.
         $doc->set('title', $indexfields[0]);
         $doc->set('content', $indexfields[1]);
 
@@ -263,7 +264,7 @@ class entry extends \core_search\base_mod {
         $indexfields = array();
         $validfieldtypes = array('text', 'textarea', 'menu', 'radiobutton', 'checkbox', 'multimenu', 'url');
 
-        $sql = "SELECT dc.id, dc.content, df.name AS fldname,
+        $sql = "SELECT dc.*, df.name AS fldname,
                        df.type AS fieldtype, df.required
                   FROM {data_content} dc, {data_fields} df
                  WHERE dc.fieldid = df.id
@@ -320,10 +321,13 @@ class entry extends \core_search\base_mod {
 
             $content = $contentqueue->extract();
             $classname = $this->get_field_class_name($content->fieldtype);
-
-            $indexfields[] = $classname::get_content_value($content->content);
+            $indexfields[] = $classname::get_content_value($content);
         }
 
+        // Limited to 4 fields as a document only has 4 content fields.
+        if (count($indexfields) > 4) {
+            $indexfields[3] = implode(' ', array_slice($indexfields, 3));
+        }
         return $indexfields;
     }
 

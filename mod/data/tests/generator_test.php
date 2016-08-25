@@ -186,9 +186,9 @@ class mod_data_generator_testcase extends advanced_testcase {
         $contents[] = array('opt1', 'opt2', 'opt3', 'opt4');
         $contents[] = '01-01-2037'; // It should be lower than 2038, to avoid failing on 32-bit windows.
         $contents[] = 'menu1';
-        $contents[] = array('menu1', 'menu2', 'menu3', 'menu4');
+        $contents[] = array('multimenu1', 'multimenu2', 'multimenu3', 'multimenu4');
         $contents[] = '12345';
-        $contents[] = 'opt1';
+        $contents[] = 'radioopt1';
         $contents[] = 'text for testing';
         $contents[] = '<p>text area testing<br /></p>';
         $contents[] = array('example.url', 'sampleurl');
@@ -221,9 +221,9 @@ class mod_data_generator_testcase extends advanced_testcase {
         $this->assertEquals($contents[$contentstartid]->content, 'opt1##opt2##opt3##opt4');
         $this->assertEquals($contents[++$contentstartid]->content, '2114380800');
         $this->assertEquals($contents[++$contentstartid]->content, 'menu1');
-        $this->assertEquals($contents[++$contentstartid]->content, 'menu1##menu2##menu3##menu4');
+        $this->assertEquals($contents[++$contentstartid]->content, 'multimenu1##multimenu2##multimenu3##multimenu4');
         $this->assertEquals($contents[++$contentstartid]->content, '12345');
-        $this->assertEquals($contents[++$contentstartid]->content, 'opt1');
+        $this->assertEquals($contents[++$contentstartid]->content, 'radioopt1');
         $this->assertEquals($contents[++$contentstartid]->content, 'text for testing');
         $this->assertEquals($contents[++$contentstartid]->content, '<p>text area testing<br /></p>');
         $this->assertEquals($contents[$contentstartid]->content1, '1');
