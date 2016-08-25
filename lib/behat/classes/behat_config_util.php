@@ -56,6 +56,11 @@ class behat_config_util {
     private $themecontexts;
 
     /**
+     * @var array list of all contexts in theme suite.
+     */
+    private $themesuitecontexts;
+
+    /**
      * @var array list of overridden theme contexts.
      */
     private $overriddenthemescontexts;
@@ -1202,8 +1207,8 @@ class behat_config_util {
     protected function get_behat_contexts_for_theme($theme) {
 
         // If we already have this list then just return. This will not change by run.
-        if (!empty($this->themecontexts[$theme])) {
-            return $this->themecontexts[$theme];
+        if (!empty($this->themecontexts[$theme]) && !empty($this->themesuitecontexts)) {
+            return array(array_keys($this->themecontexts[$theme]), $this->themesuitecontexts[$theme]);
         }
 
         if (empty($this->overriddenthemescontexts)) {
@@ -1251,7 +1256,8 @@ class behat_config_util {
         }
 
         // We are only interested in the class name of context.
-        $this->themecontexts[$theme] = $themesuitecontexts;
+        $this->themesuitecontexts[$theme] = $themesuitecontexts;
+        $this->themecontexts[$theme] = $themecontexts;
 
         return array(array_keys($themecontexts), $themesuitecontexts);
     }
