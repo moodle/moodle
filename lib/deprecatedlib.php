@@ -5620,6 +5620,7 @@ function message_is_user_blocked($recipient, $sender = null) {
 }
 
 /**
+<<<<<<< 919b9dfabd69f71c088f565746c547e6e169a0b7
  * Display logs.
  *
  * @deprecated since 3.2
@@ -6369,5 +6370,15 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
            $select
             $order";
 
-    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum) ;
+    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+}
+
+/**
+ * Renders a hidden password field so that browsers won't incorrectly autofill password fields with the user's password.
+ *
+ * @deprecated since Moodle 3.2 MDL-53048
+ */
+function prevent_form_autofill_password() {
+    debugging('prevent_form_autofill_password has been deprecated and is no longer in use.', DEBUG_DEVELOPER);
+    return '';
 }

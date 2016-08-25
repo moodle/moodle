@@ -107,7 +107,7 @@ class files_renderer extends \core_files_renderer {
      * @return string
      */
     protected function fp_js_template_loginform() {
-        return $this->render_from_template('core/filemanager_loginform', ['autofillhack' => prevent_form_autofill_password()]);
+        return $this->render_from_template('core/filemanager_loginform', []);
     }
 
     /**
