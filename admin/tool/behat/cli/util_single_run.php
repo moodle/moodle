@@ -47,11 +47,10 @@ list($options, $unrecognized) = cli_get_params(
         'diag'        => false,
         'tags'        => '',
         'updatesteps' => false,
-        'themesuitewithallfeatures' => false,
+        'run-with-theme' => false,
     ),
     array(
         'h' => 'help',
-        'a' => 'themesuitewithallfeatures',
     )
 );
 
@@ -67,15 +66,14 @@ Usage:
   php util_single_run.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--help]
 
 Options:
---install     Installs the test environment for acceptance tests
---drop        Drops the database tables and the dataroot contents
---enable      Enables test environment and updates tests list
---disable     Disables test environment
---diag        Get behat test environment status code
---updatesteps Update feature step file.
+--install        Installs the test environment for acceptance tests
+--drop           Drops the database tables and the dataroot contents
+--enable         Enables test environment and updates tests list
+--disable        Disables test environment
+--diag           Get behat test environment status code
+--updatesteps    Update feature step file.
+--run-with-theme Run all core features with specified theme.
 
--a, --themesuitewithallfeatures Theme suite do not include core features by default. If you want to run core features
-                                with theme, then use this option.
 -h, --help Print out this help
 
 Example from Moodle root directory:
@@ -180,7 +178,7 @@ if ($options['install']) {
     }
 
     // Enable test mode.
-    behat_util::start_test_mode($options['themesuitewithallfeatures'], $parallel, $run);
+    behat_util::start_test_mode($options['run-with-theme'], $parallel, $run);
 
     // This is only displayed once for parallel install.
     if (empty($run)) {

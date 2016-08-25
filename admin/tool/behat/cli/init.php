@@ -47,13 +47,12 @@ list($options, $unrecognized) = cli_get_params(
         'help'     => false,
         'fromrun'  => 1,
         'torun'    => 0,
-        'themesuitewithallfeatures' => false,
+        'run-with-theme' => false,
     ),
     array(
         'j' => 'parallel',
         'm' => 'maxruns',
         'h' => 'help',
-        'a' => 'themesuitewithallfeatures',
     )
 );
 
@@ -65,13 +64,12 @@ Usage:
   php init.php [--parallel=value [--maxruns=value] [--fromrun=value --torun=value]] [--help]
 
 Options:
--j, --parallel Number of parallel behat run to initialise
--m, --maxruns  Max parallel processes to be executed at one time.
---fromrun      Execute run starting from (Used for parallel runs on different vms)
---torun        Execute run till (Used for parallel runs on different vms)
+-j, --parallel   Number of parallel behat run to initialise
+-m, --maxruns    Max parallel processes to be executed at one time.
+--fromrun        Execute run starting from (Used for parallel runs on different vms)
+--torun          Execute run till (Used for parallel runs on different vms)
+--run-with-theme Run all core features with specified theme.
 
--a, --themesuitewithallfeatures Theme suite do not include core features by default. If you want to run core features
-                                with theme, then use this option.
 -h, --help     Print out this help
 
 Example from Moodle root directory:
@@ -100,8 +98,8 @@ if ($options['parallel'] && $options['parallel'] > 1) {
 }
 
 $themesuitewithallfeatures = '';
-if ($options['themesuitewithallfeatures']) {
-    $themesuitewithallfeatures = '--themesuitewithallfeatures="true"';
+if ($options['run-with-theme']) {
+    $themesuitewithallfeatures = '--run-with-theme="true"';
 }
 
 // Changing the cwd to admin/tool/behat/cli.
