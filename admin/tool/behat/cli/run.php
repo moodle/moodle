@@ -55,14 +55,13 @@ list($options, $unrecognised) = cli_get_params(
         'fromrun'  => 1,
         'torun'    => 0,
         'single-run' => false,
-        'themesuitewithallfeatures' => false,
+        'run-with-theme' => false,
     ),
     array(
         'h' => 'help',
         't' => 'tags',
         'p' => 'profile',
         's' => 'single-run',
-        'a' => 'themesuitewithallfeatures',
     )
 );
 
@@ -80,9 +79,8 @@ Options:
 --replace          Replace args string with run process number, useful for output.
 --fromrun          Execute run starting from (Used for parallel runs on different vms)
 --torun            Execute run till (Used for parallel runs on different vms)
+--run-with-theme   Run all core features with specified theme.
 
--a, --themesuitewithallfeatures Theme suite do not include core features by default. If you want to run core features
-                                with theme, then use this option.
 -h, --help         Print out this help
 
 Example from Moodle root directory:
@@ -196,7 +194,7 @@ if ($tags) {
         } else {
             $CFG->behat_dataroot = $behatdataroot . $i;
         }
-        behat_config_manager::update_config_file('', true, $tags, $options['themesuitewithallfeatures'], $parallelrun);
+        behat_config_manager::update_config_file('', true, $tags, $options['run-with-theme'], $parallelrun);
     }
     $CFG->behat_dataroot = $behatdataroot;
     $CFG->behat_wwwroot = $behatwwwroot;
