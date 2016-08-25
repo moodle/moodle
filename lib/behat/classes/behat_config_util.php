@@ -466,10 +466,14 @@ class behat_config_util {
 
         // Remove selectors from step definitions.
         $themes = $this->get_list_of_themes();
+        $selectortypes = ['partial', 'exact'];
         foreach ($themes as $theme) {
-            $selectorclass = self::get_behat_theme_selector_override_classname($theme);
-            if (isset($allcontexts[$selectorclass])) {
-                unset($allcontexts[$selectorclass]);
+            foreach ($selectortypes as $selectortype) {
+                // Don't include selector classes.
+                $selectorclass = self::get_behat_theme_selector_override_classname($theme, $selectortype);
+                if (isset($allcontexts[$selectorclass])) {
+                    unset($allcontexts[$selectorclass]);
+                }
             }
         }
 
@@ -838,13 +842,18 @@ class behat_config_util {
      * Return context name of behat_theme selector to use.
      *
      * @param string $themename name of the theme.
+     * @param string $selectortype The type of selector (partial or exact at this stage)
      * @param bool $includeclass if class should be included.
      * @return string
      */
-    public static final function get_behat_theme_selector_override_classname($themename, $includeclass = false) {
+    public static final function get_behat_theme_selector_override_classname($themename, $selectortype, $includeclass = false) {
         global $CFG;
 
-        $overridebehatclassname = 'behat_theme_'.$themename.'_behat_selectors';
+        if ($selectortype !== 'partial' && $selectortype !== 'exact') {
+            throw new coding_exception("Unknown selector override type '{$selectortype}'");
+        }
+
+        $overridebehatclassname = "behat_theme_{$themename}_behat_{$selectortype}_selectors";
 
         if ($includeclass) {
             $themeoverrideselector = $CFG->dirroot . DIRECTORY_SEPARATOR . 'theme' . DIRECTORY_SEPARATOR . $themename .
@@ -1238,11 +1247,14 @@ class behat_config_util {
                 $this->overriddenthemescontexts[$context] = $path;
             }
 
-            // Don't include behat_selectors.
-            if ($context === self::get_behat_theme_selector_override_classname($theme)) {
-                unset($this->contexts[$context]);
-                unset($themesuitecontexts[$context]);
-                continue;
+            $selectortypes = ['partial', 'exact'];
+            foreach ($selectortypes as $selectortype) {
+                // Don't include selector classes.
+                if ($context === self::get_behat_theme_selector_override_classname($theme, $selectortype)) {
+                    unset($this->contexts[$context]);
+                    unset($themesuitecontexts[$context]);
+                    continue;
+                }
             }
 
             // Add theme specific contexts with suffix to steps definitions.
