@@ -171,8 +171,6 @@ function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
  * Before shutdown save last error entries, so we can fail the test.
  */
 function behat_shutdown_function() {
-    global $DB;
-
     // If any error found, then save it.
     if ($error = error_get_last()) {
         // Ignore E_WARNING, as they might come via ( @ )suppression and might lead to false failure.
@@ -193,7 +191,10 @@ function behat_shutdown_function() {
  * @return array
  */
 function behat_get_shutdown_process_errors() {
-    $phperrors = get_config('tool_behat', 'process_errors');
+    global $DB;
+
+    // Don't use get_config, as it use cache and return invalid value, between selenium and cli process.
+    $phperrors = $DB->get_field('config_plugins', 'value', array('name' => 'process_errors', 'plugin' => 'tool_behat'));
 
     if (!empty($phperrors)) {
         return json_decode($phperrors, true);
