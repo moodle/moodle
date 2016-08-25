@@ -359,6 +359,8 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         global $CFG;
 
         // This is a hack so directory name is correctly detected in tests.
+        //FIXME: MDL-55722 work out why this is necessary..
+        $oldroot = $CFG->dirroot;
         $CFG->dirroot = 'C:';
 
         $behatconfigutil = $this->behatconfigutil;
@@ -374,6 +376,8 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
 
         $this->assertEquals($key, $retkey);
         $this->assertEquals($cleanfeaturepath, $retcleanfeaturepath);
+        //FIXME: MDL-55722 work out why this is necessary..
+        $CFG->dirroot = $oldroot;
     }
 
     public function clean_features_path_list() {
