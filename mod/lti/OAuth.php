@@ -278,7 +278,7 @@ class OAuthRequest {
             // Deal with magic_quotes
             // http://www.php.net/manual/en/security.magicquotes.disabling.php
             if (get_magic_quotes_gpc()) {
-                $outpost = array();
+                $ourpost = array();
                 foreach ($_POST as $k => $v) {
                     $v = stripslashes($v);
                     $ourpost[$k] = $v;
