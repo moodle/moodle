@@ -41,7 +41,6 @@ function xmldb_enrol_lti_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-
     if ($oldversion < 2016052303) {
 
         // Define table enrol_lti_lti2_consumer to be created.
@@ -114,7 +113,13 @@ function xmldb_enrol_lti_upgrade($oldversion) {
 
         // Adding keys to table enrol_lti_item.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('item_pk'));
-        $table->add_key('resource_link_pk', XMLDB_KEY_FOREIGN, array('resource_link_pk'), 'enrol_lti_lti2_resource_link', array('id'));
+        $table->add_key(
+            'resource_link_pk',
+            XMLDB_KEY_FOREIGN,
+            array('resource_link_pk'),
+            'enrol_lti_lti2_resource_link',
+            array('id')
+        );
 
         // Conditionally launch create table for enrol_lti_item.
         if (!$dbman->table_exists($table)) {
@@ -175,7 +180,13 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         // Adding keys to table enrol_lti_lti2_resource_link.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('context_pk', XMLDB_KEY_FOREIGN, array('context_pk'), 'enrol_lti_lti2_context', array('context_pk'));
-        $table->add_key('primary_resource_link_pk', XMLDB_KEY_FOREIGN, array('primary_resource_link_pk'), 'enrol_lti_lti2_resource_link', array('id'));
+        $table->add_key(
+            'primary_resource_link_pk',
+            XMLDB_KEY_FOREIGN,
+            array('primary_resource_link_pk'),
+            'enrol_lti_lti2_resource_link',
+            array('id')
+        );
 
         // Adding indexes to table enrol_lti_lti2_resource_link.
         $table->add_index('consumer_pk', XMLDB_INDEX_NOTUNIQUE, array('consumer_pk'));
@@ -196,7 +207,13 @@ function xmldb_enrol_lti_upgrade($oldversion) {
 
         // Adding keys to table enrol_lti_lti2_share_key.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('share_key_id'));
-        $table->add_key('resource_link_pk', XMLDB_KEY_FOREIGN, array('resource_link_pk'), 'enrol_lti_lti2_resource_link', array('id'));
+        $table->add_key(
+            'resource_link_pk',
+            XMLDB_KEY_FOREIGN,
+            array('resource_link_pk'),
+            'enrol_lti_lti2_resource_link',
+            array('id')
+        );
 
         // Conditionally launch create table for enrol_lti_lti2_share_key.
         if (!$dbman->table_exists($table)) {
@@ -216,7 +233,13 @@ function xmldb_enrol_lti_upgrade($oldversion) {
 
         // Adding keys to table enrol_lti_lti2_user_result.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('user_pk'));
-        $table->add_key('resource_link_pk', XMLDB_KEY_FOREIGN, array('resource_link_pk'), 'enrol_lti_lti2_resource_link', array('id'));
+        $table->add_key(
+            'resource_link_pk',
+            XMLDB_KEY_FOREIGN,
+            array('resource_link_pk'),
+            'enrol_lti_lti2_resource_link',
+            array('id')
+        );
 
         // Conditionally launch create table for enrol_lti_lti2_user_result.
         if (!$dbman->table_exists($table)) {

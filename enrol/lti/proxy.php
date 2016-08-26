@@ -41,10 +41,12 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('popup');
 $PAGE->set_title(get_string('registration', 'enrol_lti'));
 
-// Only show the cartridge if the token parameter is correct.
+// Only show the proxy if the token parameter is correct.
 // If we do not compare with a shared secret, someone could very easily
 // guess an id for the enrolment.
-\enrol_lti\helper::verify_tool_token($toolid, $token);
+if (!\enrol_lti\helper::verify_proxy_token($toolid, $token)) {
+    throw new \moodle_exception('incorrecttoken', 'enrol_lti'); // TODO can we do an LTI error? Not really important as this bug will only occur if the url is wrong.
+}
 $tool = \enrol_lti\helper::get_lti_tool($toolid);
 
 if (!is_enabled_auth('lti')) {

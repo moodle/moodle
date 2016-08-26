@@ -277,7 +277,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $tool1 = $this->create_tool($data);
 
         $id = $tool1->id;
-        $token = \enrol_lti\helper::generate_tool_token($id);
+        $token = \enrol_lti\helper::generate_cartridge_token($id);
         $launchurl = \enrol_lti\helper::get_cartridge_url($tool1);
         $this->assertEquals('http://www.example.com/moodle/enrol/lti/cartridge.php?id=' . $id . '&amp;token=' . $token,
                             $launchurl->out());
@@ -333,15 +333,15 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     /**
      * Test verifying a tool token.
      */
-    public function test_verify_tool_token() {
+    public function test_verify_cartridge_token() {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
         $tool1 = $this->create_tool($data);
 
-        $token = \enrol_lti\helper::generate_tool_token($tool1->id);
-        $this->assertTrue(\enrol_lti\helper::verify_tool_token($tool1->id, $token));
-        $this->assertFalse(\enrol_lti\helper::verify_tool_token($tool1->id, 'incorrect token!'));
+        $token = \enrol_lti\helper::generate_cartridge_token($tool1->id);
+        $this->assertTrue(\enrol_lti\helper::verify_cartridge_token($tool1->id, $token));
+        $this->assertFalse(\enrol_lti\helper::verify_cartridge_token($tool1->id, 'incorrect token!'));
     }
 
     /**

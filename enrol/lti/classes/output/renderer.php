@@ -38,8 +38,9 @@ use renderable;
  */
 class renderer extends plugin_renderer_base {
     /**
-     * Defer to template.
+     * Render the enrol_lti/proxy_registration template
      *
+     * @param registration $registration The registration renderable
      * @return string html for the page
      */
     public function render_registration(registration $registration) {

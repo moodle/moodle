@@ -462,7 +462,7 @@ class helper {
         $url = null;
 
         $id = $tool->id;
-        $token = self::generate_tool_token($tool->id);
+        $token = self::generate_cartridge_token($tool->id);
         if ($CFG->slasharguments) {
             $url = new \moodle_url('/enrol/lti/cartridge.php/' . $id . '/' . $token . '/cartridge.xml');
         } else {
@@ -490,7 +490,7 @@ class helper {
         $url = null;
 
         $id = $tool->id;
-        $token = self::generate_tool_token($tool->id);
+        $token = self::generate_proxy_token($tool->id);
         if ($CFG->slasharguments) {
             $url = new \moodle_url('/enrol/lti/proxy.php/' . $id . '/' . $token . '/');
         } else {
@@ -513,22 +513,49 @@ class helper {
      * @return string MD5 hash of combined site ID and enrolment instance ID.
      * @since Moodle 3.2
      */
-    public static function generate_tool_token($toolid) {
+    public static function generate_cartridge_token($toolid) {
         $siteidentifier = get_site_identifier();
-        $checkhash = md5($siteidentifier . '_enrol_lti_' . $toolid);
+        $checkhash = md5($siteidentifier . '_enrol_lti_cartridge_' . $toolid);
         return $checkhash;
     }
 
     /**
-     * Verifies that the given token matches the token of the given shared tool.
+     * Returns a unique hash for this site and this enrolment instance.
+     *
+     * Used to verify that the link to the proxy has not just been guessed.
+     *
+     * @param int $toolid The id of the shared tool
+     * @return string MD5 hash of combined site ID and enrolment instance ID.
+     * @since Moodle 3.2
+     */
+    public static function generate_proxy_token($toolid) {
+        $siteidentifier = get_site_identifier();
+        $checkhash = md5($siteidentifier . '_enrol_lti_proxy_' . $toolid);
+        return $checkhash;
+    }
+
+    /**
+     * Verifies that the given token matches the cartridge token of the given shared tool.
      *
      * @param int $toolid The id of the shared tool
      * @param string $token hash for this site and this enrolment instance
      * @return boolean True if the token matches, false if it does not
      * @since Moodle 3.2
      */
-    public static function verify_tool_token($toolid, $token) {
-        return $token == self::generate_tool_token($toolid);
+    public static function verify_cartridge_token($toolid, $token) {
+        return $token == self::generate_cartridge_token($toolid);
+    }
+
+    /**
+     * Verifies that the given token matches the proxy token of the given shared tool.
+     *
+     * @param int $toolid The id of the shared tool
+     * @param string $token hash for this site and this enrolment instance
+     * @return boolean True if the token matches, false if it does not
+     * @since Moodle 3.2
+     */
+    public static function verify_proxy_token($toolid, $token) {
+        return $token == self::generate_proxy_token($toolid);
     }
 
     /**

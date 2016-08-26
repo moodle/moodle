@@ -25,6 +25,7 @@
 $string['allowframeembedding'] = 'Note: It is recommended that the site administration setting \'Allow frame embedding\' is enabled, so that tools are displayed within a frame rather than in a new window.';
 $string['authltimustbeenabled'] = 'Note: This plugin requires the LTI authentication plugin to be enabled too.';
 $string['cartridgeurl'] = 'Cartridge URL';
+$string['couldnotestablishproxy'] = 'Could not establish proxy with consumer.';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can access until this date only.';
 $string['enrolenddateerror'] = 'Enrolment end date cannot be earlier than start date';
@@ -40,6 +41,7 @@ $string['failedregistration'] = 'Failed registration. Reason: {$a->reason}';
 $string['gradesync'] = 'Grade synchronisation';
 $string['gradesync_help'] = 'Whether grades from the tool are sent to the remote system (LTI consumer).';
 $string['incorrecttoken'] = 'The token was incorrect. Please check the URL and try again, or contact the administrator of this tool.';
+$string['invalidrequest'] = 'Invalid request';
 $string['maxenrolled'] = 'Maximum enrolled users';
 $string['maxenrolled_help'] = 'The maximum number of remote users who can access the tool. If set to zero, the number of enrolled users is unlimited.';
 $string['maxenrolledreached'] = 'The maximum number of remote users allowed to access the tool has been reached.';

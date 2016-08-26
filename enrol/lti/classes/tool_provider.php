@@ -43,10 +43,10 @@ class tool_provider extends ToolProvider\ToolProvider {
     /**
      * Remove $this->baseUrl (wwwroot) from a given url string and return it.
      *
-     * @param string url The url from which to remove the base url
+     * @param string $url The url from which to remove the base url
      * @return string|null A string of the relative path to the url, or null if it couldn't be determined.
      */
-    private function stripBaseUrl($url) {
+    private function strip_base_url($url) {
         if (substr($url, 0, strlen($this->baseUrl)) == $this->baseUrl) {
             return substr($url, strlen($this->baseUrl));
         }
@@ -56,39 +56,39 @@ class tool_provider extends ToolProvider\ToolProvider {
     /**
      * Create a new instance of tool_provider to handle all the LTI tool provider interactions.
      *
-     * @param int toolid The id of the tool to be provided.
+     * @param int $toolid The id of the tool to be provided.
      */
-    function __construct($toolid) {
+    public function __construct($toolid) {
         global $CFG, $SITE;
 
-        $token = \enrol_lti\helper::generate_tool_token($toolid);
+        $token = helper::generate_proxy_token($toolid);
 
         $this->debugMode = $CFG->debugdeveloper;
-        $tool = \enrol_lti\helper::get_lti_tool($toolid);
+        $tool = helper::get_lti_tool($toolid);
         $this->tool = $tool;
 
         $dataconnector = new data_connector();
         parent::__construct($dataconnector);
 
         $this->baseUrl = $CFG->wwwroot;
-        $toolpath = \enrol_lti\helper::get_proxy_url($tool);
-        $toolpath = $this->stripBaseUrl($toolpath);
+        $toolpath = helper::get_proxy_url($tool);
+        $toolpath = $this->strip_base_url($toolpath);
 
         $vendorid = $SITE->shortname;
         $vendorname = $SITE->fullname;
         $vendordescription = trim(html_to_text($SITE->summary));
         $this->vendor = new Profile\Item($vendorid, $vendorname, $vendordescription, $CFG->wwwroot);
 
-        $name = \enrol_lti\helper::get_name($tool);
-        $description = \enrol_lti\helper::get_description($tool);
-        $icon = \enrol_lti\helper::get_icon($tool)->out();
-        $icon = $this->stripBaseUrl($icon);
+        $name = helper::get_name($tool);
+        $description = helper::get_description($tool);
+        $icon = helper::get_icon($tool)->out();
+        $icon = $this->strip_base_url($icon);
 
         $this->product = new Profile\Item(
             $token,
             $name,
             $description,
-            \enrol_lti\helper::get_proxy_url($tool),
+            helper::get_proxy_url($tool),
             '1.0'
         );
 
@@ -133,7 +133,7 @@ class tool_provider extends ToolProvider\ToolProvider {
         $this->resourceHandlers[] = new Profile\ResourceHandler(
              new Profile\Item(
                  $token,
-                 \enrol_lti\helper::get_name($tool),
+                 helper::get_name($tool),
                  $description
              ),
              $icon,
@@ -150,18 +150,26 @@ class tool_provider extends ToolProvider\ToolProvider {
 
     }
 
-    function onError() {
-        error_log("onError()");
-        error_log($this->reason);
+    /**
+     * Override onError for custom error handling.
+     * @return void
+     */
+    protected function onError() {
         $message = $this->message;
         if ($this->debugMode && !empty($this->reason)) {
             $message = $this->reason;
         }
 
+        $this->errorOutput = '';
+
         \core\notification::error(get_string('failedregistration', 'enrol_lti', ['reason' => $message]));
     }
 
-    function onLaunch() {
+    /**
+     * Override onLaunch with tool logic.
+     * @return void
+     */
+    protected function onLaunch() {
         global $DB, $SESSION, $CFG;
 
         // Before we do anything check that the context is valid.
@@ -170,7 +178,7 @@ class tool_provider extends ToolProvider\ToolProvider {
 
         // Set the user data.
         $user = new \stdClass();
-        $user->username = \enrol_lti\helper::create_username($this->consumer->getKey(), $this->user->ltiUserId);
+        $user->username = helper::create_username($this->consumer->getKey(), $this->user->ltiUserId);
         if (!empty($this->user->firstname)) {
             $user->firstname = $this->user->firstname;
         } else {
@@ -185,7 +193,7 @@ class tool_provider extends ToolProvider\ToolProvider {
         $user->email = \core_user::clean_field($this->user->email, 'email');
 
         // Get the user data from the LTI consumer.
-        $user = \enrol_lti\helper::assign_user_tool_data($tool, $user);
+        $user = helper::assign_user_tool_data($tool, $user);
 
         // Check if the user exists.
         if (!$dbuser = $DB->get_record('user', ['username' => $user->username, 'deleted' => 0])) {
@@ -201,7 +209,7 @@ class tool_provider extends ToolProvider\ToolProvider {
             // Get the updated user record.
             $user = $DB->get_record('user', ['id' => $user->id]);
         } else {
-            if (\enrol_lti\helper::user_match($user, $dbuser)) {
+            if (helper::user_match($user, $dbuser)) {
                 $user = $dbuser;
             } else {
                 // If email is empty remove it, so we don't update the user with an empty email.
@@ -227,7 +235,7 @@ class tool_provider extends ToolProvider\ToolProvider {
 
         // Check if there is an image to process.
         if ($image) {
-            \enrol_lti\helper::update_user_profile_image($user->id, $image);
+            helper::update_user_profile_image($user->id, $image);
         }
 
         // Check if we are an instructor.
@@ -258,10 +266,10 @@ class tool_provider extends ToolProvider\ToolProvider {
         }
 
         // Enrol the user in the course with no role.
-        $result = \enrol_lti\helper::enrol_user($tool, $user->id);
+        $result = helper::enrol_user($tool, $user->id);
 
         // Display an error, if there is one.
-        if ($result !== \enrol_lti\helper::ENROLMENT_SUCCESSFUL) {
+        if ($result !== helper::ENROLMENT_SUCCESSFUL) {
             print_error($result, 'enrol_lti');
             exit();
         }
@@ -315,7 +323,12 @@ class tool_provider extends ToolProvider\ToolProvider {
             redirect($urltogo);
         }
     }
-    function onRegister() {
+
+    /**
+     * Override onRegister with registration code.
+     * @return void
+     */
+    protected function onRegister() {
         global $PAGE;
 
         $returnurl = $_POST['launch_presentation_return_url'];
@@ -328,10 +341,17 @@ class tool_provider extends ToolProvider\ToolProvider {
         $returnurl = $returnurl . $separator . 'lti_msg=' . urlencode(get_string("successfulregistration", "enrol_lti"));
         $returnurl = $returnurl . '&status=success';
         $returnurl = $returnurl . "&tool_proxy_guid=$guid";
-        $ok = $this->doToolProxyService($_POST['tc_profile_url']);
+        $ok = $this->doToolProxyService();
 
-        $registration = new output\registration($returnurl);
-        $output = $PAGE->get_renderer('enrol_lti');
-        echo $output->render($registration);
+        if ($ok) {
+            $registration = new output\registration($returnurl);
+            $output = $PAGE->get_renderer('enrol_lti');
+            echo $output->render($registration);
+        } else {
+            // Tell the consumer that the registration failed.
+            $this->ok = false;
+            $couldnotestablish = get_string('couldnotestablishproxy', 'enrol_lti');
+            $this->message = get_string('failedregistration', 'enrol_lti', array('reason' => $couldnotestablish));
+        }
     }
 }
