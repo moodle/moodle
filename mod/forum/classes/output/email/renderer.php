@@ -26,6 +26,8 @@ namespace mod_forum\output\email;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/../../../renderer.php');
+
 /**
  * Forum post renderable.
  *
