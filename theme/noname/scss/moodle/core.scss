@@ -1615,6 +1615,26 @@ img#persona_signin {
 }
 .breadcrumb-nav .breadcrumb {
     margin: 0;
+
+}
+/** Navbar */
+.navbar-brand {
+    .logo {
+        display: inline-block;
+        margin-top: -$navbar-brand-padding-y;
+    }
+    .site-name {
+        display: inline-block;
+        margin-left: $spacer/2;
+    }
+    height: 43px;
+}
+
+/** Page header */
+#page-header {
+    .logo {
+        margin: $spacer 0;
+    }
 }
 
 /** Header-bar styles **/
