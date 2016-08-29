@@ -1553,7 +1553,7 @@ abstract class admin_setting {
     /** @var array of admin_setting_flag - These are extra checkboxes attached to a setting. */
     private $flags = array();
     /** @var bool Whether this field must be forced LTR. */
-    protected $forceltr = false;
+    private $forceltr = null;
 
     /**
      * Constructor
@@ -1912,7 +1912,7 @@ abstract class admin_setting {
      * For more information on this setting, please check the documentation
      * provided with {@link admin_setting_localisedtext}.
      *
-     * @return bool
+     * @return bool|null
      */
     public function get_force_ltr() {
         return $this->forceltr;
@@ -1924,10 +1924,10 @@ abstract class admin_setting {
      * For more information on this option, please read the documentation
      * provided with the class {@link admin_setting_localisedtext}.
      *
-     * @param bool $value True when forced, else false.
+     * @param bool $value True when forced, false when not force, null when unknown.
      */
     public function set_force_ltr($value) {
-        $this->forceltr = (bool) $value;
+        $this->forceltr = $value;
     }
 }
 
@@ -2134,8 +2134,6 @@ class admin_setting_configtext extends admin_setting {
     public $paramtype;
     /** @var int default field size */
     public $size;
-    /** @var bool Whether this field must be forced LTR. */
-    protected $forceltr = true;
 
     /**
      * Config text constructor
@@ -2155,6 +2153,19 @@ class admin_setting_configtext extends admin_setting {
             $this->size  = ($paramtype === PARAM_INT) ? 5 : 30;
         }
         parent::__construct($name, $visiblename, $description, $defaultsetting);
+    }
+
+    /**
+     * Get whether this should be displayed in LTR mode.
+     *
+     * Try to guess from the PARAM type unless specifically set.
+     */
+    public function get_force_ltr() {
+        $forceltr = parent::get_force_ltr();
+        if ($forceltr === null) {
+            return !is_rtl_compatible($this->paramtype);
+        }
+        return $forceltr;
     }
 
     /**
@@ -2219,35 +2230,12 @@ class admin_setting_configtext extends admin_setting {
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
             'value' => $data,
-            'forceltr' => $this->forceltr,
+            'forceltr' => $this->get_force_ltr(),
         ];
         $element = $OUTPUT->render_from_template('core_admin/setting_configtext', $context);
 
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
-}
-
-/**
- * Override configtext to provide a localised setting.
- *
- * The main purpose of this setting is to not force left-to-right as we would
- * typically do for configuration settings. In the case of a localised string we
- * will let the natural direction of the page act on the field.
- *
- * Why? Because a database name will always be expressed in English, and thus needs
- * to be left-aligned and LTR. But, the name of your site, for instance, should follow
- * the language of your site and become right-aligned and RTL if need be.
- *
- * @copyright  2016 Frédéric Massart - FMCorz.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class admin_setting_localisedtext extends admin_setting_configtext {
-
-    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype = PARAM_RAW, $size = null) {
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $size);
-        $this->set_force_ltr(false);
-    }
-
 }
 
 /**
@@ -2350,7 +2338,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
             'value' => $data,
-            'forceltr' => $this->forceltr,
+            'forceltr' => $this->get_force_ltr(),
         ];
         $element = $OUTPUT->render_from_template('core_admin/setting_configtextarea', $context);
 
@@ -2359,29 +2347,9 @@ class admin_setting_configtextarea extends admin_setting_configtext {
 }
 
 /**
- * Override configtextarea to provide a localised setting.
- *
- * The main purpose of this setting is to not force left-to-right as we would
- * typically do for configuration settings. In the case of a localised string we
- * will let the natural direction of the page act on the field.
- *
- * @copyright  2016 Frédéric Massart - FMCorz.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class admin_setting_localisedtextarea extends admin_setting_configtextarea {
-
-    public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype = PARAM_RAW,
-            $cols = '60', $rows = '8') {
-        parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $cols, $rows);
-        $this->set_force_ltr(false);
-    }
-
-}
-
-/**
  * General text area with html editor.
  */
-class admin_setting_confightmleditor extends admin_setting_localisedtextarea {
+class admin_setting_confightmleditor extends admin_setting_configtextarea {
 
     /**
      * @param string $name
@@ -2392,6 +2360,7 @@ class admin_setting_confightmleditor extends admin_setting_localisedtextarea {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $paramtype=PARAM_RAW, $cols='60', $rows='8') {
         parent::__construct($name, $visiblename, $description, $defaultsetting, $paramtype, $cols, $rows);
+        $this->set_force_ltr(false);
         editors_head_setup();
     }
 
@@ -2417,8 +2386,6 @@ class admin_setting_confightmleditor extends admin_setting_localisedtextarea {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_configpasswordunmask extends admin_setting_configtext {
-
-    protected $forceltr = false;
 
     /**
      * Constructor
@@ -2463,15 +2430,12 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
             'name' => $this->get_full_name(),
             'size' => $this->size,
             'value' => $data,
-            'forceltr' => false,
+            'forceltr' => $this->get_force_ltr(),
         ];
         $element = $OUTPUT->render_from_template('core_admin/setting_configpasswordunmask', $context);
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', null, $query);
     }
 
-    public function set_force_ltr($value) {
-        throw new coding_exception('This must always be in LTR more.');
-    }
 }
 
 /**
@@ -2551,7 +2515,7 @@ class admin_setting_configfile extends admin_setting_configtext {
             'showvalidity' => !empty($data),
             'valid' => $data && file_exists($data),
             'readonly' => !empty($CFG->preventexecpath),
-            'forceltr' => true,
+            'forceltr' => $this->get_force_ltr(),
         ];
 
         if ($context->readonly) {
@@ -2582,9 +2546,6 @@ class admin_setting_configfile extends admin_setting_configtext {
         return parent::write_setting($data);
     }
 
-    public function set_force_ltr($value) {
-        throw new coding_exception('This must always be in LTR more.');
-    }
 }
 
 
@@ -2615,7 +2576,7 @@ class admin_setting_configexecutable extends admin_setting_configfile {
             'showvalidity' => !empty($data),
             'valid' => $data && file_exists($data) && !is_dir($data) && file_is_executable($data),
             'readonly' => !empty($CFG->preventexecpath),
-            'forceltr' => true
+            'forceltr' => $this->get_force_ltr()
         ];
 
         if (!empty($CFG->preventexecpath)) {
@@ -2655,7 +2616,7 @@ class admin_setting_configdirectory extends admin_setting_configfile {
             'showvalidity' => !empty($data),
             'valid' => $data && file_exists($data) && is_dir($data),
             'readonly' => !empty($CFG->preventexecpath),
-            'forceltr' => true
+            'forceltr' => $this->get_force_ltr()
         ];
 
         if (!empty($CFG->preventexecpath)) {
@@ -4087,7 +4048,16 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_sitesettext extends admin_setting_localisedtext {
+class admin_setting_sitesettext extends admin_setting_configtext {
+
+    /**
+     * Constructor.
+     */
+    public function __construct() {
+        call_user_func_array(['parent', '__construct'], func_get_args());
+        $this->set_force_ltr(false);
+    }
+
     /**
      * Return the current setting
      *
@@ -4401,9 +4371,6 @@ class admin_setting_emoticons extends admin_setting {
         return $emoticons;
     }
 
-    public function set_force_ltr($value) {
-        throw new coding_exception('This must always be in LTR more.');
-    }
 }
 
 
@@ -5255,7 +5222,7 @@ class admin_setting_special_gradepointmax extends admin_setting_configtext {
             'attributes' => [
                 'maxlength' => 5
             ],
-            'forceltr' => $this->forceltr
+            'forceltr' => $this->get_force_ltr()
         ];
         $element = $OUTPUT->render_from_template('core_admin/setting_configtext', $context);
 
@@ -9008,6 +8975,7 @@ class admin_setting_configcolourpicker extends admin_setting {
         $this->previewconfig = $previewconfig;
         $this->usedefaultwhenempty = $usedefaultwhenempty;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
+        $this->set_force_ltr(true);
     }
 
     /**
@@ -9124,7 +9092,7 @@ class admin_setting_configcolourpicker extends admin_setting {
             'name' => $this->get_full_name(),
             'icon' => $icon->export_for_template($OUTPUT),
             'haspreviewconfig' => !empty($this->previewconfig),
-            'forceltr' => true
+            'forceltr' => $this->get_force_ltr()
         ];
 
         $element = $OUTPUT->render_from_template('core_admin/setting_configcolourpicker', $context);
@@ -9134,9 +9102,6 @@ class admin_setting_configcolourpicker extends admin_setting {
             $this->get_defaultsetting(), $query);
     }
 
-    public function set_force_ltr($value) {
-        throw new coding_exception('This must always be in LTR more.');
-    }
 }
 
 
@@ -9485,9 +9450,6 @@ class admin_setting_devicedetectregex extends admin_setting {
         return $regexes;
     }
 
-    public function set_force_ltr($value) {
-        throw new coding_exception('This must always be in LTR more.');
-    }
 }
 
 /**
