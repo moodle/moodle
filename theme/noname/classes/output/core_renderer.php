@@ -50,6 +50,18 @@ class core_renderer extends \core_renderer {
     protected $language = null;
 
     /**
+     * Outputs the opening section of a box.
+     *
+     * @param string $classes A space-separated list of CSS classes
+     * @param string $id An optional ID
+     * @param array $attributes An array of other attributes to give the box.
+     * @return string the HTML to output.
+     */
+    public function box_start($classes = 'generalbox', $id = null, $attributes = array()) {
+        return parent::box_start($classes . ' p-a-1', $id, $attributes);
+    }
+
+    /**
      * The standard tags that should be included in the <head> tag
      * including a meta description for the front page
      *
