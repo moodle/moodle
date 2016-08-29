@@ -37,4 +37,4 @@
         "profileimageurl": "https://moodle.org/pix/u/f3.png"
     }
 }}
-<h4><a href="{{globals.config.wwwroot}}/user/view.php?id={{id}}&course={{courseid}}">{{#profileimageurl}}<img src="{{profileimageurl}}" class="img-rounded" height="40" role="presentation"/>{{/profileimageurl}} {{fullname}}{{#hasidentity}}<em><small> {{identity}} </small></em>{{/hasidentity}}</a></h4>
+<h4>{{^blindmarking}}<a href="{{globals.config.wwwroot}}/user/view.php?id={{id}}&course={{courseid}}">{{/blindmarking}}{{#profileimageurl}}<img src="{{profileimageurl}}" class="img-rounded" height="40" role="presentation"/>{{/profileimageurl}} {{fullname}}{{#hasidentity}}<em><small> {{identity}} </small></em>{{/hasidentity}}{{^blindmarking}}</a>{{/blindmarking}}</h4>
