@@ -56,11 +56,11 @@ $gray-light:                #818a91 !default;
 $gray-lighter:              #eceeef !default;
 $gray-lightest:             #f7f7f9 !default;
 
-$brand-primary:             #0275d8 !default;
-$brand-success:             #5cb85c !default;
-$brand-info:                #5bc0de !default;
-$brand-warning:             #f0ad4e !default;
-$brand-danger:              #d9534f !default;
+$brand-primary:             #00acdf !default;
+$brand-success:             #77b300 !default;
+$brand-info:                #9954bb !default;
+$brand-warning:             #ff8800 !default;
+$brand-danger:              #ff4136 !default;
 $brand-inverse:             $gray-dark !default;
 
 
@@ -112,8 +112,8 @@ $border-width: 1px !default;
 //
 // Settings for the `<body>` element.
 
-$body-bg:    #fff !default;
-$body-color: $gray-dark !default;
+$body-bg:    #f4f4f4 !default;
+$body-color: #333333 !default;
 
 
 // Links
@@ -166,13 +166,13 @@ $grid-gutter-width: 30px !default;
 //
 // Font, line-height, and color for body text, headings, and more.
 
-$font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$font-family-sans-serif: "Open Sans", "Helvetica Neue", Arial, sans-serif !default;
 $font-family-serif:      Georgia, "Times New Roman", Times, serif !default;
 $font-family-monospace:  Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
 $font-family-base:       $font-family-sans-serif !default;
 
 // Pixel value used to responsively scale all typography. Applied to the `<html>` element.
-$font-size-root: 16px !default;
+$font-size-root: 14px !default;
 
 $font-size-base: 1rem !default;
 $font-size-lg:   1.25rem !default;
@@ -496,9 +496,9 @@ $navbar-dark-hover-color:           rgba(255,255,255,.75) !default;
 $navbar-dark-active-color:          rgba(255,255,255,1) !default;
 $navbar-dark-disabled-color:        rgba(255,255,255,.25) !default;
 
-$navbar-light-color:                rgba(0,0,0,.3) !default;
-$navbar-light-hover-color:          rgba(0,0,0,.6) !default;
-$navbar-light-active-color:         rgba(0,0,0,.8) !default;
+$navbar-light-color:                rgba(0,0,0,.535) !default;
+$navbar-light-hover-color:          $brand-primary !default;
+$navbar-light-active-color:         $brand-primary !default;
 $navbar-light-disabled-color:       rgba(0,0,0,.15) !default;
 
 
@@ -587,8 +587,8 @@ $state-danger-border:            darken($state-danger-bg, 5%) !default;
 $card-spacer-x:            1.25rem !default;
 $card-spacer-y:            .75rem !default;
 $card-border-width:        1px !default;
-$card-border-radius:       $border-radius !default;
-$card-border-color:        rgba(0,0,0,.125) !default;
+$card-border-radius:       none !default;
+$card-border-color:        rgba(238,238,238,1) !default;
 $card-border-radius-inner: $card-border-radius !default;
 $card-cap-bg:              #f5f5f5 !default;
 $card-bg:                  #fff !default;
@@ -840,3 +840,112 @@ $pre-scrollable-max-height:   340px !default;
 @import "moodle";
 
 // Additional scss here.
+
+.navbar-brand {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.navbar-light {
+    background-color: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    border-radius: 0;
+    .navbar-brand {
+        color: #fff;
+        background-color: $brand-primary;
+        @include hover-focus {
+          color: #fff;
+        }
+    }
+    .navbar-nav {
+        .nav-link {
+            font-size: $font-size-sm;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    }
+}
+
+.navbar-nav {
+    .nav-item + .nav-item {
+        margin-left: 0;
+    }
+}
+
+.dropdown-menu {
+    font-size: 14px;
+    border-color: #e2e2e2;
+    border-radius: 0;
+    margin-top: 11px;
+    .dropdown-item {
+        color: rgba(0,0,0,.535);
+        padding: 8px 20px;
+        border-bottom: 1px solid #e2e2e2;
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}
+
+#page-header {
+    background-color: #fff;
+    border: 1px solid rgba(238,238,238,1);
+    margin-top: $spacer;
+    margin-bottom: $spacer;
+}
+
+.breadcrumb {
+    background-color: transparent;
+    border-radius: 0;
+}
+
+#region-main {
+    background-color: #fff;
+    border: 1px solid rgba(238,238,238,1);
+}
+
+.course-content ul {
+    &.topics li.section {
+        padding-top: $spacer;
+        padding-bottom: ($spacer/2);
+    }
+    li.section.main {
+        border-bottom: 1px solid #eceeef;
+    }
+}
+
+.pagelayout-login {
+    #region-main {
+        background-color: transparent;
+        border: 0;
+    }
+    .login-page .col-sm-6 {
+        background-color: #fff;
+        border: 1px solid rgba(238,238,238,1);
+    }
+}
+
+.block-region .card-block {
+    .card-title {
+        padding-bottom: ($spacer/2);
+        small {
+            font-size: 65.3%;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    }
+}
+
+.block_navigation,
+.block_settings {
+    .block_tree .tree_item {
+        margin: ($spacer/2) 0;
+    }
+}
+
+#page-footer {
+    color: #fff;
+    text-align: right;
+    background-color: #333;
+    border-top: none;
+}
