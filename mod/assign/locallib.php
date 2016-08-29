@@ -2264,7 +2264,7 @@ class assign {
                 $grade = '-';
             }
 
-            $courseindexsummary->add_assign_info($cm->id, $cm->name, $sectionname, $timedue, $submitted, $grade);
+            $courseindexsummary->add_assign_info($cm->id, $cm->get_formatted_name(), $sectionname, $timedue, $submitted, $grade);
 
         }
 
