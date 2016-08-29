@@ -45,11 +45,13 @@
 
     <div id="page-content" class="row">
         <div id="region-main-box" class="col-md-9 push-md-3">
-            <section id="region-main">
-                {{{ output.course_content_header }}}
-                {{{ output.main_content }}}
-                {{{ output.course_content_footer }}}
-            </section>
+            <div class="row">
+                <section id="region-main" class="col-xs-12">
+                    {{{ output.course_content_header }}}
+                    {{{ output.main_content }}}
+                    {{{ output.course_content_footer }}}
+                </section>
+            </div>
         </div>
         {{{ sidepreblocks }}}
     </div>
