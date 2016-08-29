@@ -19,9 +19,12 @@
     padding: 4px;
     margin-bottom: 4px;
 }
+.mform fieldset {
+    margin-left: $spacer;
+}
 .mform fieldset.collapsible legend a.fheader {
-    padding: 0 5px 0 18px;
-    margin-left: -18px;
+    padding: 0 5px 0 ($spacer * 1.5);
+    margin-left: -($spacer * 1.5);
     background: url([[pix:t/expanded]]) 0 center no-repeat;
 }
 .mform fieldset.collapsed legend a.fheader {
