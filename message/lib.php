@@ -412,9 +412,11 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     $unread = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
     $unreadcountssql = 'SELECT useridfrom, count(*) as count
-                        FROM {message}
-                        WHERE useridto = :userid
-                        GROUP BY useridfrom';
+                          FROM {message}
+                         WHERE useridto = :userid
+                           AND timeusertodeleted = 0
+                           AND notification = 0
+                      GROUP BY useridfrom';
     $unreadcounts = $DB->get_records_sql($unreadcountssql, array('userid' => $user->id));
 
     // Union the 2 result sets together looking for the message with the most
