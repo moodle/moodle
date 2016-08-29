@@ -266,6 +266,9 @@ class phpunit_util extends testing_util {
         // Make sure the time locale is consistent - that is Australian English.
         setlocale(LC_TIME, $localename);
 
+        // Reset the log manager cache.
+        get_log_manager(true);
+
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
             error_log('Unexpected DB writes in phpunit_util::reset_all_data()');
