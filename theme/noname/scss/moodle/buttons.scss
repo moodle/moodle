@@ -1,18 +1,7 @@
 .singlebutton {
-    div {
-        display: inline-block;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        margin-left: 5px;
-    }
-}
-
-// Two singlebuttons side by side for ok/cancel.
-#notice {
-    .buttons {
-        .singlebutton {
-            display: inline-block;
-        }
+    display: inline-block;
+    + .singlebutton {
+        margin-left: $spacer / 2;
     }
 }
 
