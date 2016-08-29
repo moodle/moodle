@@ -15,7 +15,15 @@
     <div class="clearfix">
         <button class="navbar-toggler pull-xs-right hidden-sm-up" data-toggle="collapse" data-target="#bd-main-mav">☰<span class="sr-only">{{#str}}expand{{/str}}</span></button>
     </div>
-    <a class="navbar-brand" href="{{{ config.wwwroot }}}">{{{ sitename }}}</a>
+
+    <a href="{{{ config.wwwroot }}}" class="navbar-brand">
+        {{# output.should_display_navbar_logo }}
+            <div class="logo">
+                <img src="{{output.get_compact_logo_url}}" alt={{#quote}}{{sitename}}{{/quote}}>
+            </div>
+        {{/ output.should_display_navbar_logo }}
+        <div class="site-name">{{{ sitename }}}</div>
+    </a>
 
     <div class="collapse navbar-toggleable-xs" id="bd-main-nav">
         <nav class="nav navbar-nav">

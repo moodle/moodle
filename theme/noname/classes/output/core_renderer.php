@@ -32,6 +32,7 @@ use single_button;
 use single_select;
 use paging_bar;
 use url_select;
+use context_course;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -74,6 +75,64 @@ class core_renderer extends \core_renderer {
      */
     public function navbar() {
         return $this->render_from_template('core/navbar', $this->page->navbar);
+    }
+
+    /**
+     * Override to inject the logo.
+     *
+     * @param array $headerinfo The header info.
+     * @param int $headinglevel What level the 'h' tag will be.
+     * @return string HTML for the header bar.
+     */
+    public function context_header($headerinfo = null, $headinglevel = 1) {
+        global $SITE;
+
+        if ($this->should_display_main_logo($headinglevel)) {
+            $sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
+            return html_writer::div(html_writer::empty_tag('img', [
+                'src' => $this->get_logo_url(null, 75), 'alt' => $sitename]), 'logo');
+        }
+
+        return parent::context_header($headerinfo, $headinglevel);
+    }
+
+    /**
+     * Get the compact logo URL.
+     *
+     * @return string
+     */
+    public function get_compact_logo_url($maxwidth = 100, $maxheight = 100) {
+        return parent::get_compact_logo_url(null, 43);
+    }
+
+    /**
+     * Whether we should display the main logo.
+     *
+     * @return bool
+     */
+    public function should_display_main_logo($headinglevel = 1) {
+        global $PAGE;
+
+        // Only render the logo if we're on the front page or login page and the we have a logo.
+        $logo = $this->get_logo_url();
+        if ($headinglevel == 1 && !empty($logo)) {
+            if ($PAGE->pagelayout == 'frontpage' || $PAGE->pagelayout == 'login') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    /**
+     * Whether we should display the logo in the navbar.
+     *
+     * We will when there are no main logos, and we have compact logo.
+     *
+     * @return bool
+     */
+    public function should_display_navbar_logo() {
+        $logo = $this->get_compact_logo_url();
+        return !empty($logo) && !$this->should_display_main_logo();
     }
 
     /*
