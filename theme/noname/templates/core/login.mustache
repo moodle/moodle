@@ -22,13 +22,13 @@
 
 <div class="container-fluid login-page">
 <div class="row">
-    <div class="col-sm-12 col-md-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+    <div class="col-sm-12 col-md-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 login-wrapper">
         <div class="row">
             {{#hasinstructions}}
-            <div class="col-sm-6">
+            <div class="col-sm-6 p-b-1 login-form">
             {{/hasinstructions}}
             {{^hasinstructions}}
-            <div class="col-sm-6 offset-sm-3 col-md-4 offset-md-4">
+            <div class="col-sm-6 offset-sm-3 col-md-4 offset-md-4 p-b-1 login-form">
             {{/hasinstructions}}
 
                 <h2 class="m-t-1">{{#str}} login {{/str}}</h2>
@@ -113,7 +113,7 @@
             </div>
 
             {{#hasinstructions}}
-                <div class="col-md-6">
+                <div class="col-md-6 p-b-1 login-instructions">
                     <h2 class="m-t-1">{{#str}}firsttime{{/str}}</h2>
                     <div>
                         {{{instructions}}}
