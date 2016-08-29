@@ -783,6 +783,10 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
                 // Getting the debugging info and the backtrace.
                 $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-error');
+                // If errorinfoboxes is empty, try find alert-danger (bootstrap4) class.
+                if (empty($errorinfoboxes)) {
+                    $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-danger');
+                }
                 // If errorinfoboxes is empty, try find notifytiny (original) class.
                 if (empty($errorinfoboxes)) {
                     $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');

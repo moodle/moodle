@@ -92,7 +92,7 @@ class report_loglive_renderer extends plugin_renderer_base {
         if ($reportloglive->page == 0 && $reportloglive->selectedlogreader) {
             echo html_writer::tag('button' , get_string('pause', 'report_loglive'), array('id' => 'livelogs-pause-button'));
             $icon = new pix_icon('i/loading_small', 'loading', 'moodle', array('class' => 'spinner'));
-            return $this->output->render($icon);
+            return html_writer::tag('span', $this->output->render($icon), array('class' => 'spinner'));
         }
         return '';
     }

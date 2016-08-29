@@ -288,6 +288,16 @@ class behat_deprecated extends behat_base {
     }
 
     /**
+     * Click on a given link in the moodle-actionmenu that is currently open.
+     * @Given /^I follow "(?P<link_string>(?:[^"]|\\")*)" in the open menu$/
+     * @param string $linkstring the text (or id, etc.) of the link to click.
+     */
+    public function i_follow_in_the_open_menu($linkstring) {
+        $alternative = 'I choose "' . $this->escape($linkstring) . '" from the open action menu';
+        $this->deprecated_message($alternative, true);
+    }
+
+    /**
      * Throws an exception if $CFG->behat_usedeprecated is not allowed.
      *
      * @throws Exception

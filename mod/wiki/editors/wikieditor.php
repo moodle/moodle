@@ -28,8 +28,12 @@
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot.'/lib/form/textarea.php');
+require_once($CFG->dirroot.'/lib/form/templatable_form_element.php');
 
 class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
 
     private $files;
 
@@ -50,7 +54,9 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
             unset($attributes['files']);
         }
 
+
         parent::__construct($elementName, $elementLabel, $attributes);
+        $this->_type = 'wikieditor';
     }
 
     /**
@@ -168,6 +174,13 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
 
     private function escapeToken(&$token) {
         $token = urlencode(str_replace("'", "\'", $token));
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['html'] = $this->toHtml();
+
+        return $context;
     }
 }
 

@@ -26,11 +26,11 @@
             </select>
         </div>
         {{#showbutton}}
-            <button type="submit" class="btn btn-secondary">{{showbutton}}</button>
+            <input type="submit" class="btn btn-secondary" value="{{showbutton}}">
         {{/showbutton}}
         {{^showbutton}}
             <noscript>
-                <button type="submit" class="btn btn-secondary">{{#str}}go, core{{/str}}</button>
+                <input type="submit" class="btn btn-secondary" value="{{#str}}go, core{{/str}}">
             </noscript>
         {{/showbutton}}
     </form>

@@ -210,11 +210,11 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
 
         $this->_generateId();
         $context = parent::export_for_template($output);
-        $context['tags'] = $this->tags;
+        $context['tags'] = !empty($this->tags);
         $context['ajax'] = $this->ajax;
         $context['placeholder'] = $this->placeholder;
-        $context['casesensitive'] = $this->casesensitive;
-        $context['showsuggestions'] = $this->showsuggestions;
+        $context['casesensitive'] = !empty($this->casesensitive);
+        $context['showsuggestions'] = !empty($this->showsuggestions);
         $context['noselectionstring'] = $this->noselectionstring;
 
         return $context;

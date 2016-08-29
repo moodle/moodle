@@ -39,7 +39,7 @@ Feature: Course activity controls works as expected
     And I should see "Turn editing on"
     And "Turn editing on" "button" should exist
     And I turn editing mode on
-    And I click on "Actions" "link" in the "Recent activity" "block"
+    And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I press "Yes"
     And <belowpage> "section" <should_see_other_sections> exist
@@ -119,7 +119,7 @@ Feature: Course activity controls works as expected
     And I should see "Turn editing on"
     And "Turn editing on" "button" should exist
     And I turn editing mode on
-    And I click on "Actions" "link" in the "Recent activity" "block"
+    And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I press "Yes"
     And <belowpage> "section" <should_see_other_sections> exist

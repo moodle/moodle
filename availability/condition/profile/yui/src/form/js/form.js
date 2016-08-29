@@ -89,7 +89,7 @@ M.availability_profile.form.getNode = function(json) {
             ancestorNode.one('input[name=value]').set('disabled', novalue);
             M.core_availability.form.update();
         };
-        var root = Y.one('#fitem_id_availabilityconditionsjson');
+        var root = Y.one('.availability-field');
         root.delegate('change', function() {
              updateForm(this);
         }, '.availability_profile select');

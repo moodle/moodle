@@ -34,9 +34,8 @@
     {
         "attributes": [
             { "name": "src", "value": "http://moodle.com/wp-content/themes/moodle/images/logo-hat2.png" },
-            { "name": "class", "value": "iconsmall" }
         ]
     }
 
 }}
-<img class="icon" {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>
+<img class="icon {{extraclasses}}" {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>

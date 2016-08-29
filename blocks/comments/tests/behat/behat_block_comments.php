@@ -94,7 +94,7 @@ class behat_block_comments extends behat_base {
         // Using xpath liternal to avoid possible problems with comments containing quotes.
         $commentliteral = behat_context_helper::escape($comment);
 
-        $commentxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' block_comments ')]" .
+        $commentxpath = "//*[contains(concat(' ', normalize-space(@class), ' '), ' block_comments ')]" .
             "/descendant::div[@class='comment-message'][contains(., $commentliteral)]";
         $commentnode = $this->find('xpath', $commentxpath, $exception);
 

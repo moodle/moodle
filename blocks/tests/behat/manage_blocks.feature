@@ -52,7 +52,7 @@ Feature: Block appearances
     And I follow "Test survey name"
     And I should not see "Comments"
 
-  Scenario: Block settings can be modified so that a block can be hidden or moved
+  Scenario: Block settings can be modified so that a block can be hidden
     When I follow "Test book name"
     And I configure the "Comments" block
     And I set the following fields to these values:
@@ -61,11 +61,3 @@ Feature: Block appearances
     And I follow "Turn editing off"
     And I follow "Test book name"
     Then I should not see "Comments"
-    And I expand "Course administration" node
-    And I follow "Turn editing on"
-    And I configure the "Comments" block
-    And I set the following fields to these values:
-      | Visible | Yes |
-      | Region  | Right |
-    And I press "Save changes"
-    And I should see "Comments" in the "//*[@id='region-post' or @id='block-region-side-post']" "xpath_element"

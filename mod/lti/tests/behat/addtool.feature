@@ -34,5 +34,5 @@ Feature: Add tools
       | Activity name | Test tool activity 1 |
       | Launch container | Embed |
     And I open "Test tool activity 1" actions menu
-    And I follow "Edit settings" in the open menu
+    And I choose "Edit settings" in the open action menu
     Then the field "Preconfigured tool" matches value "Teaching Tool 1"

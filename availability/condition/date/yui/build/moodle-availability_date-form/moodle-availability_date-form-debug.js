@@ -72,7 +72,7 @@ M.availability_date.form.getNode = function(json) {
     if (!M.availability_date.form.addedEvents) {
         M.availability_date.form.addedEvents = true;
 
-        var root = Y.one('#fitem_id_availabilityconditionsjson');
+        var root = Y.one('.availability-field');
         root.delegate('change', function() {
             // For the direction, just update the form fields.
             M.core_availability.form.update();

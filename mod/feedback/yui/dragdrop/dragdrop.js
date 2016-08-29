@@ -4,8 +4,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
         DRAGAREA : '#feedback_dragarea',
         DRAGITEMCLASS : 'feedback_itemlist',
         DRAGITEM : 'div.feedback_itemlist',
-        DRAGLIST : '#feedback_dragarea form > fieldset > div',
-        ITEMBOX : '#feedback_item_box_',
+        DRAGLIST : '#feedback_dragarea form',
         DRAGHANDLE : 'itemhandle'
     };
 
@@ -29,8 +28,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
             basenode = Y.Node.one(CSS.DRAGLIST);
             listitems = basenode.all(CSS.DRAGITEM).each(function(v) {
                 var item_id = this.get_node_id(v.get('id')); //Get the id of the feedback item.
-                var item_box = Y.Node.one(CSS.ITEMBOX + item_id); //Get the current item box so we can add the drag handle.
-                item_box.append(this.mydraghandle.cloneNode(true)); // Insert the new handle into the item box.
+                v.append(this.mydraghandle.cloneNode(true)); // Insert the new handle into the item box.
             }, this);
 
             //We use a delegate to make all items draggable

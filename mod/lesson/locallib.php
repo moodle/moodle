@@ -536,7 +536,7 @@ function lesson_menu_block_contents($cmid, $lesson) {
         return null;
     }
 
-    $content = '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson')."</a>\n<div class=\"menuwrapper\">\n<ul>\n";
+    $content = '<a href="#maincontent" class="accesshide">'.get_string('skip', 'lesson')."</a>\n<div class=\"menuwrapper\">\n<ul>\n";
 
     while ($pageid != 0) {
         $page = $pages[$pageid];

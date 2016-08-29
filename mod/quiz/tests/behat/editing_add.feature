@@ -88,7 +88,7 @@ Feature: Edit quiz page - adding things
 
     # Add a question to page 2.
     When I open the "Page 2" add to quiz menu
-    And I follow "a new question" in the open menu
+    And I choose "a new question" in the open action menu
     And I set the field "qtype_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
@@ -241,7 +241,7 @@ Feature: Edit quiz page - adding things
 
     # Add a random question to page 4.
     And I open the "Page 4" add to quiz menu
-    And I follow "a new question" in the open menu
+    And I choose "a new question" in the open action menu
     And I set the field "qtype_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"

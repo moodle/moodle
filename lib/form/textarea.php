@@ -39,7 +39,9 @@ require_once('templatable_form_element.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class MoodleQuickForm_textarea extends HTML_QuickForm_textarea implements templatable {
-    use templatable_form_element;
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
 
     /** @var string Need to store id of form as we may need it for helpbutton */
     var $_formid = '';
@@ -165,5 +167,12 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea implements templa
      */
     public function set_force_ltr($value) {
         $this->forceltr = (bool) $value;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['value'] = $this->getValue();
+
+        return $context;
     }
 }

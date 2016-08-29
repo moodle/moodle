@@ -1,6 +1,7 @@
 {{< core_form/element-template }}
     {{$element}}
-        <input type="submit" {{#element.frozen}}readonly{{/element.frozen}}
+        {{^element.frozen}}
+            <input type="submit"
                 class="btn
                     {{^element.secondary}}btn-primary{{/element.secondary}}
                     {{#element.secondary}}btn-secondary{{/element.secondary}}
@@ -12,5 +13,6 @@
                 {{/error}}
                 value="{{element.value}}"
                 {{{element.attributes}}} >
+        {{/element.frozen}}
     {{/element}}
 {{/ core_form/element-template }}

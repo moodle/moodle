@@ -186,7 +186,7 @@ EOD;
 
     public function export_for_template(renderer_base $output) {
         $context = $this->export_for_template_base($output);
-        $context['filepickerhtml'] = $this->toHtml();
+        $context['filepickerhtml'] = $this->getFilePickerHTML();
         return $context;
     }
 

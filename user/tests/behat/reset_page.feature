@@ -24,4 +24,3 @@ Feature: Reset my profile page to default
     And I add the "Latest announcements" block
     And I press "Reset page to default"
     Then I should not see "Latest announcements"
-    And I should not see "Reset page to default"

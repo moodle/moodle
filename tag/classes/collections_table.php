@@ -77,7 +77,7 @@ class core_tag_collections_table extends html_table {
                 // Delete.
                 $url->param('action', 'colldelete');
                 $actions .= $OUTPUT->action_icon('#', new pix_icon('t/delete', get_string('delete')), null,
-                        array('data-url' => $url, 'data-collname' => $name,
+                        array('data-url' => $url->out(false), 'data-collname' => $name,
                             'class' => 'action-icon action_delete'));
             }
             $component = '';
@@ -89,7 +89,7 @@ class core_tag_collections_table extends html_table {
             $validareas = core_tag_collection::get_areas_names($tagcoll->id);
             $areaslist = array_map(function($key) use ($allareas, $validareas) {
                 return "<li data-areaid=\"{$key}\" " .
-                        (array_key_exists($key, $validareas) ? "" : "class=\"hidden\"") .
+                        (array_key_exists($key, $validareas) ? "" : "style=\"display:none;\"") .
                         ">{$allareas[$key]}</li>";
             }, array_keys($allareas));
             $displayname = new \core_tag\output\tagcollname($tagcoll);

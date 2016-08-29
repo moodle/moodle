@@ -216,9 +216,9 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
         var region = $(selector);
 
         templates.render('mod_assign/popout_button', {}).done(function(html) {
-            region.find('.fitem_ffilemanager .fitemtitle').append(html);
-            region.find('.fitem_feditor .fitemtitle').append(html);
-            region.find('.fitem_f .fitemtitle').append(html);
+            var parents = region.find('[data-fieldtype="filemanager"],[data-fieldtype="editor"],[data-fieldtype="grading"]')
+                    .closest('.fitem');
+            parents.addClass('has-popout').find('label').parent().append(html);
 
             region.on('click', '[data-region="popout-button"]', this._togglePopout.bind(this));
         }.bind(this)).fail(notification.exception);

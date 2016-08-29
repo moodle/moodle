@@ -59,6 +59,9 @@ class core_renderer extends \core_renderer {
      * @return string the HTML to output.
      */
     public function box_start($classes = 'generalbox', $id = null, $attributes = array()) {
+        if (is_array($classes)) {
+            $classes = implode(' ', $classes);
+        }
         return parent::box_start($classes . ' p-a-1', $id, $attributes);
     }
 
@@ -434,5 +437,26 @@ class core_renderer extends \core_renderer {
      */
     protected function render_url_select(url_select $select) {
         return $this->render_from_template('core/url_select', $select->export_for_template($this));
+    }
+
+    /**
+     * Renders a pix_icon widget and returns the HTML to display it.
+     *
+     * @param pix_icon $icon
+     * @return string HTML fragment
+     */
+    protected function render_pix_icon(pix_icon $icon) {
+        $data = $icon->export_for_template($this);
+        foreach ($data['attributes'] as $key => $item) {
+            $name = $item['name'];
+            $value = $item['value'];
+            if ($name == 'class') {
+                $data['extraclasses'] = $value;
+                unset($data['attributes'][$key]);
+                $data['attributes'] = array_values($data['attributes']);
+                break;
+            }
+        }
+        return $this->render_from_template('core/pix_icon', $data);
     }
 }

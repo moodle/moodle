@@ -446,7 +446,6 @@ class mod_feedback_complete_form extends moodleform {
         $menu->set_constraint('.feedback_form');
         $menu->set_alignment(action_menu::TR, action_menu::BR);
         $menu->set_menu_trigger(get_string('edit'));
-        $menu->do_not_enhance();
         $menu->prioritise = true;
 
         $itemobj = feedback_get_item_class($item->typ);

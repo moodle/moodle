@@ -396,7 +396,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         $group = array();
         $group[] =& $mform->createElement('checkbox', 'completiontimespentenabled', '',
                 get_string('completiontimespent', 'lesson'));
-        $group[] =& $mform->createElement('duration', 'completiontimespent', array('optional' => true));
+        $group[] =& $mform->createElement('duration', 'completiontimespent', '', array('optional' => false));
         $mform->addGroup($group, 'completiontimespentgroup', get_string('completiontimespentgroup', 'lesson'), array(' '), false);
         $mform->disabledIf('completiontimespent[number]', 'completiontimespentenabled', 'notchecked');
         $mform->disabledIf('completiontimespent[timeunit]', 'completiontimespentenabled', 'notchecked');

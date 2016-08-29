@@ -1,18 +1,22 @@
 <label class="form-check-inline {{#error}}has-danger{{/error}}">
+{{^element.frozen}}
 <input type="radio" name="{{element.name}}"
     id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
-    {{#element.frozen}}readonly disabled{{/element.frozen}}
+    {{element.checked}}checked{{/element.checked}}
     {{#error}}
         autofocus aria-describedby="id_error_{{element.name}}"
     {{/error}}
     {{{element.attributes}}} >
+{{/element.frozen}}
     {{{label}}} {{{helpbutton}}}
 </label>
 <span class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
     {{{error}}}
 </span>
+{{^element.frozen}}
 {{#js}}
 require(['theme_noname/form-display-errors'], function(module) {
     module.enhance({{#quote}}{{element.id}}{{/quote}});
 });
 {{/js}}
+{{/element.frozen}}

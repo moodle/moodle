@@ -1,3 +1,27 @@
-<input type="hidden" name="{{element.name}}"
-            value="{{element.value}}">
-{{> core_form/element-checkbox-inline }}
+<label class="form-check-inline {{#error}}has-danger{{/error}}">
+{{^element.frozen}}
+<input type="hidden" name="{{element.name}}" value="{{element.deselectedvalue}}">
+<input type="checkbox" name="{{element.name}}"
+    id="{{element.id}}"
+    {{#element.selectedvalue}}
+        value="{{element.selectedvalue}}"
+    {{/element.selectedvalue}}
+    {{#element.checked}}checked{{/element.checked}}
+    size="{{element.size}}"
+    {{#error}}
+        autofocus aria-describedby="id_error_{{element.name}}"
+    {{/error}}
+    {{{element.attributes}}} >
+{{/element.frozen}}
+    {{{label}}} {{{helpbutton}}}
+</label>
+<span class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+    {{{error}}}
+</span>
+{{^element.frozen}}
+{{#js}}
+require(['theme_noname/form-display-errors'], function(module) {
+    module.enhance({{#quote}}{{element.id}}{{/quote}});
+});
+{{/js}}
+{{/element.frozen}}

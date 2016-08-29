@@ -298,20 +298,6 @@ class behat_mod_quiz extends behat_question_base {
     }
 
     /**
-     * Click on a given link in the moodle-actionmenu that is currently open.
-     * @Given /^I follow "(?P<link_string>(?:[^"]|\\")*)" in the open menu$/
-     * @param string $linkstring the text (or id, etc.) of the link to click.
-     */
-    public function i_follow_in_the_open_menu($linkstring) {
-        $openmenuxpath = "//div[contains(@class, 'moodle-actionmenu') and contains(@class, 'show')]";
-
-        $this->execute('behat_general::i_click_on_in_the',
-            array($linkstring, "link", $openmenuxpath, "xpath_element")
-        );
-
-    }
-
-    /**
      * Check whether a particular question is on a particular page of the quiz on the Edit quiz page.
      * @Given /^I should see "(?P<question_name>(?:[^"]|\\")*)" on quiz page "(?P<page_number>\d+)"$/
      * @param string $questionname the name of the question we are looking for.

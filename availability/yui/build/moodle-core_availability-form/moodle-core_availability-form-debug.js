@@ -1154,4 +1154,14 @@ M.core_availability.DeleteIcon = function(toDelete) {
 M.core_availability.DeleteIcon.prototype.span = null;
 
 
-}, '@VERSION@', {"requires": ["base", "node", "event", "panel", "moodle-core-notification-dialogue", "json"]});
+}, '@VERSION@', {
+    "requires": [
+        "base",
+        "node",
+        "event",
+        "event-delegate",
+        "panel",
+        "moodle-core-notification-dialogue",
+        "json"
+    ]
+});

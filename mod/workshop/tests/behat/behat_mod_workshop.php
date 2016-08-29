@@ -71,7 +71,7 @@ class behat_mod_workshop extends behat_base {
     public function i_add_a_submission_in_workshop_as($workshopname, $table) {
         $workshopname = $this->escape($workshopname);
         $savechanges = $this->escape(get_string('savechanges'));
-        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' ownsubmission ')]/descendant::input[@type='submit']";
+        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' ownsubmission ')]/descendant::*[@type='submit']";
 
         $this->execute('behat_general::click_link', $workshopname);
 

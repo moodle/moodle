@@ -115,7 +115,7 @@ Feature: Mapping courses in a feedback
     And I follow "Course feedback"
 
     And I follow "Analysis"
-    And I should see "All courses" in the "#feedback_course_filter .fautocomplete .label" "css_element"
+    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "1 (33.33 %)" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
@@ -127,7 +127,7 @@ Feature: Mapping courses in a feedback
     And I follow "Back"
     And I set the field "Filter by course" to "Course 1"
     And I press "Filter"
-    And I should see "Course 1" in the "#feedback_course_filter .fautocomplete .label" "css_element"
+    And I should see "Course 1" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (50.00 %)" in the "option b" "table_row"
@@ -198,7 +198,7 @@ Feature: Mapping courses in a feedback
     And I am on site homepage
     And I follow "Course feedback"
     And I follow "Analysis"
-    And I should see "All courses" in the "#feedback_course_filter .fautocomplete .label" "css_element"
+    And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"
     And I should see "1 (33.33 %)" in the "option b" "table_row"
@@ -236,7 +236,7 @@ Feature: Mapping courses in a feedback
     And I am on site homepage
     And I follow "Turn editing on"
     And I add the "Feedback" block
-    And I click on "Delete" "link" in the "//div[contains(@class,'block_site_main_menu')]//li[contains(.,'Course feedback')]" "xpath_element"
+    And I click on "Delete" "link" in the "//*[contains(@class,'block_site_main_menu')]//li[contains(.,'Course feedback')]" "xpath_element"
     And I press "Yes"
     And I follow "Turn editing off"
     And I am on site homepage

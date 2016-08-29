@@ -26,7 +26,7 @@ Feature: Course summary block used on the frontpage
     And I follow "Turn editing on"
     Then I should see "Proved the summary block works!" in the "Course/site summary" "block"
     And I should not see "Course summary" in the "Course/site summary" "block"
-    And I click on "Edit" "link" in the "Course/site summary" "block"
+    And I click on ".editbutton a" "css_element" in the "Course/site summary" "block"
     Then I should see "Front page settings" in the "h2" "css_element"
 
   Scenario: Admin can not see edit icon when edit mode is off

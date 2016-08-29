@@ -21,7 +21,7 @@ Feature: Edit activities in social activities block
     And I set the field "Add an activity to section 'section 0'" to "Forum"
     And I set the field "Forum name" to "My forum name"
     And I press "Save and return to course"
-    And I click on "Edit title" "link" in the "//div[contains(@class,'block_social_activities')]//li[contains(.,'My forum name')]" "xpath_element"
+    And I click on "Edit title" "link" in the "//*[contains(@class,'block_social_activities')]//li[contains(.,'My forum name')]" "xpath_element"
     And I set the field "New name for activity My forum name" to "New forum name"
     And I press key "13" in the field "New name for activity My forum name"
     Then I should not see "My forum name" in the "Social activities" "block"

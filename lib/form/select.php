@@ -213,6 +213,10 @@ class MoodleQuickForm_select extends HTML_QuickForm_select implements templatabl
         }
         $context['options'] = $options;
 
+        if ($this->getAttribute('multiple')) {
+            $context['name'] = $context['name'] . '[]';
+        }
+
         return $context;
     }
 }
