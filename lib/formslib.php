@@ -1771,9 +1771,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
     function setType($elementname, $paramtype) {
         $this->_types[$elementname] = $paramtype;
 
-        // All param types, except TEXT and NOTAGS will be forced LTR. This will not always get
-        // it right, but it should be accurate in most cases. When inaccurate use setForceLtr().
-        if (!in_array($paramtype, [PARAM_TEXT, PARAM_NOTAGS])
+        // This will not always get it right, but it should be accurate in most cases.
+        // When inaccurate use setForceLtr().
+        if (!is_rtl_compatible($paramtype)
                 && $this->elementExists($elementname)
                 && ($element =& $this->getElement($elementname))
                 && method_exists($element, 'set_force_ltr')) {
