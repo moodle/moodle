@@ -86,7 +86,7 @@ Feature: Testing multichoice questions in feedback
     And I should not see "this is the third page of the feedback"
     And I press "Next page"
     # We are still on the second page because the field is required
-    And I should see "Required" in the ".error" "css_element"
+    And I should see "Required" in the "form" "css_element"
     And I should see "this is the second page of the feedback"
     And I set the field "option e" to "1"
     And the following fields match these values:
@@ -158,7 +158,8 @@ Feature: Testing multichoice questions in feedback
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I follow "Edit questions"
-    And I click on "Edit question" "link" in the "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
+    And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
+    And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
     And I follow "Analysis"
@@ -228,7 +229,7 @@ Feature: Testing multichoice questions in feedback
     And I should not see "this is the third page of the feedback"
     And I press "Next page"
     # We are still on the second page because the field is required
-    And I should see "Required" in the ".error" "css_element"
+    And I should see "Required" in the "form" "css_element"
     And I should see "this is the second page of the feedback"
     And I set the field "option e" to "1"
     And I set the field "option f" to "1"
@@ -301,7 +302,8 @@ Feature: Testing multichoice questions in feedback
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I follow "Edit questions"
-    And I click on "Edit question" "link" in the "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
+    And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
+    And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
     And I follow "Analysis"
@@ -363,7 +365,7 @@ Feature: Testing multichoice questions in feedback
     And I should not see "this is the third page of the feedback"
     And I press "Next page"
     # We are still on the second page because the field is required
-    And I should see "Required" in the ".error" "css_element"
+    And I should see "Required" in the "form" "css_element"
     And I should see "this is the second page of the feedback"
     And I set the field "this is a multiple choice 2" to "option e"
     And I press "Next page"
@@ -423,7 +425,8 @@ Feature: Testing multichoice questions in feedback
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I follow "Edit questions"
-    And I click on "Edit question" "link" in the "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
+    And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
+    And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
     And I follow "Analysis"

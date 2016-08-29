@@ -128,7 +128,6 @@ class grade_edit_tree {
 
         $moveaction = '';
         $actionsmenu = new action_menu();
-        $actionsmenu->initialise_js($PAGE);
         $actionsmenu->set_menu_trigger(get_string('edit'));
         $actionsmenu->set_owner_selector('grade-item-' . $eid);
         $actionsmenu->set_alignment(action_menu::TL, action_menu::BL);

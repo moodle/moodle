@@ -3,5 +3,5 @@
         <label class="sr-only" for="adminsearchquery">{{label}}</label>
         <input class="form-control" type="text" name="query" value="{{searchvalue}}" id="adminsearchquery" size="10">
     </div>
-    <button type="submit" class="btn btn-secondary">{{#str}}search{{/str}}</button>
+    <input type="submit" class="btn btn-secondary" value={{#quote}}{{#str}}search{{/str}}{{/quote}}>
 </form>

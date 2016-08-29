@@ -52,7 +52,7 @@ trait templatable_form_element {
 
         // Not all elements have all of these attributes - but they are common enough to be valid for a few.
         $standardattributes = ['id', 'name', 'label', 'multiple', 'checked', 'error', 'size', 'value'];
-        $standardproperties = ['frozen', 'helpbutton', 'hiddenLabel'];
+        $standardproperties = ['helpbutton', 'hiddenLabel'];
 
         // Standard attributes.
         foreach ($standardattributes as $attrname) {
@@ -65,14 +65,20 @@ trait templatable_form_element {
             $classpropname = '_' . $propname;
             $context[strtolower($propname)] = isset($this->$classpropname) ? $this->$classpropname : false;
         }
+        $extraclasses = $this->getAttribute('class');
+
+        // Special wierd named property.
+        $context['frozen'] = !empty($this->_flagFrozen);
 
         // Other attributes.
         $otherattributes = [];
         foreach ($this->getAttributes() as $attr => $value) {
-            if (!in_array($attr, $standardattributes)) {
+            if (!in_array($attr, $standardattributes) && $attr != 'class') {
                 $otherattributes[] = $attr . '="' . s($value) . '"';
             }
         }
+        $context['extraclasses'] = $extraclasses;
+        $context['type'] = $this->getType();
         $context['attributes'] = implode(' ', $otherattributes);
 
         return $context;

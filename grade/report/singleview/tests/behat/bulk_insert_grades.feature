@@ -82,8 +82,8 @@ Feature: We can bulk insert grades for students in a course
     And I press "Ok"
     And I follow "Edit settings"
     And I follow "View gradebook"
-    And I click on "input[title='Dock Navigation block']" "css_element"
-    And I click on "input[title='Dock Administration block']" "css_element"
+    # And I click on "input[title='Dock Navigation block']" "css_element"
+    # And I click on "input[title='Dock Administration block']" "css_element"
     And I follow "Single view for Test assignment two"
     And I select "Student 1" from the "Select user..." singleselect
     Then the field "Grade for Test assignment two" matches value "50.00"

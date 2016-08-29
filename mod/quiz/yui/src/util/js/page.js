@@ -207,7 +207,9 @@ Y.Moodle.mod_quiz.util.page = {
         beforenode.insert(page, 'after');
 
         // Enhance the add menu to make if fully visible and clickable.
-        M.core.actionmenu.newDOMNode(page);
+        if (typeof M.core.actionmenu !== "undefined") {
+            M.core.actionmenu.newDOMNode(page);
+        }
         return page;
     },
 

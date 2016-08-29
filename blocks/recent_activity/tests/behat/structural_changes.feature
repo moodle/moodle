@@ -151,6 +151,7 @@ Feature: View structural changes in recent activity block
     Then I should see "Added Forum" in the "Recent activity" "block"
     And I should see "ForumNew" in the "Recent activity" "block"
     And I log out
+    And I wait "1" seconds
     And I log in as "student1"
     And I follow "Course 1"
     And I should see "Added Forum" in the "Recent activity" "block"
@@ -158,6 +159,7 @@ Feature: View structural changes in recent activity block
     And I log out
     # Update forum as a teacher after a second to ensure we have a new timestamp for recent activity.
     And I wait "1" seconds
+    # Update forum as a teacher
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "ForumNew"
@@ -166,6 +168,7 @@ Feature: View structural changes in recent activity block
       | name | ForumUpdated |
     And I press "Save and return to course"
     And I log out
+    And I wait "1" seconds
     # Student 1 already saw that forum was created, now he can see that forum was updated
     And I log in as "student1"
     And I follow "Course 1"
@@ -174,6 +177,7 @@ Feature: View structural changes in recent activity block
     And I should see "Updated Forum" in the "Recent activity" "block"
     And I should see "ForumUpdated" in the "Recent activity" "block"
     And I log out
+    And I wait "1" seconds
     # Student 2 has bigger interval and he can see one entry that forum was created but with the new name
     And I log in as "student2"
     And I follow "Course 1"
@@ -182,12 +186,14 @@ Feature: View structural changes in recent activity block
     And I should not see "Updated Forum" in the "Recent activity" "block"
     And I should see "ForumUpdated" in the "Recent activity" "block"
     And I log out
+    And I wait "1" seconds
     # Delete forum as a teacher
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
     And I delete "ForumUpdated" activity
     And I log out
+    And I wait "1" seconds
     # Students 1 and 2 see that forum was deleted
     And I log in as "student1"
     And I follow "Course 1"
@@ -197,6 +203,7 @@ Feature: View structural changes in recent activity block
     And I should not see "ForumUpdated" in the "Recent activity" "block"
     And I should see "Deleted Forum" in the "Recent activity" "block"
     And I log out
+    And I wait "1" seconds
     # Student 3 never knew that forum was created, so he does not see anything
     And I log in as "student3"
     And I follow "Course 1"

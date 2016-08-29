@@ -1,9 +1,11 @@
 {{< core_form/element-template }}
     {{$element}}
         <input type="text"
-                {{#element.frozen}}readonly{{/element.frozen}}
                 class="form-control {{#error}}form-control-danger{{/error}}"
                 name="{{element.name}}"
+        {{#element.frozen}}
+                readonly disabled
+        {{/element.frozen}}
                 id="{{element.id}}"
                 value="{{element.value}}"
                 size="{{element.size}}"

@@ -1,5 +1,5 @@
 <div class="{{classes}}">
-    <form method="{{method}}" action="{{url}}" id="{{formid}}">
+    <form method="{{method}}" action="{{url}}" {{#formid}}id="{{formid}}"{{/formid}}>
         {{#params}}
             <input type="hidden" name="{{name}}" value="{{value}}">
         {{/params}}

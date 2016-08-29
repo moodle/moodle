@@ -408,8 +408,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
         }
         $context['hasformats'] = count($formats) > 1;
         $context['formats'] = [];
-        foreach ($formats as $value => $text) {
-            $context['formats'][] = ['value' => $value, 'text' => $text, 'selected' => ($value == $format)];
+        foreach ($formats as $formatvalue => $formattext) {
+            $context['formats'][] = ['value' => $formatvalue, 'text' => $formattext, 'selected' => ($formatvalue == $format)];
         }
         $context['id'] = $id;
         $context['value'] = $text;

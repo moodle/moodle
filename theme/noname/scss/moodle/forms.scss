@@ -189,10 +189,12 @@ fieldset.coursesearchbox label {
 
 /* Section and module editing forms contain special JS components for the
    availability system (if enabled). */
-#fitem_id_availabilityconditionsjson {
-    *[aria-hidden=true] {
-        display: none;
-    }
+#id_availabilityconditionsjson[aria-hidden=true],
+.availability-field [aria-hidden=true] {
+    display: none;
+}
+
+.availability-field {
     select,
     input[type=text] {
         position:relative;

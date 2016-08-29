@@ -9,6 +9,17 @@ select {
     width: auto;
 }
 
+// Feedback module
+.path-mod-feedback .feedback_form .col-md-9,
+.path-mod-feedback .feedback_form .col-md-3,
+.path-mod-feedback .feedback_form .col-md-3 label {
+    width: 100%;
+}
+.path-mod-feedback .feedback_form .col-md-9 {
+    margin-left: 1rem;
+    margin-bottom: -2rem;
+}
+
 // Forum module
 
 .path-mod-forum .forumsearch {
@@ -200,16 +211,8 @@ div#dock {
 
 // Lesson module
 
-.path-mod-lesson .firstpageoptions {
-    margin: auto;
-    min-width: 280px;
-    width: 60%;
-}
-
-.path-mod-lesson .centerpadded {
-    padding: 5px;
-    text-align: center;
-}
+/** General styles (scope: all of lesson) **/
+.path-mod-lesson .invisiblefieldset.fieldsetfix {display: block;}
 
 .path-mod-wiki .wiki_headingtitle,
 .path-mod-wiki .midpad,
@@ -548,6 +551,27 @@ div#dock {
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     top: auto;
 }
+.path-mod-assign [data-region="grade-panel"] .has-popout {
+  background-color: $card-bg;
+  @include border-radius($card-border-radius);
+  border: $card-border-width solid $card-border-color;
+}
+.path-mod-assign [data-region="grade-panel"] .popout {
+    background-color: $modal-content-bg;
+}
+.path-mod-assign [data-region="grade-panel"] .col-md-3 {
+    width: 100%;
+}
+.path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
+    @extend .modal-header;
+    font-size: 1.5rem;
+}
+.path-mod-assign [data-region="grade-panel"] [data-region="popout-button"] {
+    margin-top: 0.5rem;
+}
+.path-mod-assign [data-region="grade-panel"] .popout [data-region="popout-button"] {
+    margin-top: 0;
+}
 .path-mod-assign [data-region="grade-panel"] h3 {
     margin: 10px 0;
     line-height: 40px;
@@ -589,3 +613,4 @@ div#dock {
 .assignfeedback_editpdf_menu {
     padding: 0;
 }
+

@@ -31,7 +31,7 @@ Feature: Award badges
     And I press "Enable access"
     And I press "Continue"
     And I click on "Admin User" "link"
-    And I follow "Profile" in the open menu
+    And I choose "Profile" in the open action menu
     And I follow "Edit profile"
     And I expand all fieldsets
     And I set the field "Phone" to "123456789"
@@ -204,7 +204,7 @@ Feature: Award badges
     And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I set the field "type" to "Course completion"
-    And I set the field with xpath "//fieldset/input[1]" to "0"
+    And I set the field with xpath ".//*[contains(., 'Minimum grade required')]/ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]//input[1]" to "0"
     And I press "Save"
     And I press "Enable access"
     When I press "Continue"

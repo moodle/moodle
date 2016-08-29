@@ -1,6 +1,7 @@
 {{< core_form/element-template }}
     {{$element}}
-        <button {{#element.frozen}}readonly{{/element.frozen}}
+        {{^element.frozen}}
+        <button
                 class="btn btn-secondary m-l-0"
                 name="{{element.name}}"
                 id="{{element.id}}"
@@ -10,5 +11,6 @@
                 {{{element.attributes}}}>
                 {{{element.value}}}
                 </button>
+        {{/element.frozen}}
     {{/element}}
 {{/ core_form/element-template }}

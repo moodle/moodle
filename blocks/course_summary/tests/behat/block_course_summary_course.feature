@@ -35,7 +35,7 @@ Feature: Course summary block used in a course
     And I turn editing mode on
     Then I should see "Proved the course summary block works!" in the "Course summary" "block"
     And I should see "Course summary" in the "Course summary" "block"
-    And I click on "Edit" "link" in the "Course summary" "block"
+    And I click on ".editbutton a" "css_element" in the "Course summary" "block"
     Then I should see "Edit course settings" in the "h2" "css_element"
 
   Scenario: Teacher can not see edit icon when edit mode is off

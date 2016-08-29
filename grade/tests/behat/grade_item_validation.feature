@@ -62,7 +62,7 @@ Feature: Editing a grade item
     And I click on "Edit" "link" in the "MI 1" "table_row"
     When I click on "Edit settings" "link" in the "MI 1" "table_row"
     Then I should see "Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
-    And "//div[contains(concat(' ', normalize-space(@class), ' '), 'fstatic') and contains(text(), 'Value')]" "xpath_element" should exist
+    And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'Value')]" "xpath_element" should exist
 
   Scenario: Attempting to change a manual item's scale when grades already exist
     Given I click on "Edit" "link" in the "MI 1" "table_row"
@@ -78,7 +78,7 @@ Feature: Editing a grade item
     And I click on "Edit" "link" in the "MI 1" "table_row"
     When I click on "Edit settings" "link" in the "MI 1" "table_row"
     Then I should see "Some grades have already been awarded, so the grade type and scale cannot be changed."
-    And "//div[contains(concat(' ', normalize-space(@class), ' '), 'fstatic') and contains(text(), 'ABCDEF')]" "xpath_element" should exist
+    And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'ABCDEF')]" "xpath_element" should exist
 
   Scenario: Attempting to change a manual item's maximum grade when no rescaling option has been chosen
     Given I navigate to "Grader report" node in "Grade administration"

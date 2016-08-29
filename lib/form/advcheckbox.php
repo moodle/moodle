@@ -41,7 +41,9 @@ require_once('templatable_form_element.php');
  */
 class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox implements templatable {
 
-    use templatable_form_element;
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
 
     /** @var string html for help button, if empty then no help will icon will be dispalyed. */
     var $_helpbutton='';
@@ -134,4 +136,14 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox implements 
         }
         return $output;
     }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+
+        $context['selectedvalue'] = $this->_values[1];
+        $context['deselectedvalue'] = $this->_values[0];
+
+        return $context;
+    }
+
 }

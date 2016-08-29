@@ -1,6 +1,7 @@
 {{< core_form/element-template-inline }}
     {{$element}}
-        <button {{#element.frozen}}readonly{{/element.frozen}}
+        {{^element.frozen}}
+            <button
                 class="btn btn-secondary"
                 name="{{element.name}}"
                 id="{{element.id}}"
@@ -10,6 +11,7 @@
                 {{{element.attributes}}}
                 >
                 {{{element.value}}}
-        </button>
+            </button>
+        {{^element.frozen}}
     {{/element}}
 {{/ core_form/element-template-inline }}

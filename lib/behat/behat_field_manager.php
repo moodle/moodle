@@ -204,7 +204,6 @@ class behat_field_manager {
 
         // We already waited when getting the NodeElement and we don't want an exception if it's not part of a moodleform.
         $parentformfound = $fieldnode->find('xpath',
-            "/ancestor::fieldset" .
             "/ancestor::form[contains(concat(' ', normalize-space(@class), ' '), ' mform ')]"
         );
 
@@ -228,11 +227,19 @@ class behat_field_manager {
             return 'availability';
         }
 
-        // We look for a parent node with 'felement' class or data-fieldtype attribute.
-        if ($fieldtype = $fieldnode->getParent()->getAttribute('data-fieldtype')) {
-            return $fieldtype;
+        if ($fieldnode->getTagName() == 'html') {
+            return false;
         }
 
+        // If the type is explictly set on the element pointed to by the label - use it.
+        if ($type = $fieldnode->getParent()->getAttribute('data-fieldtype')) {
+            if ($type == 'tags') {
+                return 'autocomplete';
+            }
+            return $type;
+        }
+
+        // We look for a parent node with 'felement' class.
         if ($class = $fieldnode->getParent()->getAttribute('class')) {
 
             if (strstr($class, 'felement') != false) {

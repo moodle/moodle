@@ -1,10 +1,12 @@
 {{< core_form/element-template-inline }}
     {{$element}}
     <input type="text"
-            {{#element.frozen}}readonly{{/element.frozen}}
             class="form-control {{#error}}form-control-danger{{/error}}"
             name="{{element.name}}"
             id="{{element.id}}"
+    {{#element.frozen}}
+            readonly disabled
+    {{/element.frozen}}
             value="{{element.value}}"
             size="{{element.size}}"
             {{#error}}

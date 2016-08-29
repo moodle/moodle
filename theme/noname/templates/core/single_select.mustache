@@ -1,5 +1,5 @@
 <div class="{{classes}} d-inline-block">
-    <form method="{{method}}" action="{{action}}" class="form-inline">
+    <form method="{{method}}" action="{{action}}" class="form-inline" id="{{formid}}">
         {{#params}}
             <input type="hidden" name="{{name}}" value="{{value}}">
         {{/params}}
@@ -13,11 +13,20 @@
         {{/helpicon}}
         <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="{{name}}">
             {{#options}}
-                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{#optgroup}}
+                    <optgroup label="{{name}}">
+                    {{#options}}
+                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/options}}
+                    </optgroup>
+                {{/optgroup}}
+                {{^optgroup}}
+                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                {{/optgroup}}
             {{/options}}
         </select>
         <noscript>
-            <button type="submit" class="btn btn-secondary">{{#str}}go, core{{/str}}</button>
+            <input type="submit" role="button" class="btn btn-secondary" value="{{#str}}go, core{{/str}}">
         </noscript>
     </form>
 </div>
