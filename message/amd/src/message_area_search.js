@@ -233,7 +233,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return promises[0];
         }.bind(this)).then(function(data) {
             numberreceived = data.contacts.length;
-            return templates.render('core_message/message_area_contacts', data);
+            return templates.render('core_message/message_area_message_search_results', data);
         }).then(function(html, js) {
             // Remove the loading icon.
             this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA + " " +
@@ -244,12 +244,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 templates.appendNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
                 // Increment the number of contacts displayed.
                 this._numMessagesDisplayed += numberreceived;
+            } else if (this._numMessagesDisplayed == 0) { // Must have nothing to begin with.
+                // Replace the new content.
+                templates.replaceNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
             }
             // Mark that we are no longer busy loading data.
             this._isLoading = false;
         }.bind(this)).fail(notification.exception);
     };
-
 
     /**
      * Handles searching for people.
@@ -330,6 +332,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 templates.appendNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
                 // Increment the number of contacts displayed.
                 this._numPeopleDisplayed += numberreceived;
+            } else if (this._numPeopleDisplayed == 0) { // Must have nothing to begin with.
+                // Replace the new content.
+                templates.replaceNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
             }
             // Mark that we are no longer busy loading data.
             this._isLoading = false;
@@ -348,7 +353,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             this.messageArea.find(this.messageArea.SELECTORS.SEARCHTEXTAREA + ' input').attr('placeholder', s);
         }.bind(this));
     };
-
 
     /**
      * Sets filter for search input.

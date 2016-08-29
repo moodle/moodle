@@ -17,3 +17,10 @@
         {{> core_message/message_area_contact }}
     {{/noncontacts}}
 {{/hasnoncontacts}}
+{{^hascontacts}}
+    {{^hascourses}}
+        {{^hasnoncontacts}}
+            <div class="noresults">{{#str}}noresults{{/str}}</div>
+        {{/hasnoncontacts}}
+    {{/hascourses}}
+{{/hascontacts}}
