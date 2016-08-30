@@ -176,7 +176,15 @@ class assign_grading_table extends table_sql implements renderable {
 
         $from .= 'LEFT JOIN {assign_user_flags} uf
                          ON u.id = uf.userid
-                        AND uf.assignment = :assignmentid3';
+                        AND uf.assignment = :assignmentid3 ';
+
+        if (!empty($this->assignment->get_instance()->blindmarking)) {
+            $from .= 'LEFT JOIN {assign_user_mapping} um
+                             ON u.id = um.userid
+                            AND um.assignment = :assignmentid4 ';
+            $params['assignmentid4'] = (int)$this->assignment->get_instance()->id;
+            $fields .= ', um.id as recordid ';
+        }
 
         $userparams = array();
         $userindex = 0;
@@ -463,8 +471,10 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_recordid(stdClass $row) {
-        return get_string('hiddenuser', 'assign') .
-               $this->assignment->get_uniqueid_for_user($row->userid);
+        if (empty($row->recordid)) {
+            $row->recordid = $this->assignment->get_uniqueid_for_user($row->userid);
+        }
+        return get_string('hiddenuser', 'assign') . $row->recordid;
     }
 
 
@@ -838,7 +848,10 @@ class assign_grading_table extends table_sql implements renderable {
                                'action' => 'grader');
 
             if ($this->assignment->is_blind_marking()) {
-                $urlparams['blindid'] = $this->assignment->get_uniqueid_for_user($row->userid);
+                if (empty($row->recordid)) {
+                    $row->recordid = $this->assignment->get_uniqueid_for_user($row->userid);
+                }
+                $urlparams['blindid'] = $row->recordid;
             } else {
                 $urlparams['userid'] = $row->userid;
             }
@@ -1015,7 +1028,10 @@ class assign_grading_table extends table_sql implements renderable {
                                'action' => 'grader');
 
         if ($this->assignment->is_blind_marking()) {
-            $urlparams['blindid'] = $this->assignment->get_uniqueid_for_user($row->userid);
+            if (empty($row->recordid)) {
+                $row->recordid = $this->assignment->get_uniqueid_for_user($row->userid);
+            }
+            $urlparams['blindid'] = $row->recordid;
         } else {
             $urlparams['userid'] = $row->userid;
         }
