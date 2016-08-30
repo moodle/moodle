@@ -421,6 +421,29 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Return the structure of a message area contact.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.2
+     */
+    private static function get_messagearea_contact_structure() {
+        return new external_single_structure(
+            array(
+                'userid' => new external_value(PARAM_INT, 'The user\'s id'),
+                'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
+                'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
+                'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
+                'messageid' => new external_value(PARAM_INT, 'The unique search message id', VALUE_DEFAULT, null),
+                'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
+                'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
+                'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation',
+                    VALUE_DEFAULT, null),
+            )
+        );
+    }
+
+    /**
      * Get messagearea search people parameters.
      *
      * @return external_function_parameters
@@ -486,17 +509,7 @@ class core_message_external extends external_api {
             array(
                 'hascontacts' => new external_value(PARAM_BOOL, 'Are there contacts?'),
                 'contacts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
-                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
-                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
-                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
-                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
-                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
-                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
-                        )
-                    )
+                    self::get_messagearea_contact_structure()
                 ),
             )
         );
@@ -562,17 +575,7 @@ class core_message_external extends external_api {
             array(
                 'hascontacts' => new external_value(PARAM_BOOL, 'Are there contacts?'),
                 'contacts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
-                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
-                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
-                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
-                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
-                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
-                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
-                        )
-                    )
+                    self::get_messagearea_contact_structure()
                 ),
                 'hascourses' => new external_value(PARAM_BOOL, 'Are there courses?'),
                 'courses' => new external_multiple_structure(
@@ -586,17 +589,7 @@ class core_message_external extends external_api {
                 ),
                 'hasnoncontacts' => new external_value(PARAM_BOOL, 'Are there non-contacts?'),
                 'noncontacts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
-                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
-                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
-                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
-                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
-                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
-                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
-                        )
-                    )
+                    self::get_messagearea_contact_structure()
                 )
             )
         );
@@ -666,18 +659,7 @@ class core_message_external extends external_api {
             array(
                 'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
                 'contacts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
-                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
-                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
-                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
-                            'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
-                            'messageid' => new external_value(PARAM_INT, 'The unique search message id'),
-                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
-                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
-                        )
-                    )
+                    self::get_messagearea_contact_structure()
                 )
             )
         );
@@ -744,18 +726,7 @@ class core_message_external extends external_api {
                 'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
                 'isconversation' => new external_value(PARAM_BOOL, 'Are we storing conversations or contacts?'),
                 'contacts' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'userid' => new external_value(PARAM_INT, 'The user\'s id'),
-                            'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
-                            'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
-                            'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
-                            'lastmessage' => new external_value(PARAM_RAW, 'The user\'s last message, null if none.'),
-                            'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
-                            'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
-                            'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation'),
-                        )
-                    )
+                    self::get_messagearea_contact_structure()
                 )
             )
         );
