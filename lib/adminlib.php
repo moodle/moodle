@@ -7663,7 +7663,7 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     $context->error = '';
     $adminroot = admin_get_root();
     if (array_key_exists($context->fullname, $adminroot->errors)) {
-        $context->error = $adminroot->errors[$fullname]->error;
+        $context->error = $adminroot->errors[$context->fullname]->error;
     }
 
     $context->id = 'admin-' . $setting->name;
