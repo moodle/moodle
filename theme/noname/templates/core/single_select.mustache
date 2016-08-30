@@ -3,21 +3,19 @@
         {{#params}}
             <input type="hidden" name="{{name}}" value="{{value}}">
         {{/params}}
-        <div class="form-group">
-            {{#label}}
-                <label for="{{id}}" {{#labelattributes}}{{name}}="{{value}}" {{/labelattributes}}>
-                    {{{label}}}
-                </label>
-            {{/label}}
-            {{#helpicon}}
-                {{>core/help_icon}}
-            {{/helpicon}}
-            <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="{{name}}">
-                {{#options}}
-                    <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-                {{/options}}
-            </select>
-        </div>
+        {{#label}}
+            <label for="{{id}}" {{#labelattributes}}{{name}}="{{value}}" {{/labelattributes}}>
+                {{{label}}}
+            </label>
+        {{/label}}
+        {{#helpicon}}
+            {{>core/help_icon}}
+        {{/helpicon}}
+        <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="{{name}}">
+            {{#options}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+            {{/options}}
+        </select>
         <noscript>
             <button type="submit" class="btn btn-secondary">{{#str}}go, core{{/str}}</button>
         </noscript>
