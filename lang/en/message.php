@@ -39,6 +39,7 @@ $string['blockedmessages'] = '{$a} message(s) to/from blocked users';
 $string['blockedusers'] = 'Blocked users ({$a})';
 $string['blocknoncontacts'] = 'Prevent non-contacts from messaging me';
 $string['collapsenotification'] = 'Collapse notification';
+$string['contactblocked'] = 'Contact blocked';
 $string['contactlistempty'] = 'Contact list empty';
 $string['contacts'] = 'Contacts';
 $string['context'] = 'context';

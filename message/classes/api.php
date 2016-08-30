@@ -54,12 +54,17 @@ class api {
 
         // Get all the messages for the user.
         $sql = "SELECT m.id, m.useridfrom, m.useridto, m.subject, m.fullmessage, m.fullmessagehtml, m.fullmessageformat,
-                       m.smallmessage, m.notification, m.timecreated, 0 as isread, $ufields, $ufields2
+                       m.smallmessage, m.notification, m.timecreated, 0 as isread, $ufields, mc.blocked as userfrom_blocked,
+                       $ufields2, mc2.blocked as userto_blocked
                   FROM {message} m
                   JOIN {user} u
                     ON m.useridfrom = u.id
+             LEFT JOIN {message_contacts} mc
+                    ON (mc.contactid = u.id AND mc.userid = ?)
                   JOIN {user} u2
                     ON m.useridto = u2.id
+             LEFT JOIN {message_contacts} mc2
+                    ON (mc2.contactid = u2.id AND mc2.userid = ?)       
                  WHERE ((useridto = ? AND timeusertodeleted = 0)
                     OR (useridfrom = ? AND timeuserfromdeleted = 0))
                    AND notification = 0
@@ -68,12 +73,17 @@ class api {
                    AND " . $DB->sql_like('smallmessage', '?', false) . "
              UNION ALL
                 SELECT mr.id, mr.useridfrom, mr.useridto, mr.subject, mr.fullmessage, mr.fullmessagehtml, mr.fullmessageformat,
-                       mr.smallmessage, mr.notification, mr.timecreated, 1 as isread, $ufields, $ufields2
+                       mr.smallmessage, mr.notification, mr.timecreated, 1 as isread, $ufields, mc.blocked as userfrom_blocked,
+                       $ufields2, mc2.blocked as userto_blocked
                   FROM {message_read} mr
                   JOIN {user} u
                     ON mr.useridfrom = u.id
+             LEFT JOIN {message_contacts} mc
+                    ON (mc.contactid = u.id AND mc.userid = ?)     
                   JOIN {user} u2
                     ON mr.useridto = u2.id
+             LEFT JOIN {message_contacts} mc2
+                    ON (mc2.contactid = u2.id AND mc2.userid = ?)
                  WHERE ((useridto = ? AND timeusertodeleted = 0)
                     OR (useridfrom = ? AND timeuserfromdeleted = 0))
                    AND notification = 0
@@ -81,8 +91,8 @@ class api {
                    AND u2.deleted = 0
                    AND " . $DB->sql_like('smallmessage', '?', false) . "
               ORDER BY timecreated DESC";
-        $params = array($userid, $userid, '%' . $search . '%',
-                        $userid, $userid, '%' . $search . '%');
+        $params = array($userid, $userid, $userid, $userid, '%' . $search . '%',
+                        $userid, $userid, $userid, $userid, '%' . $search . '%');
 
         // Convert the messages into searchable contacts with their last message being the message that was searched.
         $contacts = array();
@@ -94,6 +104,9 @@ class api {
                     // If it from the user, then mark it as read, even if it wasn't by the receiver.
                     $message->isread = true;
                 }
+                $blockedcol = $prefix . 'blocked';
+                $message->blocked = $message->$blockedcol;
+
                 $message->messageid = $message->id;
                 $contacts[] = \core_message\helper::create_contact($message, $prefix);
             }
@@ -117,16 +130,19 @@ class api {
 
         // Get all the users in the course.
         list($esql, $params) = get_enrolled_sql(\context_course::instance($courseid), '', 0, true);
-        $sql = "SELECT u.*
+        $sql = "SELECT u.*, mc.blocked
                   FROM {user} u
-                  JOIN ($esql) je ON je.id = u.id
+                  JOIN ($esql) je
+                    ON je.id = u.id
+             LEFT JOIN {message_contacts} mc
+                    ON (mc.contactid = u.id AND mc.userid = :userid)
                  WHERE u.deleted = 0";
         // Add more conditions.
         $fullname = $DB->sql_fullname();
-        $sql .= " AND u.id != :userid
+        $sql .= " AND u.id != :userid2
                   AND " . $DB->sql_like($fullname, ':search', false) . "
              ORDER BY " . $DB->sql_fullname();
-        $params = array_merge(array('userid' => $userid, 'search' => '%' . $search . '%'), $params);
+        $params = array_merge(array('userid' => $userid, 'userid2' => $userid, 'search' => '%' . $search . '%'), $params);
 
 
         // Convert all the user records into contacts.
@@ -163,7 +179,7 @@ class api {
 
         // Ok, let's search for contacts first.
         $contacts = array();
-        $sql = "SELECT $ufields
+        $sql = "SELECT $ufields, mc.blocked
                   FROM {user} u
                   JOIN {message_contacts} mc
                     ON u.id = mc.contactid
@@ -193,6 +209,8 @@ class api {
         }
 
         // Let's get those non-contacts. Toast them gears boi.
+        // Note - you can only block contacts, so these users will not be blocked, so no need to get that
+        // extra detail from the database.
         $noncontacts = array();
         $sql = "SELECT $ufields
                   FROM {user} u
@@ -246,7 +264,7 @@ class api {
         global $DB;
 
         $arrcontacts = array();
-        $sql = "SELECT u.*
+        $sql = "SELECT u.*, mc.blocked
                   FROM {message_contacts} mc
                   JOIN {user} u
                     ON mc.contactid = u.id

@@ -5,7 +5,15 @@
         <img src="{{profileimageurl}}" alt="" />
     </div>
     <div class="span9 information">
-        <div class="name">{{fullname}} {{#isonline}}{{#pix}} t/go, core, {{#str}} online, message {{/str}} {{/pix}}{{/isonline}}</div>
+        <div class="name">
+            {{fullname}}
+            <span {{^isonline}}class="hidden"{{/isonline}} data-region="contact-icon-online">
+                {{#pix}} t/go, core, {{#str}} online, message {{/str}} {{/pix}}
+            </span>
+            <span {{^isblocked}}class="hidden"{{/isblocked}} data-region="contact-icon-blocked">
+                {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}
+            </span>
+        </div>
         <p class="lastmessage" data-region="lastmessage">
             {{#lastmessage}}
                 {{.}}

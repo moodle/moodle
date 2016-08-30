@@ -41,6 +41,8 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             BLOCKTIME: "[data-region='blocktime']",
             CANCELDELETEMESSAGES: "[data-action='cancel-delete-messages']",
             CONTACT: "[data-region='contact']",
+            CONTACTICONBLOCKED: "[data-region='contact-icon-blocked']",
+            CONTACTICONONLINE: "[data-region='contact-icon-online']",
             CONTACTS: "[data-region='contacts'][data-region-content='contacts']",
             CONTACTSAREA: "[data-region='contacts-area']",
             CONTACTSPANELS: "[data-region='contacts']",

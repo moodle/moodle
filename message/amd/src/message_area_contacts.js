@@ -86,6 +86,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTADDED, function(e, userid) {
                 this._addContact(userid);
             }.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTBLOCKED, function(e, userid) {
+                this._blockContact(userid);
+            }.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTUNBLOCKED, function(e, userid) {
+                this._unblockContact(userid);
+            }.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE,
                 this._chooseConversationsToDelete.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES,
@@ -474,18 +480,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         };
 
         /**
-         * Handles retrieving a user node from a list.
-         *
-         * @param {String} selector
-         * @param {int} userid
-         * @private
-         */
-        Contacts.prototype._getUserNode = function(selector, userid) {
-            return this.messageArea.find(selector + " " + this.messageArea.SELECTORS.CONTACT +
-                "[data-userid='" + userid + "']");
-        };
-
-        /**
          * Handles removing a contact from the list.
          *
          * @param {String} selector
@@ -495,6 +489,52 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         Contacts.prototype._removeContact = function(selector, userid) {
             this._getUserNode(selector, userid).remove();
             this._numContactsDisplayed--;
+        };
+
+        /**
+         * Handles marking a contact as blocked on the list.
+         *
+         * @param {int} userid
+         * @private
+         */
+        Contacts.prototype._blockContact = function(userid) {
+            var user = this._getUserNode(this.messageArea.SELECTORS.CONTACTS, userid);
+            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
+
+            user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
+            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
+
+            user = this._getUserNode(this.messageArea.SELECTORS.SEARCHRESULTSAREA, userid);
+            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
+        };
+
+        /**
+         * Handles marking a contact as unblocked on the list.
+         *
+         * @param {int} userid
+         * @private
+         */
+        Contacts.prototype._unblockContact = function(userid) {
+            var user = this._getUserNode(this.messageArea.SELECTORS.CONTACTS, userid);
+            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
+
+            user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
+            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
+
+            user = this._getUserNode(this.messageArea.SELECTORS.SEARCHRESULTSAREA, userid);
+            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
+        };
+
+        /**
+         * Handles retrieving a user node from a list.
+         *
+         * @param {String} selector
+         * @param {int} userid
+         * @private
+         */
+        Contacts.prototype._getUserNode = function(selector, userid) {
+            return this.messageArea.find(selector + " " + this.messageArea.SELECTORS.CONTACT +
+                "[data-userid='" + userid + "']");
         };
 
         /**

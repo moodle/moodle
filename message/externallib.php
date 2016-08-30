@@ -437,6 +437,7 @@ class core_message_external extends external_api {
                 'messageid' => new external_value(PARAM_INT, 'The unique search message id', VALUE_DEFAULT, null),
                 'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                 'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
+                'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
                 'unreadcount' => new external_value(PARAM_INT, 'The number of unread messages in this conversation',
                     VALUE_DEFAULT, null),
             )
