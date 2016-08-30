@@ -48,7 +48,6 @@ require_course_login($course);
 $PAGE->set_pagelayout('incourse');
 $coursecontext = context_course::instance($course->id);
 
-
 unset($SESSION->fromdiscussion);
 
 $params = array(
@@ -77,8 +76,7 @@ $stremaildigest  = get_string('emaildigest');
 
 $searchform = forum_search_form($course);
 
-// Start of the table for General Forums
-
+// Start of the table for General Forums.
 $generaltable = new html_table();
 $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
 $generaltable->align = array ('left', 'left', 'center');
@@ -501,20 +499,15 @@ echo $OUTPUT->footer();
  * @return  string
  */
 function forum_index_get_forum_subscription_selector($forum) {
-    global $OUTPUT;
+    global $OUTPUT, $PAGE;
 
     if ($forum->cansubscribe || $forum->issubscribed) {
-        $digestoptionsselector = new single_select(new moodle_url('/mod/forum/maildigest.php', [
-                'id'            => $forum->id,
-                'backtoindex'   => 1,
-            ]),
-            'maildigest',
-            forum_get_user_digest_options(),
-            $forum->maildigest !== null ? $forum->maildigest : -1,
-            '');
-        $digestoptionsselector->method = 'post';
+        if ($forum->maildigest === null) {
+            $forum->maildigest = -1;
+        }
 
-        return $OUTPUT->render($digestoptionsselector);
+        $renderer = $PAGE->get_renderer('mod_forum');
+        return $OUTPUT->render($renderer->render_digest_options($forum, $forum->maildigest));
     } else {
         // This user can subscribe to some forums. Add the empty fields.
         return '';

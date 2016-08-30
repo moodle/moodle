@@ -203,4 +203,27 @@ class mod_forum_renderer extends plugin_renderer_base {
     public function forum_post_template() {
         return 'forum_post';
     }
+
+    /**
+     * Create the inplace_editable used to select forum digest options.
+     *
+     * @param   stdClass    $forum  The forum to create the editable for.
+     * @param   int         $value  The current value for this user
+     * @return  inplace_editable
+     */
+    public function render_digest_options($forum, $value) {
+        $options = forum_get_user_digest_options();
+        $editable = new \core\output\inplace_editable(
+            'mod_forum',
+            'digestoptions',
+            $forum->id,
+            true,
+            $options[$value],
+            $value
+        );
+
+        $editable->set_type_select($options);
+
+        return $editable;
+    }
 }
