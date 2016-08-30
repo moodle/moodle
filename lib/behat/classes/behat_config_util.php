@@ -624,6 +624,11 @@ class behat_config_util {
      */
     public function profile_guided_allocate($features, $nbuckets, $instance) {
 
+        // No profile guided allocation is required in phpunit.
+        if (defined('PHPUNIT_TEST')) {
+            return false;
+        }
+
         $behattimingfile = defined('BEHAT_FEATURE_TIMING_FILE') &&
         @filesize(BEHAT_FEATURE_TIMING_FILE) ? BEHAT_FEATURE_TIMING_FILE : false;
 
