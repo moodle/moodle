@@ -43,24 +43,6 @@ if ($errormsg !== '') {
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 
-$resultshtml = admin_search_settings_html($query); // case insensitive search only
-
-echo '<form action="' . $PAGE->url->out(true) . '" method="post" id="adminsettings">';
-echo '<div>';
-echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-// HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
-echo prevent_form_autofill_password();
-echo '</div>';
-echo '<fieldset>';
-echo '<div class="clearer"><!-- --></div>';
-if ($resultshtml != '') {
-    echo $resultshtml;
-} else {
-    echo get_string('noresults','admin');
-}
-echo '</fieldset>';
-echo '</form>';
+echo admin_search_settings_html($query);
 
 echo $OUTPUT->footer();
-
-
