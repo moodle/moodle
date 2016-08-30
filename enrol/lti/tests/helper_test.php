@@ -292,6 +292,36 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
+     * Test getting the cartridge url of a tool.
+     */
+    public function test_get_proxy_url() {
+        global $CFG;
+
+        $slasharguments = $CFG->slasharguments;
+
+        $CFG->slasharguments = false;
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool1 = $this->create_tool($data);
+
+        $id = $tool1->id;
+        $token = \enrol_lti\helper::generate_proxy_token($id);
+        $launchurl = \enrol_lti\helper::get_proxy_url($tool1);
+        $this->assertEquals('http://www.example.com/moodle/enrol/lti/proxy.php?id=' . $id . '&amp;token=' . $token,
+                            $launchurl->out());
+
+        $CFG->slasharguments = true;
+
+        $launchurl = \enrol_lti\helper::get_proxy_url($tool1);
+        $this->assertEquals('http://www.example.com/moodle/enrol/lti/proxy.php/' . $id . '/' . $token . '/',
+                            $launchurl->out());
+
+        $CFG->slasharguments = $slasharguments;
+    }
+
+    /**
      * Test getting the name of a tool.
      */
     public function test_get_name() {
@@ -331,7 +361,25 @@ class enrol_lti_helper_testcase extends advanced_testcase {
     }
 
     /**
-     * Test verifying a tool token.
+     * Test getting the icon of a tool.
+     */
+    public function test_get_icon() {
+        global $CFG;
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool = $this->create_tool($data);
+
+        $icon = \enrol_lti\helper::get_icon($tool);
+        $icon = $icon->out();
+        // Only local icons are supported by the LTI framework
+        $this->assertContains($CFG->wwwroot, $icon);
+
+    }
+
+    /**
+     * Test verifying a cartridge token.
      */
     public function test_verify_cartridge_token() {
         $course1 = $this->getDataGenerator()->create_course();
@@ -342,6 +390,20 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $token = \enrol_lti\helper::generate_cartridge_token($tool1->id);
         $this->assertTrue(\enrol_lti\helper::verify_cartridge_token($tool1->id, $token));
         $this->assertFalse(\enrol_lti\helper::verify_cartridge_token($tool1->id, 'incorrect token!'));
+    }
+
+    /**
+     * Test verifying a proxy token.
+     */
+    public function test_verify_proxy_token() {
+        $course1 = $this->getDataGenerator()->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool1 = $this->create_tool($data);
+
+        $token = \enrol_lti\helper::generate_proxy_token($tool1->id);
+        $this->assertTrue(\enrol_lti\helper::verify_proxy_token($tool1->id, $token));
+        $this->assertFalse(\enrol_lti\helper::verify_proxy_token($tool1->id, 'incorrect token!'));
     }
 
     /**
