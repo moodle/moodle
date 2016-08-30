@@ -458,15 +458,33 @@ class core_component_testcase extends advanced_testcase {
         $this->assertCount(0, core_component::get_component_classes_in_namespace('core_unexistingcomponent', 'something'));
         $this->assertCount(0, core_component::get_component_classes_in_namespace('auth_cas', 'something'));
 
+        // Matches the last namespace level name not partials.
+        $this->assertCount(0, core_component::get_component_classes_in_namespace('auth_cas', 'tas'));
+        $this->assertCount(0, core_component::get_component_classes_in_namespace('core_user', 'course'));
+        $this->assertCount(0, core_component::get_component_classes_in_namespace('mod_forum', 'output\\emaildigest'));
+        $this->assertCount(0, core_component::get_component_classes_in_namespace('mod_forum', '\\output\\emaildigest'));
+        $this->assertCount(2, core_component::get_component_classes_in_namespace('mod_forum', 'output\\email'));
+        $this->assertCount(2, core_component::get_component_classes_in_namespace('mod_forum', '\\output\\email'));
+        $this->assertCount(2, core_component::get_component_classes_in_namespace('mod_forum', 'output\\email\\'));
+        $this->assertCount(2, core_component::get_component_classes_in_namespace('mod_forum', '\\output\\email\\'));
+
         // Prefix with backslash if it doesn\'t come prefixed.
         $this->assertCount(1, core_component::get_component_classes_in_namespace('auth_cas', 'task'));
         $this->assertCount(1, core_component::get_component_classes_in_namespace('auth_cas', '\\task'));
 
-        // Core as a component works.
+        // Core as a component works, the funcion can normalise the component name.
         $this->assertCount(7, core_component::get_component_classes_in_namespace('core', 'update'));
+        $this->assertCount(7, core_component::get_component_classes_in_namespace('', 'update'));
+        $this->assertCount(7, core_component::get_component_classes_in_namespace('moodle', 'update'));
 
         // Multiple levels.
         $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', '\\output\\myprofile\\'));
+        $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', 'output\\myprofile\\'));
         $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', '\\output\\myprofile'));
+        $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', 'output\\myprofile'));
+
+        // Without namespace it returns classes/ classes.
+        $this->assertCount(2, core_component::get_component_classes_in_namespace('tool_mobile', ''));
+        $this->assertCount(1, core_component::get_component_classes_in_namespace('tool_filetypes'));
     }
 }

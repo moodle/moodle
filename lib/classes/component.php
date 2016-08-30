@@ -910,18 +910,24 @@ $cache = '.var_export($cache, true).';
      * e.g. get_component_classes_in_namespace('mod_forum', 'event')
      *
      * @param string $component A valid moodle component (frankenstyle)
-     * @param string $namespace Namespace from the component name.
+     * @param string $namespace Namespace from the component name or empty if all $component namespace classes.
      * @return array The full class name as key and the class path as value.
      */
     public static function get_component_classes_in_namespace($component, $namespace = '') {
 
-        // We will add them later.
-        $namespace = ltrim($namespace, '\\');
+        $component = self::normalize_componentname($component);
 
-        // We need add double backslashes as it is how classes are stored into self::$classmap.
-        $namespace = implode('\\\\', explode('\\', $namespace));
+        if ($namespace) {
 
-        $regex = '/^' . $component . '\\\\' . $namespace . '/';
+            // We will add them later.
+            $namespace = trim($namespace, '\\');
+
+            // We need add double backslashes as it is how classes are stored into self::$classmap.
+            $namespace = implode('\\\\', explode('\\', $namespace));
+            $namespace = $namespace . '\\\\';
+        }
+
+        $regex = '|^' . $component . '\\\\' . $namespace . '|';
         $it = new RegexIterator(new ArrayIterator(self::$classmap), $regex, RegexIterator::GET_MATCH, RegexIterator::USE_KEY);
 
         // We want to be sure that they exist.
