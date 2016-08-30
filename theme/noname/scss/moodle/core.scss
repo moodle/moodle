@@ -1158,6 +1158,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
     @extend .modal-footer;
 }
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft:empty {
+    display: none;
+}
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft.yui3-widget-ft {
     // Undo some YUI damage.
     background: initial;
