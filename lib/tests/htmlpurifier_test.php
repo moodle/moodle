@@ -448,7 +448,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
                     'No tasty jams for you.' .
                     '</video>' .
                 '</div>'
-            ]) + $generatetestcases('Video with invalid crossorigin', $videoattrs, [
+            ]) + ['Video with invalid crossorigin' => [
                     '<video src="http://example.com/turnitup.mov" crossorigin="can i pls hab?">' .
                         'Oh, that\'s pretty bad 😦' .
                     '</video>',
@@ -457,7 +457,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
                            'Oh, that\'s pretty bad 😦' .
                         '</video>' .
                     '</div>'
-            ]) + $generatetestcases('Audio with invalid crossorigin', $audioattrs, [
+            ]] + ['Audio with invalid crossorigin' => [
                     '<audio src="http://example.com/getup.wav" crossorigin="give me. the jams.">' .
                         'nyemnyemnyem' .
                     '</audio>',
@@ -466,6 +466,19 @@ class core_htmlpurifier_testcase extends basic_testcase {
                             'nyemnyemnyem' .
                         '</audio>' .
                     '</div>'
-            ]);
+            ]] + ['Other attributes' => [
+                '<video src="http://example.com/turnitdown.mov" class="nofilter" data-something="data attribute" someattribute="somevalue" onclick="boom">' .
+                    '<source src="http://example.com/getup.wav" type="audio/wav" class="shouldberemoved" data-sourcedata="source data" onmouseover="kill session" />' .
+                    '<track src="http://example.com/subtitles_en.vtt" class="shouldberemoved" data-trackdata="track data" onmouseover="removeme" />' .
+                    'Do not remove attribute class but remove other attributes' .
+                '</video>',
+                '<div class="text_to_html">' .
+                    '<video src="http://example.com/turnitdown.mov" class="nofilter">' .
+                        '<source src="http://example.com/getup.wav" type="audio/wav" />' .
+                        '<track src="http://example.com/subtitles_en.vtt" />' .
+                        'Do not remove attribute class but remove other attributes' .
+                    '</video>' .
+                '</div>'
+            ]];
     }
 }
