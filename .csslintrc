@@ -1,3 +1,0 @@
---errors=errors,duplicate-properties
---warnings=known-properties,display-property-grouping,empty-rules,important
---exclude-list=vendor/,node_modules/,lib/editor/tinymce/,lib/yuilib/,theme/bootstrapbase/style/,lib/jquery/,lib/htmlpurifier,theme/clean/style/custom.css,theme/more/style/custom.css,
