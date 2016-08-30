@@ -400,7 +400,7 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for data_connector::loadContext().
+     * Test for data_connector::saveContext().
      */
     public function test_save_context() {
         $dc = new data_connector();
@@ -875,11 +875,6 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $nonce = new ConsumerNonce($consumer, 'testnonce');
 
         // Save the nonce.
-        $this->assertTrue($dc->saveConsumerNonce($nonce));
-
-        // We should only be doing inserts and a consumer can only have one nonce record.
-        // So saving again the nonce without it getting cleaned up (by data_connector::loadConsumerNonce()) will throw an exception.
-        $this->expectException('dml_write_exception');
         $this->assertTrue($dc->saveConsumerNonce($nonce));
     }
 

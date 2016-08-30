@@ -57,11 +57,12 @@ $consumerkey = required_param('oauth_consumer_key', PARAM_TEXT);
 $ltiversion = optional_param('lti_version', null, PARAM_TEXT);
 $messagetype = required_param('lti_message_type', PARAM_TEXT);
 
-// Only accept launch requests from this old LTI endpoint.
+// Only accept launch requests from this endpoint.
 if ($messagetype != "basic-lti-launch-request") {
     print_error('invalidrequest', 'enrol_lti');
     exit();
 }
+
 // Special handling for LTIv1 launch requests.
 if ($ltiversion === \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1) {
     $dataconnector = new \enrol_lti\data_connector();
@@ -79,9 +80,9 @@ if ($ltiversion === \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1) {
         $consumer->protected = true;
         $consumer->save();
     }
-
-    $toolprovider = new \enrol_lti\tool_provider($toolid);
-    $toolprovider->handleRequest();
 }
+
+$toolprovider = new \enrol_lti\tool_provider($toolid);
+$toolprovider->handleRequest();
 echo $OUTPUT->header();
 echo $OUTPUT->footer();

@@ -45,7 +45,7 @@ $PAGE->set_title(get_string('registration', 'enrol_lti'));
 // If we do not compare with a shared secret, someone could very easily
 // guess an id for the enrolment.
 if (!\enrol_lti\helper::verify_proxy_token($toolid, $token)) {
-    throw new \moodle_exception('incorrecttoken', 'enrol_lti'); // TODO can we do an LTI error? Not really important as this bug will only occur if the url is wrong.
+    throw new \moodle_exception('incorrecttoken', 'enrol_lti');
 }
 $tool = \enrol_lti\helper::get_lti_tool($toolid);
 
@@ -63,6 +63,14 @@ if (!enrol_is_enabled('lti')) {
 // Check if the enrolment instance is disabled.
 if ($tool->status != ENROL_INSTANCE_ENABLED) {
     print_error('enrolisdisabled', 'enrol_lti');
+    exit();
+}
+
+$messagetype = required_param('lti_message_type', PARAM_TEXT);
+
+// Only accept proxy registration requests from this endpoint.
+if ($messagetype != "ToolProxyRegistrationRequest") {
+    print_error('invalidrequest', 'enrol_lti');
     exit();
 }
 

@@ -71,7 +71,7 @@ class tool_provider extends ToolProvider\ToolProvider {
         parent::__construct($dataconnector);
 
         $this->baseUrl = $CFG->wwwroot;
-        $toolpath = helper::get_proxy_url($tool);
+        $toolpath = helper::get_launch_url($toolid);
         $toolpath = $this->strip_base_url($toolpath);
 
         $vendorid = $SITE->shortname;
