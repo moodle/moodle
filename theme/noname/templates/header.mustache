@@ -20,7 +20,10 @@
 <header role="banner" class="navbar navbar-light bg-faded navbar-static-top moodle-has-zindex">
 
     <div class="container">
-        <button class="navbar-toggler pull-xs-right hidden-sm-up" data-toggle="collapse" data-target="#bd-main-nav" aria-expanded="false" aria-controls="bd-main-nav" type="button">☰<span class="sr-only">{{#str}}expand{{/str}}</span></button>
+
+        <div class="clearfix">
+            <button class="navbar-toggler pull-xs-right hidden-sm-up" data-toggle="collapse" data-target="#bd-main-nav" aria-expanded="false" aria-controls="bd-main-nav" type="button">☰<span class="sr-only">{{#str}}expand{{/str}}</span></button>
+        </div>
 
         <a role="banner" href="{{{ config.wwwroot }}}" class="navbar-brand">
             {{# output.should_display_navbar_logo }}
