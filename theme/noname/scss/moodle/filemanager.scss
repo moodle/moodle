@@ -29,9 +29,10 @@
 .file-picker .fp-navbar {
     border-bottom: 1px solid #e5e5e5;
     min-height: 40px;
+    padding: 4px;
 }
-
 .file-picker .fp-content {
+    border-top: 0;
     background: #FFFFFF;
     clear: none;
     overflow: auto;
@@ -89,51 +90,14 @@
     vertical-align: -15%;
     margin-right: 5px;
 }
-.fp-viewbaffr {
-    float: right;
-    height: 30px;
-    border: 1px solid #CCC;
-    border-bottom: 1px solid #B3B3B3;
-    border-radius: 4px;
-    background: white;
-}
-.fp-repo-items fp-viewbar {
-    margin: 4px;
-}
-.fp-viddewbar a {
-    width: 30px;
-    height: 30px;
-    border-right: 1px solid #CCC;
-    display: block;
-    float:left;
-}
-.fp-viddewbar a.checked:hover,
-.fp-viddewbar a:hover {
-    background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
-    background-color: #ebebeb;
+
+.fp-viewbar:not(.disabled) a.checked {
+    @extend .btn-secondary.active;
 }
 
-.fp-viddewbar a.checked,
-.fp-vieddwbar a:active {
-    background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
-    background-color: #dfdfdf;
-}
-
-.fp-viewddbar a.fp-vb-icons {
-    border-radius: 4px 0 0 4px;
-}
-.fp-vieddwbar a.fp-vb-tree {
-    border-right: 0;
-    border-radius: 0 4px 4px 0;
-}
-.fp-vieddwbar a img {
-    margin: 7px;
-}
-
-.fp-viewddbar.disabled a {
-    opacity: .45;
-    background: none;
-    cursor: default;
+.fp-viewbar.disabled a {
+    @extend .btn.disabled;
+    @extend .btn-secondary.disabled;
 }
 
 .file-picker .fp-clear-left {
@@ -435,9 +399,6 @@ a.ygtvspacer:hover {
     padding-top: 50px;
 }
 // Select Dialogue (File Picker and File Manager)
-.fp-select form {
-    padding: 20px 20px 0;
-}
 .fp-select .fp-select-loading {
     text-align: center;
     margin-top: 20px;
@@ -455,9 +416,7 @@ a.ygtvspacer:hover {
     float: right;
 }
 .fp-select .fp-info {
-    display: block;
-    clear: both;
-    padding: 1px 20px 0;
+    font-size: $font-size-xs
 }
 .fp-select .fp-thumbnail {
     float: left;
