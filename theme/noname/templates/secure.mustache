@@ -11,32 +11,34 @@
 
 {{{ output.standard_top_of_body_html }}}
 
-<header role="banner" class="navbar navbar-light bg-faded navbar-static-top moodle-has-zindex">
-    <div class="clearfix">
-        <button class="navbar-toggler pull-xs-right hidden-sm-up" data-toggle="collapse" data-target="#bd-main-mav">☰<span class="sr-only">{{#str}}expand{{/str}}</span></button>
-    </div>
-
-    <a href="{{{ config.wwwroot }}}" class="navbar-brand">
-        {{# output.should_display_navbar_logo }}
-            <div class="logo">
-                <img src="{{output.get_compact_logo_url}}" alt={{#quote}}{{sitename}}{{/quote}}>
-            </div>
-        {{/ output.should_display_navbar_logo }}
-        <div class="site-name">{{{ sitename }}}</div>
-    </a>
-
-    <div class="collapse navbar-toggleable-xs" id="bd-main-nav">
-        <nav class="nav navbar-nav">
-            <!-- search_box -->
-            {{{ output.search_box }}}
-            <!-- custom_menu -->
-            {{{ output.custom_menu }}}
-            <!-- page_heading_menu -->
-            {{{ output.page_heading_menu }}}
-            <!-- login info -->
-            {{{ output.login_info }}}
+<header class="navbar navbar-light bg-faded navbar-static-top moodle-has-zindex">
+    <div class="container-fluid">
+        <div class="clearfix">
+            <button class="navbar-toggler pull-xs-right hidden-sm-up" data-toggle="collapse" data-target="#bd-main-mav">☰<span class="sr-only">{{#str}}expand{{/str}}</span></button>
         </div>
-    </nav>
+
+        <a role="banner" href="{{{ config.wwwroot }}}" class="navbar-brand">
+            {{# output.should_display_navbar_logo }}
+                <div class="logo">
+                    <img src="{{output.get_compact_logo_url}}" alt={{#quote}}{{sitename}}{{/quote}}>
+                </div>
+            {{/ output.should_display_navbar_logo }}
+            <div class="site-name">{{{ sitename }}}</div>
+        </a>
+
+        <div class="collapse navbar-toggleable-xs" id="bd-main-nav">
+            <nav class="nav navbar-nav">
+                <!-- search_box -->
+                {{{ output.search_box }}}
+                <!-- custom_menu -->
+                {{{ output.custom_menu }}}
+                <!-- page_heading_menu -->
+                {{{ output.page_heading_menu }}}
+                <!-- login info -->
+                {{{ output.login_info }}}
+            </nav>
+        </div>
+    </div>
 </header>
 
 <div id="page" class="container-fluid">
