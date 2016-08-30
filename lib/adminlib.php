@@ -7498,7 +7498,7 @@ function admin_find_write_settings($node, $data) {
  * @return string empty or XHTML
  */
 function admin_search_settings_html($query) {
-    global $CFG, $OUTPUT;
+    global $CFG, $OUTPUT, $PAGE;
 
     if (core_text::strlen($query) < 2) {
         return '';
@@ -7507,8 +7507,13 @@ function admin_search_settings_html($query) {
 
     $adminroot = admin_get_root();
     $findings = $adminroot->search($query);
-    $return = '';
     $savebutton = false;
+
+    $tpldata = (object) [
+        'actionurl' => $PAGE->url->out(false),
+        'results' => [],
+        'sesskey' => sesskey(),
+    ];
 
     foreach ($findings as $found) {
         $page     = $found->page;
@@ -7517,20 +7522,23 @@ function admin_search_settings_html($query) {
         // hidden pages are not displayed in search results
             continue;
         }
+
+        $heading = highlight($query, $page->visiblename);
+        $headingurl = null;
         if ($page instanceof admin_externalpage) {
-            $return .= $OUTPUT->heading(get_string('searchresults','admin').' - <a href="'.$page->url.'">'.highlight($query, $page->visiblename).'</a>', 2, 'main');
+            $headingurl = new moodle_url($page->url);
         } else if ($page instanceof admin_settingpage) {
-                $return .= $OUTPUT->heading(get_string('searchresults','admin').' - <a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section='.$page->name.'">'.highlight($query, $page->visiblename).'</a>', 2, 'main');
-            } else {
-                continue;
-            }
+            $headingurl = new moodle_url('/admin/settings.php', ['section' => $page->name]);
+        } else {
+            continue;
+        }
+
+        $sectionsettings = [];
         if (!empty($settings)) {
-            $return .= '<fieldset class="adminsettings">'."\n";
             foreach ($settings as $setting) {
                 if (empty($setting->nosave)) {
                     $savebutton = true;
                 }
-                $return .= '<div class="clearer"><!-- --></div>'."\n";
                 $fullname = $setting->get_full_name();
                 if (array_key_exists($fullname, $adminroot->errors)) {
                     $data = $adminroot->errors[$fullname]->data;
@@ -7538,17 +7546,21 @@ function admin_search_settings_html($query) {
                     $data = $setting->get_setting();
                 // do not use defaults if settings not available - upgradesettings handles the defaults!
                 }
-                $return .= $setting->output_html($data, $query);
+                $sectionsettings[] = $setting->output_html($data, $query);
             }
-            $return .= '</fieldset>';
         }
+
+        $tpldata->results[] = (object) [
+            'title' => $heading,
+            'url' => $headingurl->out(false),
+            'settings' => $sectionsettings
+        ];
     }
 
-    if ($savebutton) {
-        $return .= '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
-    }
+    $tpldata->showsave = $savebutton;
+    $tpldata->hasresults = !empty($tpldata->results);
 
-    return $return;
+    return $OUTPUT->render_from_template('core_admin/settings_search_results', $tpldata);
 }
 
 /**
