@@ -1470,7 +1470,8 @@ class assign {
         $params['assignmentid1'] = $assignid;
         $params['assignmentid2'] = $assignid;
 
-        $sql = 'SELECT u.id, s.status, s.timemodified AS stime, g.timemodified AS gtime, g.grade FROM {user} u
+        $fields = 'SELECT u.id, s.status, s.timemodified AS stime, g.timemodified AS gtime, g.grade';
+        $from = ' FROM {user} u
                          LEFT JOIN {assign_submission} s
                                 ON u.id = s.userid
                                AND s.assignment = :assignmentid1
@@ -1479,7 +1480,18 @@ class assign {
                                 ON u.id = g.userid
                                AND g.assignment = :assignmentid2
                                AND g.attemptnumber = s.attemptnumber
-                         WHERE u.id ' . $insql;
+            ';
+        $where = ' WHERE u.id ' . $insql;
+
+        if (!empty($this->get_instance()->blindmarking)) {
+            $from .= 'LEFT JOIN {assign_user_mapping} um
+                             ON u.id = um.userid
+                            AND um.assignment = :assignmentid3 ';
+            $params['assignmentid3'] = $assignid;
+            $fields .= ', um.id as recordid ';
+        }
+
+        $sql = "$fields $from $where";
 
         $records = $DB->get_records_sql($sql, $params);
 
