@@ -127,7 +127,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         }.bind(this));
 
         // Event listeners for scrolling through messages and people in courses.
-        customEvents.define(this.messageArea.SELECTORS.SEARCHRESULTSAREA, [
+        customEvents.define(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), [
             customEvents.events.scrollBottom
         ]);
         this.messageArea.onDelegateEvent(customEvents.events.scrollBottom, this.messageArea.SELECTORS.SEARCHRESULTSAREA,
@@ -228,7 +228,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         var numberreceived = 0;
         // Add loading icon to the end of the list.
         return templates.render('core/loading', {}).then(function(html, js) {
-            templates.appendNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA,
+            templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA),
                 "<div style='text-align:center'>" + html + "</div>", js);
             return promises[0];
         }.bind(this)).then(function(data) {
@@ -241,12 +241,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             // Only append data if we got data back.
             if (numberreceived > 0) {
                 // Show the new content.
-                templates.appendNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
+                templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
                 // Increment the number of contacts displayed.
                 this._numMessagesDisplayed += numberreceived;
             } else if (this._numMessagesDisplayed == 0) { // Must have nothing to begin with.
                 // Replace the new content.
-                templates.replaceNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
+                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
             }
             // Mark that we are no longer busy loading data.
             this._isLoading = false;
@@ -274,13 +274,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
 
         // Perform the search and replace the content.
         return templates.render('core/loading', {}).then(function(html, js) {
-            templates.replaceNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA,
+            templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA),
                 "<div style='text-align:center'>" + html + "</div>", js);
             return promises[0];
         }.bind(this)).then(function(data) {
             return templates.render('core_message/message_area_people_search_results', data);
         }).then(function(html, js) {
-            templates.replaceNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
+            templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
         }.bind(this)).fail(notification.exception);
     };
 
@@ -316,7 +316,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         var numberreceived = 0;
         // Add loading icon to the end of the list.
         return templates.render('core/loading', {}).then(function(html, js) {
-            templates.appendNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA,
+            templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA),
                 "<div style='text-align:center'>" + html + "</div>", js);
             return promises[0];
         }.bind(this)).then(function(data) {
@@ -329,12 +329,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             // Only append data if we got data back.
             if (numberreceived > 0) {
                 // Show the new content.
-                templates.appendNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
+                templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
                 // Increment the number of contacts displayed.
                 this._numPeopleDisplayed += numberreceived;
             } else if (this._numPeopleDisplayed == 0) { // Must have nothing to begin with.
                 // Replace the new content.
-                templates.replaceNodeContents(this.messageArea.SELECTORS.SEARCHRESULTSAREA, html, js);
+                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
             }
             // Mark that we are no longer busy loading data.
             this._isLoading = false;

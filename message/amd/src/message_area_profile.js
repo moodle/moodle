@@ -66,7 +66,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         Profile.prototype._viewProfile = function(event, userid) {
             // Show loading template.
             templates.render('core/loading', {}).done(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
             }.bind(this));
 
             // Call the web service to return the profile.
@@ -82,7 +82,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return promises[0].then(function(data) {
                 return templates.render('core_message/message_area_profile', data);
             }).then(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
             }.bind(this)).fail(notification.exception);
         };
 

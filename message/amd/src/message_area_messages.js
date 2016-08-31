@@ -125,7 +125,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             var numberreceived = 0;
             // Show loading template.
             return templates.render('core/loading', {}).then(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
                 return markMessagesAsRead[0];
             }.bind(this)).then(function() {
                 var conversationnode = this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
@@ -142,7 +142,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 // We have the data - lets render the template with it.
                 return templates.render('core_message/message_area_messages_area', data);
             }).then(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.SELECTORS.MESSAGESAREA, html, js);
+                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
                 // Scroll to the bottom.
                 this._scrollBottom();
                 // Only increment if data was returned.
@@ -151,7 +151,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     this._numMessagesDisplayed = numberreceived;
                 }
                 // Now enable the ability to infinitely scroll through messages.
-                customEvents.define(this.messageArea.SELECTORS.MESSAGES, [
+                customEvents.define(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES), [
                     customEvents.events.scrollTop
                 ]);
                 // Assign the event for scrolling.
@@ -176,7 +176,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             var numberreceived = 0;
             // Show loading template.
             return templates.render('core/loading', {}).then(function(html, js) {
-                templates.prependNodeContents(this.messageArea.SELECTORS.MESSAGES,
+                templates.prependNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES),
                     "<div style='text-align:center'>" + html + "</div>", js);
                 return this._getMessages(this._getUserId());
             }.bind(this)).then(function(data) {
@@ -200,7 +200,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     // Get height before we add the messages.
                     var oldheight = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES)[0].scrollHeight;
                     // Show the new content.
-                    templates.prependNodeContents(this.messageArea.SELECTORS.MESSAGES, html, js);
+                    templates.prependNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES), html, js);
                     // Get height after we add the messages.
                     var newheight = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES)[0].scrollHeight;
                     // Make sure scroll bar is at the location before we loaded more messages.
@@ -433,7 +433,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             return promises[0].then(function(data) {
                 return templates.render('core_message/message_area_message', data);
             }).then(function(html, js) {
-                templates.appendNodeContents(this.messageArea.SELECTORS.MESSAGES, html, js);
+                templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES), html, js);
                 // Empty the response text area.
                 this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val('').trigger('input');
                 // Scroll down.
