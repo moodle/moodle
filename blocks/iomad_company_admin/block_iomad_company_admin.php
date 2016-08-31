@@ -73,8 +73,11 @@ class block_iomad_company_admin extends block_base {
         if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context)) {
             $tabs[4] = get_string('licensemanagement', 'block_iomad_company_admin');
         }
+        if (iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $context)) {
+            $tabs[5] = get_string('competencymanagement', 'block_iomad_company_admin');
+        }
         if (iomad::has_capability('block/iomad_commerce:admin_view', $context)) {
-            $tabs[5] = get_string('blocktitle', 'block_iomad_commerce');
+            $tabs[6] = get_string('blocktitle', 'block_iomad_commerce');
         }
         $tabhtml = $this->gettabs($tabs, $selectedtab);
 

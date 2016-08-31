@@ -52,6 +52,9 @@ $ADMIN->add( 'iomad', new admin_category( 'PerficoReports',
 $ADMIN->add( 'iomad', new admin_category( 'LicenseAdmin',
              get_string('licensemanagement', 'block_iomad_company_admin')));
 
+$ADMIN->add( 'iomad', new admin_category( 'CompetencyAdmin',
+             get_string('competencymanagement', 'block_iomad_company_admin')));
+
 $ADMIN->add( 'iomad', new admin_category( 'ECommerceAdmin',
              get_string('blocktitle', 'block_iomad_commerce')));
 
