@@ -75,6 +75,12 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK
     ),
 
+    'block/iomad_company_admin:competencymanagement_view' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
     'block/iomad_company_admin:assign_company_manager' => array(
 
         'captype' => 'read',
@@ -262,6 +268,30 @@ $capabilities = array(
     'block/iomad_company_admin:restrict_capabilities' => array(
                     'captype' => 'write',
                     'contextlevel' => CONTEXT_BLOCK,
+    ),
+    'block/iomad_company_admin:competencyview' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+    'block/iomad_company_admin:manageframeworks' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+    'block/iomad_company_admin:templateview' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+    'block/iomad_company_admin:company_framework' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+    'block/iomad_company_admin:company_template' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+    ),
+    'block/iomad_company_admin:manage_templates' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
     ),
 
 );
