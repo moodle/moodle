@@ -45,7 +45,7 @@ $string['err_nocriteria'] = 'Rubric must contain at least one criterion';
 $string['err_nodefinition'] = 'Level definition can not be empty';
 $string['err_nodescription'] = 'Criterion description can not be empty';
 $string['err_novariations'] = 'Criterion levels cannot all be worth the same number of points';
-$string['err_scoreformat'] = 'Number of points for each level must be a valid non-negative number';
+$string['err_scoreformat'] = 'Number of points for each level must be a valid number';
 $string['err_totalscore'] = 'Maximum number of points possible when graded by the rubric must be more than zero';
 $string['gradingof'] = '{$a} grading';
 $string['level'] = 'Level {$a->definition}, {$a->score} points.';
@@ -53,6 +53,11 @@ $string['leveldelete'] = 'Delete level {$a}';
 $string['leveldefinition'] = 'Level {$a} definition';
 $string['levelempty'] = 'Click to edit level';
 $string['levelsgroup'] = 'Levels group';
+$string['lockzeropoints'] = 'When converting rubric score to points/scale assume that minimum number of points is 0';
+$string['lockzeropoints_help'] = 'Locking the minimum number of points will allow to create rubrics without 0-levels. This may also mean that 0% grade on this rubric is not possible to achieve.<br />
+The maximum score in the rubric is always converted to the maximum grade.<br />
+When this setting is unchecked, the minimum possible score for this rubric will be converted to the minimum grade available in the module (which is zero unless the scale is used).<br />
+<a href="https://docs.moodle.org/en/Rubrics#Grade_calculation">Explanation of rubrics grade calculation</a>';
 $string['name'] = 'Name';
 $string['needregrademessage'] = 'The rubric definition was changed after this student had been graded. The student can not see this rubric until you check the rubric and update the grade.';
 $string['pluginname'] = 'Rubric';
@@ -66,8 +71,9 @@ $string['rubric'] = 'Rubric';
 $string['rubricmapping'] = 'Score to grade mapping rules';
 $string['rubricmappingexplained'] = 'The minimum possible score for this rubric is <b>{$a->minscore} points</b> and it will be converted to the minimum grade available in this module (which is zero unless the scale is used).
     The maximum score <b>{$a->maxscore} points</b> will be converted to the maximum grade.<br />
-    Intermediate scores will be converted respectively and rounded to the nearest available grade.<br />
-    If a scale is used instead of a grade, the score will be converted to the scale elements as if they were consecutive integers.';
+    Intermediate scores will be converted respectively.<br />
+    If a scale is used for grading, the score will be rounded and converted to the scale elements as if they were consecutive integers.<br><br>
+    You can change the method of grade calculation in the Rubic options section below.';
 $string['rubricnotcompleted'] = 'Please choose something for each criterion';
 $string['rubricoptions'] = 'Rubric options';
 $string['rubricstatus'] = 'Current rubric status';

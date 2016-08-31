@@ -58,7 +58,7 @@ Feature: Rubrics can be created and edited
     And I complete the advanced grading form with these values:
       | Feedback comments | In general... work harder... |
     # Checking that the user grade is correct.
-    And I should see "58.33" in the "Student 1" "table_row"
+    And I should see "65" in the "Student 1" "table_row"
     # Updating the user grade.
     And I go to "Student 1" "Test assignment 1 name" activity advanced grading page
     And I grade by filling the rubric with:
@@ -68,13 +68,13 @@ Feature: Rubrics can be created and edited
     #And the level with "50" points was previously selected for the rubric criterion "Criterion 1"
     #And the level with "20" points is selected for the rubric criterion "Criterion 1"
     And I save the advanced grading form
-    And I should see "22.62" in the "Student 1" "table_row"
+    And I should see "35" in the "Student 1" "table_row"
     And I log out
     # Viewing it as a student.
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment 1 name"
-    And I should see "22.62" in the ".feedback" "css_element"
+    And I should see "35" in the ".feedback" "css_element"
     And I should see "Rubric test description" in the ".feedback" "css_element"
     And I should see "In general... work harder..."
     And the level with "10" points is selected for the rubric criterion "Criterion 2"
@@ -97,7 +97,7 @@ Feature: Rubrics can be created and edited
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment 1 name"
-    And I should see "22.62" in the ".feedback" "css_element"
+    And I should see "35" in the ".feedback" "css_element"
     And the level with "20" points is selected for the rubric criterion "Criterion 1"
     And I log out
     # Editing a rubric with significant changes.
@@ -105,7 +105,7 @@ Feature: Rubrics can be created and edited
     And I follow "Course 1"
     And I go to "Test assignment 1 name" advanced grading definition page
     And I click on "Move down" "button" in the "Criterion 2" "table_row"
-    And I replace "1" rubric level with "11" in "Criterion 1" criterion
+    And I replace "1" rubric level with "60" in "Criterion 1" criterion
     And I press "Save"
     And I should see "You are about to save significant changes to a rubric that has already been used for grading. The gradebook value will be unchanged, but the rubric will be hidden from students until their item is regraded."
     And I press "Continue"
@@ -114,7 +114,7 @@ Feature: Rubrics can be created and edited
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment 1 name"
-    And I should see "22.62" in the ".feedback" "css_element"
+    And I should see "35" in the ".feedback" "css_element"
     And the level with "20" points is not selected for the rubric criterion "Criterion 1"
     And I log out
     # Regrade student.
@@ -129,7 +129,7 @@ Feature: Rubrics can be created and edited
     And I log in as "student1"
     And I follow "Course 1"
     And I follow "Test assignment 1 name"
-    And I should see "12.16" in the ".feedback" "css_element"
+    And I should see "31.82" in the ".feedback" "css_element"
     And the level with "20" points is not selected for the rubric criterion "Criterion 1"
     # Hide all rubric info for students
     And I log out
