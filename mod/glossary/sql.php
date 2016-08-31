@@ -78,6 +78,11 @@ switch ($tab) {
             case 'search':
                 list($allentries, $count) = glossary_get_entries_by_search($glossary, $context, $hook, $fullsearch,
                     $sortkey, $sortorder, $offset, $entriesbypage);
+
+                // Scripts like view.php expect $allentries to be an array, not a recordset.
+                $aux = iterator_to_array($allentries, true);
+                $allentries->close();
+                $allentries = $aux;
                 break;
 
             case 'term':
