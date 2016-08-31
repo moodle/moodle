@@ -382,7 +382,17 @@ function grade_regrade_final_grades_if_required($course, callable $callback = nu
         echo $OUTPUT->header();
         echo $OUTPUT->heading(get_string('recalculatinggrades', 'grades'));
         $progress = new \core\progress\display(true);
-        grade_regrade_final_grades($course->id, null, null, $progress);
+        $status = grade_regrade_final_grades($course->id, null, null, $progress);
+
+        // Show regrade errors and set the course to no longer needing regrade (stop endless loop).
+        if (is_array($status)) {
+            foreach ($status as $error) {
+                $errortext = new \core\output\notification($error, \core\output\notification::NOTIFY_ERROR);
+                echo $OUTPUT->render($errortext);
+            }
+            $courseitem = grade_item::fetch_course_item($course->id);
+            $courseitem->regrading_finished();
+        }
 
         if ($callback) {
             //
