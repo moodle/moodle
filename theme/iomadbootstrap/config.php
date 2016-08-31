@@ -29,9 +29,9 @@ $THEME->yuicssmodules = array();
 $THEME->name = 'iomadbootstrap';
 $THEME->parents = array();
 if ('ltr' === get_string('thisdirection', 'langconfig')) {
-    $THEME->sheets = array('moodle', 'iomad');
+    $THEME->sheets = array('moodle', 'font-awesome', 'iomad');
 } else {
-    $THEME->sheets = array('moodle-rtl', 'iomad');
+    $THEME->sheets = array('moodle-rtl', 'font-awesome', 'iomad');
 }
 $THEME->enable_dock = true;
 $THEME->supportscssoptimisation = false;
