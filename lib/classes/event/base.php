@@ -116,7 +116,7 @@ abstract class base implements \IteratorAggregate {
     private static $fields = array(
         'eventname', 'component', 'action', 'target', 'objecttable', 'objectid', 'crud', 'edulevel', 'contextid',
         'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'anonymous', 'other',
-        'timecreated');
+        'timecreated', 'companyid');
 
     /** @var array simple record cache */
     private $recordsnapshots = array();
@@ -189,6 +189,7 @@ abstract class base implements \IteratorAggregate {
         $event->data['timecreated'] = time();
 
         // Set optional data or use defaults.
+        $event->data['companyid'] = isset($data['companyid']) ? $data['companyid'] : null;
         $event->data['objectid'] = isset($data['objectid']) ? $data['objectid'] : null;
         $event->data['courseid'] = isset($data['courseid']) ? $data['courseid'] : null;
         $event->data['userid'] = isset($data['userid']) ? $data['userid'] : $USER->id;
