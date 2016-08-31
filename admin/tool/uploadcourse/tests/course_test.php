@@ -424,7 +424,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'fullname' => 'Fullname',
             'category' => '1',
             'visible' => '0',
-            'startdate' => '8 June 1990',
+            'startdate' => 644803200,
             'idnumber' => '123abc',
             'summary' => 'Summary',
             'format' => 'weeks',
@@ -451,7 +451,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($defaultdata['fullname'], $course->fullname);
         $this->assertEquals($defaultdata['category'], $course->category);
         $this->assertEquals($defaultdata['visible'], $course->visible);
-        $this->assertEquals(mktime(0, 0, 0, 6, 8, 1990), $course->startdate);
+        $this->assertEquals($defaultdata['startdate'], $course->startdate);
         $this->assertEquals($defaultdata['idnumber'], $course->idnumber);
         $this->assertEquals($defaultdata['summary'], $course->summary);
         $this->assertEquals($defaultdata['format'], $course->format);
@@ -477,7 +477,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'fullname' => 'Fullname 2',
             'category' => $cat->id,
             'visible' => '1',
-            'startdate' => '11 June 1984',
+            'startdate' => 455760000,
             'idnumber' => 'changedid',
             'summary' => 'Summary 2',
             'format' => 'topics',
@@ -504,7 +504,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals($defaultdata['fullname'], $course->fullname);
         $this->assertEquals($defaultdata['category'], $course->category);
         $this->assertEquals($defaultdata['visible'], $course->visible);
-        $this->assertEquals(mktime(0, 0, 0, 6, 11, 1984), $course->startdate);
+        $this->assertEquals($defaultdata['startdate'], $course->startdate);
         $this->assertEquals($defaultdata['idnumber'], $course->idnumber);
         $this->assertEquals($defaultdata['summary'], $course->summary);
         $this->assertEquals($defaultdata['format'], $course->format);
