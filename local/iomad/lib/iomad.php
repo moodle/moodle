@@ -28,7 +28,6 @@ class iomad {
      */
     public static function get_my_companyid($context, $required=true) {
         global $SESSION, $USER;
-
         // are we logged in?
         if (empty($USER->id)) {
             return -1;
@@ -334,6 +333,52 @@ class iomad {
         }
 
         return $iomadcourses;
+    }
+
+    /**
+     * IOMAD:
+     * Filter objects to only show 'company' objects for the
+     * current user. All other pass through as normal
+     * @param array $objects list of competency objects
+     * @return array filtered list of objects.
+     */
+    public static function iomad_filter_competency_objects($table, $objects ) {
+        global $DB, $USER;
+
+        // Check if its the client admin.
+        if (self::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+            return $objects;
+        }
+        $context = context_system::instance();
+        $mycompanyid = self::get_my_companyid($context);
+        
+        if ($table == 'competency_template') {
+            $sourcetable = 'company_comp_templates';
+            $target = 'templateid';
+            $iomadtable = 'iomad_templates';
+        } else {
+            $sourcetable = 'company_comp_frameworks';
+            $target = 'frameworkid';
+            $iomadtable = 'iomad_frameworks';
+        }
+        $companyobjexts = array();
+        foreach ($objects as $id => $object) {
+            // Try to find category in company list.
+            if ($DB->get_record($sourcetable, array($target => $id,
+                                                    'companyid' => $mycompanyid) ) ) {
+                // Include as tied to company.
+                $companyobjetcs[$id] = $object;
+            } else if ($DB->get_record($iomadtable, array($target => $id,
+                                                          'shared' => 1) ) ) {
+                // Include as open shared.
+                $companyobjects[$id] = $object;
+            } else if (!$DB->get_records($sourcetable, array($target => $id))) {
+                // Include as not a companycourse.
+                $companyobjects[$id] = $object;
+            }
+        }
+
+        return $companyobjects;
     }
 
     /** IOMAD:

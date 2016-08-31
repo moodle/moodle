@@ -606,12 +606,20 @@ class company {
 
         $flatlist = array();
         if (isset($tree->id)) {
-            $flatlist[$tree->id] = $path . '/' . $tree->name;
+            if (!empty($path)) {
+                $flatlist[$tree->id] = $path . ' / ' . $tree->name;
+            } else {
+                $flatlist[$tree->id] = $tree->name;
+            }
         }
 
         if (!empty($tree->children)) {
             foreach ($tree->children as $child) {
-                $flatlist[$child->id] = self::get_department_list($child, $path.'/'.$tree->name);
+                if (!empty($path)) {
+                    $flatlist[$child->id] = self::get_department_list($child, $path.' / '.$tree->name);
+                } else {
+                    $flatlist[$child->id] = self::get_department_list($child, $tree->name);
+                }
             }
         }
 
@@ -727,7 +735,7 @@ class company {
 
         $parentlist = array();
         $parentnode = self::get_company_parentnode($company);
-        $parentlist[$parentnode->id] = array($parentnode->id => '/'.$parentnode->name);
+        $parentlist[$parentnode->id] = array($parentnode->id => $parentnode->name);
         $departmenttree = self::get_subdepartments($parentnode);
         $departmentlist = self::array_flatten($parentlist +
                                               self::get_department_list($departmenttree));
@@ -1680,5 +1688,124 @@ class company {
 
         // Return a false by default.
         return false;
+    }
+
+    // Competencies stuff.
+
+    /**
+     * Associates a ccompetency framework to a company
+     *
+     * Parameters -
+     *              $framework = stdclass();
+     *
+     **/
+    public static function add_competency_framework($companyid, $frameworkid) {
+        global $DB;
+
+        if (!$DB->record_exists('company_comp_frameworks', array('companyid' => $companyid,
+                                                                 'frameworkid' => $frameworkid))) {
+            $DB->insert_record('company_comp_frameworks', array('companyid' => $companyid,
+                                                                'frameworkid' => $frameworkid));
+        }
+    }
+
+    /**
+     * Removes a course from a company
+     *
+     * Parameters -
+     *              $course = stdclass();
+     *              $companyid = int;
+     *              $departmentid = int;
+     *
+     **/
+    public static function remove_competency_framework($companyid, $frameworkid) {
+        global $DB;
+
+        $DB->delete_records('company_comp_frameworks', array('companyid' => $companyid,
+                                                             'frameworkid' => $frameworkid));
+    }
+
+    /**
+     * Associates a ccompetency framework to a company
+     *
+     * Parameters -
+     *              $template = stdclass();
+     *
+     **/
+    public static function add_competency_template($companyid, $templateid) {
+        global $DB;
+
+        if (!$DB->record_exists('company_comp_templates', array('companyid' => $companyid,
+                                                                'templateid' => $templateid))) {
+            $DB->insert_record('company_comp_templates', array('companyid' => $companyid,
+                                                               'templateid' => $templateid));
+        }
+    }
+
+    /**
+     * Removes a course from a company
+     *
+     * Parameters -
+     *              $template = stdclass();
+     *
+     **/
+    public static function remove_competency_template($companyid, $templateid) {
+        global $DB;
+
+        $DB->delete_records('company_comp_templates', array('companyid' => $companyid, 
+                                                            'templateid' => $templateid));
+    }
+
+    /**
+     * Triggered via competency_framework_created event.
+     *
+     * @param \core\event\competency_framework_created $event
+     * @return bool true on success.
+     */
+    public static function competency_framework_created(\core\event\competency_framework_created $event) {
+        $data = $event->get_data();
+        if (!empty($data['companyid'])) {
+            self::add_competency_framework($data['companyid'], $event->objectid);
+        }
+        return true;
+    }
+
+    /**
+     * Triggered via competency_framework_deleted event.
+     *
+     * @param \core\event\competency_framework_deleted $event
+     * @return bool true on success.
+     */
+    public static function competency_framework_deleted(\core\event\competency_framework_deleted $event) {
+        global $DB;
+        $DB->delete_records('company_comp_frameworks', array('frameworkid' => $event->objectid));
+        return true;
+    }
+
+    /**
+     * Triggered via competency_template_created event.
+     *
+     * @param \core\event\competency_template_created $event
+     * @return bool true on success.
+     */
+    public static function competency_template_created(\core\event\competency_template_created $event) {
+
+        $data = $event->get_data();
+        if (!empty($data['companyid'])) {
+            self::add_competency_template($data['companyid'], $event->objectid);
+        }
+        return true;
+    }
+
+    /**
+     * Triggered via competency_template_deleted event.
+     *
+     * @param \core\event\competency_template_deleted $event
+     * @return bool true on success.
+     */
+    public static function competency_template_deleted(\core\event\competency_template_deleted $event) {
+        global $DB;
+        $DB->delete_records('company_comp_templates', array('templateid' => $event->objectid));
+        return true;
     }
 }
