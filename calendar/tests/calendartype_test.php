@@ -232,7 +232,7 @@ class core_calendar_type_testcase extends advanced_testcase {
         }
         $submitvalues = array('dateselector' . $counter => $date);
 
-        $this->assertSame($el->exportValue($submitvalues), array('dateselector' . $counter => $date['timestamp']));
+        $this->assertSame(array('dateselector' . $counter => $date['timestamp']), $el->exportValue($submitvalues, true));
     }
 
     /**
