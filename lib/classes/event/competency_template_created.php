@@ -49,12 +49,14 @@ class competency_template_created extends base {
      * @return self
      */
     public static final function create_from_template(template $template) {
+
         if (!$template->get_id()) {
             throw new \coding_exception('The template ID must be set.');
         }
         $event = static::create(array(
             'contextid'  => $template->get_contextid(),
-            'objectid' => $template->get_id()
+            'objectid' => $template->get_id(),
+            'companyid'  => $template->data['companyid']
         ));
         $event->add_record_snapshot(template::TABLE, $template->to_record());
         return $event;
