@@ -9,6 +9,7 @@
 div.iomadlink_container {
     min-height: 100px;
     position: relative;
+    top: -30px;
     }
 
 ul.iomadtab {
@@ -69,4 +70,21 @@ padding-top: 10px;
 padding-bottom: 15px;
 width: 50%;
 border-radius: 10px;
+}
+
+.iomad_company_selector .singleselect {
+    float: left;
+}
+
+.companyselect .singlebutton {
+    float: right;
+    position: relative;
+    top: -30px;
+    left: 4px;
+}
+
+.block_iomad_company_admin .nav-tabs {
+    clear:both;
+    position: relative;
+    top: -30px;
 }
