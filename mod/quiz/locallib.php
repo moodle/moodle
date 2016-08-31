@@ -1353,12 +1353,12 @@ function quiz_get_flag_option($attempt, $context) {
 function quiz_attempt_state($quiz, $attempt) {
     if ($attempt->state == quiz_attempt::IN_PROGRESS) {
         return mod_quiz_display_options::DURING;
+    } else if ($quiz->timeclose && time() >= $quiz->timeclose) {
+        return mod_quiz_display_options::AFTER_CLOSE;
     } else if (time() < $attempt->timefinish + 120) {
         return mod_quiz_display_options::IMMEDIATELY_AFTER;
-    } else if (!$quiz->timeclose || time() < $quiz->timeclose) {
-        return mod_quiz_display_options::LATER_WHILE_OPEN;
     } else {
-        return mod_quiz_display_options::AFTER_CLOSE;
+        return mod_quiz_display_options::LATER_WHILE_OPEN;
     }
 }
 
