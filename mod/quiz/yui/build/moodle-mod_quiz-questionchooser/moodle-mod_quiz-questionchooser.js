@@ -3,7 +3,7 @@ YUI.add('moodle-mod_quiz-questionchooser', function (Y, NAME) {
 var CSS = {
     ADDNEWQUESTIONBUTTONS: '.menu [data-action="addquestion"]',
     CREATENEWQUESTION: 'div.createnewquestion',
-    CHOOSERDIALOGUE: 'div.chooserdialogue',
+    CHOOSERDIALOGUE: 'div.chooserdialoguebody',
     CHOOSERHEADER: 'div.choosertitle'
 };
 
