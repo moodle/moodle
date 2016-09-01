@@ -3,7 +3,7 @@ YUI.add('moodle-question-chooser', function (Y, NAME) {
 var SELECTORS = {
     CREATENEWQUESTION: 'div.createnewquestion',
     CREATENEWQUESTIONFORM: 'div.createnewquestion form',
-    CHOOSERDIALOGUE: 'div.chooserdialogue',
+    CHOOSERDIALOGUE: 'div.chooserdialoguebody',
     CHOOSERHEADER: 'div.choosertitle'
 };
 
