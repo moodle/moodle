@@ -8,18 +8,11 @@
                 <div class="offline-text">{{#str}} offline, message {{/str}}</div>
             </div>
         </div>
-        <div class="information">
-            <div class="names">
-                <div>{{#str}} email {{/str}}</div>
-                <div>{{#str}} country {{/str}}</div>
-                <div>{{#str}} city {{/str}}</div>
-            </div>
-            <div class="values">
-                <div>{{email}}</div>
-                <div>{{country}}</div>
-                <div>{{city}}</div>
-            </div>
-        </div>
+        <ul class="information">
+            {{#email}}<li><div class="name">{{#str}} email {{/str}}</div><div class="value">{{.}}</div></li>{{/email}}
+            {{#country}}<li><div class="name">{{#str}} country {{/str}}</div><div class="value">{{country}}</div></li>{{/country}}
+            {{#city}}<li><div class="name">{{#str}} city {{/str}}</div><div class="value">{{city}}</div></li>{{/city}}
+        </ul>
     </div>
     <div class="actions">
         <div class="separator">

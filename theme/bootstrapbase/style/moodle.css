@@ -6021,14 +6021,15 @@ a.ygtvspacer:hover {
   float: right;
   margin-top: 20px;
   font-size: 14px;
+  list-style: none;
 }
-.messaging-area-container .messaging-area .messages-area .profile .information .names {
+.messaging-area-container .messaging-area .messages-area .profile .information .name {
   display: inline-block;
   font-weight: bold;
   text-align: right;
   margin-right: 10px;
 }
-.messaging-area-container .messaging-area .messages-area .profile .information .values {
+.messaging-area-container .messaging-area .messages-area .profile .information .value {
   display: inline-block;
 }
 .messaging-area-container .messaging-area .messages-area .profile .actions {
