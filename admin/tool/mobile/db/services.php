@@ -41,6 +41,14 @@ $functions = array(
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax'          => true,
         'loginrequired' => false,
+    ),
+
+    'tool_mobile_get_config' => array(
+        'classname'   => 'tool_mobile\external',
+        'methodname'  => 'get_config',
+        'description' => 'Returns a list of the site configurations, filtering by section.',
+        'type'        => 'read',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     )
 
 );

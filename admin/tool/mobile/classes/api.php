@@ -135,4 +135,49 @@ class api {
         return $settings;
     }
 
+    /**
+     * Returns a list of site configurations, filtering by section.
+     *
+     * @param  string $section section name
+     * @return stdClass object containing the settings
+     */
+    public static function get_config($section) {
+        global $CFG, $SITE;
+
+        $settings = new \stdClass;
+        $context = context_system::instance();
+        $isadmin = has_capability('moodle/site:config', $context);
+
+        if (empty($section) or $section == 'frontpagesettings') {
+            require_once($CFG->dirroot . '/course/format/lib.php');
+            // First settings that anyone can deduce.
+            $settings->fullname = $SITE->fullname;
+            $settings->shortname = $SITE->shortname;
+            $settings->summary = $SITE->summary;
+            $settings->frontpage = $CFG->frontpage;
+            $settings->frontpageloggedin = $CFG->frontpageloggedin;
+            $settings->maxcategorydepth = $CFG->maxcategorydepth;
+            $settings->frontpagecourselimit = $CFG->frontpagecourselimit;
+            $settings->numsections = course_get_format($SITE)->get_course()->numsections;
+            $settings->newsitems = $SITE->newsitems;
+            $settings->commentsperpage = $CFG->commentsperpage;
+
+            // Now, admin settings.
+            if ($isadmin) {
+                $settings->defaultfrontpageroleid = $CFG->defaultfrontpageroleid;
+            }
+        }
+
+        if (empty($section) or $section == 'sitepolicies') {
+            $settings->disableuserimages = $CFG->disableuserimages;
+        }
+
+        if (empty($section) or $section == 'gradessettings') {
+            require_once($CFG->dirroot . '/user/lib.php');
+            $settings->mygradesurl = user_mygrades_url()->out(false);
+        }
+
+        return $settings;
+    }
+
 }
