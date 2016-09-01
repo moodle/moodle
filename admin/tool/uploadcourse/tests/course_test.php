@@ -244,8 +244,6 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'fullname' => 'Fullname',
             'category' => '1',
             'visible' => '0',
-            'startdate' => '8 June 1990',
-            'enddate' => '18 June 1990',
             'idnumber' => '123abc',
             'summary' => 'Summary',
             'format' => 'weeks',
@@ -270,6 +268,20 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'enrolment_3' => 'manual',
             'enrolment_3_disable' => '1',
         );
+
+        // There should be a start date if there is a end date.
+        $data['enddate'] = '7 June 1990';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('nostartdatenoenddate', $co->get_errors());
+
+        $data['startdate'] = '8 June 1990';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('enddatebeforestartdate', $co->get_errors());
+
+        // They are correct now.
+        $data['enddate'] = '18 June 1990';
 
         $this->assertFalse($DB->record_exists('course', array('shortname' => 'c1')));
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
@@ -335,8 +347,6 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
             'fullname' => 'Fullname 2',
             'category' => $cat->id,
             'visible' => '1',
-            'startdate' => '11 June 1984',
-            'enddate' => '31 June 1984',
             'idnumber' => 'changeidn',
             'summary' => 'Summary 2',
             'format' => 'topics',
@@ -363,6 +373,21 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         );
 
         $this->assertTrue($DB->record_exists('course', array('shortname' => 'c1')));
+
+        $data['enddate'] = '31 June 1984';
+        // Previous start and end dates are 8 and 18 June 1990.
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('enddatebeforestartdate', $co->get_errors());
+
+        $data['startdate'] = '19 June 1990';
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('enddatebeforestartdate', $co->get_errors());
+
+        // They are correct now.
+        $data['startdate'] = '11 June 1984';
+
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertTrue($co->prepare());
         $co->proceed();
