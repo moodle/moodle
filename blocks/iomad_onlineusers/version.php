@@ -14,6 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version = 2015073000;
+$plugin->version = 2016083100;
 $plugin->requires  = 2014110400;        // Requires this Moodle version
 $plugin->component = 'block_iomad_onlineusers'; // Full name of the plugin (used for diagnostics)

@@ -54,7 +54,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-function xmldb_block_eldms_commerce_upgrade($oldversion) {
+function xmldb_block_iomad_commerce_upgrade($oldversion) {
     global $CFG, $DB;
 
     $result = true;

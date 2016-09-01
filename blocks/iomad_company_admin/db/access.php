@@ -51,6 +51,12 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK
     ),
 
+    'block/iomad_company_admin:myaddinstance' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
     'block/iomad_company_admin:companymanagement_view' => array(
 
         'captype' => 'read',

@@ -22,6 +22,12 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK
     ),
 
+    'block/iomad_onlineusers:myaddinstance' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
     'block/iomad_onlineusers:viewlist' => array(
 
         'captype' => 'read',

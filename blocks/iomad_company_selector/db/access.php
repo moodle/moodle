@@ -21,4 +21,10 @@ $capabilities = array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_BLOCK
     ),
+
+    'block/iomad_company_selector:myaddinstance' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
 );

@@ -14,5 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version = 2013030300;
+$plugin->version = 2016083100;
+$plugin->requires = 2010021900;   // Requires this Moodle version.
 $plugin->component  = 'block_iomad_reports';

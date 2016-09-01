@@ -22,6 +22,12 @@ $capabilities = array(
         'contextlevel' => CONTEXT_BLOCK
     ),
 
+    'block/iomad_link:myaddinstance' => array(
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_BLOCK
+    ),
+
     'block/iomad_link:view' => array(
 
         'captype' => 'write',
