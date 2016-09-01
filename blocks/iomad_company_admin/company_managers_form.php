@@ -82,25 +82,12 @@ class company_managers_form extends moodleform {
         // changes get displayed, rather than the lists as they are before processing.
 
         $company = new company($this->selectedcompany);
-        $managertypes = $company->get_managertypes();
-        $mform->addElement('header', 'header', get_string('company_managers_for',
-                                                          'block_iomad_company_admin', $company->get_name()));
-        $mform->addElement('select', 'deptid', get_string('department', 'block_iomad_company_admin'), $this->subhierarchieslist);
-        $mform->addHelpButton('deptid', 'department', 'block_iomad_company_admin');
-
-        $mform->addElement('select', 'managertype', get_string('managertype', 'block_iomad_company_admin'), $managertypes);
-        $mform->addHelpButton('managertype', 'managertype', 'block_iomad_company_admin');
-
-        if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
-            // This user can add other managers to this company.
-            $mform->addElement('selectyesno', 'showothermanagers', get_string('showothermanagers', 'block_iomad_company_admin'));
-            $mform->disabledIf('showothermanagers', 'managertype', 'neq', '1');
-            $mform->addHelpButton('showothermanagers', 'showothermanagers', 'block_iomad_company_admin');
-        } else {
-            $mform->addElement('hidden', 'showothermanagers', 0);
-        } 
-
-        $mform->addElement('submit', 'updateselection', get_string('updatedepartmentusersselection', 'block_iomad_company_admin'));
+        $mform->addElement('hidden', 'showothermanagers', $this->showothermanagers);
+        $mform->setType('showothermanagers', PARAM_INT);
+        $mform->addElement('hidden', 'departmentid', $this->departmentid);
+        $mform->setType('departmentid', PARAM_INT);
+        $mform->addElement('hidden', 'managertype', $this->roletype);
+        $mform->setType('managertype', PARAM_INT);
 
         if (count($this->potentialusers->find_users('')) || count($this->currentusers->find_users(''))) {
 
@@ -387,7 +374,6 @@ class company_managers_form extends moodleform {
 
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
-$companyid = optional_param('companyid', 0, PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $roleid = optional_param('managertype', 0, PARAM_INTEGER);
 $showothermanagers = optional_param('showothermanagers', 0, PARAM_BOOL);
@@ -417,10 +403,42 @@ $companyid = iomad::get_my_companyid($context);
 
 $PAGE->set_context($context);
 
-$urlparams = array('companyid' => $companyid);
+$urlparams = array('departmentid' => $departmentid,
+                   'managertype' => $roleid,
+                   'showothermanagers' => $showothermanagers);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
+
+// Set up the departments stuffs.
+$company = new company($companyid);
+$parentlevel = company::get_company_parentnode($company->id);
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+    $userhierarchylevel = $parentlevel->id;
+} else {
+    $userlevel = company::get_userlevel($USER);
+    $userhierarchylevel = $userlevel->id;
+}
+
+$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
+if (empty($departmentid)) {
+    $departmentid = $userhierarchylevel;
+}
+
+$departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
+$departmentselect->label = get_string('department', 'block_iomad_company_admin') .
+                           $OUTPUT->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
+
+$managertypes = $company->get_managertypes();
+$managerselect = new single_select(new moodle_url($linkurl, $urlparams), 'managertype', $managertypes, $roleid);
+$managerselect->label = get_string('managertype', 'block_iomad_company_admin') .
+                        $OUTPUT->help_icon('managertype', 'block_iomad_company_admin') . '&nbsp';
+
+$othersselect = new single_select(new moodle_url($linkurl, $urlparams), 'showothermanagers',
+                array(get_string('no'), get_string('yes')), $showothermanagers);
+$othersselect->label = get_string('showothermanagers', 'block_iomad_company_admin') .
+                       $OUTPUT->help_icon('showothermanagers', 'block_iomad_company_admin') . '&nbsp';
+
 // Set up the allocation form.
 $managersform = new company_managers_form($PAGE->url, $context, $companyid, $departmentid, $roleid, $showothermanagers);
 
@@ -449,6 +467,16 @@ if ($managersform->is_cancelled()) {
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
     }   
+
+    echo html_writer::tag('h3', get_string('company_managers_for', 'block_iomad_company_admin', $company->get_name()));
+    echo $OUTPUT->render($departmentselect);
+
+    echo $OUTPUT->render($managerselect);
+
+    if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance()) &&
+        $roleid == 1) {
+        echo $OUTPUT->render($othersselect);
+    }
 
     echo $managersform->display();
 

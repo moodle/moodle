@@ -89,9 +89,9 @@ class department_display_form extends company_moodleform {
                             get_string('companydepartment', 'block_iomad_company_admin').
                            $company->get_name());
 
-        $mform->addElement('select', 'deptid',
-                            get_string('department', 'block_iomad_company_admin'),
-                            $departmentslist);
+        if (count($departmentslist) == 1) {
+            $mform->addElement('html', "<h3>" . get_string('nodepartments', 'block_iomad_company_admin') . "</h3></br>");
+        }
         $mform->addElement('html', $subdepartmenthtml);
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('submit', 'create',
@@ -150,7 +150,7 @@ class department_edit_form extends company_moodleform {
         $mform->addElement('hidden', 'action', $this->action);
         $mform->setType('action', PARAM_INT);
         $mform->addElement('select', 'deptid',
-                            get_string('department', 'block_iomad_company_admin'),
+                            get_string('parentdepartment', 'block_iomad_company_admin'),
                             $departmentslist);
         $mform->disabledIf('deptid', 'action', 'eq', 1);
 
