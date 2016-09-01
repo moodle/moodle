@@ -45,6 +45,8 @@ class chooser implements renderable, templatable {
     public $actionurl;
     /** @var lang_string The instructions to display. */
     public $instructions;
+    /** @var string The form method. */
+    public $method = 'post';
     /** @var string The name of the parameter for the items value. */
     public $paramname;
     /** @var array The list of hidden parameters. See {@link self::add_param}. */
@@ -97,6 +99,15 @@ class chooser implements renderable, templatable {
     }
 
     /**
+     * Set the form method.
+     *
+     * @param string $value The method.
+     */
+    public function set_method($value) {
+        $this->method = $value;
+    }
+
+    /**
      * Export for template.
      *
      * @param renderer_base The renderer.
@@ -107,6 +118,7 @@ class chooser implements renderable, templatable {
 
         $data->actionurl = $this->actionurl->out(false);
         $data->instructions = (string) $this->instructions;
+        $data->method = $this->method;
         $data->paramname = $this->paramname;
         $data->params = $this->params;
         $data->sesskey = sesskey();
