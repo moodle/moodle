@@ -2687,6 +2687,10 @@ function create_course($data, $editoroptions = NULL) {
         }
     }
 
+    if ($errorcode = course_validate_dates((array)$data)) {
+        throw new moodle_exception($errorcode);
+    }
+
     // Check if timecreated is given.
     $data->timecreated  = !empty($data->timecreated) ? $data->timecreated : time();
     $data->timemodified = $data->timecreated;
@@ -2803,6 +2807,10 @@ function update_course($data, $editoroptions = NULL) {
         if ($DB->record_exists_sql('SELECT id from {course} WHERE idnumber = ? AND id <> ?', array($data->idnumber, $data->id))) {
             throw new moodle_exception('courseidnumbertaken', '', '', $data->idnumber);
         }
+    }
+
+    if ($errorcode = course_validate_dates((array)$data)) {
+        throw new moodle_exception($errorcode);
     }
 
     if (!isset($data->category) or empty($data->category)) {
@@ -4189,4 +4197,30 @@ function course_get_user_administration_options($course, $context) {
     }
 
     return $options;
+}
+
+/**
+ * Validates course start and end dates.
+ *
+ * Checks that the end course date is not greater than the start course date.
+ *
+ * $coursedata['startdate'] or $coursedata['enddate'] may not be set, it depends on the form and user input.
+ *
+ * @param array $coursedata May contain startdate and enddate timestamps, depends on the user input.
+ * @return mixed False if everything alright, error codes otherwise.
+ */
+function course_validate_dates($coursedata) {
+
+    // If both start and end dates are set end date should be later than the start date.
+    if (!empty($coursedata['startdate']) && !empty($coursedata['enddate']) &&
+            ($coursedata['enddate'] < $coursedata['startdate'])) {
+        return 'enddatebeforestartdate';
+    }
+
+    // If start date is not set end date can not be set.
+    if (empty($coursedata['startdate']) && !empty($coursedata['enddate'])) {
+        return 'nostartdatenoenddate';
+    }
+
+    return false;
 }

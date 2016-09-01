@@ -3200,7 +3200,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
 
     /**
-     * test_course_reset
+     * test_course_dates_reset
      *
      * @dataProvider course_dates_reset_provider
      * @param int $startdate

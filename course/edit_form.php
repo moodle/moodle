@@ -342,7 +342,8 @@ class course_edit_form extends moodleform {
         $mform = $this->_form;
 
         // add available groupings
-        if ($courseid = $mform->getElementValue('id') and $mform->elementExists('defaultgroupingid')) {
+        $courseid = $mform->getElementValue('id');
+        if ($courseid and $mform->elementExists('defaultgroupingid')) {
             $options = array();
             if ($groupings = $DB->get_records('groupings', array('courseid'=>$courseid))) {
                 foreach ($groupings as $grouping) {
@@ -357,7 +358,14 @@ class course_edit_form extends moodleform {
         // add course format options
         $formatvalue = $mform->getElementValue('format');
         if (is_array($formatvalue) && !empty($formatvalue)) {
-            $courseformat = course_get_format((object)array('format' => $formatvalue[0]));
+
+            $params = array('format' => $formatvalue[0]);
+            // Load the course as well if it is available, course formats may need it to work out
+            // they preferred course end date.
+            if ($courseid) {
+                $params['id'] = $courseid;
+            }
+            $courseformat = course_get_format((object)$params);
 
             $elements = $courseformat->create_edit_form_elements($mform);
             for ($i = 0; $i < count($elements); $i++) {
@@ -395,9 +403,8 @@ class course_edit_form extends moodleform {
             }
         }
 
-        // Add field validation check for end date must be after start date.
-        if (($data['enddate'] > 0) && ($data['enddate'] < $data['startdate'])) {
-            $errors['enddate'] = get_string('enddatebeforstartdate', 'error');
+        if ($errorcode = course_validate_dates($data)) {
+            $errors['enddate'] = get_string($errorcode, 'error');
         }
 
         $errors = array_merge($errors, enrol_course_edit_validation($data, $this->context));

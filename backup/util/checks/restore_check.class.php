@@ -174,9 +174,9 @@ abstract class restore_check {
             // settings so that they cannot change it.
             $hasrolldatescap = has_capability('moodle/restore:rolldates', $coursectx, $userid);
             if (!$hasrolldatescap) {
-                $datesetting = $restore_controller->get_plan()->get_setting('course_startdate');
-                if ($datesetting) {
-                    $datesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
+                $startdatesetting = $restore_controller->get_plan()->get_setting('course_startdate');
+                if ($startdatesetting) {
+                    $startdatesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
                 }
             }
 
@@ -202,10 +202,6 @@ abstract class restore_check {
             if (!$hasupdatecap) {
                 $overwritesetting = $restore_controller->get_plan()->get_setting('overwrite_conf');
                 $overwritesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
-            }
-            $datesetting = $restore_controller->get_plan()->get_setting('course_enddate');
-            if ($datesetting) {
-                $datesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
             }
         }
 

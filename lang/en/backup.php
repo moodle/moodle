@@ -266,7 +266,6 @@ $string['setting_overwriteconf'] = 'Overwrite course configuration';
 $string['setting_course_fullname'] = 'Course name';
 $string['setting_course_shortname'] = 'Course short name';
 $string['setting_course_startdate'] = 'Course start date';
-$string['setting_course_enddate'] = 'Course end date';
 $string['setting_keep_roles_and_enrolments'] = 'Keep current roles and enrolments';
 $string['setting_keep_groups_and_groupings'] = 'Keep current groups and groupings';
 $string['showtypes'] = 'Show type options';

@@ -641,6 +641,22 @@ class tool_uploadcourse_course {
             $this->do = self::DO_CREATE;
         }
 
+        // Validate course start and end dates.
+        if ($exists) {
+            // We also check existing start and end dates if we are updating an existing course.
+            $existingdata = $DB->get_record('course', array('shortname' => $this->shortname));
+            if (empty($coursedata['startdate'])) {
+                $coursedata['startdate'] = $existingdata->startdate;
+            }
+            if (empty($coursedata['enddate'])) {
+                $coursedata['enddate'] = $existingdata->enddate;
+            }
+        }
+        if ($errorcode = course_validate_dates($coursedata)) {
+            $this->error($errorcode, new lang_string($errorcode, 'error'));
+            return false;
+        }
+
         // Add role renaming.
         $errors = array();
         $rolenames = tool_uploadcourse_helper::get_role_names($this->rawdata, $errors);
@@ -905,6 +921,7 @@ class tool_uploadcourse_course {
         if (empty($course->enddate)) {
             $course->enddate = $DB->get_field_select('course', 'enddate', 'id = :id', array('id' => $course->id));
         }
+        $resetdata->reset_end_date_old = $course->enddate;
 
         // Add roles.
         $roles = tool_uploadcourse_helper::get_role_ids();
