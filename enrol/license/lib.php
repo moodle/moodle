@@ -232,6 +232,14 @@ class enrol_license_plugin extends enrol_plugin {
 
                 $this->enrol_user($instance, $USER->id, $instance->roleid, $timestart, $timeend);
 
+                // Check if it is a shared course.
+                if ($courseinfo = $DB->get_record('iomad_courses', array('courseid' => $instance->courseid))) {
+                    if (!empty($courseinfo->shared)) {
+                        // We have a shared course.
+                        company::add_user_to_shared_course($instance->courseid, $USER->id, $license->companyid);
+                    }
+                }
+
                 // Update the userlicense record to mark it as in use.
                 $userlicense = (array) $DB->get_record('companylicense_users', array('id' => $license->id));
                 $userlicense['isusing'] = 1;
