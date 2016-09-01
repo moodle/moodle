@@ -7,4 +7,9 @@ information provided here is intended especially for developers.
  * External functions that were returning file information now return the following file fields:
    filename, filepath, mimetype, filesize, timemodified and fileurl.
    Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
-
+ * The modchooser now uses a renderable and a template, thus its associated renderer
+   methods have been deprecated. Note that the call to core_course_render::course_modchooser,
+   is still required. Deprecated methods:
+   - core_course_renderer::course_modchooser_module_types
+   - core_course_renderer::course_modchooser_module
+   - core_course_renderer::course_modchooser_title

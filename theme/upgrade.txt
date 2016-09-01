@@ -24,6 +24,11 @@ information provided here is intended especially for theme designer.
   of the CSS tree ($THEME->csstreepostprocess). This gives a lot more flexibility than a
   simplel find and replace. Refer to 'noname' for an example, and to PHP-CSS-Parser
   (https://github.com/sabberworm/PHP-CSS-Parser) for the API.
+* You may no longer override the following core_course_renderer methods.
+  See course/upgrade.txt for more information:
+  - course_modchooser_module_types
+  - course_modchooser_module
+  - course_modchooser_title
 
 === 3.1 ===
 

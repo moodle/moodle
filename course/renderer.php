@@ -167,6 +167,16 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render a modchooser.
+     *
+     * @param renderable $modchooser The chooser.
+     * @return string
+     */
+    public function render_modchooser(renderable $modchooser) {
+        return $this->render_from_template('core_course/modchooser', $modchooser->export_for_template($this));
+    }
+
+    /**
      * Build the HTML for the module chooser javascript popup
      *
      * @param array $modules A set of modules as returned form @see
@@ -178,69 +188,8 @@ class core_course_renderer extends plugin_renderer_base {
         if (!$this->page->requires->should_create_one_time_item_now('core_course_modchooser')) {
             return '';
         }
-
-        // Add the module chooser
-        $this->page->requires->yui_module('moodle-course-modchooser',
-        'M.course.init_chooser',
-        array(array('courseid' => $course->id, 'closeButtonTitle' => get_string('close', 'editor')))
-        );
-        $this->page->requires->strings_for_js(array(
-                'addresourceoractivity'
-        ), 'moodle');
-
-        // Add the header
-        $header = html_writer::tag('div', get_string('addresourceoractivity', 'moodle'),
-                array('class' => 'hd choosertitle'));
-
-        $formcontent = html_writer::start_tag('form', array('action' => new moodle_url('/course/jumpto.php'),
-                'id' => 'chooserform', 'method' => 'post'));
-        $formcontent .= html_writer::start_tag('div', array('id' => 'typeformdiv'));
-        $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'id' => 'course',
-                'name' => 'course', 'value' => $course->id));
-        $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'name' => 'sesskey',
-                'value' => sesskey()));
-        $formcontent .= html_writer::end_tag('div');
-
-        // Put everything into one tag 'options'
-        $formcontent .= html_writer::start_tag('div', array('class' => 'options'));
-        $formcontent .= html_writer::tag('div', get_string('selectmoduletoviewhelp', 'moodle'),
-                array('class' => 'instruction'));
-        // Put all options into one tag 'alloptions' to allow us to handle scrolling
-        $formcontent .= html_writer::start_tag('div', array('class' => 'alloptions'));
-
-         // Activities
-        $activities = array_filter($modules, create_function('$mod', 'return ($mod->archetype !== MOD_ARCHETYPE_RESOURCE && $mod->archetype !== MOD_ARCHETYPE_SYSTEM);'));
-        if (count($activities)) {
-            $formcontent .= $this->course_modchooser_title('activities');
-            $formcontent .= $this->course_modchooser_module_types($activities);
-        }
-
-        // Resources
-        $resources = array_filter($modules, create_function('$mod', 'return ($mod->archetype === MOD_ARCHETYPE_RESOURCE);'));
-        if (count($resources)) {
-            $formcontent .= $this->course_modchooser_title('resources');
-            $formcontent .= $this->course_modchooser_module_types($resources);
-        }
-
-        $formcontent .= html_writer::end_tag('div'); // modoptions
-        $formcontent .= html_writer::end_tag('div'); // types
-
-        $formcontent .= html_writer::start_tag('div', array('class' => 'submitbuttons'));
-        $formcontent .= html_writer::tag('input', '',
-                array('type' => 'submit', 'name' => 'submitbutton', 'class' => 'submitbutton', 'value' => get_string('add')));
-        $formcontent .= html_writer::tag('input', '',
-                array('type' => 'submit', 'name' => 'addcancel', 'class' => 'addcancel', 'value' => get_string('cancel')));
-        $formcontent .= html_writer::end_tag('div');
-        $formcontent .= html_writer::end_tag('form');
-
-        // Wrap the whole form in a div
-        $formcontent = html_writer::tag('div', $formcontent, array('id' => 'chooseform'));
-
-        // Put all of the content together
-        $content = $formcontent;
-
-        $content = html_writer::tag('div', $content, array('class' => 'choosercontainer'));
-        return $header . html_writer::tag('div', $content, array('class' => 'chooserdialoguebody'));
+        $modchooser = new \core_course\output\modchooser($course, $modules);
+        return $this->render($modchooser);
     }
 
     /**
@@ -251,11 +200,9 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string The composed HTML for the module
      */
     protected function course_modchooser_module_types($modules) {
-        $return = '';
-        foreach ($modules as $module) {
-            $return .= $this->course_modchooser_module($module);
-        }
-        return $return;
+        debugging('Method core_course_renderer::course_modchooser_module_types() is deprecated, ' .
+            'see core_course_renderer::render_modchooser().', DEBUG_DEVELOPER);
+        return '';
     }
 
     /**
@@ -270,51 +217,15 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string The composed HTML for the module
      */
     protected function course_modchooser_module($module, $classes = array('option')) {
-        $output = '';
-        $output .= html_writer::start_tag('div', array('class' => implode(' ', $classes)));
-        $output .= html_writer::start_tag('label', array('for' => 'module_' . $module->name));
-        if (!isset($module->types)) {
-            $output .= html_writer::tag('input', '', array('type' => 'radio',
-                    'name' => 'jumplink', 'id' => 'module_' . $module->name, 'value' => $module->link));
-        }
-
-        $output .= html_writer::start_tag('span', array('class' => 'modicon'));
-        if (isset($module->icon)) {
-            // Add an icon if we have one
-            $output .= $module->icon;
-        }
-        $output .= html_writer::end_tag('span');
-
-        $output .= html_writer::tag('span', $module->title, array('class' => 'typename'));
-        if (!isset($module->help)) {
-            // Add help if found
-            $module->help = get_string('nohelpforactivityorresource', 'moodle');
-        }
-
-        // Format the help text using markdown with the following options
-        $options = new stdClass();
-        $options->trusted = false;
-        $options->noclean = false;
-        $options->smiley = false;
-        $options->filter = false;
-        $options->para = true;
-        $options->newlines = false;
-        $options->overflowdiv = false;
-        $module->help = format_text($module->help, FORMAT_MARKDOWN, $options);
-        $output .= html_writer::tag('span', $module->help, array('class' => 'typesummary'));
-        $output .= html_writer::end_tag('label');
-        $output .= html_writer::end_tag('div');
-
-        return $output;
+        debugging('Method core_course_renderer::course_modchooser_module() is deprecated, ' .
+            'see core_course_renderer::render_modchooser().', DEBUG_DEVELOPER);
+        return '';
     }
 
     protected function course_modchooser_title($title, $identifier = null) {
-        $module = new stdClass();
-        $module->name = $title;
-        $module->types = array();
-        $module->title = get_string($title, $identifier);
-        $module->help = '';
-        return $this->course_modchooser_module($module, array('moduletypetitle'));
+        debugging('Method core_course_renderer::course_modchooser_title() is deprecated, ' .
+            'see core_course_renderer::render_modchooser().', DEBUG_DEVELOPER);
+        return '';
     }
 
     /**
@@ -2151,6 +2062,7 @@ class core_course_renderer extends plugin_renderer_base {
                 set_attributes(array('class' => 'frontpage-category-names'));
         return $this->coursecat_tree($chelper, coursecat::get(0));
     }
+
 }
 
 /**
