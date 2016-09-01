@@ -1357,6 +1357,17 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     width: 24px;
     height: 24px;
 }
+
+@include media-breakpoint-down(xs) {
+    .jsenabled .choosercontainer #chooseform .alloptions {
+        max-width: 100%;
+    }
+    .jsenabled .choosercontainer #chooseform .instruction,
+    .jsenabled .choosercontainer #chooseform .typesummary {
+        position:static;
+    }
+}
+
 /* Form element: listing */
 .formlistingradio {
     padding-bottom: 25px;
