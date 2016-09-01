@@ -1,5 +1,14 @@
 This files describes API changes for code that uses the question API.
 
+=== 3.2 ===
+
+1) The following renderers have been deprecated in favour of the renderable
+   core_question\output\qbank_chooser and associated render_* method.
+    * qbank_chooser
+    * qbank_chooser_types
+    * qbank_chooser_qtype
+    * qbank_chooser_title
+
 === 3.1 ===
 
 1) The argument $requirecourseid was removed from question_edit_setup() and

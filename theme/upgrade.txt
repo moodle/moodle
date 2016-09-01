@@ -35,6 +35,12 @@ Removed themes:
   - course_modchooser_module_types
   - course_modchooser_module
   - course_modchooser_title
+* The question chooser now uses a renderable and a template, the following methods
+  have been deprecated in favour of core_question_bank_renderer::render_qbank_chooser().
+  - qbank_chooser
+  - qbank_chooser_types
+  - qbank_chooser_qtype
+  - qbank_chooser_title
 
 === 3.1 ===
 

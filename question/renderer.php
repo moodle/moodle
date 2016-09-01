@@ -68,9 +68,9 @@ class core_question_bank_renderer extends plugin_renderer_base {
      * @return string The composed HTML for the questionbank chooser
      */
     public function qbank_chooser($real, $fake, $course, $hiddenparams) {
-        $chooser = new \core_question\output\qbank_chooser($real, $fake, $course, $hiddenparams,
-            context_course::instance($course->id));
-        return $this->render($chooser);
+        debugging('Method core_question_bank_renderer::qbank_chooser() is deprecated, ' .
+            'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
+        return '';
     }
 
     /**
