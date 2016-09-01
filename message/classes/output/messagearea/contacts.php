@@ -92,14 +92,26 @@ class contacts implements templatable, renderable {
         $data->userid = $this->userid;
         $data->otheruserid = $this->otheruserid;
         $data->contacts = array();
+        $userids = array();
         foreach ($this->contacts as $contact) {
             $contactdata = $contact->export_for_template($output);
+            $userids[$contactdata->userid] = $contactdata->userid;
             // Check if the contact was selected.
             if ($this->otheruserid == $contactdata->userid) {
                 $contactdata->selected = true;
             }
             $data->contacts[] = $contactdata;
         }
+        // Check if the other user is not part of the contacts. We may be sending a message to someone
+        // we have not had a conversation with, so we want to add a new item to the contacts array.
+        if ($this->otheruserid && !isset($userids[$this->otheruserid])) {
+            $user = \core_user::get_user($this->otheruserid);
+            // Set an empty message so that we know we are messaging the user, and not viewing their profile.
+            $user->smallmessage = '';
+            $contact = \core_message\helper::create_contact($user);
+            $data->contacts[] = $contact->export_for_template($output);
+        }
+
         $data->isconversation = $this->isconversation;
         return $data;
     }

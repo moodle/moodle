@@ -1,5 +1,5 @@
 <div class="row-fluid contact {{#selected}}selected{{/selected}} {{#lastmessage}}{{^isread}}unread{{/isread}}{{/lastmessage}}"
-     data-action="{{#lastmessage}}view-contact-msg{{/lastmessage}}{{^lastmessage}}view-contact-profile{{/lastmessage}}"
+     data-action="{{#ismessaging}}view-contact-msg{{/ismessaging}}{{^ismessaging}}view-contact-profile{{/ismessaging}}"
      data-userid="{{userid}}" data-messageid="{{#messageid}}{{.}}{{isread}}{{/messageid}}" data-region="contact" tabindex="0">
     <div class="span3 picture">
         <img src="{{profileimageurl}}" alt="" />

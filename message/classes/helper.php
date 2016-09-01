@@ -140,9 +140,11 @@ class helper {
         $userpicture->size = 0; // Size f2.
         $data->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
         // Store the message if we have it.
+        $data->ismessaging = false;
         $data->lastmessage = null;
         $data->messageid = null;
         if (isset($contact->smallmessage)) {
+            $data->ismessaging = true;
             $data->lastmessage = $contact->smallmessage;
             if (isset($contact->messageid)) {
                 $data->messageid = $contact->messageid;
