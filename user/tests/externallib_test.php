@@ -919,4 +919,110 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         core_user_external::update_picture(0);
     }
+
+    /**
+     * Test set_user_preferences
+     */
+    public function test_set_user_preferences_save() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Save users preferences.
+        $this->setAdminUser();
+        $preferences = array(
+            array(
+                'name' => 'some_random_pref',
+                'value' => 'abc',
+                'userid' => $user1->id,
+            ),
+            array(
+                'name' => 'some_random_pref',
+                'value' => 'def',
+                'userid' => $user2->id,
+            )
+        );
+
+        $result = core_user_external::set_user_preferences($preferences);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['saved']);
+
+        // Get preference from DB to avoid cache.
+        $this->assertEquals('abc', $DB->get_field('user_preferences', 'value',
+            array('userid' => $user1->id, 'name' => 'some_random_pref')));
+        $this->assertEquals('def', $DB->get_field('user_preferences', 'value',
+            array('userid' => $user2->id, 'name' => 'some_random_pref')));
+    }
+
+    /**
+     * Test set_user_preferences for an invalid user
+     */
+    public function test_set_user_preferences_invalid_user() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $preferences = array(
+            array(
+                'name' => 'calendar_maxevents',
+                'value' => 4,
+                'userid' => -2
+            )
+        );
+
+        $result = core_user_external::set_user_preferences($preferences);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertCount(0, $result['saved']);
+        $this->assertEquals('invaliduser', $result['warnings'][0]['warningcode']);
+        $this->assertEquals(-2, $result['warnings'][0]['itemid']);
+    }
+
+    /**
+     * Test set_user_preferences using an invalid preference
+     */
+    public function test_set_user_preferences_invalid_preference() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        // Create a very long value.
+        $this->setAdminUser();
+        $preferences = array(
+            array(
+                'name' => 'calendar_maxevents',
+                'value' => str_repeat('a', 1334),
+                'userid' => $USER->id
+            )
+        );
+
+        $result = core_user_external::set_user_preferences($preferences);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertCount(0, $result['saved']);
+        $this->assertEquals('errorsavingpreference', $result['warnings'][0]['warningcode']);
+    }
+
+    /**
+     * Test set_user_preferences for other user not being admin
+     */
+    public function test_set_user_preferences_other_user_not_being_admin() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+        $preferences = array(
+            array(
+                'name' => 'calendar_maxevents',
+                'value' => 4,
+                'userid' => $user2->id
+            )
+        );
+
+        $this->expectException('required_capability_exception');
+        $result = core_user_external::set_user_preferences($preferences);
+    }
 }

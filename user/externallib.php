@@ -1554,4 +1554,110 @@ class core_user_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function set_user_preferences_parameters() {
+        return new external_function_parameters(
+            array(
+                'preferences' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'The name of the preference'),
+                            'value' => new external_value(PARAM_RAW, 'The value of the preference'),
+                            'userid' => new external_value(PARAM_INT, 'Id of the user to set the preference'),
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Set user preferences.
+     *
+     * @param array $preferences list of preferences including name, value and userid
+     * @return array of warnings and preferences saved
+     * @since Moodle 3.2
+     * @throws moodle_exception
+     */
+    public static function set_user_preferences($preferences) {
+        global $USER;
+
+        $params = self::validate_parameters(self::set_user_preferences_parameters(), array('preferences' => $preferences));
+        $warnings = array();
+        $saved = array();
+
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('moodle/site:config', $context);
+
+        $userscache = array();
+        foreach ($params['preferences'] as $pref) {
+            // Check to which user set the preference.
+            if (!empty($userscache[$pref['userid']])) {
+                $user = $userscache[$pref['userid']];
+            } else {
+                try {
+                    $user = core_user::get_user($pref['userid'], '*', MUST_EXIST);
+                    core_user::require_active_user($user);
+                    $userscache[$pref['userid']] = $user;
+                } catch (Exception $e) {
+                    $warnings[] = array(
+                        'item' => 'user',
+                        'itemid' => $pref['userid'],
+                        'warningcode' => 'invaliduser',
+                        'message' => $e->getMessage()
+                    );
+                    continue;
+                }
+            }
+
+            try {
+                set_user_preference($pref['name'], $pref['value'], $user);
+                $saved[] = array(
+                    'name' => $pref['name'],
+                    'userid' => $user->id,
+                );
+            } catch (Exception $e) {
+                $warnings[] = array(
+                    'item' => 'user',
+                    'itemid' => $user->id,
+                    'warningcode' => 'errorsavingpreference',
+                    'message' => $e->getMessage()
+                );
+            }
+        }
+
+        $result = array();
+        $result['saved'] = $saved;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.2
+     */
+    public static function set_user_preferences_returns() {
+        return new external_single_structure(
+            array(
+                'saved' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'The name of the preference'),
+                            'userid' => new external_value(PARAM_INT, 'The user the preference was set for'),
+                        )
+                    ), 'Preferences saved'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
