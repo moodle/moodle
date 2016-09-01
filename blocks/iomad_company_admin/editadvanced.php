@@ -103,7 +103,7 @@ profile_load_data($user);
 // User interests.
 if (!empty($CFG->usetags)) {
     require_once($CFG->dirroot.'/tag/lib.php');
-    $user->interests = tag_get_tags_array('user', $id);
+    $user->interests =  core_tag_tag::get_item_tags_array('', 'user', $id);
 }
 
 if ($user->id !== -1) {
