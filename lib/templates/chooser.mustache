@@ -24,7 +24,7 @@
 <div class="chooserdialoguebody">
     <div class="choosercontainer">
         <div id="chooseform">
-            <form action="{{actionurl}}" id="chooserform" method="post">
+            <form action="{{actionurl}}" id="chooserform" method="{{method}}">
                 <div id="typeformdiv">
                     {{#params}}
                         <input type="hidden" id="{{id}}" name="{{name}}" value="{{value}}">
