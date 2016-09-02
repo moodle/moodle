@@ -279,13 +279,12 @@ div#dock {
 // Usermenu
 .usermenu {
     .login {
-      //  color: $navbarText;
-        line-height: 40px;
+        line-height: 2.25rem;
         a {
-            color: $dropdown-link-color;
+            color: $link-color;
             &:hover,
             &:focus {
-                color: $dropdown-link-hover-color;
+                color: $link-hover-color;
                 text-decoration: underline;
             }
         }
