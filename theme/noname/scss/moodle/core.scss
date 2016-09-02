@@ -1659,6 +1659,15 @@ img#persona_signin {
     }
 }
 
+/** Header. */
+header {
+    .collapse.in,
+    .collapsing {
+        display: block;
+        clear: both;
+    }
+}
+
 /** Header-bar styles **/
 .page-context-header {
     // We need to be explicit about the height of the header.
