@@ -401,7 +401,7 @@ Thank you for your request.
      * @param boolean $sendemail
      * @param text $temppassword
      */
-    public static function store_temporary_password($user, $sendemail, $temppassword, $reset) {
+    public static function store_temporary_password($user, $sendemail, $temppassword, $reset = false) {
         global $CFG, $USER;
         set_user_preference('iomad_temporary', self::rc4encrypt($temppassword), $user);
         unset_user_preference('create_password', $user);

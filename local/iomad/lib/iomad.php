@@ -342,43 +342,49 @@ class iomad {
      * @param array $objects list of competency objects
      * @return array filtered list of objects.
      */
-    public static function iomad_filter_competency_objects($table, $objects ) {
-        global $DB, $USER;
+    public static function get_company_frameworkids($companyid) {
+        global $DB;
 
-        // Check if its the client admin.
-        if (self::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
-            return $objects;
+        $companyframeworks = $DB->get_records('company_comp_frameworks', array('companyid' => $companyid));
+        $closedsharedframeworks = $DB->get_records('company_shared_frameworks', array('companyid' => $companyid));
+        $opensharedframeworks = $DB->get_records('iomad_frameworks', array('shared' => 1));
+        $return = array();
+        foreach($companyframeworks as $framework) {
+            $return[$framework->frameworkid] = $framework->frameworkid;
         }
-        $context = context_system::instance();
-        $mycompanyid = self::get_my_companyid($context);
-        
-        if ($table == 'competency_template') {
-            $sourcetable = 'company_comp_templates';
-            $target = 'templateid';
-            $iomadtable = 'iomad_templates';
-        } else {
-            $sourcetable = 'company_comp_frameworks';
-            $target = 'frameworkid';
-            $iomadtable = 'iomad_frameworks';
+        foreach($closedsharedframeworks as $framework) {
+            $return[$framework->frameworkid] = $framework->frameworkid;
         }
-        $companyobjexts = array();
-        foreach ($objects as $id => $object) {
-            // Try to find category in company list.
-            if ($DB->get_record($sourcetable, array($target => $id,
-                                                    'companyid' => $mycompanyid) ) ) {
-                // Include as tied to company.
-                $companyobjetcs[$id] = $object;
-            } else if ($DB->get_record($iomadtable, array($target => $id,
-                                                          'shared' => 1) ) ) {
-                // Include as open shared.
-                $companyobjects[$id] = $object;
-            } else if (!$DB->get_records($sourcetable, array($target => $id))) {
-                // Include as not a companycourse.
-                $companyobjects[$id] = $object;
-            }
+        foreach($opensharedframeworks as $framework) {
+            $return[$framework->frameworkid] = $framework->frameworkid;
         }
+        return $return;
+    }
 
-        return $companyobjects;
+    /**
+     * IOMAD:
+     * Filter objects to only show 'company' objects for the
+     * current user. All other pass through as normal
+     * @param array $objects list of competency objects
+     * @return array filtered list of objects.
+     */
+    public static function get_company_templateids($companyid) {
+        global $DB;
+
+        $companytemplates = $DB->get_records('company_comp_templates', array('companyid' => $companyid));
+        $closedsharedtemplates = $DB->get_records('company_shared_templates', array('companyid' => $companyid));
+        $opensharedtemplates = $DB->get_records('iomad_templates', array('shared' => 1));
+        $return = array();
+        foreach($companytemplates as $template) {
+            $return[$template->templateid] = $template->templateid;
+        }
+        foreach($closedsharedtemplates as $template) {
+            $return[$template->templateid] = $template->templateid;
+        }
+        foreach($opensharedtemplates as $template) {
+            $return[$template->templateid] = $template->templateid;
+        }
+        return $return;
     }
 
     /** IOMAD:

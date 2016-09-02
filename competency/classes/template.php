@@ -28,6 +28,8 @@ use context;
 use lang_string;
 use stdClass;
 
+require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
+
 /**
  * Class for loading/storing learning plan templates from the DB.
  *
@@ -114,7 +116,7 @@ class template extends persistent {
      * @return bool
      */
     public static function can_manage_context($context) {
-        return has_capability('moodle/competency:templatemanage', $context);
+        return \iomad::has_capability('moodle/competency:templatemanage', $context);
     }
 
     /**
@@ -133,7 +135,7 @@ class template extends persistent {
      * @return bool
      */
     public static function can_read_context($context) {
-        return has_capability('moodle/competency:templateview', $context) || self::can_manage_context($context);
+        return \iomad::has_capability('moodle/competency:templateview', $context) || self::can_manage_context($context);
     }
 
     /**

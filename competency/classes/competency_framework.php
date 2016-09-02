@@ -30,6 +30,7 @@ use lang_string;
 use stdClass;
 
 require_once($CFG->libdir . '/grade/grade_scale.php');
+require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
 
 /**
  * Class for loading/storing competency frameworks from the DB.
@@ -482,7 +483,7 @@ class competency_framework extends persistent {
      * @return bool
      */
     public static function can_manage_context($context) {
-        return has_capability('moodle/competency:competencymanage', $context);
+        return \iomad::has_capability('moodle/competency:competencymanage', $context);
     }
 
     /**
@@ -501,7 +502,7 @@ class competency_framework extends persistent {
      * @return bool
      */
     public static function can_read_context($context) {
-        return has_capability('moodle/competency:competencyview', $context) || self::can_manage_context($context);
+        return \iomad::has_capability('moodle/competency:competencyview', $context) || self::can_manage_context($context);
     }
 
 }
