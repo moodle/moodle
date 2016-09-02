@@ -421,7 +421,8 @@ Thank you for your request.
                 if ($reset) {
                     EmailTemplate::send('user_reset', array('user' => $user,
                                                             'company' => $company,
-                                                            'sender' => $USER));
+                                                            'sender' => $USER,
+                                                            'due' => $due));
                 } else {
                     EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER));
                 }
@@ -429,12 +430,13 @@ Thank you for your request.
                 if ($reset) {
                     EmailTemplate::send('user_reset', array('user' => $user, 'company' => $company));
                 } else {
-                    EmailTemplate::send('user_create', array('user' => $user));
+                    EmailTemplate::send('user_create', array('user' => $user, 'due' => $due));
                 }
             } else {
                 if ($reset) {
                     EmailTemplate::send('user_reset',
                                          array('user' => $user,
+                                         'due' => $due,
                                          'company' => $company,
                                          'headers' => serialize(array("Cc:".$USER->email))));
                 } else {
@@ -442,16 +444,6 @@ Thank you for your request.
                                          array('user' => $user,
                                          'headers' => serialize(array("Cc:".$USER->email))));
                 }
-=======
-                EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER, 'due' => $due));
-            } else if (is_siteadmin($USER->id)) {
-                EmailTemplate::send('user_create', array('user' => $user, 'due' => $due));
-            } else {
-                EmailTemplate::send('user_create',
-                                     array('user' => $user,
-                                           'due' => $due,
-                                     'headers' => serialize(array("Cc:".$USER->email))));
->>>>>>> 1bfc672... IOMAD: user creation not picking up due date when a password is given.  #349
             }
         } else {
             unset_user_preference('iomad_send_password', $user);
