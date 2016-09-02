@@ -243,8 +243,7 @@ class report_completion {
                      cc.timestarted,
                      cc.timecompleted,
                      cc.finalscore ";
-        $selectsql = "SELECT DISTINCT cc.id,
-                      u.id as uid,
+        $selectsql = "SELECT DISTINCT u.id as uid,
                       u.firstname AS firstname,
                       u.lastname AS lastname,
                       u.email AS email,
