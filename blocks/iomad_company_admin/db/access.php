@@ -295,7 +295,7 @@ $capabilities = array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
     ),
-    'block/iomad_company_admin:manage_templates' => array(
+    'block/iomad_company_admin:managetemplates' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
     ),
