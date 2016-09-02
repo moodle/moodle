@@ -584,67 +584,6 @@
     width: auto;
 }
 
-/** Messenger send message dialog */
-.core_message-messenger-sendmessage-hidden {
-    display: none;
-}
-.core_message-messenger-sendmessage {
-    .message-actions {
-        position: relative;
-    }
-    .message-area {
-        height: 240px;
-        max-height: 100%;
-        position: relative;
-        margin-bottom: 10px;
-    }
-    .message-input {
-        width: 100%;
-        height: 100%;
-        .box-sizing(border-box);
-    }
-    .message-send {
-        margin: 0;
-        float: right;
-    }
-    .message-notice-area {
-        display: table;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        height: 100%;
-    }
-    .message-notice {
-        display: table-cell;
-        vertical-align: middle;
-        text-align: center;
-        > div {
-            background: #eee;
-            padding: 5px;
-            font-size: 12px;
-        }
-    }
-    .message-footer {
-        margin-top: 3px;
-        line-height: 20px;
-    }
-    .message-history {
-        position: absolute;
-        bottom: 0;
-    }
-}
-
-.dir-rtl {
-    .core_message-messenger-sendmessage {
-        .message-send {
-            float: left;
-        }
-    }
-}
-
 .preferences-container {
     .container-fluid {
         padding: 0;

@@ -1973,41 +1973,6 @@ function message_count_unread_popup_notifications($useridto = 0) {
 }
 
 /**
- * Requires the JS libraries to send a message using a dialog.
- *
- * @return void
- */
-function message_messenger_requirejs() {
-    global $PAGE;
-
-    static $done = false;
-    if ($done) {
-        return;
-    }
-
-    $PAGE->requires->yui_module(
-        array('moodle-core_message-messenger'),
-        'Y.M.core_message.messenger.init',
-        array(array())
-    );
-    $PAGE->requires->strings_for_js(array(
-        'errorwhilesendingmessage',
-        'messagesent',
-        'messagetosend',
-        'sendingmessage',
-        'sendmessage',
-        'viewconversation',
-    ), 'core_message');
-    $PAGE->requires->strings_for_js(array(
-        'userisblockingyou',
-        'userisblockingyounoncontact'
-    ), 'message');
-    $PAGE->requires->string_for_js('error', 'core');
-
-    $done = true;
-}
-
-/**
  * Requires the JS libraries for the toggle contact button.
  *
  * @return void
@@ -2022,29 +1987,6 @@ function message_togglecontact_requirejs() {
 
     $PAGE->requires->js_call_amd('core_message/toggle_contact_button', 'enhance', array('#toggle-contact-button'));
     $done = true;
-}
-
-/**
- * Returns the attributes to place on a link to open the 'Send message' dialog.
- *
- * @param object $user User object.
- * @return void
- */
-function message_messenger_sendmessage_link_params($user) {
-    $params = array(
-        'data-trigger' => 'core_message-messenger::sendmessage',
-        'data-fullname' => fullname($user),
-        'data-userid' => $user->id,
-        'role' => 'button'
-    );
-
-    if (message_is_user_non_contact_blocked($user)) {
-        $params['data-blocked-string'] = 'userisblockingyounoncontact';
-    } else if (message_is_user_blocked($user)) {
-        $params['data-blocked-string'] = 'userisblockingyou';
-    }
-
-    return $params;
 }
 
 /**

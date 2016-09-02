@@ -4163,7 +4163,7 @@ EOD;
                         'title' => get_string('message', 'message'),
                         'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
                         'image' => 'message',
-                        'linkattributes' => message_messenger_sendmessage_link_params($user),
+                        'linkattributes' => array('role' => 'button'),
                         'page' => $this->page
                     ),
                     'togglecontact' => array(
@@ -4237,9 +4237,7 @@ EOD;
             foreach ($contextheader->additionalbuttons as $button) {
                 if (!isset($button->page)) {
                     // Include js for messaging.
-                    if ($button['buttontype'] === 'message') {
-                        message_messenger_requirejs();
-                    } else if ($button['buttontype'] === 'togglecontact') {
+                    if ($button['buttontype'] === 'togglecontact') {
                         message_togglecontact_requirejs();
                     }
                     $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
