@@ -88,3 +88,27 @@ border-radius: 10px;
     position: relative;
     top: -30px;
 }
+
+.fitem .singleselect label {
+    font-weight: normal;
+    float: left;
+    width: 25%;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: right;
+}
+
+.fitem .singleselect select {
+    position: relative;
+    float: left;
+    width: 75%;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    left: 0.6%;
+}
+
+.iomadclear {
+    clear:both;
+}

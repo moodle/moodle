@@ -27,30 +27,12 @@ class company_courses_form extends moodleform {
     protected $subhierarchieslist = null;
     protected $companydepartment = 0;
 
-    public function __construct($actionurl, $context, $companyid, $departmentid) {
+    public function __construct($actionurl, $context, $companyid, $departmentid, $parentlevel) {
         global $USER;
         $this->selectedcompany = $companyid;
         $this->context = $context;
         $this->departmentid = $departmentid;
 
-        $company = new company($this->selectedcompany);
-        $parentlevel = company::get_company_parentnode($company->id);
-        $this->companydepartment = $parentlevel->id;
-        $syscontext = context_system::instance();
-
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
-            $userhierarchylevel = $parentlevel->id;
-        } else {
-            $userlevel = company::get_userlevel($USER);
-            $userhierarchylevel = $userlevel->id;
-        }
-
-        $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-        if ($this->departmentid == 0 ) {
-            $departmentid = $userhierarchylevel;
-        } else {
-            $departmentid = $this->departmentid;
-        }
         $options = array('context' => $this->context,
                          'companyid' => $this->selectedcompany,
                          'departmentid' => $departmentid,
@@ -80,62 +62,50 @@ class company_courses_form extends moodleform {
 
         $context = context_system::instance();
         $company = new company($this->selectedcompany);
-        $mform->addElement('header', 'header', get_string('company_courses_for',
-                                                          'block_iomad_company_admin',
-                                                          $company->get_name() ));
-        $mform->addElement('select', 'deptid',
-                            get_string('department', 'block_iomad_company_admin'),
-                            $this->subhierarchieslist);
-        $mform->addElement('submit', 'updateselection',
-                       get_string('updatedepartmentusersselection', 'block_iomad_company_admin'));
+        $mform->addElement('hidden', 'deptid', $this->departmentid);
+        $mform->setType('deptid', PARAM_INT);
+        
+        $mform->addElement('html', '<table summary="" class="companycoursetable addremovetable'.
+                                   ' generaltable generalbox boxaligncenter" cellspacing="0">
+            <tr>
+              <td id="existingcell">');
 
-        //if (count($this->potentialcourses->find_courses('')) ||
-            //count($this->currentcourses->find_courses(''))) {
+        $mform->addElement('html', $this->currentcourses->display(true));
 
-            $mform->addElement('html', '<table summary="" class="companycoursetable addremovetable'.
-                                       ' generaltable generalbox boxaligncenter" cellspacing="0">
-                <tr>
-                  <td id="existingcell">');
+        $mform->addElement('html', '
+              </td>
+              <td id="buttonscell">
+                  <div id="addcontrols">
+                      <input name="add" id="add" type="submit" value="&#x25C4;&nbsp;'.
+                       get_string('add') . '" title="Add" /><br />
 
-            $mform->addElement('html', $this->currentcourses->display(true));
+                  </div>
 
-            $mform->addElement('html', '
-                  </td>
-                  <td id="buttonscell">
-                      <div id="addcontrols">
-                          <input name="add" id="add" type="submit" value="&#x25C4;&nbsp;'.
-                           get_string('add') . '" title="Add" /><br />
+                  <div id="removecontrols">
+                      <input name="remove" id="remove" type="submit" value="'.
+                       get_string('remove') . '&nbsp;&#x25BA;" title="Remove" />
+                  </div>
+              </td>
+              <td id="potentialcell">');
 
-                      </div>
+        $mform->addElement('html', $this->potentialcourses->display(true));
 
-                      <div id="removecontrols">
-                          <input name="remove" id="remove" type="submit" value="'.
-                           get_string('remove') . '&nbsp;&#x25BA;" title="Remove" />
-                      </div>
-                  </td>
-                  <td id="potentialcell">');
+        $mform->addElement('html', '
+              </td>
+            </tr>
+          </table>');
 
-            $mform->addElement('html', $this->potentialcourses->display(true));
-
-            $mform->addElement('html', '
-                  </td>
-                </tr>
-              </table>');
-
-            // Can this user move courses with existing enrollments
-            // (which unenrolls those users as a result)?
-            if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol', $context)) {
-                $mform->addElement('html', get_string('unenrollwarning',
-                                                      'block_iomad_company_admin'));
-                $mform->addElement('checkbox', 'oktounenroll',
-                                    get_string('oktounenroll', 'block_iomad_company_admin'));
-            } else {
-                $mform->addElement('html', get_string('unenrollincapable',
-                                                      'block_iomad_company_admin'));
-            }
-        //} else {
-            //$mform->addElement('html', get_string('nocourses', 'block_iomad_company_admin'));
-        //}
+        // Can this user move courses with existing enrollments
+        // (which unenrolls those users as a result)?
+        if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol', $context)) {
+            $mform->addElement('html', get_string('unenrollwarning',
+                                                  'block_iomad_company_admin'));
+            $mform->addElement('checkbox', 'oktounenroll',
+                                get_string('oktounenroll', 'block_iomad_company_admin'));
+        } else {
+            $mform->addElement('html', get_string('unenrollincapable',
+                                                  'block_iomad_company_admin'));
+        }
     }
 
     public function process() {
@@ -303,8 +273,27 @@ $blockpage->setup();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$parentlevel = company::get_company_parentnode($companyid);
+$companydepartment = $parentlevel->id;
+$syscontext = context_system::instance();
+$company = new company($companyid);
 
-$mform = new company_courses_form($PAGE->url, $context, $companyid, $departmentid);
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
+    $userhierarchylevel = $parentlevel->id;
+} else {
+    $userlevel = company::get_userlevel($USER);
+    $userhierarchylevel = $userlevel->id;
+}
+
+$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
+if (empty($departmentid)) {
+    $departmentid = $userhierarchylevel;
+}
+$departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
+$departmentselect->label = get_string('department', 'block_iomad_company_admin') .
+                           $OUTPUT->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
+
+$mform = new company_courses_form($PAGE->url, $context, $companyid, $departmentid, $parentlevel);
 
 if ($mform->is_cancelled()) {
     if ($returnurl) {
@@ -318,11 +307,17 @@ if ($mform->is_cancelled()) {
     $blockpage->display_header();
 
     // Check the department is valid.
-if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-    print_error('invaliddepartment', 'block_iomad_company_admin');
-}   
+    if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
+        print_error('invaliddepartment', 'block_iomad_company_admin');
+    }
 
-$mform->display();
+    echo html_writer::tag('h3', get_string('company_courses_for',
+                                                          'block_iomad_company_admin',
+                                                          $company->get_name()));
+
+    echo $OUTPUT->render($departmentselect);
+
+    $mform->display();
 
     echo $OUTPUT->footer();
 }

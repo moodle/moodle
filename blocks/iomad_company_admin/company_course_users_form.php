@@ -30,31 +30,12 @@ class company_ccu_courses_form extends company_moodleform {
     protected $selectedcourse = 0;
 
 
-    public function __construct($actionurl, $context, $companyid, $departmentid, $selectedcourse) {
+    public function __construct($actionurl, $context, $companyid, $departmentid, $selectedcourse, $parentlevel) {
         global $USER;
         $this->selectedcompany = $companyid;
         $this->context = $context;
         $this->departmentid = $departmentid;
         $this->selectedcourse = $selectedcourse;
-
-        $company = new company($this->selectedcompany);
-        $parentlevel = company::get_company_parentnode($company->id);
-        $this->companydepartment = $parentlevel->id;
-        $context = context_system::instance();
-
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
-            $userhierarchylevel = $parentlevel->id;
-        } else {
-            $userlevel = company::get_userlevel($USER);
-            $userhierarchylevel = $userlevel->id;
-        }
-
-        $this->subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-        if ($this->departmentid == 0 ) {
-            $departmentid = $userhierarchylevel;
-        } else {
-            $departmentid = $this->departmentid;
-        }
 
         $options = array('context' => $this->context,
                          'multiselect' => false,
@@ -81,19 +62,6 @@ class company_ccu_courses_form extends company_moodleform {
         // Adding the elements in the definition_after_data function rather than in the definition
         // function so that when the currentcourses or potentialcourses get changed in the process
         // function, the changes get displayed, rather than the lists as they are before processing.
-
-        $company = new company($this->selectedcompany);
-
-        $mform->addElement('header', 'header',
-                            get_string('company_courses_for',
-                                      'block_iomad_company_admin',
-                                      $company->get_name() ));
-        $mform->addElement('select', 'departmentid',
-                            get_string('department', 'block_iomad_company_admin'),
-                            $this->subhierarchieslist);
-        $mform->addElement('submit', 'updateselection',
-                            get_string('updatedepartmentusersselection',
-                                       'block_iomad_company_admin'));
 
         $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
                                 get_string('selectenrolmentcourse', 'block_iomad_company_admin') .
@@ -303,7 +271,7 @@ class company_course_users_form extends moodleform {
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
-$departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
+$departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $selectedcourse = optional_param('currentcourses', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
@@ -332,11 +300,31 @@ $blockpage->setup();
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 iomad::require_capability('block/iomad_company_admin:company_course_users', $context);
-
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$parentlevel = company::get_company_parentnode($companyid);
+$companydepartment = $parentlevel->id;
+$syscontext = context_system::instance();
+$company = new company($companyid);
 
-$coursesform = new company_ccu_courses_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourse);
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
+    $userhierarchylevel = $parentlevel->id;
+} else {
+    $userlevel = company::get_userlevel($USER);
+    $userhierarchylevel = $userlevel->id;
+}
+
+$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
+if (empty($departmentid)) {
+    $departmentid = $userhierarchylevel;
+}
+
+$departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
+$departmentselect->label = get_string('department', 'block_iomad_company_admin') .
+                           $OUTPUT->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
+
+
+$coursesform = new company_ccu_courses_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourse, $parentlevel);
 $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid);
 $blockpage->display_header();
 
@@ -363,6 +351,11 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
         redirect(new moodle_url('/local/iomad_dashboard/index.php'));
     }
 } else {
+    echo html_writer::tag('h3', get_string('company_courses_for', 'block_iomad_company_admin', $company->get_name()));
+    echo html_writer::start_tag('div', array('class' => 'fitem'));
+    echo $OUTPUT->render($departmentselect);
+    echo html_writer::end_tag('div');
+    echo html_writer::start_tag('div', array('class' => 'iomadclear'));
     if ($companyid > 0) {
         $coursesform->set_data($ccuparamarray);
         echo $coursesform->display();
@@ -379,6 +372,7 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
             echo $usersform->display();
         }
     }
+    echo html_writer::end_tag('div');
 
     echo $OUTPUT->footer();
 }

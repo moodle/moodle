@@ -469,13 +469,25 @@ if ($managersform->is_cancelled()) {
     }   
 
     echo html_writer::tag('h3', get_string('company_managers_for', 'block_iomad_company_admin', $company->get_name()));
+    echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+    echo html_writer::start_tag('div', array('class' => 'fitem'));
     echo $OUTPUT->render($departmentselect);
+    echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
 
+    echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+    echo html_writer::start_tag('div', array('class' => 'fitem'));
     echo $OUTPUT->render($managerselect);
+    echo html_writer::end_tag('div');
+    echo html_writer::end_tag('div');
 
     if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance()) &&
         $roleid == 1) {
+        echo html_writer::start_tag('div', array('class' => 'iomadclear'));
+        echo html_writer::start_tag('div', array('class' => 'fitem'));
         echo $OUTPUT->render($othersselect);
+        echo html_writer::end_tag('div');
+        echo html_writer::end_tag('div');
     }
 
     echo $managersform->display();
