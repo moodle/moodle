@@ -899,6 +899,18 @@ $pre-scrollable-max-height:   340px !default;
     border-radius: 0;
 }
 
+#page.container-fluid {
+    padding: 0 (2 * $spacer);
+}
+
+#block-region-side-pre {
+    padding-left: 0;
+}
+
+#block-region-side-post {
+    padding-right: 0;
+}
+
 #region-main {
     background-color: #fff;
     border: 1px solid rgba(238,238,238,1);
