@@ -55,92 +55,49 @@ class mod_quiz_locallib_testcase extends advanced_testcase {
             format_float(0.247, 3));
     }
 
-    public function test_quiz_attempt_state_in_progress() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::IN_PROGRESS;
-        $attempt->timefinish = 0;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = 0;
-
-        $this->assertEquals(mod_quiz_display_options::DURING, quiz_attempt_state($quiz, $attempt));
+    public function quiz_attempt_state_data_provider() {
+        return [
+            [quiz_attempt::IN_PROGRESS, null, null, mod_quiz_display_options::DURING],
+            [quiz_attempt::FINISHED, -90, null, mod_quiz_display_options::IMMEDIATELY_AFTER],
+            [quiz_attempt::FINISHED, -7200, null, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::FINISHED, -7200, 3600, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::FINISHED, -30, 30, mod_quiz_display_options::IMMEDIATELY_AFTER],
+            [quiz_attempt::FINISHED, -90, -30, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::FINISHED, -7200, -3600, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::FINISHED, -90, -3600, mod_quiz_display_options::AFTER_CLOSE],
+            [quiz_attempt::ABANDONED, -10000000, null, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::ABANDONED, -7200, 3600, mod_quiz_display_options::LATER_WHILE_OPEN],
+            [quiz_attempt::ABANDONED, -7200, -3600, mod_quiz_display_options::AFTER_CLOSE],
+        ];
     }
 
-    public function test_quiz_attempt_state_recently_submitted() {
+    /**
+     * @dataProvider quiz_attempt_state_data_provider
+     *
+     * @param unknown $attemptstate as in the quiz_attempts.state DB column.
+     * @param unknown $relativetimefinish time relative to now when the attempt finished, or null for 0.
+     * @param unknown $relativetimeclose time relative to now when the quiz closes, or null for 0.
+     * @param unknown $expectedstate expected result. One of the mod_quiz_display_options constants/
+     */
+    public function test_quiz_attempt_state($attemptstate,
+            $relativetimefinish, $relativetimeclose, $expectedstate) {
+
         $attempt = new stdClass();
-        $attempt->state = quiz_attempt::FINISHED;
-        $attempt->timefinish = time() - 10;
+        $attempt->state = $attemptstate;
+        if ($relativetimefinish === null) {
+            $attempt->timefinish = 0;
+        } else {
+            $attempt->timefinish = time() + $relativetimefinish;
+        }
 
         $quiz = new stdClass();
-        $quiz->timeclose = 0;
+        if ($relativetimeclose === null) {
+            $quiz->timeclose = 0;
+        } else {
+            $quiz->timeclose = time() + $relativetimeclose;
+        }
 
-        $this->assertEquals(mod_quiz_display_options::IMMEDIATELY_AFTER, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_sumitted_quiz_never_closes() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::FINISHED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = 0;
-
-        $this->assertEquals(mod_quiz_display_options::LATER_WHILE_OPEN, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_sumitted_quiz_closes_later() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::FINISHED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = time() + 3600;
-
-        $this->assertEquals(mod_quiz_display_options::LATER_WHILE_OPEN, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_sumitted_quiz_closed() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::FINISHED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = time() - 3600;
-
-        $this->assertEquals(mod_quiz_display_options::AFTER_CLOSE, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_never_sumitted_quiz_never_closes() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::ABANDONED;
-        $attempt->timefinish = 1000; // A very long time ago!
-
-        $quiz = new stdClass();
-        $quiz->timeclose = 0;
-
-        $this->assertEquals(mod_quiz_display_options::LATER_WHILE_OPEN, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_never_sumitted_quiz_closes_later() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::ABANDONED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = time() + 3600;
-
-        $this->assertEquals(mod_quiz_display_options::LATER_WHILE_OPEN, quiz_attempt_state($quiz, $attempt));
-    }
-
-    public function test_quiz_attempt_state_never_sumitted_quiz_closed() {
-        $attempt = new stdClass();
-        $attempt->state = quiz_attempt::ABANDONED;
-        $attempt->timefinish = time() - 7200;
-
-        $quiz = new stdClass();
-        $quiz->timeclose = time() - 3600;
-
-        $this->assertEquals(mod_quiz_display_options::AFTER_CLOSE, quiz_attempt_state($quiz, $attempt));
+        $this->assertEquals($expectedstate, quiz_attempt_state($quiz, $attempt));
     }
 
     public function test_quiz_question_tostring() {
