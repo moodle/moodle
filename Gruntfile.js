@@ -30,7 +30,15 @@ module.exports = function(grunt) {
         cwd = process.env.PWD || process.cwd(),
         async = require('async'),
         DOMParser = require('xmldom').DOMParser,
-        xpath = require('xpath');
+        xpath = require('xpath'),
+        semver = require('semver');
+
+    // Verify the node version is new enough.
+    var expected = semver.validRange(grunt.file.readJSON('package.json').engines.node);
+    var actual = semver.valid(process.version);
+    if (!semver.satisfies(actual, expected)) {
+        grunt.fail.fatal('Node version too old. Require ' + expected + ', version installed: ' + actual);
+    }
 
     // Windows users can't run grunt in a subdirectory, so allow them to set
     // the root by passing --root=path/to/dir.
