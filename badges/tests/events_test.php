@@ -310,4 +310,66 @@ class core_badges_events_testcase extends core_badges_badgeslib_testcase {
         $sink->close();
 
     }
+
+    /**
+     * Test the badge viewed event.
+     *
+     * There is no external API for viewing a badge, so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     */
+    public function test_badge_viewed() {
+
+        $badge = new badge($this->badgeid);
+        // Trigger an event: badge viewed.
+        $other = array('badgeid' => $badge->id, 'badgehash' => '12345678');
+        $eventparams = array(
+            'context' => $badge->get_context(),
+            'other' => $other,
+        );
+
+        $event = \core\event\badge_viewed::create($eventparams);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\badge_viewed', $event);
+        $this->assertEquals('12345678', $event->other['badgehash']);
+        $this->assertEquals($badge->id, $event->other['badgeid']);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+
+    }
+
+    /**
+     * Test the badge listing viewed event.
+     *
+     * There is no external API for viewing a badge, so the unit test will simply
+     * create and trigger the event and ensure data is returned as expected.
+     */
+    public function test_badge_listing_viewed() {
+
+        // Trigger an event: badge listing viewed.
+        $context = context_system::instance();
+        $eventparams = array(
+            'context' => $context,
+            'other' => array('badgetype' => BADGE_TYPE_SITE)
+        );
+
+        $event = \core\event\badge_listing_viewed::create($eventparams);
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\badge_listing_viewed', $event);
+        $this->assertEquals(BADGE_TYPE_SITE, $event->other['badgetype']);
+        $this->assertDebuggingNotCalled();
+        $sink->close();
+
+    }
 }
