@@ -914,6 +914,8 @@ $pre-scrollable-max-height:   340px !default;
 #region-main {
     background-color: #fff;
     border: 1px solid rgba(238,238,238,1);
+    padding-top: $spacer;
+    padding-bottom: $spacer;
 }
 
 .course-content ul {
