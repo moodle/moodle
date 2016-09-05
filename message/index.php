@@ -245,13 +245,13 @@ $settings->make_active();
 $renderer = $PAGE->get_renderer('core_message');
 if (!$user2realuser) {
     $conversations = \core_message\api::get_conversations($user1->id, 0, 0, 20);
-    $contacts = $conversations->get_contacts();
+    $contacts = $conversations->contacts;
 
     if (!empty($contacts)) {
         // If there are conversations then render the most recent one by default.
         $contact = reset($contacts);
-        $otheruserid = $contact->get_contact()->userid;
-        $conversations->set_otheruserid($otheruserid);
+        $otheruserid = $contact->userid;
+        $conversations->otheruserid = $otheruserid;
         $messages = \core_message\api::get_messages($user1->id, $otheruserid);
 
         // Mark the conversation as read.

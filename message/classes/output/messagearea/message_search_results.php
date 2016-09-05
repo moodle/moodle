@@ -37,14 +37,14 @@ use templatable;
 class message_search_results implements templatable, renderable {
 
     /**
-     * The id of the user that the contacts belong to.
+     * @var int The id of the user that the contacts belong to.
      */
-    protected $userid;
+    public $userid;
 
     /**
-     * The list of contacts with the.
+     * @var \core_message\output\messagearea\contact[] The list of contacts.
      */
-    protected $contacts;
+    public $contacts;
 
     /**
      * Constructor.

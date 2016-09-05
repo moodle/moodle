@@ -37,19 +37,19 @@ use templatable;
 class message_area implements templatable, renderable {
 
     /**
-     * The user id.
+     * @var int The user id.
      */
-    protected $userid;
+    public $userid;
 
     /**
-     * The contacts for the users.
+     * @var \core_message\output\messagearea\contacts The contacts for the users.
      */
-    protected $contacts;
+    public $contacts;
 
     /**
-     * The messages for the user.
+     * @var \core_message\output\messagearea\messages The messages for the user.
      */
-    protected $messages;
+    public $messages;
 
     /**
      * Constructor.

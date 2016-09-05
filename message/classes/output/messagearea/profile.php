@@ -37,14 +37,59 @@ use templatable;
 class profile implements templatable, renderable {
 
     /**
-     * The id of the user who is viewing the profile.
+     * @var int The id of the user who is viewing the profile.
      */
-    protected $currentuserid;
+    public $currentuserid;
 
     /**
-     * The profile of the user we are going to view.
+     * @var int The id of the user we are going to view.
      */
-    protected $otheruser;
+    public $userid;
+
+    /**
+     * @var string The fullname.
+     */
+    public $fullname;
+
+    /**
+     * @var string The city.
+     */
+    public $city;
+
+    /**
+     * @var string The country.
+     */
+    public $country;
+
+    /**
+     * @var string The email.
+     */
+    public $email;
+
+    /**
+     * @var string The profile image url.
+     */
+    public $profileimageurl;
+
+    /**
+     * @var string The small profile image url.
+     */
+    public $profileimageurlsmall;
+
+    /**
+     * @var bool Is the user online?
+     */
+    public $isonline;
+
+    /**
+     * @var bool Is the user blocked?
+     */
+    public $isblocked;
+
+    /**
+     * @var bool Is the user a contact?
+     */
+    public $iscontact;
 
     /**
      * Constructor.
@@ -54,29 +99,38 @@ class profile implements templatable, renderable {
      */
     public function __construct($currentuserid, $otheruser) {
         $this->currentuserid = $currentuserid;
-        $this->otheruser = $otheruser;
+        $this->userid = $otheruser->userid;
+        $this->fullname = $otheruser->fullname;
+        $this->isonline = $otheruser->isonline;
+        $this->email = $otheruser->email;
+        $this->country = $otheruser->country;
+        $this->city = $otheruser->city;
+        $this->profileimageurl = $otheruser->profileimageurl;
+        $this->profileimageurlsmall = $otheruser->profileimageurlsmall;
+        $this->isblocked = $otheruser->isblocked;
+        $this->iscontact = $otheruser->iscontact;
     }
 
     public function export_for_template(\renderer_base $output) {
         global $USER;
 
         $data = new \stdClass();
-        $data->iscurrentuser = $USER->id == $this->otheruser->userid;
+        $data->iscurrentuser = $USER->id == $this->userid;
         $data->currentuserid = $this->currentuserid;
-        $data->otheruserid = $this->otheruser->userid;
-        $data->fullname = $this->otheruser->fullname;
-        $data->isonline = $this->otheruser->isonline;
-        $data->email = $this->otheruser->email;
-        if (!empty($this->otheruser->country)) {
-            $data->country = get_string($this->otheruser->country, 'countries');
+        $data->otheruserid = $this->userid;
+        $data->fullname = $this->fullname;
+        $data->isonline = $this->isonline;
+        $data->email = $this->email;
+        if (!empty($this->country)) {
+            $data->country = get_string($this->country, 'countries');
         } else {
             $data->country = '';
         }
-        $data->city = $this->otheruser->city;
-        $data->profileimageurl = $this->otheruser->profileimageurl;
-        $data->profileimageurlsmall = $this->otheruser->profileimageurlsmall;
-        $data->isblocked = $this->otheruser->isblocked;
-        $data->iscontact = $this->otheruser->iscontact;
+        $data->city = $this->city;
+        $data->profileimageurl = $this->profileimageurl;
+        $data->profileimageurlsmall = $this->profileimageurlsmall;
+        $data->isblocked = $this->isblocked;
+        $data->iscontact = $this->iscontact;
 
         return $data;
     }

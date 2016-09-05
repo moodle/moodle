@@ -37,54 +37,38 @@ use templatable;
 class contacts implements templatable, renderable {
 
     /**
-     * The id of the user that the contacts belong to.
+     * @var int The id of the user that the contacts belong to.
      */
-    protected $userid;
+    public $userid;
 
     /**
-     * The id of the user that has been selected.
+     * @var int The id of the user that has been selected.
      */
-    protected $otheruserid;
+    public $otheruserid;
 
     /**
-     * The contacts.
+     * @var \core_message\output\messagearea\contact[] The contacts.
      */
-    protected $contacts;
+    public $contacts;
 
     /**
-     * Are we storing conversations or contacts?
+     * @var bool Are we storing conversations or contacts?
      */
-    protected $isconversation;
+    public $isconversation;
 
     /**
      * Constructor.
      *
      * @param int $userid The id of the user the contacts belong to
      * @param int $otheruserid The id of the user we are viewing
-     * @param bool $isconversation Are we storing conversations or contacts?
      * @param \core_message\output\messagearea\contact[] $contacts
+     * @param bool $isconversation Are we storing conversations or contacts?
      */
     public function __construct($userid, $otheruserid, $contacts, $isconversation = true) {
         $this->userid = $userid;
         $this->otheruserid = $otheruserid;
         $this->contacts = $contacts;
         $this->isconversation = $isconversation;
-    }
-
-    /**
-     * Get the list of contacts.
-     */
-    public function get_contacts() {
-        return $this->contacts;
-    }
-
-    /**
-     * Set the other user id.
-     *
-     * @param {int} $otheruserid The id of the other user
-     */
-    public function set_otheruserid($otheruserid) {
-        $this->otheruserid = $otheruserid;
     }
 
     public function export_for_template(\renderer_base $output) {

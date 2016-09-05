@@ -37,14 +37,64 @@ use templatable;
 class contact implements templatable, renderable {
 
     /**
-     * Maximum length of message to show in left panel.
+     * @var int Maximum length of message to show in panel.
      */
     const MAX_MSG_LENGTH = 60;
 
     /**
-     * The contact.
+     * @var int The userid.
      */
-    protected $contact;
+    public $userid;
+
+    /**
+     * @var string The fullname.
+     */
+    public $fullname;
+
+    /**
+     * @var string The profile image url.
+     */
+    public $profileimageurl;
+
+    /**
+     * @var string The small profile image url.
+     */
+    public $profileimageurlsmall;
+
+    /**
+     * @var int The message id.
+     */
+    public $messageid;
+
+    /**
+     * @var bool Are we messaging the user?
+     */
+    public $ismessaging;
+
+    /**
+     * @var string The last message sent.
+     */
+    public $lastmessage;
+
+    /**
+     * @var bool Is the user online?
+     */
+    public $isonline;
+
+    /**
+     * @var bool Is the user blocked?
+     */
+    public $isblocked;
+
+    /**
+     * @var bool Is the message read?
+     */
+    public $isread;
+
+    /**
+     * @var int The number of unread messages.
+     */
+    public $unreadcount;
 
     /**
      * Constructor.
@@ -52,46 +102,37 @@ class contact implements templatable, renderable {
      * @param \stdClass $contact
      */
     public function __construct($contact) {
-        $this->contact = $contact;
-    }
-
-    /**
-     * Get the user id for this contact.
-     */
-    public function get_contact() {
-        return $this->contact;
+        $this->userid = $contact->userid;
+        $this->fullname = $contact->fullname;
+        $this->profileimageurl = $contact->profileimageurl;
+        $this->profileimageurlsmall = $contact->profileimageurlsmall;
+        $this->messageid = $contact->messageid;
+        $this->ismessaging = $contact->ismessaging;
+        $this->lastmessage = $contact->lastmessage;
+        $this->isonline = $contact->isonline;
+        $this->isblocked = $contact->isblocked;
+        $this->isread = $contact->isread;
+        $this->unreadcount = $contact->unreadcount;
     }
 
     public function export_for_template(\renderer_base $output) {
         $contact = new \stdClass();
-        $contact->userid = $this->contact->userid;
-        $contact->fullname = $this->contact->fullname;
-        $contact->profileimageurl = $this->contact->profileimageurl;
-        $contact->profileimageurlsmall = $this->contact->profileimageurlsmall;
-        $contact->messageid = $this->contact->messageid;
-        $contact->ismessaging = $this->contact->ismessaging;
-        if ($this->contact->lastmessage) {
-            $contact->lastmessage = shorten_text($this->contact->lastmessage, self::MAX_MSG_LENGTH);
+        $contact->userid = $this->userid;
+        $contact->fullname = $this->fullname;
+        $contact->profileimageurl = $this->profileimageurl;
+        $contact->profileimageurlsmall = $this->profileimageurlsmall;
+        $contact->messageid = $this->messageid;
+        $contact->ismessaging = $this->ismessaging;
+        if ($this->lastmessage) {
+            $contact->lastmessage = shorten_text($this->lastmessage, self::MAX_MSG_LENGTH);
         } else {
             $contact->lastmessage = null;
         }
-        $contact->isonline = $this->contact->isonline;
-        $contact->isblocked = $this->contact->isblocked;
-        $contact->isread = $this->contact->isread;
-        $contact->unreadcount = $this->contact->unreadcount;
+        $contact->isonline = $this->isonline;
+        $contact->isblocked = $this->isblocked;
+        $contact->isread = $this->isread;
+        $contact->unreadcount = $this->unreadcount;
 
         return $contact;
-    }
-
-    /**
-     * Magic setter method.
-     *
-     * @param $name
-     * @param $value
-     */
-    public function __set($name, $value) {
-        if (property_exists($this->contact, $name)) {
-            $this->contact->$name = $value;
-        }
     }
 }

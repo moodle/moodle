@@ -37,19 +37,19 @@ use templatable;
 class people_search_results implements templatable, renderable {
 
     /**
-     * The list of contacts
+     * @var \core_message\output\messagearea\contact[] The list of contacts.
      */
-    protected $contacts;
+    public $contacts;
 
     /**
-     * The list of courses.
+     * @var array The list of courses.
      */
-    protected $courses;
+    public $courses;
 
     /**
-     * The list of non-contacts.
+     * @var \core_message\output\messagearea\contact[] The list of non-contacts.
      */
-    protected $noncontacts;
+    public $noncontacts;
 
     /**
      * Constructor.

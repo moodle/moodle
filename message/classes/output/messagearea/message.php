@@ -37,9 +37,39 @@ use templatable;
 class message implements templatable, renderable {
 
     /**
-     * The message.
+     * @var int The message id.
      */
-    protected $message;
+    public $id;
+
+    /**
+     * @var int The current userid.
+     */
+    public $currentuserid;
+
+    /**
+     * @var int The userid from.
+     */
+    public $useridfrom;
+
+    /**
+     * @var string The message text.
+     */
+    public $text;
+
+    /**
+     * @var bool Are we displaying the time?
+     */
+    public $displayblocktime;
+
+    /**
+     * @var int The time created of the message.
+     */
+    public $timecreated;
+
+    /**
+     * @var int The time the message was read.
+     */
+    public $timeread;
 
     /**
      * Constructor.
@@ -47,21 +77,27 @@ class message implements templatable, renderable {
      * @param \stdClass $message
      */
     public function __construct($message) {
-        $this->message = $message;
+        $this->id = $message->id;
+        $this->currentuserid = $message->currentuserid;
+        $this->useridfrom = $message->useridfrom;
+        $this->text = $message->text;
+        $this->displayblocktime = $message->displayblocktime;
+        $this->timecreated = $message->timecreated;
+        $this->timeread = $message->timeread;
     }
 
     public function export_for_template(\renderer_base $output) {
         $message = new \stdClass();
-        $message->id = $this->message->id;
-        $message->text = $this->message->text;
-        $message->displayblocktime = $this->message->displayblocktime;
-        $message->blocktime = userdate($this->message->timecreated, get_string('strftimedaydate'));
+        $message->id = $this->id;
+        $message->text = $this->text;
+        $message->displayblocktime = $this->displayblocktime;
+        $message->blocktime = userdate($this->timecreated, get_string('strftimedaydate'));
         $message->position = 'left';
-        if ($this->message->currentuserid == $this->message->useridfrom) {
+        if ($this->currentuserid == $this->useridfrom) {
             $message->position = 'right';
         }
-        $message->timesent = userdate($this->message->timecreated, get_string('strftimetime'));
-        $message->isread = !empty($this->message->timeread) ? 1 : 0;
+        $message->timesent = userdate($this->timecreated, get_string('strftimetime'));
+        $message->isread = !empty($this->timeread) ? 1 : 0;
 
         return $message;
     }

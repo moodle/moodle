@@ -37,24 +37,24 @@ use templatable;
 class messages implements templatable, renderable {
 
     /**
-     * The messages.
+     * @var \core_message\output\messagearea\message[] The messages.
      */
-    protected $messages;
+    public $messages;
 
     /**
-     * The current user id.
+     * @var int The current user id.
      */
-    protected $currentuserid;
+    public $currentuserid;
 
     /**
-     * The other user id.
+     * @var int The other user id.
      */
-    protected $otheruserid;
+    public $otheruserid;
 
     /**
-     * The other user.
+     * @var \stdClass The other user.
      */
-    protected $otheruser;
+    public $otheruser;
 
     /**
      * Constructor.
@@ -64,13 +64,11 @@ class messages implements templatable, renderable {
      * @param \core_message\output\messagearea\message[] $messages
      */
     public function __construct($currentuserid, $otheruserid, $messages) {
-        global $DB;
-
         $ufields = get_all_user_name_fields(true) . ', lastaccess';
 
         $this->currentuserid = $currentuserid;
         $this->otheruserid = $otheruserid;
-        $this->otheruser = $DB->get_record('user', array('id' => $otheruserid), $ufields);
+        $this->otheruser = \core_user::get_user($otheruserid, $ufields);
         $this->messages = $messages;
     }
 
