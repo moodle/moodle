@@ -915,13 +915,19 @@ $pre-scrollable-max-height:   340px !default;
 }
 
 .pagelayout-login {
-    #region-main {
-        background-color: transparent;
-        border: 0;
+    &.notloggedin {
+        #region-main {
+            background-color: transparent;
+            border: 0;
+            padding: 0 !important;
+        }
+        .login-wrapper {
+            background-color: #fff;
+            border: 1px solid rgba(238,238,238,1);
+        }
     }
-    .login-page .col-sm-6 {
-        background-color: #fff;
-        border: 1px solid rgba(238,238,238,1);
+    #notice {
+        text-align: center;
     }
 }
 
