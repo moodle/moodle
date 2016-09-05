@@ -152,6 +152,17 @@ class toolproxy extends \mod_lti\local\ltiservice\resource_base {
             foreach ($resources as $resource) {
                 $found = false;
                 $tool = new \stdClass();
+
+                $iconinfo = null;
+                if (is_array($resource->icon_info)) {
+                    $iconinfo = $resource->icon_info[0];
+                } else {
+                    $iconinfo = $resource->icon_info;
+                }
+                if (isset($iconinfo) && isset($iconinfo->default_location) && isset($iconinfo->default_location->path)) {
+                    $tool->iconpath = $iconinfo->default_location->path;
+                }
+
                 foreach ($resource->message as $message) {
                     if ($message->message_type == 'basic-lti-launch-request') {
                         $found = true;
@@ -197,13 +208,13 @@ class toolproxy extends \mod_lti\local\ltiservice\resource_base {
                 $type->enabledcapability = implode("\n", $tool->enabled_capability);
                 $type->parameter = self::lti_extract_parameters($tool->parameter);
 
-                if (isset($resource->icon_info[0]->default_location->path)) {
-                    $iconpath = $resource->icon_info[0]->default_location->path;
-                    $type->icon = "{$baseurl}{$iconpath}";
+                if (!empty($tool->iconpath)) {
+                    $type->icon = "{$baseurl}{$tool->iconpath}";
                     if (!empty($securebaseurl)) {
-                        $type->secureicon = "{$securebaseurl}{$iconpath}";
+                        $type->secureicon = "{$securebaseurl}{$tool->iconpath}";
                     }
                 }
+
                 $ok = $ok && (lti_add_type($type, $config) !== false);
             }
             if (isset($toolproxyjson->custom)) {
