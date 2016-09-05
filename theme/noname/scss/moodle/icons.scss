@@ -23,3 +23,8 @@ a:first-of-type > .icon {
 .dropdown a.dropdown-item .icon {
     margin-left: 0px;
 }
+
+// YUI 2 Tree View icons must not have a margin left.
+.ygtvcell .icon {
+    margin-left: 0 !important;
+}
