@@ -49,7 +49,8 @@ class filter extends base {
         require_once("$CFG->libdir/filterlib.php");
 
         $enabled = array();
-        $filters = $DB->get_records_select('filter_active', "active <> :disabled", array('disabled'=>TEXTFILTER_DISABLED), 'filter ASC', 'id, filter');
+        $filters = $DB->get_records_select('filter_active', "active <> :disabled AND contextid = :contextid", array(
+            'disabled' => TEXTFILTER_DISABLED, 'contextid' => \context_system::instance()->id), 'filter ASC', 'id, filter');
         foreach ($filters as $filter) {
             $enabled[$filter->filter] = $filter->filter;
         }
