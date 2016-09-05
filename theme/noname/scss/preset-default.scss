@@ -948,11 +948,9 @@ $pre-scrollable-max-height:   340px !default;
 .block-region .card-block {
     .card-title {
         padding-bottom: ($spacer/2);
-        small {
-            font-size: 65.3%;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+        font-size: 1.143rem;
+        font-weight: 600;
+        text-transform: uppercase;
     }
 }
 
