@@ -680,7 +680,8 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Mark regrading as finished successfully.
+     * Mark regrading as finished successfully. This will also be called when subsequent regrading will not change any grades.
+     * Situations such as an error being found will still result in the regrading being finished.
      */
     public function regrading_finished() {
         global $DB;
