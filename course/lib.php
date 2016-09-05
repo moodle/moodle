@@ -3599,6 +3599,12 @@ function duplicate_module($course, $cm) {
         moveto_module($newcm, $section, $cm);
         moveto_module($cm, $section, $newcm);
 
+        // Update calendar events with the duplicated module.
+        $refresheventsfunction = $newcm->modname . '_refresh_events';
+        if (function_exists($refresheventsfunction)) {
+            call_user_func($refresheventsfunction, $newcm->course);
+        }
+
         // Trigger course module created event. We can trigger the event only if we know the newcmid.
         $event = \core\event\course_module_created::create_from_cm($newcm);
         $event->trigger();
