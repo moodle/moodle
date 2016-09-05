@@ -846,7 +846,9 @@ class assign_files implements renderable {
                     $file->get_filename();
             $url = file_encode_url("$CFG->wwwroot/pluginfile.php", $path, true);
             $filename = $file->get_filename();
-            $file->fileurl = html_writer::link($url, $filename);
+            $file->fileurl = html_writer::link($url, $filename, [
+                    'target' => '_blank',
+                ]);
         }
     }
 }
