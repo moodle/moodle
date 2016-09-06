@@ -225,13 +225,6 @@ div#dock {
     width: 100%;
 }
 
-// Dropdown styling.
-.dropdown-menu {
-    > li > a {
-        padding: 3px 20px 3px 8px;
-    }
-}
-
 // Survey module
 
 .path-mod-survey {
@@ -267,14 +260,6 @@ div#dock {
       //  }
  //   }
 //}
-.dropdown-menu {
-    .divider {
-        width: auto;
-        height: 1px;
-        border-left: 0 none;
-        border-right: 0 none;
-    }
-}
 
 // Usermenu
 .usermenu {

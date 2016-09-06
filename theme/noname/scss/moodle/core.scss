@@ -171,7 +171,6 @@ img.resize {
     width: 1em;
 }
 .action-menu .dropdown-toggle {
-    margin-right: 0.5rem;
     text-decoration: none;
 }
 .action-menu {
@@ -1722,11 +1721,6 @@ header {
 
 ul.dragdrop-keyboard-drag li {
     list-style-type: none;
-}
-
-.block-control-actions .moodle-core-dragdrop-draghandle img {
-    width: 12px;
-    height: 12px;
 }
 
 a.disabled:hover,

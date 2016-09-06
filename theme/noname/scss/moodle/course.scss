@@ -106,9 +106,12 @@
     }
 
     .filler {
+        // This must be sized like an icon to fill the space.
         width: 16px;
         height: 16px;
-        padding: 0.3em;
+        margin: 0;
+        padding: 0;
+        margin: 0 ($spacer / 2);
         display: inline-block;
     }
 

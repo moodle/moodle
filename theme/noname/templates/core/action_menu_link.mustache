@@ -15,20 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Action menu.
+    Action menu link.
 }}
-<div class="action-menu {{classes}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
-    {{#primary}}
-
-        <div class="{{classes}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
-
-            {{#prioritise}}{{> core/action_menu_trigger }}{{/prioritise}}<!--
-
-            -->{{#items}}{{> core/action_menu_item }}{{/items}}<!--
-
-            -->{{^prioritise}}{{> core/action_menu_trigger }}{{/prioritise}}
-
-        </div>
-
-    {{/primary}}
-</div>
+{{^disabled}}
+    <a href="{{url}}" class="{{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}}{{/attributes}} {{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>
+{{/disabled}}
+{{#disabled}}
+    <span class="currentlink" role="menuitem">{{#icon}}{{>core/pix_icon}}{{/icon}}{{{text}}}</span>
+{{/disabled}}
