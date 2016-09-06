@@ -755,14 +755,9 @@ class single_button implements renderable {
 
         // Button actions.
         $actions = $this->actions;
-        $data->actions = array_map(function($key) use ($actions) {
-            $args = !empty($actions[$key]->jsfunctionargs) ? json_encode($actions[$key]->jsfunctionargs) : false;
-            return [
-                'event' => $actions[$key]->event,
-                'jsfunction' => $actions[$key]->jsfunction,
-                'jsfunctionargs' => $args,
-            ];
-        }, array_keys($actions));
+        $data->actions = array_map(function($action) use ($output) {
+            return $action->export_for_template($output);
+        }, $actions);
         $data->hasactions = !empty($data->actions);
 
         return $data;
@@ -1362,6 +1357,46 @@ class action_link implements renderable {
             return '';
         }
         return $OUTPUT->render($this->icon);
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $data = new stdClass();
+        $attributes = $this->attributes;
+
+        if (empty($attributes['id'])) {
+            $attributes['id'] = html_writer::random_id('action_link');
+        }
+        $data->id = $attributes['id'];
+        unset($attributes['id']);
+
+        $data->disabled = !empty($attributes['disabled']);
+        unset($attributes['disabled']);
+
+        $data->text = $this->text instanceof renderable ? $output->render($this->text) : (string) $this->text;
+        $data->url = $this->url ? $this->url->out(false) : '';
+        $data->icon = $this->icon ? $this->icon->export_for_template($output) : null;
+        $data->classes = isset($attributes['class']) ? $attributes['class'] : '';
+        unset($attributes['class']);
+
+        $data->attributes = array_map(function($key, $value) {
+            return [
+                'name' => $key,
+                'value' => $value
+            ];
+        }, array_keys($attributes), $attributes);
+
+        $data->actions = array_map(function($action) use ($output) {
+            return $action->export_for_template($output);
+        }, !empty($this->actions) ? $this->actions : []);
+        $data->hasactions = !empty($this->actions);
+
+        return $data;
     }
 }
 
