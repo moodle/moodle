@@ -25,6 +25,8 @@
 namespace core\output;
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/externallib.php');
+
 use coding_exception;
 use context;
 use pix_icon;
