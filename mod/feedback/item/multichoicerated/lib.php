@@ -166,7 +166,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         foreach ($presentation as $pres) {
             if ($value->value == $index) {
                 $item_label = explode(FEEDBACK_MULTICHOICERATED_VALUE_SEP, $pres);
-                $printval = $item_label[1];
+                $printval = format_string($item_label[1]);
                 break;
             }
             $index++;
@@ -184,7 +184,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';
             }
-            echo $analysed_item[1];
+            echo format_string($analysed_item[1]);
             echo '</th></tr>';
             echo '</table>';
             $analysed_vals = $analysed_item[2];
