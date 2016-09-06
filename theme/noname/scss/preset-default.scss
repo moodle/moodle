@@ -918,16 +918,6 @@ $pre-scrollable-max-height:   340px !default;
     padding-bottom: $spacer;
 }
 
-.course-content ul {
-    &.topics li.section {
-        padding-top: $spacer;
-        padding-bottom: ($spacer/2);
-    }
-    li.section.main {
-        border-bottom: 1px solid #eceeef;
-    }
-}
-
 .pagelayout-login {
     &.notloggedin {
         #region-main {
@@ -1025,6 +1015,37 @@ h2,
     border-bottom: 1px solid #f4f4f4;
     padding-bottom: $spacer;
     margin-bottom: $spacer;
+}
+
+// Course content
+
+.course-content ul {
+    &.topics li.section {
+        padding-top: $spacer;
+        padding-bottom: ($spacer/2);
+    }
+    li.section.main {
+        border-bottom: 1px solid #f4f4f4;
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+.activityinstance {
+    > a,
+    .inplaceeditable.inplaceeditable-text {
+        display: block;
+        text-indent: -31px;
+        padding-left: 31px;
+    }
+}
+
+.editing .section .activity {
+    &:hover,
+    &.action-menu-shown {
+        background-color: $table-bg-accent;
+    }
 }
 
 // Edit settings
