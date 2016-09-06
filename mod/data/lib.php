@@ -4045,3 +4045,49 @@ function data_refresh_events($courseid = 0) {
     }
     return true;
 }
+
+/**
+ * Fetch the configuration for this database activity.
+ *
+ * @param   stdClass    $database   The object returned from the database for this instance
+ * @param   string      $key        The name of the key to retrieve. If none is supplied, then all configuration is returned
+ * @param   mixed       $default    The default value to use if no value was found for the specified key
+ * @return  mixed                   The returned value
+ */
+function data_get_config($database, $key = null, $default = null) {
+    if (!empty($database->config)) {
+        $config = json_decode($database->config);
+    } else {
+        $config = new stdClass();
+    }
+
+    if ($key === null) {
+        return $config;
+    }
+
+    if (property_exists($config, $key)) {
+        return $config->$key;
+    }
+    return $default;
+}
+
+/**
+ * Update the configuration for this database activity.
+ *
+ * @param   stdClass    $database   The object returned from the database for this instance
+ * @param   string      $key        The name of the key to set
+ * @param   mixed       $value      The value to set for the key
+ */
+function data_set_config(&$database, $key, $value) {
+    // Note: We must pass $database by reference because there may be subsequent calls to update_record and these should
+    // not overwrite the configuration just set.
+    global $DB;
+
+    $config = data_get_config($database);
+
+    if (!isset($config->$key) || $config->$key !== $value) {
+        $config->$key = $value;
+        $database->config = json_encode($config);
+        $DB->set_field('data', 'config', $database->config, ['id' => $database->id]);
+    }
+}
