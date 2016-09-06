@@ -248,7 +248,7 @@ function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user,
                         $courselisting .= html_writer::tag('li', html_writer::link($url, $ccontext->get_context_name(false),
                                 $linkattributes));
                     } else {
-                        $courselisting .= html_writer::tag('li', $course->fullname);
+                        $courselisting .= html_writer::tag('li', $ccontext->get_context_name(false));
                     }
                 }
                 $shown++;
