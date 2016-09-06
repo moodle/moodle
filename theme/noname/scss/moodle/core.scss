@@ -1652,6 +1652,12 @@ img#persona_signin {
     height: 43px;
 }
 
+@include media-breakpoint-down(xs) {
+    .navbar-brand .site-name {
+        display: none;
+    }
+}
+
 /** Page header */
 #page-header {
     .logo {
