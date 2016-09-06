@@ -1641,6 +1641,10 @@ class mod_quiz_external extends external_api {
                                                         'mod_quiz', 'feedback', $feedback->id);
             $result['feedbacktext'] = $text;
             $result['feedbacktextformat'] = $format;
+            $feedbackinlinefiles = external_util::get_area_files($context->id, 'mod_quiz', 'feedback', $feedback->id);
+            if (!empty($feedbackinlinefiles)) {
+                $result['feedbackinlinefiles'] = $feedbackinlinefiles;
+            }
         }
 
         $result['warnings'] = $warnings;
@@ -1658,6 +1662,7 @@ class mod_quiz_external extends external_api {
             array(
                 'feedbacktext' => new external_value(PARAM_RAW, 'the comment that corresponds to this grade (empty for none)'),
                 'feedbacktextformat' => new external_format_value('feedbacktext', VALUE_OPTIONAL),
+                'feedbackinlinefiles' => new external_files('feedback inline files', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );
