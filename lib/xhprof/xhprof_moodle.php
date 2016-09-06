@@ -29,6 +29,7 @@ require_once($CFG->libdir . '/xhprof/xhprof_lib/utils/xhprof_runs.php');
 // Need some stuff from moodle.
 require_once($CFG->libdir . '/tablelib.php');
 require_once($CFG->libdir . '/setuplib.php');
+require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/phpunit/classes/util.php');
 require_once($CFG->dirroot . '/backup/util/xml/xml_writer.class.php');
 require_once($CFG->dirroot . '/backup/util/xml/output/xml_output.class.php');
@@ -586,6 +587,9 @@ function profiling_import_runs($file, $commentprefix = '') {
             $runarr['data'] = clean_param($rdom->getElementsByTagName('data')->item(0)->nodeValue, PARAM_CLEAN);
             // If the runid does not exist, insert it.
             if (!$DB->record_exists('profiling', array('runid' => $runarr['runid']))) {
+                if (@gzuncompress(base64_decode($runarr['data'])) === false) {
+                    $runarr['data'] = base64_encode(gzcompress(base64_decode($runarr['data'])));
+                }
                 $DB->insert_record('profiling', $runarr);
             } else {
                 return false;
@@ -818,7 +822,12 @@ class moodle_xhprofrun implements iXHProfRuns {
 
         $run_desc = $this->url . ($rec->runreference ? ' (R) ' : ' ') . ' - ' . s($rec->runcomment);
 
-        return unserialize(base64_decode($rec->data));
+        // Handle historical runs that aren't compressed.
+        if (@gzuncompress(base64_decode($rec->data)) === false) {
+            return unserialize(base64_decode($rec->data));
+        } else {
+            return unserialize(gzuncompress(base64_decode($rec->data)));
+        }
     }
 
     /**
@@ -828,7 +837,7 @@ class moodle_xhprofrun implements iXHProfRuns {
      * Note that $type is completely ignored
      */
     public function save_run($xhprof_data, $type, $run_id = null) {
-        global $DB;
+        global $DB, $CFG;
 
         if (is_null($this->url)) {
             xhprof_error("Warning: You must use the prepare_run() method before saving it");
@@ -847,7 +856,7 @@ class moodle_xhprofrun implements iXHProfRuns {
         $rec = new stdClass();
         $rec->runid = $this->runid;
         $rec->url = $this->url;
-        $rec->data = base64_encode(serialize($xhprof_data));
+        $rec->data = base64_encode(gzcompress(serialize($xhprof_data), 9));
         $rec->totalexecutiontime = $this->totalexecutiontime;
         $rec->totalcputime = $this->totalcputime;
         $rec->totalcalls = $this->totalcalls;
@@ -855,6 +864,21 @@ class moodle_xhprofrun implements iXHProfRuns {
         $rec->timecreated = $this->timecreated;
 
         $DB->insert_record('profiling', $rec);
+
+        if (PHPUNIT_TEST) {
+            // Calculate export variables.
+            $tempdir = 'profiling';
+            make_temp_directory($tempdir);
+            $runids = array($this->runid);
+            $filename = $this->runid . '.mpr';
+            $filepath = $CFG->tempdir . '/' . $tempdir . '/' . $filename;
+
+            // Generate the mpr file and send it.
+            if (profiling_export_runs($runids, $filepath)) {
+                fprintf(STDERR, "Profiling data saved to: ".$filepath."\n");
+            }
+        }
+
         return $this->runid;
     }
 
