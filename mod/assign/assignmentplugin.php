@@ -384,6 +384,16 @@ abstract class assign_plugin {
     }
 
     /**
+     * Get a list of file areas associated with the plugin configuration.
+     * This is used for backup/restore.
+     *
+     * @return array names of the fileareas, can be an empty array
+     */
+    public function get_config_file_areas() {
+        return array();
+    }
+
+    /**
      * Should not output anything - return the result as a string so it can be consumed by webservices.
      *
      * @param stdClass $submissionorgrade assign_submission or assign_grade

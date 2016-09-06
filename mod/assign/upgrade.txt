@@ -11,6 +11,8 @@ This files describes API changes in the assign code.
   filename, filepath, mimetype, filesize, timemodified and fileurl.
   Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
   Please, note that previously the filename was part of the filepath field, now they are separated.
+* Submission and feedback plugins can now specify file areas related to their configuration data,
+  which will then be included in backup and restore; see assign_plugin::get_config_file_areas().
 
 === 3.1 ===
 * The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true
