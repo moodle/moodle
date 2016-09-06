@@ -526,8 +526,8 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element implements tem
             $options = [];
 
             foreach ($group['options'] as $option) {
-                $o = [];
-                if (is_array($this->_values) && in_array((string)$option['attr']['value'], $this->_values)) {
+                $o = ['value' => (string)$option['attr']['value']];
+                if (is_array($this->_values) && in_array($o['value'], $this->_values)) {
                     $o['selected'] = true;
                 } else {
                     $o['selected'] = false;
