@@ -47,6 +47,11 @@ class message implements templatable, renderable {
     public $currentuserid;
 
     /**
+     * @var int The userid to.
+     */
+    public $useridto;
+
+    /**
      * @var int The userid from.
      */
     public $useridfrom;
@@ -79,6 +84,7 @@ class message implements templatable, renderable {
     public function __construct($message) {
         $this->id = $message->id;
         $this->currentuserid = $message->currentuserid;
+        $this->useridto = $message->useridto;
         $this->useridfrom = $message->useridfrom;
         $this->text = $message->text;
         $this->displayblocktime = $message->displayblocktime;
@@ -89,6 +95,8 @@ class message implements templatable, renderable {
     public function export_for_template(\renderer_base $output) {
         $message = new \stdClass();
         $message->id = $this->id;
+        $message->useridto = $this->useridto;
+        $message->useridfrom = $this->useridfrom;
         $message->text = $this->text;
         $message->displayblocktime = $this->displayblocktime;
         $message->blocktime = userdate($this->timecreated, get_string('strftimedaydate'));

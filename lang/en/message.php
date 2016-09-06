@@ -187,3 +187,4 @@ $string['userssearchresults'] = 'Users found: {$a}';
 $string['viewinganotherusersmessagearea'] = 'You are viewing another user\'s message area.';
 $string['viewconversation'] = 'View conversation';
 $string['writeamessage'] = 'Write a message...';
+$string['you'] = 'You:';

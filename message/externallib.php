@@ -434,6 +434,7 @@ class core_message_external extends external_api {
                 'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
                 'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
                 'ismessaging' => new external_value(PARAM_BOOL, 'If we are messaging the user'),
+                'sentfromcurrentuser' => new external_value(PARAM_BOOL, 'Was the last message sent from the current user?'),
                 'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
                 'messageid' => new external_value(PARAM_INT, 'The unique search message id', VALUE_DEFAULT, null),
                 'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
@@ -455,6 +456,8 @@ class core_message_external extends external_api {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'The id of the message'),
+                'useridfrom' => new external_value(PARAM_INT, 'The id of the user who sent the message'),
+                'useridto' => new external_value(PARAM_INT, 'The id of the user who received the message'),
                 'text' => new external_value(PARAM_RAW, 'The text of the message'),
                 'displayblocktime' => new external_value(PARAM_BOOL, 'Should we display the block time?'),
                 'blocktime' => new external_value(PARAM_NOTAGS, 'The time to display above the message'),

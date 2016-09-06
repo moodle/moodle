@@ -48,7 +48,12 @@
         </div>
         <div class="content-item-body">
             <h3>{{fullname}}</h3>
-            <p>{{lastmessage}}</p>
+            <p>
+                {{#sentfromcurrentuser}}
+                    <span data-region="last-message-user">{{#str}}you, message{{/str}}</span>
+                {{/sentfromcurrentuser}}
+                {{lastmessage}}
+            </p>
         </div>
         <div class="unread-count-container">
             <span data-region="unread-count" class="badge badge-important">{{unreadcount}}</span>

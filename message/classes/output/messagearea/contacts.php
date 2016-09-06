@@ -92,8 +92,12 @@ class contacts implements templatable, renderable {
             $user = \core_user::get_user($this->otheruserid);
             // Set an empty message so that we know we are messaging the user, and not viewing their profile.
             $user->smallmessage = '';
+            $user->useridfrom = $user->id;
             $contact = \core_message\helper::create_contact($user);
-            $data->contacts[] = $contact->export_for_template($output);
+            $contactdata = $contact->export_for_template($output);
+            $contactdata->selected = true;
+            // Put the contact at the front.
+            array_unshift($data->contacts, $contactdata);
         }
 
         $data->isconversation = $this->isconversation;

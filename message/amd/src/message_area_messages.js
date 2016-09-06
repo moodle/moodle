@@ -329,11 +329,20 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             if (requests.length > 0) {
                 ajax.call(requests)[requests.length - 1].then(function() {
+                    // Store the last message on the page, and the last message being deleted.
+                    var updatemessage = null;
+                    var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGE);
+                    var lastmessage = messages.last();
+                    var lastremovedmessage = messagestoremove[messagestoremove.length - 1];
                     // Remove the messages from the DOM.
                     $.each(messagestoremove, function(key, message) {
                         // Remove the message.
                         message.remove();
                     });
+                    // If the last message was deleted then we need to provide the new last message.
+                    if (lastmessage.data('id') === lastremovedmessage.data('id')) {
+                        updatemessage = this.messageArea.find(this.messageArea.SELECTORS.MESSAGE).last();
+                    }
                     // Now we have removed all the messages from the DOM lets remove any block times we may need to as well.
                     $.each(messagestoremove, function(key, message) {
                         // First - let's make sure there are no more messages in that time block.
@@ -352,7 +361,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     }
 
                     // Trigger event letting other modules know messages were deleted.
-                    this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED, this._getUserId());
+                    this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED, [this._getUserId(), updatemessage]);
                 }.bind(this), notification.exception);
             } else {
                 // Trigger event letting other modules know messages were deleted.

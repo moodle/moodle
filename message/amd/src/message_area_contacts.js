@@ -21,8 +21,8 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events'],
-    function($, ajax, templates, notification, customEvents) {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events', 'core/str'],
+    function($, ajax, templates, notification, customEvents, Str) {
 
         /**
          * Contacts class.
@@ -171,8 +171,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         Contacts.prototype._handleMessageSent = function(event, userid, text) {
             // Switch to viewing the conversations.
             this._viewConversations();
-            // Get the text we will display on the contact panel.
-            text = this._getContactText(text);
             // Get the user node.
             var user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
             // If the user has not been loaded yet, let's copy the element from contact or search panel to the conversation panel.
@@ -200,8 +198,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             user.prependTo(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS));
             // Scroll to the top.
             this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS).scrollTop(0);
-            // Replace the text.
-            user.find(this.messageArea.SELECTORS.LASTMESSAGE).empty().append(text);
+            // Get the new text to show.
+            this._updateContactText(user, text, true);
             // Ensure user is selected.
             this._setSelectedUser("[data-userid='" + userid + "']");
         };
@@ -373,7 +371,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 }
             }]);
 
-            // After the request render the contacts area.
             return promises[0];
         };
 
@@ -407,10 +404,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Handles deleting conversations.
          *
          * @params {Event} event
-         * @params {int} The user id belonging to the messages we are deleting.
+         * @params {int} The user id belonging to the messages we are deleting
+         * @params {jQuery|null} The message we need to update the contact panel with
          * @private
          */
-        Contacts.prototype._deleteConversations = function(event, userid) {
+        Contacts.prototype._deleteConversations = function(event, userid, updatemessage) {
             var checkboxes = this.messageArea.find(this.messageArea.SELECTORS.CONTACT + "[aria-checked='true']");
             var requests = [];
 
@@ -435,30 +433,21 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                         this._numConversationsDisplayed--;
                         // Trigger conversation deleted events.
                         this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONDELETED, requests[i].args.otheruserid);
-
                     }
                 }.bind(this), notification.exception);
             }
 
             // Check if the last message needs updating.
-            var user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
-            if (user.length !== 0) {
-                var lastmessagelisted = user.find(this.messageArea.SELECTORS.LASTMESSAGE);
-                lastmessagelisted = lastmessagelisted.html();
-                // Go through and get the actual last message after all the deletions.
-                var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA + " " +
-                    this.messageArea.SELECTORS.MESSAGE);
-                var messageslength = messages.length;
+            if (updatemessage) {
+                var user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
+                var updatemessagetext = updatemessage.find(this.messageArea.SELECTORS.MESSAGETEXT).text().trim();
+                var sentbyuser = false;
+                if (updatemessage.data('useridto') == userid) {
+                    // Must have been sent by the currently logged in user.
+                    sentbyuser = true;
+                }
 
-                messages.each(function(index, element) {
-                    if (index === messageslength - 1) {
-                        var actuallastmessage = $(element).find(this.messageArea.SELECTORS.MESSAGETEXT).html().trim();
-                        if (lastmessagelisted != actuallastmessage) {
-                            user.find(this.messageArea.SELECTORS.LASTMESSAGE).empty().append(
-                                this._getContactText(actuallastmessage));
-                        }
-                    }
-                }.bind(this));
+                this._updateContactText(user, updatemessagetext, sentbyuser);
             }
 
             // Now we have done all the deletion we can set the flag back to false.
@@ -563,6 +552,30 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }
 
             return text;
+        };
+
+        /**
+         * Handles updating the contact text.
+         *
+         * @param {jQuery} user The user to update
+         * @param {String} text The text to update the contact with
+         * @param {Boolean} sentbyuser Was it sent by the currently logged in user?
+         * @private
+         */
+        Contacts.prototype._updateContactText = function(user, text, sentbyuser) {
+            // Get the text we will display on the contact panel.
+            text = this._getContactText(text);
+            if (sentbyuser) {
+                Str.get_string('you', 'message').done(function (string) {
+                    // Ensure we display that the message is from this user.
+                    user.find(this.messageArea.SELECTORS.LASTMESSAGEUSER).empty().append(string);
+                }.bind(this)).always(function () {
+                    user.find(this.messageArea.SELECTORS.LASTMESSAGETEXT).empty().append(text);
+                }.bind(this));
+            } else {
+                user.find(this.messageArea.SELECTORS.LASTMESSAGEUSER).empty();
+                user.find(this.messageArea.SELECTORS.LASTMESSAGETEXT).empty().append(text);
+            }
         };
 
         /**

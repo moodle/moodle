@@ -132,6 +132,7 @@ class helper {
         $userfields = \user_picture::unalias($contact, array('lastaccess'), $prefix . 'id', $prefix);
         $data = new \stdClass();
         $data->userid = $userfields->id;
+        $data->useridfrom = null;
         $data->fullname = fullname($userfields);
         // Get the user picture data.
         $userpicture = new \user_picture($userfields);
@@ -146,6 +147,7 @@ class helper {
         if (isset($contact->smallmessage)) {
             $data->ismessaging = true;
             $data->lastmessage = $contact->smallmessage;
+            $data->useridfrom = $contact->useridfrom;
             if (isset($contact->messageid)) {
                 $data->messageid = $contact->messageid;
             }

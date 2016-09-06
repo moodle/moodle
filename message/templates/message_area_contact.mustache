@@ -14,10 +14,15 @@
                 {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}
             </span>
         </div>
-        <p class="lastmessage" data-region="lastmessage">
-            {{#lastmessage}}
-                {{.}}
-            {{/lastmessage}}
+        <p class="lastmessage" data-region="last-message-area">
+            <span data-region="last-message-user">
+                {{#sentfromcurrentuser}}{{#str}}you, message{{/str}}{{/sentfromcurrentuser}}
+            </span>
+            <span data-region="last-message-text">
+                {{#lastmessage}}
+                    {{.}}
+                {{/lastmessage}}
+            </span>
         </p>
     </div>
     <div class="span2 unread-count-container">
