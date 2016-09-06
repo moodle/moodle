@@ -257,8 +257,8 @@ $table-cell-padding:            .75rem !default;
 $table-sm-cell-padding:         .3rem !default;
 
 $table-bg:                      transparent !default;
-$table-bg-accent:               rgba(0,0,0,.05) !default;
-$table-bg-hover:                rgba(0,0,0,.075) !default;
+$table-bg-accent:               #fafafa !default;
+$table-bg-hover:                lighten($brand-primary, 55%) !default;
 $table-bg-active:               $table-bg-hover !default;
 
 $table-border-width:            $border-width !default;
@@ -966,4 +966,63 @@ $pre-scrollable-max-height:   340px !default;
     text-align: right;
     background-color: #333;
     border-top: none;
+}
+
+// Frontpage
+
+.courses {
+    .coursebox {
+        &.collapsed {
+            border: none;
+            padding: 10px 5px;
+        }
+        &.even {
+            background-color: $table-bg-accent;
+        }
+        &:hover {
+            background-color: $table-bg-hover;
+        }
+    }
+    > .paging {
+        padding: 15px 10px;
+        &.paging-morelink {
+            text-align: center;
+        }
+    }
+}
+
+.coursebox {
+  margin-bottom: 0;
+  border: none;
+  border-radius: 0;
+  padding: 10px 5px;
+    .content {
+        .summary,
+        .courseimage,
+        .teachers {
+            margin: 15px 5px 5px;
+        }
+    }
+}
+
+.course_category_tree {
+    .paging.paging-morelink a {
+        font-size: 1rem;
+    }
+    .courses > .paging.paging-morelink:hover {
+        background-color: transparent;
+    }
+    .category > .info {
+        border: none;
+    }
+}
+
+h2,
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
+    border-bottom: 1px solid #f4f4f4;
+    padding-bottom: $spacer;
+    margin-bottom: $spacer;
 }
