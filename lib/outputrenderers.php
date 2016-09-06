@@ -1310,31 +1310,8 @@ class core_renderer extends renderer_base {
      * @return string HTML
      */
     public function render_action_menu(action_menu $menu) {
-        $menu->initialise_js($this->page);
-
-        $output = html_writer::start_tag('div', $menu->attributes);
-        $output .= html_writer::start_tag('ul', $menu->attributesprimary);
-        foreach ($menu->get_primary_actions($this) as $action) {
-            if ($action instanceof renderable) {
-                $content = $this->render($action);
-            } else {
-                $content = $action;
-            }
-            $output .= html_writer::tag('li', $content, array('role' => 'presentation'));
-        }
-        $output .= html_writer::end_tag('ul');
-        $output .= html_writer::start_tag('ul', $menu->attributessecondary);
-        foreach ($menu->get_secondary_actions() as $action) {
-            if ($action instanceof renderable) {
-                $content = $this->render($action);
-            } else {
-                $content = $action;
-            }
-            $output .= html_writer::tag('li', $content, array('role' => 'presentation'));
-        }
-        $output .= html_writer::end_tag('ul');
-        $output .= html_writer::end_tag('div');
-        return $output;
+        $context = $menu->export_for_template($this);
+        return $this->render_from_template('core/action_menu', $context);
     }
 
     /**
@@ -1344,53 +1321,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_action_menu_link(action_menu_link $action) {
-        static $actioncount = 0;
-        $actioncount++;
-
-        $comparetoalt = '';
-        $text = '';
-        if (!$action->icon || $action->primary === false) {
-            $text .= html_writer::start_tag('span', array('class'=>'menu-action-text', 'id' => 'actionmenuaction-'.$actioncount));
-            if ($action->text instanceof renderable) {
-                $text .= $this->render($action->text);
-            } else {
-                $text .= $action->text;
-                $comparetoalt = (string)$action->text;
-            }
-            $text .= html_writer::end_tag('span');
-        }
-
-        $icon = '';
-        if ($action->icon) {
-            $icon = $action->icon;
-            if ($action->primary || !$action->actionmenu->will_be_enhanced()) {
-                $action->attributes['title'] = $action->text;
-            }
-            if (!$action->primary && $action->actionmenu->will_be_enhanced()) {
-                if ((string)$icon->attributes['alt'] === $comparetoalt) {
-                    $icon->attributes['alt'] = '';
-                }
-                if (isset($icon->attributes['title']) && (string)$icon->attributes['title'] === $comparetoalt) {
-                    unset($icon->attributes['title']);
-                }
-            }
-            $icon = $this->render($icon);
-        }
-
-        // A disabled link is rendered as formatted text.
-        if (!empty($action->attributes['disabled'])) {
-            // Do not use div here due to nesting restriction in xhtml strict.
-            return html_writer::tag('span', $icon.$text, array('class'=>'currentlink', 'role' => 'menuitem'));
-        }
-
-        $attributes = $action->attributes;
-        unset($action->attributes['disabled']);
-        $attributes['href'] = $action->url;
-        if ($text !== '') {
-            $attributes['aria-labelledby'] = 'actionmenuaction-'.$actioncount;
-        }
-
-        return html_writer::tag('a', $icon.$text, $attributes);
+        return $this->render_from_template('core/action_menu_link', $action->export_for_template($this));
     }
 
     /**
@@ -3376,7 +3307,6 @@ EOD;
         $divider->primary = false;
 
         $am = new action_menu();
-        $am->initialise_js($this->page);
         $am->set_menu_trigger(
             $returnstr
         );

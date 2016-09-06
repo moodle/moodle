@@ -3759,7 +3759,7 @@ class tabtree extends tabobject {
  * @copyright 2013 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_menu implements renderable {
+class action_menu implements renderable, templatable {
 
     /**
      * Top right alignment.
@@ -4108,6 +4108,98 @@ class action_menu implements renderable {
             $this->attributes['class'] = $class;
         }
     }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $data = new stdClass();
+        $attributes = $this->attributes;
+        $attributesprimary = $this->attributesprimary;
+        $attributessecondary = $this->attributessecondary;
+
+        $data->instance = $this->instance;
+
+        $data->classes = isset($attributes['class']) ? $attributes['class'] : '';
+        unset($attributes['class']);
+
+        $data->attributes = array_map(function($key, $value) {
+            return [ 'name' => $key, 'value' => $value ];
+        }, array_keys($attributes), $attributes);
+
+        $primary = new stdClass();
+        $primary->title = '';
+        $primary->prioritise = $this->prioritise;
+
+        $primary->classes = isset($attributesprimary['class']) ? $attributesprimary['class'] : '';
+        unset($attributesprimary['class']);
+        $primary->attributes = array_map(function($key, $value) {
+            return [ 'name' => $key, 'value' => $value ];
+        }, array_keys($attributesprimary), $attributesprimary);
+
+        $actionicon = $this->actionicon;
+        if (!empty($this->menutrigger)) {
+            $primary->menutrigger = $this->menutrigger;
+        } else {
+            $primary->title = get_string('actions');
+            $actionicon = new pix_icon('t/edit_menu', '', 'moodle', ['class' => 'iconsmall actionmenu', 'title' => '']);
+        }
+
+        if ($actionicon instanceof pix_icon) {
+            $primary->icon = $actionicon->export_for_template($output);
+            $primary->title = !empty($actionicon->attributes['alt']) ? $this->actionicon->attributes['alt'] : '';
+        } else {
+            $primary->iconraw = $actionicon ? $output->render($actionicon) : '';
+        }
+
+        $primary->actiontext = $this->actiontext ? (string) $this->actiontext : '';
+        $primary->items = array_map(function($item) use ($output) {
+            $data = (object) [];
+            if ($item instanceof action_menu_link) {
+                $data->actionmenulink = $item->export_for_template($output);
+            } else if ($item instanceof action_menu_filler) {
+                $data->actionmenufiller = $item->export_for_template($output);
+            } else if ($item instanceof action_link) {
+                $data->actionlink = $item->export_for_template($output);
+            } else if ($item instanceof pix_icon) {
+                $data->pixicon = $item->export_for_template($output);
+            } else {
+                $data->rawhtml = ($item instanceof renderable) ? $output->render($item) : $item;
+            }
+            return $data;
+        }, $this->primaryactions);
+
+        $secondary = new stdClass();
+        $secondary->classes = isset($attributessecondary['class']) ? $attributessecondary['class'] : '';
+        unset($attributessecondary['class']);
+        $secondary->attributes = array_map(function($key, $value) {
+            return [ 'name' => $key, 'value' => $value ];
+        }, array_keys($attributessecondary), $attributessecondary);
+        $secondary->items = array_map(function($item) use ($output) {
+            $data = (object) [];
+            if ($item instanceof action_menu_link) {
+                $data->actionmenulink = $item->export_for_template($output);
+            } else if ($item instanceof action_menu_filler) {
+                $data->actionmenufiller = $item->export_for_template($output);
+            } else if ($item instanceof action_link) {
+                $data->actionlink = $item->export_for_template($output);
+            } else if ($item instanceof pix_icon) {
+                $data->pixicon = $item->export_for_template($output);
+            } else {
+                $data->rawhtml = ($item instanceof renderable) ? $output->render($item) : $item;
+            }
+            return $data;
+        }, $this->secondaryactions);
+
+        $data->primary = $primary;
+        $data->secondary = $secondary;
+
+        return $data;
+    }
+
 }
 
 /**
@@ -4169,6 +4261,64 @@ class action_menu_link extends action_link implements renderable {
         $this->primary = (bool)$primary;
         $this->add_class('menu-action');
         $this->attributes['role'] = 'menuitem';
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        static $instance = 1;
+
+        $data = parent::export_for_template($output);
+        $data->instance = $instance++;
+
+        // Ignore what the parent did with the attributes, except for ID and class.
+        $data->attributes = [];
+        $attributes = $this->attributes;
+        unset($attributes['id']);
+        unset($attributes['class']);
+
+        // Handle text being a renderable.
+        $comparetoalt = $this->text;
+        if ($this->text instanceof renderable) {
+            $data->text = $this->render($this->text);
+            $comparetoalt = '';
+        }
+        $comparetoalt = (string) $comparetoalt;
+
+        $data->showtext = (!$this->icon || $this->primary === false);
+
+        $data->icon = null;
+        if ($this->icon) {
+            $icon = $this->icon;
+            if ($this->primary || !$this->actionmenu->will_be_enhanced()) {
+                $attributes['title'] = $data->text;
+            }
+            if (!$this->primary && $this->actionmenu->will_be_enhanced()) {
+                if ((string) $icon->attributes['alt'] === $comparetoalt) {
+                    $icon->attributes['alt'] = '';
+                }
+                if (isset($icon->attributes['title']) && (string) $icon->attributes['title'] === $comparetoalt) {
+                    unset($icon->attributes['title']);
+                }
+            }
+            $data->icon = $icon ? $icon->export_for_template($output) : null;
+        }
+
+        $data->disabled = !empty($attributes['disabled']);
+        unset($attributes['disabled']);
+
+        $data->attributes = array_map(function($key, $value) {
+            return [
+                'name' => $key,
+                'value' => $value
+            ];
+        }, array_keys($attributes), $attributes);
+
+        return $data;
     }
 }
 
