@@ -175,9 +175,9 @@
 .file-picker .ygtvtn,
 .filemanager .ygtvtn {
     /*rtl:remove*/
-    background: url('[[pix:moodle|y/tn]]') 0 0 no-repeat;
+    background: url('[[pix:moodle|y/tn]]') 0 10px no-repeat;
     /*rtl:raw:
-    background: url('[[pix:moodle|y/tn_rtl]]') 0 0 no-repeat;
+    background: url('[[pix:moodle|y/tn_rtl]]') 2px 10px no-repeat;
     */
     width: 17px;
     height: 22px;
@@ -232,9 +232,9 @@
 .file-picker .ygtvln,
 .filemanager .ygtvln {
     /*rtl:remove*/
-    background: url('[[pix:moodle|y/ln]]') 0 0 no-repeat;
+    background: url('[[pix:moodle|y/ln]]') 0 10px no-repeat;
     /*rtl:raw:
-    background: url('[[pix:moodle|y/ln_rtl]]') 0 0 no-repeat;
+    background: url('[[pix:moodle|y/ln_rtl]]') 2px 10px no-repeat;
     */
     width: 17px;
     height: 22px;
@@ -295,9 +295,9 @@
 // the style for the empty cells that are used for rendering the depth of the node
 .file-picker .ygtvdepthcell,
 .filemanager .ygtvdepthcell {
-    background: url('[[pix:moodle|y/vline]]') 0 0 no-repeat;
+    background: url('[[pix:moodle|y/vline]]') 0 10px no-repeat;
     /*rtl:raw:
-    background-position: 1px 0;
+    background-position: 2px 10px;
     */
     width: 17px;
     height: 32px;
