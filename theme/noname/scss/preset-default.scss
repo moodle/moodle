@@ -1026,3 +1026,15 @@ h2,
     padding-bottom: $spacer;
     margin-bottom: $spacer;
 }
+
+// Edit settings
+
+.mform fieldset {
+    margin-left: 1.5rem;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.form-group {
+    margin-top: ($spacer/2);
+}
