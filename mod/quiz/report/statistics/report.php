@@ -168,7 +168,7 @@ class quiz_statistics_report extends quiz_default_report {
             }
 
             if (!$this->table->is_downloading() && $quizstats->s() == 0) {
-                echo $OUTPUT->notification(get_string('noattempts', 'quiz'));
+                echo $OUTPUT->notification(get_string('nogradedattempts', 'quiz_statistics'));
             }
 
             foreach ($questionstats->any_error_messages() as $errormessage) {
@@ -259,7 +259,7 @@ class quiz_statistics_report extends quiz_default_report {
             // On-screen display of overview report.
             echo $OUTPUT->heading(get_string('quizinformation', 'quiz_statistics'), 3);
             echo $this->output_caching_info($quizstats->timemodified, $quiz->id, $groupstudents, $whichattempts, $reporturl);
-            echo $this->everything_download_options();
+            echo $this->everything_download_options($reporturl);
             $quizinfo = $quizstats->get_formatted_quiz_info_data($course, $cm, $quiz);
             echo $this->output_quiz_info_table($quizinfo);
             if ($quizstats->s()) {
@@ -735,13 +735,14 @@ class quiz_statistics_report extends quiz_default_report {
      * Return a little form for the user to request to download the full report, including quiz stats and response analysis for
      * all questions and sub-questions.
      *
+     * @param moodle_url $reporturl the base URL of the report.
+     *
      * @return string HTML.
      */
-    protected function everything_download_options() {
+    protected function everything_download_options(moodle_url $reporturl) {
         global $OUTPUT;
-
         return $OUTPUT->download_dataformat_selector(get_string('downloadeverything', 'quiz_statistics'),
-            $this->table->baseurl->out_omit_querystring(), 'download', $this->table->baseurl->params() + array('everything' => 1));
+            $reporturl->out_omit_querystring(), 'download', $reporturl->params() + array('everything' => 1));
     }
 
     /**
