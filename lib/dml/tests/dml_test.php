@@ -4146,6 +4146,9 @@ class core_dml_testcase extends database_driver_testcase {
             $this->fail("Expecting an exception, none occurred");
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
 
         // Cover the function using placeholders in all positions.
