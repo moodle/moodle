@@ -15,28 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/pix_icon
-
-    Moodle pix_icon template.
-
-    The purpose of this template is to render a pix_icon.
-
-    Classes required for JS:
-    * none
-
-    Data attributes required for JS:
-    * none
-
-    Context variables required for this template:
-    * attributes Array of name / value pairs.
-
-    Example context (json):
-    {
-        "attributes": [
-            { "name": "src", "value": "http://moodle.com/wp-content/themes/moodle/images/logo-hat2.png" },
-            { "name": "class", "value": "iconsmall" }
-        ]
-    }
-
+    Action menu link.
 }}
-<img {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>
+{{^disabled}}
+    <a href="{{url}}" class="{{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}}{{/attributes}} {{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>
+{{/disabled}}
+{{#disabled}}
+    <span class="currentlink" role="menuitem">{{#icon}}{{>core/pix_icon}}{{/icon}}{{{text}}}</span>
+{{/disabled}}
