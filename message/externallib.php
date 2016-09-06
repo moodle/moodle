@@ -446,6 +446,26 @@ class core_message_external extends external_api {
     }
 
     /**
+     * Return the structure of a message area message.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.2
+     */
+    private static function get_messagearea_message_structure() {
+        return new external_single_structure(
+            array(
+                'id' => new external_value(PARAM_INT, 'The id of the message'),
+                'text' => new external_value(PARAM_RAW, 'The text of the message'),
+                'displayblocktime' => new external_value(PARAM_BOOL, 'Should we display the block time?'),
+                'blocktime' => new external_value(PARAM_NOTAGS, 'The time to display above the message'),
+                'position' => new external_value(PARAM_ALPHA, 'The position of the text'),
+                'timesent' => new external_value(PARAM_NOTAGS, 'The time the message was sent'),
+                'isread' => new external_value(PARAM_INT, 'Determines if the message was read or not'),
+            )
+        );
+    }
+
+    /**
      * Get messagearea search people parameters.
      *
      * @return external_function_parameters
@@ -862,17 +882,7 @@ class core_message_external extends external_api {
                 'otheruserfullname' => new external_value(PARAM_NOTAGS, 'The other user\'s fullname'),
                 'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                 'messages' => new external_multiple_structure(
-                    new external_single_structure(
-                        array(
-                            'id' => new external_value(PARAM_INT, 'The id of the message'),
-                            'text' => new external_value(PARAM_RAW, 'The text of the message'),
-                            'displayblocktime' => new external_value(PARAM_BOOL, 'Should we display the block time?'),
-                            'blocktime' => new external_value(PARAM_NOTAGS, 'The time to display above the message'),
-                            'position' => new external_value(PARAM_ALPHA, 'The position of the text'),
-                            'timesent' => new external_value(PARAM_NOTAGS, 'The time the message was sent'),
-                            'isread' => new external_value(PARAM_INT, 'Determines if the message was read or not'),
-                        )
-                    )
+                    self::get_messagearea_message_structure()
                 )
             )
         );
@@ -931,17 +941,7 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_get_most_recent_message_returns() {
-        return new external_single_structure(
-            array(
-                'id' => new external_value(PARAM_INT, 'The id of the message'),
-                'text' => new external_value(PARAM_RAW, 'The text of the message'),
-                'displayblocktime' => new external_value(PARAM_BOOL, 'Should we display the block time?'),
-                'blocktime' => new external_value(PARAM_NOTAGS, 'The time to display above the message'),
-                'position' => new external_value(PARAM_ALPHA, 'The position of the text'),
-                'timesent' => new external_value(PARAM_NOTAGS, 'The time the message was sent'),
-                'isread' => new external_value(PARAM_INT, 'Determines if the message was read or not'),
-            )
-        );
+        return self::get_messagearea_message_structure();
     }
 
     /**
