@@ -1697,44 +1697,8 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_action_link(action_link $link) {
-        global $CFG;
-
-        $text = '';
-        if ($link->icon) {
-            $text .= $this->render($link->icon);
-        }
-
-        if ($link->text instanceof renderable) {
-            $text .= $this->render($link->text);
-        } else {
-            $text .= $link->text;
-        }
-
-        // A disabled link is rendered as formatted text
-        if (!empty($link->attributes['disabled'])) {
-            // do not use div here due to nesting restriction in xhtml strict
-            return html_writer::tag('span', $text, array('class'=>'currentlink'));
-        }
-
-        $attributes = $link->attributes;
-        unset($link->attributes['disabled']);
-        $attributes['href'] = $link->url;
-
-        if ($link->actions) {
-            if (empty($attributes['id'])) {
-                $id = html_writer::random_id('action_link');
-                $attributes['id'] = $id;
-            } else {
-                $id = $attributes['id'];
-            }
-            foreach ($link->actions as $action) {
-                $this->add_action_handler($action, $id);
-            }
-        }
-
-        return html_writer::tag('a', $text, $attributes);
+        return $this->render_from_template('core/action_link', $link->export_for_template($this));
     }
-
 
     /**
      * Renders an action_icon.
