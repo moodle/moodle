@@ -18,7 +18,7 @@
         /* So that the caret takes the colour of the icon. */
         color: #999;
         &::after {
-            margin-left: -($spacer/2);
+            margin-left: 0;
         }
     }
 }
