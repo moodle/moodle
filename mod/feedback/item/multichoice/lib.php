@@ -110,7 +110,7 @@ class feedback_item_multichoice extends feedback_item_base {
 
         $analysed_item = array();
         $analysed_item[] = $item->typ;
-        $analysed_item[] = $item->name;
+        $analysed_item[] = format_string($item->name);
 
         //get the possible answers
         $answers = null;
@@ -183,7 +183,7 @@ class feedback_item_multichoice extends feedback_item_base {
             for ($i = 0; $i < $sizeofvallist; $i++) {
                 for ($k = 0; $k < $sizeofpresentation; $k++) {
                     if ($vallist[$i] == ($k + 1)) {//Die Werte beginnen bei 1, das Array aber mit 0
-                        $printval .= trim($presentation[$k]) . chr(10);
+                        $printval .= trim(format_string($presentation[$k])) . chr(10);
                         break;
                     }
                 }
@@ -192,7 +192,7 @@ class feedback_item_multichoice extends feedback_item_base {
             $index = 1;
             foreach ($presentation as $pres) {
                 if ($value->value == $index) {
-                    $printval = $pres;
+                    $printval = format_string($pres);
                     break;
                 }
                 $index++;
@@ -212,7 +212,7 @@ class feedback_item_multichoice extends feedback_item_base {
             if (strval($item->label) !== '') {
                 echo '('. format_string($item->label).') ';
             }
-            echo $itemname;
+            echo format_string($itemname);
             echo '</th></tr>';
 
             $analysed_vals = $analysed_item[2];
