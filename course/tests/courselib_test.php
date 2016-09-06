@@ -2920,4 +2920,208 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertNotEmpty($res->prevpageurl);
         $this->assertEmpty($res->nextpageurl);
     }
+
+    /**
+     * Test course_get_user_navigation_options for frontpage.
+     */
+    public function test_course_get_user_navigation_options_for_frontpage() {
+        global $CFG, $SITE, $DB;
+        $this->resetAfterTest();
+        $context = context_system::instance();
+        $course = clone $SITE;
+        $this->setAdminUser();
+
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertTrue($navoptions->notes);
+        $this->assertTrue($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+        $this->assertTrue($navoptions->tags);
+        $this->assertFalse($navoptions->search);
+        $this->assertTrue($navoptions->calendar);
+
+        // Enable global search now.
+        $CFG->enableglobalsearch = 1;
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertTrue($navoptions->search);
+
+        // Now try with a standard user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertFalse($navoptions->notes);
+        $this->assertFalse($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+        $this->assertTrue($navoptions->tags);
+        $this->assertTrue($navoptions->search);
+        $this->assertTrue($navoptions->calendar);
+
+        // Standar using viewing frontpage settings from a course where is enrolled.
+        $course = self::getDataGenerator()->create_course();
+        // Create a viewer user.
+        $viewer = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($viewer->id, $course->id, $studentrole->id);
+        $this->setUser($viewer);
+        
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertFalse($navoptions->notes);
+        $this->assertTrue($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+        $this->assertTrue($navoptions->tags);
+        $this->assertTrue($navoptions->search);
+        $this->assertTrue($navoptions->calendar);
+    }
+
+    /**
+     * Test course_get_user_navigation_options for managers in a normal course.
+     */
+    public function test_course_get_user_navigation_options_for_managers() {
+        global $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $this->setAdminUser();
+
+        $navoptions = course_get_user_navigation_options($context);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertTrue($navoptions->notes);
+        $this->assertTrue($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+    }
+
+    /**
+     * Test course_get_user_navigation_options for students in a normal course.
+     */
+    public function test_course_get_user_navigation_options_for_students() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+
+        $navoptions = course_get_user_navigation_options($context);
+        $this->assertTrue($navoptions->blogs);
+        $this->assertFalse($navoptions->notes);
+        $this->assertTrue($navoptions->participants);
+        $this->assertTrue($navoptions->badges);
+
+        // Disable some options.
+        $CFG->badges_allowcoursebadges = 0;
+        $CFG->enableblogs = 0;
+        // Disable view participants capability.
+        assign_capability('moodle/course:viewparticipants', CAP_PROHIBIT, $roleid, $context);
+        $context->mark_dirty();
+
+        $navoptions = course_get_user_navigation_options($context);
+        $this->assertFalse($navoptions->blogs);
+        $this->assertFalse($navoptions->notes);
+        $this->assertFalse($navoptions->participants);
+        $this->assertFalse($navoptions->badges);
+    }
+
+    /**
+     * Test course_get_user_administration_options for frontpage.
+     */
+    public function test_course_get_user_administration_options_for_frontpage() {
+        global $CFG, $SITE;
+        $this->resetAfterTest();
+        $course = clone $SITE;
+        $context = context_course::instance($course->id);
+        $this->setAdminUser();
+
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertTrue($adminoptions->update);
+        $this->assertTrue($adminoptions->filters);
+        $this->assertTrue($adminoptions->reports);
+        $this->assertTrue($adminoptions->backup);
+        $this->assertTrue($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertTrue(!isset($adminoptions->tags));
+
+        // Now try with a standard user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertFalse($adminoptions->update);
+        $this->assertFalse($adminoptions->filters);
+        $this->assertFalse($adminoptions->reports);
+        $this->assertFalse($adminoptions->backup);
+        $this->assertFalse($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertTrue(!isset($adminoptions->tags));
+
+    }
+
+    /**
+     * Test course_get_user_administration_options for managers in a normal course.
+     */
+    public function test_course_get_user_administration_options_for_managers() {
+        global $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $this->setAdminUser();
+
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertTrue($adminoptions->update);
+        $this->assertTrue($adminoptions->filters);
+        $this->assertTrue($adminoptions->reports);
+        $this->assertTrue($adminoptions->backup);
+        $this->assertTrue($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertTrue($adminoptions->tags);
+        $this->assertTrue($adminoptions->gradebook);
+        $this->assertFalse($adminoptions->outcomes);
+        $this->assertTrue($adminoptions->badges);
+        $this->assertTrue($adminoptions->import);
+        $this->assertTrue($adminoptions->publish);
+        $this->assertTrue($adminoptions->reset);
+        $this->assertTrue($adminoptions->roles);
+        $this->assertTrue($adminoptions->grades);
+    }
+
+    /**
+     * Test course_get_user_administration_options for students in a normal course.
+     */
+    public function test_course_get_user_administration_options_for_students() {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $roleid);
+
+        $this->setUser($user);
+        $adminoptions = course_get_user_administration_options($course, $context);
+
+        $this->assertFalse($adminoptions->update);
+        $this->assertFalse($adminoptions->filters);
+        $this->assertFalse($adminoptions->reports);
+        $this->assertFalse($adminoptions->backup);
+        $this->assertFalse($adminoptions->restore);
+        $this->assertFalse($adminoptions->files);
+        $this->assertFalse($adminoptions->tags);
+        $this->assertFalse($adminoptions->gradebook);
+        $this->assertFalse($adminoptions->outcomes);
+        $this->assertTrue($adminoptions->badges);
+        $this->assertFalse($adminoptions->import);
+        $this->assertFalse($adminoptions->publish);
+        $this->assertFalse($adminoptions->reset);
+        $this->assertFalse($adminoptions->roles);
+        $this->assertTrue($adminoptions->grades);
+
+        $CFG->enablebadges = false;
+        $adminoptions = course_get_user_administration_options($course, $context);
+        $this->assertFalse($adminoptions->badges);
+    }
 }

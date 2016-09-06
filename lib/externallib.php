@@ -1098,9 +1098,10 @@ class external_util {
      *
      * @param  array $courseids A list of course ids
      * @param  array $courses   An array of courses already pre-fetched, indexed by course id.
+     * @param  bool $addcontext True if the returned course object should include the full context object.
      * @return array            An array of courses and the validation warnings
      */
-    public static function validate_courses($courseids, $courses = array()) {
+    public static function validate_courses($courseids, $courses = array(), $addcontext = false) {
         // Delete duplicates.
         $courseids = array_unique($courseids);
         $warnings = array();
@@ -1116,6 +1117,9 @@ class external_util {
 
                 if (!isset($courses[$cid])) {
                     $courses[$cid] = get_course($cid);
+                }
+                if ($addcontext) {
+                    $courses[$cid]->context = $context;
                 }
             } catch (Exception $e) {
                 unset($courses[$cid]);

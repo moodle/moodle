@@ -2536,6 +2536,7 @@ class global_navigation extends navigation_node {
      */
     public function add_course_essentials($coursenode, stdClass $course) {
         global $CFG, $SITE;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         if ($course->id == $SITE->id) {
             return $this->add_front_page_course_essentials($coursenode, $course);
@@ -2545,22 +2546,23 @@ class global_navigation extends navigation_node {
             return true;
         }
 
+        $navoptions = course_get_user_navigation_options($this->page->context);
+
         //Participants
-        if (has_capability('moodle/course:viewparticipants', $this->page->context)) {
+        if ($navoptions->participants) {
             $participants = $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CONTAINER, get_string('participants'), 'participants');
-            if (!empty($CFG->enableblogs)) {
-                if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
-                   and has_capability('moodle/blog:view', context_system::instance())) {
-                    $blogsurls = new moodle_url('/blog/index.php');
-                    if ($currentgroup = groups_get_course_group($course, true)) {
-                        $blogsurls->param('groupid', $currentgroup);
-                    } else {
-                        $blogsurls->param('courseid', $course->id);
-                    }
-                    $participants->add(get_string('blogscourse', 'blog'), $blogsurls->out(), self::TYPE_SETTING, null, 'courseblogs');
+
+            if ($navoptions->blogs) {
+                $blogsurls = new moodle_url('/blog/index.php');
+                if ($currentgroup = groups_get_course_group($course, true)) {
+                    $blogsurls->param('groupid', $currentgroup);
+                } else {
+                    $blogsurls->param('courseid', $course->id);
                 }
+                $participants->add(get_string('blogscourse', 'blog'), $blogsurls->out(), self::TYPE_SETTING, null, 'courseblogs');
             }
-            if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->page->context) || has_capability('moodle/notes:view', $this->page->context))) {
+
+            if ($navoptions->notes) {
                 $participants->add(get_string('notes', 'notes'), new moodle_url('/notes/index.php', array('filtertype' => 'course', 'filterselect' => $course->id)), self::TYPE_SETTING, null, 'currentcoursenotes');
             }
         } else if (count($this->extendforuser) > 0 || $this->page->course->id == $course->id) {
@@ -2568,8 +2570,7 @@ class global_navigation extends navigation_node {
         }
 
         // Badges.
-        if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) &&
-            has_capability('moodle/badges:viewbadges', $this->page->context)) {
+        if ($navoptions->badges) {
             $url = new moodle_url('/badges/view.php', array('type' => 2, 'id' => $course->id));
 
             $coursenode->add(get_string('coursebadges', 'badges'), null,
@@ -2594,30 +2595,26 @@ class global_navigation extends navigation_node {
      */
     public function add_front_page_course_essentials(navigation_node $coursenode, stdClass $course) {
         global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         if ($coursenode == false || $coursenode->get('frontpageloaded', navigation_node::TYPE_CUSTOM)) {
             return true;
         }
 
         $sitecontext = context_system::instance();
-        $isfrontpage = ($course->id == SITEID);
+        $navoptions = course_get_user_navigation_options($sitecontext, $course);
 
         // Hidden node that we use to determine if the front page navigation is loaded.
         // This required as there are not other guaranteed nodes that may be loaded.
         $coursenode->add('frontpageloaded', null, self::TYPE_CUSTOM, null, 'frontpageloaded')->display = false;
 
         // Participants.
-        // If this is the site course, they need to have moodle/site:viewparticipants at the site level.
-        // If no, then they need to have moodle/course:viewparticipants at the course level.
-        if (($isfrontpage && has_capability('moodle/site:viewparticipants', $sitecontext)) ||
-                (!$isfrontpage && has_capability('moodle/course:viewparticipants', context_course::instance($course->id)))) {
+        if ($navoptions->participants) {
             $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CUSTOM, get_string('participants'), 'participants');
         }
 
         // Blogs.
-        if (!empty($CFG->enableblogs)
-          and ($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
-          and has_capability('moodle/blog:view', $sitecontext)) {
+        if ($navoptions->blogs) {
             $blogsurls = new moodle_url('/blog/index.php');
             $coursenode->add(get_string('blogssite', 'blog'), $blogsurls->out(), self::TYPE_SYSTEM, null, 'siteblog');
         }
@@ -2625,30 +2622,30 @@ class global_navigation extends navigation_node {
         $filterselect = 0;
 
         // Badges.
-        if (!empty($CFG->enablebadges) && has_capability('moodle/badges:viewbadges', $sitecontext)) {
+        if ($navoptions->badges) {
             $url = new moodle_url($CFG->wwwroot . '/badges/view.php', array('type' => 1));
             $coursenode->add(get_string('sitebadges', 'badges'), $url, navigation_node::TYPE_CUSTOM);
         }
 
         // Notes.
-        if (!empty($CFG->enablenotes) && has_any_capability(array('moodle/notes:manage', 'moodle/notes:view'), $sitecontext)) {
+        if ($navoptions->notes) {
             $coursenode->add(get_string('notes', 'notes'), new moodle_url('/notes/index.php',
                 array('filtertype' => 'course', 'filterselect' => $filterselect)), self::TYPE_SETTING, null, 'notes');
         }
 
         // Tags
-        if (!empty($CFG->usetags) && isloggedin()) {
+        if ($navoptions->tags) {
             $node = $coursenode->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'),
                     self::TYPE_SETTING, null, 'tags');
         }
 
         // Search.
-        if (!empty($CFG->enableglobalsearch) && has_capability('moodle/search:query', $sitecontext)) {
+        if ($navoptions->search) {
             $node = $coursenode->add(get_string('search', 'search'), new moodle_url('/search/index.php'),
                     self::TYPE_SETTING, null, 'search');
         }
 
-        if (isloggedin()) {
+        if ($navoptions->calendar) {
             // Calendar
             $calendarurl = new moodle_url('/calendar/view.php', array('view' => 'month'));
             $coursenode->add(get_string('calendar', 'calendar'), $calendarurl, self::TYPE_CUSTOM, null, 'calendar');
@@ -3770,9 +3767,11 @@ class settings_navigation extends navigation_node {
      */
     protected function load_course_settings($forceopen = false) {
         global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         $course = $this->page->course;
         $coursecontext = context_course::instance($course->id);
+        $adminoptions = course_get_user_administration_options($course, $coursecontext);
 
         // note: do not test if enrolled or viewing here because we need the enrol link in Course administration section
 
@@ -3804,7 +3803,7 @@ class settings_navigation extends navigation_node {
             $coursenode->add($editstring, $editurl, self::TYPE_SETTING, null, 'turneditingonoff', new pix_icon('i/edit', ''));
         }
 
-        if (has_capability('moodle/course:update', $coursecontext)) {
+        if ($adminoptions->update) {
             // Add the course settings link
             $url = new moodle_url('/course/edit.php', array('id'=>$course->id));
             $coursenode->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, 'editsettings', new pix_icon('i/settings', ''));
@@ -3814,7 +3813,7 @@ class settings_navigation extends navigation_node {
                 $url = new moodle_url('/course/completion.php', array('id'=>$course->id));
                 $coursenode->add(get_string('coursecompletion', 'completion'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
             }
-        } else if (has_capability('moodle/course:tag', $coursecontext)) {
+        } else if ($adminoptions->tags) {
             $url = new moodle_url('/course/tags.php', array('id' => $course->id));
             $coursenode->add(get_string('coursetags', 'tag'), $url, self::TYPE_SETTING, null, 'coursetags', new pix_icon('i/settings', ''));
         }
@@ -3823,13 +3822,13 @@ class settings_navigation extends navigation_node {
         enrol_add_course_navigation($coursenode, $course);
 
         // Manage filters
-        if (has_capability('moodle/filter:manage', $coursecontext) && count(filter_get_available_in_context($coursecontext))>0) {
+        if ($adminoptions->filters) {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/filter', ''));
         }
 
         // View course reports.
-        if (has_capability('moodle/site:viewreports', $coursecontext)) { // Basic capability for listing of reports.
+        if ($adminoptions->reports) {
             $reportnav = $coursenode->add(get_string('reports'), null, self::TYPE_CONTAINER, null, 'coursereports',
                     new pix_icon('i/stats', ''));
             $coursereports = core_component::get_plugin_list('coursereport');
@@ -3850,73 +3849,56 @@ class settings_navigation extends navigation_node {
             }
         }
 
-        // Add view grade report is permitted
-        $reportavailable = false;
-        if (has_capability('moodle/grade:viewall', $coursecontext)) {
-            $reportavailable = true;
-        } else if (!empty($course->showgrades)) {
-            $reports = core_component::get_plugin_list('gradereport');
-            if (is_array($reports) && count($reports)>0) {     // Get all installed reports
-                arsort($reports); // user is last, we want to test it first
-                foreach ($reports as $plugin => $plugindir) {
-                    if (has_capability('gradereport/'.$plugin.':view', $coursecontext)) {
-                        //stop when the first visible plugin is found
-                        $reportavailable = true;
-                        break;
-                    }
-                }
-            }
-        }
-        if ($reportavailable) {
+        if ($adminoptions->grades) {
             $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
             $gradenode = $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, 'grades', new pix_icon('i/grades', ''));
         }
 
         // Check if we can view the gradebook's setup page.
-        if (has_capability('moodle/grade:manage', $coursecontext)) {
+        if ($adminoptions->gradebook) {
             $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $course->id));
             $coursenode->add(get_string('gradebooksetup', 'grades'), $url, self::TYPE_SETTING,
                 null, 'gradebooksetup', new pix_icon('i/settings', ''));
         }
 
         //  Add outcome if permitted
-        if (!empty($CFG->enableoutcomes) && has_capability('moodle/course:update', $coursecontext)) {
+        if ($adminoptions->outcomes) {
             $url = new moodle_url('/grade/edit/outcome/course.php', array('id'=>$course->id));
             $coursenode->add(get_string('outcomes', 'grades'), $url, self::TYPE_SETTING, null, 'outcomes', new pix_icon('i/outcomes', ''));
         }
 
         //Add badges navigation
-        if (!empty($CFG->enablebadges)) {
+        if ($adminoptions->badges) {
             require_once($CFG->libdir .'/badgeslib.php');
             badges_add_course_navigation($coursenode, $course);
         }
 
         // Backup this course
-        if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
+        if ($adminoptions->backup) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
             $coursenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
         }
 
         // Restore to this course
-        if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
+        if ($adminoptions->restore) {
             $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
         }
 
         // Import data from other courses
-        if (has_capability('moodle/restore:restoretargetimport', $coursecontext)) {
+        if ($adminoptions->import) {
             $url = new moodle_url('/backup/import.php', array('id'=>$course->id));
             $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
         }
 
         // Publish course on a hub
-        if (has_capability('moodle/course:publish', $coursecontext)) {
+        if ($adminoptions->publish) {
             $url = new moodle_url('/course/publish/index.php', array('id'=>$course->id));
             $coursenode->add(get_string('publish'), $url, self::TYPE_SETTING, null, 'publish', new pix_icon('i/publish', ''));
         }
 
         // Reset this course
-        if (has_capability('moodle/course:reset', $coursecontext)) {
+        if ($adminoptions->reset) {
             $url = new moodle_url('/course/reset.php', array('id'=>$course->id));
             $coursenode->add(get_string('reset'), $url, self::TYPE_SETTING, null, 'reset', new pix_icon('i/return', ''));
         }
@@ -3925,7 +3907,7 @@ class settings_navigation extends navigation_node {
         require_once($CFG->libdir . '/questionlib.php');
         question_extend_settings_navigation($coursenode, $coursecontext)->trim_if_empty();
 
-        if (has_capability('moodle/course:update', $coursecontext)) {
+        if ($adminoptions->update) {
             // Repository Instances
             if (!$this->cache->cached('contexthasrepos'.$coursecontext->id)) {
                 require_once($CFG->dirroot . '/repository/lib.php');
@@ -3943,7 +3925,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Manage files
-        if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $coursecontext)) {
+        if ($adminoptions->files) {
             // hidden in new courses and courses where legacy files were turned off
             $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
             $coursenode->add(get_string('courselegacyfiles'), $url, self::TYPE_SETTING, null, 'coursefiles', new pix_icon('i/folder', ''));
@@ -3956,7 +3938,7 @@ class settings_navigation extends navigation_node {
         if ($assumedrole !== false) {
             $roles[0] = get_string('switchrolereturn');
         }
-        if (has_capability('moodle/role:switchroles', $coursecontext)) {
+        if ($adminoptions->roles) {
             $availableroles = get_switchable_roles($coursecontext);
             if (is_array($availableroles)) {
                 foreach ($availableroles as $key=>$role) {
@@ -4737,9 +4719,11 @@ class settings_navigation extends navigation_node {
      */
     protected function load_front_page_settings($forceopen = false) {
         global $SITE, $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         $course = clone($SITE);
         $coursecontext = context_course::instance($course->id);   // Course context
+        $adminoptions = course_get_user_administration_options($course, $coursecontext);
 
         $frontpage = $this->add(get_string('frontpagesettings'), null, self::TYPE_SETTING, null, 'frontpage');
         if ($forceopen) {
@@ -4761,7 +4745,7 @@ class settings_navigation extends navigation_node {
             $frontpage->add($editstring, $url, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
         }
 
-        if (has_capability('moodle/course:update', $coursecontext)) {
+        if ($adminoptions->update) {
             // Add the course settings link
             $url = new moodle_url('/admin/settings.php', array('section'=>'frontpagesettings'));
             $frontpage->add(get_string('editsettings'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/settings', ''));
@@ -4771,13 +4755,13 @@ class settings_navigation extends navigation_node {
         enrol_add_course_navigation($frontpage, $course);
 
         // Manage filters
-        if (has_capability('moodle/filter:manage', $coursecontext) && count(filter_get_available_in_context($coursecontext))>0) {
+        if ($adminoptions->filters) {
             $url = new moodle_url('/filter/manage.php', array('contextid'=>$coursecontext->id));
             $frontpage->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/filter', ''));
         }
 
         // View course reports.
-        if (has_capability('moodle/site:viewreports', $coursecontext)) { // Basic capability for listing of reports.
+        if ($adminoptions->reports) {
             $frontpagenav = $frontpage->add(get_string('reports'), null, self::TYPE_CONTAINER, null, 'frontpagereports',
                     new pix_icon('i/stats', ''));
             $coursereports = core_component::get_plugin_list('coursereport');
@@ -4799,13 +4783,13 @@ class settings_navigation extends navigation_node {
         }
 
         // Backup this course
-        if (has_capability('moodle/backup:backupcourse', $coursecontext)) {
+        if ($adminoptions->backup) {
             $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
             $frontpage->add(get_string('backup'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/backup', ''));
         }
 
         // Restore to this course
-        if (has_capability('moodle/restore:restorecourse', $coursecontext)) {
+        if ($adminoptions->restore) {
             $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
             $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/restore', ''));
         }
@@ -4815,7 +4799,7 @@ class settings_navigation extends navigation_node {
         question_extend_settings_navigation($frontpage, $coursecontext)->trim_if_empty();
 
         // Manage files
-        if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $this->context)) {
+        if ($adminoptions->files) {
             //hiden in new installs
             $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
             $frontpage->add(get_string('sitelegacyfiles'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/folder', ''));

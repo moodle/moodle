@@ -1755,4 +1755,111 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals('forum', $result['courses'][0]['overviews'][0]['module']);
         $this->assertContains('1 total unread', $result['courses'][0]['overviews'][0]['overviewtext']);
     }
+
+    /**
+     * Test get_user_navigation_options
+     */
+    public function test_get_user_navigation_options() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        // Create a viewer user.
+        $viewer = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($viewer->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($viewer->id, $course2->id);
+
+        $this->setUser($viewer->id);
+        $courses = array($course1->id , $course2->id, SITEID);
+
+        $result = core_course_external::get_user_navigation_options($courses);
+        $result = external_api::clean_returnvalue(core_course_external::get_user_navigation_options_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(3, $result['courses']);
+
+        foreach ($result['courses'] as $course) {
+            $navoptions = new stdClass;
+            foreach ($course['options'] as $option) {
+                $navoptions->{$option['name']} = $option['available'];
+            }
+            if ($course['id'] == SITEID) {
+                $this->assertCount(7, $course['options']);
+                $this->assertTrue($navoptions->blogs);
+                $this->assertFalse($navoptions->notes);
+                $this->assertFalse($navoptions->participants);
+                $this->assertTrue($navoptions->badges);
+                $this->assertTrue($navoptions->tags);
+                $this->assertFalse($navoptions->search);
+                $this->assertTrue($navoptions->calendar);
+            } else {
+                $this->assertCount(4, $course['options']);
+                $this->assertTrue($navoptions->blogs);
+                $this->assertFalse($navoptions->notes);
+                $this->assertTrue($navoptions->participants);
+                $this->assertTrue($navoptions->badges);
+            }
+        }
+    }
+
+    /**
+     * Test get_user_administration_options
+     */
+    public function test_get_user_administration_options() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        // Create a viewer user.
+        $viewer = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($viewer->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($viewer->id, $course2->id);
+
+        $this->setUser($viewer->id);
+        $courses = array($course1->id , $course2->id, SITEID);
+
+        $result = core_course_external::get_user_administration_options($courses);
+        $result = external_api::clean_returnvalue(core_course_external::get_user_administration_options_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(3, $result['courses']);
+
+        foreach ($result['courses'] as $course) {
+            $adminoptions = new stdClass;
+            foreach ($course['options'] as $option) {
+                $adminoptions->{$option['name']} = $option['available'];
+            }
+            if ($course['id'] == SITEID) {
+                $this->assertCount(6, $course['options']);
+                $this->assertFalse($adminoptions->update);
+                $this->assertFalse($adminoptions->filters);
+                $this->assertFalse($adminoptions->reports);
+                $this->assertFalse($adminoptions->backup);
+                $this->assertFalse($adminoptions->restore);
+                $this->assertFalse($adminoptions->files);
+                $this->assertTrue(!isset($adminoptions->tags));
+            } else {
+                $this->assertCount(15, $course['options']);
+                $this->assertFalse($adminoptions->update);
+                $this->assertFalse($adminoptions->filters);
+                $this->assertFalse($adminoptions->reports);
+                $this->assertFalse($adminoptions->backup);
+                $this->assertFalse($adminoptions->restore);
+                $this->assertFalse($adminoptions->files);
+                $this->assertFalse($adminoptions->tags);
+                $this->assertFalse($adminoptions->gradebook);
+                $this->assertFalse($adminoptions->outcomes);
+                $this->assertTrue($adminoptions->badges);
+                $this->assertFalse($adminoptions->import);
+                $this->assertFalse($adminoptions->publish);
+                $this->assertFalse($adminoptions->reset);
+                $this->assertFalse($adminoptions->roles);
+                $this->assertTrue($adminoptions->grades);
+            }
+        }
+    }
 }
