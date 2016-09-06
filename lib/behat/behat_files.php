@@ -67,7 +67,7 @@ class behat_files extends behat_base {
         if (empty($filepickerelement)) {
             $filepickercontainer = $this->find(
                 'xpath',
-                "//*[@class=\"form-filemanager\"]",
+                "//*[@data-fieldtype=\"filemanager\"]",
                 $exception
             );
         } else {
@@ -76,8 +76,7 @@ class behat_files extends behat_base {
             $filepickercontainer = $this->find(
                 'xpath',
                 "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
-                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ') or " .
-                    "contains(concat(' ', normalize-space(@class), ' '), ' ffilepicker ')]",
+                    '//ancestor::div[@data-fieldtype="filemanager" or @data-fieldtype="filepicker"]',
                 $exception
             );
         }

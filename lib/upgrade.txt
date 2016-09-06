@@ -70,6 +70,7 @@ information provided here is intended especially for developers.
   - 2. Parallel runs: How many parallel runs will be running.
   - 3. Run: Which process behat should be initialise for.
 * behat_context_helper::set_session() has been deprecated, please use behat_context_helper::set_environment() instead.
+* data-fieldtype="type" attribute has been added to form field default template.
 
 === 3.1 ===
 
