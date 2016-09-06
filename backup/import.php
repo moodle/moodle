@@ -145,7 +145,6 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
             if (!empty($precheckresults['errors'])) { // If errors are found, terminate the import.
                 fulldelete($tempdestination);
 
-                echo $OUTPUT->header();
                 echo $renderer->precheck_notices($precheckresults);
                 echo $OUTPUT->continue_button(new moodle_url('/course/view.php', array('id'=>$course->id)));
                 echo $OUTPUT->footer();
