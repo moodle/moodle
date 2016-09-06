@@ -333,7 +333,9 @@ div#dock {
                     .role {
                         font-weight: bold;
                     }
+
                 }
+
             }
 
             // Hide caret when JS is disabled.
@@ -343,6 +345,11 @@ div#dock {
         }
 
 
+    }
+}
+@include media-breakpoint-down(sm) {
+    .usertext {
+        display: none;
     }
 }
 .jsenabled {
