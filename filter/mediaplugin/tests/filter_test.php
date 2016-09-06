@@ -105,7 +105,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
         $paddedurl = str_pad($originalurl, 6000, 'z');
         $validpaddedurl = '<p>Some text.</p><pre style="color: rgb(0, 0, 0); line-height: normal;"><span class="mediaplugin mediaplugin_youtube">
 <iframe title="Valid link" width="400" height="300"
-  src="https://www.youtube.com/embed/uUhWl9Lm3OM?rel=0&wmode=transparent" frameborder="0" allowfullscreen="1"></iframe>
+  src="https://www.youtube.com/embed/uUhWl9Lm3OM?rel=0&amp;wmode=transparent" frameborder="0" allowfullscreen="1"></iframe>
 </span></pre><pre style="color: rgb(0, 0, 0); line-height: normal;">';
         $validpaddedurl = str_pad($validpaddedurl, 6000 + (strlen($validpaddedurl) - strlen($originalurl)), 'z');
 
