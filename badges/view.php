@@ -83,7 +83,7 @@ $output = $PAGE->get_renderer('core', 'badges');
 echo $output->header();
 echo $OUTPUT->heading($title);
 
-$totalcount = count(badges_get_badges($type, $courseid, '', '', '', '', $USER->id));
+$totalcount = count(badges_get_badges($type, $courseid, '', '', 0, 0, $USER->id));
 $records = badges_get_badges($type, $courseid, $sortby, $sorthow, $page, BADGE_PERPAGE, $USER->id);
 
 if ($totalcount) {
