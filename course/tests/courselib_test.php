@@ -3044,7 +3044,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue($adminoptions->backup);
         $this->assertTrue($adminoptions->restore);
         $this->assertFalse($adminoptions->files);
-        $this->assertTrue(!isset($adminoptions->tags));
+        $this->assertFalse($adminoptions->tags);
 
         // Now try with a standard user.
         $user = $this->getDataGenerator()->create_user();
@@ -3056,7 +3056,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($adminoptions->backup);
         $this->assertFalse($adminoptions->restore);
         $this->assertFalse($adminoptions->files);
-        $this->assertTrue(!isset($adminoptions->tags));
+        $this->assertFalse($adminoptions->tags);
 
     }
 
