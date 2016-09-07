@@ -62,11 +62,21 @@ class user_edit_forum_form extends moodleform {
         $mform->setDefault('autosubscribe', core_user::get_property_default('autosubscribe'));
 
         if (!empty($CFG->forum_trackreadposts)) {
+            $mform->addElement('header', 'trackreadposts', get_string('trackreadposts_header', 'mod_forum'));
             $choices = array();
             $choices['0'] = get_string('trackforumsno');
             $choices['1'] = get_string('trackforumsyes');
             $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
             $mform->setDefault('trackforums', core_user::get_property_default('trackforums'));
+
+            $choices = [
+                1   => get_string('markasreadonnotificationyes', 'mod_forum'),
+                0   => get_string('markasreadonnotificationno', 'mod_forum'),
+            ];
+            $mform->addElement('select', 'markasreadonnotification', get_string('markasreadonnotification', 'mod_forum'), $choices);
+            $mform->addHelpButton('markasreadonnotification', 'markasreadonnotification', 'mod_forum');
+            $mform->disabledIf('markasreadonnotification', 'trackforums', 'eq', "0");
+            $mform->setDefault('markasreadonnotification', 1);
         }
 
         // Add some extra hidden fields.
