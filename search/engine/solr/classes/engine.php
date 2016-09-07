@@ -745,7 +745,7 @@ class engine extends \core_search\engine {
                     if (isset($files[$fileid])) {
                         // Check for changes that would mean we need to re-index the file. If so, just leave in $files.
                         // Filelib does not guarantee time modified is updated, so we will check important values.
-                        if ($indexedfile->modified < $files[$fileid]->get_timemodified()) {
+                        if ($indexedfile->modified != $files[$fileid]->get_timemodified()) {
                             continue;
                         }
                         if (strcmp($indexedfile->title, $files[$fileid]->get_filename()) !== 0) {

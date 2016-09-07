@@ -194,6 +194,10 @@ class core_search_generator extends component_generator_base {
             $content = 'File contents';
         }
 
+        if (isset($options->timemodified)) {
+            $filerecord['timemodified'] = $options->timemodified;
+        }
+
         $fs = get_file_storage();
         $file = $fs->create_file_from_string($filerecord, $content);
 
