@@ -188,6 +188,12 @@ switch($requestmethod) {
                         $grademodule->modname = $cm->modname;
                         grade_update_mod_grades($grademodule);
 
+                        // Update calendar events with the new name.
+                        $refresheventsfunction = $cm->modname . '_refresh_events';
+                        if (function_exists($refresheventsfunction)) {
+                            call_user_func($refresheventsfunction, $cm->course);
+                        }
+
                         // We need to return strings after they've been through filters for multilang
                         $stringoptions = new stdClass;
                         $stringoptions->context = $coursecontext;
