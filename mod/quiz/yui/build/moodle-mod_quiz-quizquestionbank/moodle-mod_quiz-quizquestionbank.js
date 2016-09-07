@@ -26,7 +26,7 @@ YUI.add('moodle-mod_quiz-quizquestionbank', function (Y, NAME) {
 
 var CSS = {
         QBANKLOADING:       'div.questionbankloading',
-        ADDQUESTIONLINKS:   'ul.menu a.questionbank',
+        ADDQUESTIONLINKS:   '.menu [data-action="questionbank"]',
         ADDTOQUIZCONTAINER: 'td.addtoquizaction',
         PREVIEWCONTAINER:   'td.previewaction',
         SEARCHOPTIONS:      '#advancedsearch'
