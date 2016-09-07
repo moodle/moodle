@@ -4174,6 +4174,14 @@ function course_get_user_administration_options($course, $context) {
             }
         }
         $options->grades = $grades;
+    } else {
+        // Set default options to false.
+        $listofoptions = array('tags', 'gradebook', 'outcomes', 'badges', 'import', 'publish', 'reset', 'roles', 'grades');
+
+        foreach ($listofoptions as $option) {
+            $options->$option = false;
+        }
     }
+
     return $options;
 }
