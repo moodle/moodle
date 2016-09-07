@@ -56,7 +56,8 @@ class block_rss_client_edit_form extends block_edit_form {
             $params += $inparams;
         }
 
-        $titlesql = "CASE WHEN preferredtitle = '' THEN {$DB->sql_compare_text('title', 64)} ELSE preferredtitle END";
+        $titlesql = "CASE WHEN {$DB->sql_isempty('block_rss_client','preferredtitle', false, false)}
+                      THEN {$DB->sql_compare_text('title', 64)} ELSE preferredtitle END";
 
         $rssfeeds = $DB->get_records_sql_menu("
                 SELECT id, $titlesql
