@@ -184,7 +184,6 @@ if (!empty($instanceid) && !empty($roleid)) {
     }
     $table->define_baseurl($baseurl);
 
-    $table->set_attribute('cellpadding','5');
     $table->set_attribute('class', 'generaltable generalbox reporttable');
 
     $table->sortable(true,'lastname','ASC');
@@ -336,11 +335,13 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     echo '<h2>'.get_string('counteditems', '', $a).'</h2>'."\n";
 
-    echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform">'."\n";
-    echo '<div>'."\n";
-    echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
-    echo '<input type="hidden" name="returnto" value="'. s($PAGE->url) .'" />'."\n";
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
+    if (!empty($CFG->messaging)) {
+        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform">'."\n";
+        echo '<div>'."\n";
+        echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
+        echo '<input type="hidden" name="returnto" value="'. s($PAGE->url) .'" />'."\n";
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
+    }
 
     foreach ($users as $u) {
         $data = array();
@@ -385,10 +386,10 @@ if (!empty($instanceid) && !empty($roleid)) {
         echo '</div>';
         echo '</div>'."\n";
         echo '</form>'."\n";
-        echo '</div>'."\n";
 
         $PAGE->requires->js_init_call('M.report_participation.init');
     }
+    echo '</div>'."\n";
 }
 
 echo $OUTPUT->footer();
