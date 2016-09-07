@@ -729,6 +729,32 @@ class manager {
     }
 
     /**
+     * Triggers search_results_viewed event
+     *
+     * Other data required:
+     * - q: The query string
+     * - page: The page number
+     * - title: Title filter
+     * - areaids: Search areas filter
+     * - courseids: Courses filter
+     * - timestart: Time start filter
+     * - timeend: Time end filter
+     *
+     * @since Moodle 3.2
+     * @param array $other Other info for the event.
+     * @return \core\event\search_results_viewed
+     */
+    public static function trigger_search_results_viewed($other) {
+        $event = \core\event\search_results_viewed::create([
+            'context' => \context_system::instance(),
+            'other' => $other
+        ]);
+        $event->trigger();
+
+        return $event;
+    }
+
+    /**
      * Checks whether a classname is of an actual search area.
      *
      * @param string $classname
