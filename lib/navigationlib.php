@@ -4461,6 +4461,15 @@ class settings_navigation extends navigation_node {
             }
         }
 
+        // Add "Calendar preferences" link.
+        if (isloggedin() && !isguestuser($user)) {
+            if ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext) ||
+                    has_capability('moodle/user:editprofile', $usercontext)) {
+                $url = new moodle_url('/user/calendar.php', array('id' => $user->id));
+                $useraccount->add(get_string('calendarpreferences', 'calendar'), $url, self::TYPE_SETTING, null, 'preferredcalendar');
+            }
+        }
+
         // View the roles settings.
         if (has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override',
                 'moodle/role:manage'), $usercontext)) {
