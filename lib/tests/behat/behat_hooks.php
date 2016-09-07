@@ -111,6 +111,11 @@ class behat_hooks extends behat_base {
      * @BeforeSuite
      */
     public static function before_suite_hook(BeforeSuiteScope $scope) {
+        // If behat has been initialised then no need to do this again.
+        if (self::$initprocessesfinished) {
+            return;
+        }
+
         try {
             self::before_suite($scope);
         } catch (behat_stop_exception $e) {
