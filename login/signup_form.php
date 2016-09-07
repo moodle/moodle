@@ -40,7 +40,7 @@ class login_signup_form extends moodleform {
 
 
         $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12"');
-        $mform->setType('username', core_user::get_property_type('username'));
+        $mform->setType('username', PARAM_RAW);
         $mform->addRule('username', get_string('missingusername'), 'required', null, 'client');
 
         if (!empty($CFG->passwordpolicy)){
