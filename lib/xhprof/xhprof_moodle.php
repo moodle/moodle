@@ -865,7 +865,7 @@ class moodle_xhprofrun implements iXHProfRuns {
 
         $DB->insert_record('profiling', $rec);
 
-        if (PHPUNIT_TEST) {
+        if (PHPUNIT_TEST && !PHPUNIT_UTIL) {
             // Calculate export variables.
             $tempdir = 'profiling';
             make_temp_directory($tempdir);
