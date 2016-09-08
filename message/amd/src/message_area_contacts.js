@@ -125,9 +125,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this.messageArea.onDelegateEvent(customEvents.events.scrollBottom, this.messageArea.SELECTORS.CONTACTS,
                 this._loadContacts.bind(this));
 
-            // Set the number of conversations that have been loaded on page load.
-            this._numConversationsDisplayed = this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
-                this.messageArea.SELECTORS.CONTACT).length;
+            // Set the number of conversations. We set this to the number of conversations we asked to retrieve not by
+            // the number that was actually retrieved, see MDL-55870.
+            this._numConversationsDisplayed = 20;
         };
 
         /**
@@ -248,8 +248,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 if (numberreceived > 0) {
                     // Show the new content.
                     templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS), html, js);
-                    // Increment the number of conversations displayed.
-                    this._numConversationsDisplayed += numberreceived;
+                    // Increment the number of conversations displayed. We increment by the number of conversations we
+                    // asked to retrieve not by the number that was actually retrieved, see MDL-55870.
+                    this._numConversationsDisplayed += this._numConversationsToRetrieve;
                 } else if (!this._numConversationsDisplayed) {
                     // If we didn't receive any contacts and there are currently none, then we want to show a message.
                     templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS), html, js);

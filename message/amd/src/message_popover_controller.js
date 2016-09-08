@@ -169,6 +169,8 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      */
     MessagePopoverController.prototype.renderMessages = function(messages, container) {
         var promises = [];
+        var allhtml = [];
+        var alljs = [];
 
         if (messages.length) {
             $.each(messages, function(index, message) {
@@ -182,16 +184,23 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                 });
 
                 var promise = Templates.render('message/message_content_item', message);
-                promise.then(function(html, js) {
-                    container.append(html);
-                    Templates.runTemplateJS(js);
-                }.bind(this));
-
                 promises.push(promise);
+
+                promise.then(function(html, js) {
+                    allhtml[index] = html;
+                    alljs[index] = js;
+                }.bind(this));
             }.bind(this));
         }
 
-        return $.when.apply($.when, promises);
+        return $.when.apply($.when, promises).then(function() {
+            if (messages.length) {
+                $.each(messages, function(index) {
+                    container.append(allhtml[index]);
+                    Templates.runTemplateJS(alljs[index]);
+                });
+            }
+        });
     };
 
     /**
