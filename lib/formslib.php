@@ -2363,7 +2363,7 @@ require(["core/event", "jquery"], function(Event, $) {
         $PAGE->requires->js_amd_inline($js);
 
         // Global variable used to skip the client validation.
-        return 'var skipClientValidation = false;';
+        return html_writer::tag('script', 'var skipClientValidation = false;');
     } // end func getValidationScript
 
     /**
