@@ -62,6 +62,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(2, $glossaries['glossaries']);
         $this->assertEquals('First Glossary', $glossaries['glossaries'][0]['name']);
         $this->assertEquals('Second Glossary', $glossaries['glossaries'][1]['name']);
+        $this->assertEquals(1, $glossaries['glossaries'][0]['canaddentry']);
+        $this->assertEquals(1, $glossaries['glossaries'][1]['canaddentry']);
 
         // Check results with specific course IDs.
         $glossaries = mod_glossary_external::get_glossaries_by_courses(array($c1->id, $c2->id));
@@ -74,6 +76,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('course', $glossaries['warnings'][0]['item']);
         $this->assertEquals($c2->id, $glossaries['warnings'][0]['itemid']);
         $this->assertEquals('1', $glossaries['warnings'][0]['warningcode']);
+        $this->assertEquals(1, $glossaries['glossaries'][0]['canaddentry']);
 
         // Now as admin.
         $this->setAdminUser();
@@ -83,6 +86,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(1, $glossaries['glossaries']);
         $this->assertEquals('Third Glossary', $glossaries['glossaries'][0]['name']);
+        $this->assertEquals(1, $glossaries['glossaries'][0]['canaddentry']);
     }
 
     public function test_view_glossary() {

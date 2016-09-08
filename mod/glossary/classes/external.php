@@ -226,6 +226,7 @@ class mod_glossary_external extends external_api {
                     $modes[$glossary->displayformat] = self::get_browse_modes_from_display_format($glossary->displayformat);
                 }
                 $glossary->browsemodes = $modes[$glossary->displayformat];
+                $glossary->canaddentry = has_capability('mod/glossary:write', $context) ? 1 : 0;
             }
         }
 
@@ -292,7 +293,8 @@ class mod_glossary_external extends external_api {
                     'groupingid' => new external_value(PARAM_INT, 'Grouping ID'),
                     'browsemodes' => new external_multiple_structure(
                         new external_value(PARAM_ALPHA, 'Modes of browsing allowed')
-                    )
+                    ),
+                    'canaddentry' => new external_value(PARAM_INT, 'Whether the user can add a new entry', VALUE_OPTIONAL),
                 ), 'Glossaries')
             ),
             'warnings' => new external_warnings())
