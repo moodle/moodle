@@ -613,6 +613,13 @@ function profiling_import_runs($file, $commentprefix = '') {
 function profiling_export_generate(array $runids, $tmpdir) {
     global $CFG, $DB;
 
+    if (empty($CFG->release) || empty($CFG->version)) {
+        // Some scripts may not have included version.php.
+        include($CFG->dirroot.'/version.php');
+        $CFG->release = $release;
+        $CFG->version = $version;
+    }
+
     // Calculate the header information to be sent to moodle_profiling_runs.xml.
     $release = $CFG->release;
     $version = $CFG->version;
