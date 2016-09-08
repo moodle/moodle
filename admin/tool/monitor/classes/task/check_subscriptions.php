@@ -199,7 +199,7 @@ class check_subscriptions extends \core\task\scheduled_task {
      */
     protected function is_user_setup($user) {
         if (!isset($this->userssetupcache[$user->id])) {
-            $this->userssetupcache[$user->id] = !user_not_fully_set_up($user);
+            $this->userssetupcache[$user->id] = !user_not_fully_set_up($user, true);
         }
         return $this->userssetupcache[$user->id];
     }

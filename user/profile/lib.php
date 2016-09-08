@@ -659,3 +659,30 @@ function profile_view($user, $context, $course = null) {
     $event->trigger();
 }
 
+/**
+ * Does the user have all required custom fields set?
+ *
+ * Internal, to be exclusively used by {@link user_not_fully_set_up()} only.
+ *
+ * Note that if users have no way to fill a required field via editing their
+ * profiles (e.g. the field is not visible or it is locked), we still return true.
+ * So this is actually checking if we should redirect the user to edit their
+ * profile, rather than whether there is a value in the database.
+ *
+ * @param int $userid
+ * @return bool
+ */
+function profile_has_required_custom_fields_set($userid) {
+    global $DB;
+
+    $sql = "SELECT f.id
+              FROM {user_info_field} f
+         LEFT JOIN {user_info_data} d ON (d.fieldid = f.id AND d.userid = ?)
+             WHERE f.required = 1 AND f.visible > 0 AND f.locked = 0 AND d.id IS NULL";
+
+    if ($DB->record_exists_sql($sql, [$userid])) {
+        return false;
+    }
+
+    return true;
+}

@@ -285,7 +285,7 @@ function core_login_generate_password_reset ($user) {
 function core_login_get_return_url() {
     global $CFG, $SESSION, $USER;
     // Prepare redirection.
-    if (user_not_fully_set_up($USER)) {
+    if (user_not_fully_set_up($USER, true)) {
         $urltogo = $CFG->wwwroot.'/user/edit.php';
         // We don't delete $SESSION->wantsurl yet, so we get there later.
 
