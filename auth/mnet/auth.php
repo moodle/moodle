@@ -263,7 +263,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             exit;
         }
 
-        if (user_not_fully_set_up($remoteuser)) {
+        if (user_not_fully_set_up($remoteuser, false)) {
             print_error('notenoughidpinfo', 'mnet');
             exit;
         }
