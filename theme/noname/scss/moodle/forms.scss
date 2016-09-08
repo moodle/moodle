@@ -20,7 +20,9 @@
     margin-bottom: 4px;
 }
 .mform fieldset {
-    margin-left: $spacer;
+    margin-left: $spacer * 1.5;
+    margin-bottom: $spacer / 2;
+    border-bottom: $border-width solid $table-border-color;
 }
 .mform fieldset.collapsible legend a.fheader {
     padding: 0 5px 0 ($spacer * 1.5);

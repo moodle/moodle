@@ -179,7 +179,7 @@ img.resize {
 .action-menu .userpicture {
     width: auto;
     height: auto;
-    padding-left: 1rem;
+    margin-left: 1rem;
 }
 .block img.resize,
 .breadcrumb img.resize {
@@ -377,8 +377,12 @@ a.skip:active {
 }
 
 // My Moodle
-.path-my .coursebox .overview {
-    margin: 15px 30px 10px 30px;
+.path-my .coursebox {
+    margin: $spacer-y 0;
+    padding: 0;
+    .overview {
+        margin: 15px 30px 10px 30px;
+    }
 }
 .path-my .coursebox .info {
     float: none;
@@ -1642,18 +1646,29 @@ img#persona_signin {
 .navbar-brand {
     .logo {
         display: inline-block;
-        margin-top: -$navbar-brand-padding-y;
+        margin: -$navbar-brand-padding-y 0;
     }
     .site-name {
         display: inline-block;
-        margin-left: $spacer/2;
     }
-    height: 43px;
+    &.has-logo {
+        .site-name {
+            margin-left: $spacer / 2;
+        }
+    }
 }
 
 @include media-breakpoint-down(xs) {
-    .navbar-brand .site-name {
-        display: none;
+    .navbar {
+        .navbar-brand {
+            max-width: 80%;
+            margin-right: 0;
+            &.has-logo {
+                .site-name {
+                    display: none;
+                }
+            }
+        }
     }
 }
 
@@ -1690,14 +1705,6 @@ header {
         float: left;
         margin-right: 1em;
         margin-bottom: 1em;
-    }
-    .page-header-headings {
-        margin-top: 30px;
-        margin-bottom: 10px;
-
-        h1 {
-            display: block;
-        }
     }
 
     .page-header-headings,

@@ -15,13 +15,7 @@
 }
 .userprofile .profile_tree section {
     @extend .card;
-    //display: inline-block;
-    //width: 100%;
-    //border: 1px solid #ddd;
-    //border-radius: $baseBorderRadius;
-    //padding: 0 15px;
-    //margin-bottom: 20px;
-    //@include box-sizing(border-box);
+    @extend .card-block;
 }
 .userprofile .profile_tree section h3 {
     @extend .lead;
@@ -43,9 +37,9 @@
 #page-user-profile .node_category,
 .path-user .node_category {
     ul {
-        margin-left: 0;
-        margin-right: 0;
+        margin: 0;
         list-style: none;
+        padding-left: 0;
     }
     li {
         margin-top: 5px;

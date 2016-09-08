@@ -5,26 +5,32 @@
 
 {{! Start Block Container }}
 <aside id="{{id}}"
-     class="{{#hidden}}hidden{{/hidden}} m-b-1 block block_{{type}} card"
+     class="{{#hidden}}hidden{{/hidden}} block block_{{type}} {{#hascontrols}}block_with_controls{{/hascontrols}} card m-b-1"
      role="{{ariarole}}"
      data-block="{{type}}"
      {{#arialabel}}
-        aria-label="{{{arialabel}}}"
-     {{/arialabel}} >
+        aria-label={{#quote}}{{{arialabel}}}{{/quote}}
+     {{/arialabel}}
+     {{^arialabel}}
+        {{#title}}
+          aria-labelledby="instance-{{blockinstanceid}}-header"
+        {{/title}}
+     {{/arialabel}}>
 
     {{! Block contents }}
     <div class="card-block">
-        {{! Block header }}
-        {{#title}}
-            <h3 class="card-title p-r-3">{{{title}}}</h3>
-        {{/title}}
 
         {{#hascontrols}}
-        <div class="pull-xs-right block-controls">
-            {{{controls}}}
-        </div>
+            <div class="pull-xs-right block-controls">
+                {{{controls}}}
+            </div>
         {{/hascontrols}}
-        <span class="clearfix m-b-1 d-block"></span>
+
+        {{! Block header }}
+        {{#title}}
+            <h3 id="instance-{{blockinstanceid}}-header" class="card-title">{{{title}}}</h3>
+        {{/title}}
+
         <div class="card-text">
             {{{content}}}
             {{{footer}}}
