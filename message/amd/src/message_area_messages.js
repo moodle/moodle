@@ -96,8 +96,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             $(document).on(AutoRows.events.ROW_CHANGE, this._adjustMessagesAreaHeight.bind(this));
 
-            // Scroll to the bottom of the messages when first initialised.
-            this._scrollBottom();
+            // Check if any messages have been displayed on page load.
+            var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES);
+            if (messages.length) {
+                this._addScrollEventListener(messages.find(this.messageArea.SELECTORS.MESSAGE).length);
+            }
         };
 
         /**
@@ -143,19 +146,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 return templates.render('core_message/message_area_messages_area', data);
             }).then(function(html, js) {
                 templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
-                // Scroll to the bottom.
-                this._scrollBottom();
-                // Only increment if data was returned.
-                if (numberreceived > 0) {
-                    // Set the number of messages displayed.
-                    this._numMessagesDisplayed = numberreceived;
-                }
-                // Now enable the ability to infinitely scroll through messages.
-                customEvents.define(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES), [
-                    customEvents.events.scrollTop
-                ]);
-                // Assign the event for scrolling.
-                this.messageArea.onCustomEvent(customEvents.events.scrollTop, this._loadMessages.bind(this));
+                this._addScrollEventListener(numberreceived);
             }.bind(this)).fail(notification.exception);
         };
 
@@ -370,8 +361,25 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             // Hide the items responsible for deleting messages.
             this._hideDeleteAction();
+        };
 
-
+        /**
+         * Handles adding a scrolling event listener.
+         *
+         * @params {int} The number of messages received
+         * @private
+         */
+        Messages.prototype._addScrollEventListener = function(numberreceived) {
+            // Scroll to the bottom.
+            this._scrollBottom();
+            // Set the number of messages displayed.
+            this._numMessagesDisplayed = numberreceived;
+            // Now enable the ability to infinitely scroll through messages.
+            customEvents.define(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES), [
+                customEvents.events.scrollTop
+            ]);
+            // Assign the event for scrolling.
+            this.messageArea.onCustomEvent(customEvents.events.scrollTop, this._loadMessages.bind(this));
         };
 
         /**

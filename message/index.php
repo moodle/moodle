@@ -252,13 +252,14 @@ if (!$user2realuser) {
         $contact = reset($contacts);
         $otheruserid = $contact->userid;
         $conversations->otheruserid = $otheruserid;
-        $messages = \core_message\api::get_messages($user1->id, $otheruserid);
 
         // Mark the conversation as read.
         if ($currentuser) {
             $contact->isread = 1;
             message_mark_all_read_for_user($user1->id, $otheruserid);
         }
+
+        $messages = \core_message\api::get_messages($user1->id, $otheruserid, 0, 20, 'timecreated DESC');
     } else {
         $messages = null;
     }
