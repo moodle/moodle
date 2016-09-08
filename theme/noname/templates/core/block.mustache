@@ -11,18 +11,19 @@
         aria-label="{{{arialabel}}}"
      {{/arialabel}} >
 
-      {{#hascontrols}}
-      <div class="pull-xs-right m-a-1 block-controls">
-          {{{controls}}}
-      </div>
-      {{/hascontrols}}
-
     {{! Block contents }}
     <div class="card-block">
         {{! Block header }}
         {{#title}}
-            <h3 class="card-title">{{{title}}}</h3>
+            <h3 class="card-title p-r-3">{{{title}}}</h3>
         {{/title}}
+
+        {{#hascontrols}}
+        <div class="pull-xs-right block-controls">
+            {{{controls}}}
+        </div>
+        {{/hascontrols}}
+        <span class="clearfix m-b-1 d-block"></span>
         <div class="card-text">
             {{{content}}}
             {{{footer}}}
