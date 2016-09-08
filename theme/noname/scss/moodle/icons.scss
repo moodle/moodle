@@ -28,3 +28,11 @@ a:first-of-type > .icon {
 .ygtvcell .icon {
     margin-left: 0 !important;
 }
+
+// In the navigation, tree icons should not have margins.
+.block_navigation,
+.block_settings {
+    .tree_item .icon {
+        margin-left: 0;
+    }
+}

@@ -21,14 +21,12 @@
 
     <div class="container">
 
-        <div class="clearfix">
-            <button class="navbar-toggler pull-xs-right hidden-sm-up" data-toggle="collapse" data-target="#bd-main-nav" aria-expanded="false" aria-controls="bd-main-nav" type="button">☰<span class="sr-only">{{#str}}expand{{/str}}</span></button>
-        </div>
+        <button class="navbar-toggler pull-xs-right hidden-sm-up" data-toggle="collapse" data-target="#bd-main-nav" aria-expanded="false" aria-controls="bd-main-nav" type="button">☰<span class="sr-only">{{#str}}expand{{/str}}</span></button>
 
-        <a role="banner" href="{{{ config.wwwroot }}}" class="navbar-brand">
+        <a role="banner" href="{{{ config.wwwroot }}}" class="navbar-brand {{# output.should_display_navbar_logo }}has-logo{{/ output.should_display_navbar_logo }}">
             {{# output.should_display_navbar_logo }}
                 <div class="logo">
-                    <img src="{{output.get_compact_logo_url}}" alt={{#quote}}{{sitename}}{{/quote}}>
+                    <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
                 </div>
             {{/ output.should_display_navbar_logo }}
             <div class="site-name">{{{ sitename }}}</div>

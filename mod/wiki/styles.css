@@ -233,11 +233,6 @@ a.wiki_newentry:link, a.wiki_newentry:visited {
     font-style: italic;
 }
 
-#intro.generalbox {
-    margin-top: 10px;
-    padding: 5px;
-}
-
 .wiki_navigation_container {
     margin: 0 auto;
 }
