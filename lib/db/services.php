@@ -746,6 +746,14 @@ $functions = array(
         'capabilities' => 'moodle/rating:view',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_rating_add_rating' => array(
+        'classname' => 'core_rating_external',
+        'methodname' => 'add_rating',
+        'description' => 'Rates an item.',
+        'type' => 'write',
+        'capabilities' => 'moodle/rating:rate',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_role_assign_roles' => array(
         'classname' => 'core_role_external',
         'methodname' => 'assign_roles',
