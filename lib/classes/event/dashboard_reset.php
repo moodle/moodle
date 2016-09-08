@@ -30,6 +30,13 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Class for event to be triggered when a dashboard is reset.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      - string private: Either MY_PAGE_PRIVATE or MY_PAGE_PUBLIC.
+ *      - string pagetype: Either my-index or user-profile.
+ * }
+ *
  * @package    core
  * @since      Moodle 3.1.3
  * @copyright  2016 Stephen Bourget
