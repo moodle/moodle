@@ -2385,12 +2385,9 @@ class core_course_external extends external_api {
      * @throws moodle_exception
      */
     public static function get_course_module($cmid) {
+        global $CFG, $DB;
 
-        $params = self::validate_parameters(self::get_course_module_parameters(),
-                                            array(
-                                                'cmid' => $cmid,
-                                            ));
-
+        $params = self::validate_parameters(self::get_course_module_parameters(), array('cmid' => $cmid));
         $warnings = array();
 
         $cm = get_coursemodule_from_id(null, $params['cmid'], 0, true, MUST_EXIST);
@@ -2399,7 +2396,49 @@ class core_course_external extends external_api {
 
         // If the user has permissions to manage the activity, return all the information.
         if (has_capability('moodle/course:manageactivities', $context)) {
+            require_once($CFG->dirroot . '/course/modlib.php');
+            require_once($CFG->libdir . '/gradelib.php');
+
             $info = $cm;
+            // Get the extra information: grade, advanced grading and outcomes data.
+            $course = get_course($cm->course);
+            list($newcm, $newcontext, $module, $extrainfo, $cw) = get_moduleinfo_data($cm, $course);
+            // Grades.
+            $gradeinfo = array('grade', 'gradepass', 'gradecat');
+            foreach ($gradeinfo as $gfield) {
+                if (isset($extrainfo->{$gfield})) {
+                    $info->{$gfield} = $extrainfo->{$gfield};
+                }
+            }
+            if (isset($extrainfo->grade) and $extrainfo->grade < 0) {
+                $info->scale = $DB->get_field('scale', 'scale', array('id' => abs($extrainfo->grade)));
+            }
+            // Advanced grading.
+            if (isset($extrainfo->_advancedgradingdata)) {
+                $info->advancedgrading = array();
+                foreach ($extrainfo as $key => $val) {
+                    if (strpos($key, 'advancedgradingmethod_') === 0) {
+                        $info->advancedgrading[] = array(
+                            'area' => str_replace('advancedgradingmethod_', '', $key),
+                            'method' => $val
+                        );
+                    }
+                }
+            }
+            // Outcomes.
+            foreach ($extrainfo as $key => $val) {
+                if (strpos($key, 'outcome_') === 0) {
+                    if (!isset($info->outcomes)) {
+                        $info->outcomes = array();
+                    }
+                    $id = str_replace('outcome_', '', $key);
+                    $outcome = $outcome = grade_outcome::fetch(array('id' => $id));
+                    $info->outcomes[] = array(
+                        'id' => $id,
+                        'name' => external_format_string($outcome->get_name(), $context->id)
+                    );
+                }
+            }
         } else {
             // Return information is safe to show to any user.
             $info = new stdClass();
@@ -2416,7 +2455,6 @@ class core_course_external extends external_api {
         }
         // Format name.
         $info->name = external_format_string($cm->name, $context->id);
-
         $result = array();
         $result['cm'] = $info;
         $result['warnings'] = $warnings;
@@ -2456,6 +2494,28 @@ class core_course_external extends external_api {
                         'completionexpected' => new external_value(PARAM_INT, 'Completion time expected', VALUE_OPTIONAL),
                         'showdescription' => new external_value(PARAM_INT, 'If the description is showed', VALUE_OPTIONAL),
                         'availability' => new external_value(PARAM_RAW, 'Availability settings', VALUE_OPTIONAL),
+                        'grade' => new external_value(PARAM_INT, 'Grade (max value or scale id)', VALUE_OPTIONAL),
+                        'scale' => new external_value(PARAM_TEXT, 'Scale items (if used)', VALUE_OPTIONAL),
+                        'gradepass' => new external_value(PARAM_RAW, 'Grade to pass (float)', VALUE_OPTIONAL),
+                        'gradecat' => new external_value(PARAM_INT, 'Grade category', VALUE_OPTIONAL),
+                        'advancedgrading' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'area' => new external_value(PARAM_AREA, 'Gradable area name'),
+                                    'method'  => new external_value(PARAM_COMPONENT, 'Grading method'),
+                                )
+                            ),
+                            'Advanced grading settings', VALUE_OPTIONAL
+                        ),
+                        'outcomes' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'id' => new external_value(PARAM_ALPHANUMEXT, 'Outcome id'),
+                                    'name'  => new external_value(PARAM_TEXT, 'Outcome full name'),
+                                )
+                            ),
+                            'Outcomes information', VALUE_OPTIONAL
+                        ),
                     )
                 ),
                 'warnings' => new external_warnings()
