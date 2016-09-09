@@ -41,12 +41,17 @@ require_once($CFG->dirroot . '/user/lib.php');
 class tool_provider extends ToolProvider\ToolProvider {
 
     /**
+     * @var stdClass $tool The object representing the enrol instance providing this LTI tool
+     */
+    protected $tool;
+
+    /**
      * Remove $this->baseUrl (wwwroot) from a given url string and return it.
      *
      * @param string $url The url from which to remove the base url
      * @return string|null A string of the relative path to the url, or null if it couldn't be determined.
      */
-    private function strip_base_url($url) {
+    protected function strip_base_url($url) {
         if (substr($url, 0, strlen($this->baseUrl)) == $this->baseUrl) {
             return substr($url, strlen($this->baseUrl));
         }
@@ -171,6 +176,33 @@ class tool_provider extends ToolProvider\ToolProvider {
      */
     protected function onLaunch() {
         global $DB, $SESSION, $CFG;
+
+        $url = helper::get_launch_url($this->tool->id);
+        // If a tool proxy has been stored for the current consumer trying to access a tool,
+        // check that the tool is being launched from the correct url.
+        $correctlaunchurl = false;
+        if (!empty($this->consumer->toolProxy)) {
+            $proxy = json_decode($this->consumer->toolProxy);
+            $handlers = $proxy->tool_profile->resource_handler;
+            foreach ($handlers as $handler) {
+                foreach ($handler->message as $message) {
+                    $handlerurl = new \moodle_url($message->path);
+                    $fullpath = $handlerurl->out(false);
+                    if ($message->message_type == "basic-lti-launch-request" && $fullpath == $url) {
+                        $correctlaunchurl = true;
+                        break 2;
+                    }
+                }
+            }
+        } else if ($this->tool->secret == $this->consumer->secret) {
+            // Test if the LTI1 secret for this tool is being used. Then we know the correct tool is being launched.
+            $correctlaunchurl = true;
+        }
+        if (!$correctlaunchurl) {
+            $this->ok = false;
+            $this->message = get_string('invalidrequest', 'enrol_lti');
+            return;
+        }
 
         // Before we do anything check that the context is valid.
         $tool = $this->tool;

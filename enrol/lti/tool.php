@@ -27,7 +27,7 @@ require_once(__DIR__ . '/../../config.php');
 $toolid = required_param('id', PARAM_INT);
 
 $PAGE->set_context(context_system::instance());
-$url = new moodle_url('/enrol/lti/tp.php');
+$url = new moodle_url('/enrol/lti/tool.php');
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('popup');
 $PAGE->set_title(get_string('opentool', 'enrol_lti'));
