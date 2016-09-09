@@ -84,6 +84,7 @@ information provided here is intended especially for developers.
   should be forced to be displayed in LTR based on the PARAM type associated with it. You
   can call $mform->setForceLtr($elementName, true/false) on some form fields to manually
   set the value.
+* Action menus do_not_enhance() is deprecated, use a list of action_icon instead.
 
 === 3.1 ===
 

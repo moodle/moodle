@@ -278,8 +278,6 @@ preferences,moodle|/user/preferences.php|preferences',
     $setting->set_updatedcallback('js_reset_all_caches');
     $temp->add($setting);
     $temp->add(new admin_setting_configcheckbox('modchooserdefault', new lang_string('modchooserdefault', 'admin'), new lang_string('configmodchooserdefault', 'admin'), 1));
-    $temp->add(new admin_setting_configcheckbox('modeditingmenu', new lang_string('modeditingmenu', 'admin'), new lang_string('modeditingmenu_desc', 'admin'), 1));
-    $temp->add(new admin_setting_configcheckbox('blockeditingmenu', new lang_string('blockeditingmenu', 'admin'), new lang_string('blockeditingmenu_desc', 'admin'), 1));
     $ADMIN->add('appearance', $temp);
 
     // link to tag management interface
