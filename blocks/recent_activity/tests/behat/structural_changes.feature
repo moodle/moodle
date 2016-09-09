@@ -156,7 +156,8 @@ Feature: View structural changes in recent activity block
     And I should see "Added Forum" in the "Recent activity" "block"
     And I should see "ForumNew" in the "Recent activity" "block"
     And I log out
-    # Update forum as a teacher
+    # Update forum as a teacher after a second to ensure we have a new timestamp for recent activity.
+    And I wait "1" seconds
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "ForumNew"
