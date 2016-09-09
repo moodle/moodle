@@ -52,17 +52,24 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      * @param stdClass $userto user object of the one receiving the message.
      * @param string $message message to send.
      * @param int $notification is the message a notification.
+     * @param int $time the time the message was sent
      */
-    protected function send_message($userfrom, $userto, $message = 'Hello world!', $notification = 0) {
+    protected function send_message($userfrom, $userto, $message = 'Hello world!', $notification = 0, $time = 0) {
         global $DB;
+
+        if (empty($time)) {
+            $time = time();
+        }
+
         $record = new stdClass();
         $record->useridfrom = $userfrom->id;
         $record->useridto = $userto->id;
         $record->subject = 'No subject';
+        $record->smallmessage = $message;
         $record->fullmessage = $message;
-        $record->timecreated = time();
+        $record->timecreated = $time;
         $record->notification = $notification;
-        $insert = $DB->insert_record('message', $record);
+        $DB->insert_record('message', $record);
     }
 
     /**
@@ -826,8 +833,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     public function test_mark_all_notifications_as_read_invalid_user_exception() {
         $this->resetAfterTest(true);
 
-        $this->setExpectedException('moodle_exception');
-        $result = core_message_external::mark_all_notifications_as_read(-2132131, 0);
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_notifications_as_read(-2132131, 0);
     }
 
     public function test_mark_all_notifications_as_read_access_denied_exception() {
@@ -837,8 +844,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         $this->setUser($user);
-        $this->setExpectedException('moodle_exception');
-        $result = core_message_external::mark_all_notifications_as_read($sender->id, 0);
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_notifications_as_read($sender->id, 0);
     }
 
     public function test_mark_all_notifications_as_read_missing_from_user_exception() {
@@ -847,8 +854,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $sender = $this->getDataGenerator()->create_user();
 
         $this->setUser($sender);
-        $this->setExpectedException('moodle_exception');
-        $result = core_message_external::mark_all_notifications_as_read($sender->id, 99999);
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_notifications_as_read($sender->id, 99999);
     }
 
     public function test_mark_all_notifications_as_read() {
@@ -863,14 +870,12 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $this->setUser($recipient);
 
-        $notificationids = array(
-            $this->send_message($sender1, $recipient, 'Notification', 1),
-            $this->send_message($sender1, $recipient, 'Notification', 1),
-            $this->send_message($sender2, $recipient, 'Notification', 1),
-            $this->send_message($sender2, $recipient, 'Notification', 1),
-            $this->send_message($sender3, $recipient, 'Notification', 1),
-            $this->send_message($sender3, $recipient, 'Notification', 1),
-        );
+        $this->send_message($sender1, $recipient, 'Notification', 1);
+        $this->send_message($sender1, $recipient, 'Notification', 1);
+        $this->send_message($sender2, $recipient, 'Notification', 1);
+        $this->send_message($sender2, $recipient, 'Notification', 1);
+        $this->send_message($sender3, $recipient, 'Notification', 1);
+        $this->send_message($sender3, $recipient, 'Notification', 1);
 
         core_message_external::mark_all_notifications_as_read($recipient->id, $sender1->id);
         $readnotifications = $DB->get_recordset('message_read', ['useridto' => $recipient->id]);
@@ -942,5 +947,1652 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $this->expectException('moodle_exception');
         $prefs = core_message_external::get_user_notification_preferences($otheruser->id);
+    }
+
+    /**
+     * Tests searching users in a course.
+     */
+    public function test_messagearea_search_users_in_course() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // Set the second user's status to online by setting their last access to now.
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'Two';
+        $user2->lastaccess = time();
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        // Block the second user.
+        message_block_contact($user2->id, $user1->id);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User';
+        $user3->lastname = 'Three';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        // Create a course.
+        $course1 = new stdClass();
+        $course1->fullname = 'Course';
+        $course1->shortname = 'One';
+        $course1 = $this->getDataGenerator()->create_course();
+
+        // Enrol the user we are doing the search for and one user in the course.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        // Perform a search.
+        $result = core_message_external::data_for_messagearea_search_users_in_course($user1->id, $course1->id, 'User');
+
+        // We need to execute the return values cleaning process to simulate the web service.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_users_in_course_returns(),
+            $result);
+
+        // Check that we only retrieved a user that was enrolled, and that the user performing the search was not returned.
+        $users = $result['contacts'];
+        $this->assertCount(1, $users);
+
+        $user = $users[0];
+        $this->assertEquals($user2->id, $user['userid']);
+        $this->assertEquals(fullname($user2), $user['fullname']);
+        $this->assertFalse($user['ismessaging']);
+        $this->assertFalse($user['sentfromcurrentuser']);
+        $this->assertNull($user['lastmessage']);
+        $this->assertNull($user['messageid']);
+        $this->assertTrue($user['isonline']);
+        $this->assertFalse($user['isread']);
+        $this->assertTrue($user['isblocked']);
+        $this->assertNull($user['unreadcount']);
+    }
+
+    /**
+     * Tests searching users in course as another user.
+     */
+    public function test_messagearea_search_users_in_course_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // The person doing the search for another user.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User';
+        $user3->lastname = 'Three';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        // Create a course.
+        $course1 = new stdClass();
+        $course1->fullname = 'Course';
+        $course1->shortname = 'One';
+        $course1 = $this->getDataGenerator()->create_course();
+
+        // Enrol the user we are doing the search for and one user in the course.
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        // Perform a search.
+        $result = core_message_external::data_for_messagearea_search_users_in_course($user1->id, $course1->id, 'User');
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_users_in_course_returns(),
+            $result);
+
+        // Check that we got the user enrolled, and that the user we are performing the search on behalf of was not returned.
+        $users = $result['contacts'];
+        $this->assertCount(1, $users);
+
+        $user = $users[0];
+        $this->assertEquals($user2->id, $user['userid']);
+        $this->assertEquals(fullname($user2), $user['fullname']);
+        $this->assertFalse($user['ismessaging']);
+        $this->assertFalse($user['sentfromcurrentuser']);
+        $this->assertNull($user['lastmessage']);
+        $this->assertNull($user['messageid']);
+        $this->assertFalse($user['isonline']);
+        $this->assertFalse($user['isread']);
+        $this->assertFalse($user['isblocked']);
+        $this->assertNull($user['unreadcount']);
+    }
+
+    /**
+     * Tests searching users in course as another user without the proper capabilities.
+     */
+    public function test_messagearea_search_users_in_course_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person doing the search for another user.
+        $this->setUser($user1);
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_search_users_in_course($user2->id, $course->id, 'User');
+    }
+
+    /**
+     * Tests searching users in course with messaging disabled.
+     */
+    public function test_messagearea_search_users_in_course_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS..
+        $user = self::getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+
+        // The person doing the search for another user.
+        $this->setUser($user);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_search_users_in_course($user->id, $course->id, 'User');
+    }
+
+    /**
+     * Tests searching users.
+     */
+    public function test_messagearea_search_users() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        // Set as the user performing the search.
+        $this->setUser($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User search';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User search';
+        $user3->lastname = 'Three';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'Four';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User search';
+        $user5->lastname = 'Five';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        $user6 = new stdClass();
+        $user6->firstname = 'User';
+        $user6->lastname = 'Six';
+        $user6 = self::getDataGenerator()->create_user($user6);
+
+        // Create some courses.
+        $course1 = new stdClass();
+        $course1->fullname = 'Course search';
+        $course1->shortname = 'One';
+        $course1 = $this->getDataGenerator()->create_course($course1);
+
+        $course2 = new stdClass();
+        $course2->fullname = 'Course';
+        $course2->shortname = 'Two';
+        $course2 = $this->getDataGenerator()->create_course($course2);
+
+        $course3 = new stdClass();
+        $course3->fullname = 'Course';
+        $course3->shortname = 'Three search';
+        $course3 = $this->getDataGenerator()->create_course($course3);
+
+        // Add some users as contacts.
+        message_add_contact($user2->id, 0, $user1->id);
+        message_add_contact($user3->id, 0, $user1->id);
+        message_add_contact($user4->id, 0, $user1->id);
+
+        // Perform a search.
+        $result = core_message_external::data_for_messagearea_search_users($user1->id, 'search');
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_users_returns(),
+            $result);
+
+        // Confirm that we returns contacts, courses and non-contacts.
+        $contacts = $result['contacts'];
+        $courses = $result['courses'];
+        $noncontacts = $result['noncontacts'];
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(2, $contacts);
+        $this->assertEquals($user3->id, $contacts[0]['userid']);
+        $this->assertEquals($user2->id, $contacts[1]['userid']);
+
+        // Check that we retrieved the correct courses.
+        $this->assertCount(2, $courses);
+        $this->assertEquals($course3->id, $courses[0]['id']);
+        $this->assertEquals($course1->id, $courses[1]['id']);
+
+        // Check that we retrieved the correct non-contacts.
+        $this->assertCount(1, $noncontacts);
+        $this->assertEquals($user5->id, $noncontacts[0]['userid']);
+    }
+
+    /**
+     * Tests searching users as another user.
+     */
+    public function test_messagearea_search_users_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // The person doing the search.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = new stdClass();
+        $user1->firstname = 'User';
+        $user1->lastname = 'One';
+        $user1 = self::getDataGenerator()->create_user($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User search';
+        $user2->lastname = 'Two';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User search';
+        $user3->lastname = 'Three';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'Four';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User search';
+        $user5->lastname = 'Five';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        $user6 = new stdClass();
+        $user6->firstname = 'User';
+        $user6->lastname = 'Six';
+        $user6 = self::getDataGenerator()->create_user($user6);
+
+        // Create some courses.
+        $course1 = new stdClass();
+        $course1->fullname = 'Course search';
+        $course1->shortname = 'One';
+        $course1 = $this->getDataGenerator()->create_course($course1);
+
+        $course2 = new stdClass();
+        $course2->fullname = 'Course';
+        $course2->shortname = 'Two';
+        $course2 = $this->getDataGenerator()->create_course($course2);
+
+        $course3 = new stdClass();
+        $course3->fullname = 'Course';
+        $course3->shortname = 'Three search';
+        $course3 = $this->getDataGenerator()->create_course($course3);
+
+        // Add some users as contacts.
+        message_add_contact($user2->id, 0, $user1->id);
+        message_add_contact($user3->id, 0, $user1->id);
+        message_add_contact($user4->id, 0, $user1->id);
+
+        // Perform a search.
+        $result = core_message_external::data_for_messagearea_search_users($user1->id, 'search');
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_users_returns(),
+            $result);
+
+        // Confirm that we returns contacts, courses and non-contacts.
+        $contacts = $result['contacts'];
+        $courses = $result['courses'];
+        $noncontacts = $result['noncontacts'];
+
+        // Check that we retrieved the correct contacts.
+        $this->assertCount(2, $contacts);
+        $this->assertEquals($user3->id, $contacts[0]['userid']);
+        $this->assertEquals($user2->id, $contacts[1]['userid']);
+
+        // Check that we retrieved the correct courses.
+        $this->assertCount(2, $courses);
+        $this->assertEquals($course3->id, $courses[0]['id']);
+        $this->assertEquals($course1->id, $courses[1]['id']);
+
+        // Check that we retrieved the correct non-contacts.
+        $this->assertCount(1, $noncontacts);
+        $this->assertEquals($user5->id, $noncontacts[0]['userid']);
+    }
+
+    /**
+     * Tests searching users as another user without the proper capabilities.
+     */
+    public function test_messagearea_search_users_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person doing the search for another user.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_search_users($user2->id, 'User');
+    }
+
+    /**
+     * Tests searching users with messaging disabled.
+     */
+    public function test_messagearea_search_users_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user = self::getDataGenerator()->create_user();
+
+        // The person doing the search.
+        $this->setUser($user);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_search_users($user->id, 'User');
+    }
+
+    /**
+     * Tests searching messages.
+     */
+    public function test_messagearea_search_messages() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        // Perform a search.
+        $result = core_message_external::data_for_messagearea_search_messages($user1->id, 'o');
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(),
+            $result);
+
+        // Confirm the data is correct.
+        $messages = $result['contacts'];
+        $this->assertCount(2, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+
+        $this->assertEquals($user2->id, $message1['userid']);
+        $this->assertEquals(fullname($user2), $message1['fullname']);
+        $this->assertTrue($message1['ismessaging']);
+        $this->assertFalse($message1['sentfromcurrentuser']);
+        $this->assertEquals('Word.', $message1['lastmessage']);
+        $this->assertNotEmpty($message1['messageid']);
+        $this->assertFalse($message1['isonline']);
+        $this->assertFalse($message1['isread']);
+        $this->assertFalse($message1['isblocked']);
+        $this->assertNull($message1['unreadcount']);
+
+        $this->assertEquals($user2->id, $message2['userid']);
+        $this->assertEquals(fullname($user2), $message2['fullname']);
+        $this->assertTrue($message2['ismessaging']);
+        $this->assertTrue($message2['sentfromcurrentuser']);
+        $this->assertEquals('Yo!', $message2['lastmessage']);
+        $this->assertNotEmpty($message2['messageid']);
+        $this->assertFalse($message2['isonline']);
+        $this->assertTrue($message2['isread']);
+        $this->assertFalse($message2['isblocked']);
+        $this->assertNull($message2['unreadcount']);
+    }
+
+    /**
+     * Tests searching messages as another user.
+     */
+    public function test_messagearea_search_messages_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // The person doing the search.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        // Perform a search.
+        $result = core_message_external::data_for_messagearea_search_messages($user1->id, 'o');
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_search_messages_returns(),
+            $result);
+
+        // Confirm the data is correct.
+        $messages = $result['contacts'];
+        $this->assertCount(2, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+
+        $this->assertEquals($user2->id, $message1['userid']);
+        $this->assertEquals(fullname($user2), $message1['fullname']);
+        $this->assertTrue($message1['ismessaging']);
+        $this->assertFalse($message1['sentfromcurrentuser']);
+        $this->assertEquals('Word.', $message1['lastmessage']);
+        $this->assertNotEmpty($message1['messageid']);
+        $this->assertFalse($message1['isonline']);
+        $this->assertFalse($message1['isread']);
+        $this->assertFalse($message1['isblocked']);
+        $this->assertNull($message1['unreadcount']);
+
+        $this->assertEquals($user2->id, $message2['userid']);
+        $this->assertEquals(fullname($user2), $message2['fullname']);
+        $this->assertTrue($message2['ismessaging']);
+        $this->assertTrue($message2['sentfromcurrentuser']);
+        $this->assertEquals('Yo!', $message2['lastmessage']);
+        $this->assertNotEmpty($message2['messageid']);
+        $this->assertFalse($message2['isonline']);
+        $this->assertTrue($message2['isread']);
+        $this->assertFalse($message2['isblocked']);
+        $this->assertNull($message2['unreadcount']);
+    }
+
+    /**
+     * Tests searching messages as another user without the proper capabilities.
+     */
+    public function test_messagearea_search_messages_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person doing the search for another user.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_search_messages($user2->id, 'Search');
+    }
+
+    /**
+     * Tests searching messages with messaging disabled
+     */
+    public function test_messagearea_search_messages_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user = self::getDataGenerator()->create_user();
+
+        // The person doing the search .
+        $this->setUser($user);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_search_messages($user->id, 'Search');
+    }
+
+    /**
+     * Tests retrieving conversations.
+     */
+    public function test_messagearea_conversations() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // The person retrieving the conversations.
+        $this->setUser($user1);
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        $this->send_message($user1, $user3, 'Booyah', 0, $time + 4);
+        $this->send_message($user3, $user1, 'Whaaat?', 0, $time + 5);
+        $this->send_message($user1, $user3, 'Nothing.', 0, $time + 6);
+        $this->send_message($user3, $user1, 'Cool.', 0, $time + 7);
+
+        $this->send_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 8);
+        $this->send_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 9);
+        $this->send_message($user1, $user4, 'Dope.', 0, $time + 10);
+
+        // Retrieve the conversations.
+        $result = core_message_external::data_for_messagearea_conversations($user1->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_conversations_returns(),
+            $result);
+
+        // Confirm the data is correct.
+        $messages = $result['contacts'];
+        $this->assertCount(3, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+        $message3 = $messages[2];
+
+        $this->assertEquals($user4->id, $message1['userid']);
+        $this->assertTrue($message1['ismessaging']);
+        $this->assertTrue($message1['sentfromcurrentuser']);
+        $this->assertEquals('Dope.', $message1['lastmessage']);
+        $this->assertNull($message1['messageid']);
+        $this->assertFalse($message1['isonline']);
+        $this->assertTrue($message1['isread']);
+        $this->assertFalse($message1['isblocked']);
+        $this->assertEquals(0, $message1['unreadcount']);
+
+        $this->assertEquals($user3->id, $message2['userid']);
+        $this->assertTrue($message2['ismessaging']);
+        $this->assertFalse($message2['sentfromcurrentuser']);
+        $this->assertEquals('Cool.', $message2['lastmessage']);
+        $this->assertNull($message2['messageid']);
+        $this->assertFalse($message2['isonline']);
+        $this->assertFalse($message2['isread']);
+        $this->assertFalse($message2['isblocked']);
+        $this->assertEquals(2, $message2['unreadcount']);
+
+        $this->assertEquals($user2->id, $message3['userid']);
+        $this->assertTrue($message3['ismessaging']);
+        $this->assertFalse($message3['sentfromcurrentuser']);
+        $this->assertEquals('Word.', $message3['lastmessage']);
+        $this->assertNull($message3['messageid']);
+        $this->assertFalse($message3['isonline']);
+        $this->assertFalse($message3['isread']);
+        $this->assertFalse($message3['isblocked']);
+        $this->assertEquals(2, $message3['unreadcount']);
+    }
+
+    /**
+     * Tests retrieving conversations as another user.
+     */
+    public function test_messagearea_conversations_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // Set as admin.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        $this->send_message($user1, $user3, 'Booyah', 0, $time + 4);
+        $this->send_message($user3, $user1, 'Whaaat?', 0, $time + 5);
+        $this->send_message($user1, $user3, 'Nothing.', 0, $time + 6);
+        $this->send_message($user3, $user1, 'Cool.', 0, $time + 7);
+
+        $this->send_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?', 0, $time + 8);
+        $this->send_message($user4, $user1, 'Yah brah, it\'s pretty rad.', 0, $time + 9);
+        $this->send_message($user1, $user4, 'Dope.', 0, $time + 10);
+
+        // Retrieve the conversations.
+        $result = core_message_external::data_for_messagearea_conversations($user1->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_conversations_returns(),
+            $result);
+
+        // Confirm the data is correct.
+        $messages = $result['contacts'];
+        $this->assertCount(3, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+        $message3 = $messages[2];
+
+        $this->assertEquals($user4->id, $message1['userid']);
+        $this->assertTrue($message1['ismessaging']);
+        $this->assertTrue($message1['sentfromcurrentuser']);
+        $this->assertEquals('Dope.', $message1['lastmessage']);
+        $this->assertNull($message1['messageid']);
+        $this->assertFalse($message1['isonline']);
+        $this->assertTrue($message1['isread']);
+        $this->assertFalse($message1['isblocked']);
+        $this->assertEquals(0, $message1['unreadcount']);
+
+        $this->assertEquals($user3->id, $message2['userid']);
+        $this->assertTrue($message2['ismessaging']);
+        $this->assertFalse($message2['sentfromcurrentuser']);
+        $this->assertEquals('Cool.', $message2['lastmessage']);
+        $this->assertNull($message2['messageid']);
+        $this->assertFalse($message2['isonline']);
+        $this->assertFalse($message2['isread']);
+        $this->assertFalse($message2['isblocked']);
+        $this->assertEquals(2, $message2['unreadcount']);
+
+        $this->assertEquals($user2->id, $message3['userid']);
+        $this->assertTrue($message3['ismessaging']);
+        $this->assertFalse($message3['sentfromcurrentuser']);
+        $this->assertEquals('Word.', $message3['lastmessage']);
+        $this->assertNull($message3['messageid']);
+        $this->assertFalse($message3['isonline']);
+        $this->assertFalse($message3['isread']);
+        $this->assertFalse($message3['isblocked']);
+        $this->assertEquals(2, $message3['unreadcount']);
+    }
+
+    /**
+     * Tests retrieving conversations as another user without the proper capabilities.
+     */
+    public function test_messagearea_conversations_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person retrieving the conversations for another user.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_conversations($user2->id);
+    }
+
+    /**
+     * Tests retrieving conversations with messaging disabled.
+     */
+    public function test_messagearea_conversations_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user = self::getDataGenerator()->create_user();
+
+        // The person retrieving the conversations.
+        $this->setUser($user);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_conversations($user->id);
+    }
+
+    /**
+     * Tests retrieving contacts.
+     */
+    public function test_messagearea_contacts() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Set as the user.
+        $this->setUser($user1);
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'A';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User';
+        $user3->lastname = 'B';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'C';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User';
+        $user5->lastname = 'D';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        // Add some users as contacts.
+        message_add_contact($user2->id, 0, $user1->id);
+        message_add_contact($user3->id, 0, $user1->id);
+        message_add_contact($user4->id, 0, $user1->id);
+
+        // Retrieve the contacts.
+        $result = core_message_external::data_for_messagearea_contacts($user1->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_contacts_returns(),
+            $result);
+
+        // Confirm the data is correct.
+        $contacts = $result['contacts'];
+        $this->assertCount(3, $contacts);
+
+        $contact1 = $contacts[0];
+        $contact2 = $contacts[1];
+        $contact3 = $contacts[2];
+
+        $this->assertEquals($user2->id, $contact1['userid']);
+        $this->assertFalse($contact1['ismessaging']);
+        $this->assertFalse($contact1['sentfromcurrentuser']);
+        $this->assertNull($contact1['lastmessage']);
+        $this->assertNull($contact1['messageid']);
+        $this->assertFalse($contact1['isonline']);
+        $this->assertFalse($contact1['isread']);
+        $this->assertFalse($contact1['isblocked']);
+        $this->assertNull($contact1['unreadcount']);
+
+        $this->assertEquals($user3->id, $contact2['userid']);
+        $this->assertFalse($contact2['ismessaging']);
+        $this->assertFalse($contact2['sentfromcurrentuser']);
+        $this->assertNull($contact2['lastmessage']);
+        $this->assertNull($contact2['messageid']);
+        $this->assertFalse($contact2['isonline']);
+        $this->assertFalse($contact2['isread']);
+        $this->assertFalse($contact2['isblocked']);
+        $this->assertNull($contact2['unreadcount']);
+
+        $this->assertEquals($user4->id, $contact3['userid']);
+        $this->assertFalse($contact3['ismessaging']);
+        $this->assertFalse($contact3['sentfromcurrentuser']);
+        $this->assertNull($contact3['lastmessage']);
+        $this->assertNull($contact3['messageid']);
+        $this->assertFalse($contact3['isonline']);
+        $this->assertFalse($contact3['isread']);
+        $this->assertFalse($contact3['isblocked']);
+        $this->assertNull($contact3['unreadcount']);
+    }
+
+    /**
+     * Tests retrieving contacts as another user.
+     */
+    public function test_messagearea_contacts_as_other_user() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+
+        $user2 = new stdClass();
+        $user2->firstname = 'User';
+        $user2->lastname = 'A';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        $user3 = new stdClass();
+        $user3->firstname = 'User';
+        $user3->lastname = 'B';
+        $user3 = self::getDataGenerator()->create_user($user3);
+
+        $user4 = new stdClass();
+        $user4->firstname = 'User';
+        $user4->lastname = 'C';
+        $user4 = self::getDataGenerator()->create_user($user4);
+
+        $user5 = new stdClass();
+        $user5->firstname = 'User';
+        $user5->lastname = 'D';
+        $user5 = self::getDataGenerator()->create_user($user5);
+
+        // Add some users as contacts.
+        message_add_contact($user2->id, 0, $user1->id);
+        message_add_contact($user3->id, 0, $user1->id);
+        message_add_contact($user4->id, 0, $user1->id);
+
+        // Retrieve the contacts.
+        $result = core_message_external::data_for_messagearea_contacts($user1->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_contacts_returns(),
+            $result);
+
+        // Confirm the data is correct.
+        $contacts = $result['contacts'];
+        $this->assertCount(3, $contacts);
+
+        $contact1 = $contacts[0];
+        $contact2 = $contacts[1];
+        $contact3 = $contacts[2];
+
+        $this->assertEquals($user2->id, $contact1['userid']);
+        $this->assertFalse($contact1['ismessaging']);
+        $this->assertFalse($contact1['sentfromcurrentuser']);
+        $this->assertNull($contact1['lastmessage']);
+        $this->assertNull($contact1['messageid']);
+        $this->assertFalse($contact1['isonline']);
+        $this->assertFalse($contact1['isread']);
+        $this->assertFalse($contact1['isblocked']);
+        $this->assertNull($contact1['unreadcount']);
+
+        $this->assertEquals($user3->id, $contact2['userid']);
+        $this->assertFalse($contact2['ismessaging']);
+        $this->assertFalse($contact2['sentfromcurrentuser']);
+        $this->assertNull($contact2['lastmessage']);
+        $this->assertNull($contact2['messageid']);
+        $this->assertFalse($contact2['isonline']);
+        $this->assertFalse($contact2['isread']);
+        $this->assertFalse($contact2['isblocked']);
+        $this->assertNull($contact2['unreadcount']);
+
+        $this->assertEquals($user4->id, $contact3['userid']);
+        $this->assertFalse($contact3['ismessaging']);
+        $this->assertFalse($contact3['sentfromcurrentuser']);
+        $this->assertNull($contact3['lastmessage']);
+        $this->assertNull($contact3['messageid']);
+        $this->assertFalse($contact3['isonline']);
+        $this->assertFalse($contact3['isread']);
+        $this->assertFalse($contact3['isblocked']);
+        $this->assertNull($contact3['unreadcount']);
+    }
+
+    /**
+     * Tests retrieving contacts as another user without the proper capabilities.
+     */
+    public function test_messagearea_contacts_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person retrieving the contacts for another user.
+        $this->setUser($user1);
+
+        // Perform the WS call and ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_contacts($user2->id);
+    }
+
+    /**
+     * Tests retrieving contacts with messaging disabled.
+     */
+    public function test_messagearea_contacts_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user = self::getDataGenerator()->create_user();
+
+        // The person retrieving the contacts.
+        $this->setUser($user);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Perform the WS call and ensure we are shown that it is disabled.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_contacts($user->id);
+    }
+
+    /**
+     * Tests retrieving messages.
+     */
+    public function test_messagearea_messages() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person asking for the messages.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        // Retrieve the messages.
+        $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
+            $result);
+
+        // Check the results are correct.
+        $this->assertTrue($result['iscurrentuser']);
+        $this->assertEquals($user1->id, $result['currentuserid']);
+        $this->assertEquals($user2->id, $result['otheruserid']);
+        $this->assertEquals(fullname($user2), $result['otheruserfullname']);
+        $this->assertFalse($result['isonline']);
+
+        // Confirm the message data is correct.
+        $messages = $result['messages'];
+        $this->assertCount(4, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+        $message3 = $messages[2];
+        $message4 = $messages[3];
+
+        $this->assertEquals($user1->id, $message1['useridfrom']);
+        $this->assertEquals($user2->id, $message1['useridto']);
+        $this->assertTrue($message1['displayblocktime']);
+        $this->assertContains('Yo!', $message1['text']);
+
+        $this->assertEquals($user2->id, $message2['useridfrom']);
+        $this->assertEquals($user1->id, $message2['useridto']);
+        $this->assertFalse($message2['displayblocktime']);
+        $this->assertContains('Sup mang?', $message2['text']);
+
+        $this->assertEquals($user1->id, $message3['useridfrom']);
+        $this->assertEquals($user2->id, $message3['useridto']);
+        $this->assertFalse($message3['displayblocktime']);
+        $this->assertContains('Writing PHPUnit tests!', $message3['text']);
+
+        $this->assertEquals($user2->id, $message4['useridfrom']);
+        $this->assertEquals($user1->id, $message4['useridto']);
+        $this->assertFalse($message4['displayblocktime']);
+        $this->assertContains('Word.', $message4['text']);
+    }
+
+    /**
+     * Tests retrieving messages as another user.
+     */
+    public function test_messagearea_messages_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // Set as admin.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        // Retrieve the messages.
+        $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
+            $result);
+
+        // Check the results are correct.
+        $this->assertFalse($result['iscurrentuser']);
+        $this->assertEquals($user1->id, $result['currentuserid']);
+        $this->assertEquals($user2->id, $result['otheruserid']);
+        $this->assertEquals(fullname($user2), $result['otheruserfullname']);
+        $this->assertFalse($result['isonline']);
+
+        // Confirm the message data is correct.
+        $messages = $result['messages'];
+        $this->assertCount(4, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+        $message3 = $messages[2];
+        $message4 = $messages[3];
+
+        $this->assertEquals($user1->id, $message1['useridfrom']);
+        $this->assertEquals($user2->id, $message1['useridto']);
+        $this->assertTrue($message1['displayblocktime']);
+        $this->assertContains('Yo!', $message1['text']);
+
+        $this->assertEquals($user2->id, $message2['useridfrom']);
+        $this->assertEquals($user1->id, $message2['useridto']);
+        $this->assertFalse($message2['displayblocktime']);
+        $this->assertContains('Sup mang?', $message2['text']);
+
+        $this->assertEquals($user1->id, $message3['useridfrom']);
+        $this->assertEquals($user2->id, $message3['useridto']);
+        $this->assertFalse($message3['displayblocktime']);
+        $this->assertContains('Writing PHPUnit tests!', $message3['text']);
+
+        $this->assertEquals($user2->id, $message4['useridfrom']);
+        $this->assertEquals($user1->id, $message4['useridto']);
+        $this->assertFalse($message4['displayblocktime']);
+        $this->assertContains('Word.', $message4['text']);
+    }
+
+    /**
+     * Tests retrieving messages as another user without the proper capabilities.
+     */
+    public function test_messagearea_messages_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // The person asking for the messages for another user.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_messages($user2->id, $user3->id);
+    }
+
+    /**
+     * Tests retrieving messages with messaging disabled.
+     */
+    public function test_messagearea_messages_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person asking for the messages for another user.
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_messages($user1->id, $user2->id);
+    }
+
+    /**
+     * Tests retrieving most recent message.
+     */
+    public function test_messagearea_get_most_recent_message() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person doing the search.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        // Get the most recent message.
+        $result = core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_most_recent_message_returns(),
+            $result);
+
+        // Check the results are correct.
+        $this->assertEquals($user2->id, $result['useridfrom']);
+        $this->assertEquals($user1->id, $result['useridto']);
+        $this->assertContains('Word.', $result['text']);
+    }
+
+    /**
+     * Tests retrieving most recent message as another user.
+     */
+    public function test_messagearea_get_most_recent_message_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // The person doing the search.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        // Get the most recent message.
+        $result = core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_most_recent_message_returns(),
+            $result);
+
+        // Check the results are correct.
+        $this->assertEquals($user2->id, $result['useridfrom']);
+        $this->assertEquals($user1->id, $result['useridto']);
+        $this->assertContains('Word.', $result['text']);
+    }
+
+    /**
+     * Tests retrieving most recent message as another user without the proper capabilities.
+     */
+    public function test_messagearea_get_most_recent_message_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // The person asking for the most recent message for another user.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_get_most_recent_message($user2->id, $user3->id);
+    }
+
+    /**
+     * Tests retrieving most recent message with messaging disabled.
+     */
+    public function test_messagearea_get_most_recent_message_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person asking for the most recent message.
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_get_most_recent_message($user1->id, $user2->id);
+    }
+
+    /**
+     * Tests retrieving a user's profile.
+     */
+    public function test_messagearea_get_profile() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person asking for the profile information.
+        $this->setUser($user1);
+
+        // Get the profile.
+        $result = core_message_external::data_for_messagearea_get_profile($user1->id, $user2->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_profile_returns(),
+            $result);
+
+        $this->assertEquals($user2->id, $result['userid']);
+        $this->assertEmpty($result['email']);
+        $this->assertEmpty($result['country']);
+        $this->assertEmpty($result['city']);
+        $this->assertEquals(fullname($user2), $result['fullname']);
+        $this->assertFalse($result['isonline']);
+        $this->assertFalse($result['isblocked']);
+        $this->assertFalse($result['iscontact']);
+    }
+
+    /**
+     * Tests retrieving a user's profile as another user.
+     */
+    public function test_messagearea_profile_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // The person asking for the profile information.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+
+        $user2 = new stdClass();
+        $user2->country = 'AU';
+        $user2->city = 'Perth';
+        $user2 = self::getDataGenerator()->create_user($user2);
+
+        // Get the profile.
+        $result = core_message_external::data_for_messagearea_get_profile($user1->id, $user2->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_get_profile_returns(),
+            $result);
+
+        $this->assertEquals($user2->id, $result['userid']);
+        $this->assertEquals($user2->email, $result['email']);
+        $this->assertEquals(get_string($user2->country, 'countries'), $result['country']);
+        $this->assertEquals($user2->city, $result['city']);
+        $this->assertEquals(fullname($user2), $result['fullname']);
+        $this->assertFalse($result['isonline']);
+        $this->assertFalse($result['isblocked']);
+        $this->assertFalse($result['iscontact']);
+    }
+
+    /**
+     * Tests retrieving a user's profile as another user without the proper capabilities.
+     */
+    public function test_messagearea_profile_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // The person asking for the profile information for another user.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_get_profile($user2->id, $user3->id);
+    }
+
+    /**
+     * Tests retrieving a user's profile with messaging disabled.
+     */
+    public function test_messagearea_profile_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some skeleton data just so we can call the WS.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person asking for the profile information.
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::data_for_messagearea_get_profile($user1->id, $user2->id);
+    }
+
+    /**
+     * Test marking all message as read with an invalid user.
+     */
+    public function test_mark_all_messages_as_read_invalid_user_exception() {
+        $this->resetAfterTest(true);
+
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_messages_as_read(-2132131, 0);
+    }
+
+    /**
+     * Test marking all message as read without proper access.
+     */
+    public function test_mark_all_messages_as_read_access_denied_exception() {
+        $this->resetAfterTest(true);
+
+        $sender = $this->getDataGenerator()->create_user();
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->setUser($user);
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_messages_as_read($sender->id, 0);
+    }
+
+    /**
+     * Test marking all message as read with missing from user.
+     */
+    public function test_mark_all_messages_as_read_missing_from_user_exception() {
+        $this->resetAfterTest(true);
+
+        $sender = $this->getDataGenerator()->create_user();
+
+        $this->setUser($sender);
+        $this->expectException('moodle_exception');
+        core_message_external::mark_all_messages_as_read($sender->id, 99999);
+    }
+
+    /**
+     * Test marking all message as read.
+     */
+    public function test_mark_all_messages_as_read() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $sender1 = $this->getDataGenerator()->create_user();
+        $sender2 = $this->getDataGenerator()->create_user();
+        $sender3 = $this->getDataGenerator()->create_user();
+        $recipient = $this->getDataGenerator()->create_user();
+
+        $this->setUser($recipient);
+
+        $this->send_message($sender1, $recipient, 'Message');
+        $this->send_message($sender1, $recipient, 'Message');
+        $this->send_message($sender2, $recipient, 'Message');
+        $this->send_message($sender2, $recipient, 'Message');
+        $this->send_message($sender3, $recipient, 'Message');
+        $this->send_message($sender3, $recipient, 'Message');
+
+        core_message_external::mark_all_messages_as_read($recipient->id, $sender1->id);
+        $readnotifications = $DB->get_records('message_read', array('useridto' => $recipient->id));
+        $unreadnotifications = $DB->get_records('message', array('useridto' => $recipient->id));
+
+        $this->assertCount(2, $readnotifications);
+        $this->assertCount(4, $unreadnotifications);
+
+        core_message_external::mark_all_messages_as_read($recipient->id, 0);
+        $readnotifications = $DB->get_records('message_read', array('useridto' => $recipient->id));
+        $unreadnotifications = $DB->get_records('message', array('useridto' => $recipient->id));
+
+        $this->assertCount(6, $readnotifications);
+        $this->assertCount(0, $unreadnotifications);
+    }
+
+    /**
+     * Test getting unread conversation count.
+     */
+    public function test_get_unread_conversations_count() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // The person wanting the conversation count.
+        $this->setUser($user1);
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $this->send_message($user1, $user2, 'Yo!');
+        $this->send_message($user2, $user1, 'Sup mang?');
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!');
+        $this->send_message($user2, $user1, 'Word.');
+
+        $this->send_message($user1, $user3, 'Booyah');
+        $this->send_message($user3, $user1, 'Whaaat?');
+        $this->send_message($user1, $user3, 'Nothing.');
+        $this->send_message($user3, $user1, 'Cool.');
+
+        $this->send_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
+        $this->send_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
+        $this->send_message($user1, $user4, 'Dope.');
+
+        // Get the unread conversation count.
+        $result = core_message_external::get_unread_conversations_count($user1->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_unread_conversations_count_returns(),
+            $result);
+
+        $this->assertEquals(3, $result);
+    }
+
+    /**
+     * Test getting unread conversation count as other user.
+     */
+    public function test_get_unread_conversations_count_as_other_user() {
+        $this->resetAfterTest(true);
+
+        // The person wanting the conversation count.
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $user4 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth, have some different conversations with different users.
+        $this->send_message($user1, $user2, 'Yo!');
+        $this->send_message($user2, $user1, 'Sup mang?');
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!');
+        $this->send_message($user2, $user1, 'Word.');
+
+        $this->send_message($user1, $user3, 'Booyah');
+        $this->send_message($user3, $user1, 'Whaaat?');
+        $this->send_message($user1, $user3, 'Nothing.');
+        $this->send_message($user3, $user1, 'Cool.');
+
+        $this->send_message($user1, $user4, 'Hey mate, you see the new messaging UI in Moodle?');
+        $this->send_message($user4, $user1, 'Yah brah, it\'s pretty rad.');
+        $this->send_message($user1, $user4, 'Dope.');
+
+        // Get the unread conversation count.
+        $result = core_message_external::get_unread_conversations_count($user1->id);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_unread_conversations_count_returns(),
+            $result);
+
+        $this->assertEquals(3, $result);
+    }
+
+    /**
+     * Test getting unread conversation count as other user without proper capability.
+     */
+    public function test_get_unread_conversations_count_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person wanting the conversation count.
+        $this->setUser($user1);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::get_unread_conversations_count($user2->id);
+    }
+
+    /**
+     * Test deleting conversation.
+     */
+    public function test_delete_conversation() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person wanting to delete the conversation.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        // Delete the conversation.
+        core_message_external::delete_conversation($user1->id, $user2->id);
+
+        $messages = $DB->get_records('message', array(), 'timecreated ASC');
+        $this->assertCount(4, $messages);
+
+        $message1 = array_shift($messages);
+        $message2 = array_shift($messages);
+        $message3 = array_shift($messages);
+        $message4 = array_shift($messages);
+
+        $this->assertNotEmpty($message1->timeuserfromdeleted);
+        $this->assertEmpty($message1->timeusertodeleted);
+
+        $this->assertEmpty($message2->timeuserfromdeleted);
+        $this->assertNotEmpty($message2->timeusertodeleted);
+
+        $this->assertNotEmpty($message3->timeuserfromdeleted);
+        $this->assertEmpty($message3->timeusertodeleted);
+
+        $this->assertEmpty($message4->timeuserfromdeleted);
+        $this->assertNotEmpty($message4->timeusertodeleted);
+    }
+
+    /**
+     * Test deleting conversation as other user.
+     */
+    public function test_delete_conversation_as_other_user() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Yo!', 0, $time);
+        $this->send_message($user2, $user1, 'Sup mang?', 0, $time + 1);
+        $this->send_message($user1, $user2, 'Writing PHPUnit tests!', 0, $time + 2);
+        $this->send_message($user2, $user1, 'Word.', 0, $time + 3);
+
+        // Delete the conversation.
+        core_message_external::delete_conversation($user1->id, $user2->id);
+
+        $messages = $DB->get_records('message', array(), 'timecreated ASC');
+        $this->assertCount(4, $messages);
+
+        $message1 = array_shift($messages);
+        $message2 = array_shift($messages);
+        $message3 = array_shift($messages);
+        $message4 = array_shift($messages);
+
+        $this->assertNotEmpty($message1->timeuserfromdeleted);
+        $this->assertEmpty($message1->timeusertodeleted);
+
+        $this->assertEmpty($message2->timeuserfromdeleted);
+        $this->assertNotEmpty($message2->timeusertodeleted);
+
+        $this->assertNotEmpty($message3->timeuserfromdeleted);
+        $this->assertEmpty($message3->timeusertodeleted);
+
+        $this->assertEmpty($message4->timeuserfromdeleted);
+        $this->assertNotEmpty($message4->timeusertodeleted);
+    }
+
+    /**
+     * Test deleting conversation as other user without proper capability.
+     */
+    public function test_delete_conversation_as_other_user_without_cap() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+
+        // The person wanting to delete the conversation.
+        $this->setUser($user3);
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::delete_conversation($user1->id, $user2->id);
+    }
+
+    /**
+     * Test deleting conversation with messaging disabled.
+     */
+    public function test_delete_conversation_messaging_disabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person wanting to delete the conversation.
+        $this->setUser($user1);
+
+        // Disable messaging.
+        $CFG->messaging = 0;
+
+        // Ensure an exception is thrown.
+        $this->expectException('moodle_exception');
+        core_message_external::delete_conversation($user1->id, $user2->id);
+    }
+
+    /**
+     * Test get message processor.
+     */
+    public function test_get_message_processor() {
+        $this->resetAfterTest(true);
+
+        // Create a user.
+        $user1 = self::getDataGenerator()->create_user();
+
+        // Set you as the user.
+        $this->setUser($user1);
+
+        // Get the message processors.
+        $result = core_message_external::get_message_processor($user1->id, 'popup');
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::get_message_processor_returns(), $result);
+
+        $this->assertNotEmpty($result['systemconfigured']);
+        $this->assertNotEmpty($result['userconfigured']);
     }
 }
