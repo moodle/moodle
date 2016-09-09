@@ -93,7 +93,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         // Set up the LTI enrolment tool.
         $data = new stdClass();
         $data->maxenrolled = 1;
-        $tool = $this->create_tool($data);
+        $tool = $this->getDataGenerator()->create_lti_tool($data);
 
         // Now get all the information we need.
         $tool = \enrol_lti\helper::get_lti_tool($tool->id);
@@ -122,7 +122,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         // Set up the LTI enrolment tool.
         $data = new stdClass();
         $data->enrolstartdate = time() + DAYSECS; // Make sure it is in the future.
-        $tool = $this->create_tool($data);
+        $tool = $this->getDataGenerator()->create_lti_tool($data);
 
         // Now get all the information we need.
         $tool = \enrol_lti\helper::get_lti_tool($tool->id);
@@ -144,7 +144,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         // Set up the LTI enrolment tool.
         $data = new stdClass();
         $data->enrolenddate = time() - DAYSECS; // Make sure it is in the past.
-        $tool = $this->create_tool($data);
+        $tool = $this->getDataGenerator()->create_lti_tool($data);
 
         // Now get all the information we need.
         $tool = \enrol_lti\helper::get_lti_tool($tool->id);
@@ -161,22 +161,23 @@ class enrol_lti_helper_testcase extends advanced_testcase {
      * Test returning the number of available tools.
      */
     public function test_count_lti_tools() {
+        $generator = $this->getDataGenerator();
         // Create two tools belonging to the same course.
-        $course1 = $this->getDataGenerator()->create_course();
+        $course1 = $generator->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $this->create_tool($data);
-        $this->create_tool($data);
+        $generator->create_lti_tool($data);
+        $generator->create_lti_tool($data);
 
         // Create two more tools in a separate course.
         $course2 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course2->id;
-        $this->create_tool($data);
+        $generator->create_lti_tool($data);
 
         // Set the next tool to disabled.
         $data->status = ENROL_INSTANCE_DISABLED;
-        $this->create_tool($data);
+        $generator->create_lti_tool($data);
 
         // Count all the tools.
         $count = \enrol_lti\helper::count_lti_tools();
@@ -199,22 +200,23 @@ class enrol_lti_helper_testcase extends advanced_testcase {
      * Test returning the list of available tools.
      */
     public function test_get_lti_tools() {
+        $generator = $this->getDataGenerator();
         // Create two tools belonging to the same course.
-        $course1 = $this->getDataGenerator()->create_course();
+        $course1 = $generator->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
-        $tool2 = $this->create_tool($data);
+        $tool1 = $generator->create_lti_tool($data);
+        $tool2 = $generator->create_lti_tool($data);
 
         // Create two more tools in a separate course.
-        $course2 = $this->getDataGenerator()->create_course();
+        $course2 = $generator->create_course();
         $data = new stdClass();
         $data->courseid = $course2->id;
-        $tool3 = $this->create_tool($data);
+        $tool3 = $generator->create_lti_tool($data);
 
         // Set the next tool to disabled.
         $data->status = ENROL_INSTANCE_DISABLED;
-        $tool4 = $this->create_tool($data);
+        $tool4 = $generator->create_lti_tool($data);
 
         // Get all the tools.
         $tools = \enrol_lti\helper::get_lti_tools();
@@ -254,7 +256,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
+        $tool1 = $this->getDataGenerator()->create_lti_tool($data);
 
         $id = $tool1->id;
         $launchurl = \enrol_lti\helper::get_launch_url($id);
@@ -274,7 +276,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
+        $tool1 = $this->getDataGenerator()->create_lti_tool($data);
 
         $id = $tool1->id;
         $token = \enrol_lti\helper::generate_cartridge_token($id);
@@ -304,7 +306,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
+        $tool1 = $this->getDataGenerator()->create_lti_tool($data);
 
         $id = $tool1->id;
         $token = \enrol_lti\helper::generate_proxy_token($id);
@@ -328,7 +330,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
+        $tool1 = $this->getDataGenerator()->create_lti_tool($data);
 
         $name = \enrol_lti\helper::get_name($tool1);
         $this->assertEquals('Course: Test course 1', $name);
@@ -342,20 +344,21 @@ class enrol_lti_helper_testcase extends advanced_testcase {
      * Test getting the description of a tool.
      */
     public function test_get_description() {
-        $course1 = $this->getDataGenerator()->create_course();
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
+        $tool1 = $generator->create_lti_tool($data);
 
         $description = \enrol_lti\helper::get_description($tool1);
         $this->assertContains('Test course 1 Lorem ipsum dolor sit amet', $description);
 
-        $module1 = $this->getDataGenerator()->create_module('assign', array(
+        $module1 = $generator->create_module('assign', array(
                 'course' => $course1->id
             ));
         $data = new stdClass();
         $data->cmid = $module1->cmid;
-        $tool2 = $this->create_tool($data);
+        $tool2 = $generator->create_lti_tool($data);
         $description = \enrol_lti\helper::get_description($tool2);
         $this->assertContains('Test assign 1', $description);
     }
@@ -369,11 +372,11 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool = $this->create_tool($data);
+        $tool = $this->getDataGenerator()->create_lti_tool($data);
 
         $icon = \enrol_lti\helper::get_icon($tool);
         $icon = $icon->out();
-        // Only local icons are supported by the LTI framework
+        // Only local icons are supported by the LTI framework.
         $this->assertContains($CFG->wwwroot, $icon);
 
     }
@@ -385,7 +388,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
+        $tool1 = $this->getDataGenerator()->create_lti_tool($data);
 
         $token = \enrol_lti\helper::generate_cartridge_token($tool1->id);
         $this->assertTrue(\enrol_lti\helper::verify_cartridge_token($tool1->id, $token));
@@ -399,7 +402,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
+        $tool1 = $this->getDataGenerator()->create_lti_tool($data);
 
         $token = \enrol_lti\helper::generate_proxy_token($tool1->id);
         $this->assertTrue(\enrol_lti\helper::verify_proxy_token($tool1->id, $token));
@@ -526,55 +529,11 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $course1 = $this->getDataGenerator()->create_course();
         $data = new stdClass();
         $data->courseid = $course1->id;
-        $tool1 = $this->create_tool($data);
+        $tool1 = $this->getDataGenerator()->create_lti_tool($data);
 
         $cartridge = \enrol_lti\helper::create_cartridge($tool1->id);
         $this->assertContains('<blti:title>Test LTI</blti:title>', $cartridge);
         $this->assertContains("<blti:icon>$CFG->wwwroot/theme/image.php/_s/clean/theme/1/favicon</blti:icon>", $cartridge);
         $this->assertContains("<blti:launch_url>$CFG->wwwroot/enrol/lti/tool.php?id=$tool1->id</blti:launch_url>", $cartridge);
-    }
-
-    /**
-     * Helper function used to create a tool.
-     *
-     * @param array $data
-     * @return stdClass the tool
-     */
-    protected function create_tool($data = array()) {
-        global $DB;
-
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
-
-        // Create a course if no course id was specified.
-        if (empty($data->courseid)) {
-            $course = $this->getDataGenerator()->create_course();
-            $data->courseid = $course->id;
-        } else {
-            $course = get_course($data->courseid);
-        }
-
-        if (!empty($data->cmid)) {
-            $data->contextid = context_module::instance($data->cmid)->id;
-        } else {
-            $data->contextid = context_course::instance($data->courseid)->id;
-        }
-
-        // Set it to enabled if no status was specified.
-        if (!isset($data->status)) {
-            $data->status = ENROL_INSTANCE_ENABLED;
-        }
-
-        // Add some extra necessary fields to the data.
-        $data->name = 'Test LTI';
-        $data->roleinstructor = $studentrole->id;
-        $data->rolelearner = $teacherrole->id;
-
-        // Get the enrol LTI plugin.
-        $enrolplugin = enrol_get_plugin('lti');
-        $instanceid = $enrolplugin->add_instance($course, (array) $data);
-
-        // Get the tool associated with this instance.
-        return $DB->get_record('enrol_lti_tools', array('enrolid' => $instanceid));
     }
 }

@@ -171,7 +171,7 @@ class tool_provider extends ToolProvider {
 
         $this->errorOutput = '';
 
-        notification::error(get_string('failedregistration', 'enrol_lti', ['reason' => $message]));
+        notification::error(get_string('failedrequest', 'enrol_lti', ['reason' => $message]));
     }
 
     /**
