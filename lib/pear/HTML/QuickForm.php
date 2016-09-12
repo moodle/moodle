@@ -545,7 +545,7 @@ class HTML_QuickForm extends HTML_Common {
     function &createElement($elementType)
     {
         $args    =  func_get_args();
-        $element =& HTML_QuickForm::_loadElement('createElement', $elementType, array_slice($args, 1));
+        $element = self::_loadElement('createElement', $elementType, array_slice($args, 1));
         return $element;
     } // end func createElement
 
@@ -566,7 +566,7 @@ class HTML_QuickForm extends HTML_Common {
     function &_loadElement($event, $type, $args)
     {
         $type = strtolower($type);
-        if (!HTML_QuickForm::isTypeRegistered($type)) {
+        if (!self::isTypeRegistered($type)) {
             $error = self::raiseError(null, QUICKFORM_UNREGISTERED_ELEMENT, null, E_USER_WARNING, "Element '$type' does not exist in HTML_QuickForm::_loadElement()", 'HTML_QuickForm_Error', true);
             return $error;
         }

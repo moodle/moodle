@@ -147,7 +147,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
         // Grade scale select box.
         $scales = get_scales_menu($COURSE->id);
         $langscale = get_string('modgradetypescale', 'grades');
-        $this->scaleformelement = @MoodleQuickForm::createElement('select', 'modgrade_scale', $langscale,
+        $this->scaleformelement = $this->createFormElement('select', 'modgrade_scale', $langscale,
             $scales, $attributes);
         $this->scaleformelement->setHiddenLabel = false;
         $scaleformelementid = $this->generate_modgrade_subelement_id('modgrade_scale');
@@ -155,7 +155,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
 
         // Maximum grade textbox.
         $langmaxgrade = get_string('modgrademaxgrade', 'grades');
-        $this->maxgradeformelement = @MoodleQuickForm::createElement('text', 'modgrade_point', $langmaxgrade, array());
+        $this->maxgradeformelement = $this->createFormElement('text', 'modgrade_point', $langmaxgrade, array());
         $this->maxgradeformelement->setHiddenLabel = false;
         $maxgradeformelementid = $this->generate_modgrade_subelement_id('modgrade_point');
         $this->maxgradeformelement->updateAttributes(array('id' => $maxgradeformelementid));
@@ -167,7 +167,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
             'point' => get_string('modgradetypepoint', 'grades'),
         );
         $langtype = get_string('modgradetype', 'grades');
-        $this->gradetypeformelement = @MoodleQuickForm::createElement('select', 'modgrade_type', $langtype, $gradetype,
+        $this->gradetypeformelement = $this->createFormElement('select', 'modgrade_type', $langtype, $gradetype,
             $attributes, true);
         $this->gradetypeformelement->setHiddenLabel = false;
         $gradetypeformelementid = $this->generate_modgrade_subelement_id('modgrade_type');
@@ -184,7 +184,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                 $choices[''] = get_string('choose');
                 $choices['no'] = get_string('no');
                 $choices['yes'] = get_string('yes');
-                $rescalegradesselect = @MoodleQuickForm::createElement('select',
+                $rescalegradesselect = $this->createFormElement('select',
                     'modgrade_rescalegrades',
                     $langrescalegrades,
                     $choices);
@@ -204,23 +204,23 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
             }
 
             $gradesexisthtml = '<div class=\'alert\'>' . $gradesexistmsg . '</div>';
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradesexistmsg', '', $gradesexisthtml);
+            $this->_elements[] = $this->createFormElement('static', 'gradesexistmsg', '', $gradesexisthtml);
         }
 
         // Grade type select box.
         $label = html_writer::tag('label', $this->gradetypeformelement->getLabel(),
             array('for' => $this->gradetypeformelement->getAttribute('id')));
-        $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradetypelabel', '', '&nbsp;'.$label);
+        $this->_elements[] = $this->createFormElement('static', 'gradetypelabel', '', '&nbsp;'.$label);
         $this->_elements[] = $this->gradetypeformelement;
-        $this->_elements[] = @MoodleQuickForm::createElement('static', 'gradetypespacer', '', '<br />');
+        $this->_elements[] = $this->createFormElement('static', 'gradetypespacer', '', '<br />');
 
         // Only show the grade scale select box when applicable.
         if (!$this->isupdate || !$this->hasgrades || $this->currentgradetype == 'scale') {
             $label = html_writer::tag('label', $this->scaleformelement->getLabel(),
                 array('for' => $this->scaleformelement->getAttribute('id')));
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $label);
+            $this->_elements[] = $this->createFormElement('static', 'scalelabel', '', $label);
             $this->_elements[] = $this->scaleformelement;
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', '<br />');
+            $this->_elements[] = $this->createFormElement('static', 'scalespacer', '', '<br />');
         }
 
         if ($this->isupdate && $this->hasgrades && $this->canrescale && $this->currentgradetype == 'point') {
@@ -228,18 +228,18 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
             $label = html_writer::tag('label', $rescalegradesselect->getLabel(),
                 array('for' => $rescalegradesselect->getAttribute('id')));
             $labelhelp = new help_icon('modgraderescalegrades', 'grades');
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalelabel', '', $label . $OUTPUT->render($labelhelp));
+            $this->_elements[] = $this->createFormElement('static', 'scalelabel', '', $label . $OUTPUT->render($labelhelp));
             $this->_elements[] = $rescalegradesselect;
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'scalespacer', '', '<br />');
+            $this->_elements[] = $this->createFormElement('static', 'scalespacer', '', '<br />');
         }
 
         // Only show the max points form element when applicable.
         if (!$this->isupdate || !$this->hasgrades || $this->currentgradetype == 'point') {
             $label = html_writer::tag('label', $this->maxgradeformelement->getLabel(),
                 array('for' => $this->maxgradeformelement->getAttribute('id')));
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointlabel', '', $label);
+            $this->_elements[] = $this->createFormElement('static', 'pointlabel', '', $label);
             $this->_elements[] = $this->maxgradeformelement;
-            $this->_elements[] = @MoodleQuickForm::createElement('static', 'pointspacer', '', '<br />');
+            $this->_elements[] = $this->createFormElement('static', 'pointspacer', '', '<br />');
         }
     }
 
@@ -340,6 +340,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
      * @return mixed
      */
     public function onQuickFormEvent($event, $arg, &$caller) {
+        $this->setMoodleForm($caller);
         switch ($event) {
             case 'createElement':
                 // The first argument is the name.

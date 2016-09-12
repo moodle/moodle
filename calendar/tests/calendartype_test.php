@@ -50,6 +50,8 @@ require_once($CFG->dirroot . '/user/profile/index_field_form.php');
  * @since Moodle 2.6
  */
 class core_calendar_type_testcase extends advanced_testcase {
+    /** @var MoodleQuickForm Keeps reference of dummy form object */
+    private $mform;
 
     /**
      * The test user.
@@ -63,6 +65,10 @@ class core_calendar_type_testcase extends advanced_testcase {
         // The user we are going to test this on.
         $this->user = self::getDataGenerator()->create_user();
         self::setUser($this->user);
+
+        // Get form data.
+        $form = new temp_form_calendartype();
+        $this->mform = $form->getform();
     }
 
     /**
@@ -216,15 +222,17 @@ class core_calendar_type_testcase extends advanced_testcase {
     private function convert_dateselector_to_unixtime_test($element, $type, $date) {
         $this->set_calendar_type($type);
 
-        if ($element == 'dateselector') {
-            $el = new MoodleQuickForm_date_selector('dateselector', null, array('timezone' => 0.0, 'step' => 1));
-        } else {
-            $el = new MoodleQuickForm_date_time_selector('dateselector', null, array('timezone' => 0.0, 'step' => 1));
-        }
-        $el->_createElements();
-        $submitvalues = array('dateselector' => $date);
+        static $counter = 0;
+        $counter++;
 
-        $this->assertSame($el->exportValue($submitvalues), array('dateselector' => $date['timestamp']));
+        if ($element == 'dateselector') {
+            $el = $this->mform->addElement('date_selector', 'dateselector' . $counter, null, array('timezone' => 0.0, 'step' => 1));
+        } else {
+            $el = $this->mform->addElement('date_time_selector', 'dateselector' . $counter, null, array('timezone' => 0.0, 'step' => 1, 'optional' => false));
+        }
+        $submitvalues = array('dateselector' . $counter => $date);
+
+        $this->assertSame($el->exportValue($submitvalues), array('dateselector' . $counter => $date['timestamp']));
     }
 
     /**
@@ -298,5 +306,27 @@ class core_calendar_type_testcase extends advanced_testcase {
     private function set_calendar_type($type) {
         $this->user->calendartype = $type;
         \core\session\manager::set_user($this->user);
+    }
+}
+
+/**
+ * Form object to be used in test case.
+ */
+class temp_form_calendartype extends moodleform {
+    /**
+     * Form definition.
+     */
+    public function definition() {
+        // No definition required.
+    }
+    /**
+     * Returns form reference
+     * @return MoodleQuickForm
+     */
+    public function getform() {
+        $mform = $this->_form;
+        // Set submitted flag, to simulate submission.
+        $mform->_flagSubmitted = true;
+        return $mform;
     }
 }
