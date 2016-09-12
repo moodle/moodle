@@ -36,7 +36,7 @@ class progress_display_test extends \advanced_testcase {
         $this->assertEquals(1, $progress->get_direction());
         $this->assertTimeCurrent($progress->get_last_wibble());
         // Wait 1 second to ensure that all code in update_progress is run.
-        sleep(1);
+        $this->waitForSecond();
         $progress->update_progress();
         $this->assertEquals(2, $progress->get_current_state());
         $this->assertEquals(1, $progress->get_direction());
@@ -58,14 +58,14 @@ class progress_display_test extends \advanced_testcase {
 
         // Set wibbler to final state and progress to check that it reverses direction.
         $progress->set_current_state(core_mock_progress_display::WIBBLE_STATES);
-        sleep(1);
+        $this->waitForSecond();
         $progress->update_progress();
         $this->assertEquals(core_mock_progress_display::WIBBLE_STATES - 1, $progress->get_current_state());
         $this->assertEquals(-1, $progress->get_direction());
 
         // Set wibbler to beginning and progress to check that it reverses direction.
         $progress->set_current_state(0);
-        sleep(1);
+        $this->waitForSecond();
         $progress->update_progress();
         $this->assertEquals(1, $progress->get_current_state());
         $this->assertEquals(1, $progress->get_direction());
