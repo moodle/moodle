@@ -81,7 +81,7 @@ switch ($action) {
         // Ask for confirmation, as there is user data available for field.
         $fieldname = $DB->get_field('user_info_field', 'name', array('id' => $id));
         $optionsyes = array ('id' => $id, 'confirm' => 1, 'action' => 'deletefield', 'sesskey' => sesskey());
-        $strheading = get_string('profiledeletefield', 'admin', $fieldname);
+        $strheading = get_string('profiledeletefield', 'admin', format_string($fieldname));
         $PAGE->navbar->add($strheading);
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strheading);
