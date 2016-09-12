@@ -72,7 +72,7 @@ class core_message_external extends external_api {
         global $CFG, $USER, $DB;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
 
@@ -217,7 +217,7 @@ class core_message_external extends external_api {
         global $CFG;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
 
@@ -279,7 +279,7 @@ class core_message_external extends external_api {
         global $CFG;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
 
@@ -334,7 +334,7 @@ class core_message_external extends external_api {
         global $CFG;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
 
@@ -396,7 +396,7 @@ class core_message_external extends external_api {
         global $CFG;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
 
@@ -499,12 +499,14 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_search_people_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
+
+        $systemcontext = context_system::instance();
 
         $params = array(
             'userid' => $userid,
@@ -514,8 +516,11 @@ class core_message_external extends external_api {
             'limitnum' => $limitnum
         );
         self::validate_parameters(self::data_for_messagearea_search_people_in_course_parameters(), $params);
+        self::validate_context($systemcontext);
 
-        self::validate_context(context_user::instance($userid));
+        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
 
         $search = \core_message\api::search_people_in_course($userid, $courseid, $search, $limitfrom, $limitnum);
 
@@ -567,12 +572,14 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_search_people($userid, $search, $limitnum = 0) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
+
+        $systemcontext = context_system::instance();
 
         $params = array(
             'userid' => $userid,
@@ -580,8 +587,11 @@ class core_message_external extends external_api {
             'limitnum' => $limitnum
         );
         self::validate_parameters(self::data_for_messagearea_search_people_parameters(), $params);
+        self::validate_context($systemcontext);
 
-        self::validate_context(context_user::instance($userid));
+        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
 
         $search = \core_message\api::search_people($userid, $search, $limitnum);
 
@@ -649,12 +659,14 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_search_messages($userid, $search, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
+
+        $systemcontext = context_system::instance();
 
         $params = array(
             'userid' => $userid,
@@ -664,8 +676,11 @@ class core_message_external extends external_api {
 
         );
         self::validate_parameters(self::data_for_messagearea_search_messages_parameters(), $params);
+        self::validate_context($systemcontext);
 
-        self::validate_context(context_user::instance($userid));
+        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
 
         $search = \core_message\api::search_messages($userid, $search, $limitfrom, $limitnum);
 
@@ -717,12 +732,14 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_conversations($userid, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
+
+        $systemcontext = context_system::instance();
 
         $params = array(
             'userid' => $userid,
@@ -730,8 +747,11 @@ class core_message_external extends external_api {
             'limitnum' => $limitnum
         );
         self::validate_parameters(self::data_for_messagearea_conversations_parameters(), $params);
+        self::validate_context($systemcontext);
 
-        self::validate_context(context_user::instance($userid));
+        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
 
         $contacts = \core_message\api::get_conversations($userid, 0, $limitfrom, $limitnum);
 
@@ -778,12 +798,14 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_contacts($userid, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
+
+        $systemcontext = context_system::instance();
 
         $params = array(
             'userid' => $userid,
@@ -791,8 +813,11 @@ class core_message_external extends external_api {
             'limitnum' => $limitnum
         );
         self::validate_parameters(self::data_for_messagearea_contacts_parameters(), $params);
+        self::validate_context($systemcontext);
 
-        self::validate_context(context_user::instance($userid));
+        if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
 
         $contacts = \core_message\api::get_contacts($userid, $limitfrom, $limitnum);
 
@@ -841,12 +866,14 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0, $newest = false) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
+
+        $systemcontext = context_system::instance();
 
         $params = array(
             'currentuserid' => $currentuserid,
@@ -856,8 +883,11 @@ class core_message_external extends external_api {
             'newest' => $newest
         );
         self::validate_parameters(self::data_for_messagearea_messages_parameters(), $params);
+        self::validate_context($systemcontext);
 
-        self::validate_context(context_user::instance($currentuserid));
+        if (($USER->id != $currentuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
 
         if ($newest) {
             $sort = 'timecreated DESC';
@@ -916,20 +946,25 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_get_most_recent_message($currentuserid, $otheruserid) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
+
+        $systemcontext = context_system::instance();
 
         $params = array(
             'currentuserid' => $currentuserid,
             'otheruserid' => $otheruserid
         );
         self::validate_parameters(self::data_for_messagearea_get_most_recent_message_parameters(), $params);
+        self::validate_context($systemcontext);
 
-        self::validate_context(context_user::instance($currentuserid));
+        if (($USER->id != $currentuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
 
         $message = \core_message\api::get_most_recent_message($currentuserid, $otheruserid);
 
@@ -972,20 +1007,25 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_get_profile($currentuserid, $otheruserid) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
+
+        $systemcontext = context_system::instance();
 
         $params = array(
             'currentuserid' => $currentuserid,
             'otheruserid' => $otheruserid
         );
         self::validate_parameters(self::data_for_messagearea_get_profile_parameters(), $params);
+        self::validate_context($systemcontext);
 
-        self::validate_context(context_user::instance($otheruserid));
+        if (($USER->id != $currentuserid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
+            throw new moodle_exception('You do not have permission to perform this action.');
+        }
 
         $profile = \core_message\api::get_profile($currentuserid, $otheruserid);
 
@@ -1039,7 +1079,7 @@ class core_message_external extends external_api {
         global $CFG, $PAGE;
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
 
@@ -1145,7 +1185,7 @@ class core_message_external extends external_api {
         require_once($CFG->dirroot . '/user/lib.php');
 
         // Check if messaging is enabled.
-        if (!$CFG->messaging) {
+        if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
 
@@ -1495,7 +1535,7 @@ class core_message_external extends external_api {
      */
     public static function get_popup_notifications($useridto, $status, $embeduserto,
         $embeduserfrom, $newestfirst, $markasread, $limit, $offset) {
-        global $CFG, $USER, $PAGE;
+        global $USER, $PAGE;
 
         $params = self::validate_parameters(
             self::get_popup_notifications_parameters(),
@@ -1644,7 +1684,7 @@ class core_message_external extends external_api {
      * @return external_description
      */
     public static function mark_all_notifications_as_read($useridto, $useridfrom) {
-        global $CFG, $USER;
+        global $USER;
 
         $params = self::validate_parameters(
             self::mark_all_notifications_as_read_parameters(),
@@ -1719,7 +1759,7 @@ class core_message_external extends external_api {
      * @return external_description
      */
     public static function get_unread_popup_notification_count($useridto) {
-        global $CFG, $USER;
+        global $USER;
 
         $params = self::validate_parameters(
             self::get_unread_popup_notification_count_parameters(),
@@ -2033,7 +2073,7 @@ class core_message_external extends external_api {
      * @return external_description
      */
     public static function mark_all_messages_as_read($useridto, $useridfrom) {
-        global $CFG, $USER;
+        global $USER;
 
         $params = self::validate_parameters(
             self::mark_all_messages_as_read_parameters(),
