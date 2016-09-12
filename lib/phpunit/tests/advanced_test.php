@@ -358,7 +358,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $this->setCurrentTimeStart();
         $this->assertTimeCurrent(time());
-        sleep(2);
+        $this->waitForSecond();
         $this->assertTimeCurrent(time());
         $this->assertTimeCurrent(time()-1);
 

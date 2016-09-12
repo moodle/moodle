@@ -822,7 +822,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $plugin->save($submission, $data);
 
         // Wait 1 second so the submission and grade do not have the same timemodified.
-        sleep(1);
+        $this->waitForSecond();
         // Simulate adding a grade.
         $this->setUser($this->teachers[0]);
         $data = new stdClass();
