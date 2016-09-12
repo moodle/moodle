@@ -1459,9 +1459,6 @@ class core_message_external extends external_api {
                 'status' => new external_value(
                     PARAM_ALPHA, 'filter the results to just "read" or "unread" notifications',
                     VALUE_DEFAULT, ''),
-                'embedpreference' => new external_value(
-                    PARAM_BOOL, 'true for returning user\'s preference for the notification',
-                    VALUE_DEFAULT, false),
                 'embeduserto' => new external_value(
                     PARAM_BOOL, 'true for returning user details for the recipient in each notification',
                     VALUE_DEFAULT, false),
@@ -1488,7 +1485,6 @@ class core_message_external extends external_api {
      * @throws moodle_exception
      * @param  int      $useridto           the user id who received the message
      * @param  string   $status             filter the results to only read or unread notifications
-     * @param  bool     $embedpreference    true to embed the recipient user details in the record for each notification
      * @param  bool     $embeduserto        true to embed the recipient user details in the record for each notification
      * @param  bool     $embeduserfrom      true to embed the send user details in the record for each notification
      * @param  bool     $newestfirst        true for ordering by newest first, false for oldest first
@@ -1497,8 +1493,8 @@ class core_message_external extends external_api {
      * @param  int      $offset             offset the result set by a given amount
      * @return external_description
      */
-    public static function get_popup_notifications($useridto, $status, $embedpreference,
-        $embeduserto, $embeduserfrom, $newestfirst, $markasread, $limit, $offset) {
+    public static function get_popup_notifications($useridto, $status, $embeduserto,
+        $embeduserfrom, $newestfirst, $markasread, $limit, $offset) {
         global $CFG, $USER, $PAGE;
 
         $params = self::validate_parameters(
@@ -1506,7 +1502,6 @@ class core_message_external extends external_api {
             array(
                 'useridto' => $useridto,
                 'status' => $status,
-                'embedpreference' => $embedpreference,
                 'embeduserto' => $embeduserto,
                 'embeduserfrom' => $embeduserfrom,
                 'newestfirst' => $newestfirst,
@@ -1521,7 +1516,6 @@ class core_message_external extends external_api {
 
         $useridto = $params['useridto'];
         $status = $params['status'];
-        $embedpreference = $params['embedpreference'];
         $embeduserto = $params['embeduserto'];
         $embeduserfrom = $params['embeduserfrom'];
         $newestfirst = $params['newestfirst'];
@@ -1562,7 +1556,7 @@ class core_message_external extends external_api {
             foreach ($notifications as $notification) {
 
                 $notificationoutput = new \core_message\output\popup_notification($notification, $embeduserto,
-                    $embeduserfrom, $embedpreference, $usertofullname);
+                    $embeduserfrom, $usertofullname);
 
                 $notificationcontext = $notificationoutput->export_for_template($renderer);
                 $notificationcontexts[] = $notificationcontext;
@@ -1595,6 +1589,7 @@ class core_message_external extends external_api {
                             'useridfrom' => new external_value(PARAM_INT, 'User from id'),
                             'useridto' => new external_value(PARAM_INT, 'User to id'),
                             'subject' => new external_value(PARAM_TEXT, 'The notification subject'),
+                            'shortenedsubject' => new external_value(PARAM_TEXT, 'The notification subject shortened with ellipsis'),
                             'text' => new external_value(PARAM_RAW, 'The message text formated'),
                             'fullmessage' => new external_value(PARAM_RAW, 'The message'),
                             'fullmessageformat' => new external_format_value('fullmessage'),
@@ -1613,15 +1608,6 @@ class core_message_external extends external_api {
                             'iconurl' => new external_value(PARAM_URL, 'URL for notification icon'),
                             'component' => new external_value(PARAM_TEXT, 'The component that generated the notification', VALUE_OPTIONAL),
                             'eventtype' => new external_value(PARAM_TEXT, 'The type of notification', VALUE_OPTIONAL),
-                            'preference' => new external_single_structure(
-                                array (
-                                    'key' => new external_value(PARAM_TEXT, 'The preference key'),
-                                    'loggedin' => new external_value(PARAM_TEXT, 'The logged in preference setting'),
-                                    'loggedoff' => new external_value(PARAM_TEXT, 'The logged off preference setting'),
-                                ),
-                                'The preference configuration',
-                                 VALUE_OPTIONAL
-                            ),
                         ), 'message'
                     )
                 ),
@@ -1946,7 +1932,7 @@ class core_message_external extends external_api {
         return new external_function_parameters(
             array(
                 'messageid' => new external_value(PARAM_INT, 'id of the message (in the message table)'),
-                'timeread' => new external_value(PARAM_INT, 'timestamp for when the message should be marked read')
+                'timeread' => new external_value(PARAM_INT, 'timestamp for when the message should be marked read', VALUE_DEFAULT, 0)
             )
         );
     }
@@ -1979,6 +1965,12 @@ class core_message_external extends external_api {
         );
         $params = self::validate_parameters(self::mark_message_read_parameters(), $params);
 
+        if (empty($params['timeread'])) {
+            $timeread = time();
+        } else {
+            $timeread = $params['timeread'];
+        }
+
         // Validate context.
         $context = context_system::instance();
         self::validate_context($context);
@@ -1989,7 +1981,7 @@ class core_message_external extends external_api {
             throw new invalid_parameter_exception('Invalid messageid, you don\'t have permissions to mark this message as read');
         }
 
-        $messageid = message_mark_message_read($message, $params['timeread']);
+        $messageid = message_mark_message_read($message, $timeread);
 
         $results = array(
             'messageid' => $messageid,

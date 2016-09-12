@@ -58,12 +58,6 @@ class popup_notification implements templatable, renderable {
     protected $embeduserfrom;
 
     /**
-     * Indicates if the receiver of the notification should have their
-     * notification preferences embedded in the output.
-     */
-    protected $embedpreference;
-
-    /**
      * A cache for the receiver's full name, if it's already known, so that
      * a DB lookup isn't required.
      */
@@ -75,12 +69,11 @@ class popup_notification implements templatable, renderable {
      * @param \stdClass $notification
      */
     public function __construct($notification, $embeduserto,
-        $embeduserfrom, $embedpreference, $usertofullname = '') {
+        $embeduserfrom, $usertofullname = '') {
 
         $this->notification = $notification;
         $this->embeduserto = $embeduserto;
         $this->embeduserfrom = $embeduserfrom;
-        $this->embedpreference = $embedpreference;
         $this->usertofullname = $usertofullname;
     }
 
@@ -123,6 +116,7 @@ class popup_notification implements templatable, renderable {
         $context->timecreatedpretty = get_string('ago', 'message', format_time(time() - $context->timecreated));
         $context->text = message_format_message_text($context);
         $context->read = $context->timeread ? true : false;
+        $context->shortenedsubject = shorten_text($context->subject, 125);
 
         if (!empty($context->component) && substr($context->component, 0, 4) == 'mod_') {
             $iconurl = $output->pix_url('icon', $context->component);
@@ -131,18 +125,6 @@ class popup_notification implements templatable, renderable {
         }
 
         $context->iconurl = $iconurl->out();
-
-        // We only return the logged in user's preferences, so if it isn't the sender or receiver
-        // of this notification then skip embedding the preferences.
-        if ($this->embedpreference && !empty($context->component) && !empty($context->eventtype)
-                && $USER->id == $context->useridto) {
-            $key = 'message_provider_' . $context->component . '_' . $context->eventtype;
-            $context->preference = array(
-                'key' => $key,
-                'loggedin' => get_user_preferences($key . '_loggedin', $USER->id),
-                'loggedoff' => get_user_preferences($key . '_loggedoff', $USER->id),
-            );
-        }
 
         return $context;
     }

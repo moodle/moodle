@@ -34,7 +34,7 @@
 
 }}
 {{< core/popover_region }}
-    {{$classes}}popover-region-notifications unread-only{{/classes}}
+    {{$classes}}popover-region-notifications{{/classes}}
     {{$attributes}}id="nav-notification-popover-container" data-userid="{{userid}}"{{/attributes}}
 
     {{$togglelabel}}{{#str}} shownotificationwindownonew, message {{/str}}{{/togglelabel}}
@@ -47,14 +47,6 @@
 
     {{$headertext}}{{#str}} notifications, message {{/str}}{{/headertext}}
     {{$headeractions}}
-        <div class="fancy-toggle on"
-            data-region="fancy-toggle"
-            tabindex="0"
-            aria-label="{{#str}} showallnotifications, message {{/str}}">
-            <div class="slider-container"><div class="slider"></div></div>
-            <div class="off-text">{{#str}} all {{/str}}</div>
-            <div class="on-text">{{#str}} new {{/str}}</div>
-        </div>
         <a class="mark-all-read-button"
             href="#"
             data-action="mark-all-read"
@@ -81,13 +73,6 @@
             aria-atomic="false"
             aria-relevant="additions"></div>
         <div class="empty-message" tabindex="0" data-region="empty-message">{{#str}} nonotifications, message {{/str}}</div>
-        <div class="unread-notifications"
-            data-region="unread-notifications"
-            role="log"
-            aria-busy="false"
-            aria-atomic="false"
-            aria-relevant="additions"></div>
-        <div class="empty-message" tabindex="0" data-region="empty-message">{{#str}} nonewnotifications, message {{/str}}</div>
     {{/content}}
 {{/ core/popover_region }}
 {{#js}}

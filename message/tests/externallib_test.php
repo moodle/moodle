@@ -927,35 +927,35 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         // Confirm that admin has super powers to retrieve any notifications.
         $this->setAdminUser();
-        $result = core_message_external::get_popup_notifications($recipient->id, '', false, false, false, true, false, 0, 0);
+        $result = core_message_external::get_popup_notifications($recipient->id, '', false, false, true, false, 0, 0);
         $this->assertCount(4, $result['notifications']);
 
         $this->setUser($recipient);
-        $result = core_message_external::get_popup_notifications($recipient->id, '', false, false, false, true, false, 0, 0);
+        $result = core_message_external::get_popup_notifications($recipient->id, '', false, false, true, false, 0, 0);
         $this->assertCount(4, $result['notifications']);
 
-        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_UNREAD, false, false, true, true, false, 0, 0);
+        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_UNREAD, false, true, true, false, 0, 0);
         $this->assertCount(2, $result['notifications']);
         $this->assertObjectHasAttribute('userfromfullname', $result['notifications'][0]);
         $this->assertObjectNotHasAttribute('usertofullname', $result['notifications'][0]);
         $this->assertObjectHasAttribute('userfromfullname', $result['notifications'][1]);
         $this->assertObjectNotHasAttribute('usertofullname', $result['notifications'][1]);
 
-        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_UNREAD, false, true, true, true, false, 0, 0);
+        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_UNREAD, true, true, true, false, 0, 0);
         $this->assertCount(2, $result['notifications']);
         $this->assertObjectHasAttribute('userfromfullname', $result['notifications'][0]);
         $this->assertObjectHasAttribute('usertofullname', $result['notifications'][0]);
         $this->assertObjectHasAttribute('userfromfullname', $result['notifications'][1]);
         $this->assertObjectHasAttribute('usertofullname', $result['notifications'][1]);
 
-        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_UNREAD, false, true, true, true, true, 0, 0);
+        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_UNREAD, true, true, true, true, 0, 0);
         $this->assertCount(2, $result['notifications']);
         $this->assertEquals(0, $result['unreadcount']);
 
-        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_UNREAD, false, true, true, true, true, 0, 0);
+        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_UNREAD, true, true, true, true, 0, 0);
         $this->assertCount(0, $result['notifications']);
 
-        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_READ, false, true, true, true, true, 0, 0);
+        $result = core_message_external::get_popup_notifications($recipient->id, MESSAGE_READ, true, true, true, true, 0, 0);
         $this->assertCount(4, $result['notifications']);
     }
 
@@ -978,12 +978,12 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
             $this->send_fake_read_popup_notification($sender, $recipient, 'Notification 8', 8),
         );
 
-        $result = core_message_external::get_popup_notifications($recipient->id, '', false, false, false, true, false, 2, 0);
+        $result = core_message_external::get_popup_notifications($recipient->id, '', false, false, true, false, 2, 0);
 
         $this->assertEquals($result['notifications'][0]->id, $notificationids[7]);
         $this->assertEquals($result['notifications'][1]->id, $notificationids[6]);
 
-        $result = core_message_external::get_popup_notifications($recipient->id, '', false, false, false, true, false, 2, 2);
+        $result = core_message_external::get_popup_notifications($recipient->id, '', false, false, true, false, 2, 2);
 
         $this->assertEquals($result['notifications'][0]->id, $notificationids[5]);
         $this->assertEquals($result['notifications'][1]->id, $notificationids[4]);
@@ -1037,15 +1037,15 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         );
 
         core_message_external::mark_all_notifications_as_read($recipient->id, $sender1->id);
-        $readresult = core_message_external::get_popup_notifications($recipient->id, 'read', false, false, false, true, false, 0, 0);
-        $unreadresult = core_message_external::get_popup_notifications($recipient->id, 'unread', false, false, false, true, false, 0, 0);
+        $readresult = core_message_external::get_popup_notifications($recipient->id, 'read', false, false, true, false, 0, 0);
+        $unreadresult = core_message_external::get_popup_notifications($recipient->id, 'unread', false, false, true, false, 0, 0);
 
         $this->assertCount(2, $readresult['notifications']);
         $this->assertCount(4, $unreadresult['notifications']);
 
         core_message_external::mark_all_notifications_as_read($recipient->id, 0);
-        $readresult = core_message_external::get_popup_notifications($recipient->id, 'read', false, false, false, true, false, 0, 0);
-        $unreadresult = core_message_external::get_popup_notifications($recipient->id, 'unread', false, false, false, true, false, 0, 0);
+        $readresult = core_message_external::get_popup_notifications($recipient->id, 'read', false, false, true, false, 0, 0);
+        $unreadresult = core_message_external::get_popup_notifications($recipient->id, 'unread', false, false, true, false, 0, 0);
 
         $this->assertCount(6, $readresult['notifications']);
         $this->assertCount(0, $unreadresult['notifications']);

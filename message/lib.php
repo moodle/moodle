@@ -303,8 +303,11 @@ function message_count_unread_conversations($user = null) {
         $user = $USER;
     }
 
-    return $DB->count_records_select('message', 'useridto = ?',
-        [$user->id], "COUNT(DISTINCT(useridfrom))");
+    return $DB->count_records_select(
+        'message',
+        'useridto = ? AND timeusertodeleted = 0 AND notification = 0',
+        [$user->id],
+        "COUNT(DISTINCT(useridfrom))");
 }
 
 /**

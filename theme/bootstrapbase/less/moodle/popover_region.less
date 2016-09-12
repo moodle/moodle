@@ -216,83 +216,6 @@
     &.popover-region {
         .popover-region-container {
             .popover-region-header-container {
-                .popover-region-header-actions {
-                    .fancy-toggle {
-                        position: relative;
-                        display: inline-block;
-                        border-radius: 4px;
-                        box-sizing: border-box;
-                        line-height: 25px;
-                        height: 20px;
-                        vertical-align: middle;
-                        cursor: pointer;
-                        overflow: hidden;
-                        background-color: #8c8c8c;
-
-                        .slider-container {
-                            width: 100%;
-                            height: 100%;
-                            position: absolute;
-
-                            .slider {
-                                width: 10px;
-                                height: ~"calc(100% - 2px)";
-                                background-color: #fff;
-                                border-radius: 4px;
-                                margin: 1px;
-                                display: inline-block;
-                            }
-                        }
-                        .on-text {
-                            padding: 2px 5px 2px 14px;
-                            box-sizing: border-box;
-                            line-height: 16px;
-                            vertical-align: top;
-                            display: inline-block;
-                        }
-                        .off-text {
-                            padding: 2px 14px 2px 5px;
-                            box-sizing: border-box;
-                            line-height: 16px;
-                            vertical-align: top;
-                            display: inline-block;
-                        }
-
-                        &.on {
-                            color: #fff;
-
-                            .slider-container {
-                                transform: translateX(0);
-                                transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-                            }
-                            .on-text {
-                                display: block;
-                            }
-                            .off-text {
-                                display: none;
-                            }
-                        }
-                        &.off {
-                            color: #fff;
-
-                            .slider-container {
-                                transform: translateX(100%);
-                                transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-
-                                .slider {
-                                    transform: translateX(-110%);
-                                }
-                            }
-                            .on-text {
-                                display: none;
-                            }
-                            .off-text {
-                                display: block;
-                            }
-                        }
-                    }
-                }
-
                 .mark-all-read-button {
                     .normal-icon {
                         display: inline-block;
@@ -309,36 +232,12 @@
             }
         }
         .popover-region-container {
-            .popover-region-content-container {
-                .popover-region-content {
-                    .unread-notifications,
-                    .all-notifications {
-                        &:empty + .empty-message,
-                        & + .empty-message {
-                            display: none;
-                        }
-                    }
-                }
-            }
-
             .popover-region-content {
-                .unread-notifications {
-                    opacity: 0;
-                    visibility: hidden;
-                    height: 0;
-                    overflow: hidden;
-                    transition: opacity 0.25s, visibility 101ms 0.25s, height 101ms 0.25s;
-
-                    & + .empty-message {
-                        display: none;
-                    }
-                }
                 .all-notifications {
                     opacity: 1;
                     visibility: visible;
                     height: auto;
                     overflow: hidden;
-                    transition: opacity 0.25s 0.25s, visibility 101ms 0.5s, height 101ms 0.5s;
 
                     &:empty + .empty-message {
                         display: block;
@@ -349,10 +248,33 @@
                     border-bottom: 1px solid #ddd;
                     box-sizing: border-box;
                     padding: 5px;
+                    position: relative;
+                    margin: 0;
 
                     &:hover {
                         color: #fff;
                         background-color: #79b5e6;
+
+                        .content-item-footer {
+                            .timestamp {
+                                color: #fff;
+                            }
+                        }
+                    }
+
+                    &.unread {
+                        background-color: #f4f4f4;
+
+                        &:hover {
+                            color: #fff;
+                            background-color: #79b5e6;
+                        }
+
+                        .content-item-body {
+                            .notification-message {
+                                font-weight: 600;
+                            }
+                        }
                     }
 
                     .content-item-link {
@@ -365,210 +287,54 @@
                         }
                     }
 
-                    .content-item {
-                        width: ~"calc(100% - 45px)";
-                        display: inline-block;
+                    .content-item-body {
                         box-sizing: border-box;
 
-                        .content-item-header {
-                            height: 20px;
-                            margin-bottom: 5px;
-                            box-sizing: border-box;
-
-                            h3 {
-                                font-size: 14px;
-                                line-height: 14px;
-                                float: left;
-                                margin: 0;
-                                max-width: 80%;
-                            }
-                        }
-
-                        .content-item-body {
-                            box-sizing: border-box;
-
-                            .content-body-short {
-                                max-height: 1000px;
-                                width: 100%;
-                                height: 30px;
-                                opacity: 1;
-                                visibility: visible;
-                                transition: opacity 101ms 0.5s, visibility 101ms 0.5s, max-height 1s 0.5s;
-
-                                .notification-image {
-                                    display: inline-block;
-                                    width: 10%;
-
-                                    img {
-                                        height: 30px;
-                                    }
-                                }
-                                .notification-message {
-                                    display: inline-block;
-                                    font-size: 12px;
-                                    line-height: 15px;
-                                    margin: 0;
-                                    vertical-align: top;
-                                    max-width: 80%;
-                                }
-                            }
-                            .content-body-full {
-                                overflow: hidden;
-                                width: 100%;
-                                max-height: 0;
-                                opacity: 0;
-                                visibility: hidden;
-                                transition: max-height 0.5s, opacity 101ms 0.5s, visibility 101ms 0.5s;
-
-                                pre {
-                                    word-break: normal;
-                                    word-wrap: normal;
-                                    font-size: 12px;
-                                    margin: 0;
-                                }
-                            }
-                        }
-
-                        .content-item-footer {
-                            text-align: left;
-                            margin: 5px 0 0;
-                            box-sizing: border-box;
-
-                            p {
-                                font-size: 10px;
-                                line-height: 10px;
-                                margin: 0;
-                            }
-                        }
-                    }
-
-                    .content-item-controls {
-                        width: 40px;
-                        height: 100%;
-                        display: inline-block;
-                        vertical-align: top;
-                        box-sizing: border-box;
-                        text-align: right;
-
-                        .block-button {
-                            img {
-                                height: 15px;
-                            }
-                            .loading-icon {
-                                padding: 0;
-                                display: none;
-                            }
-
-                            &.loading {
-                                .loading-icon {
-                                    display: inline-block;
-                                }
-                                .block-icon {
-                                    display: none;
-                                }
-                            }
-                        }
-                        .mark-read-button {
-                            img {
-                                height: 15px;
-                            }
-                        }
-                        .expand-buttons {
+                        .notification-image {
                             display: inline-block;
-                            height: 30px;
-                            width: 100%;
+                            width: 8%;
                             vertical-align: top;
-                            float: right;
-                            text-align: center;
-                            margin-top: 20px;
 
                             img {
-                                vertical-align: middle;
-                                height: 100%;
-                            }
-                            .show-button {
-                                width: 100%;
-                                height: 100%;
-                                display: block;
-                            }
-                            .hide-button {
-                                width: 100%;
-                                height: 100%;
-                                display: none;
+                                height: 75%;
                             }
                         }
-                        .block-button + .expand-buttons {
-                            margin-top: 0;
+
+                        .notification-message {
+                            display: inline-block;
+                            font-size: 12px;
+                            width: 90%;
                         }
                     }
 
-                    &.expanded {
-                        .content-item {
-                            .content-item-body {
-                                .content-body-short {
-                                    opacity: 0;
-                                    visibility: hidden;
-                                    max-height: 0;
-                                    overflow: hidden;
-                                    transition: opacity 101ms 0.25s, visibility 101ms 0.25s, max-height 0.25s;
-                                }
-                                .content-body-full {
-                                    max-height: 1000px;
-                                    opacity: 1;
-                                    visibility: visible;
-                                    transition: max-height 2s 0.25s, opacity 101ms 0.25s, visibility 101ms 0.25s;
-                                }
-                            }
-                        }
+                    .content-item-footer {
+                        text-align: left;
+                        box-sizing: border-box;
 
-                        .content-item-controls {
-                            .expand-buttons {
-                                .show-button {
-                                    display: none;
-                                }
-                                .hide-button {
-                                    display: block;
-                                }
-                            }
+                        .timestamp {
+                            font-size: 10px;
+                            line-height: 10px;
+                            margin: 0;
+                            color: #666;
+                            margin-left: 9%;
                         }
+                    }
+
+                    .view-more {
+                        position: absolute;
+                        bottom: 5px;
+                        right: 5px;
+                        font-size: 12px;
+                        line-height: 12px;
                     }
                 }
             }
-        }
-    }
 
-    &.unread-only {
-        .popover-region-container {
             .popover-region-content-container {
-                .popover-region-content {
-                    .all-notifications {
-                        opacity: 0;
-                        visibility: hidden;
-                        height: 0;
-                        transition: opacity 0.25s, visibility 101ms 0.25s, height 101ms 0.25s;
-
-                        & + .empty-message {
-                            display: none;
-                        }
-                    }
-                    .unread-notifications {
-                        opacity: 1;
-                        visibility: visible;
-                        height: auto;
-                        transition: opacity 0.25s 0.25s, visibility 101ms 0.5s, height 101ms 0.5s;
-
-                        &:empty + .empty-message {
-                            display: block;
-                        }
-                    }
-                }
-
                 &.loading {
                     .popover-region-content {
-                        .unread-notifications,
                         .all-notifications {
-                            &:empty + .empty-message,
-                            & + .empty-message {
+                            &:empty + .empty-message {
                                 display: none;
                             }
                         }
@@ -765,30 +531,6 @@
     .popover-region-notifications {
         .popover-region {
             .popover-region-container {
-                .popover-region-header-container {
-                    .popover-region-header-actions {
-                        .fancy-toggle {
-                            &.off {
-                                .slider-container {
-                                    transform: translateX(0);
-
-                                    .slider {
-                                        transform: translateX(0);
-                                    }
-                                }
-                            }
-                            &.on {
-                                .slider-container {
-                                    transform: translateX(-100%);
-
-                                    .slider {
-                                        transform: translateX(110%);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
                 .popover-region-content-container {
                     .popover-region-content {
                         .content-item-container {

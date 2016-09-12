@@ -779,6 +779,7 @@ $functions = array(
         'description' => 'Mark a single message as read, trigger message_viewed event.',
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
     ),
     'core_message_message_processor_config_form' => array(
         'classname' => 'core_message_external',

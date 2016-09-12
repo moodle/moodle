@@ -34,67 +34,28 @@
     }
 
 }}
-<div class="content-item-container"
+<div class="content-item-container {{^read}}unread{{/read}}"
     data-region="notification-content-item-container"
+    data-id="{{id}}"
     role="listitem"
-    aria-expanded="false"
-    aria-label="{{subject}}"
+    {{#read}}aria-label="{{subject}}"{{/read}}
+    {{^read}}aria-label="{{#str}} unreadnotification, message, {{subject}} {{/str}}"{{/read}}
     tabindex="0">
 
     {{#contexturl}}
-    <a class="content-item-link" href="{{{.}}}">
+    <a class="content-item-link" href="{{{.}}}" data-region="content-item-link">
     {{/contexturl}}
-    <div class="content-item">
-        <div class="content-item-header">
-            <h3>{{userfromfullname}}</h3>
+    <div class="content-item-body">
+        <div class="notification-image">
+            <img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/>
         </div>
-        <div class="content-item-body">
-            <div class="content-body-short" data-region="content-body-short">
-                <div class="notification-image">
-                    <img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/>
-                </div>
-                <p class="notification-message">{{subject}}</p>
-            </div>
-            <div class="content-body-full" aria-hidden="true" data-region="content-body-full">
-                <pre>{{fullmessage}}</pre>
-            </div>
-        </div>
-        <div class="content-item-footer">
-            <p>{{timecreatedpretty}}</p>
-        </div>
+        <div class="notification-message">{{shortenedsubject}}</div>
     </div>
-    <div class="content-item-controls">
-        {{#preferenceenabled}}
-            {{#preference}}
-                <span class="block-button"
-                    data-action="block-button"
-                    data-preference-key="{{key}}"
-                    data-preference-loggedin="{{loggedin}}"
-                    data-preference-loggedoff="{{loggedoff}}">
-                    <div class="block-icon">{{#pix}} t/block {{/pix}}</div>
-                    {{> core/loading }}
-                </span>
-            {{/preference}}
-        {{/preferenceenabled}}
-        <div class="expand-buttons">
-            <span class="show-button"
-                data-action="show-button"
-                tabindex="0"
-                role="button"
-                aria-label="{{#str}} expandnotification, message {{/str}}">
-                {{#pix}} t/sort_desc {{/pix}}
-            </span>
-            <span class="hide-button"
-                data-action="hide-button"
-                tabindex="0"
-                role="button"
-                aria-hidden="true"
-                aria-label="{{#str}} collapsenotification, message {{/str}}">
-                {{#pix}} t/sort_asc {{/pix}}
-            </span>
-        </div>
+    <div class="content-item-footer">
+        <div class="timestamp">{{timecreatedpretty}}</div>
     </div>
     {{#contexturl}}
     </a>
     {{/contexturl}}
+    {{#viewmoreurl}}<a href="{{{.}}}" class="view-more">{{#str}} viewmore {{/str}}</a>{{/viewmoreurl}}
 </div>

@@ -27,8 +27,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
     /**
      * Retrieve a list of notifications from the server.
      *
-     * @param {object} args The request arguments:
-     * @return {jQuery promise}
+     * @param {object} args The request arguments
+     * @return {object} jQuery promise
      */
     var query = function(args) {
         if (typeof args.limit === 'undefined') {
@@ -54,8 +54,8 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
     /**
      * Get the number of unread notifications from the server.
      *
-     * @param {object} args The request arguments:
-     * @return {jQuery promise}
+     * @param {object} args The request arguments
+     * @return {object} jQuery promise
      */
     var countUnread = function(args) {
         var request = {
@@ -74,7 +74,7 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
      * Mark all notifications for the given user as read.
      *
      * @param {object} args The request arguments:
-     * @return {jQuery promise}
+     * @return {object} jQuery promise
      */
     var markAllAsRead = function(args) {
         var request = {
@@ -89,9 +89,38 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         return promise;
     };
 
+    /**
+     * Mark all notifications for the given user as read.
+     *
+     * @param {int} id The notification id
+     * @param {int} timeread The read timestamp (optional)
+     * @return {object} jQuery promise
+     */
+    var markAsRead = function(id, timeread) {
+        var args = {
+            messageid: id,
+        };
+
+        if (timeread) {
+            args.timeread = timeread;
+        }
+
+        var request = {
+            methodname: 'core_message_mark_message_read',
+            args: args
+        };
+
+        var promise = ajax.call([request])[0];
+
+        promise.fail(notification.exception);
+
+        return promise;
+    };
+
     return {
         query: query,
         countUnread: countUnread,
         markAllAsRead: markAllAsRead,
+        markAsRead: markAsRead,
     };
 });

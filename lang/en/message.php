@@ -179,6 +179,7 @@ $string['touserdoesntexist'] = 'You can not send a message to a user id ({$a}) t
 $string['unabletomessageuser'] = 'You are not permitted to send a message to that user';
 $string['unblockcontact'] = 'Unblock contact';
 $string['unreadmessages'] = 'Unread messages ({$a})';
+$string['unreadnotification'] = 'Unread notification: {$a}';
 $string['unreadnewmessages'] = 'New messages ({$a})';
 $string['unreadnewmessage'] = 'New message from {$a}';
 $string['userisblockingyou'] = 'This user has blocked you from sending messages to them';
