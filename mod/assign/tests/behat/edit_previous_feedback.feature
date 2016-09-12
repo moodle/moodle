@@ -73,6 +73,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     Then I log in as "student2"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on ".mod-assign-history-link" "css_element"
     And I should see "I'm the teacher second feedback" in the "Feedback comments" "table_row"
     And I should see "50.00"
+    And I click on ".mod-assign-history-link" "css_element"
+    And I should not see "I'm the teacher second feedback" in the "Feedback comments" "table_row"
