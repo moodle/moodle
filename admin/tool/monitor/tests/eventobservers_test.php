@@ -384,7 +384,7 @@ class tool_monitor_eventobservers_testcase extends advanced_testcase {
             // Now let us trigger 7 instances of the event.
             $event = \mod_book\event\course_module_instance_list_viewed::create_from_course($course);
             $event->trigger();
-            sleep(1); // Add a second delay, to prevent time collisions.
+            $this->waitForSecond(); // Add a second delay, to prevent time collisions.
         }
         $this->run_adhock_tasks();
         $messages = $messagesink->get_messages();

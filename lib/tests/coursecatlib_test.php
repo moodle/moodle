@@ -236,7 +236,7 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $timecreated = $category1->timemodified;
         $this->assertSame('Cat1', $category1->name);
         $this->assertTrue(empty($category1->description));
-        sleep(2);
+        $this->waitForSecond();
         $testdescription = 'This is cat 1 а также русский текст';
         $category1->update(array('description' => $testdescription));
         $this->assertSame($testdescription, $category1->description);
