@@ -139,25 +139,25 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
         $dateformat = $calendartype->get_date_order($this->_options['startyear'], $this->_options['stopyear']);
         foreach ($dateformat as $key => $date) {
             // E_STRICT creating elements without forms is nasty because it internally uses $this
-            $this->_elements[] = @MoodleQuickForm::createElement('select', $key, get_string($key, 'form'), $date, $this->getAttributes(), true);
+            $this->_elements[] = $this->createFormElement('select', $key, get_string($key, 'form'), $date, $this->getAttributes(), true);
         }
         if (right_to_left()) {   // Switch order of elements for Right-to-Left
-            $this->_elements[] = @MoodleQuickForm::createElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
-            $this->_elements[] = @MoodleQuickForm::createElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);
+            $this->_elements[] = $this->createFormElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
+            $this->_elements[] = $this->createFormElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);
         } else {
-            $this->_elements[] = @MoodleQuickForm::createElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);
-            $this->_elements[] = @MoodleQuickForm::createElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
+            $this->_elements[] = $this->createFormElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);
+            $this->_elements[] = $this->createFormElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
         }
         // The YUI2 calendar only supports the gregorian calendar type so only display the calendar image if this is being used.
         if ($calendartype->get_name() === 'gregorian') {
             $image = $OUTPUT->pix_icon('i/calendar', get_string('calendar', 'calendar'), 'moodle');
-            $this->_elements[] = @MoodleQuickForm::createElement('link', 'calendar',
+            $this->_elements[] = $this->createFormElement('link', 'calendar',
                     null, '#', $image,
                     array('class' => 'visibleifjs'));
         }
         // If optional we add a checkbox which the user can use to turn if on
         if ($this->_options['optional']) {
-            $this->_elements[] = @MoodleQuickForm::createElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
+            $this->_elements[] = $this->createFormElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
         }
         foreach ($this->_elements as $element){
             if (method_exists($element, 'setHiddenLabel')){
@@ -176,6 +176,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
      * @return bool
      */
     function onQuickFormEvent($event, $arg, &$caller) {
+        $this->setMoodleForm($caller);
         switch ($event) {
             case 'updateValue':
                 // Constant values override both default and submitted ones

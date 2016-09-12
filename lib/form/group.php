@@ -41,6 +41,9 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 
+    /** @var MoodleQuickForm */
+    protected $_mform = null;
+
     /**
      * constructor
      *
@@ -106,5 +109,42 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
                 $element->setHiddenLabel(true);
             }
         }
+    }
+
+    /**
+     * Stores the form this element was added to
+     * This object is later used by {@link MoodleQuickForm_group::createElement()}
+     * @param null|MoodleQuickForm $mform
+     */
+    public function setMoodleForm($mform) {
+        if ($mform && $mform instanceof MoodleQuickForm) {
+            $this->_mform = $mform;
+        }
+    }
+
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * If this function is overridden and parent is not called the element must be responsible for
+     * storing the MoodleQuickForm object, see {@link MoodleQuickForm_group::setMoodleForm()}
+     *
+     * @param     string $event Name of event
+     * @param     mixed $arg event arguments
+     * @param     mixed $caller calling object
+     */
+    public function onQuickFormEvent($event, $arg, &$caller) {
+        $this->setMoodleForm($caller);
+        return parent::onQuickFormEvent($event, $arg, $caller);
+    }
+
+    /**
+     * Creates an element to add to the group
+     * Expects the same arguments as MoodleQuickForm::createElement()
+     */
+    public function createFormElement() {
+        if (!$this->_mform) {
+            throw new coding_exception('You can not call createFormElement() on the group element that was not yet added to a form.');
+        }
+        return call_user_func_array([$this->_mform, 'createElement'], func_get_args());
     }
 }
