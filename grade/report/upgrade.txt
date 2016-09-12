@@ -1,5 +1,10 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
+
+=== 3.2 ===
+* External function gradereport_user_external::get_grades_table now has an optional groupid parameter.
+Is recommended to use this parameter in courses with separate groups or when the user requesting the report is in more than one group.
+
 === 2.9 ===
 * Deprecating grade_report_grader:get_collapsing_icon.
 * A new web service function gradereport_user_get_grades_table has been added which will allow external system to retrieve grade information ready to be formatted as a table similar to the gradebook user report one.
