@@ -23,7 +23,7 @@
  */
 
 // Set default (LTR) layout mark-up for a three column page.
-$regionmainbox = 'span9';
+$regionmainbox = 'span9 desktop-first-column';
 $regionmain = 'span8 pull-right';
 $sidepre = 'span4 desktop-first-column';
 $sidepost = 'span3 pull-right';
