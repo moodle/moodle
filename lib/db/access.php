@@ -2292,5 +2292,11 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         ),
     ),
+    'moodle/site:maintenanceaccess' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+        )
+    ),
 
 );
