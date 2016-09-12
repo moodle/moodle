@@ -304,14 +304,6 @@ function useredit_shared_definition(&$mform, $editoroptions, $filemanageroptions
         $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
     }
 
-    // Multi-Calendar Support - see MDL-18375.
-    $calendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
-    // We do not want to show this option unless there is more than one calendar type to display.
-    if (count($calendartypes) > 1) {
-        $mform->addElement('select', 'calendartype', get_string('preferredcalendar', 'calendar'), $calendartypes);
-        $mform->setDefault('calendartype', $CFG->calendartype);
-    }
-
     if (!empty($CFG->allowuserthemes)) {
         $choices = array();
         $choices[''] = get_string('default');

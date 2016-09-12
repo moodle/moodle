@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,41 +15,70 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mform for settings user preferences
+ * Form to edit a users preferred language
  *
- * @copyright 2010 Sam Hemelryk
+ * @copyright 2015 Shamim Rezaie  http://foodle.org
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package calendar
+ * @package core_user
  */
 
- /**
-  * Always include formslib
-  */
+namespace core_user\form;
+
 if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    die('Direct access to this script is forbidden.');    // It must be included from a Moodle page.
 }
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 /**
- * The mform class for setting user preferences
+ * Class user_edit_calendar_form.
  *
- * @copyright 2010 Sam Hemelryk
+ * @copyright 2015 Shamim Rezaie  http://foodle.org
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calendar_preferences_form extends moodleform {
+class calendar_form extends \moodleform {
 
-    function definition() {
+    /**
+     * Define the form.
+     */
+    public function definition () {
+        global $CFG, $USER;
+
         $mform = $this->_form;
+        $userid = $USER->id;
 
+        if (is_array($this->_customdata)) {
+            if (array_key_exists('userid', $this->_customdata)) {
+                $userid = $this->_customdata['userid'];
+            }
+        }
+
+        // Add some extra hidden fields.
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+
+        // We do not want to show this option unless there is more than one calendar type to display.
+        if (count(\core_calendar\type_factory::get_list_of_calendar_types()) > 1) {
+            $calendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
+            $mform->addElement('select', 'calendartype', get_string('preferredcalendar', 'calendar'), $calendartypes);
+            $mform->setType('calendartype', PARAM_ALPHANUM);
+            $mform->setDefault('calendartype', $CFG->calendartype);
+        } else {
+            $mform->addElement('hidden', 'calendartype', $CFG->calendartype);
+            $mform->setType('calendartype', PARAM_ALPHANUM);
+
+        }
+
+        // Date / Time settings.
         $options = array(
-            '0'  =>             get_string('default', 'calendar'),
-            CALENDAR_TF_12 =>   get_string('timeformat_12', 'calendar'),
-            CALENDAR_TF_24 =>   get_string('timeformat_24', 'calendar')
+            '0'  => get_string('default', 'calendar'),
+            CALENDAR_TF_12 => get_string('timeformat_12', 'calendar'),
+            CALENDAR_TF_24 => get_string('timeformat_24', 'calendar')
         );
         $mform->addElement('select', 'timeformat', get_string('pref_timeformat', 'calendar'), $options);
         $mform->addHelpButton('timeformat', 'pref_timeformat', 'calendar');
 
+        // First day of week.
         $options = array(
             0 => get_string('sunday', 'calendar'),
             1 => get_string('monday', 'calendar'),
@@ -63,14 +91,16 @@ class calendar_preferences_form extends moodleform {
         $mform->addElement('select', 'startwday', get_string('pref_startwday', 'calendar'), $options);
         $mform->addHelpButton('startwday', 'pref_startwday', 'calendar');
 
+        // Maximum events to display.
         $options = array();
-        for ($i=1; $i<=20; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $options[$i] = $i;
         }
         $mform->addElement('select', 'maxevents', get_string('pref_maxevents', 'calendar'), $options);
         $mform->addHelpButton('maxevents', 'pref_maxevents', 'calendar');
 
-        $options = array(365 => new lang_string('numyear', '', 1),
+        // Calendar lookahead.
+        $options = array(365 => new \lang_string('numyear', '', 1),
                 270 => get_string('nummonths', '', 9),
                 180 => get_string('nummonths', '', 6),
                 150 => get_string('nummonths', '', 5),
@@ -90,14 +120,38 @@ class calendar_preferences_form extends moodleform {
         $mform->addElement('select', 'lookahead', get_string('pref_lookahead', 'calendar'), $options);
         $mform->addHelpButton('lookahead', 'pref_lookahead', 'calendar');
 
+        // Remember event filtering.
         $options = array(
             0 => get_string('no'),
             1 => get_string('yes')
         );
         $mform->addElement('select', 'persistflt', get_string('pref_persistflt', 'calendar'), $options);
         $mform->addHelpButton('persistflt', 'pref_persistflt', 'calendar');
-
-        $this->add_action_buttons(false, get_string('savechanges'));
+        $this->add_action_buttons(true, get_string('savechanges'));
     }
 
+    /**
+     * Extend the form definition after the data has been parsed.
+     */
+    public function definition_after_data() {
+        global $CFG;
+
+        $mform = $this->_form;
+
+        // If calendar type does not exist, use site default calendar type.
+        if ($calendarselected = $mform->getElementValue('calendartype')) {
+            if (is_array($calendarselected)) {
+                // There are multiple calendar types available.
+                $calendar = reset($calendarselected);
+            } else {
+                // There is only one calendar type available.
+                $calendar = $calendarselected;
+            }
+            // Check calendar type exists.
+            if (!array_key_exists($calendar, \core_calendar\type_factory::get_list_of_calendar_types())) {
+                $calendartypeel = $mform->getElement('calendartype');
+                $calendartypeel->setValue($CFG->calendartype);
+            }
+        }
+    }
 }

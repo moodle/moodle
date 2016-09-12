@@ -1658,6 +1658,8 @@ function calendar_get_default_courses() {
  * Display calendar preference button
  *
  * @param stdClass $course course object
+ * @deprecated since Moodle 3.2
+ * @todo MDL-55875 This will be deleted in Moodle 3.6.
  * @return string return preference button in html
  */
 function calendar_preferences_button(stdClass $course) {
@@ -1667,8 +1669,9 @@ function calendar_preferences_button(stdClass $course) {
     if (!isloggedin() || isguestuser()) {
         return '';
     }
+    debugging('This should no longer be used, the calendar preferences are now linked to the user preferences page');
 
-    return $OUTPUT->single_button(new moodle_url('/calendar/preferences.php', array('course' => $course->id)), get_string("preferences", "calendar"));
+    return $OUTPUT->single_button(new moodle_url('/user/calendar.php'), get_string("preferences", "calendar"));
 }
 
 /**
