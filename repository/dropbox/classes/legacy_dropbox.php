@@ -35,7 +35,7 @@ require_once($CFG->libdir.'/oauthlib.php');
  * @copyright  2010 Dongsheng Cai
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dropbox extends oauth_helper {
+class repository_dropbox_legacy_dropbox extends oauth_helper {
     /** @var string dropbox access type, can be dropbox or sandbox */
     private $mode = 'dropbox';
     /** @var string dropbox api url*/
