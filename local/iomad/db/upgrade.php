@@ -1283,7 +1283,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
             'moodle/competency:coursecompetencyview',
         );
 
-        $companycourseeditorcaps = array('
+        $companycourseeditorcaps = array(
             'moodle/competency:competencygrade',
             'moodle/competency:coursecompetencymanage',
             'moodle/competency:coursecompetencyview',
