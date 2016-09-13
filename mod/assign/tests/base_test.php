@@ -205,7 +205,9 @@ class mod_assign_base_testcase extends advanced_testcase {
      */
     protected function create_instance($params=array()) {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $params['course'] = $this->course->id;
+        if (!isset($params['course'])) {
+            $params['course'] = $this->course->id;
+        }
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
         $context = context_module::instance($cm->id);
