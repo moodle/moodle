@@ -34,3 +34,9 @@ $string['cachelimit'] = 'Cache limit';
 $string['cachelimit_info'] = 'Enter the maximum size of files (in bytes) to be cached on server for Dropbox aliases/shortcuts. Cached files will be served when the source is no longer available. Empty value or zero mean caching of all files regardless of size.';
 $string['dropbox:view'] = 'View a Dropbox folder';
 $string['logoutdesc'] = '(Logout when you finish using Dropbox)';
+
+$string['usev2api'] = 'Use the OAuth 2 API (recommended)';
+$string['uselegacyapi'] = 'Use the deprecated v1 API';
+$string['legacyapihelpsupported'] = 'Dropbox introduced the OAuth 2 API in June 2015. You can configure a new application at <a href="https://www.dropbox.com/developers/apps/" target="_blank">https://www.dropbox.com/developers/apps/</a> and specify the OAuth 2 Redirect URI shown below.';
+$string['oauth2redirecturi'] = 'OAuth 2 Redirect URI';
+$string['oauth2title'] = 'OAuth 2 API';

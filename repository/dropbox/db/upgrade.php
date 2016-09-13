@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * @param int $oldversion the version we are upgrading from
  * @return bool result
  */
 function xmldb_repository_dropbox_upgrade($oldversion) {
-    global $CFG, $DB;
-
-    $dbman = $DB->get_manager();
-
     // Moodle v2.3.0 release upgrade line
     // Put any upgrade step following this
 
@@ -57,6 +55,11 @@ function xmldb_repository_dropbox_upgrade($oldversion) {
 
     // Moodle v3.0.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2015111601) {
+        set_config('legacyapi', 1, 'dropbox');
+        upgrade_plugin_savepoint(true, 2015111601, 'repository', 'dropbox');
+    }
 
     return true;
 }
