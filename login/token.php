@@ -46,9 +46,9 @@ if (is_restored_user($username)) {
 $user = authenticate_user_login($username, $password);
 if (!empty($user)) {
 
-    //Non admin can not authenticate if maintenance mode
-    $hassiteconfig = has_capability('moodle/site:config', context_system::instance(), $user);
-    if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+    // Cannot authenticate unless maintenance access is granted.
+    $hasmaintenanceaccess = has_capability('moodle/site:maintenanceaccess', context_system::instance(), $user);
+    if (!empty($CFG->maintenance_enabled) and !$hasmaintenanceaccess) {
         throw new moodle_exception('sitemaintenance', 'admin');
     }
 

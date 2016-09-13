@@ -2684,7 +2684,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // If the site is currently under maintenance, then print a message.
-    if (!empty($CFG->maintenance_enabled) and !has_capability('moodle/site:config', $sysctx)) {
+    if (!empty($CFG->maintenance_enabled) and !has_capability('moodle/site:maintenanceaccess', $sysctx)) {
         if ($preventredirect) {
             throw new require_login_exception('Maintenance in progress');
         }

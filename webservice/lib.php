@@ -120,9 +120,9 @@ class webservice {
             }
         }
 
-        //Non admin can not authenticate if maintenance mode
-        $hassiteconfig = has_capability('moodle/site:config', context_system::instance(), $user);
-        if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+        // Cannot authenticate unless maintenance access is granted.
+        $hasmaintenanceaccess = has_capability('moodle/site:maintenanceaccess', context_system::instance(), $user);
+        if (!empty($CFG->maintenance_enabled) and !$hasmaintenanceaccess) {
             //this is usually temporary, client want to implement code logic  => moodle_exception
             throw new moodle_exception('sitemaintenance', 'admin');
         }
@@ -924,9 +924,9 @@ abstract class webservice_server implements webservice_server_interface {
             $user = $this->authenticate_by_token(EXTERNAL_TOKEN_EMBEDDED);
         }
 
-        //Non admin can not authenticate if maintenance mode
-        $hassiteconfig = has_capability('moodle/site:config', context_system::instance(), $user);
-        if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+        // Cannot authenticate unless maintenance access is granted.
+        $hasmaintenanceaccess = has_capability('moodle/site:maintenanceaccess', context_system::instance(), $user);
+        if (!empty($CFG->maintenance_enabled) and !$hasmaintenanceaccess) {
             throw new moodle_exception('sitemaintenance', 'admin');
         }
 
