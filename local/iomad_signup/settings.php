@@ -34,6 +34,20 @@ if ($hassiteconfig && !empty($USER->id)) {
         1)
     );
 
+    $settings->add(new admin_setting_configcheckbox(
+        'local_iomad_signup_useemail',
+        get_string('useemail', 'local_iomad_signup'),
+        get_string('useemail_help', 'local_iomad_signup'),
+        1)
+    );
+
+    $settings->add(new admin_setting_configcheckbox(
+        'local_iomad_signup_autoenrol',
+        get_string('autoenrol', 'local_iomad_signup'),
+        get_string('autoenrol_help', 'local_iomad_signup'),
+        1)
+    );
+
     $siteauths = get_enabled_auth_plugins();
     $siteautharray = array();
     foreach ($siteauths as $siteauth) {

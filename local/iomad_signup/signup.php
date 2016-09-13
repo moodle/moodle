@@ -78,6 +78,9 @@ if ($mform_signup->is_cancelled()) {
     redirect(get_login_url());
 
 } else if ($user = $mform_signup->get_data()) {
+    if ($CFG->local_iomad_signup_useemail) {
+       $user->username = $user->email;
+    }
     $user->confirmed   = 0;
     $user->lang        = current_language();
     $user->firstaccess = time();
@@ -98,7 +101,6 @@ if ($mform_signup->is_cancelled()) {
 
 // make sure we really are on the https page when https login required
 $PAGE->verify_https_required();
-
 
 $newaccount = get_string('newaccount');
 $login      = get_string('login');

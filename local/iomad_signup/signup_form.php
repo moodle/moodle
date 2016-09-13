@@ -37,12 +37,24 @@ class iomad_signup_form extends moodleform {
         $mform = $this->_form;
         $company = $this->_customdata;
 
-        $mform->addElement('header', 'createuserandpass', get_string('createuserandpass'), '');
+        if (!$CFG->local_iomad_signup_useemail) {
+            $mform->addElement('header', 'createuserandpass', get_string('createuserandpass'), '');
+            $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12"');
+            $mform->setType('username', PARAM_NOTAGS);
+            $mform->addRule('username', get_string('missingusername'), 'required', null, 'server');
+        } else {
+            $mform->addElement('header', 'choosepassword', get_string('choosepassword', 'local_iomad_signup'), '');
+            $mform->addElement('html', get_string('emailasusernamehelp', 'local_iomad_signup'));
 
+            $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
+            $mform->setType('email', PARAM_RAW_TRIMMED);
+            $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
 
-        $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12"');
-        $mform->setType('username', PARAM_NOTAGS);
-        $mform->addRule('username', get_string('missingusername'), 'required', null, 'server');
+            $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
+            $mform->setType('email2', PARAM_RAW_TRIMMED);
+            $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
+        }
+
 
         if (!empty($CFG->passwordpolicy)){
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
@@ -53,13 +65,15 @@ class iomad_signup_form extends moodleform {
 
         $mform->addElement('header', 'supplyinfo', get_string('supplyinfo'),'');
 
-        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
-        $mform->setType('email', PARAM_RAW_TRIMMED);
-        $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
+        if (!$CFG->local_iomad_signup_useemail) {
+            $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="25"');
+            $mform->setType('email', PARAM_RAW_TRIMMED);
+            $mform->addRule('email', get_string('missingemail'), 'required', null, 'server');
 
-        $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
-        $mform->setType('email2', PARAM_RAW_TRIMMED);
-        $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
+            $mform->addElement('text', 'email2', get_string('emailagain'), 'maxlength="100" size="25"');
+            $mform->setType('email2', PARAM_RAW_TRIMMED);
+            $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
+        }
 
         $namefields = useredit_get_required_name_fields();
         foreach ($namefields as $field) {
@@ -115,8 +129,11 @@ class iomad_signup_form extends moodleform {
     }
 
     function definition_after_data(){
+        global $CFG;
         $mform = $this->_form;
-        $mform->applyFilter('username', 'trim');
+        if (!$CFG->local_iomad_signup_useemail) {
+            $mform->applyFilter('username', 'trim');
+        }
     }
 
     function validation($data, $files) {
@@ -125,26 +142,28 @@ class iomad_signup_form extends moodleform {
 
         $authplugin = get_auth_plugin($CFG->registerauth);
 
-        if ($DB->record_exists('user', array('username'=>$data['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
-            $errors['username'] = get_string('usernameexists');
-        } else {
-            //check allowed characters
-            if ($data['username'] !== core_text::strtolower($data['username'])) {
-                $errors['username'] = get_string('usernamelowercase');
+        if (!$CFG->local_iomad_signup_useemail) {
+            if ($DB->record_exists('user', array('username'=>$data['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
+                $errors['username'] = get_string('usernameexists');
             } else {
-                if ($data['username'] !== clean_param($data['username'], PARAM_USERNAME)) {
-                    $errors['username'] = get_string('invalidusername');
+                //check allowed characters
+                if ($data['username'] !== core_text::strtolower($data['username'])) {
+                    $errors['username'] = get_string('usernamelowercase');
+                } else {
+                    if ($data['username'] !== clean_param($data['username'], PARAM_USERNAME)) {
+                        $errors['username'] = get_string('invalidusername');
+                    }
                 }
-
             }
         }
 
         //check if user exists in external db
         //TODO: maybe we should check all enabled plugins instead
-        if ($authplugin->user_exists($data['username'])) {
-            $errors['username'] = get_string('usernameexists');
+        if (!$CFG->local_iomad_signup_useemail) {
+            if ($authplugin->user_exists($data['username'])) {
+                $errors['username'] = get_string('usernameexists');
+            }
         }
-
 
         if (! validate_email($data['email'])) {
             $errors['email'] = get_string('invalidemail');
@@ -162,7 +181,17 @@ class iomad_signup_form extends moodleform {
             if ($err = email_is_not_allowed($data['email'])) {
                 $errors['email'] = $err;
             }
+        }
 
+        // Check if we have a domain already for this users email address.
+        list($dump, $emaildomain) = explode('@', $data['email']); 
+        if ($domaininfo = $DB->get_records('company_domains', array('companyid' => $data['id']))) {
+            if (!$domaininfo = $DB->get_record_sql("SELECT * FROM {company_domains} WHERE " . $DB->sql_compare_text('domain') .
+                                                   " = '" . $DB->sql_compare_text($emaildomain)."' 
+                                                   AND companyid = :companyid", array('companyid' => $data['id']))) {
+
+                $errors['email'] = get_string('emaildomaindoesntmatch', 'local_iomad_signup');
+            }
         }
 
         $errmsg = '';
