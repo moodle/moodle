@@ -73,6 +73,11 @@ information provided here is intended especially for developers.
 * data-fieldtype="type" attribute has been added to form field default template.
 * form elements extending MoodleQuickForm_group must call $this->createFormElement() instead of
   @MoodleQuickForm::createElement() in order to be compatible with PHP 7.1
+* Relative paths in $CFG->alternateloginurl will be resolved to absolute path within moodle site. Previously they
+  were resolved to absolute path within the server. That means:
+  - $CFG->wwwroot: http://example.com/moodle
+  - $CFG->alternateloginurl : /my/super/login.php
+  - Login url will be: http://example.com/moodle/my/super/login.php (moodle root based)
 
 === 3.1 ===
 
