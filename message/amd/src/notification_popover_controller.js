@@ -293,6 +293,8 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
      */
     NotificationPopoverController.prototype.renderNotifications = function(notifications, container) {
         var promises = [];
+        var allhtml = [];
+        var alljs = [];
 
         if (notifications.length) {
             $.each(notifications, function(index, notification) {
@@ -307,16 +309,23 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                 }
 
                 var promise = Templates.render('message/notification_content_item', notification);
-                promise.then(function(html, js) {
-                    container.append(html);
-                    Templates.runTemplateJS(js);
-                }.bind(this));
-
                 promises.push(promise);
+
+                promise.then(function(html, js) {
+                    allhtml[index] = html;
+                    alljs[index] = js;
+                }.bind(this));
             }.bind(this));
         }
 
-        return $.when.apply($.when, promises);
+        return $.when.apply($.when, promises).then(function() {
+            if (notifications.length) {
+                $.each(notifications, function(index) {
+                    container.append(allhtml[index]);
+                    Templates.runTemplateJS(alljs[index]);
+                });
+            }
+        });
     };
 
     /**
