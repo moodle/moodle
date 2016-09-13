@@ -1238,5 +1238,85 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016083100, 'local', 'iomad');
     }
 
+    if ($oldversion < 2016090500) {
+        // Deal with new competencies based capabilities.
+        $companydepartmentmanagercaps = array(
+            'moodle/competency:plancomment',
+            'moodle/competency:planmanage',
+            'moodle/competency:planmanageowndraft',
+            'moodle/competency:planreview',
+            'moodle/competency:planview',
+            'moodle/competency:usercompetencycomment',
+            'moodle/competency:usercompetencyreview',
+            'moodle/competency:usercompetencyview',
+            'moodle/competency:userevidencemanage',
+            'moodle/competency:userevidenceview',
+            'moodle/competency:competencymanage',
+            'moodle/competency:competencyview',
+            'moodle/competency:templatemanage',
+            'moodle/competency:templateview',
+            'block/iomad_company_admin:competencymanagement_view',
+            'block/iomad_company_admin:templateview',
+        );
+
+        $companymanagercaps = array(
+            'moodle/competency:plancomment',
+            'moodle/competency:planmanage',
+            'moodle/competency:planmanageowndraft',
+            'moodle/competency:planreview',
+            'moodle/competency:planview',
+            'moodle/competency:usercompetencycomment',
+            'moodle/competency:usercompetencyreview',
+            'moodle/competency:usercompetencyview',
+            'moodle/competency:userevidencemanage',
+            'moodle/competency:userevidenceview',
+            'moodle/competency:competencymanage',
+            'moodle/competency:competencyview',
+            'moodle/competency:templatemanage',
+            'moodle/competency:templateview',
+            'block/iomad_company_admin:competencymanagement_view',
+            'block/iomad_company_admin:competencyview',
+            'block/iomad_company_admin:templateview',
+        );
+
+        $companycoursenoneditorcaps = array(
+            'moodle/competency:coursecompetencyview',
+        );
+
+        $companycourseeditorcaps = array('
+            'moodle/competency:competencygrade',
+            'moodle/competency:coursecompetencymanage',
+            'moodle/competency:coursecompetencyview',
+            'moodle/competency:coursecompetencyconfigure',
+        );
+
+        $systemcontext = context_system::instance();
+        if ($companymanager = $DB->get_record( 'role', array( 'shortname' => 'companymanager') )) {
+            foreach ($companymanagercaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companymanager->id, $systemcontext->id );
+            }
+        }
+        
+        if ($companydepartmentmanager = $DB->get_record( 'role', array( 'shortname' => 'companydepartmentmanager') )) {
+            foreach ($companydepartmentmanager as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companydepartmentmanager->id, $systemcontext->id );
+            }
+        }
+        
+        if ($companycourseeditor = $DB->get_record( 'role', array( 'shortname' => 'companycourseeditor') )) {
+            foreach ($companycourseeditor as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companycourseeditor->id, $systemcontext->id );
+            }
+        }
+        
+        if ($companycoursenoneditor = $DB->get_record( 'role', array( 'shortname' => 'companycoursenoneditor') )) {
+            foreach ($companycoursenoneditor as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companycoursenoneditor->id, $systemcontext->id );
+            }
+        }
+        
+        upgrade_plugin_savepoint(true, 2016090500, 'local', 'iomad');
+    }
+
     return $result;
 }

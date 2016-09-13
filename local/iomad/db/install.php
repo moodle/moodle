@@ -166,6 +166,22 @@ function xmldb_local_iomad_install() {
         'local/report_users:view',
         'local/report_scorm_overview:view',
         'local/report_license:view',
+        'moodle/competency:plancomment',
+        'moodle/competency:planmanage',
+        'moodle/competency:planmanageowndraft',
+        'moodle/competency:planreview',
+        'moodle/competency:planview',
+        'moodle/competency:usercompetencycomment',
+        'moodle/competency:usercompetencyreview',
+        'moodle/competency:usercompetencyview',
+        'moodle/competency:userevidencemanage',
+        'moodle/competency:userevidenceview',
+        'moodle/competency:competencymanage',
+        'moodle/competency:competencyview',
+        'moodle/competency:templatemanage',
+        'moodle/competency:templateview',
+        'block/iomad_company_admin:competencymanagement_view',
+        'block/iomad_company_admin:templateview',
     );
 
     foreach ($companydepartmentmanagercaps as $cap) {
@@ -209,6 +225,23 @@ function xmldb_local_iomad_install() {
         'local/report_scorm_overview:view',
         'local/report_license:view',
         'block/iomad_approve_access:approve',
+        'moodle/competency:plancomment',
+        'moodle/competency:planmanage',
+        'moodle/competency:planmanageowndraft',
+        'moodle/competency:planreview',
+        'moodle/competency:planview',
+        'moodle/competency:usercompetencycomment',
+        'moodle/competency:usercompetencyreview',
+        'moodle/competency:usercompetencyview',
+        'moodle/competency:userevidencemanage',
+        'moodle/competency:userevidenceview',
+        'moodle/competency:competencymanage',
+        'moodle/competency:competencyview',
+        'moodle/competency:templatemanage',
+        'moodle/competency:templateview',
+        'block/iomad_company_admin:competencymanagement_view',
+        'block/iomad_company_admin:competencyview',
+        'block/iomad_company_admin:templateview',
 
     );
 
@@ -239,7 +272,9 @@ function xmldb_local_iomad_install() {
         'moodle/block:view',
         'moodle/grade:viewall',
         'moodle/site:viewfullnames',
-        'moodle/site:viewuseridentity');
+        'moodle/site:viewuseridentity',
+        'moodle/competency:coursecompetencyview',
+    );
 
     $companycourseeditorcaps = array('block/side_bar_block:editblock',
         'block/side_bar_block:viewblock',
@@ -349,7 +384,13 @@ function xmldb_local_iomad_install() {
         'report/loglive:view',
         'report/outline:view',
         'report/participation:view',
-        'report/progress:view');
+        'report/progress:view',
+        'moodle/competency:competencygrade',
+        'moodle/competency:coursecompetencymanage',
+        'moodle/competency:coursecompetencyview',
+        'moodle/competency:coursecompetencyconfigure',
+
+    );
 
     foreach ($companymanagercaps as $cap) {
         assign_capability( $cap, CAP_ALLOW, $companymanagerid, $systemcontext->id );
