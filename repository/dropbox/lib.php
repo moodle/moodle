@@ -34,6 +34,11 @@ require_once($CFG->dirroot . '/repository/lib.php');
  */
 class repository_dropbox extends repository {
     /**
+     * @var dropbox     The instance of dropbox client.
+     */
+    protected $dropbox;
+
+    /**
      * @var int         The maximum file size to cache in the moodle filepool.
      */
     public $cachelimit = null;
@@ -49,9 +54,41 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = []) {
-        $this->legacy = new repository_dropbox_legacy($repositoryid, $context, $options);
+        if (self::use_legacy_api()) {
+            $this->legacy = new repository_dropbox_legacy($repositoryid, $context, $options);
 
+            parent::__construct($repositoryid, $context, $options);
+
+            return;
+        }
+
+        $options['page'] = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
+
+        $returnurl = new moodle_url('/repository/repository_callback.php', [
+                'callback'  => 'yes',
+                'repo_id'   => $repositoryid,
+                'sesskey'   => sesskey(),
+            ]);
+
+        // Create the dropbox API instance.
+        $key = get_config('dropbox', 'dropbox_key');
+        $secret = get_config('dropbox', 'dropbox_secret');
+        $this->dropbox = new repository_dropbox\dropbox(
+                $key,
+                $secret,
+                $returnurl
+            );
+    }
+
+    /**
+     * Determine whether to use the legacy (v1) API.
+     *
+     * @return  bool
+     */
+    protected static function use_legacy_api() {
+        $uselegacyapi = get_config('dropbox', 'legacyapi');
+        return !empty($uselegacyapi);
     }
 
     /**
@@ -60,7 +97,42 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
-        return $this->legacy->send_file($storedfile, $lifetime, $filter, $forcedownload, $options);
+        if (self::use_legacy_api()) {
+            return $this->legacy->send_file($storedfile, $lifetime, $filter, $forcedownload, $options);
+        }
+
+        $reference = $this->unpack_reference($storedfile->get_reference());
+
+        $maxcachesize = $this->max_cache_bytes();
+        if (empty($maxcachesize)) {
+            // Always cache the file, regardless of size.
+            $cachefile = true;
+        } else {
+            // Size available. Only cache if it is under maxcachesize.
+            $cachefile = $storedfile->get_filesize() < $maxcachesize;
+        }
+
+        if (!$cachefile) {
+            \core\session\manager::write_close();
+            header('Location: ' . $this->get_file_download_link($reference->url));
+            die;
+        }
+
+        try {
+            $this->import_external_file_contents($storedfile, $this->max_cache_bytes());
+            if (!is_array($options)) {
+                $options = array();
+            }
+            $options['sendcachedexternalfile'] = true;
+            \core\session\manager::write_close();
+            send_stored_file($storedfile, $lifetime, $filter, $forcedownload, $options);
+        } catch (moodle_exception $e) {
+            // Redirect to Dropbox, it will show the error.
+            // Note: We redirect to Dropbox shared link, not to the download link here!
+            \core\session\manager::write_close();
+            header('Location: ' . $reference->url);
+            die;
+        }
     }
 
     /**
@@ -70,7 +142,29 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function get_reference_details($reference, $filestatus = 0) {
-        return $this->legacy->get_reference_details($reference, $filestatus);
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_reference_details($reference, $filestatus);
+        }
+
+        global $USER;
+        $ref  = unserialize($reference);
+        $detailsprefix = $this->get_name();
+        if (isset($ref->userid) && $ref->userid != $USER->id && isset($ref->username)) {
+            $detailsprefix .= ' ('.$ref->username.')';
+        }
+        $details = $detailsprefix;
+        if (isset($ref->path)) {
+            $details .= ': '. $ref->path;
+        }
+        if (isset($ref->path) && !$filestatus) {
+            // Indicate this is from dropbox with path.
+            return $details;
+        } else {
+            if (isset($ref->url)) {
+                $details = $detailsprefix. ': '. $ref->url;
+            }
+            return get_string('lostsource', 'repository', $details);
+        }
     }
 
     /**
@@ -82,7 +176,15 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function cache_file_by_reference($reference, $storedfile) {
-        return $this->legacy->cache_file_by_reference($reference, $storedfile);
+        if (self::use_legacy_api()) {
+            return $this->legacy->cache_file_by_reference($reference, $storedfile);
+        }
+
+        try {
+            $this->import_external_file_contents($storedfile, $this->max_cache_bytes());
+        } catch (Exception $e) {
+            // Cache failure should not cause a fatal error. This is only a nice-to-have feature.
+        }
     }
 
     /**
@@ -100,7 +202,12 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function get_file_source_info($source) {
-        return $this->legacy->get_file_source_info($source);
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_file_source_info($source);
+        }
+
+        global $USER;
+        return 'Dropbox ('.fullname($USER).'): ' . $source;
     }
 
     /**
@@ -109,7 +216,25 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function get_file_reference($source) {
-        return $this->legacy->get_file_reference($source);
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_file_reference($source);
+        }
+
+        global $USER;
+        $reference = new stdClass;
+        $reference->userid = $USER->id;
+        $reference->username = fullname($USER);
+        $reference->path = $source;
+
+        // Determine whether we are downloading the file, or should use a file reference.
+        $usefilereference = optional_param('usefilereference', false, PARAM_BOOL);
+        if ($usefilereference) {
+            if ($data = $this->dropbox->get_file_share_info($source)) {
+                $reference = (object) array_merge((array) $data, (array) $reference);
+            }
+        }
+
+        return serialize($reference);
     }
 
     /**
@@ -118,7 +243,13 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function get_link($reference) {
-        return $this->legacy->get_link($reference);
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_link($reference);
+        }
+
+        $unpacked = $this->unpack_reference($reference);
+
+        return $this->get_file_download_link($unpacked->url);
     }
 
     /**
@@ -127,7 +258,19 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function get_file($reference, $saveas = '') {
-        return $this->legacy->get_file($reference, $saveas);
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_file($reference, $saveas);
+        }
+
+        $unpacked = $this->unpack_reference($reference);
+
+        // This is a shared link, and hopefully it is still active.
+        $downloadlink = $this->get_file_download_link($unpacked->url);
+
+        $saveas = $this->prepare_file($saveas);
+        file_put_contents($saveas, fopen($downloadlink, 'r'));
+
+        return ['path' => $saveas];
     }
 
     /**
@@ -136,7 +279,11 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function supported_filetypes() {
-        return $this->legacy->supported_filetypes();
+        if (self::use_legacy_api()) {
+            return $this->legacy->supported_filetypes();
+        }
+
+        return '*';
     }
 
     /**
@@ -145,7 +292,11 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function supported_returntypes() {
-        return $this->legacy->supported_returntypes();
+        if (self::use_legacy_api()) {
+            return $this->legacy->supported_returntypes();
+        }
+
+        return FILE_INTERNAL | FILE_REFERENCE | FILE_EXTERNAL;
     }
 
     /**
@@ -154,7 +305,48 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function get_listing($path = '', $page = '1') {
-        return $this->legacy->get_listing($path, $page);
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_listing($path, $page);
+        }
+
+        if (empty($path) || $path == '/') {
+            $path = '';
+        } else {
+            $path = file_correct_filepath($path);
+        }
+
+        $list = [
+                'list'      => [],
+                'manage'    => 'https://www.dropbox.com/home',
+                'logouturl' => 'https://www.dropbox.com/logout',
+                'message'   => get_string('logoutdesc', 'repository_dropbox'),
+                'dynload'   => true,
+                'path'      => $this->process_breadcrumbs($path),
+            ];
+
+        // Note - we deliberately do not catch the coding exceptions here.
+        try {
+            $result = $this->dropbox->get_listing($path);
+        } catch (\repository_dropbox\authentication_exception $e) {
+            // The token has expired.
+            return $this->print_login();
+        } catch (\repository_dropbox\dropbox_exception $e) {
+            // There was some other form of non-coding failure.
+            // This could be a rate limit, or it could be a server-side error.
+            // Just return early instead.
+            return $list;
+        }
+
+        if (!is_object($result) || empty($result)) {
+            return $list;
+        }
+
+        if (empty($result->entries) or !is_array($result->entries)) {
+            return $list;
+        }
+
+        $list['list'] = $this->process_entries($result->entries);
+        return $list;
     }
 
     /**
@@ -165,7 +357,41 @@ class repository_dropbox extends repository {
      * @return  array
      */
     public function search($query, $page = 0) {
-        return parent::search($query, $page);
+        if (self::use_legacy_api()) {
+            return parent::search($query, $page);
+        }
+
+        $list = [
+                'list'      => [],
+                'manage'    => 'https://www.dropbox.com/home',
+                'logouturl' => 'https://www.dropbox.com/logout',
+                'message'   => get_string('logoutdesc', 'repository_dropbox'),
+                'dynload'   => true,
+            ];
+
+        // Note - we deliberately do not catch the coding exceptions here.
+        try {
+            $result = $this->dropbox->search($query);
+        } catch (\repository_dropbox\authentication_exception $e) {
+            // The token has expired.
+            return $this->print_login();
+        } catch (\repository_dropbox\dropbox_exception $e) {
+            // There was some other form of non-coding failure.
+            // This could be a rate limit, or it could be a server-side error.
+            // Just return early instead.
+            return $list;
+        }
+
+        if (!is_object($result) || empty($result)) {
+            return $list;
+        }
+
+        if (empty($result->matches) or !is_array($result->matches)) {
+            return $list;
+        }
+
+        $list['list'] = $this->process_entries($result->matches);
+        return $list;
     }
 
     /**
@@ -174,7 +400,16 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function send_thumbnail($source) {
-        return $this->legacy->send_thumbnail($source);
+        if (self::use_legacy_api()) {
+            return $this->legacy->send_thumbnail($source);
+        }
+
+        $content = $this->dropbox->get_thumbnail($source);
+
+        // Set 30 days lifetime for the image.
+        // If the image is changed in dropbox it will have different revision number and URL will be different.
+        // It is completely safe to cache the thumbnail in the browser for a long time.
+        send_file($content, basename($source), 30 * DAYSECS, 0, true);
     }
 
     /**
@@ -184,15 +419,103 @@ class repository_dropbox extends repository {
      * @return  string                  New serialized reference
      */
     protected function fix_old_style_reference($packed) {
-        return $this->legacy->fix_old_style_reference($packed);
+        if (self::use_legacy_api()) {
+            throw new \coding_exception(__FUNCTION__ . ' is a v2 API function only');
+        }
+
+        $ref = unserialize($packed);
+        $ref = $this->dropbox->get_file_share_info($ref->path);
+        if (!$ref || empty($ref->url)) {
+            // Some error occurred, do not fix reference for now.
+            return $packed;
+        }
+
+        $newreference = serialize($ref);
+        if ($newreference !== $packed) {
+            // We need to update references in the database.
+            global $DB;
+            $params = array(
+                'newreference'  => $newreference,
+                'newhash'       => sha1($newreference),
+                'reference'     => $packed,
+                'hash'          => sha1($packed),
+                'repoid'        => $this->id,
+            );
+            $refid = $DB->get_field_sql('SELECT id FROM {files_reference}
+                WHERE reference = :reference AND referencehash = :hash
+                AND repositoryid = :repoid', $params);
+            if (!$refid) {
+                return $newreference;
+            }
+
+            $existingrefid = $DB->get_field_sql('SELECT id FROM {files_reference}
+                    WHERE reference = :newreference AND referencehash = :newhash
+                    AND repositoryid = :repoid', $params);
+            if ($existingrefid) {
+                // The same reference already exists, we unlink all files from it,
+                // link them to the current reference and remove the old one.
+                $DB->execute('UPDATE {files} SET referencefileid = :refid
+                    WHERE referencefileid = :existingrefid',
+                    array('refid' => $refid, 'existingrefid' => $existingrefid));
+                $DB->delete_records('files_reference', array('id' => $existingrefid));
+            }
+
+            // Update the reference.
+            $params['refid'] = $refid;
+            $DB->execute('UPDATE {files_reference}
+                SET reference = :newreference, referencehash = :newhash
+                WHERE id = :refid', $params);
+        }
+        return $newreference;
     }
+
+    /**
+     * Unpack the supplied serialized reference, fixing it if required.
+     *
+     * @param   string      $packed     The packed reference
+     * @return  object                  The unpacked reference
+     */
+    protected function unpack_reference($packed) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->fix_old_style_reference($packed);
+        }
+
+        $reference = unserialize($packed);
+        if (empty($reference->url)) {
+            // The reference is missing some information. Attempt to update it.
+            return unserialize($this->fix_old_style_reference($packed));
+        }
+
+        return $reference;
+    }
+
+    /**
+     * Converts a URL received from dropbox API function 'shares' into URL that
+     * can be used to download/access file directly
+     *
+     * @param string $sharedurl
+     * @return string
+     */
+    protected function get_file_download_link($sharedurl) {
+        $url = new \moodle_url($sharedurl);
+        $url->param('dl', 1);
+
+        return $url->out(false);
+    }
+
     /**
      * Logout from dropbox.
      *
      * @inheritDocs
      */
     public function logout() {
-        return $this->legacy->logout();
+        if (self::use_legacy_api()) {
+            return $this->legacy->logout();
+        }
+
+        $this->dropbox->logout();
+
+        return $this->print_login();
     }
 
     /**
@@ -201,7 +524,11 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function check_login() {
-        return $this->legacy->check_login();
+        if (self::use_legacy_api()) {
+            return $this->legacy->check_login();
+        }
+
+        return $this->dropbox->is_logged_in();
     }
 
     /**
@@ -210,7 +537,21 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function print_login() {
-        return $this->legacy->print_login();
+        if (self::use_legacy_api()) {
+            return $this->legacy->print_login();
+        }
+
+        $url = $this->dropbox->get_login_url();
+        if ($this->options['ajax']) {
+            $ret = array();
+            $btn = new \stdClass();
+            $btn->type = 'popup';
+            $btn->url = $url->out(false);
+            $ret['login'] = array($btn);
+            return $ret;
+        } else {
+            echo html_writer::link($url, get_string('login', 'repository'), array('target' => '_blank'));
+        }
     }
 
     /**
@@ -219,7 +560,11 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function callback() {
-        return $this->legacy->callback();
+        if (self::use_legacy_api()) {
+            return $this->legacy->callback();
+        }
+
+        $this->dropbox->callback();
     }
 
     /**
@@ -232,7 +577,26 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function cron() {
-        return $this->legacy->cron();
+        if (self::use_legacy_api()) {
+            return $this->legacy->cron();
+        }
+
+        $fs = get_file_storage();
+        $files = $fs->get_external_files($this->id);
+        $fetchedreferences = [];
+        foreach ($files as $file) {
+            if (isset($fetchedreferences[$file->get_referencefileid()])) {
+                continue;
+            }
+            try {
+                // This call will cache all files that are smaller than max_cache_bytes()
+                // and synchronise file size of all others.
+                $this->import_external_file_contents($file, $this->max_cache_bytes());
+                $fetchedreferences[$file->get_referencefileid()] = true;
+            } catch (moodle_exception $e) {
+                // If an exception is thrown, just continue. This is only a pre-fetch to help speed up general use.
+            }
+        }
     }
 
     /**
@@ -260,6 +624,19 @@ class repository_dropbox extends repository {
         $mform->addRule('dropbox_secret', get_string('required'), 'required', null, 'client');
         $mform->setType('dropbox_secret', PARAM_RAW_TRIMMED);
         $mform->addElement('static', null, '', get_string('instruction', 'repository_dropbox'));
+
+        $mform->addElement('static', null,
+                get_string('oauth2title', 'repository_dropbox'),
+                get_string('legacyapihelpsupported', 'repository_dropbox'));
+        $mform->addElement('static', null,
+                get_string('oauth2redirecturi', 'repository_dropbox'),
+                self::get_oauth2callbackurl()->out()
+            );
+
+        // The Legacy API is still available so give the user the option of which version to use.
+        $mform->addElement('radio', 'legacyapi', get_string('usev2api', 'repository_dropbox'), null, false);
+        $mform->addElement('radio', 'legacyapi', get_string('uselegacyapi', 'repository_dropbox'), null, true);
+        $mform->setDefault('legacyapi', false);
 
         $mform->addElement('text', 'dropbox_cachelimit', get_string('cachelimit', 'repository_dropbox'), array('size' => '40'));
         $mform->addRule('dropbox_cachelimit', null, 'numeric', null, 'client');
@@ -289,6 +666,11 @@ class repository_dropbox extends repository {
             unset($options['dropbox_cachelimit']);
         }
 
+        if (!empty($options['legacyapi'])) {
+            set_config('legacyapi', $this->legacyapi, 'dropbox');
+            unset($options['legacyapi']);
+        }
+
         return parent::set_option($options);
     }
 
@@ -304,14 +686,28 @@ class repository_dropbox extends repository {
             return trim(get_config('dropbox', 'dropbox_secret'));
         } else if ($config === 'dropbox_cachelimit') {
             return $this->max_cache_bytes();
+        } elseif ($config === 'legacyapi') {
+            return trim(get_config('dropbox', 'legacyapi'));
         } else {
             $options = parent::get_option();
             $options['dropbox_key'] = trim(get_config('dropbox', 'dropbox_key'));
             $options['dropbox_secret'] = trim(get_config('dropbox', 'dropbox_secret'));
             $options['dropbox_cachelimit'] = $this->max_cache_bytes();
+            $options['legacyapi'] = trim(get_config('dropbox', 'legacyapi'));
         }
 
         return $options;
+    }
+
+    /**
+     * Return the OAuth 2 Redirect URI.
+     *
+     * @return  moodle_url
+     */
+    public static function get_oauth2callbackurl() {
+        global $CFG;
+
+        return new moodle_url($CFG->httpswwwroot . '/admin/oauth2callback.php');
     }
 
     /**
@@ -321,6 +717,7 @@ class repository_dropbox extends repository {
      */
     public static function get_type_option_names() {
         return [
+                'legacyapi',
                 'dropbox_key',
                 'dropbox_secret',
                 'pluginname',
@@ -357,7 +754,175 @@ class repository_dropbox extends repository {
      * @inheritDocs
      */
     public function sync_reference(stored_file $file) {
-        return $this->legacy->sync_reference($file);
+        if (self::use_legacy_api()) {
+            return $this->legacy->sync_reference($file);
+        }
+
+        global $CFG;
+
+        if ($file->get_referencelastsync() + DAYSECS > time()) {
+            // Only synchronise once per day.
+            return false;
+        }
+
+        $reference = $this->unpack_reference($file->get_reference());
+        if (!isset($reference->url)) {
+            // The URL to sync with is missing.
+            return false;
+        }
+
+        $c = new curl;
+        $url = $this->get_file_download_link($reference->url);
+        if (file_extension_in_typegroup($reference->path, 'web_image')) {
+            $saveas = $this->prepare_file('');
+            try {
+                $result = $c->download_one($url, [], [
+                        'filepath' => $saveas,
+                        'timeout' => $CFG->repositorysyncimagetimeout,
+                        'followlocation' => true,
+                    ]);
+                $info = $c->get_info();
+                if ($result === true && isset($info['http_code']) && $info['http_code'] == 200) {
+                    $fs = get_file_storage();
+                    list($contenthash, $filesize, ) = $fs->add_file_to_pool($saveas);
+                    $file->set_synchronized($contenthash, $filesize);
+                    return true;
+                }
+            } catch (Exception $e) {
+                // IF the download_one fails, we will attempt to download
+                // again with get() anyway.
+            }
+        }
+
+        $c->get($url, null, array('timeout' => $CFG->repositorysyncimagetimeout, 'followlocation' => true, 'nobody' => true));
+        $info = $c->get_info();
+        if (isset($info['http_code']) && $info['http_code'] == 200 &&
+                array_key_exists('download_content_length', $info) &&
+                $info['download_content_length'] >= 0) {
+            $filesize = (int)$info['download_content_length'];
+            $file->set_synchronized(null, $filesize);
+            return true;
+        }
+        $file->set_missingsource();
+        return true;
+    }
+
+    /**
+     * Process a standard entries list.
+     *
+     * @param   array       $entries    The list of entries returned from the API
+     * @return  array                   The manipulated entries for display in the file picker
+     */
+    protected function process_entries(array $entries) {
+        if (self::use_legacy_api()) {
+            throw new \coding_exception(__FUNCTION__ . ' is a v2 API function only');
+        }
+
+        global $OUTPUT;
+
+        $dirslist   = [];
+        $fileslist  = [];
+        foreach ($entries as $entry) {
+            $entrydata = $entry;
+            if (isset($entrydata->metadata)) {
+                // If this is metadata, fetch the metadata content.
+                // We only use the consistent parts of the file, folder, and metadata.
+                $entrydata = $entrydata->metadata;
+            }
+            if ($entrydata->{".tag"} === "folder") {
+                $dirslist[] = [
+                        'title'             => $entrydata->name,
+                        // Use the display path here rather than lower.
+                        // Dropbox is case insensitive but this leads to more accurate breadcrumbs.
+                        'path'              => file_correct_filepath($entrydata->path_display),
+                        'thumbnail'         => $OUTPUT->pix_url(file_folder_icon(64))->out(false),
+                        'thumbnail_height'  => 64,
+                        'thumbnail_width'   => 64,
+                        'children'          => array(),
+                    ];
+            } else if ($entrydata->{".tag"} === "file") {
+                $fileslist[] = [
+                        'title'             => $entrydata->name,
+                        // Use the path_lower here to make life easier elsewhere.
+                        'source'            => $entrydata->path_lower,
+                        'size'              => $entrydata->size,
+                        'date'              => strtotime($entrydata->client_modified),
+                        'thumbnail'         => $OUTPUT->pix_url(file_extension_icon($entrydata->path_lower, 64))->out(false),
+                        'realthumbnail'     => $this->get_thumbnail_url($entrydata),
+                        'thumbnail_height'  => 64,
+                        'thumbnail_width'   => 64,
+                    ];
+            }
+        }
+
+        $fileslist = array_filter($fileslist, array($this, 'filter'));
+
+        return array_merge($dirslist, array_values($fileslist));
+    }
+
+    /**
+     * Process the breadcrumbs for a listing.
+     *
+     * @param   string      $path       The path to create breadcrumbs for
+     * @return  array
+     */
+    protected function process_breadcrumbs($path) {
+        if (self::use_legacy_api()) {
+            throw new \coding_exception(__FUNCTION__ . ' is a v2 API function only');
+        }
+
+        // Process breadcrumb trail.
+        // Note: Dropbox is case insensitive.
+        // Without performing an additional API call, it isn't possible to get the path_display.
+        // As a result, the path here is the path_lower.
+        $breadcrumbs = [
+            [
+                'path' => '/',
+                'name' => get_string('dropbox', 'repository_dropbox'),
+            ],
+        ];
+
+        $path = rtrim($path, '/');
+        $directories = explode('/', $path);
+        $pathtodate = '';
+        foreach ($directories as $directory) {
+            if ($directory === '') {
+                continue;
+            }
+            $pathtodate .= '/' . $directory;
+            $breadcrumbs[] = [
+                    'path'  => $pathtodate,
+                    'name'  => $directory,
+                ];
+        }
+
+        return $breadcrumbs;
+    }
+
+    /**
+     * Grab the thumbnail URL for the specified entry.
+     *
+     * @param   object      $entry      The file entry as retrieved from the API
+     * @return  moodle_url
+     */
+    protected function get_thumbnail_url($entry) {
+        if (self::use_legacy_api()) {
+            throw new \coding_exception(__FUNCTION__ . ' is a v2 API function only');
+        }
+
+        if ($this->dropbox->supports_thumbnail($entry)) {
+            $thumburl = new moodle_url('/repository/dropbox/thumbnail.php', [
+                // The id field in dropbox is unique - no need to specify a revision.
+                'source'    => $entry->id,
+                'path'      => $entry->path_lower,
+
+                'repo_id'   => $this->id,
+                'ctx_id'    => $this->context->id,
+            ]);
+            return $thumburl->out(false);
+        }
+
+        return '';
     }
 
     /**

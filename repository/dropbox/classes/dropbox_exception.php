@@ -15,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * General Dropbox Exception.
  *
- * @package    repository_dropbox
- * @copyright  2010 Dongsheng Cai
- * @author     Dongsheng Cai <dongsheng@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since       Moodle 3.2
+ * @package     repository_dropbox
+ * @copyright   Andrew Nicols <andrew@nicols.co.uk>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace repository_dropbox;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016052301;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016051900;        // Requires this Moodle version
-$plugin->component = 'repository_dropbox'; // Full name of the plugin (used for diagnostics)
+/**
+ * General Dropbox Exception.
+ *
+ * @package     repository_dropbox
+ * @copyright   Andrew Nicols <andrew@nicols.co.uk>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class dropbox_exception extends \moodle_exception {
+}
