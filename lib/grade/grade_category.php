@@ -900,6 +900,8 @@ class grade_category extends grade_object {
                                                        & $weights = null,
                                                        $grademinoverrides = array(),
                                                        $grademaxoverrides = array()) {
+        global $CFG;
+
         $category_item = $this->load_grade_item();
         $grademin = $category_item->grademin;
         $grademax = $category_item->grademax;
@@ -1187,8 +1189,9 @@ class grade_category extends grade_object {
 
                 // This setting indicates if we should use algorithm prior to MDL-49257 fix for calculating extra credit weights.
                 // Even though old algorith has bugs in it, we need to preserve existing grades.
-                $gradebookcalculationfreeze = (int)get_config('core', 'gradebook_calculations_freeze_' . $this->courseid);
-                $oldextracreditcalculation = $gradebookcalculationfreeze && ($gradebookcalculationfreeze <= 20150619);
+                $gradebookcalculationfreeze = 'gradebook_calculations_freeze_' . $this->courseid;
+                $oldextracreditcalculation = isset($CFG->$gradebookcalculationfreeze)
+                        && ($CFG->$gradebookcalculationfreeze <= 20150619);
 
                 $sumweights = 0;
                 $grademin = 0;
@@ -1383,7 +1386,7 @@ class grade_category extends grade_object {
      * @return void
      */
     private function auto_update_max() {
-        global $DB;
+        global $CFG, $DB;
         if ($this->aggregation != GRADE_AGGREGATE_SUM) {
             // not needed at all
             return;
@@ -1395,11 +1398,10 @@ class grade_category extends grade_object {
 
         // Check to see if the gradebook is frozen. This allows grades to not be altered at all until a user verifies that they
         // wish to update the grades.
-        $gradebookcalculationsfreeze = get_config('core', 'gradebook_calculations_freeze_' . $this->courseid);
+        $gradebookcalculationfreeze = 'gradebook_calculations_freeze_' . $this->courseid;
+        $oldextracreditcalculation = isset($CFG->$gradebookcalculationfreeze) && ($CFG->$gradebookcalculationfreeze <= 20150627);
         // Only run if the gradebook isn't frozen.
-        if ($gradebookcalculationsfreeze && (int)$gradebookcalculationsfreeze <= 20150627) {
-            // Do nothing.
-        } else{
+        if (!$oldextracreditcalculation) {
             // Don't automatically update the max for calculated items.
             if ($this->grade_item->is_calculated()) {
                 return;
