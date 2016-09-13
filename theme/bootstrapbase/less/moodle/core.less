@@ -1267,11 +1267,49 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     text-align: center;
 }
 .initialbar {
+
+    overflow: auto;
+
+    .initialbarlabel {
+        display: inline-block;
+        width: 6em;
+        float: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .initialbargroups {
+        float: left;
+    }
+
+    .initialbargroup {
+        float: left;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
     a,
     strong {
-        padding-left: 3px;
-        padding-right: 3px;
+        display: inline-block;
+        min-width: 1.4em;
+        text-align: center;
+
+        &.initialbarall {
+            float: left;
+            width: 4em;
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
+
+    strong {
+        background: @linkColor;
+        color: @bodyBackground;
+    }
+
 }
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
