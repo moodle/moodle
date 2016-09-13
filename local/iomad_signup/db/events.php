@@ -16,11 +16,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$handlers = array(
-    'user_created' => array(
-        'handlerfile' => '/local/iomad_signup/lib.php',
-        'handlerfunction' => 'local_iomad_signup_user_created',
-        'schedule' => 'instant',
-        'internal' => 1,
+// List of observers.
+$observers = array(
+
+    array(
+        'eventname'   => '\core\event\user_created',
+        'callback'    => 'local_iomad_signup_observer::user_created',
     ),
 );
