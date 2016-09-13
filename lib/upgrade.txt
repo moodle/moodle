@@ -78,6 +78,8 @@ information provided here is intended especially for developers.
   - $CFG->wwwroot: http://example.com/moodle
   - $CFG->alternateloginurl : /my/super/login.php
   - Login url will be: http://example.com/moodle/my/super/login.php (moodle root based)
+* Database (DML) layer:
+  - new sql_equal() method available for places where case sensitive/insensitive varchar comparisons are required.
 
 === 3.1 ===
 
