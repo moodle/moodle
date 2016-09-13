@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $string['iomad_link:addinstance'] = 'Add a new Iomad Dashboard link block';
+$string['iomad_link:myaddinstance'] = 'Add a new Iomad Dashboard link block to the users dashboard';
 $string['iomad_link:view'] = 'View link to Iomad Dashboard';
 $string['link'] = 'Go to Iomad Dashboard';
 $string['pluginname'] = 'Iomad - Link to Dashboard';

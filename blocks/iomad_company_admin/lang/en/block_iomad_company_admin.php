@@ -189,6 +189,7 @@ $string['iomad_company_admin:licensemanagement_view'] = 'View the license manage
 $string['iomad_company_admin:managecourses'] = 'Designate course as licensed or shared';
 $string['iomad_company_admin:manageframeworks'] = 'Manage Iomad competency framework settings';
 $string['iomad_company_admin:managetemplates'] = 'Manage Iomad learning plan template settings';
+$string['iomad_company_admin:myaddinstance'] = 'Add a new Iomad company admin block to the users dashboard';
 $string['iomad_company_admin:restrict_capabilities'] = 'Restrict IOMAD role capabilties for company';
 $string['iomad_company_admin:suspendcompanies'] = 'Suspend a company';
 $string['iomad_company_admin:templateview'] = 'View templates from dashboard';

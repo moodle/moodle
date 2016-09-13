@@ -68,6 +68,7 @@ $string['iomad_commerce:buyitnow'] = 'Access to the buy it now button in the sho
 $string['iomad_commerce:delete_course'] = 'Remove a course from the shop';
 $string['iomad_commerce:edit_course'] = 'Edit a course in the shop';
 $string['iomad_commerce:hide_course'] = 'Hide a course in the shop';
+$string['iomad_commerce:myaddinstance'] = 'Add a new Iomad Ecommerce block to the users dashboard';
 $string['emptybasket'] = 'Your basket is empty';
 $string['error_duplicateblockstarts'] = 'Duplicate # of licenses.';
 $string['error_invalidblockstarts'] = 'One or more # of licenses is invalid.';
