@@ -133,6 +133,9 @@ $string['disallowsubscription'] = 'Subscription';
 $string['disallowsubscription_help'] = 'This forum has been configured so that you cannot subscribe to discussions.';
 $string['disallowsubscribeteacher'] = 'Subscriptions not allowed (except for teachers)';
 $string['discussion'] = 'Discussion';
+$string['discussionlocked'] = 'This discussion has been locked so you can no longer reply to it.';
+$string['discussionlockingheader'] = 'Discussion locking';
+$string['discussionlockingdisabled'] = 'Do not lock discussions';
 $string['discussionmoved'] = 'This discussion has been moved to \'{$a}\'.';
 $string['discussionmovedpost'] = 'This discussion has been moved to <a href="{$a->discusshref}">here</a> in the forum <a href="{$a->forumhref}">{$a->forumname}</a>';
 $string['discussionname'] = 'Discussion name';
@@ -216,6 +219,7 @@ $string['forum:addinstance'] = 'Add a new forum';
 $string['forum:addnews'] = 'Add news';
 $string['forum:addquestion'] = 'Add question';
 $string['forum:allowforcesubscribe'] = 'Allow force subscribe';
+$string['forum:canoverridediscussionlock'] = 'Reply to locked discussions';
 $string['forumauthorhidden'] = 'Author (hidden)';
 $string['forumblockingalmosttoomanyposts'] = 'You are approaching the posting threshold. You have posted {$a->numposts} times in the last {$a->blockperiod} and the limit is {$a->blockafter} posts.';
 $string['forumbodyhidden'] = 'This post cannot be viewed by you, probably because you have not posted in the discussion, the maximum editing time hasn\'t passed yet, the discussion has not started or the discussion has expired.';
@@ -275,6 +279,10 @@ $string['invalidparentpostid'] = 'Parent post ID was incorrect';
 $string['invalidpostid'] = 'Invalid post ID - {$a}';
 $string['lastpost'] = 'Last post';
 $string['learningforums'] = 'Learning forums';
+$string['lockdiscussionafter'] = 'Lock discussions after period of inactivity';
+$string['lockdiscussionafter_help'] = 'Discussions may be automatically locked after a specified time has elapsed since the last reply.
+
+Users with the capability to reply to locked discussions can unlock a discussion by replying to it.';
 $string['longpost'] = 'Long post';
 $string['mailnow'] = 'Send forum post notifications with no editing-time delay';
 $string['manydiscussions'] = 'Discussions per page';

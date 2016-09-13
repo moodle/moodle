@@ -112,7 +112,7 @@ class mod_forum_external extends external_api {
      * @return external_single_structure
      * @since Moodle 2.5
      */
-     public static function get_forums_by_courses_returns() {
+    public static function get_forums_by_courses_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -143,6 +143,7 @@ class mod_forum_external extends external_api {
                     'cmid' => new external_value(PARAM_INT, 'Course module id'),
                     'numdiscussions' => new external_value(PARAM_INT, 'Number of discussions in the forum', VALUE_OPTIONAL),
                     'cancreatediscussions' => new external_value(PARAM_BOOL, 'If the user can create discussions', VALUE_OPTIONAL),
+                    'lockdiscussionafter' => new external_value(PARAM_INT, 'After what period a discussion is locked', VALUE_OPTIONAL),
                 ), 'forum'
             )
         );
@@ -499,6 +500,9 @@ class mod_forum_external extends external_api {
                                                                                 $discussion->id);
                 }
 
+                $discussion->locked = forum_discussion_is_locked($forum, $discussion);
+                $discussion->canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
+
                 $discussions[] = $discussion;
             }
         }
@@ -549,7 +553,9 @@ class mod_forum_external extends external_api {
                                 'usermodifiedpictureurl' => new external_value(PARAM_URL, 'Post modifier picture.'),
                                 'numreplies' => new external_value(PARAM_TEXT, 'The number of replies in the discussion'),
                                 'numunread' => new external_value(PARAM_INT, 'The number of unread discussions.'),
-                                'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned')
+                                'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned'),
+                                'locked' => new external_value(PARAM_BOOL, 'Is the discussion locked'),
+                                'canreply' => new external_value(PARAM_BOOL, 'Can the user reply to the discussion'),
                             ), 'post'
                         )
                     ),

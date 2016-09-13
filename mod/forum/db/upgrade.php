@@ -177,5 +177,20 @@ function xmldb_forum_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016091200) {
+
+        // Define field lockdiscussionafter to be added to forum.
+        $table = new xmldb_table('forum');
+        $field = new xmldb_field('lockdiscussionafter', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'displaywordcount');
+
+        // Conditionally launch add field lockdiscussionafter.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Forum savepoint reached.
+        upgrade_mod_savepoint(true, 2016091200, 'forum');
+    }
+
     return true;
 }

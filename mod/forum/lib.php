@@ -5043,6 +5043,13 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
         $context = context_module::instance($cm->id);
     }
 
+    // Check whether the discussion is locked.
+    if (forum_discussion_is_locked($forum, $discussion)) {
+        if (!has_capability('mod/forum:canoverridediscussionlock', $context)) {
+            return false;
+        }
+    }
+
     // normal users with temporary guest access can not post, suspended users can not post either
     if (!is_viewing($context, $user->id) and !is_enrolled($context, $user->id, '', true)) {
         return false;
@@ -8012,4 +8019,28 @@ function mod_forum_inplace_editable($itemtype, $itemid, $newvalue) {
         $renderer = $PAGE->get_renderer('mod_forum');
         return $renderer->render_digest_options($forum, $newvalue);
     }
+}
+
+/**
+ * Determine whether the specified discussion is time-locked.
+ *
+ * @param   stdClass    $forum          The forum that the discussion belongs to
+ * @param   stdClass    $discussion     The discussion to test
+ * @return  bool
+ */
+function forum_discussion_is_locked($forum, $discussion) {
+    if (empty($forum->lockdiscussionafter)) {
+        return false;
+    }
+
+    if ($forum->type === 'single') {
+        // It does not make sense to lock a single discussion forum.
+        return false;
+    }
+
+    if (($discussion->timemodified + $forum->lockdiscussionafter) < time()) {
+        return true;
+    }
+
+    return false;
 }
