@@ -52,7 +52,8 @@ $THEME->sheets = array(
     'filemanager',
     'templates',
     'autocomplete',
-    'search'
+    'search',
+    'modal'
 );
 
 $THEME->editor_sheets = array('editor');
