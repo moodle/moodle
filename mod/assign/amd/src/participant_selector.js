@@ -61,7 +61,8 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
             });
 
             var promise = ajax.call([{
-                methodname: 'mod_assign_list_participants', args: { assignid: assignmentid, groupid: 0, filter: query, limit: 30 }
+                methodname: 'mod_assign_list_participants',
+                args: {assignid: assignmentid, groupid: 0, filter: query, limit: 30, includeenrolments: false}
             }]);
 
             promise[0].then(function(results) {
