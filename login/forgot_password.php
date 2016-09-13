@@ -85,7 +85,7 @@ if (empty($token)) {
     // The session var is intentionally used only during the lifespan of one request (the redirect) and is unset above.
     if (!$tokeninsession && $_SERVER['REQUEST_METHOD'] === 'GET') {
         $SESSION->password_reset_token = $token;
-        redirect($CFG->wwwroot . '/login/forgot_password.php');
+        redirect($CFG->httpswwwroot . '/login/forgot_password.php');
     } else {
         // Continue with the password reset process.
         core_login_process_password_set($token);
