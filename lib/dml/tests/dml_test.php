@@ -3829,7 +3829,7 @@ class core_dml_testcase extends database_driver_testcase {
         }
     }
 
-    public function test_sql_binary_equal() {
+    public function test_sql_equal() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3838,20 +3838,51 @@ class core_dml_testcase extends database_driver_testcase {
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('name2', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $DB->insert_record($tablename, array('name'=>'aaa'));
-        $DB->insert_record($tablename, array('name'=>'aáa'));
-        $DB->insert_record($tablename, array('name'=>'aäa'));
-        $DB->insert_record($tablename, array('name'=>'bbb'));
-        $DB->insert_record($tablename, array('name'=>'BBB'));
+        $DB->insert_record($tablename, array('name' => 'one', 'name2' => 'one'));
+        $DB->insert_record($tablename, array('name' => 'ONE', 'name2' => 'ONE'));
+        $DB->insert_record($tablename, array('name' => 'two', 'name2' => 'TWO'));
+        $DB->insert_record($tablename, array('name' => 'öne', 'name2' => 'one'));
+        $DB->insert_record($tablename, array('name' => 'öne', 'name2' => 'ÖNE'));
 
-        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE name = ?", array('bbb'));
-        $this->assertEquals(1, count($records), 'SQL operator "=" is expected to be case sensitive');
+        // Case sensitive and accent sensitive (equal and not equal).
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', '?', true, true, false);
+        $records = $DB->get_records_sql($sql, array('one'));
+        $this->assertCount(1, $records);
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', ':name', true, true, true);
+        $records = $DB->get_records_sql($sql, array('name' => 'one'));
+        $this->assertCount(4, $records);
+        // And with column comparison instead of params.
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', 'name2', true, true, false);
+        $records = $DB->get_records_sql($sql);
+        $this->assertCount(2, $records);
 
-        $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} WHERE name = ?", array('aaa'));
-        $this->assertEquals(1, count($records), 'SQL operator "=" is expected to be accent sensitive');
+        // Case insensitive and accent sensitive (equal and not equal).
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', '?', false, true, false);
+        $records = $DB->get_records_sql($sql, array('one'));
+        $this->assertCount(2, $records);
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', ':name', false, true, true);
+        $records = $DB->get_records_sql($sql, array('name' => 'one'));
+        $this->assertCount(3, $records);
+        // And with column comparison instead of params.
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', 'name2', false, true, false);
+        $records = $DB->get_records_sql($sql);
+        $this->assertCount(4, $records);
+
+        // TODO: Accent insensitive is not cross-db, only some drivers support it, so just verify the queries work.
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', '?', true, false);
+        $records = $DB->get_records_sql($sql, array('one'));
+        $this->assertGreaterThanOrEqual(1, count($records)); // At very least, there is 1 record with CS/AI "one".
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', '?', false, false);
+        $records = $DB->get_records_sql($sql, array('one'));
+        $this->assertGreaterThanOrEqual(2, count($records)); // At very least, there are 2 records with CI/AI "one".
+        // And with column comparison instead of params.
+        $sql = "SELECT * FROM {{$tablename}} WHERE " . $DB->sql_equal('name', 'name2', false, false);
+        $records = $DB->get_records_sql($sql);
+        $this->assertGreaterThanOrEqual(4, count($records)); // At very least, there are 4 records with CI/AI names matching.
     }
 
     public function test_sql_like() {
