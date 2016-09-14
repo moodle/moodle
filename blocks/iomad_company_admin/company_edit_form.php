@@ -33,6 +33,9 @@ class company_edit_form extends company_moodleform {
         $this->isadding = $isadding;
         $this->companyid = $companyid;
         $this->companyrecord = $companyrecord;
+        if (empty($this->companyrecord->theme)) {
+            $this->companyrecord->theme = 'iomadbootstrap';
+        }
         parent::__construct($actionurl);
     }
 
