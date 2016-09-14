@@ -61,6 +61,10 @@ class mod_assign_locallib_participants extends advanced_testcase {
         $context = context_module::instance($cm->id);
         $assign = new assign($context, $cm, $course);
 
+        // Allocate IDs now.
+        // We're testing whether the IDs are correct after allocation.
+        assign::allocate_unique_ids($assign->get_instance()->id);
+
         $participants = $assign->list_participants(null, false);
 
         // There should be exactly two participants and they should be the students.
