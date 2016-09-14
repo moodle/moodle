@@ -1047,11 +1047,11 @@ class core_media_player_html5video extends core_media_player {
         $sources = array();
         foreach ($urls as $url) {
             $mimetype = core_media::get_mimetype($url);
-            $source = html_writer::tag('source', '', array('src' => $url, 'type' => $mimetype));
+            $source = html_writer::empty_tag('source', array('src' => $url, 'type' => $mimetype));
             if ($mimetype === 'video/mp4') {
                 if ($oldandroid) {
                     // Old Android fails if you specify the type param.
-                    $source = html_writer::tag('source', '', array('src' => $url));
+                    $source = html_writer::empty_tag('source', array('src' => $url));
                 }
 
                 // Better add m4v as first source, it might be a bit more
@@ -1063,7 +1063,9 @@ class core_media_player_html5video extends core_media_player {
         }
 
         $sources = implode("\n", $sources);
-        $title = s($this->get_name($name, $urls));
+        $title = $this->get_name($name, $urls);
+        // Escape title but prevent double escaping.
+        $title = s(preg_replace(['/&amp;/', '/&gt;/', '/&lt;/'], ['&', '>', '<'], $title));
 
         if (!$width) {
             // No width specified, use system default.
@@ -1162,11 +1164,13 @@ class core_media_player_html5audio extends core_media_player {
         $sources = array();
         foreach ($urls as $url) {
             $mimetype = core_media::get_mimetype($url);
-            $sources[] = html_writer::tag('source', '', array('src' => $url, 'type' => $mimetype));
+            $sources[] = html_writer::empty_tag('source', array('src' => $url, 'type' => $mimetype));
         }
 
         $sources = implode("\n", $sources);
-        $title = s($this->get_name($name, $urls));
+        $title = $this->get_name($name, $urls);
+        // Escape title but prevent double escaping.
+        $title = s(preg_replace(['/&amp;/', '/&gt;/', '/&lt;/'], ['&', '>', '<'], $title));
 
         // Default to not specify size (so it can be changed in css).
         $size = '';
