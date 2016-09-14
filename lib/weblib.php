@@ -2934,6 +2934,10 @@ function rebuildnolinktag($text) {
 function print_maintenance_message() {
     global $CFG, $SITE, $PAGE, $OUTPUT;
 
+    header($_SERVER['SERVER_PROTOCOL'] . ' 503 Moodle under maintenance');
+    header('Status: 503 Moodle under maintenance');
+    header('Retry-After: 300');
+
     $PAGE->set_pagetype('maintenance-message');
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_title(strip_tags($SITE->fullname));
