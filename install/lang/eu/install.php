@@ -34,39 +34,39 @@ $string['admindirname'] = 'Admin direktorioa';
 $string['availablelangs'] = 'Hizkuntza-pakete eskuragarriak';
 $string['chooselanguagehead'] = 'Aukeratu hizkuntza bat';
 $string['chooselanguagesub'] = 'Mesedez, aukeratu instalaziorako hizkuntza bat. Hizkuntza hori erabiliko da gunearen berezko hizkuntza gisa, baina aurrerago alda daiteke.';
-$string['clialreadyconfigured'] = 'File config.php fitxategia badago, mesedez erabili admin/cli/install_database.php gune hau instalatu nahi baduzu.';
-$string['clialreadyinstalled'] = 'File config.php fitxategia badago, mesedez erabili admin/cli/upgrade.php zure gunea eguneratu nahi baduzu.';
+$string['clialreadyconfigured'] = 'Dagoeneko badago config.php fitxategia. Mesedez erabili admin/cli/install_database.php gune hau instalatu nahi baduzu.';
+$string['clialreadyinstalled'] = 'Dagoeneko badago config.php fitxategia. Mesedez erabili admin/cli/install_database.php gune hau instalatu nahi baduzu.';
 $string['databasehost'] = 'Datu-basearen ostalaria';
 $string['databasename'] = 'Datu-basearen izena';
-$string['dataroot'] = 'Datu-direktorioa';
+$string['dataroot'] = 'Datuen karpeta';
 $string['datarootpermission'] = 'Datu-direktorioen baimena';
 $string['dbprefix'] = 'Taulen aurrizkia';
 $string['dirroot'] = 'Moodle direktorioa';
 $string['environmenthead'] = 'Zure ingurunea egiaztatzen...';
 $string['errorsinenvironment'] = 'Kale egin du ingurunearen egiaztatzeak!';
 $string['installation'] = 'Instalazioa';
-$string['langdownloaderror'] = '"{$a}" hizkuntza ezin izan da instalatu. Instalazio-prozesuak ingelesez jarraituko du.';
-$string['memorylimithelp'] = '<p>Zure zerbitzarian PHP memoria-muga {$a} da.</p>
+$string['langdownloaderror'] = 'Zoritxarrez "{$a}" hizkuntza ezin izan da jaitsi. Instalazio-prozesuak ingelesez jarraituko du.';
+$string['memorylimithelp'] = '<p>Zure zerbitzarian PHP memoria-muga {$a} da une honetan.</p>
 
-<p>Aurrerago honek Moodle-ri arazoak sor diezaizkioke, bereziki modulu edo/eta erabiltzaile asko badituzu.</p>
+<p>Aurrerago honek Moodle-ri arazoak sor diezaizkioke, bereziki modulu edota erabiltzaile asko badituzu.</p>
 
-<p>PHP muga altuenarekin konfiguratzea aholkatzen dizugu, ad. 40M.
+<p>PHP muga altuagoa konfiguratzea aholkatzen dizugu, ad. 40MB.
 Hori egiteko modu asko daude:</p>
 <ol>
 <li>Ahal baduzu, PHP <i>--enable-memory-limit</i>-ekin berriz konpilatu.
 Horrek Moodle-k berak memoria-muga ezartzea ahalbidetzen du.</li>
 <li>php.ini fitxategirako sarbidea baduzu,<b>memory_limit</b> ezarpena alda dezakezu
-40Mra, adibidez. Sarbiderik ez baduzu, zure administratzaileari egin dezala eska diezaiokezu.</li>
-<li>PHP zerbitzari batzuetan Moodle-ren direktorioan beheko lerro hau daukan .htaccess fitxategia sor dezakezu:
-<p><blockquote>php_value memory_limit 40M</blockquote></p>
-<p>Hala ere, zerbitzari batzuetan horrek PHP orri <b>GUZTIEK</b> ez funtzionatzea ekar dezake
+40MBra, adibidez. Sarbiderik ez baduzu, zure administratzaileari egin dezala eska diezaiokezu.</li>
+<li>PHP zerbitzari batzuetan Moodle-ren karpetan beheko lerro hau daukan .htaccess fitxategia sor dezakezu:
+<blockquote>php_value memory_limit 40M</blockquote>
+<p>Hala ere, zerbitzari batzuetan horrek PHP orri <b>guztiek</b> ez funtzionatzea ekar dezake
 (orriak ikustean erroreak ere ikusiko dituzu). Kasu horretan, .htaccess fitxategia ezabatu beharko duzu.</p></li>
 </ol>';
 $string['paths'] = 'Bideak';
-$string['pathserrcreatedataroot'] = 'Instalatzaileak ezin du datu-direktorioa ({$a->dataroot}) sortu.';
+$string['pathserrcreatedataroot'] = 'Instalatzaileak ezin du datuen karpeta ({$a->dataroot}) sortu.';
 $string['pathshead'] = 'Egiaztatu bideak';
 $string['pathsrodataroot'] = 'Dataroot direktorioa ez da idazteko modukoa.';
-$string['pathsroparentdataroot'] = 'Goragoko direktorioa ({$a->parent}) ez da idazteko modukoa. Instalatzaileak ezin du datu-direktorioa ({$a->dataroot}) sortu.';
+$string['pathsroparentdataroot'] = 'Goragoko direktorioan ({$a->parent}) ezin da idatzi. Instalatzaileak ezin du datuen karpeta ({$a->dataroot}) sortu.';
 $string['pathsunsecuredataroot'] = 'Dataroot-en kokapena ez da segurua';
 $string['pathswrongadmindir'] = 'Kudeaketa direktorioa ez da existitzen';
 $string['phpextension'] = '{$a} PHP luzapena';
@@ -76,8 +76,7 @@ $string['phpversionhelp'] = '<p>Moodle-k gutxienez PHP 4.3.0 edo 5.1.0 (5.0.x er
 <p>PHP eguneratu edo PHP bertsio berriagoa duen zerbitzari batera jo</p>
 <p>5.0.x baduzu, nahi izanez gero, 4.4.x. bertsiora jaitsi dezakezu</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Orri hau ikusten baduzu <strong>{$a->packname} {$a->packversion}</strong> paketea
-    zure ordenadorean instalatu ahal izan duzu. Zorionak!';
+$string['welcomep20'] = 'Orri hau ikusten baduzu <strong>{$a->packname} {$a->packversion}</strong> paketea zure ordenagailuan arrakastaz instalatu ahal izan duzu. Zorionak!';
 $string['welcomep30'] = '<strong>{$a->installername}</strong>ren bertsio honek <strong>Moodle</strong>k
     zure ordenadorean funtzionatzeko behar diren aplikazioak dauzka,
     bereziki:';
@@ -86,8 +85,6 @@ $string['welcomep50'] = 'Paketeko aplikazio guztien erabilpena dagozkien lizentz
     arautzen dute. <strong>{$a->installername}</strong> aplikazioak
     <a href="http://www.opensource.org/docs/definition_plain.html">kode irekia</a> dauka eta
    <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> lizentziapean banatzen da.';
-$string['welcomep60'] = 'Datozen orriek urrats erraz batzuen bidez gidatuko zaituzte
-   <strong>Moodle</strong> zure ordenadorean instalatu eta konfiguratzeko. Aholkatzen diren lehentsitako baloreak
-   mantendu edo, nahi izanez gero, alda ditzakezu zure beharrei erantzun diezaieten.';
+$string['welcomep60'] = 'Datozen orriek urrats erraz batzuen bidez gidatuko zaituzte <strong>Moodle</strong> zure ordenagailuan instalatu eta konfiguratzeko. Aholkatzen diren lehentsitako baloreak mantendu edo, nahi izanez gero, alda ditzakezu zure beharrei erantzun diezaieten.';
 $string['welcomep70'] = '"Hurrengoa" botoia sakatu <strong>Moodle</strong>ren konfigurazioarekin jarraitzeko.';
 $string['wwwroot'] = 'Web helbidea';
