@@ -314,10 +314,10 @@ YUI.add('moodle-enrol-otherusersmanager', function(Y) {
                     )
                     .append(Y.Node.create('<div class="'+CSS.OPTIONS+'"><span class="label">'+M.util.get_string('assignrole', 'role')+': </span></div>'))
                 );
-            var id = 0, roles = this._manager.get(ASSIGNABLEROLES);
-            for (id in roles) {
-                var role = Y.Node.create('<a href="#" class="'+CSS.ROLEOPTION+'">'+roles[id]+'</a>');
-                role.on('click', this.assignRoleToUser, this, id, role);
+            var roles = this._manager.get(ASSIGNABLEROLES);
+            for (var i in roles) {
+                var role = Y.Node.create('<a href="#" class="' + CSS.ROLEOPTION + '">' + roles[i].name + '</a>');
+                role.on('click', this.assignRoleToUser, this, roles[i].id, role);
                 this._node.one('.'+CSS.OPTIONS).append(role);
             }
             return this._node;

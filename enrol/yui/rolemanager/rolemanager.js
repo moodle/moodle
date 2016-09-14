@@ -94,7 +94,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                             if (o.error) {
                                 new M.core.ajaxException(o);
                             } else {
-                                this.users[userid].addRoleToDisplay(args.roleid, this.get(ASSIGNABLEROLES)[args.roleid]);
+                                this.users[userid].addRoleToDisplay(args.roleid, this._getAssignableRole(args.roleid));
                             }
                         } catch (e) {
                             new M.core.exception(e);
@@ -151,6 +151,15 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                     roleid : roleid
                 }
             });
+        },
+        _getAssignableRole: function(roleid) {
+            var roles = this.get(ASSIGNABLEROLES);
+            for (var i in roles) {
+                if (roles[i].id == roleid) {
+                    return roles[i].name;
+                }
+            }
+            return null;
         },
         _loadAssignableRoles : function() {
             var c = this.get(COURSEID), params = {
@@ -277,7 +286,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             var current = this.get(CURRENTROLES);
             var allroles = true, i = 0;
             for (i in roles) {
-                if (!current[i]) {
+                if (!current[roles[i].id]) {
                     allroles = false;
                     break;
                 }
@@ -353,8 +362,10 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             var content = element.one('.content');
             var roles = m.get(ASSIGNABLEROLES);
             for (i in roles) {
-                var button = Y.Node.create('<input type="button" value="'+roles[i]+'" id="add_assignable_role_'+i+'" />');
-                button.on('click', this.submit, this, i);
+                var buttonid = 'add_assignable_role_' + roles[i].id;
+                var buttonhtml = '<input type="button" value="' + roles[i].name + '" id="' + buttonid + '" />';
+                var button = Y.Node.create(buttonhtml);
+                button.on('click', this.submit, this, roles[i].id);
                 content.append(button);
             }
             Y.one(document.body).append(element);
