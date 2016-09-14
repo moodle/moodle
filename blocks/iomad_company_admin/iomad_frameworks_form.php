@@ -95,7 +95,7 @@ if (!empty($update)) {
                 // Deal with any current enrolments.
                 if ($companyframework = $DB->get_record('company_comp_frameworks', array('frameworkid' => $frameworkid))) {
                     if ($shared == 2) {
-                        $sharingrecord = new object();
+                        $sharingrecord = new stdclass();
                         $sharingrecord->frameworkid = $frameworkid;
                         $sharingrecord->companyid = $companyframework->companyid;
                         $DB->insert_record('company_shared_frameworks', $sharingrecord);

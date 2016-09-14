@@ -149,7 +149,7 @@ if (!empty($courseid)) {
     // Get the scorm id's in this course.
     $scormids = $DB->get_records('scorm', array('course' => $courseid));
     foreach ($scormids as $scormid) {
-        $scormdata = new object();
+        $scormdata = new stdclass();
         $scormident = $scormid->id;
         // Get the users who have attempted this.
         if ($scormusers = $DB->get_records_sql("SELECT DISTINCT(userid)

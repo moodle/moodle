@@ -481,7 +481,7 @@ if (!$users) {
     // Set the initial parameters for the table header links.
     $linkparams = $urlparams;
 
-    $override = new object();
+    $override = new stdclass();
     $override->firstname = 'firstname';
     $override->lastname = 'lastname';
     $fullnamelanguage = get_string('fullnamedisplay', '', $override);

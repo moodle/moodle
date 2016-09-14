@@ -51,7 +51,7 @@ echo get_invoice_html($invoice->id);
 // Check if the user has a company.
 if (empty($USER->profile['company'])) {
     if (!$company = $DB->get_record('company', array('name' => $invoice->company))) {
-        $company = new object();
+        $company = new stdclass();
         $company->name = $invoice->company;
         $company->shortname = preg_replace('~\b(\w)|.~', '$1', $company->name);
         // Does this shortname already exist?
@@ -70,13 +70,13 @@ if (empty($USER->profile['company'])) {
         $company->id = $companyid;
 
         //  Set up a profiles field category for this company.
-        $catdata = new object();
+        $catdata = new stdclass();
         $catdata->sortorder = $DB->count_records('user_info_category') + 1;
         $catdata->name = $company->shortname;
         $DB->insert_record('user_info_category', $catdata, false);
 
         // Set up course category for company.
-        $coursecat = new object();
+        $coursecat = new stdclass();
         $coursecat->name = $company->name;
         $coursecat->sortorder = 999;
         $coursecat->id = $DB->insert_record('course_categories', $coursecat);

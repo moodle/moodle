@@ -62,7 +62,7 @@ $blockpage->setup();
 if ($id == -1) {
     // Creating new user.
     iomad::require_capability('block/iomad_company_admin:editusers', $systemcontext);
-    $user = new object();
+    $user = new stdclass();
     $user->id = -1;
     $user->auth = 'manual';
     $user->confirmed = 1;

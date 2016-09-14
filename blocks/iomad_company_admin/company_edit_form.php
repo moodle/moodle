@@ -380,7 +380,7 @@ if ($mform->is_cancelled()) {
 
     if ($isadding) {
         // Set up a profiles field category for this company.
-        $catdata = new object();
+        $catdata = new stdclass();
         $catdata->sortorder = $DB->count_records('user_info_category') + 1;
         $catdata->name = $data->shortname;
         $data->profileid = $DB->insert_record('user_info_category', $catdata, false);
@@ -392,7 +392,7 @@ if ($mform->is_cancelled()) {
         $data->id = $companyid;
 
         // Set up course category for company.
-        $coursecat = new object();
+        $coursecat = new stdclass();
         $coursecat->name = $data->name;
         $coursecat->sortorder = 999;
         $coursecat->id = $DB->insert_record('course_categories', $coursecat);

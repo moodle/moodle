@@ -369,7 +369,7 @@ if (!empty($courseid) && !empty($usercompletion[$courseid])) {
                     WHERE userid = $userid AND scormid = ". $instanceinfo->instance ."
                     AND attempt = (SELECT MAX(attempt) from {scorm_scoes_track}
                     WHERE userid = $userid AND scormid = ". $instanceinfo->instance .")";
-            $scormdata = new object();
+            $scormdata = new stdclass();
             $numattempts = 0;
             if ($scormattempt = $DB->get_records_sql($sql)) {
                 foreach ($scormattempt as $data) {

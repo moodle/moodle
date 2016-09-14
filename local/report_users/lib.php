@@ -50,7 +50,7 @@ class userrep {
                   WHERE gi.courseid=$courseid AND gi.itemtype='course' AND gg.userid=$userid
                   AND gi.id=gg.itemid";
         if (!$gradeinfo = $DB->get_record_sql($gbsql)) {
-            $gradeinfo = new object();
+            $gradeinfo = new stdclass();
             $gradeinfo->result = null;
         }
 

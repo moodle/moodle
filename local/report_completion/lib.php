@@ -248,7 +248,7 @@ class comprep{
                           WHERE gi.courseid=$courseid AND gi.itemtype='course' AND gg.userid=".$user->id."
                           AND gi.id=gg.itemid";
                 if (!$gradeinfo = $DB->get_record_sql($gbsql)) {
-                    $gradeinfo = new object();
+                    $gradeinfo = new stdclass();
                     $gradeinfo->result = null;
                 }
                 $u->result = round($gradeinfo->result, 0);

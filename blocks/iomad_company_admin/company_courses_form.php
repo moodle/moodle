@@ -134,7 +134,7 @@ class company_courses_form extends moodleform {
                             $companycourserecord->departmentid = $this->departmentid;
                             $DB->update_record('company_course', $companycourserecord);
                         } else {
-                            $sharingrecord = new object();
+                            $sharingrecord = new stdclass();
                             $sharingrecord->courseid = $addcourse->id;
                             $sharingrecord->companyid = $company->id;
                             $DB->insert_record('company_shared_courses', $sharingrecord);

@@ -147,7 +147,7 @@ if (!empty($update)) {
                 // Deal with any current enrolments.
                 if ($companycourse = $DB->get_record('company_course', array('courseid' => $courseid))) {
                     if ($shared == 2) {
-                        $sharingrecord = new object();
+                        $sharingrecord = new stdclass();
                         $sharingrecord->courseid = $courseid;
                         $sharingrecord->companyid = $companycourse->companyid;
                         $DB->insert_record('company_shared_courses', $sharingrecord);
@@ -182,7 +182,7 @@ if (!empty($update)) {
                 if ($companygroups = $DB->get_records('company_course_groups', array('courseid' => $courseid))) {
                     // Got companies using it.
                     foreach ($companygroups as $companygroup) {
-                        $sharingrecord = new object();
+                        $sharingrecord = new stdclass();
                         $sharingrecord->courseid = $courseid;
                         $sharingrecord->companyid = $companygroup->companyid;
                         $DB->insert_record('company_shared_courses', $sharingrecord);

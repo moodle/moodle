@@ -1262,7 +1262,7 @@ class company {
 
         // Creates a company group within a shared course.
         $company = $DB->get_record('company', array('id' => $companyid));
-        $data = new object();
+        $data = new stdclass();
         $data->timecreated  = time();
         $data->timemodified = $data->timecreated;
         $data->name = $company->shortname;

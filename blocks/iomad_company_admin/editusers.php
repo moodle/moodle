@@ -383,7 +383,7 @@ if ($confirmuser and confirm_sesskey()) {
     $aclrecord = $DB->get_record('mnet_sso_access_control', array('username' => $user->username, 'mnet_host_id'
                                   => $user->mnethostid));
     if (empty($aclrecord)) {
-        $aclrecord = new object();
+        $aclrecord = new stdclass();
         $aclrecord->mnet_host_id = $user->mnethostid;
         $aclrecord->username = $user->username;
         $aclrecord->accessctrl = $accessctrl;

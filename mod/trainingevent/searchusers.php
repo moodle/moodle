@@ -281,7 +281,7 @@ if (!$users) {
 
     $mainadmin = get_admin();
 
-    $override = new object();
+    $override = new stdclass();
     $override->firstname = 'firstname';
     $override->lastname = 'lastname';
     $fullnamelanguage = get_string('fullnamedisplay', '', $override);

@@ -99,7 +99,7 @@ if (!empty($update)) {
                 // Deal with any current enrolments.
                 if ($companyframework = $DB->get_record('company_framework', array('frameworkid' => $frameworkid))) {
                     if ($shared == 2) {
-                        $sharingrecord = new object();
+                        $sharingrecord = new stdclass();
                         $sharingrecord->frameworkid = $frameworkid;
                         $sharingrecord->companyid = $companyframework->companyid;
                         $DB->insert_record('company_shared_frameworks', $sharingrecord);
@@ -134,7 +134,7 @@ if (!empty($update)) {
                 if ($companygroups = $DB->get_records('company_framework_groups', array('frameworkid' => $frameworkid))) {
                     // Got companies using it.
                     foreach ($companygroups as $companygroup) {
-                        $sharingrecord = new object();
+                        $sharingrecord = new stdclass();
                         $sharingrecord->frameworkid = $frameworkid;
                         $sharingrecord->companyid = $companygroup->companyid;
                         $DB->insert_record('company_shared_frameworks', $sharingrecord);

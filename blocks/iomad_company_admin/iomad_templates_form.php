@@ -95,7 +95,7 @@ if (!empty($update)) {
                 // Deal with any current assignments.
                 if ($companytemplate = $DB->get_record('company_comp_templates', array('templateid' => $templateid))) {
                     if ($shared == 2) {
-                        $sharingrecord = new object();
+                        $sharingrecord = new stdclass();
                         $sharingrecord->templateid = $templateid;
                         $sharingrecord->companyid = $companytemplate->companyid;
                         $DB->insert_record('company_shared_templates', $sharingrecord);
