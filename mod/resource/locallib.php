@@ -75,10 +75,10 @@ function resource_display_embed($resource, $cm, $course, $file) {
 
     $extension = resourcelib_get_extension($file->get_filename());
 
-    $mediarenderer = $PAGE->get_renderer('core', 'media');
+    $mediamanager = core_media_manager::instance();
     $embedoptions = array(
-        core_media::OPTION_TRUSTED => true,
-        core_media::OPTION_BLOCK => true,
+        core_media_manager::OPTION_TRUSTED => true,
+        core_media_manager::OPTION_BLOCK => true,
     );
 
     if (file_mimetype_in_typegroup($mimetype, 'web_image')) {  // It's an image
@@ -88,9 +88,9 @@ function resource_display_embed($resource, $cm, $course, $file) {
         // PDF document
         $code = resourcelib_embed_pdf($fullurl, $title, $clicktoopen);
 
-    } else if ($mediarenderer->can_embed_url($moodleurl, $embedoptions)) {
+    } else if ($mediamanager->can_embed_url($moodleurl, $embedoptions)) {
         // Media (audio/video) file.
-        $code = $mediarenderer->embed_url($moodleurl, $title, 0, 0, $embedoptions);
+        $code = $mediamanager->embed_url($moodleurl, $title, 0, 0, $embedoptions);
 
     } else {
         // anything else - just try object tag enlarged as much as possible

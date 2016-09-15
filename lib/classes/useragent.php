@@ -316,6 +316,10 @@ class core_useragent {
                 // Internet Explorer.
                 return self::check_ie_version($version);
 
+            case 'Edge':
+                // Microsoft Edge.
+                return self::check_edge_version($version);
+
             case 'Firefox':
                 // Mozilla Firefox browsers.
                 return self::check_firefox_version($version);
@@ -1053,5 +1057,86 @@ class core_useragent {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if current browser supports files with give extension as <video> or <audio> source
+     *
+     * Note, the check here is not 100% accurate!
+     *
+     * First, we do not know which codec is used in .mp4 or .webm files. Not all browsers support
+     * all codecs.
+     *
+     * Also we assume that users of Firefox/Chrome/Safari do not use the ancient versions of browsers.
+     *
+     * We check the exact version for IE/Edge though. We know that there are still users of very old
+     * versions that are afraid to upgrade or have slow IT department.
+     *
+     * Resources:
+     * https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
+     * https://en.wikipedia.org/wiki/HTML5_video
+     * https://en.wikipedia.org/wiki/HTML5_Audio
+     *
+     * @param string $extension extension without leading .
+     * @return bool
+     */
+    public static function supports_html5($extension) {
+        $extension = strtolower($extension);
+
+        $supportedvideo = array('m4v', 'webm', 'ogv', 'mp4');
+        $supportedaudio = array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav', 'mov');
+        // TODO MDL-56549 Flac will be supported in Firefox 51 in January 2017.
+
+        // Basic extension support.
+        if (!in_array($extension, $supportedvideo) && !in_array($extension, $supportedaudio)) {
+            return false;
+        }
+
+        // MS IE support - version 9.0 or later.
+        if (self::is_ie() && !self::check_ie_version('9.0')) {
+            return false;
+        }
+
+        // MS Edge support - version 12.0 for desktop and 13.0 for mobile.
+        if (self::is_edge()) {
+            if (!self::check_edge_version('12.0')) {
+                return false;
+            }
+            if (self::instance()->is_useragent_mobile() && !self::check_edge_version('13.0')) {
+                return false;
+            }
+        }
+
+        // Different exceptions.
+
+        // Webm is not supported in IE, Edge and in Safari.
+        if ($extension === 'webm' &&
+                (self::is_ie() || self::is_edge() || self::is_safari() || self::is_safari_ios())) {
+            return false;
+        }
+        // Ogg is not supported in IE, Edge and Safari.
+        $isogg = in_array($extension, ['ogg', 'oga', 'ogv']);
+        if ($isogg && (self::is_ie() || self::is_edge() || self::is_safari() || self::is_safari_ios())) {
+            return false;
+        }
+        // Wave is not supported in IE.
+        if ($extension === 'wav' && self::is_ie()) {
+            return false;
+        }
+        // Aac is not supported in IE below 11.0.
+        if ($extension === 'aac' && (self::is_ie() && !self::check_ie_version('11.0'))) {
+            return false;
+        }
+        // Mpeg is not supported in IE below 10.0.
+        $ismpeg = in_array($extension, ['m4a', 'mp3', 'm4v', 'mp4']);
+        if ($ismpeg && (self::is_ie() && !self::check_ie_version('10.0'))) {
+            return false;
+        }
+        // Mov is not supported in IE.
+        if ($extension === 'mov' && self::is_ie()) {
+            return false;
+        }
+
+        return true;
     }
 }

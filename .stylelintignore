@@ -25,7 +25,6 @@ lib/htmlpurifier/
 lib/jabber/
 lib/minify/matthiasmullie-minify/
 lib/minify/matthiasmullie-pathconverter/
-lib/flowplayer/
 lib/pear/Auth/RADIUS.php
 lib/pear/Crypt/CHAP.php
 lib/pear/HTML/Common.php

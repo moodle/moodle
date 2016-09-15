@@ -217,6 +217,9 @@ class phpunit_util extends testing_util {
         core_filetypes::reset_caches();
         \core_search\manager::clear_static();
         core_user::reset_caches();
+        if (class_exists('core_media_manager', false)) {
+            core_media_manager::reset_caches();
+        }
 
         // Reset static unit test options.
         if (class_exists('\availability_date\condition', false)) {

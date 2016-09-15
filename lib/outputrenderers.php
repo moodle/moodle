@@ -563,9 +563,6 @@ class core_renderer extends renderer_base {
             }
         }
 
-        // flow player embedding support
-        $this->page->requires->js_function_call('M.util.load_flowplayer');
-
         // Set up help link popups for all links with the helptooltip class
         $this->page->requires->js_init_call('M.util.help_popups.setup');
 
@@ -4639,6 +4636,7 @@ class core_renderer_ajax extends core_renderer {
  * Used in file resources, media filter, and any other places that need to
  * output embedded media.
  *
+ * @deprecated since Moodle 3.2
  * @copyright 2011 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4649,75 +4647,14 @@ class core_media_renderer extends plugin_renderer_base {
     private $embeddablemarkers;
 
     /**
-     * Constructor requires medialib.php.
+     * Constructor
      *
      * This is needed in the constructor (not later) so that you can use the
      * constants and static functions that are defined in core_media class
      * before you call renderer functions.
      */
     public function __construct() {
-        global $CFG;
-        require_once($CFG->libdir . '/medialib.php');
-    }
-
-    /**
-     * Obtains the list of core_media_player objects currently in use to render
-     * items.
-     *
-     * The list is in rank order (highest first) and does not include players
-     * which are disabled.
-     *
-     * @return array Array of core_media_player objects in rank order
-     */
-    protected function get_players() {
-        global $CFG;
-
-        // Save time by only building the list once.
-        if (!$this->players) {
-            // Get raw list of players.
-            $players = $this->get_players_raw();
-
-            // Chuck all the ones that are disabled.
-            foreach ($players as $key => $player) {
-                if (!$player->is_enabled()) {
-                    unset($players[$key]);
-                }
-            }
-
-            // Sort in rank order (highest first).
-            usort($players, array('core_media_player', 'compare_by_rank'));
-            $this->players = $players;
-        }
-        return $this->players;
-    }
-
-    /**
-     * Obtains a raw list of player objects that includes objects regardless
-     * of whether they are disabled or not, and without sorting.
-     *
-     * You can override this in a subclass if you need to add additional
-     * players.
-     *
-     * The return array is be indexed by player name to make it easier to
-     * remove players in a subclass.
-     *
-     * @return array $players Array of core_media_player objects in any order
-     */
-    protected function get_players_raw() {
-        return array(
-            'vimeo' => new core_media_player_vimeo(),
-            'youtube' => new core_media_player_youtube(),
-            'youtube_playlist' => new core_media_player_youtube_playlist(),
-            'html5video' => new core_media_player_html5video(),
-            'html5audio' => new core_media_player_html5audio(),
-            'mp3' => new core_media_player_mp3(),
-            'flv' => new core_media_player_flv(),
-            'wmp' => new core_media_player_wmp(),
-            'qt' => new core_media_player_qt(),
-            'rm' => new core_media_player_rm(),
-            'swf' => new core_media_player_swf(),
-            'link' => new core_media_player_link(),
-        );
+        debugging('Class core_media_renderer is deprecated, please use core_media_manager::instance()', DEBUG_DEVELOPER);
     }
 
     /**
@@ -4739,18 +4676,7 @@ class core_media_renderer extends plugin_renderer_base {
      */
     public function embed_url(moodle_url $url, $name = '', $width = 0, $height = 0,
             $options = array()) {
-
-        // Get width and height from URL if specified (overrides parameters in
-        // function call).
-        $rawurl = $url->out(false);
-        if (preg_match('/[?#]d=([\d]{1,4}%?)x([\d]{1,4}%?)/', $rawurl, $matches)) {
-            $width = $matches[1];
-            $height = $matches[2];
-            $url = new moodle_url(str_replace($matches[0], '', $rawurl));
-        }
-
-        // Defer to array version of function.
-        return $this->embed_alternatives(array($url), $name, $width, $height, $options);
+        return core_media_manager::instance()->embed_url($url, $name, $width, $height, $options);
     }
 
     /**
@@ -4785,38 +4711,7 @@ class core_media_renderer extends plugin_renderer_base {
      */
     public function embed_alternatives($alternatives, $name = '', $width = 0, $height = 0,
             $options = array()) {
-
-        // Get list of player plugins (will also require the library).
-        $players = $this->get_players();
-
-        // Set up initial text which will be replaced by first player that
-        // supports any of the formats.
-        $out = core_media_player::PLACEHOLDER;
-
-        // Loop through all players that support any of these URLs.
-        foreach ($players as $player) {
-            // Option: When no other player matched, don't do the default link player.
-            if (!empty($options[core_media::OPTION_FALLBACK_TO_BLANK]) &&
-                    $player->get_rank() === 0 && $out === core_media_player::PLACEHOLDER) {
-                continue;
-            }
-
-            $supported = $player->list_supported_urls($alternatives, $options);
-            if ($supported) {
-                // Embed.
-                $text = $player->embed($supported, $name, $width, $height, $options);
-
-                // Put this in place of the 'fallback' slot in the previous text.
-                $out = str_replace(core_media_player::PLACEHOLDER, $text, $out);
-            }
-        }
-
-        // Remove 'fallback' slot from final version and return it.
-        $out = str_replace(core_media_player::PLACEHOLDER, '', $out);
-        if (!empty($options[core_media::OPTION_BLOCK]) && $out !== '') {
-            $out = html_writer::tag('div', $out, array('class' => 'resourcecontent'));
-        }
-        return $out;
+        return core_media_manager::instance()->embed_alternatives($alternatives, $name, $width, $height, $options);
     }
 
     /**
@@ -4831,7 +4726,7 @@ class core_media_renderer extends plugin_renderer_base {
      * @return bool True if file can be embedded
      */
     public function can_embed_url(moodle_url $url, $options = array()) {
-        return $this->can_embed_urls(array($url), $options);
+        return core_media_manager::instance()->can_embed_url($url, $options);
     }
 
     /**
@@ -4844,18 +4739,7 @@ class core_media_renderer extends plugin_renderer_base {
      * @return bool True if file can be embedded
      */
     public function can_embed_urls(array $urls, $options = array()) {
-        // Check all players to see if any of them support it.
-        foreach ($this->get_players() as $player) {
-            // Link player (always last on list) doesn't count!
-            if ($player->get_rank() <= 0) {
-                break;
-            }
-            // First player that supports it, return true.
-            if ($player->list_supported_urls($urls, $options)) {
-                return true;
-            }
-        }
-        return false;
+        return core_media_manager::instance()->can_embed_urls($urls, $options);
     }
 
     /**
@@ -4870,19 +4754,7 @@ class core_media_renderer extends plugin_renderer_base {
      * @return string String suitable for use in regex such as '(\.mp4|\.flv)'
      */
     public function get_embeddable_markers() {
-        if (empty($this->embeddablemarkers)) {
-            $markers = '';
-            foreach ($this->get_players() as $player) {
-                foreach ($player->get_embeddable_markers() as $marker) {
-                    if ($markers !== '') {
-                        $markers .= '|';
-                    }
-                    $markers .= preg_quote($marker);
-                }
-            }
-            $this->embeddablemarkers = $markers;
-        }
-        return $this->embeddablemarkers;
+        return core_media_manager::instance()->get_embeddable_markers();
     }
 }
 

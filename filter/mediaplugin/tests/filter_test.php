@@ -32,22 +32,10 @@ require_once($CFG->dirroot . '/filter/mediaplugin/filter.php'); // Include the c
 class filter_mediaplugin_testcase extends advanced_testcase {
 
     function test_filter_mediaplugin_link() {
-        global $CFG;
-
         $this->resetAfterTest(true);
 
         // we need to enable the plugins somehow
-        $CFG->core_media_enable_youtube    = 1;
-        $CFG->core_media_enable_vimeo      = 1;
-        $CFG->core_media_enable_mp3        = 1;
-        $CFG->core_media_enable_flv        = 1;
-        $CFG->core_media_enable_swf        = 1;
-        $CFG->core_media_enable_html5audio = 1;
-        $CFG->core_media_enable_html5video = 1;
-        $CFG->core_media_enable_qt         = 1;
-        $CFG->core_media_enable_wmp        = 1;
-        $CFG->core_media_enable_rm         = 1;
-
+        \core\plugininfo\media::set_enabled_plugins('vimeo,youtube,videojs,html5video,swf,html5audio');
 
         $filterplugin = new filter_mediaplugin(null, array());
 
@@ -64,7 +52,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
             '<a href="http://moodle.org/testfile/test.mp3">test mp3</a>',
             '<a href="http://moodle.org/testfile/test.ogg">test ogg</a>',
             '<a id="movie player" class="center" href="http://moodle.org/testfile/test.mpg">test mpg</a>',
-            '<a href="http://moodle.org/testfile/test.ram">test</a>',
+            '<a href="http://moodle.org/testfile/test.webm">test</a>',
             '<a href="http://www.youtube.com/watch?v=JghQgA2HMX8" class="href=css">test file</a>',
             '<a href="http://www.youtube-nocookie.com/watch?v=JghQgA2HMX8" class="href=css">test file</a>',
             '<a href="http://youtu.be/JghQgA2HMX8" class="href=css">test file</a>',
@@ -72,7 +60,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
             '<a class="youtube" href="http://www.youtube.com/watch?v=JghQgA2HMX8">test file</a>',
             '<a class="_blanktarget" href="http://moodle.org/testfile/test.flv?d=100x100">test flv</a>',
             '<a class="hrefcss" href="http://www.youtube.com/watch?v=JghQgA2HMX8">test file</a>',
-            '<a  class="content"     href="http://moodle.org/testfile/test.avi">test mp3</a>',
+            '<a  class="content"     href="http://moodle.org/testfile/test.ogg">test ogg</a>',
             '<a     id="audio"      href="http://moodle.org/testfile/test.mp3">test mp3</a>',
             '<a  href="http://moodle.org/testfile/test.mp3">test mp3</a>',
             '<a     href="http://moodle.org/testfile/test.mp3">test mp3</a>',
@@ -83,7 +71,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
             '<a                         class="content"
 
 
-                            href="http://moodle.org/testfile/test.avi">test mp3
+                            href="http://moodle.org/testfile/test.wav">test wav
                                     </a>',
             '<a             href="http://www.youtube.com/watch?v=JghQgA2HMX8?d=200x200"     >youtube\'s</a>',
             // Test a long URL under 4096 characters.
@@ -139,7 +127,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
         // Valid mediaurl followed by a longurl.
         $precededlongurl = '<a href="http://moodle.org/testfile/test.mp3">test.mp3</a>'. $longurl;
         $filter = $filterplugin->filter($precededlongurl);
-        $this->assertEquals(1, substr_count($filter, 'M.util.add_audio_player'));
+        $this->assertEquals(1, substr_count($filter, '</audio>'));
         $this->assertContains($longurl, $filter);
 
         // Testing for cases where: to be filtered content has 6+ text afterwards.
