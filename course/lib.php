@@ -2776,6 +2776,11 @@ function update_course($data, $editoroptions = NULL) {
 
     $data->timemodified = time();
 
+    // Prevent changes on front page course.
+    if ($data->id == SITEID) {
+        throw new moodle_exception('invalidcourse', 'error');
+    }
+
     $oldcourse = course_get_format($data->id)->get_course();
     $context   = context_course::instance($oldcourse->id);
 
