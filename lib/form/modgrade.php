@@ -502,7 +502,8 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                             $this->scaleformelement->setValue(($value * -1));
                         } else if ($value > 0) {
                             $this->gradetypeformelement->setValue('point');
-                            $this->maxgradeformelement->setValue($value);
+                            $maxvalue = !empty($this->currentgrade) ? (string)unformat_float($this->currentgrade) : $value;
+                            $this->maxgradeformelement->setValue($maxvalue);
                         }
                     } else {
                         $this->gradetypeformelement->setValue('none');
