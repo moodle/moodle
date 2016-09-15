@@ -47,16 +47,16 @@ class core_iplookup_geoplugin_testcase extends advanced_testcase {
     }
 
     public function test_geoip_ipv4() {
-        $result = iplookup_find_location('147.230.16.1');
+        $result = iplookup_find_location('131.111.150.25');
 
         $this->assertEquals('array', gettype($result));
-        $this->assertEquals('Liberec', $result['city']);
-        $this->assertEquals(15.0653, $result['longitude'], '', 0.001);
-        $this->assertEquals(50.7639, $result['latitude'], '', 0.001);
+        $this->assertEquals('Cambridge', $result['city']);
+        $this->assertEquals(0.1167, $result['longitude'], '', 0.001);
+        $this->assertEquals(52.200000000000003, $result['latitude'], '', 0.001);
         $this->assertNull($result['error']);
         $this->assertEquals('array', gettype($result['title']));
-        $this->assertEquals('Liberec', $result['title'][0]);
-        $this->assertEquals('Czech Republic', $result['title'][1]);
+        $this->assertEquals('Cambridge', $result['title'][0]);
+        $this->assertEquals('United Kingdom', $result['title'][1]);
     }
 
     public function test_geoip_ipv6() {
