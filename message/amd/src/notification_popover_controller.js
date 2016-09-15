@@ -36,7 +36,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         ALL_NOTIFICATIONS_CONTAINER: '[data-region="all-notifications"]',
         NOTIFICATION: '[data-region="notification-content-item-container"]',
         UNREAD_NOTIFICATION: '[data-region="notification-content-item-container"].unread',
-        NOTIFICATION_LINK: '[data-region="content-item-link"]',
+        NOTIFICATION_LINK: '[data-action="content-item-link"]',
         EMPTY_MESSAGE: '[data-region="empty-message"]',
         COUNT_CONTAINER: '[data-region="count-container"]',
     };

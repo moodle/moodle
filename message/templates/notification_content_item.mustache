@@ -34,7 +34,13 @@
     }
 
 }}
-<div class="content-item-container {{^read}}unread{{/read}}"
+{{#contexturl}}
+<a href="{{{.}}}" data-action="content-item-link"
+{{/contexturl}}
+{{^contexturl}}
+<div
+{{/contexturl}}
+    class="content-item-container {{^read}}unread{{/read}}"
     data-region="notification-content-item-container"
     data-id="{{id}}"
     role="listitem"
@@ -42,9 +48,6 @@
     {{^read}}aria-label="{{#str}} unreadnotification, message, {{subject}} {{/str}}"{{/read}}
     tabindex="0">
 
-    {{#contexturl}}
-    <a class="content-item-link" href="{{{.}}}" data-region="content-item-link">
-    {{/contexturl}}
     <div class="content-item-body">
         <div class="notification-image">
             <img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/>
@@ -54,8 +57,11 @@
     <div class="content-item-footer">
         <div class="timestamp">{{timecreatedpretty}}</div>
     </div>
-    {{#contexturl}}
-    </a>
-    {{/contexturl}}
+
     {{#viewmoreurl}}<a href="{{{.}}}" class="view-more">{{#str}} viewmore {{/str}}</a>{{/viewmoreurl}}
+{{#contexturl}}
+</a>
+{{/contexturl}}
+{{^contexturl}}
 </div>
+{{/contexturl}}

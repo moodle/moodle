@@ -258,6 +258,9 @@
                     padding: 5px;
                     position: relative;
                     margin: 0;
+                    display: block;
+                    color: inherit;
+                    text-decoration: none;
 
                     &:hover {
                         color: #fff;
@@ -282,16 +285,6 @@
                             .notification-message {
                                 font-weight: 600;
                             }
-                        }
-                    }
-
-                    .content-item-link {
-                        color: inherit;
-                        text-decoration: none;
-
-                        &:hover {
-                            color: inherit;
-                            text-decoration: none;
                         }
                     }
 
@@ -386,36 +379,30 @@
                         border-bottom: 1px solid #ddd;
                         box-sizing: border-box;
                         padding: 5px;
-                        height: 66px;
                         cursor: pointer;
+                        color: inherit;
+                        text-decoration: none;
+                        display: block;
 
                         &:hover {
                             color: #fff;
                             background-color: #79b5e6;
                         }
 
-                        .content-item-link {
-                            color: inherit;
-                            text-decoration: none;
-
-                            &:hover {
-                                color: inherit;
-                                text-decoration: none;
-                            }
-                        }
-
                         .content-item {
                             height: 100%;
                             width: 100%;
+                            box-sizing: border-box;
 
                             .profile-image-container {
-                                height: 100%;
-                                width: 20%;
+                                width: 30px;
                                 display: inline-block;
                                 text-align: center;
+                                vertical-align: middle;
+                                float: left;
 
                                 img {
-                                    height: 100%;
+                                    width: 100%;
                                     display: inline-block;
                                     vertical-align: middle;
                                     border-radius: 50%;
@@ -425,13 +412,14 @@
                             .content-item-body {
                                 display: inline-block;
                                 box-sizing: border-box;
-                                vertical-align: middle;
-                                width: 75%;
-                                height: 100%;
+                                width: ~"calc(100% - 30px)";
+                                font-size: 12px;
+                                padding-left: 10px;
+                                overflow: hidden;
 
                                 h3 {
-                                    font-size: 14px;
-                                    line-height: 14px;
+                                    font-size: 12px;
+                                    line-height: 12px;
                                     margin: 0;
                                     width: 100%;
                                 }
@@ -446,16 +434,22 @@
                             }
                         }
                         &.unread {
-                            background-color: #f1f1f1;
+                            background-color: #f4f4f4;
+
+                            &:hover {
+                                background-color: #79b5e6;
+                            }
 
                             .content-item-body {
-                                width: 65%;
+                                font-weight: 600;
+                                width: ~"calc(90% - 30px)";
                             }
 
                             .unread-count-container {
                                 display: inline-block;
                                 width: 10%;
                                 text-align: center;
+                                float: right;
                             }
 
                             &:hover {
@@ -558,6 +552,33 @@
                             }
                             .content-item-controls {
                                 text-align: left;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .popover-region-messages {
+        .popover-region-container {
+            .popover-region-content-container {
+                .popover-region-content {
+                    .messages {
+                        .content-item-container {
+                            .content-item {
+                                .profile-image-container {
+                                    float: right;
+                                }
+
+                                .content-item-body {
+                                    padding-left: 0;
+                                    padding-right: 10px;
+                                }
+
+                                .unread-count-container {
+                                    float: left;
+                                }
                             }
                         }
                     }

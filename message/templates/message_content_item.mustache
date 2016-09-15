@@ -34,14 +34,14 @@
     }
 
 }}
-<div class="content-item-container {{^isread}}unread{{/isread}}"
+<a class="content-item-container {{^isread}}unread{{/isread}}"
     data-region="message-content-item-container"
     role="listitem"
+    href="{{{contexturl}}}"
+    {{^isread}}aria-label="{{#str}} viewunreadmessageswith, message, {{fullname}} {{/str}}"{{/isread}}
+    {{#isread}}aria-label="{{#str}} viewmessageswith, message, {{fullname}} {{/str}}"{{/isread}}
     tabindex="0">
 
-    {{#contexturl}}
-    <a class="content-item-link" href="{{{.}}}">
-    {{/contexturl}}
     <div class="content-item">
         <div class="profile-image-container">
             <img src="{{{profileimageurl}}}" />
@@ -59,7 +59,4 @@
             <span data-region="unread-count" class="badge badge-important">{{unreadcount}}</span>
         </div>
     </div>
-    {{#contexturl}}
-    </a>
-    {{/contexturl}}
-</div>
+</a>

@@ -7693,6 +7693,9 @@ body.path-question-type .mform fieldset.hidden {
   padding: 5px;
   position: relative;
   margin: 0;
+  display: block;
+  color: inherit;
+  text-decoration: none;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container:hover {
   color: #fff;
@@ -7710,14 +7713,6 @@ body.path-question-type .mform fieldset.hidden {
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container.unread .content-item-body .notification-message {
   font-weight: 600;
-}
-.popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container .content-item-link {
-  color: inherit;
-  text-decoration: none;
-}
-.popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container .content-item-link:hover {
-  color: inherit;
-  text-decoration: none;
 }
 .popover-region-notifications.popover-region .popover-region-container .popover-region-content .content-item-container .content-item-body {
   box-sizing: border-box;
@@ -7773,33 +7768,29 @@ body.path-question-type .mform fieldset.hidden {
   border-bottom: 1px solid #ddd;
   box-sizing: border-box;
   padding: 5px;
-  height: 66px;
   cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  display: block;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container:hover {
   color: #fff;
   background-color: #79b5e6;
 }
-.popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item-link {
-  color: inherit;
-  text-decoration: none;
-}
-.popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item-link:hover {
-  color: inherit;
-  text-decoration: none;
-}
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item {
   height: 100%;
   width: 100%;
+  box-sizing: border-box;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .profile-image-container {
-  height: 100%;
-  width: 20%;
+  width: 30px;
   display: inline-block;
   text-align: center;
+  vertical-align: middle;
+  float: left;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .profile-image-container img {
-  height: 100%;
+  width: 100%;
   display: inline-block;
   vertical-align: middle;
   border-radius: 50%;
@@ -7807,13 +7798,14 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .content-item-body {
   display: inline-block;
   box-sizing: border-box;
-  vertical-align: middle;
-  width: 75%;
-  height: 100%;
+  width: calc(100% - 30px);
+  font-size: 12px;
+  padding-left: 10px;
+  overflow: hidden;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .content-item-body h3 {
-  font-size: 14px;
-  line-height: 14px;
+  font-size: 12px;
+  line-height: 12px;
   margin: 0;
   width: 100%;
 }
@@ -7824,15 +7816,20 @@ body.path-question-type .mform fieldset.hidden {
   display: none;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread {
-  background-color: #f1f1f1;
+  background-color: #f4f4f4;
+}
+.popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread:hover {
+  background-color: #79b5e6;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread .content-item-body {
-  width: 65%;
+  font-weight: 600;
+  width: calc(90% - 30px);
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread .unread-count-container {
   display: inline-block;
   width: 10%;
   text-align: center;
+  float: right;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread:hover {
   color: #fff;
@@ -7885,6 +7882,16 @@ body.path-question-type .mform fieldset.hidden {
 }
 .dir-rtl .popover-region-notifications .popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item-controls {
   text-align: left;
+}
+.dir-rtl .popover-region-messages .popover-region-container .popover-region-content-container .popover-region-content .messages .content-item-container .content-item .profile-image-container {
+  float: right;
+}
+.dir-rtl .popover-region-messages .popover-region-container .popover-region-content-container .popover-region-content .messages .content-item-container .content-item .content-item-body {
+  padding-left: 0;
+  padding-right: 10px;
+}
+.dir-rtl .popover-region-messages .popover-region-container .popover-region-content-container .popover-region-content .messages .content-item-container .content-item .unread-count-container {
+  float: left;
 }
 @media (max-width: 767px) {
   .navbar .popover-region .popover-region-container {

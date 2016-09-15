@@ -187,5 +187,7 @@ $string['userisblockingyounoncontact'] = '{$a} only accepts messages from their 
 $string['userssearchresults'] = 'Users found: {$a}';
 $string['viewinganotherusersmessagearea'] = 'You are viewing another user\'s message area.';
 $string['viewconversation'] = 'View conversation';
+$string['viewmessageswith'] = 'View messages with {$a}';
+$string['viewunreadmessageswith'] = 'View unread messages with {$a}';
 $string['writeamessage'] = 'Write a message...';
 $string['you'] = 'You:';
