@@ -3124,4 +3124,17 @@ class core_course_courselib_testcase extends advanced_testcase {
         $adminoptions = course_get_user_administration_options($course, $context);
         $this->assertFalse($adminoptions->badges);
     }
+
+    /**
+     * Test test_update_course_frontpage_category.
+     */
+    public function test_update_course_frontpage_category() {
+        // Fetch front page course.
+        $course = get_course(SITEID);
+        // Test update information on front page course.
+        $course->category = 99;
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('invalidcourse', 'error'));
+        update_course($course);
+    }
 }
