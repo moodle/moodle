@@ -68,18 +68,16 @@ if ($ltiversion === \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1) {
     $dataconnector = new \enrol_lti\data_connector();
     $consumer = new \IMSGlobal\LTI\ToolProvider\ToolConsumer($consumerkey, $dataconnector);
     // Check if the consumer has already been registered to the enrol_lti_lti2_consumer table. Register if necessary.
-    if ($consumer->getRecordId() === null) {
-        $consumer->ltiVersion = \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1;
-        // For LTIv1, set the tool secret as the consumer secret.
-        $consumer->secret = $tool->secret;
-        $consumer->name = optional_param('tool_consumer_instance_description', null, PARAM_TEXT);
-        $consumer->consumerName = optional_param('tool_consumer_instance_name', null, PARAM_TEXT);
-        $consumer->consumerGuid = optional_param('tool_consumer_instance_guid', null, PARAM_TEXT);
-        $consumer->consumerVersion = optional_param('tool_consumer_info_version', null, PARAM_TEXT);
-        $consumer->enabled = true;
-        $consumer->protected = true;
-        $consumer->save();
-    }
+    $consumer->ltiVersion = \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1;
+    // For LTIv1, set the tool secret as the consumer secret.
+    $consumer->secret = $tool->secret;
+    $consumer->name = optional_param('tool_consumer_instance_name', null, PARAM_TEXT);
+    $consumer->consumerName = $consumer->name;
+    $consumer->consumerGuid = optional_param('tool_consumer_instance_guid', null, PARAM_TEXT);
+    $consumer->consumerVersion = optional_param('tool_consumer_info_version', null, PARAM_TEXT);
+    $consumer->enabled = true;
+    $consumer->protected = true;
+    $consumer->save();
 }
 
 $toolprovider = new \enrol_lti\tool_provider($toolid);
