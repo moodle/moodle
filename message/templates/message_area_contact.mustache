@@ -1,10 +1,10 @@
-<div class="row-fluid contact {{#selected}}selected{{/selected}} {{#lastmessage}}{{^isread}}unread{{/isread}}{{/lastmessage}}"
+<div class="contact {{#selected}}selected{{/selected}} {{#lastmessage}}{{^isread}}unread{{/isread}}{{/lastmessage}}"
      data-action="{{#ismessaging}}view-contact-msg{{/ismessaging}}{{^ismessaging}}view-contact-profile{{/ismessaging}}"
      data-userid="{{userid}}" data-messageid="{{#messageid}}{{.}}{{isread}}{{/messageid}}" data-region="contact" tabindex="0">
-    <div class="span3 picture">
+    <div class="picture">
         <img src="{{profileimageurl}}" alt="" />
     </div>
-    <div class="span9 information">
+    <div class="information">
         <div class="name">
             {{fullname}}
             <span {{^isonline}}class="hidden"{{/isonline}} data-region="contact-icon-online">
@@ -25,7 +25,7 @@
             </span>
         </p>
     </div>
-    <div class="span2 unread-count-container">
+    <div class="unread-count-container">
         <span data-region="unread-count" class="badge badge-important">{{unreadcount}}</span>
     </div>
 </div>

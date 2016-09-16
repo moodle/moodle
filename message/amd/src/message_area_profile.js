@@ -21,8 +21,9 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str', 'core/config'],
-    function($, ajax, templates, notification, str, config) {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str', 'core/config',
+        'core/custom_interaction_events'],
+    function($, ajax, templates, notification, str, config, CustomEvents) {
 
         /**
          * Profile class.
@@ -43,16 +44,25 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @private
          */
         Profile.prototype._init = function() {
+            CustomEvents.define(this.messageArea.node, [
+                CustomEvents.events.activate
+            ]);
+
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSELECTED, this._viewProfile.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEVIEW, this._viewFullProfile.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILESENDMESSAGE, this._sendMessage.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEUNBLOCKCONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEVIEW,
+                this._viewFullProfile.bind(this));
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILESENDMESSAGE,
+                this._sendMessage.bind(this));
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEUNBLOCKCONTACT,
                 this._unblockContact.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEBLOCKCONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEBLOCKCONTACT,
                 this._blockContact.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEADDCONTACT, this._addContact.bind(this));
-            this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.PROFILEREMOVECONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEADDCONTACT,
+                this._addContact.bind(this));
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEREMOVECONTACT,
                 this._removeContact.bind(this));
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.SHOWCONTACTS,
+                this._hideMessagingArea.bind(this));
         };
 
         /**
@@ -220,6 +230,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          */
         Profile.prototype._getUserId = function() {
             return this.messageArea.find(this.messageArea.SELECTORS.PROFILE).data('userid');
+        };
+
+        /**
+         * Hide the messaging area. This only applies on smaller screen resolutions.
+         */
+        Profile.prototype._hideMessagingArea = function() {
+            this.messageArea.find(this.messageArea.SELECTORS.MESSAGINGAREA)
+                .removeClass('show-messages')
+                .addClass('hide-messages');
         };
 
         return Profile;

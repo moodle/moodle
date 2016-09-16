@@ -1,4 +1,10 @@
 <div class="messages-header">
+    <div class="view-toggle btn-container">
+        <button class="btn btn-link" data-action="show-contacts">{{#str}} back {{/str}}</button>
+    </div>
+    <div class="delete-all btn-container">
+        <button class="btn btn-link" data-action="delete-all-messages">{{#str}} deleteall {{/str}}</button>
+    </div>
     <div class="name-container">
         <div class="name">
             {{otheruserfullname}}
@@ -12,8 +18,8 @@
         {{#str}} selectmessagestodelete, message {{/str}}
     </div>
     <div class="actions" data-region="messages-header-actions">
-        <a class="messages-delete" data-action="start-delete-messages" href="#">{{#str}}edit{{/str}}</a>
-        <a class="cancel-messages-delete" data-action="cancel-delete-messages" href="#">{{#str}}cancel{{/str}}</a>
+        <button class="btn btn-link messages-delete" data-action="start-delete-messages">{{#str}}edit{{/str}}</button>
+        <button class="btn btn-link cancel-messages-delete" data-action="cancel-delete-messages">{{#str}}cancel{{/str}}</button>
     </div>
 </div>
 <div class="messages" data-region="messages" data-userid="{{otheruserid}}">
@@ -26,6 +32,6 @@
         </div>
     {{/iscurrentuser}}
     <div class="delete-confirmation">
-        <button class="btn btn-link confirm" data-action="delete-messages">{{#str}} deletemessagesandconvos, message {{/str}}</button>
+        <button class="btn btn-link confirm" data-action="delete-messages">{{#str}} deleteselectedmessages, message {{/str}}</button>
     </div>
 </div>

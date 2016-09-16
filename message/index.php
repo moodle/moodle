@@ -243,6 +243,7 @@ $settings->make_active();
 
 // Get the renderer and the information we are going to be use.
 $renderer = $PAGE->get_renderer('core_message');
+$requestedconversation = false;
 if (!$user2realuser) {
     $conversations = \core_message\api::get_conversations($user1->id, 0, 0, 20);
     $contacts = $conversations->contacts;
@@ -271,8 +272,11 @@ if (!$user2realuser) {
 
     $conversations = \core_message\api::get_conversations($user1->id, $user2->id, 0, 20);
     $messages = \core_message\api::get_messages($user1->id, $user2->id);
+    // The user has specifically requested to see this conversation. Add the flag
+    // to the context so that we can render the messaging app appropriately.
+    $requestedconversation = true;
 }
-$messagearea = new \core_message\output\messagearea\message_area($user1->id, $conversations, $messages);
+$messagearea = new \core_message\output\messagearea\message_area($user1->id, $conversations, $messages, $requestedconversation);
 
 // Now the page contents.
 echo $OUTPUT->header();

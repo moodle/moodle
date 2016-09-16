@@ -68,20 +68,24 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             AutoRows.init(this.messageArea.node);
 
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONDELETED, this._handleConversationDeleted.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSELECTED, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._viewMessages.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, this._chooseMessagesToDelete.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES, this._hideDeleteAction.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SENDMESSAGE,
                 this._sendMessage.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.STARTDELETEMESSAGES,
                 this._startDeleting.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.DELETEMESSAGES,
                 this._deleteMessages.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.DELETEALLMESSAGES,
+                this._deleteAllMessages.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.CANCELDELETEMESSAGES,
-                this._cancelMessagesToDelete.bind(this));
+                this._triggerCancelMessagesToDelete.bind(this));
             this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.MESSAGE,
                 this._toggleMessage.bind(this));
+            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SHOWCONTACTS,
+                this._hideMessagingArea.bind(this));
 
             this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.MESSAGE,
                 this._selectPreviousMessage.bind(this));
@@ -392,17 +396,28 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         };
 
         /**
-         * Returns the ID of the other user in the conversation.
+         * Handles deleting a conversation.
          *
-         * @params {Event} event
-         * @params {int} The user id
          * @private
          */
-        Messages.prototype._handleConversationDeleted = function(event, userid) {
-            if (userid == this._getUserId()) {
-                // Clear the current panel.
+        Messages.prototype._deleteAllMessages = function() {
+            var otherUserId = this._getUserId();
+            var request = {
+                methodname: 'core_message_delete_conversation',
+                args: {
+                    userid: this.messageArea.getCurrentUserId(),
+                    otheruserid: otherUserId
+                }
+            };
+
+            // Delete the conversation.
+            ajax.call([request])[0].then(function() {
+                // Clear the message area.
                 this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).empty();
-            }
+                // Let the app know a conversation was deleted.
+                this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONDELETED, otherUserId);
+                this._hideDeleteAction();
+            }.bind(this), notification.exeption);
         };
 
         /**
@@ -419,14 +434,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         };
 
         /**
-         * Handles canceling deleting messages.
+         * Triggers the CANCELDELETEMESSAGES event.
          *
          * @private
          */
-        Messages.prototype._cancelMessagesToDelete = function() {
-            // Hide the items responsible for deleting messages.
-            this._hideDeleteAction();
-            // Trigger event letting other modules know message deletion was canceled.
+        Messages.prototype._triggerCancelMessagesToDelete = function() {
+           // Trigger event letting other modules know message deletion was canceled.
             this.messageArea.trigger(this.messageArea.EVENTS.CANCELDELETEMESSAGES);
         };
 
@@ -613,6 +626,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             data.originalEvent.preventDefault();
 
             this._sendMessage();
+        };
+
+        /**
+         * Hide the messaging area. This only applies on smaller screen resolutions.
+         */
+        Messages.prototype._hideMessagingArea = function() {
+            this.messageArea.find(this.messageArea.SELECTORS.MESSAGINGAREA)
+                .removeClass('show-messages')
+                .addClass('hide-messages');
         };
 
         return Messages;

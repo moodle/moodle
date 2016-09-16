@@ -380,6 +380,12 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                 this.loadMoreNotifications();
             }
         }.bind(this));
+
+        // Stop mouse scroll from propagating to the window element and
+        // scrolling the page.
+        CustomEvents.define(this.getContentContainer(), [
+            CustomEvents.events.scrollLock
+        ]);
     };
 
     return NotificationPopoverController;

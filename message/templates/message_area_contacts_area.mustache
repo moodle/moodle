@@ -12,12 +12,12 @@
 {{! Hidden divs to load the other tab and search panels via JS when appropriate. }}
 <div class="contacts" data-region="contacts" data-region-content="contacts" style="display:none;" role="tabpanel" id="contacts-tab-panel"></div>
 <div class="contacts searcharea" data-region="search-results-area" style="display:none;"></div>
-<div class="row-fluid tabs">
-    <div class="span6 tab tabconversations selected" data-action="conversations-view" role="tab" aria-controls="conversations-tab-panel" aria-selected="true" tabindex="0">
+<div class="tabs">
+    <div class="tab tabconversations selected" data-action="conversations-view" role="tab" aria-controls="conversations-tab-panel" aria-selected="true" tabindex="0">
         <div class="tabimage">{{#pix}}t/message, moodle{{/pix}}</div>
         <div>{{#str}}conversations, message{{/str}}</div>
     </div>
-    <div class="span6 tab tabcontacts" data-action="contacts-view" role="tab" aria-controls="contacts-tab-panel" aria-selected="false" tabindex="-1">
+    <div class="tab tabcontacts" data-action="contacts-view" role="tab" aria-controls="contacts-tab-panel" aria-selected="false" tabindex="-1">
         <div class="tabimage">{{#pix}}i/cohort, moodle{{/pix}}</div>
         <div>{{#str}}contacts, message{{/str}}</div>
     </div>

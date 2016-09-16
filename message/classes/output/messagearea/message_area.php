@@ -52,16 +52,23 @@ class message_area implements templatable, renderable {
     public $messages;
 
     /**
+     * @var bool Was a specific conversation requested.
+     */
+    public $requestedconversation;
+
+    /**
      * Constructor.
      *
      * @param int $userid The ID of the user whose contacts and messages we are viewing
      * @param \core_message\output\messagearea\contacts $contacts
      * @param \core_message\output\messagearea\messages|null $messages
+     * @param bool $requestedconversation
      */
-    public function __construct($userid, $contacts, $messages) {
+    public function __construct($userid, $contacts, $messages, $requestedconversation) {
         $this->userid = $userid;
         $this->contacts = $contacts;
         $this->messages = $messages;
+        $this->requestedconversation = $requestedconversation;
     }
 
     public function export_for_template(\renderer_base $output) {
@@ -71,6 +78,7 @@ class message_area implements templatable, renderable {
         if ($this->messages) {
             $data->messages = $this->messages->export_for_template($output);
         }
+        $data->requestedconversation = $this->requestedconversation;
 
         return $data;
     }

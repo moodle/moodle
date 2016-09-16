@@ -5794,6 +5794,9 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area {
   border-right: 1px solid #e3e3e3;
   height: 600px;
+  width: 280px;
+  display: inline-block;
+  box-sizing: border-box;
 }
 .messaging-area-container .messaging-area .contacts-area.searchfilter .searchtextarea {
   height: 80px;
@@ -5814,14 +5817,10 @@ a.ygtvspacer:hover {
   background-color: #f5f5f5;
   border: 0;
   width: 90%;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
   transition: background-color linear 0.2s;
 }
 .messaging-area-container .messaging-area .contacts-area .searchtextarea input:focus {
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
 }
 .messaging-area-container .messaging-area .contacts-area .searchtextarea.searching {
@@ -5866,6 +5865,7 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area .contacts {
   height: 500px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .nocontacts {
   padding-top: 20px;
@@ -5880,11 +5880,16 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area .contacts .contact.unread {
   background-color: #f1f1f1;
 }
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.unread .picture {
+  border-color: #f1f1f1;
+}
 .messaging-area-container .messaging-area .contacts-area .contacts .contact.unread .information {
-  width: 57.26495726%;
+  width: 60%;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact.unread .unread-count-container {
   display: inline-block;
+  width: 15%;
+  float: left;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact:hover {
   background-color: #4f94cd;
@@ -5898,15 +5903,15 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area .contacts .contact:hover .picture {
   border: none;
 }
-.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected:not([aria-checked]) {
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected {
   background-color: #4f94cd;
   color: #fff;
   border: none;
 }
-.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected:not([aria-checked]) .information .lastmessage {
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected .information .lastmessage {
   color: #fff;
 }
-.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected:not([aria-checked]) .picture {
+.messaging-area-container .messaging-area .contacts-area .contacts .contact.selected .picture {
   border: none;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .picture {
@@ -5914,6 +5919,10 @@ a.ygtvspacer:hover {
   text-align: center;
   height: 66px;
   border-bottom: 1px solid #fff;
+  width: 25%;
+  float: left;
+  display: inline-block;
+  box-sizing: border-box;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .picture img {
   border-radius: 50%;
@@ -5922,6 +5931,10 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .information {
   padding: 6px 0;
   height: 66px;
+  width: 75%;
+  float: left;
+  display: inline-block;
+  box-sizing: border-box;
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .contact .information .name {
   font-weight: bold;
@@ -5944,6 +5957,7 @@ a.ygtvspacer:hover {
   display: none;
   line-height: 66px;
   text-align: center;
+  box-sizing: border-box;
 }
 .messaging-area-container .messaging-area .contacts-area .tabs {
   border-top: 1px solid #e3e3e3;
@@ -5957,6 +5971,7 @@ a.ygtvspacer:hover {
   margin: 0;
   width: 50%;
   text-align: center;
+  float: left;
 }
 .messaging-area-container .messaging-area .contacts-area .tabs .tab:hover {
   color: #4f94cd;
@@ -5971,27 +5986,46 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area .tabs .tab.selected {
   color: #4f94cd;
 }
-.messaging-area-container .messaging-area .contacts-area.editing .contacts .contact[aria-checked="true"] {
-  background-color: #4f94cd;
-  color: #fff;
-  border: none;
-}
-.messaging-area-container .messaging-area .contacts-area.editing .contacts .contact[aria-checked="true"] .information .lastmessage {
-  color: #fff;
-}
-.messaging-area-container .messaging-area .contacts-area.editing .contacts .contact[aria-checked="true"] .picture {
-  border: none;
-}
 .messaging-area-container .messaging-area .messages-area {
-  width: 76.92407792%;
+  width: calc(100% - 280px);
   height: 600px;
   box-sizing: border-box;
   margin: 0;
   position: relative;
+  float: right;
+}
+.messaging-area-container .messaging-area .messages-area .btn-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding-left: 15px;
+  font-weight: normal;
+}
+.messaging-area-container .messaging-area .messages-area .btn-container.view-toggle {
+  display: none;
+}
+.messaging-area-container .messaging-area .messages-area .btn-container.delete-all {
+  display: none;
+}
+.messaging-area-container .messaging-area .messages-area .profile-header {
+  height: 50px;
+  line-height: 50px;
+  display: none;
+}
+.messaging-area-container .messaging-area .messages-area .profile-header .btn-container {
+  display: block;
+}
+.messaging-area-container .messaging-area .messages-area .profile-header .btn-container .btn-link {
+  padding: 0;
+  line-height: inherit;
 }
 .messaging-area-container .messaging-area .messages-area .profile {
   padding: 30px;
   font-size: 16px;
+  height: 600px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .messaging-area-container .messaging-area .messages-area .profile .user-container {
   height: 100px;
@@ -6052,6 +6086,10 @@ a.ygtvspacer:hover {
   text-align: center;
   position: relative;
 }
+.messaging-area-container .messaging-area .messages-area .messages-header .btn-link {
+  padding: 0;
+  line-height: inherit;
+}
 .messaging-area-container .messaging-area .messages-area .messages-header .delete-instructions {
   display: none;
 }
@@ -6080,8 +6118,10 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .messages-area .messages {
   height: 500px;
   overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
-  padding: 15px 50px;
+  padding: 20px;
 }
 .messaging-area-container .messaging-area .messages-area .messages .blocktime {
   clear: both;
@@ -6105,20 +6145,13 @@ a.ygtvspacer:hover {
   border-radius: 4px;
   position: relative;
 }
-.messaging-area-container .messaging-area .messages-area .messages .message .content .text {
-  display: inline-block;
-  margin-right: 60px;
-  width: 90%;
-}
 .messaging-area-container .messaging-area .messages-area .messages .message .content .text p {
   margin: 0;
 }
 .messaging-area-container .messaging-area .messages-area .messages .message .content .timesent {
   font-size: 10px;
   color: #a1a1a1;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  float: right;
 }
 .messaging-area-container .messaging-area .messages-area .messages .message .content.left {
   float: left;
@@ -6127,8 +6160,9 @@ a.ygtvspacer:hover {
   float: right;
 }
 .messaging-area-container .messaging-area .messages-area .response {
+  display: table;
   border-bottom-right-radius: 4px;
-  padding: 10px 0 9px 0;
+  padding: 10px 10px 9px;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -6152,29 +6186,42 @@ a.ygtvspacer:hover {
   color: #fff;
   text-shadow: none;
 }
-.messaging-area-container .messaging-area .messages-area .response textarea {
-  width: 85%;
+.messaging-area-container .messaging-area .messages-area .response .message-box {
+  display: table-row;
+}
+.messaging-area-container .messaging-area .messages-area .response .message-box .message-text-container {
+  display: table-cell;
+}
+.messaging-area-container .messaging-area .messages-area .response .message-box .message-text-container textarea {
+  width: 100%;
   margin: 0;
   resize: none;
   border: none;
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
   box-shadow: none;
+  box-sizing: border-box;
   background-color: #f5f5f5;
   transition: background-color linear 0.2s;
 }
-.messaging-area-container .messaging-area .messages-area .response textarea:focus {
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
+.messaging-area-container .messaging-area .messages-area .response .message-box .message-text-container textarea:focus {
   box-shadow: none;
+}
+.messaging-area-container .messaging-area .messages-area .response .message-box .send-button-container {
+  display: table-cell;
+  width: 1px;
 }
 .messaging-area-container .messaging-area .messages-area .response.messaging {
   background-color: #f5f5f5;
   transition: background-color linear 0.2s;
 }
-.messaging-area-container .messaging-area .messages-area .response.messaging textarea {
+.messaging-area-container .messaging-area .messages-area .response.messaging .message-box .message-text-container textarea {
   background-color: #fff;
   transition: background-color linear 0.2s;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages-header .btn-container.view-all {
+  display: none;
+}
+.messaging-area-container .messaging-area .messages-area.editing .messages-header .btn-container.delete-all {
+  display: block;
 }
 .messaging-area-container .messaging-area .messages-area.editing .messages-header .delete-instructions {
   display: block;
@@ -6378,6 +6425,118 @@ a.ygtvspacer:hover {
 }
 .preferences-page-container .checkbox-container.loading .loading-icon {
   display: inline-block;
+}
+.dir-rtl .messaging-area-container .messaging-area .contacts-area .contacts .contact .picture {
+  float: right;
+}
+.dir-rtl .messaging-area-container .messaging-area .contacts-area .contacts .contact .information {
+  float: right;
+}
+.dir-rtl .messaging-area-container .messaging-area .contacts-area .contacts .contact .unread-count-container {
+  float: right;
+}
+@media (max-width: 979px) {
+  .messaging-area-container .messaging-area {
+    position: relative;
+    overflow: hidden;
+    height: 600px;
+  }
+  .messaging-area-container .messaging-area .messages-area .messages-header .btn-container.view-toggle {
+    display: block;
+  }
+  .messaging-area-container .messaging-area .messages-area .messages-header .btn-container.delete-all {
+    display: none;
+  }
+  .messaging-area-container .messaging-area .messages-area .profile-header {
+    display: block;
+  }
+  .messaging-area-container .messaging-area .messages-area .profile {
+    height: 550px;
+  }
+  .messaging-area-container .messaging-area .messages-area.editing .messages-header .btn-container.view-toggle {
+    display: none;
+  }
+  .messaging-area-container .messaging-area .messages-area.editing .messages-header .btn-container.delete-all {
+    display: block;
+  }
+  .messaging-area-container .messaging-area .contacts-area {
+    width: 100%;
+    border-right: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: auto;
+    bottom: auto;
+  }
+  .messaging-area-container .messaging-area .messages-area {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: auto;
+    right: 0;
+    bottom: auto;
+  }
+  .messaging-area-container .messaging-area.show-messages .contacts-area {
+    left: -100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: left 0.25s, opacity 0.25s, visibility 0.25s;
+  }
+  .messaging-area-container .messaging-area.show-messages .messages-area {
+    right: 0;
+    opacity: 1;
+    visibility: visible;
+    transition: right 0.25s, opacity 0.25s, visibility 0.25s;
+  }
+  .messaging-area-container .messaging-area.hide-messages .contacts-area {
+    left: 0;
+    opacity: 1;
+    visibility: visible;
+    transition: left 0.25s, opacity 0.25s, visibility 0.25s;
+  }
+  .messaging-area-container .messaging-area.hide-messages .contacts-area .contact.selected {
+    background-color: inherit;
+    color: inherit;
+    border-bottom: 1px solid #e3e3e3;
+  }
+  .messaging-area-container .messaging-area.hide-messages .contacts-area .contact.selected:hover {
+    background-color: #4f94cd;
+    color: #fff;
+    border: none;
+    background-color: #79b5e6;
+  }
+  .messaging-area-container .messaging-area.hide-messages .contacts-area .contact.selected:hover .information .lastmessage {
+    color: #fff;
+  }
+  .messaging-area-container .messaging-area.hide-messages .contacts-area .contact.selected:hover .picture {
+    border: none;
+  }
+  .messaging-area-container .messaging-area.hide-messages .contacts-area .contact.selected .picture {
+    border-bottom: 1px solid #fff;
+  }
+  .messaging-area-container .messaging-area.hide-messages .contacts-area .contact.selected .information .lastmessage {
+    color: #a1a1a1;
+  }
+  .messaging-area-container .messaging-area.hide-messages .messages-area {
+    right: -100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: right 0.25s, opacity 0.25s, visibility 0.25s;
+  }
+}
+@media (max-width: 480px) {
+  .messaging-area-container .messaging-area .messages-area.editing .messages-header {
+    height: 80px;
+  }
+  .messaging-area-container .messaging-area .messages-area.editing .messages-header .delete-all {
+    top: 30px;
+  }
+  .messaging-area-container .messaging-area .messages-area.editing .messages-header .actions {
+    top: 30px;
+  }
+  .messaging-area-container .messaging-area .messages-area.editing .messages {
+    height: 470px;
+  }
 }
 /* Question */
 .questionbank h2 {
@@ -7332,6 +7491,28 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region .popover-region-toggle {
   cursor: pointer;
 }
+.popover-region .popover-region-toggle::before {
+  content: '';
+  display: inline-block;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #ddd;
+  position: absolute;
+  bottom: 0;
+  right: 7px;
+  z-index: 10001;
+}
+.popover-region .popover-region-toggle::after {
+  content: '';
+  display: inline-block;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid #fff;
+  position: absolute;
+  bottom: -1px;
+  right: 8px;
+  z-index: 10001;
+}
 .popover-region .popover-region-toggle .count-container {
   padding: 2px;
   border-radius: 2px;
@@ -7410,6 +7591,7 @@ body.path-question-type .mform fieldset.hidden {
   height: calc(100% - 25px);
   width: 100%;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .popover-region .popover-region-container .popover-region-content-container > .loading-icon {
   display: none;
@@ -7440,6 +7622,10 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region [data-link-url]:focus {
   color: #003d5c;
   text-decoration: underline;
+}
+.popover-region.collapsed .popover-region-toggle:before,
+.popover-region.collapsed .popover-region-toggle:after {
+  display: none;
 }
 .popover-region.collapsed .popover-region-container {
   height: 0;
@@ -7474,26 +7660,6 @@ body.path-question-type .mform fieldset.hidden {
 }
 .navbar .popover-region .popover-region-container {
   top: 42px;
-}
-.navbar .popover-region .popover-region-container::before {
-  content: '';
-  display: inline-block;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid #ddd;
-  position: absolute;
-  top: -10px;
-  right: 7px;
-}
-.navbar .popover-region .popover-region-container::after {
-  content: '';
-  display: inline-block;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-bottom: 9px solid #fff;
-  position: absolute;
-  top: -9px;
-  right: 8px;
 }
 .navbar .popover-region.collapsed .popover-region-container {
   height: 0;
@@ -7668,6 +7834,10 @@ body.path-question-type .mform fieldset.hidden {
   width: 10%;
   text-align: center;
 }
+.popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container.unread:hover {
+  color: #fff;
+  background-color: #79b5e6;
+}
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container.loading .popover-region-content .messages:empty + .empty-message {
   display: none;
 }
@@ -7715,6 +7885,22 @@ body.path-question-type .mform fieldset.hidden {
 }
 .dir-rtl .popover-region-notifications .popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item-controls {
   text-align: left;
+}
+@media (max-width: 767px) {
+  .navbar .popover-region .popover-region-container {
+    right: -70px;
+  }
+}
+@media (max-width: 480px) {
+  .navbar .popover-region .popover-region-container {
+    position: fixed;
+    top: 46px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+  }
 }
 /*!
  * Bootstrap v2.3.2

@@ -301,6 +301,12 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             data.originalEvent.preventDefault();
         }.bind(this));
 
+        // Stop mouse scroll from propagating to the window element and
+        // scrolling the page.
+        CustomEvents.define(this.getContentContainer(), [
+            CustomEvents.events.scrollLock
+        ]);
+
         // Check if we have marked a conversation as read in the messaging area.
         $(document).on('messagearea:conversationselected', function() {
             this.unreadCount--;

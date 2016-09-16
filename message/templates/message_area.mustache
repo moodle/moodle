@@ -1,16 +1,15 @@
 <div class="messaging-area-container" data-userid="{{userid}}">
-    <div class="messaging-area">
-        <div class="row-fluid">
-            <div class="span3 contacts-area" data-region="contacts-area" role="tablist">
-                {{#contacts}}
-                    {{> core_message/message_area_contacts_area }}
-                {{/contacts}}
-            </div>
-            <div class="span9 messages-area" data-region="messages-area" role="log">
-                {{#messages}}
-                    {{> core_message/message_area_messages_area }}
-                {{/messages}}
-            </div>
+    <div class="messaging-area {{#requestedconversation}}show-messages{{/requestedconversation}}
+            {{^requestedconversation}}hide-messages{{/requestedconversation}}" data-region="messaging-area">
+        <div class="contacts-area" data-region="contacts-area" role="tablist">
+            {{#contacts}}
+                {{> core_message/message_area_contacts_area }}
+            {{/contacts}}
+        </div>
+        <div class="messages-area" data-region="messages-area" role="log">
+            {{#messages}}
+                {{> core_message/message_area_messages_area }}
+            {{/messages}}
         </div>
     </div>
 </div>
