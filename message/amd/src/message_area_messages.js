@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events',
-        'core/auto_rows', 'core_message/message_area_actions'],
-    function($, ajax, templates, notification, customEvents, AutoRows, Actions) {
+        'core/auto_rows', 'core_message/message_area_actions', 'core/modal_factory', 'core/modal_events', 'core/str'],
+    function($, ajax, templates, notification, customEvents, AutoRows, Actions, ModalFactory, ModalEvents, Str) {
 
         var MESSAGES_AREA_DEFAULT_HEIGHT = 500;
         var MESSAGES_RESPONSE_DEFAULT_HEIGHT = 50;
@@ -49,6 +49,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
         /** @type {int} the number of messages to retrieve */
         Messages.prototype._numMessagesToRetrieve = 20;
+
+        /** @type {Modal} the confirmation modal */
+        Messages.prototype._confirmationModal = null;
 
         /** @type {Messagearea} The messaging area object. */
         Messages.prototype.messageArea = null;
@@ -401,23 +404,43 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._deleteAllMessages = function() {
-            var otherUserId = this._getUserId();
-            var request = {
-                methodname: 'core_message_delete_conversation',
-                args: {
-                    userid: this.messageArea.getCurrentUserId(),
-                    otheruserid: otherUserId
-                }
-            };
+            // Create the confirmation modal if we haven't already.
+            if (!this._confirmationModal) {
+                ModalFactory.create({
+                    type: ModalFactory.types.CONFIRM,
+                    body: Str.get_string('deleteallconfirm', 'message'),
+                }, this.messageArea.find(this.messageArea.SELECTORS.DELETEALLMESSAGES))
+                .done(function(modal) {
+                    this._confirmationModal = modal;
 
-            // Delete the conversation.
-            ajax.call([request])[0].then(function() {
-                // Clear the message area.
-                this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).empty();
-                // Let the app know a conversation was deleted.
-                this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONDELETED, otherUserId);
-                this._hideDeleteAction();
-            }.bind(this), notification.exeption);
+                    // Only delete the conversation if the user agreed in the confirmation modal.
+                    modal.getRoot().on(ModalEvents.yes, function() {
+                        var otherUserId = this._getUserId();
+                        var request = {
+                            methodname: 'core_message_delete_conversation',
+                            args: {
+                                userid: this.messageArea.getCurrentUserId(),
+                                otheruserid: otherUserId
+                            }
+                        };
+
+                        // Delete the conversation.
+                        ajax.call([request])[0].then(function() {
+                            // Clear the message area.
+                            this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).empty();
+                            // Let the app know a conversation was deleted.
+                            this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONDELETED, otherUserId);
+                            this._hideDeleteAction();
+                        }.bind(this), notification.exeption);
+                    }.bind(this));
+
+                    // Display the confirmation.
+                    modal.show();
+                }.bind(this));
+            } else {
+                // Otherwise just show the existing modal.
+                this._confirmationModal.show();
+            }
         };
 
         /**

@@ -46,6 +46,7 @@ $string['context'] = 'context';
 $string['conversations'] = 'Conversations';
 $string['defaultmessageoutputs'] = 'Default message outputs';
 $string['defaults'] = 'Defaults';
+$string['deleteallconfirm'] = "Are you sure you would like to delete this entire conversation?";
 $string['deletemessage'] = 'Delete message';
 $string['deletemessageconfirmation'] = 'Are you sure you want to delete this message? It will only be deleted from your messaging history and will still be viewable by the user who sent or received the message.';
 $string['deleteselectedmessages'] = 'Delete selected messages';
