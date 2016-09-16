@@ -26,9 +26,19 @@ namespace enrol_lti;
 
 defined('MOODLE_INTERNAL') || die;
 
-use IMSGlobal\LTI\Profile;
-use IMSGlobal\LTI\ToolProvider;
-use IMSGlobal\LTI\ToolProvider\DataConnector;
+use context;
+use core\notification;
+use core_user;
+use enrol_lti\output\registration;
+use html_writer;
+use IMSGlobal\LTI\Profile\Item;
+use IMSGlobal\LTI\Profile\Message;
+use IMSGlobal\LTI\Profile\ResourceHandler;
+use IMSGlobal\LTI\Profile\ServiceDefinition;
+use IMSGlobal\LTI\ToolProvider\ToolProvider;
+use moodle_url;
+use stdClass;
+
 require_once($CFG->dirroot . '/user/lib.php');
 
 /**
@@ -38,7 +48,7 @@ require_once($CFG->dirroot . '/user/lib.php');
  * @copyright  2016 John Okely <john@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_provider extends ToolProvider\ToolProvider {
+class tool_provider extends ToolProvider {
 
     /**
      * @var stdClass $tool The object representing the enrol instance providing this LTI tool
@@ -82,14 +92,14 @@ class tool_provider extends ToolProvider\ToolProvider {
         $vendorid = $SITE->shortname;
         $vendorname = $SITE->fullname;
         $vendordescription = trim(html_to_text($SITE->summary));
-        $this->vendor = new Profile\Item($vendorid, $vendorname, $vendordescription, $CFG->wwwroot);
+        $this->vendor = new Item($vendorid, $vendorname, $vendordescription, $CFG->wwwroot);
 
         $name = helper::get_name($tool);
         $description = helper::get_description($tool);
         $icon = helper::get_icon($tool)->out();
         $icon = $this->strip_base_url($icon);
 
-        $this->product = new Profile\Item(
+        $this->product = new Item(
             $token,
             $name,
             $description,
@@ -98,7 +108,7 @@ class tool_provider extends ToolProvider\ToolProvider {
         );
 
         $requiredmessages = [
-            new Profile\Message(
+            new Message(
                 'basic-lti-launch-request',
                 $toolpath,
                 [
@@ -135,8 +145,8 @@ class tool_provider extends ToolProvider\ToolProvider {
         $optionalmessages = [
         ];
 
-        $this->resourceHandlers[] = new Profile\ResourceHandler(
-             new Profile\Item(
+        $this->resourceHandlers[] = new ResourceHandler(
+             new Item(
                  $token,
                  helper::get_name($tool),
                  $description
@@ -146,13 +156,7 @@ class tool_provider extends ToolProvider\ToolProvider {
              $optionalmessages
         );
 
-        $this->requiredServices[] = new Profile\ServiceDefinition(['application/vnd.ims.lti.v2.toolproxy+json'], ['POST']);
-
-        $this->setParameterConstraint('oauth_consumer_key', true, 50, ['basic-lti-launch-request']);
-        $this->setParameterConstraint('resource_link_id', true, 50, ['basic-lti-launch-request']);
-        $this->setParameterConstraint('user_id', true, 50, ['basic-lti-launch-request']);
-        $this->setParameterConstraint('roles', true, null, ['basic-lti-launch-request']);
-
+        $this->requiredServices[] = new ServiceDefinition(['application/vnd.ims.lti.v2.toolproxy+json'], ['POST']);
     }
 
     /**
@@ -167,7 +171,7 @@ class tool_provider extends ToolProvider\ToolProvider {
 
         $this->errorOutput = '';
 
-        \core\notification::error(get_string('failedregistration', 'enrol_lti', ['reason' => $message]));
+        notification::error(get_string('failedregistration', 'enrol_lti', ['reason' => $message]));
     }
 
     /**
@@ -176,6 +180,13 @@ class tool_provider extends ToolProvider\ToolProvider {
      */
     protected function onLaunch() {
         global $DB, $SESSION, $CFG;
+
+        // Check for valid consumer.
+        if (empty($this->consumer) || $this->dataConnector->loadToolConsumer($this->consumer) === false) {
+            $this->ok = false;
+            $this->message = get_string('invalidtoolconsumer', 'enrol_lti');
+            return;
+        }
 
         $url = helper::get_launch_url($this->tool->id);
         // If a tool proxy has been stored for the current consumer trying to access a tool,
@@ -186,7 +197,7 @@ class tool_provider extends ToolProvider\ToolProvider {
             $handlers = $proxy->tool_profile->resource_handler;
             foreach ($handlers as $handler) {
                 foreach ($handler->message as $message) {
-                    $handlerurl = new \moodle_url($message->path);
+                    $handlerurl = new moodle_url($message->path);
                     $fullpath = $handlerurl->out(false);
                     if ($message->message_type == "basic-lti-launch-request" && $fullpath == $url) {
                         $correctlaunchurl = true;
@@ -206,10 +217,10 @@ class tool_provider extends ToolProvider\ToolProvider {
 
         // Before we do anything check that the context is valid.
         $tool = $this->tool;
-        $context = \context::instance_by_id($tool->contextid);
+        $context = context::instance_by_id($tool->contextid);
 
         // Set the user data.
-        $user = new \stdClass();
+        $user = new stdClass();
         $user->username = helper::create_username($this->consumer->getKey(), $this->user->ltiUserId);
         if (!empty($this->user->firstname)) {
             $user->firstname = $this->user->firstname;
@@ -222,7 +233,7 @@ class tool_provider extends ToolProvider\ToolProvider {
             $user->lastname = $this->tool->contextid;
         }
 
-        $user->email = \core_user::clean_field($this->user->email, 'email');
+        $user->email = core_user::clean_field($this->user->email, 'email');
 
         // Get the user data from the LTI consumer.
         $user = helper::assign_user_tool_data($tool, $user);
@@ -275,14 +286,13 @@ class tool_provider extends ToolProvider\ToolProvider {
 
         if ($context->contextlevel == CONTEXT_COURSE) {
             $courseid = $context->instanceid;
-            $urltogo = new \moodle_url('/course/view.php', ['id' => $courseid]);
+            $urltogo = new moodle_url('/course/view.php', ['id' => $courseid]);
 
             // May still be set from previous session, so unset it.
             unset($SESSION->forcepagelayout);
         } else if ($context->contextlevel == CONTEXT_MODULE) {
-            $cmid = $context->instanceid;
             $cm = get_coursemodule_from_id(false, $context->instanceid, 0, false, MUST_EXIST);
-            $urltogo = new \moodle_url('/mod/' . $cm->modname . '/view.php', ['id' => $cm->id]);
+            $urltogo = new moodle_url('/mod/' . $cm->modname . '/view.php', ['id' => $cm->id]);
 
             // If we are a student in the course module context we do not want to display blocks.
             if (!$isinstructor) {
@@ -326,7 +336,7 @@ class tool_provider extends ToolProvider\ToolProvider {
             $DB->update_record('enrol_lti_users', $userlog);
         } else {
             // Add the user details so we can use it later when syncing grades and members.
-            $userlog = new \stdClass();
+            $userlog = new stdClass();
             $userlog->userid = $user->id;
             $userlog->toolid = $tool->id;
             $userlog->serviceurl = $serviceurl;
@@ -345,11 +355,15 @@ class tool_provider extends ToolProvider\ToolProvider {
         // Finalise the user log in.
         complete_user_login($user);
 
+        // Everything's good. Set appropriate OK flag and message values.
+        $this->ok = true;
+        $this->message = get_string('success');
+
         if (empty($CFG->allowframembedding)) {
             // Provide an alternative link.
             $stropentool = get_string('opentool', 'enrol_lti');
-            echo \html_writer::tag('p', get_string('frameembeddingnotenabled', 'enrol_lti'));
-            echo \html_writer::link($urltogo, $stropentool, ['target' => '_blank']);
+            echo html_writer::tag('p', get_string('frameembeddingnotenabled', 'enrol_lti'));
+            echo html_writer::link($urltogo, $stropentool, ['target' => '_blank']);
         } else {
             // All done, redirect the user to where they want to go.
             redirect($urltogo);
@@ -358,32 +372,43 @@ class tool_provider extends ToolProvider\ToolProvider {
 
     /**
      * Override onRegister with registration code.
-     * @return void
      */
     protected function onRegister() {
         global $PAGE;
 
-        $returnurl = $this->returnUrl;
-        if (strpos($returnurl, '?') === false) {
-            $separator = '?';
-        } else {
-            $separator = '&';
+        if (empty($this->consumer)) {
+            $this->ok = false;
+            $this->message = get_string('invalidtoolconsumer', 'enrol_lti');
+            return;
         }
-        $guid = $this->consumer->getKey();
-        $returnurl = $returnurl . $separator . 'lti_msg=' . urlencode(get_string("successfulregistration", "enrol_lti"));
-        $returnurl = $returnurl . '&status=success';
-        $returnurl = $returnurl . "&tool_proxy_guid=$guid";
-        $ok = $this->doToolProxyService();
 
-        if ($ok) {
-            $registration = new output\registration($returnurl);
+        if (empty($this->returnUrl)) {
+            $this->ok = false;
+            $this->message = get_string('returnurlnotset', 'enrol_lti');
+            return;
+        }
+
+        if ($this->doToolProxyService()) {
+            // Indicate successful processing in message.
+            $this->message = get_string('successfulregistration', 'enrol_lti');
+
+            // Prepare response.
+            $returnurl = new moodle_url($this->returnUrl);
+            $returnurl->param('lti_msg', get_string("successfulregistration", "enrol_lti"));
+            $returnurl->param('status', 'success');
+            $guid = $this->consumer->getKey();
+            $returnurl->param('tool_proxy_guid', $guid);
+
+            $returnurlout = $returnurl->out(false);
+
+            $registration = new registration($returnurlout);
             $output = $PAGE->get_renderer('enrol_lti');
             echo $output->render($registration);
+
         } else {
             // Tell the consumer that the registration failed.
             $this->ok = false;
-            $couldnotestablish = get_string('couldnotestablishproxy', 'enrol_lti');
-            $this->message = get_string('failedregistration', 'enrol_lti', array('reason' => $couldnotestablish));
+            $this->message = get_string('couldnotestablishproxy', 'enrol_lti');
         }
     }
 }
