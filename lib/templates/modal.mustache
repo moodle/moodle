@@ -48,7 +48,9 @@
         <div class="modal-header" data-region="header">
             <button type="button" class="close" data-action="hide" title="{{#str}} closebuttontitle {{/str}}"></button>
             {{$header}}
-                <h3 id="{{uniqid}}-modal-title" data-region="title" tabindex="0">{{title}}</h3>
+                <h3 id="{{uniqid}}-modal-title" data-region="title" tabindex="0">
+                    {{$title}}{{title}}{{/title}}
+                </h3>
             {{/header}}
         </div>
         <div class="modal-body" data-region="body">
