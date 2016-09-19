@@ -4700,7 +4700,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2015111605.07);
     }
 
-    if ($oldversion < 2015111606.01) {
+    if ($oldversion < 2015111606.02) {
 
         // Define index attemptstepid-name (unique) to be dropped from question_attempt_step_data.
         $table = new xmldb_table('question_attempt_step_data');
@@ -4712,7 +4712,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2015111606.01);
+        upgrade_main_savepoint(true, 2015111606.02);
     }
 
     return true;
