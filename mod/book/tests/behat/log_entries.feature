@@ -47,21 +47,21 @@ Feature: In a book, verify log entries
     And I should see "Chapter created" in the "#report_log_r9_c5" "css_element"
     And I click on "Chapter viewed" "link" in the "#report_log_r2_c5" "css_element"
     And I switch to "action" window
-    And I should see "1 First chapter edited" in the ".book_content" "css_element"
+    And I should see "1. First chapter edited" in the ".book_content" "css_element"
     And I switch to the main window
     And I click on "Chapter viewed" "link" in the "#report_log_r3_c5" "css_element"
     And I switch to "action" window
-    And I should see "2 Second chapter" in the ".book_content" "css_element"
+    And I should see "2. Second chapter" in the ".book_content" "css_element"
     And I switch to the main window
     And I click on "Chapter updated" "link" in the "#report_log_r5_c5" "css_element"
     And I switch to "action" window
-    And I should see "1 First chapter edited" in the ".book_content" "css_element"
+    And I should see "1. First chapter edited" in the ".book_content" "css_element"
     And I switch to the main window
     And I click on "Chapter created" "link" in the "#report_log_r7_c5" "css_element"
     And I switch to "action" window
-    And I should see "2 Second chapter" in the ".book_content" "css_element"
+    And I should see "2. Second chapter" in the ".book_content" "css_element"
     And I switch to the main window
     And I click on "Chapter created" "link" in the "#report_log_r9_c5" "css_element"
     And I switch to "action" window
-    And I should see "1 First chapter edited" in the ".book_content" "css_element"
+    And I should see "1. First chapter edited" in the ".book_content" "css_element"
     And I switch to the main window

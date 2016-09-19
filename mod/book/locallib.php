@@ -154,7 +154,7 @@ function book_get_chapter_title($chid, $chapters, $book, $context) {
     }
 
     if ($numbers) {
-        $title = implode('.', $numbers).' '.$title;
+        $title = implode('.', $numbers) . '. ' . $title;
     }
 
     return $title;
@@ -241,12 +241,12 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                     $nch++;
                     $ns = 0;
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
-                        $title = "$nch $title";
+                        $title = "$nch. $title";
                         $titleout = $title;
                     }
                 } else {
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
-                        $title = "x $title";
+                        $title = "x. $title";
                     }
                     $titleout = html_writer::tag('span', $title, array('class' => 'dimmed_text'));
                 }
@@ -263,15 +263,15 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                 if (!$ch->hidden) {
                     $ns++;
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
-                        $title = "$nch.$ns $title";
+                        $title = "$nch.$ns. $title";
                         $titleout = $title;
                     }
                 } else {
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
                         if (empty($chapters[$ch->parent]->hidden)) {
-                            $title = "$nch.x $title";
+                            $title = "$nch.x. $title";
                         } else {
-                            $title = "x.x $title";
+                            $title = "x.x. $title";
                         }
                     }
                     $titleout = html_writer::tag('span', $title, array('class' => 'dimmed_text'));
@@ -346,7 +346,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                     }
 
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
-                          $title = "$nch $title";
+                          $title = "$nch. $title";
                     }
                 } else {
                     $ns++;
@@ -360,7 +360,7 @@ function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
                     }
 
                     if ($book->numbering == BOOK_NUM_NUMBERS) {
-                          $title = "$nch.$ns $title";
+                          $title = "$nch.$ns. $title";
                     }
                 }
                 if ($ch->id == $chapter->id) {
