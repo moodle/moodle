@@ -145,7 +145,8 @@ class core_files_externallib_testcase extends advanced_testcase {
         $instanceid = null;
 
         // Make sure the file is created.
-        $fileinfo = @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+        $fileinfo = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent,
+            'user', $USER->id);
         $fileinfo = external_api::clean_returnvalue(core_files_external::upload_returns(), $fileinfo);
         $browser = get_file_browser();
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
