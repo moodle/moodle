@@ -17,7 +17,6 @@ lib/bennu/
 lib/evalmath/
 lib/lessphp/
 lib/phpexcel/
-lib/pear/Net/
 lib/google/
 lib/htmlpurifier/
 lib/jabber/
@@ -49,6 +48,8 @@ lib/amd/src/mustache.js
 lib/graphlib.php
 lib/spout/
 lib/amd/src/chartjs-lazy.js
+lib/maxmind/GeoIP2/
+lib/maxmind/MaxMind/
 mod/assign/feedback/editpdf/fpdi/
 repository/s3/S3.php
 theme/bootstrapbase/less/bootstrap/

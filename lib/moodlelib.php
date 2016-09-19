@@ -8641,8 +8641,6 @@ function getremoteaddr($default='0.0.0.0') {
 function cleanremoteaddr($addr, $compress=false) {
     $addr = trim($addr);
 
-    // TODO: maybe add a separate function is_addr_public() or something like this.
-
     if (strpos($addr, ':') !== false) {
         // Can be only IPv6.
         $parts = explode(':', $addr);
@@ -8733,6 +8731,17 @@ function cleanremoteaddr($addr, $compress=false) {
     }
 
     return implode('.', $parts);
+}
+
+
+/**
+ * Is IP address a public address?
+ *
+ * @param string $ip The ip to check
+ * @return bool true if the ip is public
+ */
+function ip_is_public($ip) {
+    return (bool) filter_var($ip, FILTER_VALIDATE_IP, (FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE));
 }
 
 /**

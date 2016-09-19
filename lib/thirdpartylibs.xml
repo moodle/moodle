@@ -36,13 +36,6 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
-    <location>pear/Net</location>
-    <name>GeoIP</name>
-    <license>LGPL</license>
-    <version>1.0.0</version>
-    <licenseversion>2.1+</licenseversion>
-  </library>
-  <library>
     <location>google</location>
     <name>Google APIs Client Library</name>
     <license>Apache</license>
@@ -259,5 +252,17 @@
     <name>Chart.js</name>
     <license>MIT</license>
     <version>2.1.6</version>
+  </library>
+  <library>
+    <location>maxmind/GeoIP2</location>
+    <name>GeoIP2 PHP API</name>
+    <license>Apache 2.0</license>
+    <version>2.4.2</version>
+  </library>
+  <library>
+    <location>maxmind/MaxMind</location>
+    <name>MaxMind DB Reader API</name>
+    <license>Apache 2.0</license>
+    <version>1.1.0</version>
   </library>
 </libraries>
