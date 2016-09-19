@@ -32,6 +32,7 @@ if ($ADMIN->fulltree) {
     $description = get_string('preset_desc', 'theme_boost');
     $choices = [
         // A file named 'preset-' . key . '.scss' is expected.
+        'plain' => get_string('presetplain', 'theme_boost'),
         'default' => get_string('presetdefault', 'theme_boost'),
         'flatly' => get_string('presetflatly', 'theme_boost'),
         'paper' => get_string('presetpaper', 'theme_boost'),

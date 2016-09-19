@@ -38,6 +38,7 @@ $string['preset_desc'] = 'Pick a preset to broadly change the look of the theme.
 $string['presetdefault'] = 'Default';
 $string['presetflatly'] = 'Flatly';
 $string['presetpaper'] = 'Paper';
+$string['presetplain'] = 'Plain';
 $string['presetreadable'] = 'Readable';
 $string['rawscss'] = 'Raw SCSS';
 $string['rawscss_desc'] = 'Use this field to provide SCSS code which will be injected at the end of the the stylesheet.';
