@@ -34,34 +34,37 @@
     }
 
 }}
-{{#contexturl}}
-<a href="{{{.}}}" data-action="content-item-link"
-{{/contexturl}}
-{{^contexturl}}
-<div
-{{/contexturl}}
-    class="content-item-container {{^read}}unread{{/read}}"
+<div class="content-item-container notification {{^read}}unread{{/read}}"
     data-region="notification-content-item-container"
     data-id="{{id}}"
-    role="listitem"
-    {{#read}}aria-label="{{subject}}"{{/read}}
-    {{^read}}aria-label="{{#str}} unreadnotification, message, {{subject}} {{/str}}"{{/read}}
-    tabindex="0">
+    role="listitem">
 
-    <div class="content-item-body">
-        <div class="notification-image">
-            <img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/>
+    {{#contexturl}}
+    <a class="context-link" href="{{{.}}}" data-action="content-item-link"
+    {{/contexturl}}
+    {{^contexturl}}
+    <div tabindex="0"
+    {{/contexturl}}
+        {{#read}}aria-label="{{subject}}"{{/read}}
+        {{^read}}aria-label="{{#str}} unreadnotification, message, {{subject}} {{/str}}"{{/read}}>
+
+        <div class="content-item-body">
+            <div class="notification-image">
+                <img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/>
+            </div>
+            <div class="notification-message">{{shortenedsubject}}</div>
         </div>
-        <div class="notification-message">{{shortenedsubject}}</div>
-    </div>
-    <div class="content-item-footer">
-        <div class="timestamp">{{timecreatedpretty}}</div>
-    </div>
+        <div class="content-item-footer">
+            <div class="timestamp">{{timecreatedpretty}}</div>
+        </div>
 
-    {{#viewmoreurl}}<a href="{{{.}}}" class="view-more">{{#str}} viewmore {{/str}}</a>{{/viewmoreurl}}
-{{#contexturl}}
-</a>
-{{/contexturl}}
-{{^contexturl}}
+        {{#viewmoreurl}}
+            <a href="{{{.}}}" class="view-more" data-action="view-more">{{#str}} viewmore {{/str}}</a>
+        {{/viewmoreurl}}
+    {{#contexturl}}
+    </a>
+    {{/contexturl}}
+    {{^contexturl}}
+    </div>
+    {{/contexturl}}
 </div>
-{{/contexturl}}

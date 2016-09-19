@@ -24,11 +24,11 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
+define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str', 'core/url',
             'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
-            'core_message/notification_repository'],
-        function($, Bootstrap, Ajax, Templates, Str, DebugNotification, CustomEvents,
-            PopoverController, NotificationRepo) {
+            'core_message/notification_repository', 'core_message/notification_area_events'],
+        function($, Bootstrap, Ajax, Templates, Str, URL, DebugNotification, CustomEvents,
+            PopoverController, NotificationRepo, NotificationAreaEvents) {
 
     var SELECTORS = {
         MARK_ALL_READ_BUTTON: '[data-action="mark-all-read"]',
@@ -205,6 +205,18 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
     };
 
     /**
+     * Find the notification element for the given id.
+     *
+     * @param {int} id
+     * @method getNotificationElement
+     * @return {object|null} The notification element
+     */
+    NotificationPopoverController.prototype.getNotificationElement = function(id) {
+        var element = this.root.find(SELECTORS.NOTIFICATION + '[data-id="' + id + '"]');
+        return element.length == 1 ? element : null;
+    };
+
+    /**
      * Render the notification data with the appropriate template and add it to the DOM.
      *
      * @method renderNotifications
@@ -220,6 +232,15 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
         if (notifications.length) {
             $.each(notifications, function(index, notification) {
+                // Determine what the offset was when loading this notification.
+                var offset = this.getOffset() - this.limit;
+                // Update the view more url to contain the offset to allow the notifications
+                // page to load to the correct position in the list of notifications.
+                notification.viewmoreurl = URL.relativeUrl('/message/notifications.php', {
+                    notificationid: notification.id,
+                    offset: offset,
+                }, true);
+
                 var promise = Templates.render('message/notification_content_item', notification);
                 promises.push(promise);
 
@@ -228,7 +249,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                     alljs[index] = js;
                 })
                 .fail(DebugNotification.exception);
-            });
+            }.bind(this));
         }
 
         return $.when.apply($.when, promises).then(function() {
@@ -266,7 +287,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             useridto: this.userId,
             markasread: false,
             embeduserto: false,
-            embeduserfrom: true,
+            embeduserfrom: false,
         };
 
         var container = this.getContent();
@@ -391,6 +412,21 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
         CustomEvents.define(this.getContentContainer(), [
             CustomEvents.events.scrollLock
         ]);
+
+        // Listen for when a notification is shown in the notifications page and mark
+        // it as read, if it's unread.
+        $(document).on(NotificationAreaEvents.notificationShown, function(e, notification) {
+            if (!notification.read) {
+                var element = this.getNotificationElement(notification.id);
+
+                if (element) {
+                    element.removeClass('unread');
+                }
+
+                this.unreadCount--;
+                this.renderUnreadCount();
+            }
+        }.bind(this));
     };
 
     return NotificationPopoverController;
