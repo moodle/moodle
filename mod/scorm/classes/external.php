@@ -692,7 +692,7 @@ class mod_scorm_external extends external_api {
                 $module['course'] = $scorm->course;
                 $module['name']  = external_format_string($scorm->name, $context->id);
                 list($module['intro'], $module['introformat']) =
-                    external_format_text($scorm->intro, $scorm->introformat, $context->id, 'mod_scorm', 'intro', $scorm->id);
+                    external_format_text($scorm->intro, $scorm->introformat, $context->id, 'mod_scorm', 'intro', null);
 
                 // Check if the SCORM open and return warnings if so.
                 list($open, $openwarnings) = scorm_get_availability_status($scorm, true, $context);
