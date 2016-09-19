@@ -194,7 +194,7 @@ class user_competency_plan extends persistent {
         $params = array('userid' => $userid, 'planid' => $planid);
 
         // IOMAD.  Set up the user's companyid.
-        if (!\iomad::has_capability('block/iomad_company_admin:company_view_all', $context)) {
+        if (!\iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             $companyid = \iomad::get_my_companyid(context_system::instance());
             $companyframeworks = \iomad::get_company_frameworkids($companyid);
             if (!empty($companyframeworks)) {
