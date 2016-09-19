@@ -17,7 +17,7 @@
 /**
  * This script implements some useful svg manipulation tricks.
  *
- * @package    theme_base
+ * @package    core_admin
  * @subpackage cli
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,7 +25,7 @@
 
 define('CLI_SCRIPT', true);
 
-require(__DIR__.'/../../../config.php');
+require(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 
 // Now get cli options.
@@ -45,10 +45,10 @@ if (!file_exists($path)) {
 }
 
 if ($options['ie9fix']) {
-    theme_base_recurse_svgs($path, '', 'theme_base_svgtool_ie9fix', $blacklist);
+    core_admin_recurse_svgs($path, '', 'core_admin_svgtool_ie9fix', $blacklist);
 
 } else if ($options['noaspectratio']) {
-    theme_base_recurse_svgs($path, '', 'theme_base_svgtool_noaspectratio', $blacklist);
+    core_admin_recurse_svgs($path, '', 'core_admin_svgtool_noaspectratio', $blacklist);
 
 } else {
     $help =
@@ -78,7 +78,7 @@ exit(0);
  *
  * @param string $file
  */
-function theme_base_svgtool_ie9fix($file) {
+function core_admin_svgtool_ie9fix($file) {
     global $CFG;
 
     if (strpos($file, $CFG->dirroot.DIRECTORY_SEPARATOR) === 0) {
@@ -115,7 +115,7 @@ function theme_base_svgtool_ie9fix($file) {
  *
  * @param string $file
  */
-function theme_base_svgtool_noaspectratio($file) {
+function core_admin_svgtool_noaspectratio($file) {
     global $CFG;
 
     if (strpos($file, $CFG->dirroot.DIRECTORY_SEPARATOR) === 0) {
@@ -155,7 +155,7 @@ function theme_base_svgtool_noaspectratio($file) {
  * @param string $filecallback
  * @param array $blacklist
  */
-function theme_base_recurse_svgs($base, $sub, $filecallback, $blacklist) {
+function core_admin_recurse_svgs($base, $sub, $filecallback, $blacklist) {
     if (is_dir("$base/$sub")) {
         $items = new DirectoryIterator("$base/$sub");
         foreach ($items as $item) {
@@ -163,7 +163,7 @@ function theme_base_recurse_svgs($base, $sub, $filecallback, $blacklist) {
                 continue;
             }
             $file = $item->getFilename();
-            theme_base_recurse_svgs("$base/$sub", $file, $filecallback, $blacklist);
+            core_admin_recurse_svgs("$base/$sub", $file, $filecallback, $blacklist);
         }
         unset($item);
         unset($items);

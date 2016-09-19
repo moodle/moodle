@@ -488,8 +488,8 @@ class theme_config {
         $this->name     = $config->name;
         $this->dir      = $config->dir;
 
-        if ($this->name != 'base') {
-            $baseconfig = theme_config::find_theme_config('base', $this->settings);
+        if ($this->name != 'bootstrapbase') {
+            $baseconfig = theme_config::find_theme_config('bootstrapbase', $this->settings);
         } else {
             $baseconfig = $config;
         }
@@ -510,9 +510,7 @@ class theme_config {
 
         // verify all parents and load configs and renderers
         foreach ($this->parents as $parent) {
-            if ($parent == 'base') {
-                $parent_config = $baseconfig;
-            } else if (!$parent_config = theme_config::find_theme_config($parent, $this->settings)) {
+            if (!$parent_config = theme_config::find_theme_config($parent, $this->settings)) {
                 // this is not good - better exclude faulty parents
                 continue;
             }
@@ -1947,8 +1945,8 @@ class theme_config {
             }
         }
 
-        // Last resort, try the base theme for names
-        return get_string('region-' . $region, 'theme_base');
+        // Last resort, try the bootstrapbase theme for names
+        return get_string('region-' . $region, 'theme_bootstrapbase');
     }
 
     /**
