@@ -69,7 +69,7 @@ class core_outputrequirementslib_testcase extends advanced_testcase {
      * Test to make sure that backslashes are not generated with either slasharguments set to on or off.
      */
     public function test_jquery_plugin() {
-        global $CFG;
+        global $CFG, $PAGE;
 
         $this->resetAfterTest();
 
@@ -83,7 +83,8 @@ class core_outputrequirementslib_testcase extends advanced_testcase {
         $this->assertTrue($requirements->jquery_plugin('ui'));
 
         // Get the code containing the required jquery plugins.
-        $requirecode = $requirements->get_top_of_body_code();
+        $renderer = $PAGE->get_renderer('core', NULL, RENDERER_TARGET_MAINTENANCE);
+        $requirecode = $requirements->get_top_of_body_code($renderer);
         // Make sure that the generated code does not contain backslashes.
         $this->assertFalse(strpos($requirecode, '\\'), "Output contains backslashes: " . $requirecode);
 
@@ -97,7 +98,7 @@ class core_outputrequirementslib_testcase extends advanced_testcase {
         $this->assertTrue($requirements->jquery_plugin('ui'));
 
         // Get the code containing the required jquery plugins.
-        $requirecode = $requirements->get_top_of_body_code();
+        $requirecode = $requirements->get_top_of_body_code($renderer);
         // Make sure that the generated code does not contain backslashes.
         $this->assertFalse(strpos($requirecode, '\\'), "Output contains backslashes: " . $requirecode);
     }
