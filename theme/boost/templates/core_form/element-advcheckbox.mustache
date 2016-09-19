@@ -1,0 +1,29 @@
+<div class="form-group row {{#error}}has-danger{{/error}}">
+    <div class="col-md-9 push-md-3 checkbox">
+        <label>
+        {{^element.frozen}}
+        <input type="hidden" name="{{element.name}}" value="{{element.deselectedvalue}}">
+        <input type="checkbox"
+            name="{{element.name}}"
+            {{#element.selectedvalue}}
+                value="{{element.selectedvalue}}"
+            {{/element.selectedvalue}}
+            id="{{element.id}}" {{#element.checked}}checked{{/element.checked}}
+            {{#error}}
+                autofocus aria-describedby="id_error_{{element.name}}"
+            {{/error}} {{{element.attributes}}} >
+        {{/element.frozen}}
+            {{{label}}} {{{helpbutton}}}
+        </label>
+        <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+            {{{error}}}
+        </div>
+    </div>
+</div>
+{{^element.frozen}}
+{{#js}}
+require(['theme_boost/form-display-errors'], function(module) {
+    module.enhance({{#quote}}{{element.id}}{{/quote}});
+});
+{{/js}}
+{{/element.frozen}}

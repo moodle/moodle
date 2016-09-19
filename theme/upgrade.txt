@@ -8,7 +8,7 @@ information provided here is intended especially for theme designer.
   to implement specific theme settings:
   * $OUTPUT->get_logo_url($maxwidth, $maxheight);
   * $OUTPUT->get_compact_logo_url($maxwidth, $maxheight);
-* Bootstrap 4 was added as part of a the new theme 'noname'.
+* Bootstrap 4 was added as part of a the new theme 'boost'.
 * Themes can now automatically compile SCSS on the fly. This works the same way as it
   does compiling LESS on the fly, effecitvely adding $THEME->scssfile to your config.
 * Using .dir-rtl for RTL styling is deprecated and should not be used any more. From now
@@ -22,7 +22,7 @@ information provided here is intended especially for theme designer.
   snippets or configuration samples.
 * A new callback can be defined to post process the CSS using an object representation
   of the CSS tree ($THEME->csstreepostprocess). This gives a lot more flexibility than a
-  simplel find and replace. Refer to 'noname' for an example, and to PHP-CSS-Parser
+  simplel find and replace. Refer to 'boost' for an example, and to PHP-CSS-Parser
   (https://github.com/sabberworm/PHP-CSS-Parser) for the API.
 * You may no longer override the following core_course_renderer methods.
   See course/upgrade.txt for more information:
