@@ -45,7 +45,7 @@ define(['exports', './util'], function (exports, _util) {
 
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.0.0-alpha.3): tooltip.js
+   * Bootstrap (v4.0.0-alpha.4): tooltip.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */
@@ -67,7 +67,7 @@ define(['exports', './util'], function (exports, _util) {
      */
 
     var NAME = 'tooltip';
-    var VERSION = '4.0.0-alpha.3';
+    var VERSION = '4.0.0-alpha.4';
     var DATA_KEY = 'bs.tooltip';
     var EVENT_KEY = '.' + DATA_KEY;
     var JQUERY_NO_CONFLICT = $.fn[NAME];

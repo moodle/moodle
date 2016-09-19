@@ -22,8 +22,8 @@ To update the javascript files:
 Checkout the latest branch of bootstrap to a folder, in that folder run:
 
 > mkdir "out"
-> npm install babel-cli babel-preset-es2015
-> ./node_modules/babel-cli/bin/babel.js --presets es2015 -d out/ js/src/
+> npm install babel-cli babel-preset-es2015 babel-plugin-transform-es2015-modules-amd
+> ./node_modules/babel-cli/bin/babel.js --presets es2015 --plugins transform-es2015-modules-amd -d out/ js/src/
 
 Copy the transpiled files from out/ into the amd/src/ folder for the theme.
 Run grunt to re-compile the JS files.
