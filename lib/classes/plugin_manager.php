@@ -1900,7 +1900,7 @@ class core_plugin_manager {
             ),
 
             'theme' => array(
-                'bootstrapbase', 'clean', 'more'
+                'boost', 'bootstrapbase', 'clean', 'more'
             ),
 
             'tool' => array(
