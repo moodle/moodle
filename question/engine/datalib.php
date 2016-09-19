@@ -287,10 +287,19 @@ class question_engine_data_mapper {
      */
     public function update_question_attempt_metadata(question_attempt $qa, array $names) {
         global $DB;
-        list($condition, $params) = $DB->get_in_or_equal($names);
-        $params[] = $qa->get_step(0)->get_id();
+        if (!$names) {
+            return [];
+        }
+        // Use case-sensitive LIKE instead of get_in_or_equal.
+        // Some databases may use case-insensitive collation, we don't want to delete 'X' instead of 'x'.
+        $sqls = [];
+        $params = [$qa->get_step(0)->get_id()];
+        foreach ($names as $name) {
+            $sqls[] = $DB->sql_like('name', '?', true);
+            $params[] = $DB->sql_like_escape($name);
+        }
         $DB->delete_records_select('question_attempt_step_data',
-                'name ' . $condition . ' AND attemptstepid = ?', $params);
+            'attemptstepid = ? AND (' . join(' OR ', $sqls) . ')', $params);
         return $this->insert_question_attempt_metadata($qa, $names);
     }
 
