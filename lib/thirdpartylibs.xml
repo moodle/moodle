@@ -254,7 +254,7 @@
     <version>2.1.6</version>
   </library>
   <library>
-    <location>maxmind/GeoIP2</location>
+    <location>maxmind/GeoIp2</location>
     <name>GeoIP2 PHP API</name>
     <license>Apache 2.0</license>
     <version>2.4.2</version>
