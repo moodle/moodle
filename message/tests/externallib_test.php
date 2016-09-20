@@ -886,4 +886,61 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(6, $readnotifications);
         $this->assertCount(0, $unreadnotifications);
     }
+
+    /**
+     * Test get_user_notification_preferences
+     */
+    public function test_get_user_notification_preferences() {
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Set a couple of preferences to test.
+        set_user_preference('message_provider_mod_assign_assign_notification_loggedin', 'popup', $user);
+        set_user_preference('message_provider_mod_assign_assign_notification_loggedoff', 'email', $user);
+
+        $prefs = core_message_external::get_user_notification_preferences();
+        $prefs = external_api::clean_returnvalue(core_message_external::get_user_notification_preferences_returns(), $prefs);
+        // Check processors.
+        $this->assertCount(2, $prefs['preferences']['processors']);
+        $this->assertEquals($user->id, $prefs['preferences']['userid']);
+
+        // Check components.
+        $this->assertCount(8, $prefs['preferences']['components']);
+
+        // Check some preferences that we previously set.
+        $found = 0;
+        foreach ($prefs['preferences']['components'] as $component) {
+            foreach ($component['notifications'] as $prefdata) {
+                if ($prefdata['preferencekey'] != 'message_provider_mod_assign_assign_notification') {
+                    continue;
+                }
+                foreach ($prefdata['processors'] as $processor) {
+                    if ($processor['name'] == 'popup') {
+                        $this->assertTrue($processor['loggedin']['checked']);
+                        $found++;
+                    } else if ($processor['name'] == 'email') {
+                        $this->assertTrue($processor['loggedoff']['checked']);
+                        $found++;
+                    }
+                }
+            }
+        }
+        $this->assertEquals(2, $found);
+    }
+
+    /**
+     * Test get_user_notification_preferences permissions
+     */
+    public function test_get_user_notification_preferences_permissions() {
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+        $otheruser = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $this->expectException('moodle_exception');
+        $prefs = core_message_external::get_user_notification_preferences($otheruser->id);
+    }
 }
