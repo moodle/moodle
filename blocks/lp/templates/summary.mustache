@@ -37,7 +37,7 @@
 }}
 <div>
     {{#hasplans}}
-        <h3>My plans</h3>
+        <h3>{{#str}}myplans, block_lp{{/str}}</h3>
         <div class="sub-content">
             {{#hasactiveplans}}
                 <ul>
@@ -50,7 +50,7 @@
                 </ul>
             {{/hasactiveplans}}
             {{^hasactiveplans}}
-                <p>No active plans at the moment. <a href="{{plansurl}}">{{#str}}viewotherplans, block_lp{{/str}}</a></p>
+                <p>{{#str}}noactiveplans, block_lp{{/str}} <a href="{{plansurl}}">{{#str}}viewotherplans, block_lp{{/str}}</a></p>
             {{/hasactiveplans}}
         </div>
     {{/hasplans}}
@@ -70,7 +70,7 @@
         </div>
     {{/hascompstoreview}}
     {{#hasplanstoreview}}
-        <h3>Plans to review</h3>
+        <h3>{{#str}}planstoreview, block_lp{{/str}}</h3>
         <div class="sub-content">
             <ul>
                 {{#planstoreview}}
