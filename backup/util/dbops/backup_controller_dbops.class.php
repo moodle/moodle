@@ -569,7 +569,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                 self::apply_admin_config_defaults($controller, $settings, true);
                 break;
             case backup::MODE_IMPORT:
-                // Load the import defaults
+                // Load the import defaults.
                 $settings = array(
                         'backup_import_activities'         => 'activities',
                         'backup_import_blocks'             => 'blocks',
