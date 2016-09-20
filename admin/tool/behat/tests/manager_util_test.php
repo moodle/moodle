@@ -365,12 +365,7 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
 
         $behatconfigutil = $this->behatconfigutil;
         // Fix expected directory path for OS.
-        $cleanfeaturepath = str_replace('\\', DIRECTORY_SEPARATOR, $cleanfeaturepath);
-        $cleanfeaturepath = str_replace('/', DIRECTORY_SEPARATOR, $cleanfeaturepath);
-
-        if (testing_is_cygwin()) {
-            $featurepath = str_replace('\\', '/', $cleanfeaturepath);
-        }
+        $cleanfeaturepath = testing_cli_fix_directory_separator($cleanfeaturepath);
 
         list($retkey, $retcleanfeaturepath) = $behatconfigutil->get_clean_feature_key_and_path($featurepath);
 

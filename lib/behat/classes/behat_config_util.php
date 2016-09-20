@@ -223,17 +223,13 @@ class behat_config_util {
         global $CFG;
 
         // Fix directory path.
-        $featurepath = str_replace('\\', DIRECTORY_SEPARATOR, $featurepath);
-        $featurepath = str_replace('/', DIRECTORY_SEPARATOR, $featurepath);
-
-        if (testing_is_cygwin()) {
-            $featurepath = str_replace('\\', '/', $featurepath);
-        }
+        $featurepath = testing_cli_fix_directory_separator($featurepath);
+        $dirroot = testing_cli_fix_directory_separator($CFG->dirroot . DIRECTORY_SEPARATOR);
 
         $key = basename($featurepath, '.feature');
 
         // Get relative path.
-        $featuredirname = str_replace($CFG->dirroot . DIRECTORY_SEPARATOR , '', $featurepath);
+        $featuredirname = str_replace($dirroot , '', $featurepath);
         // Get 5 levels of feature path to ensure we have a unique key.
         for ($i = 0; $i < 5; $i++) {
             if (($featuredirname = dirname($featuredirname)) && $featuredirname !== '.') {
