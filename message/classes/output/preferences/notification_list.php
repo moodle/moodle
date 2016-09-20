@@ -147,7 +147,6 @@ class notification_list implements templatable, renderable {
 
             $context['processors'][] = [
                 'displayname' => get_string('pluginname', 'message_'.$processor->name),
-                'ispopup' => ($processor->name == 'popup'),
                 'name' => $processor->name,
                 'hassettings' => !empty($processor->object->config_form($preferences)),
                 'contextid' => $usercontext->id,

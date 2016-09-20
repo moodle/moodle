@@ -120,13 +120,8 @@
                             <td class="align-bottom">
                                 <div class="container-fluid">
                                     <div class="row-fluid">
-                                        {{#ispopup}}
-                                            <div class="span12">{{#str}} online, message {{/str}}</div>
-                                        {{/ispopup}}
-                                        {{^ispopup}}
-                                            <div class="span6">{{#str}} online, message {{/str}}</div>
-                                            <div class="span6">{{#str}} offline, message {{/str}}</div>
-                                        {{/ispopup}}
+                                        <div class="span6">{{#str}} online, message {{/str}}</div>
+                                        <div class="span6">{{#str}} offline, message {{/str}}</div>
                                     </div>
                                 </div>
                             </td>
@@ -147,7 +142,7 @@
                                         <form>
                                             <div class="container-fluid">
                                                 <div class="row-fluid">
-                                                    <div {{#ispopup}}class="span12"{{/ispopup}}{{^ispopup}}class="span6"{{/ispopup}}>
+                                                    <div class="span6">
                                                         {{#loggedin}}
                                                             <label class="preference-state"
                                                                 data-toggle="tooltip"
@@ -168,29 +163,27 @@
                                                             </label>
                                                         {{/loggedin}}
                                                     </div>
-                                                    {{^ispopup}}
-                                                        <div class="span6">
-                                                            {{#loggedoff}}
-                                                                <label class="preference-state"
-                                                                    data-toggle="tooltip"
-                                                                    title="{{displayname}}"
-                                                                    data-state="{{name}}">
+                                                    <div class="span6">
+                                                        {{#loggedoff}}
+                                                            <label class="preference-state"
+                                                                data-toggle="tooltip"
+                                                                title="{{displayname}}"
+                                                                data-state="{{name}}">
 
-                                                                    <span class="accesshide">{{displayname}}</span>
-                                                                    <input type="checkbox"
-                                                                        tabindex="-1"
-                                                                        class="accesshide"
-                                                                        {{#checked}}checked{{/checked}}
-                                                                        {{#disableall}}disabled{{/disableall}} />
-                                                                    <div class="preference-state-status-container" tabindex="0">
-                                                                        <span class="on-text">{{#str}} on, message {{/str}}</span>
-                                                                        <span class="off-text">{{#str}} off, message {{/str}}</span>
-                                                                        {{> core/loading }}
-                                                                    </div>
-                                                                </label>
-                                                            {{/loggedoff}}
-                                                        </div>
-                                                    {{/ispopup}}
+                                                                <span class="accesshide">{{displayname}}</span>
+                                                                <input type="checkbox"
+                                                                    tabindex="-1"
+                                                                    class="accesshide"
+                                                                    {{#checked}}checked{{/checked}}
+                                                                    {{#disableall}}disabled{{/disableall}} />
+                                                                <div class="preference-state-status-container" tabindex="0">
+                                                                    <span class="on-text">{{#str}} on, message {{/str}}</span>
+                                                                    <span class="off-text">{{#str}} off, message {{/str}}</span>
+                                                                    {{> core/loading }}
+                                                                </div>
+                                                            </label>
+                                                        {{/loggedoff}}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </form>
