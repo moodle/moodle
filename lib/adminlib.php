@@ -9081,6 +9081,7 @@ class admin_setting_configcolourpicker extends admin_setting {
         $context = (object) [
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
+            'value' => $data,
             'icon' => $icon->export_for_template($OUTPUT),
             'haspreviewconfig' => !empty($this->previewconfig),
             'forceltr' => $this->get_force_ltr()
