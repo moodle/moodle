@@ -1556,15 +1556,16 @@ class theme_config {
             $parser = new core_cssparser($css);
             $csstree = $parser->parse();
             unset($parser);
-        }
 
-        if ($this->rtlmode) {
-            $this->rtlize($csstree);
-        }
+            if ($this->rtlmode) {
+                $this->rtlize($csstree);
+            }
 
-        if ($hastreeprocessor) {
-            $fn = $this->csstreepostprocessor;
-            $fn($csstree, $this);
+            if ($hastreeprocessor) {
+                $fn = $this->csstreepostprocessor;
+                $fn($csstree, $this);
+            }
+
             $css = $csstree->render();
             unset($csstree);
         }
