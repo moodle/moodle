@@ -5771,7 +5771,7 @@ a.ygtvspacer:hover {
 }
 .messaging-area-container .status .online-text {
   display: none;
-  color: #77dd77;
+  color: #7d7;
 }
 .messaging-area-container .status .offline-text {
   color: #ff6961;
@@ -7786,7 +7786,6 @@ body.path-question-type .mform fieldset.hidden {
   width: 30px;
   display: inline-block;
   text-align: center;
-  vertical-align: middle;
   float: left;
 }
 .popover-region-messages.popover-region .popover-region-container .popover-region-content-container .popover-region-content .content-item-container .content-item .profile-image-container img {

@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains notification_list_processor class for displaying on message preferences
- * page.
+ * Contains notification_list_processor class for displaying on message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
@@ -25,14 +24,15 @@
 
 namespace core_message\output\preferences;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/message/lib.php');
 
 use renderable;
 use templatable;
 
 /**
- * Class to create context for a notification component on the message
- * preferences page.
+ * Class to create context for a notification component on the message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
@@ -41,26 +41,26 @@ use templatable;
 class notification_list_processor implements templatable, renderable {
 
     /**
-     * A notification processor.
+     * @var \stdClass A notification processor.
      */
     protected $processor;
 
     /**
-     * A notification provider.
+     * @var \stdClass A notification provider.
      */
     protected $provider;
 
     /**
-     * A list of message preferences.
+     * @var \stdClass A list of message preferences.
      */
     protected $preferences;
 
     /**
      * Constructor.
      *
-     * @param stdClass $processor
-     * @param stdClass $provider
-     * @param stdClass $preferences
+     * @param \stdClass $processor
+     * @param \stdClass $provider
+     * @param \stdClass $preferences
      */
     public function __construct($processor, $provider, $preferences) {
         $this->processor = $processor;
@@ -81,8 +81,6 @@ class notification_list_processor implements templatable, renderable {
      * Check if the given preference is enabled or not.
      *
      * @param string $name preference name
-     * @param stdClass $processor the processors for the preference
-     * @param stdClass $preferences the preferences config
      * @return bool
      */
     private function is_preference_enabled($name) {
@@ -91,12 +89,12 @@ class notification_list_processor implements templatable, renderable {
         $defaultpreferences = get_message_output_default_preferences();
 
         $checked = false;
-        // See if user has touched this preference
+        // See if user has touched this preference.
         if (isset($preferences->{$name})) {
-            // User have some preferneces for this state in the database, use them
+            // User has some preferences for this state in the database.
             $checked = isset($preferences->{$name}[$processor->name]);
         } else {
-            // User has not set this preference yet, using site default preferences set by admin
+            // User has not set this preference yet, using site default preferences set by admin.
             $defaultpreference = 'message_provider_'.$name;
             if (isset($defaultpreferences->{$defaultpreference})) {
                 $checked = (int)in_array($processor->name, explode(',', $defaultpreferences->{$defaultpreference}));
@@ -108,9 +106,7 @@ class notification_list_processor implements templatable, renderable {
 
     public function export_for_template(\renderer_base $output) {
         $processor = $this->processor;
-        $provider = $this->provider;
-        $preferences = $this->preferences;
-        $preferencebase = $this->get_preference_base($provider);
+        $preferencebase = $this->get_preference_base();
         $permitted = MESSAGE_DEFAULT_PERMITTED;
         $defaultpreferences = get_message_output_default_preferences();
         $defaultpreference = $processor->name.'_provider_'.$preferencebase.'_permitted';
@@ -122,21 +118,20 @@ class notification_list_processor implements templatable, renderable {
             'loggedin' => [
                 'name' => 'loggedin',
                 'displayname' => get_string('loggedindescription', 'message'),
-                'checked' => $this->is_preference_enabled($preferencebase.'_loggedin', $processor, $preferences),
+                'checked' => $this->is_preference_enabled($preferencebase.'_loggedin'),
             ],
             'loggedoff' => [
                 'name' => 'loggedoff',
                 'displayname' => get_string('loggedoffdescription', 'message'),
-                'checked' => $this->is_preference_enabled($preferencebase.'_loggedoff', $processor, $preferences),
+                'checked' => $this->is_preference_enabled($preferencebase.'_loggedoff'),
             ],
         ];
 
-        // determine the default setting
+        // Determine the default setting.
         if (isset($defaultpreferences->{$defaultpreference})) {
             $permitted = $defaultpreferences->{$defaultpreference};
         }
-        // If settings are disallowed or forced, just display the
-        // corresponding message, if not use user settings.
+        // If settings are disallowed or forced, just display the corresponding message, if not use user settings.
         if ($permitted == 'disallowed') {
             $context['locked'] = true;
             $context['lockedmessage'] = get_string('disallowed', 'message');

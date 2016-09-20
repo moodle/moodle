@@ -230,16 +230,16 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles loading conversations.
          *
-         * @returns {Promise} The promise resolved when the contact area has been rendered,
+         * @return {Promise|boolean} The promise resolved when the contact area has been rendered,
          * @private
          */
         Contacts.prototype._loadConversations = function() {
             if (this._isDeleting) {
-                return;
+                return false;
             }
 
             if (this._isLoadingConversations) {
-                return;
+                return false;
             }
 
             // Tell the user we are loading items.
@@ -284,16 +284,16 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles loading contacts.
          *
-         * @returns {Promise} The promise resolved when the contact area has been rendered
+         * @return {Promise|boolean} The promise resolved when the contact area has been rendered
          * @private
          */
         Contacts.prototype._loadContacts = function() {
             if (this._isDeleting) {
-                return;
+                return false;
             }
 
             if (this._isLoadingContacts) {
-                return;
+                return false;
             }
 
             // Tell the user we are loading items.
@@ -384,7 +384,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @param {String} webservice The web service to call
          * @param {int} limitfrom
          * @param {int} limitnum
-         * @returns {Promise} The promise resolved when the contact area has been rendered
+         * @return {Promise} The promise resolved when the contact area has been rendered
          * @private
          */
         Contacts.prototype._getItems = function(webservice, limitfrom, limitnum) {
@@ -404,8 +404,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles deleting a conversation.
          *
-         * @params {Event} event
-         * @params {int} The user id belonging to the messages we are deleting.
+         * @param {Event} event
+         * @param {int} userid The user id belonging to the messages we are deleting.
          * @private
          */
         Contacts.prototype._deleteConversation = function(event, userid) {
@@ -420,9 +420,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles updating the last message in the contact.
          *
-         * @params {Event} event
-         * @params {int} The user id belonging to the messages we are deleting
-         * @params {jQuery|null} The message we need to update the contact panel with
+         * @param {Event} event
+         * @param {int} userid The user id belonging to the messages we are deleting
+         * @param {jQuery|null} updatemessage The message we need to update the contact panel with
          * @private
          */
         Contacts.prototype._updateLastMessage = function(event, userid, updatemessage) {
@@ -446,7 +446,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles adding a contact to the list.
          *
-         * @param {int} userid
          * @private
          */
         Contacts.prototype._addContact = function() {
@@ -506,6 +505,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          *
          * @param {String} selector
          * @param {int} userid
+         * @return {jQuery} The user node
          * @private
          */
         Contacts.prototype._getUserNode = function(selector, userid) {
@@ -530,6 +530,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Converts a text message into the text that should be stored in the contact list
          *
          * @param {String} text
+         * @return {String} The altered text
          */
         Contacts.prototype._getContactText = function(text) {
             if (text.length > this._messageLength) {
@@ -552,10 +553,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Get the text we will display on the contact panel.
             text = this._getContactText(text);
             if (sentbyuser) {
-                Str.get_string('you', 'message').done(function (string) {
+                Str.get_string('you', 'message').done(function(string) {
                     // Ensure we display that the message is from this user.
                     user.find(this.messageArea.SELECTORS.LASTMESSAGEUSER).empty().append(string);
-                }.bind(this)).always(function () {
+                }.bind(this)).always(function() {
                     user.find(this.messageArea.SELECTORS.LASTMESSAGETEXT).empty().append(text);
                 }.bind(this));
             } else {

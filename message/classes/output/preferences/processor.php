@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains processor class for displaying on message preferences
- * page.
+ * Contains processor class for displaying on message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
@@ -25,12 +24,13 @@
 
 namespace core_message\output\preferences;
 
+defined('MOODLE_INTERNAL') || die();
+
 use renderable;
 use templatable;
 
 /**
- * Class to create context for one of the message processors settings
- * on the message preferences page.
+ * Class to create context for one of the message processors settings on the message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
@@ -39,31 +39,32 @@ use templatable;
 class processor implements templatable, renderable {
 
     /**
-     * The message processor.
+     * @var \stdClass The message processor.
      */
     protected $processor;
 
     /**
-     * A list of message preferences.
+     * @var \stdClass list of message preferences.
      */
     protected $preferences;
 
     /**
-     * A user.
+     * @var \stdClass A user.
      */
     protected $user;
 
     /**
-     * The processor type.
+     * @var string The processor type.
      */
     protected $type;
 
     /**
      * Constructor.
      *
-     * @param stdClass $processor
-     * @param stdClass $preferences
-     * @param stdClass $user
+     * @param \stdClass $processor
+     * @param \stdClass $preferences
+     * @param \stdClass $user
+     * @param string $type
      */
     public function __construct($processor, $preferences, $user, $type) {
         $this->processor = $processor;

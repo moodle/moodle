@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains notification_list class for displaying on message preferences
- * page.
+ * Contains notification_list class for displaying on message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
@@ -25,13 +24,14 @@
 
 namespace core_message\output\preferences;
 
+defined('MOODLE_INTERNAL') || die();
+
 use renderable;
 use templatable;
 use context_user;
 
 /**
- * Class to create context for the list of notifications on the message
- * preferences page.
+ * Class to create context for the list of notifications on the message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
@@ -40,22 +40,22 @@ use context_user;
 class notification_list implements templatable, renderable {
 
     /**
-     * A list of message processors.
+     * @var array A list of message processors.
      */
     protected $processors;
 
     /**
-     * A list of message providers.
+     * @var array A list of message providers.
      */
     protected $providers;
 
     /**
-     * A list of message preferences.
+     * @var array A list of message preferences.
      */
     protected $preferences;
 
     /**
-     * A user.
+     * @var \stdClass A user.
      */
     protected $user;
 
@@ -64,8 +64,8 @@ class notification_list implements templatable, renderable {
      *
      * @param array $processors
      * @param array $providers
-     * @param stdClass $preferences
-     * @param stdClass $user
+     * @param \stdClass $preferences
+     * @param \stdClass $user
      */
     public function __construct($processors, $providers, $preferences, $user) {
         $this->processors = $processors;
@@ -80,12 +80,12 @@ class notification_list implements templatable, renderable {
      * @param string $component
      * @param array $readyprocessors
      * @param array $providers
-     * @param stdClass $preferences
-     * @param stdClass $user
+     * @param \stdClass $preferences
+     * @param \stdClass $user
+     * @return notification_list_component
      */
     protected function create_list_component($component, $readyprocessors, $providers, $preferences, $user) {
-        return new \core_message\output\preferences\notification_list_component(
-            $component, $readyprocessors, $providers, $preferences, $user);
+        return new notification_list_component($component, $readyprocessors, $providers, $preferences, $user);
     }
 
     public function export_for_template(\renderer_base $output) {
@@ -102,7 +102,7 @@ class notification_list implements templatable, renderable {
         foreach ($providers as $provider) {
             if ($provider->component != 'moodle') {
                 if (substr($provider->component, 0, 4) == 'mod_') {
-                    // Activities
+                    // Activities.
                     $activitycomponents[] = $provider->component;
                 } else {
                     // Other stuff.
@@ -110,7 +110,6 @@ class notification_list implements templatable, renderable {
                 }
             }
         }
-
 
         $activitycomponents = array_unique($activitycomponents);
         asort($activitycomponents);

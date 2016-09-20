@@ -17,11 +17,13 @@
 /**
  * Event observers definition.
  *
- * @package message_output_popup
+ * @package message_popup
  * @category event
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 $observers = array(
 

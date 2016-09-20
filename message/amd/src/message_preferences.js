@@ -21,7 +21,6 @@
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/notification',
         'core_message/message_notification_preference', 'core/custom_interaction_events'],
@@ -37,8 +36,7 @@ define(['jquery', 'core/ajax', 'core/notification',
     /**
      * Constructor for the MessagePreferences.
      *
-     * @param {jQuery object} element The root element for the message preferences
-     * @return object MessagePreferences
+     * @param {object} element The root element for the message preferences
      */
     var MessagePreferences = function(element) {
         this.root = $(element);
@@ -50,7 +48,7 @@ define(['jquery', 'core/ajax', 'core/notification',
      * Check if the preferences have been disabled on this page.
      *
      * @method preferencesDisabled
-     * @return bool
+     * @return {bool}
      */
     MessagePreferences.prototype.preferencesDisabled = function() {
         return this.root.find(SELECTORS.PREFERENCES_CONTAINER).hasClass('disabled');
@@ -60,6 +58,7 @@ define(['jquery', 'core/ajax', 'core/notification',
      * Update the block messages from non-contacts user preference in the DOM and
      * send a request to update on the server.
      *
+     * @return {Promise}
      * @method saveBlockNonContactsStatus
      */
     MessagePreferences.prototype.saveBlockNonContactsStatus = function() {

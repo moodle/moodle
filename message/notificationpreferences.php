@@ -53,18 +53,18 @@ $personalcontext = context_user::instance($user->id);
 $PAGE->set_context($personalcontext);
 $PAGE->set_pagelayout('admin');
 
-// check access control
+// Check access control.
 if ($user->id == $USER->id) {
-    //editing own message profile
+    // Editing own message profile.
     require_capability('moodle/user:editownmessageprofile', $systemcontext);
 } else {
-    // teachers, parents, etc.
+    // Teachers, parents, etc.
     require_capability('moodle/user:editmessageprofile', $personalcontext);
-    // no editing of guest user account
+    // No editing of guest user account.
     if (isguestuser($user->id)) {
         print_error('guestnoeditmessageother', 'message');
     }
-    // no editing of admins by non admins!
+    // No editing of admins by non admins!
     if (is_siteadmin($user) and !is_siteadmin($USER)) {
         print_error('useradmineditadmin');
     }
@@ -72,12 +72,12 @@ if ($user->id == $USER->id) {
     $PAGE->navigation->extend_for_user($user);
 }
 
-/// Display page header
+// Display page header.
 $strmessaging = get_string('notificationpreferences', 'message');
 $PAGE->set_title($strmessaging);
 $PAGE->set_heading(fullname($user));
 
-// Grab the renderer
+// Grab the renderer.
 $renderer = $PAGE->get_renderer('core', 'message');
 $messagingoptions = $renderer->render_user_notification_preferences($user);
 

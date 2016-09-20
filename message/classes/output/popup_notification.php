@@ -24,6 +24,8 @@
 
 namespace core_message\output;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/message/lib.php');
 
 use renderable;
@@ -41,25 +43,22 @@ use core_user;
 class popup_notification implements templatable, renderable {
 
     /**
-     * The notification.
+     * @var \stdClass The notification.
      */
     protected $notification;
 
     /**
-     * Indicates if the receiver of the notification should have their
-     * details embedded in the output.
+     * @var \stdClass Indicates if the receiver of the notification should have their details embedded in the output.
      */
     protected $embeduserto;
 
     /**
-     * Indicates if the sender of the notification should have their
-     * details embedded in the output.
+     * @var \stdClass Indicates if the sender of the notification should have their details embedded in the output.
      */
     protected $embeduserfrom;
 
     /**
-     * A cache for the receiver's full name, if it's already known, so that
-     * a DB lookup isn't required.
+     * @var string A cache for the receiver's full name, if it's already known, so that a DB lookup isn't required.
      */
     protected $usertofullname;
 
@@ -67,10 +66,11 @@ class popup_notification implements templatable, renderable {
      * Constructor.
      *
      * @param \stdClass $notification
+     * @param \stdClass $embeduserto
+     * @param \stdClass $embeduserfrom
+     * @param string $usertofullname
      */
-    public function __construct($notification, $embeduserto,
-        $embeduserfrom, $usertofullname = '') {
-
+    public function __construct($notification, $embeduserto, $embeduserfrom, $usertofullname = '') {
         $this->notification = $notification;
         $this->embeduserto = $embeduserto;
         $this->embeduserfrom = $embeduserfrom;

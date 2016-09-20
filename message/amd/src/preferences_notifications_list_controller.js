@@ -22,7 +22,6 @@
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_events', 'core_message/notification_preference',
         'core_message/notification_processor_settings'],
@@ -40,8 +39,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
     /**
      * Constructor for the PreferencesController.
      *
-     * @param element jQuery object root element of the preference
-     * @return object PreferencesController
+     * @param {object} element jQuery object root element of the preference
      */
     var PreferencesController = function(element) {
         this.root = $(element);
@@ -54,7 +52,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
      * Check if the preferences are all disabled.
      *
      * @method isDisabled
-     * @return bool
+     * @return {bool}
      */
     PreferencesController.prototype.isDisabled = function() {
         return this.root.hasClass('disabled');
@@ -85,6 +83,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
       * send a request to update on the server.
       *
       * @method toggleDisableAllStatus
+      * @return {Promise}
       */
     PreferencesController.prototype.toggleDisableAllStatus = function() {
         var checkbox = $(SELECTORS.DISABLE_NOTIFICATIONS);
@@ -119,6 +118,11 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
             .fail(Notification.exception);
     };
 
+    /**
+      * Set up all of the event listeners for the PreferencesController.
+      *
+      * @method registerEventListeners
+      */
     PreferencesController.prototype.registerEventListeners = function() {
         var disabledNotificationsElement = $(SELECTORS.DISABLE_NOTIFICATIONS);
 

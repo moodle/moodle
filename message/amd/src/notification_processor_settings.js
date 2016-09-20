@@ -21,7 +21,6 @@
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/notification', 'core/fragment', 'core/templates', 'core/str', 'tool_lp/dialogue'],
         function($, Ajax, Notification, Fragment, Templates, Str, Dialogue) {
@@ -34,8 +33,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/fragment', 'core/templ
     /**
      * Constructor for the notification processor settings.
      *
-     * @param element jQuery object root element of the processor
-     * @return object NotificationProcessorSettings
+     * @param {object} element jQuery object root element of the processor
      */
     var NotificationProcessorSettings = function(element) {
         this.root = $(element);
@@ -85,12 +83,13 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/fragment', 'core/templ
      * status from the interface.
      *
      * @method updateConfiguredStatus
+     * @return {Promise|boolean}
      */
     NotificationProcessorSettings.prototype.updateConfiguredStatus = function() {
         var processorHeader = this.root.closest(SELECTORS.PROCESSOR);
 
         if (!processorHeader.hasClass('unconfigured')) {
-            return;
+            return false;
         }
 
         var processorName = processorHeader.attr('data-processor-name');

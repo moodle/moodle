@@ -22,10 +22,9 @@
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
-define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_preference'],
-        function($, ajax, notification, NotificationPreference) {
+define(['jquery', 'core_message/notification_preference'],
+        function($, NotificationPreference) {
 
     var SELECTORS = {
         PREFERENCE_KEY: '[data-preference-key]',
@@ -34,9 +33,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
     /**
      * Constructor for the Preference.
      *
-     * @param element jQuery object root element of the preference
-     * @param int the current user id
-     * @return object Preference
+     * @param {object} element jQuery object root element of the preference
+     * @param {int} userId The current user id
      */
     var MessageNotificationPreference = function(element, userId) {
         NotificationPreference.call(this, element, userId);
@@ -50,13 +48,13 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
     /**
      * Set constructor.
      */
-    MessageNotificationPreference.prototype.constructor = NotificationPreference;
+    MessageNotificationPreference.prototype.constructor = MessageNotificationPreference;
 
     /**
      * Get the unique prefix key that identifies this user preference.
      *
      * @method getPreferenceKey
-     * @return string
+     * @return {string}
      */
     MessageNotificationPreference.prototype.getPreferenceKey = function() {
         return this.root.find(SELECTORS.PREFERENCE_KEY).attr('data-preference-key');

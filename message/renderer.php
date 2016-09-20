@@ -224,10 +224,12 @@ class core_message_renderer extends plugin_renderer_base {
     public function render_user_notification_preferences($user) {
         $processors = get_message_processors();
         $providers = message_get_providers_for_user($user->id);
-        $preferences = \core_message\api::get_all_message_preferences($processors, $providers, $user);
-        $notificationlistoutput = new \core_message\output\preferences\notification_list($processors, $providers, $preferences, $user);
 
-        return $this->render_from_template('message/preferences_notifications_list', $notificationlistoutput->export_for_template($this));
+        $preferences = \core_message\api::get_all_message_preferences($processors, $providers, $user);
+        $notificationlistoutput = new \core_message\output\preferences\notification_list($processors, $providers,
+            $preferences, $user);
+        return $this->render_from_template('message/preferences_notifications_list',
+            $notificationlistoutput->export_for_template($this));
     }
 
     /**
@@ -251,7 +253,8 @@ class core_message_renderer extends plugin_renderer_base {
             return $provider->component === 'moodle';
         });
         $preferences = \core_message\api::get_all_message_preferences($readyprocessors, $providers, $user);
-        $notificationlistoutput = new \core_message\output\preferences\message_notification_list($readyprocessors, $providers, $preferences, $user);
+        $notificationlistoutput = new \core_message\output\preferences\message_notification_list($readyprocessors,
+            $providers, $preferences, $user);
         $context = $notificationlistoutput->export_for_template($this);
         $context['blocknoncontacts'] = get_user_preferences('message_blocknoncontacts', '', $user->id) ? true : false;
 

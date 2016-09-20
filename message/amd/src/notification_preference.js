@@ -22,10 +22,9 @@
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_processor'],
-        function($, ajax, notification, NotificationProcessor) {
+        function($, Ajax, Notification, NotificationProcessor) {
 
     var SELECTORS = {
         PROCESSOR: '[data-processor-name]',
@@ -35,9 +34,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
     /**
      * Constructor for the Preference.
      *
-     * @param element jQuery object root element of the preference
-     * @param int the current user id
-     * @return object Preference
+     * @param {object} element jQuery object root element of the preference
+     * @param {int} userId The current user id
      */
     var NotificationPreference = function(element, userId) {
         this.root = $(element);
@@ -48,7 +46,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
      * Get the unique prefix key that identifies this user preference.
      *
      * @method getPreferenceKey
-     * @return string
+     * @return {string}
      */
     NotificationPreference.prototype.getPreferenceKey = function() {
         return this.root.attr('data-preference-key');
@@ -58,7 +56,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
      * Get the unique key for the logged in preference.
      *
      * @method getLoggedInPreferenceKey
-     * @return string
+     * @return {string}
      */
     NotificationPreference.prototype.getLoggedInPreferenceKey = function() {
         return this.getPreferenceKey() + '_loggedin';
@@ -68,7 +66,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
      * Get the unique key for the logged off preference.
      *
      * @method getLoggedOffPreferenceKey
-     * @return string
+     * @return {string}
      */
     NotificationPreference.prototype.getLoggedOffPreferenceKey = function() {
         return this.getPreferenceKey() + '_loggedoff';
@@ -78,7 +76,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
      * Get the list of Processors available for this preference.
      *
      * @method getProcessors
-     * @return array
+     * @return {array}
      */
     NotificationPreference.prototype.getProcessors = function() {
         return this.root.find(SELECTORS.PROCESSOR).map(function(index, element) {
@@ -110,6 +108,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
      * Check if the preference is loading.
      *
      * @method isLoading
+     * @return {Boolean}
      */
     NotificationPreference.prototype.isLoading = function() {
         return this.root.hasClass('loading');
@@ -119,7 +118,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
      * Persist the current state of the processors for this preference.
      *
      * @method save
-     * @return promise
+     * @return {object} jQuery promise
      */
     NotificationPreference.prototype.save = function() {
         if (this.isLoading()) {
@@ -158,7 +157,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
         }
 
         var args = {
-            userid : this.userId,
+            userid: this.userId,
             preferences: [
                 {
                     type: this.getLoggedInPreferenceKey(),
@@ -176,9 +175,11 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
             args: args,
         };
 
-        return ajax.call([request])[0]
-            .fail(notification.exception)
-            .always(function() { this.stopLoading(); }.bind(this));
+        return Ajax.call([request])[0]
+            .fail(Notification.exception)
+            .always(function() {
+                this.stopLoading();
+            }.bind(this));
     };
 
     return NotificationPreference;

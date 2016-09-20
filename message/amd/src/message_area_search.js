@@ -177,13 +177,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA).show();
 
         if (this._searchArea == this._searchAreas.MESSAGES) {
-            this._requestTimeout = setTimeout(function () {
+            this._requestTimeout = setTimeout(function() {
                 this._clearSearchArea();
                 this._numMessagesDisplayed = 0;
                 this._searchMessages();
             }.bind(this), 300);
         } else if (this._searchArea == this._searchAreas.PEOPLEINCOURSE) {
-            this._requestTimeout = setTimeout(function () {
+            this._requestTimeout = setTimeout(function() {
                 this._clearSearchArea();
                 this._numPeopleDisplayed = 0;
                 this._searchPeopleInCourse();
@@ -201,11 +201,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * Handles searching for messages.
      *
      * @private
-     * @returns {Promise} The promise resolved when the search area has been rendered
+     * @return {Promise|boolean} The promise resolved when the search area has been rendered
      */
     Search.prototype._searchMessages = function() {
         if (this._isLoading) {
-            return;
+            return false;
         }
 
         var str = this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).val();
@@ -257,7 +257,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * Handles searching for people.
      *
      * @private
-     * @returns {Promise} The promise resolved when the search area has been rendered
+     * @return {Promise} The promise resolved when the search area has been rendered
      */
     Search.prototype._searchPeople = function() {
         var str = this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).val();
@@ -288,11 +288,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * Handles searching for people in a course.
      *
      * @private
-     * @returns {Promise} The promise resolved when the search area has been rendered
+     * @return {Promise|boolean} The promise resolved when the search area has been rendered
      */
     Search.prototype._searchPeopleInCourse = function() {
         if (this._isLoading) {
-            return;
+            return false;
         }
 
         var str = this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).val();

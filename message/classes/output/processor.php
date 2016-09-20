@@ -24,6 +24,8 @@
 
 namespace core_message\output;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/message/lib.php');
 
 use renderable;
@@ -39,12 +41,12 @@ use templatable;
 class processor implements templatable, renderable {
 
     /**
-     * The message processor
+     * @var \stdClass The message processor
      */
     protected $processor;
 
     /**
-     * The user
+     * @var \stdClass The user
      */
     protected $user;
 

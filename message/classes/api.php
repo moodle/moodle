@@ -24,9 +24,9 @@
 
 namespace core_message;
 
-require_once($CFG->dirroot . '/lib/messagelib.php');
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/lib/messagelib.php');
 
 /**
  * Class used to return information to display for the message area.
@@ -64,7 +64,7 @@ class api {
                   JOIN {user} u2
                     ON m.useridto = u2.id
              LEFT JOIN {message_contacts} mc2
-                    ON (mc2.contactid = u2.id AND mc2.userid = ?)       
+                    ON (mc2.contactid = u2.id AND mc2.userid = ?)
                  WHERE ((useridto = ? AND timeusertodeleted = 0)
                     OR (useridfrom = ? AND timeuserfromdeleted = 0))
                    AND notification = 0
@@ -79,7 +79,7 @@ class api {
                   JOIN {user} u
                     ON mr.useridfrom = u.id
              LEFT JOIN {message_contacts} mc
-                    ON (mc.contactid = u.id AND mc.userid = ?)     
+                    ON (mc.contactid = u.id AND mc.userid = ?)
                   JOIN {user} u2
                     ON mr.useridto = u2.id
              LEFT JOIN {message_contacts} mc2
@@ -144,7 +144,6 @@ class api {
              ORDER BY " . $DB->sql_fullname();
         $params = array_merge(array('userid' => $userid, 'userid2' => $userid, 'search' => '%' . $search . '%'), $params);
 
-
         // Convert all the user records into contacts.
         $contacts = array();
         if ($users = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
@@ -189,8 +188,8 @@ class api {
                    AND " . $DB->sql_like($fullname, ':search', false) . "
                    AND u.id $exclude
               ORDER BY " . $DB->sql_fullname();
-        if ($users = $DB->get_records_sql($sql, array('userid' => $userid, 'search' => '%' . $search . '%') +
-            $excludeparams, 0, $limitnum)) {
+        if ($users = $DB->get_records_sql($sql, array('userid' => $userid, 'search' => '%' . $search . '%') + $excludeparams,
+            0, $limitnum)) {
             foreach ($users as $user) {
                 $contacts[] = \core_message\helper::create_contact($user);
             }
@@ -218,12 +217,12 @@ class api {
                    AND u.confirmed = 1
                    AND " . $DB->sql_like($fullname, ':search', false) . "
                    AND u.id $exclude
-                   AND u.id NOT IN (SELECT contactid 
-                                      FROM {message_contacts} 
+                   AND u.id NOT IN (SELECT contactid
+                                      FROM {message_contacts}
                                      WHERE userid = :userid)
               ORDER BY " . $DB->sql_fullname();
-        if ($users = $DB->get_records_sql($sql,  array('userid' => $userid, 'search' => '%' . $search . '%') +
-            $excludeparams, 0, $limitnum)) {
+        if ($users = $DB->get_records_sql($sql,  array('userid' => $userid, 'search' => '%' . $search . '%') + $excludeparams,
+            0, $limitnum)) {
             foreach ($users as $user) {
                 $noncontacts[] = \core_message\helper::create_contact($user);
             }
@@ -342,8 +341,11 @@ class api {
                 $data->country = isset($userfields['country']) ? $userfields['country'] : '';
                 $data->email = isset($userfields['email']) ? $userfields['email'] : '';
                 $data->profileimageurl = isset($userfields['profileimageurl']) ? $userfields['profileimageurl'] : '';
-                $data->profileimageurlsmall = isset($userfields['profileimageurlsmall']) ?
-                    $userfields['profileimageurlsmall'] : '';
+                if (isset($userfields['profileimageurlsmall'])) {
+                    $data->profileimageurlsmall = $userfields['profileimageurlsmall'];
+                } else {
+                    $data->profileimageurlsmall = '';
+                }
                 if (isset($userfields['lastaccess'])) {
                     $data->isonline = \core_message\helper::is_online($userfields['lastaccess']);
                 } else {

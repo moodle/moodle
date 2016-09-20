@@ -21,17 +21,16 @@
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events'],
-        function($, ajax, templates, notification, customEvents) {
+        function($, Ajax, Templates, Notification, CustomEvents) {
 
     /**
      * Check the state of the element, if the current user is a contact or not.
      *
      * @method isContact
-     * @param element jQuery object for the button
-     * @return bool
+     * @param {object} element jQuery object for the button
+     * @return {bool}
      */
     var isContact = function(element) {
         return element.attr('data-is-contact') == '1';
@@ -41,7 +40,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
      * Record that the user is a contact.
      *
      * @method setContact
-     * @param element jQuery object for the button
+     * @param {object} element jQuery object for the button
      */
     var setContact = function(element) {
         element.attr('data-is-contact', '1');
@@ -51,7 +50,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
      * Record that the user is not a contact.
      *
      * @method setNotContact
-     * @param element jQuery object for the button
+     * @param {object} element jQuery object for the button
      */
     var setNotContact = function(element) {
         element.attr('data-is-contact', '0');
@@ -61,8 +60,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
      * Get the id for the user being viewed.
      *
      * @method getUserId
-     * @param element jQuery object for the button
-     * @return int
+     * @param {object} element jQuery object for the button
+     * @return {int}
      */
     var getUserId = function(element) {
         return element.attr('data-userid');
@@ -72,8 +71,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
      * Check if this element is currently loading.
      *
      * @method isLoading
-     * @param element jQuery object for the button
-     * @return bool
+     * @param {object} element jQuery object for the button
+     * @return {bool}
      */
     var isLoading = function(element) {
         return element.hasClass('loading') || element.attr('disabled');
@@ -84,9 +83,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
      * while the request is being performed.
      *
      * @method sendRequest
-     * @param element jQuery object for the button
-     * @param request request hash to send
-     * @return jQuery promise
+     * @param {object} element jQuery object for the button
+     * @param {object} request Request hash to send
+     * @return {object} jQuery promise
      */
     var sendRequest = function(element, request) {
         if (isLoading(element)) {
@@ -96,8 +95,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         element.addClass('loading');
         element.attr('disabled', 'disabled');
 
-        return ajax.call([request])[0]
-            .fail(notification.exception)
+        return Ajax.call([request])[0]
+            .fail(Notification.exception)
             .always(function() {
                 element.removeClass('loading');
                 element.removeAttr('disabled');
@@ -110,7 +109,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
      * remove contact button upon success.
      *
      * @method addContact
-     * @param element jQuery object for the button
+     * @param {object} element jQuery object for the button
      */
     var addContact = function(element) {
         if (isLoading(element)) {
@@ -125,8 +124,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         };
         sendRequest(element, request).done(function() {
             setContact(element);
-            templates.render('message/remove_contact_button', {}).done(function(html, js) {
-                templates.replaceNodeContents(element, html, js);
+            Templates.render('message/remove_contact_button', {}).done(function(html, js) {
+                Templates.replaceNodeContents(element, html, js);
             });
         });
     };
@@ -137,7 +136,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
      * add contact button upon success.
      *
      * @method removeContact
-     * @param element jQuery object for the button
+     * @param {object} element jQuery object for the button
      */
     var removeContact = function(element) {
         if (isLoading(element)) {
@@ -153,8 +152,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
         sendRequest(element, request).done(function() {
             setNotContact(element);
-            templates.render('message/add_contact_button', {}).done(function(html, js) {
-                templates.replaceNodeContents(element, html, js);
+            Templates.render('message/add_contact_button', {}).done(function(html, js) {
+                Templates.replaceNodeContents(element, html, js);
             });
         });
     };
@@ -164,21 +163,21 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
      * ajax requests to add or remove a contact where appropriate.
      *
      * @method enhance
-     * @param element jQuery object for the button
+     * @param {object} element jQuery object for the button
      */
     var enhance = function(element) {
         element = $(element);
 
         if (!element.children('.loading-icon').length) {
             // Add the loading gif if it isn't already there.
-            templates.render('core/loading', {}).done(function(html, js) {
+            Templates.render('core/loading', {}).done(function(html, js) {
                 element.append(html, js);
             });
         }
 
-        customEvents.define(element, [customEvents.events.activate]);
+        CustomEvents.define(element, [CustomEvents.events.activate]);
 
-        element.on(customEvents.events.activate, function(e, data) {
+        element.on(CustomEvents.events.activate, function(e, data) {
             if (isContact(element)) {
                 removeContact(element);
             } else {

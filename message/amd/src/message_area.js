@@ -74,7 +74,7 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             SEARCHBOX: "[data-region='search-box']",
             SEARCHFILTER: "[data-region='search-filter']",
             SEARCHFILTERAREA: "[data-region='search-filter-area']",
-            SEARCHPEOPLEINCOURSE : "[data-action='search-people-in-course']",
+            SEARCHPEOPLEINCOURSE: "[data-action='search-people-in-course']",
             SEARCHRESULTSAREA: "[data-region='search-results-area']",
             SEARCHTEXTAREA: "[data-region='search-text-area']",
             SELECTEDVIEWPROFILE: "[data-action='view-contact-profile'].selected",
@@ -162,7 +162,7 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
          * Handles finding a node in the messaging area.
          *
          * @param {String} selector The selector for the node we are looking for
-         * @returns {jQuery} The node
+         * @return {jQuery} The node
          */
         Messagearea.prototype.find = function(selector) {
             return this.node.find(selector);
@@ -171,7 +171,7 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
         /**
          * Returns the ID of the user whose message area we are viewing.
          *
-         * @returns {int} The user id
+         * @return {int} The user id
          */
         Messagearea.prototype.getCurrentUserId = function() {
             return this.node.data('userid');

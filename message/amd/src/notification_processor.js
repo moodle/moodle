@@ -21,7 +21,6 @@
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
 define(['jquery'], function($) {
     var SELECTORS = {
@@ -34,8 +33,7 @@ define(['jquery'], function($) {
     /**
      * Constructor for the notification processor.
      *
-     * @param element jQuery object root element of the processor
-     * @return object NotificationProcessor
+     * @param {object} element jQuery object root element of the processor
      */
     var NotificationProcessor = function(element) {
         this.root = $(element);
@@ -45,7 +43,7 @@ define(['jquery'], function($) {
      * Get the processor name.
      *
      * @method getName
-     * @return string
+     * @return {string}
      */
     NotificationProcessor.prototype.getName = function() {
         return this.root.attr('data-processor-name');
@@ -55,7 +53,7 @@ define(['jquery'], function($) {
      * Check if the processor is enabled when the user is logged in.
      *
      * @method isLoggedInEnabled
-     * @return bool
+     * @return {bool}
      */
     NotificationProcessor.prototype.isLoggedInEnabled = function() {
         var none = this.root.find(SELECTORS.STATE_NONE).find('input');
@@ -74,7 +72,7 @@ define(['jquery'], function($) {
      * Check if the processor is enabled when the user is logged out.
      *
      * @method isLoggedOffEnabled
-     * @return bool
+     * @return {bool}
      */
     NotificationProcessor.prototype.isLoggedOffEnabled = function() {
         var none = this.root.find(SELECTORS.STATE_NONE).find('input');

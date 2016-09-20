@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains notification_list_component class for displaying on message preferences
- * page.
+ * Contains notification_list_component class for displaying on message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
@@ -25,14 +24,15 @@
 
 namespace core_message\output\preferences;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/message/lib.php');
 
 use renderable;
 use templatable;
 
 /**
- * Class to create context for a notification component on the message
- * preferences page.
+ * Class to create context for a notification component on the message preferences page.
  *
  * @package   core_message
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
@@ -41,27 +41,27 @@ use templatable;
 class notification_list_component implements templatable, renderable {
 
     /**
-     * A list of message processors.
+     * @var array A list of message processors.
      */
     protected $processors;
 
     /**
-     * A list of message providers.
+     * @var array A list of message providers.
      */
     protected $providers;
 
     /**
-     * A list of message preferences.
+     * @var array A list of message preferences.
      */
     protected $preferences;
 
     /**
-     * The component name.
+     * @var string The component name.
      */
     protected $component;
 
     /**
-     * A user.
+     * @var \stdClass A user.
      */
     protected $user;
 
@@ -71,7 +71,8 @@ class notification_list_component implements templatable, renderable {
      * @param string $component
      * @param array $processors
      * @param array $providers
-     * @param stdClass $preferences
+     * @param \stdClass $preferences
+     * @param \stdClass $user
      */
     public function __construct($component, $processors, $providers, $preferences, $user) {
         $this->processors = $processors;
@@ -84,7 +85,7 @@ class notification_list_component implements templatable, renderable {
     /**
      * Get the base key prefix for the given provider.
      *
-     * @param stdClass message provider
+     * @param \stdClass $provider The message provider
      * @return string
      */
     private function get_preference_base($provider) {
@@ -94,7 +95,7 @@ class notification_list_component implements templatable, renderable {
     /**
      * Get the display name for the given provider.
      *
-     * @param stdClass $provider message provider
+     * @param \stdClass $provider The message provider
      * @return string
      */
     private function get_provider_display_name($provider) {
@@ -152,7 +153,7 @@ class notification_list_component implements templatable, renderable {
             ];
 
             foreach ($processors as $processor) {
-                $notificationprocessor = new \core_message\output\preferences\notification_list_processor($processor, $provider, $preferences);
+                $notificationprocessor = new notification_list_processor($processor, $provider, $preferences);
                 $notificationcontext['processors'][] = $notificationprocessor->export_for_template($output);
             }
 

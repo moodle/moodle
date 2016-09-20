@@ -47,10 +47,10 @@ define('MESSAGE_SEARCH_MAX_RESULTS', 200);
 define('MESSAGE_CONTACTS_PER_PAGE',10);
 define('MESSAGE_MAX_COURSE_NAME_LENGTH', 30);
 
-define('MESSAGE_UNREAD','unread');
-define('MESSAGE_READ','read');
-define('MESSAGE_TYPE_NOTIFICATION','notification');
-define('MESSAGE_TYPE_MESSAGE','message');
+define('MESSAGE_UNREAD', 'unread');
+define('MESSAGE_READ', 'read');
+define('MESSAGE_TYPE_NOTIFICATION', 'notification');
+define('MESSAGE_TYPE_MESSAGE', 'message');
 
 
 /**

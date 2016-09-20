@@ -45,7 +45,8 @@ class helper {
      * @param string $sort
      * @return array of messages
      */
-    public static function get_messages($userid, $otheruserid, $timedeleted = 0, $limitfrom = 0, $limitnum = 0, $sort = 'timecreated ASC') {
+    public static function get_messages($userid, $otheruserid, $timedeleted = 0, $limitfrom = 0, $limitnum = 0,
+                                        $sort = 'timecreated ASC') {
         global $DB;
 
         $sql = "SELECT id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
@@ -153,7 +154,7 @@ class helper {
             }
         }
         // Check if the user is online.
-        $data->isonline = \core_message\helper::is_online($userfields->lastaccess);
+        $data->isonline = self::is_online($userfields->lastaccess);
         $data->isblocked = isset($contact->blocked) ? $contact->blocked : 0;
         $data->isread = isset($contact->isread) ? $contact->isread : 0;
         $data->unreadcount = isset($contact->unreadcount) ? $contact->unreadcount : null;

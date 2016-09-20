@@ -125,9 +125,11 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * @param stdClass $userto user object of the one receiving the message.
      * @param string $message message to send.
      * @param int $timecreated time the message was created.
+     * @param int $timeread the the message was read
      * @return int the id of the message
      */
-    protected function send_fake_read_popup_notification($userfrom, $userto, $message = 'Hello world!', $timecreated = 0, $timeread = 0) {
+    protected function send_fake_read_popup_notification($userfrom, $userto, $message = 'Hello world!',
+                                                         $timecreated = 0, $timeread = 0) {
         global $DB;
 
         $record = new stdClass();

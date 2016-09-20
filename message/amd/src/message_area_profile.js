@@ -70,7 +70,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          *
          * @param {Event} event
          * @param {int} userid
-         * @returns {Promise} The promise resolved when the profile has been rendered
+         * @return {Promise} The promise resolved when the profile has been rendered
          * @private
          */
         Profile.prototype._viewProfile = function(event, userid) {
@@ -117,7 +117,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         /**
          * Handles blocking the contact.
          *
-         * @returns {Promise} The promise resolved when the contact has been blocked
+         * @return {Promise} The promise resolved when the contact has been blocked
          * @private
          */
         Profile.prototype._blockContact = function() {
@@ -131,7 +131,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         /**
          * Handles unblocking the contact.
          *
-         * @returns {Promise} The promise resolved when the contact has been unblocked
+         * @return {Promise} The promise resolved when the contact has been unblocked
          * @private
          */
         Profile.prototype._unblockContact = function() {
@@ -145,7 +145,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         /**
          * Handles adding the contact.
          *
-         * @returns {Promise} The promise resolved when the contact has been added
+         * @return {Promise} The promise resolved when the contact has been added
          * @private
          */
         Profile.prototype._addContact = function() {
@@ -159,7 +159,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         /**
          * Handles removing the contact.
          *
-         * @returns {Promise} The promise resolved when the contact has been removed
+         * @return {Promise} The promise resolved when the contact has been removed
          * @private
          */
         Profile.prototype._removeContact = function() {
@@ -178,7 +178,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @param {String} oldaction The data-action of the button
          * @param {string} newaction The data-action to change the button to
          * @param {String} newclass The CSS class we want to add
-         * @returns {Promise} The promise resolved when the action has been performed
+         * @return {Promise} The promise resolved when the action has been performed
          * @private
          */
         Profile.prototype._performAction = function(service, string, oldaction, newaction, newclass) {
@@ -225,7 +225,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         /**
          * Returns the ID of the user whos profile we are viewing.
          *
-         * @returns {int} The user ID
+         * @return {int} The user ID
          * @private
          */
         Profile.prototype._getUserId = function() {

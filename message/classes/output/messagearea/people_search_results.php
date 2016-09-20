@@ -24,6 +24,8 @@
 
 namespace core_message\output\messagearea;
 
+defined('MOODLE_INTERNAL') || die();
+
 use renderable;
 use templatable;
 

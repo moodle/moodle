@@ -134,12 +134,12 @@ define(['core/custom_interaction_events'], function(CustomEvents) {
      * @private
      */
     Tabs.prototype._selectTab = function(tabselect, tabdeselect) {
-        var tabdeselect = this.messageArea.find(tabdeselect);
+        tabdeselect = this.messageArea.find(tabdeselect);
         tabdeselect.removeClass('selected');
         tabdeselect.attr('aria-selected', 'false');
         tabdeselect.attr('tabindex', '-1');
 
-        var tabselect = this.messageArea.find(tabselect);
+        tabselect = this.messageArea.find(tabselect);
         tabselect.addClass('selected');
         tabselect.attr('aria-selected', 'true');
         tabselect.attr('tabindex', '0');

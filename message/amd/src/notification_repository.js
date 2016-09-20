@@ -21,7 +21,6 @@
  * @package    message
  * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
 define(['core/ajax', 'core/notification'], function(ajax, notification) {
     /**
@@ -90,7 +89,7 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
     };
 
     /**
-     * Mark all notifications for the given user as read.
+     * Mark a specific notification as read.
      *
      * @param {int} id The notification id
      * @param {int} timeread The read timestamp (optional)

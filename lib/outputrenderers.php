@@ -147,10 +147,10 @@ class renderer_base {
 
         try {
             // Grab a copy of the existing helper to be restored later.
-            $uniqidHelper = $mustache->getHelper('uniqid');
+            $uniqidhelper = $mustache->getHelper('uniqid');
         } catch (Mustache_Exception_UnknownHelperException $e) {
             // Helper doesn't exist.
-            $uniqidHelper = null;
+            $uniqidhelper = null;
         }
 
         // Provide 1 random value that will not change within a template
@@ -169,15 +169,15 @@ class renderer_base {
             }
         }
 
-        $renderedTemplate = trim($template->render($context));
+        $renderedtemplate = trim($template->render($context));
 
         // If we had an existing uniqid helper then we need to restore it to allow
         // handle nested calls of render_from_template.
-        if ($uniqidHelper) {
-            $mustache->addHelper('uniqid', $uniqidHelper);
+        if ($uniqidhelper) {
+            $mustache->addHelper('uniqid', $uniqidhelper);
         }
 
-        return $renderedTemplate;
+        return $renderedtemplate;
     }
 
 
@@ -3193,7 +3193,7 @@ EOD;
     }
 
     /**
-     * Returns the noticication menu
+     * Returns the notification menu
      *
      * @return string         HTML for the notification menu
      */

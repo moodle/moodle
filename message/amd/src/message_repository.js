@@ -21,14 +21,13 @@
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      3.2
  */
 define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
     /**
      * Retrieve a list of messages from the server.
      *
      * @param {object} args The request arguments:
-     * @return {jQuery promise}
+     * @return {object} jQuery promise
      */
     var query = function(args) {
         // Normalise the arguments to use limit/offset rather than limitnum/limitfrom.
@@ -63,7 +62,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
      * for a given user.
      *
      * @param {object} args The request arguments:
-     * @return {jQuery promise}
+     * @return {object} jQuery promise
      */
     var countUnreadConversations = function(args) {
         var request = {
@@ -82,7 +81,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
      * Mark all of unread messages for a user as read.
      *
      * @param {object} args The request arguments:
-     * @return {jQuery promise}
+     * @return {object} jQuery promise
      */
     var markAllAsRead = function(args) {
         var request = {

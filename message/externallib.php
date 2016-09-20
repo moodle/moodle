@@ -498,7 +498,8 @@ class core_message_external extends external_api {
      * @throws moodle_exception
      * @since 3.2
      */
-    public static function data_for_messagearea_search_people_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
+    public static function data_for_messagearea_search_people_in_course($userid, $courseid, $search, $limitfrom = 0,
+                                                                        $limitnum = 0) {
         global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
@@ -865,7 +866,8 @@ class core_message_external extends external_api {
      * @throws moodle_exception
      * @since 3.2
      */
-    public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0, $newest = false) {
+    public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0,
+                                                         $newest = false) {
         global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
@@ -909,7 +911,8 @@ class core_message_external extends external_api {
     public static function data_for_messagearea_messages_returns() {
         return new external_single_structure(
             array(
-                'iscurrentuser' => new external_value(PARAM_BOOL, 'Is the currently logged in user the user we are viewing the messages on behalf of?'),
+                'iscurrentuser' => new external_value(PARAM_BOOL, 'Is the currently logged in user the user we are viewing
+                    the messages on behalf of?'),
                 'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
                 'otheruserid' => new external_value(PARAM_INT, 'The other user\'s id'),
                 'otheruserfullname' => new external_value(PARAM_NOTAGS, 'The other user\'s fullname'),
@@ -1042,7 +1045,8 @@ class core_message_external extends external_api {
     public static function data_for_messagearea_get_profile_returns() {
         return new external_single_structure(
             array(
-                'iscurrentuser' => new external_value(PARAM_BOOL, 'Is the currently logged in user the user we are viewing the profile on behalf of?'),
+                'iscurrentuser' => new external_value(PARAM_BOOL, 'Is the currently logged in user the user we are viewing
+                    the profile on behalf of?'),
                 'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
                 'otheruserid' => new external_value(PARAM_INT, 'The id of the user whose profile we are viewing'),
                 'email' => new external_value(core_user::get_property_type('email'), 'An email address'),
@@ -1071,7 +1075,6 @@ class core_message_external extends external_api {
     /**
      * Get contacts.
      *
-     * @param array $userids array of user IDs.
      * @return external_description
      * @since Moodle 2.5
      */
@@ -1581,7 +1584,8 @@ class core_message_external extends external_api {
         }
 
         $sort = $newestfirst ? 'DESC' : 'ASC';
-        $notifications = \core_message\api::get_popup_notifications($useridto, $status, $embeduserto, $embeduserfrom, $sort, $limit, $offset);
+        $notifications = \core_message\api::get_popup_notifications($useridto, $status, $embeduserto,
+            $embeduserfrom, $sort, $limit, $offset);
         $notificationcontexts = [];
 
         if ($notifications) {
@@ -1625,11 +1629,13 @@ class core_message_external extends external_api {
                 'notifications' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_INT, 'Notification id (this is not guaranteed to be unique within this result set)'),
+                            'id' => new external_value(PARAM_INT, 'Notification id (this is not guaranteed to be unique
+                                within this result set)'),
                             'useridfrom' => new external_value(PARAM_INT, 'User from id'),
                             'useridto' => new external_value(PARAM_INT, 'User to id'),
                             'subject' => new external_value(PARAM_TEXT, 'The notification subject'),
-                            'shortenedsubject' => new external_value(PARAM_TEXT, 'The notification subject shortened with ellipsis'),
+                            'shortenedsubject' => new external_value(PARAM_TEXT, 'The notification subject shortened
+                                with ellipsis'),
                             'text' => new external_value(PARAM_RAW, 'The message text formated'),
                             'fullmessage' => new external_value(PARAM_RAW, 'The message'),
                             'fullmessageformat' => new external_format_value('fullmessage'),
@@ -1646,7 +1652,8 @@ class core_message_external extends external_api {
                             'read' => new external_value(PARAM_BOOL, 'notification read status'),
                             'deleted' => new external_value(PARAM_BOOL, 'notification deletion status'),
                             'iconurl' => new external_value(PARAM_URL, 'URL for notification icon'),
-                            'component' => new external_value(PARAM_TEXT, 'The component that generated the notification', VALUE_OPTIONAL),
+                            'component' => new external_value(PARAM_TEXT, 'The component that generated the notification',
+                                VALUE_OPTIONAL),
                             'eventtype' => new external_value(PARAM_TEXT, 'The type of notification', VALUE_OPTIONAL),
                         ), 'message'
                     )
@@ -1715,7 +1722,7 @@ class core_message_external extends external_api {
 
         // Check if the current user is the sender/receiver or just a privileged user.
         if ($useridto != $USER->id and $useridfrom != $USER->id and
-            // deleteanymessage seems more reasonable here than readallmessages.
+            // The deleteanymessage cap seems more reasonable here than readallmessages.
              !has_capability('moodle/site:deleteanymessage', $context)) {
             throw new moodle_exception('accessdenied', 'admin');
         }
@@ -1972,7 +1979,8 @@ class core_message_external extends external_api {
         return new external_function_parameters(
             array(
                 'messageid' => new external_value(PARAM_INT, 'id of the message (in the message table)'),
-                'timeread' => new external_value(PARAM_INT, 'timestamp for when the message should be marked read', VALUE_DEFAULT, 0)
+                'timeread' => new external_value(PARAM_INT, 'timestamp for when the message should be marked read',
+                    VALUE_DEFAULT, 0)
             )
         );
     }
@@ -2104,7 +2112,7 @@ class core_message_external extends external_api {
 
         // Check if the current user is the sender/receiver or just a privileged user.
         if ($useridto != $USER->id and $useridfrom != $USER->id and
-            // deleteanymessage seems more reasonable here than readallmessages.
+            // The deleteanymessage cap seems more reasonable here than readallmessages.
              !has_capability('moodle/site:deleteanymessage', $context)) {
             throw new moodle_exception('accessdenied', 'admin');
         }
@@ -2383,7 +2391,8 @@ class core_message_external extends external_api {
     /**
      * Get a message processor.
      *
-     * @param  string $name the name of the processor
+     * @param int $userid
+     * @param string $name the name of the processor
      * @return external_description
      * @throws moodle_exception
      * @since 3.2

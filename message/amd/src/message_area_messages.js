@@ -115,7 +115,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          *
          * @param {Event} event
          * @param {int} userid
-         * @returns {Promise} The promise resolved when the messages have been loaded.
+         * @return {Promise} The promise resolved when the messages have been loaded.
          * @private
          */
         Messages.prototype._viewMessages = function(event, userid) {
@@ -160,12 +160,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Loads messages while scrolling.
          *
-         * @returns {Promise} The promise resolved when the messages have been loaded.
+         * @return {Promise|boolean} The promise resolved when the messages have been loaded.
          * @private
          */
         Messages.prototype._loadMessages = function() {
             if (this._isLoadingMessages) {
-                return;
+                return false;
             }
 
             this._isLoadingMessages = true;
@@ -215,7 +215,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Handles returning a list of messages to display.
          *
          * @param {int} userid
-         * @returns {Promise} The promise resolved when the contact area has been rendered
+         * @return {Promise} The promise resolved when the contact area has been rendered
          * @private
          */
         Messages.prototype._getMessages = function(userid) {
@@ -238,7 +238,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles sending a message.
          *
-         * @returns {Promise} The promise resolved once the message has been sent.
+         * @return {Promise|boolean} The promise resolved once the message has been sent.
          * @private
          */
         Messages.prototype._sendMessage = function() {
@@ -247,12 +247,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             // Do not do anything if it is empty.
             if (text.trim() === '') {
-                return;
+                return false;
             }
 
             // If we are sending a message, don't do anything, be patient!
             if (this._isSendingMessage) {
-                return;
+                return false;
             }
 
             // Ok, mark that we are sending a message.
@@ -297,7 +297,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles selecting messages to delete.
          *
-         * @returns {Promise} The promise resolved when the messages to delete have been selected.
          * @private
          */
         Messages.prototype._chooseMessagesToDelete = function() {
@@ -332,7 +331,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                         read: isread
                     }
                 });
-            }.bind(this));
+            });
 
             if (requests.length > 0) {
                 ajax.call(requests)[requests.length - 1].then(function() {
@@ -382,7 +381,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles adding a scrolling event listener.
          *
-         * @params {int} The number of messages received
+         * @param {int} numberreceived The number of messages received
          * @private
          */
         Messages.prototype._addScrollEventListener = function(numberreceived) {
@@ -446,7 +445,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handles hiding the delete checkboxes and replacing the response area.
          *
-         * @return {Promise} JQuery promise object resolved when the template has been rendered.
          * @private
          */
         Messages.prototype._hideDeleteAction = function() {
@@ -462,14 +460,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._triggerCancelMessagesToDelete = function() {
-           // Trigger event letting other modules know message deletion was canceled.
+            // Trigger event letting other modules know message deletion was canceled.
             this.messageArea.trigger(this.messageArea.EVENTS.CANCELDELETEMESSAGES);
         };
 
         /**
          * Handles adding messages to the DOM.
          *
-         * @returns {Promise} The promise resolved when the message has been added to the DOM.
+         * @return {Promise} The promise resolved when the message has been added to the DOM.
          * @private
          */
         Messages.prototype._addMessageToDom = function() {
@@ -497,7 +495,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Returns the ID of the other user in the conversation.
          *
-         * @returns {int} The user id
+         * @return {int} The user id
          * @private
          */
         Messages.prototype._getUserId = function() {
@@ -520,8 +518,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Select the previous message in the list.
          *
-         * @params {event} e The jquery event
-         * @params {object} data Extra event data
+         * @param {event} e The jquery event
+         * @param {object} data Extra event data
          * @private
          */
         Messages.prototype._selectPreviousMessage = function(e, data) {
@@ -540,8 +538,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Select the next message in the list.
          *
-         * @params {event} e The jquery event
-         * @params {object} data Extra event data
+         * @param {event} e The jquery event
+         * @param {object} data Extra event data
          * @private
          */
         Messages.prototype._selectNextMessage = function(e, data) {
@@ -560,7 +558,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Flag the response area as messaging.
          *
-         * @params {event} e The jquery event
+         * @param {event} e The jquery event
          * @private
          */
         Messages.prototype._setMessaging = function(e) {
@@ -570,7 +568,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Clear the response area as messaging flag.
          *
-         * @params {event} e The jquery event
+         * @param {event} e The jquery event
          * @private
          */
         Messages.prototype._clearMessaging = function(e) {
@@ -580,7 +578,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Turn on delete message mode.
          *
-         * @params {event} e The jquery event
+         * @param {event} e The jquery event
          * @private
          */
         Messages.prototype._startDeleting = function(e) {
@@ -603,7 +601,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Check or uncheck the message if the message area is in editing mode.
          *
-         * @params {event} e The jquery event
+         * @param {event} e The jquery event
          * @private
          */
         Messages.prototype._toggleMessage = function(e) {
@@ -624,7 +622,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Adjust the height of the messages area to match the changed height of
          * the response area.
          *
-         * @params {event} e The jquery event
+         * @param {event} e The jquery event
          * @private
          */
         Messages.prototype._adjustMessagesAreaHeight = function(e) {
@@ -641,8 +639,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /**
          * Handle the event that triggers sending a message from the messages area.
          *
-         * @params {event} e The jquery event
-         * @params {object} data Additional event data
+         * @param {event} e The jquery event
+         * @param {object} data Additional event data
          * @private
          */
         Messages.prototype._sendMessageHandler = function(e, data) {
