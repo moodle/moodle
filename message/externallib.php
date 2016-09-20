@@ -2200,4 +2200,146 @@ class core_message_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since 3.2
+     */
+    public static function get_user_notification_preferences_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Get the notification preferences for a given user.
+     *
+     * @param int $userid id of the user, 0 for current user
+     * @return external_description
+     * @throws moodle_exception
+     * @since 3.2
+     */
+    public static function get_user_notification_preferences($userid = 0) {
+        global $USER, $PAGE;
+
+        $params = self::validate_parameters(
+            self::get_user_notification_preferences_parameters(),
+            array(
+                'userid' => $userid,
+            )
+        );
+
+        if (empty($params['userid'])) {
+            $user = $USER;
+        } else {
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+        }
+
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+
+        // Check access control.
+        if ($user->id == $USER->id) {
+            // Editing own message profile.
+            require_capability('moodle/user:editownmessageprofile', $systemcontext);
+        } else {
+            // Teachers, parents, etc.
+            $personalcontext = context_user::instance($user->id);
+            require_capability('moodle/user:editmessageprofile', $personalcontext);
+        }
+
+        $processors = get_message_processors();
+        $providers = message_get_providers_for_user($user->id);
+        $preferences = get_all_message_preferences($processors, $providers, $user);
+        $notificationlist = new \core_message\output\preferences\notification_list($processors, $providers, $preferences, $user);
+
+        $renderer = $PAGE->get_renderer('core_message');
+
+        $result = array(
+            'warnings' => array(),
+            'preferences' => $notificationlist->export_for_template($renderer)
+        );
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since 3.2
+     */
+    public static function get_user_notification_preferences_returns() {
+        return new external_function_parameters(
+            array(
+                'preferences' => new external_single_structure(
+                    array(
+                        'userid' => new external_value(PARAM_INT, 'User id'),
+                        'disableall' => new external_value(PARAM_INT, 'Whether all the preferences are disabled'),
+                        'processors' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'displayname' => new external_value(PARAM_TEXT, 'Display name'),
+                                    'ispopup' => new external_value(PARAM_BOOL, 'If is a popup'),
+                                    'name' => new external_value(PARAM_PLUGIN, 'Processor name'),
+                                    'hassettings' => new external_value(PARAM_BOOL, 'Whether has settings'),
+                                    'contextid' => new external_value(PARAM_INT, 'Context id'),
+                                    'userconfigured' => new external_value(PARAM_INT, 'Whether is configured by the user'),
+                                )
+                            ),
+                            'Config form values'
+                        ),
+                        'components' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'displayname' => new external_value(PARAM_TEXT, 'Display name'),
+                                    'notifications' => new external_multiple_structure(
+                                        new external_single_structure(
+                                            array(
+                                                'displayname' => new external_value(PARAM_TEXT, 'Display name'),
+                                                'preferencekey' => new external_value(PARAM_ALPHANUMEXT, 'Preference key'),
+                                                'processors' => new external_multiple_structure(
+                                                    new external_single_structure(
+                                                        array(
+                                                            'displayname' => new external_value(PARAM_TEXT, 'Display name'),
+                                                            'ispopup' => new external_value(PARAM_BOOL, 'If is a popup'),
+                                                            'name' => new external_value(PARAM_PLUGIN, 'Processor name'),
+                                                            'locked' => new external_value(PARAM_BOOL, 'Is locked by admin?'),
+                                                            'userconfigured' => new external_value(PARAM_INT, 'Is configured?'),
+                                                            'loggedin' => new external_single_structure(
+                                                                array(
+                                                                    'name' => new external_value(PARAM_NOTAGS, 'Name'),
+                                                                    'displayname' => new external_value(PARAM_TEXT, 'Display name'),
+                                                                    'checked' => new external_value(PARAM_BOOL, 'Is checked?'),
+                                                                )
+                                                            ),
+                                                            'loggedoff' => new external_single_structure(
+                                                                array(
+                                                                    'name' => new external_value(PARAM_NOTAGS, 'Name'),
+                                                                    'displayname' => new external_value(PARAM_TEXT, 'Display name'),
+                                                                    'checked' => new external_value(PARAM_BOOL, 'Is checked?'),
+                                                                )
+                                                            ),
+                                                        )
+                                                    ),
+                                                    'Processors values for this notification'
+                                                ),
+                                            )
+                                        ),
+                                        'List of notificaitons for the component'
+                                    ),
+                                )
+                            ),
+                            'Available components'
+                        ),
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
