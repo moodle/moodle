@@ -50,7 +50,7 @@ class mod_lesson_locallib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $lessonmodule = $this->getDataGenerator()->create_module('lesson', array('course' => $course->id));
         // Convert to a lesson object.
-        $lesson = new lesson($lessonmodule);   
+        $lesson = new lesson($lessonmodule);
 
         // Set up a generator to create content.
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
