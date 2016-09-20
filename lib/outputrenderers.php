@@ -3221,9 +3221,9 @@ EOD;
      * @return string         HTML for the message menu
      */
     public function message_menu() {
-        global $USER;
+        global $CFG, $USER;
 
-        if (isloggedin() && !user_not_fully_set_up($USER)) {
+        if (!empty($CFG->messaging) && isloggedin() && !user_not_fully_set_up($USER)) {
             $context = [
                 'userid' => $USER->id,
                 'urls' => [
