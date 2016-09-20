@@ -632,6 +632,7 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/site:deleteownmessage',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_delete_message' => array(
         'classname' => 'core_message_external',
@@ -658,6 +659,7 @@ $functions = array(
         'description' => 'Retrieve the template data for searching for messages',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_data_for_messagearea_search_users' => array(
         'classname' => 'core_message_external',
@@ -739,6 +741,7 @@ $functions = array(
         'description' => 'Retrieve the count of unread conversations for a given user',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_mark_all_notifications_as_read' => array(
         'classname' => 'core_message_external',
@@ -747,6 +750,7 @@ $functions = array(
         'description' => 'Mark all notifications as read for a given user',
         'type' => 'write',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_mark_all_messages_as_read' => array(
         'classname' => 'core_message_external',
@@ -755,6 +759,7 @@ $functions = array(
         'description' => 'Mark all messages as read for a given user',
         'type' => 'write',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_mark_message_read' => array(
         'classname' => 'core_message_external',
@@ -772,6 +777,7 @@ $functions = array(
         'description' => 'Process the message processor config form',
         'type' => 'write',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_get_message_processor' => array(
         'classname' => 'core_message_external',
