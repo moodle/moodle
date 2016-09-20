@@ -89,8 +89,10 @@ if (! $context = context_course::instance($course->id, IGNORE_MISSING)) {
     die;
 }
 
+// Now that the course/context has been validated, we can set it. Not that it's wonderful
+// to set contexts more than once but system->course switches are accepted.
 // Required for message_send.
-$PAGE->set_context(context_course::instance($context));
+$PAGE->set_context($context);
 
 if (! $plugin_instance = $DB->get_record("enrol", array("id"=>$data->instanceid, "status"=>0))) {
     \enrol_paypal\util::message_paypal_error_to_admin("Not a valid instance id", $data);
