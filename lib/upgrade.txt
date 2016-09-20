@@ -80,6 +80,13 @@ information provided here is intended especially for developers.
   - Login url will be: http://example.com/moodle/my/super/login.php (moodle root based)
 * Database (DML) layer:
   - new sql_equal() method available for places where case sensitive/insensitive varchar comparisons are required.
+* PostgreSQL connections now use advanced options to reduce connection overhead.  These options are not compatible
+  with some connection poolers.  The dbhandlesoptions parameter has been added to allow the database to configure the
+  required defaults. The parameters that are required in the database are;
+    ALTER DATABASE moodle SET client_encoding = UTF8;
+    ALTER DATABASE moodle SET standard_conforming_strings = on;
+    ALTER DATABASE moodle SET search_path = 'moodle,public';  -- Optional, if you wish to use a custom schema.
+  You can set these options against the database or the moodle user who connects.
 
 === 3.1 ===
 

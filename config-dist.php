@@ -59,6 +59,10 @@ $CFG->dboptions = array(
     'dbport'    => '',          // the TCP port number to use when connecting
                                 //  to the server. keep empty string for the
                                 //  default port
+    'dbhandlesoptions' => false,// On PostgreSQL poolers like pgbouncer don't
+                                // support advanced options on connection.
+                                // If you set those in the database then
+                                // the advanced settings will not be sent.
 );
 
 

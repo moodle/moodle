@@ -134,11 +134,12 @@ class pgsql_native_moodle_database extends moodle_database {
         if (!empty($this->dboptions['dbsocket']) and ($this->dbhost === 'localhost' or $this->dbhost === '127.0.0.1')) {
             $connection = "user='$this->dbuser' password='$pass' dbname='$this->dbname'";
             if (strpos($this->dboptions['dbsocket'], '/') !== false) {
-                $connection = $connection." host='".$this->dboptions['dbsocket']."'";
-                if (!empty($this->dboptions['dbport'])) {
-                    // Somehow non-standard port is important for sockets - see MDL-44862.
-                    $connection = $connection." port ='".$this->dboptions['dbport']."'";
-                }
+                // A directory was specified as the socket location.
+                $connection .= " host='".$this->dboptions['dbsocket']."'";
+            }
+            if (!empty($this->dboptions['dbport'])) {
+                // A port as specified, add it to the connection as it's used as part of the socket path.
+                $connection .= " port ='".$this->dboptions['dbport']."'";
             }
         } else {
             $this->dboptions['dbsocket'] = '';
@@ -153,14 +154,29 @@ class pgsql_native_moodle_database extends moodle_database {
             $connection = "host='$this->dbhost' $port user='$this->dbuser' password='$pass' dbname='$this->dbname'";
         }
 
-        // ALTER USER and ALTER DATABASE are overridden by these settings.
-        $options = array('--client_encoding=utf8', '--standard_conforming_strings=on');
-        // Select schema if specified, otherwise the first one wins.
-        if (!empty($this->dboptions['dbschema'])) {
-            $options[] = "-c search_path=" . addcslashes($this->dboptions['dbschema'], "'\\");
-        }
+        if (empty($this->dboptions['dbhandlesoptions'])) {
+            // ALTER USER and ALTER DATABASE are overridden by these settings.
+            $options = array('--client_encoding=utf8', '--standard_conforming_strings=on');
+            // Select schema if specified, otherwise the first one wins.
+            if (!empty($this->dboptions['dbschema'])) {
+                $options[] = "-c search_path=" . addcslashes($this->dboptions['dbschema'], "'\\");
+            }
 
-        $connection .= " options='".implode(' ', $options)."'";
+            $connection .= " options='" . implode(' ', $options) . "'";
+        } else {
+            /* We don't trust people who just set the dbhandlesoptions, this code checks up on them.
+             * These functions do not talk to the server, they use the client library knowledge to determine state.
+             */
+            if (!empty($this->dboptions['dbschema'])) {
+                throw new dml_connection_exception('You cannot specify a schema with dbhandlesoptions, use the database to set it.');
+            }
+            if (pg_client_encoding($this->pgsql) != 'UTF8') {
+                throw new dml_connection_exception('client_encoding = UTF8 not set, it is: ' . pg_client_encoding($this->pgsql));
+            }
+            if (pg_escape_string($this->pgsql, '\\') != '\\') {
+                throw new dml_connection_exception('standard_conforming_string = on, must be set at the database.');
+            }
+        }
 
         ob_start();
         if (empty($this->dboptions['dbpersist'])) {
