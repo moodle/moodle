@@ -68,7 +68,7 @@ Feature: Add and configure blocks throughout the site
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
     And I set the following fields to these values:
-      | Block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt="
-      | Content     | Example
+      | Block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt=" |
+      | Content     | Example |
     When I press "Save changes"
     Then I should see "Course overview"
