@@ -536,9 +536,8 @@ abstract class backup_controller_dbops extends backup_dbops {
     /**
      * Sets the default values for the settings in a backup operation
      *
-     * Based on the mode of the backup it will delegate the process to
-     * other methods like {@link apply_general_config_defaults} ...
-     * to get proper defaults loaded
+     * Based on the mode of the backup it will load proper defaults
+     * using {@link apply_admin_config_defaults}.
      *
      * @param backup_controller $controller
      */
@@ -550,78 +549,72 @@ abstract class backup_controller_dbops extends backup_dbops {
         switch ($mode) {
             case backup::MODE_GENERAL:
                 // Load the general defaults
-                self::apply_general_config_defaults($controller);
+                $settings = array(
+                        'backup_general_users'              => 'users',
+                        'backup_general_anonymize'          => 'anonymize',
+                        'backup_general_role_assignments'   => 'role_assignments',
+                        'backup_general_activities'         => 'activities',
+                        'backup_general_blocks'             => 'blocks',
+                        'backup_general_filters'            => 'filters',
+                        'backup_general_comments'           => 'comments',
+                        'backup_general_badges'             => 'badges',
+                        'backup_general_calendarevents'     => 'calendarevents',
+                        'backup_general_userscompletion'    => 'userscompletion',
+                        'backup_general_logs'               => 'logs',
+                        'backup_general_histories'          => 'grade_histories',
+                        'backup_general_questionbank'       => 'questionbank',
+                        'backup_general_groups'             => 'groups',
+                        'backup_general_competencies'       => 'competencies'
+                );
+                self::apply_admin_config_defaults($controller, $settings, true);
+                break;
+            case backup::MODE_IMPORT:
+                // Load the import defaults
+                $settings = array(
+                        'backup_import_activities'         => 'activities',
+                        'backup_import_blocks'             => 'blocks',
+                        'backup_import_filters'            => 'filters',
+                        'backup_import_calendarevents'     => 'calendarevents',
+                        'backup_import_questionbank'       => 'questionbank',
+                        'backup_import_groups'             => 'groups',
+                        'backup_import_competencies'       => 'competencies'
+                );
+                self::apply_admin_config_defaults($controller, $settings, true);
                 break;
             case backup::MODE_AUTOMATED:
                 // Load the automated defaults.
-                self::apply_auto_config_defaults($controller);
+                $settings = array(
+                        'backup_auto_users'              => 'users',
+                        'backup_auto_role_assignments'   => 'role_assignments',
+                        'backup_auto_activities'         => 'activities',
+                        'backup_auto_blocks'             => 'blocks',
+                        'backup_auto_filters'            => 'filters',
+                        'backup_auto_comments'           => 'comments',
+                        'backup_auto_badges'             => 'badges',
+                        'backup_auto_calendarevents'     => 'calendarevents',
+                        'backup_auto_userscompletion'    => 'userscompletion',
+                        'backup_auto_logs'               => 'logs',
+                        'backup_auto_histories'          => 'grade_histories',
+                        'backup_auto_questionbank'       => 'questionbank',
+                        'backup_auto_groups'             => 'groups',
+                        'backup_auto_competencies'       => 'competencies'
+                );
+                self::apply_admin_config_defaults($controller, $settings, false);
                 break;
             default:
-                // Nothing to do for other modes (IMPORT/HUB...). Some day we
+                // Nothing to do for other modes (HUB...). Some day we
                 // can define defaults (admin UI...) for them if we want to
         }
     }
 
     /**
-     * Sets the controller settings default values from the automated backup config.
+     * Sets the controller settings default values from the admin config.
      *
      * @param backup_controller $controller
+     * @param array $settings a map from admin config names to setting names (Config name => Setting name)
+     * @param boolean $uselocks whether "locked" admin settings should be honoured
      */
-    private static function apply_auto_config_defaults(backup_controller $controller) {
-        $settings = array(
-            // Config name                   => Setting name.
-            'backup_auto_users'              => 'users',
-            'backup_auto_role_assignments'   => 'role_assignments',
-            'backup_auto_activities'         => 'activities',
-            'backup_auto_blocks'             => 'blocks',
-            'backup_auto_filters'            => 'filters',
-            'backup_auto_comments'           => 'comments',
-            'backup_auto_badges'             => 'badges',
-            'backup_auto_userscompletion'    => 'userscompletion',
-            'backup_auto_logs'               => 'logs',
-            'backup_auto_histories'          => 'grade_histories',
-            'backup_auto_questionbank'       => 'questionbank',
-            'backup_auto_groups'             => 'groups'
-        );
-        $plan = $controller->get_plan();
-        foreach ($settings as $config => $settingname) {
-            $value = get_config('backup', $config);
-            if ($value === false) {
-                // The setting is not set.
-                $controller->log('Could not find a value for the config ' . $config, BACKUP::LOG_DEBUG);
-                continue;
-            }
-            if ($plan->setting_exists($settingname)) {
-                $setting = $plan->get_setting($settingname);
-                $setting->set_value($value);
-            } else {
-                $controller->log('Unknown setting: ' . $settingname, BACKUP::LOG_DEBUG);
-            }
-        }
-    }
-
-    /**
-     * Sets the controller settings default values from the backup config.
-     *
-     * @param backup_controller $controller
-     */
-    private static function apply_general_config_defaults(backup_controller $controller) {
-        $settings = array(
-            // Config name                      => Setting name
-            'backup_general_users'              => 'users',
-            'backup_general_anonymize'          => 'anonymize',
-            'backup_general_role_assignments'   => 'role_assignments',
-            'backup_general_activities'         => 'activities',
-            'backup_general_blocks'             => 'blocks',
-            'backup_general_filters'            => 'filters',
-            'backup_general_comments'           => 'comments',
-            'backup_general_badges'             => 'badges',
-            'backup_general_userscompletion'    => 'userscompletion',
-            'backup_general_logs'               => 'logs',
-            'backup_general_histories'          => 'grade_histories',
-            'backup_general_questionbank'       => 'questionbank',
-            'backup_general_groups'             => 'groups'
-        );
+    private static function apply_admin_config_defaults(backup_controller $controller, array $settings, $uselocks) {
         $plan = $controller->get_plan();
         foreach ($settings as $config=>$settingname) {
             $value = get_config('backup', $config);
@@ -632,7 +625,7 @@ abstract class backup_controller_dbops extends backup_dbops {
                 $controller->log('Could not find a value for the config ' . $config, BACKUP::LOG_DEBUG);
                 continue;
             }
-            $locked = (get_config('backup', $config.'_locked') == true);
+            $locked = $uselocks && (get_config('backup', $config.'_locked') == true);
             if ($plan->setting_exists($settingname)) {
                 $setting = $plan->get_setting($settingname);
                 if ($setting->get_value() != $value || 1==1) {
