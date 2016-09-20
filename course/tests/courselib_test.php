@@ -2735,4 +2735,16 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertNull($DB->get_field('course_modules', 'availability',
                 array('id' => $label->cmid)));
     }
+
+    /**
+     * Test test_update_course_frontpage_category.
+     */
+    public function test_update_course_frontpage_category() {
+        // Fetch front page course.
+        $course = get_course(SITEID);
+        // Test update information on front page course.
+        $course->category = 99;
+        $this->setExpectedException('moodle_exception');
+        update_course($course);
+    }
 }
