@@ -23,6 +23,7 @@
  *    delete
  *    move
  *    moveit
+ *    duplicate
  * @package mod_lesson
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -128,6 +129,10 @@ switch ($action) {
 
         $lesson->resort_pages($pageid, $after);
         redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");
+        break;
+    case 'duplicate':
+            $lesson->duplicate_page($pageid);
+            redirect(new moodle_url('/mod/lesson/edit.php', array('id' => $cm->id)));
         break;
     default:
         print_error('unknowaction');
