@@ -78,7 +78,7 @@ class CachingStrategyFactory
      * Returns the best caching strategy, given the number of unique shared strings
      * and the amount of memory available.
      *
-     * @param int $sharedStringsUniqueCount Number of unique shared strings
+     * @param int|null $sharedStringsUniqueCount Number of unique shared strings (NULL if unknown)
      * @param string|void $tempFolder Temporary folder where the temporary files to store shared strings will be stored
      * @return CachingStrategyInterface The best caching strategy
      */
@@ -95,11 +95,16 @@ class CachingStrategyFactory
      * Returns whether it is safe to use in-memory caching, given the number of unique shared strings
      * and the amount of memory available.
      *
-     * @param int $sharedStringsUniqueCount Number of unique shared strings
+     * @param int|null $sharedStringsUniqueCount Number of unique shared strings (NULL if unknown)
      * @return bool
      */
     protected function isInMemoryStrategyUsageSafe($sharedStringsUniqueCount)
     {
+        // if the number of shared strings in unknown, do not use "in memory" strategy
+        if ($sharedStringsUniqueCount === null) {
+            return false;
+        }
+
         $memoryAvailable = $this->getMemoryLimitInKB();
 
         if ($memoryAvailable === -1) {

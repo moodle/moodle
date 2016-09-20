@@ -80,7 +80,7 @@ class SharedStringsHelper
         $xmlReader = new XMLReader();
         $sharedStringIndex = 0;
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $escaper = new \Box\Spout\Common\Escaper\XLSX();
+        $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
 
         $sharedStringsFilePath = $this->getSharedStringsFilePath();
         if ($xmlReader->open($sharedStringsFilePath) === false) {
@@ -100,11 +100,16 @@ class SharedStringsHelper
                 // removes nodes that should not be read, like the pronunciation of the Kanji characters
                 $cleanNode = $this->removeSuperfluousTextNodes($node);
 
-                // find all text nodes 't'; there can be multiple if the cell contains formatting
+                // find all text nodes "t"; there can be multiple if the cell contains formatting
                 $textNodes = $cleanNode->xpath('//ns:t');
 
                 $textValue = '';
-                foreach ($textNodes as $textNode) {
+                foreach ($textNodes as $nodeIndex => $textNode) {
+                    if ($nodeIndex !== 0) {
+                        // add a space between each "t" node
+                        $textValue .= ' ';
+                    }
+
                     if ($this->shouldPreserveWhitespace($textNode)) {
                         $textValue .= $textNode->__toString();
                     } else {
@@ -142,7 +147,7 @@ class SharedStringsHelper
      * Returns the shared strings unique count, as specified in <sst> tag.
      *
      * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader instance
-     * @return int Number of unique shared strings in the sharedStrings.xml file
+     * @return int|null Number of unique shared strings in the sharedStrings.xml file
      * @throws \Box\Spout\Common\Exception\IOException If sharedStrings.xml is invalid and can't be read
      */
     protected function getSharedStringsUniqueCount($xmlReader)
@@ -154,13 +159,21 @@ class SharedStringsHelper
             $xmlReader->read();
         }
 
-        return intval($xmlReader->getAttribute('uniqueCount'));
+        $uniqueCount = $xmlReader->getAttribute('uniqueCount');
+
+        // some software do not add the "uniqueCount" attribute but only use the "count" one
+        // @see https://github.com/box/spout/issues/254
+        if ($uniqueCount === null) {
+            $uniqueCount = $xmlReader->getAttribute('count');
+        }
+
+        return ($uniqueCount !== null) ? intval($uniqueCount) : null;
     }
 
     /**
      * Returns the best shared strings caching strategy.
      *
-     * @param int $sharedStringsUniqueCount
+     * @param int|null $sharedStringsUniqueCount Number of unique shared strings (NULL if unknown)
      * @return CachingStrategyInterface
      */
     protected function getBestSharedStringsCachingStrategy($sharedStringsUniqueCount)
@@ -200,6 +213,8 @@ class SharedStringsHelper
     {
         $tagsToRemove = [
             'rPh', // Pronunciation of the text
+            'pPr', // Paragraph Properties / Previous Paragraph Properties
+            'rPr', // Run Properties for the Paragraph Mark / Previous Run Properties for the Paragraph Mark
         ];
 
         foreach ($tagsToRemove as $tagToRemove) {

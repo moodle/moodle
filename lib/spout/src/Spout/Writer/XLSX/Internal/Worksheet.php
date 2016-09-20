@@ -30,6 +30,9 @@ EOD;
     /** @var \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper Helper to write shared strings */
     protected $sharedStringsHelper;
 
+    /** @var \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to work with styles */
+    protected $styleHelper;
+
     /** @var bool Whether inline or shared strings should be used */
     protected $shouldUseInlineStrings;
 
@@ -46,17 +49,19 @@ EOD;
      * @param \Box\Spout\Writer\Common\Sheet $externalSheet The associated "external" sheet
      * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
      * @param \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper $sharedStringsHelper Helper for shared strings
+     * @param \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to work with styles
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $shouldUseInlineStrings)
+    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $styleHelper, $shouldUseInlineStrings)
     {
         $this->externalSheet = $externalSheet;
         $this->sharedStringsHelper = $sharedStringsHelper;
+        $this->styleHelper = $styleHelper;
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->stringsEscaper = new \Box\Spout\Common\Escaper\XLSX();
+        $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
 
         $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
         $this->startSheet();
@@ -134,29 +139,7 @@ EOD;
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
         foreach($dataRow as $cellValue) {
-            $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-            $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
-            $cellXML .= ' s="' . $style->getId() . '"';
-
-            if (CellHelper::isNonEmptyString($cellValue)) {
-                if ($this->shouldUseInlineStrings) {
-                    $cellXML .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
-                } else {
-                    $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
-                    $cellXML .= ' t="s"><v>' . $sharedStringId . '</v></c>';
-                }
-            } else if (CellHelper::isBoolean($cellValue)) {
-                    $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
-            } else if (CellHelper::isNumeric($cellValue)) {
-                $cellXML .= '><v>' . $cellValue . '</v></c>';
-            } else if (empty($cellValue)) {
-                // don't write empty cells (not appending to $cellXML is the right behavior!)
-                $cellXML = '';
-            } else {
-                throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
-            }
-
-            $rowXML .= $cellXML;
+            $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
             $cellNumber++;
         }
 
@@ -172,12 +155,58 @@ EOD;
     }
 
     /**
+     * Build and return xml for a single cell.
+     *
+     * @param int $rowIndex
+     * @param int $cellNumber
+     * @param mixed $cellValue
+     * @param int $styleId
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    private function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
+    {
+        $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
+        $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
+        $cellXML .= ' s="' . $styleId . '"';
+
+        if (CellHelper::isNonEmptyString($cellValue)) {
+            if ($this->shouldUseInlineStrings) {
+                $cellXML .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
+            } else {
+                $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
+                $cellXML .= ' t="s"><v>' . $sharedStringId . '</v></c>';
+            }
+        } else if (CellHelper::isBoolean($cellValue)) {
+            $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
+        } else if (CellHelper::isNumeric($cellValue)) {
+            $cellXML .= '><v>' . $cellValue . '</v></c>';
+        } else if (empty($cellValue)) {
+            if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
+                $cellXML .= '/>';
+            } else {
+                // don't write empty cells that do no need styling
+                // NOTE: not appending to $cellXML is the right behavior!!
+                $cellXML = '';
+            }
+        } else {
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
+        }
+
+        return $cellXML;
+    }
+
+    /**
      * Closes the worksheet
      *
      * @return void
      */
     public function close()
     {
+        if (!is_resource($this->sheetFilePointer)) {
+            return;
+        }
+
         fwrite($this->sheetFilePointer, '</sheetData>');
         fwrite($this->sheetFilePointer, '</worksheet>');
         fclose($this->sheetFilePointer);

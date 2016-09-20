@@ -62,6 +62,23 @@ class Style
     protected $hasSetWrapText = false;
 
     /**
+     * @var Border
+     */
+    protected $border = null;
+
+    /**
+     * @var bool Whether border properties should be applied
+     */
+    protected $shouldApplyBorder = false;
+
+    /** @var string Background color */
+    protected $backgroundColor = null;
+
+    /** @var bool */
+    protected $hasSetBackgroundColor = false;
+
+
+    /**
      * @return int|null
      */
     public function getId()
@@ -77,6 +94,32 @@ class Style
     {
         $this->id = $id;
         return $this;
+    }
+
+    /**
+     * @return Border
+     */
+    public function getBorder()
+    {
+        return $this->border;
+    }
+
+    /**
+     * @param Border $border
+     */
+    public function setBorder(Border $border)
+    {
+        $this->shouldApplyBorder = true;
+        $this->border = $border;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function shouldApplyBorder()
+    {
+        return $this->shouldApplyBorder;
     }
 
     /**
@@ -244,6 +287,35 @@ class Style
     }
 
     /**
+     * Sets the background color
+     * @param string $color ARGB color (@see Color)
+     * @return Style
+     */
+    public function setBackgroundColor($color)
+    {
+        $this->hasSetBackgroundColor = true;
+        $this->backgroundColor = $color;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBackgroundColor()
+    {
+        return $this->backgroundColor;
+    }
+
+    /**
+     *
+     * @return bool Whether the background color should be applied
+     */
+    public function shouldApplyBackgroundColor()
+    {
+        return $this->hasSetBackgroundColor;
+    }
+
+    /**
      * Serializes the style for future comparison with other styles.
      * The ID is excluded from the comparison, as we only care about
      * actual style properties.
@@ -301,6 +373,12 @@ class Style
         }
         if (!$this->hasSetWrapText && $baseStyle->shouldWrapText()) {
             $mergedStyle->setShouldWrapText();
+        }
+        if (!$this->getBorder() && $baseStyle->shouldApplyBorder()) {
+            $mergedStyle->setBorder($baseStyle->getBorder());
+        }
+        if (!$this->hasSetBackgroundColor && $baseStyle->shouldApplyBackgroundColor()) {
+            $mergedStyle->setBackgroundColor($baseStyle->getBackgroundColor());
         }
 
         return $mergedStyle;

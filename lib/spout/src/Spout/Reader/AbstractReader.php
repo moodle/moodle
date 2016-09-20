@@ -19,6 +19,9 @@ abstract class AbstractReader implements ReaderInterface
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
+    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
+    protected $shouldFormatDates = false;
+
     /**
      * Returns whether stream wrappers are supported
      *
@@ -49,12 +52,24 @@ abstract class AbstractReader implements ReaderInterface
     abstract protected function closeReader();
 
     /**
-     * @param $globalFunctionsHelper
+     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      * @return AbstractReader
      */
     public function setGlobalFunctionsHelper($globalFunctionsHelper)
     {
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+        return $this;
+    }
+
+    /**
+     * Sets whether date/time values should be returned as PHP objects or be formatted as strings.
+     *
+     * @param bool $shouldFormatDates
+     * @return AbstractReader
+     */
+    public function setShouldFormatDates($shouldFormatDates)
+    {
+        $this->shouldFormatDates = $shouldFormatDates;
         return $this;
     }
 
