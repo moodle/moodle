@@ -32,7 +32,7 @@ class block_login extends block_base {
     }
 
     function get_content () {
-        global $USER, $CFG, $SESSION;
+        global $USER, $CFG, $SESSION, $OUTPUT;
         $wwwroot = '';
         $signup = '';
 
@@ -94,6 +94,24 @@ class block_login extends block_base {
             $this->content->text .= '<div class="c1 btn"><input type="submit" value="'.get_string('login').'" /></div>';
 
             $this->content->text .= "</form>\n";
+
+            $authsequence = get_enabled_auth_plugins(true); // auths, in sequence
+            $potentialidps = array();
+            foreach($authsequence as $authname) {
+                $authplugin = get_auth_plugin($authname);
+                $potentialidps = array_merge($potentialidps, $authplugin->loginpage_idp_list($SESSION->wantsurl));
+            }
+
+            if (!empty($potentialidps)) {
+                $this->content->text .= '<div class="potentialidps">';
+                $this->content->text .= '<h6>' . get_string('potentialidps', 'auth') . '</h6>';
+                $this->content->text .= '<div class="potentialidplist">';
+                foreach ($potentialidps as $idp) {
+                    $this->content->text .= '<div class="potentialidp"><a href="' . $idp['url']->out() . '" title="' . $idp['name'] . '">' . $OUTPUT->render($idp['icon'], $idp['name']) . $idp['name'] . '</a></div>';
+                }
+                $this->content->text .= '</div>';
+                $this->content->text .= '</div>';
+            }
 
             if (!empty($signup)) {
                 $this->content->footer .= '<div><a href="'.$signup.'">'.get_string('startsignup').'</a></div>';
