@@ -32,5 +32,13 @@ $functions = array(
         'description' => 'Get the given user courses final grades',
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'gradereport_overview_view_grade_report' => array(
+        'classname' => 'gradereport_overview_external',
+        'methodname' => 'view_grade_report',
+        'description' => 'Trigger the report view event',
+        'type' => 'write',
+        'capabilities' => 'gradereport/overview:view',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     )
 );

@@ -359,6 +359,63 @@ class grade_report_overview extends grade_report {
     public static function supports_mygrades() {
         return true;
     }
+
+    /**
+     * Check if the user can access the report.
+     *
+     * @param  stdClass $systemcontext   system context
+     * @param  stdClass $context         course context
+     * @param  stdClass $personalcontext personal context
+     * @param  stdClass $course          course object
+     * @param  int $userid               userid
+     * @return bool true if the user can access the report
+     * @since  Moodle 3.2
+     */
+    public static function check_access($systemcontext, $context, $personalcontext, $course, $userid) {
+        global $USER;
+
+        $access = false;
+        if (has_capability('moodle/grade:viewall', $systemcontext)) {
+            // Ok - can view all course grades.
+            $access = true;
+
+        } else if (has_capability('moodle/grade:viewall', $context)) {
+            // Ok - can view any grades in context.
+            $access = true;
+
+        } else if ($userid == $USER->id and ((has_capability('moodle/grade:view', $context) and $course->showgrades)
+                || $course->id == SITEID)) {
+            // Ok - can view own course grades.
+            $access = true;
+
+        } else if (has_capability('moodle/grade:viewall', $personalcontext) and $course->showgrades) {
+            // Ok - can view grades of this user - parent most probably.
+            $access = true;
+        } else if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and $course->showgrades) {
+            // Ok - can view grades of this user - parent most probably.
+            $access = true;
+        }
+        return $access;
+    }
+
+    /**
+     * Trigger the grade_report_viewed event
+     *
+     * @param  stdClass $context  course context
+     * @param  int $courseid      course id
+     * @param  int $userid        user id
+     * @since Moodle 3.2
+     */
+    public static function viewed($context, $courseid, $userid) {
+        $event = \gradereport_overview\event\grade_report_viewed::create(
+            array(
+                'context' => $context,
+                'courseid' => $courseid,
+                'relateduserid' => $userid,
+            )
+        );
+        $event->trigger();
+    }
 }
 
 function grade_report_overview_settings_definition(&$mform) {

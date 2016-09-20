@@ -142,4 +142,83 @@ class gradereport_overview_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function view_grade_report_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'id of the course'),
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 means current user', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Trigger the user report events, do the same that the web interface view of the report
+     *
+     * @param int $courseid id of course
+     * @param int $userid id of the user the report belongs to
+     * @return array of warnings and status result
+     * @since Moodle 3.2
+     * @throws moodle_exception
+     */
+    public static function view_grade_report($courseid, $userid = 0) {
+        global $USER;
+
+        $params = self::validate_parameters(self::view_grade_report_parameters(),
+            array(
+                'courseid' => $courseid,
+                'userid' => $userid
+            )
+        );
+
+        $warnings = array();
+        $course = get_course($params['courseid']);
+
+        $context = context_course::instance($course->id);
+        self::validate_context($context);
+
+        $userid = $params['userid'];
+        if (empty($userid)) {
+            $userid = $USER->id;
+        } else {
+            $user = core_user::get_user($userid, '*', MUST_EXIST);
+            core_user::require_active_user($user);
+        }
+        $systemcontext = context_system::instance();
+        $personalcontext = context_user::instance($userid);
+
+        $access = grade_report_overview::check_access($systemcontext, $context, $personalcontext, $course, $userid);
+
+        if (!$access) {
+            throw new moodle_exception('nopermissiontoviewgrades', 'error');
+        }
+
+        grade_report_overview::viewed($context, $course->id, $userid);
+
+        $result = array();
+        $result['status'] = true;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.2
+     */
+    public static function view_grade_report_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

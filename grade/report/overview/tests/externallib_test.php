@@ -184,4 +184,48 @@ class gradereport_overview_externallib_testcase extends externallib_advanced_tes
         $this->expectException('required_capability_exception');
         $studentgrade = gradereport_overview_external::get_course_grades($this->student1->id);
     }
+
+    /**
+     * Test view_grade_report function
+     */
+    public function test_view_grade_report() {
+        global $USER;
+
+        // Redirect events to the sink, so we can recover them later.
+        $sink = $this->redirectEvents();
+
+        $this->setUser($this->student1);
+        $result = gradereport_overview_external::view_grade_report($this->course1->id);
+        $result = external_api::clean_returnvalue(gradereport_overview_external::view_grade_report_returns(), $result);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\gradereport_overview\event\grade_report_viewed', $event);
+        $this->assertEquals(context_course::instance($this->course1->id), $event->get_context());
+        $this->assertEquals($USER->id, $event->get_data()['relateduserid']);
+
+        $this->setUser($this->teacher);
+        $result = gradereport_overview_external::view_grade_report($this->course1->id, $this->student1->id);
+        $result = external_api::clean_returnvalue(gradereport_overview_external::view_grade_report_returns(), $result);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $sink->close();
+
+        // Check the event details are correct.
+        $this->assertInstanceOf('\gradereport_overview\event\grade_report_viewed', $event);
+        $this->assertEquals(context_course::instance($this->course1->id), $event->get_context());
+        $this->assertEquals($this->student1->id, $event->get_data()['relateduserid']);
+    }
+
+    /**
+     * Test view_grade_report_permissions function
+     */
+    public function test_view_grade_report_permissions() {
+        $this->setUser($this->student2);
+
+        $this->expectException('moodle_exception');
+        $studentgrade = gradereport_overview_external::view_grade_report($this->course1->id, $this->student1->id);
+    }
 }
