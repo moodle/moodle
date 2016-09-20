@@ -262,8 +262,9 @@
   <library>
     <location>spout</location>
     <name>Spout</name>
-    <license>GPL</license>
-    <version>2.3.0</version>
+    <license>Apache</license>
+    <version>2.6.0</version>
+    <licenseversion>2.0</licenseversion>
   </library>
   <library>
     <location>amd/src/chartjs-lazy.js</location>
