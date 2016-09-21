@@ -15,7 +15,21 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting configmulticheckbox.
+    @template core_admin/setting_configmulticheckbox
+
+    Admin multicheckbox setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * hasoptions - there are some options
+    * options - list of options containing name, key, id, checked, label
+
+    Example context (json):
+    {
+        "name": "test",
+        "hasoptions": true,
+        "options": [ { "name": "Option", "key": "k1", "id": "id0", "checked": true, "label": "Option label"} ]
+    }
 }}
 <div class="form-multicheckbox">
     <input type="hidden" name="{{name}}[xxxxx]" value="1">

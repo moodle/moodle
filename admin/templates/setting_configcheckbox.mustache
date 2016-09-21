@@ -15,7 +15,25 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting configdirectory.
+    @template core_admin/setting_configcheckbox
+
+    Admin checkbox setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * no - no value
+    * value - yes value
+    * id - element id
+    * checked - boole
+
+    Example context (json):
+    {
+        "name": "test",
+        "no": "False",
+        "value": "True",
+        "id": "test0",
+        "checked": "checked"
+    }
 }}
 <div class="form-checkbox defaultsnext">
     <input type="hidden" name="{{name}}" value="{{no}}">

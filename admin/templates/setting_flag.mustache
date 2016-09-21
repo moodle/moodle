@@ -15,7 +15,24 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting flag.
+    @template core_admin/setting_flag
+
+    Admin flag setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * value - form element value
+    * checked - is it checked
+    * id - element id
+    * label - element label
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0",
+        "checked": true,
+        "label": "Do you like crackers?"
+    }
 }}
 <input type="checkbox" name="{{name}}" value="{{value}}" id="{{id}}" {{#checked}}checked{{/checked}}>
 <label for="{{id}}">{{label}}</label>

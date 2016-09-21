@@ -15,7 +15,24 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting special_calendar_weekend.
+    @template core_admin/setting_special_calendar_weekend
+
+    Admin special_calendar_weekend setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - form element id
+    * days - list of days containing index, label, checked
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "i1",
+        "days": [
+            { "index": 0, "label": "Monday", "checked": true },
+            { "index": 0, "label": "Tuesday", "checked": false }
+        ]
+    }
 }}
 <table>
     <thead>

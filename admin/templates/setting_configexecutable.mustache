@@ -15,6 +15,27 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting configexecutable.
+    @template core_admin/setting_configexecutable
+
+    Admin executable setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+    * size - size of the field
+    * readonly - Make the field readonly
+    * value - value
+    * showvalidity - Show a green check if the path is readable
+    * valid - True if the path is readable
+
+    Example context (json):
+    {
+        "name": "test",
+        "value": "/usr/bin/cowsay",
+        "id": "test0",
+        "readonly": true,
+        "showvalidity": true,
+        "valid": false
+    }
 }}
 {{>core_admin/setting_configfile}}
