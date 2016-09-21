@@ -367,7 +367,7 @@ module.exports = function(grunt) {
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
-    grunt.registerTask('css', ['stylelint:less', 'less:bootstrapbase']);
+    grunt.registerTask('css', ['stylelint:scss', 'stylelint:less', 'less:bootstrapbase']);
 
     // Register the startup task.
     grunt.registerTask('startup', 'Run the correct tasks for the current directory', tasks.startup);
