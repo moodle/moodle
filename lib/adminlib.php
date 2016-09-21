@@ -9699,19 +9699,13 @@ class admin_setting_searchsetupinfo extends admin_setting {
         $return = '';
         $brtag = html_writer::empty_tag('br');
 
-        // Available search areas.
         $searchareas = \core_search\manager::get_search_areas_list();
-        $anyenabled = false;
+        $anyenabled = !empty(\core_search\manager::get_search_areas_list(true));
         $anyindexed = false;
         foreach ($searchareas as $areaid => $searcharea) {
             list($componentname, $varname) = $searcharea->get_config_var_name();
-            if (!$anyenabled) {
-                $anyenabled = get_config($componentname, $varname . '_enabled');
-            }
-            if (!$anyindexed) {
-                $anyindexed = get_config($componentname, $varname . '_indexingstart');
-            }
-            if ($anyenabled && $anyindexed) {
+            if (get_config($componentname, $varname . '_indexingstart')) {
+                $anyindexed = true;
                 break;
             }
         }
