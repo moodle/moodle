@@ -21,7 +21,7 @@ a:first-of-type > .icon {
 
 // Fix the first item in a drop down menu (it's a list of links and icons, but has been made vertical.
 .dropdown .dropdown-item .icon {
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 // YUI 2 Tree View icons must not have a margin left.

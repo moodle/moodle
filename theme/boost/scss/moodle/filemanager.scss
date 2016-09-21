@@ -39,7 +39,7 @@
 
 .file-picker .fp-content {
     border-top: 0;
-    background: #ffffff;
+    background: #fff;
     clear: none;
     overflow: auto;
     height: 452px;
@@ -152,7 +152,7 @@
     min-height: 110px;
     line-height: 110px;
     text-align: center;
-    border: 1px solid #ffffff;
+    border: 1px solid #fff;
     display: block;
 }
 
@@ -168,7 +168,7 @@
     background: #fff;
     border: 1px solid #ddd;
 
-    @include box-shadow(inset 0 0 10px 0px #ccc);
+    @include box-shadow(inset 0 0 10px0 #ccc);
 }
 
 .fp-iconview .fp-filename-field {
@@ -184,14 +184,14 @@
 }
 
 .fp-iconview .fp-filename-field .fp-filename {
-    background: #ffffff;
+    background: #fff;
     padding-top: 5px;
     padding-bottom: 12px;
     min-width: 112px;
 }
 // Table view (File Picker only)
 .file-picker .yui3-datatable table {
-    border: 0 solid #bbbbbb;
+    border: 0 solid #bbb;
     width: 100%;
 }
 // Tree view (File Manager only)
@@ -351,7 +351,7 @@ a.ygtvspacer:hover {
 
 .file-picker .ygtvfocus,
 .filemanager .ygtvfocus {
-    background-color: #eeeeee;
+    background-color: #eee;
 }
 
 .fp-filename-icon {
@@ -474,7 +474,7 @@ a.ygtvspacer:hover {
 }
 
 .fp-select .fp-thumbnail img {
-    border: 1px solid #dddddd;
+    border: 1px solid #ddd;
     padding: 3px;
     vertical-align: middle;
     margin: 10px;
@@ -647,15 +647,15 @@ a.ygtvspacer:hover {
 }
 // Table view (File Manager only)
 .filemanager .yui3-datatable table {
-    border: 0 solid #bbbbbb;
+    border: 0 solid #bbb;
     width: 100%;
 }
 
 .filemanager .yui3-datatable-header {
-    background: #ffffff !important;
-    border-bottom: 1px solid #cccccc !important;
-    border-left: 0 solid #ffffff !important;
-    color: #555555 !important;
+    background: #fff !important;
+    border-bottom: 1px solid #ccc !important;
+    border-left: 0 solid #fff !important;
+    color: #555 !important;
 }
 
 .filemanager .yui3-datatable-odd .yui3-datatable-cell {
@@ -664,8 +664,8 @@ a.ygtvspacer:hover {
 }
 
 .filemanager .yui3-datatable-even .yui3-datatable-cell {
-    background-color: #ffffff !important;
-    border-left: 0 solid #ffffff;
+    background-color: #fff !important;
+    border-left: 0 solid #fff;
 }
 
 .filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1 {
@@ -716,14 +716,14 @@ a.ygtvspacer:hover {
     bottom: 10px;
     left: 10px;
     right: 10px;
-    border: 2px dashed #bbbbbb;
+    border: 2px dashed #bbb;
     padding-top: 85px;
     text-align: center;
 }
 
 .filepicker-filelist .dndupload-target,
 .filemanager-container .dndupload-target {
-    background: #ffffff;
+    background: #fff;
     position: absolute;
     top: 10px;
     bottom: 10px;
@@ -733,12 +733,12 @@ a.ygtvspacer:hover {
     padding-top: 85px;
     text-align: center;
 
-    @include box-shadow(0px 0 0 10px #fff);
+    @include box-shadow(0 0 0 10px #fff);
 }
 
 .filepicker-filelist.dndupload-over .dndupload-target,
 .filemanager-container.dndupload-over .dndupload-target {
-    background: #ffffff;
+    background: #fff;
     position: absolute;
     top: 10px;
     bottom: 10px;
@@ -883,7 +883,7 @@ a.ygtvspacer:hover {
 
 .filemanager.fp-select .fp-reflist .fp-value {
     background: #f9f9f9;
-    border: 1px solid #bbbbbb;
+    border: 1px solid #bbb;
     padding: 8px 7px;
     margin: 0;
     max-height: 75px;

@@ -21,20 +21,20 @@ body.behat-site {
 .phpinfo .e,
 .phpinfo .v,
 .phpinfo .h {
-    border: 1px solid #000000;
+    border: 1px solid #000;
     font-size: 0.8em;
     vertical-align: baseline;
-    color: #000000;
-    background-color: #cccccc;
+    color: #000;
+    background-color: #ccc;
 }
 
 .phpinfo .e {
-    background-color: #ccccff;
+    background-color: #ccf;
     font-weight: bold;
 }
 
 .phpinfo .h {
-    background-color: #9999cc;
+    background-color: #99c;
     font-weight: bold;
 }
 
