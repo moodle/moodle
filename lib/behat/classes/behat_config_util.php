@@ -935,9 +935,7 @@ class behat_config_util {
             $currentrun = $this->get_current_run();;
         }
 
-        $blacklistedfeatures = array();
         $themefeatures = array();
-        $themesuitecontexts = array();
         $themecontexts = array();
 
         $themes = $this->get_list_of_themes();
@@ -945,27 +943,29 @@ class behat_config_util {
         // Create list of theme suite features and contexts.
         foreach ($themes as $theme) {
             // Get theme features.
-            list($blacklistedfeatures[$theme], $themefeatures[$theme]) = $this->get_behat_features_for_theme($theme);
+            $themefeatures[$theme] = $this->get_behat_features_for_theme($theme);
 
-            list($themecontexts[$theme], $themesuitecontexts[$theme]) = $this->get_behat_contexts_for_theme($theme);
+            $themecontexts[$theme] = $this->get_behat_contexts_for_theme($theme);
         }
 
         // Remove list of theme features for default suite, as default suite should not run theme specific features.
         foreach ($themefeatures as $removethemefeatures) {
-            $features = $this->remove_blacklisted_features_from_list($features, $removethemefeatures);
+            if (!empty($removethemefeatures['features'])) {
+                $features = $this->remove_blacklisted_features_from_list($features, $removethemefeatures['features']);
+            }
         }
 
         // Remove list of theme features for default suite, as default suite should not run theme specific features.
-        foreach ($themecontexts as $theme => $themeblacklistcontexts) {
-            if ($themeblacklistcontexts) {
-                foreach ($themeblacklistcontexts as $c) {
+        foreach ($themecontexts as $themename => $themecontext) {
+            if (!empty($themecontext['contexts'])) {
+                foreach ($themecontext['contexts'] as $contextkey => $contextpath) {
                     // Remove theme specific contexts from default contexts.
-                    unset($contexts[$c]);
+                    unset($contexts[$contextkey]);
 
                     // Remove theme specific contexts from other themes.
                     foreach ($themes as $currenttheme) {
-                        if (($currenttheme != $theme) && isset($themesuitecontexts[$currenttheme][$c])) {
-                            unset($themesuitecontexts[$currenttheme][$c]);
+                        if (($currenttheme != $themename) && isset($themecontexts[$currenttheme]['suitecontexts'][$contextkey])) {
+                            unset($themecontexts[$currenttheme]['suitecontexts'][$contextkey]);
                         }
                     }
                 }
@@ -989,17 +989,18 @@ class behat_config_util {
             // If theme suite with all features is set, then we want all core features to be part of theme suite.
             if ($this->themesuitewithallfeatures) {
                 // If there is no theme specific feature. Then it's just core features.
-                if (empty($themefeatures[$theme])) {
+                if (empty($themefeatures[$theme]['features'])) {
                     $themesuitefeatures = $features;
                 } else {
-                    $themesuitefeatures = array_merge($features, $themefeatures[$theme]);
+                    $themesuitefeatures = array_merge($features, $themefeatures[$theme]['features']);
                 }
             } else {
-                $themesuitefeatures = $themefeatures[$theme];
+                $themesuitefeatures = $themefeatures[$theme]['features'];
             }
 
             // Remove blacklisted features.
-            $themesuitefeatures = $this->remove_blacklisted_features_from_list($themesuitefeatures, $blacklistedfeatures[$theme]);
+            $themesuitefeatures = $this->remove_blacklisted_features_from_list($themesuitefeatures,
+                $themefeatures[$theme]['blacklistfeatures']);
 
             // Return sub-set of features if parallel run.
             $themesuitefeatures = $this->get_features_for_the_run($themesuitefeatures, $parallelruns, $currentrun);
@@ -1009,7 +1010,7 @@ class behat_config_util {
             $suites = array_merge($suites, array(
                 $theme => array(
                     'paths'    => array_values($themesuitefeatures),
-                    'contexts' => array_keys($themesuitecontexts[$theme]),
+                    'contexts' => array_keys($themecontexts[$theme]['suitecontexts']),
                 )
             ));
         }
@@ -1168,7 +1169,7 @@ class behat_config_util {
      * Return list of blacklisted behat features for theme and features defined by theme only.
      *
      * @param string $theme theme name.
-     * @return array ($themeblacklistfeatures, $themefeatures)
+     * @return array ($blacklistfeatures, $blacklisttags, $features)
      */
     protected function get_behat_features_for_theme($theme) {
 
@@ -1183,7 +1184,12 @@ class behat_config_util {
             }
         }
 
-        return array($themeblacklistfeatures, $themefeatures);
+        $retval = array(
+            'blacklistfeatures' => $themeblacklistfeatures,
+            'features' => $themefeatures
+        );
+
+        return $retval;
     }
 
     /**
@@ -1260,6 +1266,11 @@ class behat_config_util {
         $this->themesuitecontexts[$theme] = $themesuitecontexts;
         $this->themecontexts[$theme] = $themecontexts;
 
-        return array(array_keys($themecontexts), $themesuitecontexts);
+        $retval = array(
+            'contexts' => $themecontexts,
+            'suitecontexts' => $themesuitecontexts,
+        );
+
+        return $retval;
     }
 }

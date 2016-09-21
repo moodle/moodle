@@ -107,7 +107,10 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $this->behatconfigutil->expects($this->any())
             ->method('get_behat_contexts_for_theme')
             ->with($this->equalTo('testtheme'))
-            ->will($this->returnValue(array(array_keys($this->themecontexts), $this->themecontexts)));
+            ->will($this->returnValue(array(
+                'contexts' => $this->themecontexts,
+                'suitecontexts' => $this->themecontexts
+            )));
 
     }
 
@@ -126,7 +129,10 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $behatconfigutil->expects($this->once())
             ->method('get_behat_features_for_theme')
             ->with($this->anything())
-            ->will($this->returnValue(array(array(), array())));
+            ->will($this->returnValue(array(
+                'blacklistfeatures' => array(),
+                'features' => array()))
+            );
 
         $config = $behatconfigutil->get_config_file_contents($this->corefeatures, $this->corecontexts);
 
@@ -183,7 +189,10 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $behatconfigutil->expects($this->any())
             ->method('get_behat_features_for_theme')
             ->with($this->anything())
-            ->will($this->returnValue(array(array(), array())));
+            ->will($this->returnValue(array(
+                'blacklistfeatures' => array(),
+                'features' => array()))
+            );
 
         $config = $behatconfigutil->get_config_file_contents($this->corefeatures, $this->corecontexts, '', 3, 1);
 
@@ -228,12 +237,18 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $behatconfigutil->expects($this->once())
             ->method('get_behat_features_for_theme')
             ->with($this->equalTo('testtheme'))
-            ->will($this->returnValue(array(array(), $themefeatures)));
+            ->will($this->returnValue(array(
+                'blacklistfeatures' => array(),
+                'features' => $this->themefeatures))
+            );
 
         $behatconfigutil->expects($this->once())
             ->method('get_behat_contexts_for_theme')
             ->with($this->equalTo('testtheme'))
-            ->will($this->returnValue(array(array_keys($this->themecontexts), $this->themecontexts)));
+            ->will($this->returnValue(array(
+                'contexts' => $this->themecontexts,
+                'suitecontexts' => $this->themecontexts
+            )));
 
         $behatconfigutil->expects($this->once())
             ->method('get_overridden_theme_contexts')
@@ -306,12 +321,18 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         $behatconfigutil->expects($this->atLeastOnce())
             ->method('get_behat_features_for_theme')
             ->with($this->equalTo('testtheme'))
-            ->will($this->returnValue(array(array(), $themefeatures)));
+            ->will($this->returnValue(array(
+                'blacklistfeatures' => array(),
+                'features' => $themefeatures))
+            );
 
         $behatconfigutil->expects($this->atLeastOnce())
             ->method('get_behat_contexts_for_theme')
             ->with($this->equalTo('testtheme'))
-            ->will($this->returnValue(array(array_keys($this->themecontexts), $this->themecontexts)));
+            ->will($this->returnValue(array(
+                'contexts' => $this->themecontexts,
+                'suitecontexts' => $this->themecontexts
+            )));
 
         $CFG->behat_wwwroot = 'http://example.com/behat';
 
