@@ -73,6 +73,7 @@
 /*rtl:ignore*/
 .text-ltr {
   direction: ltr !important;
+  /* stylelint-disable-line declaration-no-important */
 }
 #add,
 #remove,
