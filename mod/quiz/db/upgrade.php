@@ -932,5 +932,27 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2015111601, 'quiz');
     }
 
+    if ($oldversion < 2015111602) {
+        // Find quizzes with the combination of require passing grade and grade to pass 0.
+        $quizzes = $DB->get_records_sql("
+            SELECT gi.id, gi.iteminstance
+		      FROM {quiz} q
+        INNER JOIN {course_modules} cm ON q.id = cm.instance
+        INNER JOIN {grade_items} gi ON q.id = gi.iteminstance
+		     WHERE q.completionpass = 1
+               AND gi.gradepass = 0
+               AND cm.completiongradeitemnumber IS NULL");
+        if ($quizzes) {
+            foreach ($quizzes as $quiz) {
+                $DB->execute("UPDATE {course_modules}
+                                 SET completiongradeitemnumber = :gradeitemid
+                               WHERE instance = :quizid",
+                    array('gradeitemid' => $quiz->id, 'quizid' => $quiz->iteminstance));
+            }
+        }
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2015111602, 'quiz');
+    }
+
     return true;
 }
