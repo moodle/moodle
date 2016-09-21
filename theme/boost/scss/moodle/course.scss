@@ -177,7 +177,7 @@
 
 .section .activity .commands {
     white-space: nowrap;
-    display: inline;
+    display: inline-block;
 }
 
 .section .activity.modtype_label.label {
@@ -426,10 +426,21 @@
 
 .path-course-view li.activity span.autocompletion img {
     vertical-align: text-bottom;
+    margin-right: 0;
 }
 
 .path-course-view li.activity form.togglecompletion img {
     max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
+}
+
+.path-course-view {
+    &.editing {
+        li.activity span.autocompletion img {
+            /* Use the same spacing as the filler. */
+            margin-right: $spacer / 2;
+            margin-left: $spacer / 2;
+        }
+    }
 }
 
 .path-course-view li.activity form.togglecompletion .ajaxworking {
