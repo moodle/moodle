@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 3.2 ===
 
+* MForms element 'submitlink' has been deprecated.
 * Node.js versions >=4 are now required to run grunt.
 * JQuery has been updated to 3.1.0. JQuery migrate plugins are no longer shipped - please read
   https://jquery.com/upgrade-guide/3.0/ and update your javascript.
