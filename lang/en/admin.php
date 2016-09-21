@@ -1169,6 +1169,7 @@ $string['useexternalyui'] = 'Use online YUI libraries';
 $string['user'] = 'User';
 $string['userbulk'] = 'Bulk user actions';
 $string['userbulkdownload'] = 'Export users as';
+$string['userimagesdisabled'] = 'Profile user images are disabled';
 $string['userlist'] = 'Browse list of users';
 $string['userdefaultpreferences'] = 'User default preferences';
 $string['userpreference'] = 'User preference';
