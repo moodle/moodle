@@ -1,11 +1,11 @@
 {
     "rules": {
         "at-rule-empty-line-before": [ "always",
-          {"except": [ "blockless-group", "all-nested" ], ignore: ["after-comment"]}
+          {"except": [ "blockless-group"], ignore: ["after-comment", "all-nested"]}
         ],
         "at-rule-name-case": "lower",
         "at-rule-name-space-after": "always-single-line",
-        "at-rule-no-unknown": [true, ignoreAtRules: ["extend", "include"]],
+        "at-rule-no-unknown": null, # Enabled for non-scss in grunt.
         "at-rule-semicolon-newline-after": "always",
         "block-closing-brace-newline-after": "always",
         "block-closing-brace-newline-before": "always-multi-line",
@@ -57,7 +57,7 @@
         "media-query-list-comma-newline-after": "always-multi-line",
         "media-query-list-comma-space-after": "always-single-line",
         "media-query-list-comma-space-before": "never",
-        "no-browser-hacks": [true, { "severity": "warning" }],
+        "no-browser-hacks": null, # Enabled for non-scss in grunt.
         "no-empty-source": true,
         "no-eol-whitespace": true,
         "no-extra-semicolons": [true, { "severity": "warning" }],
@@ -87,7 +87,7 @@
         "unit-blacklist": ["pt", "rem"],
         "unit-case": "lower",
         "unit-no-unknown": true,
-        "value-keyword-case": ["lower", {"ignoreKeywords": ["/@/"]}],
+        "value-keyword-case": ["lower", {"ignoreKeywords": ["/(@|$)/"]}],
         "value-list-comma-newline-after": "always-multi-line",
         "value-list-comma-space-after": "always-single-line",
         "value-list-comma-space-before": "never",
