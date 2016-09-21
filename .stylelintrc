@@ -84,7 +84,7 @@
         "shorthand-property-no-redundant-values": [null, { "severity": "warning" }],
         "string-no-newline": true,
         "time-no-imperceptible": true,
-        "unit-blacklist": ["pt", "rem"],
+        "unit-blacklist": ["pt"],
         "unit-case": "lower",
         "unit-no-unknown": true,
         "value-keyword-case": ["lower", {"ignoreKeywords": ["/(@|$)/"]}],
