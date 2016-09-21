@@ -180,4 +180,48 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
         $this->expectException('required_capability_exception');
         $devices = message_airnotifier_external::get_user_devices('', $otheruser->id);
     }
+
+    /**
+     * Test enable_device
+     */
+    public function test_enable_device() {
+        global $USER, $DB;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Add fake core device.
+        $device = array(
+            'appid' => 'com.moodle.moodlemobile',
+            'name' => 'occam',
+            'model' => 'Nexus 4',
+            'platform' => 'Android',
+            'version' => '4.2.2',
+            'pushid' => 'apushdkasdfj4835',
+            'uuid' => 'asdnfl348qlksfaasef859',
+            'userid' => $USER->id,
+            'timecreated' => time(),
+            'timemodified' => time(),
+        );
+        $coredeviceid = $DB->insert_record('user_devices', (object) $device);
+
+        $airnotifierdev = array(
+            'userdeviceid' => $coredeviceid,
+            'enable' => 1
+        );
+        $airnotifierdevid = $DB->insert_record('message_airnotifier_devices', (object) $airnotifierdev);
+
+        // Disable and enable.
+        $result = message_airnotifier_external::enable_device($airnotifierdevid, false);
+        $result = external_api::clean_returnvalue(message_airnotifier_external::enable_device_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertTrue($result['success']);
+        $this->assertEquals(0, $DB->get_field('message_airnotifier_devices', 'enable', array('id' => $airnotifierdevid)));
+
+        $result = message_airnotifier_external::enable_device($airnotifierdevid, true);
+        $result = external_api::clean_returnvalue(message_airnotifier_external::enable_device_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertTrue($result['success']);
+        $this->assertEquals(1, $DB->get_field('message_airnotifier_devices', 'enable', array('id' => $airnotifierdevid)));
+    }
 }

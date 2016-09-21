@@ -323,4 +323,66 @@ class message_airnotifier_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @since Moodle 3.2
+     */
+    public static function enable_device_parameters() {
+        return new external_function_parameters(
+            array(
+                'deviceid' => new external_value(PARAM_INT, 'The device id'),
+                'enable' => new external_value(PARAM_BOOL, 'True for enable the device, false otherwise')
+            )
+        );
+    }
+
+    /**
+     * Enables or disables a registered user device so it can receive Push notifications
+     *
+     * @param  integer $deviceid the device id
+     * @param  bool $enable whether to enable the device
+     * @return array warnings and success status
+     * @throws moodle_exception
+     * @since Moodle 3.2
+     */
+    public static function enable_device($deviceid, $enable) {
+        global $USER;
+
+        $params = self::validate_parameters(
+            self::enable_device_parameters(),
+            array(
+                'deviceid' => $deviceid,
+                'enable' => $enable,
+            )
+        );
+
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('message/airnotifier:managedevice', $context);
+
+        if (!message_airnotifier_manager::enable_device($params['deviceid'], $params['enable'])) {
+            throw new moodle_exception('unknowndevice', 'message_airnotifier');
+        }
+
+        return array(
+            'success' => true,
+            'warnings' => array()
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_single_structure
+     * @since Moodle 3.2
+     */
+    public static function enable_device_returns() {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'True if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

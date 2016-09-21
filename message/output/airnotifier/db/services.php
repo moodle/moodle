@@ -50,4 +50,13 @@ $functions = array(
         'type'        => 'read',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'message_airnotifier_enable_device' => array(
+        'classname'    => 'message_airnotifier_external',
+        'methodname'   => 'enable_device',
+        'classpath'    => 'message/output/airnotifier/externallib.php',
+        'description'  => 'Enables or disables a registered user device so it can receive Push notifications',
+        'type'         => 'write',
+        'capabilities' => 'message/airnotifier:managedevice',
+        'services'     => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );
