@@ -533,6 +533,13 @@ class mod_quiz_mod_form extends moodleform_mod {
             }
         }
 
+        if (array_key_exists('completion', $data) && $data['completion'] == COMPLETION_TRACKING_AUTOMATIC) {
+            // Show an error if require passing grade was selected and the grade to pass was setted to 0.
+            if ($data['completionpass'] == 1 && (empty($data['gradepass']) || grade_floatval($data['gradepass']) == 0)) {
+                $errors['gradepass'] = get_string('gradetopassnotset', 'quiz');
+            }
+        }
+
         // Check the boundary value is a number or a percentage, and in range.
         $i = 0;
         while (!empty($data['feedbackboundaries'][$i] )) {
