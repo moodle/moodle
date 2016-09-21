@@ -4267,10 +4267,10 @@ EOD;
     /**
      * Renders the login form.
      *
-     * @param \core\output\login_form $form The renderable.
+     * @param \core_auth\output\login $form The renderable.
      * @return string
      */
-    public function render_login(\core\output\login $form) {
+    public function render_login(\core_auth\output\login $form) {
         $context = $form->export_for_template($this);
 
         // Override because rendering is not supported in template yet.

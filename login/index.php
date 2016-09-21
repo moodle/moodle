@@ -349,7 +349,7 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
     echo $OUTPUT->box_end();
 } else {
-    $loginform = new \core\output\login($authsequence, $frm->username);
+    $loginform = new \core_auth\output\login($authsequence, $frm->username);
     $loginform->set_error($errormsg);
     echo $OUTPUT->render($loginform);
 }

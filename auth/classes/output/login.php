@@ -17,12 +17,12 @@
 /**
  * Login renderable.
  *
- * @package    core_output
+ * @package    core_auth
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\output;
+namespace core_auth\output;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
@@ -38,7 +38,7 @@ use templatable;
 /**
  * Login renderable class.
  *
- * @package    core_output
+ * @package    core_auth
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
