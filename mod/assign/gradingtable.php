@@ -628,7 +628,8 @@ class assign_grading_table extends table_sql implements renderable {
                 if ($grade == -1 || $grade === null) {
                     return '';
                 }
-                return format_float($grade, 2);
+                $gradeitem = $this->assignment->get_grade_item();
+                return format_float($grade, $gradeitem->get_decimals());
             } else {
                 // This is a custom scale.
                 $scale = $this->assignment->display_grade($grade, false);
@@ -825,7 +826,8 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_grademax(stdClass $row) {
-        return format_float($this->assignment->get_instance()->grade, 2);
+        $gradeitem = $this->assignment->get_grade_item();
+        return format_float($this->assignment->get_instance()->grade, $gradeitem->get_decimals());
     }
 
     /**
