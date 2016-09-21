@@ -2,78 +2,101 @@
 .questionbank h2 {
     margin-top: 0;
 }
+
 .questioncategories h3 {
     margin-top: 0;
 }
+
 #chooseqtypebox {
     margin-top: 1em;
 }
+
 #chooseqtype h3 {
     margin: 0 0 0.3em;
 }
+
 #chooseqtype .instruction {
     display: none;
 }
+
 #chooseqtype .fakeqtypes {
     border-top: 1px solid silver;
 }
+
 #chooseqtype .qtypeoption {
     margin-bottom: 0.5em;
 }
+
 #chooseqtype label {
     display: block;
 }
+
 #chooseqtype .qtypename img {
     padding: 0 0.3em;
 }
+
 #chooseqtype .qtypename {
     display: inline-table;
     width: 16em;
 }
+
 #chooseqtype .qtypesummary {
     display: block;
     margin: 0 2em;
 }
+
 #chooseqtype .submitbuttons {
     margin: 0.7em 0;
     text-align: center;
 }
+
 #qtypechoicecontainer {
     display: none;
 }
+
 #qtypechoicecontainer_c.yui-panel-container.shadow .underlay {
     background: none;
 }
+
 #qtypechoicecontainer.yui-panel .hd {
     color: #333;
     letter-spacing: 1px;
     text-shadow: 1px 1px 1px #fff;
+
     @include border-top-radius(10px);
     border: 1px solid #ccc;
     border-bottom: 1px solid #bbb;
+
     @include gradient-y(#fff, #ccc);
 }
+
 #qtypechoicecontainer {
     font-size: 12px;
     color: #333;
-    background: #F2F2F2;
+    background: #f2f2f2;
+
     @include border-radius(10px);
     border: 1px solid #ccc;
     border-top: 0 none;
+
     @include box-shadow(5px 5px 20px 0 #666);
 }
+
 #qtypechoicecontainer #chooseqtype {
     width: 40em;
 }
+
 #chooseqtypehead h3 {
     margin: 0;
     font-weight: normal;
 }
+
 #chooseqtype .qtypes {
     position: relative;
     border-bottom: 1px solid #bbb;
     padding: 0.24em 0;
 }
+
 #chooseqtype .alloptions {
     overflow-x: hidden;
     overflow-y: auto;
@@ -85,19 +108,24 @@
     max-height: 60vh;
     width: 60%;
 }
+
 #chooseqtype .qtypeoption {
     margin-bottom: 0;
     padding: 0.3em 0.3em 0.3em 1.6em;
 }
+
 #chooseqtype .qtypeoption img {
     vertical-align: text-bottom;
     padding-left: 1em;
     padding-right: 0.5em;
 }
+
 #chooseqtype .selected {
     background-color: #fff;
+
     @include box-shadow(0px 0 10px 0 #ccc);
 }
+
 #chooseqtype .instruction,
 #chooseqtype .qtypesummary {
     display: none;
@@ -113,42 +141,53 @@
     background-color: #fff;
     overflow-y: auto;
 }
+
 #chooseqtype .instruction,
 #chooseqtype .selected .qtypesummary {
     display: block;
 }
+
 #categoryquestions {
     margin: 0;
+
     td,
     th {
         padding: 0 0.2em;
     }
+
     th {
         text-align: left;
         font-weight: normal;
     }
+
     .checkbox {
         padding-left: 5px;
     }
+
     .checkbox input[type="checkbox"] {
         margin-left: 0px;
         float: none;
     }
+
     .iconcol {
         padding: 3px;
     }
+
     label {
         margin: 0;
     }
 }
+
 #page-mod-quiz-edit {
     div.questionbankwindow div.header {
         margin: 0;
     }
+
     div.questionbankwindow.block {
         padding: 0;
     }
 }
+
 .questionbank .singleselect {
     margin: 0;
 }
@@ -156,30 +195,37 @@
 #combinedfeedbackhdr div.fhtmleditor {
     padding: 0;
 }
+
 #combinedfeedbackhdr div.fcheckbox {
     margin-bottom: 1em;
 }
+
 #multitriesheader div.fitem_feditor {
     margin-top: 1em;
 }
+
 #multitriesheader div.fitem_fgroup {
     margin-bottom: 1em;
 }
+
 #multitriesheader div.fitem_fgroup fieldset.felement label {
     margin-left: 0.3em;
     margin-right: 0.3em;
 }
+
 body.path-question-type .fitem_fgroup .accesshide {
     font: inherit;
     left: 0;
     position: static;
     padding-right: .3em;
 }
+
 .que {
     clear: left;
     text-align: left;
     margin: 0 auto 1.8em auto;
 }
+
 .que .info {
     float: left;
     width: 7em;
@@ -187,62 +233,78 @@ body.path-question-type .fitem_fgroup .accesshide {
     margin-bottom: 1.8em;
     background-color: $gray-lighter;
     border: 1px solid darken($gray-lighter, 7%);
+
     @include border-radius(2px);
 }
+
 .que h3.no {
     margin: 0;
     font-size: 0.8em;
     line-height: 1;
 }
+
 .que span.qno {
     font-size: 1.5em;
     font-weight: bold;
 }
+
 .que .info > div {
     font-size: 0.8em;
     margin-top: 0.7em;
 }
+
 .que .info .questionflag.editable {
     cursor: pointer;
 }
+
 .que .info .editquestion img,
 .que .info .questionflag img,
 .que .info .questionflag input {
     vertical-align: bottom;
 }
+
 .que .content {
     margin: 0 0 0 8.5em;
 }
+
 .que .formulation,
 .que .outcome,
 .que .comment {
     @extend .alert;
 }
+
 .que .formulation {
     @extend .alert-info;
 }
+
 .formulation input[type="text"],
 .formulation select {
     width: auto;
     vertical-align: baseline;
 }
+
 .path-mod-quiz input[size] {
     width: auto;
     max-width: 100%;
 }
+
 .que .comment {
     @extend .alert-success;
 }
+
 .que .history {
     @extend .card;
 }
+
 .que .ablock {
     margin: 0.7em 0 0.3em 0;
 }
+
 .que .im-controls {
     margin-top: 0.5em;
     text-align: left;
 }
+
 .que .specificfeedback,
 .que .generalfeedback,
 .que .rightanswer,
@@ -251,36 +313,45 @@ body.path-question-type .fitem_fgroup .accesshide {
 .que p {
     margin: 0 0 0.5em;
 }
+
 .que .qtext {
     margin-bottom: 1.5em;
 }
+
 .que .correctness {
     @extend label;
+
     &.correct {
         @extend .text-success;
     }
+
     &.partiallycorrect {
         @extend .text-warning;
     }
+
     &.notanswered,
     &.incorrect {
         @extend .text-danger;
     }
 }
+
 .que .validationerror {
     @extend .text-danger;
 }
 // copied from .formFieldState in mixin.less
 // and made more specific
+
 @mixin answerState($textColor, $backgroundColor) {
     $borderColor: $textColor;
     color: $textColor;
     background-color: $backgroundColor;
     border-color: $borderColor;
-    @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075)); // Redeclare so transitions work
+
+    @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075)); // Redeclare so transitions work
     &:focus {
         border-color: darken($borderColor, 10%);
-        $shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px lighten($borderColor, 20%);
+        $shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px lighten($borderColor, 20%);
+
         @include box-shadow($shadow);
     }
 }
@@ -288,20 +359,25 @@ body.path-question-type .fitem_fgroup .accesshide {
 .formulation .correct {
     @extend .text-success;
 }
+
 .formulation .partiallycorrect {
     @extend .text-warning;
 }
+
 .formulation .incorrect {
     @extend .text-danger;
 }
+
 .formulation select.correct,
 .formulation input.correct {
     @include answerState($btn-success-color, $btn-success-bg);
 }
+
 .formulation select.partiallycorrect,
 .formulation input.partiallycorrect {
     @include answerState($btn-warning-color, $btn-warning-bg);
 }
+
 .formulation select.incorrect,
 .formulation input.incorrect {
     @include answerState($btn-danger-color, $btn-danger-bg);
@@ -313,30 +389,38 @@ body.path-question-type .fitem_fgroup .accesshide {
 .que .history {
     margin-top: 0.5em;
 }
+
 .que .history h3 {
     margin: 0 0 0.2em;
     font-size: 1em;
 }
+
 .que .history table {
     width: 100%;
     margin: 0;
 }
+
 .que .history .current {
     font-weight: bold;
 }
+
 .que .questioncorrectnessicon {
     vertical-align: text-bottom;
 }
+
 .que input.questionflagimage {
     padding-right: 3px;
 }
+
 .importerror {
     margin-top: 10px;
     border-bottom: 1px solid #555;
 }
+
 .mform .que.comment .fitemtitle {
     width: 20%;
 }
+
 #page-question-preview #techinfo {
     margin: 1em 0;
 }
@@ -360,10 +444,12 @@ body.path-question-type .fitem_fgroup .accesshide {
 #page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
     background: transparent;
 }
-#page-mod-quiz-edit #categoryquestions>thead {
-    background: #FFF;
+
+#page-mod-quiz-edit #categoryquestions > thead {
+    background: #fff;
 }
-#page-mod-quiz-edit #categoryquestions>tbody>tr:nth-of-type(even) {
+
+#page-mod-quiz-edit #categoryquestions > tbody > tr:nth-of-type(even) {
     background: #e4e4e4;
 }
 
@@ -371,6 +457,7 @@ body.path-question-type .fitem_fgroup .accesshide {
     color: #444;
     text-shadow: none;
     padding: 3px;
+
     @include border-top-radius(4px);
     margin: 0 -10px 0 -10px;
     padding: 2px 10px 2px 10px;
@@ -388,7 +475,9 @@ body.path-question-type .fitem_fgroup .accesshide {
 
 #page-mod-quiz-edit .createnewquestion {
     padding: 0.3em 0;
-    div, input {
+
+    div,
+    input {
         margin: 0;
     }
 }
@@ -421,6 +510,7 @@ body.path-question-type .fitem_fgroup .accesshide {
     margin: 0;
     border-top: 0;
     border-bottom: 0;
+
     .paging {
         padding: 0 0.3em;
     }
@@ -429,6 +519,7 @@ body.path-question-type .fitem_fgroup .accesshide {
 #page-mod-quiz-edit div.question div.content div.questioncontrols {
     background-color: $body-bg;
 }
+
 #page-mod-quiz-edit div.question div.content div.points {
     margin-top: -0.5em;
     padding-bottom: 0em;
@@ -439,9 +530,11 @@ body.path-question-type .fitem_fgroup .accesshide {
     float: right;
     margin-right: 60px;
 }
+
 #page-mod-quiz-edit div.question div.content div.points br {
     display: none;
 }
+
 #page-mod-quiz-edit div.question div.content div.points label {
     display: inline-block;
 }
@@ -457,6 +550,7 @@ body.path-question-type .fitem_fgroup .accesshide {
 
 #page-mod-quiz-edit div.quizpage .pagecontent {
     border: 1px solid #ddd;
+
     @include border-radius(2px);
     overflow: hidden;
 }
@@ -467,21 +561,28 @@ body.path-question-type .fitem_fgroup .accesshide {
 
 #page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer {
     padding: 0;
+
     strong {
         display: block;
     }
-    hr, br {
+
+    hr,
+    br {
         display: none;
     }
+
     strong {
         margin-left: -0.3em;
     }
+
     strong label {
         margin-left: 0.3em;
     }
+
     input {
         margin-left: 0;
     }
+
     input + input {
         margin-left: 5px;
     }
@@ -494,6 +595,7 @@ body.path-question-type .fitem_fgroup .accesshide {
 #page-mod-quiz-edit div.editq div.question div.content {
     background-color: $body-bg;
     border: 1px solid #ddd;
+
     @include border-radius(2px);
     overflow: hidden;
 }

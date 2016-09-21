@@ -6,7 +6,7 @@
 .layout-option-nofooter #page-footer,
 .layout-option-nocourseheader .course-content-header,
 .layout-option-nocoursefooter .course-content-footer {
-    display:none;
+    display: none;
 }
 
 /** Page layout CSS ends **/
@@ -14,6 +14,7 @@
 .mdl-left {
     text-align: left;
 }
+
 .mdl-right {
     text-align: right;
 }
@@ -29,6 +30,7 @@
 .mdl-align {
     text-align: center;
 }
+
 a.dimmed,
 a.dimmed:link,
 a.dimmed:visited,
@@ -45,11 +47,13 @@ a.dimmed_text:visited,
 .usersuspended a:visited,
 .dimmed_category,
 .dimmed_category a {
-    @extend .text-muted
+    @extend .text-muted;
 }
+
 .activity.label .dimmed_text {
     opacity: 0.5;
 }
+
 .unlist,
 .unlist li,
 .inline-list,
@@ -63,31 +67,39 @@ a.dimmed_text:visited,
     margin: 0;
     padding: 0;
 }
+
 .inline,
 .inline-list li {
     display: inline;
 }
+
 .notifytiny {
     font-size: $font-size-xs;
 }
+
 .notifytiny li,
 .notifytiny td {
     font-size: 100%;
 }
+
 .red,
 .notifyproblem {
     @extend .text-warning;
 }
+
 .green,
 .notifysuccess {
     @extend .text-success;
 }
+
 .highlight {
     @extend .text-info;
 }
+
 .reportlink {
     text-align: right;
 }
+
 a.autolink.glossary:hover {
     cursor: help;
 }
@@ -95,9 +107,11 @@ a.autolink.glossary:hover {
 .collapsibleregioncaption {
     white-space: nowrap;
 }
+
 .pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
     cursor: pointer;
 }
+
 .collapsibleregioncaption img {
     vertical-align: middle;
 }
@@ -105,25 +119,32 @@ a.autolink.glossary:hover {
 .jsenabled .hiddenifjs {
     display: none;
 }
+
 .visibleifjs {
     display: none;
 }
+
 .jsenabled .visibleifjs {
     display: inline;
 }
+
 .jsenabled .collapsibleregion {
     overflow: hidden;
 }
+
 .jsenabled .collapsed .collapsibleregioninner {
     visibility: hidden;
 }
+
 .collapsible-actions {
     display: none;
     text-align: right;
 }
+
 .jsenabled .collapsible-actions {
     display: block;
 }
+
 .collapsible-actions .collapseexpand {
     padding-left: 20px;
     background: url([[pix:t/collapsed]]) 2px center no-repeat;
@@ -136,10 +157,11 @@ a.autolink.glossary:hover {
 .collapsible-actions .collapse-all {
     background-image: url([[pix:t/expanded]]);
 }
+
 .yui-overlay .yui-widget-bd {
-    background-color: #FFEE69;
-    border: 1px solid #A6982B;
-    border-top-color: #D4C237;
+    background-color: #ffee69;
+    border: 1px solid #a6982b;
+    border-top-color: #d4c237;
     color: #000000;
     left: 0;
     padding: 2px 5px;
@@ -147,6 +169,7 @@ a.autolink.glossary:hover {
     top: 0;
     z-index: 1;
 }
+
 .clearer {
     background: transparent;
     border-width: 0;
@@ -156,6 +179,7 @@ a.autolink.glossary:hover {
     margin: 0;
     padding: 0;
 }
+
 .bold,
 .warning,
 .errorbox .title,
@@ -163,24 +187,30 @@ a.autolink.glossary:hover {
 .pagingbar .thispage {
     font-weight: bold;
 }
+
 img.userpicture {
     margin-right: 0.5rem;
 }
+
 img.resize {
     height: 1em;
     width: 1em;
 }
+
 .action-menu .dropdown-toggle {
     text-decoration: none;
 }
+
 .action-menu {
     white-space: nowrap;
 }
+
 .action-menu .userpicture {
     width: auto;
     height: auto;
     margin-left: 1rem;
 }
+
 .block img.resize,
 .breadcrumb img.resize {
     height: 0.9em;
@@ -192,49 +222,62 @@ img.activityicon {
     width: 24px;
     vertical-align: middle;
 }
+
 .boxaligncenter {
     margin-left: auto;
     margin-right: auto;
 }
+
 .boxalignright {
     margin-left: auto;
     margin-right: 0;
 }
+
 .boxalignleft {
     margin-left: 0;
     margin-right: auto;
 }
+
 .boxwidthnarrow {
     width: 30%;
 }
+
 .boxwidthnormal {
     width: 50%;
 }
+
 .boxwidthwide {
     width: 80%;
 }
+
 .headermain {
     font-weight: bold;
 }
+
 #maincontent {
     display: block;
     height: 1px;
     overflow: hidden;
 }
+
 img.uihint {
     cursor: help;
 }
+
 #addmembersform table {
     margin-left: auto;
     margin-right: auto;
 }
+
 table.flexible .emptyrow {
     display: none;
 }
+
 form.popupform,
 form.popupform div {
     display: inline;
 }
+
 .arrow_button input {
     overflow: hidden;
 }
@@ -243,9 +286,11 @@ form.popupform div {
     overflow: auto;
     padding-bottom: 1px;
 }
+
 .pagelayout-report .no-overflow {
     overflow: visible;
 }
+
 .no-overflow > .generaltable {
     margin-bottom: 0;
 }
@@ -258,6 +303,7 @@ form.popupform div {
     font-weight: normal;
     font-size: 1em;
 }
+
 span.hide,
 div.hide {
     display: none;
@@ -270,6 +316,7 @@ a.skip {
     font-size: 0.85em;
     text-decoration: none;
 }
+
 a.skip-block:focus,
 a.skip-block:active,
 a.skip:focus,
@@ -277,6 +324,7 @@ a.skip:active {
     position: static;
     display: block;
 }
+
 .skip-block-to {
     display: block;
     height: 1px;
@@ -286,13 +334,16 @@ a.skip:active {
 .addbloglink {
     text-align: center;
 }
+
 .blog_entry .audience {
     text-align: right;
     padding-right: 4px;
 }
+
 .blog_entry .tags {
     margin-top: 15px;
 }
+
 .blog_entry .content {
     margin-left: 43px;
 }
@@ -300,48 +351,60 @@ a.skip:active {
 #page-group-index #groupeditform {
     text-align: center;
 }
+
 #doc-contents h1 {
     margin: 1em 0 0 0;
 }
+
 #doc-contents ul {
     margin: 0;
     padding: 0;
     width: 90%;
 }
+
 #doc-contents ul li {
     list-style-type: none;
 }
+
 .groupmanagementtable td {
     vertical-align: top;
 }
+
 .groupmanagementtable #existingcell,
 .groupmanagementtable #potentialcell {
     width: 42%;
 }
+
 .groupmanagementtable #buttonscell {
     width: 16%;
 }
+
 .groupmanagementtable #buttonscell p.arrow_button input {
     width: auto;
     min-width: 80%;
     margin: 0 auto;
 }
+
 .groupmanagementtable #removeselect_wrapper,
 .groupmanagementtable #addselect_wrapper {
     width: 100%;
 }
+
 .groupmanagementtable #removeselect_wrapper label,
 .groupmanagementtable #addselect_wrapper label {
     font-weight: normal;
 }
+
 #group-usersummary {
     width: 14em;
 }
+
 .groupselector {
     margin-top: 3px;
     margin-bottom: 3px;
     display: inline-block;
 }
+
 .groupselector label {
     display: inline-block;
 }
@@ -353,6 +416,7 @@ a.skip:active {
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
     }
+
     [type="password"] {
         margin-bottom: 10px;
         border-top-left-radius: 0;
@@ -364,14 +428,17 @@ a.skip:active {
 .notepost {
     margin-bottom: 1em;
 }
+
 .notepost .userpicture {
     float: left;
     margin-right: 5px;
 }
+
 .notepost .content,
 .notepost .footer {
     clear: both;
 }
+
 .notesgroup {
     margin-left: 20px;
 }
@@ -380,10 +447,12 @@ a.skip:active {
 .path-my .coursebox {
     margin: $spacer-y 0;
     padding: 0;
+
     .overview {
         margin: 15px 30px 10px 30px;
     }
 }
+
 .path-my .coursebox .info {
     float: none;
     margin: 0;
@@ -393,6 +462,7 @@ a.skip:active {
 .mod_introbox {
     padding: 10px;
 }
+
 table.mod_index {
     width: 100%;
 }
@@ -404,32 +474,40 @@ table.mod_index {
     margin: 0;
     padding: 0;
 }
+
 .comment-ctrl h5 {
     margin: 0;
     padding: 5px;
 }
+
 .comment-area {
     max-width: 400px;
     padding: 5px;
 }
+
 .comment-area textarea {
     width: 100%;
     overflow: auto;
+
     &.fullwidth {
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
     }
 }
+
 .comment-area .fd {
     text-align: right;
 }
+
 .comment-meta span {
     color: gray;
 }
+
 .comment-link img {
     vertical-align: text-bottom;
 }
+
 .comment-list {
     font-size: 11px;
     overflow: auto;
@@ -437,6 +515,7 @@ table.mod_index {
     padding: 0;
     margin: 0;
 }
+
 .comment-list li {
     margin: 2px;
     list-style: none;
@@ -445,50 +524,63 @@ table.mod_index {
     padding: .3em;
     position: relative;
 }
+
 .comment-list li.first {
-    display: none
+    display: none;
 }
-.comment-paging{
+
+.comment-paging {
     text-align: center;
 }
-.comment-paging .pageno{
+
+.comment-paging .pageno {
     padding: 2px;
 }
-.comment-paging .curpage{
-    border: 1px solid #CCC;
+
+.comment-paging .curpage {
+    border: 1px solid #ccc;
 }
+
 .comment-message .picture {
     width: 20px;
     float: left;
 }
+
 .comment-message .text {
     margin: 0;
     padding: 0;
 }
+
 .comment-message .text p {
     padding: 0;
     margin: 0 18px 0 0;
 }
+
 .comment-delete {
     position: absolute;
     top: 0;
     right: 0;
     margin: .3em;
 }
-.comment-report-selectall{
-    display: none
+
+.comment-report-selectall {
+    display: none;
 }
+
 .comment-link {
-    display: none
+    display: none;
 }
+
 .jsenabled .comment-link {
-    display: block
+    display: block;
 }
-.jsenabled .showcommentsnonjs{
-    display: none
+
+.jsenabled .showcommentsnonjs {
+    display: none;
 }
-.jsenabled .comment-report-selectall{
-    display: inline
+
+.jsenabled .comment-report-selectall {
+    display: inline;
 }
 /**
 * Completion progress report
@@ -496,17 +588,21 @@ table.mod_index {
 .completion-expired {
     @extend .text-warning;
 }
+
 .completion-expected {
     font-size: $font-size-xs;
 }
+
 .completion-sortchoice,
 .completion-identifyfield {
     font-size: $font-size-xs;
     vertical-align: bottom;
 }
+
 .completion-progresscell {
     text-align: right;
 }
+
 .completion-expired .completion-expected {
     font-weight: bold;
 }
@@ -517,13 +613,14 @@ img.user-image {
     height: 100px;
     width: 100px;
 }
+
 #tag-search-box {
     text-align: center;
     margin: 10px auto;
 }
 
 .path-tag .tag-index-items .tagarea {
-    border: 1px solid #E3E3E3;
+    border: 1px solid #e3e3e3;
     border-radius: 4px;
     padding: 10px;
     margin-top: 10px;
@@ -540,7 +637,7 @@ img.user-image {
     text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
     text-transform: uppercase;
     word-wrap: break-word;
-    border-bottom: solid 1px #E3E3E3;
+    border-bottom: solid 1px #e3e3e3;
     margin-bottom: 10px;
 }
 
@@ -548,27 +645,34 @@ img.user-image {
 .path-tag .tagarea .taggeditems {
     @include clearfix();
 }
+
 .path-tag .tagarea .controls,
 .path-tag .tag-backtoallitems {
     text-align: center;
 }
+
 .path-tag .tagarea .controls .gotopage.nextpage {
     float: right;
 }
+
 .path-tag .tagarea .controls .gotopage.prevpage {
     float: left;
 }
+
 .path-tag .tagarea .controls .exclusivemode {
     display: inline-block;
 }
+
 .path-tag .tagarea .controls.controls-bottom {
     margin-top: 5px;
 }
+
 .path-tag .tagarea .controls .gotopage.nextpage::after {
     padding-right: 5px;
     padding-left: 5px;
     content: "»";
 }
+
 .path-tag .tagarea .controls .gotopage.prevpage::before {
     padding-right: 5px;
     padding-left: 5px;
@@ -581,153 +685,199 @@ span.flagged-tag a,
 tr.flagged-tag a {
     @extend .text-warning;
 }
+
 .tag-management-table td,
 .tag-management-table th {
     vertical-align: middle;
     padding: 4px;
 }
+
 .tag-management-table .inplaceeditable.inplaceeditingon input {
     width: 150px;
 }
+
 .path-admin-tag .addstandardtags {
     float: right;
+
     img {
         margin: 0 5px;
     }
 }
+
 .path-tag .tag-relatedtags {
     padding-top: 10px;
 }
+
 .path-tag .tag-management-box {
     text-align: right;
 }
+
 .path-tag .tag-index-toc {
     padding: 10px;
     text-align: center;
 }
+
 .path-tag .tag-index-toc li,
 .path-tag .tag-management-box li {
     margin-left: 5px;
     margin-right: 5px;
 }
+
 .path-tag .tag-management-box li a.edittag {
     background-image: url([[pix:moodle|i/settings]]);
 }
+
 .path-tag .tag-management-box li a.flagasinappropriate {
     background-image: url([[pix:moodle|i/flagged]]);
 }
+
 .path-tag .tag-management-box li a.removefrommyinterests {
     background-image: url([[pix:moodle|t/delete]]);
 }
+
 .path-tag .tag-management-box li a.addtomyinterests {
     background-image: url([[pix:moodle|t/add]]);
 }
+
 .path-tag .tag-management-box li a {
     background-repeat: no-repeat;
     background-position: left;
     padding-left: 17px;
 }
+
 .tag_feed.media-list .media .itemimage {
     float: left;
 }
+
 .tag_feed.media-list .media .itemimage img {
     height: 35px;
     width: 35px;
 }
+
 .tag_feed.media-list .media .media-body {
     padding-right: 10px;
     padding-left: 10px;
 }
+
 .tag_feed .media .muted a {
     @extend .text-muted;
 }
+
 .tag_cloud {
     text-align: center;
 }
+
 .tag_cloud .inline-list li {
     padding: 0px 0.2em;
 }
+
 .tag_cloud .tag_overflow {
     margin-top: 1em;
     font-style: italic;
 }
+
 .tag_cloud .s20 {
     font-size: 2.7em;
 }
+
 .tag_cloud .s19 {
     font-size: 2.6em;
 }
+
 .tag_cloud .s18 {
     font-size: 2.5em;
 }
+
 .tag_cloud .s17 {
     font-size: 2.4em;
 }
+
 .tag_cloud .s16 {
     font-size: 2.3em;
 }
+
 .tag_cloud .s15 {
     font-size: 2.2em;
 }
+
 .tag_cloud .s14 {
     font-size: 2.1em;
 }
+
 .tag_cloud .s13 {
     font-size: 2em;
 }
+
 .tag_cloud .s12 {
     font-size: 1.9em;
 }
+
 .tag_cloud .s11 {
     font-size: 1.8em;
 }
+
 .tag_cloud .s10 {
     font-size: 1.7em;
 }
+
 .tag_cloud .s9 {
     font-size: 1.6em;
 }
+
 .tag_cloud .s8 {
     font-size: 1.5em;
 }
+
 .tag_cloud .s7 {
     font-size: 1.4em;
 }
+
 .tag_cloud .s6 {
     font-size: 1.3em;
 }
+
 .tag_cloud .s5 {
     font-size: 1.2em;
 }
+
 .tag_cloud .s4 {
     font-size: 1.1em;
 }
+
 .tag_cloud .s3 {
     font-size: 1em;
 }
+
 .tag_cloud .s2 {
     font-size: 0.9em;
 }
+
 .tag_cloud .s1 {
     font-size: 0.8em;
 }
+
 .tag_cloud .s0 {
     font-size: 0.7em;
 }
+
 .tag_list ul {
     display: inline;
 }
+
 .tag_list.hideoverlimit .overlimit {
-    display:none;
+    display: none;
 }
+
 .tag_list .tagmorelink {
-    display:none;
+    display: none;
 }
+
 .tag_list.hideoverlimit .tagmorelink {
-    display:inline;
+    display: inline;
 }
+
 .tag_list.hideoverlimit .taglesslink {
-    display:none;
+    display: none;
 }
 
 /**
@@ -743,43 +893,54 @@ tr.flagged-tag a {
 .smartselect {
     position: absolute;
 }
+
 .smartselect .smartselect_mask {
     background-color: #fff;
 }
-.smartselect ul  {
+
+.smartselect ul {
     padding: 0;
     margin: 0;
 }
+
 .smartselect ul li {
     list-style: none;
 }
+
 .smartselect .smartselect_menu {
     margin-right: 5px;
 }
+
 .safari .smartselect .smartselect_menu {
     margin-left: 2px;
 }
+
 .smartselect .smartselect_menu,
 .smartselect .smartselect_submenu {
     border: 1px solid #000;
-    background-color: #FFF;
+    background-color: #fff;
     display: none;
 }
+
 .smartselect .smartselect_menu.visible,
 .smartselect .smartselect_submenu.visible {
     display: block;
 }
+
 .smartselect .smartselect_menu_content ul li {
     position: relative;
     padding: 2px 5px;
 }
+
 .smartselect .smartselect_menu_content ul li a {
     color: #333;
     text-decoration: none;
 }
+
 .smartselect .smartselect_menu_content ul li a.selectable {
     color: inherit;
 }
+
 .smartselect .smartselect_submenuitem {
     background-image: url([[pix:moodle|t/collapsed]]);
     background-repeat: no-repeat;
@@ -791,10 +952,12 @@ tr.flagged-tag a {
     top: -1px;
     left: 100%;
 }
+
 .smartselect.spanningmenu .smartselect_submenu a {
     white-space: nowrap;
     padding-right: 16px;
 }
+
 .smartselect.spanningmenu .smartselect_menu_content ul li a.selectable:hover {
     text-decoration: underline;
 }
@@ -807,16 +970,20 @@ tr.flagged-tag a {
     border-width: 0;
     z-index: 1010;
 }
+
 .smartselect.compactmenu .smartselect_submenu.visible {
     display: block;
 }
+
 .smartselect.compactmenu .smartselect_menu {
     z-index: 1000;
     overflow: hidden;
 }
+
 .smartselect.compactmenu .smartselect_submenu .smartselect_submenu {
     z-index: 1020;
 }
+
 .smartselect.compactmenu .smartselect_submenuitem:hover > .smartselect_menuitem_label {
     font-weight: bold;
 }
@@ -833,33 +1000,42 @@ tr.flagged-tag a {
     width: 100%;
     border-collapse: collapse;
 }
+
 .userenrolment tr {
-    vertical-align:top;
+    vertical-align: top;
 }
+
 .userenrolment td {
     padding: 0;
     height: 41px;
 }
+
 .userenrolment .subfield {
     margin-right: 5px;
 }
+
 .userenrolment .col_userdetails .subfield {
     margin-left: 40px;
 }
+
 .userenrolment .col_userdetails .subfield_picture {
     float: left;
     margin-left: 0;
 }
+
 .userenrolment .col_lastseen {
     width: 150px;
 }
+
 .userenrolment .col_role {
     width: 262px;
 }
+
 .userenrolment .col_role .roles,
 .userenrolment .col_group .groups {
     margin-right: 30px;
 }
+
 .userenrolment .col_role .role,
 .userenrolment .col_group .group {
     float: left;
@@ -867,20 +1043,24 @@ tr.flagged-tag a {
     margin: 3px;
     white-space: nowrap;
 }
+
 .userenrolment .col_role .role a,
 .userenrolment .col_group .group a {
     margin-left: 3px;
     cursor: pointer;
 }
+
 .userenrolment .col_role .addrole,
 .userenrolment .col_group .addgroup {
     float: right;
     padding: 3px;
     margin: 3px;
+
     > a:hover {
-        border-bottom:1px solid #666;
+        border-bottom: 1px solid #666;
     }
 }
+
 .userenrolment .col_role .addrole img,
 .userenrolment .col_group .addgroup img {
     vertical-align: baseline;
@@ -895,15 +1075,19 @@ tr.flagged-tag a {
     padding: 3px;
     margin: 3px;
 }
+
 .userenrolment .col_enrol .enrolment a {
     float: right;
     margin-left: 3px;
 }
+
 #page-enrol-users {
     .enrol_user_buttons {
         float: right;
+
         .enrolusersbutton {
             display: inline;
+
             div,
             form {
                 display: inline;
@@ -911,24 +1095,29 @@ tr.flagged-tag a {
             }
         }
     }
+
     #filterform {
         @extend .card;
         display: inline-block;
+
         .fitem {
             display: inline-block;
             line-height: $line-height-base * 2;
             margin-right: .3em;
             white-space: nowrap;
+
             label {
                 display: inline;
                 line-height: $line-height-base;
                 padding-right: .3em;
             }
+
             :before,
             :after {
                 display: inline;
             }
         }
+
         div,
         fieldset {
             display: inline;
@@ -937,27 +1126,33 @@ tr.flagged-tag a {
             width: auto;
             margin: 0;
         }
+
         select,
         .ftext input {
             width: 7em;
         }
+
         input,
         select {
             margin-bottom: 0;
         }
     }
+
     .user-enroller-panel .uep-search-results .user .details {
         width: 237px;
     }
+
     .user-enroller-panel .uep-search-results .cohort .details {
         width: 237px;
     }
 }
+
 #page-enrol-users .enrol-users-page-action input {
-    margin-left: 0
+    margin-left: 0;
 }
+
 .corelightbox {
-    background-color: #CCC;
+    background-color: #ccc;
     position: absolute;
     top: 0;
     left: 0;
@@ -965,6 +1160,7 @@ tr.flagged-tag a {
     height: 100%;
     text-align: center;
 }
+
 .corelightbox img {
     position: fixed;
     top: 50%;
@@ -974,16 +1170,18 @@ tr.flagged-tag a {
 .mod-indent-outer {
     display: table;
 }
+
 .mod-indent {
     display: table-cell;
 }
-.label .mod-indent {
-    float:left;
-    padding-top:20px
-}
 
+.label .mod-indent {
+    float: left;
+    padding-top: 20px;
+}
 $mod-indent-size: 30px;
 /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
+
 @for $i from 1 through 16 {
     $width: ($i * $mod-indent-size);
 
@@ -991,6 +1189,7 @@ $mod-indent-size: 30px;
         width: $width;
     }
 }
+
 .mod-indent-huge {
     width: (16 * $mod-indent-size);
 }
@@ -998,10 +1197,11 @@ $mod-indent-size: 30px;
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {
     height: 25px;
-    width: 600px
+    width: 600px;
 }
+
 .resourcecontent audio.mediaplugin_html5audio {
-    width: 600px
+    width: 600px;
 }
 /** Large resource images should avoid hidden overflow **/
 .resourceimage {
@@ -1010,38 +1210,46 @@ $mod-indent-size: 30px;
 /* Audio player size in 'inline' mode (can only change width, as above) */
 .mediaplugin_mp3 object {
     height: 15px;
-    width: 300px
+    width: 300px;
 }
+
 audio.mediaplugin_html5audio {
-    width: 300px
+    width: 300px;
 }
 /* TinyMCE moodle media preview frame should not have padding */
 .core_media_preview.pagelayout-embedded #content {
     padding: 0;
 }
+
 .core_media_preview.pagelayout-embedded #maincontent {
     height: 0;
 }
+
 body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     padding: 0;
     margin: 0;
     min-width: 0;
     background: none;
 }
+
 .path-rating .ratingtable {
     width: 100%;
     margin-bottom: 1em;
 }
+
 .path-rating .ratingtable th.rating {
     width: 100%;
 }
+
 .path-rating .ratingtable td.rating,
 .path-rating .ratingtable td.time {
     white-space: nowrap;
     text-align: center;
 }
+
 .initialbar {
-    a, strong {
+    a,
+    strong {
         padding-left: 3px;
         padding-right: 3px;
     }
@@ -1051,13 +1259,16 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .moodle-dialogue-base .moodle-dialogue-lightbox {
     background-color: $gray;
 }
+
 .moodle-dialogue-base .hidden,
 .moodle-dialogue-base .moodle-dialogue-hidden {
     display: none;
 }
+
 .no-scrolling {
     overflow: hidden;
 }
+
 .moodle-dialogue-base .moodle-dialogue-fullscreen {
     left: 0px;
     top: 0px;
@@ -1065,24 +1276,30 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     bottom: -50px;
     position: fixed;
 }
+
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
     overflow: auto;
 }
+
 .moodle-dialogue-base .moodle-dialogue-fullscreen .closebutton {
     width: 28px;
     height: 16px;
     background-size: 100%;
 }
+
 .moodle-dialogue-base .moodle-dialogue-wrap {
     background-color: #fff;
     border: 1px solid #ccc;
 }
+
 .moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
     @extend .modal-content;
 }
+
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
     @extend .modal-header;
 }
+
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
     // Undo some YUI damage.
     min-height: 3rem;
@@ -1092,24 +1309,29 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     font-size: 1.5rem;
     line-height: 1.5;
 }
+
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
     @extend .modal-title;
 }
+
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
     padding: 5px;
     right: 0;
 }
+
 .moodle-dialogue-base .closebutton {
     @extend .close;
     margin: 0;
-    padding: 10px ! important;
+    padding: 10px !important;
     background: 0;
     border-style: none;
     box-shadow: none;
 }
+
 .moodle-dialogue-base .closebutton::after {
     content: "×";
 }
+
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
     @extend .modal-body;
 }
@@ -1124,89 +1346,112 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     margin: 0px;
     border: 0px;
 }
+
 .moodle-dialogue-confirm .confirmation-dialogue {
     text-align: center;
 }
+
 .moodle-dialogue-confirm .confirmation-dialogue input {
     text-align: center;
 }
+
 .moodle-dialogue-exception .moodle-exception-message {
-    text-align: center
+    text-align: center;
 }
+
 .moodle-dialogue-exception .moodle-exception-param label {
     font-weight: bold;
 }
+
 .moodle-dialogue-exception .param-stacktrace label {
-    background-color: #EEE;
+    background-color: #eee;
     border: 1px solid #ccc;
     border-bottom-width: 0;
 }
+
 .moodle-dialogue-exception .param-stacktrace pre {
     border: 1px solid #ccc;
     background-color: #fff;
 }
+
 .moodle-dialogue-exception .param-stacktrace .stacktrace-file {
     color: navy;
     font-size: $font-size-sm;
 }
+
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
     @extend .text-warning;
     font-size: $font-size-sm;
 }
+
 .moodle-dialogue-exception .param-stacktrace .stacktrace-call {
     color: #333;
     font-size: 90%;
     border-bottom: 1px solid #eee;
 }
+
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
     @extend .modal-footer;
 }
+
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft:empty {
     display: none;
 }
+
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft.yui3-widget-ft {
     // Undo some YUI damage.
     background: initial;
 }
+
 .moodle-dialogue-confirm .confirmation-message {
     margin: 0.5em 1em;
 }
+
 .moodle-dialogue-confirm .confirmation-dialogue input {
-    min-width: 80px
+    min-width: 80px;
 }
+
 .moodle-dialogue-exception .moodle-exception-message {
     margin: 1em;
 }
+
 .moodle-dialogue-exception .moodle-exception-param {
     margin-bottom: 0.5em;
 }
+
 .moodle-dialogue-exception .moodle-exception-param label {
     width: 150px;
 }
+
 .moodle-dialogue-exception .param-stacktrace label {
     display: block;
     margin: 0;
     padding: 4px 1em;
 }
+
 .moodle-dialogue-exception .param-stacktrace pre {
     display: block;
     height: 200px;
     overflow: auto;
 }
+
 .moodle-dialogue-exception .param-stacktrace .stacktrace-file {
     display: inline-block;
     margin: 4px 0;
 }
+
 .moodle-dialogue-exception .param-stacktrace .stacktrace-line {
     display: inline-block;
     width: 50px;
     margin: 4px 1em;
 }
+
 .moodle-dialogue-exception .param-stacktrace .stacktrace-call {
     padding-left: 25px;
     margin-bottom: 4px;
     padding-bottom: 4px;
 }
+
 .moodle-dialogue .moodle-dialogue-bd .content-lightbox {
     opacity: 0.75;
     width: 100%;
@@ -1241,12 +1486,15 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .choosertitle {
     display: none;
 }
+
 .moodle-dialogue.chooserdialogue .moodle-dialogue-content .moodle-dialogue-ft {
     margin: 0;
 }
+
 .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
     padding: 0;
-    background: #F2F2F2;
+    background: #f2f2f2;
+
     @include border-bottom-radius(10px);
 }
 /* Center the submit buttons within the area */
@@ -1255,11 +1503,13 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     text-align: center;
 }
 /* Fixed for safari browser on iPhone4S with ios7@mixin */
+
 @media (max-height: 639px) {
     .ios.safari .choosercontainer #chooseform .submitbuttons {
         padding: 45px 0;
     }
 }
+
 .choosercontainer #chooseform .submitbuttons input {
     min-width: 100px;
     margin: 0 0.5em;
@@ -1267,17 +1517,19 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 /* Various settings for the options area */
 .choosercontainer #chooseform .options {
     position: relative;
-    border-bottom: 1px solid #BBBBBB;
+    border-bottom: 1px solid #bbbbbb;
 }
 /* Only set these options if we're showing the js container */
 .jschooser .choosercontainer #chooseform .alloptions {
     overflow-x: hidden;
     overflow-y: auto;
     max-width: 240px;
+
     .option {
         input[type=radio] {
             display: inline-block;
         }
+
         .typename {
             display: inline-block;
             width: 55%;
@@ -1291,15 +1543,18 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     margin-bottom: 0;
     padding: 0 1.6em 0 1.6em;
 }
+
 .choosercontainer #chooseform .moduletypetitle {
     text-transform: uppercase;
     padding-top: 1.2em;
     padding-bottom: 0.4em;
 }
+
 .choosercontainer #chooseform .option .typename,
 .choosercontainer #chooseform .nonoption .typename {
     padding: 0 0 0 0.5em;
 }
+
 .choosercontainer #chooseform .modicon + .typename {
     padding-left: 0;
 }
@@ -1308,25 +1563,30 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .choosercontainer #chooseform .option span.typename {
     vertical-align: middle;
 }
+
 .choosercontainer #chooseform .option label {
     display: block;
     margin: 0;
     padding: ($spacer / 2) 0;
-    border-bottom: 1px solid #FFFFFF;
+    border-bottom: 1px solid #ffffff;
 }
+
 .choosercontainer #chooseform .option .icon {
     margin: 0;
     padding: 0 $spacer;
 }
+
 .choosercontainer #chooseform .nonoption {
     padding-left: 2.7em;
     padding-top: 0.3em;
     padding-bottom: 0.1em;
 }
+
 .choosercontainer #chooseform .subtype {
     margin-bottom: 0;
     padding: 0 1.6em 0 3.2em;
 }
+
 .choosercontainer #chooseform .subtype .typename {
     margin: 0 0 0 0.2em;
 }
@@ -1351,11 +1611,13 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .choosercontainer #chooseform .selected .typesummary {
     display: block;
 }
+
 .choosercontainer #chooseform .selected {
     background-color: #fff;
     margin-top: -1px;
     padding-top: 1px;
 }
+
 .chooserdialogue-course-modchooser .modicon .icon {
     width: 24px;
     height: 24px;
@@ -1365,9 +1627,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     .jsenabled .choosercontainer #chooseform .alloptions {
         max-width: 100%;
     }
+
     .jsenabled .choosercontainer #chooseform .instruction,
     .jsenabled .choosercontainer #chooseform .typesummary {
-        position:static;
+        position: static;
     }
 }
 
@@ -1376,20 +1639,25 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     padding-bottom: 25px;
     padding-right: 10px;
 }
+
 .formlistinginputradio {
     float: left;
 }
+
 .formlistingmain {
     min-height: 225px;
 }
+
 .formlisting {
     position: relative;
     margin: 15px 0;
     padding: 1px 19px 14px;
     background-color: white;
-    border: 1px solid #DDD;
+    border: 1px solid #ddd;
+
     @include border-radius(4px);
 }
+
 .formlistingmore {
     position: absolute;
     cursor: pointer;
@@ -1398,23 +1666,28 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     padding: 3px 7px;
     font-size: 12px;
     font-weight: bold;
-    background-color: whiteSmoke;
+    background-color: whitesmoke;
     border: 1px solid #ddd;
-    color: #9DA0A4;
+    color: #9da0a4;
+
     @include border-radius(4px 0 4px 0);
 }
+
 .formlistingall {
     margin: 15px 0;
     padding: 0;
+
     @include border-radius(4px);
 }
+
 .formlistingrow {
     cursor: pointer;
     border-bottom: 1px solid;
-    border-color: #E1E1E8;
-    border-left: 1px solid #E1E1E8;
-    border-right: 1px solid #E1E1E8;
-    background-color: #F7F7F9;
+    border-color: #e1e1e8;
+    border-left: 1px solid #e1e1e8;
+    border-right: 1px solid #e1e1e8;
+    background-color: #f7f7f9;
+
     @include border-radius(0 0 4px 4px);
     padding: 6px;
     top: 50%;
@@ -1423,9 +1696,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     float: left;
     width: 150px;
 }
+
 body.jsenabled .formlistingradio {
     display: none;
 }
+
 body.jsenabled .formlisting {
     display: block;
 }
@@ -1436,30 +1711,36 @@ table.collection {
     @extend .table-bordered;
     @extend .table-striped;
 }
+
 table.collection .name {
     text-align: left;
     vertical-align: middle;
 }
+
 table.collection .awards {
     width: 10%;
     text-align: center;
     vertical-align: middle;
 }
+
 table.collection .criteria {
     width: 40%;
     text-align: left;
     vertical-align: top;
 }
+
 table.collection .badgeimage,
 table.collection .status {
     width: 15%;
     text-align: center;
     vertical-align: middle;
 }
+
 table.collection .description {
     width: 25%;
     text-align: left;
 }
+
 table.collection .actions {
     width: 11em;
     text-align: center;
@@ -1470,16 +1751,19 @@ a.criteria-action {
     padding: 0px 3px;
     float: right;
 }
+
 div.criteria-description {
     padding: 10px 15px;
     margin: 5px 0px;
     background: none repeat scroll 0 0 #f9f9f9;
-    border: 1px solid #EEE;
+    border: 1px solid #eee;
 }
+
 ul.badges {
     margin: 0;
     list-style: none;
 }
+
 .badges li {
     position: relative;
     display: inline-block;
@@ -1488,13 +1772,16 @@ ul.badges {
     vertical-align: top;
     width: 150px;
 }
+
 .badges li .badge-name {
     display: block;
     padding: 5px;
 }
+
 .badges li > img {
     position: absolute;
 }
+
 .badges li .badge-image {
     width: 100px;
     height: 100px;
@@ -1502,9 +1789,11 @@ ul.badges {
     top: 0px;
     z-index: 1;
 }
+
 .badges li .badge-actions {
     position: relative;
 }
+
 .badges li .expireimage {
     width: 100px;
     height: 100px;
@@ -1532,7 +1821,7 @@ ul.badges {
         top: 0px;
         opacity: 0.85;
         position: absolute;
-        z-index:10;
+        z-index: 10;
     }
 
     .singlebutton {
@@ -1543,6 +1832,7 @@ ul.badges {
         }
     }
 }
+
 #badge-details {
     display: inline-block;
     width: 79%;
@@ -1557,12 +1847,14 @@ ul.badges {
         vertical-align: top;
         padding: 3px 0;
     }
+
     dt {
         clear: both;
         display: inline-block;
         width: 20%;
         min-width: 100px;
     }
+
     dd {
         display: inline-block;
         width: 79%;
@@ -1573,23 +1865,29 @@ ul.badges {
 .badge-profile {
     vertical-align: top;
 }
+
 .connected {
     @extend .text-success;
 }
+
 .notconnected {
     @extend .text-danger;
 }
+
 .connecting {
     @extend .text-warning;
 }
+
 #page-badges-award .recipienttable tr td {
     vertical-align: top;
 }
+
 #page-badges-award .recipienttable tr td.actions .actionbutton {
     margin: 0.3em 0;
     padding: 0.5em 0;
     width: 100%;
 }
+
 #page-badges-award .recipienttable tr td.existing,
 #page-badges-award .recipienttable tr td.potential {
     width: 42%;
@@ -1598,49 +1896,60 @@ ul.badges {
 #issued-badge-table .activatebadge {
     display: inline-block;
 }
+
 .statusbox.active {
     background-color: $state-success-bg;
 }
+
 .statusbox.inactive {
     background-color: $state-warning-bg;
 }
+
 .statusbox {
     text-align: center;
     margin-bottom: 5px;
     padding: 5px;
 }
+
 .statusbox .activatebadge {
     display: inline-block;
 }
-.statusbox .activatebadge input[type=submit]{
+
+.statusbox .activatebadge input[type=submit] {
     margin: 3px;
 }
+
 .activatebadge {
     margin: 0px;
     text-align: left;
     vertical-align: middle;
 }
+
 img#persona_signin {
     cursor: pointer;
 }
+
 .addcourse {
     float: right;
 }
+
 .invisiblefieldset {
     display: inline;
     margin: 0;
     padding: 0;
     border-width: 0;
 }
+
 .breadcrumb-nav {
     float: left;
 }
+
 .breadcrumb-button .singlebutton div {
     margin-right: 0;
 }
+
 .breadcrumb-nav .breadcrumb {
     margin: 0;
-
 }
 /** Navbar */
 .navbar-brand {
@@ -1648,9 +1957,11 @@ img#persona_signin {
         display: inline-block;
         margin: -$navbar-brand-padding-y 0;
     }
+
     .site-name {
         display: inline-block;
     }
+
     &.has-logo {
         .site-name {
             margin-left: $spacer / 2;
@@ -1663,6 +1974,7 @@ img#persona_signin {
         .navbar-brand {
             max-width: 80%;
             margin-right: 0;
+
             &.has-logo {
                 .site-name {
                     display: none;
@@ -1701,6 +2013,7 @@ header {
         display: block;
         position: relative;
     }
+
     .page-header-image {
         float: left;
         margin-right: 1em;
@@ -1717,6 +2030,7 @@ header {
     .header-button-group {
         display: block;
         float: left;
+
         a {
             position: relative;
 
@@ -1737,6 +2051,7 @@ a.disabled {
     font-style: italic;
     color: #808080;
 }
+
 body.lockscroll {
     height: 100%;
     overflow: hidden;
@@ -1757,6 +2072,7 @@ dd:after {
     display: block;
     content: " ";
 }
+
 dd:after {
     clear: both;
 }
@@ -1770,7 +2086,6 @@ dd:after {
 }
 
 .inplaceeditable {
-
     &.inplaceeditingon {
         position: relative;
 

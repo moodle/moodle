@@ -3,8 +3,7 @@
 // Should probably be moved to relevant @mixin less files
 // after 4095 selector issue is solved
 
-@media (min-width: ($navbarCollapseDesktopWidth) ) {
-
+@media (min-width: ($navbarCollapseDesktopWidth)) {
     a[id]:empty::before,
     a[name]:empty::before {
         display: inline-block;
@@ -14,7 +13,6 @@
         margin-top: -$navbarHeight;
         vertical-align: top;
     }
-
 }
 
 @media (min-width: 980px) and (max-width: 1199px) {
@@ -25,6 +23,7 @@
     .form-horizontal .control-label {
         width: $horizontalComponentOffset980 - 20px;
     }
+
     .form-item .form-setting,
     .form-item .form-description,
     .mform .fitem .felement,
@@ -33,6 +32,7 @@
     .form-horizontal .controls {
         margin-left: $horizontalComponentOffset980;
     }
+
     .path-admin .buttons,
     .form-buttons {
         padding-left: $horizontalComponentOffset980;
@@ -48,19 +48,23 @@
         float: none;
         border: 0px;
     }
+
     .file-picker .fp-repo-items {
         width: 100%;
         float: none;
         margin-left: 0;
     }
+
     .file-picker .fp-login-form .fp-login-input label {
         text-align: left;
     }
+
     .file-picker .fp-content form td {
         display: block;
         width: 100%;
         text-align: left;
     }
+
     .fp-content .mdl-right {
         text-align: left;
     }
@@ -88,6 +92,7 @@
     .form-horizontal .control-label {
         width: $horizontalComponentOffset1200 - 20px;
     }
+
     .form-item .form-setting,
     .form-item .form-description,
     .mform .fitem .felement,
@@ -96,23 +101,29 @@
     .form-horizontal .controls {
         margin-left: $horizontalComponentOffset1200;
     }
+
     .path-admin .buttons,
     .form-buttons {
         padding-left: $horizontalComponentOffset1200;
     }
 
     // Core empty block regions.
-    @mixin fluid-span ($columns) {
+
+    @mixin fluid-span($columns) {
         @include fluid-span-full($columns, $fluidGridColumnWidth1200, $fluidGridGutterWidth1200);
     }
-    .empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+
+    .empty-region-side-post.used-region-side-pre,
     .jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
         #region-main.span8 {
             /** increase the span size by 1 **/
+
             @include fluid-span(9);
         }
+
         #block-region-side-pre.span4 {
             /** decrease the span size by 1 **/
+
             @include fluid-span(3);
         }
     }
@@ -122,6 +133,7 @@
     .loginbox.twocolumns .loginpanel {
         margin-left: 0;
     }
+
     .loginbox.twocolumns .loginpanel,
     .loginbox.twocolumns .signuppanel {
         width: 48.617948717948715%;
@@ -131,17 +143,22 @@
 
 @media (min-width: 768px) and (max-width: 979px) {
     // Core empty block regions.
-    @mixin fluid-span ($columns) {
+
+    @mixin fluid-span($columns) {
         @include fluid-span-full($columns, $fluidGridColumnWidth768, $fluidGridGutterWidth768);
     }
-    .empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+
+    .empty-region-side-post.used-region-side-pre,
     .jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
         #region-main.span8 {
             /** increase the span size by 1 **/
+
             @include fluid-span(9);
         }
+
         #block-region-side-pre.span4 {
             /** decrease the span size by 1 **/
+
             @include fluid-span(3);
         }
     }
@@ -153,11 +170,11 @@
         width: 100%;
         float: none;
     }
+
     #page-mod-quiz-edit #block-region-side-pre,
     #page-mod-quiz-edit #block-region-side-post {
         clear: both;
     }
-
 }
 
 @media (max-width: 480px) {
@@ -166,35 +183,45 @@
     .nav-tabs > li {
         float: none;
     }
+
     .nav-tabs > li > a {
         margin-right: 0; // no need for the gap between nav items
     }
+
     .nav-tabs {
         border-bottom: 0;
     }
+
     .nav-tabs > li > a {
         border: 1px solid #ddd;
+
         @include border-radius(0);
     }
+
     .nav-tabs > .active > a,
     .nav-tabs > .active > a:hover {
         border: 1px solid #ddd;
     }
+
     .nav-tabs > li:first-child > a {
         @include border-top-radius(4px);
     }
+
     .nav-tabs > li:last-child > a {
         @include border-bottom-radius(4px);
     }
+
     .nav-tabs > li > a:hover,
     .nav-tabs > li > a:focus {
         border-color: #ddd;
         z-index: 2;
     }
+
     .fp-content-center {
         display: block;
         vertical-align: top;
     }
+
     .course-content ul.topics li.section,
     .course-content ul.topics li.section .content,
     .course-content ul.weeks li.section .content,
@@ -204,14 +231,17 @@
         margin-left: 0;
         padding: 0;
     }
+
     .activityinstance {
         display: block;
     }
+
     .editing .course-content .section .activity {
         margin-bottom: 0.2em;
         padding-bottom: 0.2em;
         border-bottom: thin solid #eee;
     }
+
     .course-content .section .activity .commands {
         text-align: right;
     }
@@ -219,43 +249,53 @@
     .jsenabled .choosercontainer #chooseform .alloptions {
         max-width: 100%;
     }
+
     .jsenabled .choosercontainer #chooseform .instruction,
     .jsenabled .choosercontainer #chooseform .typesummary {
-        position:static;
+        position: static;
     }
+
     .que .info {
         float: none;
         width: auto;
     }
+
     .que .content {
         margin: 0;
     }
+
     .path-mod-choice .horizontal  .choices .option {
         display: block;
     }
+
     .path-mod-forum .forumsearch #search {
         width: 120px;
     }
+
     .path-mod-forum .forumheaderlist .picture {
         display: none;
     }
 }
 
 // Stuart's 2,1,3 layout
-@media (min-width : 768px) {
+
+@media (min-width: 768px) {
     .row-fluid .desktop-first-column {
         margin-left: 0;
     }
+
     #page-navbar .breadcrumb-button {
         display: inline;
     }
 }
-@media (max-width : 767px) {
+
+@media (max-width: 767px) {
     .row-fluid .desktop-first-column {
         clear: both;
     }
 }
 // Forms
+
 @media (max-width: 767px) {
     // Remove the horizontal form styles
     .form-item .form-label,
@@ -266,16 +306,20 @@
         padding-top: 0;
         text-align: left;
     }
-    .form-item .form-label label{
+
+    .form-item .form-label label {
         display: inline-block;
         margin-right: .5em;
     }
+
     .form-item .form-setting .form-checkbox {
         margin-top: 0;
     }
+
     .form-label span.form-shortname {
         display: inline-block;
     }
+
     .form-item .form-setting,
     .mform .fitem .felement,
     .path-backup .mform .fitem .felement,
@@ -283,6 +327,7 @@
     .form-item .form-description {
         margin-left: 0;
     }
+
     .form-buttons,
     #fitem_id_submitbutton,
     .fp-content-center form + div,
@@ -292,13 +337,15 @@
         padding-left: 10px;
         padding-right: 10px;
     }
+
     #helppopupbox {
         width: auto !important;
         left: 0 !important;
     }
 }
 // Shrink calender when short on space in block
-@media (min-width : 768px) and (max-width: 979px) {
+
+@media (min-width: 768px) and (max-width: 979px) {
     .block_calendar_month .content,
     .block .minicalendar td {
         padding-left: 0;
@@ -309,9 +356,11 @@
 @media (max-width: 979px) {
     .nav-collapse {
         height: 0;
+
         .nav > li > a {
             color: $grayDark;
         }
+
         .nav > li > a:hover,
         .nav > li > a:focus,
         .dropdown-menu a:hover,
@@ -322,18 +371,20 @@
         .dropdown-menu > li > a:hover,
         .dropdown-menu > li > a:focus,
         .dropdown-submenu:hover > a,
-        .dropdown-submenu:focus > a
-        {
+        .dropdown-submenu:focus > a {
             background-image: none;
             color: $grayDark;
         }
     }
+
     .nav-collapse.in {
         height: auto;
+
         .usermenu .moodle-actionmenu[data-enhanced] {
             .toggle-display {
                 display: none;
             }
+
             .menu {
                 display: block;
 
@@ -343,18 +394,24 @@
             }
         }
     }
+
     .path-mod-data .box > table > tbody > tr > td {
         display: block;
     }
+
     .path-mod-forum .forumheaderlist {
         thead .header {
             font-weight: normal;
             font-size: round($font-size-sm);
         }
+
         .discussion {
-            .author, .replies, .lastpost {
+            .author,
+            .replies,
+            .lastpost {
                 font-size: round($font-size-sm);
             }
+
             .replies .unread a {
                 padding: 0;
             }
@@ -364,10 +421,12 @@
     .navbar {
         .nav-collapse.in {
             border-top: 1px solid $navbarBorder;
+
             &.pull-left,
             &.pull-right {
                 float: none;
             }
+
             > .nav {
                 margin: 0;
 
@@ -376,8 +435,10 @@
                     padding-left: 20px;
                     border-radius: 0;
                 }
+
                 .dropdown-menu {
                     margin: 0 0 0 15px;
+
                     li > a {
                         border-radius: 0;
                     }
@@ -391,6 +452,7 @@
                         &:after {
                             display: inline-block;
                             float: none;
+
                             @include caret();
                             border-top-color: $navbarBorder;
                             margin-left: 4px;
@@ -409,10 +471,12 @@
                         .dropdown-menu {
                             display: none;
                         }
+
                         &.open {
                             > a {
                                 background-color: $navbarBackground;
                             }
+
                             > .dropdown-menu,
                             .open > .dropdown-menu {
                                 display: block;
@@ -420,6 +484,7 @@
                         }
                     }
                 }
+
                 .divider {
                     width: auto;
                     display: block;
@@ -437,6 +502,7 @@
     .navbar-inverse {
         .nav-collapse.in {
             border-top-color: $navbarInverseBorder;
+
             .nav,
             .nav .dropdown-menu {
                 .dropdown-submenu {
@@ -445,6 +511,7 @@
                             border-top-color: $navbarInverseBorder;
                         }
                     }
+
                     &.open {
                         > a {
                             background-color: $navbarInverseBackground;
@@ -459,6 +526,7 @@
                         }
                     }
                 }
+
                 .divider {
                     width: auto;
                     display: block;
@@ -468,6 +536,7 @@
                     border-bottom: 1px solid lighten($navbarInverseBackground, 25%);
                 }
             }
+
             .nav {
                 > li > a {
                     &:hover,
@@ -476,11 +545,13 @@
                     }
                 }
             }
+
             .dropdown-menu a {
                 &:hover,
                 &:focus {
                     color: $navbarInverseLinkColorHover;
                 }
+
                 > li > a {
                     &:hover,
                     &:focus {
@@ -488,6 +559,7 @@
                     }
                 }
             }
+
             .dropdown-submenu a {
                 &:hover,
                 &:focus,
@@ -506,6 +578,7 @@
         width: 100%;
         left: 0;
     }
+
     .userprofile dl.list {
         // copied from dl-horizontal in bootstrap/repsonsive.less
         dt {
@@ -514,6 +587,7 @@
             width: auto;
             text-align: left;
         }
+
         dd {
             margin-left: 0;
         }
@@ -533,6 +607,7 @@
     .row-fluid {
         width: 100%;
     }
+
     .row-fluid .span8.pull-right,
     .row-fluid .span9.pull-right {
         float: none;
@@ -548,6 +623,7 @@
         display: block;
         width: 100%;
         margin-left: 0;
+
         @include box-sizing(border-box);
     }
 
@@ -555,7 +631,7 @@
     // cases when we have content in the side-pre blockregion but not in the
     // side-post blockregion as there are more specific selectors in
     // core.less which take precedence which break responsiveness.
-    .empty-region-side-post.used-region-side-pre, // Post region is empty and pre region is in use.
+    .empty-region-side-post.used-region-side-pre,
     .jsenabled.docked-region-side-post.used-region-side-pre { // All post blocks docked and pre region is in use.
         #block-region-side-pre.span4,
         #region-main.span8 {
@@ -565,14 +641,18 @@
 
     .row-fluid .span12 {
         width: 100%;
+
         @include box-sizing(border-box);
     }
+
     .row-fluid [class*="offset"]:first-child {
         margin-left: 0;
     }
+
     div[role=main] {
         margin-bottom: 1em;
     }
+
     .coursebox {
         .info {
             .name {
@@ -582,6 +662,7 @@
             }
         }
     }
+
     .category-browse {
         .coursebox {
             .info {
@@ -596,24 +677,27 @@
 }
 
 // All widths between 1200px and 1600px
+
 @media (min-width: 1200px) and (max-width: 1600px) {
-    @mixin fluid-span ($columns) {
+    @mixin fluid-span($columns) {
         @include fluid-span-full($columns, $fluidGridColumnWidth1200, $fluidGridGutterWidth1200);
     }
     // CSS for the course management pages.
     #course-category-listings.columns-3 {
         background-color: $tableBackground;
-        border:0;
+        border: 0;
 
         #category-listing,
         #course-listing {
             @include fluid-span(6);
             margin-left: $fluidGridGutterWidth1200;
             *margin-left: $fluidGridGutterWidth1200 - (.5 / $gridRowWidth * 100 * 1%);
+
             &:first-child {
                 margin-left: 0;
             }
         }
+
         #course-detail {
             @include fluid-span(12);
             margin: 1em 0 0;
@@ -622,6 +706,7 @@
 }
 
 // All widths up to 1199px@mixin
+
 @media (max-width: 1199px) {
 
     // Editor on question pages
@@ -634,7 +719,8 @@
     // CSS for the course management pages.
     #course-category-listings.columns-3 {
         background-color: $tableBackground;
-        border:0;
+        border: 0;
+
         #category-listing,
         #course-listing,
         #course-detail {
@@ -645,15 +731,18 @@
 
     #page-mod-forum-discuss .discussioncontrols {
         text-align: right;
+
         .discussioncontrol {
             float: none;
             width: auto;
             display: inline-block;
             margin: 0 3px 0.5em;
+
             select,
             input {
                 margin-bottom: 0;
             }
+
             &.movediscussion {
                 margin-right: 0;
                 padding-right: 0;
@@ -664,6 +753,7 @@
 
 
 // File Picker@mixin
+
 @media (max-width: 768px) {
     .fp-forminset .control-group .controls {
         margin-left: 0;

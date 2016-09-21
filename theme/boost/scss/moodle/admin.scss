@@ -18,9 +18,11 @@
     .warn {
         background-color: $state-warning-bg;
     }
+
     .error {
         background-color: $state-danger-bg;
     }
+
     .ok {
         background-color: $state-success-bg;
     }
@@ -55,14 +57,17 @@
 .timewarninghidden {
     display: none;
 }
+
 .statusok {
     @extend .tag;
     @extend .tag-success;
 }
+
 .statuswarning {
     @extend .tag;
     @extend .tag-warning;
 }
+
 .statusserious,
 .statuscritical {
     @extend .tag;
@@ -179,8 +184,9 @@
     min-width: 220px;
     margin: auto;
     text-align: center;
+
     .buttons {
-        padding: 0
+        padding: 0;
     }
 }
 
@@ -193,6 +199,7 @@
     width: 60%;
     min-width: 220px;
 }
+
 #page-admin-index .adminerror {
     @extend .alert-danger;
 }
@@ -239,7 +246,7 @@
 
 .path-admin .roleassigntable td {
     vertical-align: top;
-    padding: 0.2em 0.3em
+    padding: 0.2em 0.3em;
 }
 
 .path-admin .roleassigntable p {
@@ -402,8 +409,8 @@
 .form-item .form-setting .form-password .unmask,
 .form-item .form-setting .form-defaultinfo {
     display: inline-block;
-
 }
+
 .form-item .form-setting .form-defaultinfo {
     max-width: 100%;
     word-wrap: break-word;
@@ -484,7 +491,6 @@
 
 // Plugins overview page at admin/plugins.php
 #page-admin-plugins {
-
     #plugins-overview-panel {
         .info {
             display: inline-block;
@@ -494,10 +500,13 @@
 
     .checkforupdates {
         margin: 10px 0;
+
         .singlebutton {
             margin: 5px 0;
             padding: 0;
-            div, input {
+
+            div,
+            input {
                 margin: 0 3px 0 0;
             }
         }
@@ -506,7 +515,9 @@
     .updateavailableinstallall {
         margin: 5px 0;
         padding: 0;
-        div, input {
+
+        div,
+        input {
             margin: 0 3px 5px 0;
         }
     }
@@ -515,6 +526,7 @@
         .status-missing td {
             background-color: $state-warning-bg;
         }
+
         .pluginname {
             .componentname {
                 font-size: $font-size-sm;
@@ -522,27 +534,34 @@
                 margin-left: 22px;
             }
         }
+
         .version {
             .versionnumber {
                 font-size: $font-size-sm;
                 @extend .text-muted;
             }
+
             .release {
             }
         }
+
         .availability {
         }
+
         .settings {
         }
+
         .uninstall {
             a {
                 color: $state-danger-text;
             }
         }
+
         .notes {
             .label {
                 margin-right: 3px;
             }
+
             .requiredby {
                 font-size: $font-size-sm;
                 @extend .text-muted;
@@ -554,7 +573,6 @@
 
 // Plugins check page displayed during upgrade.
 #plugins-check-page {
-
     .page-description {
         @extend .text-muted;
     }
@@ -564,7 +582,9 @@
         .singlebutton {
             margin: 5px 0;
             padding: 0;
-            div, input {
+
+            div,
+            input {
                 margin: 0 3px 0 0;
             }
         }
@@ -577,10 +597,13 @@
                 display: inline-block;
                 margin-right: 1em;
             }
+
             .singlebutton {
                 margin: 5px 0;
                 padding: 0;
-                div, input {
+
+                div,
+                input {
                     margin: 0 3px 0 0;
                 }
             }
@@ -593,9 +616,10 @@
             @extend .text-muted;
         }
 
-        .status-missing, .status-downgrade {
+        .status-missing,
+        .status-downgrade {
             td {
-                background-color:  $state-danger-bg;
+                background-color: $state-danger-bg;
             }
         }
 
@@ -614,6 +638,7 @@
             .actionbutton {
                 margin: 5px 0px;
                 padding: 0;
+
                 input {
                     margin: 0;
                 }
@@ -626,10 +651,13 @@
             display: inline-block;
             margin-right: 1em;
         }
+
         .singlebutton {
             margin: 5px 0;
             padding: 0;
-            div, input {
+
+            div,
+            input {
                 margin: 0 3px 0 0;
             }
         }
@@ -641,15 +669,18 @@
             font-size: $font-size-sm;
             @extend .text-muted;
         }
+
         .info .actions {
             > div {
                 display: inline-block;
                 margin-right: 1em;
             }
+
             .dependencyinstall {
                 display: block;
                 margin: 5px 0;
                 padding: 0;
+
                 input {
                     margin: 0;
                 }
@@ -660,28 +691,38 @@
 
 // Available plugin update notification.
 
-#plugins-check-page, #plugins-control-panel {
+#plugins-check-page,
+#plugins-control-panel {
     .pluginupdateinfo {
         background-color: $state-info-bg;
+
         &.maturity50 {
             background-color: $state-danger-bg;
         }
-        &.maturity100, &.maturity150 {
+
+        &.maturity100,
+        &.maturity150 {
             background-color: $state-warning-bg;
         }
         padding: 5px;
         margin: 10px 0;
+
         @include border-radius(5px);
+
         .info {
             display: inline-block;
         }
+
         .separator:after {
             content: " | ";
         }
+
         .singlebutton {
             margin: 5px 0;
             padding: 0;
-            div, input {
+
+            div,
+            input {
                 margin: 0 3px 0 0;
             }
         }
@@ -693,9 +734,12 @@
         display: inline-block;
         margin: 1em 1em 1em 0;
     }
+
     .continue {
         padding: 0;
-        div, input {
+
+        div,
+        input {
             margin: 0;
         }
     }
@@ -757,9 +801,11 @@
     right: 0;
     overflow: hidden;
     z-index: 1;
+
     &.error {
         @extend .form-control-danger;
     }
+
     &.warning {
         @extend .form-control-warning;
     }
