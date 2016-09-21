@@ -24,9 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// TODO MDL-53016 Remove this when the latter is implemented.
-require_once($CFG->libdir . '/rtlcss/RTLCSS.php');
-
 /**
  * Moodle RTLCSS class.
  *
