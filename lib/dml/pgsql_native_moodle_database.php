@@ -163,19 +163,6 @@ class pgsql_native_moodle_database extends moodle_database {
             }
 
             $connection .= " options='" . implode(' ', $options) . "'";
-        } else {
-            /* We don't trust people who just set the dbhandlesoptions, this code checks up on them.
-             * These functions do not talk to the server, they use the client library knowledge to determine state.
-             */
-            if (!empty($this->dboptions['dbschema'])) {
-                throw new dml_connection_exception('You cannot specify a schema with dbhandlesoptions, use the database to set it.');
-            }
-            if (pg_client_encoding($this->pgsql) != 'UTF8') {
-                throw new dml_connection_exception('client_encoding = UTF8 not set, it is: ' . pg_client_encoding($this->pgsql));
-            }
-            if (pg_escape_string($this->pgsql, '\\') != '\\') {
-                throw new dml_connection_exception('standard_conforming_string = on, must be set at the database.');
-            }
         }
 
         ob_start();
@@ -192,6 +179,21 @@ class pgsql_native_moodle_database extends moodle_database {
         if ($status === false or $status === PGSQL_CONNECTION_BAD) {
             $this->pgsql = null;
             throw new dml_connection_exception($dberr);
+        }
+
+        if (!empty($this->dboptions['dbhandlesoptions'])) {
+            /* We don't trust people who just set the dbhandlesoptions, this code checks up on them.
+             * These functions do not talk to the server, they use the client library knowledge to determine state.
+             */
+            if (!empty($this->dboptions['dbschema'])) {
+                throw new dml_connection_exception('You cannot specify a schema with dbhandlesoptions, use the database to set it.');
+            }
+            if (pg_client_encoding($this->pgsql) != 'UTF8') {
+                throw new dml_connection_exception('client_encoding = UTF8 not set, it is: ' . pg_client_encoding($this->pgsql));
+            }
+            if (pg_escape_string($this->pgsql, '\\') != '\\') {
+                throw new dml_connection_exception('standard_conforming_strings = on, must be set at the database.');
+            }
         }
 
         // Connection stabilised and configured, going to instantiate the temptables controller
