@@ -15,7 +15,19 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting configempty.
+    @template core_admin/setting_configempty
+
+    Admin empty setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0"
+    }
 }}
 <div class="form-empty">
     <input type="hidden" name="{{name}}" id="{{id}}" value="">

@@ -15,7 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Setting heading.
+    @template core_admin/setting_heading
+
+    Admin heading setting template.
+
+    Context variables required for this template:
+    * title - Title text
+    * description - Description containing descriptionformatted
+
+    Example context (json):
+    {
+        "title": "Favourite cheeses",
+        "description": true,
+        "descriptionformatted": "Stilton, Cheddar, Edam"
+    }
 }}
 {{#title}}
     <h3 class="main">{{title}}</h3>
