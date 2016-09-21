@@ -229,8 +229,8 @@ if (!behat_config_manager::create_parallel_site_links($options['fromrun'], $opti
     exit(1);
 }
 
-// Execute all commands.
-$processes = cli_execute_parallel($cmds, __DIR__);
+// Execute all commands, relative to moodle root directory.
+$processes = cli_execute_parallel($cmds, __DIR__ . "/../../../../");
 $stoponfail = empty($options['stop-on-failure']) ? false : true;
 
 // Print header.
