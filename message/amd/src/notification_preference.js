@@ -158,22 +158,21 @@ define(['jquery', 'core/ajax', 'core/notification', 'core_message/notification_p
         }
 
         var args = {
-            user: {
-                preferences: [
-                    {
-                        type: this.getLoggedInPreferenceKey(),
-                        value: loggedInValue,
-                    },
-                    {
-                        type: this.getLoggedOffPreferenceKey(),
-                        value: loggedOffValue,
-                    },
-                ],
-            }
+            userid : this.userId,
+            preferences: [
+                {
+                    type: this.getLoggedInPreferenceKey(),
+                    value: loggedInValue,
+                },
+                {
+                    type: this.getLoggedOffPreferenceKey(),
+                    value: loggedOffValue,
+                },
+            ],
         };
 
         var request = {
-            methodname: 'core_user_update_user',
+            methodname: 'core_user_update_user_preferences',
             args: args,
         };
 

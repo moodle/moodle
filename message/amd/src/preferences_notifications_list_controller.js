@@ -98,11 +98,10 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
         container.addClass('loading');
 
         var request = {
-            methodname: 'core_user_update_user',
+            methodname: 'core_user_update_user_preferences',
             args: {
-                user: {
-                    emailstop: ischecked ? 1 : 0,
-                }
+                userid: this.userId,
+                emailstop: ischecked ? 1 : 0,
             }
         };
 

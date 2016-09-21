@@ -74,16 +74,14 @@ define(['jquery', 'core/ajax', 'core/notification',
         container.addClass('loading');
 
         var request = {
-            methodname: 'core_user_update_user',
+            methodname: 'core_user_update_user_preferences',
             args: {
-                user: {
-                    preferences: [
-                        {
-                            type: checkbox.attr('data-preference-key'),
-                            value: ischecked ? 1 : 0,
-                        }
-                    ]
-                }
+                preferences: [
+                    {
+                        type: checkbox.attr('data-preference-key'),
+                        value: ischecked ? 1 : 0,
+                    }
+                ]
             }
         };
 
