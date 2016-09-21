@@ -24,40 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// TODO MDL-53016 Remove this when the latter is implemented.
-require_once($CFG->libdir . '/php-css-parser/Comment/Commentable.php');
-require_once($CFG->libdir . '/php-css-parser/Renderable.php');
-require_once($CFG->libdir . '/php-css-parser/Property/AtRule.php');
-require_once($CFG->libdir . '/php-css-parser/RuleSet/RuleSet.php');
-require_once($CFG->libdir . '/php-css-parser/RuleSet/AtRuleSet.php');
-require_once($CFG->libdir . '/php-css-parser/Parsing/SourceException.php');
-require_once($CFG->libdir . '/php-css-parser/CSSList/CSSList.php');
-require_once($CFG->libdir . '/php-css-parser/CSSList/CSSBlockList.php');
-require_once($CFG->libdir . '/php-css-parser/Value/Value.php');
-require_once($CFG->libdir . '/php-css-parser/Value/ValueList.php');
-require_once($CFG->libdir . '/php-css-parser/Value/CSSFunction.php');
-require_once($CFG->libdir . '/php-css-parser/Comment/Comment.php');
-require_once($CFG->libdir . '/php-css-parser/Value/PrimitiveValue.php');
-require_once($CFG->libdir . '/php-css-parser/CSSList/AtRuleBlockList.php');
-require_once($CFG->libdir . '/php-css-parser/CSSList/Document.php');
-require_once($CFG->libdir . '/php-css-parser/CSSList/KeyFrame.php');
-require_once($CFG->libdir . '/php-css-parser/OutputFormat.php');
-require_once($CFG->libdir . '/php-css-parser/Parser.php');
-require_once($CFG->libdir . '/php-css-parser/Parsing/OutputException.php');
-require_once($CFG->libdir . '/php-css-parser/Parsing/UnexpectedTokenException.php');
-require_once($CFG->libdir . '/php-css-parser/Property/Charset.php');
-require_once($CFG->libdir . '/php-css-parser/Property/CSSNamespace.php');
-require_once($CFG->libdir . '/php-css-parser/Property/Import.php');
-require_once($CFG->libdir . '/php-css-parser/Property/Selector.php');
-require_once($CFG->libdir . '/php-css-parser/Rule/Rule.php');
-require_once($CFG->libdir . '/php-css-parser/RuleSet/DeclarationBlock.php');
-require_once($CFG->libdir . '/php-css-parser/Settings.php');
-require_once($CFG->libdir . '/php-css-parser/Value/Color.php');
-require_once($CFG->libdir . '/php-css-parser/Value/CSSString.php');
-require_once($CFG->libdir . '/php-css-parser/Value/RuleValueList.php');
-require_once($CFG->libdir . '/php-css-parser/Value/Size.php');
-require_once($CFG->libdir . '/php-css-parser/Value/URL.php');
-
 /**
  * Moodle CSS parser.
  *

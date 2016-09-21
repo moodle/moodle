@@ -24,31 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// TODO MDL-53016 Remove this when the latter is implemented.
-require_once($CFG->libdir . '/scssphp/Base/Range.php');
-require_once($CFG->libdir . '/scssphp/Block.php');
-require_once($CFG->libdir . '/scssphp/Colors.php');
-require_once($CFG->libdir . '/scssphp/Compiler.php');
-require_once($CFG->libdir . '/scssphp/Compiler/Environment.php');
-require_once($CFG->libdir . '/scssphp/Exception/CompilerException.php');
-require_once($CFG->libdir . '/scssphp/Exception/ParserException.php');
-require_once($CFG->libdir . '/scssphp/Exception/ServerException.php');
-require_once($CFG->libdir . '/scssphp/Formatter.php');
-require_once($CFG->libdir . '/scssphp/Formatter/Compact.php');
-require_once($CFG->libdir . '/scssphp/Formatter/Compressed.php');
-require_once($CFG->libdir . '/scssphp/Formatter/Crunched.php');
-require_once($CFG->libdir . '/scssphp/Formatter/Debug.php');
-require_once($CFG->libdir . '/scssphp/Formatter/Expanded.php');
-require_once($CFG->libdir . '/scssphp/Formatter/Nested.php');
-require_once($CFG->libdir . '/scssphp/Formatter/OutputBlock.php');
-require_once($CFG->libdir . '/scssphp/Node.php');
-require_once($CFG->libdir . '/scssphp/Node/Number.php');
-require_once($CFG->libdir . '/scssphp/Parser.php');
-require_once($CFG->libdir . '/scssphp/Type.php');
-require_once($CFG->libdir . '/scssphp/Util.php');
-require_once($CFG->libdir . '/scssphp/Version.php');
-require_once($CFG->libdir . '/scssphp/Server.php');
-
 /**
  * Moodle SCSS compiler class.
  *
