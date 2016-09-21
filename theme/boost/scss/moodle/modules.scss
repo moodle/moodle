@@ -401,7 +401,7 @@ div#dock {
 
             > .menubar {
                 display: block;
-                margin: 0px;
+                margin: 0;
             }
 
             > .menu {
@@ -568,7 +568,7 @@ div#dock {
     }
 
     .qnbutton.flagged .thispageholder {
-        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0px no-repeat;
+        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0 no-repeat;
     }
 
     .qnbutton .trafficlight {

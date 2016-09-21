@@ -239,7 +239,7 @@ fieldset.coursesearchbox label {
     }
 
     .availability-plugincontrols {
-        padding: 2px 0px 0px 4px;
+        padding: 2px 0 0 4px;
         border: 1px solid $gray-lighter;
         border-radius: 4px;
         display: inline-block;
@@ -349,8 +349,8 @@ fieldset.coursesearchbox label {
     min-width: 206px;
     max-height: 20em;
     overflow: auto;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     margin-top: 0.4em;
     z-index: 1;
 }

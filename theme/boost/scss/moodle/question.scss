@@ -123,7 +123,7 @@
 #chooseqtype .selected {
     background-color: #fff;
 
-    @include box-shadow(0px 0 10px 0 #ccc);
+    @include box-shadow(0 0 10px 0 #ccc);
 }
 
 #chooseqtype .instruction,
@@ -165,7 +165,7 @@
     }
 
     .checkbox input[type="checkbox"] {
-        margin-left: 0px;
+        margin-left: 0;
         float: none;
     }
 
@@ -522,7 +522,7 @@ body.path-question-type .fitem_fgroup .accesshide {
 
 #page-mod-quiz-edit div.question div.content div.points {
     margin-top: -0.5em;
-    padding-bottom: 0em;
+    padding-bottom: 0;
     border: none;
     background-color: $body-bg;
     position: static;

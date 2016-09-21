@@ -94,7 +94,7 @@
                     padding: $rubricPadding;
 
                     textarea {
-                        margin-bottom: 0px;
+                        margin-bottom: 0;
                         height: 115px;
                     }
                 }
@@ -102,7 +102,7 @@
                 .definition {
                     textarea {
                         width: 80%;
-                        margin-bottom: 0px;
+                        margin-bottom: 0;
                     }
                 }
 
@@ -112,7 +112,7 @@
                     margin-right: 28px;
 
                     input {
-                        margin-bottom: 0px;
+                        margin-bottom: 0;
                     }
                 }
 
@@ -135,7 +135,7 @@
                             bottom: 0;
                             height: 24px;
                             width: 24px;
-                            margin: 0px;
+                            margin: 0;
 
                             &:hover {
                                 background-color: #ddd;
@@ -164,7 +164,7 @@
 
                     input {
                         @extend .btn;
-                        background-position: 0px 0px;
+                        background-position: 0 0;
                         height: 30px;
                         margin-right: 5px;
                     }
@@ -181,7 +181,7 @@
                 margin: 0;
                 color: inherit;
                 text-shadow: inherit;
-                border: 0px none;
+                border: 0 none;
                 line-height: inherit;
                 background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
                 padding-left: 26px;
