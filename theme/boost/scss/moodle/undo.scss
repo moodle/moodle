@@ -9,19 +9,19 @@
 
 li.activity.label,
 .file-picker td.label {
-  background: inherit;
-  color: inherit;
-  border: inherit;
-  text-shadow: none;
-  padding: 8px;
-  white-space: normal;
-  display: block;
-  font-size: inherit;
-  line-height: inherit;
+    background: inherit;
+    color: inherit;
+    border: inherit;
+    text-shadow: none;
+    padding: 8px;
+    white-space: normal;
+    display: block;
+    font-size: inherit;
+    line-height: inherit;
 }
 .file-picker td.label {
-  display: table-cell;
-  text-align: right;
+    display: table-cell;
+    text-align: right;
 }
 
 // Some of this dialog is sized in ems so a different font size
@@ -56,8 +56,8 @@ li.activity.label,
 li.section.hidden,
 .block.hidden,
 .block.invisible {
-  visibility: visible;
-  display: block;
+    visibility: visible;
+    display: block;
 }
 
 
@@ -72,14 +72,14 @@ li.section.hidden,
 
 #turnitintool_style .row,
 .forumpost .row {
-  margin-left: 0 !important;
-  // not sure if this needs !important
+    margin-left: 0 !important;
+    // not sure if this needs !important
 }
 #turnitintool_style .row:before,
 #turnitintool_style .row:after,
 .forumpost .row:before,
 .forumpost .row:after {
-  content: none;
+    content: none;
 }
 /* fieldset.hidden vs .hidden
  *

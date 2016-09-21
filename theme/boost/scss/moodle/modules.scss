@@ -128,7 +128,7 @@ select {
 
 // Override hardcoded forum modules styling
 .forumsearch input[type=text] {
-     margin-bottom: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 #page-mod-forum-discuss .discussioncontrols {
@@ -233,8 +233,8 @@ div#dock {
 
 .path-mod-survey {
     .surveytable {
-      > tbody > tr:nth-of-type(odd) {background-color: $table-bg;}
-      > tbody > tr:nth-of-type(even) {background-color: $table-bg-accent;}
+        > tbody > tr:nth-of-type(odd) {background-color: $table-bg;}
+        > tbody > tr:nth-of-type(even) {background-color: $table-bg-accent;}
         .rblock label {text-align: center;}
     }
     .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
@@ -251,18 +251,18 @@ div#dock {
     .divider {
         overflow: hidden;
         width: 0;
-  //      height: $navbarHeight;
-  //      border-left: 1px solid $navbarBackground;
-   //     border-right: 1px solid $navbarBackgroundHighlight;
+        //      height: $navbarHeight;
+        //      border-left: 1px solid $navbarBackground;
+        //     border-right: 1px solid $navbarBackgroundHighlight;
     }
 }
 //.navbar-inverse {
 //    .nav {
-   //     .divider {
-       //     border-left-color: $navbarInverseBackground;
-       //     border-right-color: lighten($navbarInverseBackground, 25%);
-      //  }
- //   }
+//        .divider {
+//            border-left-color: $navbarInverseBackground;
+//            border-right-color: lighten($navbarInverseBackground, 25%);
+//        }
+//    }
 //}
 
 // Usermenu
@@ -557,9 +557,9 @@ div#dock {
     top: auto;
 }
 .path-mod-assign [data-region="grade-panel"] .has-popout {
-  background-color: $card-bg;
-  @include border-radius($card-border-radius);
-  border: $card-border-width solid $card-border-color;
+    background-color: $card-bg;
+    @include border-radius($card-border-radius);
+    border: $card-border-width solid $card-border-color;
 }
 .path-mod-assign [data-region="grade-panel"] .popout {
     background-color: $modal-content-bg;
