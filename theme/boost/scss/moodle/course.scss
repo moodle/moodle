@@ -99,17 +99,17 @@
         }
     }
     .label {
-      .contentwithoutlink,
-      .activityinstance {
-        padding-right: 32px;
-        display: block;
-        height: inherit;
-      }
+        .contentwithoutlink,
+        .activityinstance {
+            padding-right: 32px;
+            display: block;
+            height: inherit;
+        }
 
-      .mod-indent-outer {
-        padding-left: 24px;
-        display: block;
-      }
+        .mod-indent-outer {
+            padding-left: 24px;
+            display: block;
+        }
     }
 
     .filler {
@@ -832,7 +832,7 @@ span.editinstructions {
         }
         > .firstpage .listitem:first-child > div .item-actions .action-moveup,
         > .lastpage .listitem:last-child > div .item-actions .action-movedown {
-          display: none;
+            display: none;
         }
         .bulk-action-checkbox {
             margin:-2px 6px 0 0;
@@ -861,7 +861,7 @@ span.editinstructions {
             }
             &:first-child > div .item-actions .action-moveup,
             &:last-child > div .item-actions .action-movedown {
-              display: none;
+                display: none;
             }
         }
         .course-count {
@@ -955,9 +955,9 @@ span.editinstructions {
         float:right;
         line-height:40px;
         > div {
-          margin-left:1em;
-          margin: 10px 0;
-          display:inline-block;
+            margin-left:1em;
+            margin: 10px 0;
+            display:inline-block;
         }
     }
     select {

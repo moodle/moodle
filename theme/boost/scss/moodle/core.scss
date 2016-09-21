@@ -946,12 +946,12 @@ tr.flagged-tag a {
             margin-bottom: 0;
         }
     }
-  .user-enroller-panel .uep-search-results .user .details {
-    width: 237px;
-  }
-  .user-enroller-panel .uep-search-results .cohort .details {
-    width: 237px;
-  }
+    .user-enroller-panel .uep-search-results .user .details {
+        width: 237px;
+    }
+    .user-enroller-panel .uep-search-results .cohort .details {
+        width: 237px;
+    }
 }
 #page-enrol-users .enrol-users-page-action input {
     margin-left: 0
@@ -978,21 +978,21 @@ tr.flagged-tag a {
     display: table-cell;
 }
 .label .mod-indent {
-  float:left;
-  padding-top:20px
+    float:left;
+    padding-top:20px
 }
 
 $mod-indent-size: 30px;
 /* Creates a series of .mod-indent-# rule declarations based on indent size and number of indent levels. */
 @for $i from 1 through 16 {
-   $width: ($i * $mod-indent-size);
+    $width: ($i * $mod-indent-size);
 
-   .mod-indent-#{$i} {
-       width: $width;
-   }
+    .mod-indent-#{$i} {
+        width: $width;
+    }
 }
 .mod-indent-huge {
-   width: (16 * $mod-indent-size);
+    width: (16 * $mod-indent-size);
 }
 
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
@@ -1333,7 +1333,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 /* The instruction/help area */
 .jschooser .choosercontainer #chooseform .instruction,
 .jschooser .choosercontainer #chooseform .typesummary {
-   display: none;
+    display: none;
     position: absolute;
     top: 0;
     right: 0;
@@ -1738,8 +1738,8 @@ a.disabled {
     color: #808080;
 }
 body.lockscroll {
-  height: 100%;
-  overflow: hidden;
+    height: 100%;
+    overflow: hidden;
 }
 
 .progressbar_container {
@@ -1754,11 +1754,11 @@ body.lockscroll {
 
 dd:before,
 dd:after {
-  display: block;
-  content: " ";
+    display: block;
+    content: " ";
 }
 dd:after {
-  clear: both;
+    clear: both;
 }
 
 // Active tabs with links should have a different
