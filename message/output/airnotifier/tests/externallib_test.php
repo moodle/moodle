@@ -135,4 +135,49 @@ class message_airnotifier_external_testcase extends externallib_advanced_testcas
         $this->assertEquals($expected, $preferences['users']);
     }
 
+    /**
+     * Test get_user_devices
+     */
+    public function test_get_user_devices() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/user/externallib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // System not configured.
+        $devices = message_airnotifier_external::get_user_devices('');
+        $devices = external_api::clean_returnvalue(message_airnotifier_external::get_user_devices_returns(), $devices);
+        $this->assertCount(1, $devices['warnings']);
+        $this->assertEquals('systemnotconfigured', $devices['warnings'][0]['warningcode']);
+
+        // Fake configuration.
+        set_config('airnotifieraccesskey', random_string());
+        // Enable the plugin.
+        $DB->set_field('message_processors', 'enabled', 1, array('name' => 'airnotifier'));
+
+        // Get devices.
+        $devices = message_airnotifier_external::get_user_devices('');
+        $devices = external_api::clean_returnvalue(message_airnotifier_external::get_user_devices_returns(), $devices);
+        $this->assertCount(0, $devices['warnings']);
+        // No devices, unfortunatelly we cannot create devices (we can't mock airnotifier server).
+        $this->assertCount(0, $devices['devices']);
+    }
+
+    /**
+     * Test get_user_devices permissions
+     */
+    public function test_get_user_devices_permissions() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/user/externallib.php');
+
+        $this->resetAfterTest(true);
+        $user  = self::getDataGenerator()->create_user();
+        $otheruser  = self::getDataGenerator()->create_user();
+        self::setUser($user);
+
+        // No permission to get other users devices.
+        $this->expectException('required_capability_exception');
+        $devices = message_airnotifier_external::get_user_devices('', $otheruser->id);
+    }
 }

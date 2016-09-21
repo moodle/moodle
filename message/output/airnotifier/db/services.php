@@ -42,4 +42,12 @@ $functions = array(
         'type'        => 'read',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'message_airnotifier_get_user_devices' => array(
+        'classname'   => 'message_airnotifier_external',
+        'methodname'  => 'get_user_devices',
+        'classpath'   => 'message/output/airnotifier/externallib.php',
+        'description' => 'Return the list of mobile devices that are registered in Moodle for the given user',
+        'type'        => 'read',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );
