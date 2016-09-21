@@ -147,6 +147,22 @@ class mod_forum_mod_form extends moodleform_mod {
             }
         }
 
+        $mform->addElement('header', 'discussionlocking', get_string('discussionlockingheader', 'forum'));
+        $options = [
+            0               => get_string('discussionlockingdisabled', 'forum'),
+            1   * DAYSECS   => get_string('numday', 'core', 1),
+            1   * WEEKSECS  => get_string('numweek', 'core', 1),
+            2   * WEEKSECS  => get_string('numweeks', 'core', 2),
+            30  * DAYSECS   => get_string('nummonth', 'core', 1),
+            60  * DAYSECS   => get_string('nummonths', 'core', 2),
+            90  * DAYSECS   => get_string('nummonths', 'core', 3),
+            180 * DAYSECS   => get_string('nummonths', 'core', 6),
+            1   * YEARSECS  => get_string('numyear', 'core', 1),
+        ];
+        $mform->addElement('select', 'lockdiscussionafter', get_string('lockdiscussionafter', 'forum'), $options);
+        $mform->addHelpButton('lockdiscussionafter', 'lockdiscussionafter', 'forum');
+        $mform->disabledIf('lockdiscussionafter', 'type', 'eq', 'single');
+
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'blockafterheader', get_string('blockafter', 'forum'));
         $options = array();
