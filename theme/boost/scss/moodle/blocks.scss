@@ -21,6 +21,7 @@
     .dropdown-toggle {
         /* So that the caret takes the colour of the icon. */
         color: #999;
+
         &::after {
             margin-left: 0;
         }

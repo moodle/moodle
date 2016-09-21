@@ -8,9 +8,11 @@
 .jsenabled .mform .containsadvancedelements .advanced {
     display: none;
 }
+
 .mform .containsadvancedelements .advanced.show {
     display: block;
 }
+
 #adminsettings span.error {
     display: inline-block;
     border: 1px solid $state-danger-border;
@@ -19,16 +21,19 @@
     padding: 4px;
     margin-bottom: 4px;
 }
+
 .mform fieldset {
     margin-left: $spacer * 1.5;
     margin-bottom: $spacer / 2;
     border-bottom: $border-width solid $table-border-color;
 }
+
 .mform fieldset.collapsible legend a.fheader {
     padding: 0 5px 0 ($spacer * 1.5);
     margin-left: -($spacer * 1.5);
     background: url([[pix:t/expanded]]) 0 center no-repeat;
 }
+
 .mform fieldset.collapsed legend a.fheader {
     /*rtl:raw:
     background-image: url([[pix:t/collapsed_rtl]]);
@@ -36,17 +41,21 @@
     /*rtl:remove*/
     background-image: url([[pix:t/collapsed]]);
 }
+
 .jsenabled .mform .collapsed .fcontainer {
     display: none;
 }
+
 #adminsettings .error {
     color: $state-danger-text;
 }
+
 .mform ul.file-list {
     padding: 0;
     margin: 0;
     list-style: none;
 }
+
 .mform label .req,
 .mform label .adv {
     cursor: help;
@@ -55,6 +64,7 @@
 input#id_externalurl {
     direction: ltr;
 }
+
 #portfolio-add-button {
     display: inline;
 }
@@ -63,6 +73,7 @@ input#id_externalurl {
 .form-label .form-shortname {
     @extend .text-muted;
 }
+
 .form-label .form-shortname {
     font-size: $font-size-xs;
     display: block;
@@ -84,6 +95,7 @@ input#id_externalurl {
     @extend .text-muted;
     padding-top: 5px;
 }
+
 .no-fitem .fstaticlabel {
     font-weight: bold;
 }
@@ -98,13 +110,16 @@ div.backup-section + form,
     @extend .form-group;
     padding-left: 0;
 }
+
 .path-admin .buttons,
 .form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
     padding-left: $display1-size;
 }
+
 .form-item .form-setting .defaultsnext > input {
     display: inline-block;
 }
+
 .form-item .form-setting .form-checkbox.defaultsnext {
     // Need to specify .defaultsnext and the .form-checkbox class
     // is somewhat randomly re-used on various actual checkboxes
@@ -142,13 +157,15 @@ div.backup-section + form,
 #page-admin-grade-edit-scale-edit .error input#id_name {
     margin-right: 170px;
 }
+
 #page-grade-edit-outcome-course .courseoutcomes {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
 }
+
 #page-grade-edit-outcome-course .courseoutcomes td {
-    text-align:center;
+    text-align: center;
 }
 /* Install Process' text fields Forms, should always be justified to the left */
 /* rtl:ignore */
@@ -176,6 +193,7 @@ div.backup-section + form,
 .form-item .form-label label {
     margin-bottom: 0;
 }
+
 div#dateselector-calendar-panel {
     z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
 }
@@ -199,22 +217,27 @@ fieldset.coursesearchbox label {
 .availability-field {
     select,
     input[type=text] {
-        position:relative;
+        position: relative;
         top: 4px;
     }
+
     label {
         display: inline;
     }
+
     .availability-group {
         margin-right: 8px;
     }
+
     .availability-item {
         margin-bottom: 6px;
     }
+
     .availability-none {
         margin-left: 20px;
         margin-bottom: 4px;
     }
+
     .availability-plugincontrols {
         padding: 2px 0px 0px 4px;
         border: 1px solid $gray-lighter;
@@ -273,10 +296,12 @@ fieldset.coursesearchbox label {
         padding-right: 0;
         padding-bottom: 2px;
     }
+
     ul {
         display: block;
         margin: 0;
     }
+
     li {
         display: block;
         list-style-type: none;
@@ -285,17 +310,20 @@ fieldset.coursesearchbox label {
         border-bottom: 1px solid $gray-lighter;
         margin-bottom: 4px;
     }
+
     ul button {
         float: left;
         margin-left: 1em;
         min-width: 140px;
         margin-top: 4px;
     }
+
     label {
         margin-left: 170px;
         margin-right: 1em;
         margin-bottom: 0;
     }
+
     .availability-buttons button {
         margin-left: 1em;
         margin-right: 1em;
@@ -308,6 +336,7 @@ fieldset.coursesearchbox label {
     margin: 0.2em;
     min-height: 21px;
 }
+
 .form-autocomplete-multiple [role=listitem] {
     cursor: pointer;
 }
@@ -325,6 +354,7 @@ fieldset.coursesearchbox label {
     margin-top: 0.4em;
     z-index: 1;
 }
+
 .form-autocomplete-suggestions li {
     list-style-type: none;
     padding: 0.2em;
@@ -332,10 +362,12 @@ fieldset.coursesearchbox label {
     cursor: pointer;
     color: $body-color;
 }
+
 .form-autocomplete-suggestions li:hover {
     background-color: lighten($dropdown-link-active-bg, 15%);
     color: $dropdown-link-active-color;
 }
+
 .form-autocomplete-suggestions li[aria-selected=true] {
     background-color: darken($dropdown-bg, 5%);
     color: $gray;
@@ -352,6 +384,7 @@ fieldset.coursesearchbox label {
 .form-autocomplete-selection:focus {
     outline: none;
 }
+
 .form-autocomplete-selection [data-active-selection=true] {
     padding: 0.5em;
     font-size: large;

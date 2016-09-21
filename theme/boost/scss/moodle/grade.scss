@@ -5,11 +5,13 @@
         // Force back the base font-size to minimise width.
         font-size: $font-size-base;
     }
+
     th.cell,
     input[type=text] {
         // Fallback on the minimum width.
         width: auto;
     }
+
     input[type=text],
     select {
         // Remove the bottom margin to gain height.
@@ -30,14 +32,17 @@
         label {
             display: inline-block;
         }
+
         .helptooltip {
             margin-right: 0.5em;
         }
     }
+
     .actions {
         display: block;
         text-align: center;
         margin-bottom: 1em;
+
         .action {
             @extend .btn;
             @extend .btn-lg;
@@ -50,6 +55,7 @@
             margin: 0.5em;
             padding: 1em;
             border: 1px solid #aaa;
+
             .action-text {
                 position: relative;
                 top: 0.4em;
@@ -66,7 +72,8 @@
 }
 
 .gradingform_rubric.editor {
-    .addlevel, .addcriterion {
+    .addlevel,
+    .addcriterion {
         input {
             // Fallback for IE8: we use Bootstrap 2's button styles normally, but
             // IE8 ignores background-image: linear-gradient rules.
@@ -80,32 +87,39 @@
         #rubric-criteria {
             margin-bottom: 1em;
             $rubricPadding: 6px;
+
             .criterion {
                 .description {
                     vertical-align: top;
                     padding: $rubricPadding;
+
                     textarea {
                         margin-bottom: 0px;
                         height: 115px;
                     }
                 }
+
                 .definition {
                     textarea {
                         width: 80%;
                         margin-bottom: 0px;
                     }
                 }
+
                 .score {
                     position: relative;
                     float: left;
                     margin-right: 28px;
+
                     input {
                         margin-bottom: 0px;
                     }
                 }
+
                 .level {
                     vertical-align: top;
                     padding: $rubricPadding;
+
                     .delete {
                         position: relative;
                         width: 32px;
@@ -113,6 +127,7 @@
                         margin-top: -32px;
                         clear: both;
                         float: right;
+
                         input {
                             display: block;
                             position: absolute;
@@ -121,26 +136,32 @@
                             height: 24px;
                             width: 24px;
                             margin: 0px;
+
                             &:hover {
                                 background-color: #ddd;
                             }
                         }
                     }
                 }
+
                 .scorevalue {
                     input {
                         // Should handle at least three chars with room to spare.
                         float: none;
                         width: 2em;
-                        &.hiddenelement,&.pseudotablink {
+
+                        &.hiddenelement,
+                        &.pseudotablink {
                             // Zero out the width if it's still in the block flow for some reason
                             // when hidden
                             width: 0;
                         }
                     }
                 }
+
                 .addlevel {
                     vertical-align: middle;
+
                     input {
                         @extend .btn;
                         background-position: 0px 0px;
@@ -150,10 +171,12 @@
                 }
             }
         }
+
         .addcriterion {
             margin-left: 5px;
             @extend .btn;
             padding: 0;
+
             input {
                 margin: 0;
                 color: inherit;
@@ -163,10 +186,12 @@
                 background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
                 padding-left: 26px;
             }
-            margin-bottom:1em;
+            margin-bottom: 1em;
         }
+
         .options {
             clear: both;
+
             .option {
                 label {
                     margin: 0;
@@ -178,6 +203,7 @@
                     text-shadow: none;
                     background-color: transparent;
                 }
+
                 input {
                     margin-left: 5px;
                     margin-right: 12px;
@@ -192,91 +218,117 @@
     h4 {
         margin: 0;
     }
+
     .column-rowspan {
         padding: 0;
         width: 24px;
         min-width: 24px;
         max-width: 24px;
     }
+
     .category td.column-name {
         padding-left: 0;
     }
+
     td.column-name {
         padding-left: 24px;
     }
+
     .category input[type="text"],
     .category .column-range,
     .categoryitem,
     .courseitem {
         font-weight: bold;
     }
+
     .emptyrow {
         display: none;
     }
+
     .gradeitemdescription {
         font-weight: normal;
         padding-left: 24px;
     }
+
     .column-weight {
         white-space: nowrap;
+
         &.level3 {
             padding-left: 37px;
         }
+
         &.level4 {
             padding-left: 66px;
         }
+
         &.level5 {
             padding-left: 95px;
         }
+
         &.level6 {
             padding-left: 124px;
         }
+
         &.level7 {
             padding-left: 153px;
         }
+
         &.level8 {
             padding-left: 182px;
         }
+
         &.level9 {
             padding-left: 211px;
         }
+
         &.level10 {
             padding-left: 240px;
         }
     }
+
     .column-range {
         &.level2 {
             padding-left: 37px;
         }
+
         &.level3 {
             padding-left: 66px;
         }
+
         &.level4 {
             padding-left: 95px;
         }
+
         &.level5 {
             padding-left: 124px;
         }
+
         &.level6 {
             padding-left: 153px;
         }
+
         &.level7 {
             padding-left: 182px;
         }
+
         &.level8 {
             padding-left: 211px;
         }
+
         &.level9 {
             padding-left: 240px;
         }
+
         &.level10 {
             padding-left: 269px;
         }
     }
+
     &.generaltable {
         .levelodd {
             background-color: $table-bg-accent;
         }
+
         .leveleven {
             background-color: $table-bg;
         }
@@ -291,18 +343,22 @@
         table {
             @include border-radius($border-radius);
         }
+
         tr .cell {
             background-color: $pagination-bg;
         }
+
         table,
         .cell {
             border-color: $table-border-color;
         }
+
         tr:nth-of-type(even) .cell,
         .floater .cell,
         .avg {
             background-color: $gray-lightest;
         }
+
         table .clickable {
             cursor: pointer;
         }
@@ -314,10 +370,12 @@
  */
 .path-grade-report-user .user-grade {
     border: none;
+
     &.generaltable {
         .levelodd {
             background-color: $table-bg-accent;
         }
+
         .leveleven {
             background-color: $table-bg;
         }

@@ -5,6 +5,7 @@
     display: table-cell;
     vertical-align: middle;
 }
+
 .fp-content-hidden {
     visibility: hidden;
 }
@@ -12,13 +13,16 @@
 .yui3-panel-focused {
     outline: none;
 }
+
 .fp-panel-button {
     background: #fff;
     padding: 3px 20px 2px 20px;
     text-align: center;
     margin: 10px;
+
     @include border-radius(10px);
     display: inline-block;
+
     @include box-shadow(2px 2px 3px .1px #999);
 }
 
@@ -26,27 +30,32 @@
 .filepicker .yui3-widget-content-expanded {
     height: auto;
 }
+
 .file-picker .fp-navbar {
     border-bottom: 1px solid #e5e5e5;
     min-height: 40px;
     padding: 4px;
 }
+
 .file-picker .fp-content {
     border-top: 0;
-    background: #FFFFFF;
+    background: #ffffff;
     clear: none;
     overflow: auto;
     height: 452px;
 }
+
 .filepicker.moodle-dialogue-fullscreen .file-picker .fp-content {
     width: 100%;
 }
+
 .file-picker .fp-content-loading {
     height: 100%;
     width: 100%;
     display: table;
     text-align: center;
 }
+
 .file-picker .fp-content .fp-object-container {
     width: 98%;
     height: 98%;
@@ -59,13 +68,16 @@
     width: 100%;
     margin: 0;
 }
+
 .file-picker .fp-list .fp-repo a {
     display: block;
     padding: .5em .7em;
 }
+
 .file-picker .fp-list .fp-repo.active {
-    background: #F2F2F2;
+    background: #f2f2f2;
 }
+
 .file-picker .fp-list .fp-repo-icon {
     padding: 0 7px 0 5px;
     width: 16px;
@@ -75,17 +87,21 @@
 .fp-toolbar {
     float: left;
 }
+
 .fp-toolbar.empty {
     display: none;
 }
+
 .fp-toolbar .disabled {
     display: none;
 }
+
 .fp-toolbar div {
     display: block;
     float: left;
     margin-right: 4px;
 }
+
 .fp-toolbar img {
     vertical-align: -15%;
     margin-right: 5px;
@@ -103,9 +119,11 @@
 .file-picker .fp-clear-left {
     clear: left;
 }
+
 .fp-pathbar.empty {
     display: none;
 }
+
 .fp-pathbar .fp-path-folder {
     background: url('[[pix:theme|fp/path_folder]]') 0 3px no-repeat;
     height: 12px;
@@ -120,7 +138,6 @@
 
 .fp-pathbar .fp-path-folder-name {
     margin-left: 32px;
-
 }
 // Icon view (File Picker and File Manager)
 .fp-iconview .fp-file {
@@ -129,44 +146,52 @@
     position: relative;
     margin: 10px 10px 35px;
 }
+
 .fp-iconview .fp-thumbnail {
     min-width: 110px;
     min-height: 110px;
     line-height: 110px;
     text-align: center;
-    border: 1px solid #FFFFFF;
+    border: 1px solid #ffffff;
     display: block;
 }
+
 .fp-iconview .fp-thumbnail img {
     border: 1px solid #ddd;
     padding: 3px;
     vertical-align: middle;
+
     @include box-shadow(1px 1px 2px 0 #ccc);
 }
+
 .fp-iconview .fp-thumbnail:hover {
     background: #fff;
     border: 1px solid #ddd;
+
     @include box-shadow(inset 0 0 10px 0px #ccc);
 }
+
 .fp-iconview .fp-filename-field {
     height: 33px;
     word-wrap: break-word;
     overflow: hidden;
     position: absolute;
 }
+
 .fp-iconview .fp-filename-field:hover {
     overflow: visible;
     z-index: 1000;
 }
+
 .fp-iconview .fp-filename-field .fp-filename {
-    background: #FFFFFF;
+    background: #ffffff;
     padding-top: 5px;
     padding-bottom: 12px;
     min-width: 112px;
 }
 // Table view (File Picker only)
 .file-picker .yui3-datatable table {
-    border: 0 solid #BBBBBB;
+    border: 0 solid #bbbbbb;
     width: 100%;
 }
 // Tree view (File Manager only)
@@ -302,15 +327,18 @@
     width: 17px;
     height: 32px;
 }
+
 .file-picker .ygtvblankdepthcell,
 .filemanager .ygtvblankdepthcell {
     width: 17px;
     height: 22px;
 }
+
 a.ygtvspacer:hover {
     color: transparent;
     text-decoration: none;
 }
+
 .ygtvlabel,
 .ygtvlabel:link,
 .ygtvlabel:visited,
@@ -320,15 +348,18 @@ a.ygtvspacer:hover {
     margin-left: 2px;
     text-decoration: none;
 }
+
 .file-picker .ygtvfocus,
 .filemanager .ygtvfocus {
-    background-color: #EEEEEE;
+    background-color: #eeeeee;
 }
+
 .fp-filename-icon {
     margin-top: 10px;
     display: block;
     position: relative;
 }
+
 .fp-icon {
     float: left;
     margin-top: -7px;
@@ -338,11 +369,13 @@ a.ygtvspacer:hover {
     text-align: center;
     line-height: 24px;
 }
+
 .fp-icon img {
     max-height: 24px;
     max-width: 24px;
     vertical-align: middle;
 }
+
 .fp-filename {
     padding-right: 10px;
 }
@@ -359,6 +392,7 @@ a.ygtvspacer:hover {
     width: 100%;
     display: table;
 }
+
 .file-picker .fp-upload-form table {
     margin: 0 auto;
 }
@@ -366,6 +400,7 @@ a.ygtvspacer:hover {
 .file-picker.fp-dlg {
     text-align: center;
 }
+
 .file-picker.fp-dlg .fp-dlg-buttons {
     margin: 0 20px;
 }
@@ -384,12 +419,15 @@ a.ygtvspacer:hover {
 .file-picker .fp-nextpage {
     clear: both;
 }
+
 .file-picker .fp-nextpage .fp-nextpage-loading {
     display: none;
 }
+
 .file-picker .fp-nextpage.loading .fp-nextpage-link {
     display: none;
 }
+
 .file-picker .fp-nextpage.loading .fp-nextpage-loading {
     display: block;
     text-align: center;
@@ -401,21 +439,27 @@ a.ygtvspacer:hover {
     text-align: center;
     margin-top: 20px;
 }
+
 .fp-select table {
     padding: 0 0 10px;
 }
+
 .fp-select table .mdl-right {
     min-width: 84px;
 }
+
 .fp-select .fp-reflist .mdl-right {
     vertical-align: top;
 }
+
 .fp-select .fp-select-buttons {
     float: right;
 }
+
 .fp-select .fp-info {
-    font-size: $font-size-xs
+    font-size: $font-size-xs;
 }
+
 .fp-select .fp-thumbnail {
     float: left;
     min-width: 110px;
@@ -425,50 +469,63 @@ a.ygtvspacer:hover {
     margin: 10px 20px 0 0;
     background: #fff;
     border: 1px solid #ddd;
+
     @include box-shadow(inset 0 0 10px 0 #ccc);
 }
+
 .fp-select .fp-thumbnail img {
-    border: 1px solid #DDDDDD;
+    border: 1px solid #dddddd;
     padding: 3px;
     vertical-align: middle;
     margin: 10px;
 }
+
 .fp-select .fp-fileinfo {
     display: inline-block;
     margin-top: 10px;
 }
+
 .file-picker.fp-select .fp-fileinfo {
     max-width: 240px;
 }
+
 .fp-select .fp-fileinfo div {
     padding-bottom: 5px;
 }
+
 .file-picker.fp-select .uneditable {
     display: none;
 }
+
 .file-picker.fp-select .fp-select-loading {
     display: none;
 }
+
 .file-picker.fp-select.loading .fp-select-loading {
     display: block;
 }
+
 .file-picker.fp-select.loading form {
     display: none;
 }
+
 .fp-select .fp-dimensions.fp-unknown {
     display: none;
 }
+
 .fp-select .fp-size.fp-unknown {
     display: none;
 }
 // File Manager
-.filemanager-loading{
+.filemanager-loading {
     display: none;
 }
-.jsenabled .filemanager-loading{
+
+.jsenabled .filemanager-loading {
     display: block;
     margin-top: 100px;
 }
+
 .filemanager.fm-loading .filemanager-toolbar,
 .filemanager.fm-loading .fp-pathbar,
 .filemanager.fm-loading .filemanager-container,
@@ -480,18 +537,22 @@ a.ygtvspacer:hover {
 .filemanager.fm-noitems .filemanager-container .fp-content {
     display: none;
 }
+
 .filemanager .fp-img-downloading {
     display: none;
     padding-top: 7px;
 }
+
 .filemanager .filemanager-updating {
     display: none;
     text-align: center;
 }
+
 .filemanager.fm-updating .filemanager-updating {
     display: block;
     margin-top: 37px;
 }
+
 .filemanager.fm-updating .fm-content-wrapper,
 .filemanager.fm-nomkdir .fp-btn-mkdir,
 .fitem.disabled .filemanager .filemanager-toolbar,
@@ -502,11 +563,12 @@ a.ygtvspacer:hover {
 }
 // File Manager layout
 .filemanager {
-    .fp-restrictions{
+    .fp-restrictions {
         text-align: right;
     }
 }
-.filemanager-toolbar{
+
+.filemanager-toolbar {
     padding: 4px;
     overflow: hidden;
 }
@@ -514,30 +576,37 @@ a.ygtvspacer:hover {
 .filemanager .fp-pathbar.empty {
     display: none;
 }
+
 .filepicker-filelist,
 .filemanager-container {
     min-height: 140px;
     border-top: 0;
 }
-.filemanager .fp-content{
+
+.filemanager .fp-content {
     overflow: auto;
     max-height: 472px;
     min-height: 157px;
 }
+
 .filemanager-container,
 .filepicker-filelist {
     overflow: hidden;
 }
+
 .file-picker .yui3-datatable-header {
     background: initial;
 }
+
 .fitem.disabled .filepicker-filelist,
 .fitem.disabled .filemanager-container {
-    background-color: #EBEBE4;
+    background-color: #ebebe4;
 }
+
 .fitem.disabled .fp-btn-choose {
     @extend .text-muted;
 }
+
 .fitem.disabled .filepicker-filelist .filepicker-filename {
     display: none;
 }
@@ -549,6 +618,7 @@ a.ygtvspacer:hover {
     top: 0;
     left: 0;
 }
+
 .fp-iconview .fp-reficons2 {
     position: absolute;
     height: 100%;
@@ -556,41 +626,49 @@ a.ygtvspacer:hover {
     top: 0;
     left: 0;
 }
+
 .fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {
     background: url('[[pix:theme|fp/link]]') no-repeat;
     background-position: bottom right;
 }
+
 .fp-iconview .fp-file.fp-isreference .fp-reficons2 {
     background: url('[[pix:theme|fp/alias]]') no-repeat;
     background-position: bottom left;
 }
+
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {
     display: none;
 }
+
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail {
     background: url([[pix:s/dead]]) no-repeat;
     background-position: center center;
 }
 // Table view (File Manager only)
 .filemanager .yui3-datatable table {
-    border: 0 solid #BBBBBB;
+    border: 0 solid #bbbbbb;
     width: 100%;
 }
+
 .filemanager .yui3-datatable-header {
-    background: #FFFFFF!important;
-    border-bottom: 1px solid #CCCCCC!important;
-    border-left: 0 solid #FFFFFF!important;
-    color: #555555!important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #cccccc !important;
+    border-left: 0 solid #ffffff !important;
+    color: #555555 !important;
 }
+
 .filemanager .yui3-datatable-odd .yui3-datatable-cell {
-    background-color: #F6F6F6!important;
-    border-left: 0 solid #F6F6F6;
+    background-color: #f6f6f6 !important;
+    border-left: 0 solid #f6f6f6;
 }
+
 .filemanager .yui3-datatable-even .yui3-datatable-cell {
-    background-color: #FFFFFF!important;
-    border-left: 0 solid #FFFFFF;
+    background-color: #ffffff !important;
+    border-left: 0 solid #ffffff;
 }
-.filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1{
+
+.filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1 {
     background: url('[[pix:theme|fp/link_sm]]') no-repeat 0 0;
     height: 100%;
     width: 100%;
@@ -599,6 +677,7 @@ a.ygtvspacer:hover {
     left: 17px;
     z-index: 1000;
 }
+
 .filemanager .fp-filename-icon.fp-isreference .fp-reficons2 {
     background: url('[[pix:theme|fp/alias_sm]]') no-repeat 0 0;
     height: 100%;
@@ -612,12 +691,14 @@ a.ygtvspacer:hover {
 .filemanager .fp-contextmenu {
     display: none;
 }
+
 .filemanager .fp-iconview .fp-folder.fp-hascontextmenu .fp-contextmenu {
     display: block;
     position: absolute;
     right: 7px;
     bottom: 5px;
 }
+
 .filemanager .fp-treeview .fp-folder.fp-hascontextmenu .fp-contextmenu,
 .filemanager .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {
     display: inline;
@@ -635,13 +716,14 @@ a.ygtvspacer:hover {
     bottom: 10px;
     left: 10px;
     right: 10px;
-    border: 2px dashed #BBBBBB;
+    border: 2px dashed #bbbbbb;
     padding-top: 85px;
     text-align: center;
 }
+
 .filepicker-filelist .dndupload-target,
 .filemanager-container .dndupload-target {
-    background: #FFFFFF;
+    background: #ffffff;
     position: absolute;
     top: 10px;
     bottom: 10px;
@@ -650,11 +732,13 @@ a.ygtvspacer:hover {
     border: 2px dashed #fb7979;
     padding-top: 85px;
     text-align: center;
+
     @include box-shadow(0px 0 0 10px #fff);
 }
+
 .filepicker-filelist.dndupload-over .dndupload-target,
 .filemanager-container.dndupload-over .dndupload-target {
-    background: #FFFFFF;
+    background: #ffffff;
     position: absolute;
     top: 10px;
     bottom: 10px;
@@ -664,31 +748,40 @@ a.ygtvspacer:hover {
     padding-top: 85px;
     text-align: center;
 }
+
 .dndupload-message {
     display: none;
 }
+
 .dndsupported .dndupload-message {
     display: inline;
 }
+
 .dnduploadnotsupported-message {
     display: none;
 }
+
 .dndnotsupported .dnduploadnotsupported-message {
     display: inline;
 }
+
 .dndupload-target {
     display: none;
 }
+
 .dndsupported .dndupload-ready .dndupload-target {
     display: block;
 }
+
 .dndupload-uploadinprogress {
     display: none;
     text-align: center;
 }
+
 .dndupload-uploading .dndupload-uploadinprogress {
     display: block;
 }
+
 .dndupload-arrow {
     background: url([[pix:theme|fp/dnd_arrow]]) center no-repeat;
     width: 100%;
@@ -696,26 +789,33 @@ a.ygtvspacer:hover {
     position: absolute;
     top: 5px;
 }
+
 .fitem.disabled .filepicker-container,
 .fitem.disabled .fm-empty-container {
     display: none;
 }
+
 .dndupload-progressbars {
     padding: 10px;
     display: none;
 }
+
 .dndupload-inprogress .dndupload-progressbars {
     display: block;
 }
+
 .dndupload-inprogress .fp-content {
     display: none;
 }
+
 .filemanager.fm-noitems .dndupload-inprogress .fm-empty-container {
     display: none;
 }
+
 .filepicker-filelist.dndupload-inprogress .filepicker-container {
     display: none;
 }
+
 .filepicker-filelist.dndupload-inprogress a {
     display: none;
 }
@@ -723,12 +823,15 @@ a.ygtvspacer:hover {
 .filemanager.fp-select .fp-select-loading {
     display: none;
 }
+
 .filemanager.fp-select.loading .fp-select-loading {
     display: block;
 }
+
 .filemanager.fp-select.loading form {
     display: none;
 }
+
 .filemanager.fp-select.fp-folder .fp-license,
 .filemanager.fp-select.fp-folder .fp-author,
 .filemanager.fp-select.fp-file .fp-file-unzip,
@@ -737,17 +840,21 @@ a.ygtvspacer:hover {
 .filemanager.fp-select.fp-zip .fp-file-zip {
     display: none;
 }
+
 .filemanager.fp-select .fp-file-setmain,
 .filemanager.fp-select .fp-file-setmain-help {
     display: none;
 }
+
 .filemanager.fp-select.fp-cansetmain .fp-file-setmain,
 .filemanager.fp-select.fp-cansetmain .fp-file-setmain-help {
     display: inline-block;
 }
+
 .filemanager .fp-mainfile .fp-filename {
     font-weight: bold;
 }
+
 .filemanager.fp-select.fp-folder .fp-file-download {
     display: none;
 }
@@ -755,28 +862,34 @@ a.ygtvspacer:hover {
 .fm-operation {
     font-weight: bold;
 }
+
 .filemanager.fp-select .fp-original.fp-unknown,
 .filemanager.fp-select .fp-original .fp-originloading {
     display: none;
 }
+
 .filemanager.fp-select .fp-original.fp-loading .fp-originloading {
     display: inline;
 }
+
 .filemanager.fp-select .fp-reflist.fp-unknown,
 .filemanager.fp-select .fp-reflist .fp-reflistloading {
     display: none;
 }
+
 .filemanager.fp-select .fp-reflist.fp-loading .fp-reflistloading {
     display: inline;
 }
+
 .filemanager.fp-select .fp-reflist .fp-value {
-    background: #F9F9F9;
-    border: 1px solid #BBBBBB;
+    background: #f9f9f9;
+    border: 1px solid #bbbbbb;
     padding: 8px 7px;
     margin: 0;
     max-height: 75px;
     overflow: auto;
 }
+
 .filemanager.fp-select .fp-reflist .fp-value li {
     padding-bottom: 7px;
 }
@@ -784,6 +897,7 @@ a.ygtvspacer:hover {
 .filemanager.fp-mkdir-dlg {
     text-align: center;
 }
+
 .filemanager.fp-mkdir-dlg .fp-mkdir-dlg-text {
     text-align: left;
     margin: 20px;
@@ -800,10 +914,12 @@ a.ygtvspacer:hover {
 // Upload form for file picker.
 .fp-formset {
     padding: 10px;
+
     input[type="file"] {
         line-height: inherit;
     }
 }
+
 .fp-forminset {
     padding: 0 10px;
 }

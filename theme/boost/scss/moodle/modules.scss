@@ -15,6 +15,7 @@ select {
 .path-mod-feedback .feedback_form .col-md-3 label {
     width: 100%;
 }
+
 .path-mod-feedback .feedback_form .col-md-9 {
     margin-left: 1rem;
     margin-bottom: -2rem;
@@ -52,25 +53,32 @@ select {
         thead .header.replies {
             text-align: center;
         }
+
         thead .header.lastpost {
             text-align: right;
         }
+
         thead .header th,
-        tbody .discussion td{
+        tbody .discussion td {
             &.discussionsubscription {
                 width: 16px;
                 padding-left: 0.5em;
                 padding-right: 0.5em;
             }
         }
+
         .discussion {
-            .author, .replies, .lastpost {
+            .author,
+            .replies,
+            .lastpost {
                 white-space: normal;
             }
+
             .discussionsubscription,
             .replies {
                 text-align: center;
             }
+
             .topic,
             .discussionsubscription,
             .topic.starter,
@@ -87,27 +95,33 @@ select {
 .forumpost {
     @extend .card;
     padding: 6px;
+
     .header {
         margin-bottom: 3px;
     }
+
     .picture img {
         margin: 3px;
+
         &.userpicture {
             margin-left: 3px;
             margin-right: 10px;
         }
     }
+
     .content {
         .posting.fullpost {
             margin-top: 8px;
         }
     }
+
     .row {
         .topic,
         .content-mask,
         .options {
             margin-left: 48px;
         }
+
         &.side {
             clear: both;
         }
@@ -140,7 +154,8 @@ select {
     border-top: 2px solid $table-border-color;
 }
 
-.maincalendar .calendarmonth td,.maincalendar .calendarmonth th {
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th {
     border: 1px dotted $table-border-color;
 }
 
@@ -182,6 +197,7 @@ select {
 .ie .row-fluid .desktop-first-column {
     margin-left: 0;
 }
+
 .langmenu form {
     margin: 0;
 }
@@ -199,11 +215,13 @@ div#dock {
 .path-mod-choice {
     .horizontal  .choices {
         margin: 0;
+
         .option {
             display: inline-block;
             padding: 10px;
         }
     }
+
     .results .data {
         white-space: normal;
     }
@@ -212,7 +230,9 @@ div#dock {
 // Lesson module
 
 /** General styles (scope: all of lesson) **/
-.path-mod-lesson .invisiblefieldset.fieldsetfix {display: block;}
+.path-mod-lesson .invisiblefieldset.fieldsetfix {
+    display: block;
+}
 
 .path-mod-wiki .wiki_headingtitle,
 .path-mod-wiki .midpad,
@@ -233,12 +253,25 @@ div#dock {
 
 .path-mod-survey {
     .surveytable {
-        > tbody > tr:nth-of-type(odd) {background-color: $table-bg;}
-        > tbody > tr:nth-of-type(even) {background-color: $table-bg-accent;}
-        .rblock label {text-align: center;}
+        > tbody > tr:nth-of-type(odd) {
+            background-color: $table-bg;
+        }
+
+        > tbody > tr:nth-of-type(even) {
+            background-color: $table-bg-accent;
+        }
+
+        .rblock label {
+            text-align: center;
+        }
     }
-    .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
-        text-align:center;
+
+    .resultgraph,
+    .reportsummary,
+    .studentreport,
+    .reportbuttons,
+    .centerpara {
+        text-align: center;
     }
 }
 
@@ -269,8 +302,10 @@ div#dock {
 .usermenu {
     .login {
         line-height: 2.25rem;
+
         a {
             color: $link-color;
+
             &:hover,
             &:focus {
                 color: $link-hover-color;
@@ -278,14 +313,15 @@ div#dock {
             }
         }
     }
-    .moodle-actionmenu {
 
+    .moodle-actionmenu {
         .toggle-display {
             display: block;
             opacity: 1;
             color: $dropdown-link-color;
             line-height: 40px;
             height: 40px;
+
             &:hover {
                 color: $dropdown-link-hover-color;
             }
@@ -293,7 +329,8 @@ div#dock {
             .userbutton {
                 height: 40px;
                 line-height: 40px;
-                .avatars{
+
+                .avatars {
                     display: inline-block;
                     height: 36px;
                     width: 36px;
@@ -306,25 +343,27 @@ div#dock {
                         display: block;
                     }
                 }
+
                 .usertext {
                     display: inline-block;
                     vertical-align: middle;
                     line-height: 1em;
                     color: inherit;
+
                     .meta,
                     .role {
                         display: block;
                         font-size: 12px;
+
                         .value {
                             font-weight: bold;
                         }
                     }
+
                     .role {
                         font-weight: bold;
                     }
-
                 }
-
             }
 
             // Hide caret when JS is disabled.
@@ -332,15 +371,15 @@ div#dock {
                 display: none;
             }
         }
-
-
     }
 }
+
 @include media-breakpoint-down(sm) {
     .usertext {
         display: none;
     }
 }
+
 .jsenabled {
     .usermenu {
         .moodle-actionmenu {
@@ -364,35 +403,41 @@ div#dock {
                 display: block;
                 margin: 0px;
             }
+
             > .menu {
                 min-width: 160px;
+
                 .filler {
                     display: block;
+
                     @include nav-divider();
                 }
             }
 
             &.show {
                 background-color: $dropdown-link-active-bg;
+
                 .menu {
                     padding: 5px 0;
                     margin: 2px 0 0;
                     background-clip: padding-box;
+
                     &:before {
                         content: '';
                         display: inline-block;
-                        border-left:   7px solid transparent;
-                        border-right:  7px solid transparent;
+                        border-left: 7px solid transparent;
+                        border-right: 7px solid transparent;
                         border-bottom: 7px solid #ccc;
                         border-bottom-color: $dropdown-border-color;
                         position: absolute;
                         top: -7px;
                     }
+
                     &:after {
                         content: '';
                         display: inline-block;
-                        border-left:   6px solid transparent;
-                        border-right:  6px solid transparent;
+                        border-left: 6px solid transparent;
+                        border-right: 6px solid transparent;
                         border-bottom: 6px solid $dropdown-bg;
                         position: absolute;
                         top: -6px;
@@ -404,17 +449,23 @@ div#dock {
                         &:focus {
                             text-decoration: none;
                         }
+
                         &:hover {
                             text-decoration: none;
+
                             @include gradient-y($dropdown-link-hover-bg, darken($dropdown-link-hover-bg, 5%));
                         }
                     }
+
                     &.align-tr-br {
                         margin-top: 2px;
                     }
-                    @include box-shadow (0 5px 10px rgba(0, 0, 0, 0.2));
+
+                    @include box-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
                 }
-                &:hover .toggle-display {}
+
+                &:hover .toggle-display {
+                }
             }
         }
     }
@@ -422,20 +473,24 @@ div#dock {
 
 .usermenu {
     float: right;
+
     > .moodle-actionmenu {
         > .menu {
             &:before {
                 right: 9px;
             }
+
             &:after {
                 right: 10px;
             }
         }
+
         > .menubar li a {
             text-align: right;
         }
     }
 }
+
 &.userloggedinas .usermenu .userbutton .avatars {
     .avatar {
         &.current {
@@ -443,7 +498,6 @@ div#dock {
         }
     }
 }
-
 
 .userloggedinas .usermenu .userbutton .avatars {
     .avatar {
@@ -457,8 +511,9 @@ div#dock {
             margin-bottom: -34px;
             border: 1px solid #fff;
             border-radius: 50%;
-            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+            box-shadow: -2px -2px 16px rgba(0, 0, 0, 0.25);
         }
+
         img {
             width: inherit;
             height: inherit;
@@ -485,11 +540,13 @@ div#dock {
         overflow: visible;
         margin: 0 6px 6px 0;
     }
+
     span.qnbutton {
         cursor: default;
         background-color: $input-bg-disabled;
         color: $gray;
     }
+
     a.qnbutton:hover,
     a.qnbutton:active,
     a.qnbutton:focus {
@@ -501,9 +558,11 @@ div#dock {
         border-radius: 3px;
         z-index: 1;
     }
+
     .qnbutton.thispage .thispageholder {
         border-width: 3px;
     }
+
     .allquestionsononepage .qnbutton.thispage .thispageholder {
         border-width: 1px;
     }
@@ -514,7 +573,7 @@ div#dock {
 
     .qnbutton .trafficlight {
         border: 0;
-        background: $body-color none center/10px no-repeat scroll;
+        background: $body-color none center / 10px no-repeat scroll;
         height: 20px;
         margin-top: 20px;
         border-radius: 0 0 3px 3px;
@@ -524,25 +583,31 @@ div#dock {
     .qnbutton.invalidanswer .trafficlight {
         background-color: $body-color;
     }
+
     .qnbutton.invalidanswer .trafficlight {
         background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
     }
+
     .qnbutton.correct .trafficlight {
         background-image: url([[pix:theme|mod/quiz/checkmark]]);
         background-color: $state-success-text;
     }
+
     .qnbutton.blocked .trafficlight {
         background-image: url([[pix:core|t/locked]]);
         background-color: $input-bg-disabled;
     }
+
     .qnbutton.notanswered .trafficlight,
     .qnbutton.incorrect .trafficlight {
         background-color: $state-danger-text;
     }
+
     .qnbutton.partiallycorrect .trafficlight {
         background-image: url([[pix:theme|mod/quiz/whitecircle]]);
         background-color: $state-warning-text;
     }
+
     .qnbutton.complete .trafficlight,
     .qnbutton.answersaved .trafficlight,
     .qnbutton.requiresgrading .trafficlight {
@@ -556,43 +621,56 @@ div#dock {
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     top: auto;
 }
+
 .path-mod-assign [data-region="grade-panel"] .has-popout {
     background-color: $card-bg;
+
     @include border-radius($card-border-radius);
     border: $card-border-width solid $card-border-color;
 }
+
 .path-mod-assign [data-region="grade-panel"] .popout {
     background-color: $modal-content-bg;
 }
+
 .path-mod-assign [data-region="grade-panel"] .col-md-3 {
     width: 100%;
 }
+
 .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
     @extend .modal-header;
     font-size: 1.5rem;
 }
+
 .path-mod-assign [data-region="grade-panel"] [data-region="popout-button"] {
     margin-top: 0.5rem;
 }
+
 .path-mod-assign [data-region="grade-panel"] .popout [data-region="popout-button"] {
     margin-top: 0;
 }
+
 .path-mod-assign [data-region="grade-panel"] h3 {
     margin: 10px 0;
     line-height: 40px;
 }
+
 .path-mod-assign [data-region="grading-navigation"] {
     padding: 6px;
 }
+
 .path-mod-assign [data-region="grade-actions"] {
     padding: 10px;
 }
+
 .path-mod-assign [data-region="user-info"] .img-rounded {
     margin-top: 0;
 }
+
 .path-mod-assign [data-region="grading-navigation-panel"] {
     height: 85px;
 }
+
 .path-mod-assign [data-region="grading-navigation"] [data-region="input-field"] input {
     width: auto;
     display: inline-block;
@@ -604,12 +682,15 @@ div#dock {
 .assignfeedback_editpdf_widget * {
     box-sizing: content-box;
 }
+
 .assignfeedback_editpdf_widget button {
     box-sizing: border-box;
 }
+
 .assignfeedback_editpdf_widget .commentcolourbutton img {
     border-width: 0;
 }
+
 .assignfeedback_editpdf_widget .label {
     @extend .tag;
     @extend .tag-info;

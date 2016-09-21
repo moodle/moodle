@@ -7,14 +7,17 @@ body.behat-site {
         position: absolute;
     }
 }
+
 .phpinfo table,
 .phpinfo th,
 .phpinfo h2 {
     margin: auto;
 }
+
 .phpinfo h2 {
     width: 600px;
 }
+
 .phpinfo .e,
 .phpinfo .v,
 .phpinfo .h {
@@ -24,30 +27,37 @@ body.behat-site {
     color: #000000;
     background-color: #cccccc;
 }
+
 .phpinfo .e {
     background-color: #ccccff;
     font-weight: bold;
 }
+
 .phpinfo .h {
     background-color: #9999cc;
     font-weight: bold;
 }
+
 #page-footer .performanceinfo {
     margin: 0 20%;
 }
+
 #page-footer .performanceinfo span {
     display: block;
 }
+
 #page-footer .validators {
     margin-top: 40px;
     padding-top: 5px;
     border-top: 1px dotted gray;
 }
+
 #page-footer .validators ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
 }
+
 #page-footer .validators ul li {
     display: inline;
     margin-right: 10px;
@@ -64,6 +74,7 @@ body.behat-site {
         font-size: 110%;
         margin-top: 0.3em;
     }
+
     .cache-definition-stats {
         margin: .3em;
         display: inline-block;
@@ -81,16 +92,17 @@ body.behat-site {
             &.nohits {
                 background-color: $state-danger-bg;
             }
+
             &.lowhits {
                 background-color: $state-warning-bg;
             }
+
             &.hihits {
                 background-color: $state-success-bg;
             }
         }
     }
 }
-
 
 #page-footer,
 #page-footer .validators,
