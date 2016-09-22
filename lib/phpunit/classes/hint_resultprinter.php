@@ -107,6 +107,10 @@ class Hint_ResultPrinter extends PHPUnit_TextUI_ResultPrinter {
                     }
                     if (in_array($_SERVER['argv'][$i], array('--colors', '--verbose', '-v', '--debug'))) {
                         $executable .= ' '.$_SERVER['argv'][$i];
+                    } else if (in_array($_SERVER['argv'][$i], array('-c', '--config'))) {
+                        $executable .= ' '.$_SERVER['argv'][$i] . ' ' . $_SERVER['argv'][++$i];
+                    } else if (strpos($_SERVER['argv'][$i], '--config') === 0) {
+                        $executable .= ' '.$_SERVER['argv'][$i];
                     }
                 }
             }

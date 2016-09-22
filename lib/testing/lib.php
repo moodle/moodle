@@ -53,19 +53,20 @@ function testing_cli_argument_path($moodlepath) {
         $cwd = getcwd();
     }
 
-    // In sub path, we want to remove leading Directory separator.
-    $removeseparator = 0;
-    if (substr($cwd, -1) !== DIRECTORY_SEPARATOR) {
-        $removeseparator = 1;
+    // Remove last directory separator as $path will not contain one.
+    if ((substr($cwd, -1) === '/') || (substr($cwd, -1) === '\\')) {
+        $cwd = substr($cwd, -1);
     }
 
     $path = realpath($CFG->dirroot.$moodlepath);
 
-    if (strpos($path, $cwd) === 0) {
-        $path = substr($path, strlen($cwd) + $removeseparator);
-    }
-
+    // We need standrad directory seperator for path and cwd, so it can be compared.
+    $cwd = testing_cli_fix_directory_separator($cwd);
     $path = testing_cli_fix_directory_separator($path);
+
+    if (strpos($path, $cwd) === 0) {
+        $path = substr($path, strlen($cwd));
+    }
 
     return $path;
 }
