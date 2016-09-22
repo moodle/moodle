@@ -1909,9 +1909,6 @@ abstract class admin_setting {
     /**
      * Get whether this should be displayed in LTR mode.
      *
-     * For more information on this setting, please check the documentation
-     * provided with {@link admin_setting_localisedtext}.
-     *
      * @return bool|null
      */
     public function get_force_ltr() {
@@ -1920,9 +1917,6 @@ abstract class admin_setting {
 
     /**
      * Set whether to force LTR or not.
-     *
-     * For more information on this option, please read the documentation
-     * provided with the class {@link admin_setting_localisedtext}.
      *
      * @param bool $value True when forced, false when not force, null when unknown.
      */
@@ -2122,9 +2116,6 @@ class admin_setting_heading extends admin_setting {
  *
  * This type of field should be used for config settings which are using
  * English words and are not localised (passwords, database name, list of values, ...).
- *
- * For localised strings such as a person's name, text to display to the users, etc...
- * please refer to {@link admin_setting_localisedtext}.
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
