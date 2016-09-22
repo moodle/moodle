@@ -41,76 +41,26 @@ require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
  */
 class tool_behat_manager_util_testcase extends advanced_testcase {
 
-    /**
-     * @var array core features.
-     */
-    private $corefeatures = array(
-        'feedback_editpdf_behat_test1' => '/test/moodle/mod/assign/feedback/editpdf/tests/behat/behat_test1.feature',
-        'feedback_file_behat_test2' => "C:\\test\\moodle\\mod\\assign\\feedback\\file\\tests\\behat\\behat_test2.feature",
-        'moodle_login_behat_test3' => "C:\\test\\moodle/login/tests/behat/behat_test3.feature",
-        );
-
-
-    /**
-     * @var array theme features.
-     */
-    private $themefeatures = array(
-            'behat_themetest1_core_behat_tests_testtheme_theme' => '/test/moodle/theme/testtheme/tests/behat/core/behat_themetest1.feature',
-            'behat_themetest2_mod_assign_behat_tests_testtheme_theme' => "C:\\test\\moodle\\theme\\testtheme\\tests\\behat\\mod_assign\\behat_themetest2.feature",
-            'behat_themetest3_behat_tests_testtheme_theme_moodle' => "C:\\test\\moodle/theme/testtheme/tests/behat/behat_themetest3.feature",
-        );
-
-    /**
-     * @var array core contexts.
-     */
-    private $corecontexts = array(
-            'behat_context1' => '/test/moodle/mod/assign/feedback/editpdf/tests/behat/behat_context1.php',
-            'behat_context2' => "C:\\test\\moodle\\blocks\\comments\\tests\\behat\\behat_context2.php",
-            'behat_context3' => "C:\\test\\moodle/lib/editor/atto/tests/behat/behat_context3.php",
-        );
-
-    /**
-     * @var array Theme contexts for test.
-     */
-    private $themecontexts = array(
-            'behat_theme_testtheme_behat_context1' =>
-                '/test/moodle/theme/testtheme/tests/behat/mod_assign/behat_theme_testtheme_behat_context1.php',
-            'behat_theme_testtheme_behat_context2' =>
-                "C:\\test\\moodle\\theme\\testtheme\\tests\\behat\\block_comments\\behat_theme_testtheme_behat_context2.php",
-            'behat_theme_testtheme_behat_context3' =>
-                "C:\\test\\moodle/theme/testtheme/tests/behat/editor_atto/behat_theme_testtheme_behat_context3.php"
-        );
-
-    /**
-     * Keep instance of behat_config_util mock object.
-     *
-     * @var null
-     */
-    private $behatconfigutil = null;
-
-    /**
-     * Test setup.
-     */
-    public function setUp() {
-        $this->resetAfterTest(true);
-        $mockbuilder = $this->getMockBuilder('behat_config_util');
-        $mockbuilder->setMethods(array('get_behat_features_for_theme', 'get_behat_contexts_for_theme',
-            'get_list_of_themes', 'get_overridden_theme_contexts'));
-
-        $this->behatconfigutil = $mockbuilder->getMock();
-
+    private function get_config($behatconfigutil) {
         // List of themes is const for test.
-        $this->behatconfigutil->expects($this->any())
+        $behatconfigutil->expects($this->any())
             ->method('get_list_of_themes')
             ->will($this->returnValue(array('testtheme')));
 
-        $this->behatconfigutil->expects($this->any())
-            ->method('get_behat_contexts_for_theme')
+        // Theme directory for testing.
+        $behatconfigutil->expects($this->any())
+            ->method('get_test_directories_overridden_for_theme')
             ->with($this->equalTo('testtheme'))
             ->will($this->returnValue(array(
-                'contexts' => $this->themecontexts,
-                'suitecontexts' => $this->themecontexts
+                __DIR__ . '/fixtures/testtheme/tests/behat'
             )));
+
+        // Core components list for testing.
+        $behatconfigutil->expects($this->any())
+            ->method('get_components_with_tests')
+            ->will($this->returnValue(array('testtheme' => __DIR__.'/fixtures/core')));
+
+        return $behatconfigutil->get_config_file_contents();
 
     }
 
@@ -121,59 +71,28 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
     public function test_get_config_file_contents_with_single_run() {
         global $CFG;
 
+        $this->resetAfterTest();
         $CFG->behat_wwwroot = 'http://example.com/behat';
 
-        $behatconfigutil = $this->behatconfigutil;
+        $mockbuilder = $this->getMockBuilder('behat_config_util');
+        $mockbuilder->setMethods(array('get_test_directories_overridden_for_theme', 'get_list_of_themes',
+            'get_components_with_tests'));
 
-        // No theme feature exists.
-        $behatconfigutil->expects($this->once())
-            ->method('get_behat_features_for_theme')
-            ->with($this->anything())
-            ->will($this->returnValue(array(
-                'blacklistfeatures' => array(),
-                'features' => array()))
-            );
+        $behatconfigutil = $mockbuilder->getMock();
 
-        $config = $behatconfigutil->get_config_file_contents($this->corefeatures, $this->corecontexts);
+        $config = $this->get_config($behatconfigutil);
 
-        $expectedconfigwithfeatures = "default:
-  formatters:
-    moodle_progress:
-      output_styles:
-        comment:
-          - magenta
-  suites:
-    default:
-      paths:
-        - /test/moodle/mod/assign/feedback/editpdf/tests/behat/behat_test1.feature
-        - 'C:\\test\\moodle\\mod\\assign\\feedback\\file\\tests\\behat\\behat_test2.feature'
-        - 'C:\\test\\moodle/login/tests/behat/behat_test3.feature'
-      contexts:
-        - behat_context1
-        - behat_context2
-        - behat_context3
-    testtheme:
-      paths: {  }
-      contexts:
-        - behat_theme_testtheme_behat_context1
-        - behat_theme_testtheme_behat_context2
-        - behat_theme_testtheme_behat_context3
-  extensions:
-    Behat\\MinkExtension:
-      base_url: 'http://example.com/behat'
-      goutte: null
-      selenium2:
-        wd_host: 'http://localhost:4444/wd/hub'
-";
+var_dump($config);
+        // Contains core features and contexts.
+        $suites = $config['default']['suites'];
+        $this->assertContains('test_1.feature', $suites['default']['paths'][0]);
+        $this->assertContains('test_2.feature', $suites['default']['paths'][1]);
+        $this->assertContains('behat_test_context_1', $suites['default']['contexts'][0]);
+        $this->assertContains('behat_test_context_2', $suites['default']['contexts'][1]);
 
-        $this->assertContains($expectedconfigwithfeatures, $config);
-
-        $expectedstepdefinitions = "steps_definitions:
-        behat_context1: /test/moodle/mod/assign/feedback/editpdf/tests/behat/behat_context1.php
-        behat_context2: 'C:\\test\\moodle\\blocks\\comments\\tests\\behat\\behat_context2.php'
-        behat_context3: 'C:\\test\\moodle/lib/editor/atto/tests/behat/behat_context3.php'
-";
-        $this->assertContains($expectedstepdefinitions, $config);
+        // Contains theme specific features and contexts.
+        $this->assertContains('theme_test_1.feature', $suites['testtheme']['paths'][0]);
+        $this->assertContains('theme_test_2.feature', $suites['testtheme']['paths'][1]);
     }
 
     /**
