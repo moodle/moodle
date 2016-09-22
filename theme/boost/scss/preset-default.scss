@@ -1,3 +1,4 @@
+/* stylelint-disable color-hex-length */
 /**
  * Default preset file.
  *
@@ -41,16 +42,16 @@ $table-border-color:            #f4f4f4 !default;
 
 // Dropdowns
 $dropdown-border-color:          #e2e2e2 !default;
-$dropdown-link-color:            rgba(0,0,0,.535) !default;
+$dropdown-link-color:            rgba(0, 0, 0, .535) !default;
 
 // Navbar
-$navbar-light-color:                rgba(0,0,0,.535) !default;
+$navbar-light-color:                rgba(0, 0, 0, .535) !default;
 $navbar-light-hover-color:          $brand-primary !default;
 $navbar-light-active-color:         $brand-primary !default;
 
 // Cards
 $card-border-radius:       0 !default;
-$card-border-color:        rgba(238,238,238,1) !default;
+$card-border-color:        rgba(238, 238, 238, 1) !default;
 
 // Breadcrumbs
 $breadcrumb-bg:                 transparent !default;
