@@ -58,7 +58,7 @@ class modchooser extends chooser {
         $sections = [];
         $context = context_course::instance($course->id);
 
-         // Activities
+         // Activities.
         $activities = array_filter($modules, function($mod) {
             return ($mod->archetype !== MOD_ARCHETYPE_RESOURCE && $mod->archetype !== MOD_ARCHETYPE_SYSTEM);
         });

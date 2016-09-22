@@ -67,19 +67,24 @@ class behat_theme_boost_behat_admin extends behat_admin {
 
             // Single element settings.
             try {
-                $fieldxpath = "//*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]" .
+                $fieldxpath = "//*[self::input | self::textarea | self::select]" .
+                    "[not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]" .
                     "[@id=//label[contains(normalize-space(.), $label)]/@for or " .
                     "@id=//span[contains(normalize-space(.), $label)]/preceding-sibling::label[1]/@for]";
                 $fieldnode = $this->find('xpath', $fieldxpath, $exception);
 
-                $formfieldtypenode = $this->find('xpath', $fieldxpath . "/ancestor::div[contains(concat(' ', @class, ' '), ' form-setting ')]" .
+                $formfieldtypenode = $this->find('xpath', $fieldxpath .
+                    "/ancestor::div[contains(concat(' ', @class, ' '), ' form-setting ')]" .
                     "/child::div[contains(concat(' ', @class, ' '),  ' form-')]/child::*/parent::div");
 
             } catch (ElementNotFoundException $e) {
 
                 // Multi element settings, interacting only the first one.
-                $fieldxpath = "//*[label[contains(., $label)]|span[contains(., $label)]]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' form-item ')]" .
-                    "/descendant::div[contains(concat(' ', @class, ' '), ' form-group ')]/descendant::*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]";
+                $fieldxpath = "//*[label[contains(., $label)]|span[contains(., $label)]]" .
+                    "/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' form-item ')]" .
+                    "/descendant::div[contains(concat(' ', @class, ' '), ' form-group ')]" .
+                    "/descendant::*[self::input | self::textarea | self::select]" .
+                    "[not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]";
                 $fieldnode = $this->find('xpath', $fieldxpath);
 
                 // It is the same one that contains the type.

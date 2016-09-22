@@ -13,7 +13,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     // "themesettings" settingpage
     $temp = new admin_settingpage('themesettings', new lang_string('themesettings', 'admin'));
     $setting = new admin_setting_configtext('themelist', new lang_string('themelist', 'admin'),
-        new lang_string('configthemelist','admin'), '', PARAM_NOTAGS);
+        new lang_string('configthemelist', 'admin'), '', PARAM_NOTAGS);
     $setting->set_force_ltr(true);
     $temp->add($setting);
     $setting = new admin_setting_configcheckbox('themedesignermode', new lang_string('themedesignermode', 'admin'), new lang_string('configthemedesignermode', 'admin'), 0);

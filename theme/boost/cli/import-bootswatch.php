@@ -30,8 +30,8 @@ require_once($CFG->libdir.'/clilib.php');
 
 
 // Now get cli options.
-list($options, $unrecognized) = cli_get_params(array('help'=>false),
-    array('h'=>'help', 'v'=>'variables', 'b'=>'bootswatch', 'p'=>'preset'));
+list($options, $unrecognized) = cli_get_params(array('help' => false),
+    array('h' => 'help', 'v' => 'variables', 'b' => 'bootswatch', 'p' => 'preset'));
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -49,8 +49,7 @@ if (!isset($options['preset'])) {
 }
 
 if ($options['help']) {
-    $help =
-        "Convert a Bootswatch file from Bootstrap 3 to a Moodle preset file compatible with bootstrap 4.
+    $help = "Convert a Bootswatch file from Bootstrap 3 to a Moodle preset file compatible with bootstrap 4.
 
         This scripts takes the scss files from a Bootstrap 3 Bootswatch and produces a Moodle compatible preset file.
 
@@ -140,7 +139,7 @@ $newrule = '$body-color: $text-color;';
 $nextline = '//** Global textual link color.';
 $workingvariables = str_replace_one($nextline, "$newrule\n\n$nextline", $workingvariables);
 
-// Add a font-size-root the same as font-size-base;
+// Add a font-size-root the same as font-size-base.
 $newrule = '$font-size-root: $font-size-base;';
 $nextline = '$font-size-large';
 $workingvariables = str_replace_one($nextline, "$newrule\n\n$nextline", $workingvariables);

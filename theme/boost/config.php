@@ -142,8 +142,6 @@ $THEME->layouts = [
     )
 ];
 
-// $THEME->javascripts = array();
-// $THEME->javascripts_footer = array();
 $THEME->parents = [];
 $THEME->enable_dock = false;
 $THEME->csstreepostprocessor = 'theme_boost_css_tree_post_processor';

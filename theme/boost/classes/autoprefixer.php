@@ -126,7 +126,10 @@ class autoprefixer {
                 $newrule->setValue('-webkit-sticky');
                 $finalrules[] = $newrule;
 
-            } else if ($property === 'background-image' && $value instanceof CSSFUnction && $value->getName() === 'linear-gradient') {
+            } else if ($property === 'background-image' &&
+                    $value instanceof CSSFunction &&
+                    $value->getName() === 'linear-gradient') {
+
                 foreach (['-webkit-', '-o-'] as $prefix) {
                     $newfunction = clone $value;
                     $newfunction->setName($prefix . $value->getName());

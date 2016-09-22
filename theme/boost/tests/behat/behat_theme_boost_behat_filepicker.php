@@ -48,7 +48,8 @@ class behat_theme_boost_behat_filepicker extends behat_theme_boost_behat_files {
         $fieldnode = $this->get_filepicker_node($filemanagerelement);
 
         // Looking for the create folder button inside the specified filemanager.
-        $exception = new ExpectationException('No folders can be created in "'.$filemanagerelement.'" filemanager', $this->getSession());
+        $exception = new ExpectationException('No folders can be created in "'.$filemanagerelement.'" filemanager',
+            $this->getSession());
         $newfolder = $this->find('css', 'div.fp-btn-mkdir a', $exception, $fieldnode);
         $newfolder->click();
 
@@ -189,7 +190,8 @@ class behat_theme_boost_behat_filepicker extends behat_theme_boost_behat_files {
 
         $elements = $this->find_all('xpath', $xpath, false, $filemanagernode);
         if (count($elements) != $elementscount) {
-            throw new ExpectationException('Found '.count($elements).' elements in filemanager instead of expected '.$elementscount, $this->getSession());
+            throw new ExpectationException('Found '.count($elements).' elements in filemanager. Expected '.$elementscount,
+                 $this->getSession());
         }
     }
 
@@ -244,7 +246,8 @@ class behat_theme_boost_behat_filepicker extends behat_theme_boost_behat_files {
      * @param string $filemanagerelement
      * @param TableNode $data Data to fill the form in Select file dialogue
      */
-    public function i_add_and_overwrite_file_from_repository_to_filemanager_as($filepath, $repository, $filemanagerelement, TableNode $data) {
+    public function i_add_and_overwrite_file_from_repository_to_filemanager_as($filepath, $repository, $filemanagerelement,
+            TableNode $data) {
         $this->add_file_from_repository_to_filemanager($filepath, $repository, $filemanagerelement, $data,
                 get_string('overwrite', 'repository'));
     }

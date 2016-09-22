@@ -36,7 +36,9 @@ class behat_theme_boost_behat_grade extends behat_grade {
         if ($this->running_javascript()) {
             $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
-                $this->execute("behat_action_menu::i_open_the_action_menu_in", array("//tr[contains(.,$gradeitem)]", "xpath_element"));
+                $this->execute("behat_action_menu::i_open_the_action_menu_in",
+                    array("//tr[contains(.,$gradeitem)]",
+                    "xpath_element"));
             }
         }
 
@@ -56,7 +58,9 @@ class behat_theme_boost_behat_grade extends behat_grade {
         if ($this->running_javascript()) {
             $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]";
             if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
-                $this->execute("behat_action_menu::i_open_the_action_menu_in", array("//tr[contains(.,$gradeitem)]", "xpath_element"));
+                $this->execute("behat_action_menu::i_open_the_action_menu_in",
+                    array("//tr[contains(.,$gradeitem)]",
+                    "xpath_element"));
             }
         }
 
@@ -71,10 +75,11 @@ class behat_theme_boost_behat_grade extends behat_grade {
         foreach ($datahash as $gradeitem => $idnumber) {
             // This xpath looks for course, categories and items with the provided name.
             // Grrr, we can't equal in categoryitem and courseitem because there is a line jump...
-            $inputxpath ="//input[@class='idnumber'][" .
+            $inputxpath = "//input[@class='idnumber'][" .
                 "parent::li[@class='item'][text()='" . $gradeitem . "']" .
                 " or " .
-                "parent::li[@class='categoryitem' or @class='courseitem']/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
+                "parent::li[@class='categoryitem' or @class='courseitem']" .
+                "/parent::ul/parent::li[starts-with(text(),'" . $gradeitem . "')]" .
             "]";
             $this->execute('behat_forms::i_set_the_field_with_xpath_to', array($inputxpath, $idnumber));
         }
