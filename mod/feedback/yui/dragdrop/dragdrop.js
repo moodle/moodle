@@ -1,11 +1,11 @@
 YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
     var DRAGDROPNAME = 'mod_feedback_dragdrop';
     var CSS = {
-        DRAGAREA : '#feedback_dragarea',
-        DRAGITEMCLASS : 'feedback_itemlist',
-        DRAGITEM : 'div.feedback_itemlist',
-        DRAGLIST : '#feedback_dragarea form',
-        DRAGHANDLE : 'itemhandle'
+        DRAGAREA: '#feedback_dragarea',
+        DRAGITEMCLASS: 'feedback_itemlist',
+        DRAGITEM: 'div.feedback_itemlist',
+        DRAGLIST: '#feedback_dragarea form',
+        DRAGHANDLE: 'itemhandle'
     };
 
     var DRAGDROP = function() {
