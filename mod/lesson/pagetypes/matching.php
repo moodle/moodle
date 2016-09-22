@@ -118,6 +118,15 @@ class lesson_page_type_matching extends lesson_page {
         $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
         $context = context_module::instance($cm->id);
 
+        // Check for duplicate response format.
+        $duplicateresponse = array();
+        if (is_array($properties->response_editor[0])) {
+            foreach ($properties->response_editor as $response) {
+                $duplicateresponse[] = $response['text'];
+            }
+            $properties->response_editor = $duplicateresponse;
+        }
+
         $answers = array();
 
         // need to add two to offset correct response and wrong response

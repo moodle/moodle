@@ -1721,10 +1721,10 @@ class lesson extends lesson_base {
         $this->copy_page_files('page_contents', $pageid, $newlessonpage->id, $context->id);
         $j = 0;
         foreach ($newanswers as $answer) {
-            if (strpos($answer->answer, '@@PLUGINFILE@@') !== false) {
+            if (isset($answer->answer) && strpos($answer->answer, '@@PLUGINFILE@@') !== false) {
                 $this->copy_page_files('page_answers', $answerids[$j], $answer->id, $context->id);
             }
-            if (strpos($answer->response, '@@PLUGINFILE@@') !== false) {
+            if (isset($answer->response) && !is_array($answer->response) && strpos($answer->response, '@@PLUGINFILE@@') !== false) {
                 $this->copy_page_files('page_responses', $answerids[$j], $answer->id, $context->id);
             }
             $j++;
