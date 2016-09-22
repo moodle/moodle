@@ -65,7 +65,8 @@ function testing_cli_argument_path($moodlepath) {
     $path = testing_cli_fix_directory_separator($path);
 
     if (strpos($path, $cwd) === 0) {
-        $path = substr($path, strlen($cwd));
+        // Remove current working directory and directory separator.
+        $path = substr($path, strlen($cwd)+1);
     }
 
     return $path;
