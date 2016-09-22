@@ -9,6 +9,6 @@
     + .breadcrumb-item::before {
         content: "#{$breadcrumb-divider-rtl}";
         /*rtl:remove*/
-        content: "#{$breadcrumb-divider}";
+        content: "#{$breadcrumb-divider}"; /* stylelint-disable-line declaration-block-no-duplicate-properties */
     }
 }

@@ -21,8 +21,6 @@
     @extend .card;
     @extend .card-block;
     break-inside: avoid;
-    -moz-break-inside: avoid;
-    -webkit-column-break-inside: avoid;
 }
 
 .userprofile .profile_tree section h3 {

@@ -44,7 +44,6 @@
         width: 100%;
         height: auto;
         max-height: 220px;
-        y-scroll: auto;
         float: none;
         border: 0;
     }
@@ -137,7 +136,6 @@
     .loginbox.twocolumns .loginpanel,
     .loginbox.twocolumns .signuppanel {
         width: 48.617948717948715%;
-        *width: 48.664757228587014%;
     }
 }
 
@@ -219,7 +217,6 @@
 
     .fp-content-center {
         display: block;
-        vertical-align: top;
     }
 
     .course-content ul.topics li.section,
@@ -691,7 +688,6 @@
         #course-listing {
             @include fluid-span(6);
             margin-left: $fluidGridGutterWidth1200;
-            *margin-left: $fluidGridGutterWidth1200 - (.5 / $gridRowWidth * 100 * 1%);
 
             &:first-child {
                 margin-left: 0;
