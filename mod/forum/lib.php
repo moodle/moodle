@@ -3449,7 +3449,12 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $output .= html_writer::tag('div', implode(' | ', $commandhtml), array('class'=>'commands'));
 
     // Output link to post if required
-    if ($link && forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
+    if ($link) {
+        if (forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext)) {
+            $langstring = 'discussthistopic';
+        } else {
+            $langstring = 'viewthediscussion';
+        }
         if ($post->replies == 1) {
             $replystring = get_string('repliesone', 'forum', $post->replies);
         } else {
@@ -3466,7 +3471,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         }
 
         $output .= html_writer::start_tag('div', array('class'=>'link'));
-        $output .= html_writer::link($discussionlink, get_string('discussthistopic', 'forum'));
+        $output .= html_writer::link($discussionlink, get_string($langstring, 'forum'));
         $output .= '&nbsp;('.$replystring.')';
         $output .= html_writer::end_tag('div'); // link
     }

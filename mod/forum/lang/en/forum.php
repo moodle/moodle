@@ -531,6 +531,7 @@ $string['unsubscribed'] = 'Unsubscribed';
 $string['unsubscribeshort'] = 'Unsubscribe';
 $string['usermarksread'] = 'Manual message read marking';
 $string['viewalldiscussions'] = 'View all discussions';
+$string['viewthediscussion'] = 'View the discussion';
 $string['warnafter'] = 'Post threshold for warning';
 $string['warnafter_help'] = 'Students can be warned as they approach the maximum number of posts allowed in a given period. This setting specifies after how many posts they are warned. Users with the capability mod/forum:postwithoutthrottling are exempt from post limits.';
 $string['warnformorepost'] = 'Warning! There is more than one discussion in this forum - using the most recent';
