@@ -99,7 +99,7 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>scss/preset-flat.scss</location>
+    <location>scss/preset-flatly.scss</location>
     <name>Flatly Bootswatch</name>
     <license>(MIT)</license>
     <version>3.3.7</version>
@@ -108,6 +108,13 @@
   <library>
     <location>scss/preset-paper.scss</location>
     <name>Paper Bootswatch</name>
+    <license>(MIT)</license>
+    <version>3.3.7</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>scss/preset-readable.scss</location>
+    <name>Readable Bootswatch</name>
     <license>(MIT)</license>
     <version>3.3.7</version>
     <licenseversion></licenseversion>

@@ -67,8 +67,9 @@ theme/boost/amd/src/tab.js
 theme/boost/amd/src/tooltip.js
 theme/boost/amd/src/util.js
 theme/boost/amd/src/tether.js
-theme/boost/scss/preset-flat.scss
+theme/boost/scss/preset-flatly.scss
 theme/boost/scss/preset-paper.scss
+theme/boost/scss/preset-readable.scss
 theme/bootstrapbase/less/bootstrap/
 theme/bootstrapbase/javascript/html5shiv.js
 theme/bootstrapbase/amd/src/bootstrap.js
