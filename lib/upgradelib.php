@@ -371,6 +371,12 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // Removed in 3.2.
+        '/calendar/preferences.php',
+        '/lib/alfresco/',
+        '/lib/jquery/jquery-1.12.1.min.js',
+        '/lib/password_compat/tests/',
+        '/lib/phpunit/classes/unittestcase.php',
         // Removed in 3.1.
         '/lib/classes/log/sql_internal_reader.php',
         '/lib/zend/',
