@@ -13504,7 +13504,7 @@ body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebrea
   padding: 6px;
 }
 .path-mod-feedback .mform.feedback_form#feedback_viewresponse_form .fitem.feedback_hasvalue:not(.feedback-item-captcha) .felement {
-  background: #FBFBF1;
+  background: #fbfbf1;
   min-height: 1em;
   box-sizing: border-box;
   padding: 3px;
@@ -13747,8 +13747,8 @@ div#dock {
 }
 .path-mod-lesson .menu ul {
   list-style: none;
-  padding: 5px 0px 0px 5px;
-  margin: 0px;
+  padding: 5px 0 0 5px;
+  margin: 0;
 }
 .path-mod-lesson .menu ul li {
   padding-bottom: 5px;
@@ -13787,7 +13787,7 @@ div#dock {
   background-color: green;
   text-align: right;
   vertical-align: middle;
-  color: #FFF;
+  color: #fff;
 }
 .path-mod-lesson .resourcecontent {
   text-align: center;
@@ -13804,7 +13804,7 @@ div#dock {
 .path-mod-lesson .answeroptiongroup input {
   position: absolute;
   top: 2px;
-  margin-top: 0px;
+  margin-top: 0;
   left: 0;
 }
 .path-mod-lesson .answeroption .fcheckbox label,
@@ -13814,7 +13814,7 @@ div#dock {
 }
 .path-mod-lesson .answeroption .felement label p:last-child,
 .path-mod-lesson .answeroptiongroup .felement label p:last-child {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 /**
  * Style for view.php
@@ -13824,8 +13824,8 @@ div#dock {
 }
 .path-mod-lesson .reviewessay {
   width: 40%;
-  border: 1px solid #DDDDDD;
-  background-color: #EEEEEE;
+  border: 1px solid #ddd;
+  background-color: #eee;
 }
 /* Countdown timer. */
 #lesson-timer {
@@ -14327,7 +14327,7 @@ div#dock {
   margin: 0 5px;
 }
 #page-report-participation-index .participationselectform div label[for=menuinstanceid] {
-  margin-left: 0px;
+  margin-left: 0;
 }
 .path-backup .mform .grouped_settings.section_level {
   min-height: 20px;
