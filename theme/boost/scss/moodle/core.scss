@@ -1120,8 +1120,7 @@ tr.flagged-tag a {
 
         div,
         fieldset {
-            display: inline;
-            float: none;
+            display: inline-block;
             clear: none;
             width: auto;
             margin: 0;
@@ -1304,7 +1303,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     // Undo some YUI damage.
     min-height: 3rem;
     color: initial;
-    background-color: initial;
     background: initial;
     font-size: 1.5rem;
     line-height: 1.5;
@@ -1935,7 +1933,6 @@ img#persona_signin {
 
 .invisiblefieldset {
     display: inline;
-    margin: 0;
     padding: 0;
     border-width: 0;
 }

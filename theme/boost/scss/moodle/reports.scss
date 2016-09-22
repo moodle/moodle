@@ -5,7 +5,7 @@
 // and replace it completely.
 
 #page-report-participation-index .participationselectform div label { // Using 'div' here to override the report styles.css
-    display: inline;
+    display: inline-block;
     margin: 0 5px; // No top and bottom margin with a 5px left and right for LTR and RTL.
 }
 

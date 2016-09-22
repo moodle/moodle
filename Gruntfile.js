@@ -198,13 +198,7 @@ module.exports = function(grunt) {
                     syntax: 'scss',
                     configOverrides: {
                         rules: {
-                            "unit-blacklist": null, // TODO: alter based on outcome of MDL-56061.
-                            "declaration-no-important": null, // TODO: to be addressed by MDL-56063.
-                            // TODO: MDL-55165 - Enable the following rules once we make output-changing changes to scss.
-                            "declaration-block-no-duplicate-properties": null,
-                            "declaration-block-no-ignored-properties": null,
-                            "declaration-block-no-shorthand-property-overrides": null,
-                            "property-no-unknown": null,
+                            "declaration-no-important": null // TODO: to be addressed by MDL-56063.
                         }
                     },
                 },
