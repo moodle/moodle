@@ -70,18 +70,8 @@ if ($mform_signup->is_cancelled()) {
     redirect(get_login_url());
 
 } else if ($user = $mform_signup->get_data()) {
-    $user->confirmed   = 0;
-    $user->lang        = current_language();
-    $user->firstaccess = 0;
-    $user->timecreated = time();
-    $user->mnethostid  = $CFG->mnet_localhost_id;
-    $user->secret      = random_string(15);
-    $user->auth        = $CFG->registerauth;
-    // Initialize alternate name fields to empty strings.
-    $namefields = array_diff(get_all_user_name_fields(), useredit_get_required_name_fields());
-    foreach ($namefields as $namefield) {
-        $user->$namefield = '';
-    }
+    // Add missing required fields.
+    $user = signup_setup_new_user($user);
 
     $authplugin->user_signup($user, true); // prints notice and link to login/index.php
     exit; //never reached

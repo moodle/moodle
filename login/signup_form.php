@@ -92,7 +92,7 @@ class login_signup_form extends moodleform {
 
         profile_signup_fields($mform);
 
-        if ($this->signup_captcha_enabled()) {
+        if (signup_captcha_enabled()) {
             $mform->addElement('recaptcha', 'recaptcha_element', get_string('security_question', 'auth'), array('https' => $CFG->loginhttps));
             $mform->addHelpButton('recaptcha_element', 'recaptcha', 'auth');
             $mform->closeHeaderBefore('recaptcha_element');
@@ -122,57 +122,9 @@ class login_signup_form extends moodleform {
     }
 
     function validation($data, $files) {
-        global $CFG, $DB;
         $errors = parent::validation($data, $files);
 
-        $authplugin = get_auth_plugin($CFG->registerauth);
-
-        if ($DB->record_exists('user', array('username'=>$data['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
-            $errors['username'] = get_string('usernameexists');
-        } else {
-            //check allowed characters
-            if ($data['username'] !== core_text::strtolower($data['username'])) {
-                $errors['username'] = get_string('usernamelowercase');
-            } else {
-                if ($data['username'] !== core_user::clean_field($data['username'], 'username')) {
-                    $errors['username'] = get_string('invalidusername');
-                }
-
-            }
-        }
-
-        //check if user exists in external db
-        //TODO: maybe we should check all enabled plugins instead
-        if ($authplugin->user_exists($data['username'])) {
-            $errors['username'] = get_string('usernameexists');
-        }
-
-
-        if (! validate_email($data['email'])) {
-            $errors['email'] = get_string('invalidemail');
-
-        } else if ($DB->record_exists('user', array('email'=>$data['email']))) {
-            $errors['email'] = get_string('emailexists').' <a href="forgot_password.php">'.get_string('newpassword').'?</a>';
-        }
-        if (empty($data['email2'])) {
-            $errors['email2'] = get_string('missingemail');
-
-        } else if ($data['email2'] != $data['email']) {
-            $errors['email2'] = get_string('invalidemail');
-        }
-        if (!isset($errors['email'])) {
-            if ($err = email_is_not_allowed($data['email'])) {
-                $errors['email'] = $err;
-            }
-
-        }
-
-        $errmsg = '';
-        if (!check_password_policy($data['password'], $errmsg)) {
-            $errors['password'] = $errmsg;
-        }
-
-        if ($this->signup_captcha_enabled()) {
+        if (signup_captcha_enabled()) {
             $recaptcha_element = $this->_form->getElement('recaptcha_element');
             if (!empty($this->_form->_submitValues['recaptcha_challenge_field'])) {
                 $challenge_field = $this->_form->_submitValues['recaptcha_challenge_field'];
@@ -184,23 +136,10 @@ class login_signup_form extends moodleform {
                 $errors['recaptcha'] = get_string('missingrecaptchachallengefield');
             }
         }
-        // Validate customisable profile fields. (profile_validation expects an object as the parameter with userid set)
-        $dataobject = (object)$data;
-        $dataobject->id = 0;
-        $errors += profile_validation($dataobject, $files);
+
+        $errors += signup_validate_data($data, $files);
 
         return $errors;
 
     }
-
-    /**
-     * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
-     * @return bool
-     */
-    function signup_captcha_enabled() {
-        global $CFG;
-        $authplugin = get_auth_plugin($CFG->registerauth);
-        return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && $authplugin->is_captcha_enabled();
-    }
-
 }
