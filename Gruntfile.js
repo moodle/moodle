@@ -202,14 +202,7 @@ module.exports = function(grunt) {
                 src: ['theme/**/*.less']
             },
             scss: {
-                options: {
-                    syntax: 'scss',
-                    configOverrides: {
-                        rules: {
-                            "declaration-no-important": null // TODO: to be addressed by MDL-56063.
-                        }
-                    },
-                },
+                options: {syntax: 'scss'},
                 src: ['*/**/*.scss']
             }
         }

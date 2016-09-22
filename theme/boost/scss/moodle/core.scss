@@ -21,7 +21,7 @@
 
 /*rtl:ignore*/
 .text-ltr {
-    direction: ltr !important;
+    direction: ltr !important; /* stylelint-disable-line declaration-no-important */
 }
 
 #add,
@@ -1313,21 +1313,15 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
-    padding: 5px;
-    right: 0;
+    padding: $spacer;
 }
 
 .moodle-dialogue-base .closebutton {
     @extend .close;
-    margin: 0;
-    padding: 10px !important;
-    background: 0;
-    border-style: none;
     box-shadow: none;
-}
-
-.moodle-dialogue-base .closebutton::after {
-    content: "×";
+    &::after {
+        content: "×";
+    }
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {

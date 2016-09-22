@@ -651,22 +651,28 @@ a.ygtvspacer:hover {
     width: 100%;
 }
 
-.filemanager .yui3-datatable-header {
-    background: #fff !important;
-    border-bottom: 1px solid #ccc !important;
-    border-left: 0 solid #fff !important;
-    color: #555 !important;
-}
+/* Override YUI default styling */
+/* stylelint-disable declaration-no-important */
+.filemanager {
 
-.filemanager .yui3-datatable-odd .yui3-datatable-cell {
-    background-color: #f6f6f6 !important;
-    border-left: 0 solid #f6f6f6;
-}
+    .yui3-datatable-header {
+        background: #fff !important;
+        border-bottom: 1px solid #ccc !important;
+        border-left: 0 solid #fff !important;
+        color: #555 !important;
+    }
 
-.filemanager .yui3-datatable-even .yui3-datatable-cell {
-    background-color: #fff !important;
-    border-left: 0 solid #fff;
+    .yui3-datatable-odd .yui3-datatable-cell {
+        background-color: #f6f6f6 !important;
+        border-left: 0 solid #f6f6f6;
+    }
+
+    .yui3-datatable-even .yui3-datatable-cell {
+        background-color: #fff !important;
+        border-left: 0 solid #fff;
+    }
 }
+/* stylelint-enable */
 
 .filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1 {
     background: url('[[pix:theme|fp/link_sm]]') no-repeat 0 0;

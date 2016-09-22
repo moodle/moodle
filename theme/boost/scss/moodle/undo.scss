@@ -71,14 +71,10 @@ li.section.hidden,
  * with where they should be check for a .row
  */
 
-#turnitintool_style .row,
 .forumpost .row {
-    margin-left: 0 !important;
-    // not sure if this needs !important
+    margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
 
-#turnitintool_style .row:before,
-#turnitintool_style .row:after,
 .forumpost .row:before,
 .forumpost .row:after {
     content: none;

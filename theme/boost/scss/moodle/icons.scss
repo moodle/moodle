@@ -26,7 +26,7 @@ a:first-of-type > .icon {
 
 // YUI 2 Tree View icons must not have a margin left.
 .ygtvcell .icon {
-    margin-left: 0 !important;
+    margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
 
 // In the navigation, tree icons should not have margins.
