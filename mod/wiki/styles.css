@@ -136,10 +136,13 @@
     border: thin solid black;
 }
 
-.wiki_restore_yes, .wiki_deletecomment_yes {
+.wiki_restore_yes,
+.wiki_deletecomment_yes {
     float: left;
 }
-.wiki_restore_no, .wiki_deletecomment_no {
+
+.wiki_restore_no,
+.wiki_deletecomment_no {
     float: right;
 }
 
@@ -344,4 +347,7 @@ a.wiki_edit_section {
 .path-mod-wiki .printicon {
     background: url([[pix:t/print]]) no-repeat scroll 2px center transparent; padding-left: 20px;
 }
-#page-mod-wiki-prettyview .displayprinticon {text-align: right;}
+
+#page-mod-wiki-prettyview .displayprinticon {
+    text-align: right;
+}

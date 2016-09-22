@@ -2935,8 +2935,6 @@ sup {
     padding-right: 2px;
 }
 
-.initialbar a {padding-right: 2px;}
-
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
     background-color: #AAA;
@@ -3356,7 +3354,7 @@ sup {
 
 /* Install Process' text fields Forms, should always be justified to the left */
 
-/*rtl:ignore*/;
+/*rtl:ignore*/
 .configphp {
     direction: ltr;
     text-align: left;
