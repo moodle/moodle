@@ -97,6 +97,8 @@ information provided here is intended especially for developers.
 * Action menus do_not_enhance() is deprecated, use a list of action_icon instead.
 * The user_not_fully_set_up() function has a new $strict parameter (defaulting to true) in order to decide when
   custom fields (and other checks) should be evaluated to determine if the user has been completely setup.
+* profile_field_base class has new methods: get_field_config_for_external() and get_field_properties().
+  This two new methods should be implemented by profile field plugins to make them compatible with Web Services.
 
 === 3.1 ===
 

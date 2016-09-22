@@ -165,6 +165,17 @@ class profile_field_menu extends profile_field_base {
         }
         return $retval;
     }
+
+    /**
+     * Return the field type and null properties.
+     * This will be used for validating the data submitted by a user.
+     *
+     * @return array the param type and null property
+     * @since Moodle 3.2
+     */
+    public function get_field_properties() {
+        return array(PARAM_TEXT, NULL_NOT_ALLOWED);
+    }
 }
 
 

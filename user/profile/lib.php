@@ -387,6 +387,28 @@ class profile_field_base {
     public function is_signup_field() {
         return (boolean)$this->field->signup;
     }
+
+    /**
+     * Return the field settings suitable to be exported via an external function.
+     * By default it return all the field settings.
+     *
+     * @return array all the settings
+     * @since Moodle 3.2
+     */
+    public function get_field_config_for_external() {
+        return (array) $this->field;
+    }
+
+    /**
+     * Return the field type and null properties.
+     * This will be used for validating the data submitted by a user.
+     *
+     * @return array the param type and null property
+     * @since Moodle 3.2
+     */
+    public function get_field_properties() {
+        return array(PARAM_RAW, NULL_NOT_ALLOWED);
+    }
 }
 
 /**
@@ -528,13 +550,15 @@ function profile_display_fields($userid) {
 }
 
 /**
- * Adds code snippet to a moodle form object for custom profile fields that
- * should appear on the signup page
- * @param moodleform $mform moodle form object
+ * Retrieves a list of profile fields that must be displayed in the sign-up form.
+ *
+ * @return array list of profile fields info
+ * @since Moodle 3.2
  */
-function profile_signup_fields($mform) {
+function profile_get_signup_fields() {
     global $CFG, $DB;
 
+    $profilefields = array();
     // Only retrieve required custom fields (with category information)
     // results are sort by categories, then by fields.
     $sql = "SELECT uf.id as fieldid, ic.id as categoryid, ic.name as categoryname, uf.datatype
@@ -543,17 +567,39 @@ function profile_signup_fields($mform) {
                 ON uf.categoryid = ic.id AND uf.signup = 1 AND uf.visible<>0
                 ORDER BY ic.sortorder ASC, uf.sortorder ASC";
 
-    if ( $fields = $DB->get_records_sql($sql)) {
+    if ($fields = $DB->get_records_sql($sql)) {
+        foreach ($fields as $field) {
+            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+            $newfield = 'profile_field_'.$field->datatype;
+            $fieldobject = new $newfield($field->fieldid);
+
+            $profilefields[] = (object) array(
+                'categoryid' => $field->categoryid,
+                'categoryname' => $field->categoryname,
+                'fieldid' => $field->fieldid,
+                'datatype' => $field->datatype,
+                'object' => $fieldobject
+            );
+        }
+    }
+    return $profilefields;
+}
+
+/**
+ * Adds code snippet to a moodle form object for custom profile fields that
+ * should appear on the signup page
+ * @param moodleform $mform moodle form object
+ */
+function profile_signup_fields($mform) {
+
+    if ($fields = profile_get_signup_fields()) {
         foreach ($fields as $field) {
             // Check if we change the categories.
             if (!isset($currentcat) || $currentcat != $field->categoryid) {
                  $currentcat = $field->categoryid;
                  $mform->addElement('header', 'category_'.$field->categoryid, format_string($field->categoryname));
-            }
-            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-            $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->fieldid);
-            $formfield->edit_field($mform);
+            };
+            $field->object->edit_field($mform);
         }
     }
 }
