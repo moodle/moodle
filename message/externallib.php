@@ -1581,7 +1581,7 @@ class core_message_external extends external_api {
         }
 
         $sort = $newestfirst ? 'DESC' : 'ASC';
-        $notifications = message_get_popup_notifications($useridto, $status, $embeduserto, $embeduserfrom, $sort, $limit, $offset);
+        $notifications = \core_message\api::get_popup_notifications($useridto, $status, $embeduserto, $embeduserfrom, $sort, $limit, $offset);
         $notificationcontexts = [];
 
         if ($notifications) {
@@ -1609,7 +1609,7 @@ class core_message_external extends external_api {
 
         return array(
             'notifications' => $notificationcontexts,
-            'unreadcount' => message_count_unread_popup_notifications($useridto),
+            'unreadcount' => \core_message\api::count_unread_popup_notifications($useridto),
         );
     }
 
@@ -1720,7 +1720,7 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        message_mark_all_read_for_user($useridto, $useridfrom, MESSAGE_TYPE_NOTIFICATION);
+        \core_message\api::mark_all_read_for_user($useridto, $useridfrom, MESSAGE_TYPE_NOTIFICATION);
 
         return true;
     }
@@ -1784,7 +1784,7 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        return message_count_unread_popup_notifications($useridto);
+        return \core_message\api::count_unread_popup_notifications($useridto);
     }
 
     /**
@@ -1848,7 +1848,7 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        return message_count_unread_conversations($userto);
+        return \core_message\api::count_unread_conversations($userto);
     }
 
     /**
@@ -2109,7 +2109,7 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
-        message_mark_all_read_for_user($useridto, $useridfrom, MESSAGE_TYPE_MESSAGE);
+        \core_message\api::mark_all_read_for_user($useridto, $useridfrom, MESSAGE_TYPE_MESSAGE);
 
         return true;
     }

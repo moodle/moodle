@@ -257,7 +257,7 @@ if (!$user2realuser) {
         // Mark the conversation as read.
         if ($currentuser) {
             $contact->isread = 1;
-            message_mark_all_read_for_user($user1->id, $otheruserid);
+            \core_message\api::mark_all_read_for_user($user1->id, $otheruserid);
         }
 
         $messages = \core_message\api::get_messages($user1->id, $otheruserid, 0, 20, 'timecreated DESC');
@@ -267,7 +267,7 @@ if (!$user2realuser) {
 } else {
     // Mark the conversation as read.
     if ($currentuser) {
-        message_mark_all_read_for_user($user1->id, $user2->id);
+        \core_message\api::mark_all_read_for_user($user1->id, $user2->id);
     }
 
     $conversations = \core_message\api::get_conversations($user1->id, $user2->id, 0, 20);

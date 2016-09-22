@@ -290,27 +290,6 @@ function message_count_unread_messages($user1=null, $user2=null) {
 }
 
 /**
- * Returns the count of unread conversations (collection of messages from a single user) for
- * the given user.
- *
- * @param object $user the user who's conversations should be counted
- * @return in the count of $user's unread conversations
- */
-function message_count_unread_conversations($user = null) {
-    global $USER, $DB;
-
-    if (empty($user)) {
-        $user = $USER;
-    }
-
-    return $DB->count_records_select(
-        'message',
-        'useridto = ? AND timeusertodeleted = 0 AND notification = 0',
-        [$user->id],
-        "COUNT(DISTINCT(useridfrom))");
-}
-
-/**
  * Count the number of users blocked by $user1
  *
  * @param object $user1 user object
@@ -1519,49 +1498,9 @@ function message_move_userfrom_unread2read($userid) {
  * @return void
  */
 function message_mark_messages_read($touserid, $fromuserid) {
-    return message_mark_all_read_for_user($touserid, $fromuserid);
+    return \core_message\api::mark_all_read_for_user($touserid, $fromuserid);
 }
 
-/**
- * marks ALL messages being sent from $fromuserid to $touserid as read. Can
- * be filtered by type.
- *
- * @param int $touserid the id of the message recipient
- * @param int $fromuserid the id of the message sender
- * @param string $type filter the messages by type, either MESSAGE_TYPE_NOTIFICATION, MESSAGE_TYPE_MESSAGE or '' for all.
- * @return void
- */
-function message_mark_all_read_for_user($touserid, $fromuserid = 0, $type = '') {
-    global $DB;
-
-    $params = array();
-    $where = '';
-
-    if (!empty($touserid)) {
-        $params['useridto'] = $touserid;
-    }
-
-    if (!empty($fromuserid)) {
-        $params['useridfrom'] = $fromuserid;
-    }
-
-    if (!empty($type)) {
-        if (strtolower($type) == MESSAGE_TYPE_NOTIFICATION) {
-            $params['notification'] = 1;
-        } else if (strtolower($type) == MESSAGE_TYPE_MESSAGE) {
-            $params['notification'] = 0;
-        }
-    }
-
-    $sql = sprintf('SELECT m.* FROM {message} m WHERE m.%s = ?', implode('= ? AND m.', array_keys($params)));
-    $messages = $DB->get_recordset_sql($sql, array_values($params));
-
-    foreach ($messages as $message) {
-        message_mark_message_read($message, time());
-    }
-
-    $messages->close();
-}
 
 /**
  * Mark a single message as read
@@ -1854,162 +1793,11 @@ function message_get_messages($useridto, $useridfrom = 0, $notifications = -1, $
     return $messages;
 }
 
-/**
- * Get popup notifications for the specified users.
- *
- * @param  int      $useridto       the user id who received the notification
- * @param  bool     $status         MESSAGE_READ for retrieving read notifications, MESSAGE_UNREAD for unread, empty for both
- * @param  bool     $embeduserto    embed the to user details in the notification response
- * @param  bool     $embeduserfrom  embed the from user details in the notification response
- * @param  string   $sort           the column name to order by including optionally direction
- * @param  int      $limit          limit the number of result returned
- * @param  int      $offset         offset the result set by this amount
- * @return array                    array of notification records
- * @since  3.2
- */
-function message_get_popup_notifications($useridto = 0, $status = '',
-    $embeduserto = false, $embeduserfrom = false, $sort = 'DESC', $limit = 0, $offset = 0) {
-    global $DB;
 
-    if (!empty($status) && $status != MESSAGE_READ && $status != MESSAGE_UNREAD) {
-        throw new moodle_exception(sprintf('invalid parameter: status: must be "%s" or "%s"',
-            MESSAGE_READ, MESSAGE_UNREAD));
-    }
 
-    $sort = strtoupper($sort);
-    if ($sort != 'DESC' && $sort != 'ASC') {
-        throw new moodle_exception('invalid parameter: sort: must be "DESC" or "ASC"');
-    }
 
-    if (empty($useridto)) {
-        $useridto = $USER->id;
-    }
 
-    $params = array();
 
-    $buildtablesql = function($table, $prefix, $additionalfields, $messagestatus)
-            use ($status, $useridto, $embeduserto, $embeduserfrom) {
-
-        $joinsql = '';
-        $fields = "concat('$prefix', $prefix.id) as uniqueid, $prefix.id, $prefix.useridfrom, $prefix.useridto,
-            $prefix.subject, $prefix.fullmessage, $prefix.fullmessageformat,
-            $prefix.fullmessagehtml, $prefix.smallmessage, $prefix.notification, $prefix.contexturl,
-            $prefix.contexturlname, $prefix.timecreated, $prefix.timeuserfromdeleted, $prefix.timeusertodeleted,
-            $prefix.component, $prefix.eventtype, $additionalfields";
-        $where = " AND $prefix.useridto = :{$prefix}useridto";
-        $params = ["{$prefix}useridto" => $useridto];
-
-        if ($embeduserto) {
-            $embedprefix = "{$prefix}ut";
-            $fields .= ", " . get_all_user_name_fields(true, $embedprefix, '', 'userto');
-            $joinsql .= " LEFT JOIN {user} $embedprefix ON $embedprefix.id = $prefix.useridto";
-        }
-
-        if ($embeduserfrom) {
-            $embedprefix = "{$prefix}uf";
-            $fields .= ", " . get_all_user_name_fields(true, $embedprefix, '', 'userfrom');
-            $joinsql .= " LEFT JOIN {user} $embedprefix ON $embedprefix.id = $prefix.useridfrom";
-        }
-
-        if ($messagestatus == MESSAGE_READ) {
-            $isread = '1';
-        } else {
-            $isread = '0';
-        }
-
-        return array(
-            sprintf(
-                "SELECT %s
-                FROM %s %s %s
-                WHERE %s.notification = 1
-                AND %s.id IN (SELECT messageid FROM {message_popup} WHERE isread = %s)
-                %s",
-                $fields, $table, $prefix, $joinsql, $prefix, $prefix, $isread, $where
-            ),
-            $params
-        );
-    };
-
-    $sql = '';
-    switch ($status) {
-        case MESSAGE_READ:
-            list($sql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread', MESSAGE_READ);
-            $params = array_merge($params, $readparams);
-            break;
-        case MESSAGE_UNREAD:
-            list($sql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread', MESSAGE_UNREAD);
-            $params = array_merge($params, $unreadparams);
-            break;
-        default:
-            list($readsql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread', MESSAGE_READ);
-            list($unreadsql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread', MESSAGE_UNREAD);
-            $sql = sprintf("SELECT * FROM (%s UNION %s) f", $readsql, $unreadsql);
-            $params = array_merge($params, $readparams, $unreadparams);
-    }
-
-    $sql .= " ORDER BY timecreated $sort, timeread $sort, id $sort";
-
-    return array_values($DB->get_records_sql($sql, $params, $offset, $limit));
-}
-
-/**
- * Count the unread notifications for a user.
- *
- * @param  int      $useridto       the user id who received the notification
- * @return int                      count of the unread notifications
- * @since  3.2
- */
-function message_count_unread_popup_notifications($useridto = 0) {
-    global $USER, $DB;
-
-    if (empty($useridto)) {
-        $useridto = $USER->id;
-    }
-
-    return $DB->count_records_sql(
-        "SELECT count(id)
-        FROM {message}
-        WHERE id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
-        AND useridto = ?",
-        [$useridto]
-    );
-}
-
-/**
- * Requires the JS libraries for the toggle contact button.
- *
- * @return void
- */
-function message_togglecontact_requirejs() {
-    global $PAGE;
-
-    static $done = false;
-    if ($done) {
-        return;
-    }
-
-    $PAGE->requires->js_call_amd('core_message/toggle_contact_button', 'enhance', array('#toggle-contact-button'));
-    $done = true;
-}
-
-/**
- * Returns the attributes to place on a contact button.
- *
- * @param object $user User object.
- * @param bool $iscontact
- * @return void
- */
-function message_togglecontact_link_params($user, $iscontact = false) {
-    $params = array(
-        'data-userid' => $user->id,
-        'data-is-contact' => $iscontact,
-        'id' => 'toggle-contact-button',
-        'role' => 'button',
-        'class' => 'ajax-contact-button',
-    );
-
-    return $params;
-}
 
 /**
  * Determines if a user is permitted to send another user a private message.
@@ -2110,44 +1898,13 @@ function message_is_user_blocked($recipient, $sender = null) {
     return false;
 }
 
-function get_providers_preferences($providers, $userid) {
-    $preferences = new stdClass();
-
-    /// Get providers preferences
-    foreach ($providers as $provider) {
-        foreach (array('loggedin', 'loggedoff') as $state) {
-            $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $userid);
-            if ($linepref == ''){
-                continue;
-            }
-            $lineprefarray = explode(',', $linepref);
-            $preferences->{$provider->component.'_'.$provider->name.'_'.$state} = array();
-            foreach ($lineprefarray as $pref) {
-                $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$pref] = 1;
-            }
-        }
-    }
-
-    return $preferences;
-}
-
-function get_all_message_preferences($processors, $providers, $user) {
-    $preferences = get_providers_preferences($providers, $user->id);
-    $preferences->userdefaultemail = $user->email;//may be displayed by the email processor
-
-    /// For every processors put its options on the form (need to get function from processor's lib.php)
-    foreach ($processors as $processor) {
-        $processor->object->load_data($preferences, $user->id);
-    }
-
-    //load general messaging preferences
-    $preferences->blocknoncontacts = get_user_preferences('message_blocknoncontacts', '', $user->id);
-    $preferences->mailformat = $user->mailformat;
-    $preferences->mailcharset = get_user_preferences('mailcharset', '', $user->id);
-
-    return $preferences;
-}
-
+/**
+ * Handles displaying processor settings in a fragment.
+ *
+ * @param array $args
+ * @return bool|string
+ * @throws moodle_exception
+ */
 function message_output_fragment_processor_settings($args = []) {
     global $PAGE;
 
@@ -2167,7 +1924,7 @@ function message_output_fragment_processor_settings($args = []) {
     $providers = message_get_providers_for_user($userid);
     $processorwrapper = new stdClass();
     $processorwrapper->object = $processor;
-    $preferences = get_all_message_preferences([$processorwrapper], $providers, $user);
+    $preferences = \core_message\api::get_all_message_preferences([$processorwrapper], $providers, $user);
 
     $processoroutput = new \core_message\output\preferences\processor($processor, $preferences, $user, $type);
     $renderer = $PAGE->get_renderer('core', 'message');

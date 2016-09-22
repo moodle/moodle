@@ -462,4 +462,213 @@ class api {
 
         return true;
     }
+
+    /**
+     * Returns the count of unread conversations (collection of messages from a single user) for
+     * the given user.
+     *
+     * @param \stdClass $user the user who's conversations should be counted
+     * @return int the count of the user's unread conversations
+     */
+    public static function count_unread_conversations($user = null) {
+        global $USER, $DB;
+
+        if (empty($user)) {
+            $user = $USER;
+        }
+
+        return $DB->count_records_select(
+            'message',
+            'useridto = ? AND timeusertodeleted = 0 AND notification = 0',
+            [$user->id],
+            "COUNT(DISTINCT(useridfrom))");
+    }
+
+    /**
+     * Marks ALL messages being sent from $fromuserid to $touserid as read.
+     *
+     * Can be filtered by type.
+     *
+     * @param int $touserid the id of the message recipient
+     * @param int $fromuserid the id of the message sender
+     * @param string $type filter the messages by type, either MESSAGE_TYPE_NOTIFICATION, MESSAGE_TYPE_MESSAGE or '' for all.
+     * @return void
+     */
+    public static function mark_all_read_for_user($touserid, $fromuserid = 0, $type = '') {
+        global $DB;
+
+        $params = array();
+
+        if (!empty($touserid)) {
+            $params['useridto'] = $touserid;
+        }
+
+        if (!empty($fromuserid)) {
+            $params['useridfrom'] = $fromuserid;
+        }
+
+        if (!empty($type)) {
+            if (strtolower($type) == MESSAGE_TYPE_NOTIFICATION) {
+                $params['notification'] = 1;
+            } else if (strtolower($type) == MESSAGE_TYPE_MESSAGE) {
+                $params['notification'] = 0;
+            }
+        }
+
+        $sql = sprintf('SELECT m.* FROM {message} m WHERE m.%s = ?', implode('= ? AND m.', array_keys($params)));
+        $messages = $DB->get_recordset_sql($sql, array_values($params));
+
+        foreach ($messages as $message) {
+            message_mark_message_read($message, time());
+        }
+
+        $messages->close();
+    }
+
+    /**
+     * Get popup notifications for the specified users.
+     *
+     * @param int $useridto the user id who received the notification
+     * @param string $status MESSAGE_READ for retrieving read notifications, MESSAGE_UNREAD for unread, empty for both
+     * @param bool $embeduserto embed the to user details in the notification response
+     * @param bool $embeduserfrom embed the from user details in the notification response
+     * @param string $sort the column name to order by including optionally direction
+     * @param int $limit limit the number of result returned
+     * @param int $offset offset the result set by this amount
+     * @return array notification records
+     * @throws \moodle_exception
+     * @since 3.2
+     */
+    public static function get_popup_notifications($useridto = 0, $status = '', $embeduserto = false, $embeduserfrom = false,
+                                     $sort = 'DESC', $limit = 0, $offset = 0) {
+        global $DB, $USER;
+
+        if (!empty($status) && $status != MESSAGE_READ && $status != MESSAGE_UNREAD) {
+            throw new \moodle_exception(sprintf('invalid parameter: status: must be "%s" or "%s"',
+                MESSAGE_READ, MESSAGE_UNREAD));
+        }
+
+        $sort = strtoupper($sort);
+        if ($sort != 'DESC' && $sort != 'ASC') {
+            throw new \moodle_exception('invalid parameter: sort: must be "DESC" or "ASC"');
+        }
+
+        if (empty($useridto)) {
+            $useridto = $USER->id;
+        }
+
+        $params = array();
+
+        $buildtablesql = function($table, $prefix, $additionalfields, $messagestatus)
+        use ($status, $useridto, $embeduserto, $embeduserfrom) {
+
+            $joinsql = '';
+            $fields = "concat('$prefix', $prefix.id) as uniqueid, $prefix.id, $prefix.useridfrom, $prefix.useridto,
+            $prefix.subject, $prefix.fullmessage, $prefix.fullmessageformat,
+            $prefix.fullmessagehtml, $prefix.smallmessage, $prefix.notification, $prefix.contexturl,
+            $prefix.contexturlname, $prefix.timecreated, $prefix.timeuserfromdeleted, $prefix.timeusertodeleted,
+            $prefix.component, $prefix.eventtype, $additionalfields";
+            $where = " AND $prefix.useridto = :{$prefix}useridto";
+            $params = ["{$prefix}useridto" => $useridto];
+
+            if ($embeduserto) {
+                $embedprefix = "{$prefix}ut";
+                $fields .= ", " . get_all_user_name_fields(true, $embedprefix, '', 'userto');
+                $joinsql .= " LEFT JOIN {user} $embedprefix ON $embedprefix.id = $prefix.useridto";
+            }
+
+            if ($embeduserfrom) {
+                $embedprefix = "{$prefix}uf";
+                $fields .= ", " . get_all_user_name_fields(true, $embedprefix, '', 'userfrom');
+                $joinsql .= " LEFT JOIN {user} $embedprefix ON $embedprefix.id = $prefix.useridfrom";
+            }
+
+            if ($messagestatus == MESSAGE_READ) {
+                $isread = '1';
+            } else {
+                $isread = '0';
+            }
+
+            return array(
+                sprintf(
+                    "SELECT %s
+                FROM %s %s %s
+                WHERE %s.notification = 1
+                AND %s.id IN (SELECT messageid FROM {message_popup} WHERE isread = %s)
+                %s",
+                    $fields, $table, $prefix, $joinsql, $prefix, $prefix, $isread, $where
+                ),
+                $params
+            );
+        };
+
+        switch ($status) {
+            case MESSAGE_READ:
+                list($sql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread', MESSAGE_READ);
+                $params = array_merge($params, $readparams);
+                break;
+            case MESSAGE_UNREAD:
+                list($sql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread', MESSAGE_UNREAD);
+                $params = array_merge($params, $unreadparams);
+                break;
+            default:
+                list($readsql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread', MESSAGE_READ);
+                list($unreadsql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread', MESSAGE_UNREAD);
+                $sql = sprintf("SELECT * FROM (%s UNION %s) f", $readsql, $unreadsql);
+                $params = array_merge($params, $readparams, $unreadparams);
+        }
+
+        $sql .= " ORDER BY timecreated $sort, timeread $sort, id $sort";
+
+        return array_values($DB->get_records_sql($sql, $params, $offset, $limit));
+    }
+
+    /**
+     * Count the unread notifications for a user.
+     *
+     * @param int $useridto the user id who received the notification
+     * @return int count of the unread notifications
+     * @since 3.2
+     */
+    public static function count_unread_popup_notifications($useridto = 0) {
+        global $USER, $DB;
+
+        if (empty($useridto)) {
+            $useridto = $USER->id;
+        }
+
+        return $DB->count_records_sql(
+            "SELECT count(id)
+        FROM {message}
+        WHERE id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
+        AND useridto = ?",
+            [$useridto]
+        );
+    }
+
+    /**
+     * Returns message preferences.
+     *
+     * @param array $processors
+     * @param array $providers
+     * @param \stdClass $user
+     * @return \stdClass
+     * @since 3.2
+     */
+    public static function get_all_message_preferences($processors, $providers, $user) {
+        $preferences = helper::get_providers_preferences($providers, $user->id);
+        $preferences->userdefaultemail = $user->email; // May be displayed by the email processor.
+
+        // For every processors put its options on the form (need to get function from processor's lib.php).
+        foreach ($processors as $processor) {
+            $processor->object->load_data($preferences, $user->id);
+        }
+
+        // Load general messaging preferences.
+        $preferences->blocknoncontacts = get_user_preferences('message_blocknoncontacts', '', $user->id);
+        $preferences->mailformat = $user->mailformat;
+        $preferences->mailcharset = get_user_preferences('mailcharset', '', $user->id);
+
+        return $preferences;
+    }
 }

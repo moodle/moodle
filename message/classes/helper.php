@@ -179,4 +179,69 @@ class helper {
 
         return $lastaccess >= $time;
     }
+
+    /**
+     * Get providers preferences.
+     *
+     * @param array $providers
+     * @param int $userid
+     * @return \stdClass
+     */
+    public static function get_providers_preferences($providers, $userid) {
+        $preferences = new \stdClass();
+
+        // Get providers preferences.
+        foreach ($providers as $provider) {
+            foreach (array('loggedin', 'loggedoff') as $state) {
+                $linepref = get_user_preferences('message_provider_' . $provider->component . '_' . $provider->name
+                    . '_' . $state, '', $userid);
+                if ($linepref == '') {
+                    continue;
+                }
+                $lineprefarray = explode(',', $linepref);
+                $preferences->{$provider->component.'_'.$provider->name.'_'.$state} = array();
+                foreach ($lineprefarray as $pref) {
+                    $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$pref] = 1;
+                }
+            }
+        }
+
+        return $preferences;
+    }
+
+    /**
+     * Requires the JS libraries for the toggle contact button.
+     *
+     * @return void
+     */
+    public static function togglecontact_requirejs() {
+        global $PAGE;
+
+        static $done = false;
+        if ($done) {
+            return;
+        }
+
+        $PAGE->requires->js_call_amd('core_message/toggle_contact_button', 'enhance', array('#toggle-contact-button'));
+        $done = true;
+    }
+
+    /**
+     * Returns the attributes to place on a contact button.
+     *
+     * @param object $user User object.
+     * @param bool $iscontact
+     * @return array
+     */
+    public static function togglecontact_link_params($user, $iscontact = false) {
+        $params = array(
+            'data-userid' => $user->id,
+            'data-is-contact' => $iscontact,
+            'id' => 'toggle-contact-button',
+            'role' => 'button',
+            'class' => 'ajax-contact-button',
+        );
+
+        return $params;
+    }
 }
