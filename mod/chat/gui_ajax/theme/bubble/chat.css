@@ -24,7 +24,7 @@
 /*rtl:ignore*/
 .chat-message .right,
 .chat-message .left {
-    direction:ltr;
+    direction: ltr;
 }
 
 #chat-input-area,
