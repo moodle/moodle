@@ -112,7 +112,7 @@ class MoodleQuickForm_text extends HTML_QuickForm_text implements templatable {
      *
      * @return string
      */
-    function toHtml() {
+    public function toHtml() {
 
         // Add the class at the last minute.
         if ($this->get_force_ltr()) {

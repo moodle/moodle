@@ -4411,7 +4411,7 @@ class admin_settings_country_select extends admin_setting_configselect {
     protected $includeall;
     public function __construct($name, $visiblename, $description, $defaultsetting, $includeall=false) {
         $this->includeall = $includeall;
-        parent::__construct($name, $visiblename, $description, $defaultsetting, NULL);
+        parent::__construct($name, $visiblename, $description, $defaultsetting, null);
     }
 
     /**
@@ -4691,7 +4691,7 @@ class admin_setting_question_behaviour extends admin_setting_configselect {
      * @param string $default default.
      */
     public function __construct($name, $visiblename, $description, $default) {
-        parent::__construct($name, $visiblename, $description, $default, NULL);
+        parent::__construct($name, $visiblename, $description, $default, null);
     }
 
     /**
@@ -9086,7 +9086,7 @@ class admin_setting_configcolourpicker extends admin_setting {
     public function output_html($data, $query = '') {
         global $PAGE, $OUTPUT;
 
-        $icon = new pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', ['class'=>'loadingicon']);
+        $icon = new pix_icon('i/loading', get_string('loading', 'admin'), 'moodle', ['class' => 'loadingicon']);
         $context = (object) [
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),

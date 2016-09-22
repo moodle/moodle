@@ -70,7 +70,10 @@ class behat_action_menu extends behat_base {
             throw new DriverException('Action menu steps are not available with Javascript disabled');
         }
         // Gets the node based on the requested selector type and locator.
-        $node = $this->get_node_in_container("link", $linkstring, "css_element", ".moodle-actionmenu [role=menu][aria-hidden=false]");
+        $node = $this->get_node_in_container("link",
+            $linkstring,
+            "css_element",
+            ".moodle-actionmenu [role=menu][aria-hidden=false]");
         $this->ensure_node_is_visible($node);
         $node->click();
     }

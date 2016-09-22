@@ -782,7 +782,7 @@ class theme_config {
                 }
                 $url->set_slashargument($slashargs, 'noparam', true);
             } else {
-                $params = array('theme' => $this->name,'rev' => $rev, 'type' => $filename);
+                $params = array('theme' => $this->name, 'rev' => $rev, 'type' => $filename);
                 if (!$svg) {
                     // We add an SVG param so that we know not to serve SVG images.
                     // We do this because all modern browsers support SVG and this param will one day be removed.

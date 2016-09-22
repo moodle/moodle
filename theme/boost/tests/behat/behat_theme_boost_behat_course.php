@@ -101,7 +101,8 @@ class behat_theme_boost_behat_course extends behat_course {
             // We are on the frontpage.
             if ($section) {
                 // Section 1 represents the contents on the frontpage.
-                $sectionxpath = "//body[@id='page-site-index']/descendant::div[contains(concat(' ',normalize-space(@class),' '),' sitetopic ')]";
+                $sectionxpath = "//body[@id='page-site-index']" .
+                    "/descendant::div[contains(concat(' ',normalize-space(@class),' '),' sitetopic ')]";
             } else {
                 // Section 0 represents "Site main menu" block.
                 $sectionxpath = "//*[contains(concat(' ',normalize-space(@class),' '),' block_site_main_menu ')]";
@@ -116,7 +117,8 @@ class behat_theme_boost_behat_course extends behat_course {
         if ($this->running_javascript()) {
 
             // Clicks add activity or resource section link.
-            $sectionxpath = $sectionxpath . "/descendant::div[contains(concat(' ', normalize-space(@class) , ' '), ' section-modchooser ')]/span/a";
+            $sectionxpath = $sectionxpath . "/descendant::div" .
+                "[contains(concat(' ', normalize-space(@class) , ' '), ' section-modchooser ')]/span/a";
             $sectionnode = $this->find('xpath', $sectionxpath);
             $sectionnode->click();
 
@@ -132,7 +134,8 @@ class behat_theme_boost_behat_course extends behat_course {
             // Without Javascript.
 
             // Selecting the option from the select box which contains the option.
-            $selectxpath = $sectionxpath . "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' section_add_menus ')]" .
+            $selectxpath = $sectionxpath . "/descendant::div" .
+                "[contains(concat(' ', normalize-space(@class), ' '), ' section_add_menus ')]" .
                 "/descendant::select[option[normalize-space(.)=$activityliteral]]";
             $selectnode = $this->find('xpath', $selectxpath);
             $selectnode->selectOption($activity);
@@ -228,7 +231,8 @@ class behat_theme_boost_behat_course extends behat_course {
     }
 
     protected function user_clicks_on_management_listing_action($listingtype, $listingnode, $action) {
-        $actionsnode = $listingnode->find('xpath', "//*[contains(concat(' ', normalize-space(@class), ' '), '{$listingtype}-item-actions')]");
+        $actionsnode = $listingnode->find('xpath', "//*" .
+            "[contains(concat(' ', normalize-space(@class), ' '), '{$listingtype}-item-actions')]");
         if (!$actionsnode) {
             throw new ExpectationException("Could not find the actions for $listingtype", $this->getSession());
         }

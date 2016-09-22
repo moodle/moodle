@@ -411,7 +411,7 @@ class grade_edit_tree {
             $tpldata = [
                 'id' => $item->id,
                 'itemname' => $itemname,
-                'value' => grade_edit_tree::format_number($item->aggregationcoef2 * 100.0),
+                'value' => self::format_number($item->aggregationcoef2 * 100.0),
                 'checked' => $item->weightoverride,
                 'disabled' => !$item->weightoverride
             ];

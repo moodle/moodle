@@ -49,7 +49,7 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
     /** @var MoodleQuickForm */
     protected $_mform = null;
 
-    var $_renderedfromtemplate = false;
+    protected $_renderedfromtemplate = false;
 
     /**
      * constructor
@@ -198,16 +198,16 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
         return $context;
     }
 
-     /**
-    * Accepts a renderer
-    *
-    * @param object     An HTML_QuickForm_Renderer object
-    * @param bool       Whether a group is required
-    * @param string     An error message associated with a group
-    * @access public
-    * @return void
-    */
-    function accept(&$renderer, $required = false, $error = null) {
+    /**
+     * Accepts a renderer
+     *
+     * @param object     An HTML_QuickForm_Renderer object
+     * @param bool       Whether a group is required
+     * @param string     An error message associated with a group
+     * @access public
+     * @return void
+     */
+    public function accept(&$renderer, $required = false, $error = null) {
         $this->_createElementsIfNotExist();
         $renderer->startGroup($this, $required, $error);
         if (!$this->_renderedfromtemplate) {
@@ -215,11 +215,11 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
             $name = $this->getName();
             foreach (array_keys($this->_elements) as $key) {
                 $element =& $this->_elements[$key];
-
+                $elementname = '';
                 if ($this->_appendName) {
-                    $elementName = $element->getName();
-                    if (isset($elementName)) {
-                        $element->setName($name . '['. (strlen($elementName)? $elementName: $key) .']');
+                    $elementname = $element->getName();
+                    if (isset($elementname)) {
+                        $element->setName($name . '['. (strlen($elementname) ? $elementname : $key) .']');
                     } else {
                         $element->setName($name);
                     }
@@ -229,9 +229,9 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
 
                 $element->accept($renderer, $required);
 
-                // restore the element's name
+                // Restore the element's name.
                 if ($this->_appendName) {
-                    $element->setName($elementName);
+                    $element->setName($elementname);
                 }
             }
         }

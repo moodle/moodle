@@ -97,7 +97,6 @@ class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
      */
     function toHtml(){
 
-
         $id     = $this->_attributes['id'];
         $elname = $this->_attributes['name'];
 
@@ -121,23 +120,23 @@ class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
             return $str;
         }
 
-        // print out file picker
+        // Print out file picker.
         $str .= $this->getFilePickerHTML();
 
         return $str;
     }
 
-    function getFilePickerHTML() {
+    public function getFilePickerHTML() {
         global $PAGE, $OUTPUT;
 
         $str = '';
-        $client_id = uniqid();
+        $clientid = uniqid();
 
         $args = new stdClass();
         $args->accepted_types = '*';
         $args->return_types = FILE_EXTERNAL;
         $args->context = $PAGE->context;
-        $args->client_id = $client_id;
+        $args->client_id = $clientid;
         $args->env = 'url';
         $fp = new file_picker($args);
         $options = $fp->options;
@@ -145,7 +144,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text implements templatable {
         if (count($options->repositories) > 0) {
             $straddlink = get_string('choosealink', 'repository');
             $str .= <<<EOD
-<button id="filepicker-button-js-{$client_id}" class="visibleifjs btn btn-secondary">
+<button id="filepicker-button-js-{$clientid}" class="visibleifjs btn btn-secondary">
 $straddlink
 </button>
 EOD;

@@ -18,9 +18,9 @@ namespace theme_boost\output\core;
 
 use plugin_renderer_base;
 
-require_once($CFG->dirroot . '/files/renderer.php');
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/files/renderer.php');
 
 /**
  * Rendering of files viewer related widgets.
@@ -120,7 +120,8 @@ class files_renderer extends \core_files_renderer {
     }
 
     /**
-     * FilePicker JS template for popup dialogue window asking for action when file with the same name already exists (multiple-file version).
+     * FilePicker JS template for popup dialogue window asking for action when file with the same name already exists
+     * (multiple-file version).
      *
      * @return string
      */
