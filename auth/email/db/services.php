@@ -34,5 +34,13 @@ $functions = array(
         'ajax'          => true,
         'loginrequired' => false,
     ),
+    'auth_email_signup_user' => array(
+        'classname'   => 'auth_email_external',
+        'methodname'  => 'signup_user',
+        'description' => 'Adds a new user (pendingto be confirmed) in the site.',
+        'type'        => 'write',
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
 );
 
