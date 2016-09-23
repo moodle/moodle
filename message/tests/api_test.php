@@ -331,4 +331,26 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals(\core_message\api::count_unread_popup_notifications($recipient1->id), 3);
         $this->assertEquals(\core_message\api::count_unread_popup_notifications($recipient2->id), 5);
     }
+
+    /**
+     * Test count_blocked_users.
+     *
+     */
+    public function test_message_count_blocked_users() {
+        // Set this user as the admin.
+        $this->setAdminUser();
+
+        // Create users to add to the admin's contact list.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $this->assertEquals(0, \core_message\api::count_blocked_users());
+
+        // Add 1 blocked and 1 normal contact to admin's contact list.
+        message_add_contact($user1->id);
+        message_add_contact($user2->id, 1);
+
+        $this->assertEquals(0, \core_message\api::count_blocked_users($user2));
+        $this->assertEquals(1, \core_message\api::count_blocked_users());
+    }
 }

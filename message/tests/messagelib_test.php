@@ -245,30 +245,6 @@ class core_message_messagelib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test message_count_messages.
-     */
-    public function test_message_count_messages() {
-        global $DB;
-
-        // Create users to send and receive message.
-        $userfrom = $this->getDataGenerator()->create_user();
-        $userto = $this->getDataGenerator()->create_user();
-
-        message_post_message($userfrom, $userto, 'Message 1', FORMAT_PLAIN);
-        message_post_message($userfrom, $userto, 'Message 2', FORMAT_PLAIN);
-        message_post_message($userto, $userfrom, 'Message 3', FORMAT_PLAIN);
-
-        // Return 0 when no message.
-        $messages = array();
-        $this->assertEquals(0, message_count_messages($messages, 'Test', 'Test'));
-
-        // Check number of messages from userfrom and userto.
-        $messages = $this->messagesink->get_messages();
-        $this->assertEquals(2, message_count_messages($messages, 'useridfrom', $userfrom->id));
-        $this->assertEquals(1, message_count_messages($messages, 'useridfrom', $userto->id));
-    }
-
-    /**
      * Test message_count_unread_messages.
      */
     public function test_message_count_unread_messages() {
@@ -287,27 +263,6 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->assertEquals(1, message_count_unread_messages($userto, $userfrom1));
     }
 
-    /**
-     * Test message_count_blocked_users.
-     *
-     */
-    public function test_message_count_blocked_users() {
-        // Set this user as the admin.
-        $this->setAdminUser();
-
-        // Create users to add to the admin's contact list.
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
-
-        $this->assertEquals(0, message_count_blocked_users());
-
-        // Add 1 blocked and 1 normal contact to admin's contact list.
-        message_add_contact($user1->id);
-        message_add_contact($user2->id, 1);
-
-        $this->assertEquals(0, message_count_blocked_users($user2));
-        $this->assertEquals(1, message_count_blocked_users());
-    }
 
     /**
      * Test message_add_contact.
@@ -329,7 +284,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->assertNotEmpty(message_get_contact($user1->id));
         $this->assertNotEmpty(message_get_contact($user2->id));
         $this->assertEquals(false, message_get_contact($user3->id));
-        $this->assertEquals(1, message_count_blocked_users());
+        $this->assertEquals(1, \core_message\api::count_blocked_users());
     }
 
     /**
@@ -366,11 +321,11 @@ class core_message_messagelib_testcase extends advanced_testcase {
         message_add_contact($user1->id);
         message_add_contact($user2->id);
 
-        $this->assertEquals(0, message_count_blocked_users());
+        $this->assertEquals(0, \core_message\api::count_blocked_users());
 
         // Block 1 user.
         message_block_contact($user2->id);
-        $this->assertEquals(1, message_count_blocked_users());
+        $this->assertEquals(1, \core_message\api::count_blocked_users());
 
     }
 
@@ -389,11 +344,11 @@ class core_message_messagelib_testcase extends advanced_testcase {
         message_add_contact($user1->id);
         message_add_contact($user2->id, 1); // Add blocked contact.
 
-        $this->assertEquals(1, message_count_blocked_users());
+        $this->assertEquals(1, \core_message\api::count_blocked_users());
 
         // Unblock user.
         message_unblock_contact($user2->id);
-        $this->assertEquals(0, message_count_blocked_users());
+        $this->assertEquals(0, \core_message\api::count_blocked_users());
     }
 
     /**
@@ -415,39 +370,6 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $this->assertCount(2, message_search_users(0, 'Test'));
         $this->assertCount(1, message_search_users(0, 'user1'));
         $this->assertCount(2, message_search_users(0, 'user'));
-    }
-
-    /**
-     * Test message_search.
-     */
-    public function test_message_search() {
-        global $USER;
-
-        // Set this user as the admin.
-        $this->setAdminUser();
-
-        // Create a user to add to the admin's contact list.
-        $user1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'user1'));
-        $user2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'user2'));
-
-        // Send few messages, real (read).
-        message_post_message($user1, $USER, 'Message 1', FORMAT_PLAIN);
-        message_post_message($USER, $user1, 'Message 2', FORMAT_PLAIN);
-        message_post_message($USER, $user2, 'Message 3', FORMAT_PLAIN);
-
-        $this->assertCount(2, message_search(array('Message'), true, false));
-        $this->assertCount(3, message_search(array('Message'), true, true));
-
-        // Send fake message (not-read).
-        $this->send_fake_message($USER, $user1, 'Message 4');
-        $this->send_fake_message($user1, $USER, 'Message 5');
-        $this->assertCount(3, message_search(array('Message'), true, false));
-        $this->assertCount(5, message_search(array('Message'), true, true));
-
-        // If courseid given then should be 0.
-        $this->assertEquals(false, message_search(array('Message'), true, true, ''));
-        $this->assertEquals(false, message_search(array('Message'), true, true, 2));
-        $this->assertCount(5, message_search(array('Message'), true, true, SITEID));
     }
 
     /**
@@ -760,191 +682,4 @@ class core_message_messagelib_testcase extends advanced_testcase {
             }
         }
     }
-
-    /**
-     * Test message_get_recent_notifications.
-     */
-    public function test_message_get_recent_notifications() {
-        global $DB, $USER;
-
-        // Set this user as the admin.
-        $this->setAdminUser();
-
-        // Create a user to send messages from.
-        $user1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'user1'));
-
-        // Add two messages - will mark them as notifications later.
-        $m1 = message_post_message($user1, $USER, 'Message 1', FORMAT_PLAIN);
-        $m2 = message_post_message($user1, $USER, 'Message 2', FORMAT_PLAIN);
-
-        // Mark the second message as a notification.
-        $updatemessage = new stdClass();
-        $updatemessage->id = $m2;
-        $updatemessage->notification = 1;
-        $DB->update_record('message_read', $updatemessage);
-
-        // Mark the first message as a notification and change the timecreated to 0.
-        $updatemessage->id = $m1;
-        $updatemessage->notification = 1;
-        $updatemessage->timecreated = 0;
-        $DB->update_record('message_read', $updatemessage);
-
-        $notifications = message_get_recent_notifications($USER);
-
-        // Get the messages.
-        $firstmessage = array_shift($notifications);
-        $secondmessage = array_shift($notifications);
-
-        // Confirm that we have received the notifications with the maximum timecreated, rather than the max id.
-        $this->assertEquals('Message 2', $firstmessage->smallmessage);
-        $this->assertEquals('Message 1', $secondmessage->smallmessage);
-    }
-
-    /**
-     * Test that message_can_post_message returns false if the sender does not have the
-     * moode/site:sendmessage capability.
-     */
-    public function test_message_can_post_message_returns_false_without_capability() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-        $context = context_system::instance();
-        $roleid = $this->getDataGenerator()->create_role();
-        $this->getDataGenerator()->role_assign($roleid, $sender->id, $context->id);
-
-        assign_capability('moodle/site:sendmessage', CAP_PROHIBIT, $roleid, $context);
-
-        $this->assertFalse(message_can_post_message($recipient, $sender));
-    }
-
-    /**
-     * Test that message_can_post_message returns false if the receiver only accepts
-     * messages from contacts and the sender isn't a contact.
-     */
-    public function test_message_can_post_message_returns_false_non_contact_blocked() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        set_user_preference('message_blocknoncontacts', true, $recipient);
-
-        $this->assertFalse(message_can_post_message($recipient, $sender));
-    }
-
-    /**
-     * Test that message_can_post_message returns false if the receiver has blocked the
-     * sender from messaging them.
-     */
-    public function test_message_can_post_message_returns_false_if_blocked() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->setUser($recipient);
-        message_block_contact($sender->id);
-
-        $this->assertFalse(message_can_post_message($recipient, $sender));
-    }
-
-    /**
-     * Test that message_can_post_message returns false if the receiver has blocked the
-     * sender from messaging them.
-     */
-    public function test_message_can_post_message_returns_true() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->assertTrue(message_can_post_message($recipient, $sender));
-    }
-
-    /**
-     * Test that message_is_user_non_contact_blocked returns false if the recipient allows
-     * messages from non-contacts.
-     */
-    public function test_message_is_user_non_contact_blocked_false_without_preference() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        set_user_preference('message_blocknoncontacts', false, $recipient);
-
-        $this->assertFalse(message_is_user_non_contact_blocked($recipient, $sender));
-    }
-
-    /**
-     * Test that message_is_user_non_contact_blocked returns true if the recipient doesn't
-     * allow messages from non-contacts and the sender isn't a contact.
-     */
-    public function test_message_is_user_non_contact_blocked_true_with_preference() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        set_user_preference('message_blocknoncontacts', true, $recipient);
-
-        $this->assertTrue(message_is_user_non_contact_blocked($recipient, $sender));
-    }
-
-    /**
-     * Test that message_is_user_non_contact_blocked returns false if the recipient doesn't
-     * allow messages from non-contacts but the sender is a contact.
-     */
-    public function test_message_is_user_non_contact_blocked_false_with_if_contact() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->setUser($recipient);
-        set_user_preference('message_blocknoncontacts', true, $recipient);
-        message_add_contact($sender->id);
-
-        $this->assertFalse(message_is_user_non_contact_blocked($recipient, $sender));
-    }
-
-    /**
-     * Test that message_is_user_blocked returns false if the sender is not a contact of
-     * the recipient.
-     */
-    public function test_message_is_user_blocked_false_no_contact() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->assertFalse(message_is_user_blocked($recipient, $sender));
-    }
-
-    /**
-     * Test that message_is_user_blocked returns false if the sender is a contact that is
-     * blocked by the recipient but has the moodle/site:readallmessages capability.
-     */
-    public function test_message_is_user_blocked_false_if_readallmessages() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->setUser($recipient);
-        message_block_contact($sender->id);
-
-        $context = context_system::instance();
-        $roleid = $this->getDataGenerator()->create_role();
-        $this->getDataGenerator()->role_assign($roleid, $sender->id, $context->id);
-
-        assign_capability('moodle/site:readallmessages', CAP_ALLOW, $roleid, $context);
-
-        $this->assertFalse(message_is_user_blocked($recipient, $sender));
-    }
-
-    /**
-     * Test that message_is_user_blocked returns true if the sender is a contact that is
-     * blocked by the recipient and does not have the moodle/site:readallmessages capability.
-     */
-    public function test_message_is_user_blocked_true_if_blocked() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->setUser($recipient);
-        message_block_contact($sender->id);
-
-        $context = context_system::instance();
-        $roleid = $this->getDataGenerator()->create_role();
-        $this->getDataGenerator()->role_assign($roleid, $sender->id, $context->id);
-
-        assign_capability('moodle/site:readallmessages', CAP_PROHIBIT, $roleid, $context);
-
-        $this->assertTrue(message_is_user_blocked($recipient, $sender));
-    }
-
-
 }

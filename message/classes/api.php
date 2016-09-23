@@ -673,4 +673,122 @@ class api {
 
         return $preferences;
     }
+
+    /**
+     * Count the number of users blocked by a user.
+     *
+     * @param \stdClass $user The user object
+     * @return int the number of blocked users
+     */
+    public static function count_blocked_users($user = null) {
+        global $USER, $DB;
+
+        if (empty($user)) {
+            $user = $USER;
+        }
+
+        $sql = "SELECT count(mc.id)
+                  FROM {message_contacts} mc
+                 WHERE mc.userid = :userid AND mc.blocked = 1";
+        return $DB->count_records_sql($sql, array('userid' => $user->id));
+    }
+
+    /**
+     * Determines if a user is permitted to send another user a private message.
+     * If no sender is provided then it defaults to the logged in user.
+     *
+     * @param \stdClass $recipient The user object.
+     * @param \stdClass|null $sender The user object.
+     * @return bool true if user is permitted, false otherwise.
+     */
+    public static function can_post_message($recipient, $sender = null) {
+        global $USER;
+
+        if (is_null($sender)) {
+            // The message is from the logged in user, unless otherwise specified.
+            $sender = $USER;
+        }
+
+        if (!has_capability('moodle/site:sendmessage', \context_system::instance(), $sender)) {
+            return false;
+        }
+
+        // The recipient blocks messages from non-contacts and the
+        // sender isn't a contact.
+        if (self::is_user_non_contact_blocked($recipient, $sender)) {
+            return false;
+        }
+
+        // The recipient has specifically blocked this sender.
+        if (self::is_user_blocked($recipient, $sender)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the recipient is allowing messages from users that aren't a
+     * contact. If not then it checks to make sure the sender is in the
+     * recipient's contacts.
+     *
+     * @param \stdClass $recipient The user object.
+     * @param \stdClass|null $sender The user object.
+     * @return bool true if $sender is blocked, false otherwise.
+     */
+    public static function is_user_non_contact_blocked($recipient, $sender = null) {
+        global $USER, $DB;
+
+        if (is_null($sender)) {
+            // The message is from the logged in user, unless otherwise specified.
+            $sender = $USER;
+        }
+
+        $blockednoncontacts = get_user_preferences('message_blocknoncontacts', '', $recipient->id);
+        if (!empty($blockednoncontacts)) {
+            // Confirm the sender is a contact of the recipient.
+            $exists = $DB->record_exists('message_contacts', array('userid' => $recipient->id, 'contactid' => $sender->id));
+            if ($exists) {
+                // All good, the recipient is a contact of the sender.
+                return false;
+            } else {
+                // Oh no, the recipient is not a contact. Looks like we can't send the message.
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the recipient has specifically blocked the sending user.
+     *
+     * Note: This function will always return false if the sender has the
+     * readallmessages capability at the system context level.
+     *
+     * @param object $recipient User object.
+     * @param object $sender User object.
+     * @return bool true if $sender is blocked, false otherwise.
+     */
+    public static function is_user_blocked($recipient, $sender = null) {
+        global $USER, $DB;
+
+        if (is_null($sender)) {
+            // The message is from the logged in user, unless otherwise specified.
+            $sender = $USER;
+        }
+
+        $systemcontext = \context_system::instance();
+        if (has_capability('moodle/site:readallmessages', $systemcontext, $sender)) {
+            return false;
+        }
+
+        if ($contact = $DB->get_record('message_contacts', array('userid' => $recipient->id, 'contactid' => $sender->id))) {
+            if ($contact->blocked) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
