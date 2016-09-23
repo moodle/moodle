@@ -436,6 +436,18 @@ class helper {
     }
 
     /**
+     * Returns the icon of the tool.
+     *
+     * @param stdClass $tool The lti tool
+     * @return moodle_url A url to the icon of the tool
+     * @since Moodle 3.2
+     */
+    public static function get_icon($tool) {
+        global $OUTPUT;
+        return $OUTPUT->favicon();
+    }
+
+    /**
      * Returns the url to the cartridge representing the tool.
      *
      * If you have slash arguments enabled, this will be a nice url ending in cartridge.xml.
@@ -455,6 +467,34 @@ class helper {
             $url = new \moodle_url('/enrol/lti/cartridge.php/' . $id . '/' . $token . '/cartridge.xml');
         } else {
             $url = new \moodle_url('/enrol/lti/cartridge.php',
+                    array(
+                        'id' => $id,
+                        'token' => $token
+                    )
+                );
+        }
+        return $url;
+    }
+
+    /**
+     * Returns the url to the tool proxy registration url.
+     *
+     * If you have slash arguments enabled, this will be a nice url ending in cartridge.xml.
+     * If not it will be a php page with some parameters passed.
+     *
+     * @param stdClass $tool The lti tool
+     * @return string The url to the cartridge representing the tool
+     */
+    public static function get_proxy_url($tool) {
+        global $CFG;
+        $url = null;
+
+        $id = $tool->id;
+        $token = self::generate_tool_token($tool->id);
+        if ($CFG->slasharguments) {
+            $url = new \moodle_url('/enrol/lti/proxy.php/' . $id . '/' . $token . '/');
+        } else {
+            $url = new \moodle_url('/enrol/lti/proxy.php',
                     array(
                         'id' => $id,
                         'token' => $token
@@ -500,7 +540,7 @@ class helper {
      * @since Moodle 3.2
      */
     protected static function get_cartridge_parameters($toolid) {
-        global $OUTPUT, $PAGE, $SITE;
+        global $PAGE, $SITE;
         $PAGE->set_context(\context_system::instance());
 
         // Get the tool.
@@ -510,8 +550,7 @@ class helper {
         $title = self::get_name($tool);
         $launchurl = self::get_launch_url($toolid);
         $launchurl = $launchurl->out();
-        $icon = $OUTPUT->favicon();
-        $icon = $icon->out();
+        $icon = self::get_icon($tool);
         $securelaunchurl = null;
         $secureicon = null;
         $vendorurl = new \moodle_url('/');

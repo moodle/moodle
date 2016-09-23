@@ -24,6 +24,7 @@
 
 $string['allowframeembedding'] = 'Note: It is recommended that the site administration setting \'Allow frame embedding\' is enabled, so that tools are displayed within a frame rather than in a new window.';
 $string['authltimustbeenabled'] = 'Note: This plugin requires the LTI authentication plugin to be enabled too.';
+$string['cartridgeurl'] = 'Cartridge URL';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can access until this date only.';
 $string['enrolenddateerror'] = 'Enrolment end date cannot be earlier than start date';
@@ -54,6 +55,8 @@ $string['lti:unenrol'] = 'Unenrol users from the course';
 $string['opentool'] = 'Open tool';
 $string['pluginname'] = 'Publish as LTI tool';
 $string['pluginname_desc'] = 'The \'Publish as LTI tool\' plugin, together with the LTI authentication plugin, allows remote users to access selected courses and activities. In other words, Moodle functions as an LTI tool provider.';
+$string['proxyurl'] = 'Proxy URL';
+$string['registration'] = 'Published tool registration';
 $string['remotesystem'] = 'Remote system';
 $string['requirecompletion'] = 'Require course or activity completion prior to grade synchronisation';
 $string['roleinstructor'] = 'Role for teacher';
