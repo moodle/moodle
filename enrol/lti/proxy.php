@@ -33,15 +33,7 @@ if (count($arguments) == 2) {
 }
 
 $toolid = optional_param('id', $toolid, PARAM_INT);
-$token = optional_param('token', $token, PARAM_BASE64);
-
-$messagetype = optional_param('lti_message_type', '', PARAM_TEXT);
-$userid = optional_param('user_id', null, PARAM_INT);
-$roles = optional_param('roles', null, PARAM_TEXT);
-$tcprofileurl = optional_param('tc_profile_url', '', PARAM_URL);
-$regkey = optional_param('reg_key', '', PARAM_URL);
-$regpassword = optional_param('reg_password', '', PARAM_URL);
-$launchpresentationreturnurl = optional_param('launch_presentation_return_url', '', PARAM_URL);
+$token = optional_param('token', $token, PARAM_ALPHANUM);
 
 $PAGE->set_context(context_system::instance());
 $url = new moodle_url('/enrol/lti/tp.php');
@@ -53,6 +45,24 @@ $PAGE->set_title(get_string('registration', 'enrol_lti'));
 // If we do not compare with a shared secret, someone could very easily
 // guess an id for the enrolment.
 \enrol_lti\helper::verify_tool_token($toolid, $token);
+$tool = \enrol_lti\helper::get_lti_tool($toolid);
+
+if (!is_enabled_auth('lti')) {
+    print_error('pluginnotenabled', 'auth', '', get_string('pluginname', 'auth_lti'));
+    exit();
+}
+
+// Check if the enrolment plugin is disabled.
+if (!enrol_is_enabled('lti')) {
+    print_error('enrolisdisabled', 'enrol_lti');
+    exit();
+}
+
+// Check if the enrolment instance is disabled.
+if ($tool->status != ENROL_INSTANCE_ENABLED) {
+    print_error('enrolisdisabled', 'enrol_lti');
+    exit();
+}
 
 $toolprovider = new \enrol_lti\tool_provider($toolid);
 $toolprovider->handleRequest();

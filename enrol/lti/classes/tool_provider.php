@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 use IMSGlobal\LTI\Profile;
 use IMSGlobal\LTI\ToolProvider;
 use IMSGlobal\LTI\ToolProvider\DataConnector;
+require_once($CFG->dirroot . '/user/lib.php');
 
 /**
  * Extends the IMS Tool provider library for the LTI enrolment.
@@ -44,6 +45,7 @@ class tool_provider extends ToolProvider\ToolProvider {
             return substr($url, strlen($this->baseUrl));
         }
         # TODO Oh no this will break!!
+        // TODO see if we can override something so it can serve icons and urls etc that are not from base Url
         print_object($icon);
         print_object($this->baseUrl);
         print_object("no good!!");
@@ -58,6 +60,7 @@ class tool_provider extends ToolProvider\ToolProvider {
 
         $this->debugMode = $CFG->debugdeveloper;
         $tool = \enrol_lti\helper::get_lti_tool($toolid);
+        $this->tool = $tool;
 
         $dataconnector = new data_connector();
         parent::__construct($dataconnector);
@@ -145,6 +148,7 @@ class tool_provider extends ToolProvider\ToolProvider {
         $this->setParameterConstraint('roles', TRUE, NULL, array('basic-lti-launch-request'));
 
     }
+
     function onError() {
         error_log("onError()");
         error_log($this->reason);
@@ -156,10 +160,174 @@ class tool_provider extends ToolProvider\ToolProvider {
         $this->errorOutput = ''; # TODO remove this
         \core\notification::error($message); # TODO is it better to have a generic, yet translatable error?
     }
+
     function onLaunch() {
-        error_log("onLaunch()");
-        // TODO Launching tool. Basically tool.php code needs to go here.
-        echo "This is a tool";
+        global $DB, $SESSION, $CFG;
+
+        // TODO Remove any references to ltirequest.
+
+        // Before we do anything check that the context is valid.
+        $tool = $this->tool;
+        $context = \context::instance_by_id($tool->contextid);
+
+        // Set the user data.
+        $user = new \stdClass();
+        $user->username = \enrol_lti\helper::create_username($this->consumer->getKey(), $this->user->ltiUserId);
+        if (!empty($this->user->firstname)) {
+            $user->firstname = $this->user->firstname;
+        } else {
+            $user->firstname = $this->user->getRecordId();
+        }
+        if (!empty($this->user->lastname)) {
+            $user->lastname = $this->user->lastname;
+        } else {
+            // TODO is this actually the same as $ltirequest->info['context_id'];
+            $user->lastname = $this->tool->contextid;
+        }
+
+        $user->email = \core_user::clean_field($this->user->email, 'email');
+
+        // Get the user data from the LTI consumer.
+        $user = \enrol_lti\helper::assign_user_tool_data($tool, $user);
+
+        // Check if the user exists.
+        if (!$dbuser = $DB->get_record('user', array('username' => $user->username, 'deleted' => 0))) {
+            // If the email was stripped/not set then fill it with a default one. This
+            // stops the user from being redirected to edit their profile page.
+            if (empty($user->email)) {
+                $user->email = $user->username .  "@example.com";
+            }
+
+            $user->auth = 'lti';
+            $user->id = \user_create_user($user);
+
+            // Get the updated user record.
+            $user = $DB->get_record('user', array('id' => $user->id));
+        } else {
+            if (\enrol_lti\helper::user_match($user, $dbuser)) {
+                $user = $dbuser;
+            } else {
+                // If email is empty remove it, so we don't update the user with an empty email.
+                if (empty($user->email)) {
+                    unset($user->email);
+                }
+
+                $user->id = $dbuser->id;
+                \user_update_user($user);
+
+                // Get the updated user record.
+                $user = $DB->get_record('user', array('id' => $user->id));
+            }
+        }
+
+        // Update user image. TODO
+        $image = false;
+        if (!empty($ltirequest->info['user_image'])) {
+            $image = $ltirequest->info['user_image'];
+        } else if (!empty($ltirequest->info['custom_user_image'])) {
+            $image = $ltirequest->info['custom_user_image'];
+        }
+
+        // Check if there is an image to process.
+        if ($image) {
+            \enrol_lti\helper::update_user_profile_image($user->id, $image);
+        }
+
+        // Check if we are an instructor.
+        $isinstructor = $this->user->isStaff() || $this->user->isAdmin();
+
+        if ($context->contextlevel == CONTEXT_COURSE) {
+            $courseid = $context->instanceid;
+            $urltogo = new \moodle_url('/course/view.php', array('id' => $courseid));
+
+            // May still be set from previous session, so unset it.
+            unset($SESSION->forcepagelayout);
+        } else if ($context->contextlevel == CONTEXT_MODULE) {
+            $cmid = $context->instanceid;
+            $cm = get_coursemodule_from_id(false, $context->instanceid, 0, false, MUST_EXIST);
+            $urltogo = new \moodle_url('/mod/' . $cm->modname . '/view.php', array('id' => $cm->id));
+
+            // If we are a student in the course module context we do not want to display blocks.
+            if (!$isinstructor) {
+                // Force the page layout.
+                $SESSION->forcepagelayout = 'embedded';
+            } else {
+                // May still be set from previous session, so unset it.
+                unset($SESSION->forcepagelayout);
+            }
+        } else {
+            print_error('invalidcontext');
+            exit();
+        }
+
+        // Enrol the user in the course with no role.
+        $result = \enrol_lti\helper::enrol_user($tool, $user->id);
+
+        // Display an error, if there is one.
+        if ($result !== \enrol_lti\helper::ENROLMENT_SUCCESSFUL) {
+            print_error($result, 'enrol_lti');
+            exit();
+        }
+
+        // Give the user the role in the given context.
+        $roleid = $isinstructor ? $tool->roleinstructor : $tool->rolelearner;
+        role_assign($roleid, $user->id, $tool->contextid);
+
+        // Login user.
+        $sourceid = (!empty($ltirequest->info['lis_result_sourcedid'])) ? $ltirequest->info['lis_result_sourcedid'] : '';
+        $serviceurl = (!empty($ltirequest->info['lis_outcome_service_url'])) ? $ltirequest->info['lis_outcome_service_url'] : '';
+
+        // Check if we have recorded this user before.
+        if ($userlog = $DB->get_record('enrol_lti_users', array('toolid' => $tool->id, 'userid' => $user->id))) {
+            if ($userlog->sourceid != $sourceid) {
+                $userlog->sourceid = $sourceid;
+            }
+            if ($userlog->serviceurl != $serviceurl) {
+                $userlog->serviceurl = $serviceurl;
+            }
+            $userlog->lastaccess = time();
+            $DB->update_record('enrol_lti_users', $userlog);
+        } else {
+            // Add the user details so we can use it later when syncing grades and members.
+            $userlog = new \stdClass();
+            $userlog->userid = $user->id;
+            $userlog->toolid = $tool->id;
+            $userlog->serviceurl = $serviceurl;
+            $userlog->sourceid = $sourceid;
+            $userlog->consumerkey = $this->consumer->getKey();
+            $userlog->consumersecret = $tool->secret;
+            $userlog->lastgrade = 0;
+            $userlog->lastaccess = time();
+            $userlog->timecreated = time();
+
+            // TODO look for resource link memberships
+            if (!empty($ltirequest->info['ext_ims_lis_memberships_url'])) {
+                $userlog->membershipsurl = $ltirequest->info['ext_ims_lis_memberships_url'];
+            } else {
+                $userlog->membershipsurl = '';
+            }
+
+            // TODO look for resource link memberships
+            if (!empty($ltirequest->info['ext_ims_lis_memberships_id'])) {
+                $userlog->membershipsid = $ltirequest->info['ext_ims_lis_memberships_id'];
+            } else {
+                $userlog->membershipsid = '';
+            }
+            $DB->insert_record('enrol_lti_users', $userlog);
+        }
+
+        // Finalise the user log in.
+        complete_user_login($user);
+
+        if (empty($CFG->allowframembedding)) {
+            // Provide an alternative link.
+            $stropentool = get_string('opentool', 'enrol_lti');
+            echo \html_writer::tag('p', get_string('frameembeddingnotenabled', 'enrol_lti'));
+            echo \html_writer::link($urltogo, $stropentool, array('target' => '_blank'));
+        } else {
+            // All done, redirect the user to where they want to go.
+            redirect($urltogo);
+        }
     }
     function onRegister() {
         global $OUTPUT;
