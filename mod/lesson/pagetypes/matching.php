@@ -120,9 +120,10 @@ class lesson_page_type_matching extends lesson_page {
 
         // Check for duplicate response format.
         $duplicateresponse = array();
-        if (is_array($properties->response_editor[0])) {
-            foreach ($properties->response_editor as $response) {
-                $duplicateresponse[] = $response['text'];
+        if (is_array($properties->response_editor) &&             // If there are response_editors to iterate.
+                is_array(reset($properties->response_editor))) {  // And they come split into text & format array.
+            foreach ($properties->response_editor as $response) { // Iterate over all them.
+                $duplicateresponse[] = $response['text'];         // Picking the text only. This pagetype is that way.
             }
             $properties->response_editor = $duplicateresponse;
         }
