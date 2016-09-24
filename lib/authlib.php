@@ -896,3 +896,23 @@ function signup_setup_new_user($user) {
     }
     return $user;
 }
+
+/**
+ * Check if user confirmation is enabled on this site and return the auth plugin handling registration if enabled.
+ *
+ * @return stdClass the current auth plugin handling user registration or false if registration not enabled
+ * @since Moodle 3.2
+ */
+function signup_get_user_confirmation_authplugin() {
+    global $CFG;
+
+    if (empty($CFG->registerauth)) {
+        return false;
+    }
+    $authplugin = get_auth_plugin($CFG->registerauth);
+
+    if (!$authplugin->can_confirm()) {
+        return false;
+    }
+    return $authplugin;
+}

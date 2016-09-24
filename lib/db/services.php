@@ -34,6 +34,14 @@
  */
 
 $functions = array(
+    'core_auth_confirm_user' => array(
+        'classname'   => 'core_auth_external',
+        'methodname'  => 'confirm_user',
+        'description' => 'Confirm a user account.',
+        'type'        => 'write',
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
     'core_badges_get_user_badges' => array(
         'classname'     => 'core_badges_external',
         'methodname'    => 'get_user_badges',
