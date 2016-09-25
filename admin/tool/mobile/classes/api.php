@@ -28,6 +28,7 @@ use core_component;
 use core_plugin_manager;
 use context_system;
 use moodle_url;
+use moodle_exception;
 
 /**
  * API exposed by tool_mobile
@@ -44,6 +45,8 @@ class api {
     const LOGIN_VIA_BROWSER = 2;
     /** @var int to identify the login via an embedded browser. */
     const LOGIN_VIA_EMBEDDED_BROWSER = 3;
+    /** @var int seconds an auto-login key will expire. */
+    const LOGIN_KEY_TTL = 60;
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -180,4 +183,43 @@ class api {
         return $settings;
     }
 
+    /*
+     * Check if all the required conditions are met to allow the auto-login process continue.
+     *
+     * @param  int $userid  current user id
+     * @since Moodle 3.2
+     * @throws moodle_exception
+     */
+    public static function check_autologin_prerequisites($userid) {
+        global $CFG;
+
+        if (!$CFG->enablewebservices or !$CFG->enablemobilewebservice) {
+            throw new moodle_exception('enablewsdescription', 'webservice');
+        }
+
+        if (!is_https()) {
+            throw new moodle_exception('httpsrequired', 'tool_mobile');
+        }
+
+        if (has_capability('moodle/site:config', context_system::instance(), $userid) or is_siteadmin($userid)) {
+            throw new moodle_exception('autologinnotallowedtoadmins', 'tool_mobile');
+        }
+    }
+
+    /**
+     * Creates an auto-login key for the current user, this key is restricted by time and ip address.
+     *
+     * @return string the key
+     * @since Moodle 3.2
+     */
+    public static function get_autologin_key() {
+        global $USER;
+        // Delete previous keys.
+        delete_user_key('tool_mobile', $USER->id);
+
+        // Create a new key.
+        $iprestriction = getremoteaddr();
+        $validuntil = time() + self::LOGIN_KEY_TTL;
+        return create_user_key('tool_mobile', $USER->id, null, $iprestriction, $validuntil);
+    }
 }

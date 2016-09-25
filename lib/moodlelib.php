@@ -3010,6 +3010,36 @@ function require_course_login($courseorid, $autologinguest = true, $cm = null, $
 }
 
 /**
+ * Validates a user key, checking if the key exists, is not expired and the remote ip is correct.
+ *
+ * @param  string $keyvalue the key value
+ * @param  string $script   unique script identifier
+ * @param  int $instance    instance id
+ * @return stdClass the key entry in the user_private_key table
+ * @since Moodle 3.2
+ * @throws moodle_exception
+ */
+function validate_user_key($keyvalue, $script, $instance) {
+    global $DB;
+
+    if (!$key = $DB->get_record('user_private_key', array('script' => $script, 'value' => $keyvalue, 'instance' => $instance))) {
+        print_error('invalidkey');
+    }
+
+    if (!empty($key->validuntil) and $key->validuntil < time()) {
+        print_error('expiredkey');
+    }
+
+    if ($key->iprestriction) {
+        $remoteaddr = getremoteaddr(null);
+        if (empty($remoteaddr) or !address_in_subnet($remoteaddr, $key->iprestriction)) {
+            print_error('ipmismatch');
+        }
+    }
+    return $key;
+}
+
+/**
  * Require key login. Function terminates with error if key not found or incorrect.
  *
  * @uses NO_MOODLE_COOKIES
@@ -3030,20 +3060,7 @@ function require_user_key_login($script, $instance=null) {
 
     $keyvalue = required_param('key', PARAM_ALPHANUM);
 
-    if (!$key = $DB->get_record('user_private_key', array('script' => $script, 'value' => $keyvalue, 'instance' => $instance))) {
-        print_error('invalidkey');
-    }
-
-    if (!empty($key->validuntil) and $key->validuntil < time()) {
-        print_error('expiredkey');
-    }
-
-    if ($key->iprestriction) {
-        $remoteaddr = getremoteaddr(null);
-        if (empty($remoteaddr) or !address_in_subnet($remoteaddr, $key->iprestriction)) {
-            print_error('ipmismatch');
-        }
-    }
+    $key = validate_user_key($keyvalue, $script, $instance);
 
     if (!$user = $DB->get_record('user', array('id' => $key->userid))) {
         print_error('invaliduserid');
