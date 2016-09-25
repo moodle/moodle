@@ -2577,6 +2577,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="token" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" COMMENT="security token, aka private access key"/>
+        <FIELD NAME="privatetoken" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="private token, generated at the same time that the token, must be stored safely by the ws client, to be transmitted only via https"/>
         <FIELD NAME="tokentype" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="type of token: 0=permanent, no session; 1=linked to current browser session via sid; 2=permanent, with emulated session"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="owner of the token"/>
         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

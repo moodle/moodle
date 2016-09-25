@@ -724,6 +724,7 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
     if (!empty($iprestriction)) {
         $newtoken->iprestriction = $iprestriction;
     }
+    $newtoken->privatetoken = null;
     $DB->insert_record('external_tokens', $newtoken);
     return $newtoken->token;
 }
@@ -1053,6 +1054,8 @@ function external_generate_token_for_current_user($service) {
             $token->externalserviceid = $service->id;
             // MDL-43119 Token valid for 3 months (12 weeks).
             $token->validuntil = $token->timecreated + 12 * WEEKSECS;
+            // Generate the private token, it must be transmitted only via https.
+            $token->privatetoken = random_string(64);
             $token->id = $DB->insert_record('external_tokens', $token);
 
             $params = array(

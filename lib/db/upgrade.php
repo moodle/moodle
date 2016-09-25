@@ -2250,6 +2250,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016101100.00);
     }
 
+
     if ($oldversion < 2016101101.00) {
         // Define field component to be added to message_read.
         $table = new xmldb_table('message_read');
@@ -2270,6 +2271,19 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2016101101.00);
+    }
+
+    if ($oldversion < 2016101400.01) {
+        $table = new xmldb_table('external_tokens');
+        $field = new xmldb_field('privatetoken', XMLDB_TYPE_CHAR, '64', null, null, null, null);
+
+        // Conditionally add privatetoken field to the external_tokens table.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016101400.01);
     }
 
     return true;
