@@ -88,6 +88,13 @@ if ($externalblogform->is_cancelled()) {
                     context_user::instance($newexternal->userid), $data->autotags);
             blog_sync_external_entries($newexternal);
 
+            // Log this action.
+            $eventparms = array('context' => $context,
+                'objectid' => $newexternal->id,
+                'other' => array('url' => $newexternal->url));
+            $event = \core\event\blog_external_added::create($eventparms);
+            $event->trigger();
+
             break;
 
         case 'edit':
@@ -104,6 +111,14 @@ if ($externalblogform->is_cancelled()) {
                 $external->timemodified = time();
 
                 $DB->update_record('blog_external', $external);
+
+                // Log this action.
+                $eventparms = array('context' => $context,
+                    'objectid' => $external->id,
+                    'other' => array('url' => $external->url));
+                $event = \core\event\blog_external_updated::create($eventparms);
+                $event->trigger();
+
                 core_tag_tag::set_item_tags('core', 'blog_external', $external->id,
                         context_user::instance($external->userid), $data->autotags);
             } else {
