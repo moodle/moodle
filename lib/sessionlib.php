@@ -178,12 +178,13 @@ function get_moodle_cookie() {
  * @param stdClass $user full user object, null means default cron user (admin),
  *                 value 'reset' means reset internal static caches.
  * @param stdClass $course full course record, null means $SITE
+ * @param bool $leavepagealone If specified, stops it messing with global page object
  * @return void
  */
-function cron_setup_user($user = NULL, $course = NULL) {
+function cron_setup_user($user = null, $course = null, $leavepagealone = false) {
     global $CFG, $SITE, $PAGE;
 
-    if (!CLI_SCRIPT) {
+    if (!CLI_SCRIPT && !$leavepagealone) {
         throw new coding_exception('Function cron_setup_user() cannot be used in normal requests!');
     }
 
@@ -224,11 +225,13 @@ function cron_setup_user($user = NULL, $course = NULL) {
 
     // TODO MDL-19774 relying on global $PAGE in cron is a bad idea.
     // Temporary hack so that cron does not give fatal errors.
-    $PAGE = new moodle_page();
-    if ($course) {
-        $PAGE->set_course($course);
-    } else {
-        $PAGE->set_course($SITE);
+    if (!$leavepagealone) {
+        $PAGE = new moodle_page();
+        if ($course) {
+            $PAGE->set_course($course);
+        } else {
+            $PAGE->set_course($SITE);
+        }
     }
 
     // TODO: it should be possible to improve perf by caching some limited number of users here ;-)
