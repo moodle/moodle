@@ -154,25 +154,12 @@ M.mod_quiz.nav.init = function(Y) {
 
     var form = Y.one('#responseform');
     if (form) {
-        function find_enabled_submit() {
-            // This is rather inelegant, but the CSS3 selector
-            //     return form.one('input[type=submit]:enabled');
-            // does not work in IE7, 8 or 9 for me.
-            var enabledsubmit = null;
-            form.all('input[type=submit]').each(function(submit) {
-                if (!enabledsubmit && !submit.get('disabled')) {
-                    enabledsubmit = submit;
-                }
-            });
-            return enabledsubmit;
-        }
-
         function nav_to_page(pageno) {
             Y.one('#followingpage').set('value', pageno);
 
             // Automatically submit the form. We do it this strange way because just
             // calling form.submit() does not run the form's submit event handlers.
-            var submit = find_enabled_submit();
+            var submit = form.one('input[name="next"]');
             submit.set('name', '');
             submit.getDOMNode().click();
         };
