@@ -140,7 +140,7 @@ class qtype_essay_question extends question_with_responses {
             return $this->responseformat === 'editorfilepicker';
 
         } else if ($component == 'qtype_essay' && $filearea == 'graderinfo') {
-            return $options->manualcomment;
+            return $options->manualcomment && $args[0] == $this->id;
 
         } else {
             return parent::check_file_access($qa, $options, $component,
