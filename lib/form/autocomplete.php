@@ -204,4 +204,19 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
         }
         return parent::onQuickFormEvent($event, $arg, $caller);
     }
+
+    public function export_for_template(renderer_base $output) {
+        global $PAGE;
+
+        $this->_generateId();
+        $context = parent::export_for_template($output);
+        $context['tags'] = !empty($this->tags);
+        $context['ajax'] = $this->ajax;
+        $context['placeholder'] = $this->placeholder;
+        $context['casesensitive'] = !empty($this->casesensitive);
+        $context['showsuggestions'] = !empty($this->showsuggestions);
+        $context['noselectionstring'] = $this->noselectionstring;
+
+        return $context;
+    }
 }

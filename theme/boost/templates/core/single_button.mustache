@@ -1,0 +1,14 @@
+<div class="{{classes}}">
+    <form method="{{method}}" action="{{url}}" {{#formid}}id="{{formid}}"{{/formid}}>
+        {{#params}}
+            <input type="hidden" name="{{name}}" value="{{value}}">
+        {{/params}}
+        <button type="submit" class="btn btn-secondary"
+            id="{{id}}"
+            title={{#quote}}{{tooltip}}{{/quote}}
+            {{#disabled}}disabled{{/disabled}}>{{label}}</button>
+    </form>
+</div>
+{{#hasactions}}
+    {{> core/actions }}
+{{/hasactions}}

@@ -315,7 +315,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertContains(get_string('overdue', 'assign', format_time(4 * 24 * 60 * 60 + $difftime)), $output);
 
         $document = new DOMDocument();
-        $document->loadHTML($output);
+        @$document->loadHTML($output);
         $xpath = new DOMXPath($document);
         $this->assertEquals('', $xpath->evaluate('string(//td[@id="mod_assign_grading_r0_c8"])'));
     }
@@ -359,7 +359,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $gradingtable = new assign_grading_table($assign, 4, '', 0, true);
         $output = $assign->get_renderer()->render($gradingtable);
         $document = new DOMDocument();
-        $document->loadHTML($output);
+        @$document->loadHTML($output);
         $xpath = new DOMXPath($document);
 
         // Check status.

@@ -50,6 +50,7 @@ class behat_selectors {
         'table' => 'table',
         'table_row' => 'table_row',
         'xpath_element' => 'xpath_element',
+        'form_row' => 'form_row'
     );
 
     /**
@@ -79,7 +80,8 @@ class behat_selectors {
         'table' => 'table',
         'table_row' => 'table_row',
         'text' => 'text',
-        'xpath_element' => 'xpath_element'
+        'xpath_element' => 'xpath_element',
+        'form_row' => 'form_row'
     );
 
     /**
@@ -95,10 +97,9 @@ class behat_selectors {
 .//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][normalize-space(.) = %locator% ]
 XPATH
         , 'block' => <<<XPATH
-.//div[contains(concat(' ', normalize-space(@class), ' '), ' block ') and
-    (contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
-     descendant::h2[normalize-space(.) = %locator%] or
-     @aria-label = %locator%)]
+.//*[@data-block][contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
+     descendant::*[self::h2|self::h3][normalize-space(.) = %locator%]  or
+     @aria-label = %locator%]
 XPATH
         , 'dialogue' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue ') and
@@ -109,7 +110,7 @@ XPATH
     normalize-space(descendant::div[@class='hd']) = %locator%]
 XPATH
         , 'filemanager' => <<<XPATH
-.//div[@data-fieldtype = 'filemanager']
+.//*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']
     /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
         , 'list_item' => <<<XPATH
@@ -137,6 +138,9 @@ XPATH
 XPATH
         , 'text' => <<<XPATH
 .//*[contains(., %locator%) and not(.//*[contains(., %locator%)])]
+XPATH
+        , 'form_row' => <<<XPATH
+.//label[contains(., %locator%)]/ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]
 XPATH
     );
 

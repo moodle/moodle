@@ -47,6 +47,10 @@ body {
     padding: 4px;
 }
 
+.text-ltr {
+    direction: ltr !important;
+}
+
 .headermain {
     margin: 15px;
 }
@@ -103,6 +107,7 @@ fieldset {
 fieldset .configphp,
 fieldset .alert {
     text-align: left;
+    direction: ltr;
 }
 
 .sitelink {

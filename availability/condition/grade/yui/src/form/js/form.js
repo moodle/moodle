@@ -84,7 +84,7 @@ M.availability_grade.form.getNode = function(json) {
     if (!M.availability_grade.form.addedEvents) {
         M.availability_grade.form.addedEvents = true;
 
-        var root = Y.one('#fitem_id_availabilityconditionsjson');
+        var root = Y.one('.availability-field');
         root.delegate('change', function() {
             // For the grade item, just update the form fields.
             M.core_availability.form.update();

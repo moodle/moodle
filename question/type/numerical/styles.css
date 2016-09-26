@@ -6,14 +6,12 @@
     width: 30%;
 }
 
-/* Numeric INPUT text boxes should be left aligned in RTL mode
-*/
-#page-question-type-numerical.dir-rtl input[name="unitpenalty"],
-#page-question-type-numerical.dir-rtl input[name^="answer"],
-#page-question-type-numerical.dir-rtl input[name^="tolerance"],
-#page-question-type-numerical.dir-rtl input[name^="multiplier"],
-#page-question-type-numerical.dir-rtl input[name^="unit"]
-{
+/*rtl:ignore*/
+#page-question-type-numerical input[name="unitpenalty"],
+#page-question-type-numerical input[name^="answer"],
+#page-question-type-numerical input[name^="tolerance"],
+#page-question-type-numerical input[name^="multiplier"],
+#page-question-type-numerical input[name^="unit"] {
     direction: ltr;
     text-align: left;
 }

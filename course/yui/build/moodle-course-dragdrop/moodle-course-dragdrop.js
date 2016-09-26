@@ -113,8 +113,8 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                             moveup.next('br').remove();
                         }
 
-                        if (moveup.ancestor('.section_action_menu')) {
-                            moveup.ancestor('li').remove();
+                        if (moveup.ancestor('.section_action_menu') && moveup.ancestor().get('nodeName').toLowerCase() == 'li') {
+                            moveup.ancestor().remove();
                         } else {
                             moveup.remove();
                         }
@@ -126,8 +126,9 @@ Y.extend(DRAGSECTION, M.core.dragdrop, {
                             movedown.next('br').remove();
                         }
 
-                        if (movedown.ancestor('.section_action_menu')) {
-                            movedown.ancestor('li').remove();
+                        var movedownParentType = movedown.ancestor().get('nodeName').toLowerCase();
+                        if (movedown.ancestor('.section_action_menu') && movedownParentType == 'li') {
+                            movedown.ancestor().remove();
                         } else {
                             movedown.remove();
                         }

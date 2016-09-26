@@ -95,11 +95,6 @@
 .path-mod-workshop .submission-full .header .userdate {
     margin: 0px 0px 0px 80px;
 }
-.dir-rtl.path-mod-workshop .submission-full .header .title,
-.dir-rtl.path-mod-workshop .submission-full .header .author,
-.dir-rtl.path-mod-workshop .submission-full .header .userdate {
-    margin: 0px 80px 0px 0px;
-}
 .path-mod-workshop .submission-full.anonymous .header .title,
 .path-mod-workshop .submission-full.anonymous .header .author,
 .path-mod-workshop .submission-full.anonymous .header .userdate {
@@ -130,10 +125,6 @@
     position: absolute;
     top: 3px;
     left: 3px;
-}
-.dir-rtl.path-mod-workshop .submission-full .header .author .picture{
-    right:3px;
-    left:auto;
 }
 
 .path-mod-workshop .submission-full .content,
@@ -310,9 +301,6 @@
     min-height: 16px;
     margin: .3em 0;
 }
-.dir-rtl.path-mod-workshop .userplan tr.phasetasks li {
-    background-position: top right;
-}
 
 .path-mod-workshop .userplan tr.phasetasks li.completed {
     background-image: url([[pix:mod_workshop|userplan/task-done]]);
@@ -335,16 +323,10 @@
 .path-mod-workshop .userplan tr.phasetasks .title {
     padding: 0px 10px 0px 20px;
 }
-.dir-rtl.path-mod-workshop .userplan tr.phasetasks .title {
-    padding: 0px 20px 0px 10px;
-}
 
 .path-mod-workshop .userplan tr.phasetasks .details {
     padding: 0px 10px 0px 25px;
     font-size: 80%;
-}
-.dir-rtl.path-mod-workshop .userplan tr.phasetasks .details {
-    padding: 0px 25px 0px 10px;
 }
 
 /**
@@ -372,12 +354,6 @@
 .path-mod-workshop .assessment-full .header .weight {
     margin: 0px 0px 0px 40px;
 }
-.dir-rtl.path-mod-workshop .assessment-full .header .title,
-.dir-rtl.path-mod-workshop .assessment-full .header .reviewer,
-.dir-rtl.path-mod-workshop .assessment-full .header .grade,
-.dir-rtl.path-mod-workshop .assessment-full .header .weight {
-    margin: 0px 40px 0px 0px;
-}
 
 .path-mod-workshop .assessment-full.anonymous .header .title,
 .path-mod-workshop .assessment-full.anonymous .header .reviewer,
@@ -390,10 +366,6 @@
     position: absolute;
     top: 3px;
     left: 3px;
-}
-.dir-rtl.path-mod-workshop .assessment-full .header .reviewer .picture {
-    right:3px;
-    left:auto;
 }
 
 .path-mod-workshop .assessment-full .header .actions {

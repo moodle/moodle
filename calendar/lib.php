@@ -891,16 +891,11 @@ function calendar_top_controls($type, $data) {
                 $calendarlink->param('course', $data['id']);
             }
 
-            if (right_to_left()) {
-                $left = $nextlink;
-                $right = $prevlink;
-            } else {
-                $left = $prevlink;
-                $right = $nextlink;
-            }
+            $prevlink = $prevlink;
+            $right = $nextlink;
 
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left.'<span class="hide"> | </span>';
+            $content .= $prevlink.'<span class="hide"> | </span>';
             $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')), array('title'=>get_string('monththis','calendar'))), array('class'=>'current'));
             $content .= '<span class="hide"> | </span>'. $right;
             $content .= "<span class=\"clearer\"><!-- --></span>\n";
@@ -916,18 +911,10 @@ function calendar_top_controls($type, $data) {
                 $calendarlink->param('course', $data['id']);
             }
 
-            if (right_to_left()) {
-                $left = $nextlink;
-                $right = $prevlink;
-            } else {
-                $left = $prevlink;
-                $right = $nextlink;
-            }
-
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left.'<span class="hide"> | </span>';
+            $content .= $prevlink.'<span class="hide"> | </span>';
             $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')), array('title'=>get_string('monththis','calendar'))), array('class'=>'current'));
-            $content .= '<span class="hide"> | </span>'. $right;
+            $content .= '<span class="hide"> | </span>'. $nextlink;
             $content .= "<span class=\"clearer\"><!-- --></span>";
             $content .= html_writer::end_tag('div');
             break;
@@ -951,18 +938,10 @@ function calendar_top_controls($type, $data) {
             $prevlink = calendar_get_link_previous(userdate($prevmonthtime, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', false, false, false, false, $prevmonthtime);
             $nextlink = calendar_get_link_next(userdate($nextmonthtime, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', false, false, false, false, $nextmonthtime);
 
-            if (right_to_left()) {
-                $left = $nextlink;
-                $right = $prevlink;
-            } else {
-                $left = $prevlink;
-                $right = $nextlink;
-            }
-
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left . '<span class="hide"> | </span>';
+            $content .= $prevlink . '<span class="hide"> | </span>';
             $content .= $OUTPUT->heading(userdate($time, get_string('strftimemonthyear')), 2, 'current');
-            $content .= '<span class="hide"> | </span>' . $right;
+            $content .= '<span class="hide"> | </span>' . $nextlink;
             $content .= '<span class="clearer"><!-- --></span>';
             $content .= html_writer::end_tag('div')."\n";
             break;
@@ -980,18 +959,10 @@ function calendar_top_controls($type, $data) {
             $prevlink = calendar_get_link_previous($prevname, 'view.php?view=day'.$courseid.'&amp;', false, false, false, false, $prevtimestamp);
             $nextlink = calendar_get_link_next($nextname, 'view.php?view=day'.$courseid.'&amp;', false, false, false, false, $nexttimestamp);
 
-            if (right_to_left()) {
-                $left = $nextlink;
-                $right = $prevlink;
-            } else {
-                $left = $prevlink;
-                $right = $nextlink;
-            }
-
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left;
+            $content .= $prevlink;
             $content .= '<span class="hide"> | </span><span class="current">'.userdate($time, get_string('strftimedaydate')).'</span>';
-            $content .= '<span class="hide"> | </span>'. $right;
+            $content .= '<span class="hide"> | </span>'. $nextlink;
             $content .= "<span class=\"clearer\"><!-- --></span>";
             $content .= html_writer::end_tag('div')."\n";
 

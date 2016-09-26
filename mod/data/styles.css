@@ -57,6 +57,7 @@
 
 /** UI Usability Hacks **/
 #page-mod-data-export #notice span {padding:0 10px;}
+/*rtl:ignore*/
 #page-mod-data-edit input[id*="url"] {text-align:left;direction:ltr;}
 
 .mod-data-default-template td {vertical-align:top;}
@@ -71,10 +72,6 @@
 }
 #page-mod-data-templates #availabletags_wrapper {max-width:250px;}
 
-.dir-rtl .mod-data-default-template .template-field {text-align:left;}
-.dir-rtl .mod-data-default-template .template-token {text-align:right;}
-.dir-rtl .mod-data-default-template searchcontrols {text-align:left;}
-
 #page-mod-data-edit .req {
     cursor: help;
 }
@@ -86,12 +83,4 @@
 }
 #page-mod-data-edit .mod-data-input {
     margin-left: 10px;
-}
-
-.dir-rtl#page-mod-data-edit .inline-req {
-    text-align: right;
-}
-.dir-rtl#page-mod-data-edit .mod-data-input {
-    margin-left: 0px;
-    margin-right: 10px;
 }

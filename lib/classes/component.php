@@ -75,6 +75,9 @@ class core_component {
     protected static $psr4namespaces = array(
         'MaxMind' => 'lib/maxmind/MaxMind',
         'GeoIp2' => 'lib/maxmind/GeoIp2',
+        'Sabberworm\\CSS' => 'lib/php-css-parser',
+        'MoodleHQ\\RTLCSS' => 'lib/rtlcss',
+        'Leafo\\ScssPhp' => 'lib/scssphp'
     );
 
     /**

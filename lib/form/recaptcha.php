@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/input.php');
+require_once('templatable_form_element.php');
 
 /**
  * recaptcha type form element
@@ -37,7 +38,10 @@ require_once('HTML/QuickForm/input.php');
  * @copyright 2008 Nicolas Connault <nicolasconnault@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
+class MoodleQuickForm_recaptcha extends HTML_QuickForm_input implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
 
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
@@ -110,7 +114,7 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
 <span class="recaptcha_only_if_image"><label for="recaptcha_response_field">' . $strenterthewordsabove . '</label></span>
 <span class="recaptcha_only_if_audio"><label for="recaptcha_response_field">' . $strenterthenumbersyouhear . '</label></span>
 
-<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
+<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" class="text-ltr" />
 <input type="hidden" name="recaptcha_element" value="dummyvalue" /> <!-- Dummy value to fool formslib -->
 <div><a href="javascript:Recaptcha.reload()">' . $strgetanothercaptcha . '</a></div>
 <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type(\'audio\')">' . $strgetanaudiocaptcha . '</a></div>
@@ -152,4 +156,20 @@ class MoodleQuickForm_recaptcha extends HTML_QuickForm_input {
         }
         return true;
     }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['html'] = $this->toHtml();
+        return $context;
+    }
+
+    /**
+     * Get force LTR option.
+     *
+     * @return bool
+     */
+    public function get_force_ltr() {
+        return true;
+    }
+
 }

@@ -9,6 +9,94 @@ select {
     width: auto;
 }
 
+// Feedback module
+.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
+    display: block;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    text-align: left;
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .felement {
+    margin-left: 0;
+    width: 100%;
+    float: left;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .fstatic:empty {
+    display: none;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .fcheckbox > span,
+.path-mod-feedback .mform.feedback_form .fitem .fradio > span,
+.path-mod-feedback .mform.feedback_form .fitem .fgroup > span {
+    margin-top: 4px;
+}
+
+body.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
+    display: inline-block;
+    width: auto;
+    margin-right: 0;
+}
+
+.path-mod-feedback .mform.feedback_form .femptylabel .felement {
+    display: inline-block;
+    margin-top: 4px;
+    padding-top: 5px;
+    width: auto;
+}
+
+body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebreak .felement {
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .fitemtitle,
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
+    display: inline-block;
+    width: auto;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
+    padding: 6px;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_viewresponse_form .fitem.feedback_hasvalue:not(.feedback-item-captcha) .felement {
+    background: #fbfbf1;
+    min-height: 1em;
+    box-sizing: border-box;
+    padding: 3px;
+    border: 1px solid #ddd;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem.feedback_hasvalue .fstatic:empty {
+    display: inherit;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem:hover {
+    background: #f5f5f5;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle label {
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle {
+    position: relative;
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemdd,
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemname {
+    float: left;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemactions {
+    float: right;
+}
+
 // Forum module
 
 .path-mod-forum .forumsearch {
@@ -105,23 +193,6 @@ select {
     }
 }
 
-.dir-rtl .forumpost {
-    .picture img {
-        &.userpicture {
-            margin-left: 10px;
-            margin-right: 3px;
-        }
-    }
-    .row {
-        .topic,
-        .content-mask,
-        .options {
-            margin-left: 0;
-            margin-right: 48px;
-        }
-    }
-}
-
 .forumpost .row .left {
     width: 48px;
 }
@@ -185,17 +256,6 @@ select {
     margin-left: 4px;
 }
 
-.dir-rtl {
-    .nav-tabs > li,
-    .nav-pills > li {
-        float: right;
-    }
-}
-.dir-rtl .navbar .brand {
-    padding: 10px 0 10px 20px;
-    float: right;
-}
-
 .navbar-inverse .logininfo a {
     color: @navbarInverseLinkColor;
 }
@@ -207,22 +267,6 @@ select {
 .navbar-fixed-top,
 .navbar-fixed-bottom {
     z-index: 4030;
-}
-
-.dir-rtl .breadcrumb-button,
-.dir-rtl .navbar .btn-navbar {
-    float: left;
-}
-
-.dir-rtl .breadcrumb-button .singlebutton {
-    float: right;
-    margin-right: 4px;
-    margin-left: 0;
-}
-.dir-rtl .breadcrumb-button .singlebutton div,
-.dir-rtl .breadcrumb-button .singlebutton div input[type="submit"] {
-    margin-right: 5px;
-    margin-left: 0;
 }
 
 .ie .row-fluid .desktop-first-column {
@@ -272,6 +316,151 @@ div#dock {
     text-align: center;
 }
 
+/** General styles (scope: all of lesson) **/
+.path-mod-lesson .contents,
+.path-mod-lesson .standardtable,
+.path-mod-lesson .mform .box.contents,
+.path-mod-lesson .invisiblefieldset.fieldsetfix tr {
+    text-align: left;
+}
+
+.path-mod-lesson #layout-table {
+    width: 100%;
+}
+
+.path-mod-lesson .edit_buttons form,
+.path-mod-lesson .edit_buttons input {
+    display: inline;
+}
+
+.path-mod-lesson .userinfotable .cell,
+.path-mod-lesson .userinfotable .userpicture {
+    vertical-align: middle;
+}
+
+.path-mod-lesson .invisiblefieldset.fieldsetfix {
+    display: block;
+}
+
+.path-mod-lesson .slideshow {
+    overflow: auto;
+    padding: 15px;
+}
+
+.path-mod-lesson .menu .menuwrapper {
+    max-height: 400px;
+    overflow: auto;
+    vertical-align: top;
+    margin-bottom: 10px;
+}
+
+.path-mod-lesson .menu ul {
+    list-style: none;
+    padding: 5px 0 0 5px;
+    margin: 0;
+}
+.path-mod-lesson .menu ul li {
+    padding-bottom: 5px;
+}
+.path-mod-lesson .skip {
+    position: absolute;
+    top: -1000em;
+    width: 20em;
+}
+.path-mod-lesson .branchbuttoncontainer.horizontal div,
+.path-mod-lesson .branchbuttoncontainer.horizontal form {
+    display: inline;
+}
+.path-mod-lesson .firstpageoptions {
+    width: 30%;
+    margin-left: 35%;
+    margin-top: 1em;
+}
+.path-mod-lesson .progress_bar_table,
+.path-mod-lesson .progress_bar_completed,
+.path-mod-lesson .progress_bar_todo {
+    padding: 0;
+    margin: 0;
+}
+.path-mod-lesson .progress_bar_token {
+    height: 20px;
+    width: 5px;
+    padding: 0;
+    margin: 0;
+}
+.path-mod-lesson .edit_pages_box .addlinks {
+    margin: 0;
+    margin-bottom: 1em;
+}
+.path-mod-lesson .progress_bar_completed {
+    background-color: green;
+    text-align: right;
+    vertical-align: middle;
+    color: #fff;
+}
+
+.path-mod-lesson .resourcecontent {
+    text-align: center;
+}
+
+.path-mod-lesson .answeroption .fcheckbox > span {
+    position: relative;
+    float: left;
+}
+
+.path-mod-lesson .answeroptiongroup .fgroup > span {
+    position: relative;
+    width: 100%;
+}
+
+.path-mod-lesson .answeroption .fcheckbox input,
+.path-mod-lesson .answeroptiongroup input {
+    position: absolute;
+    top: 2px;
+    margin-top: 0;
+    left: 0;
+}
+
+.path-mod-lesson .answeroption .fcheckbox label,
+.path-mod-lesson .mform .fitem.answeroptiongroup fieldset.fgroup label {
+    padding-left: 20px;
+    float: left;
+}
+
+.path-mod-lesson .answeroption .felement label p:last-child,
+.path-mod-lesson .answeroptiongroup .felement label p:last-child {
+    margin-bottom: 0;
+}
+
+/**
+ * Style for view.php
+ **/
+#page-mod-lesson-view .password-form .submitbutton {
+    display: inline;
+}
+.path-mod-lesson .reviewessay {
+    width: 40%;
+    border: 1px solid #ddd;
+    background-color: #eee;
+}
+
+/* Countdown timer. */
+#lesson-timer {
+    text-align: center;
+}
+
+.path-mod-lesson .essayungraded {
+    background-color: #efcfcf;
+}
+
+.path-mod-lesson .essaygraded {
+    background-color: #efefcf;
+}
+
+.path-mod-lesson .essaysent {
+    background-color: #cfefcf;
+}
+
 .path-mod-wiki .wiki_headingtitle,
 .path-mod-wiki .midpad,
 .path-mod-wiki .wiki_headingtime {
@@ -288,15 +477,6 @@ div#dock {
         padding: 3px 20px 3px 8px;
     }
 }
-.dir-rtl .dropdown-menu {
-    > li > a {
-        padding: 3px 8px 3px 20px;
-    }
-}
-.dir-rtl .dropdown-submenu > .dropdown-menu {
-    .border-radius(6px 0px 6px 6px);
-}
-
 
 // Survey module
 
@@ -320,25 +500,9 @@ div#dock {
         text-align: center;
     }
 }
-// rtl overrides
-.dir-rtl {
-    &.path-mod-forum .forumheaderlist {
-        thead .header.lastpost {
-            text-align: left;
-        }
-        .discussion {
-            .lastpost {
-                text-align: left;
-            }
-        }
-    }
-}
 
 .nav .caret {
     margin-left: 4px;
-}
-.dir-rtl .nav .caret {
-    margin-right: 4px;
 }
 
 // Dividers
@@ -624,59 +788,30 @@ div#dock {
     }
 }
 
-.dir-ltr {
-    .usermenu {
-        float: right;
-        > .moodle-actionmenu {
-            > .menu {
-                &:before {
-                    right: 9px;
-                }
-                &:after {
-                    right: 10px;
-                }
+
+.usermenu {
+    float: right;
+    > .moodle-actionmenu {
+        > .menu {
+            &:before {
+                right: 9px;
             }
-            > .menubar li a {
-                text-align: right;
+            &:after {
+                right: 10px;
             }
         }
-    }
-    &.userloggedinas .usermenu .userbutton .avatars {
-        .avatar {
-            &.current {
-                left: 16px;
-            }
+        > .menubar li a {
+            text-align: right;
         }
     }
 }
-
-.dir-rtl {
-    .usermenu {
-        float: left;
-        > .moodle-actionmenu {
-            > .menu {
-                margin-right: 0px;
-                &:before {
-                    left: 9px;
-                }
-                &:after {
-                    left: 10px;
-                }
-            }
-            > .menubar li a {
-                text-align: left;
-            }
-        }
-    }
-    &.userloggedinas .usermenu .userbutton .avatars {
-        .avatar {
-            &.current {
-                left: -14px;
-            }
+&.userloggedinas .usermenu .userbutton .avatars {
+    .avatar {
+        &.current {
+            left: 16px;
         }
     }
 }
-
 
 .userloggedinas .usermenu .userbutton .avatars {
     .avatar {

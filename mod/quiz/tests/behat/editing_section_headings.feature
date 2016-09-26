@@ -349,17 +349,17 @@ Feature: Edit quiz page - section headings
     And I follow "Edit quiz"
     And I click on the "Add" page break icon after question "TF1"
     And I click on "Add" "link" in the "Page 1" "list_item"
-    Then "a new section heading" "list_item" in the "Page 1" "list_item" should not be visible
+    Then "a new section heading" "link" in the "Page 1" "list_item" should not be visible
     # Click away to close the menu.
     And I click on ".numberofquestions" "css_element"
     And I click on "Add" "link" in the "Page 2" "list_item"
-    And "a new section heading" "list_item" in the "Page 2" "list_item" should be visible
+    And "a new section heading" "link" in the "Page 2" "list_item" should be visible
     And I click on ".numberofquestions" "css_element"
     And I click on "Add" "link" in the "Page 3" "list_item"
-    And "a new section heading" "list_item" in the "Page 3" "list_item" should be visible
+    And "a new section heading" "link" in the "Page 3" "list_item" should be visible
     And I click on ".numberofquestions" "css_element"
     And I click on "Add" "link" in the ".last-add-menu" "css_element"
-    And "a new section heading" "list_item" in the ".last-add-menu" "css_element" should not be visible
+    And "a new section heading" "link" in the ".last-add-menu" "css_element" should not be visible
 
   @javascript
   Scenario: Verify sections are added in the right place afte ajax changes
@@ -384,5 +384,5 @@ Feature: Edit quiz page - section headings
     And I follow "Edit quiz"
     And I click on the "Remove" page break icon after question "TF1"
     And I open the "Page 2" add to quiz menu
-    And I follow "a new section heading" in the open menu
+    And I choose "a new section heading" in the open action menu
     Then "TF3" "list_item" should exist in the "Section heading ..." "list_item"

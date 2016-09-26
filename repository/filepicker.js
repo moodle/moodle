@@ -460,17 +460,6 @@ YUI.add('moodle-core_filepicker', function(Y) {
         }
 
     }
-
-    /**
-     * creates a node and adds it to the div with id #filesskin. This is needed for CSS to be able
-     * to overwrite YUI skin styles (instead of using !important that does not work in IE)
-     */
-    Y.Node.createWithFilesSkin = function(node) {
-        if (!Y.one('#filesskin')) {
-            Y.one(document.body).appendChild(Y.Node.create('<div/>').set('id', 'filesskin'));
-        }
-        return Y.one('#filesskin').appendChild(Y.Node.create(node));
-    }
 }, '@VERSION@', {
     requires:['base', 'node', 'yui2-treeview', 'panel', 'cookie', 'datatable', 'datatable-sort']
 });
@@ -716,7 +705,7 @@ M.core_filepicker.init = function(Y, options) {
                 this.selectui.hide();
             }
             if (!this.process_dlg) {
-                this.process_dlg_node = Y.Node.createWithFilesSkin(M.core_filepicker.templates.processexistingfile);
+                this.process_dlg_node = Y.Node.create(M.core_filepicker.templates.processexistingfile);
                 var node = this.process_dlg_node;
                 node.generateID();
                 this.process_dlg = new M.core.dialogue({
@@ -757,7 +746,7 @@ M.core_filepicker.init = function(Y, options) {
                 header = M.util.get_string('info', 'moodle');
             }
             if (!this.msg_dlg) {
-                this.msg_dlg_node = Y.Node.createWithFilesSkin(M.core_filepicker.templates.message);
+                this.msg_dlg_node = Y.Node.create(M.core_filepicker.templates.message);
                 this.msg_dlg_node.generateID();
 
                 this.msg_dlg = new M.core.dialogue({
@@ -1301,7 +1290,7 @@ M.core_filepicker.init = function(Y, options) {
             var labelid = 'fp-dialog-label_'+ client_id;
             var width = 873;
             var draggable = true;
-            this.fpnode = Y.Node.createWithFilesSkin(M.core_filepicker.templates.generallayout).
+            this.fpnode = Y.Node.create(M.core_filepicker.templates.generallayout).
                 set('id', 'filepicker-'+client_id).set('aria-labelledby', labelid);
 
             if (this.in_iframe()) {
@@ -1324,7 +1313,7 @@ M.core_filepicker.init = function(Y, options) {
             });
 
             // create panel for selecting a file (initially hidden)
-            this.selectnode = Y.Node.createWithFilesSkin(M.core_filepicker.templates.selectlayout).
+            this.selectnode = Y.Node.create(M.core_filepicker.templates.selectlayout).
                 set('id', 'filepicker-select-'+client_id).
                 set('aria-live', 'assertive').
                 set('role', 'dialog');

@@ -1225,6 +1225,25 @@ function clean_param($param, $type) {
 }
 
 /**
+ * Whether the PARAM_* type is compatible in RTL.
+ *
+ * Being compatible with RTL means that the data they contain can flow
+ * from right-to-left or left-to-right without compromising the user experience.
+ *
+ * Take URLs for example, they are not RTL compatible as they should always
+ * flow from the left to the right. This also applies to numbers, email addresses,
+ * configuration snippets, base64 strings, etc...
+ *
+ * This function tries to best guess which parameters can contain localised strings.
+ *
+ * @param string $paramtype Constant PARAM_*.
+ * @return bool
+ */
+function is_rtl_compatible($paramtype) {
+    return $paramtype == PARAM_TEXT || $paramtype == PARAM_NOTAGS;
+}
+
+/**
  * Makes sure the data is using valid utf8, invalid characters are discarded.
  *
  * Note: this function is not intended for full objects with methods and private properties.

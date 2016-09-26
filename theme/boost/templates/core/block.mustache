@@ -1,0 +1,47 @@
+{{! Block Skip Link }}
+{{#showskiplink}}
+  <a href="#sb-{{skipid}}" class="sr-only sr-only-focusable">{{#str}}skipa, access, {{title}}{{/str}}</a>
+{{/showskiplink}}
+
+{{! Start Block Container }}
+<aside id="{{id}}"
+     class="{{#hidden}}hidden{{/hidden}} block block_{{type}} {{#hascontrols}}block_with_controls{{/hascontrols}} card m-b-1"
+     role="{{ariarole}}"
+     data-block="{{type}}"
+     {{#arialabel}}
+        aria-label={{#quote}}{{{arialabel}}}{{/quote}}
+     {{/arialabel}}
+     {{^arialabel}}
+        {{#title}}
+          aria-labelledby="instance-{{blockinstanceid}}-header"
+        {{/title}}
+     {{/arialabel}}>
+
+    {{! Block contents }}
+    <div class="card-block">
+
+        {{#hascontrols}}
+            <div class="pull-xs-right block-controls">
+                {{{controls}}}
+            </div>
+        {{/hascontrols}}
+
+        {{! Block header }}
+        {{#title}}
+            <h3 id="instance-{{blockinstanceid}}-header" class="card-title">{{{title}}}</h3>
+        {{/title}}
+
+        <div class="card-text">
+            {{{content}}}
+            {{{footer}}}
+            {{{annotation}}}
+        </div>
+    </div>
+
+{{! End Block Container }}
+</aside>
+
+{{! Block Skip Link Target }}
+{{#showskiplink}}
+  <span id="sb-{{skipid}}"></span>
+{{/showskiplink}}

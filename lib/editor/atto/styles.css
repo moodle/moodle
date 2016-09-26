@@ -126,20 +126,6 @@ div.editor_atto_toolbar div.atto_group {
     margin: 0 0 5px 0;
 }
 
-/* RTL Rules */
-body.dir-rtl div.editor_atto_toolbar button + button {
-    border-left: 0;
-    border-right: 1px solid #CCC;
-}
-
-body.dir-rtl div.editor_atto_toolbar img.icon {
-    padding: 0;
-}
-
-body.dir-rtl div.editor_atto_toolbar div.atto_group {
-    margin: 9px 9px 0 0;
-}
-
 .atto_control {
     position: absolute;
     right: -6px;
@@ -183,7 +169,8 @@ div.editor_atto_content:hover .atto_control {
 .editor_atto_wrap {
     position: relative;
 }
-.dir-rtl .editor_atto_wrap textarea {
+/*rtl:ignore*/
+.editor_atto_wrap textarea {
     direction: ltr;
 }
 .editor_atto_notification{
@@ -213,15 +200,4 @@ div.editor_atto_content:hover .atto_control {
 .editor_atto_content_wrap,
 .editor_atto + textarea {
     box-sizing: border-box;
-}
-.dir-rtl .editor_atto_notification .atto_info,
-.dir-rtl .editor_atto_notification .atto_warning {
-    border-bottom-right-radius: 1em;
-    border-bottom-left-radius: 1em;
-}
-.dir-ltr .editor_atto_notification {
-    right: 0;
-}
-.dir-rtl .editor_atto_notification {
-    left: 0;
 }

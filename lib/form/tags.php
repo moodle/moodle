@@ -115,7 +115,9 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
             $attributes['showsuggestions'] = $this->showstandard;
         }
 
+
         parent::__construct($elementName, $elementLabel, $validoptions, $attributes);
+        $this->_type = 'tags';
     }
 
     /**
@@ -246,5 +248,16 @@ class MoodleQuickForm_tags extends MoodleQuickForm_autocomplete {
         }
 
         return parent::exportValue($submitValues, $assoc);
+    }
+
+    public function export_for_template(renderer_base $output) {
+
+        $context = parent::export_for_template($output);
+        if (has_capability('moodle/tag:manage', context_system::instance()) && $this->showstandard) {
+            $url = new moodle_url('/tag/manage.php', array('tc' => $this->get_tag_collection()));
+            $context['managestandardtagsurl'] = $url->out(false);
+        }
+
+        return $context;
     }
 }

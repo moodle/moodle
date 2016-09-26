@@ -613,4 +613,5 @@ class behat_hooks extends behat_base {
  * @copyright  2016 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_stop_exception extends \Exception{}
+class behat_stop_exception extends \Exception {
+}

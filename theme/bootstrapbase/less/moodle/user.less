@@ -53,22 +53,6 @@
     }
 }
 
-.dir-rtl {
-    .user-box {
-        float: right;
-    }
-    .userprofile .node_category {
-        .editprofile,
-        .viewmore {
-            text-align: left;
-        }
-    }
-    .userprofile dl dd {
-        margin-left: 0;
-        margin-right: 10px;
-    }
-}
-
 @media (max-width: 480px) {
     .userprofile .profile_tree {
         /** Display the profile on one column on phones. */
@@ -204,9 +188,6 @@
     margin: 0.2em 0;
     text-align: left;
 }
-.dir-rtl #userselector_options p {
-    text-align: right;
-}
 /** user full profile */
 #page-user-profile .messagebox {
     text-align: center;
@@ -218,17 +199,6 @@
     text-align: center;
     margin-left: auto;
     margin-right: auto;
-}
-/** Overide for RTL layout **/
-.dir-rtl .userlist table#participants td,
-.dir-rtl .userlist table#participants th {
-    text-align: right;
-}
-.dir-rtl .userlist table#participants {
-    margin: 0 auto;
-}
-#page-my-index.dir-rtl .block h3 {
-    text-align: right;
 }
 
 .profileeditor {
@@ -242,14 +212,6 @@
         input {
             margin: 0;
         }
-    }
-}
-.dir-rtl .profileeditor {
-    > .singleselect {
-        margin: 0 0 0 0.5em;
-    }
-    > .singlebutton {
-        margin: 0 0.5em 0 0;
     }
 }
 
@@ -266,13 +228,6 @@
         }
     }
 }
-.dir-rtl #groupeditform {
-    .groups,
-    .members {
-        float: right;
-        text-align: right;
-    }
-}
 
 /** Preferences page */
 .preferences-group {
@@ -280,10 +235,5 @@
         list-style: none;
         margin-left: 0;
         margin-right: 0;
-    }
-}
-.dir-rtl {
-    .preferences-group {
-        float: right;
     }
 }

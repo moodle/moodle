@@ -241,10 +241,6 @@
     text-align: right;
 }
 
-.path-mod-assign.dir-rtl.jsenabled .mod-assign-history-link h4 {
-    text-align: right;
-}
-
 .path-mod-assign.jsenabled .mod-assign-history-link-open {
     padding: 0 5px 0 20px; background: url([[pix:t/expanded]]) 2px center no-repeat;
 }
@@ -253,9 +249,11 @@
     padding: 0 5px 0 20px; background: url([[pix:t/collapsed]]) 2px center no-repeat;
 }
 
-.path-mod-assign.dir-rtl.jsenabled .mod-assign-history-link-closed {
-    padding: 0 20px 0 5px; background: url([[pix:t/collapsed_rtl]]) 2px center no-repeat;
+/*rtl:raw:
+.path-mod-assign.jsenabled .mod-assign-history-link-closed {
+    background-image: url([[pix:t/collapsed_rtl]]);
 }
+*/
 
 .path-mod-assign .submithelp {
     padding: 1em;
@@ -318,13 +316,6 @@
 .path-mod-assign [data-region="user-selector"] [data-action="next-user"] {
     margin-left: -10px;
 }
-.dir-rtl.path-mod-assign [data-region="user-selector"] [data-action="next-user"] {
-    margin-right: -10px;
-}
-
-.dir-rtl.path-mod-assign [data-region="user-selector"] .alignment {
-    float: left;
-}
 
 .path-mod-assign [data-region="user-selector"] .alignment input {
     margin-bottom: 5px;
@@ -343,9 +334,6 @@
 }
 .path-mod-assign [data-region="user-selector"] .form-autocomplete-suggestions {
     margin-left: 48px;
-}
-.dir-rtl.path-mod-assign [data-region="user-selector"] .form-autocomplete-suggestions {
-    margin-right: 64px;
 }
 
 .path-mod-assign [data-region="user-filters"] {
@@ -392,12 +380,6 @@
     border-bottom-color: #fff;
 }
 
-.path-mod-assign.dir-rtl [data-region="configure-filters"] {
-    text-align: right;
-    margin-left: 0;
-    margin-right: -140px;
-}
-
 .path-mod-assign [data-region="configure-filters"] label {
     padding: 3px 20px;
 }
@@ -433,10 +415,6 @@
     float: left;
     margin-top: -3px;
     margin-right: 10px;
-}
-.dir-rtl.path-mod-assign [data-region="user-info"] .img-rounded {
-    float: right;
-    margin-left: 10px;
 }
 
 .path-mod-assign [data-region="user-info"] em {
@@ -880,9 +858,6 @@
 .path-mod-assign #page-content [data-region="grade-panel"] [data-region="popout-button"] {
     float: right;
 }
-.dir-rtl.path-mod-assign #page-content [data-region="grade-panel"] [data-region="popout-button"] {
-    float: left;
-}
 
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fitem.popout .fitemtitle [data-region="popout-button"] img {
     margin-top: -10px;
@@ -962,6 +937,7 @@
     height: 60px;
 }
 
+/*rtl:ignore*/
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     position: absolute;
     top: 0;
@@ -970,7 +946,6 @@
     margin: 0;
     height: 100%;
     line-height: 60px;
-    direction: ltr;
 }
 
 .path-mod-assign [data-region="grade-actions"] {
@@ -1134,31 +1109,6 @@
         float: none;
         margin: 0 auto 10px;
     }
-    .dir-rtl.path-mod-assign [data-region="review-panel"] .pageheader {
-        padding-right: 40px;
-        padding-left: 20px;
-    }
-    .dir-rtl.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] {
-        left: auto;
-        right: 0;
-        border-radius: 0 0 0 4px;
-    }
-    .dir-rtl.path-mod-assign [data-region="review-panel"].collapsed {
-        right: 0;
-        left: auto;
-    }
-    .dir-rtl.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon .ltr-icon {
-        display: none;
-    }
-    .dir-rtl.path-mod-assign [data-region="review-panel"] [data-region="review-panel-toggle"] .expand-icon .rtl-icon {
-        display: block;
-    }
-    .dir-rtl.path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] .collapse-icon {
-        display: none;
-    }
-    .dir-rtl.path-mod-assign [data-region="review-panel"].collapsed [data-region="review-panel-toggle"] .expand-icon {
-        display: block;
-    }
 }
 
 /** Start of CSS to make forms vertical in the grading panel (taken from theme/bootstrapbase/less/moodle/forms.less). */
@@ -1205,22 +1155,6 @@
     padding: 6px;
 }
 
-.dir-rtl.path-mod-assign [data-region="grade-panel"] .mform .femptylabel .fitemtitle {
-    margin-right: 0px;
-    margin-left: 8px;
-}
-.dir-rtl.path-mod-assign [data-region="grade-panel"] .mform .fitem .fitemtitle {
-    text-align: right;
-}
-.dir-rtl.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {
-    margin-right: 0;
-    float: right;
-    padding-right: 0;
-    padding-left: 0;
-}
-.dir-rtl.path-mod-assign [data-region="grade-panel"] .mform .fitem_checkbox .felement {
-    float: right;
-}
 /** End of CSS to make forms vertical in the grading panel (taken from theme/bootstrapbase/less/moodle/forms.less). */
 
 /** Styles to fix base theme **/

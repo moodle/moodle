@@ -7,14 +7,10 @@
     font-weight: normal;
     text-decoration: none;
 }
-#page-mod-book-print.dir-ltr {
+#page-mod-book-print {
     margin-left: 50px;
     margin-right: 10px;
 
-}
-#page-mod-book-print.dir-rtl {
-    margin-left: 10px;
-    margin-right: 50px;
 }
 
 #page-mod-book-print h1,
@@ -25,21 +21,6 @@
 #page-mod-book-print h6 {
     page-break-after: avoid;
     page-break-inside: avoid;
-}
-#page-mod-book-print.dir-ltr h1,
-#page-mod-book-print.dir-ltr h2,
-#page-mod-book-print.dir-ltr h3,
-#page-mod-book-print.dir-ltr h4,
-#page-mod-book-print.dir-ltr h5,
-#page-mod-book-print.dir-ltr h6 {
-    margin-left: 0px;
-}
-#page-mod-book-print.dir-rtl h1,
-#page-mod-book-print.dir-rtl h2,
-#page-mod-book-print.dir-rtl h3,
-#page-mod-book-print.dir-rtl h4,
-#page-mod-book-print.dir-rtl h5,
-#page-mod-book-print.dir-rtl h6 {
     margin-left: 0px;
 }
 
@@ -56,12 +37,7 @@
 #page-mod-book-print .book_summary {
     text-align: center;
     margin-bottom: 120px;
-}
-#page-mod-book-print.dir-ltr .book_summary {
     margin-left: -40px;
-}
-#page-mod-book-print.dir-rtl .book_summary {
-    margin-right: -40px;
 }
 
 #page-mod-book-print .book_chapter {
@@ -74,15 +50,10 @@
 #page-mod-book-print .book_toc_none {
     page-break-before: always;
 }
-#page-mod-book-print.dir-ltr .book_toc_none ul,
-#page-mod-book-print.dir-ltr .book_toc_none ul ul {
+#page-mod-book-print .book_toc_none ul,
+#page-mod-book-print .book_toc_none ul ul {
     margin-left: 0px;
     padding-left: 0px;
-}
-#page-mod-book-print.dir-rtl .book_toc_none ul,
-#page-mod-book-print.dir-rtl .book_toc_none ul ul {
-    margin-right: 0px;
-    padding-right: 0px;
 }
 #page-mod-book-print .book_toc_none li {
     margin-top: 10px;
@@ -104,15 +75,10 @@
     margin-top: 0px;
     list-style: none;
 }
-#page-mod-book-print.dir-ltr .book_toc_numbered ul,
-#page-mod-book-print.dir-ltr .book_toc_numbered ul ul {
+#page-mod-book-print .book_toc_numbered ul,
+#page-mod-book-print .book_toc_numbered ul ul {
     margin-left: 0px;
     padding-left: 0px;
-}
-#page-mod-book-print.dir-rtl .book_toc_numbered ul,
-#page-mod-book-print.dir-rtl .book_toc_numbered ul ul {
-    margin-right: 0px;
-    padding-right: 0px;
 }
 
 /* numbering == BULLETS */
@@ -127,21 +93,13 @@
     margin-top: 0px;
     list-style: circle;
 }
-#page-mod-book-print.dir-ltr .book_toc_bullets ul {
+#page-mod-book-print .book_toc_bullets ul {
     margin-left: 0px;
     padding-left: 0px;
 }
-#page-mod-book-print.dir-ltr .book_toc_bullets ul ul {
+#page-mod-book-print .book_toc_bullets ul ul {
     margin-left: 20px;
     padding-left: 0px;
-}
-#page-mod-book-print.dir-rtl .book_toc_bullets ul {
-    margin-right: 0px;
-    padding-right: 0px;
-}
-#page-mod-book-print.dir-rtl .book_toc_bullets ul ul {
-    margin-right: 20px;
-    padding-right: 0px;
 }
 
 /* numbering == INDENTED */
@@ -156,22 +114,15 @@
     margin-top: 0px;
     list-style: none;
 }
-#page-mod-book-print.dir-ltr .book_toc_indented ul {
+#page-mod-book-print .book_toc_indented ul {
     margin-left: 0px;
     padding-left: 0px;
 }
-#page-mod-book-print.dir-ltr .book_toc_indented ul ul {
+#page-mod-book-print .book_toc_indented ul ul {
     margin-left: 20px;
     padding-left: 0px;
 }
-#page-mod-book-print.dir-rtl .book_toc_indented ul {
-    margin-right: 0px;
-    padding-right: 0px;
-}
-#page-mod-book-print.dir-rtl .book_toc_indented ul ul {
-    margin-right: 20px;
-    padding-right: 0px;
-}
+
 
 /* Exclude elements from printing. */
 @media print

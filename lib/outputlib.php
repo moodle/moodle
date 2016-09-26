@@ -285,6 +285,17 @@ class theme_config {
     public $csspostprocess = null;
 
     /**
+     * @var string Function to do custom CSS post-processing on a parsed CSS tree.
+     *
+     * This is an advanced feature. If you want to do custom post-processing on the
+     * CSS before it is output, you can provide the name of the function here. The
+     * function will receive a CSS tree document as first parameter, and the theme_config
+     * object as second parameter. A return value is not required, the tree can
+     * be edited in place.
+     */
+    public $csstreepostprocess = null;
+
+    /**
      * @var string Accessibility: Right arrow-like character is
      * used in the breadcrumb trail, course navigation menu
      * (previous/next activity), calendar, and search forum block.
@@ -405,10 +416,22 @@ class theme_config {
     private $usesvg = null;
 
     /**
+     * Whether in RTL mode or not.
+     * @var bool
+     */
+    protected $rtlmode = false;
+
+    /**
      * The LESS file to compile. When set, the theme will attempt to compile the file itself.
      * @var bool
      */
     public $lessfile = false;
+
+    /**
+     * The SCSS file to compile. This takes precedence over the LESS file.
+     * @var string
+     */
+    public $scssfile = false;
 
     /**
      * The name of the function to call to get the LESS code to inject.
@@ -417,10 +440,22 @@ class theme_config {
     public $extralesscallback = null;
 
     /**
+     * The name of the function to call to get the SCSS code to inject.
+     * @var string
+     */
+    public $extrascsscallback = null;
+
+    /**
      * The name of the function to call to get extra LESS variables.
      * @var string
      */
     public $lessvariablescallback = null;
+
+    /**
+     * The name of the function to call to get extra SCSS variables.
+     * @var string
+     */
+    public $scssvariablescallback = null;
 
     /**
      * Sets the render method that should be used for rendering custom block regions by scripts such as my/index.php
@@ -500,7 +535,8 @@ class theme_config {
             'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
-            'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod');
+            'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod',
+            'scssfile', 'extrascsscallback', 'scssvariablescallback', 'csstreepostprocessor');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {
@@ -729,6 +765,7 @@ class theme_config {
         $separate = (core_useragent::is_ie() && !core_useragent::check_ie_version('10'));
 
         if ($rev > -1) {
+            $filename = right_to_left() ? 'all-rtl' : 'all';
             $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
             if (!empty($CFG->slasharguments)) {
                 $slashargs = '';
@@ -737,13 +774,13 @@ class theme_config {
                     // The underscore is used to ensure that it isn't a valid theme name.
                     $slashargs .= '/_s'.$slashargs;
                 }
-                $slashargs .= '/'.$this->name.'/'.$rev.'/all';
+                $slashargs .= '/'.$this->name.'/'.$rev.'/'.$filename;
                 if ($separate) {
                     $slashargs .= '/chunk0';
                 }
                 $url->set_slashargument($slashargs, 'noparam', true);
             } else {
-                $params = array('theme' => $this->name,'rev' => $rev, 'type' => 'all');
+                $params = array('theme' => $this->name, 'rev' => $rev, 'type' => $filename);
                 if (!$svg) {
                     // We add an SVG param so that we know not to serve SVG images.
                     // We do this because all modern browsers support SVG and this param will one day be removed.
@@ -765,6 +802,9 @@ class theme_config {
                 // We do this because all modern browsers support SVG and this param will one day be removed.
                 $baseurl->param('svg', '0');
             }
+            if (right_to_left()) {
+                $baseurl->param('rtl', 1);
+            }
             if ($separate) {
                 // We might need to chunk long files.
                 $baseurl->param('chunk', '0');
@@ -776,7 +816,10 @@ class theme_config {
                     // We need to serve parents individually otherwise we may easily exceed the style limit IE imposes (4096).
                     $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'ie', 'subtype'=>'parents', 'sheet'=>$parent));
                 }
-                if (!empty($this->lessfile)) {
+                if (!empty($this->scssfile)) {
+                    // No need to define the type as IE here.
+                    $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'scss'));
+                } else if (!empty($this->lessfile)) {
                     // No need to define the type as IE here.
                     $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less'));
                 }
@@ -792,7 +835,10 @@ class theme_config {
                     }
                 }
                 foreach ($css['theme'] as $sheet => $filename) {
-                    if ($sheet === $this->lessfile) {
+                    if ($sheet === $this->scssfile) {
+                        // This is the theme SCSS file.
+                        $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'scss'));
+                    } else if ($sheet === $this->lessfile) {
                         // This is the theme LESS file.
                         $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less'));
                     } else {
@@ -825,7 +871,10 @@ class theme_config {
                         $csscontent .= file_get_contents($v) . "\n";
                     }
                 } else {
-                    if ($type === 'theme' && $identifier === $this->lessfile) {
+                    if ($type === 'theme' && $identifier === $this->scssfile) {
+                        // We need the content from SCSS because this is the SCSS file from the theme.
+                        $csscontent .= $this->get_css_content_from_scss(false);
+                    } else if ($type === 'theme' && $identifier === $this->lessfile) {
                         // We need the content from LESS because this is the LESS file from the theme.
                         $csscontent .= $this->get_css_content_from_less(false);
                     } else {
@@ -867,11 +916,18 @@ class theme_config {
         global $CFG;
         require_once($CFG->dirroot.'/lib/csslib.php');
 
-        // The LESS file of the theme is requested.
-        if ($type === 'less') {
+        if ($type === 'scss') {
+            // The SCSS file of the theme is requested.
+            $csscontent = $this->get_css_content_from_scss(true);
+            if ($csscontent !== false) {
+                return $this->post_process($csscontent);
+            }
+            return '';
+        } else if ($type === 'less') {
+            // The LESS file of the theme is requested.
             $csscontent = $this->get_css_content_from_less(true);
             if ($csscontent !== false) {
-                return $csscontent;
+                return $this->post_process($csscontent);
             }
             return '';
         }
@@ -906,9 +962,9 @@ class theme_config {
             } else if ($subtype === 'theme') {
                 $cssfiles = $css['theme'];
                 foreach ($cssfiles as $key => $value) {
-                    if ($this->lessfile && $key === $this->lessfile) {
-                        // Remove the LESS file from the theme CSS files.
-                        // The LESS files use the type 'less', not 'ie'.
+                    if (in_array($key, [$this->lessfile, $this->scssfile])) {
+                        // Remove the LESS/SCSS file from the theme CSS files.
+                        // The LESS/SCSS files use the type 'less' or 'scss', not 'ie'.
                         unset($cssfiles[$key]);
                     }
                 }
@@ -1053,10 +1109,15 @@ class theme_config {
         }
 
         // Current theme sheets and less file.
-        // We first add the LESS files because we want the CSS ones to be included after the
-        // LESS code. However, if both the LESS file and the CSS file share the same name,
-        // the CSS file is ignored.
-        if (!empty($this->lessfile)) {
+        // We first add the SCSS, or LESS file because we want the CSS ones to
+        // be included after the SCSS/LESS code. However, if both the SCSS/LESS file
+        // and a CSS file share the same name, the CSS file is ignored.
+        if (!empty($this->scssfile)) {
+            $sheetfile = "{$this->dir}/scss/{$this->scssfile}.scss";
+            if (is_readable($sheetfile)) {
+                $cssfiles['theme'][$this->scssfile] = $sheetfile;
+            }
+        } else if (!empty($this->lessfile)) {
             $sheetfile = "{$this->dir}/less/{$this->lessfile}.less";
             if (is_readable($sheetfile)) {
                 $cssfiles['theme'][$this->lessfile] = $sheetfile;
@@ -1132,11 +1193,54 @@ class theme_config {
             // Compile the CSS.
             $compiled = $compiler->getCss();
 
-            // Post process the entire thing.
-            $compiled = $this->post_process($compiled);
         } catch (Less_Exception_Parser $e) {
             $compiled = false;
             debugging('Error while compiling LESS ' . $lessfile . ' file: ' . $e->getMessage(), DEBUG_DEVELOPER);
+        }
+
+        // Try to save memory.
+        $compiler = null;
+        unset($compiler);
+
+        return $compiled;
+    }
+
+    /**
+     * Return the CSS content generated from the SCSS file.
+     *
+     * @param bool $themedesigner True if theme designer is enabled.
+     * @return bool|string Return false when the compilation failed. Else the compiled string.
+     */
+    protected function get_css_content_from_scss($themedesigner) {
+        global $CFG;
+
+        $scssfile = $this->scssfile;
+        if (!$scssfile || !is_readable($this->dir . '/scss/' . $scssfile . '.scss')) {
+            throw new coding_exception('The theme did not define a SCSS file, or it is not readable.');
+        }
+
+        // We might need more memory to do this, so let's play safe.
+        raise_memory_limit(MEMORY_EXTRA);
+
+        // Files list.
+        $files = $this->get_css_files($themedesigner);
+
+        // Get the SCSS file path.
+        $themescssfile = $files['theme'][$scssfile];
+
+        // Set-up the compiler.
+        $compiler = new core_scss();
+        $compiler->set_file($themescssfile);
+        $compiler->append_raw_scss($this->get_extra_scss_code());
+        $compiler->add_variables($this->get_scss_variables());
+
+        try {
+            // Compile!
+            $compiled = $compiler->to_css();
+
+        } catch (\Leafo\ScssPhp\Exception $e) {
+            $compiled = false;
+            debugging('Error while compiling SCSS ' . $scssfile . ' file: ' . $e->getMessage(), DEBUG_DEVELOPER);
         }
 
         // Try to save memory.
@@ -1180,6 +1284,39 @@ class theme_config {
     }
 
     /**
+     * Return extra SCSS variables to use when compiling.
+     *
+     * @return array Where keys are the variable names, and the values are the value.
+     */
+    protected function get_scss_variables() {
+        $variables = array();
+
+        // Getting all the candidate functions.
+        $candidates = array();
+        foreach ($this->parent_configs as $parent_config) {
+            if (!isset($parent_config->scssvariablescallback)) {
+                continue;
+            }
+            $candidates[] = $parent_config->scssvariablescallback;
+        }
+        $candidates[] = $this->scssvariablescallback;
+
+        // Calling the functions.
+        foreach ($candidates as $function) {
+            if (function_exists($function)) {
+                $vars = $function($this);
+                if (!is_array($vars)) {
+                    debugging('Callback ' . $function . ' did not return an array() as expected', DEBUG_DEVELOPER);
+                    continue;
+                }
+                $variables = array_merge($variables, $vars);
+            }
+        }
+
+        return $variables;
+    }
+
+    /**
      * Return extra LESS code to add when compiling.
      *
      * This is intended to be used by themes to inject some LESS code
@@ -1205,6 +1342,38 @@ class theme_config {
         foreach ($candidates as $function) {
             if (function_exists($function)) {
                 $content .= "\n/** Extra LESS from $function **/\n" . $function($this) . "\n";
+            }
+        }
+
+        return $content;
+    }
+
+    /**
+     * Return extra SCSS code to add when compiling.
+     *
+     * This is intended to be used by themes to inject some SCSS code
+     * before it gets compiled. If you want to inject variables you
+     * should use {@link self::get_scss_variables()}.
+     *
+     * @return string The SCSS code to inject.
+     */
+    protected function get_extra_scss_code() {
+        $content = '';
+
+        // Getting all the candidate functions.
+        $candidates = array();
+        foreach ($this->parent_configs as $parent_config) {
+            if (!isset($parent_config->extrascsscallback)) {
+                continue;
+            }
+            $candidates[] = $parent_config->extrascsscallback;
+        }
+        $candidates[] = $this->extrascsscallback;
+
+        // Calling the functions.
+        foreach ($candidates as $function) {
+            if (function_exists($function)) {
+                $content .= "\n/** Extra SCSS from $function **/\n" . $function($this) . "\n";
             }
         }
 
@@ -1380,6 +1549,26 @@ class theme_config {
             }
         }
 
+        // Post processing using an object representation of CSS.
+        $hastreeprocessor = !empty($this->csstreepostprocessor) && function_exists($this->csstreepostprocessor);
+        $needsparsing = $hastreeprocessor || !empty($this->rtlmode);
+        if ($needsparsing) {
+            $parser = new core_cssparser($css);
+            $csstree = $parser->parse();
+            unset($parser);
+        }
+
+        if ($this->rtlmode) {
+            $this->rtlize($csstree);
+        }
+
+        if ($hastreeprocessor) {
+            $fn = $this->csstreepostprocessor;
+            $fn($csstree, $this);
+            $css = $csstree->render();
+            unset($csstree);
+        }
+
         // now resolve all theme settings or do any other postprocessing
         $csspostprocess = $this->csspostprocess;
         if (function_exists($csspostprocess)) {
@@ -1387,6 +1576,17 @@ class theme_config {
         }
 
         return $css;
+    }
+
+    /**
+     * Flip a stylesheet to RTL.
+     *
+     * @param Object $csstree The parsed CSS tree structure to flip.
+     * @return void
+     */
+    protected function rtlize($csstree) {
+        $rtlcss = new core_rtlcss($csstree);
+        $rtlcss->flip();
     }
 
     /**
@@ -1716,6 +1916,17 @@ class theme_config {
      */
     public function force_svg_use($setting) {
         $this->usesvg = (bool)$setting;
+    }
+
+    /**
+     * Set to be in RTL mode.
+     *
+     * This will likely be used when post processing the CSS before serving it.
+     *
+     * @param bool $inrtl True when in RTL mode.
+     */
+    public function set_rtl_mode($inrtl = true) {
+        $this->rtlmode = $inrtl;
     }
 
     /**

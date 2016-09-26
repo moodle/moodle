@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use \mod_quiz\structure;
 use \html_writer;
+use renderable;
 
 /**
  * Renderer outputting the quiz editing UI.
@@ -102,7 +103,6 @@ class edit_renderer extends \plugin_renderer_base {
 
             // Include the question chooser.
             $output .= $this->question_chooser();
-            $this->page->requires->yui_module('moodle-mod_quiz-questionchooser', 'M.mod_quiz.init_questionchooser');
         }
 
         return $output;
@@ -933,12 +933,22 @@ class edit_renderer extends \plugin_renderer_base {
     }
 
     /**
+     * Renders the question chooser.
+     *
+     * @param renderable
+     * @return string
+     */
+    public function render_question_chooser(renderable $chooser) {
+        return $this->render_from_template('mod_quiz/question_chooser', $chooser->export_for_template($this));
+    }
+
+    /**
      * Render the question type chooser dialogue.
      * @return string HTML to output.
      */
     public function question_chooser() {
-        $container = html_writer::div(print_choose_qtype_to_add_form(array(), null, false), '',
-                array('id' => 'qtypechoicecontainer'));
+        $chooser = \mod_quiz\output\question_chooser::get($this->page->course, [], null);
+        $container = html_writer::div($this->render($chooser), '', array('id' => 'qtypechoicecontainer'));
         return html_writer::div($container, 'createnewquestion');
     }
 

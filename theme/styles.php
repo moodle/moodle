@@ -66,7 +66,7 @@ if ($slashargument = min_get_slash_argument()) {
 if ($type === 'editor') {
     // The editor CSS is never chunked.
     $chunk = null;
-} else if ($type === 'all') {
+} else if ($type === 'all' || $type === 'all-rtl') {
     // We're fine.
 } else {
     css_send_css_not_found();
@@ -116,6 +116,7 @@ require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
 $theme->force_svg_use($usesvg);
+$theme->set_rtl_mode($type === 'all-rtl' ? true : false);
 
 $themerev = theme_get_revision();
 
@@ -150,11 +151,10 @@ if ($type === 'editor') {
 } else {
 
     $lock = null;
-
-    // Lock system to prevent concurrent requests to compile LESS, which is really slow and CPU intensive.
+    // Lock system to prevent concurrent requests to compile LESS/SCSS, which is really slow and CPU intensive.
     // Each client should wait for one to finish the compilation before starting a new compiling process.
     // We only do this when the file will be cached...
-    if ($type === 'less' && $cache) {
+    if (in_array($type, ['less', 'scss']) && $cache) {
         $lockfactory = \core\lock\lock_config::get_lock_factory('core_theme_get_css_content');
         // We wait for the lock to be acquired, the timeout does not need to be strict here.
         $lock = $lockfactory->get_lock($themename, rand(15, 30));
@@ -173,19 +173,19 @@ if ($type === 'editor') {
     $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
     if (!empty($slashargument)) {
         if ($usesvg) {
-            $chunkurl = "{$relroot}/theme/styles.php/{$themename}/{$rev}/all";
+            $chunkurl = "{$relroot}/theme/styles.php/{$themename}/{$rev}/$type";
         } else {
-            $chunkurl = "{$relroot}/theme/styles.php/_s/{$themename}/{$rev}/all";
+            $chunkurl = "{$relroot}/theme/styles.php/_s/{$themename}/{$rev}/$type";
         }
     } else {
         if ($usesvg) {
-            $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type=all";
+            $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type=$type";
         } else {
-            $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type=all&svg=0";
+            $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type=$type&svg=0";
         }
     }
 
-    css_store_css($theme, "$candidatedir/all.css", $csscontent, true, $chunkurl);
+    css_store_css($theme, "$candidatedir/$type.css", $csscontent, true, $chunkurl);
 
     // Release the lock.
     if ($lock) {

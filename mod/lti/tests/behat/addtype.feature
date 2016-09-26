@@ -23,11 +23,11 @@ Feature: Add preconfigured tools via teacher interface
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |
     And I open "Test tool activity 1" actions menu
-    And I follow "Edit settings" in the open menu
+    And I choose "Edit settings" in the open action menu
     And I set the field "Launch/cartridge URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
     And I press "Save and return to course"
     And I open "Test tool activity 1" actions menu
-    And I follow "Edit settings" in the open menu
+    And I choose "Edit settings" in the open action menu
     And I expand all fieldsets
     Then the field "Launch/cartridge URL" matches value "http://www.example.com/lti/provider.php"
     And the field "Secure launch URL" matches value "https://www.example.com/lti/provider.php"
@@ -42,7 +42,7 @@ Feature: Add preconfigured tools via teacher interface
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |
     And I open "Test tool activity 1" actions menu
-    And I follow "Edit settings" in the open menu
+    And I choose "Edit settings" in the open action menu
     And I follow "Add preconfigured tool"
     And I switch to "add_tool" window
     And I set the field "Tool name" to "Placeholder"
@@ -66,7 +66,7 @@ Feature: Add preconfigured tools via teacher interface
     And I add a "External tool" to section "1" and I fill the form with:
       | Activity name | Test tool activity 1 |
     And I open "Test tool activity 1" actions menu
-    And I follow "Edit settings" in the open menu
+    And I choose "Edit settings" in the open action menu
     And I set the field "Launch/cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
     And I press "Save and return to course"
     And I follow "Test tool activity 1"

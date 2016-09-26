@@ -65,6 +65,7 @@ class MoodleQuickForm_passwordunmask extends MoodleQuickForm_password {
         }
 
         parent::__construct($elementName, $elementLabel, $attributes);
+        $this->setType('passwordunmask');
     }
 
     /**

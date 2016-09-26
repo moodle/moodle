@@ -1,0 +1,69 @@
+table#explaincaps,
+table#defineroletable,
+table.grading-report,
+table#listdirectories,
+table.rolecaps,
+table.userenrolment,
+form#movecourses table,
+#page-admin-course-index .editcourse,
+.forumheaderlist,
+table.flexible,
+.generaltable {
+    @extend .table-striped;
+}
+
+table {
+    caption {
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 42px;
+        text-align: left;
+    }
+}
+
+#page-report-loglive-index .generaltable,
+#page-admin-report-log-index .generaltable,
+#page-report-log-user .generaltable,
+#page-admin-user table,
+.environmenttable,
+.category_subcategories,
+.rcs-results,
+table#listdirectories {
+    @extend .table-sm;
+}
+
+.user-enroller-panel .uep-search-results .users,
+.user-enroller-panel .uep-search-results .cohorts,
+table.grading-report,
+.forumheaderlist,
+.generaltable,
+table.flexible,
+.category_subcategories,
+table#modules,
+table#permissions {
+    @extend .table-hover;
+}
+
+// colored buttons
+input.form-submit,
+input#id_submitbutton,
+input#id_submitbutton2,
+.path-admin .buttons input[type="submit"],
+td.submit input {
+    @extend .btn-primary;
+}
+// override .btn-primary
+#notice .singlebutton + .singlebutton input,
+.submit.buttons input[name="cancel"] {
+    @extend .btn;
+}
+
+#notice .singlebutton + .singlebutton input,
+.submit.buttons input[name="cancel"] {
+    @extend .btn-lineup;
+}
+
+input[id="_clearbutton"],
+input[type="reset"] {
+    @extend .btn-warning;
+}

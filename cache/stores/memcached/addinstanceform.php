@@ -73,6 +73,7 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->setType('prefix', PARAM_TEXT); // We set to text but we have a rule to limit to alphanumext.
         $form->addHelpButton('prefix', 'prefix', 'cachestore_memcached');
         $form->addRule('prefix', get_string('prefixinvalid', 'cachestore_memcached'), 'regex', '#^[a-zA-Z0-9\-_]+$#');
+        $form->setForceLtr('prefix');
 
         $hashoptions = cachestore_memcached::config_get_hash_options();
         $form->addElement('select', 'hash', get_string('hash', 'cachestore_memcached'), $hashoptions);

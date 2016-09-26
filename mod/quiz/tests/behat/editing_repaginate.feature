@@ -116,7 +116,7 @@ Feature: Edit quiz page - pagination
 
     # Add the forth Essay question in a new page (Page 4).
     When I open the "Page 3" add to quiz menu
-    And I follow "a new question" in the open menu
+    And I choose "a new question" in the open action menu
     And I set the field "qtype_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"

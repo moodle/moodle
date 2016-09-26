@@ -319,24 +319,6 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
     $frm->password = "";
 }
 
-if (!empty($frm->username)) {
-    $focus = "password";
-} else {
-    $focus = "username";
-}
-
-if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {
-    $show_instructions = true;
-} else {
-    $show_instructions = false;
-}
-
-$potentialidps = array();
-foreach($authsequence as $authname) {
-    $authplugin = get_auth_plugin($authname);
-    $potentialidps = array_merge($potentialidps, $authplugin->loginpage_idp_list($SESSION->wantsurl));
-}
-
 if (!empty($SESSION->loginerrormsg)) {
     // We had some errors before redirect, show them now.
     $errormsg = $SESSION->loginerrormsg;
@@ -367,13 +349,9 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
     echo $OUTPUT->box_end();
 } else {
-    include("index_form.html");
-    if ($errormsg) {
-        $PAGE->requires->js_init_call('M.util.focus_login_error', null, true);
-    } else if (!empty($CFG->loginpageautofocus)) {
-        //focus username or password
-        $PAGE->requires->js_init_call('M.util.focus_login_form', null, true);
-    }
+    $loginform = new \core_auth\output\login($authsequence, $frm->username);
+    $loginform->set_error($errormsg);
+    echo $OUTPUT->render($loginform);
 }
 
 echo $OUTPUT->footer();

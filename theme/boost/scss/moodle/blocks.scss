@@ -1,0 +1,29 @@
+.blockmovetarget .accesshide {
+    position: relative;
+    left: initial;
+}
+
+.block_search_forums .searchform {
+    /* Override plugin's default. */
+    text-align: left;
+}
+
+.block.block_navigation .block_tree ul,
+.block_settings .block_tree ul {
+    margin-left: 0;
+}
+
+.block .card-title {
+    word-break: break-all;
+}
+
+.block .block-controls {
+    .dropdown-toggle {
+        /* So that the caret takes the colour of the icon. */
+        color: #999;
+
+        &::after {
+            margin-left: 0;
+        }
+    }
+}

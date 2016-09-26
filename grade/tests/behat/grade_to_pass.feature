@@ -134,8 +134,8 @@ Feature: We can set the grade to pass value
       | Submission grade to pass | 90 |
       | gradinggrade | 20 |
       | Assessment grade to pass | 30 |
-    Then "The grade to pass can not be greater than the maximum possible grade 80" "text" should exist in the "#fitem_id_submissiongradepass .error" "css_element"
-    Then "The grade to pass can not be greater than the maximum possible grade 20" "text" should exist in the "#fitem_id_gradinggradepass .error" "css_element"
+    Then "The grade to pass can not be greater than the maximum possible grade 80" "text" should exist in the "Submission grade to pass" "form_row"
+    Then "The grade to pass can not be greater than the maximum possible grade 20" "text" should exist in the "Assessment grade to pass" "form_row"
 
   Scenario: Set a valid grade to pass for quiz activity
     When I turn editing mode on

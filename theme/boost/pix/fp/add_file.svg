@@ -1,0 +1,3 @@
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+	<!ENTITY ns_flows "http://ns.adobe.com/Flows/1.0/">
+]><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="-1 0 16 16" preserveAspectRatio="xMinYMid meet" overflow="visible"><path d="M10 15H1.2c-.1 0-.2-.1-.2-.3V1.2c0-.1.1-.2.2-.2H9v4h4v4h1V5.2c0-.7-.4-1.6-.9-2.1L10.9.9C10.4.4 9.4 0 8.8 0H1.2C.6 0 0 .6 0 1.2v13.5c0 .7.6 1.3 1.2 1.3H10v-1zm0-13.6c.1 0 2.5 2.5 2.6 2.6H10V1.4zM15 14h-2v2h-2v-2H9v-2h2v-2h2v2h2v2z" fill="#999"/></svg>

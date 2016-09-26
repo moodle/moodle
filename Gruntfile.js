@@ -151,7 +151,7 @@ module.exports = function(grunt) {
                     "theme/bootstrapbase/style/editor.css": "theme/bootstrapbase/less/editor.less",
                 },
                 options: {
-                    compress: true
+                    compress: false // We must not compress to keep the comments.
                 }
            }
         },
@@ -192,11 +192,18 @@ module.exports = function(grunt) {
                             "selector-type-no-unknown": null,
                             "length-zero-no-unit": null,
                             "color-hex-case": null,
-                            "color-hex-length": null
+                            "color-hex-length": null,
+                            // These rules have to be disabled in .stylelintrc for scss compat.
+                            "at-rule-no-unknown": true,
+                            "no-browser-hacks": [true, {"severity": "warning"}]
                         }
                     }
                 },
                 src: ['theme/**/*.less']
+            },
+            scss: {
+                options: {syntax: 'scss'},
+                src: ['*/**/*.scss']
             }
         }
     });
@@ -351,7 +358,7 @@ module.exports = function(grunt) {
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
-    grunt.registerTask('css', ['stylelint:less', 'less:bootstrapbase']);
+    grunt.registerTask('css', ['stylelint:scss', 'stylelint:less', 'less:bootstrapbase']);
 
     // Register the startup task.
     grunt.registerTask('startup', 'Run the correct tasks for the current directory', tasks.startup);
