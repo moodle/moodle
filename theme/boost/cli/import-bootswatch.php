@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This script fixed incorrectly deleted users.
+ * Used to convert a bootswatch file from https://bootswatch.com/ to a Moodle preset.
  *
- * @package    core
+ * @package    theme_boost
  * @subpackage cli
- * @copyright  2013 Petr Skoda (http://skodak.org)
+ * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
