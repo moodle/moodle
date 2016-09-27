@@ -116,6 +116,7 @@ $string['currentstage16'] = 'Complete';
 $string['enterasearch'] = 'Enter a search';
 $string['error_block_for_module_not_found'] = 'Orphan block instance (id: {$a->bid}) for course module (id: {$a->mid}) found. This block will not be backed up';
 $string['error_course_module_not_found'] = 'Orphan course module (id: {$a}) found. This module will not be backed up.';
+$string['errorcopyingbackupfile'] = "Failed to copy the backup file to the temporary folder before restoring.";
 $string['errorfilenamerequired'] = 'You must enter a valid filename for this backup';
 $string['errorfilenamemustbezip'] = 'The filename you enter must be a ZIP file and have the .mbz extension';
 $string['errorminbackup20version'] = 'This backup file has been created with one development version of Moodle backup ({$a->backup}). Minimum required is {$a->min}. Cannot be restored.';
