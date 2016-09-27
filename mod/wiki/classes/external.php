@@ -635,6 +635,12 @@ class mod_wiki_external extends external_api {
                             $page->cachedcontent, FORMAT_HTML, $context->id, 'mod_wiki', 'attachments', $subwiki->id);
         $returnedpage['caneditpage'] = wiki_user_can_edit($subwiki);
 
+        // Get page version.
+        $version = wiki_get_current_version($page->id);
+        if (!empty($version)) {
+            $returnedpage['version'] = $version->version;
+        }
+
         $result = array();
         $result['page'] = $returnedpage;
         $result['warnings'] = $warnings;
@@ -660,7 +666,8 @@ class mod_wiki_external extends external_api {
                         'title' => new external_value(PARAM_RAW, 'Page title.'),
                         'cachedcontent' => new external_value(PARAM_RAW, 'Page contents.'),
                         'contentformat' => new external_format_value('cachedcontent', VALUE_OPTIONAL),
-                        'caneditpage' => new external_value(PARAM_BOOL, 'True if user can edit the page.')
+                        'caneditpage' => new external_value(PARAM_BOOL, 'True if user can edit the page.'),
+                        'version' => new external_value(PARAM_INT, 'Latest version of the page.', VALUE_OPTIONAL),
                     ), 'Page'
                 ),
                 'warnings' => new external_warnings()

@@ -976,7 +976,8 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
             'title' => $this->firstpage->title,
             'cachedcontent' => $this->firstpage->cachedcontent,
             'contentformat' => 1,
-            'caneditpage' => true
+            'caneditpage' => true,
+            'version' => 1
         );
 
         $result = mod_wiki_external::get_page_contents($this->firstpage->id);
@@ -1016,7 +1017,8 @@ class mod_wiki_external_testcase extends externallib_advanced_testcase {
             'title' => $this->fpsepg1indstu->title,
             'cachedcontent' => $this->fpsepg1indstu->cachedcontent,
             'contentformat' => 1,
-            'caneditpage' => true
+            'caneditpage' => true,
+            'version' => 1
         );
 
         $result = mod_wiki_external::get_page_contents($this->fpsepg1indstu->id);
