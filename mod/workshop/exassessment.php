@@ -143,7 +143,7 @@ echo $output->render($workshop->prepare_example_submission(($example)));
 // for evaluating the assessment
 if (trim($workshop->instructreviewers)) {
     $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
-        'mod_workshop', 'instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
+        'mod_workshop', 'instructreviewers', null, workshop::instruction_editors_options($PAGE->context));
     print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
     echo $output->box(format_text($instructions, $workshop->instructreviewersformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
     print_collapsible_region_end();
