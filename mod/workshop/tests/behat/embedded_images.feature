@@ -29,6 +29,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     # Embed the image into Instructions for submission.
     And I navigate to "Edit settings" node in "Workshop administration"
     And I expand all fieldsets
+    And I set the field "Instructions for submission" to "<p>Image test</p>"
     And I select the text in the "Instructions for submission" Atto editor
     And I click on "Image" "button" in the "#fitem_id_instructauthorseditor" "css_element"
     And I click on "Browse repositories..." "button"
@@ -41,6 +42,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     # Embed the image into Instructions for assessment.
     And I navigate to "Edit settings" node in "Workshop administration"
     And I expand all fieldsets
+    And I set the field "Instructions for assessment" to "<p>Image test</p>"
     And I select the text in the "Instructions for assessment" Atto editor
     And I click on "Image" "button" in the "#fitem_id_instructreviewerseditor" "css_element"
     And I click on "Browse repositories..." "button"
@@ -53,6 +55,7 @@ Feature: Teachers can embed images into instructions and conclusion fields
     # Embed the image into Conclusion.
     And I navigate to "Edit settings" node in "Workshop administration"
     And I expand all fieldsets
+    And I set the field "Conclusion" to "<p>Image test</p>"
     And I select the text in the "Conclusion" Atto editor
     And I click on "Image" "button" in the "#fitem_id_conclusioneditor" "css_element"
     And I click on "Browse repositories..." "button"
