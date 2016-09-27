@@ -2685,7 +2685,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     if (!$USER->policyagreed and !is_siteadmin()) {
         if (!empty($CFG->sitepolicy) and !isguestuser()) {
             if ($preventredirect) {
-                throw new require_login_exception('Policy not agreed');
+                throw new moodle_exception('sitepolicynotagreed', 'error', '', $CFG->sitepolicy);
             }
             if ($setwantsurltome) {
                 $SESSION->wantsurl = qualified_me();
@@ -2693,7 +2693,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             redirect($CFG->wwwroot .'/user/policy.php');
         } else if (!empty($CFG->sitepolicyguest) and isguestuser()) {
             if ($preventredirect) {
-                throw new require_login_exception('Policy not agreed');
+                throw new moodle_exception('sitepolicynotagreed', 'error', '', $CFG->sitepolicyguest);
             }
             if ($setwantsurltome) {
                 $SESSION->wantsurl = qualified_me();

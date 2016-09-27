@@ -1025,4 +1025,49 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $this->expectException('required_capability_exception');
         $result = core_user_external::set_user_preferences($preferences);
     }
+
+    /**
+     * Test agree_site_policy
+     */
+    public function test_agree_site_policy() {
+        global $CFG, $DB, $USER;
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Site policy not set.
+        $result = core_user_external::agree_site_policy();
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $this->assertFalse($result['status']);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('nositepolicy', $result['warnings'][0]['warningcode']);
+
+        // Set a policy issue.
+        $CFG->sitepolicy = 'https://moodle.org';
+        $this->assertEquals(0, $USER->policyagreed);
+
+        $result = core_user_external::agree_site_policy();
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(1, $USER->policyagreed);
+        $this->assertEquals(1, $DB->get_field('user', 'policyagreed', array('id' => $USER->id)));
+
+        // Try again, we should get a warning.
+        $result = core_user_external::agree_site_policy();
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $this->assertFalse($result['status']);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('alreadyagreed', $result['warnings'][0]['warningcode']);
+
+        // Set something to make require_login throws an exception.
+        $otheruser = self::getDataGenerator()->create_user();
+        $this->setUser($otheruser);
+
+        $DB->set_field('user', 'lastname', '', array('id' => $USER->id));
+        $USER->lastname = '';
+        $this->expectException('require_login_exception');
+        $result = core_user_external::agree_site_policy();
+    }
 }
