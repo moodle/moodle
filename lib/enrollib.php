@@ -1184,7 +1184,7 @@ function get_enrolled_with_capabilities_join(context $context, $prefix = '', $ca
     }
 
     if ($group) {
-        $groupjoin = get_in_group_join($group, $uid);
+        $groupjoin = groups_get_members_join($group, $uid);
         $joins[] = $groupjoin->joins;
         $params = array_merge($params, $groupjoin->params);
     }

@@ -937,13 +937,13 @@ function groups_group_visible($groupid, $course, $cm = null, $userid = null) {
  * @param int $groupid
  * @return array($sql, $params)
  */
-function get_in_group_sql($groupid) {
-    $groupjoin = get_in_group_join($groupid, 'u.id');
+function groups_get_members_ids_sql($groupid) {
+    $groupjoin = groups_get_members_join($groupid, 'u.id');
 
     $sql = "SELECT DISTINCT u.id
-            FROM {user} u
+              FROM {user} u
             $groupjoin->joins
-            WHERE u.deleted = 0";
+             WHERE u.deleted = 0";
 
     return array($sql, $groupjoin->params);
 }
@@ -955,7 +955,7 @@ function get_in_group_sql($groupid) {
  * @param string $useridcolumn The column of the user id from the calling SQL, e.g. u.id
  * @return \core\dml\sql_join Contains joins, wheres, params
  */
-function get_in_group_join($groupid, $useridcolumn) {
+function groups_get_members_join($groupid, $useridcolumn) {
     // Use unique prefix just in case somebody makes some SQL magic with the result.
     static $i = 0;
     $i++;

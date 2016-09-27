@@ -177,14 +177,13 @@ class core_grouplib_testcase extends advanced_testcase {
     }
 
 
-    public function test_groups_get_in_group_sql() {
+    public function test_groups_get_members_ids_sql() {
         global $DB;
 
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
 
-        // Create a course category and course.
         $course = $generator->create_course();
         $student = $generator->create_user();
         $plugin = enrol_get_plugin('manual');
@@ -200,7 +199,7 @@ class core_grouplib_testcase extends advanced_testcase {
         // Enrol the user in the course.
         $plugin->enrol_user($instance, $student->id, $role->id);
 
-        list($sql, $params) = get_in_group_sql($group->id, true);
+        list($sql, $params) = groups_get_members_ids_sql($group->id, true);
 
         // Test an empty group.
         $users = $DB->get_records_sql($sql, $params);
