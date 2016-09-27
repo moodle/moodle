@@ -10,7 +10,7 @@ Feature: View the user page for the outline report
       | Course 1 | C1 | topics | 1 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com
+      | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
