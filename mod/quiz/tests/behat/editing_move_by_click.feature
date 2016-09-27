@@ -70,7 +70,7 @@ Feature: Edit quiz page - drag-and-drop
     When I click on the "Add" page break icon after question "Question A"
     When I open the "Page 2" add to quiz menu
     And I choose "a new question" in the open action menu
-    And I set the field "qtype_qtype_description" to "1"
+    And I set the field "item_qtype_description" to "1"
     And I press "submitbutton"
     Then I should see "Adding a description"
     And I set the following fields to these values:

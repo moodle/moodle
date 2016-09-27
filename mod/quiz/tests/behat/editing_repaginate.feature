@@ -32,7 +32,7 @@ Feature: Edit quiz page - pagination
     # Add the first Essay question.
     And I follow "Add"
     And I follow "a new question"
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 01 new"
@@ -44,7 +44,7 @@ Feature: Edit quiz page - pagination
     # Add the second Essay question.
     And I follow "Add"
     And I follow "a new question"
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 02 new"
@@ -69,7 +69,7 @@ Feature: Edit quiz page - pagination
     # Add the third Essay question.
     And I follow "Add"
     And I follow "a new question"
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     And I set the field "Question name" to "Essay 03 new"
@@ -117,7 +117,7 @@ Feature: Edit quiz page - pagination
     # Add the forth Essay question in a new page (Page 4).
     When I open the "Page 3" add to quiz menu
     And I choose "a new question" in the open action menu
-    And I set the field "qtype_qtype_essay" to "1"
+    And I set the field "item_qtype_essay" to "1"
     And I press "submitbutton"
     Then I should see "Adding an Essay question"
     When I set the field "Question name" to "Essay 04 new"
