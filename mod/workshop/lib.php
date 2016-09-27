@@ -1318,8 +1318,8 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
 
     require_login($course, true, $cm);
 
-    if ($filearea === 'instructauthors') {
-        array_shift($args); // itemid is ignored here
+    if ($filearea === 'instructauthors' or $filearea === 'instructreviewers' or $filearea === 'conclusion') {
+        // The $args are supposed to contain just the path, not the item id.
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
 
@@ -1327,34 +1327,6 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
             send_file_not_found();
         }
-
-        // finally send the file
-        send_stored_file($file, null, 0, $forcedownload, $options);
-
-    } else if ($filearea === 'instructreviewers') {
-        array_shift($args); // itemid is ignored here
-        $relativepath = implode('/', $args);
-        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            send_file_not_found();
-        }
-
-        // finally send the file
-        send_stored_file($file, null, 0, $forcedownload, $options);
-
-    } else if ($filearea === 'conclusion') {
-        array_shift($args); // itemid is ignored here
-        $relativepath = implode('/', $args);
-        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            send_file_not_found();
-        }
-
-        // finally send the file
         send_stored_file($file, null, 0, $forcedownload, $options);
 
     } else if ($filearea === 'submission_content' or $filearea === 'submission_attachment') {
