@@ -582,6 +582,11 @@ class tool_uploadcourse_course {
             }
         }
 
+        // Course start date.
+        if (!empty($coursedata['startdate'])) {
+            $coursedata['startdate'] = strtotime($coursedata['startdate']);
+        }
+
         // Ultimate check mode vs. existence.
         switch ($mode) {
             case tool_uploadcourse_processor::MODE_CREATE_NEW:
@@ -629,11 +634,6 @@ class tool_uploadcourse_course {
         } else {
             $coursedata = $this->get_final_create_data($coursedata);
             $this->do = self::DO_CREATE;
-        }
-
-        // Course start date.
-        if (!empty($coursedata['startdate'])) {
-            $coursedata['startdate'] = strtotime($coursedata['startdate']);
         }
 
         // Add role renaming.

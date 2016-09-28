@@ -282,7 +282,6 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
      * @return array
      */
     function exportValue(&$submitValues, $assoc = false) {
-        $value = null;
         $valuearray = array();
         foreach ($this->_elements as $element){
             $thisexport = $element->exportValue($submitValues[$this->getName()], true);
@@ -294,8 +293,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
             if($this->_options['optional']) {
                 // If checkbox is on, the value is zero, so go no further
                 if(empty($valuearray['enabled'])) {
-                    $value[$this->getName()] = 0;
-                    return $value;
+                    return $this->_prepareValue(0, $assoc);
                 }
             }
             // Get the calendar type used - see MDL-18375.
@@ -305,7 +303,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                                                                  $valuearray['day'],
                                                                  $valuearray['hour'],
                                                                  $valuearray['minute']);
-            $value[$this->getName()] = make_timestamp($gregoriandate['year'],
+            $value = make_timestamp($gregoriandate['year'],
                                                       $gregoriandate['month'],
                                                       $gregoriandate['day'],
                                                       $gregoriandate['hour'],
@@ -314,7 +312,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                                                       $this->_options['timezone'],
                                                       true);
 
-            return $value;
+            return $this->_prepareValue($value, $assoc);
         } else {
             return null;
         }
