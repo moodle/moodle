@@ -310,3 +310,56 @@ Feature: Award badges
     When I follow "Course 1"
     Then I should see "Course Badge 2"
     Then I should not see "Course Badge 1"
+
+  @javascript
+  Scenario: Revoke badge
+    Given the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 2 | student2@example.com |
+    And the following "courses" exist:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1 | 0 | 1 |
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+      | student2 | C1 | student |
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
+    And I follow "Add a new badge"
+    And I set the following fields to these values:
+      | Name | Course Badge |
+      | Description | Course badge description |
+      | issuername | Tester of course badge |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
+    And I press "Create badge"
+    And I set the field "type" to "Manual issue by role"
+    And I set the field "Teacher" to "1"
+    And I press "Save"
+    And I press "Enable access"
+    And I press "Continue"
+    And I follow "Recipients (0)"
+    And I press "Award badge"
+    And I set the field "potentialrecipients[]" to "Student 2 (student2@example.com)"
+    And I press "Award badge"
+    And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
+    When I press "Award badge"
+    And I follow "Course Badge"
+    Then I should see "Recipients (2)"
+    And I follow "Recipients (2)"
+    And I press "Award badge"
+    And I set the field "existingrecipients[]" to "Student 2 (student2@example.com)"
+    And I press "Remove badge"
+    And I set the field "existingrecipients[]" to "Student 1 (student1@example.com)"
+    When I press "Award badge"
+    And I follow "Remove Badge"
+    Then I should see "Recipients (0)"
+    And I log out
+    And I log in as "student1"
+    And I follow "Profile" in the user menu
+    And I follow "Course 1"
+    And I should see "Course Badge"
+    
