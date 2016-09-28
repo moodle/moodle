@@ -736,7 +736,22 @@ class webservice {
 
     }
 
+    /**
+     * Return a list with all the valid user tokens for the given user, it only excludes expired tokens.
+     *
+     * @param  string $userid user id to retrieve tokens from
+     * @return array array of token entries
+     * @since Moodle 3.2
+     */
+    public static function get_active_tokens($userid) {
+        global $DB;
 
+        $sql = 'SELECT t.*, s.name as servicename FROM {external_tokens} t JOIN
+                {external_services} s ON t.externalserviceid = s.id WHERE
+                t.userid = :userid AND (t.validuntil IS NULL OR t.validuntil > :now)';
+        $params = array('userid' => $userid, 'now' => time());
+        return $DB->get_records_sql($sql, $params);
+    }
 }
 
 /**

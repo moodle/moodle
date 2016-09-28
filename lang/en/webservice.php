@@ -204,6 +204,7 @@ $string['usernameorid_help'] = 'Enter a username or a user id.';
 $string['usernameoridnousererror'] = 'No users were found with this username/user id.';
 $string['usernameoridoccurenceerror'] = 'More than one user was found with this username. Please enter the user id.';
 $string['usernotallowed'] = 'The user is not allowed for this service. First you need to allow this user on the {$a}\'s allowed users administration page.';
+$string['userservices'] = 'User services: {$a}';
 $string['usersettingssaved'] = 'User settings saved';
 $string['validuntil'] = 'Valid until';
 $string['validuntil_help'] = 'If set, the service will be inactivated after this date for this user.';
