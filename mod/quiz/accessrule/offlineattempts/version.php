@@ -15,16 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz activity version information.
+ * Version information for the quizaccess_offlineattempts plugin.
  *
- * @package   mod_quiz
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    quizaccess_offlineattempts
+ * @copyright  2016 Juan Leyva
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016092001;
-$plugin->requires  = 2016051900;
-$plugin->component = 'mod_quiz';
-$plugin->cron      = 60;
+$plugin->version   = 2016042600;
+$plugin->requires  = 2016042200;
+$plugin->component = 'quizaccess_offlineattempts';

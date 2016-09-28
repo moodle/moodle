@@ -131,7 +131,8 @@ class mod_quiz_external extends external_api {
                                                     'reviewoverallfeedback', 'questionsperpage', 'navmethod', 'sumgrades', 'grade',
                                                     'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                                     'completionattemptsexhausted', 'completionpass', 'overduehandling',
-                                                    'graceperiod', 'preferredbehaviour', 'canredoquestions');
+                                                    'graceperiod', 'preferredbehaviour', 'canredoquestions',
+                                                    'allowofflineattempts');
                         $viewablefields = array_merge($viewablefields, $additionalfields);
                     }
 
@@ -258,6 +259,8 @@ class mod_quiz_external extends external_api {
                                                                                 exhausted the maximum number of attempts',
                                                                                 VALUE_OPTIONAL),
                             'completionpass' => new external_value(PARAM_INT, 'Whether to require passing grade', VALUE_OPTIONAL),
+                            'allowofflineattempts' => new external_value(PARAM_INT, 'Whether to allow the quiz to be attempted
+                                                                            offline in the mobile app', VALUE_OPTIONAL),
                             'autosaveperiod' => new external_value(PARAM_INT, 'Auto-save delay', VALUE_OPTIONAL),
                             'hasfeedback' => new external_value(PARAM_INT, 'Whether the quiz has any non-blank feedback text',
                                                                 VALUE_OPTIONAL),
@@ -445,6 +448,7 @@ class mod_quiz_external extends external_api {
                 'timefinish' => new external_value(PARAM_INT, 'Time when the attempt was submitted.
                                                     0 if the attempt has not been submitted yet.', VALUE_OPTIONAL),
                 'timemodified' => new external_value(PARAM_INT, 'Last modified time.', VALUE_OPTIONAL),
+                'timemodifiedoffline' => new external_value(PARAM_INT, 'Last modified time via webservices.', VALUE_OPTIONAL),
                 'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
                                                         state changes.  NULL means never check.', VALUE_OPTIONAL),
                 'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
@@ -748,7 +752,8 @@ class mod_quiz_external extends external_api {
                     throw new moodle_quiz_exception($quizobj, 'attemptstillinprogress');
                 }
             }
-            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt);
+            $offlineattempt = WS_SERVER ? true : false;
+            $attempt = quiz_prepare_and_start_new_attempt($quizobj, $attemptnumber, $lastattempt, $offlineattempt);
         }
 
         $result = array();
@@ -872,6 +877,11 @@ class mod_quiz_external extends external_api {
                 'type' => new external_value(PARAM_ALPHANUMEXT, 'question type, i.e: multichoice'),
                 'page' => new external_value(PARAM_INT, 'page of the quiz this question appears on'),
                 'html' => new external_value(PARAM_RAW, 'the question rendered'),
+                'sequencecheck' => new external_value(PARAM_INT, 'the number of real steps in this attempt', VALUE_OPTIONAL),
+                'lastactiontime' => new external_value(PARAM_INT, 'the timestamp of the most recent step in this question attempt',
+                                                        VALUE_OPTIONAL),
+                'hasautosavedstep' => new external_value(PARAM_BOOL, 'whether this question attempt has autosaved data',
+                                                            VALUE_OPTIONAL),
                 'flagged' => new external_value(PARAM_BOOL, 'whether the question is flagged or not'),
                 'number' => new external_value(PARAM_INT, 'question ordering number in the quiz', VALUE_OPTIONAL),
                 'state' => new external_value(PARAM_ALPHA, 'the state where the question is in', VALUE_OPTIONAL),
@@ -907,7 +917,10 @@ class mod_quiz_external extends external_api {
                 'type' => $attemptobj->get_question_type_name($slot),
                 'page' => $attemptobj->get_question_page($slot),
                 'flagged' => $attemptobj->is_question_flagged($slot),
-                'html' => $attemptobj->render_question($slot, $review, $renderer) . $PAGE->requires->get_end_code()
+                'html' => $attemptobj->render_question($slot, $review, $renderer) . $PAGE->requires->get_end_code(),
+                'sequencecheck' => $attemptobj->get_question_attempt($slot)->get_sequence_check_count(),
+                'lastactiontime' => $attemptobj->get_question_attempt($slot)->get_last_step()->get_timecreated(),
+                'hasautosavedstep' => $attemptobj->get_question_attempt($slot)->has_autosaved_step()
             );
 
             if ($attemptobj->is_real_question($slot)) {
@@ -1136,6 +1149,8 @@ class mod_quiz_external extends external_api {
             $_POST[$element['name']] = $element['value'];
         }
         $timenow = time();
+        // Update the timemodifiedoffline field.
+        $attemptobj->set_offline_modified_time($timenow);
         $attemptobj->process_auto_save($timenow);
         $transaction->allow_commit();
 
@@ -1231,7 +1246,10 @@ class mod_quiz_external extends external_api {
         $timeup = $params['timeup'];
 
         $result = array();
+        // Update the timemodifiedoffline field.
+        $attemptobj->set_offline_modified_time($timenow);
         $result['state'] = $attemptobj->process_attempt($timenow, $finishattempt, $timeup, 0);
+
         $result['warnings'] = $warnings;
         return $result;
     }

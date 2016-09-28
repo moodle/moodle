@@ -199,7 +199,8 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
                                         'reviewoverallfeedback', 'questionsperpage', 'navmethod', 'sumgrades', 'grade',
                                         'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                         'completionattemptsexhausted', 'completionpass', 'autosaveperiod', 'hasquestions',
-                                        'hasfeedback', 'overduehandling', 'graceperiod', 'preferredbehaviour', 'canredoquestions');
+                                        'hasfeedback', 'overduehandling', 'graceperiod', 'preferredbehaviour', 'canredoquestions',
+                                        'allowofflineattempts');
         $managerfields = array('shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet');
 
         // Add expected coursemodule and other data.
@@ -850,6 +851,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
     public function test_get_attempt_data() {
         global $DB;
 
+        $timenow = time();
         // Create a new quiz with one attempt started.
         list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
 
@@ -877,6 +879,9 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $result['questions'][0]['page']);
         $this->assertEmpty($result['questions'][0]['mark']);
         $this->assertEquals(1, $result['questions'][0]['maxmark']);
+        $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
 
         // Now try the last page.
         $result = mod_quiz_external::get_attempt_data($attempt->id, 1);
@@ -893,6 +898,9 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(get_string('notyetanswered', 'question'), $result['questions'][0]['status']);
         $this->assertFalse($result['questions'][0]['flagged']);
         $this->assertEquals(1, $result['questions'][0]['page']);
+        $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
 
         // Finish previous attempt.
         $attemptobj->process_finish(time(), false);
@@ -981,6 +989,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
      */
     public function test_get_attempt_summary() {
 
+        $timenow = time();
         // Create a new quiz with one attempt started.
         list($quiz, $context, $quizobj, $attempt, $attemptobj) = $this->create_quiz_with_questions(true);
 
@@ -997,6 +1006,12 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['questions'][1]['flagged']);
         $this->assertEmpty($result['questions'][0]['mark']);
         $this->assertEmpty($result['questions'][1]['mark']);
+        $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
+        $this->assertEquals(1, $result['questions'][1]['sequencecheck']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][1]['lastactiontime']);
+        $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
+        $this->assertEquals(false, $result['questions'][1]['hasautosavedstep']);
 
         // Submit a response for the first question.
         $tosubmit = array(1 => array('answer' => '3.14'));
@@ -1013,6 +1028,12 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['questions'][1]['flagged']);
         $this->assertEmpty($result['questions'][0]['mark']);
         $this->assertEmpty($result['questions'][1]['mark']);
+        $this->assertEquals(2, $result['questions'][0]['sequencecheck']);
+        $this->assertEquals(1, $result['questions'][1]['sequencecheck']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][1]['lastactiontime']);
+        $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
+        $this->assertEquals(false, $result['questions'][1]['hasautosavedstep']);
 
     }
 
@@ -1021,6 +1042,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
      */
     public function test_save_attempt() {
 
+        $timenow = time();
         // Create a new quiz with one attempt started.
         list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true);
 
@@ -1052,6 +1074,12 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['questions'][1]['flagged']);
         $this->assertEmpty($result['questions'][0]['mark']);
         $this->assertEmpty($result['questions'][1]['mark']);
+        $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
+        $this->assertEquals(1, $result['questions'][1]['sequencecheck']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][1]['lastactiontime']);
+        $this->assertEquals(true, $result['questions'][0]['hasautosavedstep']);
+        $this->assertEquals(false, $result['questions'][1]['hasautosavedstep']);
 
         // Now, second slot.
         $prefix = $quba->get_field_prefix(2);
@@ -1072,7 +1100,9 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
         $this->assertEquals('complete', $result['questions'][1]['state']);
+        $this->assertEquals(1, $result['questions'][1]['sequencecheck']);
 
     }
 
@@ -1082,6 +1112,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
     public function test_process_attempt() {
         global $DB;
 
+        $timenow = time();
         // Create a new quiz with two questions and one attempt started.
         list($quiz, $context, $quizobj, $attempt, $attemptobj, $quba) = $this->create_quiz_with_questions(true);
 
@@ -1113,6 +1144,12 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['questions'][1]['flagged']);
         $this->assertEmpty($result['questions'][0]['mark']);
         $this->assertEmpty($result['questions'][1]['mark']);
+        $this->assertEquals(2, $result['questions'][0]['sequencecheck']);
+        $this->assertEquals(2, $result['questions'][0]['sequencecheck']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
+        $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
 
         // Now, second slot.
         $prefix = $quba->get_field_prefix(2);
