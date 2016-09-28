@@ -402,14 +402,6 @@ class theme_config {
     protected $parent_configs = array();
 
     /**
-     * @var bool If set to true then the theme is safe to run through the optimiser (if it is enabled)
-     * If set to false then we know either the theme has already been optimised and the CSS optimiser is not needed
-     * or the theme is not compatible with the CSS optimiser. In both cases even if enabled the CSS optimiser will not
-     * be used with this theme if set to false.
-     */
-    public $supportscssoptimisation = true;
-
-    /**
      * Used to determine whether we can serve SVG images or not.
      * @var bool
      */
@@ -532,7 +524,7 @@ class theme_config {
         $configurable = array(
             'parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets',
             'javascripts', 'javascripts_footer', 'parents_exclude_javascripts',
-            'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
+            'layouts', 'enable_dock', 'enablecourseajax',
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
             'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod',
@@ -857,11 +849,9 @@ class theme_config {
      *
      * NOTE: this method is not expected to be used from any addons.
      *
-     * @return string CSS markup, already optimised and compressed
+     * @return string CSS markup compressed
      */
     public function get_css_content() {
-        global $CFG;
-        require_once($CFG->dirroot.'/lib/csslib.php');
 
         $csscontent = '';
         foreach ($this->get_css_files(false) as $type => $value) {
@@ -884,19 +874,7 @@ class theme_config {
             }
         }
         $csscontent = $this->post_process($csscontent);
-
-        if (!empty($CFG->enablecssoptimiser) && $this->supportscssoptimisation) {
-            // This is an experimental feature introduced in Moodle 2.3
-            // The CSS optimiser organises the CSS in order to reduce the overall number
-            // of rules and styles being sent to the client. It does this by collating
-            // the CSS before it is cached removing excess styles and rules and stripping
-            // out any extraneous content such as comments and empty rules.
-            $optimiser = new css_optimiser();
-            $csscontent = $optimiser->process($csscontent);
-
-        } else {
-            $csscontent = core_minify::css($csscontent);
-        }
+        $csscontent = core_minify::css($csscontent);
 
         return $csscontent;
     }
@@ -913,8 +891,6 @@ class theme_config {
      * @return string CSS markup
      */
     public function get_css_content_debug($type, $subtype, $sheet) {
-        global $CFG;
-        require_once($CFG->dirroot.'/lib/csslib.php');
 
         if ($type === 'scss') {
             // The SCSS file of the theme is requested.
@@ -930,16 +906,6 @@ class theme_config {
                 return $this->post_process($csscontent);
             }
             return '';
-        }
-
-        $optimiser = null;
-        if (!empty($CFG->enablecssoptimiser) && $this->supportscssoptimisation) {
-            // This is an experimental feature introduced in Moodle 2.3
-            // The CSS optimiser organises the CSS in order to reduce the overall number
-            // of rules and styles being sent to the client. It does this by collating
-            // the CSS before it is cached removing excess styles and rules and stripping
-            // out any extraneous content such as comments and empty rules.
-            $optimiser = new css_optimiser();
         }
 
         $cssfiles = array();
@@ -992,12 +958,6 @@ class theme_config {
             $contents = $this->post_process($contents);
             $comment = "/** Path: $type $subtype $sheet.' **/\n";
             $stats = '';
-            if ($optimiser) {
-                $contents = $optimiser->process($contents);
-                if (!empty($CFG->cssoptimiserstats)) {
-                    $stats = $optimiser->output_stats_css();
-                }
-            }
             $csscontent .= $comment.$stats.$contents."\n\n";
         }
 
