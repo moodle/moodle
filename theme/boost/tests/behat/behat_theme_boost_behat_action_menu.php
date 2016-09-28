@@ -38,9 +38,6 @@ require_once(__DIR__ . '/../../../../lib/tests/behat/behat_action_menu.php');
 class behat_theme_boost_behat_action_menu extends behat_action_menu {
 
     public function i_open_the_action_menu_in($element, $selectortype) {
-        if (!$this->running_javascript()) {
-            throw new DriverException('Open the action menu step is not available with Javascript disabled');
-        }
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_node_in_container("css_element", "[role=button][aria-haspopup=true]", $selectortype, $element);
         $this->ensure_node_is_visible($node);

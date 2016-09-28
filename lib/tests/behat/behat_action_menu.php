@@ -50,7 +50,8 @@ class behat_action_menu extends behat_base {
      */
     public function i_open_the_action_menu_in($element, $selectortype) {
         if (!$this->running_javascript()) {
-            throw new DriverException('Open the action menu step is not available with Javascript disabled');
+            // Action menus automatically expand in a visible list of actions when Javascript is disabled.
+            return;
         }
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_node_in_container("css_element", "[role=menuitem][aria-haspopup=true]", $selectortype, $element);
