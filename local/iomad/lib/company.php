@@ -1690,6 +1690,32 @@ class company {
         return false;
     }
 
+    /**
+     * Automatically enrols a users on un-licensed courses if its set in the config.
+     *
+     * Parameters -
+     *              $user = stdclass();
+     *
+     **/
+    public static function autoenrol($user) {
+        global $DB;
+
+        // Get the courses which are assigned to the company which are not licensed.
+        $courses = $DB->get_records_sql("SELECT * FROM {company_course} WHERE companyid = :companyid
+                                         AND courseid IN (
+                                             SELECT courseid from {iomad_courses}
+                                             WHERE licensed = 0)",
+                                         array('companyid' => $user->companyid));
+
+        // Enrol the user onto them.
+        foreach ($courses as $addcourse) {
+            if ($course = $DB->get_record_sql("SELECT id FROM {course} WHERE id = :courseid AND visible = 1",
+                                               array('courseid' => $addcourse->courseid))) {
+                company_user::enrol($user, array($course->id));
+            }
+        }
+    }
+
     // Competencies stuff.
 
     /**
