@@ -76,7 +76,7 @@ function useredit_setup_preference_page($userid, $courseid) {
 
     // Remote users cannot be edited.
     if (is_mnet_remote_user($user)) {
-        if (user_not_fully_set_up($user)) {
+        if (user_not_fully_set_up($user, false)) {
             $hostwwwroot = $DB->get_field('mnet_host', 'wwwroot', array('id' => $user->mnethostid));
             print_error('usernotfullysetup', 'mnet', '', $hostwwwroot);
         }
