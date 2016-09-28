@@ -516,8 +516,7 @@ class api {
             }
         }
 
-        $sql = sprintf('SELECT m.* FROM {message} m WHERE m.%s = ?', implode('= ? AND m.', array_keys($params)));
-        $messages = $DB->get_recordset_sql($sql, array_values($params));
+        $messages = $DB->get_recordset('message', $params);
 
         foreach ($messages as $message) {
             message_mark_message_read($message, time());
