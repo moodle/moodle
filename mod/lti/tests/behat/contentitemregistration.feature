@@ -1,4 +1,4 @@
-@mod @mod_lti @mod_lti_contentitem
+@mod @mod_lti
 Feature: Content-Item support
   In order to provide external tools that support the Content-Item Message type for teachers and learners
   As an admin

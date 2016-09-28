@@ -1,4 +1,4 @@
-@mod @mod_lti @mod_lti_contentitem
+@mod @mod_lti
 Feature: Content-Item support
   In order to easily add activities and content in a course from an external tool
   As a teacher
