@@ -140,6 +140,13 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addHelpButton('lti_launchcontainer', 'default_launch_container', 'lti');
         $mform->setType('lti_launchcontainer', PARAM_INT);
 
+        $mform->addElement('advcheckbox', 'lti_contentitem', get_string('contentitem', 'lti'));
+        $mform->addHelpButton('lti_contentitem', 'contentitem', 'lti');
+        $mform->setAdvanced('lti_contentitem');
+        if ($istool) {
+            $mform->disabledIf('lti_contentitem', null);
+        }
+
         $mform->addElement('hidden', 'oldicon');
         $mform->setType('oldicon', PARAM_URL);
 
@@ -231,5 +238,19 @@ class mod_lti_edit_types_form extends moodleform{
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
 
+    }
+
+    /**
+     * Retrieves the data of the submitted form.
+     *
+     * @return stdClass
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if ($data && !empty($this->_customdata->istool)) {
+            // Content item checkbox is disabled in tool settings, so this cannot be edited. Just unset it.
+            unset($data->lti_contentitem);
+        }
+        return $data;
     }
 }
