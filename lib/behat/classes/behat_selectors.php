@@ -140,7 +140,7 @@ XPATH
 .//*[contains(., %locator%) and not(.//*[contains(., %locator%)])]
 XPATH
         , 'form_row' => <<<XPATH
-.//label[contains(., %locator%)]/ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]
+.//*[self::label or self::div[contains(concat(' ', @class, ' '), ' fstaticlabel ')]][contains(., %locator%)]/ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]
 XPATH
     );
 
