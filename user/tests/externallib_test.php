@@ -854,4 +854,69 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $result = core_user_external::get_user_preferences('', $user->id);
     }
 
+    /**
+     * Test update_picture
+     */
+    public function test_update_picture() {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+        self::setUser($user);
+
+        $context = context_user::instance($USER->id);
+        $contextid = $context->id;
+        $filename = "reddot.png";
+        $filecontent = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38"
+            . "GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+
+        // Call the files api to create a file.
+        $draftfile = core_files_external::upload($contextid, 'user', 'draft', 0, '/', $filename, $filecontent, null, null);
+        $draftid = $draftfile['itemid'];
+
+        // Change user profile image.
+        $result = core_user_external::update_picture($draftid);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
+        // The new revision is in the url for the user.
+        $this->assertContains($picture, $result['profileimageurl']);
+        // Check expected URL for serving the image.
+        $this->assertContains("/$contextid/user/icon", $result['profileimageurl']);
+
+        // Delete image.
+        $result = core_user_external::update_picture(0, true);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
+        // No picture.
+        $this->assertEquals(0, $picture);
+
+        // Add again the user profile image (as admin).
+        $this->setAdminUser();
+
+        $context = context_user::instance($USER->id);
+        $admincontextid = $context->id;
+        $draftfile = core_files_external::upload($admincontextid, 'user', 'draft', 0, '/', $filename, $filecontent, null, null);
+        $draftid = $draftfile['itemid'];
+
+        $result = core_user_external::update_picture($draftid, false, $user->id);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        // The new revision is in the url for the user.
+        $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
+        $this->assertContains($picture, $result['profileimageurl']);
+        $this->assertContains("/$contextid/user/icon", $result['profileimageurl']);
+    }
+
+    /**
+     * Test update_picture disabled
+     */
+    public function test_update_picture_disabled() {
+        global $CFG;
+        $this->resetAfterTest(true);
+        $CFG->disableuserimages = true;
+
+        $this->setAdminUser();
+        $this->expectException('moodle_exception');
+        core_user_external::update_picture(0);
+    }
 }

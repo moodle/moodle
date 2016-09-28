@@ -1456,4 +1456,102 @@ class core_user_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function update_picture_parameters() {
+        return new external_function_parameters(
+            array(
+                'draftitemid' => new external_value(PARAM_INT, 'Id of the user draft file to use as image'),
+                'delete' => new external_value(PARAM_BOOL, 'If we should delete the user picture', VALUE_DEFAULT, false),
+                'userid' => new external_value(PARAM_INT, 'Id of the user, 0 for current user', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Update or delete the user picture in the site
+     *
+     * @param  int  $draftitemid id of the user draft file to use as image
+     * @param  bool $delete      if we should delete the user picture
+     * @param  int $userid       id of the user, 0 for current user
+     * @return array warnings and success status
+     * @since Moodle 3.2
+     * @throws moodle_exception
+     */
+    public static function update_picture($draftitemid, $delete = false, $userid = 0) {
+        global $CFG, $USER, $PAGE;
+
+        $params = self::validate_parameters(
+            self::update_picture_parameters(),
+            array(
+                'draftitemid' => $draftitemid,
+                'delete' => $delete,
+                'userid' => $userid
+            )
+        );
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        if (!empty($CFG->disableuserimages)) {
+            throw new moodle_exception('userimagesdisabled', 'admin');
+        }
+
+        if (empty($params['userid']) or $params['userid'] == $USER->id) {
+            $user = $USER;
+            require_capability('moodle/user:editownprofile', $context);
+        } else {
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            $personalcontext = context_user::instance($user->id);
+
+            require_capability('moodle/user:editprofile', $personalcontext);
+            if (is_siteadmin($user) and !is_siteadmin($USER)) {  // Only admins may edit other admins.
+                throw new moodle_exception('useradmineditadmin');
+            }
+        }
+
+        // Load the appropriate auth plugin.
+        $userauth = get_auth_plugin($user->auth);
+        if (is_mnet_remote_user($user) or !$userauth->can_edit_profile() or $userauth->edit_profile_url()) {
+            throw new moodle_exception('noprofileedit', 'auth');
+        }
+
+        $filemanageroptions = array('maxbytes' => $CFG->maxbytes, 'subdirs' => 0, 'maxfiles' => 1, 'accepted_types' => 'web_image');
+        $user->deletepicture = $params['delete'];
+        $user->imagefile = $params['draftitemid'];
+        $success = core_user::update_picture($user, $filemanageroptions);
+
+        $result = array(
+            'success' => $success,
+            'warnings' => array(),
+        );
+        if ($success) {
+            $userpicture = new user_picture(core_user::get_user($user->id));
+            $userpicture->size = 1; // Size f1.
+            $result['profileimageurl'] = $userpicture->get_url($PAGE)->out(false);
+        }
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.2
+     */
+    public static function update_picture_returns() {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'True if the image was updated, false otherwise.'),
+                'profileimageurl' => new external_value(PARAM_URL, 'New profile user image url', VALUE_OPTIONAL),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

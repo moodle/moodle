@@ -896,7 +896,15 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
-
+    'core_user_update_picture' => array(
+        'classname' => 'core_user_external',
+        'methodname' => 'update_picture',
+        'classpath' => 'user/externallib.php',
+        'description' => 'Update or delete the user picture in the site',
+        'type' => 'write',
+        'capabilities' => 'moodle/user:editownprofile, moodle/user:editprofile',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     // Competencies functions.
     'core_competency_create_competency_framework' => array(
         'classname'    => 'core_competency\external',
