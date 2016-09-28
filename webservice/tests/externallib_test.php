@@ -95,6 +95,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals('Doe', $siteinfo['lastname']);
         $this->assertEquals(current_language(), $siteinfo['lang']);
         $this->assertEquals($USER->id, $siteinfo['userid']);
+        $this->assertEquals(SITEID, $siteinfo['siteid']);
         $this->assertEquals(true, $siteinfo['downloadfiles']);
         $this->assertEquals($CFG->release, $siteinfo['release']);
         $this->assertEquals($CFG->version, $siteinfo['version']);
