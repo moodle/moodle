@@ -4570,8 +4570,10 @@ function update_internal_user_password($user, $password, $fasthash = false) {
         \core\event\user_password_updated::create_from_user($user)->trigger();
 
         // Remove WS user tokens.
-        require_once($CFG->dirroot.'/webservice/lib.php');
-        webservice::delete_user_ws_tokens($user->id);
+        if (!empty($CFG->passwordchangetokendeletion)) {
+            require_once($CFG->dirroot.'/webservice/lib.php');
+            webservice::delete_user_ws_tokens($user->id);
+        }
     }
 
     return true;
