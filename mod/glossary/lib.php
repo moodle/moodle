@@ -3929,3 +3929,174 @@ function glossary_can_view_entry($entry, $cminfo) {
 
     return true;
 }
+
+/**
+ * Check if a concept exists in a glossary.
+ *
+ * @param  stdClass $glossary glossary object
+ * @param  string $concept the concept to check
+ * @return bool true if exists
+ * @since  Moodle 3.2
+ */
+function glossary_concept_exists($glossary, $concept) {
+    global $DB;
+
+    return $DB->record_exists_select('glossary_entries', 'glossaryid = :glossaryid AND LOWER(concept) = :concept',
+        array(
+            'glossaryid' => $glossary->id,
+            'concept'    => core_text::strtolower($concept)
+        )
+    );
+}
+
+/**
+ * Return the editor and attachment options when editing a glossary entry
+ *
+ * @param  stdClass $course  course object
+ * @param  stdClass $context context object
+ * @param  stdClass $entry   entry object
+ * @return array array containing the editor and attachment options
+ * @since  Moodle 3.2
+ */
+function glossary_get_editor_and_attachment_options($course, $context, $entry) {
+    $maxfiles = 99;                // TODO: add some setting.
+    $maxbytes = $course->maxbytes; // TODO: add some setting.
+
+    $definitionoptions = array('trusttext' => true, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes, 'context' => $context,
+        'subdirs' => file_area_contains_subdirs($context, 'mod_glossary', 'entry', $entry->id));
+    $attachmentoptions = array('subdirs' => false, 'maxfiles' => $maxfiles, 'maxbytes' => $maxbytes);
+    return array($definitionoptions, $attachmentoptions);
+}
+
+/**
+ * Creates or updates a glossary entry
+ *
+ * @param  stdClass $entry entry data
+ * @param  stdClass $course course object
+ * @param  stdClass $cm course module object
+ * @param  stdClass $glossary glossary object
+ * @param  stdClass $context context object
+ * @return stdClass the complete new or updated entry
+ * @since  Moodle 3.2
+ */
+function glossary_edit_entry($entry, $course, $cm, $glossary, $context) {
+    global $DB, $USER;
+
+    list($definitionoptions, $attachmentoptions) = glossary_get_editor_and_attachment_options($course, $context, $entry);
+
+    $timenow = time();
+
+    $categories = empty($entry->categories) ? array() : $entry->categories;
+    unset($entry->categories);
+    $aliases = trim($entry->aliases);
+    unset($entry->aliases);
+
+    if (empty($entry->id)) {
+        $entry->glossaryid       = $glossary->id;
+        $entry->timecreated      = $timenow;
+        $entry->userid           = $USER->id;
+        $entry->timecreated      = $timenow;
+        $entry->sourceglossaryid = 0;
+        $entry->teacherentry     = has_capability('mod/glossary:manageentries', $context);
+        $isnewentry              = true;
+    } else {
+        $isnewentry              = false;
+    }
+
+    $entry->concept          = trim($entry->concept);
+    $entry->definition       = '';          // Updated later.
+    $entry->definitionformat = FORMAT_HTML; // Updated later.
+    $entry->definitiontrust  = 0;           // Updated later.
+    $entry->timemodified     = $timenow;
+    $entry->approved         = 0;
+    $entry->usedynalink      = isset($entry->usedynalink) ? $entry->usedynalink : 0;
+    $entry->casesensitive    = isset($entry->casesensitive) ? $entry->casesensitive : 0;
+    $entry->fullmatch        = isset($entry->fullmatch) ? $entry->fullmatch : 0;
+
+    if ($glossary->defaultapproval or has_capability('mod/glossary:approve', $context)) {
+        $entry->approved = 1;
+    }
+
+    if ($isnewentry) {
+        // Add new entry.
+        $entry->id = $DB->insert_record('glossary_entries', $entry);
+    } else {
+        // Update existing entry.
+        $DB->update_record('glossary_entries', $entry);
+    }
+
+    // Save and relink embedded images and save attachments.
+    if (!empty($entry->definition_editor)) {
+        $entry = file_postupdate_standard_editor($entry, 'definition', $definitionoptions, $context, 'mod_glossary', 'entry',
+            $entry->id);
+    }
+    if (!empty($entry->attachment_filemanager)) {
+        $entry = file_postupdate_standard_filemanager($entry, 'attachment', $attachmentoptions, $context, 'mod_glossary',
+            'attachment', $entry->id);
+    }
+
+    // Store the updated value values.
+    $DB->update_record('glossary_entries', $entry);
+
+    // Refetch complete entry.
+    $entry = $DB->get_record('glossary_entries', array('id' => $entry->id));
+
+    // Update entry categories.
+    $DB->delete_records('glossary_entries_categories', array('entryid' => $entry->id));
+    // TODO: this deletes cats from both both main and secondary glossary :-(.
+    if (!empty($categories) and array_search(0, $categories) === false) {
+        foreach ($categories as $catid) {
+            $newcategory = new stdClass();
+            $newcategory->entryid    = $entry->id;
+            $newcategory->categoryid = $catid;
+            $DB->insert_record('glossary_entries_categories', $newcategory, false);
+        }
+    }
+
+    // Update aliases.
+    $DB->delete_records('glossary_alias', array('entryid' => $entry->id));
+    if ($aliases !== '') {
+        $aliases = explode("\n", $aliases);
+        foreach ($aliases as $alias) {
+            $alias = trim($alias);
+            if ($alias !== '') {
+                $newalias = new stdClass();
+                $newalias->entryid = $entry->id;
+                $newalias->alias   = $alias;
+                $DB->insert_record('glossary_alias', $newalias, false);
+            }
+        }
+    }
+
+    // Trigger event and update completion (if entry was created).
+    $eventparams = array(
+        'context' => $context,
+        'objectid' => $entry->id,
+        'other' => array('concept' => $entry->concept)
+    );
+    if ($isnewentry) {
+        $event = \mod_glossary\event\entry_created::create($eventparams);
+    } else {
+        $event = \mod_glossary\event\entry_updated::create($eventparams);
+    }
+    $event->add_record_snapshot('glossary_entries', $entry);
+    $event->trigger();
+    if ($isnewentry) {
+        // Update completion state.
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries && $entry->approved) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
+        }
+    }
+
+    // Reset caches.
+    if ($isnewentry) {
+        if ($entry->usedynalink and $entry->approved) {
+            \mod_glossary\local\concept_cache::reset_glossary($glossary);
+        }
+    } else {
+        // So many things may affect the linking, let's just purge the cache always on edit.
+        \mod_glossary\local\concept_cache::reset_glossary($glossary);
+    }
+    return $entry;
+}
