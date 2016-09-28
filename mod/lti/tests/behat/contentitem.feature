@@ -45,7 +45,7 @@ Feature: Content-Item support
     And I set the field "Launch container" to "Embed"
     And I press "Save and return to course"
     And I open "Test tool activity 1" actions menu
-    And I follow "Edit settings" in the open menu
+    And I choose "Edit settings" in the open action menu
     Then the field "Preconfigured tool" matches value "Teaching Tool 1"
     # When editing settings, the Select content button should be disabled.
     And the "Select content" "button" should be disabled
