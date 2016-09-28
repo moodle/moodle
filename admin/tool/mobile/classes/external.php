@@ -240,7 +240,22 @@ class external extends external_api {
         $privatetoken = $params['privatetoken'];
 
         $context = context_system::instance();
-        self::validate_context($context);
+
+        // We must toletare these two exceptions: forcepasswordchangenotice and usernotfullysetup.
+        try {
+            self::validate_context($context);
+        } catch (Exception $e) {
+            if ($e instanceof moodle_exception) {
+                if (($e->errorcode != 'usernotfullysetup') and
+                    ($e->errorcode != 'forcepasswordchangenotice')) {
+
+                    // In case we receive a different exception, throw it.
+                    throw $e;
+                }
+            } else {
+                throw $e;
+            }
+        }
 
         api::check_autologin_prerequisites($USER->id);
 
