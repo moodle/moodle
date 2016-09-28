@@ -2639,8 +2639,10 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
                     redirect($wwwroot .'/login/change_password.php');
                 }
             }
+        } else if ($userauth->can_change_password()) {
+            throw new moodle_exception('forcepasswordchangenotice');
         } else {
-            print_error('nopasswordchangeforced', 'auth');
+            throw new moodle_exception('nopasswordchangeforced', 'auth');
         }
     }
 
@@ -2656,7 +2658,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
 
     if ($usernotfullysetup) {
         if ($preventredirect) {
-            throw new require_login_exception('User not fully set-up');
+            throw new moodle_exception('usernotfullysetup');
         }
         if ($setwantsurltome) {
             $SESSION->wantsurl = qualified_me();
