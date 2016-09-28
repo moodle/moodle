@@ -26,8 +26,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define(['jquery', 'core/notification', 'core/str', 'core/templates', 'mod_lti/form-field', 'core/yui'],
-    function($, notification, str, templates, FormField) {
+define(
+    [
+        'jquery',
+        'core/notification',
+        'core/str',
+        'core/templates',
+        'mod_lti/form-field',
+        'core/modal_factory',
+        'core/modal_events'
+    ],
+    function($, notification, str, templates, FormField, ModalFactory, ModalEvents) {
         var dialogue;
         var contentItem = {
             /**
@@ -44,35 +53,35 @@ define(['jquery', 'core/notification', 'core/str', 'core/templates', 'mod_lti/fo
                         url: url,
                         postData: postData
                     };
-                    return templates.render('mod_lti/contentitem', context);
 
-                }).then(function(html, js) {
-                    // Set dialog's body content.
-                    dialogue = new M.core.dialogue({
-                        modal: true,
-                        headerContent: dialogueTitle,
-                        bodyContent: html,
-                        draggable: true,
-                        width: '800px',
-                        height: '600px'
-                    });
+                    var body = templates.render('mod_lti/contentitem', context);
+                    if (dialogue) {
+                        // Set dialogue body.
+                        dialogue.setBody(body);
+                        // Display the dialogue.
+                        dialogue.show();
+                    } else {
+                        ModalFactory.create({
+                            title: dialogueTitle,
+                            body: body,
+                            large: true
+                        }).done(function(modal) {
+                            dialogue = modal;
 
-                    // Show dialog.
-                    dialogue.show();
+                            // Display the dialogue.
+                            dialogue.show();
 
-                    // Destroy after hiding.
-                    dialogue.after('visibleChange', function(e) {
-                        // Going from visible to hidden.
-                        if (e.prevVal && !e.newVal) {
-                            this.destroy();
-                            // Fetch notifications.
-                            notification.fetchNotifications();
-                        }
-                    }, dialogue);
+                            // On hide handler.
+                            modal.getRoot().on(ModalEvents.hidden, function () {
+                                // Empty modal contents when it's hidden.
+                                modal.setBody('');
 
-                    templates.runTemplateJS(js);
-
-                }).fail(notification.exception);
+                                // Fetch notifications.
+                                notification.fetchNotifications();
+                            });
+                        });
+                    }
+                });
             }
         };
 

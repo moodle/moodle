@@ -76,13 +76,11 @@
 
             // Adjust iframe's width to the fit the container's width.
             var containerWidth = $('div.contentitem-container').width();
-            $('#contentitem-page-iframe').attr('width', containerWidth);
+            $('#contentitem-page-iframe').width(containerWidth + 'px');
 
-            var dialogueContentDiv = $('div.contentitem-container').parent();
-            var dialogueContainer = dialogueContentDiv.parent();
-            // Adjust iframe's height to container's height - 55px (dialogue title bar + top/bottom margins).
-            var containerHeight = dialogueContainer.height() - 55;
-            $('#contentitem-page-iframe').attr('height', containerHeight);
+            // Adjust iframe's height to 75% of the width.
+            var containerHeight = containerWidth * 0.75;
+            $('#contentitem-page-iframe').height(containerHeight + 'px');
         });
     });
 {{/js}}

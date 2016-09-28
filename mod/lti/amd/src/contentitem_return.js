@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.2
  */
-define([], function() {
+define(['jquery'], function($) {
     return {
         /**
          * Init function.
@@ -31,10 +31,13 @@ define([], function() {
          * @param {string} returnData The returned data.
          */
         init: function(returnData) {
-            if (window != top) {
-                // Send return data to be processed by the parent window.
-                parent.processContentItemReturnData(returnData);
-            }
+            // Make sure the window has loaded before we perform processing.
+            $(window).ready(function() {
+                if (window != top) {
+                    // Send return data to be processed by the parent window.
+                    parent.processContentItemReturnData(returnData);
+                }
+            });
         }
     };
 });

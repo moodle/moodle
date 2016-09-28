@@ -1344,15 +1344,15 @@ function lti_get_type_config($typeid) {
                 FROM {lti_types_config}
                WHERE typeid = :typeid1
            UNION ALL
-              SELECT 'toolurl' AS name, " . $DB->sql_compare_text('baseurl', 1333) . " AS value
+              SELECT 'toolurl' AS name, baseurl AS value
                 FROM {lti_types}
                WHERE id = :typeid2
            UNION ALL
-              SELECT 'icon' AS name, " . $DB->sql_compare_text('icon', 1333) . " AS value
+              SELECT 'icon' AS name, icon AS value
                 FROM {lti_types}
                WHERE id = :typeid3
            UNION ALL
-              SELECT 'secureicon' AS name, " . $DB->sql_compare_text('secureicon', 1333) . " AS value
+              SELECT 'secureicon' AS name, secureicon AS value
                 FROM {lti_types}
                WHERE id = :typeid4";
 
