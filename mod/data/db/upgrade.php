@@ -82,5 +82,20 @@ function xmldb_data_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016090600) {
+
+        // Define field config to be added to data.
+        $table = new xmldb_table('data');
+        $field = new xmldb_field('config', XMLDB_TYPE_TEXT, null, null, null, null, null, 'timemodified');
+
+        // Conditionally launch add field config.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Data savepoint reached.
+        upgrade_mod_savepoint(true, 2016090600, 'data');
+    }
+
     return true;
 }
