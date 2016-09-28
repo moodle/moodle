@@ -2124,6 +2124,30 @@ dd:after {
 h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
     margin-top: -20px;
 }
+
+/** Chart area. */
+.chart-area {
+
+    .chart-table-data {
+        display: none;
+    }
+
+    .chart-table {
+        .chart-output-htmltable caption {
+            white-space: nowrap;
+        }
+        /** When accessible, we display the table only. */
+        &.accesshide {
+            .chart-table-expand {
+                display: none;
+            }
+            .chart-table-data {
+                display: block;
+            }
+        }
+    }
+}
+
 // Reset for ul.
 ul {
     padding-left: 1rem;
