@@ -43,11 +43,11 @@ if ($ADMIN->fulltree) {
     $page->add($setting);
 
     // Variable $body-color.
+    // We do not set a default value because the default colour should come from the preset.
     $name = 'theme_boost/brandcolor';
     $title = get_string('brandcolor', 'theme_boost');
     $description = get_string('brandcolor_desc', 'theme_boost');
-    $default = '#373A3C';   // Straight from bootstrap variables.
-    $setting = new admin_setting_configcolourpicker($name, $title, $description, $default, null, false);
+    $setting = new admin_setting_configcolourpicker($name, $title, $description, null, null, false);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
