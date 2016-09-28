@@ -120,8 +120,14 @@
                             <td class="align-bottom">
                                 <div class="container-fluid">
                                     <div class="row-fluid">
-                                        <div class="span6">{{#str}} online, message {{/str}}</div>
-                                        <div class="span6">{{#str}} offline, message {{/str}}</div>
+                                        <div class="span6">
+                                            {{#str}} loggedin, message {{/str}}
+                                            {{#onlinehelphtml}}{{{.}}}{{/onlinehelphtml}}
+                                        </div>
+                                        <div class="span6">
+                                            {{#str}} loggedoff, message {{/str}}
+                                            {{#offlinehelphtml}}{{{.}}}{{/offlinehelphtml}}
+                                        </div>
                                     </div>
                                 </div>
                             </td>
