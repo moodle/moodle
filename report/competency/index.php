@@ -51,13 +51,17 @@ if (empty($currentuser)) {
     }
 }
 
-$urlparams = array('id' => $id, 'user' => $currentuser);
-
+$urlparams = array('id' => $id);
+$navurl = new moodle_url('/report/competency/index.php', $urlparams);
+$urlparams['user'] = $currentuser;
 $url = new moodle_url('/report/competency/index.php', $urlparams);
+
 $title = get_string('pluginname', 'report_competency');
+$coursename = format_string($course->fullname, true, array('context' => $context));
+
+$PAGE->navigation->override_active_url($navurl);
 $PAGE->set_url($url);
 $PAGE->set_title($title);
-$coursename = format_text($course->fullname, false, array('context' => $context));
 $PAGE->set_heading($coursename);
 $PAGE->set_pagelayout('incourse');
 
