@@ -31,13 +31,29 @@
     Example context (json):
     This template includes ajax functionality, so it cannot be shown in the template library.
 }}
+
 <div data-region="grading-navigation" class="row-fluid">
+
+{{!
+    There are three chunks, which appear side-by-side at large screen sizes.
+    A) Assignment info, which has 3 rows:
+}}
+
 <div data-region="assignment-info" class="span4">
+
+{{!
+    Row 1) course name & link.
+}}
 <a href="{{config.wwwroot}}/course/view.php?id={{courseid}}">{{{coursename}}}</a><br/>
+
+{{!
+    Row 2) Assignment name & link.
+}}
 <a href="{{config.wwwroot}}/mod/assign/view.php?id={{cmid}}">{{name}}</a>
-{{#caneditsettings}}
-<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
-{{/caneditsettings}}
+
+{{!
+    Row 3) Edit settings, due date, with tool-tip thing.
+}}
 <div role="tooltip" id="tooltip-{{uniqid}}" class="accesshide">
 {{#duedate}}
 {{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}
@@ -51,14 +67,27 @@
 <br>{{timeremainingstr}}
 {{/duedate}}
 </div>
+
+<br/>
+{{#caneditsettings}}
+<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
+{{/caneditsettings}}
 {{#duedate}}
-<br/><small data-region="assignment-tooltip" aria-describedby="tooltip-{{uniqid}}">{{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}</small>
+<small data-region="assignment-tooltip" aria-describedby="tooltip-{{uniqid}}">{{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}</small>
 {{/duedate}}
 </span>
 </div>
+
+{{!
+    B) Current user name and info.
+}}
 <div data-region="user-info" class="span4" data-assignmentid="{{assignmentid}}" data-groupid="{{groupid}}">
     {{> mod_assign/grading_navigation_user_info }}
 </div>
+
+{{!
+    C) User selector widget.
+}}
 <div data-region="user-selector" class="span4">
     <div class="alignment">
         {{> mod_assign/grading_navigation_user_selector }}
