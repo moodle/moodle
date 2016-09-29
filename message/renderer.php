@@ -228,7 +228,7 @@ class core_message_renderer extends plugin_renderer_base {
         $preferences = \core_message\api::get_all_message_preferences($processors, $providers, $user);
         $notificationlistoutput = new \core_message\output\preferences\notification_list($processors, $providers,
             $preferences, $user);
-        return $this->render_from_template('message/preferences_notifications_list',
+        return $this->render_from_template('message/notification_preferences',
             $notificationlistoutput->export_for_template($this));
     }
 

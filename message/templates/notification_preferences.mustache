@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_message/message_preferences
+    @template core_message/notification_preferences
 
-    The message preferences page
+    The list of notifications for the notification preferences page
 
     Classes required for JS:
     * None
@@ -75,35 +75,39 @@
         ]
     }
 }}
-<div class="preferences-page-container" data-region="preferences-page-container">
-    <h2>{{#str}} messagepreferences, message {{/str}}</h2>
-    <div class="checkbox-container" data-region="block-non-contacts-container">
-        <input id="block-non-contacts"
-                type="checkbox"
-                data-user-id="{{userid}}"
-                data-block-non-contacts
-                data-preference-key="message_blocknoncontacts"
-                {{#blocknoncontacts}}checked{{/blocknoncontacts}} />
-        <label for="block-non-contacts">{{#str}} blocknoncontacts, message {{/str}}</label>
+<div class="preferences-page-container">
+    <h2>{{#str}} notificationpreferences, message {{/str}}</h2>
+    <div class="checkbox-container" data-region="disable-notification-container">
+        <input id="disable-notifications"
+           type="checkbox"
+           data-disable-notifications
+           {{#disableall}}checked{{/disableall}} />
+        <label for="disable-notifications">{{#str}} disableall, message {{/str}}</label>
         {{> core/loading }}
     </div>
-    <div class="preferences-container {{#disableall}}disabled{{/disableall}}"
-        data-user-id="{{userid}}"
-        data-region="preferences-container">
-        <table class="table table-hover preference-table" data-region="preference-table">
+    <div class="preferences-container {{#disableall}}disabled{{/disableall}}" data-user-id="{{userid}}">
+        <table class="table table-hover preference-table">
+            <thead>
+                <tr>
+                    <th>{{displayname}}</th>
+                    {{#processors}}
+                        {{> message/notification_preferences_processor }}
+                    {{/processors}}
+                </tr>
+            </thead>
             <tbody>
                 {{#components}}
-                    {{> message/message_preferences_component }}
+                    {{> message/notification_preferences_component }}
                 {{/components}}
             </tbody>
         </table>
     </div>
 </div>
 {{#js}}
-require(['jquery', 'theme_bootstrapbase/bootstrap', 'core_message/message_preferences'],
-    function($, Bootstrap, MessagePreferences) {
+require(['jquery', 'theme_bootstrapbase/bootstrap', 'core_message/preferences_notifications_list_controller'],
+    function($, bootstrap, controller) {
 
     $('[data-toggle="tooltip"]').tooltip();
-    new MessagePreferences($('[data-region="preferences-page-container"]'));
+    new controller($('.preferences-container'));
 });
 {{/js}}
