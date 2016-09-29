@@ -26,14 +26,9 @@ require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');
 require_once($CFG->dirroot . '/user/lib.php');
 
-$userid = optional_param('id', 0, PARAM_INT);    // User id.
-
-if (!$userid) {
-    $userid = $USER->id;
-}
-
+$userid = optional_param('userid', $USER->id, PARAM_INT);    // User id.
 $url = new moodle_url('/message/notificationpreferences.php');
-$url->param('id', $userid);
+$url->param('userid', $userid);
 
 $PAGE->set_url($url);
 
@@ -43,9 +38,7 @@ if (isguestuser()) {
     print_error('guestnoeditmessage', 'message');
 }
 
-if (!$user = $DB->get_record('user', array('id' => $userid))) {
-    print_error('invaliduserid');
-}
+$user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
 $systemcontext   = context_system::instance();
 $personalcontext = context_user::instance($user->id);

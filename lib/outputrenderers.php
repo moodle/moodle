@@ -3206,7 +3206,7 @@ EOD;
             $context = [
                 'userid' => $USER->id,
                 'urls' => [
-                    'preferences' => (new moodle_url('/message/notificationpreferences.php', ['id' => $USER->id]))->out(),
+                    'preferences' => (new moodle_url('/message/notificationpreferences.php', ['userid' => $USER->id]))->out(),
                 ],
             ];
             return $this->render_from_template('message/notification_popover', $context);
