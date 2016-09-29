@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2015 Justin Hileman
+ * (c) 2010-2016 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -68,7 +68,7 @@ class Mustache_Loader_InlineLoader implements Mustache_Loader
      * @param string $fileName The file to parse for inline templates
      * @param int    $offset   A string offset for the start of the templates.
      *                         This usually coincides with the `__halt_compiler`
-     *                         call, and the `__COMPILER_HALT_OFFSET__`.
+     *                         call, and the `__COMPILER_HALT_OFFSET__`
      */
     public function __construct($fileName, $offset)
     {
@@ -87,7 +87,7 @@ class Mustache_Loader_InlineLoader implements Mustache_Loader
     /**
      * Load a Template by name.
      *
-     * @throws Mustache_Exception_UnknownTemplateException If a template file is not found.
+     * @throws Mustache_Exception_UnknownTemplateException If a template file is not found
      *
      * @param string $name
      *

@@ -23,3 +23,7 @@ Copy into this folder, and update this readme to cover any changes.
 == 3.1 ==
 
 Update from version 2.9.0 to 2.10.0
+
+== 3.2 ==
+
+Update from version 2.10.0 to 2.11.1
