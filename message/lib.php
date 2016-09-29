@@ -244,16 +244,18 @@ function message_count_unread_messages($user1=null, $user2=null) {
  * Get the users recent conversations meaning all the people they've recently
  * sent or received a message from plus the most recent message sent to or received from each other user
  *
- * @param object|int $user the current user
+ * @param object|int $userorid the current user or user id
  * @param int $limitfrom can be used for paging
  * @param int $limitto can be used for paging
  * @return array
  */
-function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
+function message_get_recent_conversations($userorid, $limitfrom = 0, $limitto = 100) {
     global $DB;
 
-    if (is_numeric($user)) {
-        $userid = $user;
+    if (is_object($userorid)) {
+        $user = $userorid;
+    } else {
+        $userid = $userorid;
         $user = new stdClass();
         $user->id = $userid;
     }
@@ -273,7 +275,7 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     $sql = "SELECT $uniquefield, $userfields,
                    message.id as mid, message.notification, message.useridfrom, message.useridto,
                    message.smallmessage, message.fullmessage, message.fullmessagehtml,
-                   message.fullmessageformat, message.timecreated, 1 as readtable,
+                   message.fullmessageformat, message.timecreated,
                    contact.id as contactlistid, contact.blocked
               FROM {message_read} message
               JOIN (
@@ -320,7 +322,6 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     // exact same query as the one above, except for the table we are querying. So, simply replace references to
     // the 'message_read' table with the 'message' table.
     $sql = str_replace('{message_read}', '{message}', $sql);
-    $sql = str_replace('1 as readtable', '0 as readtable', $sql);
     $unread = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
 
     $unreadcountssql = 'SELECT useridfrom, count(*) as count
