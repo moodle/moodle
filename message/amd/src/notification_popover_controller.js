@@ -285,9 +285,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
             limit: this.limit,
             offset: this.getOffset(),
             useridto: this.userId,
-            markasread: false,
-            embeduserto: false,
-            embeduserfrom: false,
         };
 
         var container = this.getContent();

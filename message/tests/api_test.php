@@ -95,56 +95,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     }
 
     /**
-     * Test that the get_popup_notifications function will return only read notifications if requested.
+     * Test that the get_popup_notifications function will return the correct notifications.
      */
-    public function test_message_get_popup_notifications_read_only() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 1', 2);
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 2', 4);
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, MESSAGE_READ);
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
-
-        // Check if we request read and unread but there are only read messages, it should
-        // still return those correctly.
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, '');
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
-    }
-
-    /**
-     * Test that the get_popup_notifications function will return only unread notifications if requested.
-     */
-    public function test_message_get_popup_notifications_unread_only() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 1', 2);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 2', 4);
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, MESSAGE_UNREAD);
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
-
-        // Check if we request read and unread but there are only read messages, it should
-        // still return those correctly.
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, '');
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 2');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 1');
-    }
-
-    /**
-     * Test that the get_popup_notifications function will return the correct notifications when both
-     * read and unread notifications are included.
-     */
-    public function test_message_get_popup_notifications_mixed() {
+    public function test_message_get_popup_notifications() {
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
         $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
 
@@ -161,24 +114,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEquals($notifications[2]->fullmessage, 'Message 3');
         $this->assertEquals($notifications[3]->fullmessage, 'Message 2');
         $this->assertEquals($notifications[4]->fullmessage, 'Message 1');
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, MESSAGE_READ);
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 4');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 3');
-        $this->assertEquals($notifications[2]->fullmessage, 'Message 1');
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, MESSAGE_UNREAD);
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 5');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 2');
     }
 
     /**
      * Test that the get_popup_notifications function works correctly with limiting and offsetting
      * the result set if requested.
      */
-    public function test_message_get_popup_notifications_all_with_limit_and_offset() {
+    public function test_message_get_popup_notifications_all_limit_and_offset() {
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
         $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
 
@@ -189,125 +131,21 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 5', 4);
         $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 6', 5);
 
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, '', false, false, 'DESC', 2, 0);
+        $notifications = \core_message\api::get_popup_notifications($recipient->id, 'DESC', 2, 0);
 
         $this->assertEquals($notifications[0]->fullmessage, 'Message 6');
         $this->assertEquals($notifications[1]->fullmessage, 'Message 5');
 
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, '', false, false, 'DESC', 2, 2);
+        $notifications = \core_message\api::get_popup_notifications($recipient->id, 'DESC', 2, 2);
 
         $this->assertEquals($notifications[0]->fullmessage, 'Message 4');
         $this->assertEquals($notifications[1]->fullmessage, 'Message 3');
 
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, '', false, false, 'DESC', 0, 3);
+        $notifications = \core_message\api::get_popup_notifications($recipient->id, 'DESC', 0, 3);
 
         $this->assertEquals($notifications[0]->fullmessage, 'Message 3');
         $this->assertEquals($notifications[1]->fullmessage, 'Message 2');
         $this->assertEquals($notifications[2]->fullmessage, 'Message 1');
-    }
-
-    /**
-     * Test that the get_popup_notifications function returns embedded user details for the
-     * sender if requested.
-     */
-    public function test_message_get_popup_notifications_embed_sender() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 1', 1);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 2', 2);
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, '', false, true, 'DESC');
-
-        $func = function($type) {
-            return function($notification) use ($type) {
-                $user = new stdClass();
-                $user = username_load_fields_from_object($user, $notification, $type);
-                return $user;
-            };
-        };
-        $senders = array_map($func('userfrom'), $notifications);
-        $recipients = array_map($func('userto'), $notifications);
-
-        $this->assertEquals($senders[0]->firstname, 'Test1');
-        $this->assertEquals($senders[0]->lastname, 'User1');
-        $this->assertEquals($senders[1]->firstname, 'Test1');
-        $this->assertEquals($senders[1]->lastname, 'User1');
-
-        // Make sure we didn't get recipient details when they weren't requested.
-        $this->assertEmpty($recipients[0]->firstname);
-        $this->assertEmpty($recipients[0]->lastname);
-        $this->assertEmpty($recipients[1]->firstname);
-        $this->assertEmpty($recipients[1]->lastname);
-    }
-
-    /**
-     * Test that the get_popup_notifications function returns embedded user details for the
-     * recipient if requested.
-     */
-    public function test_message_get_popup_notifications_embed_recipient() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 1', 1);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 2', 2);
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, '', true, false, 'DESC');
-
-        $func = function($type) {
-            return function($notification) use ($type) {
-                $user = new stdClass();
-                $user = username_load_fields_from_object($user, $notification, $type);
-                return $user;
-            };
-        };
-        $senders = array_map($func('userfrom'), $notifications);
-        $recipients = array_map($func('userto'), $notifications);
-
-        $this->assertEquals($recipients[0]->firstname, 'Test2');
-        $this->assertEquals($recipients[0]->lastname, 'User2');
-        $this->assertEquals($recipients[1]->firstname, 'Test2');
-        $this->assertEquals($recipients[1]->lastname, 'User2');
-
-        // Make sure we didn't get sender details when they weren't requested.
-        $this->assertEmpty($senders[0]->firstname);
-        $this->assertEmpty($senders[0]->lastname);
-        $this->assertEmpty($senders[1]->firstname);
-        $this->assertEmpty($senders[1]->lastname);
-    }
-
-    /**
-     * Test that the get_popup_notifications function returns embedded all user details.
-     */
-    public function test_message_get_popup_notifications_embed_both() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 1', 1);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 2', 2);
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, '', true, true, 'DESC');
-
-        $func = function($type) {
-            return function($notification) use ($type) {
-                $user = new stdClass();
-                $user = username_load_fields_from_object($user, $notification, $type);
-                return $user;
-            };
-        };
-        $senders = array_map($func('userfrom'), $notifications);
-        $recipients = array_map($func('userto'), $notifications);
-
-        $this->assertEquals($recipients[0]->firstname, 'Test2');
-        $this->assertEquals($recipients[0]->lastname, 'User2');
-        $this->assertEquals($recipients[1]->firstname, 'Test2');
-        $this->assertEquals($recipients[1]->lastname, 'User2');
-
-        // Make sure we didn't get sender details when they weren't requested.
-        $this->assertEquals($senders[0]->firstname, 'Test1');
-        $this->assertEquals($senders[0]->lastname, 'User1');
-        $this->assertEquals($senders[1]->firstname, 'Test1');
-        $this->assertEquals($senders[1]->lastname, 'User1');
     }
 
     /**

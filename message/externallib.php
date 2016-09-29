@@ -1496,22 +1496,10 @@ class core_message_external extends external_api {
     public static function get_popup_notifications_parameters() {
         return new external_function_parameters(
             array(
-                'useridto' => new external_value(PARAM_INT, 'the user id who received the message, 0 for any user', VALUE_REQUIRED),
-                'status' => new external_value(
-                    PARAM_ALPHA, 'filter the results to just "read" or "unread" notifications',
-                    VALUE_DEFAULT, ''),
-                'embeduserto' => new external_value(
-                    PARAM_BOOL, 'true for returning user details for the recipient in each notification',
-                    VALUE_DEFAULT, false),
-                'embeduserfrom' => new external_value(
-                    PARAM_BOOL, 'true for returning user details for the sender in each notification',
-                    VALUE_DEFAULT, false),
+                'useridto' => new external_value(PARAM_INT, 'the user id who received the message, 0 for current user', VALUE_REQUIRED),
                 'newestfirst' => new external_value(
                     PARAM_BOOL, 'true for ordering by newest first, false for oldest first',
                     VALUE_DEFAULT, true),
-                'markasread' => new external_value(
-                    PARAM_BOOL, 'mark notifications as read when they are returned by this function',
-                    VALUE_DEFAULT, false),
                 'limit' => new external_value(PARAM_INT, 'the number of results to return', VALUE_DEFAULT, 0),
                 'offset' => new external_value(PARAM_INT, 'offset the result set by a given amount', VALUE_DEFAULT, 0)
             )
@@ -1525,28 +1513,19 @@ class core_message_external extends external_api {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @param  int      $useridto           the user id who received the message
-     * @param  string   $status             filter the results to only read or unread notifications
-     * @param  bool     $embeduserto        true to embed the recipient user details in the record for each notification
-     * @param  bool     $embeduserfrom      true to embed the send user details in the record for each notification
      * @param  bool     $newestfirst        true for ordering by newest first, false for oldest first
-     * @param  bool     $markasread         mark notifications as read when they are returned by this function
      * @param  int      $limit              the number of results to return
      * @param  int      $offset             offset the result set by a given amount
      * @return external_description
      */
-    public static function get_popup_notifications($useridto, $status, $embeduserto,
-        $embeduserfrom, $newestfirst, $markasread, $limit, $offset) {
+    public static function get_popup_notifications($useridto, $newestfirst, $limit, $offset) {
         global $USER, $PAGE;
 
         $params = self::validate_parameters(
             self::get_popup_notifications_parameters(),
             array(
                 'useridto' => $useridto,
-                'status' => $status,
-                'embeduserto' => $embeduserto,
-                'embeduserfrom' => $embeduserfrom,
                 'newestfirst' => $newestfirst,
-                'markasread' => $markasread,
                 'limit' => $limit,
                 'offset' => $offset,
             )
@@ -1556,24 +1535,14 @@ class core_message_external extends external_api {
         self::validate_context($context);
 
         $useridto = $params['useridto'];
-        $status = $params['status'];
-        $embeduserto = $params['embeduserto'];
-        $embeduserfrom = $params['embeduserfrom'];
         $newestfirst = $params['newestfirst'];
-        $markasread = $params['markasread'];
         $limit = $params['limit'];
         $offset = $params['offset'];
         $issuperuser = has_capability('moodle/site:readallmessages', $context);
         $renderer = $PAGE->get_renderer('core_message');
 
-        if (!empty($useridto)) {
-            if (core_user::is_real_user($useridto)) {
-                if ($embeduserto) {
-                    $userto = core_user::get_user($useridto, '*', MUST_EXIST);
-                }
-            } else {
-                throw new moodle_exception('invaliduser');
-            }
+        if (empty($useridto)) {
+            $useridto = $USER->id;
         }
 
         // Check if the current user is the sender/receiver or just a privileged user.
@@ -1581,31 +1550,23 @@ class core_message_external extends external_api {
             throw new moodle_exception('accessdenied', 'admin');
         }
 
+        if (!empty($useridto)) {
+            if (!core_user::is_real_user($useridto)) {
+                throw new moodle_exception('invaliduser');
+            }
+        }
+
         $sort = $newestfirst ? 'DESC' : 'ASC';
-        $notifications = \core_message\api::get_popup_notifications($useridto, $status, $embeduserto,
-            $embeduserfrom, $sort, $limit, $offset);
+        $notifications = \core_message\api::get_popup_notifications($useridto, $sort, $limit, $offset);
         $notificationcontexts = [];
 
         if ($notifications) {
-            // In some cases, we don't need to get the to user objects from the sql query.
-            $usertofullname = '';
-
-            // In this case, the useridto field is not empty, so we can get the user destinatary fullname from there.
-            if (!empty($useridto) && $embeduserto) {
-                $usertofullname = fullname($userto);
-            }
-
             foreach ($notifications as $notification) {
 
-                $notificationoutput = new \core_message\output\popup_notification($notification, $embeduserto,
-                    $embeduserfrom, $usertofullname);
+                $notificationoutput = new \core_message\output\popup_notification($notification);
 
                 $notificationcontext = $notificationoutput->export_for_template($renderer);
                 $notificationcontexts[] = $notificationcontext;
-
-                if ($markasread && !$notificationcontext->read) {
-                    message_mark_message_read($notification, time());
-                }
             }
         }
 
@@ -1644,9 +1605,6 @@ class core_message_external extends external_api {
                             'timecreated' => new external_value(PARAM_INT, 'Time created'),
                             'timecreatedpretty' => new external_value(PARAM_TEXT, 'Time created in a pretty format'),
                             'timeread' => new external_value(PARAM_INT, 'Time read'),
-                            'usertofullname' => new external_value(PARAM_TEXT, 'User to full name', VALUE_OPTIONAL),
-                            'userfromfullname' => new external_value(PARAM_TEXT, 'User from full name', VALUE_OPTIONAL),
-                            'userfromprofileurl' => new external_value(PARAM_URL, 'User from profile url', VALUE_OPTIONAL),
                             'read' => new external_value(PARAM_BOOL, 'notification read status'),
                             'deleted' => new external_value(PARAM_BOOL, 'notification deletion status'),
                             'iconurl' => new external_value(PARAM_URL, 'URL for notification icon'),
@@ -1656,7 +1614,7 @@ class core_message_external extends external_api {
                         ), 'message'
                     )
                 ),
-                'unreadcount' => new external_value(PARAM_INT, 'the user whose blocked users we want to retrieve'),
+                'unreadcount' => new external_value(PARAM_INT, 'the number of unread message for the given user'),
             )
         );
     }

@@ -539,14 +539,8 @@ class api {
      * @throws \moodle_exception
      * @since 3.2
      */
-    public static function get_popup_notifications($useridto = 0, $status = '', $embeduserto = false, $embeduserfrom = false,
-                                     $sort = 'DESC', $limit = 0, $offset = 0) {
+    public static function get_popup_notifications($useridto = 0, $sort = 'DESC', $limit = 0, $offset = 0) {
         global $DB, $USER;
-
-        if (!empty($status) && $status != MESSAGE_READ && $status != MESSAGE_UNREAD) {
-            throw new \moodle_exception(sprintf('invalid parameter: status: must be "%s" or "%s"',
-                MESSAGE_READ, MESSAGE_UNREAD));
-        }
 
         $sort = strtoupper($sort);
         if ($sort != 'DESC' && $sort != 'ASC') {
@@ -557,68 +551,32 @@ class api {
             $useridto = $USER->id;
         }
 
-        $params = array();
+        $params = [
+            'useridto1' => $useridto,
+            'useridto2' => $useridto,
+        ];
 
-        $buildtablesql = function($table, $prefix, $additionalfields, $messagestatus)
-        use ($status, $useridto, $embeduserto, $embeduserfrom) {
-
-            $joinsql = '';
-            $fields = "concat('$prefix', $prefix.id) as uniqueid, $prefix.id, $prefix.useridfrom, $prefix.useridto,
-            $prefix.subject, $prefix.fullmessage, $prefix.fullmessageformat,
-            $prefix.fullmessagehtml, $prefix.smallmessage, $prefix.notification, $prefix.contexturl,
-            $prefix.contexturlname, $prefix.timecreated, $prefix.timeuserfromdeleted, $prefix.timeusertodeleted,
-            $prefix.component, $prefix.eventtype, $additionalfields";
-            $where = " AND $prefix.useridto = :{$prefix}useridto";
-            $params = ["{$prefix}useridto" => $useridto];
-
-            if ($embeduserto) {
-                $embedprefix = "{$prefix}ut";
-                $fields .= ", " . get_all_user_name_fields(true, $embedprefix, '', 'userto');
-                $joinsql .= " LEFT JOIN {user} $embedprefix ON $embedprefix.id = $prefix.useridto";
-            }
-
-            if ($embeduserfrom) {
-                $embedprefix = "{$prefix}uf";
-                $fields .= ", " . get_all_user_name_fields(true, $embedprefix, '', 'userfrom');
-                $joinsql .= " LEFT JOIN {user} $embedprefix ON $embedprefix.id = $prefix.useridfrom";
-            }
-
-            if ($messagestatus == MESSAGE_READ) {
-                $isread = '1';
-            } else {
-                $isread = '0';
-            }
-
-            return array(
-                sprintf(
-                    "SELECT %s
-                FROM %s %s %s
-                WHERE %s.notification = 1
-                AND %s.id IN (SELECT messageid FROM {message_popup} WHERE isread = %s)
-                %s",
-                    $fields, $table, $prefix, $joinsql, $prefix, $prefix, $isread, $where
-                ),
-                $params
-            );
-        };
-
-        switch ($status) {
-            case MESSAGE_READ:
-                list($sql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread', MESSAGE_READ);
-                $params = array_merge($params, $readparams);
-                break;
-            case MESSAGE_UNREAD:
-                list($sql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread', MESSAGE_UNREAD);
-                $params = array_merge($params, $unreadparams);
-                break;
-            default:
-                list($readsql, $readparams) = $buildtablesql('{message_read}', 'r', 'r.timeread', MESSAGE_READ);
-                list($unreadsql, $unreadparams) = $buildtablesql('{message}', 'u', '0 as timeread', MESSAGE_UNREAD);
-                $sql = sprintf("SELECT * FROM (%s UNION %s) f", $readsql, $unreadsql);
-                $params = array_merge($params, $readparams, $unreadparams);
-        }
-
-        $sql .= " ORDER BY timecreated $sort, timeread $sort, id $sort";
+        $sql = "SELECT * FROM (
+                    SELECT concat('r', r.id) as uniqueid, r.id, r.useridfrom, r.useridto,
+                        r.subject, r.fullmessage, r.fullmessageformat,
+                        r.fullmessagehtml, r.smallmessage, r.notification, r.contexturl,
+                        r.contexturlname, r.timecreated, r.timeuserfromdeleted, r.timeusertodeleted,
+                        r.component, r.eventtype, r.timeread
+                    FROM {message_read} r
+                    WHERE r.notification = 1
+                    AND r.id IN (SELECT messageid FROM {message_popup} WHERE isread = 1)
+                    AND r.useridto = :useridto1
+                UNION
+                    SELECT concat('u', u.id) as uniqueid, u.id, u.useridfrom, u.useridto,
+                        u.subject, u.fullmessage, u.fullmessageformat,
+                        u.fullmessagehtml, u.smallmessage, u.notification, u.contexturl,
+                        u.contexturlname, u.timecreated, u.timeuserfromdeleted, u.timeusertodeleted,
+                        u.component, u.eventtype, 0 as timeread
+                    FROM {message} u
+                    WHERE u.notification = 1
+                    AND u.id IN (SELECT messageid FROM {message_popup} WHERE isread = 0)
+                    AND u.useridto = :useridto2
+                ) f ORDER BY timecreated $sort, timeread $sort, id $sort";
 
         return array_values($DB->get_records_sql($sql, $params, $offset, $limit));
     }

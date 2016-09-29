@@ -48,21 +48,6 @@ class popup_notification implements templatable, renderable {
     protected $notification;
 
     /**
-     * @var \stdClass Indicates if the receiver of the notification should have their details embedded in the output.
-     */
-    protected $embeduserto;
-
-    /**
-     * @var \stdClass Indicates if the sender of the notification should have their details embedded in the output.
-     */
-    protected $embeduserfrom;
-
-    /**
-     * @var string A cache for the receiver's full name, if it's already known, so that a DB lookup isn't required.
-     */
-    protected $usertofullname;
-
-    /**
      * Constructor.
      *
      * @param \stdClass $notification
@@ -70,11 +55,8 @@ class popup_notification implements templatable, renderable {
      * @param \stdClass $embeduserfrom
      * @param string $usertofullname
      */
-    public function __construct($notification, $embeduserto, $embeduserfrom, $usertofullname = '') {
+    public function __construct($notification) {
         $this->notification = $notification;
-        $this->embeduserto = $embeduserto;
-        $this->embeduserfrom = $embeduserfrom;
-        $this->usertofullname = $usertofullname;
     }
 
     public function export_for_template(\renderer_base $output) {
@@ -86,31 +68,6 @@ class popup_notification implements templatable, renderable {
             $context->deleted = true;
         } else {
             $context->deleted = false;
-        }
-
-        // We need to get the user from the query.
-        if ($this->embeduserfrom) {
-            // Check for non-reply and support users.
-            if (core_user::is_real_user($context->useridfrom)) {
-                $user = new \stdClass();
-                $user = username_load_fields_from_object($user, $context, 'userfrom');
-                $profileurl = new moodle_url('/user/profile.php', array('id' => $context->useridfrom));
-                $context->userfromfullname = fullname($user);
-                $context->userfromprofileurl = $profileurl->out();
-            } else {
-                $context->userfromfullname = get_string('coresystem');
-            }
-        }
-
-        // We need to get the user from the query.
-        if ($this->embeduserto) {
-            if (empty($this->usertofullname)) {
-                $user = new \stdClass();
-                $user = username_load_fields_from_object($user, $context, 'userto');
-                $context->usertofullname = fullname($user);
-            } else {
-                $context->usertofullname = $this->usertofullname;
-            }
         }
 
         $context->timecreatedpretty = get_string('ago', 'message', format_time(time() - $context->timecreated));
