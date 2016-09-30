@@ -165,6 +165,13 @@
 
     .iconcol {
         padding: 3px;
+        box-sizing: content-box;
+
+        .icon {
+            margin: 0;
+            width: 12px;
+            height: 12px;
+        }
     }
 
     label {
