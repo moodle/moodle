@@ -691,7 +691,7 @@ abstract class cache_administration_helper extends cache_helper {
                 'plugin' => $details['plugin'],
                 'default' => $details['default'],
                 'isready' => $store->is_ready(),
-                'requirementsmet' => $store->are_requirements_met(),
+                'requirementsmet' => $class::are_requirements_met(),
                 'mappings' => 0,
                 'lock' => $lock,
                 'modes' => array(
