@@ -72,7 +72,7 @@ if ($action == 'loadallpages') {
     $response->pagecount = count($pages);
     $response->pages = array();
 
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
 
     // The readonly files are stored in a different file area.
     $filearea = document_services::PAGE_IMAGE_FILEAREA;
@@ -111,7 +111,7 @@ if ($action == 'loadallpages') {
     $response = new stdClass();
     $response->errors = array();
 
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
 
     $pagejson = required_param('page', PARAM_RAW);
     $page = json_decode($pagejson);
@@ -132,7 +132,7 @@ if ($action == 'loadallpages') {
 
     require_capability('mod/assign:grade', $context);
     $response = new stdClass();
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
     $file = document_services::generate_feedback_document($assignment, $userid, $attemptnumber);
 
     $response->url = '';
@@ -172,7 +172,7 @@ if ($action == 'loadallpages') {
 } else if ($action == 'revertchanges') {
     require_capability('mod/assign:grade', $context);
 
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
 
     $result = page_editor::revert_drafts($gradeid);
 
@@ -190,7 +190,7 @@ if ($action == 'loadallpages') {
 } else if ($action == 'deletefeedbackdocument') {
     require_capability('mod/assign:grade', $context);
 
-    $grade = $assignment->get_user_grade($userid, true);
+    $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
     $result = document_services::delete_feedback_document($assignment, $userid, $attemptnumber);
 
     $result = $result && page_editor::unrelease_drafts($grade->id);
