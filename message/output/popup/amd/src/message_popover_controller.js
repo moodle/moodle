@@ -16,11 +16,11 @@
 /**
  * Controls the message popover in the nav bar.
  *
- * See template: message/message_menu
+ * See template: message_popup/message_popover
  *
- * @module     core_message/message_popover_controller
+ * @module     message_popup/message_popover_controller
  * @class      message_popover_controller
- * @package    message
+ * @package    message_popup
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -180,7 +180,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                     id: message.userid,
                 });
 
-                var promise = Templates.render('message/message_content_item', message);
+                var promise = Templates.render('message_popup/message_content_item', message);
                 promises.push(promise);
 
                 promise.then(function(html, js) {

@@ -16,13 +16,13 @@
 /**
  * Retrieves notifications from the server.
  *
- * @module     core_message/notification_repository
+ * @module     message_popup/notification_repository
  * @class      notification_repository
- * @package    message
- * @copyright  2015 Ryan Wyllie <ryan@moodle.com>
+ * @package    message_popup
+ * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/ajax', 'core/notification'], function(ajax, notification) {
+define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
     /**
      * Retrieve a list of notifications from the server.
      *
@@ -39,13 +39,13 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
         }
 
         var request = {
-            methodname: 'core_message_get_popup_notifications',
+            methodname: 'message_popup_get_popup_notifications',
             args: args
         };
 
-        var promise = ajax.call([request])[0];
+        var promise = Ajax.call([request])[0];
 
-        promise.fail(notification.exception);
+        promise.fail(Notification.exception);
 
         return promise;
     };
@@ -58,13 +58,13 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
      */
     var countUnread = function(args) {
         var request = {
-            methodname: 'core_message_get_unread_popup_notification_count',
+            methodname: 'message_popup_get_unread_popup_notification_count',
             args: args
         };
 
-        var promise = ajax.call([request])[0];
+        var promise = Ajax.call([request])[0];
 
-        promise.fail(notification.exception);
+        promise.fail(Notification.exception);
 
         return promise;
     };
@@ -81,9 +81,9 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
             args: args
         };
 
-        var promise = ajax.call([request])[0];
+        var promise = Ajax.call([request])[0];
 
-        promise.fail(notification.exception);
+        promise.fail(Notification.exception);
 
         return promise;
     };
@@ -109,9 +109,9 @@ define(['core/ajax', 'core/notification'], function(ajax, notification) {
             args: args
         };
 
-        var promise = ajax.call([request])[0];
+        var promise = Ajax.call([request])[0];
 
-        promise.fail(notification.exception);
+        promise.fail(Notification.exception);
 
         return promise;
     };

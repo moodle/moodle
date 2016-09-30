@@ -17,12 +17,12 @@
 /**
  * Contains class used to prepare a popup notification for display.
  *
- * @package   core_message
+ * @package   message_popup
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_message\output;
+namespace message_popup\output;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,7 +36,7 @@ use core_user;
 /**
  * Class to prepare a popup notification for display.
  *
- * @package   core_message
+ * @package   message_popup
  * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,9 +51,6 @@ class popup_notification implements templatable, renderable {
      * Constructor.
      *
      * @param \stdClass $notification
-     * @param \stdClass $embeduserto
-     * @param \stdClass $embeduserfrom
-     * @param string $usertofullname
      */
     public function __construct($notification) {
         $this->notification = $notification;

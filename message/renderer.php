@@ -244,9 +244,8 @@ class core_message_renderer extends plugin_renderer_base {
             return $processor->enabled &&
                 $processor->configured &&
                 $processor->object->is_user_configured() &&
-                // Filter out the popup processor because the notification preferences aren't
-                // considered for that.
-                $processor->name != 'popup';
+                // Filter out processors that don't have and message preferences to configure.
+                $processor->object->has_message_preferences();
         });
 
         $providers = array_filter(message_get_providers_for_user($user->id), function($provider) {

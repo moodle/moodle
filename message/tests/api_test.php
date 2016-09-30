@@ -43,9 +43,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
         $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
 
-        $this->send_fake_unread_popup_notification($sender, $recipient);
-        $this->send_fake_unread_popup_notification($sender, $recipient);
-        $this->send_fake_unread_popup_notification($sender, $recipient);
+        $this->send_fake_message($sender, $recipient, 'Notification', 1);
+        $this->send_fake_message($sender, $recipient, 'Notification', 1);
+        $this->send_fake_message($sender, $recipient, 'Notification', 1);
         $this->send_fake_message($sender, $recipient);
         $this->send_fake_message($sender, $recipient);
         $this->send_fake_message($sender, $recipient);
@@ -59,15 +59,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $sender2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test3', 'lastname' => 'User3'));
         $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
 
-        $this->send_fake_unread_popup_notification($sender1, $recipient);
-        $this->send_fake_unread_popup_notification($sender1, $recipient);
-        $this->send_fake_unread_popup_notification($sender1, $recipient);
+        $this->send_fake_message($sender1, $recipient, 'Notification', 1);
+        $this->send_fake_message($sender1, $recipient, 'Notification', 1);
+        $this->send_fake_message($sender1, $recipient, 'Notification', 1);
         $this->send_fake_message($sender1, $recipient);
         $this->send_fake_message($sender1, $recipient);
         $this->send_fake_message($sender1, $recipient);
-        $this->send_fake_unread_popup_notification($sender2, $recipient);
-        $this->send_fake_unread_popup_notification($sender2, $recipient);
-        $this->send_fake_unread_popup_notification($sender2, $recipient);
+        $this->send_fake_message($sender2, $recipient, 'Notification', 1);
+        $this->send_fake_message($sender2, $recipient, 'Notification', 1);
+        $this->send_fake_message($sender2, $recipient, 'Notification', 1);
         $this->send_fake_message($sender2, $recipient);
         $this->send_fake_message($sender2, $recipient);
         $this->send_fake_message($sender2, $recipient);
@@ -80,9 +80,9 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
         $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
 
-        $this->send_fake_unread_popup_notification($sender, $recipient);
-        $this->send_fake_unread_popup_notification($sender, $recipient);
-        $this->send_fake_unread_popup_notification($sender, $recipient);
+        $this->send_fake_message($sender, $recipient, 'Notification', 1);
+        $this->send_fake_message($sender, $recipient, 'Notification', 1);
+        $this->send_fake_message($sender, $recipient, 'Notification', 1);
         $this->send_fake_message($sender, $recipient);
         $this->send_fake_message($sender, $recipient);
         $this->send_fake_message($sender, $recipient);
@@ -92,82 +92,6 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         \core_message\api::mark_all_read_for_user($recipient->id, 0, MESSAGE_TYPE_MESSAGE);
         $this->assertEquals(message_count_unread_messages($recipient), 0);
-    }
-
-    /**
-     * Test that the get_popup_notifications function will return the correct notifications.
-     */
-    public function test_message_get_popup_notifications() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 1', 1);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 2', 2);
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 3', 3, 1);
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 4', 3, 2);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 5', 4);
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id);
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 5');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 4');
-        $this->assertEquals($notifications[2]->fullmessage, 'Message 3');
-        $this->assertEquals($notifications[3]->fullmessage, 'Message 2');
-        $this->assertEquals($notifications[4]->fullmessage, 'Message 1');
-    }
-
-    /**
-     * Test that the get_popup_notifications function works correctly with limiting and offsetting
-     * the result set if requested.
-     */
-    public function test_message_get_popup_notifications_all_limit_and_offset() {
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 1', 1);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 2', 2);
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 3', 3, 1);
-        $this->send_fake_read_popup_notification($sender, $recipient, 'Message 4', 3, 2);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 5', 4);
-        $this->send_fake_unread_popup_notification($sender, $recipient, 'Message 6', 5);
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, 'DESC', 2, 0);
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 6');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 5');
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, 'DESC', 2, 2);
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 4');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 3');
-
-        $notifications = \core_message\api::get_popup_notifications($recipient->id, 'DESC', 0, 3);
-
-        $this->assertEquals($notifications[0]->fullmessage, 'Message 3');
-        $this->assertEquals($notifications[1]->fullmessage, 'Message 2');
-        $this->assertEquals($notifications[2]->fullmessage, 'Message 1');
-    }
-
-    /**
-     * Test count_unread_popup_notifications.
-     */
-    public function test_message_count_unread_popup_notifications() {
-        $sender1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test1', 'lastname' => 'User1'));
-        $sender2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test2', 'lastname' => 'User2'));
-        $recipient1 = $this->getDataGenerator()->create_user(array('firstname' => 'Test3', 'lastname' => 'User3'));
-        $recipient2 = $this->getDataGenerator()->create_user(array('firstname' => 'Test4', 'lastname' => 'User4'));
-
-        $this->send_fake_unread_popup_notification($sender1, $recipient1);
-        $this->send_fake_unread_popup_notification($sender1, $recipient1);
-        $this->send_fake_unread_popup_notification($sender2, $recipient1);
-        $this->send_fake_unread_popup_notification($sender1, $recipient2);
-        $this->send_fake_unread_popup_notification($sender2, $recipient2);
-        $this->send_fake_unread_popup_notification($sender2, $recipient2);
-        $this->send_fake_unread_popup_notification($sender2, $recipient2);
-        $this->send_fake_unread_popup_notification($sender2, $recipient2);
-
-        $this->assertEquals(\core_message\api::count_unread_popup_notifications($recipient1->id), 3);
-        $this->assertEquals(\core_message\api::count_unread_popup_notifications($recipient2->id), 5);
     }
 
     /**

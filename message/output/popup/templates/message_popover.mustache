@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template message/message_popover
+    @template message_output_popup/message_popover
 
     This template will render the message popover for the navigation bar.
 
@@ -71,7 +71,7 @@
     {{/content}}
 {{/ core/popover_region }}
 {{#js}}
-require(['jquery', 'core_message/message_popover_controller'], function($, controller) {
+require(['jquery', 'message_popup/message_popover_controller'], function($, controller) {
     var container = $('#nav-message-popover-container');
     var controller = new controller(container);
     controller.registerEventListeners();

@@ -51,8 +51,9 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      * @param stdClass $userfrom user object of the one sending the message.
      * @param stdClass $userto user object of the one receiving the message.
      * @param string $message message to send.
+     * @param int $notification is the message a notification.
      */
-    protected function send_message($userfrom, $userto, $message = 'Hello world!') {
+    protected function send_message($userfrom, $userto, $message = 'Hello world!', $notification = 0) {
         global $DB;
         $record = new stdClass();
         $record->useridfrom = $userfrom->id;
@@ -60,82 +61,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $record->subject = 'No subject';
         $record->fullmessage = $message;
         $record->timecreated = time();
+        $record->notification = $notification;
         $insert = $DB->insert_record('message', $record);
-    }
-
-    /**
-     * Send a fake unread popup notification.
-     *
-     * {@link message_send()} does not support transaction, this function will simulate a message
-     * sent from a user to another. We should stop using it once {@link message_send()} will support
-     * transactions. This is not clean at all, this is just used to add rows to the table.
-     *
-     * @param stdClass $userfrom user object of the one sending the message.
-     * @param stdClass $userto user object of the one receiving the message.
-     * @param string $message message to send.
-     * @param int $timecreated time the message was created.
-     * @return int the id of the message
-     */
-    protected function send_fake_unread_popup_notification($userfrom, $userto, $message = 'Hello world!', $timecreated = 0) {
-        global $DB;
-
-        $record = new stdClass();
-        $record->useridfrom = $userfrom->id;
-        $record->useridto = $userto->id;
-        $record->notification = 1;
-        $record->subject = 'No subject';
-        $record->fullmessage = $message;
-        $record->smallmessage = $message;
-        $record->timecreated = $timecreated ? $timecreated : time();
-
-        $id = $DB->insert_record('message', $record);
-
-        $popup = new stdClass();
-        $popup->messageid = $id;
-        $popup->isread = 0;
-
-        $DB->insert_record('message_popup', $popup);
-
-        return $id;
-    }
-
-    /**
-     * Send a fake read popup notification.
-     *
-     * {@link message_send()} does not support transaction, this function will simulate a message
-     * sent from a user to another. We should stop using it once {@link message_send()} will support
-     * transactions. This is not clean at all, this is just used to add rows to the table.
-     *
-     * @param stdClass $userfrom user object of the one sending the message.
-     * @param stdClass $userto user object of the one receiving the message.
-     * @param string $message message to send.
-     * @param int $timecreated time the message was created.
-     * @param int $timeread the the message was read
-     * @return int the id of the message
-     */
-    protected function send_fake_read_popup_notification($userfrom, $userto, $message = 'Hello world!',
-                                                         $timecreated = 0, $timeread = 0) {
-        global $DB;
-
-        $record = new stdClass();
-        $record->useridfrom = $userfrom->id;
-        $record->useridto = $userto->id;
-        $record->notification = 1;
-        $record->subject = 'No subject';
-        $record->fullmessage = $message;
-        $record->smallmessage = $message;
-        $record->timecreated = $timecreated ? $timecreated : time();
-        $record->timeread = $timeread ? $timeread : time();
-
-        $id = $DB->insert_record('message_read', $record);
-
-        $popup = new stdClass();
-        $popup->messageid = $id;
-        $popup->isread = 1;
-
-        $DB->insert_record('message_popup', $popup);
-
-        return $id;
     }
 
     /**
@@ -896,77 +823,6 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
     }
 
-    public function test_get_popup_notifications_no_user_exception() {
-        $this->resetAfterTest(true);
-
-        $this->setExpectedException('moodle_exception');
-        $result = core_message_external::get_popup_notifications(-2132131, false, 0, 0);
-    }
-
-    public function test_get_popup_notifications_access_denied_exception() {
-        $this->resetAfterTest(true);
-
-        $sender = $this->getDataGenerator()->create_user();
-        $user = $this->getDataGenerator()->create_user();
-
-        $this->setUser($user);
-        $this->setExpectedException('moodle_exception');
-        $result = core_message_external::get_popup_notifications($sender->id, false, 0, 0);
-    }
-
-    public function test_get_popup_notifications_as_recipient() {
-        $this->resetAfterTest(true);
-
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Sendy', 'lastname' => 'Sender'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Recipy', 'lastname' => 'Recipient'));
-
-        $notificationids = array(
-            $this->send_fake_unread_popup_notification($sender, $recipient),
-            $this->send_fake_unread_popup_notification($sender, $recipient),
-            $this->send_fake_read_popup_notification($sender, $recipient),
-            $this->send_fake_read_popup_notification($sender, $recipient),
-        );
-
-        // Confirm that admin has super powers to retrieve any notifications.
-        $this->setAdminUser();
-        $result = core_message_external::get_popup_notifications($recipient->id, false, 0, 0);
-        $this->assertCount(4, $result['notifications']);
-
-        $this->setUser($recipient);
-        $result = core_message_external::get_popup_notifications($recipient->id, false, 0, 0);
-        $this->assertCount(4, $result['notifications']);
-    }
-
-    public function test_get_popup_notification_limit_offset() {
-        $this->resetAfterTest(true);
-
-        $sender = $this->getDataGenerator()->create_user(array('firstname' => 'Sendy', 'lastname' => 'Sender'));
-        $recipient = $this->getDataGenerator()->create_user(array('firstname' => 'Recipy', 'lastname' => 'Recipient'));
-
-        $this->setUser($recipient);
-
-        $notificationids = array(
-            $this->send_fake_unread_popup_notification($sender, $recipient, 'Notification 1', 1),
-            $this->send_fake_unread_popup_notification($sender, $recipient, 'Notification 2', 2),
-            $this->send_fake_unread_popup_notification($sender, $recipient, 'Notification 3', 3),
-            $this->send_fake_unread_popup_notification($sender, $recipient, 'Notification 4', 4),
-            $this->send_fake_read_popup_notification($sender, $recipient, 'Notification 5', 5),
-            $this->send_fake_read_popup_notification($sender, $recipient, 'Notification 6', 6),
-            $this->send_fake_read_popup_notification($sender, $recipient, 'Notification 7', 7),
-            $this->send_fake_read_popup_notification($sender, $recipient, 'Notification 8', 8),
-        );
-
-        $result = core_message_external::get_popup_notifications($recipient->id, true, 2, 0);
-
-        $this->assertEquals($result['notifications'][0]->id, $notificationids[7]);
-        $this->assertEquals($result['notifications'][1]->id, $notificationids[6]);
-
-        $result = core_message_external::get_popup_notifications($recipient->id, true, 2, 2);
-
-        $this->assertEquals($result['notifications'][0]->id, $notificationids[5]);
-        $this->assertEquals($result['notifications'][1]->id, $notificationids[4]);
-    }
-
     public function test_mark_all_notifications_as_read_invalid_user_exception() {
         $this->resetAfterTest(true);
 
@@ -996,6 +852,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     public function test_mark_all_notifications_as_read() {
+        global $DB;
+
         $this->resetAfterTest(true);
 
         $sender1 = $this->getDataGenerator()->create_user();
@@ -1006,67 +864,26 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->setUser($recipient);
 
         $notificationids = array(
-            $this->send_fake_unread_popup_notification($sender1, $recipient, 'Notification', 1),
-            $this->send_fake_unread_popup_notification($sender1, $recipient, 'Notification', 2),
-            $this->send_fake_unread_popup_notification($sender2, $recipient, 'Notification', 3),
-            $this->send_fake_unread_popup_notification($sender2, $recipient, 'Notification', 4),
-            $this->send_fake_unread_popup_notification($sender3, $recipient, 'Notification', 5),
-            $this->send_fake_unread_popup_notification($sender3, $recipient, 'Notification', 6),
+            $this->send_message($sender1, $recipient, 'Notification', 1),
+            $this->send_message($sender1, $recipient, 'Notification', 1),
+            $this->send_message($sender2, $recipient, 'Notification', 1),
+            $this->send_message($sender2, $recipient, 'Notification', 1),
+            $this->send_message($sender3, $recipient, 'Notification', 1),
+            $this->send_message($sender3, $recipient, 'Notification', 1),
         );
 
         core_message_external::mark_all_notifications_as_read($recipient->id, $sender1->id);
-        $result = core_message_external::get_popup_notifications($recipient->id, false, 0, 0);
-        $notifications = $result['notifications'];
+        $readnotifications = $DB->get_recordset('message_read', ['useridto' => $recipient->id]);
+        $unreadnotifications = $DB->get_recordset('message', ['useridto' => $recipient->id]);
 
-        $this->assertCount(2, array_filter($notifications, function($a) { return $a->read; }));
-        $this->assertCount(4, array_filter($notifications, function($a) { return !$a->read; }));
+        $this->assertCount(2, $readnotifications);
+        $this->assertCount(4, $unreadnotifications);
 
         core_message_external::mark_all_notifications_as_read($recipient->id, 0);
-        $result = core_message_external::get_popup_notifications($recipient->id, false, 0, 0);
-        $notifications = $result['notifications'];
+        $readnotifications = $DB->get_recordset('message_read', ['useridto' => $recipient->id]);
+        $unreadnotifications = $DB->get_recordset('message', ['useridto' => $recipient->id]);
 
-        $this->assertCount(6, array_filter($notifications, function($a) { return $a->read; }));
-        $this->assertCount(0, array_filter($notifications, function($a) { return !$a->read; }));
-    }
-
-    public function test_get_unread_popup_notification_count_invalid_user_exception() {
-        $this->resetAfterTest(true);
-
-        $this->setExpectedException('moodle_exception');
-        $result = core_message_external::get_unread_popup_notification_count(-2132131, 0);
-    }
-
-    public function test_get_unread_popup_notification_count_access_denied_exception() {
-        $this->resetAfterTest(true);
-
-        $sender = $this->getDataGenerator()->create_user();
-        $user = $this->getDataGenerator()->create_user();
-
-        $this->setUser($user);
-        $this->setExpectedException('moodle_exception');
-        $result = core_message_external::get_unread_popup_notification_count($sender->id, 0);
-    }
-
-    public function test_get_unread_popup_notification_count() {
-        $this->resetAfterTest(true);
-
-        $sender1 = $this->getDataGenerator()->create_user();
-        $sender2 = $this->getDataGenerator()->create_user();
-        $sender3 = $this->getDataGenerator()->create_user();
-        $recipient = $this->getDataGenerator()->create_user();
-
-        $this->setUser($recipient);
-
-        $notificationids = array(
-            $this->send_fake_unread_popup_notification($sender1, $recipient, 'Notification', 1),
-            $this->send_fake_unread_popup_notification($sender1, $recipient, 'Notification', 2),
-            $this->send_fake_unread_popup_notification($sender2, $recipient, 'Notification', 3),
-            $this->send_fake_unread_popup_notification($sender2, $recipient, 'Notification', 4),
-            $this->send_fake_unread_popup_notification($sender3, $recipient, 'Notification', 5),
-            $this->send_fake_unread_popup_notification($sender3, $recipient, 'Notification', 6),
-        );
-
-        $count = core_message_external::get_unread_popup_notification_count($recipient->id);
-        $this->assertEquals($count, 6);
+        $this->assertCount(6, $readnotifications);
+        $this->assertCount(0, $unreadnotifications);
     }
 }

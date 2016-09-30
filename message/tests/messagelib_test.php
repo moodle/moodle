@@ -62,9 +62,10 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * @param stdClass $userfrom user object of the one sending the message.
      * @param stdClass $userto user object of the one receiving the message.
      * @param string $message message to send.
+     * @param int $notification if the message is a notification.
      * @return int the id of the message
      */
-    protected function send_fake_message($userfrom, $userto, $message = 'Hello world!') {
+    protected function send_fake_message($userfrom, $userto, $message = 'Hello world!', $notification = 0) {
         global $DB;
 
         $record = new stdClass();
@@ -74,83 +75,9 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $record->fullmessage = $message;
         $record->smallmessage = $message;
         $record->timecreated = time();
+        $record->notification = $notification;
 
         return $DB->insert_record('message', $record);
-    }
-
-    /**
-     * Send a fake unread popup notification.
-     *
-     * {@link message_send()} does not support transaction, this function will simulate a message
-     * sent from a user to another. We should stop using it once {@link message_send()} will support
-     * transactions. This is not clean at all, this is just used to add rows to the table.
-     *
-     * @param stdClass $userfrom user object of the one sending the message.
-     * @param stdClass $userto user object of the one receiving the message.
-     * @param string $message message to send.
-     * @param int $timecreated time the message was created.
-     * @return int the id of the message
-     */
-    protected function send_fake_unread_popup_notification($userfrom, $userto, $message = 'Hello world!', $timecreated = 0) {
-        global $DB;
-
-        $record = new stdClass();
-        $record->useridfrom = $userfrom->id;
-        $record->useridto = $userto->id;
-        $record->notification = 1;
-        $record->subject = 'No subject';
-        $record->fullmessage = $message;
-        $record->smallmessage = $message;
-        $record->timecreated = $timecreated ? $timecreated : time();
-
-        $id = $DB->insert_record('message', $record);
-
-        $popup = new stdClass();
-        $popup->messageid = $id;
-        $popup->isread = 0;
-
-        $DB->insert_record('message_popup', $popup);
-
-        return $id;
-    }
-
-    /**
-     * Send a fake read popup notification.
-     *
-     * {@link message_send()} does not support transaction, this function will simulate a message
-     * sent from a user to another. We should stop using it once {@link message_send()} will support
-     * transactions. This is not clean at all, this is just used to add rows to the table.
-     *
-     * @param stdClass $userfrom user object of the one sending the message.
-     * @param stdClass $userto user object of the one receiving the message.
-     * @param string $message message to send.
-     * @param int $timecreated time the message was created.
-     * @param int $timeread the the message was read
-     * @return int the id of the message
-     */
-    protected function send_fake_read_popup_notification($userfrom, $userto, $message = 'Hello world!',
-                                                         $timecreated = 0, $timeread = 0) {
-        global $DB;
-
-        $record = new stdClass();
-        $record->useridfrom = $userfrom->id;
-        $record->useridto = $userto->id;
-        $record->notification = 1;
-        $record->subject = 'No subject';
-        $record->fullmessage = $message;
-        $record->smallmessage = $message;
-        $record->timecreated = $timecreated ? $timecreated : time();
-        $record->timeread = $timeread ? $timeread : time();
-
-        $id = $DB->insert_record('message_read', $record);
-
-        $popup = new stdClass();
-        $popup->messageid = $id;
-        $popup->isread = 1;
-
-        $DB->insert_record('message_popup', $popup);
-
-        return $id;
     }
 
     /**
@@ -651,7 +578,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
 
             if (isset($messagedata['state']) && $messagedata['state'] == 'unread') {
                 $table = 'message';
-                $messageid = $this->send_fake_message($from, $to, $subject, FORMAT_PLAIN);
+                $messageid = $this->send_fake_message($from, $to, $subject);
             } else {
                 // If there is no state, or the state is not 'unread', assume the message is read.
                 $table = 'message_read';

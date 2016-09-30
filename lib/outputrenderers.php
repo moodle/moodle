@@ -3193,47 +3193,24 @@ EOD;
     }
 
     /**
-     * Returns the notification menu
+     * Allow plugins to provide some content to be rendered in the navbar.
+     * The plugin must define a PLUGIN_render_navbar_output function that returns
+     * the HTML they wish to add to the navbar.
      *
-     * @return string         HTML for the notification menu
+     * @return string HTML for the navbar
      */
-    public function notification_menu() {
-        global $USER, $DB;
+    public function navbar_plugin_output() {
+        $output = '';
 
-        $processor = $DB->get_record('message_processors', array('name' => 'popup'));
-
-        if (isloggedin() && $processor->enabled && !isguestuser() && !user_not_fully_set_up($USER)) {
-            $context = [
-                'userid' => $USER->id,
-                'urls' => [
-                    'preferences' => (new moodle_url('/message/notificationpreferences.php', ['userid' => $USER->id]))->out(),
-                ],
-            ];
-            return $this->render_from_template('message/notification_popover', $context);
-        } else {
-            return '';
+        if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $output .= $pluginfunction($this);
+                }
+            }
         }
-    }
 
-    /**
-     * Returns the message menu
-     *
-     * @return string         HTML for the message menu
-     */
-    public function message_menu() {
-        global $CFG, $USER;
-
-        if (!empty($CFG->messaging) && isloggedin() && !isguestuser() && !user_not_fully_set_up($USER)) {
-            $context = [
-                'userid' => $USER->id,
-                'urls' => [
-                    'preferences' => (new moodle_url('/message/edit.php', ['id' => $USER->id]))->out(),
-                ],
-            ];
-            return $this->render_from_template('message/message_popover', $context);
-        } else {
-            return '';
-        }
+        return $output;
     }
 
     /**

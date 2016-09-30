@@ -732,22 +732,6 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
     ),
-    'core_message_get_popup_notifications' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'get_popup_notifications',
-        'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve a list of popup notifications for a user',
-        'type' => 'read',
-        'ajax' => true,
-    ),
-    'core_message_get_unread_popup_notification_count' => array(
-        'classname' => 'core_message_external',
-        'methodname' => 'get_unread_popup_notification_count',
-        'classpath' => 'message/externallib.php',
-        'description' => 'Retrieve the count of unread popup notifications for a given user',
-        'type' => 'read',
-        'ajax' => true,
-    ),
     'core_message_get_unread_conversations_count' => array(
         'classname' => 'core_message_external',
         'methodname' => 'get_unread_conversations_count',

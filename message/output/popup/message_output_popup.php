@@ -104,6 +104,16 @@ class message_output_popup extends message_output {
     }
 
     /**
+     * Don't show this processor on the message preferences page. The user can't disable
+     * the notifications for user-to-user messaging.
+     *
+     * @return bool
+     */
+    public function has_message_preferences() {
+        return false;
+    }
+
+    /**
      * Handles the message_viewed event to keep data in sync.
      *
      * @param \core\event\base $event The event data
