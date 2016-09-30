@@ -420,6 +420,17 @@ body.path-question-type .fitem_fgroup .accesshide {
 
 // imported from quiz.css
 
+#page-mod-quiz-edit ul.slots .activityinstance {
+    > a {
+        display: inline;
+        text-indent: 0;
+        padding-left: 0;
+    }
+    img.activityicon {
+        margin-left: 0;
+    }
+}
+
 #page-mod-quiz-edit .box.generalbox.questionbank {
     padding: 0.5em;
 }
