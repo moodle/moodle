@@ -33,7 +33,7 @@
     }
 
 }}
-<div class="popover-region popover-region-{{uniqid}} collapsed {{$classes}}{{/classes}}"
+<div class="popover-region collapsed {{$classes}}{{/classes}}"
     {{$attributes}}{{/attributes}}
     data-region="popover-region">
     <div class="popover-region-toggle"
@@ -65,10 +65,3 @@
         </div>
     </div>
 </div>
-{{#js}}
-require(['jquery', 'core/popover_region_controller'], function($, controller) {
-    var container = $(".popover-region-{{uniqid}}");
-    var controller = new controller(container);
-    controller.registerBaseEventListeners();
-});
-{{/js}}
