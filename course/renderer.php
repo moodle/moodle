@@ -890,14 +890,14 @@ class core_course_renderer extends plugin_renderer_base {
             $output .= html_writer::span($modicons, 'actions');
         }
 
+        // Show availability info (if module is not available).
+        $output .= $this->course_section_cm_availability($mod, $displayoptions);
+
         // If there is content AND a link, then display the content here
         // (AFTER any icons). Otherwise it was displayed before
         if (!empty($url)) {
             $output .= $contentpart;
         }
-
-        // show availability info (if module is not available)
-        $output .= $this->course_section_cm_availability($mod, $displayoptions);
 
         $output .= html_writer::end_tag('div'); // $indentclasses
 

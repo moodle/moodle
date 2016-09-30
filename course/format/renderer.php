@@ -226,13 +226,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectionname = html_writer::tag('span', $this->section_title($section, $course));
         $o.= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
 
-        $o.= html_writer::start_tag('div', array('class' => 'summary'));
-        $o.= $this->format_summary_text($section);
-        $o.= html_writer::end_tag('div');
-
         $context = context_course::instance($course->id);
+
         $o .= $this->section_availability_message($section,
                 has_capability('moodle/course:viewhiddensections', $context));
+
+        $o .= html_writer::start_tag('div', array('class' => 'summary'));
+        $o .= $this->format_summary_text($section);
+        $o .= html_writer::end_tag('div');
 
         return $o;
     }
