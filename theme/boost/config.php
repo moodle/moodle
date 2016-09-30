@@ -29,7 +29,7 @@ require_once(__DIR__ . '/lib.php');
 $THEME->name = 'boost';
 $THEME->scssfile = theme_boost_get_scss_file($THEME);
 $THEME->sheets = [];
-$THEME->editor_sheets = ['editor'];
+$THEME->editor_sheets = [];
 
 $THEME->layouts = [
     // Most backwards compatible layout without the blocks - this is the layout used by default.
