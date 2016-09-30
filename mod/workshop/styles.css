@@ -46,7 +46,7 @@
 .path-mod-workshop .submission-summary .title,
 .path-mod-workshop .submission-summary .userdate,
 .path-mod-workshop .submission-summary .grade-status {
-    margin: 0px 0px 0px 40px;
+    margin: 0 0 0 40px;
 }
 
 .path-mod-workshop .submission-summary .author {
@@ -57,7 +57,7 @@
 .path-mod-workshop .submission-summary.anonymous .author,
 .path-mod-workshop .submission-summary.anonymous .userdate,
 .path-mod-workshop .submission-summary.anonymous .grade-status {
-    margin: 0px 0px 0px 5px;
+    margin: 0 0 0 5px;
 }
 
 .path-mod-workshop .submission-summary .userdate {
@@ -71,8 +71,8 @@
 
 .path-mod-workshop .submission-summary .author .picture {
     position: absolute;
-    top: 0px;
-    left: 0px;
+    top: 0;
+    left: 0;
 }
 
 /**
@@ -80,7 +80,7 @@
  */
 .path-mod-workshop .submission-full {
     border: 1px solid #ddd;
-    margin: 0px 0px 1em 0px;
+    margin: 0 0 1em 0;
 }
 
 .path-mod-workshop .submission-full .header {
@@ -93,13 +93,13 @@
 .path-mod-workshop .submission-full .header .title,
 .path-mod-workshop .submission-full .header .author,
 .path-mod-workshop .submission-full .header .userdate {
-    margin: 0px 0px 0px 80px;
+    margin: 0 0 0 80px;
 }
 
 .path-mod-workshop .submission-full.anonymous .header .title,
 .path-mod-workshop .submission-full.anonymous .header .author,
 .path-mod-workshop .submission-full.anonymous .header .userdate {
-    margin: 0px 0px 0px 5px;
+    margin: 0 0 0 5px;
 }
 
 .path-mod-workshop .submission-full .header .userdate.created {
@@ -108,7 +108,7 @@
 
 .path-mod-workshop .submission-full .header .userdate.modified {
     padding-left: 10px;
-    margin-left: 0px;
+    margin-left: 0;
     border-left: 1px solid #000;
 }
 
@@ -149,18 +149,18 @@
  */
 .path-mod-workshop .submission-summary.example .title,
 .path-mod-workshop .submission-summary.example .userdate {
-    margin: 0px 0px 0px 0px;
+    margin: 0 0 0 0;
 }
 
 /**
  * Example submission - full display
  */
 .path-mod-workshop .submission-full.example .header {
-    min-height: 0px;
+    min-height: 0;
 }
 
 .path-mod-workshop .submission-full.example .header .title {
-    margin: 0px 0px 0px 0px;
+    margin: 0 0 0 0;
 }
 
 /**
@@ -168,7 +168,7 @@
  */
 .path-mod-workshop .message {
     padding: 5px 5em 5px 15px;
-    margin: 0px auto 20px auto;
+    margin: 0 auto 20px auto;
     width: 100%;
     font-size: 80%;
     position: relative;
@@ -176,7 +176,7 @@
 
 .path-mod-workshop .message .singlebutton {
     text-align: left;
-    margin: 0px;
+    margin: 0;
 }
 
 .path-mod-workshop .message.ok {
@@ -319,15 +319,15 @@
 .path-mod-workshop .userplan tr.phasetasks .tasks {
     list-style: none;
     margin: 3px;
-    padding: 0px;
+    padding: 0;
 }
 
 .path-mod-workshop .userplan tr.phasetasks .title {
-    padding: 0px 10px 0px 20px;
+    padding: 0 10px 0 20px;
 }
 
 .path-mod-workshop .userplan tr.phasetasks .details {
-    padding: 0px 10px 0px 25px;
+    padding: 0 10px 0 25px;
     font-size: 80%;
 }
 
@@ -336,7 +336,7 @@
  */
 .path-mod-workshop .assessment-full {
     border: 1px solid #ddd;
-    margin: 0px auto 1em auto;
+    margin: 0 auto 1em auto;
 }
 
 .path-mod-workshop .assessment-full .header {
@@ -354,14 +354,14 @@
 .path-mod-workshop .assessment-full .header .reviewer,
 .path-mod-workshop .assessment-full .header .grade,
 .path-mod-workshop .assessment-full .header .weight {
-    margin: 0px 0px 0px 40px;
+    margin: 0 0 0 40px;
 }
 
 .path-mod-workshop .assessment-full.anonymous .header .title,
 .path-mod-workshop .assessment-full.anonymous .header .reviewer,
 .path-mod-workshop .assessment-full.anonymous .header .grade,
 .path-mod-workshop .assessment-full.anonymous .header .weight {
-    margin: 0px 0px 0px 5px;
+    margin: 0 0 0 5px;
 }
 
 .path-mod-workshop .assessment-full .header .reviewer .picture {
@@ -386,7 +386,7 @@
 .path-mod-workshop .assessment-full .assessment-form-wrapper,
 .path-mod-workshop .assessment-full .overall-feedback-wrapper {
     margin-top: 0.5em;
-    padding: 0px 1em;
+    padding: 0 1em;
 }
 
 .path-mod-workshop .assessment-summary.graded .singlebutton input[type="submit"],
@@ -422,7 +422,7 @@
  * Assessment form
  */
 .path-mod-workshop .assessmentform .description {
-    margin: 0px 1em;
+    margin: 0 1em;
 }
 
 /**
@@ -436,7 +436,7 @@
 }
 
 .path-mod-workshop .grading-report .userpicture {
-    margin: 0px 3px;
+    margin: 0 3px;
     vertical-align: middle;
 }
 
@@ -534,7 +534,7 @@
  */
 .path-mod-workshop .feedback {
     border: 1px solid #ddd;
-    margin: 0px auto 1em auto;
+    margin: 0 auto 1em auto;
     width: 100%;
 }
 
@@ -546,7 +546,7 @@
 }
 
 .path-mod-workshop .feedback .header .title {
-    margin: 0px 0px 0px 40px;
+    margin: 0 0 0 40px;
 }
 
 .path-mod-workshop .feedback .header .picture {

@@ -10,7 +10,7 @@
     }
     .moodleSkin .mceLayout .mceToolbar .mceNoWrap {
         clear: none;
-        width: 0px;
+        width: 0;
     }
 
     .o2k7Skin tr.mceLast .mceToolbar tr td.mceWrap,

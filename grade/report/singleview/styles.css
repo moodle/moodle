@@ -12,7 +12,7 @@
 
 .path-grade-report-singleview div.singleselect + div.singleselect select,
 .path-grade-report-singleview div.groupselector select {
-    margin-right: 0px;
+    margin-right: 0;
 }
 
 .path-grade-report-singleview div.reporttable div.singleselect form div {

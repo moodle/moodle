@@ -152,16 +152,16 @@
 }
 
 #page-blocks-community-communitycourse .hubcoursetitle {
-    -webkit-box-shadow: rgba(0, 0, 0, 0.546875) 0px 0px 4px;
-    -moz-box-shadow: rgba(0, 0, 0, 0.546875) 0px 0px 4px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.546875) 0 0 4px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.546875) 0 0 4px;
     background: #8b8989;
     left: -15px;
     position: relative;
     z-index: 0;
-    border: 0px;
-    margin: 0px;
-    outline: 0px;
-    padding: 0px;
+    border: 0;
+    margin: 0;
+    outline: 0;
+    padding: 0;
     vertical-align: baseline;
     color: #fff;
     padding-top: 6px;
@@ -210,7 +210,7 @@
 #page-blocks-community-communitycourse .star-rating {
     list-style: none;
     margin: 4px 0 4px;
-    padding: 0px;
+    padding: 0;
     width: 100px;
     height: 20px;
     position: relative;
@@ -219,8 +219,8 @@
 }
 
 #page-blocks-community-communitycourse .star-rating li {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
     height: 20px;
     width: 20px;
     float: left;
@@ -278,7 +278,7 @@
     position: relative;
     cursor: pointer;
     background-color: #8b8989;
-    margin-left: 0px;
+    margin-left: 0;
     font-size: 80%;
     margin-top: 15px;
 }
@@ -333,8 +333,8 @@
 }
 
 #page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-wrap {
-    -moz-border-radius: 12px 12px 0px 0px;
-    -webkit-border-radius: 12px 12px 0px 0px;
+    -moz-border-radius: 12px 12px 0 0;
+    -webkit-border-radius: 12px 12px 0 0;
     background-color: #fff;
     border: 1px solid #555;
 }
@@ -349,7 +349,7 @@
 }
 
 #page-blocks-community-communitycourse .moodle-dialogue-base .moodle-dialogue-bd {
-    padding: 0px;
+    padding: 0;
     margin-bottom: -5px;
 }
 

@@ -69,7 +69,7 @@ div.editor_atto_toolbar button::-moz-focus-inner {
 }
 
 div.editor_atto_toolbar button img.icon {
-    padding: 0px;
+    padding: 0;
     margin: 2px 0;
     /* The following is dedicated to the beloved IE8, clashing with Bootstrap. God bless you IE. */
     vertical-align: text-bottom;

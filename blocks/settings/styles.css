@@ -25,7 +25,7 @@
 
 .block_settings .block_tree .tree_item {
     cursor: pointer;
-    margin: 3px 0px;
+    margin: 3px 0;
     background-position: 0 50%;
     background-repeat: no-repeat;
 }

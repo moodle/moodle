@@ -39,7 +39,7 @@
 
 .path-admin-tool-health dl.healthissues dt,
 .path-admin-tool-health dl.healthissues dd {
-    margin: 0px;
+    margin: 0;
     padding: 1em;
     border: 1px solid black;
 }
@@ -67,8 +67,8 @@
 }
 
 .path-admin-tool-health dd.solution p {
-    padding: 0px;
-    margin: 1em 0px;
+    padding: 0;
+    margin: 1em 0;
 }
 
 .path-admin-tool-health dd.solution li {

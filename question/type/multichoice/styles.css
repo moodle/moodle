@@ -42,10 +42,10 @@ body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] .fitemtitle 
 }
 
 body#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle {
-    margin-left: 0px;
-    margin-right: 0px;
+    margin-left: 0;
+    margin-right: 0;
     padding-left: 6px;
-    padding-right: 0px;
+    padding-right: 0;
 }
 
 body#page-question-type-multichoice div[id^=fitem_id_][id*=fraction_] {
