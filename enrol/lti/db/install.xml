@@ -120,7 +120,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="consumer_pk" TYPE="foreign-unique" FIELDS="consumer_pk" REFTABLE="enrol_lti_lti2_consumer" REFFIELDS="id"/>
+        <KEY NAME="consumer_pk" TYPE="foreign" FIELDS="consumer_pk" REFTABLE="enrol_lti_lti2_consumer" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="enrol_lti_lti2_resource_link" COMMENT="Link from the consumer to the tool">
@@ -168,6 +168,18 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="resource_link_pk" TYPE="foreign" FIELDS="resource_link_pk" REFTABLE="enrol_lti_lti2_resource_link" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="enrol_lti_tool_consumer_map" COMMENT="Table that maps the published tool to tool consumers.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="toolid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The tool ID."/>
+        <FIELD NAME="consumer_pk" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false" COMMENT="The consumer ID."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="toolid" TYPE="foreign" FIELDS="toolid" REFTABLE="enrol_lti_tools" REFFIELDS="id"/>
+        <KEY NAME="consumer_pk" TYPE="foreign" FIELDS="consumer_pk" REFTABLE="enrol_lti_lti2_consumer" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

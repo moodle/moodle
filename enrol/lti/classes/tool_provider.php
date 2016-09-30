@@ -36,6 +36,7 @@ use IMSGlobal\LTI\Profile\Message;
 use IMSGlobal\LTI\Profile\ResourceHandler;
 use IMSGlobal\LTI\Profile\ServiceDefinition;
 use IMSGlobal\LTI\ToolProvider\ToolProvider;
+use moodle_exception;
 use moodle_url;
 use stdClass;
 
@@ -78,12 +79,14 @@ class tool_provider extends ToolProvider {
 
         $token = helper::generate_proxy_token($toolid);
 
-        $this->debugMode = $CFG->debugdeveloper;
         $tool = helper::get_lti_tool($toolid);
         $this->tool = $tool;
 
         $dataconnector = new data_connector();
         parent::__construct($dataconnector);
+
+        // Override debugMode and set to the configured value.
+        $this->debugMode = $CFG->debugdeveloper;
 
         $this->baseUrl = $CFG->wwwroot;
         $toolpath = helper::get_launch_url($toolid);
@@ -164,14 +167,17 @@ class tool_provider extends ToolProvider {
      * @return void
      */
     protected function onError() {
+        global $OUTPUT;
+
         $message = $this->message;
         if ($this->debugMode && !empty($this->reason)) {
             $message = $this->reason;
         }
 
-        $this->errorOutput = '';
-
-        notification::error(get_string('failedrequest', 'enrol_lti', ['reason' => $message]));
+        // Display the error message from the provider's side if the consumer has not specified a URL to pass the error to.
+        if (empty($this->returnUrl)) {
+            $this->errorOutput = $OUTPUT->notification(get_string('failedrequest', 'enrol_lti', ['reason' => $message]), 'error');
+        }
     }
 
     /**
@@ -389,6 +395,9 @@ class tool_provider extends ToolProvider {
         }
 
         if ($this->doToolProxyService()) {
+            // Map tool consumer and published tool, if necessary.
+            $this->map_tool_to_consumer();
+
             // Indicate successful processing in message.
             $this->message = get_string('successfulregistration', 'enrol_lti');
 
@@ -409,6 +418,29 @@ class tool_provider extends ToolProvider {
             // Tell the consumer that the registration failed.
             $this->ok = false;
             $this->message = get_string('couldnotestablishproxy', 'enrol_lti');
+        }
+    }
+
+    /**
+     * Performs mapping of the tool consumer to a published tool.
+     *
+     * @throws moodle_exception
+     */
+    public function map_tool_to_consumer() {
+        global $DB;
+
+        if (empty($this->consumer)) {
+            throw new moodle_exception('invalidtoolconsumer', 'enrol_lti');
+        }
+
+        // Map the consumer to the tool.
+        $mappingparams = [
+            'toolid' => $this->tool->id,
+            'consumer_pk' => $this->consumer->getRecordId()
+        ];
+        $mappingexists = $DB->record_exists('enrol_lti_tool_consumer_map', $mappingparams);
+        if (!$mappingexists) {
+            $DB->insert_record('enrol_lti_tool_consumer_map', (object) $mappingparams);
         }
     }
 }

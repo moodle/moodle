@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test the helper functionality.
+ * Tests for the tool_provider class.
  *
  * @package enrol_lti
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
@@ -35,7 +35,7 @@ use IMSGlobal\LTI\ToolProvider\User;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Test the helper functionality.
+ * Tests for the tool_provider class.
  *
  * @package enrol_lti
  * @copyright 2016 Jun Pataleta <jun@moodle.com>
@@ -129,8 +129,12 @@ class tool_provider_testcase extends advanced_testcase {
         // Tool provider object should have been created fine. OK flag should be fine for now.
         $this->assertTrue($tp->ok);
 
-        // There's basically no request data submitted so OK flag should turn out false.
+        // Call handleRequest but suppress output.
+        ob_start();
         $tp->handleRequest();
+        ob_end_clean();
+
+        // There's basically no request data submitted so OK flag should turn out false.
         $this->assertFalse($tp->ok);
     }
 
@@ -138,19 +142,13 @@ class tool_provider_testcase extends advanced_testcase {
      * Test for tool_provider::onError().
      */
     public function test_on_error() {
-        global $SESSION;
-
         $tool = $this->tool;
         $tp = new dummy_tool_provider($tool->id);
         $message = "THIS IS AN ERROR!";
         $tp->message = $message;
         $tp->onError();
-        // Assert that a notification has been added.
-        $this->assertCount(1, $SESSION->notifications);
-        $notification = $SESSION->notifications[0];
         $errormessage = get_string('failedrequest', 'enrol_lti', ['reason' => $message]);
-        $this->assertEquals($errormessage, $notification->message);
-        $this->assertEquals('error', $notification->type);
+        $this->assertContains($errormessage, $tp->get_error_output());
     }
 
     /**
@@ -229,7 +227,7 @@ class tool_provider_testcase extends advanced_testcase {
      * Test for tool_provider::onRegister() when registration succeeds.
      */
     public function test_on_register() {
-        global $CFG;
+        global $CFG, $DB;
         $tool = $this->tool;
 
         $dataconnector = new data_connector();
@@ -266,6 +264,13 @@ class tool_provider_testcase extends advanced_testcase {
 
         // Check tool provider message.
         $this->assertEquals($successmessage, $tp->message);
+
+        // Check published tool and tool consumer mapping.
+        $mappingparams = [
+            'toolid' => $tool->id,
+            'consumer_pk' => $tp->consumer->getRecordId()
+        ];
+        $this->assertTrue($DB->record_exists('enrol_lti_tool_consumer_map', $mappingparams));
     }
 
     /**
@@ -456,12 +461,20 @@ class tool_provider_testcase extends advanced_testcase {
      * Test for tool_provider::onLaunch() when the consumer object has not been set.
      */
     public function test_on_launch_no_consumer() {
+        global $DB;
+
         $tool = $this->tool;
 
         $tp = new dummy_tool_provider($tool->id);
         $tp->onLaunch();
         $this->assertFalse($tp->ok);
         $this->assertEquals(get_string('invalidtoolconsumer', 'enrol_lti'), $tp->message);
+
+        // Check published tool and tool consumer has not yet been mapped due to failure.
+        $mappingparams = [
+            'toolid' => $tool->id
+        ];
+        $this->assertFalse($DB->record_exists('enrol_lti_tool_consumer_map', $mappingparams));
     }
 
     /**
@@ -479,6 +492,32 @@ class tool_provider_testcase extends advanced_testcase {
         $tp->onLaunch();
         $this->assertFalse($tp->ok);
         $this->assertEquals(get_string('invalidtoolconsumer', 'enrol_lti'), $tp->message);
+    }
+
+    /**
+     * Test for tool_provider::map_tool_to_consumer().
+     */
+    public function test_map_tool_to_consumer() {
+        global $DB;
+
+        $tp = $this->build_dummy_tp();
+        $tp->map_tool_to_consumer();
+
+        // Check published tool and tool consumer mapping.
+        $mappingparams = [
+            'toolid' => $this->tool->id,
+            'consumer_pk' => $tp->consumer->getRecordId()
+        ];
+        $this->assertTrue($DB->record_exists('enrol_lti_tool_consumer_map', $mappingparams));
+    }
+
+    /**
+     * Test for tool_provider::map_tool_to_consumer().
+     */
+    public function test_map_tool_to_consumer_no_consumer() {
+        $tp = new dummy_tool_provider($this->tool->id);
+        $this->expectException('moodle_exception');
+        $tp->map_tool_to_consumer();
     }
 
     /**
@@ -547,6 +586,7 @@ class tool_provider_testcase extends advanced_testcase {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dummy_tool_provider extends tool_provider {
+
     /**
      * Exposes tool_provider::onError().
      */
@@ -566,6 +606,15 @@ class dummy_tool_provider extends tool_provider {
      */
     public function onRegister() {
         parent::onRegister();
+    }
+
+    /**
+     * Expose protected variable errorOutput.
+     *
+     * @return string
+     */
+    public function get_error_output() {
+        return $this->errorOutput;
     }
 }
 

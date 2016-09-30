@@ -130,7 +130,7 @@ function xmldb_enrol_lti_upgrade($oldversion) {
 
         // Adding keys to table enrol_lti_lti2_nonce.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('consumer_pk', XMLDB_KEY_FOREIGN_UNIQUE, array('consumer_pk'), 'enrol_lti_lti2_consumer', array('id'));
+        $table->add_key('consumer_pk', XMLDB_KEY_FOREIGN, array('consumer_pk'), 'enrol_lti_lti2_consumer', array('id'));
 
         // Conditionally launch create table for enrol_lti_lti2_nonce.
         if (!$dbman->table_exists($table)) {
@@ -176,7 +176,8 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         // Adding keys to table enrol_lti_lti2_share_key.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $table->add_key('share_key_id', XMLDB_KEY_UNIQUE, array('share_key_id'));
-        $table->add_key('resource_link_pk', XMLDB_KEY_FOREIGN_UNIQUE, array('resource_link_pk'), 'enrol_lti_lti2_resource_link', array('id'));
+        $table->add_key('resource_link_pk', XMLDB_KEY_FOREIGN_UNIQUE, array('resource_link_pk'),
+            'enrol_lti_lti2_resource_link', array('id'));
 
         // Conditionally launch create table for enrol_lti_lti2_share_key.
         if (!$dbman->table_exists($table)) {
@@ -200,6 +201,24 @@ function xmldb_enrol_lti_upgrade($oldversion) {
             'enrol_lti_lti2_resource_link', array('id'));
 
         // Conditionally launch create table for enrol_lti_lti2_user_result.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table enrol_lti_tool_consumer_map to be created.
+        $table = new xmldb_table('enrol_lti_tool_consumer_map');
+
+        // Adding fields to table enrol_lti_tool_consumer_map.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('toolid', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('consumer_pk', XMLDB_TYPE_INTEGER, '11', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table enrol_lti_tool_consumer_map.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('toolid', XMLDB_KEY_FOREIGN, array('toolid'), 'enrol_lti_tools', array('id'));
+        $table->add_key('consumer_pk', XMLDB_KEY_FOREIGN, array('consumer_pk'), 'enrol_lti_lti2_consumer', array('id'));
+
+        // Conditionally launch create table for enrol_lti_tool_consumer_map.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }

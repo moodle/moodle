@@ -63,6 +63,9 @@ if ($messagetype != "basic-lti-launch-request") {
     exit();
 }
 
+// Initialise tool provider.
+$toolprovider = new \enrol_lti\tool_provider($toolid);
+
 // Special handling for LTIv1 launch requests.
 if ($ltiversion === \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1) {
     $dataconnector = new \enrol_lti\data_connector();
@@ -78,9 +81,15 @@ if ($ltiversion === \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1) {
     $consumer->enabled = true;
     $consumer->protected = true;
     $consumer->save();
+
+    // Set consumer to tool provider.
+    $toolprovider->consumer = $consumer;
+    // Map tool consumer and published tool, if necessary.
+    $toolprovider->map_tool_to_consumer();
 }
 
-$toolprovider = new \enrol_lti\tool_provider($toolid);
+// Handle the request.
 $toolprovider->handleRequest();
+
 echo $OUTPUT->header();
 echo $OUTPUT->footer();
