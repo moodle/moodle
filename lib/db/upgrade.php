@@ -2228,10 +2228,10 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016100501.00);
     }
 
-    if ($oldversion < 2016100700.01) {
+    if ($oldversion < 2016101000.00) {
         // Define field component to be added to message.
         $table = new xmldb_table('message');
-        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '200', null, null, null, null, 'timeusertodeleted');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'timeusertodeleted');
 
         // Conditionally launch add field component.
         if (!$dbman->field_exists($table, $field)) {
@@ -2246,9 +2246,14 @@ function xmldb_main_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016101000.00);
+    }
+
+    if ($oldversion < 2016101000.01) {
         // Define field component to be added to message_read.
         $table = new xmldb_table('message_read');
-        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '200', null, null, null, null, 'timeusertodeleted');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'timeusertodeleted');
 
         // Conditionally launch add field component.
         if (!$dbman->field_exists($table, $field)) {
@@ -2264,7 +2269,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016100700.01);
+        upgrade_main_savepoint(true, 2016101000.01);
     }
 
     return true;
