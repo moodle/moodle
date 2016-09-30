@@ -363,7 +363,7 @@ class behat_config_util {
         $config = $this->merge_behat_profiles($config);
 
         // Return config array for phpunit, so it can be tested.
-        if (defined('PHPUNIT_TEST')) {
+        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
             return $config;
         }
 
@@ -1087,7 +1087,7 @@ class behat_config_util {
      * @param string $themename
      * @return string theme directory
      */
-    protected function get_theme_directory($themename) {
+    protected function get_theme_test_directory($themename) {
         global $CFG;
 
         $themetestdir = "/theme/" . $themename;
@@ -1109,7 +1109,7 @@ class behat_config_util {
             'contexts' => '|behat_.*\.php$|',
             'features' => '|.*\.feature$|',
         );
-        $themetestdirfullpath = $this->get_theme_directory($theme) . '/tests/behat';
+        $themetestdirfullpath = $this->get_theme_test_directory($theme);
 
         // If test directory doesn't exist then return.
         if (!is_dir($themetestdirfullpath)) {

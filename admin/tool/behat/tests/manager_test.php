@@ -114,6 +114,8 @@ class tool_behat_manager_testcase extends advanced_testcase {
     public function test_config_file_contents() {
         global $CFG;
 
+        $this->resetAfterTest(true);
+
         // Skip tests if behat is not installed.
         $vendorpath = $CFG->dirroot . '/vendor';
         if (!file_exists($vendorpath . '/autoload.php') || !is_dir($vendorpath . '/behat')) {
@@ -145,17 +147,19 @@ class tool_behat_manager_testcase extends advanced_testcase {
         // YAML decides when is is necessary to wrap strings between single quotes, so not controlled
         // values like paths should not be asserted including the key name as they would depend on the
         // directories values.
-        $this->assertContains($CFG->dirroot, $contents);
+        $this->assertContains($CFG->dirroot,
+            $contents['default']['extensions']['Moodle\BehatExtension']['moodledirroot']);
 
         // Not quoted strings.
-        $this->assertContains('micarro: /me/lo/robaron', $contents);
+        $this->assertEquals('/me/lo/robaron',
+            $contents['default']['extensions']['Moodle\BehatExtension']['steps_definitions']['micarro']);
 
         // YAML uses single quotes to wrap URL strings.
-        $this->assertContains("base_url: '" . $CFG->behat_wwwroot . "'", $contents);
+        $this->assertEquals($CFG->behat_wwwroot, $contents['default']['extensions']['Behat\MinkExtension']['base_url']);
 
         // Lists.
-        $this->assertContains('- feature1', $contents);
-        $this->assertContains('- feature3', $contents);
+        $this->assertEquals('feature1', $contents['default']['suites']['default']['paths'][0]);
+        $this->assertEquals('feature3', $contents['default']['suites']['default']['paths'][2]);
 
         unset($CFG->behat_wwwroot);
     }
