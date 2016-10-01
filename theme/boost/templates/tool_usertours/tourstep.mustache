@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_usertours/tourstep
+
+    Template used as a template to render step bubbles with their content
+    in a user tour.
+
+    Classes required for JS:
+    * arrow
+    * popover-title
+    * popover-content
+    * popover-navigation
+    * popover-title
+
+    Data attributes required for JS:
+    * data-role=prev
+    * data-role=next
+    * data-role=pause-resume
+    * data-pause-text
+    * data-resume-text
+    * data-role=end
+    * data-placeholder=body
+    * data-placeholder=title
+
+    Context variables required for this template:
+    * None
+
+    Example context (json):
+    {
+    }
+
+}}
+<div class="modal-dialog" role="document" data-role="flexitour-step">
+  <div class="modal-content">
+    <div class="tooltip-arrow" data-role="arrow"></div>
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" data-role="end">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="modal-title" data-placeholder="title"></h4>
+    </div>
+    <div class="modal-body" data-placeholder="body">
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-role="previous">{{# str }} previous, moodle {{/ str }}</button>
+      <button type="button" class="btn btn-primary" data-role="next">{{# str }} next, moodle {{/ str }}</button>
+      <button class="btn btn-secondary" data-role="end"> {{# str }} endtour, tool_usertours {{/ str }} </button>
+    </div>
+  </div>
+</div>
