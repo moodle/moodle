@@ -1026,12 +1026,18 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                     if (!empty($this->config->{'field_updatelocal_' . $key})) {
                         // Only update if it's changed.
-                        if ($user->{$key} != $value) {
+                        // add isset if there is no field in $user while adding new custom fields
+                        if (!isset($user->{$key}) || $user->{$key} != $value) {
                             $newuser->$key = $value;
                         }
                     }
                 }
-                user_update_user($newuser, false, $triggerevent);
+                // user_update_user does not update profile_field_*
+                user_update_user($newuser, false, false);
+                require_once($CFG->dirroot.'/user/profile/lib.php');
+                require_once($CFG->dirroot.'/user/lib.php');
+                profile_save_data($newuser);
+
             }
         } else {
             return false;
