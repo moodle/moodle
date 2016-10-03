@@ -21,7 +21,15 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/custom_interaction_events'], function(CustomEvents) {
+define(['core/custom_interaction_events', 'core_message/message_area_events'], function(CustomEvents, Events) {
+
+    /** @type {Object} The list of selectors for the message area. */
+    var SELECTORS = {
+        ACTIVECONTACTSTAB: "[data-region='contacts-area'] [role='tab'][aria-selected='true']",
+        CONTACTSPANELS: "[data-region='contacts']",
+        VIEWCONTACTS: "[data-action='contacts-view']",
+        VIEWCONVERSATIONS: "[data-action='conversations-view']"
+    };
 
     /**
      * Tabs class.
@@ -55,46 +63,46 @@ define(['core/custom_interaction_events'], function(CustomEvents) {
             CustomEvents.events.ctrlPageDown,
         ]);
 
-        this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.VIEWCONVERSATIONS,
                 this._viewConversations.bind(this));
-        this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.VIEWCONTACTS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.VIEWCONTACTS,
                 this._viewContacts.bind(this));
 
         // Change to the other tab if any arrow keys are pressed, since there are only two tabs.
-        this.messageArea.onDelegateEvent(CustomEvents.events.up, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.up, SELECTORS.VIEWCONVERSATIONS,
                 this._toggleTabs.bind(this));
-        this.messageArea.onDelegateEvent(CustomEvents.events.down, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.down, SELECTORS.VIEWCONVERSATIONS,
                 this._toggleTabs.bind(this));
-        this.messageArea.onDelegateEvent(CustomEvents.events.next, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.next, SELECTORS.VIEWCONVERSATIONS,
                 this._toggleTabs.bind(this));
-        this.messageArea.onDelegateEvent(CustomEvents.events.previous, this.messageArea.SELECTORS.VIEWCONVERSATIONS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.previous, SELECTORS.VIEWCONVERSATIONS,
                 this._toggleTabs.bind(this));
         // Change to the other tab if any arrow keys are pressed, since there are only two tabs.
-        this.messageArea.onDelegateEvent(CustomEvents.events.up, this.messageArea.SELECTORS.VIEWCONTACTS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.up, SELECTORS.VIEWCONTACTS,
                 this._toggleTabs.bind(this));
-        this.messageArea.onDelegateEvent(CustomEvents.events.down, this.messageArea.SELECTORS.VIEWCONTACTS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.down, SELECTORS.VIEWCONTACTS,
                 this._toggleTabs.bind(this));
-        this.messageArea.onDelegateEvent(CustomEvents.events.next, this.messageArea.SELECTORS.VIEWCONTACTS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.next, SELECTORS.VIEWCONTACTS,
                 this._toggleTabs.bind(this));
-        this.messageArea.onDelegateEvent(CustomEvents.events.previous, this.messageArea.SELECTORS.VIEWCONTACTS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.previous, SELECTORS.VIEWCONTACTS,
                 this._toggleTabs.bind(this));
         // Tab panel keyboard handling.
-        this.messageArea.onDelegateEvent(CustomEvents.events.ctrlPageUp, this.messageArea.SELECTORS.CONTACTSPANELS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.ctrlPageUp, SELECTORS.CONTACTSPANELS,
                 this._toggleTabs.bind(this));
-        this.messageArea.onDelegateEvent(CustomEvents.events.ctrlPageDown, this.messageArea.SELECTORS.CONTACTSPANELS,
+        this.messageArea.onDelegateEvent(CustomEvents.events.ctrlPageDown, SELECTORS.CONTACTSPANELS,
                 this._toggleTabs.bind(this));
 
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, function() {
+        this.messageArea.onCustomEvent(Events.CHOOSEMESSAGESTODELETE, function() {
             this._isDeleting = true;
         }.bind(this));
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESDELETED, function() {
+        this.messageArea.onCustomEvent(Events.MESSAGESDELETED, function() {
             this._isDeleting = false;
         }.bind(this));
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES, function() {
+        this.messageArea.onCustomEvent(Events.CANCELDELETEMESSAGES, function() {
             this._isDeleting = false;
         }.bind(this));
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESENT, function() {
-            this._selectTab(this.messageArea.SELECTORS.VIEWCONVERSATIONS, this.messageArea.SELECTORS.VIEWCONTACTS);
+        this.messageArea.onCustomEvent(Events.MESSAGESENT, function() {
+            this._selectTab(SELECTORS.VIEWCONVERSATIONS, SELECTORS.VIEWCONTACTS);
         }.bind(this));
     };
 
@@ -108,8 +116,8 @@ define(['core/custom_interaction_events'], function(CustomEvents) {
             return;
         }
 
-        this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONSSELECTED);
-        this._selectTab(this.messageArea.SELECTORS.VIEWCONVERSATIONS, this.messageArea.SELECTORS.VIEWCONTACTS);
+        this.messageArea.trigger(Events.CONVERSATIONSSELECTED);
+        this._selectTab(SELECTORS.VIEWCONVERSATIONS, SELECTORS.VIEWCONTACTS);
     };
 
     /**
@@ -122,8 +130,8 @@ define(['core/custom_interaction_events'], function(CustomEvents) {
             return;
         }
 
-        this.messageArea.trigger(this.messageArea.EVENTS.CONTACTSSELECTED);
-        this._selectTab(this.messageArea.SELECTORS.VIEWCONTACTS, this.messageArea.SELECTORS.VIEWCONVERSATIONS);
+        this.messageArea.trigger(Events.CONTACTSSELECTED);
+        this._selectTab(SELECTORS.VIEWCONTACTS, SELECTORS.VIEWCONVERSATIONS);
     };
 
     /**
@@ -153,15 +161,15 @@ define(['core/custom_interaction_events'], function(CustomEvents) {
      * @private
      */
     Tabs.prototype._toggleTabs = function(e, data) {
-        var activeTab = this.messageArea.find(this.messageArea.SELECTORS.ACTIVECONTACTSTAB);
+        var activeTab = this.messageArea.find(SELECTORS.ACTIVECONTACTSTAB);
 
-        if (activeTab.is(this.messageArea.SELECTORS.VIEWCONVERSATIONS)) {
+        if (activeTab.is(SELECTORS.VIEWCONVERSATIONS)) {
             this._viewContacts();
         } else {
             this._viewConversations();
         }
 
-        this.messageArea.find(this.messageArea.SELECTORS.ACTIVECONTACTSTAB).focus();
+        this.messageArea.find(SELECTORS.ACTIVECONTACTSTAB).focus();
 
         e.preventDefault();
         e.stopPropagation();

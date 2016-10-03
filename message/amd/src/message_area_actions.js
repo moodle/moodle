@@ -21,7 +21,12 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([], function() {
+define(['core_message/message_area_events'], function(Events) {
+
+    /** @type {Object} The list of selectors for the message area. */
+    var SELECTORS = {
+        MESSAGES: "[data-region='messages']"
+    };
 
     /**
      * Actions class.
@@ -40,8 +45,8 @@ define([], function() {
      */
     Actions.prototype.chooseMessagesToDelete = function() {
         // Only fire the event if we are viewing messages.
-        if (this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).length !== 0) {
-            this.messageArea.trigger(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE);
+        if (this.messageArea.find(SELECTORS.MESSAGES).length !== 0) {
+            this.messageArea.trigger(Events.CHOOSEMESSAGESTODELETE);
         }
     };
 

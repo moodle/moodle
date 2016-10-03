@@ -21,8 +21,24 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str', 'core/custom_interaction_events'],
-    function($, ajax, templates, notification, str, customEvents) {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str', 'core/custom_interaction_events',
+        'core_message/message_area_events'],
+    function($, Ajax, Templates, Notification, Str, CustomEvents, Events) {
+
+    /** @type {Object} The list of selectors for the message area. */
+    var SELECTORS = {
+        CONTACTS: "[data-region='contacts'][data-region-content='contacts']",
+        CONTACTSAREA: "[data-region='contacts-area']",
+        CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
+        DELETESEARCHFILTER: "[data-action='search-filter-delete']",
+        LOADINGICON: '.loading-icon',
+        SEARCHBOX: "[data-region='search-box']",
+        SEARCHFILTER: "[data-region='search-filter']",
+        SEARCHFILTERAREA: "[data-region='search-filter-area']",
+        SEARCHRESULTSAREA: "[data-region='search-results-area']",
+        SEARCHTEXTAREA: "[data-region='search-text-area']",
+        SEARCHUSERSINCOURSE: "[data-action='search-users-in-course']",
+    };
 
     /**
      * Search class.
@@ -75,10 +91,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      */
     Search.prototype._init = function() {
         // Handle searching for text.
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHTEXTAREA).on('input', this._searchRequest.bind(this));
+        this.messageArea.find(SELECTORS.SEARCHTEXTAREA).on('input', this._searchRequest.bind(this));
 
         // Handle clicking on a course in the list of users.
-        this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.SEARCHUSERSINCOURSE, function(e) {
+        this.messageArea.onDelegateEvent('click', SELECTORS.SEARCHUSERSINCOURSE, function(e) {
             this._setFilter($(e.currentTarget).html());
             this._setPlaceholderText('searchforuser');
             this._clearSearchArea();
@@ -88,49 +104,49 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         }.bind(this));
 
         // Handle deleting the search filter.
-        this.messageArea.onDelegateEvent('click', this.messageArea.SELECTORS.DELETESEARCHFILTER, function() {
+        this.messageArea.onDelegateEvent('click', SELECTORS.DELETESEARCHFILTER, function() {
             this._hideSearchResults();
             // Filter has been removed, so we don't want to be searching in a course anymore.
             this._searchArea = this._searchAreas.USERS;
             this._setPlaceholderText('searchforuserorcourse');
             // Go back the contacts.
-            this.messageArea.trigger(this.messageArea.EVENTS.USERSSEARCHCANCELED);
+            this.messageArea.trigger(Events.USERSSEARCHCANCELED);
         }.bind(this));
 
         // Handle events that occur outside this module.
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSSELECTED, function() {
+        this.messageArea.onCustomEvent(Events.CONVERSATIONSSELECTED, function() {
             this._hideSearchResults();
             this._searchArea = this._searchAreas.MESSAGES;
             this._setPlaceholderText('searchmessages');
         }.bind(this));
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSSELECTED, function() {
+        this.messageArea.onCustomEvent(Events.CONTACTSSELECTED, function() {
             this._hideSearchResults();
             this._searchArea = this._searchAreas.USERS;
             this._setPlaceholderText('searchforuserorcourse');
         }.bind(this));
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESENT, function() {
+        this.messageArea.onCustomEvent(Events.MESSAGESENT, function() {
             this._hideSearchResults();
             this._searchArea = this._searchAreas.MESSAGES;
             this._setPlaceholderText('searchmessages');
         }.bind(this));
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, function() {
+        this.messageArea.onCustomEvent(Events.CHOOSEMESSAGESTODELETE, function() {
             this._hideSearchResults();
             this._searchArea = this._searchAreas.MESSAGES;
             this._setPlaceholderText('searchmessages');
             this._disableSearching();
         }.bind(this));
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES, function() {
+        this.messageArea.onCustomEvent(Events.CANCELDELETEMESSAGES, function() {
             this._enableSearching();
         }.bind(this));
-        this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESDELETED, function() {
+        this.messageArea.onCustomEvent(Events.MESSAGESDELETED, function() {
             this._enableSearching();
         }.bind(this));
 
         // Event listeners for scrolling through messages and users in courses.
-        customEvents.define(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), [
-            customEvents.events.scrollBottom
+        CustomEvents.define(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA), [
+            CustomEvents.events.scrollBottom
         ]);
-        this.messageArea.onDelegateEvent(customEvents.events.scrollBottom, this.messageArea.SELECTORS.SEARCHRESULTSAREA,
+        this.messageArea.onDelegateEvent(CustomEvents.events.scrollBottom, SELECTORS.SEARCHRESULTSAREA,
             function() {
                 if (this._searchArea == this._searchAreas.MESSAGES) {
                     this._searchMessages();
@@ -150,7 +166,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * @private
      */
     Search.prototype._searchRequest = function() {
-        var str = this.messageArea.find(this.messageArea.SELECTORS.SEARCHTEXTAREA + ' input').val();
+        var str = this.messageArea.find(SELECTORS.SEARCHTEXTAREA + ' input').val();
 
         if (this._requestTimeout) {
             clearTimeout(this._requestTimeout);
@@ -160,10 +176,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             // If nothing we being searched then we need to display the usual data.
             if (this._searchArea == this._searchAreas.MESSAGES) {
                 this._hideSearchResults();
-                this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESEARCHCANCELED);
+                this.messageArea.trigger(Events.MESSAGESEARCHCANCELED);
             } else if (this._searchArea == this._searchAreas.USERS) {
                 this._hideSearchResults();
-                this.messageArea.trigger(this.messageArea.EVENTS.USERSSEARCHCANCELED);
+                this.messageArea.trigger(Events.USERSSEARCHCANCELED);
             } else if (this._searchArea == this._searchAreas.USERSINCOURSE) {
                 // We are still searching in a course, so need to list all the users again.
                 this._clearSearchArea();
@@ -172,9 +188,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return;
         }
 
-        this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS).hide();
-        this.messageArea.find(this.messageArea.SELECTORS.CONTACTS).hide();
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA).show();
+        this.messageArea.find(SELECTORS.CONVERSATIONS).hide();
+        this.messageArea.find(SELECTORS.CONTACTS).hide();
+        this.messageArea.find(SELECTORS.SEARCHRESULTSAREA).show();
 
         if (this._searchArea == this._searchAreas.MESSAGES) {
             this._requestTimeout = setTimeout(function() {
@@ -208,13 +224,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return false;
         }
 
-        var str = this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).val();
+        var str = this.messageArea.find(SELECTORS.SEARCHBOX).val();
 
         // Tell the user we are loading items.
         this._isLoading = true;
 
         // Call the web service to get our data.
-        var promises = ajax.call([{
+        var promises = Ajax.call([{
             methodname: 'core_message_data_for_messagearea_search_messages',
             args: {
                 userid: this.messageArea.getCurrentUserId(),
@@ -227,30 +243,30 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         // Keep track of the number of messages
         var numberreceived = 0;
         // Add loading icon to the end of the list.
-        return templates.render('core/loading', {}).then(function(html, js) {
-            templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA),
+        return Templates.render('core/loading', {}).then(function(html, js) {
+            Templates.appendNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA),
                 "<div style='text-align:center'>" + html + "</div>", js);
             return promises[0];
         }.bind(this)).then(function(data) {
             numberreceived = data.contacts.length;
-            return templates.render('core_message/message_area_messages_search_results', data);
+            return Templates.render('core_message/message_area_messages_search_results', data);
         }).then(function(html, js) {
             // Remove the loading icon.
-            this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA + " " +
-                this.messageArea.SELECTORS.LOADINGICON).remove();
+            this.messageArea.find(SELECTORS.SEARCHRESULTSAREA + " " +
+                SELECTORS.LOADINGICON).remove();
             // Only append data if we got data back.
             if (numberreceived > 0) {
                 // Show the new content.
-                templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
+                Templates.appendNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA), html, js);
                 // Increment the number of contacts displayed.
                 this._numMessagesDisplayed += numberreceived;
             } else if (this._numMessagesDisplayed == 0) { // Must have nothing to begin with.
                 // Replace the new content.
-                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
+                Templates.replaceNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA), html, js);
             }
             // Mark that we are no longer busy loading data.
             this._isLoading = false;
-        }.bind(this)).fail(notification.exception);
+        }.bind(this)).fail(Notification.exception);
     };
 
     /**
@@ -260,10 +276,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * @return {Promise} The promise resolved when the search area has been rendered
      */
     Search.prototype._searchUsers = function() {
-        var str = this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).val();
+        var str = this.messageArea.find(SELECTORS.SEARCHBOX).val();
 
         // Call the web service to get our data.
-        var promises = ajax.call([{
+        var promises = Ajax.call([{
             methodname: 'core_message_data_for_messagearea_search_users',
             args: {
                 userid: this.messageArea.getCurrentUserId(),
@@ -273,15 +289,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         }]);
 
         // Perform the search and replace the content.
-        return templates.render('core/loading', {}).then(function(html, js) {
-            templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA),
+        return Templates.render('core/loading', {}).then(function(html, js) {
+            Templates.replaceNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA),
                 "<div style='text-align:center'>" + html + "</div>", js);
             return promises[0];
         }.bind(this)).then(function(data) {
-            return templates.render('core_message/message_area_users_search_results', data);
+            return Templates.render('core_message/message_area_users_search_results', data);
         }).then(function(html, js) {
-            templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
-        }.bind(this)).fail(notification.exception);
+            Templates.replaceNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA), html, js);
+        }.bind(this)).fail(Notification.exception);
     };
 
     /**
@@ -295,13 +311,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return false;
         }
 
-        var str = this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).val();
+        var str = this.messageArea.find(SELECTORS.SEARCHBOX).val();
 
         // Tell the user we are loading items.
         this._isLoading = true;
 
         // Call the web service to get our data.
-        var promises = ajax.call([{
+        var promises = Ajax.call([{
             methodname: 'core_message_data_for_messagearea_search_users_in_course',
             args: {
                 userid: this.messageArea.getCurrentUserId(),
@@ -315,30 +331,30 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         // Keep track of the number of contacts
         var numberreceived = 0;
         // Add loading icon to the end of the list.
-        return templates.render('core/loading', {}).then(function(html, js) {
-            templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA),
+        return Templates.render('core/loading', {}).then(function(html, js) {
+            Templates.appendNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA),
                 "<div style='text-align:center'>" + html + "</div>", js);
             return promises[0];
         }.bind(this)).then(function(data) {
             numberreceived = data.contacts.length;
-            return templates.render('core_message/message_area_users_search_results', data);
+            return Templates.render('core_message/message_area_users_search_results', data);
         }).then(function(html, js) {
             // Remove the loading icon.
-            this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA + " " +
-                this.messageArea.SELECTORS.LOADINGICON).remove();
+            this.messageArea.find(SELECTORS.SEARCHRESULTSAREA + " " +
+                SELECTORS.LOADINGICON).remove();
             // Only append data if we got data back.
             if (numberreceived > 0) {
                 // Show the new content.
-                templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
+                Templates.appendNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA), html, js);
                 // Increment the number of contacts displayed.
                 this._numUsersDisplayed += numberreceived;
             } else if (this._numUsersDisplayed == 0) { // Must have nothing to begin with.
                 // Replace the new content.
-                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA), html, js);
+                Templates.replaceNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA), html, js);
             }
             // Mark that we are no longer busy loading data.
             this._isLoading = false;
-        }.bind(this)).fail(notification.exception);
+        }.bind(this)).fail(Notification.exception);
     };
 
     /**
@@ -349,8 +365,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * @return {Promise} The promise resolved when the placeholder text has been set
      */
     Search.prototype._setPlaceholderText = function(text) {
-        return str.get_string(text, 'message').then(function(s) {
-            this.messageArea.find(this.messageArea.SELECTORS.SEARCHTEXTAREA + ' input').attr('placeholder', s);
+        return Str.get_string(text, 'message').then(function(s) {
+            this.messageArea.find(SELECTORS.SEARCHTEXTAREA + ' input').attr('placeholder', s);
         }.bind(this));
     };
 
@@ -361,10 +377,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * @param {String} text The filter text
      */
     Search.prototype._setFilter = function(text) {
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).val('');
-        this.messageArea.find(this.messageArea.SELECTORS.CONTACTSAREA).addClass('searchfilter');
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHFILTERAREA).show();
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHFILTER).html(text);
+        this.messageArea.find(SELECTORS.SEARCHBOX).val('');
+        this.messageArea.find(SELECTORS.CONTACTSAREA).addClass('searchfilter');
+        this.messageArea.find(SELECTORS.SEARCHFILTERAREA).show();
+        this.messageArea.find(SELECTORS.SEARCHFILTER).html(text);
     };
 
     /**
@@ -373,9 +389,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * @private
      */
     Search.prototype._clearFilters = function() {
-        this.messageArea.find(this.messageArea.SELECTORS.CONTACTSAREA).removeClass('searchfilter');
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHFILTER).empty();
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHFILTERAREA).hide();
+        this.messageArea.find(SELECTORS.CONTACTSAREA).removeClass('searchfilter');
+        this.messageArea.find(SELECTORS.SEARCHFILTER).empty();
+        this.messageArea.find(SELECTORS.SEARCHFILTERAREA).hide();
     };
 
     /**
@@ -384,7 +400,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * @private
      */
     Search.prototype._clearSearchArea = function() {
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA).empty();
+        this.messageArea.find(SELECTORS.SEARCHRESULTSAREA).empty();
     };
 
     /**
@@ -394,9 +410,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      */
     Search.prototype._hideSearchResults = function() {
         this._clearFilters();
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHTEXTAREA + ' input').val('');
+        this.messageArea.find(SELECTORS.SEARCHTEXTAREA + ' input').val('');
         this._clearSearchArea();
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHRESULTSAREA).hide();
+        this.messageArea.find(SELECTORS.SEARCHRESULTSAREA).hide();
     };
 
     /**
@@ -405,12 +421,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * @private
      */
     Search.prototype._disableSearching = function() {
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).prop('disabled', true);
+        this.messageArea.find(SELECTORS.SEARCHBOX).prop('disabled', true);
 
         if (this._searchArea == this._searchAreas.MESSAGES) {
-            this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESEARCHCANCELED);
+            this.messageArea.trigger(Events.MESSAGESEARCHCANCELED);
         } else if (this._searchArea == this._searchAreas.USERS) {
-            this.messageArea.trigger(this.messageArea.EVENTS.USERSSEARCHCANCELED);
+            this.messageArea.trigger(Events.USERSSEARCHCANCELED);
         }
     };
 
@@ -420,7 +436,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
      * @private
      */
     Search.prototype._enableSearching = function() {
-        this.messageArea.find(this.messageArea.SELECTORS.SEARCHBOX).prop('disabled', false);
+        this.messageArea.find(SELECTORS.SEARCHBOX).prop('disabled', false);
     };
 
     return Search;

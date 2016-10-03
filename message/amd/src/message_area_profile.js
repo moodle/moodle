@@ -22,8 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str', 'core/config',
-        'core/custom_interaction_events'],
-    function($, ajax, templates, notification, str, config, CustomEvents) {
+        'core/custom_interaction_events', 'core_message/message_area_events'],
+    function($, Ajax, Templates, Notification, Str, Config, CustomEvents, Events) {
+
+        /** @type {Object} The list of selectors for the message area. */
+        var SELECTORS = {
+            PROFILE: "[data-region='profile']",
+            PROFILEADDCONTACT: "[data-action='profile-add-contact']",
+            PROFILEBLOCKCONTACT: "[data-action='profile-block-contact']",
+            PROFILEREMOVECONTACT: "[data-action='profile-remove-contact']",
+            PROFILESENDMESSAGE: "[data-action='profile-send-message']",
+            PROFILEUNBLOCKCONTACT: "[data-action='profile-unblock-contact']",
+            PROFILEVIEW: "[data-action='profile-view']",
+            SHOWCONTACTS: "[data-action='show-contacts']",
+            MESSAGESAREA: "[data-region='messages-area']",
+            MESSAGINGAREA: "[data-region='messaging-area']"
+        };
 
         /**
          * Profile class.
@@ -48,20 +62,20 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 CustomEvents.events.activate
             ]);
 
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSELECTED, this._viewProfile.bind(this));
-            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEVIEW,
+            this.messageArea.onCustomEvent(Events.CONTACTSELECTED, this._viewProfile.bind(this));
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEVIEW,
                 this._viewFullProfile.bind(this));
-            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILESENDMESSAGE,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILESENDMESSAGE,
                 this._sendMessage.bind(this));
-            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEUNBLOCKCONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEUNBLOCKCONTACT,
                 this._unblockContact.bind(this));
-            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEBLOCKCONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEBLOCKCONTACT,
                 this._blockContact.bind(this));
-            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEADDCONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEADDCONTACT,
                 this._addContact.bind(this));
-            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.PROFILEREMOVECONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEREMOVECONTACT,
                 this._removeContact.bind(this));
-            this.messageArea.onDelegateEvent(CustomEvents.events.activate, this.messageArea.SELECTORS.SHOWCONTACTS,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.SHOWCONTACTS,
                 this._hideMessagingArea.bind(this));
         };
 
@@ -75,12 +89,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          */
         Profile.prototype._viewProfile = function(event, userid) {
             // Show loading template.
-            templates.render('core/loading', {}).done(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
+            Templates.render('core/loading', {}).done(function(html, js) {
+                Templates.replaceNodeContents(this.messageArea.find(SELECTORS.MESSAGESAREA), html, js);
             }.bind(this));
 
             // Call the web service to return the profile.
-            var promises = ajax.call([{
+            var promises = Ajax.call([{
                 methodname: 'core_message_data_for_messagearea_get_profile',
                 args: {
                     currentuserid: this.messageArea.getCurrentUserId(),
@@ -90,10 +104,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
 
             // Show the profile.
             return promises[0].then(function(data) {
-                return templates.render('core_message/message_area_profile', data);
+                return Templates.render('core_message/message_area_profile', data);
             }).then(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
-            }.bind(this)).fail(notification.exception);
+                Templates.replaceNodeContents(this.messageArea.find(SELECTORS.MESSAGESAREA), html, js);
+            }.bind(this)).fail(Notification.exception);
         };
 
         /**
@@ -102,7 +116,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @private
          */
         Profile.prototype._viewFullProfile = function() {
-            window.location.href = config.wwwroot + '/user/profile.php?id=' + this._getUserId();
+            window.location.href = Config.wwwroot + '/user/profile.php?id=' + this._getUserId();
         };
 
         /**
@@ -111,7 +125,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @private
          */
         Profile.prototype._sendMessage = function() {
-            this.messageArea.trigger(this.messageArea.EVENTS.SENDMESSAGE, this._getUserId());
+            this.messageArea.trigger(Events.SENDMESSAGE, this._getUserId());
         };
 
         /**
@@ -124,7 +138,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             var action = this._performAction('core_message_block_contacts', 'unblockcontact', 'profile-block-contact',
                 'profile-unblock-contact', '');
             return action.then(function() {
-                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTBLOCKED, this._getUserId());
+                this.messageArea.trigger(Events.CONTACTBLOCKED, this._getUserId());
             }.bind(this));
         };
 
@@ -138,7 +152,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             var action = this._performAction('core_message_unblock_contacts', 'blockcontact', 'profile-unblock-contact',
                 'profile-block-contact', 'danger');
             return action.then(function() {
-                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTUNBLOCKED, this._getUserId());
+                this.messageArea.trigger(Events.CONTACTUNBLOCKED, this._getUserId());
             }.bind(this));
         };
 
@@ -152,7 +166,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             var action = this._performAction('core_message_create_contacts', 'removecontact', 'profile-add-contact',
                 'profile-remove-contact', 'danger');
             return action.then(function() {
-                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTADDED, this._getUserId());
+                this.messageArea.trigger(Events.CONTACTADDED, this._getUserId());
             }.bind(this));
         };
 
@@ -166,7 +180,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             var action = this._performAction('core_message_delete_contacts', 'addcontact', 'profile-remove-contact',
                 'profile-add-contact', '');
             return action.then(function() {
-                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTREMOVED, this._getUserId());
+                this.messageArea.trigger(Events.CONTACTREMOVED, this._getUserId());
             }.bind(this));
         };
 
@@ -182,7 +196,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @private
          */
         Profile.prototype._performAction = function(service, string, oldaction, newaction, newclass) {
-            var promises = ajax.call([{
+            var promises = Ajax.call([{
                 methodname: service,
                 args: {
                     userid: this.messageArea.getCurrentUserId(),
@@ -193,10 +207,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             }]);
 
             return promises[0].then(function() {
-                return str.get_string(string, 'message');
+                return Str.get_string(string, 'message');
             }).then(function(s) {
                 this._changeText(s, oldaction, newaction, newclass);
-            }.bind(this)).fail(notification.exception);
+            }.bind(this)).fail(Notification.exception);
         };
 
         /**
@@ -229,14 +243,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
          * @private
          */
         Profile.prototype._getUserId = function() {
-            return this.messageArea.find(this.messageArea.SELECTORS.PROFILE).data('userid');
+            return this.messageArea.find(SELECTORS.PROFILE).data('userid');
         };
 
         /**
          * Hide the messaging area. This only applies on smaller screen resolutions.
          */
         Profile.prototype._hideMessagingArea = function() {
-            this.messageArea.find(this.messageArea.SELECTORS.MESSAGINGAREA)
+            this.messageArea.find(SELECTORS.MESSAGINGAREA)
                 .removeClass('show-messages')
                 .addClass('hide-messages');
         };

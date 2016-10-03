@@ -21,8 +21,32 @@
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events', 'core/str'],
-    function($, ajax, templates, notification, customEvents, Str) {
+define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events', 'core/str',
+        'core_message/message_area_events'],
+    function($, Ajax, Templates, Notification, CustomEvents, Str, Events) {
+
+        /** @type {Object} The list of selectors for the message area. */
+        var SELECTORS = {
+            CONTACT: "[data-region='contact']",
+            CONTACTICONBLOCKED: "[data-region='contact-icon-blocked']",
+            CONTACTS: "[data-region='contacts'][data-region-content='contacts']",
+            CONTACTSAREA: "[data-region='contacts-area']",
+            CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
+            LASTMESSAGETEXT: "[data-region='last-message-text']",
+            LASTMESSAGEUSER: "[data-region='last-message-user']",
+            LOADINGICON: '.loading-icon',
+            MESSAGETEXT: "[data-region='message-text']",
+            MESSAGINGAREA: "[data-region='messaging-area']",
+            NOCONTACTS: "[data-region=no-contacts]",
+            SEARCHBOX: "[data-region='search-box']",
+            SEARCHRESULTSAREA: "[data-region='search-results-area']",
+            SEARCHTEXTAREA: "[data-region='search-text-area']",
+            SELECTEDVIEWCONVERSATION: "[data-action='view-contact-msg'].selected",
+            SELECTEDVIEWPROFILE: "[data-action='view-contact-profile'].selected",
+            SHOWMESSAGES: "[data-action='show-messages']",
+            VIEWCONVERSATION: "[data-action='view-contact-msg']",
+            VIEWPROFILE: "[data-action='view-contact-profile']"
+        };
 
         /**
          * Contacts class.
@@ -67,65 +91,65 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._init = function() {
-            customEvents.define(this.messageArea.node, [
-                customEvents.events.activate,
-                customEvents.events.down,
-                customEvents.events.up,
+            CustomEvents.define(this.messageArea.node, [
+                CustomEvents.events.activate,
+                CustomEvents.events.down,
+                CustomEvents.events.up,
             ]);
 
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESEARCHCANCELED, this._viewConversations.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.USERSSEARCHCANCELED, this._viewContacts.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSSELECTED, this._viewContacts.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONDELETED, this._deleteConversation.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSSELECTED, this._viewConversations.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSSELECTED, this._viewContacts.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESDELETED, this._updateLastMessage.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESENT, this._handleMessageSent.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTREMOVED, function(e, userid) {
-                this._removeContact(this.messageArea.SELECTORS.CONTACTS, userid);
+            this.messageArea.onCustomEvent(Events.MESSAGESEARCHCANCELED, this._viewConversations.bind(this));
+            this.messageArea.onCustomEvent(Events.USERSSEARCHCANCELED, this._viewContacts.bind(this));
+            this.messageArea.onCustomEvent(Events.CONTACTSSELECTED, this._viewContacts.bind(this));
+            this.messageArea.onCustomEvent(Events.CONVERSATIONDELETED, this._deleteConversation.bind(this));
+            this.messageArea.onCustomEvent(Events.CONVERSATIONSSELECTED, this._viewConversations.bind(this));
+            this.messageArea.onCustomEvent(Events.CONTACTSSELECTED, this._viewContacts.bind(this));
+            this.messageArea.onCustomEvent(Events.MESSAGESDELETED, this._updateLastMessage.bind(this));
+            this.messageArea.onCustomEvent(Events.MESSAGESENT, this._handleMessageSent.bind(this));
+            this.messageArea.onCustomEvent(Events.CONTACTREMOVED, function(e, userid) {
+                this._removeContact(SELECTORS.CONTACTS, userid);
             }.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTADDED, function(e, userid) {
+            this.messageArea.onCustomEvent(Events.CONTACTADDED, function(e, userid) {
                 this._addContact(userid);
             }.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTBLOCKED, function(e, userid) {
+            this.messageArea.onCustomEvent(Events.CONTACTBLOCKED, function(e, userid) {
                 this._blockContact(userid);
             }.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTUNBLOCKED, function(e, userid) {
+            this.messageArea.onCustomEvent(Events.CONTACTUNBLOCKED, function(e, userid) {
                 this._unblockContact(userid);
             }.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE,
+            this.messageArea.onCustomEvent(Events.CHOOSEMESSAGESTODELETE,
                 this._startDeleting.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES,
+            this.messageArea.onCustomEvent(Events.CANCELDELETEMESSAGES,
                 this._stopDeleting.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.VIEWCONVERSATION,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.VIEWCONVERSATION,
                 this._viewConversation.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.VIEWPROFILE,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.VIEWPROFILE,
                 this._viewContact.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SHOWMESSAGES,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.SHOWMESSAGES,
                 this._showMessagingArea.bind(this));
 
-            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.CONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.up, SELECTORS.CONTACT,
                 this._selectPreviousContact.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.CONTACT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.down, SELECTORS.CONTACT,
                 this._selectNextContact.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.VIEWCONVERSATION,
+            this.messageArea.onDelegateEvent(CustomEvents.events.up, SELECTORS.VIEWCONVERSATION,
                 this._selectPreviousConversation.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.VIEWCONVERSATION,
+            this.messageArea.onDelegateEvent(CustomEvents.events.down, SELECTORS.VIEWCONVERSATION,
                 this._selectNextConversation.bind(this));
 
-            this.messageArea.onDelegateEvent('focus', this.messageArea.SELECTORS.SEARCHBOX, this._setSearching.bind(this));
-            this.messageArea.onDelegateEvent('blur', this.messageArea.SELECTORS.SEARCHBOX, this._clearSearching.bind(this));
+            this.messageArea.onDelegateEvent('focus', SELECTORS.SEARCHBOX, this._setSearching.bind(this));
+            this.messageArea.onDelegateEvent('blur', SELECTORS.SEARCHBOX, this._clearSearching.bind(this));
 
             // Now enable the ability to infinitely scroll through conversations and contacts.
-            customEvents.define(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS), [
-                customEvents.events.scrollBottom
+            CustomEvents.define(this.messageArea.find(SELECTORS.CONVERSATIONS), [
+                CustomEvents.events.scrollBottom
             ]);
-            customEvents.define(this.messageArea.find(this.messageArea.SELECTORS.CONTACTS), [
-                customEvents.events.scrollBottom
+            CustomEvents.define(this.messageArea.find(SELECTORS.CONTACTS), [
+                CustomEvents.events.scrollBottom
             ]);
-            this.messageArea.onDelegateEvent(customEvents.events.scrollBottom, this.messageArea.SELECTORS.CONVERSATIONS,
+            this.messageArea.onDelegateEvent(CustomEvents.events.scrollBottom, SELECTORS.CONVERSATIONS,
                 this._loadConversations.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.scrollBottom, this.messageArea.SELECTORS.CONTACTS,
+            this.messageArea.onDelegateEvent(CustomEvents.events.scrollBottom, SELECTORS.CONTACTS,
                 this._loadContacts.bind(this));
 
             // Set the number of conversations. We set this to the number of conversations we asked to retrieve not by
@@ -140,7 +164,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Contacts.prototype._startDeleting = function() {
             this._isDeleting = true;
-            this.messageArea.find(this.messageArea.SELECTORS.CONTACTSAREA).addClass('editing');
+            this.messageArea.find(SELECTORS.CONTACTSAREA).addClass('editing');
         };
 
         /**
@@ -150,7 +174,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Contacts.prototype._stopDeleting = function() {
             this._isDeleting = false;
-            this.messageArea.find(this.messageArea.SELECTORS.CONTACTSAREA).removeClass('editing');
+            this.messageArea.find(SELECTORS.CONTACTSAREA).removeClass('editing');
         };
 
         /**
@@ -164,8 +188,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 this._loadConversations();
             }
 
-            this.messageArea.find(this.messageArea.SELECTORS.CONTACTS).hide();
-            this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS).show();
+            this.messageArea.find(SELECTORS.CONTACTS).hide();
+            this.messageArea.find(SELECTORS.CONVERSATIONS).show();
         };
 
         /**
@@ -179,8 +203,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 this._loadContacts();
             }
 
-            this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS).hide();
-            this.messageArea.find(this.messageArea.SELECTORS.CONTACTS).show();
+            this.messageArea.find(SELECTORS.CONVERSATIONS).hide();
+            this.messageArea.find(SELECTORS.CONTACTS).show();
         };
 
         /**
@@ -195,14 +219,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Switch to viewing the conversations.
             this._viewConversations();
             // Get the user node.
-            var user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
+            var user = this._getUserNode(SELECTORS.CONVERSATIONS, userid);
             // If the user has not been loaded yet, let's copy the element from contact or search panel to the conversation panel.
             if (user.length === 0) {
                 // Let's clone the data on the contact page.
-                var usercontact = this._getUserNode(this.messageArea.SELECTORS.CONTACTS, userid);
+                var usercontact = this._getUserNode(SELECTORS.CONTACTS, userid);
                 if (usercontact.length === 0) {
                     // No luck, maybe we sent the message to a user we searched for - check search page.
-                    usercontact = this._getUserNode(this.messageArea.SELECTORS.SEARCHRESULTSAREA, userid);
+                    usercontact = this._getUserNode(SELECTORS.SEARCHRESULTSAREA, userid);
                 }
                 if (usercontact.length == 0) {
                     // Can't do much.
@@ -212,15 +236,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 // Change the data action attribute.
                 user.attr('data-action', 'view-contact-msg');
                 // Remove the 'no conversations' message.
-                this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
-                    this.messageArea.SELECTORS.NOCONTACTS).remove();
+                this.messageArea.find(SELECTORS.CONVERSATIONS + " " +
+                    SELECTORS.NOCONTACTS).remove();
                 // Increment the number of conversations displayed.
                 this._numConversationsDisplayed++;
             }
             // Move the contact to the top of the list.
-            user.prependTo(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS));
+            user.prependTo(this.messageArea.find(SELECTORS.CONVERSATIONS));
             // Scroll to the top.
-            this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS).scrollTop(0);
+            this.messageArea.find(SELECTORS.CONVERSATIONS).scrollTop(0);
             // Get the new text to show.
             this._updateContactText(user, text, true);
             // Ensure user is selected.
@@ -248,37 +272,37 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Keep track of the number of contacts
             var numberreceived = 0;
             // Add loading icon to the end of the list.
-            return templates.render('core/loading', {}).then(function(html, js) {
+            return Templates.render('core/loading', {}).then(function(html, js) {
                 if (this._numConversationsDisplayed) {
-                    templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS),
+                    Templates.appendNodeContents(this.messageArea.find(SELECTORS.CONVERSATIONS),
                         "<div style='text-align:center'>" + html + "</div>", js);
                 } else { // No conversations, just replace contents.
-                    templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS),
+                    Templates.replaceNodeContents(this.messageArea.find(SELECTORS.CONVERSATIONS),
                         "<div style='text-align:center'>" + html + "</div>", js);
                 }
                 return this._getItems('core_message_data_for_messagearea_conversations',
                     this._numConversationsDisplayed, this._numConversationsToRetrieve);
             }.bind(this)).then(function(data) {
                 numberreceived = data.contacts.length;
-                return templates.render('core_message/message_area_contacts', data);
+                return Templates.render('core_message/message_area_contacts', data);
             }).then(function(html, js) {
                 // Remove the loading icon.
-                this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
-                    this.messageArea.SELECTORS.LOADINGICON).remove();
+                this.messageArea.find(SELECTORS.CONVERSATIONS + " " +
+                    SELECTORS.LOADINGICON).remove();
                 // Only append data if we got data back.
                 if (numberreceived > 0) {
                     // Show the new content.
-                    templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS), html, js);
+                    Templates.appendNodeContents(this.messageArea.find(SELECTORS.CONVERSATIONS), html, js);
                     // Increment the number of conversations displayed. We increment by the number of conversations we
                     // asked to retrieve not by the number that was actually retrieved, see MDL-55870.
                     this._numConversationsDisplayed += this._numConversationsToRetrieve;
                 } else if (!this._numConversationsDisplayed) {
                     // If we didn't receive any contacts and there are currently none, then we want to show a message.
-                    templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS), html, js);
+                    Templates.replaceNodeContents(this.messageArea.find(SELECTORS.CONVERSATIONS), html, js);
                 }
                 // Mark that we are no longer busy loading data.
                 this._isLoadingConversations = false;
-            }.bind(this)).fail(notification.exception);
+            }.bind(this)).fail(Notification.exception);
         };
 
         /**
@@ -302,36 +326,36 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Keep track of the number of contacts
             var numberreceived = 0;
             // Add loading icon to the end of the list.
-            return templates.render('core/loading', {}).then(function(html, js) {
+            return Templates.render('core/loading', {}).then(function(html, js) {
                 if (this._numContactsDisplayed) {
-                    templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONTACTS),
+                    Templates.appendNodeContents(this.messageArea.find(SELECTORS.CONTACTS),
                         "<div style='text-align:center'>" + html + "</div>", js);
                 } else { // No contacts, just replace contents.
-                    templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONTACTS),
+                    Templates.replaceNodeContents(this.messageArea.find(SELECTORS.CONTACTS),
                         "<div style='text-align:center'>" + html + "</div>", js);
                 }
                 return this._getItems('core_message_data_for_messagearea_contacts',
                     this._numContactsDisplayed, this._numContactsToRetrieve);
             }.bind(this)).then(function(data) {
                 numberreceived = data.contacts.length;
-                return templates.render('core_message/message_area_contacts', data);
+                return Templates.render('core_message/message_area_contacts', data);
             }).then(function(html, js) {
                 // Remove the loading icon.
-                this.messageArea.find(this.messageArea.SELECTORS.CONTACTS + " " +
-                    this.messageArea.SELECTORS.LOADINGICON).remove();
+                this.messageArea.find(SELECTORS.CONTACTS + " " +
+                    SELECTORS.LOADINGICON).remove();
                 // Only append data if we got data back.
                 if (numberreceived > 0) {
                     // Show the new content.
-                    templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONTACTS), html, js);
+                    Templates.appendNodeContents(this.messageArea.find(SELECTORS.CONTACTS), html, js);
                     // Increment the number of contacts displayed.
                     this._numContactsDisplayed += numberreceived;
                 } else if (!this._numContactsDisplayed) {
                     // If we didn't receive any contacts and there are currently none, then we want to show a message.
-                    templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.CONTACTS), html, js);
+                    Templates.replaceNodeContents(this.messageArea.find(SELECTORS.CONTACTS), html, js);
                 }
                 // Mark that we are no longer busy loading data.
                 this._isLoadingContacts = false;
-            }.bind(this)).fail(notification.exception);
+            }.bind(this)).fail(Notification.exception);
         };
 
         /**
@@ -342,7 +366,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Contacts.prototype._viewConversation = function(event) {
             if (this._isDeleting) {
-                this.messageArea.trigger(this.messageArea.EVENTS.CANCELDELETEMESSAGES, userid);
+                this.messageArea.trigger(Events.CANCELDELETEMESSAGES, userid);
             }
 
             var userid = $(event.currentTarget).data('userid');
@@ -355,9 +379,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }
 
             this._setSelectedUser(selector);
-            this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONSELECTED, userid);
+            this.messageArea.trigger(Events.CONVERSATIONSELECTED, userid);
             // Don't highlight the contact because the message region has changed.
-            this.messageArea.find(this.messageArea.SELECTORS.SELECTEDVIEWPROFILE).removeClass('selected');
+            this.messageArea.find(SELECTORS.SELECTEDVIEWPROFILE).removeClass('selected');
             this._showMessagingArea();
         };
 
@@ -371,9 +395,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             if (!this._isDeleting) {
                 var userid = $(event.currentTarget).data('userid');
                 this._setSelectedUser("[data-userid='" + userid + "']");
-                this.messageArea.trigger(this.messageArea.EVENTS.CONTACTSELECTED, userid);
+                this.messageArea.trigger(Events.CONTACTSELECTED, userid);
                 // Don't highlight the conversation because the message region has changed.
-                this.messageArea.find(this.messageArea.SELECTORS.SELECTEDVIEWCONVERSATION).removeClass('selected');
+                this.messageArea.find(SELECTORS.SELECTEDVIEWCONVERSATION).removeClass('selected');
                 this._showMessagingArea();
             }
         };
@@ -389,7 +413,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Contacts.prototype._getItems = function(webservice, limitfrom, limitnum) {
             // Call the web service to return the data we want to view.
-            var promises = ajax.call([{
+            var promises = Ajax.call([{
                 methodname: webservice,
                 args: {
                     userid: this.messageArea.getCurrentUserId(),
@@ -410,7 +434,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Contacts.prototype._deleteConversation = function(event, userid) {
             // Remove the conversation.
-            this._removeContact(this.messageArea.SELECTORS.CONVERSATIONS, userid);
+            this._removeContact(SELECTORS.CONVERSATIONS, userid);
             this._numConversationsDisplayed--;
             this._hideMessagingArea();
             // Now we have done all the deletion we can set the flag back to false.
@@ -428,8 +452,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         Contacts.prototype._updateLastMessage = function(event, userid, updatemessage) {
             // Check if the last message needs updating.
             if (updatemessage) {
-                var user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
-                var updatemessagetext = updatemessage.find(this.messageArea.SELECTORS.MESSAGETEXT).text().trim();
+                var user = this._getUserNode(SELECTORS.CONVERSATIONS, userid);
+                var updatemessagetext = updatemessage.find(SELECTORS.MESSAGETEXT).text().trim();
                 var sentbyuser = false;
                 if (updatemessage.data('useridto') == userid) {
                     // Must have been sent by the currently logged in user.
@@ -449,7 +473,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._addContact = function() {
-            this.messageArea.find(this.messageArea.SELECTORS.CONTACTS).empty();
+            this.messageArea.find(SELECTORS.CONTACTS).empty();
             this._numContactsDisplayed = 0;
             this._loadContacts();
         };
@@ -473,14 +497,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._blockContact = function(userid) {
-            var user = this._getUserNode(this.messageArea.SELECTORS.CONTACTS, userid);
-            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
+            var user = this._getUserNode(SELECTORS.CONTACTS, userid);
+            user.find(SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
 
-            user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
-            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
+            user = this._getUserNode(SELECTORS.CONVERSATIONS, userid);
+            user.find(SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
 
-            user = this._getUserNode(this.messageArea.SELECTORS.SEARCHRESULTSAREA, userid);
-            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
+            user = this._getUserNode(SELECTORS.SEARCHRESULTSAREA, userid);
+            user.find(SELECTORS.CONTACTICONBLOCKED).removeClass('hidden');
         };
 
         /**
@@ -490,14 +514,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._unblockContact = function(userid) {
-            var user = this._getUserNode(this.messageArea.SELECTORS.CONTACTS, userid);
-            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
+            var user = this._getUserNode(SELECTORS.CONTACTS, userid);
+            user.find(SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
 
-            user = this._getUserNode(this.messageArea.SELECTORS.CONVERSATIONS, userid);
-            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
+            user = this._getUserNode(SELECTORS.CONVERSATIONS, userid);
+            user.find(SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
 
-            user = this._getUserNode(this.messageArea.SELECTORS.SEARCHRESULTSAREA, userid);
-            user.find(this.messageArea.SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
+            user = this._getUserNode(SELECTORS.SEARCHRESULTSAREA, userid);
+            user.find(SELECTORS.CONTACTICONBLOCKED).addClass('hidden');
         };
 
         /**
@@ -509,7 +533,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._getUserNode = function(selector, userid) {
-            return this.messageArea.find(selector + " " + this.messageArea.SELECTORS.CONTACT +
+            return this.messageArea.find(selector + " " + SELECTORS.CONTACT +
                 "[data-userid='" + userid + "']");
         };
 
@@ -521,9 +545,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Contacts.prototype._setSelectedUser = function(selector) {
             // Remove the 'selected' class from any other contact.
-            this.messageArea.find(this.messageArea.SELECTORS.CONTACT).removeClass('selected');
+            this.messageArea.find(SELECTORS.CONTACT).removeClass('selected');
             // Set the tab for the user to selected.
-            this.messageArea.find(this.messageArea.SELECTORS.CONTACT + selector).addClass('selected');
+            this.messageArea.find(SELECTORS.CONTACT + selector).addClass('selected');
         };
 
         /**
@@ -555,13 +579,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             if (sentbyuser) {
                 Str.get_string('you', 'message').done(function(string) {
                     // Ensure we display that the message is from this user.
-                    user.find(this.messageArea.SELECTORS.LASTMESSAGEUSER).empty().append(string);
-                }.bind(this)).always(function() {
-                    user.find(this.messageArea.SELECTORS.LASTMESSAGETEXT).empty().append(text);
-                }.bind(this));
+                    user.find(SELECTORS.LASTMESSAGEUSER).empty().append(string);
+                }).always(function() {
+                    user.find(SELECTORS.LASTMESSAGETEXT).empty().append(text);
+                });
             } else {
-                user.find(this.messageArea.SELECTORS.LASTMESSAGEUSER).empty();
-                user.find(this.messageArea.SELECTORS.LASTMESSAGETEXT).empty().append(text);
+                user.find(SELECTORS.LASTMESSAGEUSER).empty();
+                user.find(SELECTORS.LASTMESSAGETEXT).empty().append(text);
             }
         };
 
@@ -572,7 +596,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @param {object} data Additional event data
          */
         Contacts.prototype._selectNextContact = function(e, data) {
-            var contact = $(e.target).closest(this.messageArea.SELECTORS.CONTACT);
+            var contact = $(e.target).closest(SELECTORS.CONTACT);
             var next = contact.next();
             next.focus();
 
@@ -587,7 +611,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @param {object} data Additional event data
          */
         Contacts.prototype._selectPreviousContact = function(e, data) {
-            var contact = $(e.target).closest(this.messageArea.SELECTORS.CONTACT);
+            var contact = $(e.target).closest(SELECTORS.CONTACT);
             var previous = contact.prev();
             previous.focus();
 
@@ -602,7 +626,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @param {object} data Additional event data
          */
         Contacts.prototype._selectNextConversation = function(e, data) {
-            var conversation = $(e.target).closest(this.messageArea.SELECTORS.VIEWCONVERSATION);
+            var conversation = $(e.target).closest(SELECTORS.VIEWCONVERSATION);
             var next = conversation.next();
             next.focus();
 
@@ -617,7 +641,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @param {object} data Additional event data
          */
         Contacts.prototype._selectPreviousConversation = function(e, data) {
-            var conversation = $(e.target).closest(this.messageArea.SELECTORS.VIEWCONVERSATION);
+            var conversation = $(e.target).closest(SELECTORS.VIEWCONVERSATION);
             var previous = conversation.prev();
             previous.focus();
 
@@ -629,21 +653,21 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Flags the search area as seaching.
          */
         Contacts.prototype._setSearching = function() {
-            $(this.messageArea.SELECTORS.SEARCHTEXTAREA).addClass('searching');
+            $(SELECTORS.SEARCHTEXTAREA).addClass('searching');
         };
 
         /**
          * Flags the search area as seaching.
          */
         Contacts.prototype._clearSearching = function() {
-            $(this.messageArea.SELECTORS.SEARCHTEXTAREA).removeClass('searching');
+            $(SELECTORS.SEARCHTEXTAREA).removeClass('searching');
         };
 
         /**
          * Make the messaging area visible.
          */
         Contacts.prototype._showMessagingArea = function() {
-            this.messageArea.find(this.messageArea.SELECTORS.MESSAGINGAREA)
+            this.messageArea.find(SELECTORS.MESSAGINGAREA)
                 .removeClass('hide-messages')
                 .addClass('show-messages');
         };
@@ -652,7 +676,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Hide the messaging area.
          */
         Contacts.prototype._hideMessagingArea = function() {
-            this.messageArea.find(this.messageArea.SELECTORS.MESSAGINGAREA)
+            this.messageArea.find(SELECTORS.MESSAGINGAREA)
                 .removeClass('show-messages')
                 .addClass('hide-messages');
         };

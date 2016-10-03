@@ -22,11 +22,35 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/custom_interaction_events',
-        'core/auto_rows', 'core_message/message_area_actions', 'core/modal_factory', 'core/modal_events', 'core/str'],
-    function($, ajax, templates, notification, customEvents, AutoRows, Actions, ModalFactory, ModalEvents, Str) {
+        'core/auto_rows', 'core_message/message_area_actions', 'core/modal_factory', 'core/modal_events',
+        'core/str', 'core_message/message_area_events'],
+    function($, Ajax, Templates, Notification, CustomEvents, AutoRows, Actions, ModalFactory, ModalEvents, Str, Events) {
 
+        /** @type {int} The message area default height. */
         var MESSAGES_AREA_DEFAULT_HEIGHT = 500;
+
+        /** @type {int} The response default height. */
         var MESSAGES_RESPONSE_DEFAULT_HEIGHT = 50;
+
+        /** @type {Object} The list of selectors for the message area. */
+        var SELECTORS = {
+            BLOCKTIME: "[data-region='blocktime']",
+            CANCELDELETEMESSAGES: "[data-action='cancel-delete-messages']",
+            CONTACT: "[data-region='contact']",
+            CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
+            DELETEALLMESSAGES: "[data-action='delete-all-messages']",
+            DELETEMESSAGES: "[data-action='delete-messages']",
+            LOADINGICON: '.loading-icon',
+            MESSAGE: "[data-region='message']",
+            MESSAGERESPONSE: "[data-region='response']",
+            MESSAGES: "[data-region='messages']",
+            MESSAGESAREA: "[data-region='messages-area']",
+            MESSAGINGAREA: "[data-region='messaging-area']",
+            SENDMESSAGE: "[data-action='send-message']",
+            SENDMESSAGETEXT: "[data-region='send-message-txt']",
+            SHOWCONTACTS: "[data-action='show-contacts']",
+            STARTDELETEMESSAGES: "[data-action='start-delete-messages']"
+        };
 
         /**
          * Messages class.
@@ -62,51 +86,51 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._init = function() {
-            customEvents.define(this.messageArea.node, [
-                customEvents.events.activate,
-                customEvents.events.up,
-                customEvents.events.down,
-                customEvents.events.enter,
+            CustomEvents.define(this.messageArea.node, [
+                CustomEvents.events.activate,
+                CustomEvents.events.up,
+                CustomEvents.events.down,
+                CustomEvents.events.enter,
             ]);
 
             AutoRows.init(this.messageArea.node);
 
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSELECTED, this._viewMessages.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.SENDMESSAGE, this._viewMessages.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CHOOSEMESSAGESTODELETE, this._chooseMessagesToDelete.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.CANCELDELETEMESSAGES, this._hideDeleteAction.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SENDMESSAGE,
+            this.messageArea.onCustomEvent(Events.CONVERSATIONSELECTED, this._viewMessages.bind(this));
+            this.messageArea.onCustomEvent(Events.SENDMESSAGE, this._viewMessages.bind(this));
+            this.messageArea.onCustomEvent(Events.CHOOSEMESSAGESTODELETE, this._chooseMessagesToDelete.bind(this));
+            this.messageArea.onCustomEvent(Events.CANCELDELETEMESSAGES, this._hideDeleteAction.bind(this));
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.SENDMESSAGE,
                 this._sendMessage.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.STARTDELETEMESSAGES,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.STARTDELETEMESSAGES,
                 this._startDeleting.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.DELETEMESSAGES,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.DELETEMESSAGES,
                 this._deleteMessages.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.DELETEALLMESSAGES,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.DELETEALLMESSAGES,
                 this._deleteAllMessages.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.CANCELDELETEMESSAGES,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.CANCELDELETEMESSAGES,
                 this._triggerCancelMessagesToDelete.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.MESSAGE,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.MESSAGE,
                 this._toggleMessage.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.activate, this.messageArea.SELECTORS.SHOWCONTACTS,
+            this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.SHOWCONTACTS,
                 this._hideMessagingArea.bind(this));
 
-            this.messageArea.onDelegateEvent(customEvents.events.up, this.messageArea.SELECTORS.MESSAGE,
+            this.messageArea.onDelegateEvent(CustomEvents.events.up, SELECTORS.MESSAGE,
                 this._selectPreviousMessage.bind(this));
-            this.messageArea.onDelegateEvent(customEvents.events.down, this.messageArea.SELECTORS.MESSAGE,
+            this.messageArea.onDelegateEvent(CustomEvents.events.down, SELECTORS.MESSAGE,
                 this._selectNextMessage.bind(this));
 
-            this.messageArea.onDelegateEvent('focus', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._setMessaging.bind(this));
-            this.messageArea.onDelegateEvent('blur', this.messageArea.SELECTORS.SENDMESSAGETEXT, this._clearMessaging.bind(this));
+            this.messageArea.onDelegateEvent('focus', SELECTORS.SENDMESSAGETEXT, this._setMessaging.bind(this));
+            this.messageArea.onDelegateEvent('blur', SELECTORS.SENDMESSAGETEXT, this._clearMessaging.bind(this));
 
-            this.messageArea.onDelegateEvent(customEvents.events.enter, this.messageArea.SELECTORS.SENDMESSAGETEXT,
+            this.messageArea.onDelegateEvent(CustomEvents.events.enter, SELECTORS.SENDMESSAGETEXT,
                 this._sendMessageHandler.bind(this));
 
             $(document).on(AutoRows.events.ROW_CHANGE, this._adjustMessagesAreaHeight.bind(this));
 
             // Check if any messages have been displayed on page load.
-            var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES);
+            var messages = this.messageArea.find(SELECTORS.MESSAGES);
             if (messages.length) {
-                this._addScrollEventListener(messages.find(this.messageArea.SELECTORS.MESSAGE).length);
+                this._addScrollEventListener(messages.find(SELECTORS.MESSAGE).length);
             }
         };
 
@@ -123,7 +147,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this._numMessagesDisplayed = 0;
 
             // Mark all the messages as read.
-            var markMessagesAsRead = ajax.call([{
+            var markMessagesAsRead = Ajax.call([{
                 methodname: 'core_message_mark_all_messages_as_read',
                 args: {
                     useridto: this.messageArea.getCurrentUserId(),
@@ -134,12 +158,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Keep track of the number of messages received.
             var numberreceived = 0;
             // Show loading template.
-            return templates.render('core/loading', {}).then(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
+            return Templates.render('core/loading', {}).then(function(html, js) {
+                Templates.replaceNodeContents(this.messageArea.find(SELECTORS.MESSAGESAREA), html, js);
                 return markMessagesAsRead[0];
             }.bind(this)).then(function() {
-                var conversationnode = this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
-                    this.messageArea.SELECTORS.CONTACT + "[data-userid='" + userid + "']");
+                var conversationnode = this.messageArea.find(SELECTORS.CONVERSATIONS + " " +
+                    SELECTORS.CONTACT + "[data-userid='" + userid + "']");
                 if (conversationnode.hasClass('unread')) {
                     // Remove the class.
                     conversationnode.removeClass('unread');
@@ -150,11 +174,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }.bind(this)).then(function(data) {
                 numberreceived = data.messages.length;
                 // We have the data - lets render the template with it.
-                return templates.render('core_message/message_area_messages_area', data);
+                return Templates.render('core_message/message_area_messages_area', data);
             }).then(function(html, js) {
-                templates.replaceNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA), html, js);
+                Templates.replaceNodeContents(this.messageArea.find(SELECTORS.MESSAGESAREA), html, js);
                 this._addScrollEventListener(numberreceived);
-            }.bind(this)).fail(notification.exception);
+            }.bind(this)).fail(Notification.exception);
         };
 
         /**
@@ -173,42 +197,42 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Keep track of the number of messages received.
             var numberreceived = 0;
             // Show loading template.
-            return templates.render('core/loading', {}).then(function(html, js) {
-                templates.prependNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES),
+            return Templates.render('core/loading', {}).then(function(html, js) {
+                Templates.prependNodeContents(this.messageArea.find(SELECTORS.MESSAGES),
                     "<div style='text-align:center'>" + html + "</div>", js);
                 return this._getMessages(this._getUserId());
             }.bind(this)).then(function(data) {
                 numberreceived = data.messages.length;
                 // We have the data - lets render the template with it.
-                return templates.render('core_message/message_area_messages', data);
+                return Templates.render('core_message/message_area_messages', data);
             }).then(function(html, js) {
                 // Remove the loading icon.
-                this.messageArea.find(this.messageArea.SELECTORS.MESSAGES + " " +
-                    this.messageArea.SELECTORS.LOADINGICON).remove();
+                this.messageArea.find(SELECTORS.MESSAGES + " " +
+                    SELECTORS.LOADINGICON).remove();
                 // Check if we got something to do.
                 if (numberreceived > 0) {
                     // Let's check if we can remove the block time.
                     // First, get the block time that is currently being displayed.
-                    var blocktime = this.messageArea.node.find(this.messageArea.SELECTORS.BLOCKTIME + ":first");
-                    var newblocktime = $(html).find(this.messageArea.SELECTORS.BLOCKTIME + ":first").addBack();
+                    var blocktime = this.messageArea.node.find(SELECTORS.BLOCKTIME + ":first");
+                    var newblocktime = $(html).find(SELECTORS.BLOCKTIME + ":first").addBack();
                     if (blocktime.html() == newblocktime.html()) {
                         // Remove the block time as it's present above.
                         blocktime.remove();
                     }
                     // Get height before we add the messages.
-                    var oldheight = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES)[0].scrollHeight;
+                    var oldheight = this.messageArea.find(SELECTORS.MESSAGES)[0].scrollHeight;
                     // Show the new content.
-                    templates.prependNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES), html, js);
+                    Templates.prependNodeContents(this.messageArea.find(SELECTORS.MESSAGES), html, js);
                     // Get height after we add the messages.
-                    var newheight = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES)[0].scrollHeight;
+                    var newheight = this.messageArea.find(SELECTORS.MESSAGES)[0].scrollHeight;
                     // Make sure scroll bar is at the location before we loaded more messages.
-                    this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).scrollTop(newheight - oldheight);
+                    this.messageArea.find(SELECTORS.MESSAGES).scrollTop(newheight - oldheight);
                     // Increment the number of messages displayed.
                     this._numMessagesDisplayed += numberreceived;
                 }
                 // Mark that we are no longer busy loading data.
                 this._isLoadingMessages = false;
-            }.bind(this)).fail(notification.exception);
+            }.bind(this)).fail(Notification.exception);
         };
 
         /**
@@ -220,7 +244,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Messages.prototype._getMessages = function(userid) {
             // Call the web service to get our data.
-            var promises = ajax.call([{
+            var promises = Ajax.call([{
                 methodname: 'core_message_data_for_messagearea_messages',
                 args: {
                     currentuserid: this.messageArea.getCurrentUserId(),
@@ -242,7 +266,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._sendMessage = function() {
-            var element = this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT);
+            var element = this.messageArea.find(SELECTORS.SENDMESSAGETEXT);
             var text = element.val();
 
             // Do not do anything if it is empty.
@@ -259,7 +283,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this._isSendingMessage = true;
 
             // Call the web service to save our message.
-            var promises = ajax.call([{
+            var promises = Ajax.call([{
                 methodname: 'core_message_send_instant_messages',
                 args: {
                     messages: [
@@ -283,7 +307,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     throw new Error(response[0].errormessage);
                 }
                 // Fire an event to say the message was sent.
-                this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESENT, [this._getUserId(), text]);
+                this.messageArea.trigger(Events.MESSAGESENT, [this._getUserId(), text]);
                 // Update the messaging area.
                 return this._addMessageToDom();
             }.bind(this)).then(function() {
@@ -291,7 +315,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 this._isSendingMessage = false;
             }.bind(this)).always(function() {
                 element.prop('disabled', false);
-            }).fail(notification.exception);
+            }).fail(Notification.exception);
         };
 
         /**
@@ -300,8 +324,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._chooseMessagesToDelete = function() {
-            this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).addClass('editing');
-            this.messageArea.find(this.messageArea.SELECTORS.MESSAGE)
+            this.messageArea.find(SELECTORS.MESSAGESAREA).addClass('editing');
+            this.messageArea.find(SELECTORS.MESSAGE)
                 .attr('role', 'checkbox')
                 .attr('aria-checked', 'false');
         };
@@ -313,7 +337,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Messages.prototype._deleteMessages = function() {
             var userid = this.messageArea.getCurrentUserId();
-            var checkboxes = this.messageArea.find(this.messageArea.SELECTORS.MESSAGE + "[aria-checked='true']");
+            var checkboxes = this.messageArea.find(SELECTORS.MESSAGE + "[aria-checked='true']");
             var requests = [];
             var messagestoremove = [];
 
@@ -334,10 +358,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             });
 
             if (requests.length > 0) {
-                ajax.call(requests)[requests.length - 1].then(function() {
+                Ajax.call(requests)[requests.length - 1].then(function() {
                     // Store the last message on the page, and the last message being deleted.
                     var updatemessage = null;
-                    var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGE);
+                    var messages = this.messageArea.find(SELECTORS.MESSAGE);
                     var lastmessage = messages.last();
                     var lastremovedmessage = messagestoremove[messagestoremove.length - 1];
                     // Remove the messages from the DOM.
@@ -347,31 +371,31 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     });
                     // If the last message was deleted then we need to provide the new last message.
                     if (lastmessage.data('id') === lastremovedmessage.data('id')) {
-                        updatemessage = this.messageArea.find(this.messageArea.SELECTORS.MESSAGE).last();
+                        updatemessage = this.messageArea.find(SELECTORS.MESSAGE).last();
                     }
                     // Now we have removed all the messages from the DOM lets remove any block times we may need to as well.
                     $.each(messagestoremove, function(key, message) {
                         // First - let's make sure there are no more messages in that time block.
                         var blocktime = message.data('blocktime');
-                        if (this.messageArea.find(this.messageArea.SELECTORS.MESSAGE +
+                        if (this.messageArea.find(SELECTORS.MESSAGE +
                             "[data-blocktime='" + blocktime + "']").length === 0) {
-                            this.messageArea.find(this.messageArea.SELECTORS.BLOCKTIME +
+                            this.messageArea.find(SELECTORS.BLOCKTIME +
                                 "[data-blocktime='" + blocktime + "']").remove();
                         }
                     }.bind(this));
 
                     // If there are no messages at all, then remove conversation panel.
-                    if (this.messageArea.find(this.messageArea.SELECTORS.MESSAGE).length === 0) {
-                        this.messageArea.find(this.messageArea.SELECTORS.CONVERSATIONS + " " +
-                            this.messageArea.SELECTORS.CONTACT + "[data-userid='" + this._getUserId() + "']").remove();
+                    if (this.messageArea.find(SELECTORS.MESSAGE).length === 0) {
+                        this.messageArea.find(SELECTORS.CONVERSATIONS + " " +
+                            SELECTORS.CONTACT + "[data-userid='" + this._getUserId() + "']").remove();
                     }
 
                     // Trigger event letting other modules know messages were deleted.
-                    this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED, [this._getUserId(), updatemessage]);
-                }.bind(this), notification.exception);
+                    this.messageArea.trigger(Events.MESSAGESDELETED, [this._getUserId(), updatemessage]);
+                }.bind(this), Notification.exception);
             } else {
                 // Trigger event letting other modules know messages were deleted.
-                this.messageArea.trigger(this.messageArea.EVENTS.MESSAGESDELETED, this._getUserId());
+                this.messageArea.trigger(Events.MESSAGESDELETED, this._getUserId());
             }
 
             // Hide the items responsible for deleting messages.
@@ -390,11 +414,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // Set the number of messages displayed.
             this._numMessagesDisplayed = numberreceived;
             // Now enable the ability to infinitely scroll through messages.
-            customEvents.define(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES), [
-                customEvents.events.scrollTop
+            CustomEvents.define(this.messageArea.find(SELECTORS.MESSAGES), [
+                CustomEvents.events.scrollTop
             ]);
             // Assign the event for scrolling.
-            this.messageArea.onCustomEvent(customEvents.events.scrollTop, this._loadMessages.bind(this));
+            this.messageArea.onCustomEvent(CustomEvents.events.scrollTop, this._loadMessages.bind(this));
         };
 
         /**
@@ -408,7 +432,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 ModalFactory.create({
                     type: ModalFactory.types.CONFIRM,
                     body: Str.get_string('deleteallconfirm', 'message'),
-                }, this.messageArea.find(this.messageArea.SELECTORS.DELETEALLMESSAGES))
+                }, this.messageArea.find(SELECTORS.DELETEALLMESSAGES))
                 .done(function(modal) {
                     this._confirmationModal = modal;
 
@@ -424,13 +448,13 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                         };
 
                         // Delete the conversation.
-                        ajax.call([request])[0].then(function() {
+                        Ajax.call([request])[0].then(function() {
                             // Clear the message area.
-                            this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).empty();
+                            this.messageArea.find(SELECTORS.MESSAGESAREA).empty();
                             // Let the app know a conversation was deleted.
-                            this.messageArea.trigger(this.messageArea.EVENTS.CONVERSATIONDELETED, otherUserId);
+                            this.messageArea.trigger(Events.CONVERSATIONDELETED, otherUserId);
                             this._hideDeleteAction();
-                        }.bind(this), notification.exeption);
+                        }.bind(this), Notification.exeption);
                     }.bind(this));
 
                     // Display the confirmation.
@@ -448,10 +472,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._hideDeleteAction = function() {
-            this.messageArea.find(this.messageArea.SELECTORS.MESSAGE)
+            this.messageArea.find(SELECTORS.MESSAGE)
                 .removeAttr('role')
                 .removeAttr('aria-checked');
-            this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).removeClass('editing');
+            this.messageArea.find(SELECTORS.MESSAGESAREA).removeClass('editing');
         };
 
         /**
@@ -461,7 +485,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Messages.prototype._triggerCancelMessagesToDelete = function() {
             // Trigger event letting other modules know message deletion was canceled.
-            this.messageArea.trigger(this.messageArea.EVENTS.CANCELDELETEMESSAGES);
+            this.messageArea.trigger(Events.CANCELDELETEMESSAGES);
         };
 
         /**
@@ -472,7 +496,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Messages.prototype._addMessageToDom = function() {
             // Call the web service to return how the message should look.
-            var promises = ajax.call([{
+            var promises = Ajax.call([{
                 methodname: 'core_message_data_for_messagearea_get_most_recent_message',
                 args: {
                     currentuserid: this.messageArea.getCurrentUserId(),
@@ -482,14 +506,14 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
             // Add the message.
             return promises[0].then(function(data) {
-                return templates.render('core_message/message_area_message', data);
+                return Templates.render('core_message/message_area_message', data);
             }).then(function(html, js) {
-                templates.appendNodeContents(this.messageArea.find(this.messageArea.SELECTORS.MESSAGES), html, js);
+                Templates.appendNodeContents(this.messageArea.find(SELECTORS.MESSAGES), html, js);
                 // Empty the response text area.
-                this.messageArea.find(this.messageArea.SELECTORS.SENDMESSAGETEXT).val('').trigger('input');
+                this.messageArea.find(SELECTORS.SENDMESSAGETEXT).val('').trigger('input');
                 // Scroll down.
                 this._scrollBottom();
-            }.bind(this)).fail(notification.exception);
+            }.bind(this)).fail(Notification.exception);
         };
 
         /**
@@ -499,7 +523,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._getUserId = function() {
-            return this.messageArea.find(this.messageArea.SELECTORS.MESSAGES).data('userid');
+            return this.messageArea.find(SELECTORS.MESSAGES).data('userid');
         };
 
         /**
@@ -509,7 +533,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Messages.prototype._scrollBottom = function() {
             // Scroll to the bottom.
-            var messages = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES);
+            var messages = this.messageArea.find(SELECTORS.MESSAGES);
             if (messages.length !== 0) {
                 messages.scrollTop(messages[0].scrollHeight);
             }
@@ -523,11 +547,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._selectPreviousMessage = function(e, data) {
-            var currentMessage = $(e.target).closest(this.messageArea.SELECTORS.MESSAGE);
+            var currentMessage = $(e.target).closest(SELECTORS.MESSAGE);
 
             do {
                 currentMessage = currentMessage.prev();
-            } while (currentMessage.length && !currentMessage.is(this.messageArea.SELECTORS.MESSAGE));
+            } while (currentMessage.length && !currentMessage.is(SELECTORS.MESSAGE));
 
             currentMessage.focus();
 
@@ -543,11 +567,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._selectNextMessage = function(e, data) {
-            var currentMessage = $(e.target).closest(this.messageArea.SELECTORS.MESSAGE);
+            var currentMessage = $(e.target).closest(SELECTORS.MESSAGE);
 
             do {
                 currentMessage = currentMessage.next();
-            } while (currentMessage.length && !currentMessage.is(this.messageArea.SELECTORS.MESSAGE));
+            } while (currentMessage.length && !currentMessage.is(SELECTORS.MESSAGE));
 
             currentMessage.focus();
 
@@ -562,7 +586,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._setMessaging = function(e) {
-            $(e.target).closest(this.messageArea.SELECTORS.MESSAGERESPONSE).addClass('messaging');
+            $(e.target).closest(SELECTORS.MESSAGERESPONSE).addClass('messaging');
         };
 
         /**
@@ -572,7 +596,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._clearMessaging = function(e) {
-            $(e.target).closest(this.messageArea.SELECTORS.MESSAGERESPONSE).removeClass('messaging');
+            $(e.target).closest(SELECTORS.MESSAGERESPONSE).removeClass('messaging');
         };
 
         /**
@@ -595,7 +619,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._isEditing = function() {
-            return this.messageArea.find(this.messageArea.SELECTORS.MESSAGESAREA).hasClass('editing');
+            return this.messageArea.find(SELECTORS.MESSAGESAREA).hasClass('editing');
         };
 
         /**
@@ -609,7 +633,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 return;
             }
 
-            var message = $(e.target).closest(this.messageArea.SELECTORS.MESSAGE);
+            var message = $(e.target).closest(SELECTORS.MESSAGE);
 
             if (message.attr('aria-checked') === 'true') {
                 message.attr('aria-checked', 'false');
@@ -626,8 +650,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Messages.prototype._adjustMessagesAreaHeight = function(e) {
-            var messagesArea = this.messageArea.find(this.messageArea.SELECTORS.MESSAGES);
-            var messagesResponse = this.messageArea.find(this.messageArea.SELECTORS.MESSAGERESPONSE);
+            var messagesArea = this.messageArea.find(SELECTORS.MESSAGES);
+            var messagesResponse = this.messageArea.find(SELECTORS.MESSAGERESPONSE);
 
             var currentMessageResponseHeight = messagesResponse.outerHeight();
             var diffResponseHeight = currentMessageResponseHeight - MESSAGES_RESPONSE_DEFAULT_HEIGHT;
@@ -653,7 +677,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Hide the messaging area. This only applies on smaller screen resolutions.
          */
         Messages.prototype._hideMessagingArea = function() {
-            this.messageArea.find(this.messageArea.SELECTORS.MESSAGINGAREA)
+            this.messageArea.find(SELECTORS.MESSAGINGAREA)
                 .removeClass('show-messages')
                 .addClass('hide-messages');
         };
