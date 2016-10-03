@@ -1149,15 +1149,6 @@ function xmldb_main_upgrade($oldversion) {
         // Launch add key tagcloudid.
         $dbman->add_key($table, $key);
 
-        // Define index tagcolltype (not unique) to be added to tag.
-        $table = new xmldb_table('tag');
-        $index = new xmldb_index('tagcolltype', XMLDB_INDEX_NOTUNIQUE, array('tagcollid', 'tagtype'));
-
-        // Conditionally launch add index tagcolltype.
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2016011300.02);
     }
@@ -1327,6 +1318,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Define index tagcolltype (not unique) to be dropped form tag.
+        // This index is no longer created however it was present at some point and it's better to be safe and try to drop it.
         $index = new xmldb_index('tagcolltype', XMLDB_INDEX_NOTUNIQUE, array('tagcollid', 'tagtype'));
 
         // Conditionally launch drop index tagcolltype.
