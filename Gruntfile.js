@@ -195,6 +195,18 @@ module.exports = function(grunt) {
             scss: {
                 options: {syntax: 'scss'},
                 src: ['*/**/*.scss']
+            },
+            css: {
+                src: ['*/**/*.css'],
+                options: {
+                    configOverrides: {
+                        rules: {
+                            // These rules have to be disabled in .stylelintrc for scss compat.
+                            "at-rule-no-unknown": true,
+                            "no-browser-hacks": [true, {"severity": "warning"}]
+                        }
+                    }
+                }
             }
         }
     });
@@ -349,7 +361,7 @@ module.exports = function(grunt) {
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
-    grunt.registerTask('css', ['stylelint:scss', 'stylelint:less', 'less:bootstrapbase']);
+    grunt.registerTask('css', ['stylelint:scss', 'stylelint:less', 'less:bootstrapbase', 'stylelint:css']);
 
     // Register the startup task.
     grunt.registerTask('startup', 'Run the correct tasks for the current directory', tasks.startup);

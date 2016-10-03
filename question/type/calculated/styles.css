@@ -2,6 +2,7 @@
     padding: 0.3em;
     display: inline;
 }
+
 .que.calculated .answer input[type="text"] {
     width: 30%;
 }
@@ -21,12 +22,12 @@
 /* Editing form. */
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answeroptions_],
 body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answeroptions_] {
-    background: #EEE;
+    background: #eee;
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #BBB;
+    border: 1px solid #bbb;
     border-bottom: 0;
 }
 
@@ -50,23 +51,23 @@ body#page-question-type-calculated div[id^=fgroup_id_][id*=answertolerance_],
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answerdisplay_],
 body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answertolerance_],
 body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answerdisplay_] {
-    background: #EEE;
+    background: #eee;
     margin-bottom: 0;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #BBB;
+    border: 1px solid #bbb;
     border-top: 0;
     border-bottom: 0;
 }
 
 body#page-question-type-calculated div[id^=fitem_id_][id*=feedback_],
 body#page-question-type-calculatedmulti div[id^=fitem_id_][id*=feedback_] {
-    background: #EEE;
+    background: #eee;
     margin-bottom: 2em;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #BBB;
+    border: 1px solid #bbb;
     border-top: 0;
 }

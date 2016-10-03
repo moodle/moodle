@@ -1,11 +1,12 @@
 div.editor_atto_content td,
 div.editor_atto_content th,
 div.editor_atto_content caption {
-    border: 1px dashed #BBB;
+    border: 1px dashed #bbb;
     position: relative;
     min-width: 30px;
     height: 13px;
 }
+
 div.editor_atto_content caption {
     height: auto;
 }
@@ -34,6 +35,7 @@ div.availablecolors label input[type="radio"] {
     margin-left: -15px;
 }
 
-input[name="bordersize"], input[name="width"] {
+input[name="bordersize"],
+input[name="width"] {
     margin-right: 0.3em;
 }

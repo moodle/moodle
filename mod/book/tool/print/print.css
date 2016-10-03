@@ -1,4 +1,3 @@
-/*csslint important:false */
 #page-mod-book-print {
     color: #000;
     background-color: #fff;
@@ -7,10 +6,10 @@
     font-weight: normal;
     text-decoration: none;
 }
+
 #page-mod-book-print {
     margin-left: 50px;
     margin-right: 10px;
-
 }
 
 #page-mod-book-print h1,
@@ -21,7 +20,7 @@
 #page-mod-book-print h6 {
     page-break-after: avoid;
     page-break-inside: avoid;
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 /* just some hack - ignore user defined <font> */
@@ -50,84 +49,98 @@
 #page-mod-book-print .book_toc_none {
     page-break-before: always;
 }
+
 #page-mod-book-print .book_toc_none ul,
 #page-mod-book-print .book_toc_none ul ul {
-    margin-left: 0px;
-    padding-left: 0px;
+    margin-left: 0;
+    padding-left: 0;
 }
+
 #page-mod-book-print .book_toc_none li {
     margin-top: 10px;
     list-style: none;
 }
+
 #page-mod-book-print .book_toc_none li li {
-    margin-top: 0px;
+    margin-top: 0;
     list-style: none;
 }
 /* numbering == NUMBERED */
 #page-mod-book-print .book_toc_numbered {
     page-break-before: always;
 }
+
 #page-mod-book-print .book_toc_numbered li {
     margin-top: 10px;
     list-style: none;
 }
+
 #page-mod-book-print .book_toc_numbered li li {
-    margin-top: 0px;
+    margin-top: 0;
     list-style: none;
 }
+
 #page-mod-book-print .book_toc_numbered ul,
 #page-mod-book-print .book_toc_numbered ul ul {
-    margin-left: 0px;
-    padding-left: 0px;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 /* numbering == BULLETS */
 #page-mod-book-print .book_toc_bullets {
     page-break-before: always;
 }
+
 #page-mod-book-print .book_toc_bullets li {
     margin-top: 10px;
     list-style: none;
 }
+
 #page-mod-book-print .book_toc_bullets li li {
-    margin-top: 0px;
+    margin-top: 0;
     list-style: circle;
 }
+
 #page-mod-book-print .book_toc_bullets ul {
-    margin-left: 0px;
-    padding-left: 0px;
+    margin-left: 0;
+    padding-left: 0;
 }
+
 #page-mod-book-print .book_toc_bullets ul ul {
     margin-left: 20px;
-    padding-left: 0px;
+    padding-left: 0;
 }
 
 /* numbering == INDENTED */
 #page-mod-book-print .book_toc_indented {
     page-break-before: always;
 }
+
 #page-mod-book-print .book_toc_indented li {
     margin-top: 10px;
     list-style: none;
 }
+
 #page-mod-book-print .book_toc_indented li li {
-    margin-top: 0px;
+    margin-top: 0;
     list-style: none;
 }
+
 #page-mod-book-print .book_toc_indented ul {
-    margin-left: 0px;
-    padding-left: 0px;
+    margin-left: 0;
+    padding-left: 0;
 }
+
 #page-mod-book-print .book_toc_indented ul ul {
     margin-left: 20px;
-    padding-left: 0px;
+    padding-left: 0;
 }
 
 
 /* Exclude elements from printing. */
-@media print
-{
+
+@media print {
     .hidden-print {
-        display: none !important;
+        display: none !important; /* stylelint-disable-line declaration-no-important */
     }
 }

@@ -1,5 +1,5 @@
 .path-grade-report-singleview div.reporttable {
-  text-align: center;
+    text-align: center;
 }
 
 .path-grade-report-singleview div.groupselector,
@@ -10,21 +10,21 @@
     clear: both;
 }
 
-.path-grade-report-singleview div.singleselect+div.singleselect select,
+.path-grade-report-singleview div.singleselect + div.singleselect select,
 .path-grade-report-singleview div.groupselector select {
-    margin-right: 0px;
+    margin-right: 0;
 }
 
 .path-grade-report-singleview div.reporttable div.singleselect form div {
-  text-align: center;
+    text-align: center;
 }
 
 .path-grade-report-singleview div.reporttable table.reporttable {
-  margin: 0 auto 15px auto;
+    margin: 0 auto 15px auto;
 }
 
 .path-grade-report-singleview div.reporttable form div {
-  text-align: center;
+    text-align: center;
 }
 
 .path-grade-report-singleview .singleview_buttons {
@@ -32,20 +32,22 @@
 }
 
 .path-grade-report-singleview div.reporttable h2 {
-   text-align: center;
+    text-align: center;
 }
 
 .path-grade-report-singleview input[name^="finalgrade"] {
     width: 50px;
 }
+
 .path-grade-report-singleview .reporttable tbody th,
 .path-grade-report-singleview .reporttable tbody td.range {
-  white-space: nowrap;
+    white-space: nowrap;
 }
+
 .path-grade-report-singleview .reporttable tbody th > * {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0 2px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 2px;
 }
 
 .path-grade-report-singleview .itemnav {
@@ -53,44 +55,48 @@
     display: inline;
     padding-bottom: 0.5em;
 }
-.path-grade-report-singleview itemnav.previtem {
-   float:left;
+
+.path-grade-report-singleview .itemnav.previtem {
+    float: left;
 }
+
 .path-grade-report-singleview div.nextitem {
-   float:right;
+    float: right;
 }
+
 .path-grade-report-singleview .reporttable {
     width: 100%;
 }
+
 .path-grade-report-singleview .reporttable th {
     text-align: left;
 }
 
 .path-grade-report-singleview div.reporttable form div.singleview_bulk {
-  display: inline-block;
-  text-align: left;
-  margin-bottom: 1em;
+    display: inline-block;
+    text-align: left;
+    margin-bottom: 1em;
 }
 
 .path-grade-report-singleview .singleview_bulk div > *,
 .path-grade-report-singleview .singleview_bulk fieldset > * {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
 }
 
 .path-grade-report-singleview .singleselect select,
 .path-grade-report-singleview div.reporttable form .singleview_bulk select,
 .path-grade-report-singleview div.reporttable form .singleview_bulk input {
-  margin-left: 10px;
-  margin-right: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .path-grade-report-singleview .singleview_bulk > fieldset {
-  display: block;
+    display: block;
 }
 
 .path-grade-report-singleview div.reporttable form .singleview_bulk > div.enable {
-  margin-bottom: 0.5em;
-  text-align: left;
+    margin-bottom: 0.5em;
+    text-align: left;
 }

@@ -10,10 +10,10 @@
 .mediaplugin_vimeo,
 .mediaplugin_wmp,
 .mediaplugin_qt {
-  display: block;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  text-align: center;
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    text-align: center;
 }
 
 /*
@@ -22,5 +22,5 @@
  * any property that ends with '...Color' is supported here.
  */
 .mp3flowplayer_backgroundColor {
-  color: #000000;
+    color: #000;
 }

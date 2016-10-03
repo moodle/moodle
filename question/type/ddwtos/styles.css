@@ -14,24 +14,31 @@
 .que.ddwtos .drop {
     display: inline-block;
     text-align: center;
-    border: 1px solid #000000;
+    border: 1px solid #000;
     margin-bottom: 2px;
 }
-.que.ddwtos .draghome, .que.ddwtos .drag {
+
+.que.ddwtos .draghome,
+.que.ddwtos .drag {
     display: inline-block;
     text-align: center;
     background: transparent;
     border: 0;
 }
-.que.ddwtos .draghome, .que.ddwtos .drag.unplaced{
-    border: 1px solid #000000;
+
+.que.ddwtos .draghome,
+.que.ddwtos .drag.unplaced {
+    border: 1px solid #000;
 }
+
 .que.ddwtos .draghome {
     visibility: hidden;
 }
+
 .que.ddwtos .drag {
     z-index: 2;
 }
+
 .que.ddwtos .drag.yui3-dd-dragging {
     z-index: 3;
     box-shadow: 3px 3px 4px #000;
@@ -46,6 +53,7 @@
 .que.ddwtos .notreadonly .drag {
     cursor: move;
 }
+
 .que.ddwtos .readonly .drag {
     cursor: default;
 }
@@ -53,33 +61,41 @@
 .que.ddwtos span.incorrect {
     background-color: #faa;
 }
+
 .que.ddwtos span.correct {
     background-color: #afa;
 }
 
 .que.ddwtos .group1 {
-    background-color: #FFFFFF;
+    background-color: #fff;
 }
+
 .que.ddwtos .group2 {
-    background-color: #DCDCDC;
+    background-color: #dcdcdc;
 }
+
 .que.ddwtos .group3 {
-    background-color: #B0C4DE;
+    background-color: #b0c4de;
 }
+
 .que.ddwtos .group4 {
-    background-color: #D8BFD8;
+    background-color: #d8bfd8;
 }
+
 .que.ddwtos .group5 {
-    background-color: #87CEFA;
+    background-color: #87cefa;
 }
+
 .que.ddwtos .group6 {
-    background-color: #DAA520;
+    background-color: #daa520;
 }
+
 .que.ddwtos .group7 {
-    background-color: #FFD700;
+    background-color: #ffd700;
 }
+
 .que.ddwtos .group8 {
-    background-color: #F0E68C;
+    background-color: #f0e68c;
 }
 
 .que.ddwtos sub,
@@ -88,9 +104,11 @@
     position: relative;
     vertical-align: baseline;
 }
+
 .que.ddwtos sup {
     top: -0.4em;
 }
+
 .que.ddwtos sub {
     bottom: -0.2em;
 }

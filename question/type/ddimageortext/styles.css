@@ -3,65 +3,91 @@
     display: block;
 }
 
-.que.ddimageortext div.droparea img, form.mform fieldset#id_previewareaheader div.droparea img  {
-    border: 1px solid #000000;
+.que.ddimageortext div.droparea img,
+form.mform fieldset#id_previewareaheader div.droparea img {
+    border: 1px solid #000;
     max-width: none;
 }
 
-.que.ddimageortext .draghome, form.mform fieldset#id_previewareaheader .draghome {
+.que.ddimageortext .draghome,
+form.mform fieldset#id_previewareaheader .draghome {
     vertical-align: top;
     margin: 5px;
-    visibility : hidden;
+    visibility: hidden;
 }
 
-.que.ddimageortext div.draghome, form.mform fieldset#id_previewareaheader div.draghome {
+.que.ddimageortext div.draghome,
+form.mform fieldset#id_previewareaheader div.draghome {
     border: 1px solid black;
     cursor: move;
-    background-color: #B0C4DE;
-    display:inline-block;
+    background-color: #b0c4de;
+    display: inline-block;
     height: auto;
     width: auto;
     zoom: 1;
 }
 
-.que.ddimageortext .group1, form.mform fieldset#id_previewareaheader .group1 {
-    background-color: #FFFFFF;
+.que.ddimageortext .group1,
+form.mform fieldset#id_previewareaheader .group1 {
+    background-color: #fff;
 }
-.que.ddimageortext .group2, form.mform fieldset#id_previewareaheader .group2 {
-    background-color: #B0C4DE;
+
+.que.ddimageortext .group2,
+form.mform fieldset#id_previewareaheader .group2 {
+    background-color: #b0c4de;
 }
-.que.ddimageortext .group3, form.mform fieldset#id_previewareaheader .group3 {
-    background-color: #DCDCDC;
+
+.que.ddimageortext .group3,
+form.mform fieldset#id_previewareaheader .group3 {
+    background-color: #dcdcdc;
 }
-.que.ddimageortext .group4, form.mform fieldset#id_previewareaheader .group4 {
-    background-color: #D8BFD8;
+
+.que.ddimageortext .group4,
+form.mform fieldset#id_previewareaheader .group4 {
+    background-color: #d8bfd8;
 }
-.que.ddimageortext .group5, form.mform fieldset#id_previewareaheader .group5 {
-    background-color: #87CEFA;
+
+.que.ddimageortext .group5,
+form.mform fieldset#id_previewareaheader .group5 {
+    background-color: #87cefa;
 }
-.que.ddimageortext .group6, form.mform fieldset#id_previewareaheader .group6 {
-    background-color: #DAA520;
+
+.que.ddimageortext .group6,
+form.mform fieldset#id_previewareaheader .group6 {
+    background-color: #daa520;
 }
-.que.ddimageortext .group7, form.mform fieldset#id_previewareaheader .group7 {
-    background-color: #FFD700;
+
+.que.ddimageortext .group7,
+form.mform fieldset#id_previewareaheader .group7 {
+    background-color: #ffd700;
 }
-.que.ddimageortext .group8, form.mform fieldset#id_previewareaheader .group8 {
-    background-color: #F0E68C;
+
+.que.ddimageortext .group8,
+form.mform fieldset#id_previewareaheader .group8 {
+    background-color: #f0e68c;
 }
-.que.ddimageortext .drag, form.mform fieldset#id_previewareaheader .drag {
+
+.que.ddimageortext .drag,
+form.mform fieldset#id_previewareaheader .drag {
     border: 1px solid black;
     cursor: move;
     z-index: 2;
 }
+
 .que.ddimageortext .dragitems.readonly .drag {
     cursor: auto;
 }
-.que.ddimageortext div.ddarea, form.mform fieldset#id_previewareaheader div.ddarea {
-    text-align : center;
+
+.que.ddimageortext div.ddarea,
+form.mform fieldset#id_previewareaheader div.ddarea {
+    text-align: center;
 }
-.que.ddimageortext .dropbackground, form.mform fieldset#id_previewareaheader .dropbackground {
-    margin:0 auto;
+
+.que.ddimageortext .dropbackground,
+form.mform fieldset#id_previewareaheader .dropbackground {
+    margin: 0 auto;
 }
+
 .que.ddimageortext .dropzone {
     border: 1px solid black;
     position: absolute;
@@ -74,10 +100,13 @@
     box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
 }
 
-.que.ddimageortext div.dragitems div.draghome, .que.ddimageortext div.dragitems div.drag,
-form.mform fieldset#id_previewareaheader div.draghome, form.mform fieldset#id_previewareaheader div.drag {
-    font:13px/1.231 arial,helvetica,clean,sans-serif;
+.que.ddimageortext div.dragitems div.draghome,
+.que.ddimageortext div.dragitems div.drag,
+form.mform fieldset#id_previewareaheader div.draghome,
+form.mform fieldset#id_previewareaheader div.drag {
+    font: 13px/1.231 arial, helvetica, clean, sans-serif;
 }
+
 form.mform fieldset#id_previewareaheader div.drag.yui3-dd-dragging,
 .que.ddimageortext div.drag.yui3-dd-dragging {
     z-index: 3;
@@ -86,35 +115,36 @@ form.mform fieldset#id_previewareaheader div.drag.yui3-dd-dragging,
 /* Editing form. Style repeated elements*/
 /*Top*/
 body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] {
-    background: #EEE;
+    background: #eee;
     margin-top: 0;
     margin-bottom: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #BBB;
+    border: 1px solid #bbb;
     border-bottom: 0;
 }
+
 body#page-question-type-ddimageortext div[id^=fgroup_id_][id*=drags_] .fgrouplabel label {
     font-weight: bold;
 }
 /* Middle */
 body#page-question-type-ddimageortext div[id^=fitem_id_][id*=dragitem_] {
-    background: #EEE;
+    background: #eee;
     margin-bottom: 0;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #BBB;
+    border: 1px solid #bbb;
     border-top: 0;
     border-bottom: 0;
 }
 /* Bottom */
 body#page-question-type-ddimageortext div[id^=fitem_id_][id*=draglabel_] {
-    background: #EEE;
+    background: #eee;
     margin-bottom: 2em;
     margin-top: 0;
     padding-bottom: 5px;
     padding-top: 5px;
-    border: 1px solid #BBB;
+    border: 1px solid #bbb;
     border-top: 0;
 }
