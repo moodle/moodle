@@ -32,6 +32,7 @@ Feature: Add tools
     And I turn editing mode on
     And I add a "Teaching Tool 1" to section "1"
     # For tool that does not support Content-Item message type, the Select content button must be disabled.
+    And I wait until the page is ready
     And the "Select content" "button" should be disabled
     And I set the field "Activity name" to "Test tool activity 1"
     And I click on "Show more..." "link"
