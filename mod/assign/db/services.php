@@ -218,7 +218,8 @@ $functions = array(
                 'description'   => 'Submit the grading form data via ajax',
                 'type'          => 'write',
                 'ajax'          => true,
-                'capabilities'  => 'mod/assign:grade'
+                'capabilities'  => 'mod/assign:grade',
+                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
         'mod_assign_get_participant' => array(
                 'classname'     => 'mod_assign_external',
@@ -227,7 +228,8 @@ $functions = array(
                 'description'   => 'Get a participant for an assignment, with some summary info about their submissions.',
                 'type'          => 'read',
                 'ajax'          => true,
-                'capabilities'  => 'mod/assign:view, mod/assign:viewgrades'
+                'capabilities'  => 'mod/assign:view, mod/assign:viewgrades',
+                'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ),
         'mod_assign_view_assign' => array(
             'classname'     => 'mod_assign_external',
