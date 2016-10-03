@@ -431,8 +431,8 @@ class core_course_external extends external_api {
 
             $courseinfo = array();
             $courseinfo['id'] = $course->id;
-            $courseinfo['fullname'] = $course->fullname;
-            $courseinfo['shortname'] = $course->shortname;
+            $courseinfo['fullname'] = external_format_string($course->fullname, $context->id);
+            $courseinfo['shortname'] = external_format_string($course->shortname, $context->id);
             $courseinfo['displayname'] = external_format_string(get_course_display_name_for_list($course), $context->id);
             $courseinfo['categoryid'] = $course->category;
             list($courseinfo['summary'], $courseinfo['summaryformat']) =
