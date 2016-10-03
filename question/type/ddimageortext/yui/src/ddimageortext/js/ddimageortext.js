@@ -480,7 +480,11 @@ Y.extend(DDIMAGEORTEXT_QUESTION, M.qtype_ddimageortext.dd_base_class, {
             var drop = this.get('drops')[dropno];
             var nodeclass = 'dropzone group' + drop.group + ' place' + dropno;
             var title = drop.text.replace('"', '\"');
-            var dropnodehtml = '<div title="' + title + '" class="' + nodeclass + '">&nbsp;</div>';
+            if (!title) {
+                title = M.util.get_string('blank', 'qtype_ddimageortext');
+            }
+            var dropnodehtml = '<div title="' + title + '" class="' + nodeclass + '">' +
+                    '<span class="accesshide">' + title + '</span>&nbsp;</div>';
             var dropnode = Y.Node.create(dropnodehtml);
             groupnodes[drop.group].append(dropnode);
             dropnode.setStyles({'opacity': 0.5});
