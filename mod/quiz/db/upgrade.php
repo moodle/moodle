@@ -197,10 +197,10 @@ function xmldb_quiz_upgrade($oldversion) {
         // Find quizzes with the combination of require passing grade and grade to pass 0.
         $quizzes = $DB->get_records_sql("
             SELECT gi.id, gi.iteminstance
-		      FROM {quiz} q
+              FROM {quiz} q
         INNER JOIN {course_modules} cm ON q.id = cm.instance
         INNER JOIN {grade_items} gi ON q.id = gi.iteminstance
-		     WHERE q.completionpass = 1
+             WHERE q.completionpass = 1
                AND gi.gradepass = 0
                AND cm.completiongradeitemnumber IS NULL");
         if ($quizzes) {
