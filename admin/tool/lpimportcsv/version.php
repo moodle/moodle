@@ -15,34 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Invalid persistent exception.
+ * Plugin version info
  *
- * @package    core_competency
- * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @package    tool_lpimportcsv
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace core_competency;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Invalid persistent exception class.
- *
- * @package    core_competency
- * @copyright  2015 Frédéric Massart - FMCorz.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class invalid_persistent_exception extends \moodle_exception {
 
-    public function __construct(array $errors = array()) {
-        $forhumans = array();
-        $debuginfo = array();
-        foreach ($errors as $key => $message) {
-            $debuginfo[] = "$key: $message";
-            $forhumans[] = $message;
-        }
-        parent::__construct('invalidpersistent', 'core_competency', null, implode(', ', $forhumans), implode(' - ', $debuginfo));
-    }
+$plugin->version   = 2016083000; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2016051900; // Requires this Moodle version.
+$plugin->component = 'tool_lpimportcsv'; // Full name of the plugin (used for diagnostics).
+$plugin->dependencies = array('tool_lp' => 2016052300);
 
-}
