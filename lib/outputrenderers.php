@@ -3202,7 +3202,7 @@ EOD;
 
         $processor = $DB->get_record('message_processors', array('name' => 'popup'));
 
-        if (isloggedin() && $processor->enabled && !user_not_fully_set_up($USER)) {
+        if (isloggedin() && $processor->enabled && !isguestuser() && !user_not_fully_set_up($USER)) {
             $context = [
                 'userid' => $USER->id,
                 'urls' => [
@@ -3223,7 +3223,7 @@ EOD;
     public function message_menu() {
         global $CFG, $USER;
 
-        if (!empty($CFG->messaging) && isloggedin() && !user_not_fully_set_up($USER)) {
+        if (!empty($CFG->messaging) && isloggedin() && !isguestuser() && !user_not_fully_set_up($USER)) {
             $context = [
                 'userid' => $USER->id,
                 'urls' => [
