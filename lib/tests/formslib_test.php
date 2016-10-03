@@ -625,6 +625,23 @@ class core_formslib_testcase extends advanced_testcase {
         $this->assertFalse($form->is_validated());
         $this->assertNull($form->get_data());
     }
+
+    /**
+     * MDL-56233 - Tests mocking a form inside a namespace.
+     */
+    public function test_mock_submit() {
+        require_once(__DIR__.'/fixtures/namespaced_form.php');
+        \local_unittests\namespaced_form\exampleform::mock_submit(['title' => 'Mocked Value']);
+        $form = new \local_unittests\namespaced_form\exampleform();
+
+        // Here is the problem, this is the expected hidden field name.
+        $expected = '_qf__local_unittests_namespaced_form_exampleform';
+        self::assertArrayHasKey($expected, $_POST);
+
+        // This should work now, before it would fail.
+        self::assertTrue($form->is_submitted());
+        self::assertSame('Mocked Value', $form->get_data()->title);
+    }
 }
 
 
