@@ -101,7 +101,6 @@ form {
 .mform fieldset.fdate_selector label {
     display: inline;
     float: none;
-    width: auto;
 }
 .mform .ftags label.accesshide {
     display: block;
@@ -375,7 +374,7 @@ fieldset.coursesearchbox label {
         margin-bottom: 4px;
     }
     .availability-plugincontrols {
-        padding: 2px 0px 0px 4px;
+        padding: 2px 0 0 4px;
         background: none repeat scroll 0% 0% @wellBackground;
         border: 1px solid @grayLighter;
         border-radius: 4px;
@@ -420,6 +419,7 @@ fieldset.coursesearchbox label {
         margin-bottom: 6px;
     }
 }
+
 
 /* Default form styling colours all text red. With availability conditions
    this looks excessive as we show 'Invalid' markers in specific places. */
@@ -488,8 +488,8 @@ input[size] {
     min-width: 206px;
     max-height: 20em;
     overflow: auto;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     margin-top: -0.2em;
     z-index: 1;
 }

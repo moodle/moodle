@@ -81,7 +81,6 @@
         "selector-root-no-composition": true,
         "selector-type-case": "lower",
         "selector-type-no-unknown": true,
-        "shorthand-property-no-redundant-values": [null, { "severity": "warning" }],
         "string-no-newline": true,
         "time-no-imperceptible": true,
         "unit-blacklist": ["pt"],

@@ -184,15 +184,6 @@ module.exports = function(grunt) {
                     syntax: 'less',
                     configOverrides: {
                         rules: {
-                            // TODO: MDL-55165 -Enable these rules once we make output-changing changes to less.
-                            "declaration-block-no-ignored-properties": null,
-                            "value-keyword-case": null,
-                            "declaration-block-no-duplicate-properties": null,
-                            "declaration-block-no-shorthand-property-overrides": null,
-                            "selector-type-no-unknown": null,
-                            "length-zero-no-unit": null,
-                            "color-hex-case": null,
-                            "color-hex-length": null,
                             // These rules have to be disabled in .stylelintrc for scss compat.
                             "at-rule-no-unknown": true,
                             "no-browser-hacks": [true, {"severity": "warning"}]

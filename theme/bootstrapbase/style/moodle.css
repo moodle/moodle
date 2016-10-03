@@ -169,10 +169,10 @@ a.autolink.glossary:hover {
   background-image: url([[pix:t/expanded]]);
 }
 .yui-overlay .yui-widget-bd {
-  background-color: #FFEE69;
-  border: 1px solid #A6982B;
-  border-top-color: #D4C237;
-  color: #000000;
+  background-color: #ffee69;
+  border: 1px solid #a6982b;
+  border-top-color: #d4c237;
+  color: #000;
   left: 0;
   padding: 2px 5px;
   position: relative;
@@ -597,7 +597,7 @@ table.mod_index {
   padding: 2px;
 }
 .comment-paging .curpage {
-  border: 1px solid #CCC;
+  border: 1px solid #ccc;
 }
 .comment-message .picture {
   width: 20px;
@@ -664,7 +664,7 @@ img.user-image {
   margin: 10px auto;
 }
 .path-tag .tag-index-items .tagarea {
-  border: 1px solid #E3E3E3;
+  border: 1px solid #e3e3e3;
   border-radius: 4px;
   padding: 10px;
   margin-top: 10px;
@@ -672,15 +672,15 @@ img.user-image {
 .path-tag .tag-index-items .tagarea h3 {
   display: block;
   padding: 3px 0 10px 0;
-  margin: 0px;
+  margin: 0;
   font-size: 1.1em;
   font-weight: bold;
   line-height: 20px;
   color: #999;
-  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   word-wrap: break-word;
-  border-bottom: solid 1px #E3E3E3;
+  border-bottom: solid 1px #e3e3e3;
   margin-bottom: 10px;
 }
 .path-tag .tagarea .controls,
@@ -803,7 +803,7 @@ tr.flagged-tag a {
   text-align: center;
 }
 .tag_cloud .inline-list li {
-  padding: 0px 0.2em;
+  padding: 0 0.2em;
 }
 .tag_cloud .tag_overflow {
   margin-top: 1em;
@@ -919,7 +919,7 @@ tr.flagged-tag a {
 .smartselect .smartselect_menu,
 .smartselect .smartselect_submenu {
   border: 1px solid #000;
-  background-color: #FFF;
+  background-color: #fff;
   display: none;
 }
 .smartselect .smartselect_menu.visible,
@@ -1109,8 +1109,6 @@ tr.flagged-tag a {
   display: inline;
   float: none;
   clear: none;
-  width: auto;
-  margin: 0;
 }
 #page-enrol-users #filterform select,
 #page-enrol-users #filterform .ftext input {
@@ -1130,7 +1128,7 @@ tr.flagged-tag a {
   margin-left: 0;
 }
 .corelightbox {
-  background-color: #CCC;
+  background-color: #ccc;
   position: absolute;
   top: 0;
   left: 0;
@@ -1357,7 +1355,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
-  background-color: #AAA;
+  background-color: #aaa;
 }
 .moodle-dialogue-base .hidden,
 .moodle-dialogue-base .moodle-dialogue-hidden {
@@ -1367,9 +1365,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   overflow: hidden;
 }
 .moodle-dialogue-base .moodle-dialogue-fullscreen {
-  left: 0px;
-  top: 0px;
-  right: 0px;
+  left: 0;
+  top: 0;
+  right: 0;
   bottom: -50px;
   position: fixed;
 }
@@ -1427,7 +1425,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   filter: 0;
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
-  margin: 0;
   padding: 0;
   display: inline;
   font-size: 100%;
@@ -1440,7 +1437,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   width: 25px;
   height: 15px;
   float: right;
-  vertical-align: middle;
   display: inline-block;
   cursor: pointer;
   padding: 0;
@@ -1456,7 +1452,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-content {
   padding: 0;
-  background: #FFF;
+  background: #fff;
 }
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd {
   padding: 10px;
@@ -1465,16 +1461,16 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
   overflow: auto;
   position: absolute;
-  top: 0px;
+  top: 0;
   bottom: 50px;
-  left: 0px;
-  right: 0px;
-  margin: 0px;
-  border: 0px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  border: 0;
 }
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd,
 .moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-wrap {
-  border-radius: 0px;
+  border-radius: 0;
 }
 .moodle-dialogue-confirm .confirmation-dialogue {
   text-align: center;
@@ -1489,7 +1485,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   font-weight: bold;
 }
 .moodle-dialogue-exception .param-stacktrace label {
-  background-color: #EEE;
+  background-color: #eee;
   border: 1px solid #ccc;
   border-bottom-width: 0;
 }
@@ -1514,7 +1510,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   padding: 0;
   margin: 0.7em 1em;
   text-align: right;
-  background-color: #FFF;
+  background-color: #fff;
   font-size: 12px;
 }
 .moodle-dialogue-confirm .confirmation-message {
@@ -1593,7 +1589,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 .chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
   padding: 0;
-  background: #F2F2F2;
+  background: #f2f2f2;
   -webkit-border-bottom-right-radius: 10px;
   -moz-border-radius-bottomright: 10px;
   border-bottom-right-radius: 10px;
@@ -1619,16 +1615,16 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 /* Various settings for the options area */
 .choosercontainer #chooseform .options {
   position: relative;
-  border-bottom: 1px solid #BBBBBB;
+  border-bottom: 1px solid #bbb;
 }
 /* Only set these options if we're showing the js container */
 .jschooser .choosercontainer #chooseform .alloptions {
   overflow-x: hidden;
   overflow-y: auto;
   max-width: 20.3em;
-  -webkit-box-shadow: inset 0 0 30px 0px #ccc;
-  -moz-box-shadow: inset 0 0 30px 0px #ccc;
-  box-shadow: inset 0 0 30px 0px #ccc;
+  -webkit-box-shadow: inset 0 0 30px 0 #ccc;
+  -moz-box-shadow: inset 0 0 30px 0 #ccc;
+  box-shadow: inset 0 0 30px 0 #ccc;
 }
 .jschooser .choosercontainer #chooseform .alloptions .option input[type=radio] {
   display: inline-block;
@@ -1671,7 +1667,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .choosercontainer #chooseform .option label {
   display: block;
   padding: 0.3em 0 0.1em 0;
-  border-bottom: 1px solid #FFFFFF;
+  border-bottom: 1px solid #fff;
 }
 .choosercontainer #chooseform .nonoption {
   padding-left: 2.7em;
@@ -1731,7 +1727,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   margin: 15px 0;
   padding: 1px 19px 14px;
   background-color: white;
-  border: 1px solid #DDD;
+  border: 1px solid #ddd;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -1744,9 +1740,9 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   padding: 3px 7px;
   font-size: 12px;
   font-weight: bold;
-  background-color: whiteSmoke;
+  background-color: #f5f5f5;
   border: 1px solid #ddd;
-  color: #9DA0A4;
+  color: #9da0a4;
   -webkit-border-radius: 4px 0 4px 0;
   -moz-border-radius: 4px 0 4px 0;
   border-radius: 4px 0 4px 0;
@@ -1761,10 +1757,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .formlistingrow {
   cursor: pointer;
   border-bottom: 1px solid;
-  border-color: #E1E1E8;
-  border-left: 1px solid #E1E1E8;
-  border-right: 1px solid #E1E1E8;
-  background-color: #F7F7F9;
+  border-color: #e1e1e8;
+  border-left: 1px solid #e1e1e8;
+  border-right: 1px solid #e1e1e8;
+  background-color: #f7f7f9;
   -webkit-border-radius: 0 0 4px 4px;
   -moz-border-radius: 0 0 4px 4px;
   border-radius: 0 0 4px 4px;
@@ -1928,14 +1924,14 @@ table.collection .actions {
   vertical-align: middle;
 }
 a.criteria-action {
-  padding: 0px 3px;
+  padding: 0 3px;
   float: right;
 }
 div.criteria-description {
   padding: 10px 15px;
-  margin: 5px 0px;
+  margin: 5px 0;
   background: none repeat scroll 0 0 #f9f9f9;
-  border: 1px solid #EEE;
+  border: 1px solid #eee;
 }
 ul.badges {
   margin: 0;
@@ -1960,7 +1956,7 @@ ul.badges {
   width: 100px;
   height: 100px;
   left: 10px;
-  top: 0px;
+  top: 0;
   z-index: 1;
 }
 .badges li .badge-actions {
@@ -1970,7 +1966,7 @@ ul.badges {
   width: 100px;
   height: 100px;
   left: 25px;
-  top: 0px;
+  top: 0;
   position: absolute;
   z-index: 10;
   opacity: 0.85;
@@ -1988,8 +1984,8 @@ ul.badges {
 #badge-image .expireimage {
   width: 100px;
   height: 100px;
-  left: 0px;
-  top: 0px;
+  left: 0;
+  top: 0;
   opacity: 0.85;
   filter: alpha(opacity=85);
   position: absolute;
@@ -1999,7 +1995,7 @@ ul.badges {
   padding-top: 5px;
 }
 #badge-image .singlebutton input {
-  margin-left: 0px;
+  margin-left: 0;
 }
 #badge-details {
   display: inline-block;
@@ -2074,7 +2070,7 @@ ul.badges {
   margin: 3px;
 }
 .activatebadge {
-  margin: 0px;
+  margin: 0;
   text-align: left;
   vertical-align: middle;
 }
@@ -2086,7 +2082,6 @@ img#persona_signin {
 }
 .invisiblefieldset {
   display: inline;
-  margin: 0;
   padding: 0;
   border-width: 0;
 }
@@ -2181,8 +2176,8 @@ img#persona_signin {
 }
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .iconsmall,
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .smallicon {
-  margin: 4px 4px 4px 0px;
-  padding: 8px 4px 0px 2px;
+  margin: 4px 4px 4px 0;
+  padding: 8px 4px 0 2px;
   vertical-align: text-bottom;
 }
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .caret {
@@ -2911,7 +2906,6 @@ img.iconsmall {
   direction: ltr;
 }
 .form-item .form-setting .form-htmlarea {
-  width: 640px;
   display: inline;
 }
 .form-item .form-setting .form-htmlarea .htmlarea {
@@ -3088,7 +3082,7 @@ img.iconsmall {
   margin-left: 13px;
 }
 #plugins-check-page #plugins-check .status .actionbutton {
-  margin: 5px 0px;
+  margin: 5px 0;
   padding: 0;
 }
 #plugins-check-page #plugins-check .status .actionbutton input {
@@ -3574,7 +3568,7 @@ img.iconsmall {
   font-size: 10px;
   font-weight: bold;
   background-color: #f60;
-  padding: 0px 5px;
+  padding: 0 5px;
   color: #fff;
   border-top: 1px solid #f93;
   border-left: 1px solid #f93;
@@ -3644,7 +3638,6 @@ img.iconsmall {
 .section .activity .spinner {
   left: 100%;
   position: absolute;
-  vertical-align: text-bottom;
 }
 .section .activity .editing_move {
   /* Move the move icon to the start of the line */
@@ -4271,8 +4264,8 @@ span.editinstructions {
 .section .editing_title .iconsmall {
   width: 12px;
   height: 12px;
-  margin: 8px 8px 0px 0;
-  padding: 4px 8px 0px 0;
+  margin: 8px 8px 0 0;
+  padding: 4px 8px 0 0;
   vertical-align: text-bottom;
 }
 .section .moodle-actionmenu .iconsmall {
@@ -4414,7 +4407,6 @@ span.editinstructions {
 }
 #course-category-listings .item-actions {
   margin-right: 1em;
-  display: inline-block;
   display: initial;
 }
 #course-category-listings .item-actions > a img,
@@ -4602,7 +4594,6 @@ span.editinstructions {
   line-height: 40px;
 }
 .coursecat-management-header > div > div {
-  margin-left: 1em;
   margin: 10px 0;
   display: inline-block;
 }
@@ -4691,7 +4682,7 @@ span.editinstructions {
 .file-picker a,
 .filemanager a:hover,
 .file-picker a:hover {
-  color: #555555;
+  color: #555;
   text-decoration: none;
 }
 .filemanager input[type="text"],
@@ -4720,7 +4711,7 @@ span.editinstructions {
 }
 #filesskin .yui3-panel-content {
   padding-bottom: 20px;
-  background: #F2F2F2;
+  background: #f2f2f2;
   -webkit-border-radius: 8px;
   -moz-border-radius: 8px;
   border-radius: 8px;
@@ -4737,14 +4728,14 @@ span.editinstructions {
   -webkit-border-radius: 10px 10px 0 0;
   -moz-border-radius: 10px 10px 0 0;
   border-radius: 10px 10px 0 0;
-  border-bottom: 1px solid #BBBBBB;
+  border-bottom: 1px solid #bbb;
   padding: 5px;
   text-align: center;
   font-size: 12px;
   color: #333;
   letter-spacing: 1px;
   text-shadow: 1px 1px 1px #fff;
-  filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+  filter: dropshadow(color=#fff, offx=1, offy=1);
   background-color: #ebebeb;
   background-image: -moz-linear-gradient(top, #fff, #ccc);
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#ccc));
@@ -4776,15 +4767,15 @@ span.editinstructions {
   line-height: 20px;
 }
 .moodle-dialogue-base .filepicker .moodle-dialogue-wrap .moodle-dialogue-bd {
-  padding: 0px;
+  padding: 0;
 }
 #filesskin .file-picker.fp-generallayout {
   width: 859px;
-  background: #FFFFFF;
+  background: #fff;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  border: 1px solid #CCCCCC;
+  border: 1px solid #ccc;
   position: relative;
 }
 .file-picker .fp-repo-area {
@@ -4796,7 +4787,7 @@ span.editinstructions {
   *zoom: 1;
   float: left;
   height: 525px;
-  border-right: 1px solid #BBBBBB;
+  border-right: 1px solid #bbb;
 }
 .file-picker .fp-repo-items {
   float: none;
@@ -4804,13 +4795,13 @@ span.editinstructions {
   margin-left: 181px;
 }
 .moodle-dialogue-fullscreen .file-picker .fp-repo-items {
-  margin-left: 0px;
-  margin-right: 0px;
+  margin-left: 0;
+  margin-right: 0;
   float: left;
 }
 .file-picker .fp-navbar {
-  background: #F2F2F2;
-  border-bottom: 1px solid #BBBBBB;
+  background: #f2f2f2;
+  border-bottom: 1px solid #bbb;
   min-height: 40px;
   overflow: hidden;
 }
@@ -4818,7 +4809,7 @@ span.editinstructions {
   margin: 4px;
 }
 .file-picker .fp-content {
-  background: #FFFFFF;
+  background: #fff;
   clear: none;
   overflow: auto;
   height: 452px;
@@ -4848,7 +4839,7 @@ span.editinstructions {
   padding: .5em .7em;
 }
 .file-picker .fp-list .fp-repo.active {
-  background: #F2F2F2;
+  background: #f2f2f2;
 }
 .file-picker .fp-list .fp-repo-icon {
   padding: 0 7px 0 5px;
@@ -4878,38 +4869,38 @@ span.editinstructions {
   height: 27px;
 }
 .fp-toolbar .fp-tb-search input {
-  background: #FFFFFF url('[[pix:a/search]]') no-repeat 7px 7px;
+  background: #fff url('[[pix:a/search]]') no-repeat 7px 7px;
   padding: 2px 6px 1px 27px;
   width: 200px;
   height: 27px;
-  border: 1px solid #BBBBBB;
+  border: 1px solid #bbb;
 }
 .fp-viewbar {
   float: right;
   height: 30px;
-  border: 1px solid #CCC;
-  border-bottom: 1px solid #B3B3B3;
+  border: 1px solid #ccc;
+  border-bottom: 1px solid #b3b3b3;
   border-radius: 4px;
   background: white;
 }
-.fp-repo-items fp-viewbar {
+.fp-repo-items .fp-viewbar {
   margin: 4px;
 }
 .fp-viewbar a {
   width: 30px;
   height: 30px;
-  border-right: 1px solid #CCC;
+  border-right: 1px solid #ccc;
   display: block;
   float: left;
 }
 .fp-viewbar a.checked:hover,
 .fp-viewbar a:hover {
-  background-image: radial-gradient(ellipse at center, #ffffff 60%, #dfdfdf 100%);
+  background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
   background-color: #ebebeb;
 }
 .fp-viewbar a.checked,
 .fp-viewbar a:active {
-  background-image: radial-gradient(ellipse at center, #ffffff 40%, #dfdfdf 100%);
+  background-image: radial-gradient(ellipse at center, #fff 40%, #dfdfdf 100%);
   background-color: #dfdfdf;
 }
 .fp-viewbar a.fp-vb-icons {
@@ -4959,7 +4950,7 @@ span.editinstructions {
   min-height: 110px;
   line-height: 110px;
   text-align: center;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #fff;
   display: block;
 }
 .fp-iconview .fp-thumbnail img {
@@ -4973,9 +4964,9 @@ span.editinstructions {
 .fp-iconview .fp-thumbnail:hover {
   background: #fff;
   border: 1px solid #ddd;
-  -webkit-box-shadow: inset 0 0 10px 0px #ccc;
-  -moz-box-shadow: inset 0 0 10px 0px #ccc;
-  box-shadow: inset 0 0 10px 0px #ccc;
+  -webkit-box-shadow: inset 0 0 10px 0 #ccc;
+  -moz-box-shadow: inset 0 0 10px 0 #ccc;
+  box-shadow: inset 0 0 10px 0 #ccc;
 }
 .fp-iconview .fp-filename-field {
   height: 33px;
@@ -4988,28 +4979,28 @@ span.editinstructions {
   z-index: 1000;
 }
 .fp-iconview .fp-filename-field .fp-filename {
-  background: #FFFFFF;
+  background: #fff;
   padding-top: 5px;
   padding-bottom: 12px;
   min-width: 112px;
 }
 .file-picker .yui3-datatable table {
-  border: 0 solid #BBBBBB;
+  border: 0 solid #bbb;
   width: 100%;
 }
 #filesskin .file-picker .yui3-datatable-header {
-  background: #FFFFFF;
-  border-bottom: 1px solid #CCCCCC;
-  border-left: 0 solid #FFFFFF;
-  color: #555555;
+  background: #fff;
+  border-bottom: 1px solid #ccc;
+  border-left: 0 solid #fff;
+  color: #555;
 }
 #filesskin .file-picker .yui3-datatable-odd .yui3-datatable-cell {
-  background-color: #F6F6F6;
-  border-left: 0 solid #F6F6F6;
+  background-color: #f6f6f6;
+  border-left: 0 solid #f6f6f6;
 }
 #filesskin .file-picker .yui3-datatable-even .yui3-datatable-cell {
-  background-color: #FFFFFF;
-  border-left: 0 solid #FFFFFF;
+  background-color: #fff;
+  border-left: 0 solid #fff;
 }
 .file-picker .ygtvtn,
 .filemanager .ygtvtn {
@@ -5150,7 +5141,7 @@ a.ygtvspacer:hover {
 }
 .file-picker .ygtvfocus,
 .filemanager .ygtvfocus {
-  background-color: #EEEEEE;
+  background-color: #eee;
 }
 .fp-filename-icon {
   margin-top: 10px;
@@ -5264,8 +5255,8 @@ a.ygtvspacer:hover {
 .fp-select .fp-hr {
   clear: both;
   height: 1px;
-  background-color: #FFFFFF;
-  border-bottom: 1px solid #BBBBBB;
+  background-color: #fff;
+  border-bottom: 1px solid #bbb;
   width: auto;
   margin: 10px 0;
 }
@@ -5300,7 +5291,7 @@ a.ygtvspacer:hover {
   box-shadow: inset 0 0 10px 0 #ccc;
 }
 .fp-select .fp-thumbnail img {
-  border: 1px solid #DDDDDD;
+  border: 1px solid #ddd;
   padding: 3px;
   vertical-align: middle;
   margin: 10px;
@@ -5378,8 +5369,8 @@ a.ygtvspacer:hover {
   text-align: right;
 }
 .filemanager .fp-navbar {
-  background: #F2F2F2;
-  border: 1px solid #BBBBBB;
+  background: #f2f2f2;
+  border: 1px solid #bbb;
   border-bottom: none;
 }
 .filemanager-toolbar {
@@ -5387,7 +5378,7 @@ a.ygtvspacer:hover {
   overflow: hidden;
 }
 .fp-pathbar {
-  border-top: 1px solid #BBBBBB;
+  border-top: 1px solid #bbb;
   padding: 5px 8px 1px;
   min-height: 20px;
 }
@@ -5401,19 +5392,19 @@ a.ygtvspacer:hover {
 .fp-toolbar .fp-tb-manage,
 .fp-toolbar .fp-tb-logout,
 .fp-toolbar .fp-tb-refresh {
-  border: 1px solid #CCC;
-  border-bottom: 1px solid #B3B3B3;
+  border: 1px solid #ccc;
+  border-bottom: 1px solid #b3b3b3;
   border-radius: 4px;
   background: white;
   width: 30px;
   height: 30px;
 }
 .fp-toolbar a:hover {
-  background-image: radial-gradient(ellipse at center, #ffffff 60%, #dfdfdf 100%);
+  background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
   background-color: #ebebeb;
 }
 .fp-toolbar a:active {
-  background-image: radial-gradient(ellipse at center, #ffffff 40%, #dfdfdf 100%);
+  background-image: radial-gradient(ellipse at center, #fff 40%, #dfdfdf 100%);
   background-color: #dfdfdf;
 }
 .fp-btn-add a,
@@ -5442,10 +5433,10 @@ a.ygtvspacer:hover {
 }
 .filepicker-filelist,
 .filemanager-container {
-  background: #FFFFFF;
+  background: #fff;
   clear: both;
   overflow: auto;
-  border: 1px solid #BBBBBB;
+  border: 1px solid #bbb;
   min-height: 140px;
   position: relative;
 }
@@ -5460,7 +5451,7 @@ a.ygtvspacer:hover {
 }
 .fitem.disabled .filepicker-filelist,
 .fitem.disabled .filemanager-container {
-  background-color: #EBEBE4;
+  background-color: #ebebe4;
 }
 .fitem.disabled .fp-btn-choose {
   color: #999;
@@ -5498,22 +5489,22 @@ a.ygtvspacer:hover {
   background-position: center center;
 }
 .filemanager .yui3-datatable table {
-  border: 0 solid #BBBBBB;
+  border: 0 solid #bbb;
   width: 100%;
 }
 .filemanager .yui3-datatable-header {
-  background: #FFFFFF !important;
-  border-bottom: 1px solid #CCCCCC !important;
-  border-left: 0 solid #FFFFFF !important;
-  color: #555555 !important;
+  background: #fff !important;
+  border-bottom: 1px solid #ccc !important;
+  border-left: 0 solid #fff !important;
+  color: #555 !important;
 }
 .filemanager .yui3-datatable-odd .yui3-datatable-cell {
-  background-color: #F6F6F6 !important;
-  border-left: 0 solid #F6F6F6;
+  background-color: #f6f6f6 !important;
+  border-left: 0 solid #f6f6f6;
 }
 .filemanager .yui3-datatable-even .yui3-datatable-cell {
-  background-color: #FFFFFF !important;
-  border-left: 0 solid #FFFFFF;
+  background-color: #fff !important;
+  border-left: 0 solid #fff;
 }
 .filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1 {
   background: url('[[pix:theme|fp/link_sm]]') no-repeat 0 0;
@@ -5558,13 +5549,13 @@ a.ygtvspacer:hover {
   bottom: 10px;
   left: 10px;
   right: 10px;
-  border: 2px dashed #BBBBBB;
+  border: 2px dashed #bbb;
   padding-top: 85px;
   text-align: center;
 }
 .filepicker-filelist .dndupload-target,
 .filemanager-container .dndupload-target {
-  background: #FFFFFF;
+  background: #fff;
   position: absolute;
   top: 10px;
   bottom: 10px;
@@ -5579,7 +5570,7 @@ a.ygtvspacer:hover {
 }
 .filepicker-filelist.dndupload-over .dndupload-target,
 .filemanager-container.dndupload-over .dndupload-target {
-  background: #FFFFFF;
+  background: #fff;
   position: absolute;
   top: 10px;
   bottom: 10px;
@@ -5699,8 +5690,8 @@ a.ygtvspacer:hover {
   display: inline;
 }
 .filemanager.fp-select .fp-reflist .fp-value {
-  background: #F9F9F9;
-  border: 1px solid #BBBBBB;
+  background: #f9f9f9;
+  border: 1px solid #bbb;
   padding: 8px 7px;
   margin: 0;
   max-width: 265px;
@@ -6227,7 +6218,7 @@ table.message .searchresults td {
 #qtypechoicecontainer {
   font-size: 12px;
   color: #333;
-  background: #F2F2F2;
+  background: #f2f2f2;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
@@ -6287,9 +6278,9 @@ table.message .searchresults td {
   left: 60%;
   margin: 0;
   overflow-x: hidden;
+  overflow-y: auto;
   padding: 1.5em 1.6em;
   background-color: #fff;
-  overflow-y: auto;
 }
 #chooseqtype .instruction,
 #chooseqtype .selected .qtypesummary {
@@ -6310,7 +6301,7 @@ table.message .searchresults td {
   padding-left: 5px;
 }
 #categoryquestions .checkbox input[type="checkbox"] {
-  margin-left: 0px;
+  margin-left: 0;
   float: none;
 }
 #categoryquestions img.iconsmall {
@@ -6350,7 +6341,6 @@ table.message .searchresults td {
 }
 body.path-question-type .fitem_fgroup .accesshide {
   font: inherit;
-  left: 0;
   position: static;
   padding-right: .3em;
 }
@@ -6628,7 +6618,7 @@ body.path-question-type .fitem_fgroup .accesshide {
   background: transparent;
 }
 #page-mod-quiz-edit #categoryquestions > thead {
-  background: #FFF;
+  background: #fff;
 }
 #page-mod-quiz-edit #categoryquestions > tbody > tr:nth-of-type(even) {
   background: #e4e4e4;
@@ -6636,7 +6626,6 @@ body.path-question-type .fitem_fgroup .accesshide {
 #page-mod-quiz-edit .questionbankwindow div.header {
   color: #444;
   text-shadow: none;
-  padding: 3px;
   -webkit-border-top-right-radius: 4px;
   -moz-border-radius-topright: 4px;
   border-top-right-radius: 4px;
@@ -6694,7 +6683,7 @@ body.path-question-type .fitem_fgroup .accesshide {
 }
 #page-mod-quiz-edit div.question div.content div.points {
   margin-top: -0.5em;
-  padding-bottom: 0em;
+  padding-bottom: 0;
   border: none;
   background-color: #fff;
   position: static;
@@ -12504,7 +12493,6 @@ div.c1.btn {
   font-size: inherit;
   line-height: inherit;
   text-align: inherit;
-  vertical-align: inherit;
   cursor: default;
   color: inherit;
   text-shadow: inherit;
@@ -12538,8 +12526,8 @@ img.icon-pre {
 .loginbox.twocolumns .signuppanel,
 .loginbox.twocolumns .loginpanel,
 .loginbox.twocolumns .loginpanel {
-  padding: 0px;
-  margin: 0px;
+  padding: 0;
+  margin: 0;
 }
 .tooltip {
   opacity: 1;
@@ -12713,7 +12701,7 @@ body {
 .block_calendar_upcoming .content .footer {
   margin-top: .5em;
   padding-top: 10px;
-  padding-left: 0px;
+  padding-left: 0;
 }
 .block_rss_client .content li {
   margin-bottom: 10px;
@@ -12752,7 +12740,7 @@ body {
 }
 .block_news_items .content .footer {
   padding-top: 10px;
-  padding-left: 0px;
+  padding-left: 0;
 }
 .block_login input#login_username,
 .block_login input#login_password {
@@ -12873,7 +12861,6 @@ form {
 .mform fieldset.fdate_selector label {
   display: inline;
   float: none;
-  width: auto;
 }
 .mform .ftags label.accesshide {
   display: block;
@@ -13205,7 +13192,7 @@ fieldset.coursesearchbox label {
   margin-bottom: 4px;
 }
 #fitem_id_availabilityconditionsjson .availability-plugincontrols {
-  padding: 2px 0px 0px 4px;
+  padding: 2px 0 0 4px;
   background: none repeat scroll 0% 0% #f5f5f5;
   border: 1px solid #eee;
   border-radius: 4px;
@@ -13303,8 +13290,8 @@ input[size] {
   min-width: 206px;
   max-height: 20em;
   overflow: auto;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   margin-top: -0.2em;
   z-index: 1;
 }
@@ -13930,7 +13917,7 @@ div#dock {
 .usermenu .moodle-actionmenu .menu .menu-action.icon:hover img {
   background: #fff;
   border-radius: 4px;
-  box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.125);
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.125);
 }
 .usermenu .moodle-actionmenu[data-enhanced] .menu .menu-action.icon img,
 .usermenu .moodle-actionmenu[data-enhanced] .menu .menu-action.icon:hover img {
@@ -13979,7 +13966,7 @@ div#dock {
 .navbar-inverse .usermenu .moodle-actionmenu .menu .menu-action.icon:hover img {
   background: #333;
   border-radius: 4px;
-  box-shadow: 0px 0px 16px #ffffff;
+  box-shadow: 0 0 16px #ffffff;
 }
 .navbar-inverse .usermenu .moodle-actionmenu[data-enhanced] .menu .menu-action.icon img,
 .navbar-inverse .usermenu .moodle-actionmenu[data-enhanced] .menu .menu-action.icon:hover img {
@@ -14001,7 +13988,7 @@ div#dock {
 }
 .jsenabled .usermenu .moodle-actionmenu > .menubar {
   display: block;
-  margin: 0px;
+  margin: 0;
 }
 .jsenabled .usermenu .moodle-actionmenu > .menu {
   min-width: 160px;
@@ -14139,7 +14126,7 @@ div#dock {
   border-width: 1px;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton.flagged .thispageholder {
-  background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0px no-repeat;
+  background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0 no-repeat;
 }
 .path-mod-quiz #mod_quiz_navblock .qnbutton .trafficlight {
   border: 0;
@@ -14299,7 +14286,7 @@ div#dock {
 }
 /* reports.less */
 #page-report-participation-index .participationselectform div label {
-  display: inline;
+  display: inline-block;
   margin: 0 5px;
 }
 #page-report-participation-index .participationselectform div label[for=menuinstanceid] {
@@ -15017,12 +15004,12 @@ input.fp-btn-choose {
   padding: 6px;
 }
 #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .description textarea {
-  margin-bottom: 0px;
+  margin-bottom: 0;
   height: 115px;
 }
 #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .definition textarea {
   width: 80%;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .score {
   position: relative;
@@ -15030,7 +15017,7 @@ input.fp-btn-choose {
   margin-right: 28px;
 }
 #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .score input {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .level {
   vertical-align: top;
@@ -15051,7 +15038,7 @@ input.fp-btn-choose {
   bottom: 0;
   height: 24px;
   width: 24px;
-  margin: 0px;
+  margin: 0;
 }
 #rubric-rubric.gradingform_rubric #rubric-criteria .criterion .level .delete input:hover {
   background-color: #ddd;
@@ -15104,7 +15091,7 @@ input.fp-btn-choose {
   -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
   -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
-  background-position: 0px 0px;
+  background-position: 0 0;
   height: 30px;
   margin-right: 5px;
 }
@@ -15263,7 +15250,7 @@ input.fp-btn-choose {
   margin: 0;
   color: inherit;
   text-shadow: inherit;
-  border: 0px none;
+  border: 0 none;
   line-height: inherit;
   background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
   padding-left: 26px;
@@ -16805,7 +16792,7 @@ body.has_dock div#dock {
     height: auto;
     max-height: 220px;
     float: none;
-    border: 0px;
+    border: 0;
   }
   .file-picker .fp-repo-items {
     width: 100%;
@@ -16970,7 +16957,6 @@ body.has_dock div#dock {
   }
   .fp-content-center {
     display: block;
-    vertical-align: top;
   }
   .course-content ul.topics li.section,
   .course-content ul.topics li.section .content,
@@ -17375,18 +17361,18 @@ body.behat-site .navbar-fixed-top {
 .phpinfo .e,
 .phpinfo .v,
 .phpinfo .h {
-  border: 1px solid #000000;
+  border: 1px solid #000;
   font-size: 0.8em;
   vertical-align: baseline;
-  color: #000000;
-  background-color: #cccccc;
+  color: #000;
+  background-color: #ccc;
 }
 .phpinfo .e {
-  background-color: #ccccff;
+  background-color: #ccf;
   font-weight: bold;
 }
 .phpinfo .h {
-  background-color: #9999cc;
+  background-color: #99c;
   font-weight: bold;
 }
 #page-footer .performanceinfo {
