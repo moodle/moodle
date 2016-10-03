@@ -14,6 +14,7 @@ YUI.add('moodle-gradereport_grader-gradereporttable', function (Y, NAME) {
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* eslint-disable no-unused-vars */
 
 /**
  * Grader Report Functionality.
@@ -155,6 +156,7 @@ Y.namespace('M.gradereport_grader').init = function(config) {
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/* global SELECTORS */
 
 /**
  * @module moodle-gradereport_grader-gradereporttable
