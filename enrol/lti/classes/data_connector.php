@@ -909,6 +909,79 @@ class data_connector extends DataConnector {
     }
 
     /**
+     * Fetches the list of Context objects that are linked to a ToolConsumer.
+     *
+     * @param ToolConsumer $consumer
+     * @return Context[]
+     */
+    public function get_contexts_from_consumer(ToolConsumer $consumer) {
+        global $DB;
+
+        $contexts = [];
+        $contextrecords = $DB->get_records($this->contexttable, ['consumerid' => $consumer->getRecordId()], '', 'lticontextkey');
+        foreach ($contextrecords as $record) {
+            $context = Context::fromConsumer($consumer, $record->lticontextkey);
+            $contexts[] = $context;
+        }
+
+        return $contexts;
+    }
+
+    /**
+     * Fetches a resource link record that is associated with a ToolConsumer.
+     *
+     * @param ToolConsumer $consumer
+     * @return ResourceLink
+     */
+    public function get_resourcelink_from_consumer(ToolConsumer $consumer) {
+        global $DB;
+
+        $resourcelink = null;
+        if ($resourcelinkrecord = $DB->get_record($this->resourcelinktable, ['consumerid' => $consumer->getRecordId()],
+            'ltiresourcelinkkey')) {
+            $resourcelink = ResourceLink::fromConsumer($consumer, $resourcelinkrecord->ltiresourcelinkkey);
+        }
+
+        return $resourcelink;
+    }
+
+    /**
+     * Fetches a resource link record that is associated with a Context object.
+     *
+     * @param Context $context
+     * @return ResourceLink
+     */
+    public function get_resourcelink_from_context(Context $context) {
+        global $DB;
+
+        $resourcelink = null;
+        if ($resourcelinkrecord = $DB->get_record($this->resourcelinktable, ['contextid' => $context->getRecordId()],
+            'ltiresourcelinkkey')) {
+            $resourcelink = ResourceLink::fromContext($context, $resourcelinkrecord->ltiresourcelinkkey);
+        }
+
+        return $resourcelink;
+    }
+
+
+    /**
+     * Fetches the list of ToolConsumer objects that are linked to a tool.
+     *
+     * @param int $toolid
+     * @return ToolConsumer[]
+     */
+    public function get_consumers_mapped_to_tool($toolid) {
+        global $DB;
+
+        $consumers = [];
+        $consumerrecords = $DB->get_records('enrol_lti_tool_consumer_map', ['toolid' => $toolid], '', 'consumerid');
+        foreach ($consumerrecords as $record) {
+            $consumers[] = ToolConsumer::fromRecordId($record->consumerid, $this);
+        }
+        return $consumers;
+    }
+
+    /**
      * Builds a ToolConsumer object from a record object from the DB.
      *
      * @param stdClass $record The DB record object.
