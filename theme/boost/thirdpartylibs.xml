@@ -4,7 +4,7 @@
     <location>scss/bootstrap</location>
     <name>Twitter Bootstrap</name>
     <license>MIT</license>
-    <version>4.0.0-alpha.3</version>
+    <version>4.0.0-alpha.4</version>
     <licenseversion></licenseversion>
   </library>
   <library>
