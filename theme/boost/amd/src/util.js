@@ -6,7 +6,7 @@ define(['exports'], function (exports) {
   });
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.0.0-alpha.3): util.js
+   * Bootstrap (v4.0.0-alpha.4): util.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */

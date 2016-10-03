@@ -69,7 +69,7 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
 
   /**
    * --------------------------------------------------------------------------
-   * Bootstrap (v4.0.0-alpha.3): popover.js
+   * Bootstrap (v4.0.0-alpha.4): popover.js
    * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
    * --------------------------------------------------------------------------
    */
@@ -83,7 +83,7 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
      */
 
     var NAME = 'popover';
-    var VERSION = '4.0.0-alpha.3';
+    var VERSION = '4.0.0-alpha.4';
     var DATA_KEY = 'bs.popover';
     var EVENT_KEY = '.' + DATA_KEY;
     var JQUERY_NO_CONFLICT = $.fn[NAME];
@@ -135,7 +135,7 @@ define(['exports', './tooltip'], function (exports, _tooltip) {
       function Popover() {
         _classCallCheck(this, Popover);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(Popover).apply(this, arguments));
+        return _possibleConstructorReturn(this, (Popover.__proto__ || Object.getPrototypeOf(Popover)).apply(this, arguments));
       }
 
       _createClass(Popover, [{
