@@ -107,7 +107,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $toolproxy = array();
 
         // Array of tool type IDs that don't support ContentItemSelectionRequest.
-        $noncontentitemtypes = ['0'];
+        $noncontentitemtypes = [];
 
         foreach (lti_get_types_for_add_instance() as $id => $type) {
             if (!empty($type->toolproxyid)) {
@@ -152,7 +152,10 @@ class mod_lti_mod_form extends moodleform_mod {
         if ($update) {
             $mform->disabledIf('selectcontent', 'typeid', 'neq', 0);
         } else {
-            $mform->disabledIf('selectcontent', 'typeid', 'in', $noncontentitemtypes);
+            // Disable select content button if the selected tool doesn't support content item or it's set to Automatic.
+            $allnoncontentitemtypes = $noncontentitemtypes;
+            $allnoncontentitemtypes[] = '0'; // Add option value for "Automatic, based on launch URL".
+            $mform->disabledIf('selectcontent', 'typeid', 'in', $allnoncontentitemtypes);
         }
 
         $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), array('size' => '64'));
@@ -193,7 +196,6 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setType('resourcekey', PARAM_TEXT);
         $mform->setAdvanced('resourcekey');
         $mform->addHelpButton('resourcekey', 'resourcekey', 'lti');
-        $mform->disabledIf('resourcekey', 'typeid', 'neq', '0');
         if ($update) {
             $mform->disabledIf('resourcekey', 'typeid', 'neq', 0);
         } else {

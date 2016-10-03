@@ -16,6 +16,7 @@ Feature: Content-Item support
       | teacher1 | C1 | editingteacher |
     And I log in as "admin"
     And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
+    # Create tool type that supports content-item.
     And I follow "configure a tool manually"
     And I set the field "Tool name" to "Teaching Tool 1"
     And I set the field "Tool base URL/cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
@@ -34,7 +35,7 @@ Feature: Content-Item support
     Then the "Select content" "button" should be enabled
 
   @javascript
-  Scenario: Adding a preconfigured tool that does not support Content-Item.
+  Scenario: Editing a tool's settings that was configured from a preconfigured tool that supports Content-Item.
     When I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
@@ -51,15 +52,37 @@ Feature: Content-Item support
     And the "Select content" "button" should be disabled
 
   @javascript
-  Scenario: Selecting a preconfigured tool that supports Content-Item
+  Scenario: Changing preconfigured tool selection
+    Given I log in as "admin"
+    And I navigate to "Manage tools" node in "Site administration > Plugins > Activity modules > External tool"
+    And I follow "configure a tool manually"
+    And I set the field "Tool name" to "Teaching Tool 2"
+    And I set the field "Tool base URL/cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
+    And I set the field "Tool configuration usage" to "Show in activity chooser and as a preconfigured tool"
+    And I expand all fieldsets
+    And I press "Save changes"
+    And I log out
     When I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "External tool" to section "1"
+    # On load with no preconfigured tool selected: Select content button - disabled, Launch/cartridge URL - enabled.
     And the field "Preconfigured tool" matches value "Automatic, based on launch URL"
-    And the "Select content" "button" should be disabled
     And I set the field "Activity name" to "Test tool activity 1"
-    And I set the field "Preconfigured tool" to "Teaching Tool 1"
-    Then the "Select content" "button" should be enabled
-    And I set the field "Preconfigured tool" to "Automatic, based on launch URL"
     And the "Select content" "button" should be disabled
+    And the "Launch/cartridge URL" "field" should be enabled
+    # Selecting a tool that supports content-item: Select content button - enabled, Launch/cartridge URL - enabled.
+    And I set the field "Preconfigured tool" to "Teaching Tool 1"
+    And I set the field "Activity name" to "Test tool activity 1"
+    Then the "Select content" "button" should be enabled
+    And the "Launch/cartridge URL" "field" should be enabled
+    # Selecting a tool that does not support content-item: Select content button - disabled, Launch/cartridge URL - disabled.
+    And I set the field "Preconfigured tool" to "Teaching Tool 2"
+    And I set the field "Activity name" to "Test tool activity 1"
+    And the "Select content" "button" should be disabled
+    And the "Launch/cartridge URL" "field" should be disabled
+    # Not selecting any tool: Select content button - disabled, Launch/cartridge URL - enabled.
+    And I set the field "Preconfigured tool" to "Automatic, based on launch URL"
+    And I set the field "Activity name" to "Test tool activity 1"
+    And the "Select content" "button" should be disabled
+    And the "Launch/cartridge URL" "field" should be enabled
