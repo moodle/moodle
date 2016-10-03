@@ -469,12 +469,12 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea search people parameters.
+     * Get messagearea search users in course parameters.
      *
      * @return external_function_parameters
      * @since 3.2
      */
-    public static function data_for_messagearea_search_people_in_course_parameters() {
+    public static function data_for_messagearea_search_users_in_course_parameters() {
         return new external_function_parameters(
             array(
                 'userid' => new external_value(PARAM_INT, 'The id of the user who is performing the search'),
@@ -487,7 +487,7 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea search people results.
+     * Get messagearea search users in course results.
      *
      * @param int $userid The id of the user who is performing the search
      * @param int $courseid The id of the course
@@ -498,7 +498,7 @@ class core_message_external extends external_api {
      * @throws moodle_exception
      * @since 3.2
      */
-    public static function data_for_messagearea_search_people_in_course($userid, $courseid, $search, $limitfrom = 0,
+    public static function data_for_messagearea_search_users_in_course($userid, $courseid, $search, $limitfrom = 0,
                                                                         $limitnum = 0) {
         global $CFG, $PAGE, $USER;
 
@@ -516,26 +516,26 @@ class core_message_external extends external_api {
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum
         );
-        self::validate_parameters(self::data_for_messagearea_search_people_in_course_parameters(), $params);
+        self::validate_parameters(self::data_for_messagearea_search_users_in_course_parameters(), $params);
         self::validate_context($systemcontext);
 
         if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $search = \core_message\api::search_people_in_course($userid, $courseid, $search, $limitfrom, $limitnum);
+        $search = \core_message\api::search_users_in_course($userid, $courseid, $search, $limitfrom, $limitnum);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $search->export_for_template($renderer);
     }
 
     /**
-     * Get messagearea search people returns.
+     * Get messagearea search users in course returns.
      *
      * @return external_single_structure
      * @since 3.2
      */
-    public static function data_for_messagearea_search_people_in_course_returns() {
+    public static function data_for_messagearea_search_users_in_course_returns() {
         return new external_single_structure(
             array(
                 'hascontacts' => new external_value(PARAM_BOOL, 'Are there contacts?'),
@@ -547,12 +547,12 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea search people parameters.
+     * Get messagearea search users parameters.
      *
      * @return external_function_parameters
      * @since 3.2
      */
-    public static function data_for_messagearea_search_people_parameters() {
+    public static function data_for_messagearea_search_users_parameters() {
         return new external_function_parameters(
             array(
                 'userid' => new external_value(PARAM_INT, 'The id of the user who is performing the search'),
@@ -563,7 +563,7 @@ class core_message_external extends external_api {
     }
 
     /**
-     * Get messagearea search people results.
+     * Get messagearea search users results.
      *
      * @param int $userid The id of the user who is performing the search
      * @param string $search The string being searched
@@ -572,7 +572,7 @@ class core_message_external extends external_api {
      * @throws moodle_exception
      * @since 3.2
      */
-    public static function data_for_messagearea_search_people($userid, $search, $limitnum = 0) {
+    public static function data_for_messagearea_search_users($userid, $search, $limitnum = 0) {
         global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
@@ -587,26 +587,26 @@ class core_message_external extends external_api {
             'search' => $search,
             'limitnum' => $limitnum
         );
-        self::validate_parameters(self::data_for_messagearea_search_people_parameters(), $params);
+        self::validate_parameters(self::data_for_messagearea_search_users_parameters(), $params);
         self::validate_context($systemcontext);
 
         if (($USER->id != $userid) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $search = \core_message\api::search_people($userid, $search, $limitnum);
+        $search = \core_message\api::search_users($userid, $search, $limitnum);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $search->export_for_template($renderer);
     }
 
     /**
-     * Get messagearea search people returns.
+     * Get messagearea search users returns.
      *
      * @return external_single_structure
      * @since 3.2
      */
-    public static function data_for_messagearea_search_people_returns() {
+    public static function data_for_messagearea_search_users_returns() {
         return new external_single_structure(
             array(
                 'hascontacts' => new external_value(PARAM_BOOL, 'Are there contacts?'),

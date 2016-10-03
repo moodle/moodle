@@ -116,16 +116,16 @@ class api {
     }
 
     /**
-     * Handles searching for people in a particular course in the message area.
+     * Handles searching for user in a particular course in the message area.
      *
      * @param int $userid The user id doing the searching
      * @param int $courseid The id of the course we are searching in
      * @param string $search The string the user is searching
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \core_message\output\messagearea\people_search_results
+     * @return \core_message\output\messagearea\user_search_results
      */
-    public static function search_people_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
+    public static function search_users_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
         global $DB;
 
         // Get all the users in the course.
@@ -152,18 +152,18 @@ class api {
             }
         }
 
-        return new \core_message\output\messagearea\people_search_results($contacts);
+        return new \core_message\output\messagearea\user_search_results($contacts);
     }
 
     /**
-     * Handles searching for people in the message area.
+     * Handles searching for user in the message area.
      *
      * @param int $userid The user id doing the searching
      * @param string $search The string the user is searching
      * @param int $limitnum
-     * @return \core_message\output\messagearea\people_search_results
+     * @return \core_message\output\messagearea\user_search_results
      */
-    public static function search_people($userid, $search, $limitnum = 0) {
+    public static function search_users($userid, $search, $limitnum = 0) {
         global $CFG, $DB;
 
         require_once($CFG->dirroot . '/lib/coursecatlib.php');
@@ -228,7 +228,7 @@ class api {
             }
         }
 
-        return new \core_message\output\messagearea\people_search_results($contacts, $courses, $noncontacts);
+        return new \core_message\output\messagearea\user_search_results($contacts, $courses, $noncontacts);
     }
 
     /**

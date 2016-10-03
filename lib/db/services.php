@@ -659,17 +659,17 @@ $functions = array(
         'type' => 'read',
         'ajax' => true,
     ),
-    'core_message_data_for_messagearea_search_people' => array(
+    'core_message_data_for_messagearea_search_users' => array(
         'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_search_people',
+        'methodname' => 'data_for_messagearea_search_users',
         'classpath' => 'message/externallib.php',
         'description' => 'Retrieve the template data for searching for people',
         'type' => 'read',
         'ajax' => true,
     ),
-    'core_message_data_for_messagearea_search_people_in_course' => array(
+    'core_message_data_for_messagearea_search_users_in_course' => array(
         'classname' => 'core_message_external',
-        'methodname' => 'data_for_messagearea_search_people_in_course',
+        'methodname' => 'data_for_messagearea_search_users_in_course',
         'classpath' => 'message/externallib.php',
         'description' => 'Retrieve the template data for searching for people in a course',
         'type' => 'read',

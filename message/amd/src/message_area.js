@@ -74,9 +74,9 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             SEARCHBOX: "[data-region='search-box']",
             SEARCHFILTER: "[data-region='search-filter']",
             SEARCHFILTERAREA: "[data-region='search-filter-area']",
-            SEARCHPEOPLEINCOURSE: "[data-action='search-people-in-course']",
             SEARCHRESULTSAREA: "[data-region='search-results-area']",
             SEARCHTEXTAREA: "[data-region='search-text-area']",
+            SEARCHUSERSINCOURSE: "[data-action='search-users-in-course']",
             SELECTEDVIEWPROFILE: "[data-action='view-contact-profile'].selected",
             SELECTEDVIEWCONVERSATION: "[data-action='view-contact-msg'].selected",
             SENDMESSAGE: "[data-action='send-message']",
@@ -106,8 +106,8 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             MESSAGESDELETED: 'messages-deleted',
             MESSAGESEARCHCANCELED: 'message-search-canceled',
             MESSAGESENT: 'message-sent',
-            PEOPLESEARCHCANCELED: 'people-search-canceled',
-            SENDMESSAGE: 'message-send'
+            SENDMESSAGE: 'message-send',
+            USERSSEARCHCANCELED: 'users-search-canceled'
         };
 
         /** @type {jQuery} The jQuery node for the page region containing the message area. */

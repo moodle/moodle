@@ -74,7 +74,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             ]);
 
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.MESSAGESEARCHCANCELED, this._viewConversations.bind(this));
-            this.messageArea.onCustomEvent(this.messageArea.EVENTS.PEOPLESEARCHCANCELED, this._viewContacts.bind(this));
+            this.messageArea.onCustomEvent(this.messageArea.EVENTS.USERSSEARCHCANCELED, this._viewContacts.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONTACTSSELECTED, this._viewContacts.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONDELETED, this._deleteConversation.bind(this));
             this.messageArea.onCustomEvent(this.messageArea.EVENTS.CONVERSATIONSSELECTED, this._viewConversations.bind(this));

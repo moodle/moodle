@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains class used to display people search results.
+ * Contains class used to display user search results.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
@@ -30,13 +30,13 @@ use renderable;
 use templatable;
 
 /**
- * Class used to display people search results.
+ * Class used to display user search results.
  *
  * @package   core_message
  * @copyright 2016 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class people_search_results implements templatable, renderable {
+class user_search_results implements templatable, renderable {
 
     /**
      * @var \core_message\output\messagearea\contact[] The list of contacts.
