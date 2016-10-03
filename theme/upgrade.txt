@@ -41,6 +41,13 @@ Removed themes:
   - qbank_chooser_types
   - qbank_chooser_qtype
   - qbank_chooser_title
+* The 'css optimiser' has been removed. Developers are encouraged to use tools such as stylelint
+  to help optimise their css. Some functions and classes in lib/csslib.php (which was not for public use)
+  have been deprecated:
+  - css_is_colour
+  - css_is_width
+  - css_sort_by_count
+  - class css_optimiser no longer does anything.
 
 === 3.1 ===
 

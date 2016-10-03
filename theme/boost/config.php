@@ -147,6 +147,5 @@ $THEME->enable_dock = false;
 $THEME->csstreepostprocessor = 'theme_boost_css_tree_post_processor';
 $THEME->extrascsscallback = 'theme_boost_get_extra_scss';
 $THEME->scssvariablescallback = 'theme_boost_get_scss_variables';
-$THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';

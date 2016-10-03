@@ -4629,3 +4629,284 @@ function put_records_csv($file, $records, $table = NULL) {
     @chmod($CFG->tempdir.'/'.$file, $CFG->filepermissions);
     return true;
 }
+
+/**
+ * Determines if the given value is a valid CSS colour.
+ *
+ * A CSS colour can be one of the following:
+ *    - Hex colour:  #AA66BB
+ *    - RGB colour:  rgb(0-255, 0-255, 0-255)
+ *    - RGBA colour: rgba(0-255, 0-255, 0-255, 0-1)
+ *    - HSL colour:  hsl(0-360, 0-100%, 0-100%)
+ *    - HSLA colour: hsla(0-360, 0-100%, 0-100%, 0-1)
+ *
+ * Or a recognised browser colour mapping {@link css_optimiser::$htmlcolours}
+ *
+ * @deprecated since Moodle 3.2
+ * @todo MDL-56173 for final deprecation in Moodle 3.6
+ * @param string $value The colour value to check
+ * @return bool
+ */
+function css_is_colour($value) {
+    debugging('css_is_colour() is deprecated without a replacement. Please copy the implementation '.
+        'into your plugin if you need this functionality.', DEBUG_DEVELOPER);
+
+    $value = trim($value);
+
+    $hex  = '/^#([a-fA-F0-9]{1,3}|[a-fA-F0-9]{6})$/';
+    $rgb  = '#^rgb\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$#i';
+    $rgba = '#^rgba\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1}(\.\d+)?)\s*\)$#i';
+    $hsl  = '#^hsl\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\%\s*,\s*(\d{1,3})\%\s*\)$#i';
+    $hsla = '#^hsla\s*\(\s*(\d{1,3})\s*,\s*(\d{1,3})\%\s*,\s*(\d{1,3})\%\s*,\s*(\d{1}(\.\d+)?)\s*\)$#i';
+
+    if (in_array(strtolower($value), array('inherit'))) {
+        return true;
+    } else if (preg_match($hex, $value)) {
+        return true;
+    } else if (in_array(strtolower($value), array_keys(css_optimiser::$htmlcolours))) {
+        return true;
+    } else if (preg_match($rgb, $value, $m) && $m[1] < 256 && $m[2] < 256 && $m[3] < 256) {
+        // It is an RGB colour.
+        return true;
+    } else if (preg_match($rgba, $value, $m) && $m[1] < 256 && $m[2] < 256 && $m[3] < 256) {
+        // It is an RGBA colour.
+        return true;
+    } else if (preg_match($hsl, $value, $m) && $m[1] <= 360 && $m[2] <= 100 && $m[3] <= 100) {
+        // It is an HSL colour.
+        return true;
+    } else if (preg_match($hsla, $value, $m) && $m[1] <= 360 && $m[2] <= 100 && $m[3] <= 100) {
+        // It is an HSLA colour.
+        return true;
+    }
+    // Doesn't look like a colour.
+    return false;
+}
+
+/**
+ * Returns true is the passed value looks like a CSS width.
+ * In order to pass this test the value must be purely numerical or end with a
+ * valid CSS unit term.
+ *
+ * @param string|int $value
+ * @return boolean
+ * @deprecated since Moodle 3.2
+ * @todo MDL-56173 for final deprecation in Moodle 3.6
+ */
+function css_is_width($value) {
+    debugging('css_is_width() is deprecated without a replacement. Please copy the implementation '.
+        'into your plugin if you need this functionality.', DEBUG_DEVELOPER);
+
+    $value = trim($value);
+    if (in_array(strtolower($value), array('auto', 'inherit'))) {
+        return true;
+    }
+    if ((string)$value === '0' || preg_match('#^(\-\s*)?(\d*\.)?(\d+)\s*(em|px|pt|\%|in|cm|mm|ex|pc)$#i', $value)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * A simple sorting function to sort two array values on the number of items they contain
+ *
+ * @param array $a
+ * @param array $b
+ * @return int
+ * @deprecated since Moodle 3.2
+ * @todo MDL-56173 for final deprecation in Moodle 3.6
+ */
+function css_sort_by_count(array $a, array $b) {
+    debugging('css_sort_by_count() is deprecated without a replacement. Please copy the implementation '.
+        'into your plugin if you need this functionality.', DEBUG_DEVELOPER);
+
+    $a = count($a);
+    $b = count($b);
+    if ($a == $b) {
+        return 0;
+    }
+    return ($a > $b) ? -1 : 1;
+}
+
+/**
+ * A basic CSS optimiser that strips out unwanted things and then processes CSS organising and cleaning styles.
+ * @deprecated since Moodle 3.2
+ * @todo MDL-56173 for final deprecation in Moodle 3.6
+ */
+class css_optimiser {
+    /**
+     * An array of the common HTML colours that are supported by most browsers.
+     *
+     * This reference table is used to allow us to unify colours, and will aid
+     * us in identifying buggy CSS using unsupported colours.
+     *
+     * @var string[]
+     * @deprecated since Moodle 3.2
+     * @todo MDL-56173 for final deprecation in Moodle 3.6
+     */
+    public static $htmlcolours = array(
+        'aliceblue' => '#F0F8FF',
+        'antiquewhite' => '#FAEBD7',
+        'aqua' => '#00FFFF',
+        'aquamarine' => '#7FFFD4',
+        'azure' => '#F0FFFF',
+        'beige' => '#F5F5DC',
+        'bisque' => '#FFE4C4',
+        'black' => '#000000',
+        'blanchedalmond' => '#FFEBCD',
+        'blue' => '#0000FF',
+        'blueviolet' => '#8A2BE2',
+        'brown' => '#A52A2A',
+        'burlywood' => '#DEB887',
+        'cadetblue' => '#5F9EA0',
+        'chartreuse' => '#7FFF00',
+        'chocolate' => '#D2691E',
+        'coral' => '#FF7F50',
+        'cornflowerblue' => '#6495ED',
+        'cornsilk' => '#FFF8DC',
+        'crimson' => '#DC143C',
+        'cyan' => '#00FFFF',
+        'darkblue' => '#00008B',
+        'darkcyan' => '#008B8B',
+        'darkgoldenrod' => '#B8860B',
+        'darkgray' => '#A9A9A9',
+        'darkgrey' => '#A9A9A9',
+        'darkgreen' => '#006400',
+        'darkKhaki' => '#BDB76B',
+        'darkmagenta' => '#8B008B',
+        'darkolivegreen' => '#556B2F',
+        'arkorange' => '#FF8C00',
+        'darkorchid' => '#9932CC',
+        'darkred' => '#8B0000',
+        'darksalmon' => '#E9967A',
+        'darkseagreen' => '#8FBC8F',
+        'darkslateblue' => '#483D8B',
+        'darkslategray' => '#2F4F4F',
+        'darkslategrey' => '#2F4F4F',
+        'darkturquoise' => '#00CED1',
+        'darkviolet' => '#9400D3',
+        'deeppink' => '#FF1493',
+        'deepskyblue' => '#00BFFF',
+        'dimgray' => '#696969',
+        'dimgrey' => '#696969',
+        'dodgerblue' => '#1E90FF',
+        'firebrick' => '#B22222',
+        'floralwhite' => '#FFFAF0',
+        'forestgreen' => '#228B22',
+        'fuchsia' => '#FF00FF',
+        'gainsboro' => '#DCDCDC',
+        'ghostwhite' => '#F8F8FF',
+        'gold' => '#FFD700',
+        'goldenrod' => '#DAA520',
+        'gray' => '#808080',
+        'grey' => '#808080',
+        'green' => '#008000',
+        'greenyellow' => '#ADFF2F',
+        'honeydew' => '#F0FFF0',
+        'hotpink' => '#FF69B4',
+        'indianred ' => '#CD5C5C',
+        'indigo ' => '#4B0082',
+        'ivory' => '#FFFFF0',
+        'khaki' => '#F0E68C',
+        'lavender' => '#E6E6FA',
+        'lavenderblush' => '#FFF0F5',
+        'lawngreen' => '#7CFC00',
+        'lemonchiffon' => '#FFFACD',
+        'lightblue' => '#ADD8E6',
+        'lightcoral' => '#F08080',
+        'lightcyan' => '#E0FFFF',
+        'lightgoldenrodyellow' => '#FAFAD2',
+        'lightgray' => '#D3D3D3',
+        'lightgrey' => '#D3D3D3',
+        'lightgreen' => '#90EE90',
+        'lightpink' => '#FFB6C1',
+        'lightsalmon' => '#FFA07A',
+        'lightseagreen' => '#20B2AA',
+        'lightskyblue' => '#87CEFA',
+        'lightslategray' => '#778899',
+        'lightslategrey' => '#778899',
+        'lightsteelblue' => '#B0C4DE',
+        'lightyellow' => '#FFFFE0',
+        'lime' => '#00FF00',
+        'limegreen' => '#32CD32',
+        'linen' => '#FAF0E6',
+        'magenta' => '#FF00FF',
+        'maroon' => '#800000',
+        'mediumaquamarine' => '#66CDAA',
+        'mediumblue' => '#0000CD',
+        'mediumorchid' => '#BA55D3',
+        'mediumpurple' => '#9370D8',
+        'mediumseagreen' => '#3CB371',
+        'mediumslateblue' => '#7B68EE',
+        'mediumspringgreen' => '#00FA9A',
+        'mediumturquoise' => '#48D1CC',
+        'mediumvioletred' => '#C71585',
+        'midnightblue' => '#191970',
+        'mintcream' => '#F5FFFA',
+        'mistyrose' => '#FFE4E1',
+        'moccasin' => '#FFE4B5',
+        'navajowhite' => '#FFDEAD',
+        'navy' => '#000080',
+        'oldlace' => '#FDF5E6',
+        'olive' => '#808000',
+        'olivedrab' => '#6B8E23',
+        'orange' => '#FFA500',
+        'orangered' => '#FF4500',
+        'orchid' => '#DA70D6',
+        'palegoldenrod' => '#EEE8AA',
+        'palegreen' => '#98FB98',
+        'paleturquoise' => '#AFEEEE',
+        'palevioletred' => '#D87093',
+        'papayawhip' => '#FFEFD5',
+        'peachpuff' => '#FFDAB9',
+        'peru' => '#CD853F',
+        'pink' => '#FFC0CB',
+        'plum' => '#DDA0DD',
+        'powderblue' => '#B0E0E6',
+        'purple' => '#800080',
+        'red' => '#FF0000',
+        'rosybrown' => '#BC8F8F',
+        'royalblue' => '#4169E1',
+        'saddlebrown' => '#8B4513',
+        'salmon' => '#FA8072',
+        'sandybrown' => '#F4A460',
+        'seagreen' => '#2E8B57',
+        'seashell' => '#FFF5EE',
+        'sienna' => '#A0522D',
+        'silver' => '#C0C0C0',
+        'skyblue' => '#87CEEB',
+        'slateblue' => '#6A5ACD',
+        'slategray' => '#708090',
+        'slategrey' => '#708090',
+        'snow' => '#FFFAFA',
+        'springgreen' => '#00FF7F',
+        'steelblue' => '#4682B4',
+        'tan' => '#D2B48C',
+        'teal' => '#008080',
+        'thistle' => '#D8BFD8',
+        'tomato' => '#FF6347',
+        'transparent' => 'transparent',
+        'turquoise' => '#40E0D0',
+        'violet' => '#EE82EE',
+        'wheat' => '#F5DEB3',
+        'white' => '#FFFFFF',
+        'whitesmoke' => '#F5F5F5',
+        'yellow' => '#FFFF00',
+        'yellowgreen' => '#9ACD32'
+    );
+
+    /**
+     * Used to orocesses incoming CSS optimising it and then returning it. Now just returns
+     * what is sent to it. Do not use.
+     *
+     * @param string $css The raw CSS to optimise
+     * @return string The optimised CSS
+     * @deprecated since Moodle 3.2
+     * @todo MDL-56173 for final deprecation in Moodle 3.6
+     */
+    public function process($css) {
+        debugging('class css_optimiser is deprecated and no longer does anything, '.
+            'please consider using stylelint to optimise your css.', DEBUG_DEVELOPER);
+
+        return $css;
+    }
+}

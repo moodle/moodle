@@ -2207,5 +2207,11 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016091900.02);
     }
 
+    if ($oldversion < 2016100300.00) {
+        unset_config('enablecssoptimiser');
+
+        upgrade_main_savepoint(true, 2016100300.00);
+    }
+
     return true;
 }
