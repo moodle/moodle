@@ -207,7 +207,7 @@ class mod_data_generator_testcase extends advanced_testcase {
         $entry = $DB->get_record('data_records', array('id' => $datarecordid));
         $this->assertEquals($entry->groupid, $groupa->id);
 
-        $contents = $DB->get_records('data_content', array('recordid' => $datarecordid));
+        $contents = $DB->get_records('data_content', array('recordid' => $datarecordid), 'id');
 
         $contentstartid = 0;
         $flag = 0;
