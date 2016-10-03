@@ -1,5 +1,7 @@
 YUI.add('moodle-mod_quiz-util-page', function (Y, NAME) {
 
+/* global YUI */
+
 /**
  * A collection of utility classes for use with pages.
  *

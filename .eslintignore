@@ -1,0 +1,17 @@
+*/**/yui/src/*/meta/
+*/**/build/
+node_modules/
+vendor/
+lib/editor/atto/yui/src/rangy/js/
+lib/editor/tinymce/plugins/pdw/tinymce/
+lib/editor/tinymce/tiny_mce/
+lib/requirejs/
+lib/yuilib/
+lib/jquery/
+lib/htmlpurifier/
+lib/flowplayer/
+lib/xhprof/
+lib/amd/src/loglevel.js
+lib/amd/src/mustache.js
+theme/bootstrapbase/javascript/html5shiv.js
+theme/bootstrapbase/amd/src/bootstrap.js
