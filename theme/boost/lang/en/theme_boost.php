@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['advancedsettings'] = 'Advanced settings';
 $string['brandcolor'] = 'Brand colour';
 $string['brandcolor_desc'] = 'The accent colour.';
-$string['choosereadme'] = 'Boost is a modern highly customizable theme. This theme is intended to used directly, or used as a parent theme when creating new themes utilising Boostrap 4.';
+$string['choosereadme'] = 'Boost is a modern highly customizable theme. This theme is intended to be used directly, or used as a parent theme when creating new themes utilising Boostrap 4.';
 $string['currentinparentheses'] = '(current)';
 $string['configtitle'] = 'Boost';
 $string['errorparsingscssvariables'] = 'There was an error parsing the variable at line {$a}, please double check the syntax.';
