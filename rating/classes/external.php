@@ -195,4 +195,107 @@ class core_rating_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of add_rating parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function add_rating_parameters() {
+        return new external_function_parameters (
+            array(
+                'contextlevel'  => new external_value(PARAM_ALPHA, 'context level: course, module, user, etc...'),
+                'instanceid'    => new external_value(PARAM_INT, 'the instance id of item associated with the context level'),
+                'component'     => new external_value(PARAM_COMPONENT, 'component'),
+                'ratingarea'    => new external_value(PARAM_AREA, 'rating area'),
+                'itemid'        => new external_value(PARAM_INT, 'associated id'),
+                'scaleid'       => new external_value(PARAM_INT, 'scale id'),
+                'rating'        => new external_value(PARAM_INT, 'user rating'),
+                'rateduserid'   => new external_value(PARAM_INT, 'rated user id'),
+                'aggregation'   => new external_value(PARAM_INT, 'agreggation method', VALUE_DEFAULT, RATING_AGGREGATE_NONE)
+            )
+        );
+    }
+
+    /**
+     * Adds a rating to an item
+     *
+     * @param string $contextlevel course, module, user...
+     * @param int $instanceid the instance if for the context element
+     * @param string $component the name of the component
+     * @param string $ratingarea rating area
+     * @param int $itemid the item id
+     * @param int $scaleid the scale id
+     * @param int $rating the user rating
+     * @param int $rateduserid the rated user id
+     * @param int $aggregation the aggregation method
+     * @return array result and possible warnings
+     * @throws moodle_exception
+     * @since Moodle 3.2
+     */
+    public static function add_rating($contextlevel, $instanceid, $component, $ratingarea, $itemid, $scaleid, $rating, $rateduserid,
+                                        $aggregation = RATING_AGGREGATE_NONE) {
+        $warnings = array();
+
+        $params = array(
+            'contextlevel' => $contextlevel,
+            'instanceid'   => $instanceid,
+            'component'    => $component,
+            'ratingarea'   => $ratingarea,
+            'itemid'       => $itemid,
+            'scaleid'      => $scaleid,
+            'rating'       => $rating,
+            'rateduserid'  => $rateduserid,
+            'aggregation'  => $aggregation,
+        );
+
+        // Validate and normalize parameters.
+        $params = self::validate_parameters(self::add_rating_parameters(), $params);
+
+        $context = self::get_context_from_params($params);
+        self::validate_context($context);
+        $cm = get_coursemodule_from_id(false, $context->instanceid, 0, false, MUST_EXIST);
+
+        require_capability('moodle/rating:rate', $context);
+
+        $rm = new rating_manager();
+        $result = $rm->add_rating($cm, $context, $params['component'], $params['ratingarea'], $params['itemid'], $params['scaleid'],
+                                    $params['rating'], $params['rateduserid'], $params['aggregation']);
+
+        if (!empty($result->error)) {
+            throw new moodle_exception($result->error, 'rating');
+        }
+
+        $returndata = array(
+            'success' => $result->success,
+            'warnings' => $warnings
+        );
+
+        if (isset($result->aggregate)) {
+            $returndata['aggregate'] = $result->aggregate;
+            $returndata['count'] = $result->count;
+            $returndata['itemid'] = $result->itemid;
+        }
+
+        return $returndata;
+    }
+
+    /**
+     * Returns description of add_rating result values.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.2
+     */
+    public static function add_rating_returns() {
+
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'Whether the rate was successfully created'),
+                'aggregate' => new external_value(PARAM_TEXT, 'New aggregate', VALUE_OPTIONAL),
+                'count' => new external_value(PARAM_INT, 'Ratings count', VALUE_OPTIONAL),
+                'itemid' => new external_value(PARAM_INT, 'Rating item id', VALUE_OPTIONAL),
+                'warnings'  => new external_warnings(),
+            )
+        );
+    }
 }
