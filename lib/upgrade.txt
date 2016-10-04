@@ -99,6 +99,7 @@ information provided here is intended especially for developers.
   custom fields (and other checks) should be evaluated to determine if the user has been completely setup.
 * profile_field_base class has new methods: get_field_config_for_external() and get_field_properties().
   This two new methods should be implemented by profile field plugins to make them compatible with Web Services.
+* context_header additional buttons can now have a class attribute provided in the link attributes.
 
 === 3.1 ===
 
