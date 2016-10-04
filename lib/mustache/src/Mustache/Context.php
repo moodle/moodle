@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2015 Justin Hileman
+ * (c) 2010-2016 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -150,7 +150,7 @@ class Mustache_Context
      *
      * @see Mustache_Context::findDot
      *
-     * @throws Mustache_Exception_InvalidArgumentException if given an invalid anchored dot $id.
+     * @throws Mustache_Exception_InvalidArgumentException if given an invalid anchored dot $id
      *
      * @param string $id Dotted variable selector
      *
@@ -182,7 +182,7 @@ class Mustache_Context
      *
      * @param string $id
      *
-     * @return mixed Variable value, or '' if not found.
+     * @return mixed Variable value, or '' if not found
      */
     public function findInBlock($id)
     {
