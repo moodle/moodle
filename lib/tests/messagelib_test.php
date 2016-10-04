@@ -36,11 +36,11 @@ class core_messagelib_testcase extends advanced_testcase {
         set_config($disableprovidersetting, 1, 'message');
         $preferences = get_message_output_default_preferences();
         $this->assertTrue($preferences->$disableprovidersetting == 1);
-
+        $noreplyuser = core_user::get_noreply_user();
         $message = new stdClass();
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
-        $message->userfrom          = get_admin();
+        $message->userfrom          = $noreplyuser->email;
         $message->userto            = $this->getDataGenerator()->create_user();;
         $message->subject           = 'message subject 1';
         $message->fullmessage       = 'message body';

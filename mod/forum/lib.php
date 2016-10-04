@@ -853,8 +853,8 @@ function forum_cron() {
                     $eventdata->set_additional_content('email', $additionalcontent);
                 }
 
-                // If forum_replytouser is not set then send mail using the noreplyaddress.
-                if (empty($CFG->forum_replytouser)) {
+                // If replytouser is not set then send mail using the noreplyaddress.
+                if (empty($CFG->noreplyaddress)) {
                     $eventdata->userfrom = core_user::get_noreply_user();
                 }
 

@@ -71,6 +71,8 @@ $string['emailupdatemessage'] = 'Dear {$a->fullname},
 
 You have requested a change of your email address for your user account at {$a->site}. Please open the following URL in your browser in order to confirm this change.
 
+If you have any questions please contact support on: {$a->supportemail}
+
 {$a->url}';
 $string['emailupdatesuccess'] = 'Email address of user <em>{$a->fullname}</em> was successfully updated to <em>{$a->email}</em>.';
 $string['emailupdatetitle'] = 'Confirmation of email update at {$a->site}';

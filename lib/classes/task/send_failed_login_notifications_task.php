@@ -174,7 +174,7 @@ class send_failed_login_notifications_task extends scheduled_task {
             mtrace('Emailing admins about '. $count .' failed login attempts');
             foreach ($recip as $admin) {
                 // Emailing the admins directly rather than putting these through the messaging system.
-                email_to_user($admin, \core_user::get_support_user(), $subject, $body);
+                email_to_user($admin, \core_user::get_noreply_user(), $subject, $body);
             }
         }
 

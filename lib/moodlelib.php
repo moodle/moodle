@@ -5685,6 +5685,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         return true;
     }
 
+    // Check from address and prevent emails to be sent from support email address.
+    $supportuser = core_user::get_support_user();
+    if ($from->email == $supportuser->email) {
+        debugging('Support user email address should not be used for email sending.', DEBUG_NORMAL);
+        return false;
+    }
+
     if (email_should_be_diverted($user->email)) {
         $subject = "[DIVERTED {$user->email}] $subject";
         $user = clone($user);
@@ -5739,28 +5746,31 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     $temprecipients = array();
     $tempreplyto = array();
 
-    $supportuser = core_user::get_support_user();
-
     // Make up an email address for handling bounces.
     if (!empty($CFG->handlebounces)) {
         $modargs = 'B'.base64_encode(pack('V', $user->id)).substr(md5($user->email), 0, 16);
         $mail->Sender = generate_email_processing_address(0, $modargs);
     } else {
-        $mail->Sender = $supportuser->email;
+        $mail->Sender = $CFG->noreplyaddress;
     }
 
-    if (!empty($CFG->emailonlyfromnoreplyaddress)) {
+    // Email will be sent using no reply address.
+    if ($CFG->emailonlyfromnoreplyaddress == true) {
         $usetrueaddress = false;
         if (empty($replyto) && $from->maildisplay) {
             $replyto = $from->email;
             $replytoname = fullname($from);
         }
+    } else {
+        // Use user's email address (if allowed).
+        $usetrueaddress = true;
     }
 
     if (is_string($from)) { // So we can pass whatever we want if there is need.
         $mail->From     = $CFG->noreplyaddress;
         $mail->FromName = $from;
     } else if ($usetrueaddress and $from->maildisplay) {
+        // If noreplyaddress is set to false, use users email address as from address.
         $mail->From     = $from->email;
         $mail->FromName = fullname($from);
     } else {
@@ -6005,7 +6015,7 @@ function setnew_password_and_mail($user, $fasthash = false) {
 
     $site  = get_site();
 
-    $supportuser = core_user::get_support_user();
+    $noreplyuser = core_user::get_noreply_user();
 
     $newpassword = generate_password();
 
@@ -6024,7 +6034,7 @@ function setnew_password_and_mail($user, $fasthash = false) {
     $subject = format_string($site->fullname) .': '. (string)new lang_string('newusernewpasswordsubj', '', $a, $lang);
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-    return email_to_user($user, $supportuser, $subject, $message);
+    return email_to_user($user, $noreplyuser, $subject, $message);
 
 }
 
@@ -6038,7 +6048,7 @@ function reset_password_and_mail($user) {
     global $CFG;
 
     $site  = get_site();
-    $supportuser = core_user::get_support_user();
+    $noreplyuser = core_user::get_noreply_user();
 
     $userauth = get_auth_plugin($user->auth);
     if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)) {
@@ -6068,7 +6078,7 @@ function reset_password_and_mail($user) {
     unset_user_preference('create_password', $user); // Prevent cron from generating the password.
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-    return email_to_user($user, $supportuser, $subject, $message);
+    return email_to_user($user, $noreplyuser, $subject, $message);
 }
 
 /**
@@ -6081,7 +6091,7 @@ function send_confirmation_email($user) {
     global $CFG;
 
     $site = get_site();
-    $supportuser = core_user::get_support_user();
+    $noreplyuser = core_user::get_noreply_user();
 
     $data = new stdClass();
     $data->firstname = fullname($user);
@@ -6099,7 +6109,7 @@ function send_confirmation_email($user) {
     $user->mailformat = 1;  // Always send HTML version as well.
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-    return email_to_user($user, $supportuser, $subject, $message, $messagehtml);
+    return email_to_user($user, $noreplyuser, $subject, $message, $messagehtml);
 }
 
 /**
@@ -6113,7 +6123,7 @@ function send_password_change_confirmation_email($user, $resetrecord) {
     global $CFG;
 
     $site = get_site();
-    $supportuser = core_user::get_support_user();
+    $noreplyuser = core_user::get_noreply_user();
     $pwresetmins = isset($CFG->pwresettime) ? floor($CFG->pwresettime / MINSECS) : 30;
 
     $data = new stdClass();
@@ -6129,7 +6139,7 @@ function send_password_change_confirmation_email($user, $resetrecord) {
     $subject = get_string('emailresetconfirmationsubject', '', format_string($site->fullname));
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-    return email_to_user($user, $supportuser, $subject, $message);
+    return email_to_user($user, $noreplyuser, $subject, $message);
 
 }
 
@@ -6143,7 +6153,7 @@ function send_password_change_info($user) {
     global $CFG;
 
     $site = get_site();
-    $supportuser = core_user::get_support_user();
+    $noreplyuser = core_user::get_noreply_user();
     $systemcontext = context_system::instance();
 
     $data = new stdClass();
@@ -6158,7 +6168,7 @@ function send_password_change_info($user) {
         $message = get_string('emailpasswordchangeinfodisabled', '', $data);
         $subject = get_string('emailpasswordchangeinfosubject', '', format_string($site->fullname));
         // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-        return email_to_user($user, $supportuser, $subject, $message);
+        return email_to_user($user, $noreplyuser, $subject, $message);
     }
 
     if ($userauth->can_change_password() and $userauth->change_password_url()) {
@@ -6179,7 +6189,7 @@ function send_password_change_info($user) {
     }
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-    return email_to_user($user, $supportuser, $subject, $message);
+    return email_to_user($user, $noreplyuser, $subject, $message);
 
 }
 
