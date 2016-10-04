@@ -490,6 +490,7 @@ $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed f
 $string['sessionipnomatch2'] = '<p>Sorry, but your IP number seems to have changed from when you first logged in. This security feature prevents crackers stealing your identity while logged in to this site. You may see this error if you use wireless networks or if you are roaming between different networks. Please ask the site administrator for more help.</p>
 <p>If you want to continue please press F5 key to refresh this page.</p>';
 $string['shortnametaken'] = 'Short name is already used for another course ({$a})';
+$string['sitepolicynotagreed'] = 'Site policy not agreed: <a href="{$a}">Click here to open the site policy.</a>';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
 $string['socksnotsupported'] = 'SOCKS5 proxy is not supported in PHP4';
 $string['spellcheckernotconf'] = 'Spellchecker not configured';

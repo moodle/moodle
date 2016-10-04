@@ -929,6 +929,14 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/site:config',
     ),
+    'core_user_agree_site_policy' => array(
+        'classname' => 'core_user_external',
+        'methodname' => 'agree_site_policy',
+        'classpath' => 'user/externallib.php',
+        'description' => 'Agree the site policy for the current user.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 
     // Competencies functions.
     'core_competency_create_competency_framework' => array(
