@@ -55,12 +55,12 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue(is_array($result['plugins']));
     }
 
-    public function test_get_site_public_settings() {
+    public function test_get_public_config() {
         global $CFG, $SITE;
 
         $this->resetAfterTest(true);
-        $result = external::get_site_public_settings();
-        $result = external_api::clean_returnvalue(external::get_site_public_settings_returns(), $result);
+        $result = external::get_public_config();
+        $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
 
         // Test default values.
         $context = context_system::instance();
@@ -95,8 +95,8 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
         $expected['launchurl'] = "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php";;
 
-        $result = external::get_site_public_settings();
-        $result = external_api::clean_returnvalue(external::get_site_public_settings_returns(), $result);
+        $result = external::get_public_config();
+        $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
         $this->assertEquals($expected, $result);
     }
 

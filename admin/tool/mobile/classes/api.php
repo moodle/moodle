@@ -96,7 +96,7 @@ class api {
      *
      * @return array with the settings and warnings
      */
-    public static function get_site_public_settings() {
+    public static function get_public_config() {
         global $CFG, $SITE, $PAGE;
 
         $context = context_system::instance();

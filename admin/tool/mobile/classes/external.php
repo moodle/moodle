@@ -96,12 +96,12 @@ class external extends external_api {
     }
 
     /**
-     * Returns description of get_site_public_settings() parameters.
+     * Returns description of get_public_config() parameters.
      *
      * @return external_function_parameters
      * @since  Moodle 3.2
      */
-    public static function get_site_public_settings_parameters() {
+    public static function get_public_config_parameters() {
         return new external_function_parameters(array());
     }
 
@@ -111,19 +111,19 @@ class external extends external_api {
      * @return array with the settings and warnings
      * @since  Moodle 3.2
      */
-    public static function get_site_public_settings() {
-        $result = api::get_site_public_settings();
+    public static function get_public_config() {
+        $result = api::get_public_config();
         $result['warnings'] = array();
         return $result;
     }
 
     /**
-     * Returns description of get_site_public_settings() result value.
+     * Returns description of get_public_config() result value.
      *
      * @return external_description
      * @since  Moodle 3.2
      */
-    public static function get_site_public_settings_returns() {
+    public static function get_public_config_returns() {
         return new external_single_structure(
             array(
                 'wwwroot' => new external_value(PARAM_RAW, 'Site URL.'),
