@@ -90,6 +90,7 @@ class mod_glossary_external extends external_api {
             'definition' => new external_value(PARAM_RAW, 'The definition'),
             'definitionformat' => new external_format_value('definition'),
             'definitiontrust' => new external_value(PARAM_BOOL, 'The definition trust flag'),
+            'definitioninlinefiles' => new external_files('entry definition inline files', VALUE_OPTIONAL),
             'attachment' => new external_value(PARAM_BOOL, 'Whether or not the entry has attachments'),
             'attachments' => new external_files('attachments', VALUE_OPTIONAL),
             'timecreated' => new external_value(PARAM_INT, 'Time created'),
@@ -143,6 +144,10 @@ class mod_glossary_external extends external_api {
         $entry->attachments = array();
         if ($entry->attachment) {
             $entry->attachments = external_util::get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
+        }
+        $definitioninlinefiles = external_util::get_area_files($context->id, 'mod_glossary', 'entry', $entry->id);
+        if (!empty($definitioninlinefiles)) {
+            $entry->definitioninlinefiles = $definitioninlinefiles;
         }
     }
 

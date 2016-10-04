@@ -1064,6 +1064,19 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
 
         $e1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        // Add a fake inline image to the entry.
+        $filename = 'shouldbeanimage.jpg';
+        $filerecordinline = array(
+            'contextid' => $ctx->id,
+            'component' => 'mod_glossary',
+            'filearea'  => 'entry',
+            'itemid'    => $e1->id,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
         $e2 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u1->id));
         $e3 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u2->id));
         $e4 = $gg->create_content($g2, array('approved' => 1));
@@ -1072,6 +1085,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $return = mod_glossary_external::get_entry_by_id($e1->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
         $this->assertEquals($e1->id, $return['entry']['id']);
+        $this->assertEquals($filename, $return['entry']['definitioninlinefiles'][0]['filename']);
 
         $return = mod_glossary_external::get_entry_by_id($e2->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);

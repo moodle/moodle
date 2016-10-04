@@ -1474,6 +1474,18 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $feedback->mingrade = 49;
         $feedback->maxgrade = 100;
         $feedback->id = $DB->insert_record('quiz_feedback', $feedback);
+        // Add a fake inline image to the feedback text.
+        $filename = 'shouldbeanimage.jpg';
+        $filerecordinline = array(
+            'contextid' => $this->context->id,
+            'component' => 'mod_quiz',
+            'filearea'  => 'feedback',
+            'itemid'    => $feedback->id,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
 
         $feedback->feedbacktext = 'Feedback text 2';
         $feedback->feedbacktextformat = 1;
@@ -1484,6 +1496,7 @@ class mod_quiz_external_testcase extends externallib_advanced_testcase {
         $result = mod_quiz_external::get_quiz_feedback_for_grade($this->quiz->id, 50);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_quiz_feedback_for_grade_returns(), $result);
         $this->assertEquals('Feedback text 1', $result['feedbacktext']);
+        $this->assertEquals($filename, $result['feedbackinlinefiles'][0]['filename']);
         $this->assertEquals(FORMAT_HTML, $result['feedbacktextformat']);
 
         $result = mod_quiz_external::get_quiz_feedback_for_grade($this->quiz->id, 30);
