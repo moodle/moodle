@@ -419,6 +419,14 @@
 .path-mod-assign [data-region="grading-navigation"] {
     padding: 1em;
 }
+.path-mod-assign [data-region="assignment-info"] {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+.path-mod-assign [data-region="assignment-info"] small[data-region="assignment-tooltip"] {
+    margin-left: 0.5em;
+}
 
 .path-mod-assign [data-region="user-info"] {
     height: 60px;
