@@ -41,8 +41,8 @@ $strblogs = get_string('blogs', 'blog');
 $message = null;
 
 if ($delete && confirm_sesskey()) {
-    $externalbloguserid = $DB->get_field('blog_external', 'userid', array('id' => $delete));
-    if ($externalbloguserid == $USER->id) {
+    $externalblog = $DB->get_record('blog_external', array('id' => $delete));
+    if ($externalblog->userid == $USER->id) {
         // Delete the external blog.
         $DB->delete_records('blog_external', array('id' => $delete));
 
@@ -55,6 +55,11 @@ if ($delete && confirm_sesskey()) {
                                                                'userid' => $USER->id,
                                                                'delete' => $delete));
 
+        // Log this action.
+        $eventparms = array('context' => $context, 'objectid' => $delete);
+        $event = \core\event\blog_external_removed::create($eventparms);
+        $event->add_record_snapshot('blog_external', $externalblog);
+        $event->trigger();
         $message = get_string('externalblogdeleted', 'blog');
     }
 }
@@ -111,4 +116,8 @@ if (!empty($blogs)) {
 $newexternalurl = new moodle_url('/blog/external_blog_edit.php');
 echo html_writer::link($newexternalurl, $straddnewexternalblog);
 echo $OUTPUT->box_end();
+
+// Log this page.
+$event = \core\event\blog_external_viewed::create(array('context' => $context));
+$event->trigger();
 echo $OUTPUT->footer();
