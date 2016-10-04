@@ -627,3 +627,4 @@ class behat_hooks extends behat_base {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_stop_exception extends \Exception {
+}
