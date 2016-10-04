@@ -81,9 +81,6 @@ class renderer_base {
         global $CFG;
 
         if ($this->mustache === null) {
-            require_once($CFG->dirroot . '/lib/mustache/src/Mustache/Autoloader.php');
-            Mustache_Autoloader::register();
-
             $themename = $this->page->theme->name;
             $themerev = theme_get_revision();
 
