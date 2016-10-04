@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param string $tree The CSS tree.
  * @param theme_config $theme The theme config object.
  */
-function theme_boost_css_tree_post_processor($tree, $this) {
+function theme_boost_css_tree_post_processor($tree, $theme) {
     $prefixer = new theme_boost\autoprefixer($tree);
     $prefixer->prefix();
 }
