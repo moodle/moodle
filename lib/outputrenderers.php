@@ -541,9 +541,9 @@ class core_renderer extends renderer_base {
         }
 
         // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
-        if ($CFG->enablemobilewebservice) {
+        if (!empty($CFG->enablemobilewebservice)) {
             $mobilesettings = get_config('tool_mobile');
-            if ($mobilesettings->enablesmartappbanners and $mobilesettings->iosappid) {
+            if (!empty($mobilesettings->enablesmartappbanners) and !empty($mobilesettings->iosappid)) {
                 $output .= '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ';
                 $output .= 'app-argument=' . $this->page->url->out() . '"/>';
             }
