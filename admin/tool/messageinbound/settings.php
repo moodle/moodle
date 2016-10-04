@@ -83,5 +83,5 @@ if ($hassiteconfig) {
             "$CFG->wwwroot/$CFG->admin/tool/messageinbound/index.php"));
 
     // Add the category to the admin tree.
-    $ADMIN->add('server', $category);
+    $ADMIN->add('email', $category);
 }

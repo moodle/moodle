@@ -213,6 +213,18 @@ $ADMIN->add('server', $temp);
 $ADMIN->add('server', new admin_externalpage('adminregistration', new lang_string('hubs', 'admin'),
     "$CFG->wwwroot/$CFG->admin/registration/index.php"));
 
+// E-mail settings.
+$ADMIN->add('server', new admin_category('email', new lang_string('categoryemail', 'message_email')));
+$ADMIN->add('email', new admin_category('outgoingmailconfig', new lang_string('outgoingmailconfig', 'message_email')));
+$ADMIN->add('outgoingmailconfig', new admin_page_managemessageoutputs());
+$ADMIN->add('outgoingmailconfig', new admin_page_defaultmessageoutputs());
+$plugins = core_plugin_manager::instance()->get_plugins_of_type('message');
+core_collator::asort_objects_by_property($plugins, 'displayname');
+foreach ($plugins as $plugin) {
+    /** @var \core\plugininfo\message $plugin */
+    $plugin->load_settings($ADMIN, 'outgoingmailconfig', $hassiteconfig);
+}
+    
 // "update notifications" settingpage
 if (empty($CFG->disableupdatenotifications)) {
     $temp = new admin_settingpage('updatenotifications', new lang_string('updatenotifications', 'core_admin'));
