@@ -154,6 +154,8 @@ class behat_hooks extends behat_base {
         // Now that we are MOODLE_INTERNAL.
         require_once(__DIR__ . '/../../behat/classes/behat_command.php');
         require_once(__DIR__ . '/../../behat/classes/behat_selectors.php');
+        require_once(__DIR__ . '/../../behat/classes/partial_named_selector.php');
+        require_once(__DIR__ . '/../../behat/classes/exact_named_selector.php');
         require_once(__DIR__ . '/../../behat/classes/behat_context_helper.php');
         require_once(__DIR__ . '/../../behat/classes/util.php');
         require_once(__DIR__ . '/../../testing/classes/test_lock.php');
@@ -314,18 +316,24 @@ class behat_hooks extends behat_base {
             behat_context_helper::set_environment($scope->getEnvironment());
 
             // We need the Mink session to do it and we do it only before the first scenario.
-            $behatselectorclass = 'behat_selectors';
-            if ($suitename !== 'default') {
-                $overriddenselectorclass = behat_config_util::get_behat_theme_selector_override_classname($suitename, true);
+            $namedpartialclass = 'behat_partial_named_selector';
+            $namedexactclass = 'behat_exact_named_selector';
 
-                // If override slector exist, then set it as default behat selectors class.
-                if (class_exists($overriddenselectorclass)) {
-                    $behatselectorclass = $overriddenselectorclass;
+            if ($suitename !== 'default') {
+                // If override selector exist, then set it as default behat selectors class.
+                $overrideclass = behat_config_util::get_behat_theme_selector_override_classname($suitename, 'named_partial', true);
+                if (class_exists($overrideclass)) {
+                    $namedpartialclass = $overrideclass;
+                }
+
+                // If override selector exist, then set it as default behat selectors class.
+                $overrideclass = behat_config_util::get_behat_theme_selector_override_classname($suitename, 'named_exact', true);
+                if (class_exists($overrideclass)) {
+                    $namedexactclass = $overrideclass;
                 }
             }
-
-            $behatselectorclass = new $behatselectorclass();
-            $behatselectorclass::register_moodle_selectors($session);
+            $this->getSession()->getSelectorsHandler()->registerSelector('named_partial', new $namedpartialclass());
+            $this->getSession()->getSelectorsHandler()->registerSelector('named_exact', new $namedexactclass());
         }
 
         // Reset mink session between the scenarios.
@@ -619,4 +627,3 @@ class behat_hooks extends behat_base {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_stop_exception extends \Exception {
-}
