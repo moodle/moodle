@@ -77,7 +77,8 @@ class core_component {
         'GeoIp2' => 'lib/maxmind/GeoIp2',
         'Sabberworm\\CSS' => 'lib/php-css-parser',
         'MoodleHQ\\RTLCSS' => 'lib/rtlcss',
-        'Leafo\\ScssPhp' => 'lib/scssphp'
+        'Leafo\\ScssPhp' => 'lib/scssphp',
+        'Box\\Spout' => 'lib/spout/src/Spout'
     );
 
     /**

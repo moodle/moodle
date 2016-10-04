@@ -253,6 +253,19 @@ class GlobalFunctionsHelper
     }
 
     /**
+     * Wrapper around global function ob_end_clean()
+     * @see ob_end_clean()
+     *
+     * @return void
+     */
+    public function ob_end_clean()
+    {
+        if (ob_get_length() > 0) {
+            ob_end_clean();
+        }
+    }
+
+    /**
      * Wrapper around global function iconv()
      * @see iconv()
      *

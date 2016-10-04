@@ -29,6 +29,9 @@ class Writer extends AbstractWriter
     /** @var int */
     protected $lastWrittenRowIndex = 0;
 
+    /** @var bool */
+    protected $shouldAddBOM = true;
+
     /**
      * Sets the field delimiter for the CSV
      *
@@ -56,14 +59,28 @@ class Writer extends AbstractWriter
     }
 
     /**
+     * Set if a BOM has to be added to the file
+     *
+     * @param bool $shouldAddBOM
+     * @return Writer
+     */
+    public function setShouldAddBOM($shouldAddBOM)
+    {
+        $this->shouldAddBOM = (bool) $shouldAddBOM;
+        return $this;
+    }
+
+    /**
      * Opens the CSV streamer and makes it ready to accept data.
      *
      * @return void
      */
     protected function openWriter()
     {
-        // Adds UTF-8 BOM for Unicode compatibility
-        $this->globalFunctionsHelper->fputs($this->filePointer, EncodingHelper::BOM_UTF8);
+        if ($this->shouldAddBOM) {
+            // Adds UTF-8 BOM for Unicode compatibility
+            $this->globalFunctionsHelper->fputs($this->filePointer, EncodingHelper::BOM_UTF8);
+        }
     }
 
     /**

@@ -59,7 +59,7 @@ class EncodingHelper
     {
         $byteOffsetToSkipBom = 0;
 
-        if ($this->hasBom($filePointer, $encoding)) {
+        if ($this->hasBOM($filePointer, $encoding)) {
             $bomUsed = $this->supportedEncodingsWithBom[$encoding];
 
             // we skip the N first bytes

@@ -45,11 +45,12 @@ class RowIterator implements IteratorInterface
 
     /**
      * @param XMLReader $xmlReader XML Reader, positioned on the "<table:table>" element
+     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
      */
-    public function __construct($xmlReader)
+    public function __construct($xmlReader, $shouldFormatDates)
     {
         $this->xmlReader = $xmlReader;
-        $this->cellValueFormatter = new CellValueFormatter();
+        $this->cellValueFormatter = new CellValueFormatter($shouldFormatDates);
     }
 
     /**
@@ -186,7 +187,7 @@ class RowIterator implements IteratorInterface
     /**
      * empty() replacement that honours 0 as a valid value
      *
-     * @param $value The cell value
+     * @param string|int|float|bool|\DateTime|\DateInterval|null $value The cell value
      * @return bool
      */
     protected function isEmptyCellValue($value)

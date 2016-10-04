@@ -55,12 +55,16 @@ class RowIterator implements IteratorInterface
     /** @var int The number of columns the sheet has (0 meaning undefined) */
     protected $numColumns = 0;
 
+    /** @var int Last column index processed (zero-based) */
+    protected $lastColumnIndexProcessed = -1;
+
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
      * @param Helper\SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
+     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper)
+    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $shouldFormatDates)
     {
         $this->filePath = $filePath;
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
@@ -68,7 +72,7 @@ class RowIterator implements IteratorInterface
         $this->xmlReader = new XMLReader();
 
         $this->styleHelper = new StyleHelper($filePath);
-        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper);
+        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper, $shouldFormatDates);
     }
 
     /**
@@ -143,6 +147,9 @@ class RowIterator implements IteratorInterface
                 } else if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_ROW)) {
                     // Start of the row description
 
+                    // Reset index of the last processed column
+                    $this->lastColumnIndexProcessed = -1;
+
                     // Read spans info if present
                     $numberOfColumnsForRow = $this->numColumns;
                     $spans = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_SPANS); // returns '1:5' for instance
@@ -154,11 +161,12 @@ class RowIterator implements IteratorInterface
 
                 } else if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
                     // Start of a cell description
-                    $currentCellIndex = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
-                    $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
+                    $currentColumnIndex = $this->getCellIndex($this->xmlReader);
 
                     $node = $this->xmlReader->expand();
                     $rowData[$currentColumnIndex] = $this->getCellValue($node);
+
+                    $this->lastColumnIndexProcessed = $currentColumnIndex;
 
                 } else if ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_ROW)) {
                     // End of the row description
@@ -179,6 +187,21 @@ class RowIterator implements IteratorInterface
         }
 
         $this->rowDataBuffer = $rowData;
+    }
+
+    /**
+     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader object, positioned on a "<c>" tag
+     * @return int
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException When the given cell index is invalid
+     */
+    protected function getCellIndex($xmlReader)
+    {
+        // Get "r" attribute if present (from something like <c r="A1"...>
+        $currentCellIndex = $xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
+
+        return ($currentCellIndex !== null) ?
+                CellHelper::getColumnIndexFromCellIndex($currentCellIndex) :
+                $this->lastColumnIndexProcessed + 1;
     }
 
     /**
