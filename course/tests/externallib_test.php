@@ -1870,4 +1870,163 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test get_courses_by_fields
+     */
+    public function test_get_courses_by_field() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $category1 = self::getDataGenerator()->create_category();
+        $category2 = self::getDataGenerator()->create_category(array('parent' => $category1->id));
+        $course1 = self::getDataGenerator()->create_course(array('category' => $category1->id, 'shortname' => 'c1'));
+        $course2 = self::getDataGenerator()->create_course(array('visible' => 0, 'category' => $category2->id, 'idnumber' => 'i2'));
+
+        $student1 = self::getDataGenerator()->create_user();
+        $user1 = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        self::getDataGenerator()->enrol_user($student1->id, $course1->id, $studentrole->id);
+        self::getDataGenerator()->enrol_user($student1->id, $course2->id, $studentrole->id);
+
+        self::setAdminUser();
+        // As admins, we should be able to retrieve everything.
+        $result = core_course_external::get_courses_by_field();
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(3, $result['courses']);
+        // Expect to receive all the fields.
+        $this->assertCount(35, $result['courses'][0]);
+        $this->assertCount(35, $result['courses'][1]);
+        $this->assertCount(35, $result['courses'][2]);
+
+        $result = core_course_external::get_courses_by_field('id', $course1->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+        // Expect to receive all the fields.
+        $this->assertCount(35, $result['courses'][0]);
+
+        $result = core_course_external::get_courses_by_field('id', $course2->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course2->id, $result['courses'][0]['id']);
+
+        $result = core_course_external::get_courses_by_field('ids', "$course1->id,$course2->id");
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(2, $result['courses']);
+
+        $result = core_course_external::get_courses_by_field('category', $category1->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+
+        $result = core_course_external::get_courses_by_field('shortname', 'c1');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+
+        $result = core_course_external::get_courses_by_field('idnumber', 'i2');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course2->id, $result['courses'][0]['id']);
+
+        $result = core_course_external::get_courses_by_field('idnumber', 'x');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+
+        self::setUser($student1);
+        // All visible courses  (including front page) for normal student.
+        $result = core_course_external::get_courses_by_field();
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(2, $result['courses']);
+        $this->assertCount(28, $result['courses'][0]);
+        $this->assertCount(28, $result['courses'][1]);
+
+        $result = core_course_external::get_courses_by_field('id', $course1->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+        // Expect to receive all the files that a student can see.
+        $this->assertCount(28, $result['courses'][0]);
+
+        // Course 2 is not visible.
+        $result = core_course_external::get_courses_by_field('id', $course2->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+
+        $result = core_course_external::get_courses_by_field('ids', "$course1->id,$course2->id");
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+
+        $result = core_course_external::get_courses_by_field('category', $category1->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+
+        $result = core_course_external::get_courses_by_field('shortname', 'c1');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+
+        $result = core_course_external::get_courses_by_field('idnumber', 'i2');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+
+        $result = core_course_external::get_courses_by_field('idnumber', 'x');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+
+        self::setUser($user1);
+        // All visible courses (including front page) for authenticated user.
+        $result = core_course_external::get_courses_by_field();
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(2, $result['courses']);
+        $this->assertCount(28, $result['courses'][0]);  // Site course.
+        $this->assertCount(12, $result['courses'][1]);  // Only public information, not enrolled.
+
+        $result = core_course_external::get_courses_by_field('id', $course1->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+        // Expect to receive all the files that a authenticated can see.
+        $this->assertCount(12, $result['courses'][0]);
+
+        // Course 2 is not visible.
+        $result = core_course_external::get_courses_by_field('id', $course2->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+
+        $result = core_course_external::get_courses_by_field('ids', "$course1->id,$course2->id");
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+
+        $result = core_course_external::get_courses_by_field('category', $category1->id);
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+
+        $result = core_course_external::get_courses_by_field('shortname', 'c1');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(1, $result['courses']);
+        $this->assertEquals($course1->id, $result['courses'][0]['id']);
+
+        $result = core_course_external::get_courses_by_field('idnumber', 'i2');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+
+        $result = core_course_external::get_courses_by_field('idnumber', 'x');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+    }
+
+    public function test_get_courses_by_field_invalid_field() {
+        $this->expectException('invalid_parameter_exception');
+        $result = core_course_external::get_courses_by_field('zyx', 'x');
+    }
+
+    public function test_get_courses_by_field_invalid_courses() {
+        $result = core_course_external::get_courses_by_field('id', '-1');
+        $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
+        $this->assertCount(0, $result['courses']);
+    }
 }
