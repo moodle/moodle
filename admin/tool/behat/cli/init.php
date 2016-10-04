@@ -48,6 +48,7 @@ list($options, $unrecognized) = cli_get_params(
         'fromrun'  => 1,
         'torun'    => 0,
         'run-with-theme' => false,
+        'optimize-runs' => '',
     ),
     array(
         'j' => 'parallel',
@@ -68,6 +69,7 @@ Options:
 -m, --maxruns    Max parallel processes to be executed at one time.
 --fromrun        Execute run starting from (Used for parallel runs on different vms)
 --torun          Execute run till (Used for parallel runs on different vms)
+--optimize-runs  Split features with specified tags in all parallel runs.
 --run-with-theme Run all core features with specified theme.
 
 -h, --help     Print out this help
@@ -85,21 +87,17 @@ if (!empty($options['help'])) {
 
 // Check which util file to call.
 $utilfile = 'util_single_run.php';
-$paralleloption = "";
+$commandoptions = "";
 // If parallel run then use utilparallel.
 if ($options['parallel'] && $options['parallel'] > 1) {
     $utilfile = 'util.php';
-    $paralleloption = "";
-    foreach ($options as $option => $value) {
-        if ($value) {
-            $paralleloption .= " --$option=\"$value\"";
-        }
-    }
 }
 
-$themesuitewithallfeatures = '';
-if ($options['run-with-theme']) {
-    $themesuitewithallfeatures = '--run-with-theme="true"';
+// Sanitize input options, so they can be passed to util.
+foreach ($options as $option => $value) {
+    if ($value) {
+        $commandoptions .= " --$option='$value'";
+    }
 }
 
 // Changing the cwd to admin/tool/behat/cli.
@@ -111,7 +109,7 @@ testing_update_composer_dependencies();
 
 // Check whether the behat test environment needs to be updated.
 chdir(__DIR__);
-exec("php $utilfile --diag $paralleloption $themesuitewithallfeatures", $output, $code);
+exec("php $utilfile --diag $commandoptions", $output, $code);
 
 if ($code == 0) {
     echo "Behat test environment already installed\n";
@@ -119,7 +117,7 @@ if ($code == 0) {
 } else if ($code == BEHAT_EXITCODE_INSTALL) {
     // Behat and dependencies are installed and we need to install the test site.
     chdir(__DIR__);
-    passthru("php $utilfile --install $paralleloption $themesuitewithallfeatures", $code);
+    passthru("php $utilfile --install $commandoptions", $code);
     if ($code != 0) {
         chdir($cwd);
         exit($code);
@@ -128,14 +126,14 @@ if ($code == 0) {
 } else if ($code == BEHAT_EXITCODE_REINSTALL) {
     // Test site data is outdated.
     chdir(__DIR__);
-    passthru("php $utilfile --drop $paralleloption $themesuitewithallfeatures", $code);
+    passthru("php $utilfile --drop $commandoptions", $code);
     if ($code != 0) {
         chdir($cwd);
         exit($code);
     }
 
     chdir(__DIR__);
-    passthru("php $utilfile --install $paralleloption $themesuitewithallfeatures", $code);
+    passthru("php $utilfile --install $commandoptions", $code);
     if ($code != 0) {
         chdir($cwd);
         exit($code);
@@ -150,7 +148,7 @@ if ($code == 0) {
 
 // Enable editing mode according to config.php vars.
 chdir(__DIR__);
-passthru("php $utilfile --enable $paralleloption $themesuitewithallfeatures", $code);
+passthru("php $utilfile --enable $commandoptions", $code);
 if ($code != 0) {
     echo "Error enabling site" . PHP_EOL;
     chdir($cwd);
