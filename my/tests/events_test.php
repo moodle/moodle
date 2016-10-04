@@ -61,7 +61,7 @@ class dashboard_events_testcase extends advanced_testcase {
         $user = $this->user;
         // Trigger an event: dashboard viewed.
         $eventparams = array(
-            'context' => $context = context_system::instance()
+            'context' => $context = context_user::instance($user->id)
         );
 
         $event = \core\event\dashboard_viewed::create($eventparams);

@@ -143,6 +143,9 @@
         <testsuite name="core_competency_testsuite">
             <directory suffix="_test.php">competency/tests</directory>
         </testsuite>
+        <testsuite name="core_my_testsuite">
+            <directory suffix="_test.php">my/tests</directory>
+        </testsuite>
 
         <!--Plugin suites: use admin/tool/phpunit/cli/util.php to build phpunit.xml from phpunit.xml.dist with up-to-date list of plugins in current install-->
 <!--@plugin_suites_start@-->

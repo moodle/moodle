@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class for event to be triggered when a dashboard is viewed.
  *
  * @package    core
- * @since      Moodle 3.2
+ * @since      Moodle 3.1.3
  * @copyright  2016 Stephen Bourget
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
