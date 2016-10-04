@@ -38,9 +38,9 @@
     {{> mod_lti/loader }}
 </div>
 {{^proxies}}{{^tools}}
-<div id="tool-notools-text" class="container-fluid">{{#str}} no_lti_tools, mod_lti {{/str}}</div>
+<div id="tool-notools-text">{{#str}} no_lti_tools, mod_lti {{/str}}</div>
 {{/tools}}{{/proxies}}
-<div id="tool-card-container" class="container-fluid">
+<div id="tool-card-container">
     {{#proxies}}
         {{> mod_lti/tool_proxy_card }}
     {{/proxies}}
