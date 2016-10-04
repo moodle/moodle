@@ -136,6 +136,9 @@ abstract class moodleform {
     /** @var object definition_after_data executed flag */
     protected $_definition_finalized = false;
 
+    /** @var bool|null stores the validation result of this form or null if not yet validated */
+    protected $_validated = null;
+
     /**
      * The constructor function calls the abstract function definition() and it will then
      * process and clean and attempt to validate incoming data.
@@ -527,11 +530,10 @@ abstract class moodleform {
      * @return bool true if form data valid
      */
     function validate_defined_fields($validateonnosubmit=false) {
-        static $validated = null; // one validation is enough
         $mform =& $this->_form;
         if ($this->no_submit_button_pressed() && empty($validateonnosubmit)){
             return false;
-        } elseif ($validated === null) {
+        } elseif ($this->_validated === null) {
             $internal_val = $mform->validate();
 
             $files = array();
@@ -569,9 +571,9 @@ abstract class moodleform {
                 $moodle_val = true;
             }
 
-            $validated = ($internal_val and $moodle_val and $file_val);
+            $this->_validated = ($internal_val and $moodle_val and $file_val);
         }
-        return $validated;
+        return $this->_validated;
     }
 
     /**
