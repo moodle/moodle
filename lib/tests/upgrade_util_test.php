@@ -62,8 +62,7 @@ class upgrade_util_testcase extends advanced_testcase {
      * @param bool  $expected expected result
      */
     public function test_validate_php_curl_tls($curlinfo, $zts, $expected) {
-        $expected === true && $this->assertTrue(\core\upgrade\util::validate_php_curl_tls($curlinfo, $zts));
-        $expected === false && $this->assertFalse(\core\upgrade\util::validate_php_curl_tls($curlinfo, $zts));
+        $this->assertSame($expected, \core\upgrade\util::validate_php_curl_tls($curlinfo, $zts));
     }
 
     /**
@@ -120,64 +119,62 @@ class upgrade_util_testcase extends advanced_testcase {
      * Test various combinations of SSL/TLS libraries.
      *
      * @dataProvider can_use_tls12_testcases
-     * @param array $environment the server environment
-     * @param bool  $expected    expected result
+     * @param string $sslversion the ssl_version string.
+     * @param string|null $uname uname string (or null if not relevant)
+     * @param bool $expected expected result
      */
-    public function test_can_use_tls12($environment, $expected) {
-        $curlinfo = $environment['curl_version'] + curl_version();
+    public function test_can_use_tls12($sslversion, $uname, $expected) {
+        // Populate curlinfo with whats installed on this php install.
+        $curlinfo = curl_version();
 
-        if ($curlinfo['version_number'] >= self::VALID_CURL_VERSION && !defined('CURL_SSLVERSION_TLSv1_2')) {
-            define('CURL_SSLVERSION_TLSv1_2', 6);
-        }
+        // Set the curl values we are testing to the passed data.
+        $curlinfo['ssl_version'] = $sslversion;
+        $curlinfo['version_number'] = self::VALID_CURL_VERSION;
 
-        $expected === true && $this->assertTrue(\core\upgrade\util::can_use_tls12($curlinfo, $environment['uname']));
-        $expected === false && $this->assertFalse(\core\upgrade\util::can_use_tls12($curlinfo, $environment['uname']));
+        // Set uname to system value if none passed in test case.
+        $uname = !empty($uname) ? $uname : php_uname('r');
+
+        $this->assertSame($expected, \core\upgrade\util::can_use_tls12($curlinfo, $uname));
+
+        // Now set the curl version to outdated one.
+        $curlinfo['version_number'] = self::INVALID_CURL_VERSION;
+        // Tls12 should never be possible now curl version is bad.
+        $this->assertFalse(\core\upgrade\util::can_use_tls12($curlinfo, $uname));
     }
 
     /**
-     * Test cases for the can_use_tls test.
+     * Test cases for the can_use_tls12 test.
+     * The returned data format is:
+     *  [(string) ssl_version, (string|null) uname (null if not relevant), (bool) expectation ]
      *
      * @return array of testcases
      */
     public function can_use_tls12_testcases() {
-        $versionmatrix = [
-            'OpenSSL'         => ['Older' => '0.9.8o',  'Min required' => '1.0.1c',           'Newer' => '1.0.1t'],
-            'GnuTLS'          => ['Older' => '1.5.0',   'Min requires' => '1.7.1',            'Newer' => '1.8.1'],
-            'NSS'             => ['Older' => '3.14.15', 'Min required' => '3.15.1 Basic ECC', 'Newer' => '3.17.2 Basic ECC'],
-            'CyaSSL'          => ['Older' => '0.9.9',   'Min required' => '1.1.0',            'Newer' => '1.2.0'],
-            'wolfSSL'         => ['Older' => '1.0.0',   'Min required' => '1.1.0',            'Newer' => '1.2.0'],
-            'WinSSL'          => ['Older' => '5.1',     'Min required' => '6.1',              'Newer' => '7.0'],
-            'SecureTransport' => ['Older' => '10.7.5',  'Min required' => '10.8.0',           'Newer' => '10.9.0']
+        return [
+            // Bad versions.
+            ['OpenSSL/0.9.8o', null, false],
+            ['GnuTLS/1.5.0', null, false],
+            ['NSS/3.14.15', null, false],
+            ['CyaSSL/0.9.9', null, false],
+            ['wolfSSL/1.0.0', null, false],
+            ['WinSSL', '5.1', false],
+            ['SecureTransport', '10.7.5', false],
+            // Lowest good version.
+            ['OpenSSL/1.0.1c', null, true],
+            ['GnuTLS/1.7.1', null, true],
+            ['NSS/3.15.1 Basic ECC', null, true],
+            ['CyaSSL/1.1.0', null, true],
+            ['wolfSSL/1.1.0', null, true],
+            ['WinSSL', '6.1', true],
+            ['SecureTransport', '10.8.0', true],
+            // More higher good versions.
+            ['OpenSSL/1.0.1t', null, true],
+            ['GnuTLS/1.8.1', null, true],
+            ['NSS/3.17.2 Basic ECC', null, true],
+            ['CyaSSL/1.2.0', null, true],
+            ['wolfSSL/1.2.0', null, true],
+            ['WinSSL', '7.0', true],
+            ['SecureTransport', '10.9.0', true],
         ];
-
-        // This will generate an array of testcases from the matrix above.
-        // It generates one testcase for every version. If the version is too
-        // old or the cURL version (passed as an argument) is too old, the
-        // expected result of the testcase is false. Otherwise it is true.
-        //
-        // Each testcase is given a name like WinSSL/Valid env/Min required.
-        // The first part is the SSL/TLS library, the second part is whether
-        // or not the environment is valid (i.e., we are using a valid/invalid
-        // cURL version. The final part says which version of the SSL/TLS library
-        // is being used (i.e., Older, Min required or Newer).
-        $generatetestcases = function($curlversion) use ($versionmatrix) {
-            return array_reduce(array_keys($versionmatrix), function($carry, $sslflavour) use ($versionmatrix, $curlversion) {
-                return $carry + array_reduce(array_keys($versionmatrix[$sslflavour]), function($carry, $sslversion)
-                        use ($versionmatrix, $curlversion, $sslflavour) {
-                    $env = $curlversion == self::VALID_CURL_VERSION ? 'Valid' : 'Invalid';
-                    $exceptions = ['WinSSL', 'SecureTransport'];
-                    $versionsuffix = in_array($sslflavour, $exceptions) ? '' : '/' . $versionmatrix[$sslflavour][$sslversion];
-                    return $carry + [$sslflavour . '/' . $env. ' env/' . $sslversion => [[
-                        'curl_version' => [
-                            'ssl_version' => $sslflavour . $versionsuffix,
-                            'version_number' => $curlversion
-                        ],
-                        'uname' => in_array($sslflavour, $exceptions) ? $versionmatrix[$sslflavour][$sslversion] : php_uname('r')
-                    ], $sslversion != 'Older' && $curlversion != self::INVALID_CURL_VERSION]];
-                }, []);
-            }, []);
-        };
-
-        return $generatetestcases(self::VALID_CURL_VERSION) + $generatetestcases(self::INVALID_CURL_VERSION);
     }
 }
