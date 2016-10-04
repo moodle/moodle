@@ -115,7 +115,8 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
                 $screenshoturl = new moodle_url('/theme/image.php',
                     array('theme' => $themename, 'image' => 'screenshot', 'component' => 'theme'));
                 // Contents of the screenshot/preview cell.
-                $screenshotcell = html_writer::empty_tag('img', array('src' => $screenshoturl, 'alt' => $strthemename));
+                $screenshotcell = html_writer::empty_tag('img', array('class' => 'img-responsive img-fluid',
+                    'src' => $screenshoturl, 'alt' => $strthemename));
                 // Show the name of the picked theme.
                 $headingthemename = $OUTPUT->heading($strthemename, 3);
             }
@@ -206,9 +207,10 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
         // Link to the screenshot, now mandatory - the image path is hardcoded because we need image from other themes,
         // not the current one.
         $screenshotpath = new moodle_url('/theme/image.php',
-            array('theme'=>$themename, 'image'=>'screenshot', 'component'=>'theme'));
+            array('theme' => $themename, 'image' => 'screenshot', 'component' => 'theme'));
         // Contents of the first screenshot/preview cell.
-        $row[] = html_writer::empty_tag('img', array('src'=>$screenshotpath, 'alt'=>$strthemename));
+        $row[] = html_writer::empty_tag('img', array('class' => 'img-responsive img-fluid',
+            'src' => $screenshotpath, 'alt' => $strthemename));
         // Contents of the second cell.
         $infocell = $OUTPUT->heading($strthemename, 3);
 
