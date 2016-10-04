@@ -3066,6 +3066,61 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals(2, count_role_users($roleid1, context_course::instance($course->id), false));
         $this->assertEquals(3, count_role_users($roleid1, context_course::instance($course->id), true));
     }
+
+    /**
+     * Test updating of role capabilities during upgrade
+     * @return void
+     */
+    public function test_get_with_capability_sql() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'), '*', MUST_EXIST);
+        $teacher = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $student = $this->getDataGenerator()->create_user();
+        $guest = $DB->get_record('user', array('username' => 'guest'));
+
+        role_assign($teacherrole->id, $teacher->id, $coursecontext);
+        role_assign($studentrole->id, $student->id, $coursecontext);
+        $admin = $DB->get_record('user', array('username' => 'admin'));
+
+        // Note: Here are used default capabilities, the full test is in permission evaluation below,
+        // use two capabilities that teacher has and one does not, none of them should be allowed for not-logged-in user.
+        $this->assertTrue($DB->record_exists('capabilities', array('name' => 'moodle/backup:backupcourse')));
+        $this->assertTrue($DB->record_exists('capabilities', array('name' => 'moodle/site:approvecourse')));
+
+        list($sql, $params) = get_with_capability_sql($coursecontext, 'moodle/backup:backupcourse');
+        $users = $DB->get_records_sql($sql, $params);
+
+        $this->assertTrue(array_key_exists($teacher->id, $users));
+        $this->assertFalse(array_key_exists($admin->id, $users));
+        $this->assertFalse(array_key_exists($student->id, $users));
+        $this->assertFalse(array_key_exists($guest->id, $users));
+
+        list($sql, $params) = get_with_capability_sql($coursecontext, 'moodle/site:approvecourse');
+        $users = $DB->get_records_sql($sql, $params);
+
+        $this->assertFalse(array_key_exists($teacher->id, $users));
+        $this->assertFalse(array_key_exists($admin->id, $users));
+        $this->assertFalse(array_key_exists($student->id, $users));
+        $this->assertFalse(array_key_exists($guest->id, $users));
+
+        // Test role override.
+        assign_capability('moodle/site:backupcourse', CAP_PROHIBIT, $teacherrole->id, $coursecontext, true);
+        assign_capability('moodle/site:backupcourse', CAP_ALLOW, $studentrole->id, $coursecontext, true);
+
+        list($sql, $params) = get_with_capability_sql($coursecontext, 'moodle/site:backupcourse');
+        $users = $DB->get_records_sql($sql, $params);
+
+        $this->assertFalse(array_key_exists($teacher->id, $users));
+        $this->assertFalse(array_key_exists($admin->id, $users));
+        $this->assertTrue(array_key_exists($student->id, $users));
+        $this->assertFalse(array_key_exists($guest->id, $users));
+    }
 }
 
 /**
