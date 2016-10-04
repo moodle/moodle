@@ -997,4 +997,61 @@ class core_useragent {
         $instance = self::instance();
         return (bool) $instance->is_useragent_web_crawler();
     }
+
+    /**
+     * Returns true if the client appears to be a device using iOS (iPhone, iPad, iPod).
+     *
+     * @param scalar $version The version if we need to find out if it is equal to or greater than that specified.
+     * @return bool true if the client is using iOS
+     * @since Moodle 3.2
+     */
+    public static function is_ios($version = null) {
+        $useragent = self::get_user_agent_string();
+        if ($useragent === false) {
+            return false;
+        }
+        if (strpos($useragent, 'AppleWebKit') === false) {
+            return false;
+        }
+        if (strpos($useragent, 'Windows')) {
+            // Reject Windows Safari.
+            return false;
+        }
+        if (strpos($useragent, 'Macintosh')) {
+            // Reject MacOS Safari.
+            return false;
+        }
+        // Look for AppleWebKit, excluding strings with OmniWeb, Shiira and SymbianOS and any other mobile devices.
+        if (strpos($useragent, 'OmniWeb')) {
+            // Reject OmniWeb.
+            return false;
+        }
+        if (strpos($useragent, 'Shiira')) {
+            // Reject Shiira.
+            return false;
+        }
+        if (strpos($useragent, 'SymbianOS')) {
+            // Reject SymbianOS.
+            return false;
+        }
+        if (strpos($useragent, 'Android')) {
+            // Reject Androids too.
+            return false;
+        }
+        if (strpos($useragent, 'Chrome')) {
+            // Reject chrome browsers - it needs to be tested explicitly.
+            // This will also reject Edge, which pretends to be both Chrome, and Safari.
+            return false;
+        }
+
+        if (empty($version)) {
+            return true; // No version specified.
+        }
+        if (preg_match("/AppleWebKit\/([0-9.]+)/i", $useragent, $match)) {
+            if (version_compare($match[1], $version) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

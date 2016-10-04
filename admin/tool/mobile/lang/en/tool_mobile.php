@@ -22,4 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['clickheretolaunchtheapp'] = 'Please, click here if the app does not open automatically.';
+$string['forcedurlscheme'] = 'The URL scheme allows to open the mobile app from other apps like the browser. Use this setting if you want to allow only your custom branded app to be opened by the browser.';
+$string['forcedurlscheme_key'] = 'URL scheme';
+$string['loginintheapp'] = 'Via the app';
+$string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
+$string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
 $string['pluginname'] = 'Moodle Mobile tools';
+$string['typeoflogin'] = 'Type of login';
+$string['typeoflogin_desc'] = 'Choose the type of login.';
