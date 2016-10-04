@@ -24,13 +24,26 @@
     * none
 
     Data attributes required for JS:
-    * none
+    * All data attributes are required
 
     Context variables required for this template:
-    * userid the logged in user id
+    * isread If the message is read or not
+    * contexturl The link to the message on the messages page
+    * fullname The name of the sender
+    * profileimageurl The URL for the sender's profile image
+    * sentfromcurrentuser Was the last message sent by the current user
+    * lastmessage The message text
+    * unreadcount The number of unread messages in this conversation
 
     Example context (json):
     {
+        "isread": true,
+        "contexturl": "http://www.moodle.com",
+        "fullname": "Some Person",
+        "profileimageurl": "http://www.moodle.com",
+        "sentfromcurrentuser": false,
+        "lastmessage": "Hello, this is Some Person!",
+        "unreadcount": 1
     }
 
 }}

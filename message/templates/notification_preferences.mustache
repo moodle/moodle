@@ -39,11 +39,8 @@
                 "displayname": "System",
                 "processors": [
                     {
-                        displayname: "Popup notification",
-                        name: "popup",
-                        userid: 1,
-                        contextid: 18,
-                        hassettings: true
+                        "onlinehelphtml": "<p>help button HTML</p>",
+                        "offlinehelphtml": "<p>help button HTML</p>",
                     }
                 ],
                 "notifications": [
@@ -55,17 +52,18 @@
                                 "displayname": "Popup notification",
                                 "name": "popup",
                                 "locked": 0,
+                                "userconfigured": 1,
                                 "loggedin": {
                                     "name": "loggedin",
                                     "displayname": "When I'm logged in",
                                     "checked": 0,
-                                    "iconurl": "some url"
+                                    "disableall": 0,
                                 },
                                 "loggedoff": {
                                     "name": "loggedoff",
                                     "displayname": "When I'm offline",
                                     "checked": 0,
-                                    "iconurl": "some url"
+                                    "disableall": 0,
                                 },
                             }
                         ]

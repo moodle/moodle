@@ -24,13 +24,28 @@
     * none
 
     Data attributes required for JS:
-    * none
+    * All data attributes are required
 
     Context variables required for this template:
-    * userid the logged in user id
+    * contexturl A link to the notification resource
+    * read If the notification is read or not
+    * subject The subject text
+    * id Notification id
+    * iconurl The URL for the notification icon
+    * shortenedsubject A shortened version of subject text
+    * timecreatedpretty Pretty formatted time stamp
+    * viewmoreurl The link to the full notification
 
     Example context (json):
     {
+        "contexturl": "http://www.moodle.com",
+        "read": true,
+        "subject": "You have a notification",
+        "id": 1,
+        "iconurl": "http://www.moodle.com",
+        "shortenedsubject": "You have a...",
+        "timecreatedpretty": "5 minutes ago",
+        "viewmoreurl": "http://www.moodle.com"
     }
 
 }}

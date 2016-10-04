@@ -34,21 +34,28 @@
 
     Example context (json):
     {
-        "displayname": "Popup notification",
-        "name": "popup",
-        "locked": 0,
-        "loggedin": {
-            "name": "loggedin",
-            "displayname": "When I'm logged in",
-            "checked": 0,
-            "iconurl": "some url"
-        },
-        "loggedoff": {
-            "name": "loggedoff",
-            "displayname": "When I'm offline",
-            "checked": 0,
-            "iconurl": "some url"
-        },
+        "displayname": "Notices about minor problems",
+        "preferencekey": "message_provider_moodle_notices",
+        "processors": [
+            {
+                "displayname": "Popup notification",
+                "name": "popup",
+                "locked": 0,
+                "userconfigured": 1,
+                "loggedin": {
+                    "name": "loggedin",
+                    "displayname": "When I'm logged in",
+                    "checked": 0,
+                    "disableall": 0,
+                },
+                "loggedoff": {
+                    "name": "loggedoff",
+                    "displayname": "When I'm offline",
+                    "checked": 0,
+                    "disableall": 0,
+                },
+            }
+        ]
     }
 }}
 <tr class="preference-row" data-region="preference-row" data-preference-key="{{preferencekey}}">
