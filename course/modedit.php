@@ -60,48 +60,10 @@ if (!empty($add)) {
     // will be the closest match we have.
     navigation_node::override_active_url(course_get_url($course, $section));
 
-    list($module, $context, $cw) = can_add_moduleinfo($course, $add, $section);
-
-    $cm = null;
-
-    $data = new stdClass();
-    $data->section          = $section;  // The section number itself - relative!!! (section column in course_sections)
-    $data->visible          = $cw->visible;
-    $data->course           = $course->id;
-    $data->module           = $module->id;
-    $data->modulename       = $module->name;
-    $data->groupmode        = $course->groupmode;
-    $data->groupingid       = $course->defaultgroupingid;
-    $data->id               = '';
-    $data->instance         = '';
-    $data->coursemodule     = '';
-    $data->add              = $add;
-    $data->return           = 0; //must be false if this is an add, go back to course view on cancel
-    $data->sr               = $sectionreturn;
-
-    if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
-        $draftid_editor = file_get_submitted_draft_itemid('introeditor');
-        file_prepare_draft_area($draftid_editor, null, null, null, null, array('subdirs'=>true));
-        $data->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
-    }
-
-    if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)
-            and has_capability('moodle/grade:managegradingforms', $context)) {
-        require_once($CFG->dirroot.'/grade/grading/lib.php');
-
-        $data->_advancedgradingdata['methods'] = grading_manager::available_methods();
-        $areas = grading_manager::available_areas('mod_'.$module->name);
-
-        foreach ($areas as $areaname => $areatitle) {
-            $data->_advancedgradingdata['areas'][$areaname] = array(
-                'title'  => $areatitle,
-                'method' => '',
-            );
-            $formfield = 'advancedgradingmethod_'.$areaname;
-            $data->{$formfield} = '';
-        }
-    }
-
+    list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $add, $section);
+    $data->return = 0;
+    $data->sr = $sectionreturn;
+    $data->add = $add;
     if (!empty($type)) { //TODO: hopefully will be removed in 2.0
         $data->type = $type;
     }
@@ -136,86 +98,10 @@ if (!empty($add)) {
     // require_login
     require_login($course, false, $cm); // needed to setup proper $COURSE
 
-    list($cm, $context, $module, $data, $cw) = can_update_moduleinfo($cm);
-
-    $data->coursemodule       = $cm->id;
-    $data->section            = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
-    $data->visible            = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
-    $data->cmidnumber         = $cm->idnumber;          // The cm IDnumber
-    $data->groupmode          = groups_get_activity_groupmode($cm); // locked later if forced
-    $data->groupingid         = $cm->groupingid;
-    $data->course             = $course->id;
-    $data->module             = $module->id;
-    $data->modulename         = $module->name;
-    $data->instance           = $cm->instance;
-    $data->return             = $return;
-    $data->sr                 = $sectionreturn;
-    $data->update             = $update;
-    $data->completion         = $cm->completion;
-    $data->completionview     = $cm->completionview;
-    $data->completionexpected = $cm->completionexpected;
-    $data->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
-    $data->showdescription    = $cm->showdescription;
-    $data->tags               = core_tag_tag::get_item_tags_array('core', 'course_modules', $cm->id);
-    if (!empty($CFG->enableavailability)) {
-        $data->availabilityconditionsjson = $cm->availability;
-    }
-
-    if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
-        $draftid_editor = file_get_submitted_draft_itemid('introeditor');
-        $currentintro = file_prepare_draft_area($draftid_editor, $context->id, 'mod_'.$data->modulename, 'intro', 0, array('subdirs'=>true), $data->intro);
-        $data->introeditor = array('text'=>$currentintro, 'format'=>$data->introformat, 'itemid'=>$draftid_editor);
-    }
-
-    if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)
-            and has_capability('moodle/grade:managegradingforms', $context)) {
-        require_once($CFG->dirroot.'/grade/grading/lib.php');
-        $gradingman = get_grading_manager($context, 'mod_'.$data->modulename);
-        $data->_advancedgradingdata['methods'] = $gradingman->get_available_methods();
-        $areas = $gradingman->get_available_areas();
-
-        foreach ($areas as $areaname => $areatitle) {
-            $gradingman->set_area($areaname);
-            $method = $gradingman->get_active_method();
-            $data->_advancedgradingdata['areas'][$areaname] = array(
-                'title'  => $areatitle,
-                'method' => $method,
-            );
-            $formfield = 'advancedgradingmethod_'.$areaname;
-            $data->{$formfield} = $method;
-        }
-    }
-
-    if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$data->modulename,
-                                             'iteminstance'=>$data->instance, 'courseid'=>$course->id))) {
-        // Add existing outcomes.
-        foreach ($items as $item) {
-            if (!empty($item->outcomeid)) {
-                $data->{'outcome_' . $item->outcomeid} = 1;
-            } else if (!empty($item->gradepass)) {
-                $decimalpoints = $item->get_decimals();
-                $data->gradepass = format_float($item->gradepass, $decimalpoints);
-            }
-        }
-
-        // set category if present
-        $gradecat = false;
-        foreach ($items as $item) {
-            if ($gradecat === false) {
-                $gradecat = $item->categoryid;
-                continue;
-            }
-            if ($gradecat != $item->categoryid) {
-                //mixed categories
-                $gradecat = false;
-                break;
-            }
-        }
-        if ($gradecat !== false) {
-            // do not set if mixed categories present
-            $data->gradecat = $gradecat;
-        }
-    }
+    list($cm, $context, $module, $data, $cw) = get_moduleinfo_data($cm, $course);
+    $data->return = $return;
+    $data->sr = $sectionreturn;
+    $data->update = $update;
 
     $sectionname = get_section_name($course, $cw);
     $fullmodulename = get_string('modulename', $module->name);
