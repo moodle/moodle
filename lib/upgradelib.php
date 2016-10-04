@@ -2317,3 +2317,27 @@ function check_unoconv_version(environment_results $result) {
     }
     return null;
 }
+
+/**
+ * Checks for up-to-date TLS libraries.
+ *
+ * @param environment_results $result object to update, if relevant.
+ * @return environment_results|null updated results or null if unoconv path is not executable.
+ */
+function check_tls_libraries(environment_results $result) {
+    global $CFG;
+
+    if (!\core\upgrade\util::validate_php_curl_tls(curl_version(), PHP_ZTS)) {
+        $result->setInfo('invalid ssl/tls configuration');
+        $result->setStatus(false);
+        return $result;
+    }
+
+    if (!\core\upgrade\util::can_use_tls12(curl_version(), php_uname('r'))) {
+        $result->setInfo('ssl/tls configuration not supported');
+        $result->setStatus(false);
+        return $result;
+    }
+
+    return null;
+}
