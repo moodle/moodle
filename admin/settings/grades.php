@@ -42,6 +42,9 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         // enable publishing in exports/imports
         $temp->add(new admin_setting_configcheckbox('gradepublishing', new lang_string('gradepublishing', 'grades'), new lang_string('gradepublishing_help', 'grades'), 0));
 
+        $temp->add(new admin_setting_configcheckbox('grade_export_exportfeedback', new lang_string('exportfeedback', 'grades'),
+                                                  new lang_string('exportfeedback_desc', 'grades'), 0));
+
         $temp->add(new admin_setting_configselect('grade_export_displaytype', new lang_string('gradeexportdisplaytype', 'grades'),
                                                   new lang_string('gradeexportdisplaytype_desc', 'grades'), GRADE_DISPLAY_TYPE_REAL, $display_types));
 

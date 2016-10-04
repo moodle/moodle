@@ -202,6 +202,7 @@ $string['expand'] = 'Expand category';
 $string['export'] = 'Export';
 $string['exportalloutcomes'] = 'Export all outcomes';
 $string['exportfeedback'] = 'Include feedback in export';
+$string['exportfeedback_desc'] = 'This can be overridden during export.';
 $string['exportformatoptions'] = 'Export format options';
 $string['exportplugins'] = 'Export plugins';
 $string['exportsettings'] = 'Export settings';
