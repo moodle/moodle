@@ -126,8 +126,10 @@ book_add_fake_block($chapters, $chapter, $book, $cm, $edit);
 // prepare chapter navigation icons
 $previd = null;
 $prevtitle = null;
+$navprevtitle = null;
 $nextid = null;
 $nexttitle = null;
+$navnexttitle = null;
 $last = null;
 foreach ($chapters as $ch) {
     if (!$edit and $ch->hidden) {
@@ -136,11 +138,13 @@ foreach ($chapters as $ch) {
     if ($last == $chapter->id) {
         $nextid = $ch->id;
         $nexttitle = book_get_chapter_title($ch->id, $chapters, $book, $context);
+        $navnexttitle = get_string('navnexttitle', 'mod_book', $nexttitle);
         break;
     }
     if ($ch->id != $chapter->id) {
         $previd = $ch->id;
         $prevtitle = book_get_chapter_title($ch->id, $chapters, $book, $context);
+        $navprevtitle = get_string('navprevtitle', 'mod_book', $prevtitle);
     }
     $last = $ch->id;
 }
@@ -155,9 +159,9 @@ if ($book->navstyle) {
     if ($previd) {
         $navprev = get_string('navprev', 'book');
         if ($book->navstyle == 1) {
-            $chnavigation .= '<a title="' . $navprev . '" class="bookprev" href="view.php?id=' .
+            $chnavigation .= '<a title="' . $navprevtitle . '" class="bookprev" href="view.php?id=' .
                 $cm->id . '&amp;chapterid=' . $previd .  '">' .
-                '<img src="' . $OUTPUT->pix_url($navprevicon, 'mod_book') . '" class="icon" alt="' . $navprev . '"/></a>';
+                '<img src="' . $OUTPUT->pix_url($navprevicon, 'mod_book') . '" class="icon" alt="' . $navprevtitle . '"/></a>';
         } else {
             $chnavigation .= '<a title="' . $navprev . '" class="bookprev" href="view.php?id=' .
                 $cm->id . '&amp;chapterid=' . $previd . '">' .
@@ -172,9 +176,9 @@ if ($book->navstyle) {
     if ($nextid) {
         $navnext = get_string('navnext', 'book');
         if ($book->navstyle == 1) {
-            $chnavigation .= '<a title="' . $navnext . '" class="booknext" href="view.php?id=' .
+            $chnavigation .= '<a title="' . $navnexttitle . '" class="booknext" href="view.php?id=' .
                 $cm->id . '&amp;chapterid='.$nextid.'">' .
-                '<img src="' . $OUTPUT->pix_url($navnexticon, 'mod_book').'" class="icon" alt="' . $navnext . '" /></a>';
+                '<img src="' . $OUTPUT->pix_url($navnexticon, 'mod_book').'" class="icon" alt="' . $navnexttitle . '" /></a>';
         } else {
             $chnavigation .= ' <a title="' . $navnext . '" class="booknext" href="view.php?id=' .
                 $cm->id . '&amp;chapterid='.$nextid.'">' .
