@@ -41,7 +41,7 @@ if (!$CFG->enablewebservices) {
 $typeoflogin = get_config('tool_mobile', 'typeoflogin');
 if ($typeoflogin != tool_mobile\api::LOGIN_VIA_BROWSER and
         $typeoflogin != tool_mobile\api::LOGIN_VIA_EMBEDDED_BROWSER) {
-    throw new moodle_exception('pluginnotenabledorconfigured', 'local_mobile');
+    throw new moodle_exception('pluginnotenabledorconfigured', 'tool_mobile');
 }
 
 // Check if the service exists and is enabled.

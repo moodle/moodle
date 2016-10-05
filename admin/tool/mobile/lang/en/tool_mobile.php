@@ -34,5 +34,6 @@ $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
 $string['pluginname'] = 'Moodle Mobile tools';
 $string['smartappbanners'] = 'Smart App Banners (iOS only)';
+$string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
 $string['typeoflogin'] = 'Type of login';
 $string['typeoflogin_desc'] = 'Choose the type of login.';
