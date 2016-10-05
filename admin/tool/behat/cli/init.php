@@ -91,12 +91,20 @@ $commandoptions = "";
 // If parallel run then use utilparallel.
 if ($options['parallel'] && $options['parallel'] > 1) {
     $utilfile = 'util.php';
-}
+    // Sanitize all input options, so they can be passed to util.
+    foreach ($options as $option => $value) {
+        if ($value) {
+            $commandoptions .= " --$option='$value'";
+        }
+    }
+} else {
+    // Only sanitize options for single run.
+    $cmdoptionsforsinglerun = array('run-with-theme');
 
-// Sanitize input options, so they can be passed to util.
-foreach ($options as $option => $value) {
-    if ($value) {
-        $commandoptions .= " --$option='$value'";
+    foreach ($cmdoptionsforsinglerun as $option) {
+        if (!empty($options[$option])) {
+            $commandoptions .= " --$option='$options[$option]'";
+        }
     }
 }
 
