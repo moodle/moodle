@@ -482,7 +482,7 @@ class behat_config_util {
 
         // Remove selectors from step definitions.
         $themes = $this->get_list_of_themes();
-        $selectortypes = ['partial', 'exact'];
+        $selectortypes = ['named_partial', 'named_exact'];
         foreach ($themes as $theme) {
             foreach ($selectortypes as $selectortype) {
                 // Don't include selector classes.
@@ -1299,7 +1299,7 @@ class behat_config_util {
                 $this->overriddenthemescontexts[$context] = $path;
             }
 
-            $selectortypes = ['partial', 'exact'];
+            $selectortypes = ['named_partial', 'named_exact'];
             foreach ($selectortypes as $selectortype) {
                 // Don't include selector classes.
                 if ($context === self::get_behat_theme_selector_override_classname($theme, $selectortype)) {
