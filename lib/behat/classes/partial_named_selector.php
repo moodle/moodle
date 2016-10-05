@@ -171,6 +171,7 @@ XPATH
         ,
             'filemanager' => <<<XPATH
 .//*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']
+    /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
         ],
     ];
