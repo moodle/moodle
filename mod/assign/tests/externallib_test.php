@@ -229,6 +229,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($course1->id, $assignment['course']);
         $this->assertEquals('lightwork assignment', $assignment['name']);
         $this->assertContains('the assignment intro text here', $assignment['intro']);
+        $this->assertNotEmpty($assignment['configs']);
         // Check the url of the file attatched.
         $this->assertRegExp('@"' . $CFG->wwwroot . '/webservice/pluginfile.php/\d+/mod_assign/intro/intro\.txt"@', $assignment['intro']);
         $this->assertEquals(1, $assignment['markingworkflow']);

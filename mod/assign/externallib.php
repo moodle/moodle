@@ -401,19 +401,27 @@ class mod_assign_external extends external_api {
                         );
                         continue;
                     }
-                    $configrecords = $DB->get_recordset('assign_plugin_config', array('assignment' => $module->assignmentid));
+
+                    $assign = new assign($context, null, null);
+
+                    // Get configurations for only enabled plugins.
+                    $plugins = $assign->get_submission_plugins();
+                    $plugins = array_merge($plugins, $assign->get_feedback_plugins());
+
                     $configarray = array();
-                    foreach ($configrecords as $configrecord) {
-                        $configarray[] = array(
-                            'id' => $configrecord->id,
-                            'assignment' => $configrecord->assignment,
-                            'plugin' => $configrecord->plugin,
-                            'subtype' => $configrecord->subtype,
-                            'name' => $configrecord->name,
-                            'value' => $configrecord->value
-                        );
+                    foreach ($plugins as $plugin) {
+                        if ($plugin->is_enabled() && $plugin->is_visible()) {
+                            $configrecords = $plugin->get_config_for_external();
+                            foreach ($configrecords as $name => $value) {
+                                $configarray[] = array(
+                                    'plugin' => $plugin->get_type(),
+                                    'subtype' => $plugin->get_subtype(),
+                                    'name' => $name,
+                                    'value' => $value
+                                );
+                            }
+                        }
                     }
-                    $configrecords->close();
 
                     $assignment = array(
                         'id' => $module->assignmentid,
@@ -446,8 +454,6 @@ class mod_assign_external extends external_api {
                     );
 
                     // Return or not intro and file attachments depending on the plugin settings.
-                    $assign = new assign($context, null, null);
-
                     if ($assign->show_intro()) {
 
                         list($assignment['intro'], $assignment['introformat']) = external_format_text($module->intro,
@@ -540,8 +546,8 @@ class mod_assign_external extends external_api {
     private static function get_assignments_config_structure() {
         return new external_single_structure(
             array(
-                'id' => new external_value(PARAM_INT, 'assign_plugin_config id'),
-                'assignment' => new external_value(PARAM_INT, 'assignment id'),
+                'id' => new external_value(PARAM_INT, 'assign_plugin_config id', VALUE_OPTIONAL),
+                'assignment' => new external_value(PARAM_INT, 'assignment id', VALUE_OPTIONAL),
                 'plugin' => new external_value(PARAM_TEXT, 'plugin'),
                 'subtype' => new external_value(PARAM_TEXT, 'subtype'),
                 'name' => new external_value(PARAM_TEXT, 'name'),

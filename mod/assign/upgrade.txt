@@ -13,6 +13,8 @@ This files describes API changes in the assign code.
   Please, note that previously the filename was part of the filepath field, now they are separated.
 * Submission and feedback plugins can now specify file areas related to their configuration data,
   which will then be included in backup and restore; see assign_plugin::get_config_file_areas().
+* Submission and feedback plugins must now return the specific list of configs available for external functions,
+  this can be done implementing the new assign plugin method get_config_for_external()
 
 === 3.1 ===
 * The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true

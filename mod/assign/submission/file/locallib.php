@@ -547,4 +547,23 @@ class assign_submission_file extends assign_submission_plugin {
             )
         );
     }
+
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of settings
+     * @since Moodle 3.2
+     */
+    public function get_config_for_external() {
+        global $CFG;
+
+        $configs = $this->get_config();
+
+        // Get a size in bytes.
+        if ($configs->maxsubmissionsizebytes == 0) {
+            $configs->maxsubmissionsizebytes = get_max_upload_file_size($CFG->maxbytes, $this->assignment->get_course()->maxbytes,
+                                                                        get_config('assignsubmission_file', 'maxbytes'));
+        }
+        return (array) $configs;
+    }
 }
