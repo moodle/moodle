@@ -14,7 +14,7 @@
 /**
 	\mainpage
 
-	@version   v5.20.3  01-Jan-2016
+	@version   v5.20.7  20-Sep-2016
 	@copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 	@copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
 
@@ -36,6 +36,21 @@
 
 if (!defined('_ADODB_LAYER')) {
 	define('_ADODB_LAYER',1);
+
+	// The ADOdb extension is no longer maintained and effectively unsupported
+	// since v5.04. The library will not function properly if it is present.
+	if(defined('ADODB_EXTENSION')) {
+		$msg = "Unsupported ADOdb Extension (v" . ADODB_EXTENSION . ") detected! "
+			. "Disable it to use ADOdb";
+
+		$errorfn = defined('ADODB_ERROR_HANDLER') ? ADODB_ERROR_HANDLER : false;
+		if ($errorfn) {
+			$conn = false;
+			$errorfn('ADOdb', basename(__FILE__), -9999, $msg, null, null, $conn);
+		} else {
+			die($msg . PHP_EOL);
+		}
+	}
 
 	//==============================================================================================
 	// CONSTANT DEFINITIONS
@@ -218,7 +233,7 @@ if (!defined('_ADODB_LAYER')) {
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'v5.20.3  01-Jan-2016';
+		$ADODB_vers = 'v5.20.7  20-Sep-2016';
 
 		/**
 		 * Determines whether recordset->RecordCount() is used.
@@ -659,23 +674,23 @@ if (!defined('_ADODB_LAYER')) {
 		}
 		if (isset($rez)) {
 			$err = $this->ErrorMsg();
+			$errno = $this->ErrorNo();
 			if (empty($err)) {
 				$err = "Connection error to server '$argHostname' with user '$argUsername'";
 			}
-			$ret = false;
 		} else {
 			$err = "Missing extension for ".$this->dataProvider;
-			$ret = 0;
+			$errno = 0;
 		}
 		if ($fn = $this->raiseErrorFn) {
-			$fn($this->databaseType,'CONNECT',$this->ErrorNo(),$err,$this->host,$this->database,$this);
+			$fn($this->databaseType, 'CONNECT', $errno, $err, $this->host, $this->database, $this);
 		}
 
 		$this->_connectionID = false;
 		if ($this->debug) {
 			ADOConnection::outp( $this->host.': '.$err);
 		}
-		return $ret;
+		return false;
 	}
 
 	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabaseName) {
@@ -1117,20 +1132,35 @@ if (!defined('_ADODB_LAYER')) {
 				$sqlarr = explode('?',$sql);
 				$nparams = sizeof($sqlarr)-1;
 
+				if (!$array_2d) {
+					// When not Bind Bulk - convert to array of arguments list
+					$inputarr = array($inputarr);
+				} else {
+					// Bulk bind - Make sure all list of params have the same number of elements
+					$countElements = array_map('count', $inputarr);
+					if (1 != count(array_unique($countElements))) {
+						$this->outp_throw(
+							"[bulk execute] Input array has different number of params  [" . print_r($countElements, true) .  "].",
+							'Execute'
+						);
+						return false;
+					}
+					unset($countElements);
+				}
 				// Make sure the number of parameters provided in the input
 				// array matches what the query expects
-				if ($nparams != count($inputarr)) {
+				$element0 = reset($inputarr);
+				if ($nparams != count($element0)) {
 					$this->outp_throw(
-						"Input array has " . count($inputarr) .
+						"Input array has " . count($element0) .
 						" params, does not match query: '" . htmlspecialchars($sql) . "'",
 						'Execute'
 					);
 					return false;
 				}
 
-				if (!$array_2d) {
-					$inputarr = array($inputarr);
-				}
+				// clean memory
+				unset($element0);
 
 				foreach($inputarr as $arr) {
 					$sql = ''; $i = 0;
