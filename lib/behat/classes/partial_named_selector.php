@@ -170,7 +170,7 @@ XPATH
 XPATH
         ,
             'filemanager' => <<<XPATH
-+.//*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']
+.//*[@data-fieldtype = 'filemanager' or @data-fieldtype = 'filepicker']
 XPATH
         ],
     ];
