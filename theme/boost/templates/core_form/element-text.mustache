@@ -4,7 +4,7 @@
                 class="form-control {{#error}}form-control-danger{{/error}}"
                 name="{{element.name}}"
         {{#element.frozen}}
-                readonly disabled
+                readonly {{#element.hardfrozen}}disabled{{/element.hardfrozen}}
         {{/element.frozen}}
                 id="{{element.id}}"
                 value="{{element.value}}"

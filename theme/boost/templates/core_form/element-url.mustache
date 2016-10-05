@@ -1,6 +1,5 @@
 {{< core_form/element-template }}
     {{$element}}
-        {{^element.frozen}}
         <input type="url"
                 class="form-control {{#error}}form-control-danger{{/error}}"
                 name="{{element.name}}"
@@ -10,11 +9,12 @@
                 {{#error}}
                     autofocus aria-describedby="id_error_{{element.name}}"
                 {{/error}}
+                {{#element.frozen}}
+                    readonly {{#element.hardfrozen}}disabled{{/element.hardfrozen}}
+                {{/element.frozen}}
                 {{{element.attributes}}} >
-                {{{element.filepickerhtml}}}
-        {{/element.frozen}}
-        {{#element.frozen}}
-            {{element.value}}
+        {{^element.frozen}}
+            {{{element.filepickerhtml}}}
         {{/element.frozen}}
     {{/element}}
 {{/ core_form/element-template }}

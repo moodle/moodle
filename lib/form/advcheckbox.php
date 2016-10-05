@@ -142,7 +142,7 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox implements 
 
         $context['selectedvalue'] = $this->_values[1];
         $context['deselectedvalue'] = $this->_values[0];
-
+        $context['frozenvalue'] = $this->getValue();
         return $context;
     }
 
