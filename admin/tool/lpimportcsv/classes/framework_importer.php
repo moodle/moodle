@@ -52,6 +52,7 @@ class framework_importer {
     protected $importid = 0;
     protected $importer = null;
     protected $foundheaders = array();
+    protected $scalecache = array();
 
     /**
      * Store an error message for display later
@@ -355,12 +356,16 @@ class framework_importer {
 
         require_once($CFG->libdir . '/gradelib.php');
 
-        $allscales = grade_scale::fetch_all_global();
-        $matchingscale = false;
-        foreach ($allscales as $scale) {
-            if ($scale->compact_items() == $scalevalues) {
-                $matchingscale = $scale;
+        if (empty($this->scalecache)) {
+            $allscales = grade_scale::fetch_all_global();
+            foreach ($allscales as $scale) {
+                $scale->load_items();
+                $this->scalecache[$scale->compact_items()] = $scale;
             }
+        }
+        $matchingscale = false;
+        if (isset($this->scalecache[$scalevalues])) {
+            $matchingscale = $this->scalecache[$scalevalues];
         }
         if (!$matchingscale) {
             // Create it.
@@ -371,6 +376,7 @@ class framework_importer {
             $newscale->scale = $scalevalues;
             $newscale->description = get_string('competencyscaledescription', 'tool_lpimportcsv');
             $newscale->insert();
+            $this->scalecache[$scalevalues] = $newscale;
             return $newscale->id;
         }
         return $matchingscale->id;
