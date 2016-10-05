@@ -4,6 +4,9 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
 === 3.2 ===
 * Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+* Course formats can overwrite get_default_course_enddate function to set the default course end date for new courses.
+  format_base::get_default_course_enddate uses the new "Course duration" site setting to calculate the default course end date
+  from the default course start date.
 
 === 3.1 ===
 * Course format may use the inplace_editable template to allow quick editing of section names, see

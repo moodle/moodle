@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/course/lib.php');
+
 /**
  * Specify course upload details.
  *
@@ -94,6 +96,9 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->addElement('date_selector', 'defaults[startdate]', get_string('startdate'));
         $mform->addHelpButton('defaults[startdate]', 'startdate');
         $mform->setDefault('defaults[startdate]', time() + 3600 * 24);
+
+        $mform->addElement('date_selector', 'defaults[enddate]', get_string('enddate'), array('optional' => true));
+        $mform->addHelpButton('defaults[enddate]', 'enddate');
 
         $courseformats = get_sorted_course_formats(true);
         $formcourseformats = array();
@@ -190,4 +195,37 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->closeHeaderBefore('buttonar');
     }
 
+    /**
+     * Sets the enddate default after set_data is called.
+     */
+    public function definition_after_data() {
+
+        $mform = $this->_form;
+
+        // The default end date depends on the course format.
+        $format = course_get_format((object)array('format' => get_config('moodlecourse', 'format')));
+
+        $enddate = $format->get_default_course_enddate($mform, array('startdate' => 'defaults[startdate]'));
+        // We add 1 day like we do above in startdate.
+        $mform->setDefault('defaults[enddate]', $enddate + 3600 * 24);
+    }
+
+    /**
+     * Validation.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array the errors that were found
+     */
+    public function validation($data, $files) {
+        global $DB;
+
+        $errors = parent::validation($data, $files);
+
+        if ($errorcode = course_validate_dates($data['defaults'])) {
+            $errors['defaults[enddate]'] = get_string($errorcode, 'error');
+        }
+
+        return $errors;
+    }
 }

@@ -92,6 +92,9 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp->add(new admin_setting_configselect('moodlecourse/coursedisplay', new lang_string('coursedisplay'),
         new lang_string('coursedisplay_help'), COURSE_DISPLAY_SINGLEPAGE, $choices));
 
+    $temp->add(new admin_setting_configduration('moodlecourse/courseduration', get_string('courseduration'),
+        get_string('courseduration_desc'), YEARSECS));
+
     // Appearance.
     $temp->add(new admin_setting_heading('appearancehdr', new lang_string('appearance'), ''));
 

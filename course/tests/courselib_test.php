@@ -3137,4 +3137,164 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->expectExceptionMessage(get_string('invalidcourse', 'error'));
         update_course($course);
     }
+
+    /**
+     * test_course_enddate
+     *
+     * @dataProvider course_enddate_provider
+     * @param int $startdate
+     * @param int $enddate
+     * @param string $errorcode
+     */
+    public function test_course_enddate($startdate, $enddate, $errorcode) {
+
+        $this->resetAfterTest(true);
+
+        $record = array('startdate' => $startdate, 'enddate' => $enddate);
+        try {
+            $course1 = $this->getDataGenerator()->create_course($record);
+            if ($errorcode !== false) {
+                $this->fail('Expected exception with "' . $errorcode . '" error code in create_create');
+            }
+        } catch (moodle_exception $e) {
+            if ($errorcode === false) {
+                $this->fail('Got "' . $errorcode . '" exception error code and no exception was expected');
+            }
+            if ($e->errorcode != $errorcode) {
+                $this->fail('Got "' . $e->errorcode. '" exception error code and "' . $errorcode . '" was expected');
+            }
+            return;
+        }
+
+        $this->assertEquals($startdate, $course1->startdate);
+        $this->assertEquals($enddate, $course1->enddate);
+    }
+
+    /**
+     * Provider for test_course_enddate.
+     *
+     * @return array
+     */
+    public function course_enddate_provider() {
+        // Each provided example contains startdate, enddate and the expected exception error code if there is any.
+        return [
+            [
+                111,
+                222,
+                false
+            ], [
+                222,
+                111,
+                'enddatebeforestartdate'
+            ], [
+                111,
+                0,
+                false
+            ], [
+                0,
+                222,
+                'nostartdatenoenddate'
+            ]
+        ];
+    }
+
+
+    /**
+     * test_course_dates_reset
+     *
+     * @dataProvider course_dates_reset_provider
+     * @param int $startdate
+     * @param int $enddate
+     * @param int $resetstartdate
+     * @param int $resetenddate
+     * @param int $resultingstartdate
+     * @param int $resultingenddate
+     */
+    public function test_course_dates_reset($startdate, $enddate, $resetstartdate, $resetenddate, $resultingstartdate, $resultingenddate) {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $this->setTimezone('UTC');
+
+        $record = array('startdate' => $startdate, 'enddate' => $enddate);
+        $originalcourse = $this->getDataGenerator()->create_course($record);
+
+        $resetdata = new stdClass();
+        $resetdata->id = $originalcourse->id;
+        $resetdata->reset_start_date_old = $originalcourse->startdate;
+        $resetdata->reset_start_date = $resetstartdate;
+        $resetdata->reset_end_date = $resetenddate;
+        $resetdata->reset_end_date_old = $record['enddate'];
+        reset_course_userdata($resetdata);
+
+        $course = $DB->get_record('course', array('id' => $originalcourse->id));
+
+        $this->assertEquals($resultingstartdate, $course->startdate);
+        $this->assertEquals($resultingenddate, $course->enddate);
+    }
+
+    /**
+     * Provider for test_course_dates_reset.
+     *
+     * @return array
+     */
+    public function course_dates_reset_provider() {
+
+        // Each example contains the following:
+        // - course startdate
+        // - course enddate
+        // - startdate to reset to (false if not reset)
+        // - enddate to reset to (false if not reset)
+        // - resulting startdate
+        // - resulting enddate
+        $time = 1445644800;
+        return [
+            // No date changes.
+            [
+                $time,
+                $time + DAYSECS,
+                false,
+                false,
+                $time,
+                $time + DAYSECS
+            ],
+            // End date changes to a valid value.
+            [
+                $time,
+                $time + DAYSECS,
+                false,
+                $time + DAYSECS + 111,
+                $time,
+                $time + DAYSECS + 111
+            ],
+            // Start date changes to a valid value. End date does not get updated because it does not have value.
+            [
+                $time,
+                0,
+                $time + DAYSECS,
+                false,
+                $time + DAYSECS,
+                0
+            ],
+            // Start date changes to a valid value. End date gets updated accordingly.
+            [
+                $time,
+                $time + DAYSECS,
+                $time + WEEKSECS,
+                false,
+                $time + WEEKSECS,
+                $time + WEEKSECS + DAYSECS
+            ],
+            // Start date and end date change to a valid value.
+            [
+                $time,
+                $time + DAYSECS,
+                $time + WEEKSECS,
+                $time + YEARSECS,
+                $time + WEEKSECS,
+                $time + YEARSECS
+            ]
+        ];
+    }
 }

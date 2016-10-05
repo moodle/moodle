@@ -93,7 +93,7 @@ class tool_uploadcourse_course {
     protected $updatemode;
 
     /** @var array fields allowed as course data. */
-    static protected $validfields = array('fullname', 'shortname', 'idnumber', 'category', 'visible', 'startdate',
+    static protected $validfields = array('fullname', 'shortname', 'idnumber', 'category', 'visible', 'startdate', 'enddate',
         'summary', 'format', 'theme', 'lang', 'newsitems', 'showgrades', 'showreports', 'legacyfiles', 'maxbytes',
         'groupmode', 'groupmodeforce', 'groupmodeforce', 'enablecompletion');
 
@@ -587,6 +587,11 @@ class tool_uploadcourse_course {
             $coursedata['startdate'] = strtotime($coursedata['startdate']);
         }
 
+        // Course end date.
+        if (!empty($coursedata['enddate'])) {
+            $coursedata['enddate'] = strtotime($coursedata['enddate']);
+        }
+
         // Ultimate check mode vs. existence.
         switch ($mode) {
             case tool_uploadcourse_processor::MODE_CREATE_NEW:
@@ -634,6 +639,22 @@ class tool_uploadcourse_course {
         } else {
             $coursedata = $this->get_final_create_data($coursedata);
             $this->do = self::DO_CREATE;
+        }
+
+        // Validate course start and end dates.
+        if ($exists) {
+            // We also check existing start and end dates if we are updating an existing course.
+            $existingdata = $DB->get_record('course', array('shortname' => $this->shortname));
+            if (empty($coursedata['startdate'])) {
+                $coursedata['startdate'] = $existingdata->startdate;
+            }
+            if (empty($coursedata['enddate'])) {
+                $coursedata['enddate'] = $existingdata->enddate;
+            }
+        }
+        if ($errorcode = course_validate_dates($coursedata)) {
+            $this->error($errorcode, new lang_string($errorcode, 'error'));
+            return false;
         }
 
         // Add role renaming.
@@ -896,6 +917,11 @@ class tool_uploadcourse_course {
             $course->startdate = $DB->get_field_select('course', 'startdate', 'id = :id', array('id' => $course->id));
         }
         $resetdata->reset_start_date_old = $course->startdate;
+
+        if (empty($course->enddate)) {
+            $course->enddate = $DB->get_field_select('course', 'enddate', 'id = :id', array('id' => $course->id));
+        }
+        $resetdata->reset_end_date_old = $course->enddate;
 
         // Add roles.
         $roles = tool_uploadcourse_helper::get_role_ids();

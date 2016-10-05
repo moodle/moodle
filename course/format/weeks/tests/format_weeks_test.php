@@ -217,4 +217,44 @@ class format_weeks_testcase extends advanced_testcase {
             $this->assertEquals(1, preg_match('/^Can not find data record in database/', $e->getMessage()));
         }
     }
+
+    /**
+     * Test get_default_course_enddate.
+     *
+     * @return void
+     */
+    public function test_default_course_enddate() {
+        global $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        require_once($CFG->dirroot . '/course/tests/fixtures/testable_course_edit_form.php');
+
+        $this->setTimezone('UTC');
+
+        $params = array('format' => 'weeks', 'numsections' => 5, 'startdate' => 1445644800);
+        $course = $this->getDataGenerator()->create_course($params);
+        $category = $DB->get_record('course_categories', array('id' => $course->category));
+
+        $args = [
+            'course' => $course,
+            'category' => $category,
+            'editoroptions' => [
+                'context' => context_course::instance($course->id),
+                'subdirs' => 0
+            ],
+            'returnto' => new moodle_url('/'),
+            'returnurl' => new moodle_url('/'),
+        ];
+
+        $courseform = new testable_course_edit_form(null, $args);
+        $courseform->definition_after_data();
+
+        // format_weeks::get_section_dates is adding 2h to avoid DST problems, we need to replicate it here.
+        $enddate = $params['startdate'] + (WEEKSECS * $params['numsections']) + 7200;
+
+        $weeksformat = course_get_format($course->id);
+        $this->assertEquals($enddate, $weeksformat->get_default_course_enddate($courseform->get_quick_form()));
+    }
+
 }

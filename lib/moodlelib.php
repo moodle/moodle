@@ -5180,6 +5180,15 @@ function reset_course_userdata($data) {
         $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
     }
 
+    if (!empty($data->reset_end_date)) {
+        // If the user set a end date value respect it.
+        $DB->set_field('course', 'enddate', $data->reset_end_date, array('id' => $data->courseid));
+    } else if ($data->timeshift > 0 && $data->reset_end_date_old) {
+        // If there is a time shift apply it to the end date as well.
+        $enddate = $data->reset_end_date_old + $data->timeshift;
+        $DB->set_field('course', 'enddate', $enddate, array('id' => $data->courseid));
+    }
+
     if (!empty($data->reset_events)) {
         $DB->delete_records('event', array('courseid' => $data->courseid));
         $status[] = array('component' => $componentstr, 'item' => get_string('deleteevents', 'calendar'), 'error' => false);

@@ -380,10 +380,16 @@ class format_weeks extends format_base {
      * Return the start and end date of the passed section
      *
      * @param int|stdClass|section_info $section section to get the dates for
+     * @param int $startdate Force course start date, useful when the course is not yet created
      * @return stdClass property start for startdate, property end for enddate
      */
-    public function get_section_dates($section) {
-        $course = $this->get_course();
+    public function get_section_dates($section, $startdate = false) {
+
+        if ($startdate === false) {
+            $course = $this->get_course();
+            $startdate = $course->startdate;
+        }
+
         if (is_object($section)) {
             $sectionnum = $section->section;
         } else {
@@ -392,7 +398,7 @@ class format_weeks extends format_base {
         $oneweekseconds = 604800;
         // Hack alert. We add 2 hours to avoid possible DST problems. (e.g. we go into daylight
         // savings and the date changes.
-        $startdate = $course->startdate + 7200;
+        $startdate = $startdate + 7200;
 
         $dates = new stdClass();
         $dates->start = $startdate + ($oneweekseconds * ($sectionnum - 1));
@@ -453,6 +459,37 @@ class format_weeks extends format_base {
             $editlabel = new lang_string('newsectionname', 'format_weeks', $title);
         }
         return parent::inplace_editable_render_section_name($section, $linkifneeded, $editable, $edithint, $editlabel);
+    }
+
+    /**
+     * Returns the default end date for weeks course format.
+     *
+     * @param moodleform $mform
+     * @param array $fieldnames The form - field names mapping.
+     * @return int
+     */
+    public function get_default_course_enddate($mform, $fieldnames = array()) {
+
+        if (empty($fieldnames['startdate'])) {
+            $fieldnames['startdate'] = 'startdate';
+        }
+
+        if (empty($fieldnames['numsections'])) {
+            $fieldnames['numsections'] = 'numsections';
+        }
+
+        $startdate = $this->get_form_start_date($mform, $fieldnames);
+        if ($mform->elementExists($fieldnames['numsections'])) {
+            $numsections = $mform->getElementValue($fieldnames['numsections']);
+            $numsections = $mform->getElement($fieldnames['numsections'])->exportValue($numsections);
+        } else {
+            // Fallback to the default value for new courses.
+            $numsections = get_config('moodlecourse', $fieldnames['numsections']);
+        }
+
+        // Final week's last day.
+        $dates = $this->get_section_dates(intval($numsections), $startdate);
+        return $dates->end;
     }
 }
 
