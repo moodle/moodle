@@ -2692,7 +2692,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         if ($preventredirect) {
             throw new require_login_exception('Maintenance in progress');
         }
-
+        $PAGE->set_context(null);
         print_maintenance_message();
     }
 
