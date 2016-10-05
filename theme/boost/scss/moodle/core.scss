@@ -1254,6 +1254,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     }
 }
 
+/** Moodle modals. */
+.modal.show {
+    display: block;
+}
+
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
     background-color: $gray;
