@@ -534,9 +534,15 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
 
         if (array_key_exists('completion', $data) && $data['completion'] == COMPLETION_TRACKING_AUTOMATIC) {
+            $completionpass = isset($data['completionpass']) ? $data['completionpass'] : $this->current->completionpass;
+
             // Show an error if require passing grade was selected and the grade to pass was set to 0.
-            if ($data['completionpass'] == 1 && (empty($data['gradepass']) || grade_floatval($data['gradepass']) == 0)) {
-                $errors['completionpassgroup'] = get_string('gradetopassnotset', 'quiz');
+            if ($completionpass && (empty($data['gradepass']) || grade_floatval($data['gradepass']) == 0)) {
+                if (isset($data['completionpass'])) {
+                    $errors['completionpassgroup'] = get_string('gradetopassnotset', 'quiz');
+                } else {
+                    $errors['gradepass'] = get_string('gradetopassmustbeset', 'quiz');
+                }
             }
         }
 
