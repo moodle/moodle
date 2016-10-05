@@ -15,15 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Auth email webservice definitions.
  *
  * @package    auth_email
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2016 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016052302;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016051900;        // Requires this Moodle version
-$plugin->component = 'auth_email';      // Full name of the plugin (used for diagnostics)
+$functions = array(
+
+    'auth_email_get_signup_settings' => array(
+        'classname'   => 'auth_email_external',
+        'methodname'  => 'get_signup_settings',
+        'description' => 'Get the signup required settings and profile fields.',
+        'type'        => 'read',
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
+    'auth_email_signup_user' => array(
+        'classname'   => 'auth_email_external',
+        'methodname'  => 'signup_user',
+        'description' => 'Adds a new user (pendingto be confirmed) in the site.',
+        'type'        => 'write',
+        'ajax'          => true,
+        'loginrequired' => false,
+    ),
+);
+

@@ -172,6 +172,7 @@ $string['categorytoolong'] = 'Category name too long';
 $string['categoryidnumbertaken'] = 'ID number is already used for another category';
 $string['commentmisconf'] = 'Comment ID is misconfigured';
 $string['componentisuptodate'] = 'Component is up-to-date';
+$string['confirmationnotenabled'] = 'User confirmation is not enabled on this site';
 $string['confirmsesskeybad'] = 'Sorry, but your session key could not be confirmed to carry out this action.  This security feature prevents against accidental or malicious execution of important functions in your name.  Please make sure you really wanted to execute this function.';
 $string['couldnotassignrole'] = 'A serious but unspecified error occurred while trying to assign a role to you';
 $string['couldnotupdatenoexistinguser'] = 'Cannot update the user - user doesn\'t exist';
@@ -462,6 +463,7 @@ $string['querystringcannotbeempty'] = 'The query string cannot be empty.';
 $string['redirecterrordetected'] = 'Unsupported redirect detected, script execution terminated';
 $string['refoundto'] = 'Can be refunded to {$a}';
 $string['refoundtoorigi'] = 'Refunded to original amount: {$a}';
+$string['registrationdisabled'] = 'Registration is disabled on this site';
 $string['remotedownloaderror'] = '<p>The download of the component to your server failed. Please verify proxy settings; the PHP cURL extension is highly recommended.</p>
 <p>You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.</p>';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';
