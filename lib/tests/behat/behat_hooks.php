@@ -154,8 +154,6 @@ class behat_hooks extends behat_base {
         // Now that we are MOODLE_INTERNAL.
         require_once(__DIR__ . '/../../behat/classes/behat_command.php');
         require_once(__DIR__ . '/../../behat/classes/behat_selectors.php');
-        require_once(__DIR__ . '/../../behat/classes/partial_named_selector.php');
-        require_once(__DIR__ . '/../../behat/classes/exact_named_selector.php');
         require_once(__DIR__ . '/../../behat/classes/behat_context_helper.php');
         require_once(__DIR__ . '/../../behat/classes/util.php');
         require_once(__DIR__ . '/../../testing/classes/test_lock.php');
