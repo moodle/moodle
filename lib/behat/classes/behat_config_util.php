@@ -876,7 +876,7 @@ class behat_config_util {
     public static final function get_behat_theme_selector_override_classname($themename, $selectortype, $includeclass = false) {
         global $CFG;
 
-        if ($selectortype !== 'partial' && $selectortype !== 'exact') {
+        if ($selectortype !== 'named_partial' && $selectortype !== 'named_exact') {
             throw new coding_exception("Unknown selector override type '{$selectortype}'");
         }
 
