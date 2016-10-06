@@ -44,7 +44,7 @@ $string['dmlexceptiononinstall'] = '<p>En databasefejl er opstået [{$a->errorco
 $string['downloadedfilecheckfailed'] = 'Downloadet fil-tjek fejlede';
 $string['invalidmd5'] = 'Tjekvariablen var forkert - prøv igen';
 $string['missingrequiredfield'] = 'Der mangler nogle obligatoriske felter';
-$string['remotedownloaderror'] = '<p>Download af komponent til din server fejlede. Verificer venligst proxy-indstillilngerne; udvidelsen PHP cURL  anbefales kraftigt. </p> <p>Du må downloade filen <a href="{$a->url}">{$a->url}</a> manuelt, kopiere den til "{$a->dest}" på din server og udpakke den der.</p>';
+$string['remotedownloaderror'] = '<p>Download af komponent til din server fejlede. Verificer venligst proxy-indstillilngerne; udvidelsen PHP cURL  anbefales kraftigt. </p> <p>Du må downloade filen <a href="{$a->url}">{$a->url}</a> manuelt, kopier den til "{$a->dest}" på din server og udpak den der.</p>';
 $string['wrongdestpath'] = 'Forkert destinationssti';
 $string['wrongsourcebase'] = 'Forkert kilde-URL';
 $string['wrongzipfilename'] = 'Forkert zip-filnavn';
