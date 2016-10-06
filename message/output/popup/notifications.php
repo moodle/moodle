@@ -17,21 +17,19 @@
 /**
  * View a user's notifications.
  *
- * @package    core_message
+ * @package    message_popup
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../config.php');
-require_once($CFG->dirroot . '/message/lib.php');
-require_once($CFG->dirroot . '/user/lib.php');
+require_once(__DIR__ . '/../../../config.php');
 
 $notificationid = optional_param('notificationid', 0, PARAM_INT);
 $offset = optional_param('offset', 0, PARAM_INT);
 $limit = optional_param('limit', 0, PARAM_INT);
 $userid = $USER->id;
 
-$url = new moodle_url('/message/notifications.php');
+$url = new moodle_url('/message/output/popup/notifications.php');
 $url->param('id', $notificationid);
 
 $PAGE->set_url($url);
@@ -67,6 +65,6 @@ $context = [
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('notifications', 'message'));
-echo $renderer->render_from_template('message/notification_area', $context);
+echo $renderer->render_from_template('message_popup/notification_area', $context);
 echo $OUTPUT->footer();
 

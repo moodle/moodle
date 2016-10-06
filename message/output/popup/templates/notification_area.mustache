@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template message/notification_area
+    @template message_popup/notification_area
 
     This template will render the notification area on the notifications
     page.
@@ -24,15 +24,13 @@
     * none
 
     Data attributes required for JS:
-    * data-region="notification-area"
-    * data-region="control-area"
-    * data-region="content-area"
-    * data-region="header"
-    * data-region="content"
-    * data-action="toggle-mode"
+    * All data attributes are required
 
     Context variables required for this template:
     * userid The logged in user id
+    * offset The offset amound of the notification list
+    * limit The limit amount for the notification list
+    * notificationid The specific notification to select
 
     Example context (json):
     {
@@ -58,10 +56,10 @@
     </div>
 </div>
 {{#js}}
-require(['jquery', 'core_message/notification_area_control_area', 'core_message/notification_area_content_area'],
+require(['jquery', 'message_popup/notification_area_control_area', 'message_popup/notification_area_content_area'],
     function($, ControlArea, ContentArea) {
 
-    var userId = $('[data-region="notification-area"]').attr('data-user-id');
+    var userId = {{userid}};
     var controlArea = new ControlArea($('[data-region="control-area"]'), userId);
     {{#offset}}
     controlArea.setOffset({{.}});

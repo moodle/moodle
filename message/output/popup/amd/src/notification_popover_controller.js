@@ -26,7 +26,7 @@
  */
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str', 'core/url',
             'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
-            'message_popup/notification_repository', 'core_message/notification_area_events'],
+            'message_popup/notification_repository', 'message_popup/notification_area_events'],
         function($, Bootstrap, Ajax, Templates, Str, URL, DebugNotification, CustomEvents,
             PopoverController, NotificationRepo, NotificationAreaEvents) {
 
@@ -236,7 +236,7 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
                 var offset = this.getOffset() - this.limit;
                 // Update the view more url to contain the offset to allow the notifications
                 // page to load to the correct position in the list of notifications.
-                notification.viewmoreurl = URL.relativeUrl('/message/notifications.php', {
+                notification.viewmoreurl = URL.relativeUrl('/message/output/popup/notifications.php', {
                     notificationid: notification.id,
                     offset: offset,
                 }, true);

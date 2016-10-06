@@ -17,14 +17,14 @@
  * Controls the content area of the notification area on the
  * notification page.
  *
- * @module     core_message/notification_area_content_area
+ * @module     message_popup/notification_area_content_area
  * @class      notification_area_content_area
  * @package    message
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/templates', 'core/notification', 'core/custom_interaction_events',
-        'message_popup/notification_repository', 'core_message/notification_area_events'],
+        'message_popup/notification_repository', 'message_popup/notification_area_events'],
     function($, Templates, DebugNotification, CustomEvents, NotificationRepo, NotificationAreaEvents) {
 
     var SELECTORS = {
@@ -36,9 +36,9 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
     };
 
     var TEMPLATES = {
-        HEADER: 'message/notification_area_content_area_header',
-        CONTENT: 'message/notification_area_content_area_content',
-        FOOTER: 'message/notification_area_content_area_footer',
+        HEADER: 'message_popup/notification_area_content_area_header',
+        CONTENT: 'message_popup/notification_area_content_area_content',
+        FOOTER: 'message_popup/notification_area_content_area_footer',
     };
 
     /**

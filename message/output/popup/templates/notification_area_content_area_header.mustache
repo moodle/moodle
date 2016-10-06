@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template message/notification_area_content_area_footer
+    @template message_popup/notification_area_content_area_header
 
-    This template will render the footer for the content area in the
+    This template will render the header for the content area in the
     notification area on the notifications page.
 
     Classes required for JS:
@@ -27,12 +27,15 @@
     * none
 
     Context variables required for this template:
-    * contexturl     The URL for the associated resource
-    * contexturlname Human readable name for the URL
+    * iconurl               The URL for the notification icon
+    * subject               The notification subject
+    * timecreatedpretty     Pretty format when the notification was created
 
     Example context (json):
     {
     }
 
 }}
-<a href="{{{contexturl}}}">{{#str}} viewnotificationresource, message, {{contexturlname}}{{/str}}</a>
+<div class="image-container"><img src="{{{iconurl}}}" alt="{{#str}}notificationimage, message{{/str}}"/></div>
+<div class="subject-container">{{subject}}</div>
+<div class="timestamp">{{timecreatedpretty}}</div>

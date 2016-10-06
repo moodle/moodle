@@ -17,7 +17,7 @@
  * Contain the events that can be fired in the notification area on
  * the notifications page.
  *
- * @module     core/notification_area_events
+ * @module     message_popup/notification_area_events
  * @class      notification_area_events
  * @package    core
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
