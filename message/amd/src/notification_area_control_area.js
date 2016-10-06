@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery', 'core/templates', 'core/notification', 'core/custom_interaction_events',
-        'core_message/notification_repository', 'core_message/notification_area_events'],
+        'message_popup/notification_repository', 'core_message/notification_area_events'],
     function($, Templates, DebugNotification, CustomEvents, NotificationRepo, NotificationAreaEvents) {
 
     var SELECTORS = {
@@ -33,7 +33,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
     };
 
     var TEMPLATES = {
-        NOTIFICATION: 'message/notification_content_item',
+        NOTIFICATION: 'message_popup/notification_content_item',
     };
 
     /**
@@ -357,9 +357,6 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
             limit: this.getLimit(),
             offset: this.getOffset(),
             useridto: this.getUserId(),
-            markasread: false,
-            embeduserto: false,
-            embeduserfrom: false,
         };
 
         if (!this.initialLoad) {

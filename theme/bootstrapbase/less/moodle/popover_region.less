@@ -180,6 +180,108 @@
     }
 }
 
+.content-item-container {
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    box-sizing: border-box;
+    padding: 5px;
+    position: relative;
+    margin: 0;
+    display: block;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+        color: #fff;
+        background-color: #79b5e6;
+
+        .content-item-footer {
+            .timestamp {
+                color: #fff;
+            }
+        }
+    }
+
+    &.unread {
+        background-color: #f4f4f4;
+
+        &:hover {
+            color: #fff;
+            background-color: #79b5e6;
+        }
+
+        .content-item-body {
+            .notification-message {
+                font-weight: 600;
+            }
+        }
+    }
+
+    .context-link {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .content-item-body {
+        box-sizing: border-box;
+        margin-bottom: 5px;
+    }
+
+    .content-item-footer {
+        text-align: left;
+        box-sizing: border-box;
+
+        .timestamp {
+            font-size: 10px;
+            line-height: 10px;
+            margin: 0;
+            color: #666;
+            margin-left: 24px;
+        }
+    }
+
+    .view-more {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        font-size: 12px;
+        line-height: 12px;
+    }
+
+    &.notification {
+        .content-item-body {
+            .notification-image {
+                display: inline-block;
+                width: 24px;
+                height: 24px;
+                float: left;
+
+                img {
+                    height: 75%;
+                }
+            }
+
+            .notification-message {
+                display: inline-block;
+                font-size: 12px;
+                width: ~"calc(100% - 24px)";
+            }
+        }
+    }
+
+    &.selected {
+        background-color: #4f94cd;
+        color: #fff;
+        border-color: #4f94cd;
+
+        .content-item-footer {
+            .timestamp {
+                color: #fff;
+            }
+        }
+    }
+}
+
 .popover-region-notifications {
     .popover-region-header-container {
         .mark-all-read-button {
@@ -209,48 +311,6 @@
         }
     }
 
-    .content-item-container {
-        width: 100%;
-        border-bottom: 1px solid #ddd;
-        box-sizing: border-box;
-        padding: 5px;
-        position: relative;
-        margin: 0;
-        display: block;
-        color: inherit;
-        text-decoration: none;
-
-        &:hover {
-            color: #fff;
-            background-color: #79b5e6;
-
-            .content-item-footer {
-                .timestamp {
-                    color: #fff;
-                }
-            }
-        }
-
-        &.unread {
-            background-color: #f4f4f4;
-
-            &:hover {
-                color: #fff;
-                background-color: #79b5e6;
-            }
-
-            .content-item-body {
-                .notification-message {
-                    font-weight: 600;
-                }
-            }
-        }
-    }
-
-    .content-item-body {
-        box-sizing: border-box;
-    }
-
     .notification-image {
         display: inline-block;
         width: 8%;
@@ -265,27 +325,6 @@
         display: inline-block;
         font-size: 12px;
         width: 90%;
-    }
-
-    .content-item-footer {
-        text-align: left;
-        box-sizing: border-box;
-
-        .timestamp {
-            font-size: 10px;
-            line-height: 10px;
-            margin: 0;
-            color: #666;
-            margin-left: 9%;
-        }
-    }
-
-    .view-more {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        font-size: 12px;
-        line-height: 12px;
     }
 
     .popover-region-content-container {
@@ -334,27 +373,7 @@
     }
 
     .content-item-container {
-        width: 100%;
-        border-bottom: 1px solid #ddd;
-        box-sizing: border-box;
-        padding: 5px;
-        cursor: pointer;
-        color: inherit;
-        text-decoration: none;
-        display: block;
-
-        &:hover {
-            color: #fff;
-            background-color: #79b5e6;
-        }
-
         &.unread {
-            background-color: #f4f4f4;
-
-            &:hover {
-                background-color: #79b5e6;
-            }
-
             .content-item-body {
                 font-weight: 600;
                 width: ~"calc(90% - 30px)";
@@ -365,11 +384,6 @@
                 width: 10%;
                 text-align: center;
                 float: right;
-            }
-
-            &:hover {
-                color: #fff;
-                background-color: #79b5e6;
             }
         }
     }

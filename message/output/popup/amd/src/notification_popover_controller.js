@@ -26,7 +26,7 @@
  */
 define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str', 'core/url',
             'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
-            'core_message/notification_repository', 'core_message/notification_area_events'],
+            'message_popup/notification_repository', 'core_message/notification_area_events'],
         function($, Bootstrap, Ajax, Templates, Str, URL, DebugNotification, CustomEvents,
             PopoverController, NotificationRepo, NotificationAreaEvents) {
 

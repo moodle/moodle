@@ -7797,6 +7797,82 @@ body.path-question-type .mform fieldset.hidden {
 .navbar .popover-region-container {
   top: 42px;
 }
+.content-item-container {
+  width: 100%;
+  border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
+  padding: 5px;
+  position: relative;
+  margin: 0;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.content-item-container:hover {
+  color: #fff;
+  background-color: #79b5e6;
+}
+.content-item-container:hover .content-item-footer .timestamp {
+  color: #fff;
+}
+.content-item-container.unread {
+  background-color: #f4f4f4;
+}
+.content-item-container.unread:hover {
+  color: #fff;
+  background-color: #79b5e6;
+}
+.content-item-container.unread .content-item-body .notification-message {
+  font-weight: 600;
+}
+.content-item-container .context-link {
+  color: inherit;
+  text-decoration: none;
+}
+.content-item-container .content-item-body {
+  box-sizing: border-box;
+  margin-bottom: 5px;
+}
+.content-item-container .content-item-footer {
+  text-align: left;
+  box-sizing: border-box;
+}
+.content-item-container .content-item-footer .timestamp {
+  font-size: 10px;
+  line-height: 10px;
+  margin: 0;
+  color: #666;
+  margin-left: 24px;
+}
+.content-item-container .view-more {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-size: 12px;
+  line-height: 12px;
+}
+.content-item-container.notification .content-item-body .notification-image {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  float: left;
+}
+.content-item-container.notification .content-item-body .notification-image img {
+  height: 75%;
+}
+.content-item-container.notification .content-item-body .notification-message {
+  display: inline-block;
+  font-size: 12px;
+  width: calc(100% - 24px);
+}
+.content-item-container.selected {
+  background-color: #4f94cd;
+  color: #fff;
+  border-color: #4f94cd;
+}
+.content-item-container.selected .content-item-footer .timestamp {
+  color: #fff;
+}
 .popover-region-notifications .popover-region-header-container .mark-all-read-button .normal-icon {
   display: inline-block;
 }
@@ -7815,37 +7891,6 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region-notifications .all-notifications:empty + .empty-message {
   display: block;
 }
-.popover-region-notifications .content-item-container {
-  width: 100%;
-  border-bottom: 1px solid #ddd;
-  box-sizing: border-box;
-  padding: 5px;
-  position: relative;
-  margin: 0;
-  display: block;
-  color: inherit;
-  text-decoration: none;
-}
-.popover-region-notifications .content-item-container:hover {
-  color: #fff;
-  background-color: #79b5e6;
-}
-.popover-region-notifications .content-item-container:hover .content-item-footer .timestamp {
-  color: #fff;
-}
-.popover-region-notifications .content-item-container.unread {
-  background-color: #f4f4f4;
-}
-.popover-region-notifications .content-item-container.unread:hover {
-  color: #fff;
-  background-color: #79b5e6;
-}
-.popover-region-notifications .content-item-container.unread .content-item-body .notification-message {
-  font-weight: 600;
-}
-.popover-region-notifications .content-item-body {
-  box-sizing: border-box;
-}
 .popover-region-notifications .notification-image {
   display: inline-block;
   width: 8%;
@@ -7858,24 +7903,6 @@ body.path-question-type .mform fieldset.hidden {
   display: inline-block;
   font-size: 12px;
   width: 90%;
-}
-.popover-region-notifications .content-item-footer {
-  text-align: left;
-  box-sizing: border-box;
-}
-.popover-region-notifications .content-item-footer .timestamp {
-  font-size: 10px;
-  line-height: 10px;
-  margin: 0;
-  color: #666;
-  margin-left: 9%;
-}
-.popover-region-notifications .view-more {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  font-size: 12px;
-  line-height: 12px;
 }
 .popover-region-notifications .popover-region-content-container.loading .all-notifications:empty + .empty-message {
   display: none;
@@ -7895,26 +7922,6 @@ body.path-question-type .mform fieldset.hidden {
 .popover-region-messages .messages:empty + .empty-message {
   display: block;
 }
-.popover-region-messages .content-item-container {
-  width: 100%;
-  border-bottom: 1px solid #ddd;
-  box-sizing: border-box;
-  padding: 5px;
-  cursor: pointer;
-  color: inherit;
-  text-decoration: none;
-  display: block;
-}
-.popover-region-messages .content-item-container:hover {
-  color: #fff;
-  background-color: #79b5e6;
-}
-.popover-region-messages .content-item-container.unread {
-  background-color: #f4f4f4;
-}
-.popover-region-messages .content-item-container.unread:hover {
-  background-color: #79b5e6;
-}
 .popover-region-messages .content-item-container.unread .content-item-body {
   font-weight: 600;
   width: calc(90% - 30px);
@@ -7924,10 +7931,6 @@ body.path-question-type .mform fieldset.hidden {
   width: 10%;
   text-align: center;
   float: right;
-}
-.popover-region-messages .content-item-container.unread:hover {
-  color: #fff;
-  background-color: #79b5e6;
 }
 .popover-region-messages .content-item {
   height: 100%;
