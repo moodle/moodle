@@ -701,7 +701,7 @@ function get_moduleinfo_data($cm, $course) {
         foreach ($items as $item) {
             if (!empty($item->outcomeid)) {
                 $data->{'outcome_' . $item->outcomeid} = 1;
-            } else if (!empty($item->gradepass)) {
+            } else if (isset($item->gradepass)) {
                 $decimalpoints = $item->get_decimals();
                 $data->gradepass = format_float($item->gradepass, $decimalpoints);
             }
