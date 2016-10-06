@@ -269,7 +269,7 @@ function commands_to_execute($options) {
         if ($options[$option]) {
             $extra .= " --$option";
             if ($value) {
-                $extra .= "='$value'";
+                $extra .= "=\"$value\"";
             }
         }
     }
