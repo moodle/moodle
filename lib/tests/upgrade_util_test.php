@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Hack to let tests run on travis..
+defined('CURL_SSLVERSION_TLSv1_2') || define('CURL_SSLVERSION_TLSv1_2', 6);
+
 /**
  * Upgrade utility class tests.
  *
