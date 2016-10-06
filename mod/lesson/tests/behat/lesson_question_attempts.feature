@@ -106,7 +106,7 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
     And I follow "Course 1"
     And I follow "Test lesson name"
     And I should see "Do you want to start at the last page you saw?"
-    And I follow "No"
+    And I click on "No" "link" in the "#page-content" "css_element"
     And I should see "First page contents"
     And I press "Next page"
     And I should see "The earth is round"
