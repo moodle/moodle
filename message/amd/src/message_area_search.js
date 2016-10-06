@@ -249,7 +249,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return promises[0];
         }.bind(this)).then(function(data) {
             numberreceived = data.contacts.length;
-            return Templates.render('core_message/message_area_messages_search_results', data);
+            return Templates.render('core_message/message_area_message_search_results', data);
         }).then(function(html, js) {
             // Remove the loading icon.
             this.messageArea.find(SELECTORS.SEARCHRESULTSAREA + " " +
@@ -294,7 +294,16 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
                 "<div style='text-align:center'>" + html + "</div>", js);
             return promises[0];
         }.bind(this)).then(function(data) {
-            return Templates.render('core_message/message_area_users_search_results', data);
+            if (data.contacts.length > 0) {
+                data.hascontacts = true;
+            }
+            if (data.courses.length > 0) {
+                data.hascourses = true;
+            }
+            if (data.noncontacts.length > 0) {
+                data.hasnoncontacts = true;
+            }
+            return Templates.render('core_message/message_area_user_search_results', data);
         }).then(function(html, js) {
             Templates.replaceNodeContents(this.messageArea.find(SELECTORS.SEARCHRESULTSAREA), html, js);
         }.bind(this)).fail(Notification.exception);
@@ -337,7 +346,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
             return promises[0];
         }.bind(this)).then(function(data) {
             numberreceived = data.contacts.length;
-            return Templates.render('core_message/message_area_users_search_results', data);
+            if (numberreceived > 0) {
+                data.hascontacts = true;
+            }
+            return Templates.render('core_message/message_area_user_search_results', data);
         }).then(function(html, js) {
             // Remove the loading icon.
             this.messageArea.find(SELECTORS.SEARCHRESULTSAREA + " " +

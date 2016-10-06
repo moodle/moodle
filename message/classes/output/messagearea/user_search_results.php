@@ -39,7 +39,7 @@ use templatable;
 class user_search_results implements templatable, renderable {
 
     /**
-     * @var \core_message\output\messagearea\contact[] The list of contacts.
+     * @var array The list of contacts.
      */
     public $contacts;
 
@@ -49,16 +49,16 @@ class user_search_results implements templatable, renderable {
     public $courses;
 
     /**
-     * @var \core_message\output\messagearea\contact[] The list of non-contacts.
+     * @var array The list of non-contacts.
      */
     public $noncontacts;
 
     /**
      * Constructor.
      *
-     * @param \core_message\output\messagearea\contact[] $contacts
+     * @param array $contacts
      * @param array $courses
-     * @param \core_message\output\messagearea\contact[] $noncontacts
+     * @param array $noncontacts
      */
     public function __construct($contacts, $courses = array(), $noncontacts = array()) {
         $this->contacts = $contacts;
@@ -80,6 +80,7 @@ class user_search_results implements templatable, renderable {
         if (!empty($this->contacts)) {
             $data->hascontacts = true;
             foreach ($this->contacts as $contact) {
+                $contact = new contact($contact);
                 $data->contacts[] = $contact->export_for_template($output);
             }
         }
@@ -94,6 +95,7 @@ class user_search_results implements templatable, renderable {
         if (!empty($this->noncontacts)) {
             $data->hasnoncontacts = true;
             foreach ($this->noncontacts as $noncontact) {
+                $noncontact = new contact($noncontact);
                 $data->noncontacts[] = $noncontact->export_for_template($output);
             }
         }

@@ -3,7 +3,7 @@
         <button class="btn btn-link show-contacts" data-action="show-contacts">{{#str}} back {{/str}}</button>
     </div>
 </div>
-<div class="profile" data-userid="{{otheruserid}}" data-region="profile">
+<div class="profile" data-userid="{{userid}}" data-region="profile">
     <div class="user-container">
         <img class="profile-picture" src="{{profileimageurl}}" alt="" />
         <div class="name-container">
@@ -24,12 +24,7 @@
             <a data-action="profile-view" href="#">{{#str}}viewprofile{{/str}}</a>
         </div>
         <div class="separator">
-            {{#iscurrentuser}}
-                <a data-action="profile-send-message" href="#">{{#str}}sendmessage, message{{/str}}</a>
-            {{/iscurrentuser}}
-            {{^iscurrentuser}}
-                <a data-action="profile-send-message" href="#">{{#str}}viewconversation, message{{/str}}</a>
-            {{/iscurrentuser}}
+            <a data-action="profile-send-message" href="#">{{#str}}viewconversation, message{{/str}}</a>
         </div>
         <div class="separator">
             {{#isblocked}}

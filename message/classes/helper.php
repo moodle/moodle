@@ -72,11 +72,11 @@ class helper {
     }
 
     /**
-     * Helper function to return an array of messages renderables to display in the message area.
+     * Helper function to return an array of messages.
      *
      * @param int $userid
      * @param array $messages
-     * @return \core_message\output\messagearea\message[]
+     * @return array
      */
     public static function create_messages($userid, $messages) {
         // Store the messages.
@@ -113,18 +113,18 @@ class helper {
             $msg->displayblocktime = $displayblocktime;
             $msg->timecreated = $message->timecreated;
             $msg->timeread = $message->timeread;
-            $arrmessages[] = new \core_message\output\messagearea\message($msg);
+            $arrmessages[] = $msg;
         }
 
         return $arrmessages;
     }
 
     /**
-     * Helper function for creating a contact renderable.
+     * Helper function for creating a contact object.
      *
      * @param \stdClass $contact
      * @param string $prefix
-     * @return \core_message\output\messagearea\contact
+     * @return \stdClass
      */
     public static function create_contact($contact, $prefix = '') {
         global $PAGE;
@@ -159,7 +159,7 @@ class helper {
         $data->isread = isset($contact->isread) ? $contact->isread : 0;
         $data->unreadcount = isset($contact->unreadcount) ? $contact->unreadcount : null;
 
-        return new \core_message\output\messagearea\contact($data);
+        return $data;
     }
 
     /**

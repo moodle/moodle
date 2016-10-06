@@ -39,11 +39,6 @@ use templatable;
 class profile implements templatable, renderable {
 
     /**
-     * @var int The id of the user who is viewing the profile.
-     */
-    public $currentuserid;
-
-    /**
      * @var int The id of the user we are going to view.
      */
     public $userid;
@@ -96,30 +91,24 @@ class profile implements templatable, renderable {
     /**
      * Constructor.
      *
-     * @param int $currentuserid
-     * @param \stdClass $otheruser
+     * @param \stdClass $profile
      */
-    public function __construct($currentuserid, $otheruser) {
-        $this->currentuserid = $currentuserid;
-        $this->userid = $otheruser->userid;
-        $this->fullname = $otheruser->fullname;
-        $this->isonline = $otheruser->isonline;
-        $this->email = $otheruser->email;
-        $this->country = $otheruser->country;
-        $this->city = $otheruser->city;
-        $this->profileimageurl = $otheruser->profileimageurl;
-        $this->profileimageurlsmall = $otheruser->profileimageurlsmall;
-        $this->isblocked = $otheruser->isblocked;
-        $this->iscontact = $otheruser->iscontact;
+    public function __construct($profile) {
+        $this->userid = $profile->userid;
+        $this->fullname = $profile->fullname;
+        $this->isonline = $profile->isonline;
+        $this->email = $profile->email;
+        $this->country = $profile->country;
+        $this->city = $profile->city;
+        $this->profileimageurl = $profile->profileimageurl;
+        $this->profileimageurlsmall = $profile->profileimageurlsmall;
+        $this->isblocked = $profile->isblocked;
+        $this->iscontact = $profile->iscontact;
     }
 
     public function export_for_template(\renderer_base $output) {
-        global $USER;
-
         $data = new \stdClass();
-        $data->iscurrentuser = $USER->id == $this->userid;
-        $data->currentuserid = $this->currentuserid;
-        $data->otheruserid = $this->userid;
+        $data->userid = $this->userid;
         $data->fullname = $this->fullname;
         $data->isonline = $this->isonline;
         $data->email = $this->email;

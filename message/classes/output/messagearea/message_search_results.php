@@ -39,31 +39,24 @@ use templatable;
 class message_search_results implements templatable, renderable {
 
     /**
-     * @var int The id of the user that the contacts belong to.
-     */
-    public $userid;
-
-    /**
-     * @var \core_message\output\messagearea\contact[] The list of contacts.
+     * @var array The list of contacts.
      */
     public $contacts;
 
     /**
      * Constructor.
      *
-     * @param int $userid The id of the user the search results belong to
-     * @param \core_message\output\messagearea\contact[] $contacts
+     * @param array $contacts
      */
-    public function __construct($userid, $contacts) {
-        $this->userid = $userid;
+    public function __construct($contacts) {
         $this->contacts = $contacts;
     }
 
     public function export_for_template(\renderer_base $output) {
         $data = new \stdClass();
-        $data->userid = $this->userid;
         $data->contacts = array();
         foreach ($this->contacts as $contact) {
+            $contact = new contact($contact);
             $data->contacts[] = $contact->export_for_template($output);
         }
 

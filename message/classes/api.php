@@ -43,7 +43,7 @@ class api {
      * @param string $search The string the user is searching
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \core_message\output\messagearea\message_search_results
+     * @return array
      */
     public static function search_messages($userid, $search, $limitfrom = 0, $limitnum = 0) {
         global $DB;
@@ -95,7 +95,7 @@ class api {
                         $userid, $userid, $userid, $userid, '%' . $search . '%');
 
         // Convert the messages into searchable contacts with their last message being the message that was searched.
-        $contacts = array();
+        $conversations = array();
         if ($messages = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
             foreach ($messages as $message) {
                 $prefix = 'userfrom_';
@@ -108,11 +108,11 @@ class api {
                 $message->blocked = $message->$blockedcol;
 
                 $message->messageid = $message->id;
-                $contacts[] = \core_message\helper::create_contact($message, $prefix);
+                $conversations[] = helper::create_contact($message, $prefix);
             }
         }
 
-        return new \core_message\output\messagearea\message_search_results($userid, $contacts);
+        return $conversations;
     }
 
     /**
@@ -123,7 +123,7 @@ class api {
      * @param string $search The string the user is searching
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \core_message\output\messagearea\user_search_results
+     * @return array
      */
     public static function search_users_in_course($userid, $courseid, $search, $limitfrom = 0, $limitnum = 0) {
         global $DB;
@@ -148,11 +148,11 @@ class api {
         $contacts = array();
         if ($users = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
             foreach ($users as $user) {
-                $contacts[] = \core_message\helper::create_contact($user);
+                $contacts[] = helper::create_contact($user);
             }
         }
 
-        return new \core_message\output\messagearea\user_search_results($contacts);
+        return $contacts;
     }
 
     /**
@@ -161,7 +161,7 @@ class api {
      * @param int $userid The user id doing the searching
      * @param string $search The string the user is searching
      * @param int $limitnum
-     * @return \core_message\output\messagearea\user_search_results
+     * @return array
      */
     public static function search_users($userid, $search, $limitnum = 0) {
         global $CFG, $DB;
@@ -191,7 +191,7 @@ class api {
         if ($users = $DB->get_records_sql($sql, array('userid' => $userid, 'search' => '%' . $search . '%') + $excludeparams,
             0, $limitnum)) {
             foreach ($users as $user) {
-                $contacts[] = \core_message\helper::create_contact($user);
+                $contacts[] = helper::create_contact($user);
             }
         }
 
@@ -224,31 +224,30 @@ class api {
         if ($users = $DB->get_records_sql($sql,  array('userid' => $userid, 'search' => '%' . $search . '%') + $excludeparams,
             0, $limitnum)) {
             foreach ($users as $user) {
-                $noncontacts[] = \core_message\helper::create_contact($user);
+                $noncontacts[] = helper::create_contact($user);
             }
         }
 
-        return new \core_message\output\messagearea\user_search_results($contacts, $courses, $noncontacts);
+        return array($contacts, $courses, $noncontacts);
     }
 
     /**
      * Returns the contacts and their conversation to display in the contacts area.
      *
      * @param int $userid The user id
-     * @param int $otheruserid The id of the user we have selected, 0 if none have been selected
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \core_message\output\messagearea\contacts
+     * @return array
      */
-    public static function get_conversations($userid, $otheruserid = 0, $limitfrom = 0, $limitnum = 0) {
-        $arrcontacts = array();
+    public static function get_conversations($userid, $limitfrom = 0, $limitnum = 0) {
+        $arrconversations = array();
         if ($conversations = message_get_recent_conversations($userid, $limitfrom, $limitnum)) {
             foreach ($conversations as $conversation) {
-                $arrcontacts[] = \core_message\helper::create_contact($conversation);
+                $arrconversations[$conversation->id] = helper::create_contact($conversation);
             }
         }
 
-        return new \core_message\output\messagearea\contacts($userid, $otheruserid, $arrcontacts);
+        return $arrconversations;
     }
 
     /**
@@ -257,7 +256,7 @@ class api {
      * @param int $userid The user id
      * @param int $limitfrom
      * @param int $limitnum
-     * @return \core_message\output\messagearea\contacts
+     * @return array
      */
     public static function get_contacts($userid, $limitfrom = 0, $limitnum = 0) {
         global $DB;
@@ -272,11 +271,11 @@ class api {
               ORDER BY " . $DB->sql_fullname();
         if ($contacts = $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum)) {
             foreach ($contacts as $contact) {
-                $arrcontacts[] = \core_message\helper::create_contact($contact);
+                $arrcontacts[] = helper::create_contact($contact);
             }
         }
 
-        return new \core_message\output\messagearea\contacts($userid, 0, $arrcontacts, false);
+        return $arrcontacts;
     }
 
     /**
@@ -287,15 +286,15 @@ class api {
      * @param int $limitfrom
      * @param int $limitnum
      * @param string $sort
-     * @return \core_message\output\messagearea\messages
+     * @return array
      */
     public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0, $sort = 'timecreated ASC') {
         $arrmessages = array();
-        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum, $sort)) {
-            $arrmessages = \core_message\helper::create_messages($userid, $messages);
+        if ($messages = helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum, $sort)) {
+            $arrmessages = helper::create_messages($userid, $messages);
         }
 
-        return new \core_message\output\messagearea\messages($userid, $otheruserid, $arrmessages);
+        return $arrmessages;
     }
 
     /**
@@ -303,14 +302,14 @@ class api {
      *
      * @param int $userid the current user
      * @param int $otheruserid the other user
-     * @return \core_message\output\messagearea\message|null
+     * @return \stdClass|null
      */
     public static function get_most_recent_message($userid, $otheruserid) {
         // We want two messages here so we get an accurate 'blocktime' value.
-        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, 0, 0, 2, 'timecreated DESC')) {
+        if ($messages = helper::get_messages($userid, $otheruserid, 0, 0, 2, 'timecreated DESC')) {
             // Swap the order so we now have them in historical order.
             $messages = array_reverse($messages);
-            $arrmessages = \core_message\helper::create_messages($userid, $messages);
+            $arrmessages = helper::create_messages($userid, $messages);
             return array_pop($arrmessages);
         }
 
@@ -322,7 +321,7 @@ class api {
      *
      * @param int $userid The user id
      * @param int $otheruserid The id of the user whose profile we want to view.
-     * @return \core_message\output\messagearea\profile
+     * @return \stdClass
      */
     public static function get_profile($userid, $otheruserid) {
         global $CFG, $DB;
@@ -347,7 +346,7 @@ class api {
                     $data->profileimageurlsmall = '';
                 }
                 if (isset($userfields['lastaccess'])) {
-                    $data->isonline = \core_message\helper::is_online($userfields['lastaccess']);
+                    $data->isonline = helper::is_online($userfields['lastaccess']);
                 } else {
                     $data->isonline = 0;
                 }
@@ -375,7 +374,7 @@ class api {
                 $data->iscontact = false;
             }
 
-            return new \core_message\output\messagearea\profile($userid, $data);
+            return $data;
         }
     }
 
@@ -448,7 +447,7 @@ class api {
         $DB->execute($sql, array('time' => $now, 'userid' => $userid, 'otheruserid' => $otheruserid));
 
         // Now we need to trigger events for these.
-        if ($messages = \core_message\helper::get_messages($userid, $otheruserid, $now)) {
+        if ($messages = helper::get_messages($userid, $otheruserid, $now)) {
             // Loop through and trigger a deleted event.
             foreach ($messages as $message) {
                 $messagetable = 'message';

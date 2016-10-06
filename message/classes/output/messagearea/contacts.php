@@ -39,70 +39,55 @@ use templatable;
 class contacts implements templatable, renderable {
 
     /**
-     * @var int The id of the user that the contacts belong to.
-     */
-    public $userid;
-
-    /**
      * @var int The id of the user that has been selected.
      */
-    public $otheruserid;
+    public $contactuserid;
 
     /**
-     * @var \core_message\output\messagearea\contact[] The contacts.
+     * @var array The contacts.
      */
     public $contacts;
 
     /**
-     * @var bool Are we storing conversations or contacts?
-     */
-    public $isconversation;
-
-    /**
      * Constructor.
      *
-     * @param int $userid The id of the user the contacts belong to
-     * @param int $otheruserid The id of the user we are viewing
-     * @param \core_message\output\messagearea\contact[] $contacts
-     * @param bool $isconversation Are we storing conversations or contacts?
+     * @param int|null $contactuserid The id of the user that has been selected
+     * @param array $contacts
      */
-    public function __construct($userid, $otheruserid, $contacts, $isconversation = true) {
-        $this->userid = $userid;
-        $this->otheruserid = $otheruserid;
+    public function __construct($contactuserid, $contacts) {
+        $this->contactuserid = $contactuserid;
         $this->contacts = $contacts;
-        $this->isconversation = $isconversation;
     }
 
     public function export_for_template(\renderer_base $output) {
         $data = new \stdClass();
-        $data->userid = $this->userid;
-        $data->otheruserid = $this->otheruserid;
         $data->contacts = array();
         $userids = array();
         foreach ($this->contacts as $contact) {
+            $contact = new contact($contact);
             $contactdata = $contact->export_for_template($output);
             $userids[$contactdata->userid] = $contactdata->userid;
             // Check if the contact was selected.
-            if ($this->otheruserid == $contactdata->userid) {
+            if ($this->contactuserid == $contactdata->userid) {
                 $contactdata->selected = true;
             }
             $data->contacts[] = $contactdata;
         }
         // Check if the other user is not part of the contacts. We may be sending a message to someone
         // we have not had a conversation with, so we want to add a new item to the contacts array.
-        if ($this->otheruserid && !isset($userids[$this->otheruserid])) {
-            $user = \core_user::get_user($this->otheruserid);
+        if ($this->contactuserid && !isset($userids[$this->contactuserid])) {
+            $user = \core_user::get_user($this->contactuserid);
             // Set an empty message so that we know we are messaging the user, and not viewing their profile.
             $user->smallmessage = '';
             $user->useridfrom = $user->id;
             $contact = \core_message\helper::create_contact($user);
+            $contact = new contact($contact);
             $contactdata = $contact->export_for_template($output);
             $contactdata->selected = true;
             // Put the contact at the front.
             array_unshift($data->contacts, $contactdata);
         }
 
-        $data->isconversation = $this->isconversation;
         return $data;
     }
 }

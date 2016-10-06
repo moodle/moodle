@@ -499,7 +499,7 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_search_users_in_course($userid, $courseid, $search, $limitfrom = 0,
-                                                                        $limitnum = 0) {
+                                                                       $limitnum = 0) {
         global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
@@ -523,10 +523,11 @@ class core_message_external extends external_api {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $search = \core_message\api::search_users_in_course($userid, $courseid, $search, $limitfrom, $limitnum);
+        $users = \core_message\api::search_users_in_course($userid, $courseid, $search, $limitfrom, $limitnum);
+        $results = new \core_message\output\messagearea\user_search_results($users);
 
         $renderer = $PAGE->get_renderer('core_message');
-        return $search->export_for_template($renderer);
+        return $results->export_for_template($renderer);
     }
 
     /**
@@ -538,7 +539,6 @@ class core_message_external extends external_api {
     public static function data_for_messagearea_search_users_in_course_returns() {
         return new external_single_structure(
             array(
-                'hascontacts' => new external_value(PARAM_BOOL, 'Are there contacts?'),
                 'contacts' => new external_multiple_structure(
                     self::get_messagearea_contact_structure()
                 ),
@@ -594,7 +594,8 @@ class core_message_external extends external_api {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $search = \core_message\api::search_users($userid, $search, $limitnum);
+        list($contacts, $courses, $noncontacts) = \core_message\api::search_users($userid, $search, $limitnum);
+        $search = new \core_message\output\messagearea\user_search_results($contacts, $courses, $noncontacts);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $search->export_for_template($renderer);
@@ -609,11 +610,9 @@ class core_message_external extends external_api {
     public static function data_for_messagearea_search_users_returns() {
         return new external_single_structure(
             array(
-                'hascontacts' => new external_value(PARAM_BOOL, 'Are there contacts?'),
                 'contacts' => new external_multiple_structure(
                     self::get_messagearea_contact_structure()
                 ),
-                'hascourses' => new external_value(PARAM_BOOL, 'Are there courses?'),
                 'courses' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -623,7 +622,6 @@ class core_message_external extends external_api {
                         )
                     )
                 ),
-                'hasnoncontacts' => new external_value(PARAM_BOOL, 'Are there non-contacts?'),
                 'noncontacts' => new external_multiple_structure(
                     self::get_messagearea_contact_structure()
                 )
@@ -683,10 +681,11 @@ class core_message_external extends external_api {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $search = \core_message\api::search_messages($userid, $search, $limitfrom, $limitnum);
+        $messages = \core_message\api::search_messages($userid, $search, $limitfrom, $limitnum);
+        $results = new \core_message\output\messagearea\message_search_results($messages);
 
         $renderer = $PAGE->get_renderer('core_message');
-        return $search->export_for_template($renderer);
+        return $results->export_for_template($renderer);
     }
 
     /**
@@ -698,7 +697,6 @@ class core_message_external extends external_api {
     public static function data_for_messagearea_search_messages_returns() {
         return new external_single_structure(
             array(
-                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
                 'contacts' => new external_multiple_structure(
                     self::get_messagearea_contact_structure()
                 )
@@ -754,10 +752,11 @@ class core_message_external extends external_api {
             throw new moodle_exception('You do not have permission to perform this action.');
         }
 
-        $contacts = \core_message\api::get_conversations($userid, 0, $limitfrom, $limitnum);
+        $conversations = \core_message\api::get_conversations($userid, $limitfrom, $limitnum);
+        $conversations = new \core_message\output\messagearea\contacts(null, $conversations);
 
         $renderer = $PAGE->get_renderer('core_message');
-        return $contacts->export_for_template($renderer);
+        return $conversations->export_for_template($renderer);
     }
 
     /**
@@ -769,8 +768,6 @@ class core_message_external extends external_api {
     public static function data_for_messagearea_conversations_returns() {
         return new external_single_structure(
             array(
-                'userid' => new external_value(PARAM_INT, 'The id of the user who we are viewing conversations for'),
-                'isconversation' => new external_value(PARAM_BOOL, 'Are we storing conversations or contacts?'),
                 'contacts' => new external_multiple_structure(
                     self::get_messagearea_contact_structure()
                 )
@@ -821,6 +818,7 @@ class core_message_external extends external_api {
         }
 
         $contacts = \core_message\api::get_contacts($userid, $limitfrom, $limitnum);
+        $contacts = new \core_message\output\messagearea\contacts(null, $contacts);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $contacts->export_for_template($renderer);
@@ -897,6 +895,7 @@ class core_message_external extends external_api {
             $sort = 'timecreated ASC';
         }
         $messages = \core_message\api::get_messages($currentuserid, $otheruserid, $limitfrom, $limitnum, $sort);
+        $messages = new \core_message\output\messagearea\messages($currentuserid, $otheruserid, $messages);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $messages->export_for_template($renderer);
@@ -970,6 +969,7 @@ class core_message_external extends external_api {
         }
 
         $message = \core_message\api::get_most_recent_message($currentuserid, $otheruserid);
+        $message = new \core_message\output\messagearea\message($message);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $message->export_for_template($renderer);
@@ -1031,6 +1031,7 @@ class core_message_external extends external_api {
         }
 
         $profile = \core_message\api::get_profile($currentuserid, $otheruserid);
+        $profile = new \core_message\output\messagearea\profile($profile);
 
         $renderer = $PAGE->get_renderer('core_message');
         return $profile->export_for_template($renderer);
@@ -1045,10 +1046,7 @@ class core_message_external extends external_api {
     public static function data_for_messagearea_get_profile_returns() {
         return new external_single_structure(
             array(
-                'iscurrentuser' => new external_value(PARAM_BOOL, 'Is the currently logged in user the user we are viewing
-                    the profile on behalf of?'),
-                'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
-                'otheruserid' => new external_value(PARAM_INT, 'The id of the user whose profile we are viewing'),
+                'userid' => new external_value(PARAM_INT, 'The id of the user whose profile we are viewing'),
                 'email' => new external_value(core_user::get_property_type('email'), 'An email address'),
                 'country' => new external_value(core_user::get_property_type('country'), 'Home country code of the user'),
                 'city' => new external_value(core_user::get_property_type('city'), 'Home city of the user'),

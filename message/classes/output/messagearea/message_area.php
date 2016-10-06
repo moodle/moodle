@@ -44,12 +44,17 @@ class message_area implements templatable, renderable {
     public $userid;
 
     /**
-     * @var \core_message\output\messagearea\contacts The contacts for the users.
+     * @var int The other user id.
+     */
+    public $otheruserid;
+
+    /**
+     * @var array The contacts for the users.
      */
     public $contacts;
 
     /**
-     * @var \core_message\output\messagearea\messages The messages for the user.
+     * @var array The messages for the user.
      */
     public $messages;
 
@@ -62,12 +67,14 @@ class message_area implements templatable, renderable {
      * Constructor.
      *
      * @param int $userid The ID of the user whose contacts and messages we are viewing
-     * @param \core_message\output\messagearea\contacts $contacts
-     * @param \core_message\output\messagearea\messages|null $messages
+     * @param int|null $otheruserid The id of the user we are viewing, null if none
+     * @param array $contacts
+     * @param array|null $messages
      * @param bool $requestedconversation
      */
-    public function __construct($userid, $contacts, $messages, $requestedconversation) {
+    public function __construct($userid, $otheruserid, $contacts, $messages, $requestedconversation) {
         $this->userid = $userid;
+        $this->otheruserid = $otheruserid;
         $this->contacts = $contacts;
         $this->messages = $messages;
         $this->requestedconversation = $requestedconversation;
@@ -76,10 +83,13 @@ class message_area implements templatable, renderable {
     public function export_for_template(\renderer_base $output) {
         $data = new \stdClass();
         $data->userid = $this->userid;
-        $data->contacts = $this->contacts->export_for_template($output);
+        $contacts = new contacts($this->otheruserid, $this->contacts);
+        $data->contacts = $contacts->export_for_template($output);
         if ($this->messages) {
-            $data->messages = $this->messages->export_for_template($output);
+            $messages = new messages($this->userid, $this->otheruserid, $this->messages);
+            $data->messages = $messages->export_for_template($output);
         }
+        $data->isconversation = true;
         $data->requestedconversation = $this->requestedconversation;
 
         return $data;

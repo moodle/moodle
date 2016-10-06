@@ -39,7 +39,7 @@ use templatable;
 class messages implements templatable, renderable {
 
     /**
-     * @var \core_message\output\messagearea\message[] The messages.
+     * @var array The messages.
      */
     public $messages;
 
@@ -63,7 +63,7 @@ class messages implements templatable, renderable {
      *
      * @param int $currentuserid The current user we are wanting to view messages for
      * @param int $otheruserid The other user we are wanting to view messages for
-     * @param \core_message\output\messagearea\message[] $messages
+     * @param array $messages
      */
     public function __construct($currentuserid, $otheruserid, $messages) {
         $ufields = get_all_user_name_fields(true) . ', lastaccess';
@@ -85,6 +85,7 @@ class messages implements templatable, renderable {
         $data->isonline = \core_message\helper::is_online($this->otheruser->lastaccess);
         $data->messages = array();
         foreach ($this->messages as $message) {
+            $message = new message($message);
             $data->messages[] = $message->export_for_template($output);
         }
 

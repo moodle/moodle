@@ -98,39 +98,37 @@ $settings->make_active();
 // Get the renderer and the information we are going to be use.
 $renderer = $PAGE->get_renderer('core_message');
 $requestedconversation = false;
+$conversations = \core_message\api::get_conversations($user1->id, 0, 20);
+$messages = null;
 if (!$user2realuser) {
-    $conversations = \core_message\api::get_conversations($user1->id, 0, 0, 20);
-    $contacts = $conversations->contacts;
-
-    if (!empty($contacts)) {
-        // If there are conversations then render the most recent one by default.
-        $contact = reset($contacts);
-        $otheruserid = $contact->userid;
-        $conversations->otheruserid = $otheruserid;
-
-        // Mark the conversation as read.
-        if ($currentuser) {
-            $contact->isread = 1;
-            \core_message\api::mark_all_read_for_user($user1->id, $otheruserid);
-        }
-
-        $messages = \core_message\api::get_messages($user1->id, $otheruserid, 0, 20, 'timecreated DESC');
-    } else {
-        $messages = null;
+    // If there are conversations, but the user has not chosen a particular one, then render the most recent one.
+    $user2 = new stdClass();
+    $user2->id = null;
+    if (!empty($conversations)) {
+        $contact = reset($conversations);
+        $user2->id = $contact->userid;
     }
 } else {
-    // Mark the conversation as read.
-    if ($currentuser) {
-        \core_message\api::mark_all_read_for_user($user1->id, $user2->id);
-    }
-
-    $conversations = \core_message\api::get_conversations($user1->id, $user2->id, 0, 20);
-    $messages = \core_message\api::get_messages($user1->id, $user2->id);
-    // The user has specifically requested to see this conversation. Add the flag
-    // to the context so that we can render the messaging app appropriately.
+    // The user has specifically requested to see a conversation. Add the flag to
+    // the context so that we can render the messaging app appropriately - this is
+    // used for smaller screens as it allows the UI to be responsive.
     $requestedconversation = true;
 }
-$messagearea = new \core_message\output\messagearea\message_area($user1->id, $conversations, $messages, $requestedconversation);
+
+// Mark the conversation as read.
+if (!empty($user2->id)) {
+    if ($currentuser) {
+        // Mark the conversation we are loading as read.
+        \core_message\api::mark_all_read_for_user($user1->id, $user2->id);
+        // Ensure the UI knows it's read as well.
+        $conversations[$user2->id]->isread = 1;
+    }
+
+    $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 20, 'timecreated DESC');
+}
+
+$messagearea = new \core_message\output\messagearea\message_area($user1->id, $user2->id, $conversations, $messages,
+    $requestedconversation);
 
 // Now the page contents.
 echo $OUTPUT->header();

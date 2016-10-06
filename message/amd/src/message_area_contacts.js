@@ -284,6 +284,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     this._numConversationsDisplayed, this._numConversationsToRetrieve);
             }.bind(this)).then(function(data) {
                 numberreceived = data.contacts.length;
+                data.isconversation = true;
                 return Templates.render('core_message/message_area_contacts', data);
             }).then(function(html, js) {
                 // Remove the loading icon.
@@ -338,6 +339,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     this._numContactsDisplayed, this._numContactsToRetrieve);
             }.bind(this)).then(function(data) {
                 numberreceived = data.contacts.length;
+                data.isconversation = false;
                 return Templates.render('core_message/message_area_contacts', data);
             }).then(function(html, js) {
                 // Remove the loading icon.
