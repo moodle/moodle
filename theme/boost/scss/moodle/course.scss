@@ -54,7 +54,9 @@
 
         &.right {
             float: right;
+            clear: right;
         }
+        margin-top: 0.5rem;
     }
 
     .spinner {
@@ -1203,4 +1205,9 @@ span.editinstructions {
             background-color: $body-bg;
         }
     }
+}
+
+.page-settings-menu .menubar > a > .icon {
+    width: auto;
+    height: 32px;
 }

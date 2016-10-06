@@ -18,6 +18,7 @@ $brand-info:                #9954bb !default;
 $brand-warning:             #ff8800 !default;
 $brand-danger:              #ff4136 !default;
 $brand-inverse:             $gray-dark !default;
+$navbar-height:             50px !default;
 
 // Spacing
 $spacer:   1rem !default;
@@ -167,26 +168,6 @@ $breadcrumb-divider-rtl: "/" !default;
 }
 
 /**
- * Login page.
- */
-.pagelayout-login {
-    &.notloggedin {
-        #region-main {
-            background-color: transparent;
-            border: 0;
-            padding: 0;
-        }
-        .login-wrapper {
-            background-color: #fff;
-            border: $border-width solid $card-border-color;
-        }
-    }
-    #notice {
-        text-align: center;
-    }
-}
-
-/**
  * Dashboard styling.
  */
 #page-my-index {
@@ -239,3 +220,23 @@ $breadcrumb-divider-rtl: "/" !default;
 .form-inline .form-group {
     margin-top: 0;
 }
+
+
+// Custom transitions for open/close of menus.
+.dropdown-menu {
+    display: block;
+    max-height: 0px;
+    overflow: hidden;
+    opacity: 0;
+    -webkit-transition: max-height 1s ease, opacity 0.4s ease;
+       -moz-transition: max-height 1s ease, opacity 0.4s ease;
+            transition: max-height 1s ease, opacity 0.4s ease;
+}
+.open {
+  // Show the menu
+  > .dropdown-menu {
+    max-height: 2048px;
+    opacity: 100;
+  }
+}
+

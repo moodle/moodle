@@ -20,32 +20,33 @@
     Moodle template for the login page.
 }}
 
-<div class="container-fluid login-page">
+<div class="m-y-3 hidden-sm-down"></div>
 <div class="row">
-    <div class="col-sm-12 col-md-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 login-wrapper">
+<div class="col-xl-6 push-xl-3 m-2-md col-sm-8 push-sm-2">
+<div class="card">
+    {{#logourl}}
+        <img class="card-img-top" src="{{logourl}}" alt="" role="presentation"/>
+    {{/logourl}}
+    <div class="card-block">
+        <div class="card-title">
+            <h2 class="m-t-1">{{sitename}}</h2>
+        </div>
+
+        {{#cansignup}}
+            <div class="sr-only">
+                <a href="{{signupurl}}">{{#str}} tocreatenewaccount {{/str}}</a>
+            </div>
+        {{/cansignup}}
+
+        {{#error}}
+            <div class="loginerrors m-t-1">
+                <a href="#" id="loginerrormessage" class="accesshide">{{error}}</a>
+                <div class="alert alert-danger" role="alert">{{error}}</div>
+            </div>
+        {{/error}}
+
         <div class="row">
-            {{#hasinstructions}}
-            <div class="col-sm-6 p-b-1 login-form">
-            {{/hasinstructions}}
-            {{^hasinstructions}}
-            <div class="col-sm-6 offset-sm-3 col-md-4 offset-md-4 p-b-1 login-form">
-            {{/hasinstructions}}
-
-                <h2 class="m-t-1">{{#str}} login {{/str}}</h2>
-
-                {{#cansignup}}
-                    <div class="sr-only">
-                        <a href="{{signupurl}}">{{#str}} tocreatenewaccount {{/str}}</a>
-                    </div>
-                {{/cansignup}}
-
-                {{#error}}
-                    <div class="loginerrors m-t-1">
-                        <a href="#" id="loginerrormessage" class="accesshide">{{error}}</a>
-                        <div class="alert alert-danger" role="alert">{{error}}</div>
-                    </div>
-                {{/error}}
-
+            <div class="col-md-4 push-md-1">
                 <form class="m-t-1" action="{{loginurl}}" method="post" id="login" {{^passwordautocomplete}}autocomplete="off"{{/passwordautocomplete}}>
                     <input id="anchor" type="hidden" name="anchor" value="">
                     <script>document.getElementById('anchor').value = location.hash;</script>
@@ -76,60 +77,69 @@
                     {{/rememberusername}}
 
                     <button type="submit" class="btn btn-primary btn-block m-t-1" id="loginbtn">{{#str}}login{{/str}}</button>
-
-                    <div class="forgetpass m-t-1">
-                        <p><a href="{{forgotpasswordurl}}">{{#str}}forgotten{{/str}}</a></p>
-                    </div>
-
-                    <div class="m-t-1">
-                        {{#str}} cookiesenabled {{/str}}
-                        {{{cookieshelpiconformatted}}}
-                    </div>
-
                 </form>
-
-                {{#canloginasguest}}
-                    <div class="m-t-2">
-                        <p>{{#str}}someallowguest{{/str}}</p>
-                        <form action="{{loginurl}}" method="post" id="guestlogin">
-                            <input type="hidden" name="username" value="guest" />
-                            <input type="hidden" name="password" value="guest" />
-                            <button class="btn btn-secondary btn-block" type="submit">{{#str}}loginguest{{/str}}</button>
-                        </form>
-                    </div>
-                {{/canloginasguest}}
-
-                {{#hasidentityproviders}}
-                    <h6 class="m-t-2">{{#str}} potentialidps, auth {{/str}}</h6>
-                    <div class="potentialidplist" class="m-t-1">
-                        {{#identityproviders}}
-                            <div class="potentialidp">
-                                <a href="{{url}}" title={{#quote}}{{name}}{{/quote}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{name}}</a>
-                            </div>
-                        {{/identityproviders}}
-                    </div>
-                {{/hasidentityproviders}}
-
             </div>
 
-            {{#hasinstructions}}
-                <div class="col-sm-6 p-b-1 login-instructions">
-                    <h2 class="m-t-1">{{#str}}firsttime{{/str}}</h2>
-                    <div>
-                        {{{instructions}}}
-                        {{#cansignup}}
-                            <form class="m-t-1" action="{{signupurl}}" method="get" id="signup">
-                                <button type="submit" class="btn btn-secondary">{{#str}}startsignup{{/str}}</button>
-                            </form>
-                        {{/cansignup}}
-                    </div>
+            <div class="col-md-4 push-md-3">
+                <div class="forgetpass m-t-1">
+                    <p><a href="{{forgotpasswordurl}}">{{#str}}forgotten{{/str}}</a></p>
                 </div>
-            {{/hasinstructions}}
 
+                <div class="m-t-1">
+                    {{#str}} cookiesenabled {{/str}}
+                    {{{cookieshelpiconformatted}}}
+                </div>
+            {{#canloginasguest}}
+                <div class="m-t-2">
+                    <p>{{#str}}someallowguest{{/str}}</p>
+                    <form action="{{loginurl}}" method="post" id="guestlogin">
+                        <input type="hidden" name="username" value="guest" />
+                        <input type="hidden" name="password" value="guest" />
+                        <button class="btn btn-secondary btn-block" type="submit">{{#str}}loginguest{{/str}}</button>
+                    </form>
+                </div>
+            {{/canloginasguest}}
+
+        {{#hasidentityproviders}}
+                <h6 class="m-t-2">{{#str}} potentialidps, auth {{/str}}</h6>
+                <div class="potentialidplist" class="m-t-1">
+                    {{#identityproviders}}
+                        <div class="potentialidp">
+                            <a href="{{url}}" title={{#quote}}{{name}}{{/quote}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{name}}</a>
+                        </div>
+                    {{/identityproviders}}
+                </div>
+        {{/hasidentityproviders}}
+            </div>
         </div>
     </div>
 </div>
 </div>
+</div>
+
+
+{{#hasinstructions}}
+<div class="row">
+<div class="col-xl-6 push-xl-3 m-2-md col-sm-8 push-sm-2">
+<div class="card">
+    <div class="card-block">
+        <div class="card-title">
+            <h2>{{#str}}firsttime{{/str}}</h2>
+        </div>
+        <div>
+        {{{instructions}}}
+        {{#cansignup}}
+            <form class="m-t-1" action="{{signupurl}}" method="get" id="signup">
+                <button type="submit" class="btn btn-secondary">{{#str}}startsignup{{/str}}</button>
+            </form>
+        {{/cansignup}}
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{{/hasinstructions}}
+
 
 {{#js}}
     require(['jquery', 'core/yui'], function($, Y) {

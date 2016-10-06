@@ -1,5 +1,20 @@
 /* core.less */
 
+
+.context-header-settings-menu,
+.region-main-settings-menu {
+    float: right;
+    width: 4em;
+    height: 2em;
+    display: block;
+}
+
+.context-header-settings-menu .dropdown-toggle > .icon,
+.region-main-settings-menu .dropdown-toggle > .icon {
+    height: 24px;
+    width: auto;
+}
+
 /** Page layout CSS starts **/
 .layout-option-noheader #page-header,
 .layout-option-nonavbar #page-navbar,
@@ -1227,11 +1242,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     }
 }
 
-/** Moodle modals. */
-.modal.show {
-    display: block;
-}
-
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
     background-color: $gray;
@@ -1920,38 +1930,6 @@ img#persona_signin {
 .breadcrumb-nav .breadcrumb {
     margin: 0;
 }
-/** Navbar */
-.navbar-brand {
-    .logo {
-        display: inline-block;
-        margin: -$navbar-brand-padding-y 0;
-    }
-
-    .site-name {
-        display: inline-block;
-    }
-
-    &.has-logo {
-        .site-name {
-            margin-left: $spacer / 2;
-        }
-    }
-}
-
-@include media-breakpoint-down(xs) {
-    .navbar {
-        .navbar-brand {
-            max-width: 80%;
-            margin-right: 0;
-
-            &.has-logo {
-                .site-name {
-                    display: none;
-                }
-            }
-        }
-    }
-}
 
 /** Page header */
 #page-header {
@@ -2204,6 +2182,21 @@ ul {
             opacity: 1;
             visibility: visible;
             transition: opacity 0.15s 0.5s, visibility 0.15s 0.5s;
+        }
+    }
+}
+
+#region-flat-nav {
+    padding-right: 0;
+    padding-left: 0;
+    .nav {
+        margin-right: $grid-gutter-width / 2;
+        background-color: $card-bg;
+    }
+    @include media-breakpoint-down(sm) {
+        .nav {
+            margin-top: $grid-gutter-width;
+            margin-right: 0;
         }
     }
 }

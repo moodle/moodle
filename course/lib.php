@@ -3510,6 +3510,29 @@ function course_get_user_navigation_options($context, $course = null) {
         $options->participants = has_capability('moodle/course:viewparticipants', $context);
         $options->badges = !empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) &&
                             has_capability('moodle/badges:viewbadges', $context);
+        // Add view grade report is permitted.
+        $grades = false;
+        if (has_capability('moodle/grade:viewall', $context)) {
+            $grades = true;
+        } else if (!empty($course->showgrades)) {
+            $reports = core_component::get_plugin_list('gradereport');
+            if (is_array($reports) && count($reports) > 0) {  // Get all installed reports.
+                arsort($reports);   // User is last, we want to test it first.
+                foreach ($reports as $plugin => $plugindir) {
+                    if (has_capability('gradereport/'.$plugin.':view', $context)) {
+                        // Stop when the first visible plugin is found.
+                        $grades = true;
+                        break;
+                    }
+                }
+            }
+        }
+        $options->grades = $grades;
+    }
+
+    if (\core_competency\api::is_enabled()) {
+        $capabilities = array('moodle/competency:coursecompetencyview', 'moodle/competency:coursecompetencymanage');
+        $options->competencies = has_any_capability($capabilities, $context);
     }
     return $options;
 }

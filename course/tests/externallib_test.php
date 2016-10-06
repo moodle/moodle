@@ -1796,7 +1796,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $navoptions->{$option['name']} = $option['available'];
             }
             if ($course['id'] == SITEID) {
-                $this->assertCount(7, $course['options']);
+                $this->assertCount(8, $course['options']);
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
                 $this->assertFalse($navoptions->participants);
@@ -1804,12 +1804,15 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertTrue($navoptions->tags);
                 $this->assertFalse($navoptions->search);
                 $this->assertTrue($navoptions->calendar);
+                $this->assertTrue($navoptions->competencies);
             } else {
-                $this->assertCount(4, $course['options']);
+                $this->assertCount(6, $course['options']);
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
                 $this->assertTrue($navoptions->participants);
                 $this->assertTrue($navoptions->badges);
+                $this->assertTrue($navoptions->grades);
+                $this->assertTrue($navoptions->competencies);
             }
         }
     }

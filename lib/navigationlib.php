@@ -143,6 +143,8 @@ class navigation_node implements renderable {
     public $includesectionnum = false;
     /** @var bool does the node need to be loaded via ajax */
     public $requiresajaxloading = false;
+    /** @var bool If set to true this node will be added to the "flat" navigation */
+    public $showinflatnavigation = false;
 
     /**
      * Constructs a new navigation_node
@@ -234,6 +236,65 @@ class navigation_node implements renderable {
             return true;
         }
         return false;
+    }
+
+    /**
+     * True if this nav node has siblings in the tree.
+     *
+     * @return bool
+     */
+    public function has_siblings() {
+        if (empty($this->parent) || empty($this->parent->children)) {
+            return false;
+        }
+        if ($this->parent->children instanceof navigation_node_collection) {
+            $count = $this->parent->children->count();
+        } else {
+            $count = count($this->parent->children);
+        }
+        return ($count > 1);
+    }
+
+    /**
+     * Recursively walk the tree looking for a node with a valid action.
+     * Depth first search.
+     *
+     * @return bool
+     */
+    public function resolve_action() {
+        if ($this->action) {
+            return $this->action;
+        }
+        if (!empty($this->children)) {
+            foreach ($this->children as $child) {
+                $action = $child->resolve_action();
+                if (!empty($action)) {
+                    return $action;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get a list of sibling navigation nodes at the same level as this one.
+     *
+     * @return bool|array of navigation_node
+     */
+    public function get_siblings() {
+        // Returns a list of the siblings of the current node for display in a flat navigation element. Either
+        // the in-page links or the breadcrumb links.
+        $siblings = false;
+
+        if ($this->has_siblings()) {
+            $siblings = [];
+            foreach ($this->parent->children as $child) {
+                if ($child->display) {
+                    $siblings[] = $child;
+                }
+            }
+        }
+        return $siblings;
     }
 
     /**
@@ -379,6 +440,24 @@ class navigation_node implements renderable {
      */
     public function find($key, $type) {
         return $this->children->find($key, $type);
+    }
+
+    /**
+     * Walk the tree building up a list of all the flat navigation nodes.
+     *
+     * @param flat_navigation $nodes List of the found flat navigation nodes.
+     */
+    public function build_flat_navigation_list(flat_navigation $nodes) {
+        if ($this->showinflatnavigation) {
+            $indent = 0;
+            if ($this->type == self::TYPE_COURSE) {
+                $indent = 1;
+            }
+            $nodes->add(new flat_navigation_node($this, $indent));
+        }
+        foreach ($this->children as $child) {
+            $child->build_flat_navigation_list($nodes);
+        }
     }
 
     /**
@@ -1053,6 +1132,7 @@ class global_navigation extends navigation_node {
 
         // Use the parents constructor.... good good reuse
         parent::__construct($properties);
+        $this->showinflatnavigation = true;
 
         // Initalise and set defaults
         $this->page = $page;
@@ -1128,15 +1208,18 @@ class global_navigation extends navigation_node {
         $this->load_course_sections($SITE, $this->rootnodes['site']);
 
         $course = $this->page->course;
+        $this->load_courses_enrolled();
 
         // $issite gets set to true if the current pages course is the sites frontpage course
         $issite = ($this->page->course->id == $SITE->id);
+
         // Determine if the user is enrolled in any course.
         $enrolledinanycourse = enrol_user_sees_own_courses();
 
         $this->rootnodes['currentcourse']->mainnavonly = true;
         if ($enrolledinanycourse) {
             $this->rootnodes['mycourses']->isexpandable = true;
+            $this->rootnodes['mycourses']->showinflatnavigation = true;
             if ($CFG->navshowallcourses) {
                 // When we show all courses we need to show both the my courses and the regular courses branch.
                 $this->rootnodes['courses']->isexpandable = true;
@@ -2428,6 +2511,14 @@ class global_navigation extends navigation_node {
         // This is the name that will be shown for the course.
         $coursename = empty($CFG->navshowfullcoursenames) ? $shortname : $fullname;
 
+        if ($coursetype == self::COURSE_CURRENT) {
+            if ($coursenode = $this->rootnodes['mycourses']->find($course->id, self::TYPE_COURSE)) {
+                return $coursenode;
+            } else {
+                $coursetype = self::COURSE_OTHER;
+            }
+        }
+
         // Can the user expand the course to see its content.
         $canexpandcourse = true;
         if ($issite) {
@@ -2468,6 +2559,7 @@ class global_navigation extends navigation_node {
         }
 
         $coursenode = $parent->add($coursename, $url, self::TYPE_COURSE, $shortname, $course->id);
+        $coursenode->showinflatnavigation = $coursetype == self::COURSE_MY;
         $coursenode->hidden = (!$course->visible);
         $coursenode->title(format_string($course->fullname, true, array('context' => $coursecontext, 'escape' => false)));
         if ($canexpandcourse) {
@@ -2582,11 +2674,21 @@ class global_navigation extends navigation_node {
         if ($navoptions->badges) {
             $url = new moodle_url('/badges/view.php', array('type' => 2, 'id' => $course->id));
 
-            $coursenode->add(get_string('coursebadges', 'badges'), null,
-                    navigation_node::TYPE_CONTAINER, null, 'coursebadges');
-            $coursenode->get('coursebadges')->add(get_string('badgesview', 'badges'), $url,
+            $coursenode->add(get_string('coursebadges', 'badges'), $url,
                     navigation_node::TYPE_SETTING, null, 'badgesview',
-                    new pix_icon('i/badge', get_string('badgesview', 'badges')));
+                    new pix_icon('i/badge', get_string('coursebadges', 'badges')));
+        }
+
+        // Check access to the course and competencies page.
+        if ($navoptions->competencies) {
+            // Just a link to course competency.
+            $title = get_string('competencies', 'core_competency');
+            $path = new moodle_url("/admin/tool/lp/coursecompetencies.php", array('courseid' => $course->id));
+            $coursenode->add($title, $path, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/competencies', ''));
+        }
+        if ($navoptions->grades) {
+            $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
+            $gradenode = $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, 'grades', new pix_icon('i/grades', ''));
         }
 
         return true;
@@ -2603,7 +2705,7 @@ class global_navigation extends navigation_node {
      * @return bool True for successfull generation
      */
     public function add_front_page_course_essentials(navigation_node $coursenode, stdClass $course) {
-        global $CFG;
+        global $CFG, $USER;
         require_once($CFG->dirroot . '/course/lib.php');
 
         if ($coursenode == false || $coursenode->get('frontpageloaded', navigation_node::TYPE_CUSTOM)) {
@@ -2657,7 +2759,18 @@ class global_navigation extends navigation_node {
         if ($navoptions->calendar) {
             // Calendar
             $calendarurl = new moodle_url('/calendar/view.php', array('view' => 'month'));
-            $coursenode->add(get_string('calendar', 'calendar'), $calendarurl, self::TYPE_CUSTOM, null, 'calendar');
+            $node = $coursenode->add(get_string('calendar', 'calendar'), $calendarurl, self::TYPE_CUSTOM, null, 'calendar');
+            $node->showinflatnavigation = true;
+        }
+
+        if (isloggedin()) {
+            $usercontext = context_user::instance($USER->id);
+            if (has_capability('moodle/user:manageownfiles', $usercontext)) {
+                $url = new moodle_url('/user/files.php');
+                $node = $coursenode->add(get_string('privatefiles'), $url, self::TYPE_SETTING);
+                $node->display = false;
+                $node->showinflatnavigation = true;
+            }
         }
 
         return true;
@@ -3090,13 +3203,12 @@ class navbar extends navigation_node {
     public $includesettingsbase = false;
     /** @var breadcrumb_navigation_node[] $prependchildren */
     protected $prependchildren = array();
+
     /**
      * The almighty constructor
      *
      * @param moodle_page $page
      */
-
-
     public function __construct(moodle_page $page) {
         global $CFG;
         if (during_initial_install()) {
@@ -3255,6 +3367,10 @@ class navbar extends navigation_node {
             $items = array_merge($items, array_reverse($this->prependchildren));
         }
 
+        $last = reset($items);
+        if ($last) {
+            $last->set_last(true);
+        }
         $this->items = array_reverse($items);
         return $this->items;
     }
@@ -3416,6 +3532,9 @@ class navbar extends navigation_node {
  */
 class breadcrumb_navigation_node extends navigation_node {
 
+    /** @var $last boolean A flag indicating this is the last item in the list of breadcrumbs. */
+    private $last = false;
+
     /**
      * A proxy constructor
      *
@@ -3433,6 +3552,251 @@ class breadcrumb_navigation_node extends navigation_node {
             }
         } else {
             throw coding_exception('Not a valid breadcrumb_navigation_node');
+        }
+    }
+
+    /**
+     * Getter for "last"
+     * @return boolean
+     */
+    public function is_last() {
+        return $this->last;
+    }
+
+    /**
+     * Setter for "last"
+     * @param $val boolean
+     */
+    public function set_last($val) {
+        $this->last = $val;
+    }
+}
+
+/**
+ * Subclass of navigation_node allowing different rendering for the flat navigation
+ * in particular allowing dividers and indents.
+ *
+ * @package   core
+ * @category  navigation
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class flat_navigation_node extends navigation_node {
+
+    /** @var $indent integer The indent level */
+    private $indent = 0;
+
+    /** @var $showdivider bool Show a divider before this element */
+    private $showdivider = false;
+
+    /** @var $smscreenonly bool Only show this menu item on xs and sm screen sizes */
+    private $smscreenonly = false;
+
+    /**
+     * A proxy constructor
+     *
+     * @param mixed $navnode A navigation_node or an array
+     */
+    public function __construct($navnode, $indent) {
+        if (is_array($navnode)) {
+            parent::__construct($navnode);
+        } else if ($navnode instanceof navigation_node) {
+
+            // Just clone everything.
+            $objvalues = get_object_vars($navnode);
+            foreach ($objvalues as $key => $value) {
+                 $this->$key = $value;
+            }
+        } else {
+            throw coding_exception('Not a valid flat_navigation_node');
+        }
+        $this->indent = $indent;
+    }
+
+    /**
+     * Getter for "showdivider"
+     * @return boolean
+     */
+    public function showdivider() {
+        return $this->showdivider;
+    }
+
+    /**
+     * Setter for "showdivider"
+     * @param $val boolean
+     */
+    public function set_showdivider($val) {
+        $this->showdivider = $val;
+    }
+
+    /**
+     * Getter for "indent"
+     * @return boolean
+     */
+    public function get_indent() {
+        return $this->indent;
+    }
+
+    /**
+     * Setter for "indent"
+     * @param $val boolean
+     */
+    public function set_indent($val) {
+        $this->indent = $val;
+    }
+
+    /**
+     * Getter for "smscreenonly"
+     * @return boolean
+     */
+    public function get_smscreenonly() {
+        return $this->smscreenonly;
+    }
+
+    /**
+     * Setter for "smscreenonly"
+     * @param $val boolean
+     */
+    public function set_smscreenonly($val) {
+        $this->smscreenonly = $val;
+    }
+}
+
+/**
+ * Class used to generate a collection of navigation nodes most closely related
+ * to the current page.
+ *
+ * @package core
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class flat_navigation extends navigation_node_collection {
+    /** @var moodle_page the moodle page that the navigation belongs to */
+    protected $page;
+
+    /**
+     * Constructor.
+     *
+     * @param moodle_page $page
+     */
+    public function __construct(moodle_page &$page) {
+        if (during_initial_install()) {
+            return false;
+        }
+        $this->page = $page;
+    }
+
+    /**
+     * Build the list of navigation nodes based on the current navigation and settings trees.
+     *
+     */
+    public function initialise() {
+        global $PAGE, $USER, $OUTPUT, $CFG;
+        if (during_initial_install()) {
+            return;
+        }
+
+        $current = false;
+
+        $course = $PAGE->course;
+
+        $PAGE->navigation->build_flat_navigation_list($this);
+
+        // First walk the nav tree looking for "flat_navigation" nodes.
+        if ($course->id > 1) {
+            // It's a real course.
+            // 'dh' is an unused param used to give this node a different url to the default.
+            // This is so we don't have 2 nodes in the flat have with the same url (both would be highlighted).
+            // 'dh' means "don't highlight".
+            $url = new moodle_url('/course/view.php', array('id' => $course->id, 'dh' => 1));
+            $flat = new flat_navigation_node(navigation_node::create($course->shortname, $url), 0);
+            $flat->key = 'coursehome';
+            $flat->set_showdivider(true);
+            $this->add($flat);
+
+            $coursenode = $PAGE->navigation->find_active_node();
+            if ($coursenode) {
+                foreach ($coursenode->children as $child) {
+                    if ($child->action) {
+                        $flat = new flat_navigation_node($child, 1);
+                        $this->add($flat);
+                    }
+                }
+            }
+
+        }
+        $admin = $PAGE->settingsnav->find('siteadministration', navigation_node::TYPE_SITE_ADMIN);
+        if (!$admin) {
+            // Try again - crazy nav tree!
+            $admin = $PAGE->settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
+        }
+        if ($admin) {
+            $flat = new flat_navigation_node($admin, 0);
+            $flat->set_showdivider(true);
+            $flat->key = 'sitesettings';
+            $this->add($flat);
+        }
+
+        // Add the lang menu for small screens (it doesn't fit in the header).
+        if (!empty($CFG->langmenu)) {
+            if ($PAGE->course == SITEID || empty($PAGE->course->lang)) {
+                $langs = get_string_manager()->get_list_of_translations();
+                if (count($langs) >= 2) {
+                    $first = true;
+                    foreach ($langs as $lang => $name) {
+                        $url = clone($PAGE->url);
+                        $url->params(['lang' => $lang]);
+                        $flat = new flat_navigation_node(navigation_node::create($name, $url), 0);
+                        if ($first) {
+                            $flat->set_showdivider(true);
+                            $first = false;
+                        }
+                        $flat->set_smscreenonly(true);
+                        $flat->key = $lang;
+                        $this->add($flat);
+                    }
+                }
+            }
+        }
+
+        // Add the custom menu for small screens (it doesn't fit in the header).
+        $customcount = 0;
+        if (!empty($CFG->custommenuitems)) {
+            $custommenus = custom_menu::convert_text_to_menu_nodes($CFG->custommenuitems, current_language());
+            $first = true;
+            foreach ($custommenus as $menu) {
+                if (preg_match("/^#+$/", $menu->get_text())) {
+                    $first = true;
+                } else {
+                    $url = $menu->get_url();
+                    if ($url) {
+                        $url = $url->out(false);
+                    }
+                    $flat = new flat_navigation_node(navigation_node::create($menu->get_text(), $url), 0);
+                    if ($first) {
+                        $flat->set_showdivider(true);
+                        $first = false;
+                    }
+                    $flat->set_smscreenonly(true);
+                    $flat->key = 'c-' . $customcount++;
+                    $this->add($flat);
+                }
+                foreach ($menu->get_children() as $child) {
+                    if (preg_match("/^#+$/", $child->get_text())) {
+                        $first = true;
+                    } else {
+                        $url = $child->get_url();
+                        if ($url) {
+                            $url = $url->out(false);
+                        }
+                        $flat = new flat_navigation_node(navigation_node::create($child->get_text(), $url), 1);
+                        $flat->set_smscreenonly(true);
+                        $flat->key = 'c-' . $customcount++;
+                        $this->add($flat);
+                    }
+                }
+            }
+
         }
     }
 
@@ -3480,6 +3844,7 @@ class settings_navigation extends navigation_node {
         $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
         $this->children = new navigation_node_collection();
     }
+
     /**
      * Initialise the settings navigation based on the current context
      *
@@ -3561,7 +3926,7 @@ class settings_navigation extends navigation_node {
                     $adminsettings->remove();
                     $adminsettings = false;
                 }
-                $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin'), self::TYPE_SITE_ADMIN, null, 'siteadministration');
+                $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin/search.php'), self::TYPE_SITE_ADMIN, null, 'siteadministration');
                 $siteadminnode->id = 'expandable_branch_'.$siteadminnode->type.'_'.clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
                 $siteadminnode->requiresajaxloading = 'true';
             }
@@ -3681,7 +4046,7 @@ class settings_navigation extends navigation_node {
 
             // Disable the navigation from automatically finding the active node
             navigation_node::$autofindactive = false;
-            $referencebranch = $this->add(get_string('administrationsite'), null, self::TYPE_SITE_ADMIN, null, 'root');
+            $referencebranch = $this->add(get_string('administrationsite'), '/admin/search.php', self::TYPE_SITE_ADMIN, null, 'root');
             foreach ($adminroot->children as $adminbranch) {
                 $this->load_administration_settings($referencebranch, $adminbranch);
             }
@@ -3787,29 +4152,6 @@ class settings_navigation extends navigation_node {
         $coursenode = $this->add(get_string('courseadministration'), null, self::TYPE_COURSE, null, 'courseadmin');
         if ($forceopen) {
             $coursenode->force_open();
-        }
-
-        if ($this->page->user_allowed_editing()) {
-            // Add the turn on/off settings
-
-            if ($this->page->url->compare(new moodle_url('/course/view.php'), URL_MATCH_BASE)) {
-                // We are on the course page, retain the current page params e.g. section.
-                $baseurl = clone($this->page->url);
-                $baseurl->param('sesskey', sesskey());
-            } else {
-                // Edit on the main course page.
-                $baseurl = new moodle_url('/course/view.php', array('id'=>$course->id, 'return'=>$this->page->url->out_as_local_url(false), 'sesskey'=>sesskey()));
-            }
-
-            $editurl = clone($baseurl);
-            if ($this->page->user_is_editing()) {
-                $editurl->param('edit', 'off');
-                $editstring = get_string('turneditingoff');
-            } else {
-                $editurl->param('edit', 'on');
-                $editstring = get_string('turneditingon');
-            }
-            $coursenode->add($editstring, $editurl, self::TYPE_SETTING, null, 'turneditingonoff', new pix_icon('i/edit', ''));
         }
 
         if ($adminoptions->update) {
@@ -3959,7 +4301,8 @@ class settings_navigation extends navigation_node {
             }
         }
         if (is_array($roles) && count($roles)>0) {
-            $switchroles = $this->add(get_string('switchroleto'), null, self::TYPE_CONTAINER, null, 'switchroleto');
+            $url = new moodle_url('/course/switchrole.php', array('id'=>$course->id, 'switchrole'=>'-1', 'returnurl'=>$this->page->url->out_as_local_url(false)));
+            $switchroles = $coursenode->add(get_string('switchroleto'), $url, self::TYPE_CONTAINER, null, 'switchroleto');
             if ((count($roles)==1 && array_key_exists(0, $roles))|| $assumedrole!==false) {
                 $switchroles->force_open();
             }
@@ -4393,7 +4736,7 @@ class settings_navigation extends navigation_node {
             if (($currentuser || is_siteadmin($USER) || !is_siteadmin($user)) &&
                     has_capability('moodle/user:update', $systemcontext)) {
                 $url = new moodle_url('/user/editadvanced.php', array('id'=>$user->id, 'course'=>$course->id));
-                $useraccount->add(get_string('editmyprofile'), $url, self::TYPE_SETTING);
+                $useraccount->add(get_string('editmyprofile'), $url, self::TYPE_SETTING, null, 'editprofile');
             } else if ((has_capability('moodle/user:editprofile', $usercontext) && !is_siteadmin($user)) ||
                     ($currentuser && has_capability('moodle/user:editownprofile', $systemcontext))) {
                 if ($userauthplugin && $userauthplugin->can_edit_profile()) {
@@ -4401,7 +4744,7 @@ class settings_navigation extends navigation_node {
                     if (empty($url)) {
                         $url = new moodle_url('/user/edit.php', array('id'=>$user->id, 'course'=>$course->id));
                     }
-                    $useraccount->add(get_string('editmyprofile'), $url, self::TYPE_SETTING);
+                    $useraccount->add(get_string('editmyprofile'), $url, self::TYPE_SETTING, null, 'editprofile');
                 }
             }
         }

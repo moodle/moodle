@@ -36,3 +36,7 @@ a:first-of-type > .icon {
         margin-left: 0;
     }
 }
+
+[data-action=toggle-drawer] .icon {
+    margin: 0px;
+}

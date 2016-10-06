@@ -287,6 +287,11 @@ class moodle_page {
     protected $_settingsnav = null;
 
     /**
+     * @var flat_navigation Contains a list of nav nodes, most closely related to the current page.
+     */
+    protected $_flatnav = null;
+
+    /**
      * @var navbar Contains the navbar structure.
      */
     protected $_navbar = null;
@@ -724,6 +729,18 @@ class moodle_page {
             $this->_settingsnav->initialise();
         }
         return $this->_settingsnav;
+    }
+
+    /**
+     * Returns the flat navigation object
+     * @return flat_navigation
+     */
+    protected function magic_get_flatnav() {
+        if ($this->_flatnav === null) {
+            $this->_flatnav = new flat_navigation($this);
+            $this->_flatnav->initialise();
+        }
+        return $this->_flatnav;
     }
 
     /**

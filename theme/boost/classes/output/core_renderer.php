@@ -23,6 +23,8 @@ use tabtree;
 use custom_menu_item;
 use custom_menu;
 use block_contents;
+use navigation_node;
+use action_link;
 use stdClass;
 use moodle_url;
 use preferences_groups;
@@ -73,6 +75,7 @@ class core_renderer extends \core_renderer {
     public function full_header() {
         $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'row'));
         $html .= html_writer::start_div('col-xs-12 p-t-1 p-b-1');
+        $html .= html_writer::div($this->context_header_settings_menu(), 'pull-xs-right context-header-settings-menu');
         $html .= $this->context_header();
         $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
         $html .= html_writer::tag('div', $this->navbar(), array('class' => 'breadcrumb-nav'));
@@ -319,7 +322,7 @@ class core_renderer extends \core_renderer {
      * @return string
      */
     public function body_css_classes(array $additionalclasses = array()) {
-        return $this->page->bodyclasses;
+        return $this->page->bodyclasses . ' ' . implode(' ', $additionalclasses);
     }
 
     /**
@@ -347,6 +350,9 @@ class core_renderer extends \core_renderer {
             }
         }
 
+        if ($menu->is_empty()) {
+            return '';
+        }
         $context = $menu->export_for_template($this);
 
         // We do not want the icon with the caret, the caret is added by Bootstrap.
@@ -441,4 +447,152 @@ class core_renderer extends \core_renderer {
         }
         return $this->render_from_template('core/pix_icon', $data);
     }
+
+    /**
+     * Renders the login form.
+     *
+     * @param \core_auth\output\login $form The renderable.
+     * @return string
+     */
+    public function render_login(\core_auth\output\login $form) {
+        global $SITE;
+
+        $context = $form->export_for_template($this);
+
+        // Override because rendering is not supported in template yet.
+        $context->cookieshelpiconformatted = $this->help_icon('cookiesenabled');
+        $context->errorformatted = $this->error_text($context->error);
+        $url = $this->get_logo_url();
+        if ($url) {
+            $url = $url->out(false);
+        }
+        $context->logourl = $url;
+        $context->sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
+
+        return $this->render_from_template('core/login', $context);
+    }
+
+    /**
+     * Render the login signup form into a nice template for the theme.
+     *
+     * @param mform $form
+     * @return string
+     */
+    public function render_login_signup_form($form) {
+        global $SITE;
+
+        $context = $form->export_for_template($this);
+        $url = $this->get_logo_url();
+        if ($url) {
+            $url = $url->out(false);
+        }
+        $context['logourl'] = $url;
+        $context['sitename'] = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
+
+        return $this->render_from_template('core/signup_form_layout', $context);
+    }
+
+    /**
+     * This is an optional menu that can be added to a layout by a theme. It contains the
+     * menu for the course administration, only on the course main page.
+     *
+     * @return string
+     */
+    public function context_header_settings_menu() {
+        $context = $this->page->context;
+        $menu = new action_menu();
+        if ($context->contextlevel == CONTEXT_COURSE) {
+            // Get the course admin node from the settings navigation.
+            $items = $this->page->navbar->get_items();
+            $node = end($items);
+            if (($node->type == navigation_node::TYPE_COURSE)) {
+                $node = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
+                if ($node) {
+                    // Build an action menu based on the visible nodes from this navigation tree.
+                    $this->build_action_menu_from_navigation($menu, $node, false, true);
+
+                    $text = get_string('courseadministration');
+                    $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
+                    $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
+                    $menu->add_secondary_action($link);
+                }
+            }
+        } else if ($context->contextlevel == CONTEXT_USER) {
+            $items = $this->page->navbar->get_items();
+            $node = end($items);
+            if ($node->key === 'myprofile') {
+                // Get the course admin node from the settings navigation.
+                $node = $this->page->settingsnav->find('useraccount', navigation_node::TYPE_CONTAINER);
+                if ($node) {
+                    // Build an action menu based on the visible nodes from this navigation tree.
+                    $this->build_action_menu_from_navigation($menu, $node);
+                }
+            }
+        }
+        return $this->render($menu);
+    }
+
+    /**
+     * This is an optional menu that can be added to a layout by a theme. It contains the
+     * menu for the most specific thing from the settings block. E.g. Module administration.
+     *
+     * @return string
+     */
+    public function region_main_settings_menu() {
+        $context = $this->page->context;
+        $menu = new action_menu();
+
+        if ($context->contextlevel == CONTEXT_MODULE) {
+
+            $node = $this->page->navigation->find_active_node();
+            if (($node->type == navigation_node::TYPE_ACTIVITY ||
+                    $node->type == navigation_node::TYPE_RESOURCE)) {
+                // Get the course admin node from the settings navigation.
+                $node = $this->page->settingsnav->find('modulesettings', navigation_node::TYPE_SETTING);
+                if ($node) {
+                    // Build an action menu based on the visible nodes from this navigation tree.
+                    $this->build_action_menu_from_navigation($menu, $node);
+                }
+            }
+        }
+        return $this->render($menu);
+    }
+
+    /**
+     * Take a node in the nav tree and make an action menu out of it.
+     * The links are injected in the action menu.
+     *
+     * @param action_menu $menu
+     * @param navigation_node $node
+     * @param boolean $indent
+     * @param boolean $onlytopleafnodes
+     */
+    private function build_action_menu_from_navigation(action_menu $menu,
+                                                       navigation_node $node,
+                                                       $indent = false,
+                                                       $onlytopleafnodes = false) {
+        // Build an action menu based on the visible nodes from this navigation tree.
+        foreach ($node->children as $menuitem) {
+            if ($menuitem->display) {
+                if ($onlytopleafnodes && $menuitem->children->count()) {
+                    continue;
+                }
+                if ($menuitem->action) {
+                    $text = $menuitem->text;
+                    $link = new action_link($menuitem->action, $menuitem->text, null, null, $menuitem->icon);
+                    if ($indent) {
+                        $link->add_class('m-l-1');
+                    }
+                } else {
+                    if ($onlytopleafnodes) {
+                        continue;
+                    }
+                    $link = $menuitem->text;
+                }
+                $menu->add_secondary_action($link);
+                $this->build_action_menu_from_navigation($menu, $menuitem, true);
+            }
+        }
+    }
+
 }

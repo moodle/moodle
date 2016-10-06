@@ -27,8 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
     'output' => $OUTPUT,
-    'sidepreblocks' => $OUTPUT->blocks('side-pre', 'col-md-4 pull-md-8 col-lg-3 pull-lg-9'),
-    'sidepostblocks' => $OUTPUT->blocks('side-post', 'col-md-3')
+    'sidepreblocks' => $OUTPUT->blocks('side-pre'),
 ];
 
 echo $OUTPUT->render_from_template('theme_boost/secure', $templatecontext);

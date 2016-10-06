@@ -1,0 +1,19 @@
+<nav class="nav nav-stacked nav-pills">
+{{# flatnavigation }}
+    {{#get_smscreenonly}}
+    <div class="hidden-lg-up">
+    {{/get_smscreenonly}}
+    {{#showdivider}}
+    <div class="nav-item"><hr></div>
+    {{/showdivider}}
+    {{#action}}
+    <div class="nav-item"><a class="nav-link {{#isactive}}active{{/isactive}} m-l-{{get_indent}}" href="{{{action}}}">{{text}}</a></div>
+    {{/action}}
+    {{^action}}
+    <div class="nav-item"><span class="nav-link m-l-{{get_indent}}">{{text}}</span></div>
+    {{/action}}
+    {{#get_smscreenonly}}
+    </div>
+    {{/get_smscreenonly}}
+{{/ flatnavigation }}
+</div>
