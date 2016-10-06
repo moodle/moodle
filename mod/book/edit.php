@@ -113,6 +113,10 @@ if ($mform->is_cancelled()) {
 $PAGE->set_title($book->name);
 $PAGE->set_heading($course->fullname);
 
+if ($chapters = book_preload_chapters($book)) {
+    book_add_fake_block($chapters, $chapter, $book, $cm);
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading($book->name);
 

@@ -161,16 +161,28 @@ function book_get_chapter_title($chid, $chapters, $book, $context) {
 }
 
 /**
- * Add the book TOC sticky block to the default region
+ * Add the book TOC sticky block to the default region.
  *
- * @param array $chapters
- * @param stdClass $chapter
- * @param stdClass $book
- * @param stdClass $cm
- * @param bool $edit
+ * @param   array       $chapters   The Chapters in the book
+ * @param   stdClass    $chapter    The current chapter
+ * @param   stdClass    $book       The book
+ * @param   stdClass    $cm         The course module
+ * @param   bool        $edit       Whether the user is editing
  */
-function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
-    global $OUTPUT, $PAGE;
+function book_add_fake_block($chapters, $chapter, $book, $cm, $edit = null) {
+    global $PAGE, $USER;
+
+    if ($edit === null) {
+        if (has_capability('mod/book:edit', context_module::instance($cm->id))) {
+            if (isset($USER->editing)) {
+                $edit = $USER->editing;
+            } else {
+                $edit = 0;
+            }
+        } else {
+            $edit = 0;
+        }
+    }
 
     $toc = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
 
