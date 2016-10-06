@@ -69,7 +69,8 @@ class cachestore_apcu extends cache_store implements cache_is_key_aware, cache_i
      * @return bool True if the stores software/hardware requirements have been met and it can be used. False otherwise.
      */
     public static function are_requirements_met() {
-        if (!extension_loaded('apcu') || !ini_get('apc.enabled')) {
+        $enabled = ini_get('apc.enabled') && (php_sapi_name() != "cli" || ini_get('apc.enable_cli'));
+        if (!extension_loaded('apcu') || !$enabled) {
             return false;
         }
 
