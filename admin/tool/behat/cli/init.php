@@ -94,7 +94,7 @@ if ($options['parallel'] && $options['parallel'] > 1) {
     // Sanitize all input options, so they can be passed to util.
     foreach ($options as $option => $value) {
         if ($value) {
-            $commandoptions .= " --$option='$value'";
+            $commandoptions .= " --$option=\"$value\"";
         }
     }
 } else {
