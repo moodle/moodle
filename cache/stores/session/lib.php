@@ -517,6 +517,14 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
     }
 
     /**
+     * Generates the appropriate configuration required for unit testing.
+     *
+     * @return array Array of unit test configuration data to be used by initialise().
+     */
+    public static function unit_test_configuration() {
+        return array();
+    }
+    /**
      * Returns the name of this instance.
      * @return string
      */

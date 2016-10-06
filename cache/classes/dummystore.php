@@ -263,6 +263,15 @@ class cachestore_dummy extends cache_store {
     }
 
     /**
+     * Generates the appropriate configuration required for unit testing.
+     *
+     * @return array Array of unit test configuration data to be used by initialise().
+     */
+    public static function unit_test_configuration() {
+        return [];
+    }
+
+    /**
      * Returns the name of this instance.
      * @return string
      */

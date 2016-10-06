@@ -13,6 +13,8 @@ Information provided here is intended especially for developers.
   - cache_store::cleanup()
 * cachestore_dummy::cleanup() has been deprecated.
 * cachestore_dummy::instance_deleted() implemented in lieu of cachestore_dummy::cleanup().
+* Added cache_store::unit_test_configuration() to calculate unit testing configuration.
+* Remove cache_store:initialise_unit_test_instance() as it is incompatible with cache_helper purge functions.
 
 === 3.1 ===
 * Cache stores has a new feature DEREFERENCES_OBJECTS.
