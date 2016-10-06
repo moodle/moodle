@@ -837,7 +837,7 @@ unset($urlthemename);
 
 // Ensure a valid theme is set.
 if (!isset($CFG->theme)) {
-    $CFG->theme = 'clean';
+    $CFG->theme = 'boost';
 }
 
 // Set language/locale of printed times.  If user has chosen a language that
