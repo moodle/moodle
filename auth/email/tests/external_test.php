@@ -52,10 +52,10 @@ class auth_email_external_testcase extends externallib_advanced_testcase {
         $categoryid = $DB->insert_record('user_info_category', array('name' => 'Cat 1', 'sortorder' => 1));
         $this->field1 = $DB->insert_record('user_info_field', array(
                 'shortname' => 'frogname', 'name' => 'Name of frog', 'categoryid' => $categoryid,
-                'datatype' => 'text', 'signup' => 1, 'visible' => 1, 'required' => 1));
+                'datatype' => 'text', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 1));
         $this->field2 = $DB->insert_record('user_info_field', array(
                 'shortname' => 'sometext', 'name' => 'Some text in textarea', 'categoryid' => $categoryid,
-                'datatype' => 'textarea', 'signup' => 1, 'visible' => 1, 'required' => 1));
+                'datatype' => 'textarea', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 2));
     }
 
     public function test_get_signup_settings() {
