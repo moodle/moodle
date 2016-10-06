@@ -332,7 +332,7 @@ class enrol_meta_plugin extends enrol_plugin {
 
         $options = array(
             'requiredcapabilities' => array('enrol/meta:selectaslinked'),
-            'multiple' => true,
+            'multiple' => empty($instance->id),  // We only accept multiple values on creation.
             'exclude' => $excludelist
         );
         $mform->addElement('course', 'customint1', get_string('linkedcourse', 'enrol_meta'), $options);
@@ -362,15 +362,24 @@ class enrol_meta_plugin extends enrol_plugin {
         $c = false;
 
         if (!empty($data['customint1'])) {
-            foreach ($data['customint1'] as $courseid) {
+            $courses = is_array($data['customint1']) ? $data['customint1'] : [$data['customint1']];
+            foreach ($courses as $courseid) {
                 $c = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
                 $coursecontext = context_course::instance($c->id);
-                $existing = $DB->get_records('enrol', array('enrol' => 'meta', 'courseid' => $thiscourseid), '', 'customint1, id');
+
+                $sqlexists = 'enrol = :meta AND courseid = :currentcourseid AND customint1 = :courseid AND id != :id';
+                $existing = $DB->record_exists_select('enrol', $sqlexists, [
+                    'meta' => 'meta',
+                    'currentcourseid' => $thiscourseid,
+                    'courseid' => $c->id,
+                    'id' => $instance->id
+                ]);
+
                 if (!$c->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                     $errors['customint1'] = get_string('error');
                 } else if (!has_capability('enrol/meta:selectaslinked', $coursecontext)) {
                     $errors['customint1'] = get_string('error');
-                } else if ($c->id == SITEID or $c->id == $thiscourseid or isset($existing[$c->id])) {
+                } else if ($c->id == SITEID or $c->id == $thiscourseid or $existing) {
                     $errors['customint1'] = get_string('error');
                 }
             }
