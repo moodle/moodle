@@ -798,9 +798,12 @@ class file_storage {
      * @param int $itemid item ID or all files if not specified
      * @param string $sort A fragment of SQL to use for sorting
      * @param bool $includedirs whether or not include directories
+     * @param string $extrasql a fragment of SQL to append to the WHERE part of the query
+     * @param array $extraconditions an array of additional condition values for the $extrasql
      * @return stored_file[] array of stored_files indexed by pathanmehash
      */
-    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "itemid, filepath, filename", $includedirs = true) {
+    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "itemid, filepath, filename",
+                                    $includedirs = true, $extrasql = '', $extraconditions = array()) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);
@@ -819,6 +822,10 @@ class file_storage {
                        AND f.component = :component
                        AND f.filearea = :filearea
                        $itemidsql";
+        if (!empty($extrasql)) {
+            $sql .= " $extrasql";
+            $conditions = array_merge($conditions, $extraconditions);
+        }
         if (!empty($sort)) {
             $sql .= " ORDER BY {$sort}";
         }
