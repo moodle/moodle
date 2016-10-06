@@ -188,8 +188,8 @@ class course_reset_form extends moodleform {
         if ($data['reset_end_date'] != 0) {
             // End date set by the user has preference.
             $coursedata['enddate'] = $data['reset_end_date'];
-        } else if ($data['reset_start_date'] > 0) {
-            // Otherwise reset_course_userdata will add the start date time shift.
+        } else if ($data['reset_start_date'] > 0 && $course->enddate != 0) {
+            // Otherwise, if the current course enddate is set, reset_course_userdata will add the start date time shift to it.
             $timeshift = $data['reset_start_date'] - usergetmidnight($course->startdate);
             $coursedata['enddate'] = $course->enddate + $timeshift;
         } else {
