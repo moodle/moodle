@@ -335,6 +335,15 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_course_check_updates' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'check_updates',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Check if there is updates affecting the user for the given course and contexts.',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',
