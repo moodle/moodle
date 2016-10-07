@@ -193,11 +193,11 @@
 #page-admin-index .releasenoteslink,
 #page-admin-index .adminwarning,
 #page-admin-index .adminerror {
-    margin: auto;
     @extend .alert;
+}
+
+#page-admin-index .adminwarning {
     @extend .alert-warning;
-    width: 60%;
-    min-width: 220px;
 }
 
 #page-admin-index .adminerror {
