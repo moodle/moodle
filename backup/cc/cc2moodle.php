@@ -381,7 +381,7 @@ class cc2moodle {
         if (!empty($format['defaultblocks'])) {
             $blocknames = $format['defaultblocks'];
         } else {
-            if (!empty($CFG->defaultblocks)) {
+            if (isset($CFG->defaultblocks)) {
                 $blocknames = $CFG->defaultblocks;
             } else {
                 $blocknames = 'participants,activity_modules,search_forums,course_list:news_items,calendar_upcoming,recent_activity';
