@@ -39,7 +39,7 @@ define(['jquery', './tether'], function(jQuery, Tether) {
             'theme_boost/tab',
             'theme_boost/tooltip',
             'theme_boost/popover'],
-            function(another) {
+            function() {
         jQuery('[data-toggle="popover"]').popover();
     });
 
