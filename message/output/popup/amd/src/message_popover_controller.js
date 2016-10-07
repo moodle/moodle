@@ -24,10 +24,10 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str',
+define(['jquery', 'core/ajax', 'core/templates', 'core/str',
             'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
             'core_message/message_repository', 'core/url'],
-        function($, Bootstrap, Ajax, Templates, Str, Notification, CustomEvents,
+        function($, Ajax, Templates, Str, Notification, CustomEvents,
             PopoverController, MessageRepo, URL) {
 
     var SELECTORS = {
@@ -58,7 +58,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
         // Let's find out how many unread messages there are.
         this.loadUnreadMessageCount();
-        this.root.find('[data-toggle="tooltip"]').tooltip();
     };
 
     /**

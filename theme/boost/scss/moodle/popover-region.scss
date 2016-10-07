@@ -1,3 +1,25 @@
+$toggle-height: 35px;
+$toggle-width: 25px;
+$standard-border: 1px solid #ddd;
+$region-container-height: 500px;
+$region-container-width: 380px;
+$region-container-z-index: 1;
+$region-header-height: 25px;
+$content-item-hover-colour-bg: #79b5e6;
+$content-item-hover-colour-text: #fff;
+$content-item-selected-colour-bg: #4f94cd;
+$content-item-unread-colour: #f4f4f4;
+
+@mixin invisible() {
+    opacity: 0;
+    visibility: hidden;
+}
+
+@mixin visible() {
+    opacity: 1;
+    visibility: visible;
+}
+
 .popover-region {
     float: right;
     position: relative;
@@ -11,10 +33,10 @@
         }
 
         .popover-region-container {
+            @include invisible();
+
             height: 0;
             overflow: hidden;
-            opacity: 0;
-            visibility: hidden;
             transition: height 0.25s, opacity 101ms 0.25s, visibility 101ms 0.25s;
         }
     }
@@ -33,6 +55,7 @@
         bottom: 0;
         right: 7px;
     }
+
     &::after {
         content: '';
         display: inline-block;
@@ -42,7 +65,7 @@
         position: absolute;
         bottom: -1px;
         right: 8px;
-        z-index: 2;
+        z-index: $region-container-z-index + 1;
     }
 }
 
@@ -59,25 +82,25 @@
 }
 
 .popover-region-container {
+    @include visible();
+
     position: absolute;
     right: 0;
     top: 0;
-    height: 500px;
-    width: 380px;
-    border: 1px solid #ddd;
+    height: $region-container-height;
+    width: $region-container-width;
+    border: $standard-border;
     transition: height 0.25s;
-    opacity: 1;
-    visibility: visible;
     background-color: #fff;
-    z-index: 1;
+    z-index: $region-container-z-index;
 }
 
 .popover-region-header-container {
-    height: 25px;
-    line-height: 25px;
+    height: $region-header-height;
+    line-height: $region-header-height;
     padding-left: 5px;
     padding-right: 5px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: $standard-border;
     box-sizing: border-box;
 }
 
@@ -85,7 +108,7 @@
     float: left;
     margin: 0;
     font-size: 14px;
-    line-height: 25px;
+    line-height: $region-header-height;
 }
 
 .popover-region-header-actions {
@@ -109,7 +132,7 @@
 }
 
 .popover-region-content-container {
-    height: ~"calc(100% - 25px)";
+    height: calc(100% - 25px);
     width: 100%;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -120,6 +143,7 @@
         padding: 5px;
         box-sizing: border-box;
     }
+
     .empty-message {
         display: none;
         text-align: center;
@@ -130,6 +154,7 @@
         > .loading-icon {
             display: block;
         }
+
         .empty-message {
             display: none;
         }
@@ -139,27 +164,28 @@
 .navbar {
     .popover-region {
         float: right;
+        margin-right: 10px;
 
         &.collapsed {
             .popover-region-container {
+                @include invisible();
+
                 height: 0;
                 overflow: hidden;
-                opacity: 0;
-                visibility: hidden;
                 transition: height 0.25s, opacity 101ms 0.25s, visibility 101ms 0.25s;
             }
         }
     }
 
     .popover-region-toggle {
-        height: 42px;
-        line-height: 42px;
-        padding-left: 10px;
-        padding-right: 10px;
+        height: $toggle-height;
+        width: $toggle-width;
+        line-height: $toggle-height;
 
         img {
             height: 16px;
             width: 16px;
+            margin: 0;
         }
     }
 
@@ -176,13 +202,13 @@
     }
 
     .popover-region-container {
-        top: 42px;
+        top: $toggle-height;
     }
 }
 
 .content-item-container {
     width: 100%;
-    border-bottom: 1px solid #ddd;
+    border-bottom: $standard-border;
     box-sizing: border-box;
     padding: 5px;
     position: relative;
@@ -192,22 +218,22 @@
     text-decoration: none;
 
     &:hover {
-        color: #fff;
-        background-color: #79b5e6;
+        color: $content-item-hover-colour-text;
+        background-color: $content-item-hover-colour-bg;
 
         .content-item-footer {
             .timestamp {
-                color: #fff;
+                color: $content-item-hover-colour-text;
             }
         }
     }
 
     &.unread {
-        background-color: #f4f4f4;
+        background-color: $content-item-unread-colour;
 
         &:hover {
-            color: #fff;
-            background-color: #79b5e6;
+            color: $content-item-hover-colour-text;
+            background-color: $content-item-hover-colour-bg;
         }
 
         .content-item-body {
@@ -264,19 +290,19 @@
             .notification-message {
                 display: inline-block;
                 font-size: 12px;
-                width: ~"calc(100% - 24px)";
+                width: calc(100% - 24px);
             }
         }
     }
 
     &.selected {
-        background-color: #4f94cd;
-        color: #fff;
-        border-color: #4f94cd;
+        background-color: $content-item-selected-colour-bg;
+        color: $content-item-hover-colour-text;
+        border-color: $content-item-selected-colour-bg;
 
         .content-item-footer {
             .timestamp {
-                color: #fff;
+                color: $content-item-hover-colour-text;
             }
         }
     }
@@ -301,8 +327,8 @@
     }
 
     .all-notifications {
-        opacity: 1;
-        visibility: visible;
+        @include visible();
+
         height: auto;
         overflow: hidden;
 
@@ -324,7 +350,6 @@
     .notification-message {
         display: inline-block;
         font-size: 12px;
-        width: 90%;
     }
 
     .popover-region-content-container {
@@ -376,7 +401,7 @@
         &.unread {
             .content-item-body {
                 font-weight: 600;
-                width: ~"calc(90% - 30px)";
+                width: calc(90% - 30px);
             }
 
             .unread-count-container {
@@ -411,7 +436,7 @@
     .content-item-body {
         display: inline-block;
         box-sizing: border-box;
-        width: ~"calc(100% - 30px)";
+        width: calc(100% - 30px);
         font-size: 12px;
         padding-left: 10px;
         overflow: hidden;
@@ -430,62 +455,6 @@
 
     .unread-count-container {
         display: none;
-    }
-}
-
-.dir-rtl {
-    .popover-region {
-        .popover-region-container {
-            left: 0;
-            right: auto;
-        }
-
-        .popover-region-header-text {
-            float: right;
-        }
-
-        .popover-region-header-actions {
-            float: left;
-        }
-    }
-
-    .navbar {
-        .popover-region {
-            float: left;
-        }
-
-        .popover-region-container {
-            &::before {
-                right: auto;
-                left: 7px;
-            }
-            &::after {
-                right: auto;
-                left: 8px;
-            }
-        }
-
-        .popover-region-header-text {
-            float: right;
-        }
-        .popover-region-header-actions {
-            float: left;
-        }
-    }
-
-    .popover-region-messages {
-        .profile-image-container {
-            float: right;
-        }
-
-        .content-item-body {
-            padding-left: 0;
-            padding-right: 10px;
-        }
-
-        .unread-count-container {
-            float: left;
-        }
     }
 }
 

@@ -24,10 +24,10 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates', 'core/str', 'core/url',
+define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
             'core/notification', 'core/custom_interaction_events', 'core/popover_region_controller',
             'message_popup/notification_repository', 'message_popup/notification_area_events'],
-        function($, Bootstrap, Ajax, Templates, Str, URL, DebugNotification, CustomEvents,
+        function($, Ajax, Templates, Str, URL, DebugNotification, CustomEvents,
             PopoverController, NotificationRepo, NotificationAreaEvents) {
 
     var SELECTORS = {
@@ -61,7 +61,6 @@ define(['jquery', 'theme_bootstrapbase/bootstrap', 'core/ajax', 'core/templates'
 
         // Let's find out how many unread notifications there are.
         this.loadUnreadNotificationCount();
-        this.root.find('[data-toggle="tooltip"]').tooltip();
     };
 
     /**

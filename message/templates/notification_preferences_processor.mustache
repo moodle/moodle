@@ -49,9 +49,14 @@
             data-context-id="{{contextid}}"
             data-name="{{name}}">
 
-            <span class="config-warning" data-toggle="tooltip" title="{{#str}} requiresconfiguration, message {{/str}}">
-                {{#pix}} i/risk_xss, core {{/pix}}
-            </span>
+            {{< core/hover_tooltip }}
+                {{$anchor}}
+                    <span class="config-warning" title="{{#str}} requiresconfiguration, message {{/str}}">
+                        {{#pix}} i/risk_xss, core {{/pix}}
+                    </span>
+                {{/anchor}}
+                {{$tooltip}}{{#str}} requiresconfiguration, message {{/str}}{{/tooltip}}
+            {{/ core/hover_tooltip }}
             {{displayname}} {{#pix}} i/settings {{/pix}}
         </a>
     {{/hassettings}}

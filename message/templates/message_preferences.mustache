@@ -93,10 +93,9 @@
     </div>
 </div>
 {{#js}}
-require(['jquery', 'theme_bootstrapbase/bootstrap', 'core_message/message_preferences'],
-    function($, Bootstrap, MessagePreferences) {
+require(['jquery', 'core_message/message_preferences'],
+    function($, MessagePreferences) {
 
-    $('[data-toggle="tooltip"]').tooltip();
     new MessagePreferences($('[data-region="preferences-page-container"]'));
 });
 {{/js}}

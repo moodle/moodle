@@ -102,10 +102,9 @@
     </div>
 </div>
 {{#js}}
-require(['jquery', 'theme_bootstrapbase/bootstrap', 'core_message/preferences_notifications_list_controller'],
-    function($, bootstrap, controller) {
+require(['jquery', 'core_message/preferences_notifications_list_controller'],
+    function($, controller) {
 
-    $('[data-toggle="tooltip"]').tooltip();
     new controller($('.preferences-container'));
 });
 {{/js}}

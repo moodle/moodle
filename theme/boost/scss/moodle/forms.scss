@@ -393,3 +393,7 @@ fieldset.coursesearchbox label {
 select[multiple] {
     overflow: auto;
 }
+
+textarea[data-auto-rows] {
+    overflow-x: hidden;
+}
