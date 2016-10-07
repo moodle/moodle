@@ -477,7 +477,7 @@ abstract class format_base {
      */
     public function get_default_blocks() {
         global $CFG;
-        if (!empty($CFG->defaultblocks)){
+        if (isset($CFG->defaultblocks)) {
             return blocks_parse_default_blocks_list($CFG->defaultblocks);
         }
         $blocknames = array(
