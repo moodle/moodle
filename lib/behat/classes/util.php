@@ -215,7 +215,7 @@ class behat_util extends testing_util {
      *
      * Stores a file in dataroot/behat to allow Moodle to switch
      * to the test environment when using cli-server.
-     * @param bool $themesuitewithallfeatures if only theme specific features need to be included in the suite.
+     * @param bool $themesuitewithallfeatures List themes to include core features.
      * @param string $tags comma separated tag, which will be given preference while distributing features in parallel run.
      * @param int $parallelruns number of parallel runs.
      * @param int $run current run.
