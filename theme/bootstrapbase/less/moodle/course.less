@@ -53,19 +53,8 @@
             position: absolute;
         }
 
-        .editing_move {
-            /* Move the move icon to the start of the line */
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
         .mod-indent-outer {
-            /**
-             * Add appropriate padding such that nothing overlaps the
-             * absolute positioned move icon.
-             */
-            padding-left: 32px;
+            padding-left: 0;
         }
 
         /* The command block for each activity */
@@ -144,6 +133,19 @@
             .contentwithoutlink,
             .activityinstance {
                 padding-right: 200px;
+            }
+            .editing_move {
+                /* Move the move icon to the start of the line */
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+            .mod-indent-outer {
+                /**
+                 * Add appropriate padding such that nothing overlaps the
+                 * absolute positioned move icon.
+                 */
+                padding-left: 32px;
             }
         }
     }
