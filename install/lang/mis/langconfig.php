@@ -30,5 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['parentlanguage'] = 'sr_lt';
+$string['parentlanguage'] = '';
 $string['thislanguage'] = 'Crnogorski';
