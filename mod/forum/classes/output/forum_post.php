@@ -378,6 +378,9 @@ class forum_post implements \renderable, \templatable {
      * @return string
      */
     public function get_unsubscribeforumlink() {
+        if (!\mod_forum\subscriptions::is_subscribable($this->forum)) {
+            return null;
+        }
         $link = new \moodle_url(
             '/mod/forum/subscribe.php', array(
                 'id' => $this->forum->id,
@@ -393,6 +396,9 @@ class forum_post implements \renderable, \templatable {
      * @return string
      */
     public function get_unsubscribediscussionlink() {
+        if (!\mod_forum\subscriptions::is_subscribable($this->forum)) {
+            return null;
+        }
         $link = new \moodle_url(
             '/mod/forum/subscribe.php', array(
                 'id'  => $this->forum->id,
