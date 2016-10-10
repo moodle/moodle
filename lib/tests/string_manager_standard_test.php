@@ -85,33 +85,46 @@ class core_string_manager_standard_testcase extends advanced_testcase {
     }
 
     /**
+     * Return all deprecated strings.
+     *
+     * @return array
+     */
+    public function get_deprecated_strings_provider() {
+        global $CFG;
+
+        $teststringman = testable_core_string_manager::instance($CFG->langotherroot, $CFG->langlocalroot, array());
+        $allstrings = $teststringman->get_all_deprecated_strings();
+        return array_map(function($string) {
+            return [$string];
+        }, $allstrings);
+    }
+
+    /**
      * This test is a built-in validation of deprecated.txt files in lang locations.
      *
      * It will fail if the string in the wrong format or non-existing (mistyped) string was deprecated.
+     *
+     * @dataProvider get_deprecated_strings_provider
+     * @param   string      $string     The string to be tested
      */
-    public function test_validate_deprecated_strings_files() {
-        global $CFG;
+    public function test_validate_deprecated_strings_files($string) {
         $stringman = get_string_manager();
-        $teststringman = testable_core_string_manager::instance($CFG->langotherroot, $CFG->langlocalroot, array());
-        $allstrings = $teststringman->get_all_deprecated_strings();
 
-        foreach ($allstrings as $string) {
-            if (!preg_match('/^(.*),(.*)$/', $string, $matches) ||
-                clean_param($matches[2], PARAM_COMPONENT) !== $matches[2]) {
-                $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have correct syntax');
-            }
-            list($pluginttype, $pluginname) = core_component::normalize_component($matches[2]);
-            $normcomponent = $pluginname ? ($pluginttype . '_' . $pluginname) : $pluginttype;
-            if ($matches[2] !== $normcomponent) {
-                $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have normalised component name');
-            }
-            if (!$stringman->string_exists($matches[1], $matches[2])) {
-                $this->fail('String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not exist');
-            }
-        }
+        $result = preg_match('/^(.*),(.*)$/', $string, $matches);
+        $this->assertEquals(1, $result);
+        $this->assertCount(3, $matches);
+        $this->assertEquals($matches[2], clean_param($matches[2], PARAM_COMPONENT),
+            "Component name {$string} appearing in one of the lang/en/deprecated.txt files does not have correct syntax");
+
+        list($pluginttype, $pluginname) = core_component::normalize_component($matches[2]);
+        $normcomponent = $pluginname ? ($pluginttype . '_' . $pluginname) : $pluginttype;
+        $this->assertEquals($normcomponent, $matches[2],
+            'String "'.$string.'" appearing in one of the lang/en/deprecated.txt files does not have normalised component name');
+
+        $this->assertTrue($stringman->string_exists($matches[1], $matches[2]),
+            "String {$string} appearing in one of the lang/en/deprecated.txt files does not exist");
     }
 }
-
 
 /**
  * Helper class providing testable string_manager
