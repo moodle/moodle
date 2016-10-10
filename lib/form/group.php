@@ -166,6 +166,7 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
 
         $elements = [];
         $name = $this->getName();
+        $i = 0;
         foreach ($this->_elements as $key => $element) {
             $elementname = '';
             if ($this->_appendName) {
@@ -186,12 +187,30 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
                 $element->accept($renderer);
                 $out = $renderer->toHtml();
             }
-            $elements[] = $out;
+
+            // Replicates the separator logic from 'pear/HTML/QuickForm/Renderer/Default.php'.
+            $separator = '';
+            if ($i > 0) {
+                if (is_array($this->_separator)) {
+                    $separator = $this->_separator[($i - 1) % count($this->_separator)];
+                } else if ($this->_separator === null) {
+                    $separator = '&nbsp;';
+                } else {
+                    $separator = (string) $this->_separator;
+                }
+            }
+
+            $elements[] = [
+                'separator' => $separator,
+                'html' => $out
+            ];
+
             // Restore the element's name.
             if ($this->_appendName) {
                 $element->setName($elementname);
             }
 
+            $i++;
         }
 
         $context['elements'] = $elements;
