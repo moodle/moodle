@@ -86,8 +86,8 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
 
         $this->assertEquals('array', gettype($result));
         $this->assertEquals('Cambridge', $result['city']);
-        $this->assertEquals(0.1249, $result['longitude'], '', 0.001);
-        $this->assertEquals(52.191000000000003, $result['latitude'], '', 0.001);
+        $this->assertEquals(0.1167, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertEquals(52.2, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
         $this->assertNull($result['error']);
         $this->assertEquals('array', gettype($result['title']));
         $this->assertEquals('Cambridge', $result['title'][0]);
@@ -100,8 +100,8 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
 
         $this->assertEquals('array', gettype($result));
         $this->assertEquals('Lancaster', $result['city']);
-        $this->assertEquals(-2.79970, $result['longitude'], '', 0.001);
-        $this->assertEquals(54.04650, $result['latitude'], '', 0.001);
+        $this->assertEquals(-2.7997, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertEquals(54.0465, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
         $this->assertNull($result['error']);
         $this->assertEquals('array', gettype($result['title']));
         $this->assertEquals('Lancaster', $result['title'][0]);
