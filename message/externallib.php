@@ -1048,7 +1048,7 @@ class core_message_external extends external_api {
             array(
                 'userid' => new external_value(PARAM_INT, 'The id of the user whose profile we are viewing'),
                 'email' => new external_value(core_user::get_property_type('email'), 'An email address'),
-                'country' => new external_value(core_user::get_property_type('country'), 'Home country code of the user'),
+                'country' => new external_value(PARAM_TEXT, 'Home country of the user'),
                 'city' => new external_value(core_user::get_property_type('city'), 'Home city of the user'),
                 'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
                 'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
