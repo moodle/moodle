@@ -29,8 +29,15 @@ require_once $CFG->dirroot.'/grade/report/user/lib.php';
 
 $courseid = required_param('id', PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
+$userview = optional_param('userview', 0, PARAM_INT);
 
 $PAGE->set_url(new moodle_url('/grade/report/user/index.php', array('id'=>$courseid)));
+
+if ($userview == 0) {
+    $userview = get_user_preferences('gradereport_user_view_user', GRADE_REPORT_USER_VIEW_USER);
+} else {
+    set_user_preference('gradereport_user_view_user', $userview);
+}
 
 /// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
@@ -103,6 +110,15 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
     $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
     $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
     $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
+
+    $renderer = $PAGE->get_renderer('gradereport_user');
+
+    if ($userview == GRADE_REPORT_USER_VIEW_USER) {
+        $viewasuser = true;
+    } else {
+        $viewasuser = false;
+    }
+
     if (empty($userid)) {
         $gui = new graded_users_iterator($course, null, $currentgroup);
         $gui->require_active_enrolment($showonlyactiveenrol);
@@ -112,13 +128,14 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
         if ($user_selector) {
-            $renderer = $PAGE->get_renderer('gradereport_user');
             echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, true);
         }
 
+        echo $renderer->view_user_selector($userid, $userview);
+
         while ($userdata = $gui->next_user()) {
             $user = $userdata->user;
-            $report = new grade_report_user($courseid, $gpr, $context, $user->id);
+            $report = new grade_report_user($courseid, $gpr, $context, $user->id, $viewasuser);
 
             $studentnamelink = html_writer::link(new moodle_url('/user/view.php', array('id' => $report->user->id, 'course' => $courseid)), fullname($report->user));
             echo $OUTPUT->heading(get_string('pluginname', 'gradereport_user') . ' - ' . $studentnamelink);
@@ -130,7 +147,7 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         }
         $gui->close();
     } else { // Only show one user's report
-        $report = new grade_report_user($courseid, $gpr, $context, $userid);
+        $report = new grade_report_user($courseid, $gpr, $context, $userid, $viewasuser);
 
         $studentnamelink = html_writer::link(new moodle_url('/user/view.php', array('id' => $report->user->id, 'course' => $courseid)), fullname($report->user));
         print_grade_page_head($courseid, 'report', 'user', get_string('pluginname', 'gradereport_user') . ' - ' . $studentnamelink,
@@ -139,10 +156,11 @@ if (has_capability('moodle/grade:viewall', $context)) { //Teachers will see all 
         groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, array('userid'=>0)));
 
         if ($user_selector) {
-            $renderer = $PAGE->get_renderer('gradereport_user');
             $showallusersoptions = true;
             echo $renderer->graded_users_selector('user', $course, $userid, $currentgroup, $showallusersoptions);
         }
+
+        echo $renderer->view_user_selector($userid, $userview);
 
         if ($currentgroup and !groups_is_member($currentgroup, $userid)) {
             echo $OUTPUT->notification(get_string('groupusernotmember', 'error'));
