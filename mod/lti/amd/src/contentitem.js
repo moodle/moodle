@@ -72,7 +72,7 @@ define(
                             dialogue.show();
 
                             // On hide handler.
-                            modal.getRoot().on(ModalEvents.hidden, function () {
+                            modal.getRoot().on(ModalEvents.hidden, function() {
                                 // Empty modal contents when it's hidden.
                                 modal.setBody('');
 

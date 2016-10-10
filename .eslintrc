@@ -31,7 +31,6 @@
     'no-inner-declarations': 'error',
     'no-invalid-regexp': 'error',
     'no-irregular-whitespace': 'error',
-    'no-negated-in-lhs': 'error',
     'no-obj-calls': 'error',
     'no-prototype-builtins': 'off',
     'no-regex-spaces': 'error',
@@ -39,6 +38,7 @@
     'no-unexpected-multiline': 'error',
     'no-unreachable': 'warn',
     'no-unsafe-finally': 'error',
+    'no-unsafe-negation': 'error',
     'use-isnan': 'error',
     'valid-jsdoc': ['warn', { 'requireReturn': false, 'requireParamDescription': false, 'requireReturnDescription': false }],
     'valid-typeof': 'error',
@@ -63,6 +63,7 @@
     'no-extra-bind': 'warn',
     'no-fallthrough': 'error',
     'no-floating-decimal': 'warn',
+    'no-global-assign': 'warn',
     // Enabled by grunt for AMD modules: 'no-implicit-globals': 'error',
     'no-implied-eval': 'error',
     'no-invalid-this': 'error',
@@ -71,7 +72,6 @@
     'no-loop-func': 'error',
     'no-multi-spaces': 'warn',
     'no-multi-str': 'error',
-    'no-native-reassign': 'warn',
     'no-new-func': 'error',
     'no-new-wrappers': 'error',
     'no-octal': 'error',
@@ -96,7 +96,7 @@
     'no-delete-var': 'error',
     'no-undef': 'error',
     'no-undef-init': 'error',
-    'no-unused-vars': ['error', { 'caughtErrors': 'none', 'argsIgnorePattern': "(e|event)" }],
+    'no-unused-vars': ['error', { 'caughtErrors': 'none' }],
 
     // === Stylistic Issues ===
     'array-bracket-spacing': 'warn',
@@ -108,6 +108,7 @@
     'computed-property-spacing': 'error',
     'consistent-this': 'off',
     'eol-last': 'off',
+    'func-call-spacing': ['warn', 'never'],
     'func-names': 'off',
     'func-style': 'off',
     // indent currently not doing well with our wrapping style, so disabled.
@@ -140,7 +141,7 @@
     'no-nested-ternary': 'warn',
     'no-new-object': 'off',
     'no-plusplus': 'off',
-    'no-spaced-func': 'warn',
+    'no-tabs': 'error',
     'no-ternary': 'off',
     'no-trailing-spaces': 'error',
     'no-underscore-dangle': 'off',
@@ -168,5 +169,12 @@
     'spaced-comment': 'warn',
     'unicode-bom': 'error',
     'wrap-regex': 'off',
+
+    // === Deprecations ===
+    "no-restricted-properties": ['warn', {
+        'object': 'M',
+        'property': 'str',
+        'message': 'Use AMD module "core/str" or M.util.get_string()'
+    }],
   }
 }
