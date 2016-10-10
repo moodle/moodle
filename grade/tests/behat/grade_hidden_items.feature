@@ -46,6 +46,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
     And I select "User report" from the "Grade report" singleselect
+    And I select "Myself" from the "View report as" singleselect
     And I select "Student 1" from the "Select all or one user" singleselect
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |

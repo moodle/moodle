@@ -30,6 +30,9 @@ define("GRADE_REPORT_USER_HIDE_HIDDEN", 0);
 define("GRADE_REPORT_USER_HIDE_UNTIL", 1);
 define("GRADE_REPORT_USER_SHOW_HIDDEN", 2);
 
+define("GRADE_REPORT_USER_VIEW_SELF", 1);
+define("GRADE_REPORT_USER_VIEW_USER", 2);
+
 /**
  * Class providing an API for the user report building and displaying.
  * @uses grade_report
