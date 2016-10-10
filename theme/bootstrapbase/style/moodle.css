@@ -12757,10 +12757,16 @@ body {
 }
 .block_adminblock .content {
   display: block;
+  margin: 0 10px;
   padding: 3px 5px;
+  width: auto;
 }
-.block_adminblock select {
-  max-width: 92%;
+.block_adminblock .singleselect {
+  display: block;
+}
+.block_adminblock .singleselect select.singleselect {
+  display: block;
+  width: 100%;
 }
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
