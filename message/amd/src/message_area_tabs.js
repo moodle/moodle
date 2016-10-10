@@ -98,6 +98,9 @@ define(['core/custom_interaction_events', 'core_message/message_area_events'], f
         this.messageArea.onCustomEvent(Events.MESSAGESDELETED, function() {
             this._isDeleting = false;
         }.bind(this));
+        this.messageArea.onCustomEvent(Events.CONVERSATIONDELETED, function() {
+            this._isDeleting = false;
+        }.bind(this));
         this.messageArea.onCustomEvent(Events.CANCELDELETEMESSAGES, function() {
             this._isDeleting = false;
         }.bind(this));

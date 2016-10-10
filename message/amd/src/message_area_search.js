@@ -138,6 +138,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         this.messageArea.onCustomEvent(Events.CANCELDELETEMESSAGES, function() {
             this._enableSearching();
         }.bind(this));
+        this.messageArea.onCustomEvent(Events.CONVERSATIONDELETED, function() {
+            this._enableSearching();
+        }.bind(this));
         this.messageArea.onCustomEvent(Events.MESSAGESDELETED, function() {
             this._enableSearching();
         }.bind(this));
