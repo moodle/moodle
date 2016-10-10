@@ -117,17 +117,21 @@ class api {
         // Get the list of possible template directories.
         $dirs = mustache_template_finder::get_template_directories_for_component($component);
         $filename = false;
+        $themedir = core_component::get_plugin_types()['theme'];
 
         foreach ($dirs as $dir) {
             // Skip theme dirs - we only want the original plugin/core template.
-            if (strpos($dir, "/theme/") === false) {
-                $candidate = $dir . $template . '.mustache';
-                if (file_exists($candidate)) {
-                    $filename = $candidate;
-                    break;
-                }
+            if (strpos($dir, $themedir) === 0) {
+                continue;
+            }
+
+            $candidate = $dir . $template . '.mustache';
+            if (file_exists($candidate)) {
+                $filename = $candidate;
+                break;
             }
         }
+
         if ($filename === false) {
             throw new moodle_exception('filenotfound', 'error');
         }
