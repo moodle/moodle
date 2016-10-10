@@ -23,16 +23,18 @@ require_once($CFG->libdir . '/formslib.php');
 require_once('lib.php');
 
 class company_edit_form extends company_moodleform {
+    protected $firstcompany;
     protected $isadding;
     protected $title = '';
     protected $description = '';
     protected $companyid;
     protected $companyrecord;
 
-    public function __construct($actionurl, $isadding, $companyid, $companyrecord) {
+    public function __construct($actionurl, $isadding, $companyid, $companyrecord, $firstcompany = false) {
         $this->isadding = $isadding;
         $this->companyid = $companyid;
         $this->companyrecord = $companyrecord;
+        $this->firstcompany = $firstcompany;
         if (empty($this->companyrecord->theme)) {
             $this->companyrecord->theme = 'iomadbootstrap';
         }
@@ -51,7 +53,16 @@ class company_edit_form extends company_moodleform {
         $mform->setType('companyid', PARAM_INT);
 
         // Then show the fields about where this block appears.
-        $mform->addElement('header', 'header', get_string('company', 'block_iomad_company_admin'));
+        if ($this->isadding) {
+            $mform->addElement('header', 'header', get_string('addnewcompany', 'block_iomad_company_admin'));
+        } else {
+            $mform->addElement('header', 'header', get_string('editcompany', 'block_iomad_company_admin'));
+        }
+
+        // If this is the first company then some extra help is displayed.
+        if ($this->firstcompany) {
+            $mform->addElement('html', '<div class="alert alert-info">' . get_string('firstcompany', 'block_iomad_company_admin') . '</div>');
+        }
 
         $mform->addElement('text', 'name',
                             get_string('companyname', 'block_iomad_company_admin'),
@@ -347,6 +358,9 @@ if (!$new) {
     iomad::require_capability('block/iomad_company_admin:company_add', $context);
 }
 
+// Are there any existing companies?
+$firstcompany = !$DB->record_exists('company', array());
+
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
@@ -369,7 +383,7 @@ if ($domains = $DB->get_records('company_domains', array('companyid' => $company
 }
 
 // Set up the form.
-$mform = new company_edit_form($PAGE->url, $isadding, $companyid, $companyrecord);
+$mform = new company_edit_form($PAGE->url, $isadding, $companyid, $companyrecord, $firstcompany);
 $mform->set_data($companyrecord);
 
 if ($mform->is_cancelled()) {
