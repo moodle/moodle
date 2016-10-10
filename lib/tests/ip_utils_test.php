@@ -335,4 +335,43 @@ class core_ip_utils_testcase extends basic_testcase {
             ["fe80:::aaaa-dddd", false],
         ];
     }
+
+    /**
+     * Test checking domains against a list of allowed domains.
+     *
+     * @param  bool $expected Expected result
+     * @param  string $domain domain address
+     * @dataProvider data_domain_addresses
+     */
+    public function test_check_domain_against_allowed_domains($expected, $domain) {
+        $alloweddomains = ['example.com',
+                           '*.moodle.com',
+                           '*.per.this.penny-arcade.com',
+                           'bad.*.url.com',
+                           ' trouble.com.au'];
+        $this->assertEquals($expected, \core\ip_utils::is_domain_in_allowed_list($domain, $alloweddomains));
+    }
+
+    /**
+     * Data provider for test_check_domain_against_allowed_domains.
+     *
+     * @return array
+     */
+    public function data_domain_addresses() {
+        return [
+            [true, 'example.com'],
+            [false, 'sub.example.com'],
+            [false, 'example.com.au'],
+            [false, ' example.com'], // A space at the front of the domain is invalid.
+            [false, 'example.123'], // Numbers at the end is invalid.
+            [false, 'test.example.com'],
+            [false, 'moodle.com'],
+            [true, 'test.moodle.com'],
+            [false, 'test.moodle.com.au'],
+            [true, 'nice.address.per.this.penny-arcade.com'],
+            [false, 'normal.per.this.penny-arcade.com.au'],
+            [false, 'bad.thing.url.com'], // The allowed domain (above) has a bad wildcard and so this address will return false.
+            [false, 'trouble.com.au'] // The allowed domain (above) has a space at the front and so will return false.
+        ];
+    }
 }

@@ -185,4 +185,43 @@ final class ip_utils {
         }
         return false;
     }
+
+    /**
+     * Checks the domain name against a list of allowed domains. The list of allowed domains is may use
+     * wildcards that match {@link is_domain_matching_pattern()}.
+     *
+     * @param  string $domain Domain address
+     * @param  array $alloweddomains An array of allowed domains.
+     * @return boolean True if the domain matches one of the entries in the allowed domains list.
+     */
+    public static function is_domain_in_allowed_list($domain, $alloweddomains) {
+
+        if (!self::is_domain_name($domain)) {
+            return false;
+        }
+
+        foreach ($alloweddomains as $alloweddomain) {
+            if (strpos($alloweddomain, '*') !== false) {
+                if (!self::is_domain_matching_pattern($alloweddomain)) {
+                    continue;
+                }
+                // Use of wildcard for possible subdomains.
+                $escapeperiods = str_replace('.', '\.', $alloweddomain);
+                $replacewildcard = str_replace('*', '.*', $escapeperiods);
+                $ultimatepattern = '/' . $replacewildcard . '$/';
+                if (preg_match($ultimatepattern, $domain)) {
+                    return true;
+                }
+            } else {
+                if (!self::is_domain_name($alloweddomain)) {
+                    continue;
+                }
+                // Strict domain setting.
+                if ($domain === $alloweddomain) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
