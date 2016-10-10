@@ -8964,6 +8964,11 @@ function get_performance_info() {
     $info['html'] = '';         // Holds userfriendly HTML representation.
     $info['txt']  = me() . ' '; // Holds log-friendly representation.
 
+    if (!empty($CFG->themedesignermode)) {
+        // Attempt to avoid devs debugging peformance issues, when its caused by css building and so on.
+        $info['html'] = '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
+    }
+
     $info['realtime'] = microtime_diff($PERF->starttime, microtime());
 
     $info['html'] .= '<span class="timeused">'.$info['realtime'].' secs</span> ';

@@ -1063,6 +1063,7 @@ $string['tasktagcron'] = 'Background processing for tags';
 $string['tasktempfilecleanup'] = 'Delete stale temp files';
 $string['tempdatafoldercleanup'] = 'Clean up temporary data files older than';
 $string['themedesignermode'] = 'Theme designer mode';
+$string['themedesignermodewarning'] = 'Theme designer mode is enabled. This should not be enabled on production sites as it can significantly reduce performance.';
 $string['themelist'] = 'Theme list';
 $string['themenoselected'] = 'No theme selected';
 $string['themeresetcaches'] = 'Clear theme caches';
