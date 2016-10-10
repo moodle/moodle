@@ -29,6 +29,7 @@ require_once($CFG->dirroot.'/user/editadvanced_form.php');
 require_once($CFG->dirroot.'/user/editlib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->dirroot.'/webservice/lib.php');
 
 // HTTPS is required in this page when $CFG->loginhttps enabled.
 $PAGE->https_required();
@@ -217,6 +218,9 @@ if ($usernew = $userform->get_data()) {
                     // We can use SID of other user safely here because they are unique,
                     // the problem here is we do not want to logout admin here when changing own password.
                     \core\session\manager::kill_user_sessions($usernew->id, session_id());
+                }
+                if (!empty($usernew->signoutofotherservices)) {
+                    webservice::delete_user_ws_tokens($usernew->id);
                 }
             }
         }
