@@ -57,10 +57,17 @@
     <licenseversion>2.0+</licenseversion>
   </library>
   <library>
-    <location>minify</location>
-    <name>Minify</name>
-    <license>BSD</license>
-    <version>2.2.1</version>
+    <location>minify/matthiasmullie-minify</location>
+    <name>MatthiasMullie\Minify</name>
+    <license>MIT</license>
+    <version>1.3.37</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>minify/matthiasmullie-pathconverter</location>
+    <name>MatthiasMullie\PathConverter</name>
+    <license>MIT</license>
+    <version>1.0.8</version>
     <licenseversion></licenseversion>
   </library>
   <library>
