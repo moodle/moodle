@@ -105,6 +105,7 @@ class core_repository_generator_testcase extends advanced_testcase {
         $record->dropbox_key = '12345';
         $record->dropbox_secret = '67890';
         $record->dropbox_cachelimit = '123';
+        $record->legacyapi = '0';
         $dropbox = $this->getDataGenerator()->create_repository_type('dropbox', $record);
 
         $config = get_config('dropbox');
@@ -112,7 +113,7 @@ class core_repository_generator_testcase extends advanced_testcase {
         $record->enablecourseinstances = '0';
         $this->assertEquals($record, $config);
         $this->assertEquals('Custom Dropbox',
-            $DB->get_field('repository_instances', 'name', array('typeid' => $dropbox->id), MUST_EXIST));
+        $DB->get_field('repository_instances', 'name', array('typeid' => $dropbox->id), MUST_EXIST));
 
         // Multiple instances.
         $record = new stdClass();

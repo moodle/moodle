@@ -15,16 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Dropbox Rate Limit Encountered.
  *
- * @package    repository_dropbox
- * @copyright  2010 Dongsheng Cai
- * @author     Dongsheng Cai <dongsheng@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since       Moodle 3.2
+ * @package     repository_dropbox
+ * @copyright   Andrew Nicols <andrew@nicols.co.uk>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace repository_dropbox;
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015111601;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2015111000;        // Requires this Moodle version
-$plugin->component = 'repository_dropbox'; // Full name of the plugin (used for diagnostics)
+/**
+ * Dropbox Rate Limit Encountered.
+ *
+ * @package     repository_dropbox
+ * @copyright   Andrew Nicols <andrew@nicols.co.uk>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class rate_limit_exception extends dropbox_exception {
+    /**
+     * Constructor for rate_limit_exception.
+     */
+    public function __construct() {
+        parent::__construct('Rate limit hit');
+    }
+}
