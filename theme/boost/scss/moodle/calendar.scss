@@ -397,6 +397,7 @@ $calendarEventUserColor: #dce7ec; // Pale blue.
         ul {
             list-style: none;
             margin: 0;
+            padding: 0;
         }
 
         li {
@@ -405,6 +406,7 @@ $calendarEventUserColor: #dce7ec; // Pale blue.
             span {
                 img {
                     padding: 0 0.2em;
+                    margin: 0;
                 }
             }
         }
