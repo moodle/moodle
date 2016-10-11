@@ -536,6 +536,11 @@ class cache_phpunit_factory extends cache_factory {
     }
 
     /**
+     * @var bool Whether the warning notice about alternative cache store used has been displayed.
+     */
+    protected $altcachestorenotice = false;
+
+    /**
      * Creates a store instance given its name and configuration.
      *
      * If the store has already been instantiated then the original object will be returned. (reused)
@@ -546,8 +551,6 @@ class cache_phpunit_factory extends cache_factory {
      * @return boolean|cache_store
      */
     public function create_store_from_config($name, array $details, cache_definition $definition) {
-
-        static $noticeshown = false;
 
         if (isset($details['use_test_store'])) {
             // name, plugin, alt
@@ -562,10 +565,10 @@ class cache_phpunit_factory extends cache_factory {
             }
 
             // Notify user that alternative store is being used, so action can be taken.
-            if (!$noticeshown) {
+            if (!$this->altcachestorenotice) {
                 echo PHP_EOL . "++ WARNING: " . 'Failed to use "' . $details['plugin'] . '" cache store, alt "' .
                     $details['alt']['plugin'] . '" cache store is used.' . PHP_EOL . PHP_EOL;
-                $noticeshown = true;
+                $this->altcachestorenotice = true;
             }
             $details = $details['alt'];
             $details['class'] = 'cachestore_'.$details['plugin'];
