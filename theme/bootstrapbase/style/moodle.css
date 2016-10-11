@@ -14188,6 +14188,10 @@ fieldset.coursesearchbox label {
   display: inline-block;
   margin-right: 8px;
 }
+#fitem_id_availabilityconditionsjson .availability-plugincontrols select {
+  width: auto;
+  max-width: 200px;
+}
 #fitem_id_availabilityconditionsjson .availability-eye,
 #fitem_id_availabilityconditionsjson .availability-delete {
   margin-right: 8px;
