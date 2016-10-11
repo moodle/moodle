@@ -3297,4 +3297,92 @@ class core_course_courselib_testcase extends advanced_testcase {
             ]
         ];
     }
+
+    public function test_course_check_module_updates_since() {
+        global $CFG, $DB, $USER;
+        require_once($CFG->dirroot . '/mod/glossary/lib.php');
+        require_once($CFG->dirroot . '/rating/lib.php');
+        require_once($CFG->dirroot . '/comment/lib.php');
+
+        $this->resetAfterTest(true);
+
+        $CFG->enablecompletion = true;
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => 1));
+        $glossary = $this->getDataGenerator()->create_module('glossary', array(
+            'course' => $course->id,
+            'completion' => COMPLETION_TRACKING_AUTOMATIC,
+            'completionview' => 1,
+            'allowcomments' => 1,
+            'assessed' => RATING_AGGREGATE_AVERAGE,
+            'scale' => 100
+        ));
+        $glossarygenerator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $context = context_module::instance($glossary->cmid);
+        $modinfo = get_fast_modinfo($course);
+        $cm = $modinfo->get_cm($glossary->cmid);
+        $user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
+        $from = time();
+
+        $teacher = $this->getDataGenerator()->create_user();
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $course->id, $teacherrole->id);
+
+        assign_capability('mod/glossary:viewanyrating', CAP_ALLOW, $studentrole->id, $context->id, true);
+
+        // Check nothing changed right now.
+        $updates = course_check_module_updates_since($cm, $from);
+        $this->assertFalse($updates->configuration);
+        $this->assertFalse($updates->completion);
+        $this->assertFalse($updates->gradeitems);
+        $this->assertFalse($updates->comments);
+        $this->assertFalse($updates->ratings);
+        $this->assertFalse($updates->introfiles);
+        $this->assertFalse($updates->outcomes);
+
+        $this->waitForSecond();
+
+        // Do some changes.
+        $this->setUser($user);
+        $entry = $glossarygenerator->create_content($glossary);
+
+        $this->setUser($teacher);
+        // Name.
+        set_coursemodule_name($glossary->cmid, 'New name');
+
+        // Add some ratings.
+        $rm = new rating_manager();
+        $result = $rm->add_rating($cm, $context, 'mod_glossary', 'entry', $entry->id, 100, 50, $user->id, RATING_AGGREGATE_AVERAGE);
+
+        // Change grades.
+        $glossary->cmidnumber = $glossary->cmid;
+        glossary_update_grades($glossary, $user->id);
+
+        $this->setUser($user);
+        // Completion status.
+        glossary_view($glossary, $course, $cm, $context, 'letter');
+
+        // Add one comment.
+        $args = new stdClass;
+        $args->context   = $context;
+        $args->course    = $course;
+        $args->cm        = $cm;
+        $args->area      = 'glossary_entry';
+        $args->itemid    = $entry->id;
+        $args->client_id = 1;
+        $args->component = 'mod_glossary';
+        $manager = new comment($args);
+        $manager->add('blah blah blah');
+
+        // Check upgrade status.
+        $updates = course_check_module_updates_since($cm, $from);
+        $this->assertTrue($updates->configuration);
+        $this->assertTrue($updates->completion);
+        $this->assertTrue($updates->gradeitems);
+        $this->assertTrue($updates->comments);
+        $this->assertTrue($updates->ratings);
+        $this->assertFalse($updates->introfiles);
+        $this->assertFalse($updates->outcomes);
+    }
 }

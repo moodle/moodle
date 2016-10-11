@@ -1131,3 +1131,34 @@ function choice_refresh_events($courseid = 0) {
     return true;
 }
 
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB;
+
+    $updates = new stdClass();
+    $choice = $DB->get_record($cm->modname, array('id' => $cm->instance), '*', MUST_EXIST);
+    list($available, $warnings) = choice_get_availability_status($choice);
+    if (!$available) {
+        return $updates;
+    }
+
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+
+    if (!choice_can_view_results($choice)) {
+        return $updates;
+    }
+    // Check if there are new responses in the choice.
+    $select = 'choiceid = :id AND timemodified > :since';
+    $params = array('id' => $choice->id, 'since' => $from);
+    $updates->answers = $DB->count_records_select('choice_answers', $select, $params) > 0;
+
+    return $updates;
+}

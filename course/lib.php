@@ -3601,3 +3601,172 @@ function course_validate_dates($coursedata) {
 
     return false;
 }
+
+/**
+ * Check for course updates in the given context level instances (only modules supported right Now)
+ *
+ * @param  stdClass $course  course object
+ * @param  array $tocheck    instances to check for updates
+ * @param  array $filter check only for updates in these areas
+ * @return array list of warnings and instances with updates information
+ * @since  Moodle 3.2
+ */
+function course_check_updates($course, $tocheck, $filter = array()) {
+    global $CFG, $DB;
+
+    $instances = array();
+    $warnings = array();
+    $modulescallbacksupport = array();
+    $modinfo = get_fast_modinfo($course);
+
+    $supportedplugins = get_plugin_list_with_function('mod', 'check_updates_since');
+
+    // Check instances.
+    foreach ($tocheck as $instance) {
+        if ($instance['contextlevel'] == 'module') {
+            // Check module visibility.
+            $modinfoexception = false;
+            try {
+                $cm = $modinfo->get_cm($instance['id']);
+            } catch (Exception $e) {
+                $modinfoexception = true;
+            }
+
+            if ($modinfoexception or !$cm->uservisible) {
+                $warnings[] = array(
+                    'item' => 'module',
+                    'itemid' => $instance['id'],
+                    'warningcode' => 'nonuservisible',
+                    'message' => 'You don\'t have access to this module.'
+                );
+                continue;
+            }
+            if (empty($supportedplugins['mod_' . $cm->modname])) {
+                $warnings[] = array(
+                    'item' => 'module',
+                    'itemid' => $instance['id'],
+                    'warningcode' => 'missingcallback',
+                    'message' => 'This module does not implement the check_updates_since callback: ' . $instance['contextlevel'],
+                );
+                continue;
+            }
+            // Retrieve the module instance.
+            $instances[] = array(
+                'contextlevel' => $instance['contextlevel'],
+                'id' => $instance['id'],
+                'updates' => call_user_func($cm->modname . '_check_updates_since', $cm, $instance['since'], $filter)
+            );
+
+        } else {
+            $warnings[] = array(
+                'item' => 'contextlevel',
+                'itemid' => $instance['id'],
+                'warningcode' => 'contextlevelnotsupported',
+                'message' => 'Context level not yet supported ' . $instance['contextlevel'],
+            );
+        }
+    }
+    return array($instances, $warnings);
+}
+
+/**
+ * Check module updates since a given time.
+ * This function checks for updates in the module config, file areas, completion, grades, comments and ratings.
+ *
+ * @param  cm_info $cm        course module data
+ * @param  int $from          the time to check
+ * @param  array $fileareas   additional file ares to check
+ * @param  array $filter      if we need to filter and return only selected updates
+ * @return stdClass object with the different updates
+ * @since  Moodle 3.2
+ */
+function course_check_module_updates_since($cm, $from, $fileareas = array(), $filter = array()) {
+    global $DB, $CFG, $USER;
+
+    $context = $cm->context;
+    $mod = $DB->get_record($cm->modname, array('id' => $cm->instance), '*', MUST_EXIST);
+
+    $updates = new stdClass();
+    $course = get_course($cm->course);
+    $component = 'mod_' . $cm->modname;
+
+    // Check changes in the module configuration.
+    if (isset($mod->timemodified) and (empty($filter) or in_array('configuration', $filter))) {
+        $updates->configuration = $mod->timemodified > $from;
+    }
+
+    // Check for updates in files.
+    if (plugin_supports('mod', $cm->modname, FEATURE_MOD_INTRO)) {
+        $fileareas[] = 'intro';
+    }
+    if (!empty($fileareas) and (empty($filter) or in_array('fileareas', $filter))) {
+        $fs = get_file_storage();
+        $extrasql = 'AND (f.timecreated > :since1 OR f.timemodified > :since2)';
+        $extraconditions = array('since1' => $from, 'since2' => $from);
+        foreach ($fileareas as $fileareaname) {
+            $files = $fs->get_area_files($context->id, $component, $fileareaname, false, "itemid", true, $extrasql, $extraconditions);
+            $updates->{$fileareaname . 'files'} = !empty($files);
+        }
+    }
+
+    // Check completion.
+    $updates->completion = false;
+    $supportcompletion = plugin_supports('mod', $cm->modname, FEATURE_COMPLETION_HAS_RULES);
+    $supportcompletion = $supportcompletion or plugin_supports('mod', $cm->modname, FEATURE_COMPLETION_TRACKS_VIEWS);
+    if ($supportcompletion and (empty($filter) or in_array('completion', $filter))) {
+        $completion = new completion_info($course);
+        // Use wholecourse to cache all the modules the first time.
+        $completiondata = $completion->get_data($cm, true);
+        $updates->completion = !empty($completiondata->timemodified) && $completiondata->timemodified > $from;
+    }
+
+    // Check grades.
+    $updates->gradeitems = false;
+    $updates->outcomes = false;
+    $supportgrades = plugin_supports('mod', $cm->modname, FEATURE_GRADE_HAS_GRADE);
+    $supportgrades = $supportgrades or plugin_supports('mod', $cm->modname, FEATURE_GRADE_OUTCOMES);
+    if ($supportgrades and (empty($filter) or (in_array('gradeitems', $filter) or in_array('outcomes', $filter)))) {
+        require_once($CFG->libdir . '/gradelib.php');
+        $grades = grade_get_grades($course->id, 'mod', $cm->modname, $mod->id, $USER->id);
+        
+        if (empty($filter) or in_array('gradeitems', $filter)) {
+            foreach ($grades->items as $gradeitem) {
+                foreach ($gradeitem->grades as $grade) {
+                    if ($grade->datesubmitted > $from or $grade->dategraded > $from) {
+                        $updates->gradeitems = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+        
+        if (empty($filter) or in_array('outcomes', $filter)) {
+            foreach ($grades->outcomes as $outcome) {
+                foreach ($outcome->grades as $grade) {
+                    if ($grade->datesubmitted > $from or $grade->dategraded > $from) {
+                        $updates->outcomes = true;
+                        break 2;
+                    }
+                }
+            }
+        }
+    }
+
+    // Check comments.
+    $updates->comments = false;
+    if (plugin_supports('mod', $cm->modname, FEATURE_COMMENT) and (empty($filter) or in_array('comments', $filter))) {
+        require_once($CFG->dirroot . '/comment/locallib.php');
+        $manager = new comment_manager();
+        $updates->comments = count($manager->get_component_comments_since($course, $cm, $context, $component, $from)) > 0;
+    }
+
+    // Check ratings.
+    $updates->ratings = false;
+    if (plugin_supports('mod', $cm->modname, FEATURE_RATE) and (empty($filter) or in_array('ratings', $filter))) {
+        require_once($CFG->dirroot . '/rating/lib.php');
+        $manager = new rating_manager();
+        $updates->ratings = count($manager->get_component_ratings_since($course, $cm, $context, $component, $from)) > 0;
+    }
+
+    return $updates;
+}

@@ -1494,3 +1494,30 @@ function scorm_view($scorm, $course, $cm, $context) {
     $event->add_record_snapshot('scorm', $scorm);
     $event->trigger();
 }
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function scorm_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $USER, $CFG;
+    require_once($CFG->dirroot . '/mod/scorm/locallib.php');
+
+    $scorm = $DB->get_record($cm->modname, array('id' => $cm->instance), '*', MUST_EXIST);
+    $updates = new stdClass();
+    list($available, $warnings) = scorm_get_availability_status($scorm, true, $cm->context);
+    if (!$available) {
+        return $updates;
+    }
+    $updates = course_check_module_updates_since($cm, $from, array('package'), $filter);
+
+    $select = 'scormid = ? AND userid = ? AND timemodified > ?';
+    $params = array($scorm->id, $USER->id, $from);
+    $updates->tracks = $DB->count_records_select('scorm_scoes_track', $select, $params) > 0;
+    return $updates;
+}

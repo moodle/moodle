@@ -2521,10 +2521,13 @@ function forum_count_discussions($forum, $cm, $course) {
  * @param int $perpage
  * @param int $groupid if groups enabled, get discussions for this group overriding the current group.
  *                     Use FORUM_POSTS_ALL_USER_GROUPS for all the user groups
+ * @param string $extrasql additional SQL code for the query
+ * @param array $extraparams additional params for the $extrasql
  * @return array
  */
 function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $limit=-1,
-                                $userlastmodified=false, $page=-1, $perpage=0, $groupid = -1) {
+                                $userlastmodified=false, $page=-1, $perpage=0, $groupid = -1,
+                                $extrasql = '', $extraparams = array()) {
     global $CFG, $DB, $USER;
 
     $timelimit = '';
@@ -2643,8 +2646,11 @@ function forum_get_discussions($cm, $forumsort="", $fullpost=true, $unused=-1, $
                    JOIN {user} u ON p.userid = u.id
                    $umtable
              WHERE d.forum = ? AND p.parent = 0
-                   $timelimit $groupselect
+                   $timelimit $groupselect $extrasql
           ORDER BY $forumsort, d.id DESC";
+    if (!empty($extrasql)) {
+        $params = array_merge($params, $extraparams);
+    }
     return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
 }
 
@@ -8037,4 +8043,32 @@ function forum_discussion_is_locked($forum, $discussion) {
     }
 
     return false;
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  stdClass $context context object
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function forum_check_updates_since(cm_info $cm, $from, $filter = array()) {
+
+    $context = $cm->context;
+    $updates = new stdClass();
+    if (!has_capability('mod/forum:viewdiscussion', $context)) {
+        return $updates;
+    }
+
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+
+    // Check if there are new discussions in the forum.
+    $sql = 'AND (d.timemodified > ? OR p.created > ? OR p.modified > ?)';
+    $params = array($from, $from, $from);
+    $discussions = forum_get_discussions($cm, '', false, -1, -1, true, -1, 0, FORUM_POSTS_ALL_USER_GROUPS, $sql, $params);
+    $updates->discussions = count($discussions) > 0;
+
+    return $updates;
 }
