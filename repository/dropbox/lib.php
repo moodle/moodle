@@ -24,7 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once(dirname(__FILE__).'/locallib.php');
 
 /**
  * Repository to access Dropbox files
@@ -34,341 +33,413 @@ require_once(dirname(__FILE__).'/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_dropbox extends repository {
-    /** @var dropbox the instance of dropbox client */
-    private $dropbox;
-    /** @var array files */
-    public $files;
-    /** @var bool flag of login status */
-    public $logged=false;
-    /** @var int maximum size of file to cache in moodle filepool */
-    public $cachelimit=null;
-
-    /** @var int cached file ttl */
-    private $cachedfilettl = null;
+    /**
+     * @var dropbox     The instance of dropbox client.
+     */
+    protected $dropbox;
 
     /**
-     * Constructor of dropbox plugin
-     *
-     * @param int $repositoryid
-     * @param stdClass $context
-     * @param array $options
+     * @var int         The maximum file size to cache in the moodle filepool.
      */
-    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        global $CFG;
-        $options['page']    = optional_param('p', 1, PARAM_INT);
+    public $cachelimit = null;
+
+    /**
+     * @var repository  The actual repository.
+     */
+    protected $legacy;
+
+    /**
+     * Constructor of dropbox plugin.
+     *
+     * @inheritDocs
+     */
+    public function __construct($repositoryid, $context = SYSCONTEXTID, $options = []) {
+        if (self::use_legacy_api()) {
+            $this->legacy = new repository_dropbox_legacy($repositoryid, $context, $options);
+
+            parent::__construct($repositoryid, $context, $options);
+
+            return;
+        }
+
+        $options['page'] = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
 
-        $this->setting = 'dropbox_';
+        $returnurl = new moodle_url('/repository/repository_callback.php', [
+                'callback'  => 'yes',
+                'repo_id'   => $repositoryid,
+                'sesskey'   => sesskey(),
+            ]);
 
-        $this->dropbox_key = $this->get_option('dropbox_key');
-        $this->dropbox_secret  = $this->get_option('dropbox_secret');
+        // Create the dropbox API instance.
+        $key = get_config('dropbox', 'dropbox_key');
+        $secret = get_config('dropbox', 'dropbox_secret');
+        $this->dropbox = new repository_dropbox\dropbox(
+                $key,
+                $secret,
+                $returnurl
+            );
+    }
 
-        // one day
-        $this->cachedfilettl = 60 * 60 * 24;
+    /**
+     * Determine whether to use the legacy (v1) API.
+     *
+     * @return  bool
+     */
+    protected static function use_legacy_api() {
+        $uselegacyapi = get_config('dropbox', 'legacyapi');
+        return !empty($uselegacyapi);
+    }
 
-        if (isset($options['access_key'])) {
-            $this->access_key = $options['access_key'];
+    /**
+     * Repository method to serve the referenced file.
+     *
+     * @inheritDocs
+     */
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->send_file($storedfile, $lifetime, $filter, $forcedownload, $options);
+        }
+
+        $reference = $this->unpack_reference($storedfile->get_reference());
+
+        $maxcachesize = $this->max_cache_bytes();
+        if (empty($maxcachesize)) {
+            // Always cache the file, regardless of size.
+            $cachefile = true;
         } else {
-            $this->access_key = get_user_preferences($this->setting.'_access_key', '');
+            // Size available. Only cache if it is under maxcachesize.
+            $cachefile = $storedfile->get_filesize() < $maxcachesize;
         }
-        if (isset($options['access_secret'])) {
-            $this->access_secret = $options['access_secret'];
+
+        if (!$cachefile) {
+            \core\session\manager::write_close();
+            header('Location: ' . $this->get_file_download_link($reference->url));
+            die;
+        }
+
+        try {
+            $this->import_external_file_contents($storedfile, $this->max_cache_bytes());
+            if (!is_array($options)) {
+                $options = array();
+            }
+            $options['sendcachedexternalfile'] = true;
+            \core\session\manager::write_close();
+            send_stored_file($storedfile, $lifetime, $filter, $forcedownload, $options);
+        } catch (moodle_exception $e) {
+            // Redirect to Dropbox, it will show the error.
+            // Note: We redirect to Dropbox shared link, not to the download link here!
+            \core\session\manager::write_close();
+            header('Location: ' . $reference->url);
+            die;
+        }
+    }
+
+    /**
+     * Return human readable reference information.
+     * {@link stored_file::get_reference()}
+     *
+     * @inheritDocs
+     */
+    public function get_reference_details($reference, $filestatus = 0) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_reference_details($reference, $filestatus);
+        }
+
+        global $USER;
+        $ref  = unserialize($reference);
+        $detailsprefix = $this->get_name();
+        if (isset($ref->userid) && $ref->userid != $USER->id && isset($ref->username)) {
+            $detailsprefix .= ' ('.$ref->username.')';
+        }
+        $details = $detailsprefix;
+        if (isset($ref->path)) {
+            $details .= ': '. $ref->path;
+        }
+        if (isset($ref->path) && !$filestatus) {
+            // Indicate this is from dropbox with path.
+            return $details;
         } else {
-            $this->access_secret = get_user_preferences($this->setting.'_access_secret', '');
-        }
-
-        if (!empty($this->access_key) && !empty($this->access_secret)) {
-            $this->logged = true;
-        }
-
-        $callbackurl = new moodle_url($CFG->wwwroot.'/repository/repository_callback.php', array(
-            'callback'=>'yes',
-            'repo_id'=>$repositoryid
-            ));
-
-        $args = array(
-            'oauth_consumer_key'=>$this->dropbox_key,
-            'oauth_consumer_secret'=>$this->dropbox_secret,
-            'oauth_callback' => $callbackurl->out(false),
-            'api_root' => 'https://api.dropbox.com/1/oauth',
-        );
-
-        $this->dropbox = new dropbox($args);
-    }
-
-    /**
-     * Set access key
-     *
-     * @param string $access_key
-     */
-    public function set_access_key($access_key) {
-        $this->access_key = $access_key;
-    }
-
-    /**
-     * Set access secret
-     *
-     * @param string $access_secret
-     */
-    public function set_access_secret($access_secret) {
-        $this->access_secret = $access_secret;
-    }
-
-
-    /**
-     * Check if moodle has got access token and secret
-     *
-     * @return bool
-     */
-    public function check_login() {
-        return !empty($this->logged);
-    }
-
-    /**
-     * Generate dropbox login url
-     *
-     * @return array
-     */
-    public function print_login() {
-        $result = $this->dropbox->request_token();
-        set_user_preference($this->setting.'_request_secret', $result['oauth_token_secret']);
-        $url = $result['authorize_url'];
-        if ($this->options['ajax']) {
-            $ret = array();
-            $popup_btn = new stdClass();
-            $popup_btn->type = 'popup';
-            $popup_btn->url = $url;
-            $ret['login'] = array($popup_btn);
-            return $ret;
-        } else {
-            echo '<a target="_blank" href="'.$url.'">'.get_string('login', 'repository').'</a>';
+            if (isset($ref->url)) {
+                $details = $detailsprefix. ': '. $ref->url;
+            }
+            return get_string('lostsource', 'repository', $details);
         }
     }
 
     /**
-     * Request access token
+     * Cache file from external repository by reference.
+     * {@link repository::get_file_reference()}
+     * {@link repository::get_file()}
+     * Invoked at MOODLE/repository/repository_ajax.php.
      *
-     * @return array
+     * @inheritDocs
      */
-    public function callback() {
-        $token  = optional_param('oauth_token', '', PARAM_TEXT);
-        $secret = get_user_preferences($this->setting.'_request_secret', '');
-        $access_token = $this->dropbox->get_access_token($token, $secret);
-        set_user_preference($this->setting.'_access_key', $access_token['oauth_token']);
-        set_user_preference($this->setting.'_access_secret', $access_token['oauth_token_secret']);
+    public function cache_file_by_reference($reference, $storedfile) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->cache_file_by_reference($reference, $storedfile);
+        }
+
+        try {
+            $this->import_external_file_contents($storedfile, $this->max_cache_bytes());
+        } catch (Exception $e) {
+            // Cache failure should not cause a fatal error. This is only a nice-to-have feature.
+        }
     }
 
     /**
-     * Get dropbox files
+     * Return the source information.
      *
-     * @param string $path
-     * @param int $page
-     * @return array
+     * The result of the function is stored in files.source field. It may be analysed
+     * when the source file is lost or repository may use it to display human-readable
+     * location of reference original.
+     *
+     * This method is called when file is picked for the first time only. When file
+     * (either copy or a reference) is already in moodle and it is being picked
+     * again to another file area (also as a copy or as a reference), the value of
+     * files.source is copied.
+     *
+     * @inheritDocs
+     */
+    public function get_file_source_info($source) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_file_source_info($source);
+        }
+
+        global $USER;
+        return 'Dropbox ('.fullname($USER).'): ' . $source;
+    }
+
+    /**
+     * Prepare file reference information.
+     *
+     * @inheritDocs
+     */
+    public function get_file_reference($source) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_file_reference($source);
+        }
+
+        global $USER;
+        $reference = new stdClass;
+        $reference->userid = $USER->id;
+        $reference->username = fullname($USER);
+        $reference->path = $source;
+
+        // Determine whether we are downloading the file, or should use a file reference.
+        $usefilereference = optional_param('usefilereference', false, PARAM_BOOL);
+        if ($usefilereference) {
+            if ($data = $this->dropbox->get_file_share_info($source)) {
+                $reference = (object) array_merge((array) $data, (array) $reference);
+            }
+        }
+
+        return serialize($reference);
+    }
+
+    /**
+     * Return file URL for external link.
+     *
+     * @inheritDocs
+     */
+    public function get_link($reference) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_link($reference);
+        }
+
+        $unpacked = $this->unpack_reference($reference);
+
+        return $this->get_file_download_link($unpacked->url);
+    }
+
+    /**
+     * Downloads a file from external repository and saves it in temp dir.
+     *
+     * @inheritDocs
+     */
+    public function get_file($reference, $saveas = '') {
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_file($reference, $saveas);
+        }
+
+        $unpacked = $this->unpack_reference($reference);
+
+        // This is a shared link, and hopefully it is still active.
+        $downloadlink = $this->get_file_download_link($unpacked->url);
+
+        $saveas = $this->prepare_file($saveas);
+        file_put_contents($saveas, fopen($downloadlink, 'r'));
+
+        return ['path' => $saveas];
+    }
+
+    /**
+     * Dropbox plugin supports all kinds of files.
+     *
+     * @inheritDocs
+     */
+    public function supported_filetypes() {
+        if (self::use_legacy_api()) {
+            return $this->legacy->supported_filetypes();
+        }
+
+        return '*';
+    }
+
+    /**
+     * User cannot use the external link to dropbox.
+     *
+     * @inheritDocs
+     */
+    public function supported_returntypes() {
+        if (self::use_legacy_api()) {
+            return $this->legacy->supported_returntypes();
+        }
+
+        return FILE_INTERNAL | FILE_REFERENCE | FILE_EXTERNAL;
+    }
+
+    /**
+     * Get dropbox files.
+     *
+     * @inheritDocs
      */
     public function get_listing($path = '', $page = '1') {
-        global $OUTPUT;
-        if (empty($path) || $path=='/') {
-            $path = '/';
+        if (self::use_legacy_api()) {
+            return $this->legacy->get_listing($path, $page);
+        }
+
+        if (empty($path) || $path == '/') {
+            $path = '';
         } else {
             $path = file_correct_filepath($path);
         }
-        $encoded_path = str_replace("%2F", "/", rawurlencode($path));
 
-        $list = array();
-        $list['list'] = array();
-        $list['manage'] = 'https://www.dropbox.com/home';
-        $list['dynload'] = true;
-        $list['nosearch'] = true;
-        $list['logouturl'] = 'https://www.dropbox.com/logout';
-        $list['message'] = get_string('logoutdesc', 'repository_dropbox');
-        // process breadcrumb trail
-        $list['path'] = array(
-            array('name'=>get_string('dropbox', 'repository_dropbox'), 'path'=>'/')
-        );
+        $list = [
+                'list'      => [],
+                'manage'    => 'https://www.dropbox.com/home',
+                'logouturl' => 'https://www.dropbox.com/logout',
+                'message'   => get_string('logoutdesc', 'repository_dropbox'),
+                'dynload'   => true,
+                'path'      => $this->process_breadcrumbs($path),
+            ];
 
-        $result = $this->dropbox->get_listing($encoded_path, $this->access_key, $this->access_secret);
+        // Note - we deliberately do not catch the coding exceptions here.
+        try {
+            $result = $this->dropbox->get_listing($path);
+        } catch (\repository_dropbox\authentication_exception $e) {
+            // The token has expired.
+            return $this->print_login();
+        } catch (\repository_dropbox\dropbox_exception $e) {
+            // There was some other form of non-coding failure.
+            // This could be a rate limit, or it could be a server-side error.
+            // Just return early instead.
+            return $list;
+        }
 
         if (!is_object($result) || empty($result)) {
             return $list;
         }
-        if (empty($result->path)) {
-            $current_path = '/';
-        } else {
-            $current_path = file_correct_filepath($result->path);
-        }
 
-        $trail = '';
-        if (!empty($path)) {
-            $parts = explode('/', $path);
-            if (count($parts) > 1) {
-                foreach ($parts as $part) {
-                    if (!empty($part)) {
-                        $trail .= ('/'.$part);
-                        $list['path'][] = array('name'=>$part, 'path'=>$trail);
-                    }
-                }
-            } else {
-                $list['path'][] = array('name'=>$path, 'path'=>$path);
-            }
-        }
-
-        if (!empty($result->error)) {
-            // reset access key
-            set_user_preference($this->setting.'_access_key', '');
-            set_user_preference($this->setting.'_access_secret', '');
-            throw new repository_exception('repositoryerror', 'repository', '', $result->error);
-        }
-        if (empty($result->contents) or !is_array($result->contents)) {
+        if (empty($result->entries) or !is_array($result->entries)) {
             return $list;
         }
-        $files = $result->contents;
-        $dirslist = array();
-        $fileslist = array();
-        foreach ($files as $file) {
-            if ($file->is_dir) {
-                $dirslist[] = array(
-                    'title' => substr($file->path, strpos($file->path, $current_path)+strlen($current_path)),
-                    'path' => file_correct_filepath($file->path),
-                    'date' => strtotime($file->modified),
-                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(64))->out(false),
-                    'thumbnail_height' => 64,
-                    'thumbnail_width' => 64,
-                    'children' => array(),
-                );
-            } else {
-                $thumbnail = null;
-                if ($file->thumb_exists) {
-                    $thumburl = new moodle_url('/repository/dropbox/thumbnail.php',
-                            array('repo_id' => $this->id,
-                                'ctx_id' => $this->context->id,
-                                'source' => $file->path,
-                                'rev' => $file->rev // include revision to avoid cache problems
-                            ));
-                    $thumbnail = $thumburl->out(false);
-                }
-                $fileslist[] = array(
-                    'title' => substr($file->path, strpos($file->path, $current_path)+strlen($current_path)),
-                    'source' => $file->path,
-                    'size' => $file->bytes,
-                    'date' => strtotime($file->modified),
-                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->path, 64))->out(false),
-                    'realthumbnail' => $thumbnail,
-                    'thumbnail_height' => 64,
-                    'thumbnail_width' => 64,
-                );
-            }
-        }
-        $fileslist = array_filter($fileslist, array($this, 'filter'));
-        $list['list'] = array_merge($dirslist, array_values($fileslist));
+
+        $list['list'] = $this->process_entries($result->entries);
         return $list;
     }
 
     /**
-     * Displays a thumbnail for current user's dropbox file
+     * Get dropbox files in the specified path.
      *
-     * @param string $string
+     * @param   string      $query      The search query
+     * @param   int         $page       The page number
+     * @return  array
+     */
+    public function search($query, $page = 0) {
+        if (self::use_legacy_api()) {
+            return parent::search($query, $page);
+        }
+
+        $list = [
+                'list'      => [],
+                'manage'    => 'https://www.dropbox.com/home',
+                'logouturl' => 'https://www.dropbox.com/logout',
+                'message'   => get_string('logoutdesc', 'repository_dropbox'),
+                'dynload'   => true,
+            ];
+
+        // Note - we deliberately do not catch the coding exceptions here.
+        try {
+            $result = $this->dropbox->search($query);
+        } catch (\repository_dropbox\authentication_exception $e) {
+            // The token has expired.
+            return $this->print_login();
+        } catch (\repository_dropbox\dropbox_exception $e) {
+            // There was some other form of non-coding failure.
+            // This could be a rate limit, or it could be a server-side error.
+            // Just return early instead.
+            return $list;
+        }
+
+        if (!is_object($result) || empty($result)) {
+            return $list;
+        }
+
+        if (empty($result->matches) or !is_array($result->matches)) {
+            return $list;
+        }
+
+        $list['list'] = $this->process_entries($result->matches);
+        return $list;
+    }
+
+    /**
+     * Displays a thumbnail for current user's dropbox file.
+     *
+     * @inheritDocs
      */
     public function send_thumbnail($source) {
-        global $CFG;
-        $saveas = $this->prepare_file('');
-        try {
-            $access_key = get_user_preferences($this->setting.'_access_key', '');
-            $access_secret = get_user_preferences($this->setting.'_access_secret', '');
-            $this->dropbox->set_access_token($access_key, $access_secret);
-            $this->dropbox->get_thumbnail($source, $saveas, $CFG->repositorysyncimagetimeout);
-            $content = file_get_contents($saveas);
-            unlink($saveas);
-            // set 30 days lifetime for the image. If the image is changed in dropbox it will have
-            // different revision number and URL will be different. It is completely safe
-            // to cache thumbnail in the browser for a long time
-            send_file($content, basename($source), 30*24*60*60, 0, true);
-        } catch (Exception $e) {}
+        if (self::use_legacy_api()) {
+            return $this->legacy->send_thumbnail($source);
+        }
+
+        $content = $this->dropbox->get_thumbnail($source);
+
+        // Set 30 days lifetime for the image.
+        // If the image is changed in dropbox it will have different revision number and URL will be different.
+        // It is completely safe to cache the thumbnail in the browser for a long time.
+        send_file($content, basename($source), 30 * DAYSECS, 0, true);
     }
 
     /**
-     * Logout from dropbox
-     * @return array
-     */
-    public function logout() {
-        set_user_preference($this->setting.'_access_key', '');
-        set_user_preference($this->setting.'_access_secret', '');
-        $this->access_key    = '';
-        $this->access_secret = '';
-        return $this->print_login();
-    }
-
-    /**
-     * Set dropbox option
-     * @param array $options
-     * @return mixed
-     */
-    public function set_option($options = array()) {
-        if (!empty($options['dropbox_key'])) {
-            set_config('dropbox_key', trim($options['dropbox_key']), 'dropbox');
-        }
-        if (!empty($options['dropbox_secret'])) {
-            set_config('dropbox_secret', trim($options['dropbox_secret']), 'dropbox');
-        }
-        if (!empty($options['dropbox_cachelimit'])) {
-            $this->cachelimit = (int)trim($options['dropbox_cachelimit']);
-            set_config('dropbox_cachelimit', $this->cachelimit, 'dropbox');
-        }
-        unset($options['dropbox_key']);
-        unset($options['dropbox_secret']);
-        unset($options['dropbox_cachelimit']);
-        $ret = parent::set_option($options);
-        return $ret;
-    }
-
-    /**
-     * Get dropbox options
-     * @param string $config
-     * @return mixed
-     */
-    public function get_option($config = '') {
-        if ($config==='dropbox_key') {
-            return trim(get_config('dropbox', 'dropbox_key'));
-        } elseif ($config==='dropbox_secret') {
-            return trim(get_config('dropbox', 'dropbox_secret'));
-        } elseif ($config==='dropbox_cachelimit') {
-            return $this->max_cache_bytes();
-        } else {
-            $options = parent::get_option();
-            $options['dropbox_key'] = trim(get_config('dropbox', 'dropbox_key'));
-            $options['dropbox_secret'] = trim(get_config('dropbox', 'dropbox_secret'));
-            $options['dropbox_cachelimit'] = $this->max_cache_bytes();
-        }
-        return $options;
-    }
-
-    /**
-     * Fixes references in DB that contains user credentials
+     * Fixes references in DB that contains user credentials.
      *
-     * @param string $reference contents of DB field files_reference.reference
+     * @param   string      $packed     Content of DB field files_reference.reference
+     * @return  string                  New serialized reference
      */
-    public function fix_old_style_reference($reference) {
-        global $CFG;
-        $ref = unserialize($reference);
-        if (!isset($ref->url)) {
-            $this->dropbox->set_access_token($ref->access_key, $ref->access_secret);
-            $ref->url = $this->dropbox->get_file_share_link($ref->path, $CFG->repositorygetfiletimeout);
-            if (!$ref->url) {
-                // some error occurred, do not fix reference for now
-                return $reference;
-            }
+    protected function fix_old_style_reference($packed) {
+        if (self::use_legacy_api()) {
+            throw new \coding_exception(__FUNCTION__ . ' is a v2 API function only');
         }
-        unset($ref->access_key);
-        unset($ref->access_secret);
+
+        $ref = unserialize($packed);
+        $ref = $this->dropbox->get_file_share_info($ref->path);
+        if (!$ref || empty($ref->url)) {
+            // Some error occurred, do not fix reference for now.
+            return $packed;
+        }
+
         $newreference = serialize($ref);
-        if ($newreference !== $reference) {
-            // we need to update references in the database
+        if ($newreference !== $packed) {
+            // We need to update references in the database.
             global $DB;
             $params = array(
-                'newreference' => $newreference,
-                'newhash' => sha1($newreference),
-                'reference' => $reference,
-                'hash' => sha1($reference),
-                'repoid' => $this->id
+                'newreference'  => $newreference,
+                'newhash'       => sha1($newreference),
+                'reference'     => $packed,
+                'hash'          => sha1($packed),
+                'repoid'        => $this->id,
             );
             $refid = $DB->get_field_sql('SELECT id FROM {files_reference}
                 WHERE reference = :reference AND referencehash = :hash
@@ -376,18 +447,20 @@ class repository_dropbox extends repository {
             if (!$refid) {
                 return $newreference;
             }
+
             $existingrefid = $DB->get_field_sql('SELECT id FROM {files_reference}
                     WHERE reference = :newreference AND referencehash = :newhash
                     AND repositoryid = :repoid', $params);
             if ($existingrefid) {
-                // the same reference already exists, we unlink all files from it,
-                // link them to the current reference and remove the old one
+                // The same reference already exists, we unlink all files from it,
+                // link them to the current reference and remove the old one.
                 $DB->execute('UPDATE {files} SET referencefileid = :refid
                     WHERE referencefileid = :existingrefid',
                     array('refid' => $refid, 'existingrefid' => $existingrefid));
                 $DB->delete_records('files_reference', array('id' => $existingrefid));
             }
-            // update the reference
+
+            // Update the reference.
             $params['refid'] = $refid;
             $DB->execute('UPDATE {files_reference}
                 SET reference = :newreference, referencehash = :newhash
@@ -397,56 +470,141 @@ class repository_dropbox extends repository {
     }
 
     /**
+     * Unpack the supplied serialized reference, fixing it if required.
+     *
+     * @param   string      $packed     The packed reference
+     * @return  object                  The unpacked reference
+     */
+    protected function unpack_reference($packed) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->fix_old_style_reference($packed);
+        }
+
+        $reference = unserialize($packed);
+        if (empty($reference->url)) {
+            // The reference is missing some information. Attempt to update it.
+            return unserialize($this->fix_old_style_reference($packed));
+        }
+
+        return $reference;
+    }
+
+    /**
      * Converts a URL received from dropbox API function 'shares' into URL that
      * can be used to download/access file directly
      *
      * @param string $sharedurl
      * @return string
      */
-    private function get_file_download_link($sharedurl) {
-        return preg_replace('|^(\w*://)www(.dropbox.com)|','\1dl\2',$sharedurl);
+    protected function get_file_download_link($sharedurl) {
+        $url = new \moodle_url($sharedurl);
+        $url->param('dl', 1);
+
+        return $url->out(false);
     }
 
     /**
-     * Downloads a file from external repository and saves it in temp dir
+     * Logout from dropbox.
      *
-     * @throws moodle_exception when file could not be downloaded
-     *
-     * @param string $reference the content of files.reference field or result of
-     * function {@link repository_dropbox::get_file_reference()}
-     * @param string $saveas filename (without path) to save the downloaded file in the
-     * temporary directory, if omitted or file already exists the new filename will be generated
-     * @return array with elements:
-     *   path: internal location of the file
-     *   url: URL to the source (from parameters)
+     * @inheritDocs
      */
-    public function get_file($reference, $saveas = '') {
-        global $CFG;
-        $ref = unserialize($reference);
-        $saveas = $this->prepare_file($saveas);
-        if (isset($ref->access_key) && isset($ref->access_secret) && isset($ref->path)) {
-            $this->dropbox->set_access_token($ref->access_key, $ref->access_secret);
-            return $this->dropbox->get_file($ref->path, $saveas, $CFG->repositorygetfiletimeout);
-        } else if (isset($ref->url)) {
-            $c = new curl;
-            $url = $this->get_file_download_link($ref->url);
-            $result = $c->download_one($url, null, array('filepath' => $saveas, 'timeout' => $CFG->repositorygetfiletimeout, 'followlocation' => true));
-            $info = $c->get_info();
-            if ($result !== true || !isset($info['http_code']) || $info['http_code'] != 200) {
-                throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
-            }
-            return array('path'=>$saveas, 'url'=>$url);
+    public function logout() {
+        if (self::use_legacy_api()) {
+            return $this->legacy->logout();
         }
-        throw new moodle_exception('cannotdownload', 'repository');
+
+        $this->dropbox->logout();
+
+        return $this->print_login();
     }
+
     /**
-     * Add Plugin settings input to Moodle form
+     * Check if moodle has got access token and secret.
      *
-     * @param moodleform $mform Moodle form (passed by reference)
-     * @param string $classname repository class name
+     * @inheritDocs
+     */
+    public function check_login() {
+        if (self::use_legacy_api()) {
+            return $this->legacy->check_login();
+        }
+
+        return $this->dropbox->is_logged_in();
+    }
+
+    /**
+     * Generate dropbox login url.
+     *
+     * @inheritDocs
+     */
+    public function print_login() {
+        if (self::use_legacy_api()) {
+            return $this->legacy->print_login();
+        }
+
+        $url = $this->dropbox->get_login_url();
+        if ($this->options['ajax']) {
+            $ret = array();
+            $btn = new \stdClass();
+            $btn->type = 'popup';
+            $btn->url = $url->out(false);
+            $ret['login'] = array($btn);
+            return $ret;
+        } else {
+            echo html_writer::link($url, get_string('login', 'repository'), array('target' => '_blank'));
+        }
+    }
+
+    /**
+     * Request access token.
+     *
+     * @inheritDocs
+     */
+    public function callback() {
+        if (self::use_legacy_api()) {
+            return $this->legacy->callback();
+        }
+
+        $this->dropbox->callback();
+    }
+
+    /**
+     * Caches all references to Dropbox files in moodle filepool.
+     *
+     * Invoked by {@link repository_dropbox_cron()}. Only files smaller than
+     * {@link repository_dropbox::max_cache_bytes()} and only files which
+     * synchronisation timeout have not expired are cached.
+     *
+     * @inheritDocs
+     */
+    public function cron() {
+        if (self::use_legacy_api()) {
+            return $this->legacy->cron();
+        }
+
+        $fs = get_file_storage();
+        $files = $fs->get_external_files($this->id);
+        $fetchedreferences = [];
+        foreach ($files as $file) {
+            if (isset($fetchedreferences[$file->get_referencefileid()])) {
+                continue;
+            }
+            try {
+                // This call will cache all files that are smaller than max_cache_bytes()
+                // and synchronise file size of all others.
+                $this->import_external_file_contents($file, $this->max_cache_bytes());
+                $fetchedreferences[$file->get_referencefileid()] = true;
+            } catch (moodle_exception $e) {
+                // If an exception is thrown, just continue. This is only a pre-fetch to help speed up general use.
+            }
+        }
+    }
+
+    /**
+     * Add Plugin settings input to Moodle form.
+     *
+     * @inheritDocs
      */
     public static function type_config_form($mform, $classname = 'repository') {
-        global $CFG;
         parent::type_config_form($mform);
         $key    = get_config('dropbox', 'dropbox_key');
         $secret = get_config('dropbox', 'dropbox_secret');
@@ -458,128 +616,184 @@ class repository_dropbox extends repository {
             $secret = '';
         }
 
-        $strrequired = get_string('required');
-
         $mform->addElement('text', 'dropbox_key', get_string('apikey', 'repository_dropbox'), array('value'=>$key,'size' => '40'));
         $mform->setType('dropbox_key', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'dropbox_secret', get_string('secret', 'repository_dropbox'), array('value'=>$secret,'size' => '40'));
 
-        $mform->addRule('dropbox_key', $strrequired, 'required', null, 'client');
-        $mform->addRule('dropbox_secret', $strrequired, 'required', null, 'client');
+        $mform->addRule('dropbox_key',    get_string('required'), 'required', null, 'client');
+        $mform->addRule('dropbox_secret', get_string('required'), 'required', null, 'client');
         $mform->setType('dropbox_secret', PARAM_RAW_TRIMMED);
-        $str_getkey = get_string('instruction', 'repository_dropbox');
-        $mform->addElement('static', null, '',  $str_getkey);
+        $mform->addElement('static', null, '', get_string('instruction', 'repository_dropbox'));
+
+        $mform->addElement('static', null,
+                get_string('oauth2title', 'repository_dropbox'),
+                get_string('legacyapihelpsupported', 'repository_dropbox'));
+        $mform->addElement('static', null,
+                get_string('oauth2redirecturi', 'repository_dropbox'),
+                self::get_oauth2callbackurl()->out()
+            );
+
+        // The Legacy API is still available so give the user the option of which version to use.
+        $mform->addElement('radio', 'legacyapi', get_string('usev2api', 'repository_dropbox'), null, false);
+        $mform->addElement('radio', 'legacyapi', get_string('uselegacyapi', 'repository_dropbox'), null, true);
+        $mform->setDefault('legacyapi', false);
 
         $mform->addElement('text', 'dropbox_cachelimit', get_string('cachelimit', 'repository_dropbox'), array('size' => '40'));
         $mform->addRule('dropbox_cachelimit', null, 'numeric', null, 'client');
         $mform->setType('dropbox_cachelimit', PARAM_INT);
         $mform->addElement('static', 'dropbox_cachelimit_info', '',  get_string('cachelimit_info', 'repository_dropbox'));
+
     }
 
     /**
-     * Option names of dropbox plugin
+     * Set options.
      *
-     * @return array
+     * @param   array   $options
+     * @return  mixed
+     */
+    public function set_option($options = []) {
+        if (!empty($options['dropbox_key'])) {
+            set_config('dropbox_key', trim($options['dropbox_key']), 'dropbox');
+            unset($options['dropbox_key']);
+        }
+        if (!empty($options['dropbox_secret'])) {
+            set_config('dropbox_secret', trim($options['dropbox_secret']), 'dropbox');
+            unset($options['dropbox_secret']);
+        }
+        if (!empty($options['dropbox_cachelimit'])) {
+            $this->cachelimit = (int) trim($options['dropbox_cachelimit']);
+            set_config('dropbox_cachelimit', $this->cachelimit, 'dropbox');
+            unset($options['dropbox_cachelimit']);
+        }
+
+        if (!empty($options['legacyapi'])) {
+            set_config('legacyapi', $this->legacyapi, 'dropbox');
+            unset($options['legacyapi']);
+        }
+
+        return parent::set_option($options);
+    }
+
+    /**
+     * Get dropbox options
+     * @param string $config
+     * @return mixed
+     */
+    public function get_option($config = '') {
+        if ($config === 'dropbox_key') {
+            return trim(get_config('dropbox', 'dropbox_key'));
+        } else if ($config === 'dropbox_secret') {
+            return trim(get_config('dropbox', 'dropbox_secret'));
+        } else if ($config === 'dropbox_cachelimit') {
+            return $this->max_cache_bytes();
+        } elseif ($config === 'legacyapi') {
+            return trim(get_config('dropbox', 'legacyapi'));
+        } else {
+            $options = parent::get_option();
+            $options['dropbox_key'] = trim(get_config('dropbox', 'dropbox_key'));
+            $options['dropbox_secret'] = trim(get_config('dropbox', 'dropbox_secret'));
+            $options['dropbox_cachelimit'] = $this->max_cache_bytes();
+            $options['legacyapi'] = trim(get_config('dropbox', 'legacyapi'));
+        }
+
+        return $options;
+    }
+
+    /**
+     * Return the OAuth 2 Redirect URI.
+     *
+     * @return  moodle_url
+     */
+    public static function get_oauth2callbackurl() {
+        global $CFG;
+
+        return new moodle_url($CFG->httpswwwroot . '/admin/oauth2callback.php');
+    }
+
+    /**
+     * Option names of dropbox plugin.
+     *
+     * @inheritDocs
      */
     public static function get_type_option_names() {
-        return array('dropbox_key', 'dropbox_secret', 'pluginname', 'dropbox_cachelimit');
+        return [
+                'legacyapi',
+                'dropbox_key',
+                'dropbox_secret',
+                'pluginname',
+                'dropbox_cachelimit',
+            ];
     }
 
     /**
-     * Dropbox plugin supports all kinds of files
+     * Performs synchronisation of an external file if the previous one has expired.
      *
-     * @return array
-     */
-    public function supported_filetypes() {
-        return '*';
-    }
-
-    /**
-     * User cannot use the external link to dropbox
+     * This function must be implemented for external repositories supporting
+     * FILE_REFERENCE, it is called for existing aliases when their filesize,
+     * contenthash or timemodified are requested. It is not called for internal
+     * repositories (see {@link repository::has_moodle_files()}), references to
+     * internal files are updated immediately when source is modified.
      *
-     * @return int
-     */
-    public function supported_returntypes() {
-        return FILE_INTERNAL | FILE_REFERENCE | FILE_EXTERNAL;
-    }
-
-    /**
-     * Return file URL for external link
+     * Referenced files may optionally keep their content in Moodle filepool (for
+     * thumbnail generation or to be able to serve cached copy). In this
+     * case both contenthash and filesize need to be synchronized. Otherwise repositories
+     * should use contenthash of empty file and correct filesize in bytes.
      *
-     * @param string $reference the result of get_file_reference()
-     * @return string
-     */
-    public function get_link($reference) {
-        global $CFG;
-        $ref = unserialize($reference);
-        if (!isset($ref->url)) {
-            $this->dropbox->set_access_token($ref->access_key, $ref->access_secret);
-            $ref->url = $this->dropbox->get_file_share_link($ref->path, $CFG->repositorygetfiletimeout);
-        }
-        return $this->get_file_download_link($ref->url);
-    }
-
-    /**
-     * Prepare file reference information
+     * Note that this function may be run for EACH file that needs to be synchronised at the
+     * moment. If anything is being downloaded or requested from external sources there
+     * should be a small timeout. The synchronisation is performed to update the size of
+     * the file and/or to update image and re-generated image preview. There is nothing
+     * fatal if syncronisation fails but it is fatal if syncronisation takes too long
+     * and hangs the script generating a page.
      *
-     * @param string $source
-     * @return string file referece
+     * Note: If you wish to call $file->get_filesize(), $file->get_contenthash() or
+     * $file->get_timemodified() make sure that recursion does not happen.
+     *
+     * Called from {@link stored_file::sync_external_file()}
+     *
+     * @inheritDocs
      */
-    public function get_file_reference($source) {
-        global $USER, $CFG;
-        $reference = new stdClass;
-        $reference->path = $source;
-        $reference->userid = $USER->id;
-        $reference->username = fullname($USER);
-        $reference->access_key = get_user_preferences($this->setting.'_access_key', '');
-        $reference->access_secret = get_user_preferences($this->setting.'_access_secret', '');
-
-        // by API we don't know if we need this reference to just download a file from dropbox
-        // into moodle filepool or create a reference. Since we need to create a shared link
-        // only in case of reference we analyze the script parameter
-        $usefilereference = optional_param('usefilereference', false, PARAM_BOOL);
-        if ($usefilereference) {
-            $this->dropbox->set_access_token($reference->access_key, $reference->access_secret);
-            $url = $this->dropbox->get_file_share_link($source, $CFG->repositorygetfiletimeout);
-            if ($url) {
-                unset($reference->access_key);
-                unset($reference->access_secret);
-                $reference->url = $url;
-            }
-        }
-        return serialize($reference);
-    }
-
     public function sync_reference(stored_file $file) {
+        if (self::use_legacy_api()) {
+            return $this->legacy->sync_reference($file);
+        }
+
         global $CFG;
 
         if ($file->get_referencelastsync() + DAYSECS > time()) {
-            // Synchronise not more often than once a day.
+            // Only synchronise once per day.
             return false;
         }
-        $ref = unserialize($file->get_reference());
-        if (!isset($ref->url)) {
-            // this is an old-style reference in DB. We need to fix it
-            $ref = unserialize($this->fix_old_style_reference($file->get_reference()));
-        }
-        if (!isset($ref->url)) {
+
+        $reference = $this->unpack_reference($file->get_reference());
+        if (!isset($reference->url)) {
+            // The URL to sync with is missing.
             return false;
         }
+
         $c = new curl;
-        $url = $this->get_file_download_link($ref->url);
-        if (file_extension_in_typegroup($ref->path, 'web_image')) {
+        $url = $this->get_file_download_link($reference->url);
+        if (file_extension_in_typegroup($reference->path, 'web_image')) {
             $saveas = $this->prepare_file('');
             try {
-                $result = $c->download_one($url, array(), array('filepath' => $saveas, 'timeout' => $CFG->repositorysyncimagetimeout, 'followlocation' => true));
+                $result = $c->download_one($url, [], [
+                        'filepath' => $saveas,
+                        'timeout' => $CFG->repositorysyncimagetimeout,
+                        'followlocation' => true,
+                    ]);
                 $info = $c->get_info();
                 if ($result === true && isset($info['http_code']) && $info['http_code'] == 200) {
                     $fs = get_file_storage();
-                    list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($saveas);
+                    list($contenthash, $filesize, ) = $fs->add_file_to_pool($saveas);
                     $file->set_synchronized($contenthash, $filesize);
                     return true;
                 }
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                // IF the download_one fails, we will attempt to download
+                // again with get() anyway.
+            }
         }
+
         $c->get($url, null, array('timeout' => $CFG->repositorysyncimagetimeout, 'followlocation' => true, 'nobody' => true));
         $info = $c->get_info();
         if (isset($info['http_code']) && $info['http_code'] == 200 &&
@@ -594,64 +808,125 @@ class repository_dropbox extends repository {
     }
 
     /**
-     * Cache file from external repository by reference
+     * Process a standard entries list.
      *
-     * Dropbox repository regularly caches all external files that are smaller than
-     * {@link repository_dropbox::max_cache_bytes()}
-     *
-     * @param string $reference this reference is generated by
-     *                          repository::get_file_reference()
-     * @param stored_file $storedfile created file reference
+     * @param   array       $entries    The list of entries returned from the API
+     * @return  array                   The manipulated entries for display in the file picker
      */
-    public function cache_file_by_reference($reference, $storedfile) {
-        try {
-            $this->import_external_file_contents($storedfile, $this->max_cache_bytes());
-        } catch (Exception $e) {}
-    }
+    protected function process_entries(array $entries) {
+        if (self::use_legacy_api()) {
+            throw new \coding_exception(__FUNCTION__ . ' is a v2 API function only');
+        }
 
-    /**
-     * Return human readable reference information
-     * {@link stored_file::get_reference()}
-     *
-     * @param string $reference
-     * @param int $filestatus status of the file, 0 - ok, 666 - source missing
-     * @return string
-     */
-    public function get_reference_details($reference, $filestatus = 0) {
-        global $USER;
-        $ref  = unserialize($reference);
-        $detailsprefix = $this->get_name();
-        if (isset($ref->userid) && $ref->userid != $USER->id && isset($ref->username)) {
-            $detailsprefix .= ' ('.$ref->username.')';
-        }
-        $details = $detailsprefix;
-        if (isset($ref->path)) {
-            $details .= ': '. $ref->path;
-        }
-        if (isset($ref->path) && !$filestatus) {
-            // Indicate this is from dropbox with path
-            return $details;
-        } else {
-            if (isset($ref->url)) {
-                $details = $detailsprefix. ': '. $ref->url;
+        global $OUTPUT;
+
+        $dirslist   = [];
+        $fileslist  = [];
+        foreach ($entries as $entry) {
+            $entrydata = $entry;
+            if (isset($entrydata->metadata)) {
+                // If this is metadata, fetch the metadata content.
+                // We only use the consistent parts of the file, folder, and metadata.
+                $entrydata = $entrydata->metadata;
             }
-            return get_string('lostsource', 'repository', $details);
+            if ($entrydata->{".tag"} === "folder") {
+                $dirslist[] = [
+                        'title'             => $entrydata->name,
+                        // Use the display path here rather than lower.
+                        // Dropbox is case insensitive but this leads to more accurate breadcrumbs.
+                        'path'              => file_correct_filepath($entrydata->path_display),
+                        'thumbnail'         => $OUTPUT->pix_url(file_folder_icon(64))->out(false),
+                        'thumbnail_height'  => 64,
+                        'thumbnail_width'   => 64,
+                        'children'          => array(),
+                    ];
+            } else if ($entrydata->{".tag"} === "file") {
+                $fileslist[] = [
+                        'title'             => $entrydata->name,
+                        // Use the path_lower here to make life easier elsewhere.
+                        'source'            => $entrydata->path_lower,
+                        'size'              => $entrydata->size,
+                        'date'              => strtotime($entrydata->client_modified),
+                        'thumbnail'         => $OUTPUT->pix_url(file_extension_icon($entrydata->path_lower, 64))->out(false),
+                        'realthumbnail'     => $this->get_thumbnail_url($entrydata),
+                        'thumbnail_height'  => 64,
+                        'thumbnail_width'   => 64,
+                    ];
+            }
         }
+
+        $fileslist = array_filter($fileslist, array($this, 'filter'));
+
+        return array_merge($dirslist, array_values($fileslist));
     }
 
     /**
-     * Return the source information
+     * Process the breadcrumbs for a listing.
      *
-     * @param string $source
-     * @return string
+     * @param   string      $path       The path to create breadcrumbs for
+     * @return  array
      */
-    public function get_file_source_info($source) {
-        global $USER;
-        return 'Dropbox ('.fullname($USER).'): ' . $source;
+    protected function process_breadcrumbs($path) {
+        if (self::use_legacy_api()) {
+            throw new \coding_exception(__FUNCTION__ . ' is a v2 API function only');
+        }
+
+        // Process breadcrumb trail.
+        // Note: Dropbox is case insensitive.
+        // Without performing an additional API call, it isn't possible to get the path_display.
+        // As a result, the path here is the path_lower.
+        $breadcrumbs = [
+            [
+                'path' => '/',
+                'name' => get_string('dropbox', 'repository_dropbox'),
+            ],
+        ];
+
+        $path = rtrim($path, '/');
+        $directories = explode('/', $path);
+        $pathtodate = '';
+        foreach ($directories as $directory) {
+            if ($directory === '') {
+                continue;
+            }
+            $pathtodate .= '/' . $directory;
+            $breadcrumbs[] = [
+                    'path'  => $pathtodate,
+                    'name'  => $directory,
+                ];
+        }
+
+        return $breadcrumbs;
     }
 
     /**
-     * Returns the maximum size of the Dropbox files to cache in moodle
+     * Grab the thumbnail URL for the specified entry.
+     *
+     * @param   object      $entry      The file entry as retrieved from the API
+     * @return  moodle_url
+     */
+    protected function get_thumbnail_url($entry) {
+        if (self::use_legacy_api()) {
+            throw new \coding_exception(__FUNCTION__ . ' is a v2 API function only');
+        }
+
+        if ($this->dropbox->supports_thumbnail($entry)) {
+            $thumburl = new moodle_url('/repository/dropbox/thumbnail.php', [
+                // The id field in dropbox is unique - no need to specify a revision.
+                'source'    => $entry->id,
+                'path'      => $entry->path_lower,
+
+                'repo_id'   => $this->id,
+                'ctx_id'    => $this->context->id,
+            ]);
+            return $thumburl->out(false);
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns the maximum size of the Dropbox files to cache in moodle.
      *
      * Note that {@link repository_dropbox::sync_reference()} will try to cache images even
      * when they are bigger in order to generate thumbnails. However there is
@@ -662,67 +937,14 @@ class repository_dropbox extends repository {
      */
     public function max_cache_bytes() {
         if ($this->cachelimit === null) {
-            $this->cachelimit = (int)get_config('dropbox', 'dropbox_cachelimit');
+            $this->cachelimit = (int) get_config('dropbox', 'dropbox_cachelimit');
         }
         return $this->cachelimit;
-    }
-
-    /**
-     * Repository method to serve the referenced file
-     *
-     * This method is ivoked from {@link send_stored_file()}.
-     * Dropbox repository first caches the file by reading it into temporary folder and then
-     * serves from there.
-     *
-     * @param stored_file $storedfile the file that contains the reference
-     * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
-     * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
-     * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
-     * @param array $options additional options affecting the file serving
-     */
-    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
-        $ref = unserialize($storedfile->get_reference());
-        if ($storedfile->get_filesize() > $this->max_cache_bytes()) {
-            header('Location: '.$this->get_file_download_link($ref->url));
-            die;
-        }
-        try {
-            $this->import_external_file_contents($storedfile, $this->max_cache_bytes());
-            if (!is_array($options)) {
-                $options = array();
-            }
-            $options['sendcachedexternalfile'] = true;
-            send_stored_file($storedfile, $lifetime, $filter, $forcedownload, $options);
-        } catch (moodle_exception $e) {
-            // redirect to Dropbox, it will show the error.
-            // We redirect to Dropbox shared link, not to download link here!
-            header('Location: '.$ref->url);
-            die;
-        }
-    }
-
-    /**
-     * Caches all references to Dropbox files in moodle filepool
-     *
-     * Invoked by {@link repository_dropbox_cron()}. Only files smaller than
-     * {@link repository_dropbox::max_cache_bytes()} and only files which
-     * synchronisation timeout have not expired are cached.
-     */
-    public function cron() {
-        $fs = get_file_storage();
-        $files = $fs->get_external_files($this->id);
-        foreach ($files as $file) {
-            try {
-                // This call will cache all files that are smaller than max_cache_bytes()
-                // and synchronise file size of all others
-                $this->import_external_file_contents($file, $this->max_cache_bytes());
-            } catch (moodle_exception $e) {}
-        }
     }
 }
 
 /**
- * Dropbox plugin cron task
+ * Dropbox plugin cron task.
  */
 function repository_dropbox_cron() {
     $instances = repository::get_instances(array('type'=>'dropbox'));

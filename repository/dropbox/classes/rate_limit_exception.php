@@ -14,28 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Dropbox Rate Limit Encountered.
+ *
+ * @since       Moodle 3.2
+ * @package     repository_dropbox
+ * @copyright   Andrew Nicols <andrew@nicols.co.uk>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace repository_dropbox;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * @param int $oldversion the version we are upgrading from
- * @return bool result
+ * Dropbox Rate Limit Encountered.
+ *
+ * @package     repository_dropbox
+ * @copyright   Andrew Nicols <andrew@nicols.co.uk>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function xmldb_repository_dropbox_upgrade($oldversion) {
-    // Moodle v2.8.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v2.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v3.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Moodle v3.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2016052301) {
-        set_config('legacyapi', 1, 'dropbox');
-        upgrade_plugin_savepoint(true, 2016052301, 'repository', 'dropbox');
+class rate_limit_exception extends dropbox_exception {
+    /**
+     * Constructor for rate_limit_exception.
+     */
+    public function __construct() {
+        parent::__construct('Rate limit hit');
     }
-    return true;
 }
