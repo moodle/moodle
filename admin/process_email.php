@@ -74,7 +74,3 @@ while(!feof($fd)) {
 $function($modargs,$body);
 
 fclose($fd);
-
-
-
-
