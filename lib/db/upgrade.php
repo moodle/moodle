@@ -2228,5 +2228,49 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016100501.00);
     }
 
+    if ($oldversion < 2016101100.00) {
+        // Define field component to be added to message.
+        $table = new xmldb_table('message');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'timeusertodeleted');
+
+        // Conditionally launch add field component.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field eventtype to be added to message.
+        $field = new xmldb_field('eventtype', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'component');
+
+        // Conditionally launch add field eventtype.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016101100.00);
+    }
+
+    if ($oldversion < 2016101101.00) {
+        // Define field component to be added to message_read.
+        $table = new xmldb_table('message_read');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'timeusertodeleted');
+
+        // Conditionally launch add field component.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field eventtype to be added to message_read.
+        $field = new xmldb_field('eventtype', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'component');
+
+        // Conditionally launch add field eventtype.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016101101.00);
+    }
+
     return true;
 }

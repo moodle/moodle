@@ -194,6 +194,22 @@
 }
 
 @media (max-width: 480px) {
+    .navbar {
+        .mdl-popover {
+            .mdl-popover-container {
+                position: fixed;
+                width: 100%;
+                height: ~"calc(100% - 52px)";
+                top: 52px;
+
+                &::before,
+                &::after {
+                    display: none;
+                }
+            }
+        }
+    }
+
     // make tabs act like nav-stacked
     // (mostly) copied from bootstrap/navs.less
     .nav-tabs > li {
@@ -537,6 +553,44 @@
 }
 
 @media (max-width: 767px) {
+    .usermenu {
+        .moodle-actionmenu {
+            .toggle-display {
+                .userbutton {
+                    .usertext {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+    .jsenabled {
+        &:not(.dir-rtl) {
+            .usermenu {
+                .moodle-actionmenu {
+                    .toggle-display {
+                        &.textmenu {
+                            margin-left: 0;
+                            padding-left: 0;
+                        }
+                    }
+                }
+            }
+        }
+        &.dir-rtl {
+            .usermenu {
+                .moodle-actionmenu {
+                    .toggle-display {
+                        &.textmenu {
+                            margin-right: 0;
+                            padding-right: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // Resize, reflow file-picker on small devices
     #filesskin .yui3-panel,
     #filesskin .file-picker.fp-generallayout {

@@ -1,6 +1,30 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+
+* Removed all message_print_* functions as well as the files search.html, search_advanced.html and
+  send_form.php due to messaging UI rehaul.
+* Deprecated the following functions as they are no longer used.
+    - message_get_course_contexts
+    - message_remove_url_params
+    - message_count_messages
+    - message_count_blocked_users
+    - message_contact_link
+    - message_get_recent_notifications
+    - message_history_link
+    - message_search
+    - message_shorten_message
+    - message_get_fragment
+    - message_get_history
+    - message_get_contact_add_remove_link
+    - message_get_contact_block_link
+    - message_mark_messages_read
+    - message_page_type_list
+    - message_can_post_message
+    - message_is_user_non_contact_blocked
+    - message_is_user_blocked
+
 === 3.1 ===
 * get_message_processors accepts an addition parameter for testing, which will just reset processor and exit.
 * Deprecated method message_current_user_is_involved() has been removed.

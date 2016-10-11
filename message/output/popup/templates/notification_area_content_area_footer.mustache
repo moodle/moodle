@@ -1,0 +1,38 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template message_popup/notification_area_content_area_footer
+
+    This template will render the footer for the content area in the
+    notification area on the notifications page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * contexturl     The URL for the associated resource
+    * contexturlname Human readable name for the URL
+
+    Example context (json):
+    {
+    }
+
+}}
+<a href="{{{contexturl}}}">{{#str}} viewnotificationresource, message, {{contexturlname}}{{/str}}</a>

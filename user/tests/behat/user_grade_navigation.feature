@@ -84,7 +84,7 @@ Feature: The student can navigate to their grades page and user grade report.
     And I follow "Assign roles relative to this user"
     And I follow "Parent"
     And I set the field "Potential users" to "Parent 1 (parent1@example.com)"
-    And I click on "Add" "button"
+    And I click on "Add" "button" in the "#page-content" "css_element"
     And I log out
     And I log in as "parent1"
     And I am on site homepage

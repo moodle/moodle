@@ -815,11 +815,14 @@ class external_format_value extends external_value {
      *
      * @param string $textfieldname Name of the text field
      * @param int $required if VALUE_REQUIRED then set standard default FORMAT_HTML
+     * @param int $default Default value.
      * @since Moodle 2.3
      */
-    public function __construct($textfieldname, $required = VALUE_REQUIRED) {
+    public function __construct($textfieldname, $required = VALUE_REQUIRED, $default = null) {
 
-        $default = ($required == VALUE_DEFAULT) ? FORMAT_HTML : null;
+        if ($default == null && $required == VALUE_DEFAULT) {
+            $default = FORMAT_HTML;
+        }
 
         $desc = $textfieldname . ' format (' . FORMAT_HTML . ' = HTML, '
                 . FORMAT_MOODLE . ' = MOODLE, '

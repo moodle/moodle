@@ -83,11 +83,8 @@ Feature: Access to full profiles of users
     And I press "Add"
     And I log out
     When I log in as "student1"
-    And I follow "Messages" in the user menu
-    And I set the following fields to these values:
-      | Search people and messages | Student 3 |
-    And I press "Search people and messages"
-    And I follow "Picture of Student 3"
+    And I view the message profile for "Student 3" user
+    And I follow "View profile"
     Then I should see "First access to site"
 
   @javascript
@@ -102,11 +99,8 @@ Feature: Access to full profiles of users
     And I press "Save and display"
     And I log out
     When I log in as "student1"
-    And I follow "Messages" in the user menu
-    And I set the following fields to these values:
-      | Search people and messages | Student 2 |
-    And I press "Search people and messages"
-    And I follow "Picture of Student 2"
+    And I view the message profile for "Student 2" user
+    And I follow "View profile"
     And I should not see "First access to site"
     And I should see "The details of this user are not available to you"
     And I log out
@@ -123,9 +117,6 @@ Feature: Access to full profiles of users
     And I add "Student 2 (student2@example.com)" user to "Group 1" group members
     And I log out
     And I log in as "student1"
-    And I follow "Messages" in the user menu
-    And I set the following fields to these values:
-      | Search people and messages | Student 2 |
-    And I press "Search people and messages"
-    And I follow "Picture of Student 2"
+    And I view the message profile for "Student 2" user
+    And I follow "View profile"
     Then I should see "First access to site"

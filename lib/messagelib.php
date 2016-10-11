@@ -127,6 +127,8 @@ function message_send($eventdata) {
     $savemessage->fullmessagehtml   = $eventdata->fullmessagehtml;
     $savemessage->smallmessage      = $eventdata->smallmessage;
     $savemessage->notification      = $eventdata->notification;
+    $savemessage->eventtype         = $eventdata->name;
+    $savemessage->component         = $eventdata->component;
 
     if (!empty($eventdata->contexturl)) {
         $savemessage->contexturl = (string)$eventdata->contexturl;

@@ -322,6 +322,104 @@ class core_user_external extends external_api {
         return null;
     }
 
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function update_user_preferences_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_INT, 'id of the user, default to current user', VALUE_DEFAULT, 0),
+                'emailstop' => new external_value(core_user::get_property_type('emailstop'),
+                    'Enable or disable notifications for this user', VALUE_DEFAULT, null),
+                'preferences' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'type'  => new external_value(PARAM_ALPHANUMEXT, 'The name of the preference'),
+                            'value' => new external_value(PARAM_RAW, 'The value of the preference')
+                        )
+                    ), 'User preferences', VALUE_DEFAULT, array()
+                )
+            )
+        );
+    }
+
+    /**
+     * Update the user's preferences.
+     *
+     * @param int $userid
+     * @param bool|null $emailstop
+     * @param array $preferences
+     * @return null
+     * @since Moodle 3.2
+     */
+    public static function update_user_preferences($userid, $emailstop = null, $preferences = array()) {
+        global $USER, $CFG;
+
+        require_once($CFG->dirroot . '/user/lib.php');
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        $systemcontext = context_system::instance();
+        self::validate_context($systemcontext);
+        $params = array(
+            'userid' => $userid,
+            'emailstop' => $emailstop,
+            'preferences' => $preferences
+        );
+        self::validate_parameters(self::update_user_preferences_parameters(), $params);
+
+        if ($userid == $USER->id) {
+            require_capability('moodle/user:editownmessageprofile', $systemcontext);
+        } else {
+            $personalcontext = context_user::instance($userid);
+            require_capability('moodle/user:editmessageprofile', $personalcontext);
+            // No editing of guest user account.
+            if (isguestuser($userid)) {
+                print_error('guestnoeditmessageother', 'message');
+            }
+            // No editing of admins by non-admins.
+            if (is_siteadmin($userid) and !is_siteadmin($USER)) {
+                print_error('useradmineditadmin');
+            }
+        }
+
+        // Preferences.
+        if (!empty($preferences)) {
+            foreach ($preferences as $preference) {
+                set_user_preference($preference['type'], $preference['value'], $userid);
+            }
+        }
+
+        // Check if they want to update the email.
+        if ($emailstop !== null) {
+            $user = new stdClass();
+            $user->id = $userid;
+            $user->emailstop = $emailstop;
+            user_update_user($user);
+
+            // Update the $USER if we should.
+            if ($userid == $USER->id) {
+                $USER->emailstop = $emailstop;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return null
+     * @since Moodle 3.2
+     */
+    public static function update_user_preferences_returns() {
+        return null;
+    }
 
     /**
      * Returns description of method parameters

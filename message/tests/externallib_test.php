@@ -51,8 +51,9 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
      * @param stdClass $userfrom user object of the one sending the message.
      * @param stdClass $userto user object of the one receiving the message.
      * @param string $message message to send.
+     * @param int $notification is the message a notification.
      */
-    protected function send_message($userfrom, $userto, $message = 'Hello world!') {
+    protected function send_message($userfrom, $userto, $message = 'Hello world!', $notification = 0) {
         global $DB;
         $record = new stdClass();
         $record->useridfrom = $userfrom->id;
@@ -60,6 +61,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $record->subject = 'No subject';
         $record->fullmessage = $message;
         $record->timecreated = time();
+        $record->notification = $notification;
         $insert = $DB->insert_record('message', $record);
     }
 
@@ -821,4 +823,67 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
     }
 
+    public function test_mark_all_notifications_as_read_invalid_user_exception() {
+        $this->resetAfterTest(true);
+
+        $this->setExpectedException('moodle_exception');
+        $result = core_message_external::mark_all_notifications_as_read(-2132131, 0);
+    }
+
+    public function test_mark_all_notifications_as_read_access_denied_exception() {
+        $this->resetAfterTest(true);
+
+        $sender = $this->getDataGenerator()->create_user();
+        $user = $this->getDataGenerator()->create_user();
+
+        $this->setUser($user);
+        $this->setExpectedException('moodle_exception');
+        $result = core_message_external::mark_all_notifications_as_read($sender->id, 0);
+    }
+
+    public function test_mark_all_notifications_as_read_missing_from_user_exception() {
+        $this->resetAfterTest(true);
+
+        $sender = $this->getDataGenerator()->create_user();
+
+        $this->setUser($sender);
+        $this->setExpectedException('moodle_exception');
+        $result = core_message_external::mark_all_notifications_as_read($sender->id, 99999);
+    }
+
+    public function test_mark_all_notifications_as_read() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $sender1 = $this->getDataGenerator()->create_user();
+        $sender2 = $this->getDataGenerator()->create_user();
+        $sender3 = $this->getDataGenerator()->create_user();
+        $recipient = $this->getDataGenerator()->create_user();
+
+        $this->setUser($recipient);
+
+        $notificationids = array(
+            $this->send_message($sender1, $recipient, 'Notification', 1),
+            $this->send_message($sender1, $recipient, 'Notification', 1),
+            $this->send_message($sender2, $recipient, 'Notification', 1),
+            $this->send_message($sender2, $recipient, 'Notification', 1),
+            $this->send_message($sender3, $recipient, 'Notification', 1),
+            $this->send_message($sender3, $recipient, 'Notification', 1),
+        );
+
+        core_message_external::mark_all_notifications_as_read($recipient->id, $sender1->id);
+        $readnotifications = $DB->get_recordset('message_read', ['useridto' => $recipient->id]);
+        $unreadnotifications = $DB->get_recordset('message', ['useridto' => $recipient->id]);
+
+        $this->assertCount(2, $readnotifications);
+        $this->assertCount(4, $unreadnotifications);
+
+        core_message_external::mark_all_notifications_as_read($recipient->id, 0);
+        $readnotifications = $DB->get_recordset('message_read', ['useridto' => $recipient->id]);
+        $unreadnotifications = $DB->get_recordset('message', ['useridto' => $recipient->id]);
+
+        $this->assertCount(6, $readnotifications);
+        $this->assertCount(0, $unreadnotifications);
+    }
 }

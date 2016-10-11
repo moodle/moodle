@@ -24,6 +24,7 @@ Feature: The messages block allows users to list new messages on the dashboard
     When I add the "Messages" block
     Then I should see "No messages waiting" in the "Messages" "block"
 
+  @javascript
   Scenario: View the block by a user who has messages.
     Given I log in as "student1"
     And I follow "Messages" in the user menu
@@ -35,11 +36,12 @@ Feature: The messages block allows users to list new messages on the dashboard
     And I add the "Messages" block
     Then I should see "Student 1" in the "Messages" "block"
 
+  @javascript
   Scenario: Use the block to send a message to a user.
     Given I log in as "teacher1"
     And I press "Customise this page"
     And I add the "Messages" block
-    And I follow "Messages"
+    And I click on "//a[normalize-space(.) = 'Messages']" "xpath_element" in the "Messages" "block"
     And I send "This is message 1" message to "Student 1" user
     And I log out
     When I log in as "student1"

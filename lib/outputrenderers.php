@@ -145,6 +145,14 @@ class renderer_base {
         static $templatecache = array();
         $mustache = $this->get_mustache();
 
+        try {
+            // Grab a copy of the existing helper to be restored later.
+            $uniqidhelper = $mustache->getHelper('uniqid');
+        } catch (Mustache_Exception_UnknownHelperException $e) {
+            // Helper doesn't exist.
+            $uniqidhelper = null;
+        }
+
         // Provide 1 random value that will not change within a template
         // but will be different from template to template. This is useful for
         // e.g. aria attributes that only work with id attributes and must be
@@ -160,7 +168,16 @@ class renderer_base {
                 throw new moodle_exception('Unknown template: ' . $templatename);
             }
         }
-        return trim($template->render($context));
+
+        $renderedtemplate = trim($template->render($context));
+
+        // If we had an existing uniqid helper then we need to restore it to allow
+        // handle nested calls of render_from_template.
+        if ($uniqidhelper) {
+            $mustache->addHelper('uniqid', $uniqidhelper);
+        }
+
+        return $renderedtemplate;
     }
 
 
@@ -3176,6 +3193,27 @@ EOD;
     }
 
     /**
+     * Allow plugins to provide some content to be rendered in the navbar.
+     * The plugin must define a PLUGIN_render_navbar_output function that returns
+     * the HTML they wish to add to the navbar.
+     *
+     * @return string HTML for the navbar
+     */
+    public function navbar_plugin_output() {
+        $output = '';
+
+        if ($pluginsfunction = get_plugins_with_function('render_navbar_output')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    $output .= $pluginfunction($this);
+                }
+            }
+        }
+
+        return $output;
+    }
+
+    /**
      * Construct a user menu, returning HTML that can be echoed out by a
      * layout file.
      *
@@ -4092,16 +4130,34 @@ EOD;
             $imagedata = $this->user_picture($user, array('size' => 100));
             // Check to see if we should be displaying a message button.
             if (!empty($CFG->messaging) && $USER->id != $user->id && has_capability('moodle/site:sendmessage', $context)) {
+                $iscontact = !empty(message_get_contact($user->id));
+                $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
+                $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
+                $contactimage = $iscontact ? 'removecontact' : 'addcontact';
                 $userbuttons = array(
                     'messages' => array(
                         'buttontype' => 'message',
                         'title' => get_string('message', 'message'),
                         'url' => new moodle_url('/message/index.php', array('id' => $user->id)),
                         'image' => 'message',
-                        'linkattributes' => message_messenger_sendmessage_link_params($user),
+                        'linkattributes' => array('role' => 'button'),
                         'page' => $this->page
-                    )
+                    ),
+                    'togglecontact' => array(
+                        'buttontype' => 'togglecontact',
+                        'title' => get_string($contacttitle, 'message'),
+                        'url' => new moodle_url('/message/index.php', array(
+                                'user1' => $USER->id,
+                                'user2' => $user->id,
+                                $contacturlaction => $user->id,
+                                'sesskey' => sesskey())
+                        ),
+                        'image' => $contactimage,
+                        'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
+                        'page' => $this->page
+                    ),
                 );
+
                 $this->page->requires->string_for_js('changesmadereallygoaway', 'moodle');
             }
         }
@@ -4158,8 +4214,8 @@ EOD;
             foreach ($contextheader->additionalbuttons as $button) {
                 if (!isset($button->page)) {
                     // Include js for messaging.
-                    if ($button['buttontype'] === 'message') {
-                        message_messenger_requirejs();
+                    if ($button['buttontype'] === 'togglecontact') {
+                        \core_message\helper::togglecontact_requirejs();
                     }
                     $image = $this->pix_icon($button['formattedimage'], $button['title'], 'moodle', array(
                         'class' => 'iconsmall',

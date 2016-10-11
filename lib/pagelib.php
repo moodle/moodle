@@ -1501,9 +1501,6 @@ class moodle_page {
                 $title .= ' - ';
             }
             $this->set_title($title . get_string('maintenancemode', 'admin'));
-        } else {
-            // Show the messaging popup if there are messages.
-            message_popup_window();
         }
 
         $this->initialise_standard_body_classes();

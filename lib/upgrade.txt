@@ -101,6 +101,7 @@ information provided here is intended especially for developers.
   This two new methods should be implemented by profile field plugins to make them compatible with Web Services.
 * The minifier library used by core_minify has been switched to https://github.com/matthiasmullie/minify - there are minor differences
   in minifier output.
+* context_header additional buttons can now have a class attribute provided in the link attributes.
 
 === 3.1 ===
 

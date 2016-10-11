@@ -3684,9 +3684,15 @@ class context_header implements renderable {
                     $this->additionalbuttons[$buttontype]['formattedimage'] = $button['image'];
                 }
             }
+
+            if (isset($button['linkattributes']['class'])) {
+                $class = $button['linkattributes']['class'] . ' btn';
+            } else {
+                $class = 'btn';
+            }
             // Add the bootstrap 'btn' class for formatting.
             $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'],
-                    array('class' => 'btn'));
+                    array('class' => $class));
         }
     }
 }
