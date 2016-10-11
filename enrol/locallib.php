@@ -622,6 +622,22 @@ class course_enrolment_manager {
     }
 
     /**
+     * Gets all of the assignable roles for this course, wrapped in an array to ensure
+     * role sort order is not lost during json deserialisation.
+     *
+     * @param boolean $otherusers whether to include the assignable roles for other users
+     * @return array
+     */
+    public function get_assignable_roles_for_json($otherusers = false) {
+        $rolesarray = array();
+        $assignable = $this->get_assignable_roles($otherusers);
+        foreach ($assignable as $id => $role) {
+            $rolesarray[] = array('id' => $id, 'name' => $role);
+        }
+        return $rolesarray;
+    }
+
+    /**
      * Gets all of the groups for this course.
      *
      * @return array
