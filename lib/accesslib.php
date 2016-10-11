@@ -7279,10 +7279,12 @@ function get_suspended_userids(context $context, $usecache = false) {
 }
 
 /**
- * Gets sql for finding users with a capability in the given context
+ * Gets sql for finding users with capability in the given context
  *
  * @param context $context
- * @param string $capability
+ * @param string|array $capability Capability name or array of names.
+ *      If an array is provided then this is the equivalent of a logical 'OR',
+ *      i.e. the user needs to have one of these capabilities.
  * @return array($sql, $params)
  */
 function get_with_capability_sql(context $context, $capability) {
@@ -7301,11 +7303,13 @@ function get_with_capability_sql(context $context, $capability) {
 }
 
 /**
- * Gets sql joins for finding users with a capability in the given context
+ * Gets sql joins for finding users with capability in the given context
  *
- * @param context $context
- * @param string $capability
- * @param string $useridcolumn e.g. u.id
+ * @param context $context Context for the join
+ * @param string|array $capability Capability name or array of names.
+ *      If an array is provided then this is the equivalent of a logical 'OR',
+ *      i.e. the user needs to have one of these capabilities.
+ * @param string $useridcolumn e.g. 'u.id'
  * @return \core\dml\sql_join Contains joins, wheres, params
  */
 function get_with_capability_join(context $context, $capability, $useridcolumn) {
@@ -7328,14 +7332,15 @@ function get_with_capability_join(context $context, $capability, $useridcolumn) 
     list($contextids, $contextpaths) = get_context_info_list($context);
 
     list($incontexts, $cparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'ctx');
-    $cparams['cap'] = $capability;
+
+    list($incaps, $capsparams) = $DB->get_in_or_equal($capability, SQL_PARAMS_NAMED, 'cap');
 
     $defs = array();
     $sql = "SELECT rc.id, rc.roleid, rc.permission, ctx.path
               FROM {role_capabilities} rc
               JOIN {context} ctx on rc.contextid = ctx.id
-             WHERE rc.contextid $incontexts AND rc.capability = :cap";
-    $rcs = $DB->get_records_sql($sql, $cparams);
+             WHERE rc.contextid $incontexts AND rc.capability $incaps";
+    $rcs = $DB->get_records_sql($sql, array_merge($cparams, $capsparams));
     foreach ($rcs as $rc) {
         $defs[$rc->path][$rc->roleid] = $rc->permission;
     }

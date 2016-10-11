@@ -1159,7 +1159,9 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
  *
  * @param context $context
  * @param string $prefix optional, a prefix to the user id column
- * @param string $capability optional, may include a capability name
+ * @param string|array $capability optional, may include a capability name, or array of names.
+ *      If an array is provided then this is the equivalent of a logical 'OR',
+ *      i.e. the user needs to have one of these capabilities.
  * @param int $group optional, 0 indicates no current group, otherwise the group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
