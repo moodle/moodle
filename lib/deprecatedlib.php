@@ -5548,7 +5548,7 @@ function message_get_contact_block_link($incontactlist, $isblocked, $contact, $s
  * @return void
  */
 function message_mark_messages_read($touserid, $fromuserid) {
-    debugging('message_mark_messages_read() is deprecated and is no longer used, please use 
+    debugging('message_mark_messages_read() is deprecated and is no longer used, please use
         \core_message\api::mark_all_read_for_user() instead.', DEBUG_DEVELOPER);
 
     \core_message\api::mark_all_read_for_user($touserid, $fromuserid);
@@ -5578,7 +5578,7 @@ function message_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * @return bool true if user is permitted, false otherwise.
  */
 function message_can_post_message($recipient, $sender = null) {
-    debugging('message_can_post_message() is deprecated and is no longer used, please use 
+    debugging('message_can_post_message() is deprecated and is no longer used, please use
         \core_message\api::can_post_message() instead.', DEBUG_DEVELOPER);
 
     return \core_message\api::can_post_message($recipient, $sender);
@@ -5595,7 +5595,7 @@ function message_can_post_message($recipient, $sender = null) {
  * @return bool true if $sender is blocked, false otherwise.
  */
 function message_is_user_non_contact_blocked($recipient, $sender = null) {
-    debugging('message_is_user_non_contact_blocked() is deprecated and is no longer used, please use 
+    debugging('message_is_user_non_contact_blocked() is deprecated and is no longer used, please use
         \core_message\api::is_user_non_contact_blocked() instead.', DEBUG_DEVELOPER);
 
     return \core_message\api::is_user_non_contact_blocked($recipient, $sender);
@@ -5613,7 +5613,7 @@ function message_is_user_non_contact_blocked($recipient, $sender = null) {
  * @return bool true if $sender is blocked, false otherwise.
  */
 function message_is_user_blocked($recipient, $sender = null) {
-    debugging('message_is_user_blocked() is deprecated and is no longer used, please use 
+    debugging('message_is_user_blocked() is deprecated and is no longer used, please use
         \core_message\api::is_user_blocked() instead.', DEBUG_DEVELOPER);
 
     return \core_message\api::is_user_blocked($recipient, $sender);
