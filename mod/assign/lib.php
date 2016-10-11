@@ -223,6 +223,8 @@ function assign_supports($feature) {
             return true;
         case FEATURE_PLAGIARISM:
             return true;
+        case FEATURE_COMMENT:
+            return true;
 
         default:
             return null;

@@ -262,6 +262,8 @@ function wiki_supports($feature) {
         return true;
     case FEATURE_SHOW_DESCRIPTION:
         return true;
+    case FEATURE_COMMENT:
+        return true;
 
     default:
         return null;
