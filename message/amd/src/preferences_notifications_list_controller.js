@@ -153,7 +153,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
             CustomEvents.events.activate
         ]);
 
-        disabledNotificationsElement.on(CustomEvents.events.activate, function(e) {
+        disabledNotificationsElement.on(CustomEvents.events.activate, function() {
             this.toggleDisableAllStatus();
         }.bind(this));
     };

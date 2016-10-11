@@ -101,7 +101,7 @@ define(['jquery', 'core/ajax', 'core/notification',
             CustomEvents.events.activate
         ]);
 
-        this.root.on(CustomEvents.events.activate, SELECTORS.BLOCK_NON_CONTACTS, function(e) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.BLOCK_NON_CONTACTS, function() {
             this.saveBlockNonContactsStatus();
         }.bind(this));
 

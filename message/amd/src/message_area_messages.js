@@ -646,10 +646,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Adjust the height of the messages area to match the changed height of
          * the response area.
          *
-         * @param {event} e The jquery event
          * @private
          */
-        Messages.prototype._adjustMessagesAreaHeight = function(e) {
+        Messages.prototype._adjustMessagesAreaHeight = function() {
             var messagesArea = this.messageArea.find(SELECTORS.MESSAGES);
             var messagesResponse = this.messageArea.find(SELECTORS.MESSAGERESPONSE);
 
