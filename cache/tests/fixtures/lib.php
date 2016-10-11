@@ -548,6 +548,8 @@ class cache_phpunit_factory extends cache_factory {
      */
     public function create_store_from_config($name, array $details, cache_definition $definition) {
 
+        static $noticeshown = false;
+
         if (isset($details['use_test_store'])) {
             // name, plugin, alt
             $class = 'cachestore_'.$details['plugin'];
@@ -559,7 +561,15 @@ class cache_phpunit_factory extends cache_factory {
                     return $instance;
                 }
             }
+
+            // Notify user that alternative store is being used, so action can be taken.
+            if (!$noticeshown) {
+                echo PHP_EOL . "++ WARNING: " . 'Failed to use "' . $details['plugin'] . '" cache store, alt "' .
+                    $details['alt']['plugin'] . '" cache store is used.' . PHP_EOL . PHP_EOL;
+                $noticeshown = true;
+            }
             $details = $details['alt'];
+            $details['class'] = 'cachestore_'.$details['plugin'];
             $name = $details['name'];
         }
 
