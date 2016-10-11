@@ -198,7 +198,7 @@ class cache_factory {
         }
         $definition = $this->create_definition($component, $area);
         $definition->set_identifiers($identifiers);
-        $cache = $this->create_cache($definition, $identifiers);
+        $cache = $this->create_cache($definition);
         // Loaders are always held onto to speed up subsequent requests.
         $this->cachesfromdefinitions[$definitionname] = $cache;
         return $cache;
@@ -227,7 +227,7 @@ class cache_factory {
         }
         $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
         $definition->set_identifiers($identifiers);
-        $cache = $this->create_cache($definition, $identifiers);
+        $cache = $this->create_cache($definition);
         $this->cachesfromparams[$key] = $cache;
         return $cache;
     }
