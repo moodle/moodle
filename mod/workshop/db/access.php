@@ -245,21 +245,16 @@ $capabilities = array(
         )
     ),
 
-    // Ability to export to portfolio of submission only.
-    'mod/workshop:exportownsubmission' => array(
-        'captype' => 'write',
+    // Ability to export submissions to a portfolio. Applies to all submissions
+    // the user has access to.
+    'mod/workshop:exportsubmissions' => array(
+        'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
-            'student' => CAP_ALLOW
-        )
-    ),
-
-    // Ability to export to portfolio of submission's assessment.
-    'mod/workshop:exportownsubmissionassessment' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'student' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
         )
     ),
 );

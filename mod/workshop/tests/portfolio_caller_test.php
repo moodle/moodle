@@ -51,7 +51,7 @@ class mod_workshop_porfolio_caller_testcase extends advanced_testcase {
         parent::setUp();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
-        $workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $course));
+        $workshop = $this->getDataGenerator()->create_module('workshop', ['course' => $course]);
         $this->cm = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
         $this->workshop = new testable_workshop($workshop, $this->cm, $course);
     }
@@ -66,11 +66,9 @@ class mod_workshop_porfolio_caller_testcase extends advanced_testcase {
     }
 
     /**
-     * Test function load_data()
-     * Case 1: User exports the assessment of his/her own submission.
-     * Assert that this function can load the correct assessment.
+     * Test the method mod_workshop_portfolio_caller::load_data()
      */
-    public function test_load_data_for_own_submissionassessment() {
+    public function test_load_data() {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -81,45 +79,20 @@ class mod_workshop_porfolio_caller_testcase extends advanced_testcase {
         $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
         $asid1 = $workshopgenerator->create_assessment($subid1, $student2->id);
 
-        $portfoliocaller = new mod_workshop_portfolio_caller(array('submissionid' => $subid1, 'assessmentid' => $asid1));
+        $portfoliocaller = new mod_workshop_portfolio_caller(['id' => $this->workshop->cm->id, 'submissionid' => $subid1]);
+        $portfoliocaller->set_formats_from_button([]);
         $portfoliocaller->load_data();
 
         $reflector = new ReflectionObject($portfoliocaller);
-        $assessment = $reflector->getProperty('assessment');
-        $assessment->setAccessible(true);
-        $result = $assessment->getValue($portfoliocaller);
+        $propertysubmission = $reflector->getProperty('submission');
+        $propertysubmission->setAccessible(true);
+        $submission = $propertysubmission->getValue($portfoliocaller);
 
-        $this->assertEquals($asid1, $result->id);
+        $this->assertEquals($subid1, $submission->id);
     }
 
     /**
-     * Test function load_data()
-     * Case 2: User exports his/her own submission.
-     * Assert that this function can load the correct submission.
-     */
-    public function test_load_data_for_own_submission() {
-        $this->resetAfterTest(true);
-
-        $student1 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($student1->id, $this->workshop->course->id);
-        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
-        $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
-
-        $portfoliocaller = new mod_workshop_portfolio_caller(array('submissionid' => $subid1));
-        $portfoliocaller->load_data();
-
-        $reflector = new ReflectionObject($portfoliocaller);
-        $submission = $reflector->getProperty('submission');
-        $submission->setAccessible(true);
-
-        $result = $submission->getValue($portfoliocaller);
-
-        $this->assertEquals($subid1, $result->id);
-    }
-
-    /**
-     * Test function get_return_url()
-     * Assert that this function can return the correct url.
+     * Test the method mod_workshop_portfolio_caller::get_return_url()
      */
     public function test_get_return_url() {
         $this->resetAfterTest(true);
@@ -129,20 +102,17 @@ class mod_workshop_porfolio_caller_testcase extends advanced_testcase {
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
         $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
 
-        $portfoliocaller = new mod_workshop_portfolio_caller(array('submissionid' => $subid1));
+        $portfoliocaller = new mod_workshop_portfolio_caller(['id' => $this->workshop->cm->id, 'submissionid' => $subid1]);
+        $portfoliocaller->set_formats_from_button([]);
+        $portfoliocaller->load_data();
 
-        $reflector = new ReflectionObject($portfoliocaller);
-        $cm = $reflector->getProperty('cm');
-        $cm->setAccessible(true);
-        $cm->setValue($portfoliocaller, $this->cm);
-
-        $expected = 'http://www.example.com/moodle/mod/workshop/submission.php?cmid='.$this->cm->id;
-        $this->assertEquals($expected, $portfoliocaller->get_return_url());
+        $expected = new moodle_url('/mod/workshop/submission.php', ['cmid' => $this->workshop->cm->id, 'id' => $subid1]);
+        $actual = new moodle_url($portfoliocaller->get_return_url());
+        $this->assertTrue($expected->compare($actual));
     }
 
     /**
-     * Test function get_navigation()
-     * Assert that this function can return the navigation array.
+     * Test the method mod_workshop_portfolio_caller::get_navigation()
      */
     public function test_get_navigation() {
         $this->resetAfterTest(true);
@@ -152,22 +122,15 @@ class mod_workshop_porfolio_caller_testcase extends advanced_testcase {
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
         $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
 
-        $portfoliocaller = new mod_workshop_portfolio_caller(array('submissionid' => $subid1));
+        $portfoliocaller = new mod_workshop_portfolio_caller(['id' => $this->workshop->cm->id, 'submissionid' => $subid1]);
+        $portfoliocaller->set_formats_from_button([]);
         $portfoliocaller->load_data();
-
-        $reflector = new ReflectionObject($portfoliocaller);
-        $cm = $reflector->getProperty('cm');
-        $cm->setAccessible(true);
-        $cm->setValue($portfoliocaller, $this->cm);
 
         $this->assertTrue(is_array($portfoliocaller->get_navigation()));
     }
 
     /**
-     * Test function check_permissions()
-     * Case 1: User exports assessment.
-     * Assert that this function can return a boolean value
-     * to indicate that the user has capability to export the assessment.
+     * Test the method mod_workshop_portfolio_caller::check_permissions()
      */
     public function test_check_permissions_exportownsubmissionassessment() {
         global $DB;
@@ -184,77 +147,19 @@ class mod_workshop_porfolio_caller_testcase extends advanced_testcase {
         $asid1 = $workshopgenerator->create_assessment($subid1, $student2->id);
         $this->setUser($student1);
 
-        $portfoliocaller = new mod_workshop_portfolio_caller(array('submissionid' => $subid1, 'assessmentid' => $asid1));
+        $portfoliocaller = new mod_workshop_portfolio_caller(['id' => $this->workshop->cm->id, 'submissionid' => $subid1]);
 
-        $reflector = new ReflectionObject($portfoliocaller);
-        $cm = $reflector->getProperty('cm');
-        $cm->setAccessible(true);
-        $cm->setValue($portfoliocaller, $this->cm);
-
-        // Case 1: If user has capabilities exportownsubmission prevented and exportownsubmissionassessment prevented
-        // then check_permissions should return false.
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmission', CAP_PREVENT);
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmissionassessment', CAP_PREVENT);
+        role_change_permission($roleids['student'], $context, 'mod/workshop:exportsubmissions', CAP_PREVENT);
         $this->assertFalse($portfoliocaller->check_permissions());
 
-        // Case 2: If user has capabilities exportownsubmission allowed and exportownsubmissionassessment prevented
-        // then check_permissions should return false.
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmission', CAP_ALLOW);
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmissionassessment', CAP_PREVENT);
-        $this->assertFalse($portfoliocaller->check_permissions());
-
-        // Case 3: If user has capabilities exportownsubmission prevented and exportownsubmissionassessment allowed
-        // then check_permissions should return false.
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmission', CAP_PREVENT);
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmissionassessment', CAP_ALLOW);
-        $this->assertFalse($portfoliocaller->check_permissions());
-
-        // Case 4: If user has capabilities exportownsubmission allowed and exportownsubmissionassessment allowed
-        // then check_permissions should return true.
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmission', CAP_ALLOW);
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmissionassessment', CAP_ALLOW);
+        role_change_permission($roleids['student'], $context, 'mod/workshop:exportsubmissions', CAP_ALLOW);
         $this->assertTrue($portfoliocaller->check_permissions());
     }
 
     /**
-     * Test function check_permissions()
-     * Case 2: User exports submission.
-     * Assert that this function can return a boolean value
-     * to indicate that the user has capability to export submission.
+     * Test the method mod_workshop_portfolio_caller::get_sha1()
      */
-    public function test_check_permissions_exportownsubmission() {
-        global $DB;
-        $this->resetAfterTest(true);
-
-        $context = context_module::instance($this->cm->id);
-        $student1 = $this->getDataGenerator()->create_user();
-        $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
-        $this->getDataGenerator()->enrol_user($student1->id, $this->workshop->course->id, $roleids['student']);
-        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
-        $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
-        $this->setUser($student1);
-
-        $portfoliocaller = new mod_workshop_portfolio_caller(array('submissionid' => $subid1));
-        $reflector = new ReflectionObject($portfoliocaller);
-        $cm = $reflector->getProperty('cm');
-        $cm->setAccessible(true);
-        $cm->setValue($portfoliocaller, $this->cm);
-
-        // Case 1: If user has capability to export submission then check_permissions should return true.
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmission', CAP_ALLOW);
-        $this->assertTrue($portfoliocaller->check_permissions());
-
-        // Case 2: If user doesn't have capability to export submission then check_permissions should return false.
-        role_change_permission($roleids['student'], $context, 'mod/workshop:exportownsubmission', CAP_PREVENT);
-        $this->assertFalse($portfoliocaller->check_permissions());
-    }
-
-    /**
-     * Test function get_sha1()
-     * Case 1: User exports the assessment of his/her own submission.
-     * Assert that this function can return a hash string.
-     */
-    public function test_get_sha1_assessment() {
+    public function test_get_sha1() {
         $this->resetAfterTest(true);
 
         $student1 = $this->getDataGenerator()->create_user();
@@ -265,28 +170,8 @@ class mod_workshop_porfolio_caller_testcase extends advanced_testcase {
         $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
         $asid1 = $workshopgenerator->create_assessment($subid1, $student2->id);
 
-        $portfoliocaller = new mod_workshop_portfolio_caller(array('submissionid' => $subid1, 'assessmentid' => $asid1));
-        $portfoliocaller->load_data();
-
-        $this->assertTrue(is_string($portfoliocaller->get_sha1()));
-    }
-
-    /**
-     * Test function get_sha1()
-     * Case 2: User exports his/her own submission.
-     * Assert that this function can return a hash string.
-     */
-    public function test_get_sha1_submission() {
-        $this->resetAfterTest(true);
-
-        $student1 = $this->getDataGenerator()->create_user();
-        $student2 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($student1->id, $this->workshop->course->id);
-        $this->getDataGenerator()->enrol_user($student2->id, $this->workshop->course->id);
-        $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
-        $subid1 = $workshopgenerator->create_submission($this->workshop->id, $student1->id);
-
-        $portfoliocaller = new mod_workshop_portfolio_caller(array('submissionid' => $subid1));
+        $portfoliocaller = new mod_workshop_portfolio_caller(['id' => $this->workshop->cm->id, 'submissionid' => $subid1]);
+        $portfoliocaller->set_formats_from_button([]);
         $portfoliocaller->load_data();
 
         $this->assertTrue(is_string($portfoliocaller->get_sha1()));
@@ -298,7 +183,8 @@ class mod_workshop_porfolio_caller_testcase extends advanced_testcase {
      */
     public function test_display_name() {
         $this->resetAfterTest(true);
-        $this->assertEquals('Workshop', mod_workshop_portfolio_caller::display_name());
-    }
 
+        $name = mod_workshop_portfolio_caller::display_name();
+        $this->assertEquals(get_string('pluginname', 'mod_workshop'), $name);
+    }
 }

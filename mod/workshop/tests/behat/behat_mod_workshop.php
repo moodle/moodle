@@ -169,9 +169,18 @@ class behat_mod_workshop extends behat_base {
      * @param string $value
      */
     public function i_set_portfolio_instance_to($portfolioinstance, $value) {
-        $xpath = "//table[contains(@class, 'generaltable')]//tr//td[contains(text(), '"
-            . $portfolioinstance . "')]/following-sibling::td//select";
-        $select = $this->find('xpath', $xpath);
+
+        $rowxpath = "//table[contains(@class, 'generaltable')]//tr//td[contains(text(), '"
+            . $portfolioinstance . "')]/following-sibling::td";
+
+        $selectxpath = $rowxpath.'//select';
+        $select = $this->find('xpath', $selectxpath);
         $select->selectOption($value);
+
+        if (!$this->running_javascript()) {
+            $this->execute('behat_general::i_click_on_in_the',
+                array(get_string('go'), "button", $rowxpath, "xpath_element")
+            );
+        }
     }
 }
