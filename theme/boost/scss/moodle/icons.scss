@@ -14,6 +14,13 @@ a:first-of-type > .icon {
     margin-left: 0.5rem;
 }
 
+.pull-xs-right {
+    .icon {
+        margin-right: 0;
+        margin-left: 0.5rem;
+    }
+}
+
 // Fix the cog icon for an action menu.
 .action-menu > .dropdown .icon {
     margin-left: 0;
