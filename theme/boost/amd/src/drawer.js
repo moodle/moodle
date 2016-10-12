@@ -20,8 +20,8 @@
  * @copyright  2016 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/custom_interaction_events', 'core/notification'],
-     function($, CustomEvents, Notification) {
+define(['jquery', 'core/custom_interaction_events', 'core/log'],
+     function($, CustomEvents, Log) {
 
     var SELECTORS = {
         TOGGLE_REGION: '[data-region="drawer-toggle"]',
@@ -39,16 +39,20 @@ define(['jquery', 'core/custom_interaction_events', 'core/notification'],
     var Drawer = function() {
 
         if (!$(SELECTORS.TOGGLE_REGION).length) {
-            Notification.exception({message: 'Page is missing a drawer toggle region'});
+            Log.debug('Page is missing a drawer region');
         }
         if (!$(SELECTORS.TOGGLE_ACTION).length) {
-            Notification.exception({message: 'Page is missing a drawer toggle link'});
+            Log.debug('Page is missing a drawer toggle link');
         }
         $(SELECTORS.TOGGLE_REGION).each(function(index, ele) {
             var trigger = $(ele).find(SELECTORS.TOGGLE_ACTION);
+            var drawerid = trigger.attr('aria-controls');
+            var drawer = $(document.getElementById(drawerid));
             var hidden = trigger.attr('aria-expanded') == 'false';
             var side = trigger.attr('data-side');
             var body = $(SELECTORS.BODY);
+
+            drawer.on('mousewheel DOMMouseScroll', this.preventPageScroll);
 
             if (!hidden) {
                 body.addClass('drawer-open-' + side);
@@ -112,6 +116,21 @@ define(['jquery', 'core/custom_interaction_events', 'core/notification'],
             drawer.attr('aria-hidden', 'true');
             drawer.addClass('closed');
             M.util.set_user_preference(preference, 'false');
+        }
+    };
+
+    /**
+     * Prevent the page from scrolling when the drawer is at max scroll.
+     *
+     * @method preventPageScroll
+     */
+    Drawer.prototype.preventPageScroll = function(e) {
+        var delta = e.wheelDelta || (e.originalEvent && e.originalEvent.wheelDelta) || -e.originalEvent.detail,
+            bottomOverflow = (this.scrollTop + $(this).outerHeight() - this.scrollHeight) >= 0,
+            topOverflow = this.scrollTop <= 0;
+
+        if ((delta < 0 && bottomOverflow) || (delta > 0 && topOverflow)) {
+            e.preventDefault();
         }
     };
 
