@@ -2272,5 +2272,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016101101.00);
     }
 
+    if ($oldversion < 2016101401.00) {
+        // Clean up repository_alfresco config unless plugin has been manually installed.
+        if (!file_exists($CFG->dirroot . '/repository/alfresco/lib.php')) {
+            // Remove capabilities.
+            capabilities_cleanup('repository_alfresco');
+            // Clean config.
+            unset_all_config_for_plugin('repository_alfresco');
+        }
+
+        // Savepoint reached.
+        upgrade_main_savepoint(true, 2016101401.00);
+    }
+
     return true;
 }
