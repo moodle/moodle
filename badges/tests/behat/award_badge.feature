@@ -352,14 +352,9 @@ Feature: Award badges
     And I follow "Recipients (2)"
     And I press "Award badge"
     And I set the field "existingrecipients[]" to "Student 2 (student2@example.com)"
-    And I press "Remove badge"
+    And I press "Revoke badge"
     And I set the field "existingrecipients[]" to "Student 1 (student1@example.com)"
-    When I press "Award badge"
-    And I follow "Remove Badge"
+    When I press "Revoke badge"
+    And I follow "Course Badge"
     Then I should see "Recipients (0)"
-    And I log out
-    And I log in as "student1"
-    And I follow "Profile" in the user menu
-    And I follow "Course 1"
-    And I should see "Course Badge"
-    
+
