@@ -9,9 +9,9 @@ Feature: Basic use of the Grades report
     Given the following "users" exist:
       | username | firstname | lastname | email                | idnumber |
       | teacher1 | T1        | Teacher1 | teacher1@example.com | T1000    |
-      | student1 | S1        | Student1 | student1@example.com | S1000    !
-      | student2 | S2        | Student2 | student2@example.com | S2000    !
-      | student3 | S3        | Student3 | student3@example.com | S3000    !
+      | student1 | S1        | Student1 | student1@example.com | S1000    |
+      | student2 | S2        | Student2 | student2@example.com | S2000    |
+      | student3 | S3        | Student3 | student3@example.com | S3000    |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
@@ -66,40 +66,40 @@ Feature: Basic use of the Grades report
     And I navigate to "Grades" node in "Quiz administration > Results"
     Then I should see "Attempts: 2"
     # Check student1's grade
-    And I should see "25.00" in the "#mod-quiz-report-overview-report_r0_c8" "css_element"
+    And I should see "25.00" in the "S1 Student1" "table_row"
     # And student2's grade
-    And I should see "100.00" in the "#mod-quiz-report-overview-report_r1_c8" "css_element"
+    And I should see "100.00" in the "S2 Student2" "table_row"
 
     # Check changing the form parameters
-    When I set the field "Attempts from" to "enrolled users who have not attempted the quiz"
+    And I set the field "Attempts from" to "enrolled users who have not attempted the quiz"
     And I press "Show report"
     # Check teacher1's grade
-    Then I should see "-" in the "#mod-quiz-report-overview-report_r0_c8" "css_element"
+    And I should see "-" in the "T1 Teacher1" "table_row"
     # Check student3's grade
-    And I should see "-" in the "#mod-quiz-report-overview-report_r1_c8" "css_element"
+    And I should see "-" in the "S3 Student3" "table_row"
 
-    When I set the field "Attempts from" to "enrolled users who have, or have not, attempted the quiz"
+    And I set the field "Attempts from" to "enrolled users who have, or have not, attempted the quiz"
     And I press "Show report"
     # Check student1's grade
-    Then I should see "25.00" in the "#mod-quiz-report-overview-report_r0_c8" "css_element"
+    And I should see "25.00" in the "S1 Student1" "table_row"
     # Check student2's grade
-    And I should see "100.00" in the "#mod-quiz-report-overview-report_r1_c8" "css_element"
+    And I should see "100.00" in the "S2 Student2" "table_row"
     # Check teacher1's grade
-    And I should see "-" in the "#mod-quiz-report-overview-report_r2_c8" "css_element"
+    And I should see "-" in the "T1 Teacher1" "table_row"
 
-    When I set the field "Attempts from" to "all users who have attempted the quiz"
+    And I set the field "Attempts from" to "all users who have attempted the quiz"
     And I press "Show report"
     # Check student1's grade
-    Then I should see "25.00" in the "#mod-quiz-report-overview-report_r0_c8" "css_element"
+    And I should see "25.00" in the "S1 Student1" "table_row"
     # Check student2's grade
-    And I should see "100.00" in the "#mod-quiz-report-overview-report_r1_c8" "css_element"
+    And I should see "100.00" in the "S2 Student2" "table_row"
 
     # Check regrade and delete attempts.
     And I set the field with xpath "//tr[contains(normalize-space(.), 'student1@example.com')]//input[@type='checkbox']" to "1"
-    When I press "Regrade selected attempts"
+    And I press "Regrade selected attempts"
     And I press "Continue"
-    Then I should see "student1@example.com"
+    And I should see "student1@example.com"
     And I set the field with xpath "//tr[contains(normalize-space(.), 'student1@example.com')]//input[@type='checkbox']" to "1"
-    When I press "Delete selected attempts"
+    And I press "Delete selected attempts"
     And I press "Yes"
-    Then I should not see "student1@example.com"
+    And I should not see "student1@example.com"
