@@ -58,9 +58,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this._init();
         }
 
-        /** @type {Boolean} checks if we are currently deleting */
-        Contacts.prototype._isDeleting = false;
-
         /** @type {Boolean} checks if we are currently loading conversations */
         Contacts.prototype._isLoadingConversations = false;
 
@@ -163,7 +160,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._startDeleting = function() {
-            this._isDeleting = true;
             this.messageArea.find(SELECTORS.CONTACTSAREA).addClass('editing');
         };
 
@@ -173,7 +169,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._stopDeleting = function() {
-            this._isDeleting = false;
             this.messageArea.find(SELECTORS.CONTACTSAREA).removeClass('editing');
         };
 
@@ -258,10 +253,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._loadConversations = function() {
-            if (this._isDeleting) {
-                return false;
-            }
-
             if (this._isLoadingConversations) {
                 return false;
             }
@@ -313,10 +304,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._loadContacts = function() {
-            if (this._isDeleting) {
-                return false;
-            }
-
             if (this._isLoadingContacts) {
                 return false;
             }
@@ -367,9 +354,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._viewConversation = function(event) {
-            if (this._isDeleting) {
-                this.messageArea.trigger(Events.CANCELDELETEMESSAGES, userid);
-            }
+            // Cancel any deletion of messages we may have.
+            this.messageArea.trigger(Events.CANCELDELETEMESSAGES);
 
             var userid = $(event.currentTarget).data('userid');
             var messageid = $(event.currentTarget).data('messageid');
@@ -394,14 +380,15 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @private
          */
         Contacts.prototype._viewContact = function(event) {
-            if (!this._isDeleting) {
-                var userid = $(event.currentTarget).data('userid');
-                this._setSelectedUser("[data-userid='" + userid + "']");
-                this.messageArea.trigger(Events.CONTACTSELECTED, userid);
-                // Don't highlight the conversation because the message region has changed.
-                this.messageArea.find(SELECTORS.SELECTEDVIEWCONVERSATION).removeClass('selected');
-                this._showMessagingArea();
-            }
+            // Cancel any deletion of messages we may have.
+            this.messageArea.trigger(Events.CANCELDELETEMESSAGES);
+
+            var userid = $(event.currentTarget).data('userid');
+            this._setSelectedUser("[data-userid='" + userid + "']");
+            this.messageArea.trigger(Events.CONTACTSELECTED, userid);
+            // Don't highlight the conversation because the message region has changed.
+            this.messageArea.find(SELECTORS.SELECTEDVIEWCONVERSATION).removeClass('selected');
+            this._showMessagingArea();
         };
 
         /**
