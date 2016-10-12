@@ -56,17 +56,18 @@ if ($hassiteconfig && !empty($USER->id)) {
         }
     }
 
-    // Add the available auth methods.
-    $settings->add(new admin_setting_configmulticheckbox('local_iomad_signup_auth', get_string('authenticationtypes', 'local_iomad_signup'), get_string('authenticationtypes_desc', 'local_iomad_signup'), array(),$siteautharray));
-
-    $siteroles = $DB->get_records_menu('role', array(), 'id', 'id,shortname');
-    $availableroles = array('0' => 'none') + $siteroles;
-    $settings->add(new admin_setting_configselect('local_iomad_signup_role', get_string('role', 'local_iomad_signup'),
-                       get_string('configrole', 'local_iomad_signup'), 'none', $availableroles));
-
+    // Add the available auth methods. IF, there are companies defined
     $sitecompanies = $DB->get_records_menu('company', array(), 'name', 'id,name');
-    $availablecompanies = array('0' => 'none') + $sitecompanies;
-    $settings->add(new admin_setting_configselect('local_iomad_signup_company', get_string('company', 'local_iomad_signup'),
-                       get_string('configcompany', 'local_iomad_signup'), 'none', $availablecompanies));
+    if ($sitecompanies) {
+        $settings->add(new admin_setting_configmulticheckbox('local_iomad_signup_auth', get_string('authenticationtypes', 'local_iomad_signup'), get_string('authenticationtypes_desc', 'local_iomad_signup'), array(),$siteautharray));
 
+        $siteroles = $DB->get_records_menu('role', array(), 'id', 'id,shortname');
+        $availableroles = array('0' => 'none') + $siteroles;
+        $settings->add(new admin_setting_configselect('local_iomad_signup_role', get_string('role', 'local_iomad_signup'),
+                           get_string('configrole', 'local_iomad_signup'), 0, $availableroles));
+
+        $availablecompanies = array('0' => 'none') + $sitecompanies;
+        $settings->add(new admin_setting_configselect('local_iomad_signup_company', get_string('company', 'local_iomad_signup'),
+                           get_string('configcompany', 'local_iomad_signup'), 0, $availablecompanies));
+    }
 }
