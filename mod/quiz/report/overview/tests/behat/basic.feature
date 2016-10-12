@@ -1,4 +1,4 @@
-@mod @mod_quiz @mod_quiz_overview_basic
+@mod @mod_quiz
 Feature: Basic use of the Grades report
   In order to easily get an overview of quiz attempts
   As a teacher
