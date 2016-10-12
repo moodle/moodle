@@ -2255,7 +2255,7 @@ class core_message_external extends external_api {
 
         $processors = get_message_processors();
         $providers = message_get_providers_for_user($user->id);
-        $preferences = get_all_message_preferences($processors, $providers, $user);
+        $preferences = \core_message\api::get_all_message_preferences($processors, $providers, $user);
         $notificationlist = new \core_message\output\preferences\notification_list($processors, $providers, $preferences, $user);
 
         $renderer = $PAGE->get_renderer('core_message');
@@ -2284,7 +2284,6 @@ class core_message_external extends external_api {
                             new external_single_structure(
                                 array(
                                     'displayname' => new external_value(PARAM_TEXT, 'Display name'),
-                                    'ispopup' => new external_value(PARAM_BOOL, 'If is a popup'),
                                     'name' => new external_value(PARAM_PLUGIN, 'Processor name'),
                                     'hassettings' => new external_value(PARAM_BOOL, 'Whether has settings'),
                                     'contextid' => new external_value(PARAM_INT, 'Context id'),
@@ -2306,7 +2305,6 @@ class core_message_external extends external_api {
                                                     new external_single_structure(
                                                         array(
                                                             'displayname' => new external_value(PARAM_TEXT, 'Display name'),
-                                                            'ispopup' => new external_value(PARAM_BOOL, 'If is a popup'),
                                                             'name' => new external_value(PARAM_PLUGIN, 'Processor name'),
                                                             'locked' => new external_value(PARAM_BOOL, 'Is locked by admin?'),
                                                             'userconfigured' => new external_value(PARAM_INT, 'Is configured?'),
