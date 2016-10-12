@@ -41,9 +41,6 @@ define(['core/custom_interaction_events', 'core_message/message_area_events'], f
         this._init();
     }
 
-    /** @type {Boolean} checks if we are currently deleting */
-    Tabs.prototype._isDeleting = false;
-
     /** @type {Messagearea} The messaging area object. */
     Tabs.prototype.messageArea = null;
 
@@ -92,18 +89,6 @@ define(['core/custom_interaction_events', 'core_message/message_area_events'], f
         this.messageArea.onDelegateEvent(CustomEvents.events.ctrlPageDown, SELECTORS.CONTACTSPANELS,
                 this._toggleTabs.bind(this));
 
-        this.messageArea.onCustomEvent(Events.CHOOSEMESSAGESTODELETE, function() {
-            this._isDeleting = true;
-        }.bind(this));
-        this.messageArea.onCustomEvent(Events.MESSAGESDELETED, function() {
-            this._isDeleting = false;
-        }.bind(this));
-        this.messageArea.onCustomEvent(Events.CONVERSATIONDELETED, function() {
-            this._isDeleting = false;
-        }.bind(this));
-        this.messageArea.onCustomEvent(Events.CANCELDELETEMESSAGES, function() {
-            this._isDeleting = false;
-        }.bind(this));
         this.messageArea.onCustomEvent(Events.MESSAGESENT, function() {
             this._selectTab(SELECTORS.VIEWCONVERSATIONS, SELECTORS.VIEWCONTACTS);
         }.bind(this));
@@ -115,10 +100,6 @@ define(['core/custom_interaction_events', 'core_message/message_area_events'], f
      * @private
      */
     Tabs.prototype._viewConversations = function() {
-        if (this._isDeleting) {
-            return;
-        }
-
         this.messageArea.trigger(Events.CONVERSATIONSSELECTED);
         this._selectTab(SELECTORS.VIEWCONVERSATIONS, SELECTORS.VIEWCONTACTS);
     };
@@ -129,10 +110,6 @@ define(['core/custom_interaction_events', 'core_message/message_area_events'], f
      * @private
      */
     Tabs.prototype._viewContacts = function() {
-        if (this._isDeleting) {
-            return;
-        }
-
         this.messageArea.trigger(Events.CONTACTSSELECTED);
         this._selectTab(SELECTORS.VIEWCONTACTS, SELECTORS.VIEWCONVERSATIONS);
     };
