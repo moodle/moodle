@@ -1,4 +1,4 @@
-@mod @mod_quiz @mod_quiz_grading_basic
+@mod @mod_quiz
 Feature: Basic use of the Manual grading report
   In order to easily find students attempts that need manual grading
   As a teacher
