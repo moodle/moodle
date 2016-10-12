@@ -3700,25 +3700,26 @@ class flat_navigation extends navigation_node_collection {
 
         $course = $PAGE->course;
 
-        $PAGE->navigation->build_flat_navigation_list($this);
+        $this->page->navigation->initialise();
+        $this->page->navigation->build_flat_navigation_list($this);
 
         // First walk the nav tree looking for "flat_navigation" nodes.
         if ($course->id > 1) {
             // It's a real course.
-            // 'dh' is an unused param used to give this node a different url to the default.
-            // This is so we don't have 2 nodes in the flat have with the same url (both would be highlighted).
-            // 'dh' means "don't highlight".
-            $url = new moodle_url('/course/view.php', array('id' => $course->id, 'dh' => 1));
+            $url = new moodle_url('/course/view.php', array('id' => $course->id));
             $flat = new flat_navigation_node(navigation_node::create($course->shortname, $url), 0);
             $flat->key = 'coursehome';
             $flat->set_showdivider(true);
             $this->add($flat);
 
             $coursenode = $PAGE->navigation->find_active_node();
+            while ($coursenode->type != navigation_node::TYPE_COURSE) {
+                $coursenode = $coursenode->parent;
+            }
             if ($coursenode) {
                 foreach ($coursenode->children as $child) {
                     if ($child->action) {
-                        $flat = new flat_navigation_node($child, 1);
+                        $flat = new flat_navigation_node($child, 0);
                         $this->add($flat);
                     }
                 }
