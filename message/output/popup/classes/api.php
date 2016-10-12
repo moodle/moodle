@@ -71,7 +71,7 @@ class api {
                     WHERE r.notification = 1
                     AND r.id IN (SELECT messageid FROM {message_popup} WHERE isread = 1)
                     AND r.useridto = :useridto1
-                UNION
+                UNION ALL
                     SELECT concat('u', u.id) as uniqueid, u.id, u.useridfrom, u.useridto,
                         u.subject, u.fullmessage, u.fullmessageformat,
                         u.fullmessagehtml, u.smallmessage, u.notification, u.contexturl,
