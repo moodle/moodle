@@ -262,6 +262,17 @@ function process_manual_revoke($recipientid, $issuerid, $issuerrole, $badgeid) {
                                                             'recipientid' => $recipientid))
             && $DB->delete_records('badge_issued', array('badgeid' => $badgeid,
                                                       'userid' => $recipientid))) {
+
+            // Trigger event, badge revoked.
+            $badge = new \badge($badgeid);
+            $eventparams = array(
+                'objectid' => $badgeid,
+                'relateduserid' => $recipientid,
+                'context' => $badge->get_context()
+            );
+            $event = \core\event\badge_revoked::create($eventparams);
+            $event->trigger();
+
             return true;
         }
     } else {

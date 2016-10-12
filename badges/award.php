@@ -180,11 +180,6 @@ if ($award && data_submitted() && has_capability('moodle/badges:awardbadge', $co
     foreach ($users as $user) {
         if (!process_manual_revoke($user->id, $USER->id, $issuerrole->roleid, $badgeid)) {
             echo $OUTPUT->error_text(get_string('error:cannotrevokebadge', 'badges'));
-        } else {
-            // Trigger event, badge revoked.
-            $eventparams = array('objectid' => $badgeid, 'context' => $PAGE->context);
-            $event = \core\event\badge_revoked::create($eventparams);
-            $event->trigger();
         }
     }
 
