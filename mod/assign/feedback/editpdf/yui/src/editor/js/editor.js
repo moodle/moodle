@@ -987,7 +987,10 @@ EDITOR.prototype = {
      */
     save_current_page: function() {
         var ajaxurl = AJAXBASE,
+            pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT),
             config;
+
+        this.currentpage = parseInt(pageselect.get('value'), 10);
 
         config = {
             method: 'post',
