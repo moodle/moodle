@@ -45,23 +45,6 @@ use Behat\Gherkin\Node\TableNode;
 class behat_transformations extends behat_base {
 
     /**
-     * Replaces $NASTYSTRING vars for a nasty string.
-     * NOTE: This has to be done before espace transformation, as
-     *       last transformation is performed first and it replaces
-     *       \" with ".
-     *
-     * @Transform /^((.*)\$NASTYSTRING(\d)(.*))$/
-     * @param string $argument The whole argument value.
-     * @return string
-     */
-    public function arg_replace_nasty_strings($argument) {
-        if (!is_scalar($argument)) {
-            return $argument;
-        }
-        return $this->replace_nasty_strings($argument);
-    }
-
-    /**
      * Transformations for TableNode arguments.
      *
      * Transformations applicable to TableNode arguments should also
@@ -94,6 +77,32 @@ class behat_transformations extends behat_base {
             return $string;
         }
         return str_replace('\"', '"', $string);
+    }
+
+    /**
+     * Replaces $NASTYSTRING vars for a nasty string.
+     *
+     * @Transform /^((.*)\$NASTYSTRING(\d)(.*))$/
+     * @param string $argument The whole argument value.
+     * @return string
+     */
+    public function arg_replace_nasty_strings($argument) {
+        if (!is_scalar($argument)) {
+            return $argument;
+        }
+        return $this->replace_nasty_strings($argument);
+    }
+
+    /**
+     * Convert string time to timestamp.
+     * Use ::time::STRING_TIME_TO_CONVERT::DATE_FORMAT::
+     *
+     * @Transform /^##(.*)##$/
+     * @param string $time
+     * @return int timestamp.
+     */
+    public function arg_time_to_string($time) {
+        return $this->get_transformed_timestamp($time);
     }
 
     /**
@@ -149,18 +158,6 @@ class behat_transformations extends behat_base {
             },
             $string
         );
-    }
-
-    /**
-     * Convert string time to timestamp.
-     * Use ::time::STRING_TIME_TO_CONVERT::DATE_FORMAT::
-     *
-     * @Transform /^##(.*)##$/
-     * @param string $time
-     * @return int timestamp.
-     */
-    public function arg_time_to_string($time) {
-        return $this->get_transformed_timestamp($time);
     }
 
     /**
