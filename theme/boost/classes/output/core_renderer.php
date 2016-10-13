@@ -610,7 +610,11 @@ class core_renderer extends \core_renderer {
                 }
                 if ($menuitem->action) {
                     $text = $menuitem->text;
-                    $link = new action_link($menuitem->action, $menuitem->text, null, null, $menuitem->icon);
+                    if ($menuitem->action instanceof action_link) {
+                        $link = $menuitem->action;
+                    } else {
+                        $link = new action_link($menuitem->action, $menuitem->text, null, null, $menuitem->icon);
+                    }
                     if ($indent) {
                         $link->add_class('m-l-1');
                     }
