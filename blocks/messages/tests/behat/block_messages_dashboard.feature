@@ -22,7 +22,7 @@ Feature: The messages block allows users to list new messages on the dashboard
     Given I log in as "teacher1"
     And I press "Customise this page"
     When I add the "Messages" block
-    Then I should see "No messages waiting" in the "Messages" "block"
+    Then I should see "No messages" in the "Messages" "block"
 
   @javascript
   Scenario: View the block by a user who has messages.
