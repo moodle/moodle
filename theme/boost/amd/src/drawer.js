@@ -140,14 +140,15 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
      * @method registerEventListeners
      */
     Drawer.prototype.registerEventListeners = function() {
-        var body = $(SELECTORS.BODY);
 
-        CustomEvents.define(body, [CustomEvents.events.activate]);
-
-        body.on(CustomEvents.events.activate, SELECTORS.TOGGLE_ACTION, function(e, data) {
-            this.toggleDrawer(data.originalEvent);
-            data.originalEvent.preventDefault();
+        $(SELECTORS.TOGGLE_ACTION).each(function(index, element) {
+            CustomEvents.define($(element), [CustomEvents.events.activate]);
+            $(element).on(CustomEvents.events.activate, function(e, data) {
+                this.toggleDrawer(data.originalEvent);
+                data.originalEvent.preventDefault();
+            }.bind(this));
         }.bind(this));
+
     };
 
     return {
