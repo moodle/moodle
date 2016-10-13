@@ -567,11 +567,18 @@ class core_renderer extends \core_renderer {
             $node = $this->page->navigation->find_active_node();
             if (($node->type == navigation_node::TYPE_ACTIVITY ||
                     $node->type == navigation_node::TYPE_RESOURCE)) {
-                // Get the course admin node from the settings navigation.
-                $node = $this->page->settingsnav->find('modulesettings', navigation_node::TYPE_SETTING);
-                if ($node) {
-                    // Build an action menu based on the visible nodes from this navigation tree.
-                    $this->build_action_menu_from_navigation($menu, $node);
+
+                $items = $this->page->navbar->get_items();
+                $navbarnode = end($items);
+                // We only want to show the menu on the first page of the activity. This means
+                // the breadcrumb has no additional nodes.
+                if ($navbarnode->key == $node->key && $navbarnode->type == $node->type) {
+                    // Get the course admin node from the settings navigation.
+                    $node = $this->page->settingsnav->find('modulesettings', navigation_node::TYPE_SETTING);
+                    if ($node) {
+                        // Build an action menu based on the visible nodes from this navigation tree.
+                        $this->build_action_menu_from_navigation($menu, $node);
+                    }
                 }
             }
         }
