@@ -116,6 +116,14 @@ class core_renderer extends \core_renderer {
     }
 
     /**
+     * We don't like these...
+     *
+     */
+    public function edit_button(moodle_url $url) {
+        return '';
+    }
+
+    /**
      * Override to inject the logo.
      *
      * @param array $headerinfo The header info.
