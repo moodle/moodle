@@ -31,7 +31,7 @@ Feature: The messages block allows users to list new messages an a course
     And I follow "Course 1"
     When I turn editing mode on
     And I add the "Messages" block
-    Then I should see "No messages waiting" in the "Messages" "block"
+    Then I should see "No messages" in the "Messages" "block"
 
   @javascript
   Scenario: View the block by a user who has messages.

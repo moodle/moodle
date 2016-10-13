@@ -28,7 +28,7 @@ Feature: The messages block allows users to list new messages on the frontpage
   Scenario: View the block by a user who does not have any messages.
     Given I log in as "teacher1"
     When I am on site homepage
-    Then I should see "No messages waiting" in the "Messages" "block"
+    Then I should see "No messages" in the "Messages" "block"
 
   Scenario: Try to view the block as a guest user.
     Given I log in as "guest"
