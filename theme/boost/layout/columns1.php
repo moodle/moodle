@@ -24,29 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-user_preference_allow_ajax_update('drawer-open-blocks', PARAM_ALPHA);
-user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
-
-$navdraweropen = (get_user_preferences('drawer-open-nav', 'true') == 'true');
-$blocksdraweropen = (get_user_preferences('drawer-open-blocks', 'true') == 'true');
-$extraclasses = [];
-if ($blocksdraweropen) {
-    $extraclasses[] = 'drawer-open-right';
-}
-if ($navdraweropen) {
-    $extraclasses[] = 'drawer-open-left';
-}
-$bodyattributes = $OUTPUT->body_attributes($extraclasses);
+$bodyattributes = $OUTPUT->body_attributes([]);
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
     'output' => $OUTPUT,
-    'sidepreblocks' => $OUTPUT->blocks('side-pre'),
     'bodyattributes' => $bodyattributes,
-    'blocksdraweropen' => $blocksdraweropen,
-    'navdraweropen' => $navdraweropen
 ];
 
-$templatecontext['flatnavigation'] = $PAGE->flatnav;
 echo $OUTPUT->render_from_template('theme_boost/columns1', $templatecontext);
 

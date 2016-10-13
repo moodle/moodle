@@ -13,45 +13,26 @@
 
     {{{ output.standard_top_of_body_html }}}
 
-    {{>theme_boost/header}}
-
     <div id="page" class="container-fluid">
-        {{{ output.full_header }}}
-
         <div id="page-content" class="row">
-            <div id="region-main-box">
-                <section id="region-main" class="col-xs-12">
-                    <span class="pull-xs-right page-settings-menu">
-                        {{{ output.page_settings_menu }}}
+            <div id="region-main-box" class="col-xs-12">
+                <section id="region-main">
+                    <div class="card card-block">
+                    <span class="pull-xs-right region-main-settings-menu">
+                        {{{ output.region_main_settings_menu }}}
                     </span>
                     {{{ output.course_content_header }}}
                     {{{ output.main_content }}}
                     {{{ output.course_content_footer }}}
+                    </div>
                 </section>
             </div>
         </div>
     </div>
-    {{> theme_boost/blocks-drawer }}
-    {{> theme_boost/nav-drawer }}
 </div>
-<footer id="page-footer" class="p-y-1">
-    <div class="container">
-        <div id="course-footer">{{{ output.course_footer }}}</div>
-
-        {{# output.page_doc_link }}
-            <p class="helplink">{{{ output.page_doc_link }}}</p>
-        {{/ output.page_doc_link }}
-
-        {{{ output.login_info }}}
-        {{{ output.home_link }}}
-        {{{ output.standard_footer_html }}}
-        {{{ output.standard_end_of_body_html }}}
-    </div>
-</footer>
-
+{{{ output.standard_end_of_body_html }}}
 </body>
 </html>
 {{#js}}
 require(['theme_boost/loader'], function() {});
-require(['theme_boost/drawer'], function(mod) {mod.init();});
 {{/js}}

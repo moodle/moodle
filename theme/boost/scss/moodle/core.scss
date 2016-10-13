@@ -269,14 +269,8 @@ form.popupform div {
 .arrow_button input {
     overflow: hidden;
 }
-/** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
 .no-overflow {
     overflow: auto;
-    padding-bottom: 1px;
-}
-
-.pagelayout-report .no-overflow {
-    overflow: visible;
 }
 
 .no-overflow > .generaltable {

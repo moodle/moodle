@@ -28,51 +28,19 @@
     }
 }
 
-#nav-drawer.closed {
-    left: -285px;
-}
-#blocks-drawer.closed {
-    right: -285px;
+$blocks-column-width: 250px !default;
+
+[data-region="blocks-column"] {
+    width: $blocks-column-width;
+    float: right;
 }
 
-/* Use a variable for the drawer background colors. */
-$drawer-bg: $gray-lighter !default;
+$blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
 
-[data-region="drawer"] {
-    position: fixed;
-    padding: 20px;
-    width: 265px;
-    top: ($navbar-padding-y * 2) + ($navbar-brand-padding-y * 2) + $font-size-lg * 1.5;
-    height: 100%;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    z-index: 100;
-    background-color: $drawer-bg;
-    -webkit-transition: right 0.5s ease, left 0.5s ease;
-       -moz-transition: right 0.5s ease, left 0.5s ease;
-            transition: right 0.5s ease, left 0.5s ease;
-}
-#nav-drawer {
-    right: auto;
-    left: 0px;
-}
-#blocks-drawer {
-    left: auto;
-    right: 0px;
-}
-body.drawer-ease {
-    -webkit-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-       -moz-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-            transition: margin-left 0.5s ease, margin-right 0.5s ease;
-}
-
-body.drawer-open-left {
-    @include media-breakpoint-up(md) {
-        margin-left: 265px;
-    }
-}
-body.drawer-open-right {
-    @include media-breakpoint-up(md) {
-        margin-right: 265px;
+#region-main.has-blocks {
+    display: inline-block;
+    width: calc(100% - #{$blocks-plus-gutter});
+    @include media-breakpoint-down(md) {
+        width: 100%;
     }
 }

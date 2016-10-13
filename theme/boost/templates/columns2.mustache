@@ -19,19 +19,28 @@
         {{{ output.full_header }}}
 
         <div id="page-content" class="row">
-            <div id="region-main-box">
-                <section id="region-main" class="col-xs-12">
+            <div id="region-main-box" class="col-xs-12">
+                {{#hasblocks}}
+                <section data-region="blocks-column" class="hidden-md-down">
+                    {{{ sidepreblocks }}}
+                </section>
+                <section id="region-main" class="has-blocks">
+                {{/hasblocks}}
+                {{^hasblocks}}
+                <section id="region-main">
+                {{/hasblocks}}
+                    <div class="card card-block">
                     <span class="pull-xs-right region-main-settings-menu">
                         {{{ output.region_main_settings_menu }}}
                     </span>
                     {{{ output.course_content_header }}}
                     {{{ output.main_content }}}
                     {{{ output.course_content_footer }}}
+                    </div>
                 </section>
             </div>
         </div>
     </div>
-    {{> theme_boost/blocks-drawer }}
     {{> theme_boost/nav-drawer }}
 </div>
 <footer id="page-footer" class="p-y-1">

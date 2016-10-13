@@ -12,10 +12,7 @@ $drawer-offscreen-gutter: 20px;
 }
 
 #nav-drawer.closed {
-    left: - ($drawer-width + $drawer-offscreen-gutter);
-}
-#blocks-drawer.closed {
-    right: - ($drawer-width + $drawer-offscreen-gutter);
+    left: -($drawer-width + $drawer-offscreen-gutter);
 }
 #page {
     margin-top: $navbar-height;
@@ -37,22 +34,10 @@ $drawer-bg: $gray-lighter !default;
     -webkit-transition: right 0.5s ease, left 0.5s ease;
        -moz-transition: right 0.5s ease, left 0.5s ease;
             transition: right 0.5s ease, left 0.5s ease;
-    .dropdown-menu {
-        max-width: $drawer-width - $drawer-padding-x * 4;
-    }
-    .dropdown-item {
-        max-width: 100%;
-        overflow-x: hidden;
-        text-overflow: ellipsis;
-    }
 }
 #nav-drawer {
     right: auto;
     left: 0px;
-}
-#blocks-drawer {
-    left: auto;
-    right: 0px;
 }
 #page {
     margin-top: $fixed-header-y;
@@ -64,12 +49,12 @@ body.drawer-ease {
 }
 
 body.drawer-open-left {
-    @include media-breakpoint-up(lg) {
+    @include media-breakpoint-up(md) {
         margin-left: $drawer-width;
     }
 }
 body.drawer-open-right {
-    @include media-breakpoint-up(lg) {
+    @include media-breakpoint-up(md) {
         margin-right: $drawer-width;
     }
 }

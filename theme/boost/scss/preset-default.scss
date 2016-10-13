@@ -14,7 +14,6 @@ $gray-lightest:             #f7f7f9 !default;
 
 $brand-primary:             #00acdf !default;
 $brand-success:             #77b300 !default;
-$brand-info:                #9954bb !default;
 $brand-warning:             #ff8800 !default;
 $brand-danger:              #ff4136 !default;
 $brand-inverse:             $gray-dark !default;
@@ -144,20 +143,6 @@ $breadcrumb-divider-rtl: "/" !default;
 
 #block-region-side-post {
     padding-right: 0;
-}
-
-#page-header {
-    background-color: #fff;
-    border: $border-width solid $card-border-color;
-    margin-top: $spacer;
-    margin-bottom: $spacer;
-}
-
-#region-main {
-    background-color: #fff;
-    border: $border-width solid $card-border-color;
-    padding-top: $spacer;
-    padding-bottom: $spacer;
 }
 
 #page-footer {

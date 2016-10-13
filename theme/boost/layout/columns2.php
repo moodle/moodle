@@ -24,26 +24,23 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-user_preference_allow_ajax_update('drawer-open-blocks', PARAM_ALPHA);
 user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
 
 $navdraweropen = (get_user_preferences('drawer-open-nav', 'true') == 'true');
-$blocksdraweropen = (get_user_preferences('drawer-open-blocks', 'true') == 'true');
 $extraclasses = [];
-if ($blocksdraweropen) {
-    $extraclasses[] = 'drawer-open-right';
-}
 if ($navdraweropen) {
     $extraclasses[] = 'drawer-open-left';
 }
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
+$blockshtml = $OUTPUT->blocks('side-pre');
+$hasblocks = strpos($blockshtml, 'data-block=') !== false;
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
     'output' => $OUTPUT,
-    'sidepreblocks' => $OUTPUT->blocks('side-pre'),
+    'sidepreblocks' => $blockshtml,
+    'hasblocks' => $hasblocks,
     'bodyattributes' => $bodyattributes,
-    'blocksdraweropen' => $blocksdraweropen,
     'navdraweropen' => $navdraweropen
 ];
 
