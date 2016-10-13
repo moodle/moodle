@@ -446,17 +446,20 @@ class navigation_node implements renderable {
      * Walk the tree building up a list of all the flat navigation nodes.
      *
      * @param flat_navigation $nodes List of the found flat navigation nodes.
+     * @param boolean $showdivider Show a divider before the first node.
      */
-    public function build_flat_navigation_list(flat_navigation $nodes) {
+    public function build_flat_navigation_list(flat_navigation $nodes, $showdivider = false) {
         if ($this->showinflatnavigation) {
             $indent = 0;
             if ($this->type == self::TYPE_COURSE) {
                 $indent = 1;
             }
-            $nodes->add(new flat_navigation_node($this, $indent));
+            $flat = new flat_navigation_node($this, $indent);
+            $flat->set_showdivider($showdivider);
+            $nodes->add($flat);
         }
         foreach ($this->children as $child) {
-            $child->build_flat_navigation_list($nodes);
+            $child->build_flat_navigation_list($nodes, false);
         }
     }
 
@@ -3706,7 +3709,6 @@ class flat_navigation extends navigation_node_collection {
         $course = $PAGE->course;
 
         $this->page->navigation->initialise();
-        $this->page->navigation->build_flat_navigation_list($this);
 
         // First walk the nav tree looking for "flat_navigation" nodes.
         if ($course->id > 1) {
@@ -3714,7 +3716,6 @@ class flat_navigation extends navigation_node_collection {
             $url = new moodle_url('/course/view.php', array('id' => $course->id));
             $flat = new flat_navigation_node(navigation_node::create($course->shortname, $url), 0);
             $flat->key = 'coursehome';
-            $flat->set_showdivider(true);
             $this->add($flat);
 
             $coursenode = $PAGE->navigation->find_active_node();
@@ -3730,7 +3731,11 @@ class flat_navigation extends navigation_node_collection {
                 }
             }
 
+            $this->page->navigation->build_flat_navigation_list($this, true);
+        } else {
+            $this->page->navigation->build_flat_navigation_list($this, false);
         }
+
         $admin = $PAGE->settingsnav->find('siteadministration', navigation_node::TYPE_SITE_ADMIN);
         if (!$admin) {
             // Try again - crazy nav tree!
