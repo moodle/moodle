@@ -50,4 +50,17 @@ class behat_message_popup extends behat_base {
             '#nav-notification-popover-container [data-region="popover-region-content"]');
         $this->ensure_node_is_visible($node);
     }
+
+    /**
+     * Open the message popover in the nav bar.
+     *
+     * @Given /^I open the message popover$/
+     */
+    public function i_open_the_message_popover() {
+        $this->execute('behat_general::i_click_on',
+            array("#nav-message-popover-container [data-region='popover-region-toggle']", 'css_element'));
+
+        $node = $this->get_selected_node('css_element', '#nav-message-popover-container [data-region="popover-region-content"]');
+        $this->ensure_node_is_visible($node);
+    }
 }
