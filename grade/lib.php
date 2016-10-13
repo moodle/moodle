@@ -1542,7 +1542,8 @@ class grade_structure {
             $header .= $this->get_element_icon($element, $spacerifnone);
         }
 
-        $header .= $element['object']->get_name($fulltotal);
+        $title = $element['object']->get_name($fulltotal);
+        $header .= $title;
 
         if ($element['type'] != 'item' and $element['type'] != 'categoryitem' and
             $element['type'] != 'courseitem') {
@@ -1552,11 +1553,12 @@ class grade_structure {
         if ($withlink && $url = $this->get_activity_link($element)) {
             $a = new stdClass();
             $a->name = get_string('modulename', $element['object']->itemmodule);
+            $a->title = $title;
             $title = get_string('linktoactivity', 'grades', $a);
 
-            $header = html_writer::link($url, $header, array('title' => $title));
+            $header = html_writer::link($url, $header, array('title' => $title, 'class' => 'gradeitemheader'));
         } else {
-            $header = html_writer::span($header);
+            $header = html_writer::span($header, 'gradeitemheader', array('title' => $title, 'tabindex' => '0'));
         }
 
         if ($withdescription) {

@@ -877,7 +877,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     $itemcell->colspan = $colspan;
-                    $itemcell->text = shorten_text($headerlink) . $arrow . $singleview;
+                    $itemcell->text = $headerlink . $arrow . $singleview;
                     $itemcell->header = true;
                     $itemcell->scope = 'col';
 

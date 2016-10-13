@@ -98,6 +98,14 @@
     vertical-align: middle;
 }
 
+.path-grade-report-grader .gradeitemheader {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    vertical-align: bottom;
+}
+
 /**
  * The additional user fields.
  */
