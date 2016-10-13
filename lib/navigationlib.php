@@ -3611,6 +3611,14 @@ class flat_navigation_node extends navigation_node {
     }
 
     /**
+     * Does this node represent a course section link.
+     * @return boolean
+     */
+    public function is_section() {
+        return $this->type == navigation_node::TYPE_SECTION;
+    }
+
+    /**
      * Getter for "showdivider"
      * @return boolean
      */

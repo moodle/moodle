@@ -1,19 +1,30 @@
-<nav class="nav nav-stacked nav-pills">
+<nav class="list-group">
 {{# flatnavigation }}
+    {{#showdivider}}
+</nav>
+<nav class="list-group m-t-1">
+    {{/showdivider}}
     {{#get_smscreenonly}}
     <div class="hidden-lg-up">
     {{/get_smscreenonly}}
-    {{#showdivider}}
-    <div class="nav-item"><hr></div>
-    {{/showdivider}}
     {{#action}}
-    <div class="nav-item"><a class="nav-link {{#isactive}}active{{/isactive}} m-l-{{get_indent}}" href="{{{action}}}">{{text}}</a></div>
+    <a class="list-group-item list-group-item-action {{#isactive}}active{{/isactive}}" href="{{{action}}}"><span class="m-l-{{get_indent}}">
+        {{#is_section}}
+            {{#pix}}i/folder{{/pix}}
+        {{/is_section}}
+        {{text}}
+    </span></a>
     {{/action}}
     {{^action}}
-    <div class="nav-item"><span class="nav-link m-l-{{get_indent}}">{{text}}</span></div>
+    <div class="list-group-item"><span class="m-l-{{get_indent}}">
+        {{#is_section}}
+            {{#pix}}i/folder{{/pix}}
+        {{/is_section}}
+        {{text}}
+    </span></div>
     {{/action}}
     {{#get_smscreenonly}}
     </div>
     {{/get_smscreenonly}}
 {{/ flatnavigation }}
-</div>
+</nav>
