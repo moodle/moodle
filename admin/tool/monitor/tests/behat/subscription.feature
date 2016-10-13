@@ -98,6 +98,7 @@ Feature: tool_monitor_subscriptions
     Then I should see "Subscription successfully removed"
     And "#toolmonitorsubs_r0" "css_element" should not exist
 
+  @_bug_phantomjs
   Scenario: Receiving notification on site level
     Given I log in as "admin"
     And I follow "Preferences" in the user menu
@@ -118,6 +119,7 @@ Feature: tool_monitor_subscriptions
     Then I should see "New rule site level"
     And I should see "The course was viewed"
 
+  @_bug_phantomjs
   Scenario: Receiving notification on course level
     Given I log in as "teacher1"
     And I follow "Preferences" in the user menu
