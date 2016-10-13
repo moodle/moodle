@@ -505,11 +505,23 @@ class core_renderer extends \core_renderer {
             // Get the course admin node from the settings navigation.
             $items = $this->page->navbar->get_items();
             $node = end($items);
-            if (($node->type == navigation_node::TYPE_COURSE)) {
-                $node = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
-                if ($node) {
+            $settingsnode = false;
+            if ($node->key === 'home') {
+                $settingsnode = $this->page->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
+                if ($settingsnode) {
                     // Build an action menu based on the visible nodes from this navigation tree.
-                    $this->build_action_menu_from_navigation($menu, $node, false, true);
+                    $this->build_action_menu_from_navigation($menu, $settingsnode, false, true);
+
+                    $text = get_string('frontpagesettings');
+                    $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
+                    $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
+                    $menu->add_secondary_action($link);
+                }
+            } else if ($node->type == navigation_node::TYPE_COURSE) {
+                $settingsnode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
+                if ($settingsnode) {
+                    // Build an action menu based on the visible nodes from this navigation tree.
+                    $this->build_action_menu_from_navigation($menu, $settingsnode, false, true);
 
                     $text = get_string('courseadministration');
                     $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
