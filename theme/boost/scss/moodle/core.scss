@@ -2194,3 +2194,8 @@ ul {
         }
     }
 }
+
+$footer-link-color: $brand-primary !default;
+#page-footer a {
+    color: $footer-link-color;
+}

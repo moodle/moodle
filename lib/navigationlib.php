@@ -3589,9 +3589,6 @@ class flat_navigation_node extends navigation_node {
     /** @var $showdivider bool Show a divider before this element */
     private $showdivider = false;
 
-    /** @var $smscreenonly bool Only show this menu item on xs and sm screen sizes */
-    private $smscreenonly = false;
-
     /**
      * A proxy constructor
      *
@@ -3653,21 +3650,6 @@ class flat_navigation_node extends navigation_node {
         $this->indent = $val;
     }
 
-    /**
-     * Getter for "smscreenonly"
-     * @return boolean
-     */
-    public function get_smscreenonly() {
-        return $this->smscreenonly;
-    }
-
-    /**
-     * Setter for "smscreenonly"
-     * @param $val boolean
-     */
-    public function set_smscreenonly($val) {
-        $this->smscreenonly = $val;
-    }
 }
 
 /**
@@ -3746,68 +3728,6 @@ class flat_navigation extends navigation_node_collection {
             $flat->set_showdivider(true);
             $flat->key = 'sitesettings';
             $this->add($flat);
-        }
-
-        // Add the lang menu for small screens (it doesn't fit in the header).
-        if (!empty($CFG->langmenu)) {
-            if ($PAGE->course == SITEID || empty($PAGE->course->lang)) {
-                $langs = get_string_manager()->get_list_of_translations();
-                if (count($langs) >= 2) {
-                    $first = true;
-                    foreach ($langs as $lang => $name) {
-                        $url = clone($PAGE->url);
-                        $url->params(['lang' => $lang]);
-                        $flat = new flat_navigation_node(navigation_node::create($name, $url), 0);
-                        if ($first) {
-                            $flat->set_showdivider(true);
-                            $first = false;
-                        }
-                        $flat->set_smscreenonly(true);
-                        $flat->key = $lang;
-                        $this->add($flat);
-                    }
-                }
-            }
-        }
-
-        // Add the custom menu for small screens (it doesn't fit in the header).
-        $customcount = 0;
-        if (!empty($CFG->custommenuitems)) {
-            $custommenus = custom_menu::convert_text_to_menu_nodes($CFG->custommenuitems, current_language());
-            $first = true;
-            foreach ($custommenus as $menu) {
-                if (preg_match("/^#+$/", $menu->get_text())) {
-                    $first = true;
-                } else {
-                    $url = $menu->get_url();
-                    if ($url) {
-                        $url = $url->out(false);
-                    }
-                    $flat = new flat_navigation_node(navigation_node::create($menu->get_text(), $url), 0);
-                    if ($first) {
-                        $flat->set_showdivider(true);
-                        $first = false;
-                    }
-                    $flat->set_smscreenonly(true);
-                    $flat->key = 'c-' . $customcount++;
-                    $this->add($flat);
-                }
-                foreach ($menu->get_children() as $child) {
-                    if (preg_match("/^#+$/", $child->get_text())) {
-                        $first = true;
-                    } else {
-                        $url = $child->get_url();
-                        if ($url) {
-                            $url = $url->out(false);
-                        }
-                        $flat = new flat_navigation_node(navigation_node::create($child->get_text(), $url), 1);
-                        $flat->set_smscreenonly(true);
-                        $flat->key = 'c-' . $customcount++;
-                        $this->add($flat);
-                    }
-                }
-            }
-
         }
     }
 
