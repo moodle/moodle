@@ -482,7 +482,7 @@ abstract class format_base {
         }
         $blocknames = array(
             BLOCK_POS_LEFT => array(),
-            BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
+            BLOCK_POS_RIGHT => array()
         );
         return $blocknames;
     }
