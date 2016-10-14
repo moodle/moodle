@@ -94,6 +94,12 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $this->includesubmission = false;
         }
 
+        // Reset revealidentities if blindmarking with no user data (MDL-43796).
+        $userinfo = $this->get_setting_value('userinfo');
+        if (!$userinfo && $data->blindmarking) {
+            $data->revealidentities = 0;
+        }
+
         if (!empty($data->teamsubmissiongroupingid)) {
             $data->teamsubmissiongroupingid = $this->get_mappingid('grouping',
                                                                    $data->teamsubmissiongroupingid);
