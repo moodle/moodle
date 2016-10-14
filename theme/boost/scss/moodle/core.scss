@@ -2206,3 +2206,7 @@ $footer-link-color: $brand-primary !default;
     width: 100%;
     color: $body-color;
 }
+
+#region-main > .card {
+    overflow: auto;
+}
