@@ -2387,7 +2387,7 @@ class global_navigation extends navigation_node {
                     $usercoursenode = $userscoursesnode->add($usercourseshortname, new moodle_url('/user/view.php',
                             array('id' => $user->id, 'course' => $usercourse->id)), self::TYPE_CONTAINER);
 
-                    $gradeavailable = has_capability('moodle/grade:viewall', $usercoursecontext);
+                    $gradeavailable = has_capability('moodle/grade:view', $usercoursecontext);
                     if (!$gradeavailable && !empty($usercourse->showgrades) && is_array($reports) && !empty($reports)) {
                         foreach ($reports as $plugin => $plugindir) {
                             if (has_capability('gradereport/'.$plugin.':view', $usercoursecontext)) {
@@ -2647,7 +2647,7 @@ class global_navigation extends navigation_node {
             return true;
         }
 
-        $navoptions = course_get_user_navigation_options($this->page->context);
+        $navoptions = course_get_user_navigation_options($this->page->context, $course);
 
         //Participants
         if ($navoptions->participants) {
@@ -4156,11 +4156,6 @@ class settings_navigation extends navigation_node {
             foreach ($reports as $reportfunction) {
                 $reportfunction($reportnav, $course, $coursecontext);
             }
-        }
-
-        if ($adminoptions->grades) {
-            $url = new moodle_url('/grade/report/index.php', array('id'=>$course->id));
-            $gradenode = $coursenode->add(get_string('grades'), $url, self::TYPE_SETTING, null, 'grades', new pix_icon('i/grades', ''));
         }
 
         // Check if we can view the gradebook's setup page.

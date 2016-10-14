@@ -3469,7 +3469,7 @@ function course_get_tagged_course_modules($tag, $exclusivemode = false, $fromcon
  * This function also handles the frontpage course.
  *
  * @param  stdClass $context context object (it can be a course context or the system context for frontpage settings)
- * @param  stdClass $course  the course where the settings are being rendered (only used when $context is set to frontpage)
+ * @param  stdClass $course  the course where the settings are being rendered
  * @return stdClass          the navigation options in a course and their availability status
  * @since  Moodle 3.2
  */
@@ -3512,6 +3512,7 @@ function course_get_user_navigation_options($context, $course = null) {
                             has_capability('moodle/badges:viewbadges', $context);
         // Add view grade report is permitted.
         $grades = false;
+
         if (has_capability('moodle/grade:viewall', $context)) {
             $grades = true;
         } else if (!empty($course->showgrades)) {
@@ -3568,25 +3569,6 @@ function course_get_user_administration_options($course, $context) {
         $options->publish = has_capability('moodle/course:publish', $context);
         $options->reset = has_capability('moodle/course:reset', $context);
         $options->roles = has_capability('moodle/role:switchroles', $context);
-
-        // Add view grade report is permitted.
-        $grades = false;
-        if (has_capability('moodle/grade:viewall', $context)) {
-            $grades = true;
-        } else if (!empty($course->showgrades)) {
-            $reports = core_component::get_plugin_list('gradereport');
-            if (is_array($reports) && count($reports) > 0) {  // Get all installed reports.
-                arsort($reports);   // User is last, we want to test it first.
-                foreach ($reports as $plugin => $plugindir) {
-                    if (has_capability('gradereport/'.$plugin.':view', $context)) {
-                        // Stop when the first visible plugin is found.
-                        $grades = true;
-                        break;
-                    }
-                }
-            }
-        }
-        $options->grades = $grades;
     } else {
         // Set default options to false.
         $listofoptions = array('tags', 'gradebook', 'outcomes', 'badges', 'import', 'publish', 'reset', 'roles', 'grades');

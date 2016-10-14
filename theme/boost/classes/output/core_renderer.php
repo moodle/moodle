@@ -554,23 +554,29 @@ class core_renderer extends \core_renderer {
                 $settingsnode = $this->page->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
                 if ($settingsnode) {
                     // Build an action menu based on the visible nodes from this navigation tree.
-                    $this->build_action_menu_from_navigation($menu, $settingsnode, false, true);
+                    $skipped = $this->build_action_menu_from_navigation($menu, $settingsnode, false, true);
 
-                    $text = get_string('frontpagesettings');
-                    $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
-                    $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
-                    $menu->add_secondary_action($link);
+                    // We only add a list to the full settings menu if we didn't include every node in the short menu.
+                    if ($skipped) {
+                        $text = get_string('frontpagesettings');
+                        $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
+                        $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
+                        $menu->add_secondary_action($link);
+                    }
                 }
             } else if ($node->type == navigation_node::TYPE_COURSE) {
                 $settingsnode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
                 if ($settingsnode) {
                     // Build an action menu based on the visible nodes from this navigation tree.
-                    $this->build_action_menu_from_navigation($menu, $settingsnode, false, true);
+                    $skipped = $this->build_action_menu_from_navigation($menu, $settingsnode, false, true);
 
-                    $text = get_string('courseadministration');
-                    $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
-                    $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
-                    $menu->add_secondary_action($link);
+                    // We only add a list to the full settings menu if we didn't include every node in the short menu.
+                    if ($skipped) {
+                        $text = get_string('courseadministration');
+                        $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
+                        $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
+                        $menu->add_secondary_action($link);
+                    }
                 }
             }
         } else if ($context->contextlevel == CONTEXT_USER) {
@@ -629,15 +635,18 @@ class core_renderer extends \core_renderer {
      * @param navigation_node $node
      * @param boolean $indent
      * @param boolean $onlytopleafnodes
+     * @return boolean nodesskipped - True if nodes were skipped in building the menu
      */
     private function build_action_menu_from_navigation(action_menu $menu,
                                                        navigation_node $node,
                                                        $indent = false,
                                                        $onlytopleafnodes = false) {
+        $skipped = false;
         // Build an action menu based on the visible nodes from this navigation tree.
         foreach ($node->children as $menuitem) {
             if ($menuitem->display) {
                 if ($onlytopleafnodes && $menuitem->children->count()) {
+                    $skipped = true;
                     continue;
                 }
                 if ($menuitem->action) {
@@ -652,14 +661,16 @@ class core_renderer extends \core_renderer {
                     }
                 } else {
                     if ($onlytopleafnodes) {
+                        $skipped = true;
                         continue;
                     }
                     $link = $menuitem->text;
                 }
                 $menu->add_secondary_action($link);
-                $this->build_action_menu_from_navigation($menu, $menuitem, true);
+                $skipped = $skipped || $this->build_action_menu_from_navigation($menu, $menuitem, true);
             }
         }
+        return $skipped;
     }
 
 }
