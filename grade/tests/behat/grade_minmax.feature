@@ -26,7 +26,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | grade_minmaxtouse | Min and max grades as specified in grade item settings |
     And I am on site homepage
     And I follow "C1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I press "Add grade item"
     And I set the following fields to these values:
@@ -68,7 +68,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I log out
     And I log in as "teacher1"
     And I follow "C1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I turn editing mode on
     And I give the grade "75.00" to the user "Student 1" for the grade item "MI 1"
     And I give the grade "25.00" to the user "Student 1" for the grade item "MI 2"

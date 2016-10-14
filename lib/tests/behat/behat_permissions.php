@@ -82,7 +82,7 @@ class behat_permissions extends behat_base {
         );
 
         if (!$this->running_javascript()) {
-            $this->execute("behat_forms::press_button", get_string('go'));
+            $this->execute("behat_general::i_click_on_in_the", [get_string('go'), 'button', 'region-main', 'region']);
         }
 
         $this->execute("behat_permissions::i_fill_the_capabilities_form_with_the_following_permissions", $table);

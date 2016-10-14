@@ -550,7 +550,7 @@ class core_renderer extends \core_renderer {
             $items = $this->page->navbar->get_items();
             $node = end($items);
             $settingsnode = false;
-            if ($node->key === 'home') {
+            if (!empty($node) && $node->key === 'home') {
                 $settingsnode = $this->page->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
                 if ($settingsnode) {
                     // Build an action menu based on the visible nodes from this navigation tree.
@@ -564,7 +564,7 @@ class core_renderer extends \core_renderer {
                         $menu->add_secondary_action($link);
                     }
                 }
-            } else if ($node->type == navigation_node::TYPE_COURSE) {
+            } else if (!empty($node) && $node->type == navigation_node::TYPE_COURSE) {
                 $settingsnode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
                 if ($settingsnode) {
                     // Build an action menu based on the visible nodes from this navigation tree.
@@ -582,7 +582,7 @@ class core_renderer extends \core_renderer {
         } else if ($context->contextlevel == CONTEXT_USER) {
             $items = $this->page->navbar->get_items();
             $node = end($items);
-            if ($node->key === 'myprofile') {
+            if (!empty($node) && ($node->key === 'myprofile')) {
                 // Get the course admin node from the settings navigation.
                 $node = $this->page->settingsnav->find('useraccount', navigation_node::TYPE_CONTAINER);
                 if ($node) {
@@ -607,7 +607,7 @@ class core_renderer extends \core_renderer {
         if ($context->contextlevel == CONTEXT_MODULE) {
 
             $node = $this->page->navigation->find_active_node();
-            if (($node->type == navigation_node::TYPE_ACTIVITY ||
+            if (!empty($node) && ($node->type == navigation_node::TYPE_ACTIVITY ||
                     $node->type == navigation_node::TYPE_RESOURCE)) {
 
                 $items = $this->page->navbar->get_items();

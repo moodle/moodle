@@ -36,7 +36,7 @@ Feature: Outcome grading
     And I press "Save changes"
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Outcomes"
+    And I navigate to "Outcomes" node in "Course administration"
     And I set the field "Available standard outcomes" to "Outcome Test"
     And I click on "#add" "css_element"
     And I log out

@@ -246,4 +246,31 @@ class behat_theme_boost_behat_course extends behat_course {
         }
         $actionnode->click();
     }
+
+    public function i_turn_editing_mode_on() {
+        try {
+            $this->execute("behat_forms::press_button", get_string('turneditingon'));
+        } catch (Exception $e) {
+            $this->execute("behat_general::i_click_on_in_the", [get_string('turneditingon'), 'link', 'Administration', 'block']);
+        }
+    }
+
+    public function i_turn_editing_mode_off() {
+        try {
+            $this->execute("behat_forms::press_button", get_string('turneditingoff'));
+        } catch (Exception $e) {
+            $this->execute("behat_general::i_click_on_in_the", [get_string('turneditingoff'), 'link', 'Administration', 'block']);
+        }
+    }
+
+    protected function is_course_editor() {
+
+        // We don't need to behat_base::spin() here as all is already loaded.
+        if (!$this->getSession()->getPage()->findLink(get_string('turneditingoff')) &&
+                !$this->getSession()->getPage()->findLink(get_string('turneditingon'))) {
+            return false;
+        }
+
+        return true;
+    }
 }

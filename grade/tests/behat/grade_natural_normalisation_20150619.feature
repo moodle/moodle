@@ -33,7 +33,7 @@ Feature: Gradebook calculations for natural weights normalisation before the fix
       | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I set the field "Grade report" to "Gradebook setup"
 
   @javascript

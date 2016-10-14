@@ -16,7 +16,7 @@ Feature: Add media to Atto
     And I set the field "Entry title" to "The best video in the entire world (not really)"
     And I click on "Media" "button"
     And I click on "Browse repositories..." "button"
-    And I click on "Private files" "link"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle-logo.webm" "link"
     And I click on "Select this file" "button"
     And I set the field "Enter name" to "It's the logo"

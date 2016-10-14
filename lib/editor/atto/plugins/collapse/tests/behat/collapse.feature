@@ -6,7 +6,7 @@ Feature: Atto collapse button
   Scenario: Toggle toolbar
     Given I log in as "admin"
     And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     When I click on "Show more buttons" "button"
     Then "Equation editor" "button" should be visible
     And I click on "Show fewer buttons" "button"

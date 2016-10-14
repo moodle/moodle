@@ -25,7 +25,7 @@ Feature: Adding blog tag block
     And I turn editing mode on
     And I add the "Blog tags" block
 
-    And I navigate to "Course blogs" node in "Current course > c1 > Participants"
+    And I navigate to "Course blogs" node in "My courses > c1 > Participants"
     And I follow "Blog about this Course"
     And I set the following fields to these values:
       | Entry title                                 | Blog post from teacher    |
@@ -35,7 +35,7 @@ Feature: Adding blog tag block
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I navigate to "Course blogs" node in "Current course > c1 > Participants"
+    And I navigate to "Course blogs" node in "My courses > c1 > Participants"
     And I follow "Blog about this Course"
     And I set the following fields to these values:
       | Entry title                                 | Blog post from student    |

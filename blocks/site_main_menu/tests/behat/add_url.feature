@@ -9,6 +9,7 @@ Feature: Add URL to main menu block
     Given I log in as "admin"
     And I am on site homepage
     And I navigate to "Turn editing on" node in "Front page settings"
+    And I add the "Main menu" block
     When I add a "URL" to section "0" and I fill the form with:
       | Name | google |
       | Description | gooooooooogle |

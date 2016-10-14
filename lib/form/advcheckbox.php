@@ -88,6 +88,7 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox implements 
         }
 
         parent::__construct($elementName, $elementLabel, $text, $attributes, $values);
+        $this->_type = 'advcheckbox';
     }
 
     /**

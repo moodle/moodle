@@ -10,6 +10,10 @@ $drawer-offscreen-gutter: 20px;
   padding-top: ($fixed-header-y + 30px) ! important; /* negative fixed header height */
   margin-top: -$fixed-header-y ! important; /* negative fixed header height */
 }
+.pagelayout-embedded :target {
+    padding-top: initial;
+    margin-top: initial;
+}
 
 #nav-drawer.closed {
     left: -($drawer-width + $drawer-offscreen-gutter);
@@ -27,7 +31,7 @@ $drawer-bg: $gray-lighter !default;
     width: $drawer-width;
     top: $fixed-header-y;
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     z-index: $zindex-dropdown - 1;
     background-color: $drawer-bg;
@@ -41,6 +45,9 @@ $drawer-bg: $gray-lighter !default;
 }
 #page {
     margin-top: $fixed-header-y;
+}
+.pagelayout-embedded #page {
+    margin-top: 0;
 }
 body.drawer-ease {
     -webkit-transition: margin-left 0.5s ease, margin-right 0.5s ease;

@@ -325,7 +325,7 @@ Feature: Set up contextual data for tests
     And I am on site homepage
     And I follow "Courses"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     Then I should see "Grade category 1"
     And I should see "Grade sub category 2"
 
@@ -349,7 +349,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I expand "Setup" node
     And I follow "Gradebook setup"
     Then I should see "Test Grade Item 1"
@@ -380,7 +380,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I follow "Scales"
     Then I should see "Test Scale 1"
     And I should see "Disappointing,  Good,  Very good,  Excellent"
@@ -432,7 +432,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I expand "Setup" node
     And I follow "Gradebook setup"
     Then I should see "Test Outcome Grade Item 1"

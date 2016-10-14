@@ -21,6 +21,10 @@ select {
     margin-bottom: -2rem;
 }
 
+.path-mod-feedback .itemactions {
+    float: right;
+}
+
 // Forum module
 
 .path-mod-forum .forumsearch {
@@ -457,6 +461,9 @@ div#dock {
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     top: auto;
 }
+.path-mod-assign .no-overflow {
+    overflow: initial;
+}
 
 .path-mod-assign [data-region="grade-panel"] .has-popout {
     background-color: $card-bg;
@@ -491,8 +498,13 @@ div#dock {
     line-height: 40px;
 }
 
+.path-mod-assign [data-region="assignment-info"] {
+    overflow-y: hidden;
+}
+
 .path-mod-assign [data-region="grading-navigation"] {
     padding: 6px;
+    overflow-y: hidden;
 }
 
 .path-mod-assign [data-region="grade-actions"] {

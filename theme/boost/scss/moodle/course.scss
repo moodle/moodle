@@ -425,10 +425,6 @@
     margin-right: 5px;
 }
 
-.path-course-view .section .summary {
-    line-height: normal;
-}
-
 .path-site li.activity > div,
 .path-course-view li.activity > div {
     position: relative;
@@ -496,7 +492,6 @@ span.editinstructions {
     top: 0;
     margin-top: -22px;
     margin-left: 30px;
-    line-height: 16px;
     font-size: $font-size-sm;
     padding: .1em .4em;
     background-color: $state-info-bg;
@@ -609,7 +604,6 @@ span.editinstructions {
 
 .coursebox > .info > h3.coursename {
     margin: 5px;
-    line-height: 1;
 }
 
 .coursebox > .info > .coursename {
@@ -827,7 +821,6 @@ span.editinstructions {
     .listing-actions {
         text-align: center;
         padding: 0.4rem 0.3rem 0.3rem;
-        line-height: 2.2em;
 
         > .moodle-actionmenu {
             display: inline-block;
@@ -843,8 +836,7 @@ span.editinstructions {
         }
     }
 
-    li {
-        line-height: 2.2em;
+    .listitem {
 
         > div {
             &:hover {
@@ -867,18 +859,7 @@ span.editinstructions {
         margin-right: 1em;
         display: inline-block;
 
-        > a img,
-        .menubar img {
-            margin: 0 4px;
-            height: 12px;
-            padding: 0;
-            vertical-align: inherit;
-        }
-
         &.show .menu {
-            li {
-                line-height: 20px;
-            }
 
             img {
                 width: 12px;
@@ -1038,7 +1019,6 @@ span.editinstructions {
 
         > * {
             display: inline-block;
-            line-height: 2.2rem;
         }
 
         .pair-key {
@@ -1115,7 +1095,6 @@ span.editinstructions {
     > div {
         display: inline-block;
         float: right;
-        line-height: 40px;
 
         > div {
             margin: 10px 0 10px 1em;

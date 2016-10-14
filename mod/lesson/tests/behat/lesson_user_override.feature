@@ -57,7 +57,7 @@ Feature: Lesson user override
       | deadline[minute]    | 00 |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
-    Then I click on "Edit" "link"
+    Then I click on "Edit" "link" in the "Sam1 Student1" "table_row"
     And I set the following fields to these values:
       | deadline[year] | 2030 |
     And I press "Save"

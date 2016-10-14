@@ -3698,13 +3698,15 @@ class flat_navigation extends navigation_node_collection {
             $url = new moodle_url('/course/view.php', array('id' => $course->id));
             $flat = new flat_navigation_node(navigation_node::create($course->shortname, $url), 0);
             $flat->key = 'coursehome';
-            $this->add($flat);
 
             $coursenode = $PAGE->navigation->find_active_node();
-            while ($coursenode->type != navigation_node::TYPE_COURSE) {
+            while (!empty($coursenode) && ($coursenode->type != navigation_node::TYPE_COURSE)) {
                 $coursenode = $coursenode->parent;
             }
-            if ($coursenode) {
+            // There is one very strange page in mod/feedback/view.php which thinks it is both site and course
+            // context at the same time. That page is broken but we need to handle it (hence the SITEID).
+            if ($coursenode && $coursenode->key != SITEID) {
+                $this->add($flat);
                 foreach ($coursenode->children as $child) {
                     if ($child->action) {
                         $flat = new flat_navigation_node($child, 0);

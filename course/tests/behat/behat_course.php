@@ -650,7 +650,7 @@ class behat_course extends behat_base {
             // It should not exist at all.
             try {
                 $this->find_link($activityname);
-                throw new ExpectationException('The "' . $activityname . '" should not appear');
+                throw new ExpectationException('The "' . $activityname . '" should not appear', $this->getSession());
             } catch (ElementNotFoundException $e) {
                 // This is good, the activity should not be there.
             }

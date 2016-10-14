@@ -1,5 +1,10 @@
 /* core.less */
 
+#region-main > .card {
+    overflow-x: auto;
+    overflow-y: visible;
+    min-height: 45rem;
+}
 
 .context-header-settings-menu,
 .region-main-settings-menu {
@@ -2207,6 +2212,3 @@ $footer-link-color: $brand-primary !default;
     color: $body-color;
 }
 
-#region-main > .card {
-    overflow: auto;
-}

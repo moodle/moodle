@@ -52,7 +52,7 @@ Feature: We can use Single view
       | gradereport/singleview:view | Allow      | teacher  | Course        | C1        |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
 
   @javascript
   Scenario: I can update grades, add feedback and exclude grades.
@@ -97,7 +97,7 @@ Feature: We can use Single view
     And I log out
     And I log in as "teacher2"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I click on "Single view" "option"
     And I click on "Student 4" "option"
     And the "Exclude for Test assignment one" "checkbox" should be disabled

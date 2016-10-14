@@ -37,7 +37,7 @@ Feature: Verify that all form fields values can be get and set
     And I expand "Appearance" node
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Reset"
+    And I navigate to "Reset" node in "Course administration"
     # Select (multi-select) - Checking "the select box should contain".
     And I expand all fieldsets
     And the "Unenrol users" select box should contain "No roles"

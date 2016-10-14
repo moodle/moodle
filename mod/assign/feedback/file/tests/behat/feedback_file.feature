@@ -60,7 +60,7 @@ Feature: In an assignment, teacher can submit feedback files during grading
     Given I set the field "applytoall" to "0"
     And I press "Save changes"
     And I click on "Ok" "button"
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "[data-region=assignment-info]" "css_element"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
@@ -76,7 +76,7 @@ Feature: In an assignment, teacher can submit feedback files during grading
   Scenario: A teacher can provide a feedback file when grading an assignment and all students in the group will receive the file.
     Given I press "Save changes"
     And I click on "Ok" "button"
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "[data-region=assignment-info]" "css_element"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"

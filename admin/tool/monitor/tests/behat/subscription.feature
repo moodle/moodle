@@ -147,7 +147,7 @@ Feature: tool_monitor_subscriptions
     When I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     Then I should see "You can manage rules from the Event monitoring rules page."
-    And I follow "Event monitoring rules"
+    And I click on "Event monitoring rules" "link" in the "region-main" "region"
     And I should see "You can subscribe to rules from the Event monitoring page."
     And I log out
     And I log in as "teacher1"
@@ -155,7 +155,7 @@ Feature: tool_monitor_subscriptions
     And I follow "Event monitoring"
     And I set the field "Select a course" to "Course 1"
     And I should see "You can manage rules from the Event monitoring rules page."
-    And I follow "Event monitoring rules"
+    And I click on "Event monitoring rules" "link" in the "region-main" "region"
     And I should see "You can subscribe to rules from the Event monitoring page."
     And I click on "//a[text()='Event monitoring']" "xpath_element"
     And the field "courseid" matches value "Course 1"

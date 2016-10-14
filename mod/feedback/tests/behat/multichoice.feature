@@ -24,7 +24,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
 
   @javascript
   Scenario: Non-rated single-answer multiple choice questions in feedback
@@ -157,7 +157,7 @@ Feature: Testing multichoice questions in feedback
     And I should not see "%" in the "option h" "table_row"
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"
@@ -301,7 +301,7 @@ Feature: Testing multichoice questions in feedback
     And I should not see "%" in the "option h" "table_row"
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"
@@ -424,7 +424,7 @@ Feature: Testing multichoice questions in feedback
     And I should not see "%" in the "option h" "table_row"
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"

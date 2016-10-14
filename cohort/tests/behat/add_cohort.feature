@@ -32,7 +32,7 @@ Feature: Add cohorts of users
     When I add "First User (first@example.com)" user to "333" cohort members
     And I add "Second User (second@example.com)" user to "333" cohort members
     Then I should see "2" in the "#cohorts" "css_element"
-    And I follow "Assign"
+    And I click on "Assign" "link" in the "Test cohort name" "table_row"
     And the "Current users" select box should contain "First User (first@example.com)"
     And the "Current users" select box should contain "Second User (second@example.com)"
     And the "Current users" select box should not contain "Forth User (forth@example.com)"
@@ -49,7 +49,7 @@ Feature: Add cohorts of users
     And I press "Add to cohort"
     And I follow "Cohorts"
     Then I should see "2" in the "#cohorts" "css_element"
-    And I follow "Assign"
+    And I click on "Assign" "link" in the "Test cohort name" "table_row"
     And the "Current users" select box should contain "Third User (third@example.com)"
     And the "Current users" select box should contain "Forth User (forth@example.com)"
     And the "Current users" select box should not contain "First User (first@example.com)"

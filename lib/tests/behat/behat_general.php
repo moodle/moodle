@@ -87,6 +87,15 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Opens course index page.
+     *
+     * @Given /^I am on course index$/
+     */
+    public function i_am_on_course_index() {
+        $this->getSession()->visit($this->locate_path('/course/index.php'));
+    }
+
+    /**
      * Reloads the current page.
      *
      * @Given /^I reload the page$/

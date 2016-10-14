@@ -43,7 +43,7 @@ Feature: The activity results block displays student scores as scales
       | student6 | G3 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I navigate to "Scales" node in "Grade administration"
     And I press "Add a new scale"
     And I set the following fields to these values:
@@ -60,7 +60,7 @@ Feature: The activity results block displays student scores as scales
       | id_grade_modgrade_scale | My Scale |
       | Group mode | Separate groups |
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "Very good" to the user "Student 2" for the grade item "Test assignment"

@@ -103,11 +103,6 @@ if ($userid && $course->id == SITEID) {
     $PAGE->navbar->add(get_string('notes', 'notes'), $notesurl);
 } else if ($course->id != SITEID) {
     $notenode = $PAGE->navigation->find('currentcoursenotes', null)->make_inactive();
-    $participantsurl = new moodle_url('/user/view.php', array('id' => $userid, 'course' => $course->id));
-    $currentcoursenode = $PAGE->navigation->find('currentcourse', null);
-    $participantsnode = $currentcoursenode->find('participants', null);
-    $usernode = $participantsnode->add(fullname($user), $participantsurl);
-    $usernode->make_active();
 
     $notesurl = new moodle_url('/notes/index.php', array('user' => $userid, 'course' => $courseid));
     $PAGE->navbar->add(get_string('notes', 'notes'), $notesurl);

@@ -28,7 +28,7 @@ Feature: Saving, using and deleting feedback templates
     And I log in as "teacher"
     And I follow "Course 1"
     And I follow "Learning experience course 1"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 1 |
       | Label            | multichoice1                |
@@ -84,7 +84,7 @@ Feature: Saving, using and deleting feedback templates
     # Add questions to another feedback
     And I follow "Course 1"
     And I follow "Another feedback in course 1"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question         | What is your favourite subject |
       | Label            | subjectchoice                  |
@@ -169,7 +169,7 @@ Feature: Saving, using and deleting feedback templates
     And I am on site homepage
     And I follow "Course 1"
     And I follow "Learning experience course 1"
-    And I follow "Templates"
+    And I click on "Templates" "link" in the "[role=main]" "css_element"
     And I set the field "Name" to "My public template"
     And I set the field "Public" to "1"
     And I press "Save as new template"

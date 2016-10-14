@@ -3,8 +3,13 @@
 // for fixed positioned elements that end up obscuring the item thus
 // leading to errors that could be avoided by scrolling an additional amount.
 body.behat-site {
-    .navbar-fixed-top {
+    .navbar-static-top {
         position: absolute;
+    }
+
+    // We need more spacing in action menus so behat does not click on the wrong menu item.
+    .dropdown-item {
+        margin-top: 4px ! important;
     }
 }
 

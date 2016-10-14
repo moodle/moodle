@@ -46,7 +46,7 @@ Feature: We can change what we are viewing on the grader report
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name 1"
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment name 2"
@@ -60,7 +60,7 @@ Feature: We can change what we are viewing on the grader report
     And I open "Test assignment name 2" actions menu
     And I click on "Hide" "link" in the "Test assignment name 2" activity
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I select "Grader report" from the "Grade report" singleselect
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"
@@ -97,7 +97,7 @@ Feature: We can change what we are viewing on the grader report
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I select "Grader report" from the "Grade report" singleselect
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"

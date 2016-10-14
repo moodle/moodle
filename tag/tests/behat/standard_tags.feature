@@ -90,7 +90,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
   Scenario: Changing standard tags property of tag area
     When I log in as "manager1"
     And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     And I expand all fieldsets
     And I should not see "Manage standard tags"
     And I set the following fields to these values:
@@ -101,7 +101,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
     And the field "Change showing standard tags in area User interests" matches value "Don't suggest"
     And I set the field "Change showing standard tags in area User interests" to "Suggest"
     And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     And I expand all fieldsets
     And I should see "Manage standard tags"
     And I navigate to "Manage tags" node in "Site administration > Appearance"
@@ -111,7 +111,7 @@ Feature: Manager can add standard tags and change the tag type of existing tags
     And I follow "Profile" in the user menu
     And I should see "Tag3"
     And I should see "Tag2"
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     And I expand all fieldsets
     And I should see "Manage standard tags"
     And I press "Update profile"

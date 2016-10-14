@@ -58,12 +58,12 @@ Feature: Backup user data
     And I follow "Course 1"
     And I turn editing mode on
     And I delete "Quiz 1" activity
-    And I follow "Recycle bin"
+    And I navigate to "Recycle bin" node in "Course administration"
     And I should see "Quiz 1"
-    And I follow "Restore"
+    And I click on "Restore" "link" in the "region-main" "region"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    When I navigate to "Grades" node in "Course administration"
+    When I click on "Grades" "link" in the "Navigation" "block"
     Then "Quiz 1" row "Grade" column of "user-grade" table should contain "5"
     And "Quiz 1" row "Percentage" column of "user-grade" table should contain "50"

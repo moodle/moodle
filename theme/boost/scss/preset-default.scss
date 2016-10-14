@@ -196,21 +196,3 @@ $breadcrumb-divider-rtl: "/" !default;
 }
 
 
-// Custom transitions for open/close of menus.
-.dropdown-menu {
-    display: block;
-    max-height: 0px;
-    overflow: hidden;
-    opacity: 0;
-    -webkit-transition: max-height 1s ease, opacity 0.4s ease;
-       -moz-transition: max-height 1s ease, opacity 0.4s ease;
-            transition: max-height 1s ease, opacity 0.4s ease;
-}
-.open {
-  // Show the menu
-  > .dropdown-menu {
-    max-height: 2048px;
-    opacity: 100;
-  }
-}
-

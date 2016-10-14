@@ -46,7 +46,7 @@ Feature: Show users who have not responded to the feedback survey
       | Record user names   | User's name will be logged and shown with answers |
       | Access restrictions | Grouping: GX1                                     |
     And I follow "Frogs"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I set the field "Add question" to "Short text answer"
     And I set the following fields to these values:
       | Question | Y/N? |
