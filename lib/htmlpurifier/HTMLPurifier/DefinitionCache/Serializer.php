@@ -97,6 +97,12 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
         }
         $dir = $this->generateDirectoryPath($config);
         $dh = opendir($dir);
+        // Apparently, on some versions of PHP, readdir will return
+        // an empty string if you pass an invalid argument to readdir.
+        // So you need this test.  See #49.
+        if (false === $dh) {
+            return false;
+        }
         while (false !== ($filename = readdir($dh))) {
             if (empty($filename)) {
                 continue;
@@ -106,6 +112,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
             }
             unlink($dir . '/' . $filename);
         }
+        return true;
     }
 
     /**
@@ -119,6 +126,10 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
         }
         $dir = $this->generateDirectoryPath($config);
         $dh = opendir($dir);
+        // See #49 (and above).
+        if (false === $dh) {
+            return false;
+        }
         while (false !== ($filename = readdir($dh))) {
             if (empty($filename)) {
                 continue;
@@ -131,6 +142,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
                 unlink($dir . '/' . $filename);
             }
         }
+        return true;
     }
 
     /**
@@ -186,11 +198,9 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
         if ($result !== false) {
             // set permissions of the new file (no execute)
             $chmod = $config->get('Cache.SerializerPermissions');
-            if (!$chmod) {
-                $chmod = 0644; // invalid config or simpletest
+            if ($chmod !== null) {
+                chmod($file, $chmod & 0666);
             }
-            $chmod = $chmod & 0666;
-            chmod($file, $chmod);
         }
         return $result;
     }
@@ -204,8 +214,10 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
     {
         $directory = $this->generateDirectoryPath($config);
         $chmod = $config->get('Cache.SerializerPermissions');
-        if (!$chmod) {
-            $chmod = 0755; // invalid config or simpletest
+        if ($chmod === null) {
+            // TODO: This races
+            if (is_dir($directory)) return true;
+            return mkdir($directory);
         }
         if (!is_dir($directory)) {
             $base = $this->generateBaseDirectoryPath($config);
@@ -219,13 +231,14 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
             } elseif (!$this->_testPermissions($base, $chmod)) {
                 return false;
             }
-            mkdir($directory, $chmod);
-            if (!$this->_testPermissions($directory, $chmod)) {
+            if (!mkdir($directory, $chmod)) {
                 trigger_error(
-                    'Base directory ' . $base . ' does not exist,
-                    please create or change using %Cache.SerializerPath',
+                    'Could not create directory ' . $directory . '',
                     E_USER_WARNING
                 );
+                return false;
+            }
+            if (!$this->_testPermissions($directory, $chmod)) {
                 return false;
             }
         } elseif (!$this->_testPermissions($directory, $chmod)) {
@@ -256,7 +269,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
             );
             return false;
         }
-        if (function_exists('posix_getuid')) {
+        if (function_exists('posix_getuid') && $chmod !== null) {
             // POSIX system, we can give more specific advice
             if (fileowner($dir) === posix_getuid()) {
                 // we can chmod it ourselves

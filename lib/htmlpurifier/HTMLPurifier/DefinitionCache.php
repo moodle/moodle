@@ -118,7 +118,7 @@ abstract class HTMLPurifier_DefinitionCache
 
     /**
      * Clears all expired (older version or revision) objects from cache
-     * @note Be carefuly implementing this method as flush. Flush must
+     * @note Be careful implementing this method as flush. Flush must
      *       not interfere with other Definition types, and cleanup()
      *       should not be repeatedly called by userland code.
      * @param HTMLPurifier_Config $config
