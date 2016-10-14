@@ -2199,3 +2199,10 @@ $footer-link-color: $brand-primary !default;
 #page-footer a {
     color: $footer-link-color;
 }
+
+// Make links in a menu clickable anywhere in the row.
+.dropdown-item a {
+    display: block;
+    width: 100%;
+    color: $body-color;
+}
