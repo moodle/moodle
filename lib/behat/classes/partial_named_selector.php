@@ -59,6 +59,8 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'dialogue' => 'dialogue',
         'fieldset' => 'fieldset',
         'list_item' => 'list_item',
+        'message_area_region' => 'message_area_region',
+        'message_area_region_content' => 'message_area_region_content',
         'question' => 'question',
         'region' => 'region',
         'section' => 'section',
@@ -85,6 +87,9 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'link' => 'link',
         'link_or_button' => 'link_or_button',
         'list_item' => 'list_item',
+        'message_area_action' => 'message_area_action',
+        'message_area_region' => 'message_area_region',
+        'message_area_region_content' => 'message_area_region_content',
         'optgroup' => 'optgroup',
         'option' => 'option',
         'question' => 'question',
@@ -152,6 +157,15 @@ XPATH
 XPATH
         , 'form_row' => <<<XPATH
 .//*[self::label or self::div[contains(concat(' ', @class, ' '), ' fstaticlabel ')]][contains(., %locator%)]/ancestor::*[contains(concat(' ', @class, ' '), ' fitem ')]
+XPATH
+        , 'message_area_region' => <<<XPATH
+.//div[@data-region='messaging-area']/descendant::*[@data-region = %locator%]
+XPATH
+        , 'message_area_region_content' => <<<XPATH
+.//div[@data-region='messaging-area']/descendant::*[@data-region-content = %locator%]
+XPATH
+        , 'message_area_action' => <<<XPATH
+.//div[@data-region='messaging-area']/descendant::*[@data-action = %locator%]
 XPATH
     );
 
