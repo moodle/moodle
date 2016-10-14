@@ -444,7 +444,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $userdetails['msn'] = $user->msn;
     }
     if (in_array('suspended', $userfields) && (!isset($hiddenfields['suspended']) or $isadmin)) {
-        $userdetails['suspended'] = $user->suspended;
+        $userdetails['suspended'] = (bool)$user->suspended;
     }
 
     if (in_array('firstaccess', $userfields) && (!isset($hiddenfields['firstaccess']) or $isadmin)) {
