@@ -229,6 +229,7 @@ $content-item-unread-colour: #f4f4f4;
     }
 
     &.unread {
+        margin: 0;
         background-color: $content-item-unread-colour;
 
         &:hover {

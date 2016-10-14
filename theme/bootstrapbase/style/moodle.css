@@ -7866,6 +7866,7 @@ body.path-question-type .mform fieldset.hidden {
   color: #fff;
 }
 .content-item-container.unread {
+  margin: 0;
   background-color: #f4f4f4;
 }
 .content-item-container.unread:hover {
