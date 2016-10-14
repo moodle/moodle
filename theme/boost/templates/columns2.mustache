@@ -55,7 +55,9 @@
         {{{ output.home_link }}}
         <nav class="nav navbar-nav hidden-lg-up">
             {{# output.custom_menu_flat }}
-                {{> theme_boost/custom_menu_footer }}
+                <ul class="list-unstyled p-t-1">
+                    {{> theme_boost/custom_menu_footer }}
+                </ul>
             {{/ output.custom_menu_flat }}
         </nav>
         {{{ output.standard_footer_html }}}

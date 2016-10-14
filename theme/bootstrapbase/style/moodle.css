@@ -18620,6 +18620,9 @@ body.behat-site .navbar-fixed-top {
 #page-footer .performanceinfo .cachesused .cache-definition-stats .cache-store-stats.hihits {
   background-color: #dff0d8;
 }
+#page-footer .performanceinfo li {
+  list-style-type: none;
+}
 #page-footer,
 #page-footer .validators,
 #page-footer .purgecaches,

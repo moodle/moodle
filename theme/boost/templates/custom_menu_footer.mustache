@@ -1,8 +1,4 @@
-<ul class="list-unstyled">
     {{#children}}
-        {{#divider}}
-            <li><hr></li>
-        {{/divider}}
         {{^divider}}
             {{#url}}
                 <li><a href="{{{url}}}" title="{{{title}}}">{{{text}}}</a></li>
@@ -12,7 +8,8 @@
             {{/url}}
         {{/divider}}
         {{#haschildren}}
-            {{> theme_boost/custom_menu_footer }}
+            <ul class="list-unstyled m-l-1">
+                {{> theme_boost/custom_menu_footer }}
+            </ul>
         {{/haschildren}}
     {{/children}}
-</ul>
