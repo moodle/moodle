@@ -1104,4 +1104,131 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $this->assertNull($user->created);
         $this->assertNull($user->updated);
     }
+
+    /**
+     * Test for data_connector::get_contexts_from_consumer().
+     */
+    public function test_get_contexts_from_consumer() {
+        $dc = new data_connector();
+        $consumer = new ToolConsumer(null, $dc);
+        $consumer->name = 'testconsumername';
+        $consumer->setKey('TestKey');
+        $consumer->secret = 'testsecret';
+        $consumer->save();
+
+        $settings = ['a', 'b', 'c'];
+        $lticontextid = 'testlticontextid';
+        $context = Context::fromConsumer($consumer, $lticontextid);
+        $context->settings = $settings;
+        $context->save();
+        $dc->loadContext($context);
+
+        $consumer2 = new ToolConsumer(null, $dc);
+        $consumer2->name = 'testconsumername2';
+        $consumer2->setKey('TestKey2');
+        $consumer2->secret = 'testsecret2';
+        $consumer2->save();
+
+        $context2 = Context::fromConsumer($consumer2, $lticontextid . '2');
+        $context2->settings = $settings;
+        $consumer2->save();
+
+        $contexts = $dc->get_contexts_from_consumer($consumer);
+        $this->assertCount(1, $contexts);
+        $this->assertEquals($context, $contexts[0]);
+    }
+
+    /**
+     * Test for data_connector::get_consumers_mapped_to_tool().
+     */
+    public function test_get_consumers_mapped_to_tool() {
+        $generator = $this->getDataGenerator();
+        // Create two tools belonging to the same course.
+        $course1 = $generator->create_course();
+        $data = new stdClass();
+        $data->courseid = $course1->id;
+        $tool = $generator->create_lti_tool($data);
+        $tool2 = $generator->create_lti_tool($data);
+
+        $dc = new data_connector();
+        $consumer = new ToolConsumer('key1', $dc);
+        $consumer->name = 'testconsumername';
+        $consumer->secret = 'testsecret';
+        $consumer->save();
+
+        $tp = new \enrol_lti\tool_provider($tool->id);
+        $tp->consumer = $consumer;
+        $tp->map_tool_to_consumer();
+
+        $consumer2 = new ToolConsumer('key2', $dc);
+        $consumer2->name = 'testconsumername2';
+        $consumer2->secret = 'testsecret2';
+        $consumer2->save();
+
+        $tp2 = new \enrol_lti\tool_provider($tool2->id);
+        $tp2->consumer = $consumer2;
+        $tp2->map_tool_to_consumer();
+
+        $consumers = $dc->get_consumers_mapped_to_tool($tool->id);
+        $this->assertCount(1, $consumers);
+        $this->assertEquals($consumer, $consumers[0]);
+
+        $consumers2 = $dc->get_consumers_mapped_to_tool($tool2->id);
+        $this->assertCount(1, $consumers2);
+        $this->assertEquals($consumer2, $consumers2[0]);
+    }
+
+    /**
+     * Test for data_connector::get_resourcelink_from_consumer()
+     */
+    public function test_get_resourcelink_from_consumer() {
+        $dc = new data_connector();
+
+        $consumer = new ToolConsumer(null, $dc);
+        $consumer->name = 'TestName';
+        $consumer->setKey('TestKey');
+        $consumer->secret = 'TestSecret';
+        $consumer->save();
+
+        // No ResourceLink associated with the ToolConsumer yet.
+        $this->assertNull($dc->get_resourcelink_from_consumer($consumer));
+
+        // Create and save ResourceLink from ToolConsumer.
+        $resourcelink = ResourceLink::fromConsumer($consumer, 'testresourcelinkid');
+        $resourcelink->save();
+        $dc->loadResourceLink($resourcelink);
+
+        // Assert that the resource link and the one fetched by get_resourcelink_from_consumer() are the same.
+        $this->assertEquals($resourcelink, $dc->get_resourcelink_from_consumer($consumer));
+    }
+
+    /**
+     * Test for data_connector::get_resourcelink_from_context()
+     */
+    public function test_get_resourcelink_from_context() {
+        $dc = new data_connector();
+
+        $consumer = new ToolConsumer(null, $dc);
+        $consumer->name = 'TestName';
+        $consumer->setKey('TestKey');
+        $consumer->secret = 'TestSecret';
+        $consumer->save();
+
+        $settings = ['a', 'b', 'c'];
+        $lticontextid = 'testlticontextid';
+        $context = Context::fromConsumer($consumer, $lticontextid);
+        $context->settings = $settings;
+        $context->save();
+
+        // No ResourceLink associated with the Context yet.
+        $this->assertNull($dc->get_resourcelink_from_context($context));
+
+        // Create and save ResourceLink from the Context.
+        $resourcelink = ResourceLink::fromContext($context, 'testresourcelinkid');
+        $resourcelink->save();
+        $dc->loadResourceLink($resourcelink);
+
+        // Assert that the resource link and the one fetched by get_resourcelink_from_context() are the same.
+        $this->assertEquals($resourcelink, $dc->get_resourcelink_from_context($context));
+    }
 }
