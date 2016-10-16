@@ -107,7 +107,7 @@ if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $
             $eventdata->fullmessage      = html_to_text($htmlmessage);
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml  = $htmlmessage;
-            $eventdata->smallmessage     = $subject;
+            $eventdata->smallmessage     = '';
             $eventdata->courseid         = $course->id;
             $eventdata->contexturl       = $link3;
             $eventdata->contexturlname   = $feedback->name;

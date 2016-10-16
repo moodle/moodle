@@ -3037,7 +3037,7 @@ function feedback_send_email($cm, $feedback, $course, $user) {
                 $eventdata->fullmessage      = $posttext;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $posthtml;
-                $eventdata->smallmessage     = $postsubject;
+                $eventdata->smallmessage     = '';
                 $eventdata->courseid         = $course->id;
                 $eventdata->contexturl       = $info->url;
                 $eventdata->contexturlname   = $info->feedback;
@@ -3053,7 +3053,7 @@ function feedback_send_email($cm, $feedback, $course, $user) {
                 $eventdata->fullmessage      = $posttext;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $posthtml;
-                $eventdata->smallmessage     = $postsubject;
+                $eventdata->smallmessage     = '';
                 $eventdata->courseid         = $course->id;
                 $eventdata->contexturl       = $info->url;
                 $eventdata->contexturlname   = $info->feedback;
@@ -3115,7 +3115,7 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $eventdata->fullmessage      = $posttext;
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml  = $posthtml;
-            $eventdata->smallmessage     = $postsubject;
+            $eventdata->smallmessage     = '';
             $eventdata->courseid         = $course->id;
             $eventdata->contexturl       = $info->url;
             $eventdata->contexturlname   = $info->feedback;
