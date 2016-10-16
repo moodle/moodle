@@ -119,7 +119,7 @@ information provided here is intended especially for developers.
 * Webservice function mod_assign_get_submissions returns a new field 'gradingstatus' from each submission.
 * The return signature for the antivirus::scan_file() function has changed.
   The calling function will now handle removal of infected files from Moodle based on the new integer return value.
-* The first parameter $eventdata of \core\manager::send_message() should be \core\message. usage of \stdClass is depecated.
+* The first parameter $eventdata of \core\manager::send_message() should be \core\message. Use of \stdClass is depecated.
 * message_sent::create_from_ids has an additional required parameter $courseid with a default value of SITEID.
 
 === 3.1 ===

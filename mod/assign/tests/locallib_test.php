@@ -1263,6 +1263,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         $this->preventResetByRollback();
         $sink = $this->redirectEvents();
+        $this->expectOutputRegex('/Done processing 1 assignment submissions/');
 
         assign::cron();
 

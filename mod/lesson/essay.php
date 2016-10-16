@@ -257,10 +257,6 @@ switch ($mode) {
                 $a->lesson = format_string($lesson->name, true);
 
                 // Fetch message HTML and plain text formats
-                $b = new stdClass();
-                $b->essay = format_string($pages[$attempt->pageid]->title, true);
-                $b->lesson = $lesson->properties()->name;
-                $b->course = $course->idnumber ? $course->idnumber : $course->fullname;
                 $message  = get_string('essayemailmessage2', 'lesson', $a);
                 $plaintext = format_text_email($message, FORMAT_HTML);
 
@@ -279,7 +275,7 @@ switch ($mode) {
                 $eventdata->fullmessage      = $plaintext;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $message;
-                $eventdata->smallmessage     = $smallmessage;
+                $eventdata->smallmessage     = '';
                 $eventdata->contexturl       = $contexturl;
 
                 // Required for messaging framework

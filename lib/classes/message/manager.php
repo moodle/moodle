@@ -68,7 +68,7 @@ class manager {
                 $eventdata->courseid = null;
             }
 
-            debugging('eventdata as \stdClass is deprecated. Please use core\message\message instead.', DEBUG_DEVELOPER);
+            debugging('eventdata as \stdClass is deprecated. Please use \core\message\message instead.', DEBUG_DEVELOPER);
         }
 
         require_once($CFG->dirroot.'/message/lib.php'); // This is most probably already included from messagelib.php file.

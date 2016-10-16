@@ -524,6 +524,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $userfrom = core_user::get_noreply_user();
         $userfrom->maildisplay = true;
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = $course->id;
         $eventdata->component         = 'moodle';
         $eventdata->name              = 'badgecreatornotice';
         $eventdata->userfrom          = $userfrom;

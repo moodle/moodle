@@ -51,7 +51,7 @@ final class util {
             $message .= "$key => $value\n";
         }
 
-        $eventdata = new \stdClass();
+        $eventdata = new \core\message\message();
         $eventdata->modulename        = 'moodle';
         $eventdata->component         = 'enrol_paypal';
         $eventdata->name              = 'paypal_enrolment';

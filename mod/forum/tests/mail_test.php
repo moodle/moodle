@@ -275,6 +275,7 @@ class mod_forum_mail_testcase extends advanced_testcase {
         // core\event\message_sent
         // core\event\message_viewed.
         $this->helper->eventsink = $this->redirectEvents();
+        $this->expectOutputRegex('/Processing user/');
 
         forum_cron();
 
