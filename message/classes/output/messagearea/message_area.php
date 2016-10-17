@@ -85,10 +85,8 @@ class message_area implements templatable, renderable {
         $data->userid = $this->userid;
         $contacts = new contacts($this->otheruserid, $this->contacts);
         $data->contacts = $contacts->export_for_template($output);
-        if ($this->messages) {
-            $messages = new messages($this->userid, $this->otheruserid, $this->messages);
-            $data->messages = $messages->export_for_template($output);
-        }
+        $messages = new messages($this->userid, $this->otheruserid, $this->messages);
+        $data->messages = $messages->export_for_template($output);
         $data->isconversation = true;
         $data->requestedconversation = $this->requestedconversation;
 
