@@ -190,12 +190,13 @@ if ($courseid != SITEID) {
             $ccontext = context_course::instance($c->id);
             $cfullname = format_string($c->fullname, true, array('context' => $ccontext));
             $header = '<a href="' . $CFG->wwwroot . '/course/view.php?id=' . $c->id . '">' . $cfullname . '</a>';
-            if (has_capability('moodle/notes:manage', context_course::instance($c->id))) {
+            $viewcoursenotes = has_capability('moodle/notes:view', $ccontext);
+            if (has_capability('moodle/notes:manage', $ccontext)) {
                 $addid = $c->id;
             } else {
                 $addid = 0;
             }
-            note_print_notes($header, $addid, $view, $c->id, $userid, NOTES_STATE_PUBLIC, 0);
+            note_print_notes($header, $addid, $viewcoursenotes, $c->id, $userid, NOTES_STATE_PUBLIC, 0);
         }
     }
 }
