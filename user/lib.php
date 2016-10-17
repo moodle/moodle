@@ -231,7 +231,7 @@ function user_get_default_fields() {
         'institution', 'interests', 'firstaccess', 'lastaccess', 'auth', 'confirmed',
         'idnumber', 'lang', 'theme', 'timezone', 'mailformat', 'description', 'descriptionformat',
         'city', 'url', 'country', 'profileimageurlsmall', 'profileimageurl', 'customfields',
-        'groups', 'roles', 'preferences', 'enrolledcourses'
+        'groups', 'roles', 'preferences', 'enrolledcourses', 'suspended'
     );
 }
 
@@ -442,6 +442,9 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     }
     if (in_array('msn', $userfields) && $user->msn && (!isset($hiddenfields['msnid']) or $isadmin)) {
         $userdetails['msn'] = $user->msn;
+    }
+    if (in_array('suspended', $userfields) && (!isset($hiddenfields['suspended']) or $isadmin)) {
+        $userdetails['suspended'] = (bool)$user->suspended;
     }
 
     if (in_array('firstaccess', $userfields) && (!isset($hiddenfields['firstaccess']) or $isadmin)) {
