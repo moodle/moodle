@@ -2115,7 +2115,9 @@ class core_message_external extends external_api {
         $form = new stdClass();
 
         foreach ($formvalues as $formvalue) {
-            $form->$formvalue['name'] = $formvalue['value'];
+            // Curly braces to ensure interpretation is consistent between
+            // php 5 and php 7.
+            $form->{$formvalue['name']} = $formvalue['value'];
         }
 
         $processor->process_form($form, $preferences);
