@@ -181,7 +181,7 @@ abstract class testing_util {
      * @return bool
      */
     public static function is_test_data_updated() {
-        global $CFG;
+        global $DB;
 
         $framework = self::get_framework();
 
@@ -201,7 +201,8 @@ abstract class testing_util {
             return false;
         }
 
-        $dbhash = get_config('core', $framework . 'test');
+        // A direct database request must be used to avoid any possible caching of an older value.
+        $dbhash = $DB->get_field('config', 'value', array('name' => $framework . 'test'));
         if ($hash !== $dbhash) {
             return false;
         }
