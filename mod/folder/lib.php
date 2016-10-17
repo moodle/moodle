@@ -569,7 +569,7 @@ function folder_downloaded($folder, $course, $cm, $context) {
  * @param int $groupid not used, but required for compatibilty with other modules
  */
 function folder_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
-    global $COURSE, $DB;
+    global $COURSE, $DB, $OUTPUT;
 
     if ($COURSE->id == $courseid) {
         $course = $COURSE;
