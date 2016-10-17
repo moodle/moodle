@@ -2299,5 +2299,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016101401.02);
     }
 
+    if ($oldversion < 2016102700.01) {
+
+        // Force uninstall of deleted authentication plugin.
+        if (!file_exists("$CFG->dirroot/auth/radius")) {
+            // Leave settings inplace if there are radius users.
+            if (!$DB->record_exists('user', array('auth' => 'radius', 'deleted' => 0))) {
+                // Remove all other associated config.
+                unset_all_config_for_plugin('auth/radius');
+                // The version number for radius is in this format.
+                unset_all_config_for_plugin('auth_radius');
+            }
+        }
+        upgrade_main_savepoint(true, 2016102700.01);
+    }
+
     return true;
 }
