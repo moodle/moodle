@@ -57,73 +57,33 @@ function theme_boost_get_extra_scss($theme) {
 }
 
 /**
- * Get additional SCSS variables.
+ * Get SCSS to prepend.
  *
  * @param theme_config $theme The theme config object.
  * @return array
  */
-function theme_boost_get_scss_variables($theme) {
-    $variables = [];
+function theme_boost_get_pre_scss($theme) {
+    $scss = '';
     $configurable = [
         // Config key => [variableName, ...].
         'brandcolor' => ['brand-primary'],
     ];
 
+    // Prepend variables first.
     foreach ($configurable as $configkey => $targets) {
         $value = $theme->settings->{$configkey};
         if (empty($value)) {
             continue;
         }
-        array_map(function($target) use (&$variables, $value) {
-            $variables[$target] = $value;
+        array_map(function($target) use (&$scss, $value) {
+            $scss .= '$' . $target . ': ' . $value . ";\n";
         }, (array) $targets);
     }
 
-    if (!empty($theme->settings->scss_variables)) {
-        $variables = array_merge($variables, theme_boost_parse_scss_variables($theme->settings->scss_variables));
+    // Prepend pre-scss.
+    if (!empty($theme->settings->scsspre)) {
+        $scss .= $theme->settings->scsspre;
     }
 
-    return $variables;
-}
-
-/**
- * Parse a string into SCSS variables.
- *
- * - One variable definition per line,
- * - The variable name is separated from the value by a colon,
- * - The dollar sign is optional,
- * - The trailing semi-colon is optional,
- * - CSS comments (starting with //) are accepted
- * - Variables names can only contain letters, numbers, hyphens and underscores.
- *
- * @param string $data The string to parse from.
- * @param bool $lenient When non lenient, an exception will be thrown when a line cannot be parsed.
- * @return array
- */
-function theme_boost_parse_scss_variables($data, $lenient = true) {
-    $variables = [];
-    $lines = explode("\n", $data);
-    $i = 0;
-
-    foreach ($lines as $line) {
-        $i++;
-        if (preg_match('@^\s*//@', $line)) {
-            continue;
-        }
-
-        $parts = explode(':', trim($line));
-        $variable = ltrim($parts[0], '$ ');
-        $value = rtrim(ltrim(isset($parts[1]) ? $parts[1] : ''), "; ");
-
-        if (empty($variable) || !preg_match('/^[a-z0-9_-]+$/i', $variable) || (empty($value) && !is_numeric($value))) {
-            if ($lenient) {
-                continue;
-            }
-            throw new moodle_exception('errorparsingscssvariables', 'theme_boost', null, $i);
-        }
-
-        $variables[$variable] = $value;
-    }
-
-    return $variables;
+    return $scss;
 }
