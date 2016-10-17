@@ -1109,6 +1109,8 @@ tr.flagged-tag a {
   display: inline;
   float: none;
   clear: none;
+  width: auto;
+  margin: 0;
 }
 #page-enrol-users #filterform select,
 #page-enrol-users #filterform .ftext input {

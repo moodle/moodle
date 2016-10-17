@@ -2298,18 +2298,18 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
         e.preventDefault();
         var target = e.target.ancestor('li'),
             comment = target.getData('comment'),
-            editor = this.get('editor');
+            editor = this.get('editor'),
+            pageselect = editor.get_dialogue_element(SELECTOR.PAGESELECT);
 
         this.hide();
 
-        if (comment.pageno === editor.currentpage) {
-            comment.drawable.nodes[0].one('textarea').focus();
-        } else {
+        editor.currentpage = parseInt(pageselect.get('value'), 10);
+        if (comment.pageno !== editor.currentpage) {
             // Comment is on a different page.
             editor.currentpage = comment.pageno;
             editor.change_page();
-            comment.drawable.nodes[0].one('textarea').focus();
         }
+        comment.drawable.nodes[0].one('textarea').focus();
     },
 
     /**
@@ -4078,7 +4078,10 @@ EDITOR.prototype = {
      */
     save_current_page: function() {
         var ajaxurl = AJAXBASE,
+            pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT),
             config;
+
+        this.currentpage = parseInt(pageselect.get('value'), 10);
 
         config = {
             method: 'post',
@@ -4253,7 +4256,9 @@ EDITOR.prototype = {
      */
     previous_page: function(e) {
         e.preventDefault();
-        this.currentpage--;
+        var pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT);
+
+        this.currentpage = parseInt(pageselect.get('value'), 10) - 1;
         if (this.currentpage < 0) {
             this.currentpage = 0;
         }
@@ -4267,7 +4272,9 @@ EDITOR.prototype = {
      */
     next_page: function(e) {
         e.preventDefault();
-        this.currentpage++;
+        var pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT);
+
+        this.currentpage = parseInt(pageselect.get('value'), 10) + 1;
         if (this.currentpage >= this.pages.length) {
             this.currentpage = this.pages.length - 1;
         }
