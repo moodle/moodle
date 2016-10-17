@@ -1,8 +1,21 @@
+{{!
+@template theme_boost/core_form/element-radio-online
+
+   Example context (json):
+   {
+    "element": {
+        "id": "test-radio",
+        "name": "Test radio button",
+        "size": "10"
+      }
+   }
+
+}}
 <label class="form-check-inline {{#error}}has-danger{{/error}}">
 {{^element.frozen}}
 <input type="radio" name="{{element.name}}"
     id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
-    {{element.checked}}checked{{/element.checked}}
+    {{#element.checked}}checked{{/element.checked}}
     {{#error}}
         autofocus aria-describedby="id_error_{{element.name}}"
     {{/error}}
