@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -102,20 +101,7 @@ if ($submission->id and !$workshop->modifying_submission_allowed($USER->id)) {
     $editable = false;
 }
 
-if ($canviewall) {
-    // check this flag against the group membership yet
-    if (groups_get_activity_groupmode($workshop->cm) == SEPARATEGROUPS) {
-        // user must have accessallgroups or share at least one group with the submission author
-        if (!has_capability('moodle/site:accessallgroups', $workshop->context)) {
-            $usersgroups = groups_get_activity_allowed_groups($workshop->cm);
-            $authorsgroups = groups_get_all_groups($workshop->course->id, $submission->authorid, $workshop->cm->groupingid, 'g.id');
-            $sharedgroups = array_intersect_key($usersgroups, $authorsgroups);
-            if (empty($sharedgroups)) {
-                $canviewall = false;
-            }
-        }
-    }
-}
+$canviewall = $canviewall && $workshop->check_group_membership($submission->authorid);
 
 if ($editable and $workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_SUBMISSION
         and !has_capability('mod/workshop:manageexamples', $workshop->context)) {
@@ -366,6 +352,7 @@ if ($submission->id) {
 
 // If not at removal confirmation screen, some action buttons can be displayed.
 if (!$delete) {
+    // Display create/edit button.
     if ($editable) {
         if ($submission->id) {
             $btnurl = new moodle_url($PAGE->url, array('edit' => 'on', 'id' => $submission->id));
@@ -377,11 +364,13 @@ if (!$delete) {
         echo $output->single_button($btnurl, $btntxt, 'get');
     }
 
+    // Display delete button.
     if ($submission->id and $deletable) {
         $url = new moodle_url($PAGE->url, array('delete' => 1));
         echo $output->single_button($url, get_string('deletesubmission', 'workshop'), 'get');
     }
 
+    // Display assess button.
     if ($submission->id and !$edit and !$isreviewer and $canallocate and $workshop->assessing_allowed($USER->id)) {
         $url = new moodle_url($PAGE->url, array('assess' => 1));
         echo $output->single_button($url, get_string('assess', 'workshop'), 'post');
@@ -467,6 +456,26 @@ if (has_capability('mod/workshop:viewallassessments', $workshop->context) or ($o
 if (!$edit and $canoverride) {
     // display a form to override the submission grade
     $feedbackform->display();
+}
+
+// If portfolios are enabled and we are not on the edit/removal confirmation screen, display a button to export this page.
+// The export is not offered if the submission is seen as a published one (it has no relation to the current user.
+if (!empty($CFG->enableportfolios)) {
+    if (!$delete and !$edit and !$seenaspublished and $submission->id and ($ownsubmission or $canviewall or $isreviewer)) {
+        if (has_capability('mod/workshop:exportsubmissions', $workshop->context)) {
+            require_once($CFG->libdir.'/portfoliolib.php');
+
+            $button = new portfolio_add_button();
+            $button->set_callback_options('mod_workshop_portfolio_caller', array(
+                'id' => $workshop->cm->id,
+                'submissionid' => $submission->id,
+            ), 'mod_workshop');
+            $button->set_formats(PORTFOLIO_FORMAT_RICHHTML);
+            echo html_writer::start_tag('div', array('class' => 'singlebutton'));
+            echo $button->to_html(PORTFOLIO_ADD_FULL_FORM, get_string('exportsubmission', 'workshop'));
+            echo html_writer::end_tag('div');
+        }
+    }
 }
 
 echo $output->footer();
