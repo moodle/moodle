@@ -304,7 +304,12 @@ class assign_submission_file extends assign_submission_plugin {
                                      false);
 
         foreach ($files as $file) {
-            $result[$file->get_filepath().$file->get_filename()] = $file;
+            // Do we return the full folder path or just the file name?
+            if (isset($submission->exportfullpath) && $submission->exportfullpath == false) {
+                $result[$file->get_filename()] = $file;
+            } else {
+                $result[$file->get_filepath().$file->get_filename()] = $file;
+            }
         }
         return $result;
     }
