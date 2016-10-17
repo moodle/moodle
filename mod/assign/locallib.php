@@ -2902,28 +2902,51 @@ class assign {
                 }
 
                 if ($submission) {
+                    $downloadasfolders = get_user_preferences('assign_downloadasfolders', 1);
                     foreach ($this->submissionplugins as $plugin) {
                         if ($plugin->is_enabled() && $plugin->is_visible()) {
-                            $pluginfiles = $plugin->get_files($submission, $student);
-                            foreach ($pluginfiles as $zipfilepath => $file) {
-                                $subtype = $plugin->get_subtype();
-                                $type = $plugin->get_type();
-                                $zipfilename = basename($zipfilepath);
-                                $prefixedfilename = clean_filename($prefix .
-                                                                   '_' .
-                                                                   $subtype .
-                                                                   '_' .
-                                                                   $type .
-                                                                   '_');
-                                if ($type == 'file') {
-                                    $pathfilename = $prefixedfilename . $file->get_filepath() . $zipfilename;
-                                } else if ($type == 'onlinetext') {
-                                    $pathfilename = $prefixedfilename . '/' . $zipfilename;
-                                } else {
-                                    $pathfilename = $prefixedfilename . '/' . $zipfilename;
+                            if ($downloadasfolders) {
+                                // Create a folder for each user for each assignment plugin.
+                                // This is the default behavior for version of Moodle >= 3.1.
+                                $submission->exportfullpath = true;
+                                $pluginfiles = $plugin->get_files($submission, $student);
+                                foreach ($pluginfiles as $zipfilepath => $file) {
+                                    $subtype = $plugin->get_subtype();
+                                    $type = $plugin->get_type();
+                                    $zipfilename = basename($zipfilepath);
+                                    $prefixedfilename = clean_filename($prefix .
+                                                                       '_' .
+                                                                       $subtype .
+                                                                       '_' .
+                                                                       $type .
+                                                                       '_');
+                                    if ($type == 'file') {
+                                        $pathfilename = $prefixedfilename . $file->get_filepath() . $zipfilename;
+                                    } else if ($type == 'onlinetext') {
+                                        $pathfilename = $prefixedfilename . '/' . $zipfilename;
+                                    } else {
+                                        $pathfilename = $prefixedfilename . '/' . $zipfilename;
+                                    }
+                                    $pathfilename = clean_param($pathfilename, PARAM_PATH);
+                                    $filesforzipping[$pathfilename] = $file;
                                 }
-                                $pathfilename = clean_param($pathfilename, PARAM_PATH);
-                                $filesforzipping[$pathfilename] = $file;
+                            } else {
+                                // Create a single folder for all users of all assignment plugins.
+                                // This was the default behavior for version of Moodle < 3.1.
+                                $submission->exportfullpath = false;
+                                $pluginfiles = $plugin->get_files($submission, $student);
+                                foreach ($pluginfiles as $zipfilename => $file) {
+                                    $subtype = $plugin->get_subtype();
+                                    $type = $plugin->get_type();
+                                    $prefixedfilename = clean_filename($prefix .
+                                                                       '_' .
+                                                                       $subtype .
+                                                                       '_' .
+                                                                       $type .
+                                                                       '_' .
+                                                                       $zipfilename);
+                                    $filesforzipping[$prefixedfilename] = $file;
+                                }
                             }
                         }
                     }
@@ -3679,6 +3702,7 @@ class assign {
         $showquickgrading = empty($controller) && $this->can_grade();
         $quickgrading = get_user_preferences('assign_quickgrading', false);
         $showonlyactiveenrolopt = has_capability('moodle/course:viewsuspendedusers', $this->context);
+        $downloadasfolders = get_user_preferences('assign_downloadasfolders', 1);
 
         $markingallocation = $this->get_instance()->markingworkflow &&
             $this->get_instance()->markingallocation &&
@@ -3715,7 +3739,8 @@ class assign {
                                           'markingworkflowopt'=>$markingworkflowoptions,
                                           'markingallocationopt'=>$markingallocationoptions,
                                           'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
-                                          'showonlyactiveenrol'=>$this->show_only_active_users());
+                                          'showonlyactiveenrol' => $this->show_only_active_users(),
+                                          'downloadasfolders' => $downloadasfolders);
 
         $classoptions = array('class'=>'gradingoptionsform');
         $gradingoptionsform = new mod_assign_grading_options_form(null,
@@ -6178,8 +6203,8 @@ class assign {
                                       'markingworkflowopt' => $markingworkflowoptions,
                                       'markingallocationopt' => $markingallocationoptions,
                                       'showonlyactiveenrolopt'=>$showonlyactiveenrolopt,
-                                      'showonlyactiveenrol'=>$this->show_only_active_users());
-
+                                      'showonlyactiveenrol' => $this->show_only_active_users(),
+                                      'downloadasfolders' => get_user_preferences('assign_downloadasfolders', 1));
         $mform = new mod_assign_grading_options_form(null, $gradingoptionsparams);
         if ($formdata = $mform->get_data()) {
             set_user_preference('assign_perpage', $formdata->perpage);
@@ -6194,6 +6219,11 @@ class assign {
             }
             if ($showquickgrading) {
                 set_user_preference('assign_quickgrading', isset($formdata->quickgrading));
+            }
+            if (isset($formdata->downloadasfolders)) {
+                set_user_preference('assign_downloadasfolders', 1); // Enabled.
+            } else {
+                set_user_preference('assign_downloadasfolders', 0); // Disabled.
             }
             if (!empty($showonlyactiveenrolopt)) {
                 $showonlyactiveenrol = isset($formdata->showonlyactiveenrol);

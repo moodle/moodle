@@ -86,6 +86,13 @@ class mod_assign_grading_options_form extends moodleform {
             $mform->setDefault('showonlyactiveenrol', $instance['showonlyactiveenrol']);
         }
 
+        // Place student downloads in seperate folders.
+        if ($instance['submissionsenabled']) {
+            $mform->addElement('checkbox', 'downloadasfolders', get_string('downloadasfolders', 'assign'), '', $dirtyclass);
+            $mform->addHelpButton('downloadasfolders', 'downloadasfolders', 'assign');
+            $mform->setDefault('downloadasfolders', $instance['downloadasfolders']);
+        }
+
         // Hidden params.
         $mform->addElement('hidden', 'contextid', $instance['contextid']);
         $mform->setType('contextid', PARAM_INT);
