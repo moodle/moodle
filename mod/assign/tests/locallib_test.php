@@ -929,7 +929,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEmpty($notices, 'No errors on save submission');
 
         // Set active groups to all groups.
-        $this->setUser($this->teachers[0]);
+        $this->setUser($this->editingteachers[0]);
         $SESSION->activegroup[$this->course->id]['aag'][0] = 0;
         $this->assertEquals(1, $assign->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
 
@@ -1055,7 +1055,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(1, $assign2->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
 
         // Set active groups to all groups.
-        $this->setUser($this->teachers[0]);
+        $this->setUser($this->editingteachers[0]);
         $SESSION->activegroup[$this->course->id]['aag'][0] = 0;
         $this->assertEquals(1, $assign2->count_submissions_with_status(ASSIGN_SUBMISSION_STATUS_SUBMITTED));
 
