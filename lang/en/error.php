@@ -562,6 +562,7 @@ $string['usernotdeletedadmin'] = 'User not deleted - can not delete administrato
 $string['usernotdeletederror'] = 'User not deleted - error';
 $string['usernotdeletedmissing'] = 'User not deleted - could not find the username';
 $string['usernotdeletedoff'] = 'User not deleted - deleting not allowed';
+$string['usernotfullysetup'] = 'User not fully set-up';
 $string['usernotincourse'] = 'This user is not in this course!';
 $string['usernotrenamedadmin'] = 'Cannot rename admin accounts';
 $string['usernotrenamedexists'] = 'User not renamed - the new username is already in use';
