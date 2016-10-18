@@ -76,6 +76,7 @@ $string['badges:deletebadge'] = 'Delete badges';
 $string['badges:earnbadge'] = 'Earn badge';
 $string['badges:manageglobalsettings'] = 'Manage badges global settings';
 $string['badges:manageownbadges'] = 'View and manage own earned badges';
+$string['badges:revokebadge'] = 'Revoke badge from a user';
 $string['badges:viewawarded'] = 'View users who earned a specific badge without being able to award a badge';
 $string['badges:viewbadges'] = 'View available badges without earning them';
 $string['badges:viewotherbadges'] = 'View public badges in other users\' profiles';

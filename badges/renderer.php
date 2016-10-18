@@ -115,6 +115,12 @@ class core_badges_renderer extends plugin_renderer_base {
                     'value' => $this->output->larrow() . ' ' . get_string('award', 'badges'),
                     'class' => 'actionbutton')
                 );
+        $actioncell->text .= html_writer::empty_tag('input', array(
+                    'type' => 'submit',
+                    'name' => 'revoke',
+                    'value' => get_string('revoke', 'badges') . ' ' . $this->output->rarrow(),
+                    'class' => 'actionbutton')
+                );
         $actioncell->text .= html_writer::end_tag('div', array());
         $actioncell->attributes['class'] = 'actions';
         $potentialcell = new html_table_cell();
