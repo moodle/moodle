@@ -106,7 +106,7 @@ class block_login extends block_base {
             $potentialidps = array();
             foreach ($authsequence as $authname) {
                 $authplugin = get_auth_plugin($authname);
-                $potentialidps = array_merge($potentialidps, $authplugin->loginpage_idp_list(empty($SESSION->wantsurl) ? '' : $SESSION->wantsurl));
+                $potentialidps = array_merge($potentialidps, $authplugin->loginpage_idp_list($this->page->url->out(false)));
             }
 
             if (!empty($potentialidps)) {

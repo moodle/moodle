@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 
 * New auth hook - pre_user_login_hook() - available, triggered right after the user object is created.
   This can be used to modify the user object before any authentication errors are raised.
+* The block_login now displays the loginpage_idp_list() links as well as main login page.
 
 === 3.0 ===
 
