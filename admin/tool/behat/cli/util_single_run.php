@@ -47,11 +47,13 @@ list($options, $unrecognized) = cli_get_params(
         'diag'        => false,
         'tags'        => '',
         'updatesteps' => false,
-        'run-with-theme' => false,
         'optimize-runs' => '',
+        'add-core-features-to-theme' => false,
     ),
     array(
         'h' => 'help',
+        'o' => 'optimize-runs',
+        'a' => 'add-core-features-to-theme',
     )
 );
 
@@ -73,8 +75,9 @@ Options:
 --disable        Disables test environment
 --diag           Get behat test environment status code
 --updatesteps    Update feature step file.
---optimize-runs  Split features with specified tags in all parallel runs.
---run-with-theme Run all core features with specified theme.
+
+-o, --optimize-runs Split features with specified tags in all parallel runs.
+-a, --add-core-features-to-theme Add all core features to specified theme's
 
 -h, --help Print out this help
 
@@ -180,7 +183,7 @@ if ($options['install']) {
     }
 
     // Enable test mode.
-    behat_util::start_test_mode($options['run-with-theme'], $options['optimize-runs'], $parallel, $run);
+    behat_util::start_test_mode($options['add-core-features-to-theme'], $options['optimize-runs'], $parallel, $run);
 
     // This is only displayed once for parallel install.
     if (empty($run)) {

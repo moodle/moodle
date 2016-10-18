@@ -597,5 +597,77 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         // There are 6 step definitions.
         $this->assertCount(6, $config['default']['extensions']['Moodle\BehatExtension']['steps_definitions']);
     }
+
+    /**
+     * Behat config for blacklisted tags.
+     */
+    public function test_core_features_to_include_in_specified_theme() {
+
+        $mockbuilder = $this->getMockBuilder('behat_config_util');
+        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes'));
+
+        $behatconfigutil = $mockbuilder->getMock();
+
+        $behatconfigutil = $this->get_behat_config_util($behatconfigutil);
+
+        // Check features when, no theme is specified.
+        $behatconfigutil->set_theme_suite_to_include_core_features('');
+        $config = $behatconfigutil->get_config_file_contents($this->corefatures, $this->corecontexts);
+        $suites = $config['default']['suites'];
+        foreach ($this->featurepaths as $themename => $paths) {
+            $this->assertCount(count($paths), $suites[$themename]['paths']);
+
+            foreach ($paths as $key => $feature) {
+                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+            }
+        }
+
+        // Check features when all themes are specified.
+        $featurepaths = $this->featurepaths;
+        $featurepaths['withfeatures'] = array_merge ($featurepaths['default'], $featurepaths['withfeatures']);
+        $featurepaths['nofeatures'] = array_merge ($featurepaths['default'], $featurepaths['nofeatures']);
+
+        $behatconfigutil->set_theme_suite_to_include_core_features('ALL');
+        $config = $behatconfigutil->get_config_file_contents($this->corefatures, $this->corecontexts);
+        $suites = $config['default']['suites'];
+        foreach ($featurepaths as $themename => $paths) {
+            $this->assertCount(count($paths), $suites[$themename]['paths']);
+
+            foreach ($paths as $key => $feature) {
+                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+            }
+        }
+
+        // Check features when all themes are specified.
+        $featurepaths = $this->featurepaths;
+        $featurepaths['withfeatures'] = array_merge ($featurepaths['default'], $featurepaths['withfeatures']);
+        $featurepaths['nofeatures'] = array_merge ($featurepaths['default'], $featurepaths['nofeatures']);
+
+        $behatconfigutil->set_theme_suite_to_include_core_features('withfeatures, nofeatures');
+        $config = $behatconfigutil->get_config_file_contents($this->corefatures, $this->corecontexts);
+        $suites = $config['default']['suites'];
+        foreach ($featurepaths as $themename => $paths) {
+            $this->assertCount(count($paths), $suites[$themename]['paths']);
+
+            foreach ($paths as $key => $feature) {
+                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+            }
+        }
+
+        // Check features when specified themes are passed..
+        $featurepaths = $this->featurepaths;
+        $featurepaths['nofeatures'] = array_merge ($featurepaths['default'], $featurepaths['nofeatures']);
+
+        $behatconfigutil->set_theme_suite_to_include_core_features('nofeatures');
+        $config = $behatconfigutil->get_config_file_contents($this->corefatures, $this->corecontexts);
+        $suites = $config['default']['suites'];
+        foreach ($featurepaths as $themename => $paths) {
+            $this->assertCount(count($paths), $suites[$themename]['paths']);
+
+            foreach ($paths as $key => $feature) {
+                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+            }
+        }
+    }
 }
 // @codeCoverageIgnoreEnd
