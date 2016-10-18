@@ -1067,7 +1067,14 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
 
         $DB->set_field('user', 'lastname', '', array('id' => $USER->id));
         $USER->lastname = '';
-        $this->expectException('require_login_exception');
-        $result = core_user_external::agree_site_policy();
+        try {
+            $result = core_user_external::agree_site_policy();
+            $this->fail('Expecting \'usernotfullysetup\' moodle_exception to be thrown');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('usernotfullysetup', $e->errorcode);
+        } catch (Exception $e) {
+            $this->fail('Expecting \'usernotfullysetup\' moodle_exception to be thrown.');
+        }
+
     }
 }
