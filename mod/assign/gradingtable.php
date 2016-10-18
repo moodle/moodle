@@ -181,8 +181,8 @@ class assign_grading_table extends table_sql implements renderable {
         if (!empty($this->assignment->get_instance()->blindmarking)) {
             $from .= 'LEFT JOIN {assign_user_mapping} um
                              ON u.id = um.userid
-                            AND um.assignment = :assignmentid4 ';
-            $params['assignmentid4'] = (int)$this->assignment->get_instance()->id;
+                            AND um.assignment = :assignmentid5 ';
+            $params['assignmentid5'] = (int)$this->assignment->get_instance()->id;
             $fields .= ', um.id as recordid ';
         }
 
