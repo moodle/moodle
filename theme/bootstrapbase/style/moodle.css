@@ -6190,6 +6190,9 @@ a.ygtvspacer:hover {
   border-radius: 4px;
   position: relative;
 }
+.messaging-area-container .messaging-area .messages-area .messages .message .content .text {
+  display: block;
+}
 .messaging-area-container .messaging-area .messages-area .messages .message .content .text p {
   margin: 0;
 }
