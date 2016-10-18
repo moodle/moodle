@@ -38,6 +38,8 @@ $string['pluginname'] = 'Book';
 $string['pluginadministration'] = 'Book administration';
 
 $string['toc'] = 'Table of contents';
+$string['chapterandsubchaptersdeleted'] = 'Chapter "{$a->title}" and its {$a->subchapters} subchapters were deleted';
+$string['chapterdeleted'] = 'Chapter "{$a->title}" was deleted';
 $string['customtitles'] = 'Custom titles';
 $string['customtitles_help'] = 'Normally the chapter title is displayed in the table of contents (TOC) AND as a heading above the content.
 
