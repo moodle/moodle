@@ -102,7 +102,7 @@ class behat_config_util {
      * @param bool $themetoset
      */
     public function set_theme_suite_to_include_core_features($themetoset) {
-        // If no value passed to --run-with-theme or ALL is passed, then set core features for all themes.
+        // If no value passed to --add-core-features-to-theme or ALL is passed, then set core features for all themes.
         if (!empty($themetoset)) {
             if (is_number($themetoset) || is_bool($themetoset) || (self::ALL_THEMES_TO_RUN === strtoupper($themetoset))) {
                 $this->themesuitewithallfeatures = self::ALL_THEMES_TO_RUN;
