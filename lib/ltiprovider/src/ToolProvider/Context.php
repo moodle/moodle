@@ -36,6 +36,12 @@ class Context
  */
     public $settings = null;
 /**
+ * Context type.
+ *
+ * @var string $type
+ */
+    public $type = null;
+/**
  * Date/time when the object was created.
  *
  * @var int $created

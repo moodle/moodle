@@ -1,8 +1,15 @@
 LTI Tool Provider Library PHP
 =============================
 
-No changes from the upstream version have been made, it is recommended by upstream
-to install these depdencies via composer - but the composer installation is bundled
+Some changes from the upstream version have been made:
+* Define consumer profile member variable for ToolConsumer class
+* Added context type property for Context class
+* Set context type if 'context_type' parameter was submitted through POST
+These changes can be reverted once the following pull requests have been integrated upstream:
+* https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/10/commits/a9a1641f1a593eba4638133245c21d9ad47d8680
+* https://github.com/IMSGlobal/LTI-Tool-Provider-Library-PHP/pull/11/commits/0bae60389bd020a02be5554516b86336e651e237
+
+It is recommended by upstream to install depdencies via composer - but the composer installation is bundled
 with an autoloader so it's better to do it manually.
 
 Information

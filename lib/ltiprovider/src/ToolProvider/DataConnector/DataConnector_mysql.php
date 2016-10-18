@@ -390,12 +390,12 @@ class DataConnector_mysql extends DataConnector
 
         $ok = false;
         if (!empty($context->getRecordId())) {
-            $sql = sprintf('SELECT context_pk, consumer_pk, lti_context_id, settings, created, updated ' .
+            $sql = sprintf('SELECT context_pk, consumer_pk, lti_context_id, type, settings, created, updated ' .
                            "FROM {$this->dbTableNamePrefix}" . DataConnector::CONTEXT_TABLE_NAME . ' ' .
                            'WHERE (context_pk = %d)',
                            $context->getRecordId());
         } else {
-            $sql = sprintf('SELECT context_pk, consumer_pk, lti_context_id, settings, created, updated ' .
+            $sql = sprintf('SELECT context_pk, consumer_pk, lti_context_id, type, settings, created, updated ' .
                            "FROM {$this->dbTableNamePrefix}" . DataConnector::CONTEXT_TABLE_NAME . ' ' .
                            'WHERE (consumer_pk = %d) AND (lti_context_id = %s)',
                            $context->getConsumer()->getRecordId(), DataConnector::quoted($context->ltiContextId));
@@ -407,6 +407,7 @@ class DataConnector_mysql extends DataConnector
                 $context->setRecordId(intval($row->context_pk));
                 $context->setConsumerId(intval($row->consumer_pk));
                 $context->ltiContextId = $row->lti_context_id;
+                $context->type = $row->type;
                 $settings = unserialize($row->settings);
                 if (!is_array($settings)) {
                     $settings = array();
@@ -439,17 +440,20 @@ class DataConnector_mysql extends DataConnector
         $consumer_pk = $context->getConsumer()->getRecordId();
         if (empty($id)) {
             $sql = sprintf("INSERT INTO {$this->dbTableNamePrefix}" . DataConnector::CONTEXT_TABLE_NAME . ' (consumer_pk, lti_context_id, ' .
-                           'settings, created, updated) ' .
-                           'VALUES (%d, %s, %s, %s, %s)',
+                           'type, settings, created, updated) ' .
+                           'VALUES (%d, %s, %s, %s, %s, %s)',
                $consumer_pk, DataConnector::quoted($context->ltiContextId),
+               DataConnector::quoted($context->type),
                DataConnector::quoted($settingsValue),
                DataConnector::quoted($now), DataConnector::quoted($now));
         } else {
             $sql = sprintf("UPDATE {$this->dbTableNamePrefix}" . DataConnector::CONTEXT_TABLE_NAME . ' SET ' .
-                           'lti_context_id = %s, settings = %s, '.
+                           'lti_context_id = %s, type = %s, settings = %s, '.
                            'updated = %s' .
                            'WHERE (consumer_pk = %d) AND (context_pk = %d)',
-               DataConnector::quoted($context->ltiContextId), DataConnector::quoted($settingsValue),
+               DataConnector::quoted($context->ltiContextId),
+               DataConnector::quoted($context->type),
+               DataConnector::quoted($settingsValue),
                DataConnector::quoted($now), $consumer_pk, $id);
         }
         $ok = mysql_query($sql);
