@@ -5618,3 +5618,756 @@ function message_is_user_blocked($recipient, $sender = null) {
 
     return \core_message\api::is_user_blocked($recipient, $sender);
 }
+
+/**
+ * Display logs.
+ *
+ * @deprecated since 3.2
+ */
+function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
+                   $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+
+    global $CFG, $DB, $OUTPUT;
+
+    if (!$logs = build_logs_array($course, $user, $date, $order, $page*$perpage, $perpage,
+                       $modname, $modid, $modaction, $groupid)) {
+        echo $OUTPUT->notification("No logs found!");
+        echo $OUTPUT->footer();
+        exit;
+    }
+
+    $courses = array();
+
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    } else {
+        $courses[$course->id] = $course->shortname;
+    }
+
+    $totalcount = $logs['totalcount'];
+    $ldcache = array();
+
+    $strftimedatetime = get_string("strftimedatetime");
+
+    echo "<div class=\"info\">\n";
+    print_string("displayingrecords", "", $totalcount);
+    echo "</div>\n";
+
+    echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage");
+
+    $table = new html_table();
+    $table->classes = array('logtable','generaltable');
+    $table->align = array('right', 'left', 'left');
+    $table->head = array(
+        get_string('time'),
+        get_string('ip_address'),
+        get_string('fullnameuser'),
+        get_string('action'),
+        get_string('info')
+    );
+    $table->data = array();
+
+    if ($course->id == SITEID) {
+        array_unshift($table->align, 'left');
+        array_unshift($table->head, get_string('course'));
+    }
+
+    // Make sure that the logs array is an array, even it is empty, to avoid warnings from the foreach.
+    if (empty($logs['logs'])) {
+        $logs['logs'] = array();
+    }
+
+    foreach ($logs['logs'] as $log) {
+
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld && is_numeric($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if ($ld->mtable == 'user' && $ld->field == $DB->sql_concat('firstname', "' '" , 'lastname')) {
+                $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
+            } else {
+                $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
+            }
+        }
+
+        //Filter log->info
+        $log->info = format_string($log->info);
+
+        // If $log->url has been trimmed short by the db size restriction
+        // code in add_to_log, keep a note so we don't add a link to a broken url
+        $brokenurl=(core_text::strlen($log->url)==100 && core_text::substr($log->url,97)=='...');
+
+        $row = array();
+        if ($course->id == SITEID) {
+            if (empty($log->course)) {
+                $row[] = get_string('site');
+            } else {
+                $row[] = "<a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">". format_string($courses[$log->course])."</a>";
+            }
+        }
+
+        $row[] = userdate($log->time, '%a').' '.userdate($log->time, $strftimedatetime);
+
+        $link = new moodle_url("/iplookup/index.php?ip=$log->ip&user=$log->userid");
+        $row[] = $OUTPUT->action_link($link, $log->ip, new popup_action('click', $link, 'iplookup', array('height' => 440, 'width' => 700)));
+
+        $row[] = html_writer::link(new moodle_url("/user/view.php?id={$log->userid}&course={$log->course}"), fullname($log, has_capability('moodle/site:viewfullnames', context_course::instance($course->id))));
+
+        $displayaction="$log->module $log->action";
+        if ($brokenurl) {
+            $row[] = $displayaction;
+        } else {
+            $link = make_log_url($log->module,$log->url);
+            $row[] = $OUTPUT->action_link($link, $displayaction, new popup_action('click', $link, 'fromloglive'), array('height' => 440, 'width' => 700));
+        }
+        $row[] = $log->info;
+        $table->data[] = $row;
+    }
+
+    echo html_writer::table($table);
+    echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage");
+}
+
+/**
+ * Display MNET logs.
+ *
+ * @deprecated since 3.2
+ */
+function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
+                   $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+
+    global $CFG, $DB, $OUTPUT;
+
+    if (!$logs = build_mnet_logs_array($hostid, $course, $user, $date, $order, $page*$perpage, $perpage,
+                       $modname, $modid, $modaction, $groupid)) {
+        echo $OUTPUT->notification("No logs found!");
+        echo $OUTPUT->footer();
+        exit;
+    }
+
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname,c.visible')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    }
+
+    $totalcount = $logs['totalcount'];
+    $ldcache = array();
+
+    $strftimedatetime = get_string("strftimedatetime");
+
+    echo "<div class=\"info\">\n";
+    print_string("displayingrecords", "", $totalcount);
+    echo "</div>\n";
+
+    echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage");
+
+    echo "<table class=\"logtable\" cellpadding=\"3\" cellspacing=\"0\">\n";
+    echo "<tr>";
+    if ($course->id == SITEID) {
+        echo "<th class=\"c0 header\">".get_string('course')."</th>\n";
+    }
+    echo "<th class=\"c1 header\">".get_string('time')."</th>\n";
+    echo "<th class=\"c2 header\">".get_string('ip_address')."</th>\n";
+    echo "<th class=\"c3 header\">".get_string('fullnameuser')."</th>\n";
+    echo "<th class=\"c4 header\">".get_string('action')."</th>\n";
+    echo "<th class=\"c5 header\">".get_string('info')."</th>\n";
+    echo "</tr>\n";
+
+    if (empty($logs['logs'])) {
+        echo "</table>\n";
+        return;
+    }
+
+    $row = 1;
+    foreach ($logs['logs'] as $log) {
+
+        $log->info = $log->coursename;
+        $row = ($row + 1) % 2;
+
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if (0 && $ld && !empty($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+                $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
+            } else {
+                $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
+            }
+        }
+
+        //Filter log->info
+        $log->info = format_string($log->info);
+
+        echo '<tr class="r'.$row.'">';
+        if ($course->id == SITEID) {
+            $courseshortname = format_string($courses[$log->course], true, array('context' => context_course::instance(SITEID)));
+            echo "<td class=\"r$row c0\" >\n";
+            echo "    <a href=\"{$CFG->wwwroot}/course/view.php?id={$log->course}\">".$courseshortname."</a>\n";
+            echo "</td>\n";
+        }
+        echo "<td class=\"r$row c1\" align=\"right\">".userdate($log->time, '%a').
+             ' '.userdate($log->time, $strftimedatetime)."</td>\n";
+        echo "<td class=\"r$row c2\" >\n";
+        $link = new moodle_url("/iplookup/index.php?ip=$log->ip&user=$log->userid");
+        echo $OUTPUT->action_link($link, $log->ip, new popup_action('click', $link, 'iplookup', array('height' => 400, 'width' => 700)));
+        echo "</td>\n";
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', context_course::instance($course->id)));
+        echo "<td class=\"r$row c3\" >\n";
+        echo "    <a href=\"$CFG->wwwroot/user/view.php?id={$log->userid}\">$fullname</a>\n";
+        echo "</td>\n";
+        echo "<td class=\"r$row c4\">\n";
+        echo $log->action .': '.$log->module;
+        echo "</td>\n";
+        echo "<td class=\"r$row c5\">{$log->info}</td>\n";
+        echo "</tr>\n";
+    }
+    echo "</table>\n";
+
+    echo $OUTPUT->paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage");
+}
+
+/**
+ * Display logs in CSV format.
+ *
+ * @deprecated since 3.2
+ */
+function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
+                        $modid, $modaction, $groupid) {
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+
+    global $DB, $CFG;
+
+    require_once($CFG->libdir . '/csvlib.class.php');
+
+    $csvexporter = new csv_export_writer('tab');
+
+    $header = array();
+    $header[] = get_string('course');
+    $header[] = get_string('time');
+    $header[] = get_string('ip_address');
+    $header[] = get_string('fullnameuser');
+    $header[] = get_string('action');
+    $header[] = get_string('info');
+
+    if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
+                       $modname, $modid, $modaction, $groupid)) {
+        return false;
+    }
+
+    $courses = array();
+
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    } else {
+        $courses[$course->id] = $course->shortname;
+    }
+
+    $count=0;
+    $ldcache = array();
+    $tt = getdate(time());
+    $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
+
+    $strftimedatetime = get_string("strftimedatetime");
+
+    $csvexporter->set_filename('logs', '.txt');
+    $title = array(get_string('savedat').userdate(time(), $strftimedatetime));
+    $csvexporter->add_data($title);
+    $csvexporter->add_data($header);
+
+    if (empty($logs['logs'])) {
+        return true;
+    }
+
+    foreach ($logs['logs'] as $log) {
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld && is_numeric($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field ==  $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+                $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
+            } else {
+                $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
+            }
+        }
+
+        //Filter log->info
+        $log->info = format_string($log->info);
+        $log->info = strip_tags(urldecode($log->info));    // Some XSS protection
+
+        $coursecontext = context_course::instance($course->id);
+        $firstField = format_string($courses[$log->course], true, array('context' => $coursecontext));
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
+        $actionurl = $CFG->wwwroot. make_log_url($log->module,$log->url);
+        $row = array($firstField, userdate($log->time, $strftimedatetime), $log->ip, $fullname, $log->module.' '.$log->action.' ('.$actionurl.')', $log->info);
+        $csvexporter->add_data($row);
+    }
+    $csvexporter->download_file();
+    return true;
+}
+
+/**
+ * Display logs in XLS format.
+ *
+ * @deprecated since 3.2
+ */
+function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
+                        $modid, $modaction, $groupid) {
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+
+    global $CFG, $DB;
+
+    require_once("$CFG->libdir/excellib.class.php");
+
+    if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
+                       $modname, $modid, $modaction, $groupid)) {
+        return false;
+    }
+
+    $courses = array();
+
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    } else {
+        $courses[$course->id] = $course->shortname;
+    }
+
+    $count=0;
+    $ldcache = array();
+    $tt = getdate(time());
+    $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
+
+    $strftimedatetime = get_string("strftimedatetime");
+
+    $nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat', 'langconfig'),99,false);
+    $filename .= '.xls';
+
+    $workbook = new MoodleExcelWorkbook('-');
+    $workbook->send($filename);
+
+    $worksheet = array();
+    $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
+                        get_string('fullnameuser'),    get_string('action'), get_string('info'));
+
+    // Creating worksheets
+    for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
+        $sheettitle = get_string('logs').' '.$wsnumber.'-'.$nroPages;
+        $worksheet[$wsnumber] = $workbook->add_worksheet($sheettitle);
+        $worksheet[$wsnumber]->set_column(1, 1, 30);
+        $worksheet[$wsnumber]->write_string(0, 0, get_string('savedat').
+                                    userdate(time(), $strftimedatetime));
+        $col = 0;
+        foreach ($headers as $item) {
+            $worksheet[$wsnumber]->write(FIRSTUSEDEXCELROW-1,$col,$item,'');
+            $col++;
+        }
+    }
+
+    if (empty($logs['logs'])) {
+        $workbook->close();
+        return true;
+    }
+
+    $formatDate =& $workbook->add_format();
+    $formatDate->set_num_format(get_string('log_excel_date_format'));
+
+    $row = FIRSTUSEDEXCELROW;
+    $wsnumber = 1;
+    $myxls =& $worksheet[$wsnumber];
+    foreach ($logs['logs'] as $log) {
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld && is_numeric($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+                $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
+            } else {
+                $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
+            }
+        }
+
+        // Filter log->info
+        $log->info = format_string($log->info);
+        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
+
+        if ($nroPages>1) {
+            if ($row > EXCELROWS) {
+                $wsnumber++;
+                $myxls =& $worksheet[$wsnumber];
+                $row = FIRSTUSEDEXCELROW;
+            }
+        }
+
+        $coursecontext = context_course::instance($course->id);
+
+        $myxls->write($row, 0, format_string($courses[$log->course], true, array('context' => $coursecontext)), '');
+        $myxls->write_date($row, 1, $log->time, $formatDate); // write_date() does conversion/timezone support. MDL-14934
+        $myxls->write($row, 2, $log->ip, '');
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
+        $myxls->write($row, 3, $fullname, '');
+        $actionurl = $CFG->wwwroot. make_log_url($log->module,$log->url);
+        $myxls->write($row, 4, $log->module.' '.$log->action.' ('.$actionurl.')', '');
+        $myxls->write($row, 5, $log->info, '');
+
+        $row++;
+    }
+
+    $workbook->close();
+    return true;
+}
+
+/**
+ * Display logs in ODS format.
+ *
+ * @deprecated since 3.2
+ */
+function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
+                        $modid, $modaction, $groupid) {
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+
+    global $CFG, $DB;
+
+    require_once("$CFG->libdir/odslib.class.php");
+
+    if (!$logs = build_logs_array($course, $user, $date, $order, '', '',
+                       $modname, $modid, $modaction, $groupid)) {
+        return false;
+    }
+
+    $courses = array();
+
+    if ($course->id == SITEID) {
+        $courses[0] = '';
+        if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname')) {
+            foreach ($ccc as $cc) {
+                $courses[$cc->id] = $cc->shortname;
+            }
+        }
+    } else {
+        $courses[$course->id] = $course->shortname;
+    }
+
+    $ldcache = array();
+
+    $strftimedatetime = get_string("strftimedatetime");
+
+    $nroPages = ceil(count($logs)/(EXCELROWS-FIRSTUSEDEXCELROW+1));
+    $filename = 'logs_'.userdate(time(),get_string('backupnameformat', 'langconfig'),99,false);
+    $filename .= '.ods';
+
+    $workbook = new MoodleODSWorkbook('-');
+    $workbook->send($filename);
+
+    $worksheet = array();
+    $headers = array(get_string('course'), get_string('time'), get_string('ip_address'),
+                        get_string('fullnameuser'),    get_string('action'), get_string('info'));
+
+    // Creating worksheets
+    for ($wsnumber = 1; $wsnumber <= $nroPages; $wsnumber++) {
+        $sheettitle = get_string('logs').' '.$wsnumber.'-'.$nroPages;
+        $worksheet[$wsnumber] = $workbook->add_worksheet($sheettitle);
+        $worksheet[$wsnumber]->set_column(1, 1, 30);
+        $worksheet[$wsnumber]->write_string(0, 0, get_string('savedat').
+                                    userdate(time(), $strftimedatetime));
+        $col = 0;
+        foreach ($headers as $item) {
+            $worksheet[$wsnumber]->write(FIRSTUSEDEXCELROW-1,$col,$item,'');
+            $col++;
+        }
+    }
+
+    if (empty($logs['logs'])) {
+        $workbook->close();
+        return true;
+    }
+
+    $formatDate =& $workbook->add_format();
+    $formatDate->set_num_format(get_string('log_excel_date_format'));
+
+    $row = FIRSTUSEDEXCELROW;
+    $wsnumber = 1;
+    $myxls =& $worksheet[$wsnumber];
+    foreach ($logs['logs'] as $log) {
+        if (isset($ldcache[$log->module][$log->action])) {
+            $ld = $ldcache[$log->module][$log->action];
+        } else {
+            $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
+            $ldcache[$log->module][$log->action] = $ld;
+        }
+        if ($ld && is_numeric($log->info)) {
+            // ugly hack to make sure fullname is shown correctly
+            if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+                $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
+            } else {
+                $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
+            }
+        }
+
+        // Filter log->info
+        $log->info = format_string($log->info);
+        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
+
+        if ($nroPages>1) {
+            if ($row > EXCELROWS) {
+                $wsnumber++;
+                $myxls =& $worksheet[$wsnumber];
+                $row = FIRSTUSEDEXCELROW;
+            }
+        }
+
+        $coursecontext = context_course::instance($course->id);
+
+        $myxls->write_string($row, 0, format_string($courses[$log->course], true, array('context' => $coursecontext)));
+        $myxls->write_date($row, 1, $log->time);
+        $myxls->write_string($row, 2, $log->ip);
+        $fullname = fullname($log, has_capability('moodle/site:viewfullnames', $coursecontext));
+        $myxls->write_string($row, 3, $fullname);
+        $actionurl = $CFG->wwwroot. make_log_url($log->module,$log->url);
+        $myxls->write_string($row, 4, $log->module.' '.$log->action.' ('.$actionurl.')');
+        $myxls->write_string($row, 5, $log->info);
+
+        $row++;
+    }
+
+    $workbook->close();
+    return true;
+}
+
+/**
+ * Build an array of logs.
+ *
+ * @deprecated since 3.2
+ */
+function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limitfrom='', $limitnum='',
+                   $modname="", $modid=0, $modaction="", $groupid=0) {
+    global $DB, $SESSION, $USER;
+
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+    // It is assumed that $date is the GMT time of midnight for that day,
+    // and so the next 86400 seconds worth of logs are printed.
+
+    // Setup for group handling.
+
+    // If the group mode is separate, and this user does not have editing privileges,
+    // then only the user's group can be viewed.
+    if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', context_course::instance($course->id))) {
+        if (isset($SESSION->currentgroup[$course->id])) {
+            $groupid =  $SESSION->currentgroup[$course->id];
+        } else {
+            $groupid = groups_get_all_groups($course->id, $USER->id);
+            if (is_array($groupid)) {
+                $groupid = array_shift(array_keys($groupid));
+                $SESSION->currentgroup[$course->id] = $groupid;
+            } else {
+                $groupid = 0;
+            }
+        }
+    }
+    // If this course doesn't have groups, no groupid can be specified.
+    else if (!$course->groupmode) {
+        $groupid = 0;
+    }
+
+    $joins = array();
+    $params = array();
+
+    if ($course->id != SITEID || $modid != 0) {
+        $joins[] = "l.course = :courseid";
+        $params['courseid'] = $course->id;
+    }
+
+    if ($modname) {
+        $joins[] = "l.module = :modname";
+        $params['modname'] = $modname;
+    }
+
+    if ('site_errors' === $modid) {
+        $joins[] = "( l.action='error' OR l.action='infected' )";
+    } else if ($modid) {
+        $joins[] = "l.cmid = :modid";
+        $params['modid'] = $modid;
+    }
+
+    if ($modaction) {
+        $firstletter = substr($modaction, 0, 1);
+        if ($firstletter == '-') {
+            $joins[] = $DB->sql_like('l.action', ':modaction', false, true, true);
+            $params['modaction'] = '%'.substr($modaction, 1).'%';
+        } else {
+            $joins[] = $DB->sql_like('l.action', ':modaction', false);
+            $params['modaction'] = '%'.$modaction.'%';
+        }
+    }
+
+
+    /// Getting all members of a group.
+    if ($groupid and !$user) {
+        if ($gusers = groups_get_members($groupid)) {
+            $gusers = array_keys($gusers);
+            $joins[] = 'l.userid IN (' . implode(',', $gusers) . ')';
+        } else {
+            $joins[] = 'l.userid = 0'; // No users in groups, so we want something that will always be false.
+        }
+    }
+    else if ($user) {
+        $joins[] = "l.userid = :userid";
+        $params['userid'] = $user;
+    }
+
+    if ($date) {
+        $enddate = $date + 86400;
+        $joins[] = "l.time > :date AND l.time < :enddate";
+        $params['date'] = $date;
+        $params['enddate'] = $enddate;
+    }
+
+    $selector = implode(' AND ', $joins);
+
+    $totalcount = 0;  // Initialise
+    $result = array();
+    $result['logs'] = get_logs($selector, $params, $order, $limitfrom, $limitnum, $totalcount);
+    $result['totalcount'] = $totalcount;
+    return $result;
+}
+
+/**
+ * Select all log records for a given course and user.
+ *
+ * @deprecated since 3.2
+ * @param int $userid The id of the user as found in the 'user' table.
+ * @param int $courseid The id of the course as found in the 'course' table.
+ * @param string $coursestart unix timestamp representing course start date and time.
+ * @return array
+ */
+function get_logs_usercourse($userid, $courseid, $coursestart) {
+    global $DB;
+
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+
+    $params = array();
+
+    $courseselect = '';
+    if ($courseid) {
+        $courseselect = "AND course = :courseid";
+        $params['courseid'] = $courseid;
+    }
+    $params['userid'] = $userid;
+    // We have to sanitize this param ourselves here instead of relying on DB.
+    // Postgres complains if you use name parameter or column alias in GROUP BY.
+    // See MDL-27696 and 51c3e85 for details.
+    $coursestart = (int)$coursestart;
+
+    return $DB->get_records_sql("SELECT FLOOR((time - $coursestart)/". DAYSECS .") AS day, COUNT(*) AS num
+                                   FROM {log}
+                                  WHERE userid = :userid
+                                        AND time > $coursestart $courseselect
+                               GROUP BY FLOOR((time - $coursestart)/". DAYSECS .")", $params);
+}
+
+/**
+ * Select all log records for a given course, user, and day.
+ *
+ * @deprecated since 3.2
+ * @param int $userid The id of the user as found in the 'user' table.
+ * @param int $courseid The id of the course as found in the 'course' table.
+ * @param string $daystart unix timestamp of the start of the day for which the logs needs to be retrived
+ * @return array
+ */
+function get_logs_userday($userid, $courseid, $daystart) {
+    global $DB;
+
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+
+    $params = array('userid'=>$userid);
+
+    $courseselect = '';
+    if ($courseid) {
+        $courseselect = "AND course = :courseid";
+        $params['courseid'] = $courseid;
+    }
+    // Note: unfortunately pg complains if you use name parameter or column alias in GROUP BY.
+    $daystart = (int) $daystart;
+
+    return $DB->get_records_sql("SELECT FLOOR((time - $daystart)/". HOURSECS .") AS hour, COUNT(*) AS num
+                                   FROM {log}
+                                  WHERE userid = :userid
+                                        AND time > $daystart $courseselect
+                               GROUP BY FLOOR((time - $daystart)/". HOURSECS .") ", $params);
+}
+
+/**
+ * Select all log records based on SQL criteria.
+ *
+ * @deprecated since 3.2
+ * @param string $select SQL select criteria
+ * @param array $params named sql type params
+ * @param string $order SQL order by clause to sort the records returned
+ * @param string $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
+ * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set)
+ * @param int $totalcount Passed in by reference.
+ * @return array
+ */
+function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
+    global $DB;
+
+    debugging(__FUNCTION__ . '() is deprecated. Please use the report_log framework instead.', DEBUG_DEVELOPER);
+
+    if ($order) {
+        $order = "ORDER BY $order";
+    }
+
+    if ($select) {
+        $select = "WHERE $select";
+    }
+
+    $sql = "SELECT COUNT(*)
+              FROM {log} l
+           $select";
+
+    $totalcount = $DB->count_records_sql($sql, $params);
+    $allnames = get_all_user_name_fields(true, 'u');
+    $sql = "SELECT l.*, $allnames, u.picture
+              FROM {log} l
+              LEFT JOIN {user} u ON l.userid = u.id
+           $select
+            $order";
+
+    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum) ;
+}
