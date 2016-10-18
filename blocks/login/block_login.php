@@ -32,7 +32,7 @@ class block_login extends block_base {
     }
 
     function get_content () {
-        global $USER, $CFG, $SESSION;
+        global $USER, $CFG, $SESSION, $OUTPUT;
         $wwwroot = '';
         $signup = '';
 
@@ -96,15 +96,32 @@ class block_login extends block_base {
             $this->content->text .= "</form>\n";
 
             if (!empty($signup)) {
-                $this->content->footer .= '<div><a href="'.$signup.'">'.get_string('startsignup').'</a></div>';
+                $this->content->text .= '<div><a href="'.$signup.'">'.get_string('startsignup').'</a></div>';
             }
             if (!empty($forgot)) {
-                $this->content->footer .= '<div><a href="'.$forgot.'">'.get_string('forgotaccount').'</a></div>';
+                $this->content->text .= '<div><a href="'.$forgot.'">'.get_string('forgotaccount').'</a></div>';
+            }
+
+            $authsequence = get_enabled_auth_plugins(true); // Get all auths, in sequence.
+            $potentialidps = array();
+            foreach ($authsequence as $authname) {
+                $authplugin = get_auth_plugin($authname);
+                $potentialidps = array_merge($potentialidps, $authplugin->loginpage_idp_list(empty($SESSION->wantsurl) ? '' : $SESSION->wantsurl));
+            }
+
+            if (!empty($potentialidps)) {
+                $this->content->text .= '<div class="potentialidps">';
+                $this->content->text .= '<h6>' . get_string('potentialidps', 'auth') . '</h6>';
+                $this->content->text .= '<div class="potentialidplist">';
+                foreach ($potentialidps as $idp) {
+                    $this->content->text .= '<div class="potentialidp"><a href="' . $idp['url']->out() . '" title="' . s($idp['name']) . '">';
+                    $this->content->text .= $OUTPUT->render($idp['icon'], $idp['name']) . s($idp['name']) . '</a></div>';
+                }
+                $this->content->text .= '</div>';
+                $this->content->text .= '</div>';
             }
         }
 
         return $this->content;
     }
 }
-
-
