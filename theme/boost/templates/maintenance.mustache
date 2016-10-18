@@ -14,13 +14,20 @@
     {{{ output.standard_top_of_body_html }}}
 
     <div id="page" class="container">
-        {{{ output.page_heading }}}
+
+        <div class="row">
+            <div class="col-xs-12 p-y-1">
+                {{{ output.page_heading }}}
+            </div>
+        </div>
 
         <div id="page-content" class="row">
-            <div id="region-main-box">
-                <section id="region-main">
-                    {{{ output.main_content }}}
-                </section>
+            <div id="region-main-box" class="col-xs-12">
+                <div class="row">
+                    <section id="region-main" class="col-xs-12">
+                        {{{ output.main_content }}}
+                    </section>
+                </div>
             </div>
         </div>
 
