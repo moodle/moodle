@@ -2294,7 +2294,7 @@ function xmldb_main_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        
+
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2016101401.02);
     }
