@@ -3686,18 +3686,8 @@ img.iconsmall {
   left: 100%;
   position: absolute;
 }
-.section .activity .editing_move {
-  /* Move the move icon to the start of the line */
-  position: absolute;
-  left: 0;
-  top: 0;
-}
 .section .activity .mod-indent-outer {
-  /**
-             * Add appropriate padding such that nothing overlaps the
-             * absolute positioned move icon.
-             */
-  padding-left: 32px;
+  padding-left: 0;
 }
 .section .activity .actions {
   position: absolute;
@@ -3756,6 +3746,19 @@ img.iconsmall {
 .editing .section .activity .contentwithoutlink,
 .editing .section .activity .activityinstance {
   padding-right: 200px;
+}
+.editing .section .activity .editing_move {
+  /* Move the move icon to the start of the line */
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.editing .section .activity .mod-indent-outer {
+  /**
+                 * Add appropriate padding such that nothing overlaps the
+                 * absolute positioned move icon.
+                 */
+  padding-left: 32px;
 }
 .editing_show + .editing_assign,
 .editing_hide + .editing_assign {
