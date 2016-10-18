@@ -340,6 +340,7 @@ class webservice {
                     $newtoken->contextid = context_system::instance()->id;
                     $newtoken->creatorid = $userid;
                     $newtoken->timecreated = time();
+                    $newtoken->privatetoken = null;
 
                     $DB->insert_record('external_tokens', $newtoken);
                 }

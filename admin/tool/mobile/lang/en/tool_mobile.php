@@ -22,11 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['autologinkeygenerationlockout'] = 'Auto-login key generation is locked out, too much requests in an hour.';
+$string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed to site admins';
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
 $string['enablesmartappbanners'] = 'Enable Smart App Banners';
 $string['enablesmartappbanners_desc'] = 'This will display a banner promoting the Moodle Mobile app when visiting the site in Mobile Safari.';
 $string['forcedurlscheme'] = 'The URL scheme allows to open the mobile app from other apps like the browser. Use this setting if you want to allow only your custom branded app to be opened by the browser.';
 $string['forcedurlscheme_key'] = 'URL scheme';
+$string['httpsrequired'] = 'HTTPS required';
+$string['invalidprivatetoken'] = 'Invalid private token. Token should not be empty or passed via GET parameter.';
 $string['iosappid'] = 'App\'s unique identifier';
 $string['iosappid_desc'] = 'You only need to change this value if you have a custom iOS app';
 $string['loginintheapp'] = 'Via the app';

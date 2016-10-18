@@ -34,7 +34,7 @@ use tool_mobile\external;
 use tool_mobile\api;
 
 /**
- * External learning plans webservice API tests.
+ * Moodle Mobile admin tool external functions tests.
  *
  * @package     tool_mobile
  * @copyright   2016 Juan Leyva
@@ -142,4 +142,123 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($expected, $result['settings']);
     }
 
+    /*
+     * Test get_autologin_key.
+     */
+    public function test_get_autologin_key() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+
+        $token = external_generate_token_for_current_user($service);
+        $this->assertDebuggingCalled(); // MDL-55992.
+
+        // Check we got the private token.
+        $this->assertTrue(isset($token->privatetoken));
+
+        // Enable requeriments.
+        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);    // Mock https.
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+        $_GET['wstoken'] = $token->token;   // Mock parameters.
+
+        $this->setCurrentTimeStart();
+        $result = external::get_autologin_key($token->privatetoken);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+        // Validate the key.
+        $this->assertEquals(32, core_text::strlen($result['key']));
+        $key = $DB->get_record('user_private_key', array('value' => $result['key']));
+        $this->assertEquals($USER->id, $key->userid);
+        $this->assertTimeCurrent($key->validuntil - api::LOGIN_KEY_TTL);
+
+        // Now, try with an invalid private token.
+        set_user_preference('tool_mobile_autologin_request_last', time() - HOURSECS, $USER);
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('invalidprivatetoken', 'tool_mobile'));
+        $result = external::get_autologin_key(random_string('64'));
+    }
+
+    /**
+     * Test get_autologin_key missing ws.
+     */
+    public function test_get_autologin_key_missing_ws() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('enablewsdescription', 'webservice'));
+        $result = external::get_autologin_key('');
+    }
+
+    /**
+     * Test get_autologin_key missing https.
+     */
+    public function test_get_autologin_key_missing_https() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('httpsrequired', 'tool_mobile'));
+        $result = external::get_autologin_key('');
+    }
+
+    /**
+     * Test get_autologin_key missing admin.
+     */
+    public function test_get_autologin_key_missing_admin() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('autologinnotallowedtoadmins', 'tool_mobile'));
+        $result = external::get_autologin_key('');
+    }
+
+    /**
+     * Test get_autologin_key locked.
+     */
+    public function test_get_autologin_key_missing_locked() {
+        global $CFG, $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);
+
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+
+        $token = external_generate_token_for_current_user($service);
+        $this->assertDebuggingCalled(); // MDL-55992.
+        $_GET['wstoken'] = $token->token;   // Mock parameters.
+
+        $result = external::get_autologin_key($token->privatetoken);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+
+        // Mock last time request.
+        $mocktime = time() - 7 * MINSECS;
+        set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
+        $result = external::get_autologin_key($token->privatetoken);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+
+        // We just requested one token, we must wait.
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('autologinkeygenerationlockout', 'tool_mobile'));
+        $result = external::get_autologin_key($token->privatetoken);
+    }
 }
