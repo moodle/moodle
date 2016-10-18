@@ -155,8 +155,8 @@ class helper {
         }
         // Check if the user is online.
         $data->isonline = self::is_online($userfields->lastaccess);
-        $data->isblocked = isset($contact->blocked) ? $contact->blocked : 0;
-        $data->isread = isset($contact->isread) ? $contact->isread : 0;
+        $data->isblocked = isset($contact->blocked) ? (bool) $contact->blocked : false;
+        $data->isread = isset($contact->isread) ? (bool) $contact->isread : false;
         $data->unreadcount = isset($contact->unreadcount) ? $contact->unreadcount : null;
 
         return $data;

@@ -348,7 +348,7 @@ class api {
                 if (isset($userfields['lastaccess'])) {
                     $data->isonline = helper::is_online($userfields['lastaccess']);
                 } else {
-                    $data->isonline = 0;
+                    $data->isonline = false;
                 }
             } else {
                 // Technically the access checks in user_get_user_details are correct,
@@ -362,12 +362,12 @@ class api {
                 $data->email = '';
                 $data->profileimageurl = '';
                 $data->profileimageurlsmall = '';
-                $data->isonline = 0;
+                $data->isonline = false;
             }
             // Check if the contact has been blocked.
             $contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $otheruserid));
             if ($contact) {
-                $data->isblocked = $contact->blocked;
+                $data->isblocked = (bool) $contact->blocked;
                 $data->iscontact = true;
             } else {
                 $data->isblocked = false;
@@ -383,14 +383,14 @@ class api {
      *
      * @param int $userid The user id of who we want to delete the messages for (this may be done by the admin
      *  but will still seem as if it was by the user)
-     * @return bool Returns true if a user can delete the message, false otherwise.
+     * @return bool Returns true if a user can delete the conversation, false otherwise.
      */
     public static function can_delete_conversation($userid) {
         global $USER;
 
         $systemcontext = \context_system::instance();
 
-        // Let's check if the user is allowed to delete this message.
+        // Let's check if the user is allowed to delete this conversation.
         if (has_capability('moodle/site:deleteanymessage', $systemcontext) ||
             ((has_capability('moodle/site:deleteownmessage', $systemcontext) &&
                 $USER->id == $userid))) {
@@ -411,7 +411,7 @@ class api {
      * @return bool
      */
     public static function delete_conversation($userid, $otheruserid) {
-        global $DB, $USER;
+        global $DB;
 
         // We need to update the tables to mark all messages as deleted from and to the other user. This seems worse than it
         // is, that's because our DB structure splits messages into two tables (great idea, huh?) which causes code like this.
@@ -457,7 +457,7 @@ class api {
 
                 // Trigger event for deleting the message.
                 \core\event\message_deleted::create_from_ids($message->useridfrom, $message->useridto,
-                    $USER->id, $messagetable, $message->id)->trigger();
+                    $userid, $messagetable, $message->id)->trigger();
             }
         }
 
