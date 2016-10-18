@@ -50,8 +50,8 @@ Feature: Book activity chapter visibility management
 
   @javascript
   Scenario: Show/hide chapters and subchapters
-    When I follow "Hide chapter \"2 Second chapter\""
-    And I follow "Hide chapter \"2 Third chapter\""
+    When I follow "Hide chapter \"2. Second chapter\""
+    And I follow "Hide chapter \"2. Third chapter\""
     And I follow "Turn editing off"
     And I am on homepage
     And I follow "Course 1"
