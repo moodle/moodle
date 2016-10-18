@@ -82,7 +82,13 @@ class messages implements templatable, renderable {
         $data->currentuserid = $this->currentuserid;
         $data->otheruserid = $this->otheruserid;
         $data->otheruserfullname = fullname($this->otheruser);
-        $data->isonline = \core_message\helper::is_online($this->otheruser->lastaccess);
+
+        if (empty($this->otheruser)) {
+            $data->isonline = false;
+        } else {
+            $data->isonline = \core_message\helper::is_online($this->otheruser->lastaccess);
+        }
+
         $data->messages = array();
         foreach ($this->messages as $message) {
             $message = new message($message);
