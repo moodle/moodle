@@ -3701,11 +3701,12 @@ function course_check_module_updates_since($cm, $from, $fileareas = array(), $fi
     }
     if (!empty($fileareas) and (empty($filter) or in_array('fileareas', $filter))) {
         $fs = get_file_storage();
-        $extrasql = 'AND (f.timecreated > :since1 OR f.timemodified > :since2)';
-        $extraconditions = array('since1' => $from, 'since2' => $from);
-        foreach ($fileareas as $fileareaname) {
-            $files = $fs->get_area_files($context->id, $component, $fileareaname, false, "itemid", true, $extrasql, $extraconditions);
-            $updates->{$fileareaname . 'files'} = !empty($files);
+        $files = $fs->get_area_files($context->id, $component, $fileareas, false, "filearea, timemodified DESC", true, $from);
+        foreach ($fileareas as $filearea) {
+            $updates->{$filearea . 'files'} = false;
+        }
+        foreach ($files as $file) {
+            $updates->{$file->get_filearea() . 'files'} = true;
         }
     }
 

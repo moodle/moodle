@@ -794,24 +794,34 @@ class file_storage {
      *
      * @param int $contextid context ID
      * @param string $component component
-     * @param string $filearea file area
+     * @param mixed $filearea file area/s, you cannot specify multiple fileareas as well as an itemid
      * @param int $itemid item ID or all files if not specified
      * @param string $sort A fragment of SQL to use for sorting
      * @param bool $includedirs whether or not include directories
-     * @param string $extrasql a fragment of SQL to append to the WHERE part of the query
-     * @param array $extraconditions an array of additional condition values for the $extrasql
+     * @param int $updatedsince return files updated since this time
      * @return stored_file[] array of stored_files indexed by pathanmehash
      */
     public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "itemid, filepath, filename",
-                                    $includedirs = true, $extrasql = '', $extraconditions = array()) {
+                                    $includedirs = true, $updatedsince = 0) {
         global $DB;
 
-        $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);
-        if ($itemid !== false) {
+        list($areasql, $conditions) = $DB->get_in_or_equal($filearea, SQL_PARAMS_NAMED);
+        $conditions['contextid'] = $contextid;
+        $conditions['component'] = $component;
+
+        if ($itemid !== false && is_array($filearea)) {
+            throw new coding_exception('You cannot specify multiple fileareas as well as an itemid.');
+        } else if ($itemid !== false) {
             $itemidsql = ' AND f.itemid = :itemid ';
             $conditions['itemid'] = $itemid;
         } else {
             $itemidsql = '';
+        }
+
+        $updatedsincesql = '';
+        if (!empty($updatedsince)) {
+            $conditions['time'] = $updatedsince;
+            $updatedsincesql = 'AND f.timemodified > :time';
         }
 
         $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
@@ -820,12 +830,9 @@ class file_storage {
                        ON f.referencefileid = r.id
                  WHERE f.contextid = :contextid
                        AND f.component = :component
-                       AND f.filearea = :filearea
+                       AND f.filearea $areasql
+                       $updatedsincesql
                        $itemidsql";
-        if (!empty($extrasql)) {
-            $sql .= " $extrasql";
-            $conditions = array_merge($conditions, $extraconditions);
-        }
         if (!empty($sort)) {
             $sql .= " ORDER BY {$sort}";
         }
