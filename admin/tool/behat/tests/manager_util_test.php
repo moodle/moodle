@@ -75,9 +75,11 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
         ),
     );
 
-    private $corefatures = array('test_1' => __DIR__.'/fixtures/core/test_1.feature',
-                                 'test_2' => __DIR__.'/fixtures/core/test_2.feature');
+    /** @var array List of core features. */
+    private $corefatures = array('test_1_core_fixtures_tests_behat_tool' => __DIR__.'/fixtures/core/test_1.feature',
+                                 'test_2_core_fixtures_tests_behat_tool' => __DIR__.'/fixtures/core/test_2.feature');
 
+    /** @var array List of core contexts. */
     private $corecontexts = array('behat_test_context_1' => __DIR__.'/fixtures/core/behat_test_context_1.php',
                                   'behat_test_context_2' => __DIR__.'/fixtures/core/behat_test_context_2.php');
 
@@ -460,6 +462,140 @@ class tool_behat_manager_util_testcase extends advanced_testcase {
             ['C:\test\behat\mod_assign.feature', 'mod_assign_behat_test', 'C:\test\behat\mod_assign.feature'],
             ['C:\mod_assign.feature', 'mod_assign', 'C:\mod_assign.feature'],
         );
+    }
+
+    /**
+     * Behat config for blacklisted tags.
+     */
+    public function test_get_config_file_contents_with_blacklisted_tags() {
+
+        $mockbuilder = $this->getMockBuilder('behat_config_util');
+        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_blacklisted_tests_for_theme'));
+
+        $behatconfigutil = $mockbuilder->getMock();
+
+        $behatconfigutil = $this->get_behat_config_util($behatconfigutil);
+
+        // Blacklisted tags.
+        $map = array(
+            array('withfeatures', 'tags', array('@test1')),
+            array('nofeatures', 'tags', array('@test2')),
+            array('withfeatures', 'features', array()),
+            array('nofeatures', 'features', array()),
+            array('withfeatures', 'contexts', array()),
+            array('nofeatures', 'contexts', array())
+        );
+
+        $behatconfigutil->expects($this->any())
+            ->method('get_blacklisted_tests_for_theme')
+            ->will($this->returnValueMap($map));
+
+        $behatconfigutil->set_theme_suite_to_include_core_features(true);
+        $config = $behatconfigutil->get_config_file_contents($this->corefatures, $this->corecontexts);
+
+        // Three suites should be present.
+        $suites = $config['default']['suites'];
+        $this->assertCount(3, $suites);
+
+        $featurepaths = array(
+            'default' => array('test_1.feature', 'test_2.feature'),
+            'withfeatures' => array('test_2.feature', 'theme_test_1.feature', 'theme_test_2.feature', 'theme_test_3.feature',
+                'theme_test_4.feature', 'theme_test_5.feature'),
+            'nofeatures' => array('test_1.feature')
+        );
+
+        // Check features.
+        foreach ($featurepaths as $themename => $paths) {
+            $this->assertCount(count($paths), $suites[$themename]['paths']);
+
+            foreach ($paths as $key => $feature) {
+                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+            }
+        }
+        // Check contexts.
+        foreach ($this->contextspath as $themename => $paths) {
+            $this->assertCount(count($paths), $suites[$themename]['contexts']);
+
+            foreach ($paths as $key => $context) {
+                $this->assertTrue(in_array($context, $suites[$themename]['contexts']));
+            }
+        }
+        // There are 6 step definitions.
+        $this->assertCount(6, $config['default']['extensions']['Moodle\BehatExtension']['steps_definitions']);
+    }
+
+    /**
+     * Behat config for blacklisted features.
+     */
+    public function test_get_config_file_contents_with_blacklisted_features_contexts() {
+
+        $mockbuilder = $this->getMockBuilder('behat_config_util');
+        $mockbuilder->setMethods(array('get_theme_test_directory', 'get_list_of_themes', 'get_blacklisted_tests_for_theme'));
+
+        $behatconfigutil = $mockbuilder->getMock();
+
+        $behatconfigutil = $this->get_behat_config_util($behatconfigutil);
+
+        // Blacklisted features and contexts.
+        $map = array(
+            array('withfeatures', 'tags', array()),
+            array('nofeatures', 'tags', array()),
+            array('withfeatures', 'features', array('admin/tool/behat/tests/fixtures/core/test_1.feature')),
+            array('nofeatures', 'features', array('admin/tool/behat/tests/fixtures/core/test_2.feature')),
+            array('withfeatures', 'contexts', array('admin/tool/behat/tests/fixtures/core/behat_test_context_2.php')),
+            array('nofeatures', 'contexts', array('admin/tool/behat/tests/fixtures/core/behat_test_context_1.php'))
+        );
+
+        $behatconfigutil->expects($this->any())
+            ->method('get_blacklisted_tests_for_theme')
+            ->will($this->returnValueMap($map));
+
+        $behatconfigutil->set_theme_suite_to_include_core_features(true);
+        $config = $behatconfigutil->get_config_file_contents($this->corefatures, $this->corecontexts);
+
+        // Three suites should be present.
+        $suites = $config['default']['suites'];
+        $this->assertCount(3, $suites);
+
+        $featurepaths = array(
+            'default' => array('test_1.feature', 'test_2.feature'),
+            'withfeatures' => array('test_2.feature', 'theme_test_1.feature', 'theme_test_2.feature', 'theme_test_3.feature',
+                'theme_test_4.feature', 'theme_test_5.feature'),
+            'nofeatures' => array('test_1.feature')
+        );
+        $contextspath = array(
+            'default' => array(
+                'behat_test_context_1',
+                'behat_test_context_2'
+            ),
+            'withfeatures' => array(
+                'behat_theme_withfeatures_test_context_2',
+                'behat_theme_withfeatures_behat_test_context_1'
+            ),
+            'nofeatures' => array(
+                'behat_theme_nofeatures_test_context_1',
+                'behat_theme_nofeatures_behat_test_context_2'
+            ),
+        );
+
+        // Check features.
+        foreach ($featurepaths as $themename => $paths) {
+            $this->assertCount(count($paths), $suites[$themename]['paths']);
+
+            foreach ($paths as $key => $feature) {
+                $this->assertContains($feature, $suites[$themename]['paths'][$key]);
+            }
+        }
+        // Check contexts.
+        foreach ($contextspath as $themename => $paths) {
+            $this->assertCount(count($paths), $suites[$themename]['contexts']);
+
+            foreach ($paths as $key => $context) {
+                $this->assertTrue(in_array($context, $suites[$themename]['contexts']));
+            }
+        }
+        // There are 6 step definitions.
+        $this->assertCount(6, $config['default']['extensions']['Moodle\BehatExtension']['steps_definitions']);
     }
 }
 // @codeCoverageIgnoreEnd

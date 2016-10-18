@@ -208,17 +208,24 @@ class behat_config_util {
             $features = array_merge($features, $additionalfeatures);
         }
 
-        $this->features = $features;
+        // Sanitize feature key.
+        $cleanfeatures = array();
+        foreach ($features as $featurepath) {
+            list($key, $path) = $this->get_clean_feature_key_and_path($featurepath);
+            $cleanfeatures[$key] = $path;
+        }
+
+        // Sort feature list.
+        ksort($cleanfeatures);
+
+        $this->features = $cleanfeatures;
 
         // If tags are passed then filter features which has sepecified tags.
         if (!empty($tags)) {
-            $features = $this->filtered_features_with_tags($features, $tags);
+            $cleanfeatures = $this->filtered_features_with_tags($cleanfeatures, $tags);
         }
 
-        // Return sorted list.
-        ksort($features);
-
-        return $features;
+        return $cleanfeatures;
     }
 
     /**
@@ -1220,6 +1227,7 @@ class behat_config_util {
         // Get list of features defined by theme.
         $themefeatures = $this->get_tests_for_theme($theme, 'features');
         $themeblacklistfeatures = $this->get_blacklisted_tests_for_theme($theme, 'features');
+        $themeblacklisttags = $this->get_blacklisted_tests_for_theme($theme, 'tags');
 
         // Clean feature key and path.
         $features = array();
@@ -1232,6 +1240,26 @@ class behat_config_util {
         foreach ($themeblacklistfeatures as $themeblacklistfeature) {
             list($blacklistfeaturekey, $blacklistfeaturepath) = $this->get_clean_feature_key_and_path($themeblacklistfeature);
             $blacklistfeatures[$blacklistfeaturekey] = $blacklistfeaturepath;
+        }
+
+        // If blacklist tags then add those features to list.
+        if (!empty($themeblacklisttags)) {
+            // Remove @ if given, so we are sure we have only tag names.
+            $themeblacklisttags = array_map(function($v) {
+                return ltrim($v, '@');
+            }, $themeblacklisttags);
+
+            $themeblacklisttags = '@' . implode(',@', $themeblacklisttags);
+            $blacklistedfeatureswithtag = $this->filtered_features_with_tags($this->get_components_features(),
+                $themeblacklisttags);
+
+            // Add features with blacklisted tags.
+            if (!empty($blacklistedfeatureswithtag)) {
+                foreach ($blacklistedfeatureswithtag as $themeblacklistfeature) {
+                    list($key, $path) = $this->get_clean_feature_key_and_path($themeblacklistfeature);
+                    $blacklistfeatures[$key] = $path;
+                }
+            }
         }
 
         ksort($features);
