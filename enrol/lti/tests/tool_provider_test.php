@@ -268,7 +268,7 @@ class tool_provider_testcase extends advanced_testcase {
         // Check published tool and tool consumer mapping.
         $mappingparams = [
             'toolid' => $tool->id,
-            'consumer_pk' => $tp->consumer->getRecordId()
+            'consumerid' => $tp->consumer->getRecordId()
         ];
         $this->assertTrue($DB->record_exists('enrol_lti_tool_consumer_map', $mappingparams));
     }
@@ -506,7 +506,7 @@ class tool_provider_testcase extends advanced_testcase {
         // Check published tool and tool consumer mapping.
         $mappingparams = [
             'toolid' => $this->tool->id,
-            'consumer_pk' => $tp->consumer->getRecordId()
+            'consumerid' => $tp->consumer->getRecordId()
         ];
         $this->assertTrue($DB->record_exists('enrol_lti_tool_consumer_map', $mappingparams));
     }

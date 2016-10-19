@@ -167,7 +167,7 @@ class enrol_lti_plugin extends enrol_plugin {
         $dataconnector = new data_connector();
         foreach ($rsmapping as $mapping) {
             $consumer = new ToolConsumer(null, $dataconnector);
-            $consumer->setRecordId($mapping->consumer_pk);
+            $consumer->setRecordId($mapping->consumerid);
             $dataconnector->deleteToolConsumer($consumer);
         }
         $rsmapping->close();

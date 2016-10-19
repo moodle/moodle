@@ -436,7 +436,7 @@ class tool_provider extends ToolProvider {
         // Map the consumer to the tool.
         $mappingparams = [
             'toolid' => $this->tool->id,
-            'consumer_pk' => $this->consumer->getRecordId()
+            'consumerid' => $this->consumer->getRecordId()
         ];
         $mappingexists = $DB->record_exists('enrol_lti_tool_consumer_map', $mappingparams);
         if (!$mappingexists) {

@@ -92,7 +92,7 @@ class enrol_lti_testcase extends advanced_testcase {
 
         $mappingparams = [
             'toolid' => $tool->id,
-            'consumer_pk' => $tp->consumer->getRecordId()
+            'consumerid' => $tp->consumer->getRecordId()
         ];
 
         // Check first that the related records exist.
