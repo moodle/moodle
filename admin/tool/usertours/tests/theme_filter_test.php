@@ -81,20 +81,20 @@ class tool_usertours_theme_filter_testcase extends advanced_testcase {
      * @param   string      $currenttheme   The name of the current theme
      * @param   boolean     $expected       Whether the tour is expected to match
      */
-	public function test_filter_matches($filtervalues, $currenttheme, $expected) {
+    public function test_filter_matches($filtervalues, $currenttheme, $expected) {
         global $PAGE;
 
-		$filtername = \tool_usertours\local\filter\theme::class;
+        $filtername = \tool_usertours\local\filter\theme::class;
 
-		// Note: No need to persist this tour.
-		$tour = new \tool_usertours\tour();
+        // Note: No need to persist this tour.
+        $tour = new \tool_usertours\tour();
         if ($filtervalues !== null) {
             $tour->set_filter_values('theme', $filtervalues);
         }
 
         $PAGE->theme->name = $currenttheme;
 
-		// Note: The theme filter does not use the context.
-		$this->assertEquals($expected, $filtername::filter_matches($tour, \context_system::instance()));
-	}
+        // Note: The theme filter does not use the context.
+        $this->assertEquals($expected, $filtername::filter_matches($tour, \context_system::instance()));
+    }
 }
