@@ -104,6 +104,15 @@ class block extends base {
     }
 
     /**
+     * Prepare data to submit to the form.
+     *
+     * @param   object          $data       The data being passed to the form
+     */
+    public function prepare_data_for_form($data) {
+        $data->targetvalue_block = $this->step->get_targetvalue();
+    }
+
+    /**
      * Fetch the targetvalue from the form for this target type.
      *
      * @param   stdClass        $data       The data submitted in the form

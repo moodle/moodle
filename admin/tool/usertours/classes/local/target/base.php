@@ -86,6 +86,13 @@ abstract class base {
     }
 
     /**
+     * Prepare data to submit to the form.
+     *
+     * @param   object          $data       The data being passed to the form
+     */
+    abstract public function prepare_data_for_form($data);
+
+    /**
      * Whether the specified step setting is forced by this target type.
      *
      * @param   string          $key        The name of the key to check.

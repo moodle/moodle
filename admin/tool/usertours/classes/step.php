@@ -374,7 +374,7 @@ class step {
             return $this->config;
         }
 
-        if ($this->get_targettype()) {
+        if ($this->get_targettype() !== null) {
             $target = $this->get_target();
             if ($target->is_setting_forced($key)) {
                 return $target->get_forced_setting_value($key);
@@ -588,6 +588,10 @@ class step {
         $data = $this->to_record();
         foreach (self::get_config_keys() as $key) {
             $data->$key = $this->get_config($key, configuration::get_step_default_value($key));
+        }
+
+        if ($this->get_targettype() !== null) {
+            $this->get_target()->prepare_data_for_form($data);
         }
 
         return $data;
