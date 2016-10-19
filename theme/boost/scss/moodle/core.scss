@@ -1056,58 +1056,13 @@ tr.flagged-tag a {
 
 #page-enrol-users {
     .enrol_user_buttons {
-        float: right;
+        text-align: right;
 
-        .enrolusersbutton {
-            display: inline;
-
-            div,
-            form {
-                display: inline;
-                margin-right: 0;
-            }
-        }
     }
 
     #filterform {
         @extend .card;
-        display: inline-block;
-
-        .fitem {
-            display: inline-block;
-            line-height: $line-height-base * 2;
-            margin-right: .3em;
-            white-space: nowrap;
-
-            label {
-                display: inline;
-                line-height: $line-height-base;
-                padding-right: .3em;
-            }
-
-            :before,
-            :after {
-                display: inline;
-            }
-        }
-
-        div,
-        fieldset {
-            display: inline-block;
-            clear: none;
-            width: auto;
-            margin: 0;
-        }
-
-        select,
-        .ftext input {
-            width: 7em;
-        }
-
-        input,
-        select {
-            margin-bottom: 0;
-        }
+        @extend .card-block;
     }
 
     .user-enroller-panel .uep-search-results .user .details {
