@@ -258,7 +258,7 @@ class tour extends external_api {
         self::validate_context($context);
 
         $step = step::instance($params['stepid']);
-        if ($step->get_tourid() !== $params['tourid']) {
+        if ($step->get_tourid() != $params['tourid']) {
             throw new \moodle_exception('Incorrect tour specified.');
         }
 
