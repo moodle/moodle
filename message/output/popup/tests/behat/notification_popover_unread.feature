@@ -52,12 +52,13 @@ Feature: Notification popover unread notifications
     # Confirm the submission notification is visible.
     And I should see "You have submitted your assignment submission for Test assignment name" in the "#nav-notification-popover-container" "css_element"
 
+  @_bug_phantomjs
   Scenario: Clicking a notification marks it as read
     When I log in as "student1"
     # Open the popover.
     And I open the notification popover
     # Click on the submission notification.
-    And I click on "[aria-label='Unread notification: You have submitted your assignment submission for Test assignment name']" "css_element" in the "#nav-notification-popover-container" "css_element"
+    And I follow "You have submitted your assignment submission for Test assignment name"
     # Confirm the count element is hidden (i.e. there are no unread notifications).
     Then "[data-region='count-container']" "css_element" in the "#nav-notification-popover-container" "css_element" should not be visible
 
@@ -66,7 +67,7 @@ Feature: Notification popover unread notifications
     # Open the popover.
     And I open the notification popover
     # Click the mark all as read button.
-    And I click on "[data-action='mark-all-read']" "css_element" in the "#nav-notification-popover-container" "css_element"
+    And I click on "Mark all as read" "link" in the "#nav-notification-popover-container" "css_element"
     # Refresh the page to make sure we send a new request for the unread count.
     And I reload the page
     # Confirm the count element is hidden (i.e. there are no unread notifications).
