@@ -498,6 +498,7 @@ M.core_filepicker.show = function(Y, options) {
     if (!M.core_filepicker.instances[options.client_id]) {
         M.core_filepicker.init(Y, options);
     }
+    M.core_filepicker.instances[options.client_id].options.formcallback = options.formcallback;
     M.core_filepicker.instances[options.client_id].show();
 };
 
