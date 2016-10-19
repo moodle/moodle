@@ -16665,6 +16665,152 @@ body.has_dock div#dock {
     padding-left: 65px;
   }
 }
+/**
+ * Tour step must sit above all other UI components.
+ * The backdrop is the lowest point in the tour.
+ * Everything else is in the container, and the target background should be at the same z-index.
+ * ----- moodle
+ *  ---- step backdrop
+ *   --- step container
+ *   --- step target background
+ */
+div[data-flexitour="backdrop"] {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000;
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+  z-index: 4049;
+  background-color: #aaa;
+  opacity: 0.4;
+  z-index: 4030;
+}
+div[data-flexitour="backdrop"].fade {
+  opacity: 0;
+}
+div[data-flexitour="step-background-fader"],
+div[data-flexitour="step-background"] {
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  z-index: 4031;
+}
+span[data-flexitour="container"],
+div[data-flexitour="step-background-fader"],
+[data-flexitour="step-backdrop"] > td,
+[data-flexitour="step-backdrop"] {
+  z-index: 4032;
+}
+span[data-flexitour="container"] div[data-role="flexitour-step"] {
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+span[data-flexitour="container"] div[data-role="flexitour-step"] > div {
+  display: block;
+  margin: 0;
+}
+span[data-flexitour="container"] .modal {
+  position: static;
+  margin-left: 0;
+}
+span[data-flexitour="container"] div[data-role="arrow"] {
+  border-width: 11px;
+}
+span[data-flexitour="container"] div[data-role="arrow"]:after {
+  content: " ";
+}
+span[data-flexitour="container"] div[data-role="arrow"],
+span[data-flexitour="container"] div[data-role="arrow"]:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 10px;
+}
+span[data-flexitour="container"][x-placement="top"],
+span[data-flexitour="container"][x-placement="top-start"] {
+  margin-bottom: 10px;
+}
+span[data-flexitour="container"][x-placement="top"] div[data-role="arrow"],
+span[data-flexitour="container"][x-placement="top-start"] div[data-role="arrow"] {
+  bottom: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-bottom-width: 0;
+  border-top-color: rgba(0, 0, 0, 0.25);
+}
+span[data-flexitour="container"][x-placement="top"] div[data-role="arrow"]:after,
+span[data-flexitour="container"][x-placement="top-start"] div[data-role="arrow"]:after {
+  bottom: 1px;
+  margin-left: -10px;
+  border-bottom-width: 0;
+  border-top-color: #fff;
+}
+span[data-flexitour="container"][x-placement="bottom"],
+span[data-flexitour="container"][x-placement="bottom-start"] {
+  margin-top: 10px;
+}
+span[data-flexitour="container"][x-placement="bottom"] div[data-role="arrow"],
+span[data-flexitour="container"][x-placement="bottom-start"] div[data-role="arrow"] {
+  top: -11px;
+  left: 50%;
+  margin-left: -11px;
+  border-top-width: 0;
+  border-bottom-color: rgba(0, 0, 0, 0.25);
+}
+span[data-flexitour="container"][x-placement="bottom"] div[data-role="arrow"]:after,
+span[data-flexitour="container"][x-placement="bottom-start"] div[data-role="arrow"]:after {
+  top: 1px;
+  margin-left: -10px;
+  border-top-width: 0;
+  border-bottom-color: #fff;
+}
+span[data-flexitour="container"][x-placement="left"],
+span[data-flexitour="container"][x-placement="left-start"] {
+  margin-right: 10px;
+}
+span[data-flexitour="container"][x-placement="left"] div[data-role="arrow"],
+span[data-flexitour="container"][x-placement="left-start"] div[data-role="arrow"] {
+  right: -11px;
+  top: 50%;
+  margin-top: -11px;
+  border-right-width: 0;
+  border-left-color: rgba(0, 0, 0, 0.25);
+}
+span[data-flexitour="container"][x-placement="left"] div[data-role="arrow"]:after,
+span[data-flexitour="container"][x-placement="left-start"] div[data-role="arrow"]:after {
+  right: 1px;
+  margin-top: -10px;
+  border-right-width: 0;
+  border-left-color: #fff;
+}
+span[data-flexitour="container"][x-placement="right"],
+span[data-flexitour="container"][x-placement="right-start"] {
+  margin-left: 10px;
+}
+span[data-flexitour="container"][x-placement="right"] div[data-role="arrow"],
+span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow"] {
+  left: -11px;
+  top: 50%;
+  margin-top: -11px;
+  border-left-width: 0;
+  border-right-color: rgba(0, 0, 0, 0.25);
+}
+span[data-flexitour="container"][x-placement="right"] div[data-role="arrow"]:after,
+span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow"]:after {
+  left: 1px;
+  margin-top: -10px;
+  border-left-width: 0;
+  border-right-color: #fff;
+}
 /* Styling for mustache templates */
 /* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
 /* stylelint-enable */
