@@ -71,52 +71,52 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $data = [
             'name' => 'TestName',
             'secret' => 'TestSecret',
-            'lti_version' => ToolProvider::LTI_VERSION1,
-            'consumer_name' => 'TestConsumerName',
-            'consumer_version' => 'TestConsumerVersion',
-            'consumer_guid' => 'TestConsumerGuid',
+            'ltiversion' => ToolProvider::LTI_VERSION1,
+            'consumername' => 'TestConsumerName',
+            'consumerversion' => 'TestConsumerVersion',
+            'consumerguid' => 'TestConsumerGuid',
             'profile' => json_decode('{TestProfile}'),
-            'tool_proxy' => 'TestProxy',
+            'toolproxy' => 'TestProxy',
             'settings' => ['setting1' => 'TestSetting 1', 'setting2' => 'TestSetting 2'],
             'protected' => 1,
             'enabled' => 0,
-            'enable_from' => $time,
-            'enable_until' => $time + 1,
-            'last_access' => strtotime(date('Y-m-d')),
+            'enablefrom' => $time,
+            'enableuntil' => $time + 1,
+            'lastaccess' => strtotime(date('Y-m-d')),
         ];
         $consumer->name = $data['name'];
         $consumer->setKey('TestKey');
         $consumer->secret = $data['secret'];
-        $consumer->ltiVersion = $data['lti_version'];
-        $consumer->consumerName = $data['consumer_name'];
-        $consumer->consumerVersion = $data['consumer_version'];
-        $consumer->consumerGuid = $data['consumer_guid'];
+        $consumer->ltiVersion = $data['ltiversion'];
+        $consumer->consumerName = $data['consumername'];
+        $consumer->consumerVersion = $data['consumerversion'];
+        $consumer->consumerGuid = $data['consumerguid'];
         $consumer->profile = $data['profile'];
-        $consumer->toolProxy = $data['tool_proxy'];
+        $consumer->toolProxy = $data['toolproxy'];
         $consumer->setSettings($data['settings']);
         $consumer->protected = true;
         $consumer->enabled = false;
-        $consumer->enableFrom = $data['enable_from'];
-        $consumer->enableUntil = $data['enable_until'];
-        $consumer->lastAccess = $data['last_access'];
+        $consumer->enableFrom = $data['enablefrom'];
+        $consumer->enableUntil = $data['enableuntil'];
+        $consumer->lastAccess = $data['lastaccess'];
 
         $dc->saveToolConsumer($consumer);
         $this->assertTrue($dc->loadToolConsumer($consumer));
         $this->assertEquals($consumer->name, 'TestName');
         $this->assertEquals($consumer->getKey(), 'TestKey');
         $this->assertEquals($consumer->secret, 'TestSecret');
-        $this->assertEquals($consumer->ltiVersion, $data['lti_version']);
-        $this->assertEquals($consumer->consumerName, $data['consumer_name']);
-        $this->assertEquals($consumer->consumerVersion, $data['consumer_version']);
-        $this->assertEquals($consumer->consumerGuid, $data['consumer_guid']);
+        $this->assertEquals($consumer->ltiVersion, $data['ltiversion']);
+        $this->assertEquals($consumer->consumerName, $data['consumername']);
+        $this->assertEquals($consumer->consumerVersion, $data['consumerversion']);
+        $this->assertEquals($consumer->consumerGuid, $data['consumerguid']);
         $this->assertEquals($consumer->profile, $data['profile']);
-        $this->assertEquals($consumer->toolProxy, $data['tool_proxy']);
+        $this->assertEquals($consumer->toolProxy, $data['toolproxy']);
         $this->assertEquals($consumer->getSettings(), $data['settings']);
         $this->assertTrue($consumer->protected);
         $this->assertFalse($consumer->enabled);
-        $this->assertEquals($consumer->enableFrom, $data['enable_from']);
-        $this->assertEquals($consumer->enableUntil, $data['enable_until']);
-        $this->assertEquals($consumer->lastAccess, $data['last_access']);
+        $this->assertEquals($consumer->enableFrom, $data['enablefrom']);
+        $this->assertEquals($consumer->enableUntil, $data['enableuntil']);
+        $this->assertEquals($consumer->lastAccess, $data['lastaccess']);
     }
 
     /**
@@ -129,35 +129,35 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $data = [
             'name' => 'TestName',
             'secret' => 'TestSecret',
-            'lti_version' => ToolProvider::LTI_VERSION1,
-            'consumer_name' => 'TestConsumerName',
-            'consumer_version' => 'TestConsumerVersion',
-            'consumer_guid' => 'TestConsumerGuid',
+            'ltiversion' => ToolProvider::LTI_VERSION1,
+            'consumername' => 'TestConsumerName',
+            'consumerversion' => 'TestConsumerVersion',
+            'consumerguid' => 'TestConsumerGuid',
             'profile' => json_decode('{TestProfile}'),
-            'tool_proxy' => 'TestProxy',
+            'toolproxy' => 'TestProxy',
             'settings' => ['setting1' => 'TestSetting 1', 'setting2' => 'TestSetting 2'],
             'protected' => 1,
             'enabled' => 0,
-            'enable_from' => $time,
-            'enable_until' => $time + 1,
-            'last_access' => strtotime(date('Y-m-d')),
+            'enablefrom' => $time,
+            'enableuntil' => $time + 1,
+            'lastaccess' => strtotime(date('Y-m-d')),
         ];
         $consumer = new ToolConsumer();
         $consumer->name = $data['name'];
         $consumer->setKey('TestKey');
         $consumer->secret = $data['secret'];
-        $consumer->ltiVersion = $data['lti_version'];
-        $consumer->consumerName = $data['consumer_name'];
-        $consumer->consumerVersion = $data['consumer_version'];
-        $consumer->consumerGuid = $data['consumer_guid'];
+        $consumer->ltiVersion = $data['ltiversion'];
+        $consumer->consumerName = $data['consumername'];
+        $consumer->consumerVersion = $data['consumerversion'];
+        $consumer->consumerGuid = $data['consumerguid'];
         $consumer->profile = $data['profile'];
-        $consumer->toolProxy = $data['tool_proxy'];
+        $consumer->toolProxy = $data['toolproxy'];
         $consumer->setSettings($data['settings']);
         $consumer->protected = true;
         $consumer->enabled = false;
-        $consumer->enableFrom = $data['enable_from'];
-        $consumer->enableUntil = $data['enable_until'];
-        $consumer->lastAccess = $data['last_access'];
+        $consumer->enableFrom = $data['enablefrom'];
+        $consumer->enableUntil = $data['enableuntil'];
+        $consumer->lastAccess = $data['lastaccess'];
 
         // Save new consumer into the DB.
         $this->assertTrue($dc->saveToolConsumer($consumer));
@@ -165,18 +165,18 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $this->assertEquals($consumer->name, $data['name']);
         $this->assertEquals($consumer->getKey(), 'TestKey');
         $this->assertEquals($consumer->secret, $data['secret']);
-        $this->assertEquals($consumer->ltiVersion, $data['lti_version']);
-        $this->assertEquals($consumer->consumerName, $data['consumer_name']);
-        $this->assertEquals($consumer->consumerVersion, $data['consumer_version']);
-        $this->assertEquals($consumer->consumerGuid, $data['consumer_guid']);
+        $this->assertEquals($consumer->ltiVersion, $data['ltiversion']);
+        $this->assertEquals($consumer->consumerName, $data['consumername']);
+        $this->assertEquals($consumer->consumerVersion, $data['consumerversion']);
+        $this->assertEquals($consumer->consumerGuid, $data['consumerguid']);
         $this->assertEquals($consumer->profile, $data['profile']);
-        $this->assertEquals($consumer->toolProxy, $data['tool_proxy']);
+        $this->assertEquals($consumer->toolProxy, $data['toolproxy']);
         $this->assertEquals($consumer->getSettings(), $data['settings']);
         $this->assertTrue($consumer->protected);
         $this->assertFalse($consumer->enabled);
-        $this->assertEquals($consumer->enableFrom, $data['enable_from']);
-        $this->assertEquals($consumer->enableUntil, $data['enable_until']);
-        $this->assertEquals($consumer->lastAccess, $data['last_access']);
+        $this->assertEquals($consumer->enableFrom, $data['enablefrom']);
+        $this->assertEquals($consumer->enableUntil, $data['enableuntil']);
+        $this->assertEquals($consumer->lastAccess, $data['lastaccess']);
 
         // Edit values.
         $edit = 'EDIT';
@@ -184,18 +184,18 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $consumer->setKey('TestKey' . $edit);
         $consumer->secret = $data['secret'] . $edit;
         $consumer->ltiVersion = ToolProvider::LTI_VERSION2;
-        $consumer->consumerName = $data['consumer_name'] . $edit;
-        $consumer->consumerVersion = $data['consumer_version'] . $edit;
-        $consumer->consumerGuid = $data['consumer_guid'] . $edit;
+        $consumer->consumerName = $data['consumername'] . $edit;
+        $consumer->consumerVersion = $data['consumerversion'] . $edit;
+        $consumer->consumerGuid = $data['consumerguid'] . $edit;
         $editprofile = json_decode('{TestProfile}');
         $consumer->profile = $editprofile;
-        $consumer->toolProxy = $data['tool_proxy'] . $edit;
+        $consumer->toolProxy = $data['toolproxy'] . $edit;
         $editsettings = ['setting1' => 'TestSetting 1'  . $edit, 'setting2' => 'TestSetting 2' . $edit];
         $consumer->setSettings($editsettings);
         $consumer->protected = null;
         $consumer->enabled = null;
-        $consumer->enableFrom = $data['enable_from'] + 100;
-        $consumer->enableUntil = $data['enable_until'] + 100;
+        $consumer->enableFrom = $data['enablefrom'] + 100;
+        $consumer->enableUntil = $data['enableuntil'] + 100;
 
         // Save edited values.
         $this->assertTrue($dc->saveToolConsumer($consumer));
@@ -204,16 +204,16 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $this->assertEquals($consumer->getKey(), 'TestKey' . $edit);
         $this->assertEquals($consumer->secret, $data['secret'] . $edit);
         $this->assertEquals($consumer->ltiVersion, ToolProvider::LTI_VERSION2);
-        $this->assertEquals($consumer->consumerName, $data['consumer_name'] . $edit);
-        $this->assertEquals($consumer->consumerVersion, $data['consumer_version'] . $edit);
-        $this->assertEquals($consumer->consumerGuid, $data['consumer_guid'] . $edit);
+        $this->assertEquals($consumer->consumerName, $data['consumername'] . $edit);
+        $this->assertEquals($consumer->consumerVersion, $data['consumerversion'] . $edit);
+        $this->assertEquals($consumer->consumerGuid, $data['consumerguid'] . $edit);
         $this->assertEquals($consumer->profile, $editprofile);
-        $this->assertEquals($consumer->toolProxy, $data['tool_proxy'] . $edit);
+        $this->assertEquals($consumer->toolProxy, $data['toolproxy'] . $edit);
         $this->assertEquals($consumer->getSettings(), $editsettings);
         $this->assertNull($consumer->protected);
         $this->assertNull($consumer->enabled);
-        $this->assertEquals($consumer->enableFrom, $data['enable_from'] + 100);
-        $this->assertEquals($consumer->enableUntil, $data['enable_until'] + 100);
+        $this->assertEquals($consumer->enableFrom, $data['enablefrom'] + 100);
+        $this->assertEquals($consumer->enableUntil, $data['enableuntil'] + 100);
     }
 
     /**
@@ -224,7 +224,7 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $data = [
             'name' => 'TestName',
             'secret' => 'TestSecret',
-            'lti_version' => ToolProvider::LTI_VERSION1,
+            'ltiversion' => ToolProvider::LTI_VERSION1,
         ];
         $consumer = new ToolConsumer(null, $dc);
         $consumer->name = $data['name'];
@@ -310,7 +310,7 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
         $data = [
             'name' => 'TestName',
             'secret' => 'TestSecret',
-            'lti_version' => ToolProvider::LTI_VERSION1,
+            'ltiversion' => ToolProvider::LTI_VERSION1,
         ];
         $count = 3;
         for ($i = 0; $i < $count; $i++) {
@@ -318,7 +318,7 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
             $consumer->name = $data['name'] . $i;
             $consumer->setKey('TestKey' . $i);
             $consumer->secret = $data['secret'] . $i;
-            $consumer->ltiVersion = $data['lti_version'];
+            $consumer->ltiVersion = $data['ltiversion'];
             $consumer->save();
         }
 
@@ -332,7 +332,7 @@ class enrol_lti_data_connector_testcase extends advanced_testcase {
             $this->assertEquals($data['name'] . $index, $record->name);
             $this->assertEquals('TestKey' . $index, $record->getKey());
             $this->assertEquals($data['secret'] . $index, $record->secret);
-            $record->ltiVersion = $data['lti_version'];
+            $record->ltiVersion = $data['ltiversion'];
         }
     }
 
