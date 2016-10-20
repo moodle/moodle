@@ -4116,12 +4116,18 @@ function glossary_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     $updates = course_check_module_updates_since($cm, $from, array('attachment', 'entry'), $filter);
 
+    $updates->entries = (object) array('updated' => false);
     $select = 'glossaryid = :id AND (timecreated > :since1 OR timemodified > :since2)';
     $params = array('id' => $cm->instance, 'since1' => $from, 'since2' => $from);
     if (!has_capability('mod/glossary:approve', $cm->context)) {
         $select .= ' AND approved = 1';
     }
-    $updates->entries = $DB->count_records_select('glossary_entries', $select, $params) > 0;
+
+    $entries = $DB->get_records_select('glossary_entries', $select, $params, '', 'id');
+    if (!empty($entries)) {
+        $updates->entries->updated = true;
+        $updates->entries->itemids = array_keys($entries);
+    }
 
     return $updates;
 }

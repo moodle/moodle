@@ -1925,6 +1925,7 @@ function quiz_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates = course_check_module_updates_since($cm, $from, array(), $filter);
 
     // Check if questions were updated.
+    $updates->questions = (object) array('updated' => false);
     $quizobj = quiz::create($cm->instance, $USER->id);
     $quizobj->preload_questions();
     $quizobj->load_questions();
@@ -1934,16 +1935,29 @@ function quiz_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $select = 'id ' . $questionsql . ' AND (timemodified > :time1 OR timecreated > :time2)';
         $params['time1'] = $from;
         $params['time2'] = $from;
-        $updates->questions = $DB->count_records_select('question', $select, $params) > 0;
-    } else {
-        $updates->questions = false;
+        $questions = $DB->count_records_select('question', $select, $params) > 0;
+        if (!empty($questions)) {
+            $updates->questions->updated = true;
+            $updates->questions->itemids = array_keys($questions);
+        }
     }
 
     // Check for new attempts or grades.
+    $updates->attempts = (object) array('updated' => false);
+    $updates->grades = (object) array('updated' => false);
     $select = 'quiz = ? AND userid = ? AND timemodified > ?';
     $params = array($cm->instance, $USER->id, $from);
-    $updates->attempts = $DB->count_records_select('quiz_attempts', $select, $params) > 0;
-    $updates->grades = $DB->count_records_select('quiz_grades', $select, $params) > 0;
+
+    $attempts = $DB->get_records_select('quiz_attempts', $select, $params, '', 'id');
+    if (!empty($attempts)) {
+        $updates->attempts->updated = true;
+        $updates->attempts->itemids = array_keys($attempts);
+    }
+    $grades = $DB->get_records_select('quiz_grades', $select, $params, '', 'id');
+    if (!empty($grades)) {
+        $updates->grades->updated = true;
+        $updates->grades->itemids = array_keys($grades);
+    }
 
     return $updates;
 }

@@ -1537,8 +1537,19 @@ function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
     // Check if there is a new submission by the user or new grades.
     $select = 'assignment = :id AND userid = :userid AND (timecreated > :since1 OR timemodified > :since2)';
     $params = array('id' => $cm->instance, 'userid' => $USER->id, 'since1' => $from, 'since2' => $from);
-    $updates->submissions = $DB->count_records_select('assign_submission', $select, $params) > 0;
-    $updates->grades = $DB->count_records_select('assign_grades', $select, $params) > 0;
+    $updates->submissions = (object) array('updated' => false);
+    $submissions = $DB->get_records_select('assign_submission', $select, $params, '', 'id');
+    if (!empty($submissions)) {
+        $updates->submissions->updated = true;
+        $updates->submissions->itemids = array_keys($submissions);
+    }
+
+    $updates->grades = (object) array('updated' => false);
+    $grades = $DB->get_records_select('assign_grades', $select, $params, '', 'id');
+    if (!empty($grades)) {
+        $updates->grades->updated = true;
+        $updates->grades->itemids = array_keys($grades);
+    }
 
     return $updates;
 }

@@ -661,7 +661,12 @@ function book_check_updates_since(cm_info $cm, $from, $filter = array()) {
     if (!has_capability('mod/book:viewhiddenchapters', $context)) {
         $select .= ' AND hidden = 0';
     }
-    $updates->entries = $DB->count_records_select('book_chapters', $select, $params) > 0;
+    $updates->entries = (object) array('updated' => false);
+    $entries = $DB->get_records_select('book_chapters', $select, $params, '', 'id');
+    if (!empty($entries)) {
+        $updates->entries->updated = true;
+        $updates->entries->itemids = array_keys($entries);
+    }
 
     return $updates;
 }

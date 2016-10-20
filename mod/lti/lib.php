@@ -576,9 +576,14 @@ function lti_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates = course_check_module_updates_since($cm, $from, array(), $filter);
 
     // Check if there is a new submission.
+    $updates->submissions = (object) array('updated' => false);
     $select = 'ltiid = :id AND userid = :userid AND (datesubmitted > :since1 OR dateupdated > :since2)';
     $params = array('id' => $cm->instance, 'userid' => $USER->id, 'since1' => $from, 'since2' => $from);
-    $updates->submissions = $DB->count_records_select('lti_submission', $select, $params) > 0;
+    $submissions = $DB->get_records_select('lti_submission', $select, $params, '', 'id');
+    if (!empty($submissions)) {
+        $updates->submissions->updated = true;
+        $updates->submissions->itemids = array_keys($submissions);
+    }
 
     return $updates;
 }

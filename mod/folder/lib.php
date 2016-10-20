@@ -747,7 +747,7 @@ function folder_print_recent_activity($course, $viewfullnames, $timestart) {
     return true;
 }
 
- /**
+/**
  * Check if the module has any update that affects the current user since a given time.
  *
  * @param  cm_info $cm course module data

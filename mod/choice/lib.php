@@ -1156,9 +1156,14 @@ function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
         return $updates;
     }
     // Check if there are new responses in the choice.
+    $updates->answers = (object) array('updated' => false);
     $select = 'choiceid = :id AND timemodified > :since';
     $params = array('id' => $choice->id, 'since' => $from);
-    $updates->answers = $DB->count_records_select('choice_answers', $select, $params) > 0;
+    $answers = $DB->get_records_select('choice_answers', $select, $params, '', 'id');
+    if (!empty($answers)) {
+        $updates->answers->updated = true;
+        $updates->answers->itemids = array_keys($answers);
+    }
 
     return $updates;
 }

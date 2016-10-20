@@ -1516,8 +1516,13 @@ function scorm_check_updates_since(cm_info $cm, $from, $filter = array()) {
     }
     $updates = course_check_module_updates_since($cm, $from, array('package'), $filter);
 
+    $updates->tracks = (object) array('updated' => false);
     $select = 'scormid = ? AND userid = ? AND timemodified > ?';
     $params = array($scorm->id, $USER->id, $from);
-    $updates->tracks = $DB->count_records_select('scorm_scoes_track', $select, $params) > 0;
+    $tracks = $DB->get_records_select('scorm_scoes_track', $select, $params, '', 'id');
+    if (!empty($tracks)) {
+        $updates->tracks->updated = true;
+        $updates->tracks->itemids = array_keys($tracks);
+    }
     return $updates;
 }

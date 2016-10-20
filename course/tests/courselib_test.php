@@ -3333,13 +3333,13 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Check nothing changed right now.
         $updates = course_check_module_updates_since($cm, $from);
-        $this->assertFalse($updates->configuration);
-        $this->assertFalse($updates->completion);
-        $this->assertFalse($updates->gradeitems);
-        $this->assertFalse($updates->comments);
-        $this->assertFalse($updates->ratings);
-        $this->assertFalse($updates->introfiles);
-        $this->assertFalse($updates->outcomes);
+        $this->assertFalse($updates->configuration->updated);
+        $this->assertFalse($updates->completion->updated);
+        $this->assertFalse($updates->gradeitems->updated);
+        $this->assertFalse($updates->comments->updated);
+        $this->assertFalse($updates->ratings->updated);
+        $this->assertFalse($updates->introfiles->updated);
+        $this->assertFalse($updates->outcomes->updated);
 
         $this->waitForSecond();
 
@@ -3377,12 +3377,12 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Check upgrade status.
         $updates = course_check_module_updates_since($cm, $from);
-        $this->assertTrue($updates->configuration);
-        $this->assertTrue($updates->completion);
-        $this->assertTrue($updates->gradeitems);
-        $this->assertTrue($updates->comments);
-        $this->assertTrue($updates->ratings);
-        $this->assertFalse($updates->introfiles);
-        $this->assertFalse($updates->outcomes);
+        $this->assertTrue($updates->configuration->updated);
+        $this->assertTrue($updates->completion->updated);
+        $this->assertTrue($updates->gradeitems->updated);
+        $this->assertTrue($updates->comments->updated);
+        $this->assertTrue($updates->ratings->updated);
+        $this->assertFalse($updates->introfiles->updated);
+        $this->assertFalse($updates->outcomes->updated);
     }
 }

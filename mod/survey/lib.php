@@ -1069,8 +1069,13 @@ function survey_check_updates_since(cm_info $cm, $from, $filter = array()) {
     }
     $updates = course_check_module_updates_since($cm, $from, array(), $filter);
 
+    $updates->answers = (object) array('updated' => false);
     $select = 'survey = ? AND userid = ? AND time > ?';
     $params = array($cm->instance, $USER->id, $from);
-    $updates->tracks = $DB->count_records_select('survey_answers', $select, $params) > 0;
+    $answers = $DB->get_records_select('survey_answers', $select, $params, '', 'id');
+    if (!empty($answers)) {
+        $updates->answers->updated = true;
+        $updates->answers->itemids = array_keys($answers);
+    }
     return $updates;
 }

@@ -760,6 +760,7 @@ function wiki_check_updates_since(cm_info $cm, $from, $filter = array()) {
     $updates = course_check_module_updates_since($cm, $from, array('attachments'), $filter);
 
     // Check only pages updated in subwikis the user can access.
+    $updates->pages = (object) array('updated' => false);
     $wiki = $DB->get_record($cm->modname, array('id' => $cm->instance), '*', MUST_EXIST);
     if ($subwikis = wiki_get_visible_subwikis($wiki, $cm, $cm->context)) {
         $subwikisids = array();
@@ -770,9 +771,11 @@ function wiki_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $select = 'subwikiid ' . $subwikissql . ' AND (timemodified > :since1 OR timecreated > :since2)';
         $params['since1'] = $from;
         $params['since2'] = $from;
-        $updates->pages = $DB->count_records_select('wiki_pages', $select, $params) > 0;
-    } else {
-        $updates->pages = false;
+        $pages = $DB->get_records_select('wiki_pages', $select, $params, '', 'id');
+        if (!empty($pages)) {
+            $updates->pages->updated = true;
+            $updates->pages->itemids = array_keys($pages);
+        }
     }
     return $updates;
 }

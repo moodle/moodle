@@ -3625,14 +3625,19 @@ function course_check_updates($course, $tocheck, $filter = array()) {
     foreach ($tocheck as $instance) {
         if ($instance['contextlevel'] == 'module') {
             // Check module visibility.
-            $modinfoexception = false;
             try {
                 $cm = $modinfo->get_cm($instance['id']);
             } catch (Exception $e) {
-                $modinfoexception = true;
+                $warnings[] = array(
+                    'item' => 'module',
+                    'itemid' => $instance['id'],
+                    'warningcode' => 'cmidnotincourse',
+                    'message' => 'This module id does not belong to this course.'
+                );
+                continue;
             }
 
-            if ($modinfoexception or !$cm->uservisible) {
+            if (!$cm->uservisible) {
                 $warnings[] = array(
                     'item' => 'module',
                     'itemid' => $instance['id'],
@@ -3692,7 +3697,10 @@ function course_check_module_updates_since($cm, $from, $fileareas = array(), $fi
 
     // Check changes in the module configuration.
     if (isset($mod->timemodified) and (empty($filter) or in_array('configuration', $filter))) {
-        $updates->configuration = $mod->timemodified > $from;
+        $updates->configuration = (object) array('updated' => false);
+        if ($updates->configuration->updated = $mod->timemodified > $from) {
+            $updates->configuration->timeupdated = $mod->timemodified;
+        }
     }
 
     // Check for updates in files.
@@ -3703,50 +3711,53 @@ function course_check_module_updates_since($cm, $from, $fileareas = array(), $fi
         $fs = get_file_storage();
         $files = $fs->get_area_files($context->id, $component, $fileareas, false, "filearea, timemodified DESC", true, $from);
         foreach ($fileareas as $filearea) {
-            $updates->{$filearea . 'files'} = false;
+            $updates->{$filearea . 'files'} = (object) array('updated' => false);
         }
         foreach ($files as $file) {
-            $updates->{$file->get_filearea() . 'files'} = true;
+            $updates->{$file->get_filearea() . 'files'}->updated = true;
+            $updates->{$file->get_filearea() . 'files'}->itemids[] = $file->get_id();
         }
     }
 
     // Check completion.
-    $updates->completion = false;
     $supportcompletion = plugin_supports('mod', $cm->modname, FEATURE_COMPLETION_HAS_RULES);
     $supportcompletion = $supportcompletion or plugin_supports('mod', $cm->modname, FEATURE_COMPLETION_TRACKS_VIEWS);
     if ($supportcompletion and (empty($filter) or in_array('completion', $filter))) {
+        $updates->completion = (object) array('updated' => false);
         $completion = new completion_info($course);
         // Use wholecourse to cache all the modules the first time.
         $completiondata = $completion->get_data($cm, true);
-        $updates->completion = !empty($completiondata->timemodified) && $completiondata->timemodified > $from;
+        if ($updates->completion->updated = !empty($completiondata->timemodified) && $completiondata->timemodified > $from) {
+            $updates->completion->timemodified = $completiondata->timemodified;
+        }
     }
 
     // Check grades.
-    $updates->gradeitems = false;
-    $updates->outcomes = false;
     $supportgrades = plugin_supports('mod', $cm->modname, FEATURE_GRADE_HAS_GRADE);
     $supportgrades = $supportgrades or plugin_supports('mod', $cm->modname, FEATURE_GRADE_OUTCOMES);
     if ($supportgrades and (empty($filter) or (in_array('gradeitems', $filter) or in_array('outcomes', $filter)))) {
         require_once($CFG->libdir . '/gradelib.php');
         $grades = grade_get_grades($course->id, 'mod', $cm->modname, $mod->id, $USER->id);
-        
+
         if (empty($filter) or in_array('gradeitems', $filter)) {
+            $updates->gradeitems = (object) array('updated' => false);
             foreach ($grades->items as $gradeitem) {
                 foreach ($gradeitem->grades as $grade) {
                     if ($grade->datesubmitted > $from or $grade->dategraded > $from) {
-                        $updates->gradeitems = true;
-                        break 2;
+                        $updates->gradeitems->updated = true;
+                        $updates->gradeitems->itemids[] = $gradeitem->id;
                     }
                 }
             }
         }
-        
+
         if (empty($filter) or in_array('outcomes', $filter)) {
+            $updates->outcomes = (object) array('updated' => false);
             foreach ($grades->outcomes as $outcome) {
                 foreach ($outcome->grades as $grade) {
                     if ($grade->datesubmitted > $from or $grade->dategraded > $from) {
-                        $updates->outcomes = true;
-                        break 2;
+                        $updates->outcomes->updated = true;
+                        $updates->outcomes->itemids[] = $outcome->id;
                     }
                 }
             }
@@ -3754,19 +3765,27 @@ function course_check_module_updates_since($cm, $from, $fileareas = array(), $fi
     }
 
     // Check comments.
-    $updates->comments = false;
     if (plugin_supports('mod', $cm->modname, FEATURE_COMMENT) and (empty($filter) or in_array('comments', $filter))) {
+        $updates->comments = (object) array('updated' => false);
         require_once($CFG->dirroot . '/comment/locallib.php');
         $manager = new comment_manager();
-        $updates->comments = count($manager->get_component_comments_since($course, $cm, $context, $component, $from)) > 0;
+        $comments = $manager->get_component_comments_since($course, $context, $component, $from, $cm);
+        if (!empty($comments)) {
+            $updates->comments->updated = true;
+            $updates->comments->itemids = array_keys($comments);
+        }
     }
 
     // Check ratings.
-    $updates->ratings = false;
     if (plugin_supports('mod', $cm->modname, FEATURE_RATE) and (empty($filter) or in_array('ratings', $filter))) {
+        $updates->ratings = (object) array('updated' => false);
         require_once($CFG->dirroot . '/rating/lib.php');
         $manager = new rating_manager();
-        $updates->ratings = count($manager->get_component_ratings_since($course, $cm, $context, $component, $from)) > 0;
+        $ratings = $manager->get_component_ratings_since($context, $component, $from);
+        if (!empty($ratings)) {
+            $updates->ratings->updated = true;
+            $updates->ratings->itemids = array_keys($ratings);
+        }
     }
 
     return $updates;
