@@ -243,6 +243,19 @@ class manager_testcase extends advanced_testcase {
             $tourconfig->id = null;
             $tour = \tool_usertours\tour::load_from_record($tourconfig, true);
             $tour->persist(true);
+
+            $stepconfig = (object) [
+                'id' => null,
+                'tourid' => $tour->get_id(),
+                'title' => '',
+                'content' => '',
+                'targettype' => \tool_usertours\target::TARGET_UNATTACHED,
+                'targetvalue' => '',
+                'sortorder' => 0,
+                'configdata' => '',
+            ];
+            $step = \tool_usertours\step::load_from_record($stepconfig, true);
+            $step->persist(true);
         }
 
         $match = \tool_usertours\manager::get_matching_tours(new moodle_url($url));
