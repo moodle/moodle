@@ -579,7 +579,7 @@ EOF;
 
         foreach ($tours as $record) {
             $tour = tour::load_from_record($record);
-            if ($tour->is_enabled() && $tour->matches_all_filters($PAGE->context) & $tour->get_steps() > 0) {
+            if ($tour->is_enabled() && $tour->matches_all_filters($PAGE->context) && $tour->get_steps() > 0) {
                 return $tour;
             }
         }
