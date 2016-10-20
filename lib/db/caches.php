@@ -301,4 +301,13 @@ $definitions = array(
         'staticacceleration' => true,
         'staticaccelerationsize' => 3
     ),
+
+    // Cache for storing the user's last received message time.
+    'message_last_created' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true, // The id of the sender and recipient is used.
+        'simplevalues' => true,
+        'datasource' => 'message_last_created_cache_source',
+        'datasourcefile' => 'message/classes/message_last_created_cache_source.php'
+    ),
 );

@@ -234,6 +234,16 @@ function message_send($eventdata) {
         }
     }
 
+    // Only cache messages, not notifications.
+    if (empty($savemessage->notification)) {
+        // Cache the timecreated value of the last message between these two users.
+        $cache = cache::make('core', 'message_last_created');
+        $ids = [$savemessage->useridfrom, $savemessage->useridto];
+        sort($ids);
+        $key = implode('_', $ids);
+        $cache->set($key, $savemessage->timecreated);
+    }
+
     // Store unread message just in case we get a fatal error any time later.
     $savemessage->id = $DB->insert_record('message', $savemessage);
     $eventdata->savedmessageid = $savemessage->id;

@@ -291,11 +291,32 @@ class api {
      * @param int $limitfrom
      * @param int $limitnum
      * @param string $sort
+     * @param int $createdfrom the timestamp from which the messages were created
+     * @param int $createdto the time up until which the message was created
      * @return array
      */
-    public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0, $sort = 'timecreated ASC') {
+    public static function get_messages($userid, $otheruserid, $limitfrom = 0, $limitnum = 0,
+        $sort = 'timecreated ASC', $createdfrom = 0, $createdto = 0) {
+
+        if (!empty($createdfrom)) {
+            // Check the cache to see if we even need to do a DB query.
+            $cache = \cache::make('core', 'message_last_created');
+            $ids = [$otheruserid, $userid];
+            sort($ids);
+            $key = implode('_', $ids);
+            $lastcreated = $cache->get($key);
+
+            // The last known message time is earlier than the one being requested so we can
+            // just return an empty result set rather than having to query the DB.
+            if ($lastcreated && $lastcreated < $createdfrom) {
+                return [];
+            }
+        }
+
         $arrmessages = array();
-        if ($messages = helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum, $sort)) {
+        if ($messages = helper::get_messages($userid, $otheruserid, 0, $limitfrom, $limitnum,
+                                             $sort, $createdfrom, $createdto)) {
+
             $arrmessages = helper::create_messages($userid, $messages);
         }
 

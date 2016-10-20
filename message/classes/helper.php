@@ -43,10 +43,12 @@ class helper {
      * @param int $limitfrom
      * @param int $limitnum
      * @param string $sort
+     * @param int $createdfrom the time from which the message was created
+     * @param int $createdto the time up until which the message was created
      * @return array of messages
      */
     public static function get_messages($userid, $otheruserid, $timedeleted = 0, $limitfrom = 0, $limitnum = 0,
-                                        $sort = 'timecreated ASC') {
+                                        $sort = 'timecreated ASC', $createdfrom = 0, $createdto = 0) {
         global $DB;
 
         $messageid = $DB->sql_concat("'message_'", 'id');
@@ -58,6 +60,7 @@ class helper {
                  WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
                     OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
                    AND notification = 0
+                   %where%
              UNION ALL
                 SELECT {$messagereadid} AS fakeid, id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
                        smallmessage, notification, timecreated, timeread
@@ -65,11 +68,29 @@ class helper {
                  WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
                     OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
                    AND notification = 0
+                   %where%
               ORDER BY $sort";
-        $params = array($userid, $otheruserid, $timedeleted,
-                        $otheruserid, $userid, $timedeleted,
-                        $userid, $otheruserid, $timedeleted,
-                        $otheruserid, $userid, $timedeleted);
+        $params1 = array($userid, $otheruserid, $timedeleted,
+                         $otheruserid, $userid, $timedeleted);
+
+        $params2 = array($userid, $otheruserid, $timedeleted,
+                         $otheruserid, $userid, $timedeleted);
+        $where = array();
+
+        if (!empty($createdfrom)) {
+            $where[] = 'AND timecreated >= ?';
+            $params1[] = $createdfrom;
+            $params2[] = $createdfrom;
+        }
+
+        if (!empty($createdto)) {
+            $where[] = 'AND timecreated <= ?';
+            $params1[] = $createdto;
+            $params2[] = $createdto;
+        }
+
+        $sql = str_replace('%where%', implode(' ', $where), $sql);
+        $params = array_merge($params1, $params2);
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
