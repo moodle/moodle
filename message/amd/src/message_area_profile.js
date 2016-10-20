@@ -64,17 +64,35 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
 
             this.messageArea.onCustomEvent(Events.CONTACTSELECTED, this._viewProfile.bind(this));
             this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEVIEW,
-                this._viewFullProfile.bind(this));
+                function(e, data) {
+                    this._viewFullProfile();
+                    data.originalEvent.preventDefault();
+                }.bind(this));
             this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILESENDMESSAGE,
-                this._sendMessage.bind(this));
+                function(e, data) {
+                    this._sendMessage();
+                    data.originalEvent.preventDefault();
+                }.bind(this));
             this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEUNBLOCKCONTACT,
-                this._unblockContact.bind(this));
+                function(e, data) {
+                    this._unblockContact();
+                    data.originalEvent.preventDefault();
+                }.bind(this));
             this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEBLOCKCONTACT,
-                this._blockContact.bind(this));
+                function(e, data) {
+                    this._blockContact();
+                    data.originalEvent.preventDefault();
+                }.bind(this));
             this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEADDCONTACT,
-                this._addContact.bind(this));
+                function(e, data) {
+                    this._addContact();
+                    data.originalEvent.preventDefault();
+                }.bind(this));
             this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.PROFILEREMOVECONTACT,
-                this._removeContact.bind(this));
+                function(e, data) {
+                    this._removeContact();
+                    data.originalEvent.preventDefault();
+                }.bind(this));
             this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.SHOWCONTACTS,
                 this._hideMessagingArea.bind(this));
         };
