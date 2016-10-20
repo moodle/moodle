@@ -3041,7 +3041,7 @@ class core_course_external extends external_api {
                     'Instances to check'
                 ),
                 'filter' => new external_multiple_structure(
-                    new external_value(PARAM_ALPHANUM, 'Area name: configuration, fileareas, completion, ratings, comments, 
+                    new external_value(PARAM_ALPHANUM, 'Area name: configuration, fileareas, completion, ratings, comments,
                                                         gradeitems, outcomes'),
                     'Check only for updates in these areas', VALUE_DEFAULT, array()
                 )
@@ -3053,7 +3053,6 @@ class core_course_external extends external_api {
      * Check if there is updates affecting the user for the given course and contexts.
      * Right now only modules are supported.
      * This WS calls mod_check_updates_since for each module to check if there is any update the user should we aware of.
-     * It just returns if there is updates, not specific information.
      *
      * @param int $courseid the list of modules to check
      * @param array $tocheck the list of modules to check
@@ -3083,17 +3082,28 @@ class core_course_external extends external_api {
         $instancesformatted = array();
         foreach ($instances as $instance) {
             $updates = array();
-            foreach ($instance['updates'] as $name => $updated) {
-                $updates[] = array(
+            foreach ($instance['updates'] as $name => $data) {
+                if (empty($data->updated)) {
+                    continue;
+                }
+                $updatedata = array(
                     'name' => $name,
-                    'updated' => $updated
+                );
+                if (!empty($data->timeupdated)) {
+                    $updatedata['timeupdated'] = $data->timeupdated;
+                }
+                if (!empty($data->itemids)) {
+                    $updatedata['itemids'] = $data->itemids;
+                }
+                $updates[] = $updatedata;
+            }
+            if (!empty($updates)) {
+                $instancesformatted[] = array(
+                    'contextlevel' => $instance['contextlevel'],
+                    'id' => $instance['id'],
+                    'updates' => $updates
                 );
             }
-            $instancesformatted[] = array(
-                'contextlevel' => $instance['contextlevel'],
-                'id' => $instance['id'],
-                'updates' => $updates
-            );
         }
 
         return array(
@@ -3120,7 +3130,12 @@ class core_course_external extends external_api {
                                 new external_single_structure(
                                     array(
                                         'name' => new external_value(PARAM_ALPHANUMEXT, 'Name of the area updated.'),
-                                        'updated' => new external_value(PARAM_BOOL, 'Whether is was updated since the given time.')
+                                        'timeupdated' => new external_value(PARAM_INT, 'Last time was updated', VALUE_OPTIONAL),
+                                        'itemids' => new external_multiple_structure(
+                                            new external_value(PARAM_INT, 'Instance id'),
+                                            'The ids of the items updated',
+                                            VALUE_OPTIONAL
+                                        )
                                     )
                                 )
                             )

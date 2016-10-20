@@ -2076,13 +2076,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Check there is nothing updated because modules are fresh new.
         $result = core_course_external::check_updates($course->id, $params);
         $result = external_api::clean_returnvalue(core_course_external::check_updates_returns(), $result);
-        $this->assertCount(16, $result['instances']);
+        $this->assertCount(0, $result['instances']);
         $this->assertCount(0, $result['warnings']);
-        foreach ($result['instances'] as $module) {
-            foreach ($module['updates'] as $update) {
-                $this->assertFalse($update['updated']);
-            }
-        }
 
         // Update a module after a second.
         $this->waitForSecond();
@@ -2091,15 +2086,12 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $found = false;
         $result = core_course_external::check_updates($course->id, $params);
         $result = external_api::clean_returnvalue(core_course_external::check_updates_returns(), $result);
-        $this->assertCount(16, $result['instances']);
+        $this->assertCount(1, $result['instances']);
         $this->assertCount(0, $result['warnings']);
         foreach ($result['instances'] as $module) {
             foreach ($module['updates'] as $update) {
                 if ($module['id'] == $modules['forum']['cm']->id and $update['name'] == 'configuration') {
-                    $this->assertTrue($update['updated']);
                     $found = true;
-                } else {
-                    $this->assertFalse($update['updated']);
                 }
             }
         }
@@ -2110,15 +2102,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $found = false;
         $result = core_course_external::check_updates($course->id, $params, $filter);
         $result = external_api::clean_returnvalue(core_course_external::check_updates_returns(), $result);
-        $this->assertCount(16, $result['instances']);
+        $this->assertCount(0, $result['instances']);
         $this->assertCount(0, $result['warnings']);
-        foreach ($result['instances'] as $module) {
-            foreach ($module['updates'] as $update) {
-                if ($module['id'] == $modules['forum']['cm']->id and $update['name'] == 'configuration') {
-                    $found = true;
-                }
-            }
-        }
         $this->assertFalse($found);
 
         // Add invalid cmid.
