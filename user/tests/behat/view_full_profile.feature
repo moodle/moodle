@@ -83,7 +83,7 @@ Feature: Access to full profiles of users
     And I press "Add"
     And I log out
     When I log in as "student1"
-    And I view the "Student 3" contact in messages
+    And I view the "Student 3" contact in the message area
     And I follow "View profile"
     Then I should see "First access to site"
 
@@ -99,7 +99,7 @@ Feature: Access to full profiles of users
     And I press "Save and display"
     And I log out
     When I log in as "student1"
-    And I view the "Student 2" contact in messages
+    And I view the "Student 2" contact in the message area
     And I follow "View profile"
     And I should not see "First access to site"
     And I should see "The details of this user are not available to you"
@@ -117,6 +117,6 @@ Feature: Access to full profiles of users
     And I add "Student 2 (student2@example.com)" user to "Group 1" group members
     And I log out
     And I log in as "student1"
-    And I view the "Student 2" contact in messages
+    And I view the "Student 2" contact in the message area
     And I follow "View profile"
     Then I should see "First access to site"
