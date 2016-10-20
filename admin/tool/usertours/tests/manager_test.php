@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/formslib.php');
+require_once(__DIR__ . '/helper_trait.php');
 
 /**
  * Tests for step.
@@ -34,7 +35,9 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_testcase extends advanced_testcase {
+class tool_usertours_manager_testcase extends advanced_testcase {
+    // There are shared helpers for these tests in the helper trait.
+    use tool_usertours_helper_trait;
 
     /**
      * @var moodle_database
@@ -243,25 +246,14 @@ class manager_testcase extends advanced_testcase {
             $tourconfig->id = null;
             $tour = \tool_usertours\tour::load_from_record($tourconfig, true);
             $tour->persist(true);
-
-            $stepconfig = (object) [
-                'id' => null,
-                'tourid' => $tour->get_id(),
-                'title' => '',
-                'content' => '',
-                'targettype' => \tool_usertours\target::TARGET_UNATTACHED,
-                'targetvalue' => '',
-                'sortorder' => 0,
-                'configdata' => '',
-            ];
-            $step = \tool_usertours\step::load_from_record($stepconfig, true);
-            $step->persist(true);
+            $this->helper_create_step((object) ['tourid' => $tour->get_id()]);
         }
 
         $match = \tool_usertours\manager::get_matching_tours(new moodle_url($url));
         if ($expected === null) {
             $this->assertNull($match);
         } else {
+            $this->assertNotNull($match);
             $this->assertEquals($expected, $match->get_name());
         }
     }
@@ -289,5 +281,4 @@ class manager_testcase extends advanced_testcase {
 
         $this->assertNull(\tool_usertours\manager::get_matching_tours(new moodle_url($url)));
     }
-
 }

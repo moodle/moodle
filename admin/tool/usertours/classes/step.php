@@ -485,7 +485,18 @@ class step {
             $this->id = $DB->insert_record('tool_usertours_steps', $record);
         }
 
+        $this->get_tour()->reset_step_sortorder();
+
         $this->reload();
+
+        // Notify of a change to the step configuration.
+        // This must be done separately to tour change notifications.
+        cache::notify_step_change($this->get_tourid());
+
+        // Notify the cache that a tour has changed.
+        // Tours are only stored in the cache if there are steps.
+        // If there step count has changed for some reason, this will change the potential cache results.
+        cache::notify_tour_change();
 
         return $this;
     }
@@ -502,6 +513,15 @@ class step {
 
         $DB->delete_records('tool_usertours_steps', array('id' => $this->id));
         $this->get_tour()->reset_step_sortorder();
+
+        // Notify of a change to the step configuration.
+        // This must be done separately to tour change notifications.
+        cache::notify_step_change($this->get_id());
+
+        // Notify the cache that a tour has changed.
+        // Tours are only stored in the cache if there are steps.
+        // If there step count has changed for some reason, this will change the potential cache results.
+        cache::notify_tour_change();
     }
 
     /**

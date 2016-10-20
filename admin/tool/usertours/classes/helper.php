@@ -432,6 +432,11 @@ class helper {
             }
             $index++;
         }
+
+        // Notify the cache that a tour has changed.
+        // Tours are only stored in the cache if there are steps.
+        // If there step count has changed for some reason, this will change the potential cache results.
+        cache::notify_tour_change();
     }
 
 
@@ -442,11 +447,8 @@ class helper {
      * @return  stdClass[]
      */
     public static function get_steps($tourid) {
-        global $DB;
+        $steps = cache::get_stepdata($tourid);
 
-        $order = 'sortorder ASC';
-
-        $steps = $DB->get_records('tool_usertours_steps', array('tourid' => $tourid), $order);
         $return = [];
         foreach ($steps as $step) {
             $return[$step->id] = step::load_from_record($step);
