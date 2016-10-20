@@ -561,8 +561,8 @@ class manager {
     public static function get_matching_tours(\moodle_url $pageurl) {
         global $DB, $PAGE;
 
-        // Do not show tours whilst upgrades are pending.
-        if (moodle_needs_upgrading()) {
+        if (self::tour_upgrade_pending()) {
+            // Do not show tours whilst upgrades are pending agains the plugin.
             return null;
         }
 
@@ -585,6 +585,21 @@ EOF;
         }
 
         return null;
+    }
+
+    /**
+     * Determine whether the tour plugin is pending an upgrade.
+     *
+     * @return  bool
+     */
+    public static function tour_upgrade_pending() {
+        $plugin = new \stdClass();
+        include(dirname(__DIR__) . '/version.php');
+
+        $manager = \core_plugin_manager::instance();
+        $plugininfo = $manager->get_plugin_info('tool_usertours');
+
+        return ($plugin->version != $plugininfo->versiondb);
     }
 
     /**
