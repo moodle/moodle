@@ -40,7 +40,7 @@ $token = optional_param('token', $token, PARAM_ALPHANUM);
 // Only show the cartridge if the token parameter is correct.
 // If we do not compare with a shared secret, someone could very easily
 // guess an id for the enrolment.
-if (!\enrol_lti\helper::verify_tool_token($toolid, $token)) {
+if (!\enrol_lti\helper::verify_cartridge_token($toolid, $token)) {
     throw new \moodle_exception('incorrecttoken', 'enrol_lti');
 }
 

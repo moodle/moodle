@@ -291,4 +291,11 @@
     <license>Apache 2.0</license>
     <version>1.1.0</version>
   </library>
+  <library>
+    <location>ltiprovider</location>
+    <name>LTI Tool Provider Library PHP</name>
+    <license>Apache</license>
+    <version>3.0.2</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
 </libraries>

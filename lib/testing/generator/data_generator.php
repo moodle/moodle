@@ -1060,4 +1060,48 @@ EOD;
         $gradeoutcome->update_from_db();
         return $gradeoutcome->get_record_data();
     }
+
+    /**
+     * Helper function used to create an LTI tool.
+     *
+     * @param array $data
+     * @return stdClass the tool
+     */
+    public function create_lti_tool($data = array()) {
+        global $DB;
+
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+
+        // Create a course if no course id was specified.
+        if (empty($data->courseid)) {
+            $course = $this->create_course();
+            $data->courseid = $course->id;
+        } else {
+            $course = get_course($data->courseid);
+        }
+
+        if (!empty($data->cmid)) {
+            $data->contextid = context_module::instance($data->cmid)->id;
+        } else {
+            $data->contextid = context_course::instance($data->courseid)->id;
+        }
+
+        // Set it to enabled if no status was specified.
+        if (!isset($data->status)) {
+            $data->status = ENROL_INSTANCE_ENABLED;
+        }
+
+        // Add some extra necessary fields to the data.
+        $data->name = 'Test LTI';
+        $data->roleinstructor = $studentrole->id;
+        $data->rolelearner = $teacherrole->id;
+
+        // Get the enrol LTI plugin.
+        $enrolplugin = enrol_get_plugin('lti');
+        $instanceid = $enrolplugin->add_instance($course, (array) $data);
+
+        // Get the tool associated with this instance.
+        return $DB->get_record('enrol_lti_tools', array('enrolid' => $instanceid));
+    }
 }
