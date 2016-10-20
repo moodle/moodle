@@ -3234,6 +3234,9 @@ img.iconsmall {
   color: #3a87ad;
   background-color: #d9edf7;
 }
+#overriderolestable .overriddenpermission {
+  background-color: #fcf8e3;
+}
 /* calendar.less */
 .calendar_event_course {
   background-color: #ffd3bd;
