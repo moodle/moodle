@@ -165,6 +165,15 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'moodle/cohort:view'
     ),
+    'core_cohort_search_cohorts' => array(
+        'classname' => 'core_cohort_external',
+        'methodname' => 'search_cohorts',
+        'classpath' => 'cohort/externallib.php',
+        'description' => 'Search for cohorts.',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'moodle/cohort:view'
+    ),
     'core_cohort_get_cohorts' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'get_cohorts',
@@ -453,6 +462,14 @@ $functions = array(
         'description' => 'For each course and capability specified, return a list of the users that are enrolled in the course
                                   and have that capability',
         'type' => 'read',
+    ),
+    'core_enrol_get_potential_users' => array(
+        'classname' => 'core_enrol_external',
+        'methodname' => 'get_potential_users',
+        'classpath' => 'enrol/externallib.php',
+        'description' => 'Get the list of potential users to enrol',
+        'type' => 'read',
+        'capabilities' => 'moodle/course:enrolreview'
     ),
     'core_enrol_get_users_courses' => array(
         'classname' => 'core_enrol_external',

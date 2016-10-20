@@ -275,6 +275,137 @@ class core_cohort_external extends external_api {
     }
 
     /**
+     * Returns the description of external function parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function search_cohorts_parameters() {
+        $query = new external_value(
+            PARAM_RAW,
+            'Query string'
+        );
+        $includes = new external_value(
+            PARAM_ALPHA,
+            'What other contexts to fetch the frameworks from. (all, parents, self)',
+            VALUE_DEFAULT,
+            'parents'
+        );
+        $limitfrom = new external_value(
+            PARAM_INT,
+            'limitfrom we are fetching the records from',
+            VALUE_DEFAULT,
+            0
+        );
+        $limitnum = new external_value(
+            PARAM_INT,
+            'Number of records to fetch',
+            VALUE_DEFAULT,
+            25
+        );
+        return new external_function_parameters(array(
+            'query' => $query,
+            'context' => self::get_context_parameters(),
+            'includes' => $includes,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum
+        ));
+    }
+
+    /**
+     * Search cohorts.
+     *
+     * @param string $query
+     * @param array $context
+     * @param string $includes
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
+     */
+    public static function search_cohorts($query, $context, $includes = 'parents', $limitfrom = 0, $limitnum = 25) {
+        global $DB, $CFG, $PAGE;
+        require_once($CFG->dirroot . '/cohort/lib.php');
+
+        $params = self::validate_parameters(self::search_cohorts_parameters(), array(
+            'query' => $query,
+            'context' => $context,
+            'includes' => $includes,
+            'limitfrom' => $limitfrom,
+            'limitnum' => $limitnum,
+        ));
+        $query = $params['query'];
+        $includes = $params['includes'];
+        $context = self::get_context_from_params($params['context']);
+        $limitfrom = $params['limitfrom'];
+        $limitnum = $params['limitnum'];
+
+        self::validate_context($context);
+        $output = $PAGE->get_renderer('tool_lp');
+
+        $manager = has_capability('moodle/cohort:manage', $context);
+        if (!$manager) {
+            require_capability('moodle/cohort:view', $context);
+        }
+
+        // TODO Make this more efficient.
+        if ($includes == 'self') {
+            $results = cohort_get_cohorts($context->id, $limitfrom, $limitnum, $query);
+            $results = $results['cohorts'];
+        } else if ($includes == 'parents') {
+            $results = cohort_get_cohorts($context->id, $limitfrom, $limitnum, $query);
+            $results = $results['cohorts'];
+            if (!$context instanceof context_system) {
+                $results = array_merge($results, cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query));
+            }
+        } else if ($includes == 'all') {
+            $results = cohort_get_all_cohorts($limitfrom, $limitnum, $query);
+            $results = $results['cohorts'];
+        } else {
+            throw new coding_exception('Invalid parameter value for \'includes\'.');
+        }
+
+        $cohorts = array();
+        foreach ($results as $key => $cohort) {
+            $cohortcontext = context::instance_by_id($cohort->contextid);
+            if (!isset($cohort->description)) {
+                $cohort->description = '';
+            }
+            if (!isset($cohort->descriptionformat)) {
+                $cohort->descriptionformat = FORMAT_PLAIN;
+            }
+
+            list($cohort->description, $cohort->descriptionformat) =
+                external_format_text($cohort->description, $cohort->descriptionformat,
+                        $cohortcontext->id, 'cohort', 'description', $cohort->id);
+
+            $cohorts[$key] = $cohort;
+        }
+
+        return array('cohorts' => $cohorts);
+    }
+
+    /**
+     * Returns description of external function result value.
+     *
+     * @return external_description
+     */
+    public static function search_cohorts_returns() {
+        return new external_single_structure(array(
+            'cohorts' => new external_multiple_structure(
+                new external_single_structure(array(
+                    'id' => new external_value(PARAM_INT, 'ID of the cohort'),
+                    'name' => new external_value(PARAM_RAW, 'cohort name'),
+                    'idnumber' => new external_value(PARAM_RAW, 'cohort idnumber'),
+                    'description' => new external_value(PARAM_RAW, 'cohort description'),
+                    'descriptionformat' => new external_format_value('description'),
+                    'visible' => new external_value(PARAM_BOOL, 'cohort visible'),
+                ))
+            )
+        ));
+    }
+
+
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters

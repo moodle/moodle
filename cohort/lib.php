@@ -331,6 +331,33 @@ function cohort_can_view_cohort($cohortorid, $currentcontext) {
 }
 
 /**
+ * Get a cohort by id. Also does a visibility check and returns false if the user cannot see this cohort.
+ *
+ * @param stdClass|int $cohortorid cohort object or id
+ * @param context $currentcontext current context (course) where visibility is checked
+ * @return stdClass|boolean
+ */
+function cohort_get_cohort($cohortorid, $currentcontext) {
+    global $DB;
+    if (is_numeric($cohortorid)) {
+        $cohort = $DB->get_record('cohort', array('id' => $cohortorid), 'id, contextid, visible');
+    } else {
+        $cohort = $cohortorid;
+    }
+
+    if ($cohort && in_array($cohort->contextid, $currentcontext->get_parent_context_ids())) {
+        if ($cohort->visible) {
+            return $cohort;
+        }
+        $cohortcontext = context::instance_by_id($cohort->contextid);
+        if (has_capability('moodle/cohort:view', $cohortcontext)) {
+            return $cohort;
+        }
+    }
+    return false;
+}
+
+/**
  * Produces a part of SQL query to filter cohorts by the search string
  *
  * Called from {@link cohort_get_cohorts()}, {@link cohort_get_all_cohorts()} and {@link cohort_get_available_cohorts()}
