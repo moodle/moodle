@@ -96,7 +96,7 @@ class step_list extends \flexible_table {
      * @return  string
      */
     protected function col_content(step $step) {
-        return $step->get_content(false);
+        return format_text(step::get_string_from_input($step->get_content()), FORMAT_HTML);
     }
 
     /**
