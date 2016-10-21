@@ -22,17 +22,19 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['above'] = 'Above';
 $string['actions'] = 'Actions';
 $string['appliesto'] = 'Applies to';
+$string['below'] = 'Below';
 $string['block'] = 'Block';
 $string['block_named'] = 'Block named \'{$a}\'';
-$string['bottom'] = 'Bottom';
 $string['description'] = 'Description';
 $string['confirmstepremovalquestion'] = 'Are you sure that you wish to remove this step?';
 $string['confirmstepremovaltitle'] = 'Confirm step removal';
 $string['confirmtourremovalquestion'] = 'Are you sure that you wish to remove this tour?';
 $string['confirmtourremovaltitle'] = 'Confirm tour removal';
 $string['content'] = 'Content';
+$string['content_heading'] = 'Content';
 $string['content_help'] = 'This is the content of the step.
 You can enter a content in the following formats:
 <dl>
@@ -48,6 +50,7 @@ $string['defaultvalue'] = 'Default ({$a})';
 $string['delay'] = 'Delay before showing the step';
 $string['done'] = 'Done';
 $string['editstep'] = 'Editing "{$a}"';
+$string['tourisenabled'] = 'Tour is enabled';
 $string['enabled'] = 'Enabled';
 $string['event_tour_started'] = 'Tour started';
 $string['event_tour_reset'] = 'Tour reset';
@@ -72,6 +75,7 @@ $string['newstep'] = 'Create step';
 $string['newstep'] = 'New step';
 $string['newtour'] = 'Create a new tour';
 $string['next'] = 'Next';
+$string['options_heading'] = 'Options';
 $string['pathmatch'] = 'Apply to URL match';
 $string['pathmatch_help'] = 'Tours will be displayed on any page whose URL matches this value.
 
@@ -87,10 +91,10 @@ $string['pluginname'] = 'User Tours';
 $string['resettouronpage'] = 'Reset user tour on this page';
 $string['right'] = 'Right';
 $string['select_block'] = 'Select a block';
-$string['select_targettype'] = 'Every step is associated with a part of the page which you must choose. To make this easier there are several types of target for different types of page content.
+$string['targettype_help'] = 'Every step is associated with a part of the page which you must choose. To make this easier there are several types of target for different types of page content.
 <dl>
     <dt>Block</dt>
-    <dd>Display the step next to the first matching block of the type on the page</dd>
+    <dd>Display the step next to the first matching block of the type on the page.</dd>
     <dt>Selector</dt>
     <dd>CSS Selectors are a powerful way which allow you to select different parts of the page based on metadata built into the page.</dd>
     <dt>Display in middle of the page</dt>
@@ -100,6 +104,7 @@ $string['selector_defaulttitle'] = 'Enter a descriptive title';
 $string['selectordisplayname'] = 'A CSS selector matching \'{$a}\'';
 $string['skip'] = 'Skip';
 $string['target'] = 'Target';
+$string['target_heading'] = 'Step Target';
 $string['target_block'] = 'Block';
 $string['target_selector'] = 'Selector';
 $string['target_unattached'] = 'Display in middle of page';
@@ -115,7 +120,6 @@ You can enter a title in the following formats:
     <dt>Moodle Translated string</dt>
     <dd>A value found in a standard Moodle language file in the format identifier,component</dd>
 </dl>';
-$string['top'] = 'Top';
 $string['tourconfig'] = 'Tour configuration file to import';
 $string['tourlist_explanation'] = 'You can create as many tours as you like and enable them for different parts of Moodle. Only one tour can be created per page.';
 $string['tours'] = 'Tours';
@@ -129,11 +133,13 @@ $string['backdrop_help'] = 'You can use a backdrop to highlight the part of the 
 
 Note: Backdrops are not compatible with some parts of the page such as the navigation bar.
 ';
-$string['reflex'] = 'Move on click';
-$string['reflex_help'] = 'Move on to the next step when the target is clicked on.';
+$string['reflex'] = 'Proceed on click';
+$string['reflex_help'] = 'Proceed to the next step when the target is clicked on.';
 $string['placement_help'] = 'You can place a step either above, below, to the left of, or to the right of the target.
 
-The best options are top, or bottom as these adjust better for mobile display.';
+The best options are above, or below as these adjust better for mobile display.
+
+If the step does not fit into the page at at the placement you choose, it will be automatically be moved to give the best viewing experience. ';
 $string['delay_help'] = 'You can optionally choose to add a delay before the step is displayed.
 
 This delay is in milliseconds.';
