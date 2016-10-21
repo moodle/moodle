@@ -100,7 +100,7 @@ class api {
      * @return array with the settings and warnings
      */
     public static function get_public_config() {
-        global $CFG, $SITE, $PAGE;
+        global $CFG, $SITE, $PAGE, $OUTPUT;
 
         $context = context_system::instance();
         // We need this to make work the format text functions.
@@ -135,6 +135,14 @@ class api {
             $url = new moodle_url("/$CFG->admin/tool/mobile/launch.php");
             $settings['launchurl'] = $url->out(false);
         }
+
+        if ($logourl = $OUTPUT->get_logo_url()) {
+            $settings['logourl'] = $logourl->out(false);
+        }
+        if ($compactlogourl = $OUTPUT->get_compact_logo_url()) {
+            $settings['compactlogourl'] = $compactlogourl->out(false);
+        }
+
         return $settings;
     }
 

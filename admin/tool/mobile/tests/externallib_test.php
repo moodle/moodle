@@ -56,7 +56,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
     }
 
     public function test_get_public_config() {
-        global $CFG, $SITE;
+        global $CFG, $SITE, $OUTPUT;
 
         $this->resetAfterTest(true);
         $result = external::get_public_config();
@@ -89,11 +89,20 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $authinstructions = 'Something with <b>html tags</b>';
         set_config('auth_instructions', $authinstructions);
         set_config('typeoflogin', api::LOGIN_VIA_BROWSER, 'tool_mobile');
+        set_config('logo', 'mock.png', 'core_admin');
+        set_config('logocompact', 'mock.png', 'core_admin');
 
         $expected['registerauth'] = 'email';
         $expected['authinstructions'] = format_text($authinstructions);
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
-        $expected['launchurl'] = "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php";;
+        $expected['launchurl'] = "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php";
+
+        if ($logourl = $OUTPUT->get_logo_url()) {
+            $expected['logourl'] = $logourl->out(false);
+        }
+        if ($compactlogourl = $OUTPUT->get_compact_logo_url()) {
+            $expected['compactlogourl'] = $compactlogourl->out(false);
+        }
 
         $result = external::get_public_config();
         $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
