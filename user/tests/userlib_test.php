@@ -575,4 +575,52 @@ class core_userliblib_testcase extends advanced_testcase {
 
         $CFG->coursecontact = null;
     }
+
+    /**
+     * Test user_get_user_details
+     */
+    public function test_user_get_user_details() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create user and modify user profile.
+        $teacher = $this->getDataGenerator()->create_user();
+        $student = $this->getDataGenerator()->create_user();
+        $studentfullname = fullname($student);
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course1->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'teacher'));
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($teacher->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id);
+        role_assign($teacherrole->id, $teacher->id, $coursecontext->id);
+        role_assign($studentrole->id, $student->id, $coursecontext->id);
+
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Get student details as a user with super system capabilities.
+        $result = user_get_user_details($student, $course1);
+        $this->assertEquals($student->id, $result['id']);
+        $this->assertEquals($studentfullname, $result['fullname']);
+        $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
+
+        $this->setUser($teacher);
+        // Get student details as a user who can only see this user in a course.
+        $result = user_get_user_details($student, $course1);
+        $this->assertEquals($student->id, $result['id']);
+        $this->assertEquals($studentfullname, $result['fullname']);
+        $this->assertEquals($course1->id, $result['enrolledcourses'][0]['id']);
+
+        // Get student details with required fields.
+        $result = user_get_user_details($student, $course1, array('id', 'fullname'));
+        $this->assertCount(2, $result);
+        $this->assertEquals($student->id, $result['id']);
+        $this->assertEquals($studentfullname, $result['fullname']);
+
+        // Get exception for invalid required fields.
+        $this->setExpectedException('moodle_exception');
+        $result = user_get_user_details($student, $course1, array('wrongrequiredfield'));
+    }
 }

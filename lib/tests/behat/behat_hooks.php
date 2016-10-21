@@ -550,7 +550,7 @@ class behat_hooks extends behat_base {
      *
      * @Given /^I look for exceptions$/
      * @throw Exception Unknown type, depending on what we caught in the hook or basic \Exception.
-     * @see Moodle\BehatExtension\Tester\MoodleStepTester
+     * @see Moodle\BehatExtension\EventDispatcher\Tester\ChainedStepTester
      */
     public function i_look_for_exceptions() {
         // If the step already failed in a hook throw the exception.
