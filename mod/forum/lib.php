@@ -853,11 +853,6 @@ function forum_cron() {
                     $eventdata->set_additional_content('email', $additionalcontent);
                 }
 
-                // If replytouser is not set then send mail using the noreplyaddress.
-                if (empty($CFG->noreplyaddress)) {
-                    $eventdata->userfrom = core_user::get_noreply_user();
-                }
-
                 $smallmessagestrings = new stdClass();
                 $smallmessagestrings->user          = fullname($userfrom);
                 $smallmessagestrings->forumname     = "$shortname: " . format_string($forum->name, true) . ": " . $discussion->name;

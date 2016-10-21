@@ -2299,5 +2299,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016101401.02);
     }
 
+    if ($oldversion < 2016102700.01) {
+        // Remove unused admin email setting.
+        unset_config('emailonlyfromreplyaddress');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016102700.01);
+    }
+
     return true;
 }

@@ -762,7 +762,8 @@ function login_lock_account($user) {
         $oldforcelang = force_current_language($user->lang);
 
         $site = get_site();
-        $noreplyuser = core_user::get_noreply_user();
+        $supportuser = core_user::get_support_user();
+
         $data = new stdClass();
         $data->firstname = $user->firstname;
         $data->lastname  = $user->lastname;
@@ -776,7 +777,7 @@ function login_lock_account($user) {
 
         if ($message) {
             // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
-            email_to_user($user, $noreplyuser, $subject, $message);
+            email_to_user($user, $supportuser, $subject, $message);
         }
 
         force_current_language($oldforcelang);
