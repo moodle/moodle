@@ -438,6 +438,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $submission = $assignment['submissions'][0];
         $this->assertEquals($sid, $submission['id']);
         $this->assertCount(1, $submission['plugins']);
+        $this->assertEquals('notgraded', $submission['gradingstatus']);
     }
 
     /**
