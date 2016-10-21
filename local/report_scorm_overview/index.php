@@ -21,7 +21,6 @@ require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 
 // Deal with params.
 $courseid = optional_param('courseid', 0, PARAM_INT);
-$departmentid = optional_param('departmentid', 0, PARAM_INT);
 $dodownload = optional_param('dodownload', 0, PARAM_INT);
 
 // Check permissions.
@@ -31,7 +30,7 @@ iomad::require_capability('local/report_scorm_overview:view', $context);
 
 // Url stuff.
 $url = new moodle_url('/local/report_scorm_overview/index.php',
-                      array('departmentid' => $departmentid, 'courseid' => $courseid));
+                      array('courseid' => $courseid));
 $dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
 
 // Page stuff:.
@@ -42,53 +41,12 @@ $PAGE->set_title($strcompletion);
 $PAGE->set_heading($SITE->fullname);
 $PAGE->requires->css("/local/report_scorm_overvew/styles.css");
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
-// Get the associated department id.
-$company = new company($companyid);
-$parentlevel = company::get_company_parentnode($company->id);
-$companydepartment = $parentlevel->id;
-
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context) ||
-    !empty($SESSION->currenteditingcompany)) {
-    $userhierarchylevel = $parentlevel->id;
-} else {
-    $userlevel = company::get_userlevel($USER);
-    $userhierarchylevel = $userlevel->id;
-}
-if ($departmentid == 0) {
-    $departmentid = $userhierarchylevel;
-}
-
 // Set the url.
 company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
 
 // Navigation and header.
 if (empty($dodownload)) {
     echo $OUTPUT->header();
-    // Check the departmentid is valid.
-    if (!company::check_valid_department($companyid, $departmentid)) {
-        print_error('invaliduserdepartment', 'block_iomad_company_management');
-    }
-} else {
-    // Check the departmentid is valid.
-    if (!company::check_valid_department($companyid, $departmentid)) {
-        print_error('invaliduserdepartment', 'block_iomad_company_management');
-    }
-}
-
-// Get the appropriate list of departments.
-$subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
-$select = new single_select($url, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_iomad_company_admin');
-$select->formid = 'choosedepartment';
-if (empty($dodownload)) {
-    echo html_writer::tag('div', $OUTPUT->render($select),
-                           array('id' => 'iomad_department_selector'));
-    $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select),
-                                        array('id' => 'iomad_company_selector'));
-    echo "</br>";
 }
 
 // Get the SCORM data.
@@ -100,24 +58,9 @@ if (!$scormmod = $DB->get_record('modules', array('name' => 'scorm'))) {
     die;
 }
 
-// Get the department courses.
-if ($departmentcourses = company::get_recursive_department_courses($departmentid)) {
-    $dcourselist = "";
-    foreach ($departmentcourses as $departmentcourse) {
-        if (!empty($dcourselist)) {
-            $dcourselist .= ",".$departmentcourse->courseid;
-        } else {
-            $dcourselist = $departmentcourse->courseid;
-        }
-    }
-    $departmentsql = " AND c.id in (".$dcourselist.") ";
-} else {
-    $departmentsql = "";
-}
-
 // Get the company course instances.
 $sql = "SELECT DISTINCT c.id, c.fullname from {course_modules} cm, {course} c WHERE
-        cm.module = ".$scormmod->id." AND c.id = cm.course $departmentsql";
+        cm.module = ".$scormmod->id." AND c.id = cm.course";
 
 if (!$courselist = $DB->get_records_sql($sql)) {
     if (empty($dodownload)) {
@@ -181,7 +124,7 @@ if (!empty($courseid)) {
                             continue;
                         } else {
                             // Check we have interaction_ and not interaction.
-                            if (strpos($data->element, 'interaction_')) {
+                            if (strpos($data->element, 'interaction_') || strpos($data->element, 'interactions_')) {
                                 list($cmi, $elementraw, $target) = explode('.', $data->element);
                             } else {
                                 list($cmi, $elementraw, $g, $target) = explode('.', $data->element);
@@ -216,7 +159,6 @@ if (!empty($courseid)) {
             echo "<h2>".$scormid->name."</h2>";
             echo $OUTPUT->single_button(new moodle_url('index.php',
                                         array('courseid' => $courseid,
-                                              'departmentid' => $departmentid,
                                               'dodownload' => '1')),
                                         get_string("downloadcsv", 'local_report_completion'));
         } else {
@@ -250,16 +192,17 @@ if (!empty($courseid)) {
         ksort($tscormdata);
         $scormdata = (object) $tscormdata;
         foreach ($scormdata as $question => $info) {
+            $qstring = str_replace('_', ' ', $question);
             $questiontotal = $info->correct + $info->wrong;
             $questionright = round(($info->correct / $questiontotal) * 100, 2);
             $questionwrong = 100 - $questionright;
-            $scormscoretable->data[$question] = array($question,
+            $scormscoretable->data[$question] = array($qstring,
                                                       $info->type,
                                                       $questiontotal,
                                                       $questionright.'%',
                                                       $questionwrong.'%');
             if (!empty($dodownload)) {
-                echo '"'.$question.'","'.
+                echo '"'.$string.'","'.
                       $info->type.'","'.
                       $questiontotal.'","'.
                       $questionright.'%","'.
