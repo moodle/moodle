@@ -17,7 +17,7 @@ Feature: Content-Item support
   Scenario: Creating and editing tool configuration that has Content-Item support
     When I follow "configure a tool manually"
     And I set the field "Tool name" to "Test tool"
-    And I set the field "Tool base URL/cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
+    And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
     And I set the field "Tool configuration usage" to "Show in activity chooser and as a preconfigured tool"
     And I expand all fieldsets
     And I set the field "Content-Item Message" to "1"
