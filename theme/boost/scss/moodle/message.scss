@@ -650,21 +650,6 @@
     }
 }
 
-#newmessageoverlay {
-    @extend .card;
-    margin: 0 1em;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-}
-#newmessageoverlay #usermessage {
-    padding: 10px;
-}
-/* Widen the plain text editor on the bulk message screen */
-#page-user-action_redir #edit-messagebody {
-    width: auto;
-}
-
 .preferences-container {
     .container-fluid {
         padding: 0;
@@ -994,30 +979,6 @@
 
             &:empty {
                 display: none;
-            }
-        }
-    }
-}
-
-.dir-rtl {
-    .messaging-area-container {
-        .messaging-area {
-            .contacts-area {
-                .contacts {
-                    .contact {
-                        .picture {
-                            float: right;
-                        }
-
-                        .information {
-                            float: right;
-                        }
-
-                        .unread-count-container {
-                            float: right;
-                        }
-                    }
-                }
             }
         }
     }
