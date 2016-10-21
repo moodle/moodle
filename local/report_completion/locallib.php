@@ -159,7 +159,7 @@ class report_completion {
         $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
                           SELECT cc.userid, cc.course, cc.timeenrolled, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
                           FROM {".$tempusertablename."} tut, {course_completions} cc LEFT JOIN {grade_grades} gg ON (gg.userid = cc.userid)
-                          LEFT JOIN {grade_items} gi
+                          JOIN {grade_items} gi
                           ON (cc.course = gi.courseid
                           AND gg.itemid = gi.id
                           AND gi.itemtype = 'course')
