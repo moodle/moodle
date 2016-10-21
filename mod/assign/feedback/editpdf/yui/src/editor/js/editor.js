@@ -1134,10 +1134,7 @@ EDITOR.prototype = {
             return;
         }
         var ajaxurl = AJAXBASE,
-            pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT),
             config;
-
-        this.currentpage = parseInt(pageselect.get('value'), 10);
 
         config = {
             method: 'post',
@@ -1311,9 +1308,7 @@ EDITOR.prototype = {
      */
     previous_page: function(e) {
         e.preventDefault();
-        var pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT);
-
-        this.currentpage = parseInt(pageselect.get('value'), 10) - 1;
+        this.currentpage--;
         if (this.currentpage < 0) {
             this.currentpage = 0;
         }
@@ -1327,9 +1322,7 @@ EDITOR.prototype = {
      */
     next_page: function(e) {
         e.preventDefault();
-        var pageselect = this.get_dialogue_element(SELECTOR.PAGESELECT);
-
-        this.currentpage = parseInt(pageselect.get('value'), 10) + 1;
+        this.currentpage++;
         if (this.currentpage >= this.pages.length) {
             this.currentpage = this.pages.length - 1;
         }
