@@ -283,8 +283,14 @@ class mod_workshop_renderer extends plugin_renderer_base {
     protected function render_workshop_user_plan(workshop_user_plan $plan) {
         $o  = '';    // Output HTML code.
         $numberofphases = count($plan->phases);
-        $o .= html_writer::start_tag('div', array('class' => 'userplan'));
-        $o .= html_writer::tag('span', get_string('userplanaccessibilitytitle', 'workshop', $numberofphases),
+        $o .= html_writer::start_tag('div', array(
+            'class' => 'userplan',
+            'aria-labelledby' => 'mod_workshop-userplanheading',
+            'aria-describedby' => 'mod_workshop-userplanaccessibilitytitle',
+        ));
+        $o .= html_writer::span(get_string('userplanaccessibilitytitle', 'workshop', $numberofphases),
+            'accesshide', array('id' => 'mod_workshop-userplanaccessibilitytitle'));
+        $o .= html_writer::link('#mod_workshop-userplancurrenttasks', get_string('userplanaccessibilityskip', 'workshop'),
             array('class' => 'accesshide'));
         foreach ($plan->phases as $phasecode => $phase) {
             $o .= html_writer::start_tag('dl', array('class' => 'phase'));
@@ -306,10 +312,9 @@ class mod_workshop_renderer extends plugin_renderer_base {
             if (!empty($actions)) {
                 $actions = $this->output->container($actions, 'actions');
             }
-            $title = html_writer::tag('span', $phase->title);
+            $title = html_writer::span($phase->title, '', array('id' => 'mod_workshop-userplancurrenttasks'));
             if ($phase->active) {
-                $title .= ' ' . html_writer::tag('span', get_string('userplancurrentphase', 'workshop'),
-                    array('class' => 'accesshide'));
+                $title .= ' ' . html_writer::span(get_string('userplancurrentphase', 'workshop'), 'accesshide');
             }
             $classes = 'phase' . $phasecode;
             if ($phase->active) {
