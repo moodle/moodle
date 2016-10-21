@@ -75,7 +75,7 @@ class tool_provider_testcase extends advanced_testcase {
      */
     public function test_constructor_with_non_existent_tool() {
         $this->expectException('dml_exception');
-        new tool_provider(1);
+        new tool_provider(-1);
     }
 
     /**
