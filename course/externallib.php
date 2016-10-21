@@ -2492,10 +2492,12 @@ class core_course_external extends external_api {
                         $info->outcomes = array();
                     }
                     $id = str_replace('outcome_', '', $key);
-                    $outcome = $outcome = grade_outcome::fetch(array('id' => $id));
+                    $outcome = grade_outcome::fetch(array('id' => $id));
+                    $scaleitems = $outcome->load_scale();
                     $info->outcomes[] = array(
                         'id' => $id,
-                        'name' => external_format_string($outcome->get_name(), $context->id)
+                        'name' => external_format_string($outcome->get_name(), $context->id),
+                        'scale' => $scaleitems->scale
                     );
                 }
             }
@@ -2572,6 +2574,7 @@ class core_course_external extends external_api {
                                 array(
                                     'id' => new external_value(PARAM_ALPHANUMEXT, 'Outcome id'),
                                     'name'  => new external_value(PARAM_TEXT, 'Outcome full name'),
+                                    'scale' => new external_value(PARAM_TEXT, 'Scale items')
                                 )
                             ),
                             'Outcomes information', VALUE_OPTIONAL
