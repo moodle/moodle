@@ -30,17 +30,31 @@ if ($ADMIN->fulltree) {
     $name = 'theme_boost/preset';
     $title = get_string('preset', 'theme_boost');
     $description = get_string('preset_desc', 'theme_boost');
-    $choices = [
-        // A file named 'preset-' . key . '.scss' is expected.
-        'plain' => get_string('presetplain', 'theme_boost'),
-        'default' => get_string('presetdefault', 'theme_boost'),
-        'flatly' => get_string('presetflatly', 'theme_boost'),
-        'paper' => get_string('presetpaper', 'theme_boost'),
-        'readable' => get_string('presetreadable', 'theme_boost')
-    ];
-    $default = 'default';
+    $default = 'default.scss';
+
+    $context = context_system::instance();
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'theme_boost', 'preset', 0, 'itemid, filepath, filename', false);
+
+    $choices = [];
+    foreach ($files as $file) {
+        $choices[$file->get_filename()] = $file->get_filename();
+    }
+    // These are the built in presets.
+    $choices['default.scss'] = 'default.scss';
+    $choices['plain.scss'] = 'plain.scss';
+
     $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
     $setting->set_updatedcallback('theme_reset_all_caches');
+    $page->add($setting);
+
+    // Preset files setting.
+    $name = 'theme_boost/presetfiles';
+    $title = get_string('presetfiles','theme_boost');
+    $description = get_string('presetfiles_desc', 'theme_boost');
+
+    $setting = new admin_setting_configstoredfile($name, $title, $description, 'preset', 0,
+        array('maxfiles' => 20, 'accepted_types' => array('.scss')));
     $page->add($setting);
 
     // Variable $body-color.

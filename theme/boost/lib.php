@@ -36,17 +36,6 @@ function theme_boost_css_tree_post_processor($tree, $theme) {
 }
 
 /**
- * Get the SCSS file to include.
- *
- * @param theme_config $theme The theme config object.
- * @return string The name of the file without 'scss'.
- */
-function theme_boost_get_scss_file($theme) {
-    $preset = !empty($theme->settings->preset) ? $theme->settings->preset : 'default';
-    return 'preset-' . $preset;
-}
-
-/**
  * Inject additional SCSS.
  *
  * @param theme_config $theme The theme config object.
@@ -63,6 +52,8 @@ function theme_boost_get_extra_scss($theme) {
  * @return array
  */
 function theme_boost_get_pre_scss($theme) {
+    global $CFG;
+
     $scss = '';
     $configurable = [
         // Config key => [variableName, ...].
@@ -83,6 +74,22 @@ function theme_boost_get_pre_scss($theme) {
     // Prepend pre-scss.
     if (!empty($theme->settings->scsspre)) {
         $scss .= $theme->settings->scsspre;
+    }
+
+    // Now append the preset.
+    $filename = $theme->settings->preset;
+    $fs = get_file_storage();
+
+    $context = context_system::instance();
+    if ($filename == 'default.scss') {
+        $scss .= file_get_contents($CFG->dirroot . '/theme/boost/scss/preset/default.scss');
+    } else if ($filename == 'plain.scss') {
+        $scss .= file_get_contents($CFG->dirroot . '/theme/boost/scss/preset/plain.scss');
+    } else if ($filename && ($presetfile = $fs->get_file($context->id, 'theme_boost', 'preset', 0, '/', $filename))) {
+        $scss .= $presetfile->get_content();
+    } else {
+        // Safety fallback - maybe new installs etc.
+        $scss .= file_get_contents($CFG->dirroot . '/theme/boost/scss/preset/default.scss');
     }
 
     return $scss;
