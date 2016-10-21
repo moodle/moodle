@@ -37,6 +37,13 @@ use context;
  */
 class role extends base {
     /**
+     * The Site Admin pseudo-role.
+     *
+     * @var ROLE_SITEADMIN int
+     */
+    const ROLE_SITEADMIN = -1;
+
+    /**
      * The name of the filter.
      *
      * @return  string
@@ -52,7 +59,24 @@ class role extends base {
      *                                  And whose values are the values to display
      */
     public static function get_filter_options() {
-        return role_get_names(null, ROLENAME_ALIAS, true);
+        $allroles = role_get_names(null, ROLENAME_ALIAS);
+
+        $roles = [];
+        foreach ($allroles as $role) {
+            if ($role->archetype === 'guest') {
+                // No point in including the 'guest' role as it isn't possible to show tours to a guest.
+                continue;
+            }
+            $roles[$role->shortname] = $role->localname;
+        }
+
+        // Add the Site Administrator pseudo-role.
+        $roles[self::ROLE_SITEADMIN] = get_string('administrator', 'core');
+
+        // Sort alphabetically too.
+        \core_collator::asort($roles);
+
+        return $roles;
     }
 
     /**
@@ -73,12 +97,13 @@ class role extends base {
             return true;
         }
 
-        if (is_siteadmin()) {
-            return true;
-        }
-
         // Presence within the array is sufficient. Ignore any value.
         $values = array_flip($values);
+
+        if (isset($values[self::ROLE_SITEADMIN]) && is_siteadmin()) {
+            // This tour has been restricted to a role including site admin, and this user is a site admin.
+            return true;
+        }
 
         $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'tool_usertours', 'filter_role');
         $cachekey = "{$USER->id}_{$context->id}";

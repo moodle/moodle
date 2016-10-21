@@ -119,9 +119,9 @@ class tool_usertours_role_filter_testcase extends advanced_testcase {
             }
         }
 
-        // The admin should always be able to view too.
+        // The admin can't view this one either.
         $this->setAdminUser();
-        $this->assertTrue(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+        $this->assertFalse(\tool_usertours\local\filter\role::filter_matches($tour, $context));
     }
 
     /**
@@ -149,9 +149,9 @@ class tool_usertours_role_filter_testcase extends advanced_testcase {
             }
         }
 
-        // The admin should always be able to view too.
+        // The admin can't view this one either.
         $this->setAdminUser();
-        $this->assertTrue(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+        $this->assertFalse(\tool_usertours\local\filter\role::filter_matches($tour, $context));
     }
 
     /**
@@ -181,8 +181,109 @@ class tool_usertours_role_filter_testcase extends advanced_testcase {
             }
         }
 
-        // The admin should always be able to view too.
+        // The admin can't view this one either.
+        $this->setAdminUser();
+        $this->assertFalse(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+    }
+
+    /**
+     * Test the filter_matches function when it is targetted at an admin.
+     */
+    public function test_filter_matches_multiple_role_only_admin() {
+        $context = \context_course::instance($this->course->id);
+
+        $roles = [
+            \tool_usertours\local\filter\role::ROLE_SITEADMIN,
+        ];
+
+        $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->roles['teacher']);
+
+        // Note: No need to persist this tour.
+        $tour = new \tool_usertours\tour();
+        $tour->set_filter_values('role', $roles);
+
+
+        // Note: The role filter does not use the context.
+        foreach ($this->testroles as $role) {
+            $this->setUser($this->$role);
+            $this->assertFalse(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+        }
+
+        // The admin can view this one because it's only aimed at them.
         $this->setAdminUser();
         $this->assertTrue(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+    }
+
+    /**
+     * Test the filter_matches function when multiple roles are set, including an admin user.
+     */
+    public function test_filter_matches_multiple_role_including_admin() {
+        $context = \context_course::instance($this->course->id);
+
+        $roles = [
+            \tool_usertours\local\filter\role::ROLE_SITEADMIN,
+            $this->roles['teacher'],
+            $this->roles['editingteacher'],
+        ];
+
+        // Note: No need to persist this tour.
+        $tour = new \tool_usertours\tour();
+        $tour->set_filter_values('role', $roles);
+
+        // Note: The role filter does not use the context.
+        foreach ($this->testroles as $role) {
+            $this->setUser($this->$role);
+            if ($role === 'student') {
+                $this->assertFalse(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+            } else {
+                $this->assertTrue(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+            }
+        }
+
+        // The admin can view this one because it's only aimed at them.
+        $this->setAdminUser();
+        $this->assertTrue(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+    }
+
+    /**
+     * Test the filter_matches function when an admin user has multiple roles.
+     */
+    public function test_filter_matches_multiple_role_admin_user() {
+        global $USER;
+
+        $context = \context_course::instance($this->course->id);
+
+        $roles = [
+            \tool_usertours\local\filter\role::ROLE_SITEADMIN,
+        ];
+
+        $this->setAdminUser();
+        $this->getDataGenerator()->enrol_user($USER->id, $this->course->id, $this->roles['student']);
+
+        // Note: No need to persist this tour.
+        $tour = new \tool_usertours\tour();
+        $tour->set_filter_values('role', $roles);
+
+        // The admin can view this one because it's only aimed at them.
+        $this->assertTrue(\tool_usertours\local\filter\role::filter_matches($tour, $context));
+    }
+
+    /**
+     * Test that the get_filter_options function does not include the guest roles.
+     */
+    public function test_get_filter_options_no_guest_roles() {
+        create_role('Test Role', 'testrole', 'This is a test role', 'guest');
+
+        $allroles = role_get_names(null, ROLENAME_ALIAS);
+        $options = \tool_usertours\local\filter\role::get_filter_options();
+
+        foreach ($allroles as $role) {
+            $hasrole = isset($options[$role->shortname]);
+            if ($role->archetype === 'guest') {
+                $this->assertFalse($hasrole);
+            } else {
+                $this->assertTrue($hasrole);
+            }
+        }
     }
 }
