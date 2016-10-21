@@ -36,11 +36,11 @@ class core_messagelib_testcase extends advanced_testcase {
         set_config($disableprovidersetting, 1, 'message');
         $preferences = get_message_output_default_preferences();
         $this->assertTrue($preferences->$disableprovidersetting == 1);
-        $noreplyuser = core_user::get_noreply_user();
+
         $message = new stdClass();
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
-        $message->userfrom          = $noreplyuser->email;
+        $message->userfrom          = get_admin();
         $message->userto            = $this->getDataGenerator()->create_user();;
         $message->subject           = 'message subject 1';
         $message->fullmessage       = 'message body';
@@ -379,8 +379,9 @@ class core_messagelib_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         $this->resetAfterTest();
 
-        $user1 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
         $user2 = $this->getDataGenerator()->create_user();
+        set_config('allowedemaildomains', 'example.com');
 
         // Test basic email redirection.
         $this->assertFileExists("$CFG->dirroot/message/output/email/version.php");
