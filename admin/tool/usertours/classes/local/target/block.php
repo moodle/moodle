@@ -90,6 +90,8 @@ class block extends base {
             $blocks[$block->name] = get_string('pluginname', 'block_' . $block->name);
         }
 
+        \core_collator::asort($blocks);
+
         $mform->addElement('select', 'targetvalue_block', get_string('block', 'tool_usertours'), $blocks);
     }
 
