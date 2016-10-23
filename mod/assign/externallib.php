@@ -1788,6 +1788,7 @@ class mod_assign_external extends external_api {
 
         $notices = array();
 
+        $assign->update_effective_access($USER->id);
         if (!$assignment->submissions_open($USER->id)) {
             $notices[] = get_string('duedatereached', 'assign');
         } else {
