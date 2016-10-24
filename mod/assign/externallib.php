@@ -403,6 +403,8 @@ class mod_assign_external extends external_api {
                     }
 
                     $assign = new assign($context, null, null);
+                    // Update assign with override information.
+                    $assign->update_effective_access($USER->id);
 
                     // Get configurations for only enabled plugins.
                     $plugins = $assign->get_submission_plugins();
@@ -433,12 +435,12 @@ class mod_assign_external extends external_api {
                         'sendnotifications' => $module->sendnotifications,
                         'sendlatenotifications' => $module->sendlatenotifications,
                         'sendstudentnotifications' => $module->sendstudentnotifications,
-                        'duedate' => $module->duedate,
-                        'allowsubmissionsfromdate' => $module->allowsubmissionsfromdate,
+                        'duedate' => $assign->get_instance()->duedate,
+                        'allowsubmissionsfromdate' => $assign->get_instance()->allowsubmissionsfromdate,
                         'grade' => $module->grade,
                         'timemodified' => $module->timemodified,
                         'completionsubmit' => $module->completionsubmit,
-                        'cutoffdate' => $module->cutoffdate,
+                        'cutoffdate' => $assign->get_instance()->cutoffdate,
                         'teamsubmission' => $module->teamsubmission,
                         'requireallteammemberssubmit' => $module->requireallteammemberssubmit,
                         'teamsubmissiongroupingid' => $module->teamsubmissiongroupingid,
@@ -1788,7 +1790,7 @@ class mod_assign_external extends external_api {
 
         $notices = array();
 
-        $assign->update_effective_access($USER->id);
+        $assignment->update_effective_access($USER->id);
         if (!$assignment->submissions_open($USER->id)) {
             $notices[] = get_string('duedatereached', 'assign');
         } else {
