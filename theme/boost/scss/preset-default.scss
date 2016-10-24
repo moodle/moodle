@@ -220,22 +220,6 @@ $breadcrumb-divider-rtl: "/" !default;
 }
 
 /**
- * Style for content title.
- */
-#region-main {
-    h2 {
-        border-bottom: $border-width solid $table-border-color;
-        padding-bottom: $spacer;
-        margin-bottom: $spacer;
-    }
-    .page-header-image + .page-header-headings h2 {
-        /* No border when there is an image next to the heading. */
-        border-bottom: 0;
-        padding-bottom: 0;
-    }
-}
-
-/**
  * Form styles.
  */
 
