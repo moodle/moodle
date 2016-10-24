@@ -58,6 +58,7 @@ class behat_theme_boost_behat_course extends behat_course {
             array("a[data-toggle='dropdown']", "css_element", $this->escape($activityname))
         );
 
+        $this->actions_menu_should_be_open($activityname);
     }
 
     public function i_close_actions_menu($activityname) {
