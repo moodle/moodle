@@ -58,11 +58,13 @@ class editstep extends \moodleform {
     public function definition() {
         $mform = $this->_form;
 
+        $mform->addElement('header', 'heading_target', get_string('target_heading', 'tool_usertours'));
         $types = [];
         foreach (\tool_usertours\target::get_target_types() as $value => $type) {
             $types[$value] = get_string('target_' . $type, 'tool_usertours');
         }
         $mform->addElement('select', 'targettype', get_string('targettype', 'tool_usertours'), $types);
+        $mform->addHelpButton('targettype', 'targettype', 'tool_usertours');
 
         // The target configuration.
         foreach (\tool_usertours\target::get_target_types() as $value => $type) {
@@ -70,7 +72,8 @@ class editstep extends \moodleform {
             $targetclass::add_config_to_form($mform);
         }
 
-        // Title of the step.
+        // Content of the step.
+        $mform->addElement('header', 'heading_content', get_string('content_heading', 'tool_usertours'));
         $mform->addElement('textarea', 'title', get_string('title', 'tool_usertours'));
         $mform->addRule('title', get_string('required'), 'required', null, 'client');
         $mform->setType('title', PARAM_TEXT);
@@ -82,6 +85,7 @@ class editstep extends \moodleform {
         $mform->addHelpButton('content', 'content', 'tool_usertours');
 
         // Add the step configuration.
+        $mform->addElement('header', 'heading_options', get_string('options_heading', 'tool_usertours'));
         // All step configuration is defined in the step.
         $this->step->add_config_to_form($mform);
 
