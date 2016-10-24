@@ -546,6 +546,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * @return {String} The altered text
          */
         Contacts.prototype._getContactText = function(text) {
+            // Remove the HTML tags to render the contact text.
+            text = $(document.createElement('div')).html(text).text();
+
             if (text.length > this._messageLength) {
                 text = text.substr(0, this._messageLength - 3);
                 text += '...';

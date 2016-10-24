@@ -147,7 +147,8 @@ class helper {
         $data->messageid = null;
         if (isset($contact->smallmessage)) {
             $data->ismessaging = true;
-            $data->lastmessage = $contact->smallmessage;
+            // Strip the HTML tags from the message for displaying in the contact area.
+            $data->lastmessage = clean_param($contact->smallmessage, PARAM_NOTAGS);
             $data->useridfrom = $contact->useridfrom;
             if (isset($contact->messageid)) {
                 $data->messageid = $contact->messageid;
