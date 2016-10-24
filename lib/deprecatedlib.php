@@ -5620,7 +5620,6 @@ function message_is_user_blocked($recipient, $sender = null) {
 }
 
 /**
-<<<<<<< 919b9dfabd69f71c088f565746c547e6e169a0b7
  * Display logs.
  *
  * @deprecated since 3.2
