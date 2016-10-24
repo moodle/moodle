@@ -8887,9 +8887,10 @@ function get_performance_info() {
     $info = array();
     $info['txt']  = me() . ' '; // Holds log-friendly representation.
 
+    $info['html'] = '';
     if (!empty($CFG->themedesignermode)) {
         // Attempt to avoid devs debugging peformance issues, when its caused by css building and so on.
-        $info['html'] = '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
+        $info['html'] .= '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
     }
     $info['html'] .= '<ul class="list-unstyled m-l-1">';         // Holds userfriendly HTML representation.
 
