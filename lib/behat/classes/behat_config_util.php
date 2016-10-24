@@ -979,7 +979,6 @@ class behat_config_util {
      */
     protected function get_behat_suites($parallelruns = 0, $currentrun = 0) {
         $features = $this->get_components_features();
-        $contexts = $this->get_components_contexts();
 
         // Get number of parallel runs and current run.
         if (!empty($parallelruns) && !empty($currentrun)) {
@@ -1003,19 +1002,16 @@ class behat_config_util {
         }
 
         // Remove list of theme features for default suite, as default suite should not run theme specific features.
-        foreach ($themefeatures as $removethemefeatures) {
+        foreach ($themefeatures as $themename => $removethemefeatures) {
             if (!empty($removethemefeatures['features'])) {
                 $features = $this->remove_blacklisted_features_from_list($features, $removethemefeatures['features']);
             }
         }
 
-        // Remove list of theme features for default suite, as default suite should not run theme specific features.
+        // Remove list of theme contexts form other suite contexts, as suite don't require other theme specific contexts.
         foreach ($themecontexts as $themename => $themecontext) {
             if (!empty($themecontext['contexts'])) {
                 foreach ($themecontext['contexts'] as $contextkey => $contextpath) {
-                    // Remove theme specific contexts from default contexts.
-                    unset($contexts[$contextkey]);
-
                     // Remove theme specific contexts from other themes.
                     foreach ($themes as $currenttheme) {
                         if (($currenttheme != $themename) && isset($themecontexts[$currenttheme]['suitecontexts'][$contextkey])) {
@@ -1026,22 +1022,13 @@ class behat_config_util {
             }
         }
 
-        $featuresforrun = $this->get_features_for_the_run($features, $parallelruns, $currentrun);
-
-        // Default suite.
-        $suites = array(
-            'default' => array(
-                'paths' => array_values($featuresforrun),
-                'contexts' => array_keys($contexts),
-            )
-        );
-
         // Set suite for each theme.
+        $suites = array();
         foreach ($themes as $theme) {
             // Get list of features which will be included in theme.
-            // If theme suite with all features is set, then we want all core features to be part of theme suite.
+            // If theme suite with all features or default theme, then we want all core features to be part of theme suite.
             if ((is_string($this->themesuitewithallfeatures) && ($this->themesuitewithallfeatures === self::ALL_THEMES_TO_RUN)) ||
-                in_array($theme, $this->themesuitewithallfeatures)) {
+                in_array($theme, $this->themesuitewithallfeatures) || ($this->get_default_theme() === $theme)) {
                 // If there is no theme specific feature. Then it's just core features.
                 if (empty($themefeatures[$theme]['features'])) {
                     $themesuitefeatures = $features;
@@ -1059,10 +1046,17 @@ class behat_config_util {
             // Return sub-set of features if parallel run.
             $themesuitefeatures = $this->get_features_for_the_run($themesuitefeatures, $parallelruns, $currentrun);
 
+            // Default theme is part of default suite.
+            if ($this->get_default_theme() === $theme) {
+                $suitename = 'default';
+            } else {
+                $suitename = $theme;
+            }
+
             // Add suite no matter what. If there is no feature in suite then it will just exist successfully with no
             // scenarios. But if we don't set this then the user has to know which run doesn't have suite and which run do.
             $suites = array_merge($suites, array(
-                $theme => array(
+                $suitename => array(
                     'paths'    => array_values($themesuitefeatures),
                     'contexts' => array_keys($themecontexts[$theme]['suitecontexts']),
                 )
@@ -1070,6 +1064,15 @@ class behat_config_util {
         }
 
         return $suites;
+    }
+
+    /**
+     * Return name of default theme.
+     *
+     * @return string
+     */
+    protected function get_default_theme() {
+        return theme_config::DEFAULT_THEME;
     }
 
     /**
@@ -1099,10 +1102,6 @@ class behat_config_util {
             if ($theme->hidefromselector) {
                 // The theme doesn't want to be shown in the theme selector and as theme
                 // designer mode is switched off we will respect that decision.
-                continue;
-            }
-            if ($themename == theme_config::DEFAULT_THEME) {
-                // Don't include default theme, as default suite will be running with this theme.
                 continue;
             }
             $selectablethemes[] = $themename;
@@ -1251,6 +1250,7 @@ class behat_config_util {
             list($featurekey, $featurepath) = $this->get_clean_feature_key_and_path($themefeature);
             $features[$featurekey] = $featurepath;
         }
+
         foreach ($themeblacklistfeatures as $themeblacklistfeature) {
             list($blacklistfeaturekey, $blacklistfeaturepath) = $this->get_clean_feature_key_and_path($themeblacklistfeature);
             $blacklistfeatures[$blacklistfeaturekey] = $blacklistfeaturepath;
