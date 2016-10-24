@@ -304,4 +304,74 @@ class core_message_events_testcase extends advanced_testcase {
         $this->assertEquals($message->useridfrom, $event->other['useridfrom']);
         $this->assertEquals($message->useridto, $event->other['useridto']);
     }
+
+    /**
+     * Test the message deleted event is fired when deleting a conversation.
+     */
+    public function test_message_deleted_whole_conversation() {
+        global $DB;
+
+        // Create a message.
+        $message = new stdClass();
+        $message->useridfrom = '1';
+        $message->useridto = '2';
+        $message->subject = 'Subject';
+        $message->message = 'Message';
+        $message->timeuserfromdeleted = 0;
+        $message->timeusertodeleted = 0;
+        $message->timecreated = 1;
+
+        // Send this a few times.
+        $messageid1 = $DB->insert_record('message', $message);
+
+        $message->timecreated++;
+        $messageid2 = $DB->insert_record('message', $message);
+
+        $message->timecreated++;
+        $messageid3 = $DB->insert_record('message', $message);
+
+        $message->timecreated++;
+        $messageid4 = $DB->insert_record('message', $message);
+
+        // Create a read message.
+        $message->timeread = time();
+
+        // Send this a few times.
+        $message->timecreated++;
+        $messageid5 = $DB->insert_record('message_read', $message);
+
+        $message->timecreated++;
+        $messageid6 = $DB->insert_record('message_read', $message);
+
+        $message->timecreated++;
+        $messageid7 = $DB->insert_record('message_read', $message);
+
+        $message->timecreated++;
+        $messageid8 = $DB->insert_record('message_read', $message);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        \core_message\api::delete_conversation(1, 2);
+        $events = $sink->get_events();
+
+        // Check that there were the correct number of events triggered.
+        $this->assertEquals(8, count($events));
+
+        // Check that the event data is valid.
+        $i = 1;
+        foreach ($events as $event) {
+            $table = ($i > 4) ? 'message_read' : 'message';
+            $messageid = 'messageid' . $i;
+
+            $this->assertInstanceOf('\core\event\message_deleted', $event);
+            $this->assertEquals($message->useridfrom, $event->userid);
+            $this->assertEquals($message->useridto, $event->relateduserid);
+            $this->assertEquals($table, $event->other['messagetable']);
+            $this->assertEquals($$messageid, $event->other['messageid']);
+            $this->assertEquals($message->useridfrom, $event->other['useridfrom']);
+            $this->assertEquals($message->useridto, $event->other['useridto']);
+
+            $i++;
+        }
+    }
 }

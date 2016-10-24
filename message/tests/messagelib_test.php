@@ -63,10 +63,15 @@ class core_message_messagelib_testcase extends advanced_testcase {
      * @param stdClass $userto user object of the one receiving the message.
      * @param string $message message to send.
      * @param int $notification if the message is a notification.
+     * @param int $time the time the message was sent
      * @return int the id of the message
      */
-    protected function send_fake_message($userfrom, $userto, $message = 'Hello world!', $notification = 0) {
+    protected function send_fake_message($userfrom, $userto, $message = 'Hello world!', $notification = 0, $time = 0) {
         global $DB;
+
+        if (empty($time)) {
+            $time = time();
+        }
 
         $record = new stdClass();
         $record->useridfrom = $userfrom->id;
@@ -74,7 +79,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
         $record->subject = 'No subject';
         $record->fullmessage = $message;
         $record->smallmessage = $message;
-        $record->timecreated = time();
+        $record->timecreated = $time;
         $record->notification = $notification;
 
         return $DB->insert_record('message', $record);
