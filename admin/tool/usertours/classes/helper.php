@@ -355,6 +355,8 @@ class helper {
      * @return  string
      */
     public static function render_stepname_inplace_editable(step $step) {
+        $title = format_text(step::get_string_from_input($step->get_title()), FORMAT_HTML);
+
         return new \core\output\inplace_editable(
                 'tool_usertours',
                 'stepname',
@@ -362,9 +364,9 @@ class helper {
                 true,
                 \html_writer::link(
                     $step->get_edit_link(),
-                    $step->get_title()
+                    $title
                 ),
-                $step->get_title(false)
+                $step->get_title()
             );
     }
 

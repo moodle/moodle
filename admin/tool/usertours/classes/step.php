@@ -216,7 +216,7 @@ class step {
      * @return  $this
      */
     public function set_title($value) {
-        $this->title = clean_param($value, PARAM_TEXT);
+        $this->title = clean_text($value);
         $this->dirty = true;
 
         return $this;
@@ -649,5 +649,28 @@ class step {
         $this->persist();
 
         return $this;
+    }
+
+    /**
+     * Attempt to fetch any matching langstring if the string is in the
+     * format identifier,component.
+     *
+     * @param   string  $string
+     * @return  string
+     */
+    public static function get_string_from_input($string) {
+        $string = trim($string);
+
+        if (preg_match('|^([a-zA-Z][a-zA-Z0-9\.:/_-]*),([a-zA-Z][a-zA-Z0-9\.:/_-]*)$|', $string, $matches)) {
+            if ($matches[2] === 'moodle') {
+                $matches[2] = 'core';
+            }
+
+            if (get_string_manager()->string_exists($matches[1], $matches[2])) {
+                $string = get_string($matches[1], $matches[2]);
+            }
+        }
+
+        return $string;
     }
 }
