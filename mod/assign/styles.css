@@ -664,6 +664,7 @@
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_ftext,
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_f,
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_feditor,
+.path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_fgrading,
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_ffilemanager {
     background-color: #fff;
     border: 1px solid #ddd;
@@ -673,6 +674,7 @@
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_ftext .fitemtitle,
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_f .fitemtitle,
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_feditor .fitemtitle,
+.path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_fgrading .fitemtitle,
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.fitem_ffilemanager .fitemtitle {
     padding-left: 5px;
     padding-right: 5px;
@@ -681,6 +683,7 @@
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.fitem_ftext .felement,
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.fitem_f .felement,
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.fitem_feditor .felement,
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.fitem_fgrading .felement,
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.fitem_ffilemanager .felement {
     padding: 6px 10px 10px;
     box-sizing: border-box;
@@ -689,6 +692,7 @@
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fitem.fitem_ftext .fitemtitle,
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fitem.fitem_f .fitemtitle,
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fitem.fitem_feditor .fitemtitle,
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fitem.fitem_fgrading .fitemtitle,
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fitem.fitem_ffilemanager .fitemtitle {
     border-bottom: 1px solid #ddd;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
