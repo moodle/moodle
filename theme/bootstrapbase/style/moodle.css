@@ -14352,6 +14352,11 @@ input[size] {
 textarea[data-auto-rows] {
   overflow-x: hidden;
 }
+div[data-passwordunmask="wrapper"] {
+  height: 30px;
+  line-height: 30px;
+  margin-bottom: 10px;
+}
 body.modal-open {
   overflow: hidden;
 }

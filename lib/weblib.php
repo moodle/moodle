@@ -3556,14 +3556,3 @@ function get_formatted_help_string($identifier, $component, $ajax = false, $a = 
     }
     return $data;
 }
-
-/**
- * Renders a hidden password field so that browsers won't incorrectly autofill password fields with the user's password.
- *
- * @since 3.0
- * @return string HTML to prevent password autofill
- */
-function prevent_form_autofill_password() {
-    global $OUTPUT;
-    return $OUTPUT->render_from_template('core/prevent_form_autofill_password', []);
-}

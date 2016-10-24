@@ -2406,13 +2406,11 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
     }
 
     /**
-     * Returns XHTML for the field
-     * Writes Javascript into the HTML below right before the last div
+     * Returns HTML for the field.
      *
-     * @todo Make javascript available through newer methods if possible
-     * @param string $data Value for the field
-     * @param string $query Passed as final argument for format_admin_setting
-     * @return string XHTML field
+     * @param   string  $data       Value for the field
+     * @param   string  $query      Passed as final argument for format_admin_setting
+     * @return  string              Rendered HTML
      */
     public function output_html($data, $query='') {
         global $OUTPUT;

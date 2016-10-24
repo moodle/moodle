@@ -69,6 +69,7 @@ trait templatable_form_element {
 
         // Special wierd named property.
         $context['frozen'] = !empty($this->_flagFrozen);
+        $context['hardfrozen'] = !empty($this->_flagFrozen) && empty($this->_persistantFreeze);
 
         // Other attributes.
         $otherattributes = [];
