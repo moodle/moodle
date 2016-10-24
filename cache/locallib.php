@@ -684,33 +684,36 @@ abstract class cache_administration_helper extends cache_helper {
         $locks = $instance->get_locks();
         foreach ($stores as $name => $details) {
             $class = $details['class'];
-            $store = new $class($details['name'], $details['configuration']);
+            $store = false;
+            if ($class::are_requirements_met()) {
+                $store = new $class($details['name'], $details['configuration']);
+            }
             $lock = (isset($details['lock'])) ? $locks[$details['lock']] : $instance->get_default_lock();
             $record = array(
                 'name' => $name,
                 'plugin' => $details['plugin'],
                 'default' => $details['default'],
-                'isready' => $store->is_ready(),
+                'isready' => $store ? $store->is_ready() : false,
                 'requirementsmet' => $class::are_requirements_met(),
                 'mappings' => 0,
                 'lock' => $lock,
                 'modes' => array(
                     cache_store::MODE_APPLICATION =>
-                        ($store->get_supported_modes($return) & cache_store::MODE_APPLICATION) == cache_store::MODE_APPLICATION,
+                        ($class::get_supported_modes($return) & cache_store::MODE_APPLICATION) == cache_store::MODE_APPLICATION,
                     cache_store::MODE_SESSION =>
-                        ($store->get_supported_modes($return) & cache_store::MODE_SESSION) == cache_store::MODE_SESSION,
+                        ($class::get_supported_modes($return) & cache_store::MODE_SESSION) == cache_store::MODE_SESSION,
                     cache_store::MODE_REQUEST =>
-                        ($store->get_supported_modes($return) & cache_store::MODE_REQUEST) == cache_store::MODE_REQUEST,
+                        ($class::get_supported_modes($return) & cache_store::MODE_REQUEST) == cache_store::MODE_REQUEST,
                 ),
                 'supports' => array(
-                    'multipleidentifiers' => $store->supports_multiple_identifiers(),
-                    'dataguarantee' => $store->supports_data_guarantee(),
-                    'nativettl' => $store->supports_native_ttl(),
+                    'multipleidentifiers' => $store ? $store->supports_multiple_identifiers() : false,
+                    'dataguarantee' => $store ? $store->supports_data_guarantee() : false,
+                    'nativettl' => $store ? $store->supports_native_ttl() : false,
                     'nativelocking' => ($store instanceof cache_is_lockable),
                     'keyawareness' => ($store instanceof cache_is_key_aware),
                     'searchable' => ($store instanceof cache_is_searchable)
                 ),
-                'warnings' => $store->get_warnings()
+                'warnings' => $store ? $store->get_warnings() : array()
             );
             if (empty($details['default'])) {
                 $return[$name] = $record;
