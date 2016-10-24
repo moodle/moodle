@@ -9,7 +9,7 @@ body.behat-site {
 
     // We need more spacing in action menus so behat does not click on the wrong menu item.
     .dropdown-item {
-        margin-top: 4px ! important;
+        margin-top: 4px !important; /* stylelint-disable declaration-no-important */
     }
 }
 

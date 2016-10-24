@@ -7,8 +7,8 @@ $drawer-padding-y: 20px;
 $drawer-offscreen-gutter: 20px;
 
 :target {
-  padding-top: ($fixed-header-y + 30px) ! important; /* negative fixed header height */
-  margin-top: -$fixed-header-y ! important; /* negative fixed header height */
+    padding-top: ($fixed-header-y + 30px) !important; /* stylelint-disable declaration-no-important */
+    margin-top: -$fixed-header-y !important; /* negative fixed header height */
 }
 .pagelayout-embedded :target {
     padding-top: initial;
@@ -36,12 +36,12 @@ $drawer-bg: $gray-lighter !default;
     z-index: $zindex-dropdown - 1;
     background-color: $drawer-bg;
     -webkit-transition: right 0.5s ease, left 0.5s ease;
-       -moz-transition: right 0.5s ease, left 0.5s ease;
-            transition: right 0.5s ease, left 0.5s ease;
+    -moz-transition: right 0.5s ease, left 0.5s ease;
+    transition: right 0.5s ease, left 0.5s ease;
 }
 #nav-drawer {
     right: auto;
-    left: 0px;
+    left: 0;
 }
 #page {
     margin-top: $fixed-header-y;
@@ -51,8 +51,8 @@ $drawer-bg: $gray-lighter !default;
 }
 body.drawer-ease {
     -webkit-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-       -moz-transition: margin-left 0.5s ease, margin-right 0.5s ease;
-            transition: margin-left 0.5s ease, margin-right 0.5s ease;
+    -moz-transition: margin-left 0.5s ease, margin-right 0.5s ease;
+    transition: margin-left 0.5s ease, margin-right 0.5s ease;
 }
 
 body.drawer-open-left {
