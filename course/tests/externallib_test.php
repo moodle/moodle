@@ -1607,20 +1607,66 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Hidden activity.
         $assign = self::getDataGenerator()->create_module('assign', $record, $options);
 
+        $outcomescale = 'Distinction, Very Good, Good, Pass, Fail';
+
+        // Insert a custom grade scale to be used by an outcome.
+        $gradescale = new grade_scale();
+        $gradescale->name        = 'gettcoursemodulescale';
+        $gradescale->courseid    = $course->id;
+        $gradescale->userid      = 0;
+        $gradescale->scale       = $outcomescale;
+        $gradescale->description = 'This scale is used to mark standard assignments.';
+        $gradescale->insert();
+
+        // Insert an outcome.
+        $data = new stdClass();
+        $data->courseid = $course->id;
+        $data->fullname = 'Team work';
+        $data->shortname = 'Team work';
+        $data->scaleid = $gradescale->id;
+        $outcome = new grade_outcome($data, false);
+        $outcome->insert();
+
+        $outcomegradeitem = new grade_item();
+        $outcomegradeitem->itemname = $outcome->shortname;
+        $outcomegradeitem->itemtype = 'mod';
+        $outcomegradeitem->itemmodule = 'assign';
+        $outcomegradeitem->iteminstance = $assign->id;
+        $outcomegradeitem->outcomeid = $outcome->id;
+        $outcomegradeitem->cmid = 0;
+        $outcomegradeitem->courseid = $course->id;
+        $outcomegradeitem->aggregationcoef = 0;
+        $outcomegradeitem->itemnumber = 1; // The activity's original grade item will be 0.
+        $outcomegradeitem->gradetype = GRADE_TYPE_SCALE;
+        $outcomegradeitem->scaleid = $outcome->scaleid;
+        $outcomegradeitem->insert();
+
+        $assignmentgradeitem = grade_item::fetch(
+            array(
+                'itemtype' => 'mod',
+                'itemmodule' => 'assign',
+                'iteminstance' => $assign->id,
+                'itemnumber' => 0,
+                'courseid' => $course->id
+            )
+        );
+        $outcomegradeitem->set_parent($assignmentgradeitem->categoryid);
+        $outcomegradeitem->move_after_sortorder($assignmentgradeitem->sortorder);
+
         // Test admin user can see the complete hidden activity.
         $result = core_course_external::get_course_module($assign->cmid);
         $result = external_api::clean_returnvalue(core_course_external::get_course_module_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(26, $result['cm']);
+        $this->assertCount(27, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
         $this->assertEquals(100, $result['cm']['grade']);
         $this->assertEquals(0.0, $result['cm']['gradepass']);
         $this->assertEquals('submissions', $result['cm']['advancedgrading'][0]['area']);
         $this->assertEmpty($result['cm']['advancedgrading'][0]['method']);
-        $this->assertArrayNotHasKey('outcomes', $result['cm']);
+        $this->assertEquals($outcomescale, $result['cm']['outcomes'][0]['scale']);
 
         $student = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
