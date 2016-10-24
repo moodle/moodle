@@ -523,6 +523,9 @@ class tour {
 
         $this->reload();
 
+        // Notify the cache that a tour has changed.
+        cache::notify_tour_change();
+
         return $this;
     }
 
@@ -565,6 +568,10 @@ class tour {
             $DB->set_field('tool_usertours_steps', 'sortorder', $index, array('id' => $step->id));
             $index++;
         }
+
+        // Notify of a change to the step configuration.
+        // Note: Do not notify of a tour change here. This is only a step change for a tour.
+        cache::notify_step_change($this->get_id());
 
         return $this;
     }

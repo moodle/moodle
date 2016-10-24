@@ -551,6 +551,11 @@ class step_testcase extends advanced_testcase {
         $rcp->setAccessible(true);
         $rcp->setValue($step, true);
 
+        $tour = $this->createMock(\tool_usertours\tour::class);
+        $rcp = $rc->getProperty('tour');
+        $rcp->setAccessible(true);
+        $rcp->setValue($step, $tour);
+
         $this->assertSame($step, $step->persist());
     }
 
@@ -589,6 +594,12 @@ class step_testcase extends advanced_testcase {
         $step->expects($this->once())
             ->method('reload')
             ;
+
+        $tour = $this->createMock(\tool_usertours\tour::class);
+        $rc = new \ReflectionClass(\tool_usertours\step::class);
+        $rcp = $rc->getProperty('tour');
+        $rcp->setAccessible(true);
+        $rcp->setValue($step, $tour);
 
         $this->assertSame($step, $step->persist(true));
     }
@@ -635,6 +646,11 @@ class step_testcase extends advanced_testcase {
         $rcp->setAccessible(true);
         $rcp->setValue($step, true);
 
+        $tour = $this->createMock(\tool_usertours\tour::class);
+        $rcp = $rc->getProperty('tour');
+        $rcp->setAccessible(true);
+        $rcp->setValue($step, $tour);
+
         $this->assertSame($step, $step->persist());
     }
 
@@ -677,6 +693,11 @@ class step_testcase extends advanced_testcase {
         $rcp = $rc->getProperty('id');
         $rcp->setAccessible(true);
         $rcp->setValue($step, 42);
+
+        $tour = $this->createMock(\tool_usertours\tour::class);
+        $rcp = $rc->getProperty('tour');
+        $rcp->setAccessible(true);
+        $rcp->setValue($step, $tour);
 
         $this->assertSame($step, $step->persist(true));
     }

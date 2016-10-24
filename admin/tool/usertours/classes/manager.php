@@ -559,22 +559,14 @@ class manager {
      * @return  tour
      */
     public static function get_matching_tours(\moodle_url $pageurl) {
-        global $DB, $PAGE;
+        global $PAGE;
 
-        $sql = <<<EOF
-            SELECT * FROM {tool_usertours_tours}
-             WHERE enabled = 1
-               AND ? LIKE pathmatch
-          ORDER BY sortorder ASC
-EOF;
 
-        $tours = $DB->get_records_sql($sql, array(
-            $pageurl->out_as_local_url(),
-        ));
+        $tours = cache::get_matching_tourdata($pageurl->out_as_local_url());
 
         foreach ($tours as $record) {
             $tour = tour::load_from_record($record);
-            if ($tour->is_enabled() && $tour->matches_all_filters($PAGE->context) && $tour->count_steps() > 0) {
+            if ($tour->is_enabled() && $tour->matches_all_filters($PAGE->context)) {
                 return $tour;
             }
         }
