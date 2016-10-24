@@ -30,6 +30,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
         CONTAINER: '[data-region="notification-area"]',
         CONTENT: '[data-region="content"]',
         NOTIFICATION: '[data-region="notification-content-item-container"]',
+        CAN_RECEIVE_FOCUS: 'input:not([type="hidden"]), a[href], button, textarea, select, [tabindex]',
     };
 
     var TEMPLATES = {
@@ -271,7 +272,7 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
 
         if (notificationElement && notificationElement.length) {
             this.getRoot().find(SELECTORS.NOTIFICATION).removeClass('selected');
-            notificationElement.addClass('selected');
+            notificationElement.addClass('selected').find(SELECTORS.CAN_RECEIVE_FOCUS).focus();
             var notificationId = notificationElement.attr('data-id');
             var notification = this.getCacheNotification(notificationId);
             this.scrollNotificationIntoView(notificationElement);
@@ -397,6 +398,8 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
             CustomEvents.events.activate,
             CustomEvents.events.scrollBottom,
             CustomEvents.events.scrollLock,
+            CustomEvents.events.up,
+            CustomEvents.events.down,
         ]);
 
         this.getRoot().on(CustomEvents.events.scrollBottom, function() {
@@ -406,6 +409,22 @@ define(['jquery', 'core/templates', 'core/notification', 'core/custom_interactio
         this.getRoot().on(CustomEvents.events.activate, SELECTORS.NOTIFICATION, function(e) {
             var notificationElement = $(e.target).closest(SELECTORS.NOTIFICATION);
             this.showNotification(notificationElement);
+        }.bind(this));
+
+        // Show the previous notification in the list.
+        this.getRoot().on(CustomEvents.events.up, SELECTORS.NOTIFICATION, function(e, data) {
+            var notificationElement = $(e.target).closest(SELECTORS.NOTIFICATION);
+            this.showNotification(notificationElement.prev());
+
+            data.originalEvent.preventDefault();
+        }.bind(this));
+
+        // Show the next notification in the list.
+        this.getRoot().on(CustomEvents.events.down, SELECTORS.NOTIFICATION, function(e, data) {
+            var notificationElement = $(e.target).closest(SELECTORS.NOTIFICATION);
+            this.showNotification(notificationElement.next());
+
+            data.originalEvent.preventDefault();
         }.bind(this));
 
         this.getContainer().on(NotificationAreaEvents.notificationShown, function(e, notification) {
