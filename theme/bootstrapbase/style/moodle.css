@@ -16647,6 +16647,8 @@ body.has_dock div#dock {
   font-size: 1.1em;
   padding: 0;
   margin: 0;
+  float: left;
+  max-width: 85%;
 }
 #dockeditempanel .dockeditempanel_hd .commands {
   display: block;
