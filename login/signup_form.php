@@ -30,7 +30,7 @@ require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once($CFG->dirroot . '/user/editlib.php');
 
-class login_signup_form extends moodleform {
+class login_signup_form extends moodleform implements renderable, templatable {
     function definition() {
         global $USER, $CFG;
 
@@ -141,5 +141,22 @@ class login_signup_form extends moodleform {
 
         return $errors;
 
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+        ob_start();
+        $this->display();
+        $formhtml = ob_get_contents();
+        ob_end_clean();
+        $context = [
+            'formhtml' => $formhtml
+        ];
+        return $context;
     }
 }

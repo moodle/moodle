@@ -23,6 +23,8 @@ use tabtree;
 use custom_menu_item;
 use custom_menu;
 use block_contents;
+use navigation_node;
+use action_link;
 use stdClass;
 use moodle_url;
 use preferences_groups;
@@ -72,13 +74,18 @@ class core_renderer extends \core_renderer {
      */
     public function full_header() {
         $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'row'));
-        $html .= html_writer::start_div('col-xs-12 p-t-1 p-b-1');
+        $html .= html_writer::start_div('col-xs-12 p-a-1');
+        $html .= html_writer::start_div('card');
+        $html .= html_writer::start_div('card-block');
+        $html .= html_writer::div($this->context_header_settings_menu(), 'pull-xs-right context-header-settings-menu');
         $html .= $this->context_header();
         $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
         $html .= html_writer::tag('div', $this->navbar(), array('class' => 'breadcrumb-nav'));
         $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
         $html .= html_writer::end_div();
         $html .= html_writer::tag('div', $this->course_header(), array('id' => 'course-header'));
+        $html .= html_writer::end_div();
+        $html .= html_writer::end_div();
         $html .= html_writer::end_div();
         $html .= html_writer::end_tag('header');
         return $html;
@@ -110,6 +117,14 @@ class core_renderer extends \core_renderer {
      */
     public function navbar() {
         return $this->render_from_template('core/navbar', $this->page->navbar);
+    }
+
+    /**
+     * We don't like these...
+     *
+     */
+    public function edit_button(moodle_url $url) {
+        return '';
     }
 
     /**
@@ -183,6 +198,38 @@ class core_renderer extends \core_renderer {
         }
         $custommenu = new custom_menu($custommenuitems, current_language());
         return $this->render_custom_menu($custommenu);
+    }
+
+    /**
+     * We want to show the custom menus as a list of links in the footer on small screens.
+     * Just return the menu object exported so we can render it differently.
+     */
+    public function custom_menu_flat() {
+        global $CFG;
+        $custommenuitems = '';
+
+        if (empty($custommenuitems) && !empty($CFG->custommenuitems)) {
+            $custommenuitems = $CFG->custommenuitems;
+        }
+        $custommenu = new custom_menu($custommenuitems, current_language());
+        $langs = get_string_manager()->get_list_of_translations();
+        $haslangmenu = $this->lang_menu() != '';
+
+        if ($haslangmenu) {
+            $strlang = get_string('language');
+            $currentlang = current_language();
+            if (isset($langs[$currentlang])) {
+                $currentlang = $langs[$currentlang];
+            } else {
+                $currentlang = $strlang;
+            }
+            $this->language = $custommenu->add($currentlang, new moodle_url('#'), $strlang, 10000);
+            foreach ($langs as $langtype => $langname) {
+                $this->language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
+            }
+        }
+
+        return $custommenu->export_for_template($this);
     }
 
     /*
@@ -319,7 +366,7 @@ class core_renderer extends \core_renderer {
      * @return string
      */
     public function body_css_classes(array $additionalclasses = array()) {
-        return $this->page->bodyclasses;
+        return $this->page->bodyclasses . ' ' . implode(' ', $additionalclasses);
     }
 
     /**
@@ -347,6 +394,9 @@ class core_renderer extends \core_renderer {
             }
         }
 
+        if ($menu->is_empty()) {
+            return '';
+        }
         $context = $menu->export_for_template($this);
 
         // We do not want the icon with the caret, the caret is added by Bootstrap.
@@ -441,4 +491,186 @@ class core_renderer extends \core_renderer {
         }
         return $this->render_from_template('core/pix_icon', $data);
     }
+
+    /**
+     * Renders the login form.
+     *
+     * @param \core_auth\output\login $form The renderable.
+     * @return string
+     */
+    public function render_login(\core_auth\output\login $form) {
+        global $SITE;
+
+        $context = $form->export_for_template($this);
+
+        // Override because rendering is not supported in template yet.
+        $context->cookieshelpiconformatted = $this->help_icon('cookiesenabled');
+        $context->errorformatted = $this->error_text($context->error);
+        $url = $this->get_logo_url();
+        if ($url) {
+            $url = $url->out(false);
+        }
+        $context->logourl = $url;
+        $context->sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
+
+        return $this->render_from_template('core/login', $context);
+    }
+
+    /**
+     * Render the login signup form into a nice template for the theme.
+     *
+     * @param mform $form
+     * @return string
+     */
+    public function render_login_signup_form($form) {
+        global $SITE;
+
+        $context = $form->export_for_template($this);
+        $url = $this->get_logo_url();
+        if ($url) {
+            $url = $url->out(false);
+        }
+        $context['logourl'] = $url;
+        $context['sitename'] = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
+
+        return $this->render_from_template('core/signup_form_layout', $context);
+    }
+
+    /**
+     * This is an optional menu that can be added to a layout by a theme. It contains the
+     * menu for the course administration, only on the course main page.
+     *
+     * @return string
+     */
+    public function context_header_settings_menu() {
+        $context = $this->page->context;
+        $menu = new action_menu();
+        if ($context->contextlevel == CONTEXT_COURSE) {
+            // Get the course admin node from the settings navigation.
+            $items = $this->page->navbar->get_items();
+            $node = end($items);
+            $settingsnode = false;
+            if (!empty($node) && $node->key === 'home') {
+                $settingsnode = $this->page->settingsnav->find('frontpage', navigation_node::TYPE_SETTING);
+                if ($settingsnode) {
+                    // Build an action menu based on the visible nodes from this navigation tree.
+                    $skipped = $this->build_action_menu_from_navigation($menu, $settingsnode, false, true);
+
+                    // We only add a list to the full settings menu if we didn't include every node in the short menu.
+                    if ($skipped) {
+                        $text = get_string('frontpagesettings');
+                        $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
+                        $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
+                        $menu->add_secondary_action($link);
+                    }
+                }
+            } else if (!empty($node) && $node->type == navigation_node::TYPE_COURSE) {
+                $settingsnode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
+                if ($settingsnode) {
+                    // Build an action menu based on the visible nodes from this navigation tree.
+                    $skipped = $this->build_action_menu_from_navigation($menu, $settingsnode, false, true);
+
+                    // We only add a list to the full settings menu if we didn't include every node in the short menu.
+                    if ($skipped) {
+                        $text = get_string('courseadministration');
+                        $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
+                        $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
+                        $menu->add_secondary_action($link);
+                    }
+                }
+            }
+        } else if ($context->contextlevel == CONTEXT_USER) {
+            $items = $this->page->navbar->get_items();
+            $node = end($items);
+            if (!empty($node) && ($node->key === 'myprofile')) {
+                // Get the course admin node from the settings navigation.
+                $node = $this->page->settingsnav->find('useraccount', navigation_node::TYPE_CONTAINER);
+                if ($node) {
+                    // Build an action menu based on the visible nodes from this navigation tree.
+                    $this->build_action_menu_from_navigation($menu, $node);
+                }
+            }
+        }
+        return $this->render($menu);
+    }
+
+    /**
+     * This is an optional menu that can be added to a layout by a theme. It contains the
+     * menu for the most specific thing from the settings block. E.g. Module administration.
+     *
+     * @return string
+     */
+    public function region_main_settings_menu() {
+        $context = $this->page->context;
+        $menu = new action_menu();
+
+        if ($context->contextlevel == CONTEXT_MODULE) {
+
+            $node = $this->page->navigation->find_active_node();
+            if (!empty($node) && ($node->type == navigation_node::TYPE_ACTIVITY ||
+                    $node->type == navigation_node::TYPE_RESOURCE)) {
+
+                $items = $this->page->navbar->get_items();
+                $navbarnode = end($items);
+                // We only want to show the menu on the first page of the activity. This means
+                // the breadcrumb has no additional nodes.
+                if ($navbarnode->key == $node->key && $navbarnode->type == $node->type) {
+                    // Get the course admin node from the settings navigation.
+                    $node = $this->page->settingsnav->find('modulesettings', navigation_node::TYPE_SETTING);
+                    if ($node) {
+                        // Build an action menu based on the visible nodes from this navigation tree.
+                        $this->build_action_menu_from_navigation($menu, $node);
+                    }
+                }
+            }
+        }
+        return $this->render($menu);
+    }
+
+    /**
+     * Take a node in the nav tree and make an action menu out of it.
+     * The links are injected in the action menu.
+     *
+     * @param action_menu $menu
+     * @param navigation_node $node
+     * @param boolean $indent
+     * @param boolean $onlytopleafnodes
+     * @return boolean nodesskipped - True if nodes were skipped in building the menu
+     */
+    private function build_action_menu_from_navigation(action_menu $menu,
+                                                       navigation_node $node,
+                                                       $indent = false,
+                                                       $onlytopleafnodes = false) {
+        $skipped = false;
+        // Build an action menu based on the visible nodes from this navigation tree.
+        foreach ($node->children as $menuitem) {
+            if ($menuitem->display) {
+                if ($onlytopleafnodes && $menuitem->children->count()) {
+                    $skipped = true;
+                    continue;
+                }
+                if ($menuitem->action) {
+                    $text = $menuitem->text;
+                    if ($menuitem->action instanceof action_link) {
+                        $link = $menuitem->action;
+                    } else {
+                        $link = new action_link($menuitem->action, $menuitem->text, null, null, $menuitem->icon);
+                    }
+                    if ($indent) {
+                        $link->add_class('m-l-1');
+                    }
+                } else {
+                    if ($onlytopleafnodes) {
+                        $skipped = true;
+                        continue;
+                    }
+                    $link = $menuitem->text;
+                }
+                $menu->add_secondary_action($link);
+                $skipped = $skipped || $this->build_action_menu_from_navigation($menu, $menuitem, true);
+            }
+        }
+        return $skipped;
+    }
+
 }

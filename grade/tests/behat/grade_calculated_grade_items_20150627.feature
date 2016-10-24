@@ -22,7 +22,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I navigate to "Gradebook setup" node in "Grade administration > Setup"
 
   @javascript

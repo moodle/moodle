@@ -51,7 +51,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name 1"
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment name 2"
@@ -66,7 +66,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And I log out
     And I log in as "student1"
     And I follow "Grades" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     Then the following should exist in the "user-grade" table:
       | Grade item | Grade | Range | Percentage |
       | Test assignment name 1 | 80.00 | 0–100 | 80.00 % |
@@ -93,7 +93,7 @@ Feature: We can enter in grades and view reports from the gradebook
     And I log out
     And I log in as "student1"
     And I follow "Grades" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage |
       | Test assignment name 1 | 41.86 % | 80.00 | 0–100 | 80.00 % |

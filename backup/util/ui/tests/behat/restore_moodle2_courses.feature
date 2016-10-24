@@ -67,7 +67,7 @@ Feature: Restore Moodle 2 course backups
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum post backup name |
       | Description | Test forum post backup description |
-    And I follow "Restore"
+    And I navigate to "Restore" node in "Course administration"
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Section 3 | 0 |
     Then I should see "Course 1"
@@ -91,6 +91,7 @@ Feature: Restore Moodle 2 course backups
       | id_startdate_month | January |
       | id_startdate_year | 2020 |
       | id_format | Weekly format |
+      | id_enddate_enabled | 0 |
     And I press "Save and display"
     And I should see "1 January - 7 January"
     And I should see "Test forum name"

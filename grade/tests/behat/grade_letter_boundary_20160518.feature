@@ -23,7 +23,7 @@ Feature: We can customise the letter boundary of a course.
       | assign | C1 | a1 | Test assignment one | Submit something! | 100 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I select "Course grade settings" from the "Grade report" singleselect
     And I set the following fields to these values:
       | Grade display type | Letter |

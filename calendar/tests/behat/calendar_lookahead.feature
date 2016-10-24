@@ -20,6 +20,7 @@ Feature: Limit displayed upcoming events
     Given I follow "C1"
     And I turn editing mode on
     And I add the "Calendar" block
+    And I add the "Upcoming events" block
     And I follow "This month"
     And I click on "a.next" "css_element"
     And I click on "a.next" "css_element"

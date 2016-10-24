@@ -42,7 +42,7 @@ Feature: We can use calculated grade totals
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I turn editing mode on
     And I change window size to "large"
     And I give the grade "60.00" to the user "Student 1" for the grade item "Test assignment one"
@@ -253,12 +253,12 @@ Feature: We can use calculated grade totals
     And I log in as "student1"
     And I follow "Grades" in the user menu
     Then I should see "114.82 (18.27 %)" in the "overview-grade" "table"
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I expand "Setup" node
     And I follow "Gradebook setup"
     And I set the following settings for grade item "Test outcome item one":
@@ -267,12 +267,12 @@ Feature: We can use calculated grade totals
     And I log in as "student1"
     And I follow "Grades" in the user menu
     Then I should see "114.00 (18.39 %)" in the "overview-grade" "table"
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I expand "Setup" node
     And I follow "Gradebook setup"
     And I set the following settings for grade item "Course 1":
@@ -282,7 +282,7 @@ Feature: We can use calculated grade totals
     And I log in as "student1"
     And I follow "Grades" in the user menu
     Then I should see "110.00 (17.74 %)" in the "overview-grade" "table"
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
 
   Scenario: Natural aggregation on outcome items with modified weights
@@ -297,7 +297,7 @@ Feature: We can use calculated grade totals
     And the following "grade items" exist:
       | itemname              | course | outcome | gradetype | scale      |
       | Test outcome item one | C1     | OT1     | Scale     | Test Scale |
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I expand "Setup" node
     And I follow "Gradebook setup"
     And I set the following settings for grade item "Course 1":
@@ -318,7 +318,7 @@ Feature: We can use calculated grade totals
     And I log in as "student1"
     And I follow "Grades" in the user menu
     Then I should see "4.00 (100.00 %)" in the "overview-grade" "table"
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
 
   Scenario: Natural aggregation
@@ -363,7 +363,7 @@ Feature: We can use calculated grade totals
     And I log in as "student1"
     And I follow "Grades" in the user menu
     And I should see "113.75 (23.45 %)" in the "overview-grade" "table"
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Contribution to course total |
       | Test assignment six | 70.00 % | 5.00 (50.00 %) | 0–10 | 1.80 % |
@@ -379,7 +379,7 @@ Feature: We can use calculated grade totals
     And I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I turn editing mode on
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |
@@ -553,7 +553,7 @@ Feature: We can use calculated grade totals
     And I log in as "student1"
     And I follow "Grades" in the user menu
     And I should see "45.00 (13.85 %)" in the "overview-grade" "table"
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And the following should exist in the "user-grade" table:
       | Grade item            | Calculated weight | Grade           | Contribution to course total |
       | Test assignment six   | 0.00 %            | 5.00 (50.00 %)  | 0.00 %                         |

@@ -36,6 +36,8 @@ if ($data = data_submitted() and confirm_sesskey()) {
 // to modify them
 echo $OUTPUT->header($focus);
 
+echo $OUTPUT->heading(get_string('administrationsite'));
+
 if ($errormsg !== '') {
     echo $OUTPUT->notification($errormsg);
 
@@ -43,6 +45,18 @@ if ($errormsg !== '') {
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 
-echo admin_search_settings_html($query);
+require_once("admin_settings_search_form.php");
+$form = new admin_settings_search_form();
+$form->display();
+echo '<hr>';
+
+if ($query) {
+    echo admin_search_settings_html($query);
+} else {
+    $node = $PAGE->settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
+    if ($node) {
+        echo $OUTPUT->render_from_template('core/settings_link_page', ['node' => $node]);
+    }
+}
 
 echo $OUTPUT->footer();

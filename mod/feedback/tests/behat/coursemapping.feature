@@ -36,8 +36,8 @@ Feature: Mapping courses in a feedback
       | feedback   | Another feedback | C1                   | feedback1 | 1         | 1             |
     When I log in as "manager"
     And I am on site homepage
-    And I follow "Course feedback"
-    And I follow "Edit questions"
+    And I navigate to "Course feedback" node in "Site pages"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
@@ -77,7 +77,7 @@ Feature: Mapping courses in a feedback
   Scenario: Site feedback is not mapped to any course
     And I log in as "user1"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I navigate to "Course feedback" node in "Site pages"
     And I follow "Answer the questions..."
     And I should see "Acceptance test site" in the ".feedback_form" "css_element"
     And I set the following fields to these values:
@@ -112,7 +112,7 @@ Feature: Mapping courses in a feedback
     And I log out
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I navigate to "Course feedback" node in "Site pages"
 
     And I follow "Analysis"
     And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
@@ -124,7 +124,7 @@ Feature: Mapping courses in a feedback
     And I follow "Sort by course"
     And I should see "2.50" in the "C1" "table_row"
     And I should see "1.00" in the "Acceptance test site" "table_row"
-    And I follow "Back"
+    And I click on "Back" "link" in the "region-main" "region"
     And I set the field "Filter by course" to "Course 1"
     And I press "Filter"
     And I should see "Course 1" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
@@ -138,7 +138,7 @@ Feature: Mapping courses in a feedback
   Scenario: Site feedback is mapped to courses
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I navigate to "Course feedback" node in "Site pages"
     And I follow "Map feedback to courses"
     And I set the field "Courses" to "Course 2"
     And I set the field "Courses" to "Course 3"
@@ -147,7 +147,7 @@ Feature: Mapping courses in a feedback
 
     And I log in as "user1"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I navigate to "Course feedback" node in "Site pages"
     And I should see "You can only access this feedback from a course"
     And I should not see "Answer the questions..."
 
@@ -196,7 +196,7 @@ Feature: Mapping courses in a feedback
     And I log out
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Course feedback"
+    And I navigate to "Course feedback" node in "Site pages"
     And I follow "Analysis"
     And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
     And I show chart data for the "multichoicerated" feedback
@@ -207,7 +207,7 @@ Feature: Mapping courses in a feedback
     And I click on "Sort by course" "link"
     And I should see "3.00" in the "C3" "table_row"
     And I should see "2.50" in the "C2" "table_row"
-    And I follow "Back"
+    And I click on "Back" "link" in the "region-main" "region"
     And I set the field "Filter by course" to "Course 2"
     And I press "Filter"
     And I show chart data for the "multichoicerated" feedback
@@ -234,8 +234,9 @@ Feature: Mapping courses in a feedback
   Scenario: Site feedback deletion hides feedback block completely
     When I log in as "manager"
     And I am on site homepage
-    And I follow "Turn editing on"
+    And I turn editing mode on
     And I add the "Feedback" block
+    And I add the "Main menu" block
     And I click on "Delete" "link" in the "//*[contains(@class,'block_site_main_menu')]//li[contains(.,'Course feedback')]" "xpath_element"
     And I press "Yes"
     And I follow "Turn editing off"

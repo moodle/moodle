@@ -20,7 +20,7 @@ Feature: Change password
     And I click on "Save changes" "button"
     Then I should see "Password has been changed"
     And I click on "Continue" "button"
-    And I should see "Preferences" in the "#region-main" "css_element"
+    And I should see "Preferences" in the "region-main" "region"
     And I log out
     And I follow "Log in"
     And I set the field "Username" to "testuser"

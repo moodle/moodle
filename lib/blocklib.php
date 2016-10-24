@@ -363,14 +363,20 @@ class block_manager {
      * @return array names of block types that cannot be added or deleted. E.g. array('navigation','settings').
      */
     public static function get_undeletable_block_types() {
-        global $CFG;
+        global $CFG, $PAGE;
+        $undeletableblocks = false;
+        if (isset($CFG->undeletableblocktypes)) {
+            $undeletableblocks = $CFG->undeletableblocktypes;
+        } else if (isset($PAGE->theme->undeletableblocktypes)) {
+            $undeletableblocks = $PAGE->theme->undeletableblocktypes;
+        }
 
-        if (!isset($CFG->undeletableblocktypes) || (!is_array($CFG->undeletableblocktypes) && !is_string($CFG->undeletableblocktypes))) {
+        if ($undeletableblocks === false) {
             return array('navigation','settings');
-        } else if (is_string($CFG->undeletableblocktypes)) {
-            return explode(',', $CFG->undeletableblocktypes);
+        } else if (is_string($undeletableblocks)) {
+            return explode(',', $undeletableblocks);
         } else {
-            return $CFG->undeletableblocktypes;
+            return $undeletableblocks;
         }
     }
 
@@ -711,6 +717,10 @@ class block_manager {
     }
 
     public function add_block_at_end_of_default_region($blockname) {
+        if (empty($this->birecordsbyregion)) {
+            // No blocks or block regions exist yet.
+            return;
+        }
         $defaulregion = $this->get_default_region();
 
         $lastcurrentblock = end($this->birecordsbyregion[$defaulregion]);
@@ -947,9 +957,30 @@ class block_manager {
      * method, before any output is done.
      */
     public function create_all_block_instances() {
+        global $PAGE;
+
+        // If there are any un-removable blocks that were not created - force them.
+        $undeletable = $this->get_undeletable_block_types();
+        foreach ($undeletable as $forced) {
+            if (empty($forced)) {
+                continue;
+            }
+            $found = false;
+            foreach ($this->get_regions() as $region) {
+                foreach($this->birecordsbyregion[$region] as $instance) {
+                    if ($instance->blockname == $forced) {
+                        $found = true;
+                    }
+                }
+            }
+            if (!$found) {
+                $this->add_block_at_end_of_default_region($forced);
+            }
+        }
         foreach ($this->get_regions() as $region) {
             $this->ensure_instances_exist($region);
         }
+
     }
 
     /**
@@ -2225,8 +2256,8 @@ function blocks_get_default_site_course_blocks() {
         return blocks_parse_default_blocks_list($CFG->defaultblocks_site);
     } else {
         return array(
-            BLOCK_POS_LEFT => array('site_main_menu'),
-            BLOCK_POS_RIGHT => array('course_summary', 'calendar_month')
+            BLOCK_POS_LEFT => array(),
+            BLOCK_POS_RIGHT => array()
         );
     }
 }
@@ -2272,7 +2303,7 @@ function blocks_add_default_system_blocks() {
 
     $page = new moodle_page();
     $page->set_context(context_system::instance());
-    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('navigation', 'settings')), '*', null, true);
+    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => block_manager::get_undeletable_block_types()), '*', null, true);
     $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('admin_bookmarks')), 'admin-*', null, null, 2);
 
     if ($defaultmypage = $DB->get_record('my_pages', array('userid' => null, 'name' => '__default', 'private' => 1))) {

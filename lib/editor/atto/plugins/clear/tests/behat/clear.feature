@@ -6,7 +6,7 @@ Feature: Atto clear button
   Scenario: Clear formatting
     Given I log in as "admin"
     And I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     And I set the field "Description" to "Pisa"
     And I select the text in the "Description" Atto editor
     And I click on "Italic" "button"
@@ -18,6 +18,6 @@ Feature: Atto clear button
     And I follow "Editor preferences"
     And I set the field "Text editor" to "Plain text area"
     And I press "Save changes"
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should not see "<i>Pisa"
 

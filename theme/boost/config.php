@@ -88,7 +88,7 @@ $THEME->layouts = [
         'defaultregion' => 'side-pre',
     ),
     'login' => array(
-        'file' => 'columns1.php',
+        'file' => 'login.php',
         'regions' => array(),
         'options' => array('langmenu' => true),
     ),
@@ -149,3 +149,4 @@ $THEME->extrascsscallback = 'theme_boost_get_extra_scss';
 $THEME->prescsscallback = 'theme_boost_get_pre_scss';
 $THEME->yuicssmodules = array();
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
+$THEME->undeletableblocktypes = '';

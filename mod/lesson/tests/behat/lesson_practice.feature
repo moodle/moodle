@@ -71,7 +71,7 @@ Feature: Practice mode in a lesson activity
         And I press "Submit"
         Then I should not see "View grades"
         And I follow "Grades" in the user menu
-        And I follow "Course 1"
+        And I click on "Course 1" "link" in the "Course 1" "table_row"
         And I should not see "Practice lesson"
 
     Scenario: Practice lesson with scale doesn't record grades in the gradebook
@@ -92,5 +92,5 @@ Feature: Practice mode in a lesson activity
         And I press "Submit"
         Then I should not see "View grades"
         And I follow "Grades" in the user menu
-        And I follow "Course 1"
+        And I click on "Course 1" "link" in the "Course 1" "table_row"
         And I should not see "Practice lesson with scale"

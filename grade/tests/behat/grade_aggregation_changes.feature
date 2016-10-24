@@ -35,7 +35,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I navigate to "Grader report" node in "Grade administration"
     And I turn editing mode on
     And I follow "Edit   Cat mean"

@@ -8,7 +8,7 @@ Feature: Forms manipulation
   Scenario: Basic forms manipulation
     Given I log in as "admin"
     And I follow "Preferences" in the user menu
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     When I set the field "First name" to "Field value"
     And I set the field "Select a country" to "Japan"
     And I set the field "Unmask" to "1"

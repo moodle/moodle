@@ -28,13 +28,13 @@ Feature: Enable the course_list block on a category page and view it's contents
   Scenario: Add the course list block on category page and navigate to the course listing
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
-    And I follow "Course 1"
+    And I turn editing mode on
+    And I am on course index
     And I follow "Miscellaneous"
     And I add the "Courses" block
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course index
     And I follow "Miscellaneous"
     Then I should see "Course 1" in the "My courses" "block"
     And I should see "Course 2" in the "My courses" "block"
@@ -46,13 +46,13 @@ Feature: Enable the course_list block on a category page and view it's contents
   Scenario: Add the course list block on category page and navigate to another course
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
-    And I follow "Course 1"
+    And I turn editing mode on
+    And I am on course index
     And I follow "Miscellaneous"
     And I add the "Courses" block
     And I log out
     When I log in as "teacher1"
-    And I follow "Course 1"
+    And I am on course index
     And I follow "Miscellaneous"
     Then I should see "Course 1" in the "My courses" "block"
     And I should see "Course 2" in the "My courses" "block"
@@ -64,8 +64,8 @@ Feature: Enable the course_list block on a category page and view it's contents
   Scenario: Add the course list block on category page and view as an admin
     Given I log in as "admin"
     And I am on site homepage
-    And I navigate to "Turn editing on" node in "Front page settings"
-    And I follow "Course 1"
+    And I turn editing mode on
+    And I am on course index
     And I follow "Miscellaneous"
     When I add the "Courses" block
     Then I should see "Miscellaneous" in the "Course categories" "block"

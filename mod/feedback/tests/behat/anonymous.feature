@@ -28,8 +28,8 @@ Feature: Anonymous feedback
       | feedback   | Course feedback | C1                   | feedback1 | 1         | 1             |
     When I log in as "manager"
     And I am on site homepage
-    And I follow "Site feedback"
-    And I follow "Edit questions"
+    And I navigate to "Site feedback" node in "Site pages"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
       | Label                          | multichoice2                       |
@@ -48,7 +48,7 @@ Feature: Anonymous feedback
   Scenario: Complete anonymous feedback on the front page as an authenticated user
     And I log in as "user1"
     And I am on site homepage
-    When I follow "Site feedback"
+    When I navigate to "Site feedback" node in "Site pages"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -69,7 +69,7 @@ Feature: Anonymous feedback
     And I log out
     And I log in as "user1"
     And I am on site homepage
-    When I follow "Site feedback"
+    When I navigate to "Site feedback" node in "Site pages"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -81,7 +81,7 @@ Feature: Anonymous feedback
     And I log out
     And I log in as "user2"
     And I am on site homepage
-    When I follow "Site feedback"
+    And I navigate to "Site feedback" node in "Site pages"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -100,7 +100,7 @@ Feature: Anonymous feedback
     And I log out
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Site feedback"
+    And I navigate to "Site feedback" node in "Site pages"
     And I follow "Show responses"
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
@@ -165,7 +165,7 @@ Feature: Anonymous feedback
     And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log in as "manager"
     And I am on site homepage
-    And I follow "Site feedback"
+    And I navigate to "Site feedback" node in "Site pages"
     And I follow "Show responses"
     And I should see "Anonymous entries (2)"
     And I follow "Response number: 1"
@@ -178,7 +178,7 @@ Feature: Anonymous feedback
     When I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course feedback"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like this course?           |
       | Label                          | multichoice1                       |
@@ -236,7 +236,7 @@ Feature: Anonymous feedback
     And I should see "Response number: 2 (Anonymous)"
     And I should see "Prev"
     And I should not see "Next"
-    And I follow "Back"
+    And I click on "Back" "link" in the "[role=main]" "css_element"
     # Delete anonymous response
     And I click on "Delete entry" "link" in the "Response number: 1" "table_row"
     And I press "Yes"

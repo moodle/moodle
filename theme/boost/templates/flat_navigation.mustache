@@ -1,0 +1,30 @@
+<nav class="list-group">
+{{# flatnavigation }}
+    {{#showdivider}}
+</nav>
+<nav class="list-group m-t-1">
+    {{/showdivider}}
+    {{#get_smscreenonly}}
+    <div class="hidden-lg-up">
+    {{/get_smscreenonly}}
+    {{#action}}
+    <a class="list-group-item list-group-item-action {{#isactive}}font-weight-bold{{/isactive}}" href="{{{action}}}"><span class="m-l-{{get_indent}}">
+        {{#is_section}}
+            {{#pix}}i/folder{{/pix}}
+        {{/is_section}}
+        {{text}}
+    </span></a>
+    {{/action}}
+    {{^action}}
+    <div class="list-group-item"><span class="m-l-{{get_indent}}">
+        {{#is_section}}
+            {{#pix}}i/folder{{/pix}}
+        {{/is_section}}
+        {{text}}
+    </span></div>
+    {{/action}}
+    {{#get_smscreenonly}}
+    </div>
+    {{/get_smscreenonly}}
+{{/ flatnavigation }}
+</nav>

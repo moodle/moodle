@@ -14,6 +14,10 @@ Feature: Show hidden blocks in a docked block region when editing
     And I log in as "admin"
     And I follow "Course 1"
     And I turn editing mode on
+    And I add the "Search forums" block
+    And I add the "Latest announcements" block
+    And I add the "Upcoming events" block
+    And I add the "Recent activity" block
     # Hide all the blocks in the non-default region
     And I configure the "Search forums" block
     And I set the following fields to these values:

@@ -8885,36 +8885,37 @@ function get_performance_info() {
     global $CFG, $PERF, $DB, $PAGE;
 
     $info = array();
-    $info['html'] = '';         // Holds userfriendly HTML representation.
     $info['txt']  = me() . ' '; // Holds log-friendly representation.
 
+    $info['html'] = '';
     if (!empty($CFG->themedesignermode)) {
         // Attempt to avoid devs debugging peformance issues, when its caused by css building and so on.
-        $info['html'] = '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
+        $info['html'] .= '<p><strong>Warning: Theme designer mode is enabled.</strong></p>';
     }
+    $info['html'] .= '<ul class="list-unstyled m-l-1">';         // Holds userfriendly HTML representation.
 
     $info['realtime'] = microtime_diff($PERF->starttime, microtime());
 
-    $info['html'] .= '<span class="timeused">'.$info['realtime'].' secs</span> ';
+    $info['html'] .= '<li class="timeused">'.$info['realtime'].' secs</li> ';
     $info['txt'] .= 'time: '.$info['realtime'].'s ';
 
     if (function_exists('memory_get_usage')) {
         $info['memory_total'] = memory_get_usage();
         $info['memory_growth'] = memory_get_usage() - $PERF->startmemory;
-        $info['html'] .= '<span class="memoryused">RAM: '.display_size($info['memory_total']).'</span> ';
+        $info['html'] .= '<li class="memoryused">RAM: '.display_size($info['memory_total']).'</li> ';
         $info['txt']  .= 'memory_total: '.$info['memory_total'].'B (' . display_size($info['memory_total']).') memory_growth: '.
             $info['memory_growth'].'B ('.display_size($info['memory_growth']).') ';
     }
 
     if (function_exists('memory_get_peak_usage')) {
         $info['memory_peak'] = memory_get_peak_usage();
-        $info['html'] .= '<span class="memoryused">RAM peak: '.display_size($info['memory_peak']).'</span> ';
+        $info['html'] .= '<li class="memoryused">RAM peak: '.display_size($info['memory_peak']).'</li> ';
         $info['txt']  .= 'memory_peak: '.$info['memory_peak'].'B (' . display_size($info['memory_peak']).') ';
     }
 
     $inc = get_included_files();
     $info['includecount'] = count($inc);
-    $info['html'] .= '<span class="included">Included '.$info['includecount'].' files</span> ';
+    $info['html'] .= '<li class="included">Included '.$info['includecount'].' files</li> ';
     $info['txt']  .= 'includecount: '.$info['includecount'].' ';
 
     if (!empty($CFG->early_install_lang) or empty($PAGE)) {
@@ -8927,7 +8928,7 @@ function get_performance_info() {
         list($filterinfo, $nicenames) = $filtermanager->get_performance_summary();
         $info = array_merge($filterinfo, $info);
         foreach ($filterinfo as $key => $value) {
-            $info['html'] .= "<span class='$key'>$nicenames[$key]: $value </span> ";
+            $info['html'] .= "<li class='$key'>$nicenames[$key]: $value </li> ";
             $info['txt'] .= "$key: $value ";
         }
     }
@@ -8937,23 +8938,23 @@ function get_performance_info() {
         list($filterinfo, $nicenames) = $stringmanager->get_performance_summary();
         $info = array_merge($filterinfo, $info);
         foreach ($filterinfo as $key => $value) {
-            $info['html'] .= "<span class='$key'>$nicenames[$key]: $value </span> ";
+            $info['html'] .= "<li class='$key'>$nicenames[$key]: $value </li> ";
             $info['txt'] .= "$key: $value ";
         }
     }
 
     if (!empty($PERF->logwrites)) {
         $info['logwrites'] = $PERF->logwrites;
-        $info['html'] .= '<span class="logwrites">Log DB writes '.$info['logwrites'].'</span> ';
+        $info['html'] .= '<li class="logwrites">Log DB writes '.$info['logwrites'].'</li> ';
         $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
     }
 
     $info['dbqueries'] = $DB->perf_get_reads().'/'.($DB->perf_get_writes() - $PERF->logwrites);
-    $info['html'] .= '<span class="dbqueries">DB reads/writes: '.$info['dbqueries'].'</span> ';
+    $info['html'] .= '<li class="dbqueries">DB reads/writes: '.$info['dbqueries'].'</li> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
     $info['dbtime'] = round($DB->perf_get_queries_time(), 5);
-    $info['html'] .= '<span class="dbtime">DB queries time: '.$info['dbtime'].' secs</span> ';
+    $info['html'] .= '<li class="dbtime">DB queries time: '.$info['dbtime'].' secs</li> ';
     $info['txt'] .= 'db queries time: ' . $info['dbtime'] . 's ';
 
     if (function_exists('posix_times')) {
@@ -8962,7 +8963,7 @@ function get_performance_info() {
             foreach ($ptimes as $key => $val) {
                 $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];
             }
-            $info['html'] .= "<span class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</span> ";
+            $info['html'] .= "<li class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</li> ";
             $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
         }
     }
@@ -8982,7 +8983,7 @@ function get_performance_info() {
     }
     if (!empty($serverload)) {
         $info['serverload'] = $serverload;
-        $info['html'] .= '<span class="serverload">Load average: '.$info['serverload'].'</span> ';
+        $info['html'] .= '<li class="serverload">Load average: '.$info['serverload'].'</li> ';
         $info['txt'] .= "serverload: {$info['serverload']} ";
     }
 
@@ -8994,8 +8995,8 @@ function get_performance_info() {
     }
 
     if ($stats = cache_helper::get_stats()) {
-        $html = '<span class="cachesused">';
-        $html .= '<span class="cache-stats-heading">Caches used (hits/misses/sets)</span>';
+        $html = '<ul class="cachesused list-unstyled m-l-1">';
+        $html .= '<li class="cache-stats-heading">Caches used (hits/misses/sets)</li>';
         $text = 'Caches used (hits/misses/sets): ';
         $hits = 0;
         $misses = 0;
@@ -9015,34 +9016,34 @@ function get_performance_info() {
                     $mode = ' <span title="request cache">[r]</span>';
                     break;
             }
-            $html .= '<span class="cache-definition-stats cache-mode-'.$modeclass.'">';
-            $html .= '<span class="cache-definition-stats-heading">'.$definition.$mode.'</span>';
+            $html .= '<ul class="cache-definition-stats list-unstyled m-l-1 cache-mode-'.$modeclass.'">';
+            $html .= '<li class="cache-definition-stats-heading p-t-1">'.$definition.$mode.'</li>';
             $text .= "$definition {";
             foreach ($details['stores'] as $store => $data) {
                 $hits += $data['hits'];
                 $misses += $data['misses'];
                 $sets += $data['sets'];
                 if ($data['hits'] == 0 and $data['misses'] > 0) {
-                    $cachestoreclass = 'nohits';
+                    $cachestoreclass = 'nohits text-danger';
                 } else if ($data['hits'] < $data['misses']) {
-                    $cachestoreclass = 'lowhits';
+                    $cachestoreclass = 'lowhits text-warning';
                 } else {
-                    $cachestoreclass = 'hihits';
+                    $cachestoreclass = 'hihits text-success';
                 }
                 $text .= "$store($data[hits]/$data[misses]/$data[sets]) ";
-                $html .= "<span class=\"cache-store-stats $cachestoreclass\">$store: $data[hits] / $data[misses] / $data[sets]</span>";
+                $html .= "<li class=\"cache-store-stats $cachestoreclass\">$store: $data[hits] / $data[misses] / $data[sets]</li>";
             }
-            $html .= '</span>';
+            $html .= '</ul>';
             $text .= '} ';
         }
-        $html .= "<span class='cache-total-stats'>Total: $hits / $misses / $sets</span>";
-        $html .= '</span> ';
+        $html .= '</ul> ';
+        $html .= "<div class='cache-total-stats row'>Total: $hits / $misses / $sets</div>";
         $info['cachesused'] = "$hits / $misses / $sets";
         $info['html'] .= $html;
         $info['txt'] .= $text.'. ';
     } else {
         $info['cachesused'] = '0 / 0 / 0';
-        $info['html'] .= '<span class="cachesused">Caches used (hits/misses/sets): 0/0/0</span>';
+        $info['html'] .= '<div class="cachesused">Caches used (hits/misses/sets): 0/0/0</div>';
         $info['txt'] .= 'Caches used (hits/misses/sets): 0/0/0 ';
     }
 

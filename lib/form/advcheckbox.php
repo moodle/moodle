@@ -88,6 +88,7 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox implements 
         }
 
         parent::__construct($elementName, $elementLabel, $text, $attributes, $values);
+        $this->_type = 'advcheckbox';
     }
 
     /**
@@ -142,7 +143,7 @@ class MoodleQuickForm_advcheckbox extends HTML_QuickForm_advcheckbox implements 
 
         $context['selectedvalue'] = $this->_values[1];
         $context['deselectedvalue'] = $this->_values[0];
-
+        $context['frozenvalue'] = $this->getValue();
         return $context;
     }
 

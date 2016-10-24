@@ -575,10 +575,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sectioncreated = $DB->record_exists('course_sections', array('course' => $created->id, 'section' => 0));
         $this->assertTrue($sectioncreated);
 
-        // Ensure blocks have been associated to the course.
-        $blockcount = $DB->count_records('block_instances', array('parentcontextid' => $context->id));
-        $this->assertGreaterThan(0, $blockcount);
-
         // Ensure that the shortname isn't duplicated.
         try {
             $created = create_course($course);
@@ -3085,7 +3081,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue($adminoptions->publish);
         $this->assertTrue($adminoptions->reset);
         $this->assertTrue($adminoptions->roles);
-        $this->assertTrue($adminoptions->grades);
     }
 
     /**
@@ -3118,7 +3113,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($adminoptions->publish);
         $this->assertFalse($adminoptions->reset);
         $this->assertFalse($adminoptions->roles);
-        $this->assertTrue($adminoptions->grades);
 
         $CFG->enablebadges = false;
         $adminoptions = course_get_user_administration_options($course, $context);

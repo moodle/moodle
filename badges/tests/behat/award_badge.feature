@@ -32,7 +32,7 @@ Feature: Award badges
     And I press "Continue"
     And I click on "Admin User" "link"
     And I choose "Profile" in the open action menu
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     And I expand all fieldsets
     And I set the field "Phone" to "123456789"
     And I press "Update profile"
@@ -113,7 +113,7 @@ Feature: Award badges
     And I log out
     And I log in as "student1"
     And I follow "Profile" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And I should see "Course Badge"
 
   @javascript
@@ -131,7 +131,7 @@ Feature: Award badges
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -156,13 +156,13 @@ Feature: Award badges
     And I log out
     And I log in as "student1"
     And I follow "Profile" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     Then I should not see "badges"
     And I am on homepage
     And I follow "Course 1"
     And I press "Mark as complete: Test assignment name"
     And I follow "Profile" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     Then I should see "Course Badge"
 
   @javascript
@@ -180,7 +180,7 @@ Feature: Award badges
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -189,7 +189,7 @@ Feature: Award badges
       | Assignment name | Test assignment name |
       | Description | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1 |
-    And I follow "Course completion"
+    And I navigate to "Course completion" node in "Course administration"
     And I set the field "id_overall_aggregation" to "2"
     And I click on "Condition: Activity completion" "link"
     And I set the field "Assignment - Test assignment name" to "1"
@@ -211,7 +211,7 @@ Feature: Award badges
     And I log out
     And I log in as "student1"
     And I follow "Profile" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     Then I should not see "badges"
     And I am on homepage
     And I follow "Course 1"
@@ -300,14 +300,14 @@ Feature: Award badges
     # Student 1 should have just course badge 1.
     And I log in as "student1"
     And I follow "Profile" in the user menu
-    When I follow "Course 1"
+    When I click on "Course 1" "link" in the "region-main" "region"
     Then I should see "Course Badge 1"
     And I should not see "Course Badge 2"
     And I log out
     # Student 2 should have just course badge 2.
     And I log in as "student2"
     And I follow "Profile" in the user menu
-    When I follow "Course 1"
+    When I click on "Course 1" "link" in the "region-main" "region"
     Then I should see "Course Badge 2"
     Then I should not see "Course Badge 1"
 

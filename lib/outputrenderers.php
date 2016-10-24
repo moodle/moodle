@@ -4086,18 +4086,6 @@ EOD;
         return $html;
     }
 
-    /**
-     * Returns the header bar.
-     *
-     * @since Moodle 2.9
-     * @param array $headerinfo An array of header information, dependant on what type of header is being displayed. The following
-     *                          array example is user specific.
-     *                          heading => Override the page heading.
-     *                          user => User object.
-     *                          usercontext => user context.
-     * @param int $headinglevel What level the 'h' tag will be.
-     * @return string HTML for the header bar.
-     */
     public function context_header($headerinfo = null, $headinglevel = 1) {
         global $DB, $USER, $CFG;
         $context = $this->page->context;
@@ -4388,6 +4376,18 @@ EOD;
             // No template for this element.
             return false;
         }
+    }
+
+    /**
+     * Render the login signup form into a nice template for the theme.
+     *
+     * @param mform $form
+     * @return string
+     */
+    public function render_login_signup_form($form) {
+        $context = $form->export_for_template($this);
+
+        return $this->render_from_template('core/signup_form_layout', $context);
     }
 
     /**

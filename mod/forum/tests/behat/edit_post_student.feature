@@ -52,6 +52,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
     And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
+    And I add the "Recent activity" block
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |

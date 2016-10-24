@@ -49,7 +49,7 @@ Feature: View gradebook when single item scales are used
     And I press "Save changes"
     And I press "Ok"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"

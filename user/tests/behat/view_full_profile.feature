@@ -26,17 +26,17 @@ Feature: Access to full profiles of users
     When I log in as "student1"
     And I follow "Course 1"
     # Another student's full profile is not visible
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "My courses > C1"
     And I follow "Student 2"
     Then I should not see "Full profile"
     # Teacher's full profile is visible
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "My courses > C1"
     And I follow "Teacher 1"
     And I follow "Full profile"
     And I should see "First access to site"
     # Own full profile is visible
     And I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "My courses > C1"
     And I click on "Student 1" "link" in the "#participants" "css_element"
     And I follow "Full profile"
     And I should see "First access to site"
@@ -47,7 +47,7 @@ Feature: Access to full profiles of users
       |  forceloginforprofiles | 0 |
     When I log in as "student1"
     And I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "My courses > C1"
     And I follow "Student 2"
     And I follow "Full profile"
     Then I should see "First access to site"
@@ -59,7 +59,7 @@ Feature: Access to full profiles of users
     And I log out
     When I log in as "student1"
     And I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "My courses > C1"
     And I follow "Student 2"
     And I follow "Full profile"
     Then I should see "First access to site"
@@ -92,7 +92,7 @@ Feature: Access to full profiles of users
     Given I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
       | Group mode | Separate groups |
       | Force group mode | Yes |

@@ -16,7 +16,10 @@
         {{#element.frozen}}
             {{#element.options}}
                 {{#selected}}
-                {{text}}
+                    {{text}}
+                    {{^element.hardfrozen}}
+                        <input type="hidden" name="{{element.name}}" value="{{value}}" id="{{element.id}}">
+                    {{/element.hardfrozen}}
                 {{/selected}}
             {{/element.options}}
         {{/element.frozen}}

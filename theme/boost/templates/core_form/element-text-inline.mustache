@@ -5,7 +5,7 @@
             name="{{element.name}}"
             id="{{element.id}}"
     {{#element.frozen}}
-            readonly disabled
+            readonly {{#element.hardfrozen}}disabled{{/element.hardfrozen}}
     {{/element.frozen}}
             value="{{element.value}}"
             size="{{element.size}}"

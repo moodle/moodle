@@ -62,7 +62,7 @@ Feature: Atto Autosave
     And I select the text in the "Course summary" Atto editor
     And I click on "Image" "button"
     And I click on "Browse repositories..." "button"
-    And I click on "Private files" "link"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle-logo.png" "link"
     And I click on "Select this file" "button"
     And I set the field "Describe this image" to "It's the Moodle"

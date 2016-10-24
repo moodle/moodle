@@ -57,11 +57,11 @@ Feature: Sections can be edited and deleted in topics format
     When I click on "Edit topic name" "link" in the "li#section-1" "css_element"
     And I set the field "New name for topic Topic 1" to "Midterm evaluation"
     And I press key "13" in the field "New name for topic Topic 1"
-    Then I should not see "Topic 1" in the "#region-main" "css_element"
+    Then I should not see "Topic 1" in the "region-main" "region"
     And "New name for topic" "field" should not exist
     And I should see "Midterm evaluation" in the "li#section-1" "css_element"
     And I follow "Course 1"
-    And I should not see "Topic 1" in the "#region-main" "css_element"
+    And I should not see "Topic 1" in the "region-main" "region"
     And I should see "Midterm evaluation" in the "li#section-1" "css_element"
 
   Scenario: Deleting the last section in topics format

@@ -74,7 +74,7 @@ trait templatable_form_element {
         // Other attributes.
         $otherattributes = [];
         foreach ($this->getAttributes() as $attr => $value) {
-            if (!in_array($attr, $standardattributes) && $attr != 'class') {
+            if (!in_array($attr, $standardattributes) && $attr != 'class' && !is_object($value)) {
                 $otherattributes[] = $attr . '="' . s($value) . '"';
             }
         }

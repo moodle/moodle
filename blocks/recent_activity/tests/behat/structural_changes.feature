@@ -49,6 +49,7 @@ Feature: View structural changes in recent activity block
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
+    And I add the "Recent activity" block
     When I add a "Forum" to section "1" and I fill the form with:
       | name        | ForumVisibleGroups |
       | Description | No description     |
@@ -145,6 +146,7 @@ Feature: View structural changes in recent activity block
     When I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
+    And I add the "Recent activity" block
     And I add a "Forum" to section "1" and I fill the form with:
       | name        | ForumNew       |
       | Description | No description |

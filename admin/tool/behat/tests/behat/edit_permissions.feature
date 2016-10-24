@@ -52,13 +52,13 @@ Feature: Edit capabilities
       | Forum name | I'm the name |
       | Description | I'm the introduction |
     And I follow "I'm the name"
-    And I follow "Permissions"
+    And I navigate to "Permissions" node in "Forum administration"
     And I override the system permissions of "Student" role with:
       | mod/forum:deleteanypost | Prohibit |
       | mod/forum:editanypost | Prevent |
       | mod/forum:addquestion | Allow |
     When I set the field "Advanced role override" to "Student (3)"
-    And I press "Go"
+    And I click on "Go" "button" in the "region-main" "region"
     Then "mod/forum:deleteanypost" capability has "Prohibit" permission
     And "mod/forum:editanypost" capability has "Prevent" permission
     And "mod/forum:addquestion" capability has "Allow" permission

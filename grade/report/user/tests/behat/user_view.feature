@@ -35,7 +35,7 @@ Feature: View the user report as the student will see it
     And I navigate to "Gradebook setup" node in "Course administration"
     And I hide the grade item "Test assignment six"
     And I hide the grade item "Sub category 2"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I turn editing mode on
     And I change window size to "large"
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
@@ -83,7 +83,7 @@ Feature: View the user report as the student will see it
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | -                 | 80.00  | 0–100 | 80.00 %    | -                            |
@@ -121,7 +121,7 @@ Feature: View the user report as the student will see it
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | 50.00 %           | 80.00  | 0–100 | 80.00 %    | 26.67 %                      |
@@ -159,7 +159,7 @@ Feature: View the user report as the student will see it
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | 50.00 %           | 80.00  | 0–100 | 80.00 %    | 13.33 %                      |
@@ -204,7 +204,7 @@ Feature: View the user report as the student will see it
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     Then the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | 50.00 %           | 80.00  | 0–100 | 80.00 %    | 13.33 %                      |

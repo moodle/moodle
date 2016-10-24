@@ -28,30 +28,30 @@ Feature: Access to preferences page
   Scenario: A student and teacher with normal permissions can not view another user's permissions page.
     Given I log in as "student1"
     And I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "My courses > C1"
     And I follow "Student 2"
-    And I should not see "Preferences" in the "#region-main" "css_element"
+    And I should not see "Preferences" in the "region-main" "region"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    When I navigate to "Participants" node in "Current course > C1"
+    When I navigate to "Participants" node in "My courses > C1"
     And I follow "Student 2"
-    Then I should not see "Preferences" in the "#region-main" "css_element"
+    Then I should not see "Preferences" in the "region-main" "region"
 
   Scenario: Administrators and Managers can view another user's permissions page.
     Given I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "Courses > C1"
     And I follow "Student 2"
-    And I should see "Preferences" in the "#region-main" "css_element"
+    And I should see "Preferences" in the "region-main" "region"
     And I log out
     And I log in as "manager1"
     And I am on site homepage
     And I follow "Course 1"
-    When I navigate to "Participants" node in "Current course > C1"
+    When I navigate to "Participants" node in "Courses > C1"
     And I follow "Student 2"
-    Then I should see "Preferences" in the "#region-main" "css_element"
+    Then I should see "Preferences" in the "region-main" "region"
 
   Scenario: A user with the appropriate permissions can view another user's permissions page.
     Given I log in as "admin"
@@ -81,4 +81,4 @@ Feature: Access to preferences page
     And I log in as "parent"
     And I am on site homepage
     When I follow "Student 1"
-    Then I should see "Preferences" in the "#region-main" "css_element"
+    Then I should see "Preferences" in the "region-main" "region"

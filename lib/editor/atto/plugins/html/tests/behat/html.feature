@@ -6,7 +6,7 @@ Feature: Atto edit HTML
   Scenario: Edit the html source
     Given I log in as "admin"
     When I follow "Profile" in the user menu
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     And I set the field "Description" to "<p style=\"color: blue;\">Smurf</p>"
     And I click on "Show more buttons" "button"
     And I click on "HTML" "button"

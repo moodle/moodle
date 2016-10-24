@@ -65,7 +65,7 @@ Feature: In an assignment, teachers grade multiple students on one page
       | enableoutcomes | 1 |
     When I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Outcomes"
+    And I navigate to "Outcomes" node in "Course administration"
     And I follow "Edit outcomes"
     And I press "Add a new outcome"
     And I follow "Add a new scale"
@@ -74,7 +74,7 @@ Feature: In an assignment, teachers grade multiple students on one page
       | Scale | Noob, Nub, 1337, HaXor |
     And I press "Save changes"
     And I follow "Course 1"
-    And I follow "Outcomes"
+    And I navigate to "Outcomes" node in "Course administration"
     And I follow "Edit outcomes"
     And I press "Add a new outcome"
     And I set the following fields to these values:
@@ -133,7 +133,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should see "I'm the teacher first feedback"
     And I should see "60.0"
     And I follow "Grades" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And I should see "1337"
     And I log out
     And I log in as "student2"
@@ -142,7 +142,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should not see "I'm the teacher first feedback"
     And I should not see "60.0"
     And I follow "Grades" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And I should not see "1337"
     And I log out
     And I log in as "teacher1"
@@ -172,7 +172,7 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should see "I'm the teacher first feedback"
     And I should see "60.0"
     And I follow "Grades" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And I should see "1337"
     And I log out
     And I log in as "student2"
@@ -181,5 +181,5 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I should not see "I'm the teacher first feedback"
     And I should not see "60.0"
     And I follow "Grades" in the user menu
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And I should not see "1337"

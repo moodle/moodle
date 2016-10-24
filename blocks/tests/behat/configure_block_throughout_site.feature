@@ -58,6 +58,7 @@ Feature: Add and configure blocks throughout the site
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Turn editing on"
+    And I add the "Search forums" block
     Then I should see "Assign roles in Search forums block"
 
   @javascript

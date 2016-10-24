@@ -49,7 +49,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I select the text in the "id_answer_editor_2" Atto editor
     And I click on "Image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_answer_editor_2']]" "xpath_element"
     And I click on "Browse repositories..." "button"
-    And I click on "Private files" "link"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
     And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
@@ -71,7 +71,7 @@ Feature: In a lesson activity, teacher can add embedded images in questions answ
     And I select the text in the "id_response_editor_0" Atto editor
     And I click on "Image" "button" in the "//*[@data-fieldtype='editor']/*[descendant::*[@id='id_response_editor_0']]" "xpath_element"
     And I click on "Browse repositories..." "button"
-    And I click on "Private files" "link"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
     And I set the field "Describe this image for someone who cannot see it" to "It's the logo"

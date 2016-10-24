@@ -24,7 +24,7 @@ Feature: Average grades are displayed in the gradebook
     And I am on site homepage
     And I follow "Course 1"
     # Enable averages
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
     And I set the following fields to these values:
       | Show average | Show |
@@ -52,7 +52,7 @@ Feature: Average grades are displayed in the gradebook
 
   Scenario: Grade a grade item and ensure the results display correctly in the gradebook
     # Check the admin grade table
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     Then I should see "50.00" in the ".avg.r0.lastrow .c1" "css_element"
     Then I should see "50.00" in the ".avg.r0.lastrow .c2" "css_element"
     And I log out
@@ -61,7 +61,7 @@ Feature: Average grades are displayed in the gradebook
     And I log in as "student1"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     Then I should see "50.00" in the ".level2.column-grade" "css_element"
     Then I should see "50.00" in the ".level2.column-average" "css_element"
     And I log out

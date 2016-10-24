@@ -52,8 +52,8 @@ Feature: Feedbacks in courses with groups
       | feedback   | Course anon feedback | C1              | feedback2 | 1         | 1             | 1         |
     When I log in as "manager"
     And I am on site homepage
-    And I follow "Site feedback"
-    And I follow "Edit questions"
+    And I navigate to "Site feedback" node in "Site pages"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
       | Label                          | multichoice2                       |
@@ -67,7 +67,7 @@ Feature: Feedbacks in courses with groups
     When I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course feedback"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like this course?           |
       | Label                          | multichoice1                       |
@@ -170,7 +170,7 @@ Feature: Feedbacks in courses with groups
     When I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course anon feedback"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like this course?           |
       | Label                          | multichoice1                       |

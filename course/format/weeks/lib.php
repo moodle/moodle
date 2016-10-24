@@ -124,9 +124,6 @@ class format_weeks extends format_base {
             if ($sectionno != 0 && $usercoursedisplay == COURSE_DISPLAY_MULTIPAGE) {
                 $url->param('section', $sectionno);
             } else {
-                if (empty($CFG->linkcoursesections) && !empty($options['navigation'])) {
-                    return null;
-                }
                 $url->set_anchor('section-'.$sectionno);
             }
         }
@@ -213,7 +210,7 @@ class format_weeks extends format_base {
     public function get_default_blocks() {
         return array(
             BLOCK_POS_LEFT => array(),
-            BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
+            BLOCK_POS_RIGHT => array()
         );
     }
 

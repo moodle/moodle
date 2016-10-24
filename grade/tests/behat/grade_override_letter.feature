@@ -16,7 +16,7 @@ Feature: Grade letters can be overridden
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I click on "Grades" "link" in the "Navigation" "block"
     And I follow "Letters"
     And I follow "Edit grade letters"
 

@@ -558,6 +558,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $coursedata['summary'] = 'Course 1 description';
         $coursedata['summaryformat'] = FORMAT_MOODLE;
         $course1  = self::getDataGenerator()->create_course($coursedata);
+
         $generatedcourses[$course1->id] = $course1;
         $course2  = self::getDataGenerator()->create_course();
         $generatedcourses[$course2->id] = $course2;
@@ -642,8 +643,17 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $generatedcourses = array();
         $coursedata1['fullname'] = 'FIRST COURSE';
         $course1  = self::getDataGenerator()->create_course($coursedata1);
+
+        $page = new moodle_page();
+        $page->set_course($course1);
+        $page->blocks->add_blocks([BLOCK_POS_LEFT => ['news_items'], BLOCK_POS_RIGHT => []], 'course-view-*');
+
         $coursedata2['fullname'] = 'SECOND COURSE';
         $course2  = self::getDataGenerator()->create_course($coursedata2);
+
+        $page = new moodle_page();
+        $page->set_course($course2);
+        $page->blocks->add_blocks([BLOCK_POS_LEFT => ['news_items'], BLOCK_POS_RIGHT => []], 'course-view-*');
         // Search by name.
         $results = core_course_external::search_courses('search', 'FIRST');
         $results = external_api::clean_returnvalue(core_course_external::search_courses_returns(), $results);
@@ -1842,7 +1852,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $navoptions->{$option['name']} = $option['available'];
             }
             if ($course['id'] == SITEID) {
-                $this->assertCount(7, $course['options']);
+                $this->assertCount(8, $course['options']);
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
                 $this->assertFalse($navoptions->participants);
@@ -1850,12 +1860,15 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertTrue($navoptions->tags);
                 $this->assertFalse($navoptions->search);
                 $this->assertTrue($navoptions->calendar);
+                $this->assertTrue($navoptions->competencies);
             } else {
-                $this->assertCount(4, $course['options']);
+                $this->assertCount(6, $course['options']);
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
                 $this->assertTrue($navoptions->participants);
                 $this->assertTrue($navoptions->badges);
+                $this->assertTrue($navoptions->grades);
+                $this->assertTrue($navoptions->competencies);
             }
         }
     }
@@ -1905,9 +1918,8 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertFalse($adminoptions->publish);
                 $this->assertFalse($adminoptions->reset);
                 $this->assertFalse($adminoptions->roles);
-                $this->assertFalse($adminoptions->grades);
             } else {
-                $this->assertCount(15, $course['options']);
+                $this->assertCount(14, $course['options']);
                 $this->assertFalse($adminoptions->update);
                 $this->assertFalse($adminoptions->filters);
                 $this->assertFalse($adminoptions->reports);
@@ -1922,7 +1934,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->assertFalse($adminoptions->publish);
                 $this->assertFalse($adminoptions->reset);
                 $this->assertFalse($adminoptions->roles);
-                $this->assertTrue($adminoptions->grades);
             }
         }
     }
