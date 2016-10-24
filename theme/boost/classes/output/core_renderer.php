@@ -64,7 +64,7 @@ class core_renderer extends \core_renderer {
         if (is_array($classes)) {
             $classes = implode(' ', $classes);
         }
-        return parent::box_start($classes . ' p-a-1', $id, $attributes);
+        return parent::box_start($classes . ' p-y-1', $id, $attributes);
     }
 
     /**
