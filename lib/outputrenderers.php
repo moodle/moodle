@@ -659,14 +659,20 @@ class core_renderer extends renderer_base {
             $errorclass = ($timeleft < 30) ? 'error' : 'warning';
             $output .= $this->box_start($errorclass . ' moodle-has-zindex maintenancewarning');
             $a = new stdClass();
-            $a->min = (int)($timeleft/60);
+            $a->hour = (int)($timeleft / 3600);
+            $a->min = (int)(($timeleft / 60) % 60);
             $a->sec = (int)($timeleft % 60);
-            $output .= get_string('maintenancemodeisscheduled', 'admin', $a) ;
+            if ($a->hour > 0) {
+                $output .= get_string('maintenancemodeisscheduledlong', 'admin', $a);
+            } else {
+                $output .= get_string('maintenancemodeisscheduled', 'admin', $a);
+            }
+
             $output .= $this->box_end();
             $this->page->requires->yui_module('moodle-core-maintenancemodetimer', 'M.core.maintenancemodetimer',
                     array(array('timeleftinsec' => $timeleft)));
             $this->page->requires->strings_for_js(
-                    array('maintenancemodeisscheduled', 'sitemaintenance'),
+                    array('maintenancemodeisscheduled', 'maintenancemodeisscheduledlong', 'sitemaintenance'),
                     'admin');
         }
         return $output;

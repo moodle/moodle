@@ -663,6 +663,7 @@ $string['logstoressupported'] = 'Log stores that support this report';
 $string['longtimewarning'] = '<b>Please note that this process can take a long time.</b>';
 $string['maintenancemode'] = 'In maintenance mode';
 $string['maintenancemodeisscheduled'] = 'This site will be switched to maintenance mode in {$a->min} mins {$a->sec} secs';
+$string['maintenancemodeisscheduledlong'] = 'This site will be switched to maintenance mode in {$a->hour} hours {$a->min} mins {$a->sec} secs';
 $string['maintfileopenerror'] = 'Error opening maintenance files!';
 $string['maintinprogress'] = 'Maintenance is in progress...';
 $string['manageformats'] = 'Manage course formats';
