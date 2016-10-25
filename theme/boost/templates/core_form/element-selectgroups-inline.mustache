@@ -13,7 +13,7 @@
         <optgroup label="{{text}}">
         {{/text}}
         {{#options}}
-        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
+        <option value="{{value}}" {{#selected}}selected{{/selected}} {{#disabled}}disabled{{/disabled}} {{{optionattributes}}}>{{{text}}}</option>
         {{/options}}
         {{#text}}
         </optgroup>
