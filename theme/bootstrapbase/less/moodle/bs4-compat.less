@@ -1,0 +1,141 @@
+
+// Add support for card. We map it to well.
+// This is not meant to be perfect - but at least applies some styles to a bs4 card.
+.card:extend(.well) {
+    /* stylelint-disable-line no-empty-source */
+}
+
+// Padding and margin utitilies.
+.padding-margin(3);
+
+.padding-margin(@n, @i : 1) when (@i =< @n) {
+    @amount: @i * @baseFontSize;
+    .p-l-@{i} {
+        padding-left: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .p-r-@{i} {
+        padding-right: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .p-t-@{i} {
+        padding-top: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .p-b-@{i} {
+        padding-bottom: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .p-x-@{i} {
+        padding-left: @amount !important; /* stylelint-disable-line declaration-no-important */
+        padding-right: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .p-y-@{i} {
+        padding-top: @amount !important; /* stylelint-disable-line declaration-no-important */
+        padding-bottom: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .p-a-@{i} {
+        padding: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+
+    .m-l-@{i} {
+        margin-left: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .m-r-@{i} {
+        margin-right: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .m-t-@{i} {
+        margin-top: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .m-b-@{i} {
+        margin-bottom: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .m-x-@{i} {
+        margin-left: @amount !important; /* stylelint-disable-line declaration-no-important */
+        margin-right: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .m-y-@{i} {
+        margin-top: @amount !important; /* stylelint-disable-line declaration-no-important */
+        margin-bottom: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .m-a-@{i} {
+        margin: @amount !important; /* stylelint-disable-line declaration-no-important */
+    }
+    .padding-margin(@n, (@i + 1));
+}
+
+.d-inline {
+    display: inline !important; /* stylelint-disable-line declaration-no-important */
+}
+.d-block {
+    display: block !important; /* stylelint-disable-line declaration-no-important */
+}
+.d-inline-block {
+    display: inline-block !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// Horizontal centering.
+.m-x-auto {
+    margin-left: auto !important; /* stylelint-disable-line declaration-no-important */
+    margin-right: auto !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// Support img-fluid.
+.img-fluid:extend(.img-responsive) {
+    /* stylelint-disable-line no-empty-source */
+}
+
+// Text danger
+.text-danger:extend(.text-error) {
+    /* stylelint-disable-line no-empty-source */
+}
+
+.btn-secondary {
+    background-color: @white;
+    background-image: none;
+    color: @black;
+}
+
+// Tags
+.tag:extend(.label) {
+    // Important (red)
+    &-danger {
+        background-color: @errorText;
+    }
+    &-danger[href] {
+        background-color: darken(@errorText, 10%);
+    }
+    // Warnings (orange)
+    &-warning {
+        background-color: @orange;
+    }
+    &-warning[href] {
+        background-color: darken(@orange, 10%);
+    }
+    // Success (green)
+    &-success {
+        background-color: @successText;
+    }
+    &-success[href] {
+        background-color: darken(@successText, 10%);
+    }
+    // Info (turquoise)
+    &-info {
+        background-color: @infoText;
+    }
+    &-info[href] {
+        background-color: darken(@infoText, 10%);
+    }
+    // Primary (blue)
+    &-primary {
+        background-color: @blue;
+    }
+    &-primary[href] {
+        background-color: darken(@blue, 10%);
+    }
+}
+
+// Floats
+.pull-xs-left:extend(.pull-left) {
+    /* stylelint-disable-line no-empty-source */
+}
+
+.pull-xs-right:extend(.pull-right) {
+    /* stylelint-disable-line no-empty-source */
+}
