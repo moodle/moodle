@@ -113,6 +113,7 @@ information provided here is intended especially for developers.
 * The minifier library used by core_minify has been switched to https://github.com/matthiasmullie/minify - there are minor differences
   in minifier output.
 * context_header additional buttons can now have a class attribute provided in the link attributes.
+* Webservice function mod_assign_get_submissions returns a new field 'gradingstatus' from each submission.
 
 === 3.1 ===
 

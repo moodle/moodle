@@ -763,7 +763,8 @@ class mod_assign_external extends external_api {
                         'status' => $submissionrecord->status,
                         'attemptnumber' => $submissionrecord->attemptnumber,
                         'groupid' => $submissionrecord->groupid,
-                        'plugins' => self::get_plugins_data($assign, $submissionplugins, $submissionrecord)
+                        'plugins' => self::get_plugins_data($assign, $submissionplugins, $submissionrecord),
+                        'gradingstatus' => $assign->get_grading_status($submissionrecord->userid)
                     );
                     $submissions[] = $submission;
                 }
@@ -840,7 +841,8 @@ class mod_assign_external extends external_api {
                 'groupid' => new external_value(PARAM_INT, 'group id'),
                 'assignment' => new external_value(PARAM_INT, 'assignment id', VALUE_OPTIONAL),
                 'latest' => new external_value(PARAM_INT, 'latest attempt', VALUE_OPTIONAL),
-                'plugins' => new external_multiple_structure(self::get_plugin_structure(), 'plugins', VALUE_OPTIONAL)
+                'plugins' => new external_multiple_structure(self::get_plugin_structure(), 'plugins', VALUE_OPTIONAL),
+                'gradingstatus' => new external_value(PARAM_ALPHANUMEXT, 'Grading status.', VALUE_OPTIONAL),
             ), 'submission info', $required
         );
     }
