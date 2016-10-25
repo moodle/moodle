@@ -2370,6 +2370,9 @@ class mod_assign_external extends external_api {
                                                                             $lastattempt->submissiongroupmemberswhoneedtosubmit);
             }
 
+            // Can edit its own submission?
+            $lastattempt->caneditowner = $assign->submissions_open($user->id) && $assign->is_any_submission_plugin_enabled();
+
             $result['lastattempt'] = $lastattempt;
         }
 
@@ -2464,6 +2467,7 @@ class mod_assign_external extends external_api {
                         'locked' => new external_value(PARAM_BOOL, 'Whether new submissions are locked.'),
                         'graded' => new external_value(PARAM_BOOL, 'Whether the submission is graded.'),
                         'canedit' => new external_value(PARAM_BOOL, 'Whether the user can edit the current submission.'),
+                        'caneditowner' => new external_value(PARAM_BOOL, 'Whether the owner of the submission can edit it.'),
                         'cansubmit' => new external_value(PARAM_BOOL, 'Whether the user can submit.'),
                         'extensionduedate' => new external_value(PARAM_INT, 'Extension due date.'),
                         'blindmarking' => new external_value(PARAM_BOOL, 'Whether blind marking is enabled.'),
