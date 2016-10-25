@@ -94,8 +94,8 @@ class configuration {
      */
     public static function get_placement_options($default = null) {
         $values = [
-            'top'    => get_string('top',     'tool_usertours'),
-            'bottom' => get_string('bottom',  'tool_usertours'),
+            'top'    => get_string('above',   'tool_usertours'),
+            'bottom' => get_string('below',   'tool_usertours'),
             'left'   => get_string('left',    'tool_usertours'),
             'right'  => get_string('right',   'tool_usertours'),
         ];
