@@ -597,28 +597,19 @@ class phpunit_util extends testing_util {
         $backtrace = debug_backtrace();
 
         foreach ($backtrace as $bt) {
-            $intest = false;
-            if (isset($bt['object']) and is_object($bt['object'])) {
-                if ($bt['object'] instanceof PHPUnit_Framework_TestCase) {
-                    if (strpos($bt['function'], 'test') === 0) {
-                        $intest = true;
-                        break;
-                    }
-                }
+            if (isset($bt['object']) and is_object($bt['object'])
+                    && $bt['object'] instanceof PHPUnit_Framework_TestCase) {
+                $debug = new stdClass();
+                $debug->message = $message;
+                $debug->level   = $level;
+                $debug->from    = $from;
+
+                self::$debuggings[] = $debug;
+
+                return true;
             }
         }
-        if (!$intest) {
-            return false;
-        }
-
-        $debug = new stdClass();
-        $debug->message = $message;
-        $debug->level   = $level;
-        $debug->from    = $from;
-
-        self::$debuggings[] = $debug;
-
-        return true;
+        return false;
     }
 
     /**
@@ -639,16 +630,24 @@ class phpunit_util extends testing_util {
 
     /**
      * Prints out any debug messages accumulated during test execution.
-     * @return bool false if no debug messages, true if debug triggered
+     *
+     * @param bool $return true to return the messages or false to print them directly. Default false.
+     * @return bool|string false if no debug messages, true if debug triggered or string of messages
      */
-    public static function display_debugging_messages() {
+    public static function display_debugging_messages($return = false) {
         if (empty(self::$debuggings)) {
             return false;
         }
+
+        $debugstring = '';
         foreach(self::$debuggings as $debug) {
-            echo 'Debugging: ' . $debug->message . "\n" . trim($debug->from) . "\n";
+            $debugstring .= 'Debugging: ' . $debug->message . "\n" . trim($debug->from) . "\n";
         }
 
+        if ($return) {
+            return $debugstring;
+        }
+        echo $debugstring;
         return true;
     }
 
