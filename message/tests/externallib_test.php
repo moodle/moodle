@@ -161,6 +161,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $return = array_pop($return);
         $this->assertEquals($return['warningcode'], 'contactnotcreated');
         $this->assertEquals($return['itemid'], 99999);
+
+        // Try to add a contact to another user, should throw an exception.
+        // All assertions must be added before this point.
+        $this->expectException('required_capability_exception');
+        core_message_external::create_contacts(array($user2->id), $user3->id);
     }
 
     /**
@@ -198,6 +203,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         // Removing mixed valid and invalid data.
         $return = core_message_external::delete_contacts(array($user6->id, 99999));
         $this->assertNull($return);
+
+        // Try to delete a contact of another user contact list, should throw an exception.
+        // All assertions must be added before this point.
+        $this->expectException('required_capability_exception');
+        core_message_external::delete_contacts(array($user2->id), $user3->id);
     }
 
     /**
@@ -244,6 +254,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $return = array_pop($return);
         $this->assertEquals($return['warningcode'], 'contactnotblocked');
         $this->assertEquals($return['itemid'], 99999);
+
+        // Try to block a contact of another user contact list, should throw an exception.
+        // All assertions must be added before this point.
+        $this->expectException('required_capability_exception');
+        core_message_external::block_contacts(array($user2->id), $user3->id);
     }
 
     /**
@@ -282,6 +297,10 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $return = core_message_external::unblock_contacts(array($user6->id, 99999));
         $this->assertNull($return);
 
+        // Try to unblock a contact of another user contact list, should throw an exception.
+        // All assertions must be added before this point.
+        $this->expectException('required_capability_exception');
+        core_message_external::unblock_contacts(array($user2->id), $user3->id);
     }
 
     /**

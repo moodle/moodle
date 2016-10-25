@@ -394,6 +394,7 @@ $string['site:doclinks'] = 'Show links to offsite docs';
 $string['site:forcelanguage'] = 'Override course language';
 $string['site:import'] = 'Import other courses into a course';
 $string['site:maintenanceaccess'] = 'Allowed access when maintenance mode is enabled.';
+$string['site:manageallmessaging'] = 'Can perform all messaging actions on site';
 $string['site:manageblocks'] = 'Manage blocks on a page';
 $string['site:mnetloginfromremote'] = 'Login from a remote application via MNet';
 $string['site:mnetlogintoremote'] = 'Roam to a remote application via MNet';

@@ -77,6 +77,17 @@ $capabilities = array(
         )
     ),
 
+    'moodle/site:manageallmessaging' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     'moodle/site:deleteanymessage' => array(
 
         'riskbitmask' => RISK_DATALOSS,
