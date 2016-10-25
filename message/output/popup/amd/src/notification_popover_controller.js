@@ -238,7 +238,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str', 'core/url',
                 notification.viewmoreurl = URL.relativeUrl('/message/output/popup/notifications.php', {
                     notificationid: notification.id,
                     offset: offset,
-                }, true);
+                });
 
                 var promise = Templates.render('message_popup/notification_content_item', notification);
                 promises.push(promise);

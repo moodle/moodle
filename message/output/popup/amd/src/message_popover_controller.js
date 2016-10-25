@@ -173,7 +173,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str',
                 message.contexturl = URL.relativeUrl('/message/index.php', {
                     user: this.userId,
                     id: message.userid,
-                }, true);
+                });
 
                 message.profileurl = URL.relativeUrl('/user/profile.php', {
                     id: message.userid,
