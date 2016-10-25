@@ -196,14 +196,19 @@ class api {
         }
 
         // Now, let's get the courses.
+        // Make sure to limit searches to enrolled courses.
+        $enrolledcourses = enrol_get_my_courses(array('id', 'cacherev'));
         $courses = array();
-        if ($arrcourses = \coursecat::search_courses(array('search' => $search), array('limit' => $limitnum))) {
+        if ($arrcourses = \coursecat::search_courses(array('search' => $search), array('limit' => $limitnum),
+                array('moodle/course:viewparticipants'))) {
             foreach ($arrcourses as $course) {
-                $data = new \stdClass();
-                $data->id = $course->id;
-                $data->shortname = $course->shortname;
-                $data->fullname = $course->fullname;
-                $courses[] = $data;
+                if (isset($enrolledcourses[$course->id])) {
+                    $data = new \stdClass();
+                    $data->id = $course->id;
+                    $data->shortname = $course->shortname;
+                    $data->fullname = $course->fullname;
+                    $courses[] = $data;
+                }
             }
         }
 
