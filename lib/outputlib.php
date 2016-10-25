@@ -149,7 +149,7 @@ class theme_config {
     /**
      * @var string Default theme, used when requested theme not found.
      */
-    const DEFAULT_THEME = 'clean';
+    const DEFAULT_THEME = 'boost';
 
     /**
      * @var array You can base your theme on other themes by linking to the other theme as

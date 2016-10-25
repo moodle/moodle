@@ -80,7 +80,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
 
         // Get the user's profile picture and make sure it is correct.
         $userpicture = new user_picture($this->user1);
-        $this->assertSame($CFG->wwwroot . '/pluginfile.php/' . $usercontext->id . '/user/icon/clean/f2?rev=' .$this->user1->picture,
+        $this->assertSame($CFG->wwwroot . '/pluginfile.php/' . $usercontext->id . '/user/icon/boost/f2?rev=' .$this->user1->picture,
             $userpicture->get_url($page, $renderer)->out(false));
     }
 
@@ -533,7 +533,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
 
         $cartridge = \enrol_lti\helper::create_cartridge($tool1->id);
         $this->assertContains('<blti:title>Test LTI</blti:title>', $cartridge);
-        $this->assertContains("<blti:icon>$CFG->wwwroot/theme/image.php/_s/clean/theme/1/favicon</blti:icon>", $cartridge);
+        $this->assertContains("<blti:icon>$CFG->wwwroot/theme/image.php/_s/boost/theme/1/favicon</blti:icon>", $cartridge);
         $this->assertContains("<blti:launch_url>$CFG->wwwroot/enrol/lti/tool.php?id=$tool1->id</blti:launch_url>", $cartridge);
     }
 }

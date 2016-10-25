@@ -555,8 +555,10 @@ class core_formslib_testcase extends advanced_testcase {
      * MDL-52873
      */
     public function test_multiple_modgrade_fields() {
+        global $CFG;
         $this->resetAfterTest(true);
 
+        $CFG->theme = 'clean';
         $form = new formslib_multiple_modgrade_form();
         ob_start();
         $form->display();
@@ -582,7 +584,9 @@ class core_formslib_testcase extends advanced_testcase {
      * Test persistant freeze elements have different id's.
      */
     public function test_persistantrreeze_element() {
+        global $CFG;
         $this->resetAfterTest(true);
+        $CFG->theme = 'clean';
 
         $form = new formslib_persistantrreeze_element();
         ob_start();

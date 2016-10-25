@@ -373,6 +373,8 @@ class block_manager {
 
         if ($undeletableblocks === false) {
             return array('navigation','settings');
+        } else if ($undeletableblocks === '') {
+            return array();
         } else if (is_string($undeletableblocks)) {
             return explode(',', $undeletableblocks);
         } else {
@@ -958,6 +960,7 @@ class block_manager {
      */
     public function create_all_block_instances() {
         global $PAGE;
+        $missing = false;
 
         // If there are any un-removable blocks that were not created - force them.
         $undeletable = $this->get_undeletable_block_types();
@@ -975,7 +978,14 @@ class block_manager {
             }
             if (!$found) {
                 $this->add_block_at_end_of_default_region($forced);
+                $missing = true;
             }
+        }
+
+        if ($missing) {
+            // Some blocks were missing. Lets do it again.
+            $this->birecordsbyregion = null;
+            $this->load_blocks();
         }
         foreach ($this->get_regions() as $region) {
             $this->ensure_instances_exist($region);
