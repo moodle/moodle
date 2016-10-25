@@ -330,7 +330,7 @@ class behat_navigation extends behat_base {
             "/li[contains(concat(' ', normalize-space(@class), ' '), ' contains_branch ')]" .
             "/ul/li[contains(concat(' ', normalize-space(@class), ' '), ' contains_branch ')]" .
             "[p[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]" .
-            "/span[normalize-space(.)=" . $nodetextliteral ."]]" .
+            "[span[normalize-space(.)=" . $nodetextliteral ."] or a[normalize-space(.)=" . $nodetextliteral ."]]]" .
             "|" .
             "//div[contains(concat(' ', normalize-space(@class), ' '), ' content ')]/div" .
             "/ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
