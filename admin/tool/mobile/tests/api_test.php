@@ -56,11 +56,11 @@ class tool_mobile_api_testcase extends externallib_advanced_testcase {
         // SEt user to GMT+5.
         $USER->timezone = 5;
 
-        $timenow = time();
+        $timenow = $this->setCurrentTimeStart();
         $key = api::get_autologin_key();
 
         $key = $DB->get_record('user_private_key', array('value' => $key), '*', MUST_EXIST);
-        $this->assertEquals($timenow + api::LOGIN_KEY_TTL, $key->validuntil);
+        $this->assertTimeCurrent($key->validuntil - api::LOGIN_KEY_TTL);
         $this->assertEquals('0.0.0.0', $key->iprestriction);
     }
 }
