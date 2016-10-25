@@ -6312,35 +6312,6 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .messages-area.editing .response .message-box {
   display: none;
 }
-#newmessageoverlay {
-  min-height: 20px;
-  padding: 19px;
-  margin-bottom: 20px;
-  background-color: #f5f5f5;
-  border: 1px solid #e3e3e3;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  border-color: #e3e3e3;
-  margin: 0 1em;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-}
-#newmessageoverlay blockquote {
-  border-color: #ddd;
-  border-color: rgba(0, 0, 0, 0.15);
-}
-#newmessageoverlay #usermessage {
-  padding: 10px;
-}
-/* Widen the plain text editor on the bulk message screen */
-#page-user-action_redir #edit-messagebody {
-  width: auto;
-}
 .preferences-container .container-fluid {
   padding: 0;
 }
@@ -6594,15 +6565,6 @@ a.ygtvspacer:hover {
 }
 .notification-area .content-area .footer:empty {
   display: none;
-}
-.dir-rtl .messaging-area-container .messaging-area .contacts-area .contacts .contact .picture {
-  float: right;
-}
-.dir-rtl .messaging-area-container .messaging-area .contacts-area .contacts .contact .information {
-  float: right;
-}
-.dir-rtl .messaging-area-container .messaging-area .contacts-area .contacts .contact .unread-count-container {
-  float: right;
 }
 @media (max-width: 979px) {
   .messaging-area-container .messaging-area {
