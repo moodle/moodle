@@ -8,12 +8,14 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
     Given the following "users" exist:
       | username | firstname | lastname | email            |
       | teacher1 | teacher1  | teacher1 | teacher1@example.com |
+      | teacher2 | teacher2  | teacher2 | teacher2@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And the following "course enrolments" exist:
       | user | course | role |
-      | teacher1 | C1 | teacher |
+      | teacher1 | C1 | editingteacher |
+      | teacher2 | C1 | teacher |
     And the following "groups" exist:
       | name | course | idnumber |
       | G1G1 | C1 | G1G1 |
@@ -28,6 +30,9 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
       | teacher1    | G1G1  |
       | teacher1    | G1G2  |
       | teacher1    | G2G1  |
+      | teacher2    | G1G1  |
+      | teacher2    | G1G2  |
+      | teacher2    | G2G1  |
     And the following "grouping groups" exist:
       | grouping | group |
       | G1       | G1G1    |
@@ -67,11 +72,7 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
     And I should not see "Post a copy to all groups"
 
   Scenario: Teacher in all groups but without accessallgroups can post in either group but not to All Participants
-    And I log in as "admin"
-    And I set the following system permissions of "Non-editing teacher" role:
-      | moodle/site:accessallgroups | Prohibit |
-    And I log out
-    Given I log in as "teacher1"
+    Given I log in as "teacher2"
     And I follow "Course 1"
     And I follow "Multiple groups forum"
     When I click on "Add a new discussion topic" "button"
