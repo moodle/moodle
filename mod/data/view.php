@@ -326,6 +326,7 @@
         $PAGE->navbar->add(get_string('search'));
     }
 
+    $PAGE->force_settings_menu();
     $PAGE->set_title($title);
     $PAGE->set_heading($course->fullname);
 

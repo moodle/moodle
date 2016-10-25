@@ -57,6 +57,7 @@ if ($pageid !== null) {
     $url->param('pageid', $pageid);
 }
 $PAGE->set_url($url);
+$PAGE->force_settings_menu();
 
 $context = context_module::instance($cm->id);
 $canmanage = has_capability('mod/lesson:manage', $context);
