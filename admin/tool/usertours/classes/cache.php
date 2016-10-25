@@ -61,10 +61,8 @@ class cache {
             $sql = <<<EOF
                 SELECT t.*
                   FROM {tool_usertours_tours} t
-            INNER JOIN {tool_usertours_steps} s ON s.tourid = t.id
                  WHERE t.enabled = 1
-              GROUP BY t.id
-                HAVING COUNT(s.id) > 0
+                   AND t.id IN (SELECT s.tourid FROM {tool_usertours_steps} s GROUP BY s.tourid)
               ORDER BY t.sortorder ASC
 EOF;
 
