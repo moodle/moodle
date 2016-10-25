@@ -22,32 +22,32 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['competencyscale'] = 'Competency Scale: {$a}';
+$string['competencyscale'] = 'Competency scale: {$a}';
 $string['competencyscaledescription'] = 'Competency scale created by import';
-$string['confirmcolumnmappings'] = 'Confirm the columns mappings';
+$string['confirmcolumnmappings'] = 'Confirm the column mappings';
 $string['confirm'] = 'Confirm';
 $string['csvdelimiter'] = 'CSV delimiter';
-$string['csvdelimiter_help'] = 'CSV delimiter of the CSV file.';
+$string['csvdelimiter_help'] = 'The CSV delimiter is normally a comma.';
 $string['description'] = 'Description';
 $string['descriptionformat'] = 'Description format';
 $string['encoding'] = 'Encoding';
-$string['encoding_help'] = 'Encoding of the CSV file.';
+$string['encoding_help'] = 'The CSV file encoding is usually UTF-8.';
 $string['export'] = 'Export';
-$string['exportid'] = 'Exported id (optional)';
+$string['exportid'] = 'Exported ID (optional)';
 $string['exportnavlink'] = 'Export competency framework';
-$string['idnumber'] = 'Id number';
+$string['idnumber'] = 'ID number';
 $string['importfile'] = 'CSV framework description file';
 $string['import'] = 'Import';
 $string['invalidimportfile'] = 'File format is invalid.';
 $string['isframework'] = 'Is framework';
 $string['noframeworks'] = 'No competency frameworks have been created yet';
-$string['parentidnumber'] = 'Parent id number';
+$string['parentidnumber'] = 'Parent ID number';
 $string['pluginname'] = 'Import competency framework';
-$string['relatedidnumbers'] = 'Cross referenced competency id numbers';
+$string['relatedidnumbers'] = 'Cross-referenced competency ID numbers';
 $string['ruleconfig'] = 'Rule config (optional)';
 $string['ruleoutcome'] = 'Rule outcome (optional)';
 $string['ruletype'] = 'Rule type (optional)';
 $string['scaleconfiguration'] = 'Scale configuration';
 $string['scalevalues'] = 'Scale values';
-$string['shortname'] = 'Shortname';
+$string['shortname'] = 'Short name';
 $string['taxonomy'] = 'Taxonomy';
