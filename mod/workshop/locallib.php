@@ -3405,10 +3405,26 @@ class workshop_user_plan implements renderable {
             }
         }
 
-        // Add phase switching actions
+        // Add phase switching actions.
         if (has_capability('mod/workshop:switchphase', $workshop->context, $userid)) {
+            $nextphases = array(
+                workshop::PHASE_SETUP => workshop::PHASE_SUBMISSION,
+                workshop::PHASE_SUBMISSION => workshop::PHASE_ASSESSMENT,
+                workshop::PHASE_ASSESSMENT => workshop::PHASE_EVALUATION,
+                workshop::PHASE_EVALUATION => workshop::PHASE_CLOSED,
+            );
             foreach ($this->phases as $phasecode => $phase) {
-                if (! $phase->active) {
+                if ($phase->active) {
+                    if (isset($nextphases[$workshop->phase])) {
+                        $task = new stdClass();
+                        $task->title = get_string('switchphasenext', 'mod_workshop');
+                        $task->link = $workshop->switchphase_url($nextphases[$workshop->phase]);
+                        $task->details = '';
+                        $task->completed = null;
+                        $phase->tasks['switchtonextphase'] = $task;
+                    }
+
+                } else {
                     $action = new stdclass();
                     $action->type = 'switchphase';
                     $action->url  = $workshop->switchphase_url($phasecode);
