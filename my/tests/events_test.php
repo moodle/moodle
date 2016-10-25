@@ -99,7 +99,19 @@ class dashboard_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\dashboard_reset', $event);
         $this->assertEquals($user->id, $event->userid);
+        $this->assertEquals(MY_PAGE_PRIVATE, $event->other['private']);
+        $this->assertEquals('my-index', $event->other['pagetype']);
         $this->assertDebuggingNotCalled();
+
+        // Reset the dashboard with private parameter is set to MY_PAGE_PUBLIC and pagetype set to 'user-profile'.
+        $sink = $this->redirectEvents();
+        my_reset_page($user->id, MY_PAGE_PUBLIC, 'user-profile');
+
+        // Trigger and capture the event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertEquals(MY_PAGE_PUBLIC, $event->other['private']);
+        $this->assertEquals('user-profile', $event->other['pagetype']);
     }
 
     /**
@@ -124,6 +136,18 @@ class dashboard_events_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\dashboards_reset', $event);
         $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals(MY_PAGE_PRIVATE, $event->other['private']);
+        $this->assertEquals('my-index', $event->other['pagetype']);
         $this->assertDebuggingNotCalled();
+
+        // Reset the dashboards with private parameter is set to MY_PAGE_PUBLIC and pagetype set to 'user-profile'.
+        $sink = $this->redirectEvents();
+        my_reset_page_for_all_users(MY_PAGE_PUBLIC, 'user-profile');
+
+        // Trigger and capture the event.
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertEquals(MY_PAGE_PUBLIC, $event->other['private']);
+        $this->assertEquals('user-profile', $event->other['pagetype']);
     }
 }
