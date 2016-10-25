@@ -224,6 +224,15 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $course3->shortname = 'Three search';
         $course3 = $this->getDataGenerator()->create_course($course3);
 
+        $course4 = new stdClass();
+        $course4->fullname = 'Course Four';
+        $course4->shortname = 'CF100';
+        $course4 = $this->getDataGenerator()->create_course($course4);
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, 'student');
+        $this->getDataGenerator()->enrol_user($user1->id, $course3->id, 'student');
+
         // Add some users as contacts.
         message_add_contact($user2->id, 0, $user1->id);
         message_add_contact($user3->id, 0, $user1->id);
