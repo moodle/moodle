@@ -577,6 +577,25 @@ class core_formslib_testcase extends advanced_testcase {
         $this->assertTag(array('id' => 'id_grade_3_modgrade_point'), $html);
         $this->assertTag(array('id' => 'id_grade_3_modgrade_scale'), $html);
     }
+
+    /**
+     * Ensure a validation can run at least once per object. See MDL-56259.
+     */
+    public function test_multiple_validation() {
+        $this->resetAfterTest(true);
+
+        // It should be valid.
+        formslib_multiple_validation_form::mock_submit(['somenumber' => '10']);
+        $form = new formslib_multiple_validation_form();
+        $this->assertTrue($form->is_validated());
+        $this->assertEquals(10, $form->get_data()->somenumber);
+
+        // It should not validate.
+        formslib_multiple_validation_form::mock_submit(['somenumber' => '-5']);
+        $form = new formslib_multiple_validation_form();
+        $this->assertFalse($form->is_validated());
+        $this->assertNull($form->get_data());
+    }
 }
 
 
@@ -859,5 +878,36 @@ class formslib_multiple_modgrade_form extends moodleform {
         $mform->addElement('modgrade', 'grade1', 'Grade 1');
         $mform->addElement('modgrade', 'grade2', 'Grade 2');
         $mform->addElement('modgrade', 'grade[3]', 'Grade 3');
+    }
+}
+
+/**
+ * Used to test that you can validate a form more than once. See MDL-56250.
+ * @package    core_form
+ * @author     Daniel Thee Roperto <daniel.roperto@catalyst-au.net>
+ * @copyright  2016 Catalyst IT
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later */
+class formslib_multiple_validation_form extends moodleform {
+    /**
+     * Simple definition, one text field which can have a number.
+     */
+    public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('text', 'somenumber');
+        $mform->setType('somenumber', PARAM_INT);
+    }
+
+    /**
+     * The number cannot be negative.
+     * @param array $data An array of form data
+     * @param array $files An array of form files
+     * @return array Error messages
+     */
+    public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        if ($data['somenumber'] < 0) {
+            $errors['somenumber'] = 'The number cannot be negative.';
+        }
+        return $errors;
     }
 }
