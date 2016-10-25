@@ -877,7 +877,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     $itemcell->colspan = $colspan;
-                    $itemcell->text = shorten_text($headerlink) . $arrow . $singleview;
+                    $itemcell->text = $headerlink . $arrow . $singleview;
                     $itemcell->header = true;
                     $itemcell->scope = 'col';
 
@@ -1602,9 +1602,10 @@ class grade_report_grader extends grade_report {
             }
         }
 
-        $name = shorten_text($element['object']->get_name());
+        $name = $element['object']->get_name();
         $courseheaderid = 'courseheader_' . clean_param($name, PARAM_ALPHANUMEXT);
-        $courseheader = html_writer::tag('span', $name, array('id' => $courseheaderid));
+        $courseheader = html_writer::tag('span', $name, array('id' => $courseheaderid,
+                'title' => $name, 'class' => 'gradeitemheader'));
         $courseheader .= html_writer::label($showing, $courseheaderid, false, array('class' => 'accesshide'));
         $courseheader .= $icon;
 
