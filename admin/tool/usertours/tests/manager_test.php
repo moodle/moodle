@@ -242,10 +242,7 @@ class tool_usertours_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         foreach ($alltours as $tourconfig) {
-            $tourconfig = (object) $tourconfig;
-            $tourconfig->id = null;
-            $tour = \tool_usertours\tour::load_from_record($tourconfig, true);
-            $tour->persist(true);
+            $tour = $this->helper_create_tour((object) $tourconfig);
             $this->helper_create_step((object) ['tourid' => $tour->get_id()]);
         }
 
@@ -256,29 +253,5 @@ class tool_usertours_manager_testcase extends advanced_testcase {
             $this->assertNotNull($match);
             $this->assertEquals($expected, $match->get_name());
         }
-    }
-
-    /**
-     * Tests for the get_matching_tours function when requiring an upgrade
-     *
-     * @dataProvider get_matching_tours_provider
-     * @param   array   $alltours   The list of tours to insert
-     * @param   string  $url        The URL to test
-     * @param   string  $expected   The name of the expected matching tour
-     */
-    public function test_get_matching_tours_requires_upgrade($alltours, $url, $expected) {
-        $this->resetAfterTest();
-
-        global $CFG;
-        unset($CFG->version);
-
-        foreach ($alltours as $tourconfig) {
-            $tourconfig = (object) $tourconfig;
-            $tourconfig->id = null;
-            $tour = \tool_usertours\tour::load_from_record($tourconfig, true);
-            $tour->persist(true);
-        }
-
-        $this->assertNull(\tool_usertours\manager::get_matching_tours(new moodle_url($url)));
     }
 }
