@@ -1174,6 +1174,40 @@ class rating_manager {
         }
         return $result;
     }
+
+    /**
+     * Get ratings created since a given time.
+     *
+     * @param  stdClass $context   context object
+     * @param  string $component  component name
+     * @param  int $since         the time to check
+     * @return array list of ratings db records since the given timelimit
+     * @since Moodle 3.2
+     */
+    public function get_component_ratings_since($context, $component, $since) {
+        global $DB, $USER;
+
+        $ratingssince = array();
+        $where = 'contextid = ? AND component = ? AND (timecreated > ? OR timemodified > ?)';
+        $ratings = $DB->get_records_select('rating', $where, array($context->id, $component, $since, $since));
+        // Check area by area if we have permissions.
+        $permissions = array();
+        $rm = new rating_manager();
+
+        foreach ($ratings as $rating) {
+            // Check if the permission array for the area is cached.
+            if (!isset($permissions[$rating->ratingarea])) {
+                $permissions[$rating->ratingarea] = $rm->get_plugin_permissions_array($context->id, $component,
+                                                                                        $rating->ratingarea);
+            }
+
+            if (($permissions[$rating->ratingarea]['view'] and $rating->userid == $USER->id) or
+                    ($permissions[$rating->ratingarea]['viewany'] or $permissions[$rating->ratingarea]['viewall'])) {
+                $ratingssince[$rating->id] = $rating;
+            }
+        }
+        return $ratingssince;
+    }
 } // End rating_manager class definition.
 
 /**

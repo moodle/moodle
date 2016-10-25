@@ -1908,3 +1908,56 @@ function quiz_get_completion_state($course, $cm, $userid, $type) {
     }
     return false;
 }
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function quiz_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $USER, $CFG;
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+
+    // Check if questions were updated.
+    $updates->questions = (object) array('updated' => false);
+    $quizobj = quiz::create($cm->instance, $USER->id);
+    $quizobj->preload_questions();
+    $quizobj->load_questions();
+    $questionids = array_keys($quizobj->get_questions());
+    if (!empty($questionids)) {
+        list($questionsql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
+        $select = 'id ' . $questionsql . ' AND (timemodified > :time1 OR timecreated > :time2)';
+        $params['time1'] = $from;
+        $params['time2'] = $from;
+        $questions = $DB->count_records_select('question', $select, $params) > 0;
+        if (!empty($questions)) {
+            $updates->questions->updated = true;
+            $updates->questions->itemids = array_keys($questions);
+        }
+    }
+
+    // Check for new attempts or grades.
+    $updates->attempts = (object) array('updated' => false);
+    $updates->grades = (object) array('updated' => false);
+    $select = 'quiz = ? AND userid = ? AND timemodified > ?';
+    $params = array($cm->instance, $USER->id, $from);
+
+    $attempts = $DB->get_records_select('quiz_attempts', $select, $params, '', 'id');
+    if (!empty($attempts)) {
+        $updates->attempts->updated = true;
+        $updates->attempts->itemids = array_keys($attempts);
+    }
+    $grades = $DB->get_records_select('quiz_grades', $select, $params, '', 'id');
+    if (!empty($grades)) {
+        $updates->grades->updated = true;
+        $updates->grades->itemids = array_keys($grades);
+    }
+
+    return $updates;
+}

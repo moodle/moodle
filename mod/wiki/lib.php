@@ -262,6 +262,8 @@ function wiki_supports($feature) {
         return true;
     case FEATURE_SHOW_DESCRIPTION:
         return true;
+    case FEATURE_COMMENT:
+        return true;
 
     default:
         return null;
@@ -736,4 +738,44 @@ function wiki_page_view($wiki, $page, $course, $cm, $context, $uid = null, $othe
     // Completion.
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function wiki_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/wiki/locallib.php');
+
+    $updates = new stdClass();
+    if (!has_capability('mod/wiki:viewpage', $cm->context)) {
+        return $updates;
+    }
+    $updates = course_check_module_updates_since($cm, $from, array('attachments'), $filter);
+
+    // Check only pages updated in subwikis the user can access.
+    $updates->pages = (object) array('updated' => false);
+    $wiki = $DB->get_record($cm->modname, array('id' => $cm->instance), '*', MUST_EXIST);
+    if ($subwikis = wiki_get_visible_subwikis($wiki, $cm, $cm->context)) {
+        $subwikisids = array();
+        foreach ($subwikis as $subwiki) {
+            $subwikisids[] = $subwiki->id;
+        }
+        list($subwikissql, $params) = $DB->get_in_or_equal($subwikisids, SQL_PARAMS_NAMED);
+        $select = 'subwikiid ' . $subwikissql . ' AND (timemodified > :since1 OR timecreated > :since2)';
+        $params['since1'] = $from;
+        $params['since2'] = $from;
+        $pages = $DB->get_records_select('wiki_pages', $select, $params, '', 'id');
+        if (!empty($pages)) {
+            $updates->pages->updated = true;
+            $updates->pages->itemids = array_keys($pages);
+        }
+    }
+    return $updates;
 }

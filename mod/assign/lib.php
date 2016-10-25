@@ -223,6 +223,8 @@ function assign_supports($feature) {
             return true;
         case FEATURE_PLAGIARISM:
             return true;
+        case FEATURE_COMMENT:
+            return true;
 
         default:
             return null;
@@ -1514,4 +1516,40 @@ function mod_assign_output_fragment_gradingpanel($args) {
     );
 
     return $assign->view('gradingpanel', $viewargs);
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $USER, $CFG;
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
+    $updates = new stdClass();
+    $updates = course_check_module_updates_since($cm, $from, array(ASSIGN_INTROATTACHMENT_FILEAREA), $filter);
+
+    // Check if there is a new submission by the user or new grades.
+    $select = 'assignment = :id AND userid = :userid AND (timecreated > :since1 OR timemodified > :since2)';
+    $params = array('id' => $cm->instance, 'userid' => $USER->id, 'since1' => $from, 'since2' => $from);
+    $updates->submissions = (object) array('updated' => false);
+    $submissions = $DB->get_records_select('assign_submission', $select, $params, '', 'id');
+    if (!empty($submissions)) {
+        $updates->submissions->updated = true;
+        $updates->submissions->itemids = array_keys($submissions);
+    }
+
+    $updates->grades = (object) array('updated' => false);
+    $grades = $DB->get_records_select('assign_grades', $select, $params, '', 'id');
+    if (!empty($grades)) {
+        $updates->grades->updated = true;
+        $updates->grades->itemids = array_keys($grades);
+    }
+
+    return $updates;
 }

@@ -2096,4 +2096,82 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(0, $result['courses']);
     }
+
+    public function test_check_updates() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create different types of activities.
+        $course  = self::getDataGenerator()->create_course();
+        $tocreate = array('assign', 'book', 'choice', 'folder', 'forum', 'glossary', 'imscp', 'label', 'lti', 'page', 'quiz',
+                            'resource', 'scorm', 'survey', 'url', 'wiki');
+
+        $modules = array();
+        foreach ($tocreate as $modname) {
+            $modules[$modname]['instance'] = $this->getDataGenerator()->create_module($modname, array('course' => $course->id));
+            $modules[$modname]['cm'] = get_coursemodule_from_id(false, $modules[$modname]['instance']->cmid);
+            $modules[$modname]['context'] = context_module::instance($modules[$modname]['instance']->cmid);
+        }
+
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        self::getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id);
+        $this->setUser($student);
+
+        $since = time();
+        $this->waitForSecond();
+        $params = array();
+        foreach ($modules as $modname => $data) {
+            $params[$data['cm']->id] = array(
+                'contextlevel' => 'module',
+                'id' => $data['cm']->id,
+                'since' => $since
+            );
+        }
+
+        // Check there is nothing updated because modules are fresh new.
+        $result = core_course_external::check_updates($course->id, $params);
+        $result = external_api::clean_returnvalue(core_course_external::check_updates_returns(), $result);
+        $this->assertCount(0, $result['instances']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Update a module after a second.
+        $this->waitForSecond();
+        set_coursemodule_name($modules['forum']['cm']->id, 'New forum name');
+
+        $found = false;
+        $result = core_course_external::check_updates($course->id, $params);
+        $result = external_api::clean_returnvalue(core_course_external::check_updates_returns(), $result);
+        $this->assertCount(1, $result['instances']);
+        $this->assertCount(0, $result['warnings']);
+        foreach ($result['instances'] as $module) {
+            foreach ($module['updates'] as $update) {
+                if ($module['id'] == $modules['forum']['cm']->id and $update['name'] == 'configuration') {
+                    $found = true;
+                }
+            }
+        }
+        $this->assertTrue($found);
+
+        // Do not retrieve the configuration field.
+        $filter = array('files');
+        $found = false;
+        $result = core_course_external::check_updates($course->id, $params, $filter);
+        $result = external_api::clean_returnvalue(core_course_external::check_updates_returns(), $result);
+        $this->assertCount(0, $result['instances']);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertFalse($found);
+
+        // Add invalid cmid.
+        $params[] = array(
+            'contextlevel' => 'module',
+            'id' => -2,
+            'since' => $since
+        );
+        $result = core_course_external::check_updates($course->id, $params);
+        $result = external_api::clean_returnvalue(core_course_external::check_updates_returns(), $result);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals(-2, $result['warnings'][0]['itemid']);
+    }
 }

@@ -3018,6 +3018,7 @@ function glossary_supports($feature) {
         case FEATURE_RATE:                    return true;
         case FEATURE_BACKUP_MOODLE2:          return true;
         case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_COMMENT:                 return true;
 
         default: return null;
     }
@@ -4099,4 +4100,34 @@ function glossary_edit_entry($entry, $course, $cm, $glossary, $context) {
         \mod_glossary\local\concept_cache::reset_glossary($glossary);
     }
     return $entry;
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function glossary_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB;
+
+    $updates = course_check_module_updates_since($cm, $from, array('attachment', 'entry'), $filter);
+
+    $updates->entries = (object) array('updated' => false);
+    $select = 'glossaryid = :id AND (timecreated > :since1 OR timemodified > :since2)';
+    $params = array('id' => $cm->instance, 'since1' => $from, 'since2' => $from);
+    if (!has_capability('mod/glossary:approve', $cm->context)) {
+        $select .= ' AND approved = 1';
+    }
+
+    $entries = $DB->get_records_select('glossary_entries', $select, $params, '', 'id');
+    if (!empty($entries)) {
+        $updates->entries->updated = true;
+        $updates->entries->itemids = array_keys($entries);
+    }
+
+    return $updates;
 }
