@@ -181,7 +181,7 @@ class restore_plan extends base_plan implements loggable {
             );
 
             if ($this->controller->is_samesite()) {
-                $otherarray['original_course_id'] = $this->controller->get_info()->original_course_id;
+                $otherarray['originalcourseid'] = $this->controller->get_info()->original_course_id;
             }
 
             // Trigger a course restored event.

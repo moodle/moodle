@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  *      - int mode: execution mode.
  *      - string operation: what operation are we performing?
  *      - boolean samesite: true if restoring to same site.
- *      - int original_course_id: the id of the course the course being restored, only included if samesite is true
+ *      - int originalcourseid: the id of the course the course being restored, only included if samesite is true
  * }
  *
  * @package    core
@@ -73,9 +73,9 @@ class course_restored extends base {
     public function get_description() {
         $retstring = "The user with id '$this->userid' restored the course with id '$this->courseid'.";
 
-        if (isset($this->other['original_course_id'])) {
-            $originalcourseid = $this->other['original_course_id'];
-            $retstring = "The user with id '$this->userid' restored old course with id " . 
+        if (isset($this->other['originalcourseid'])) {
+            $originalcourseid = $this->other['originalcourseid'];
+            $retstring = "The user with id '$this->userid' restored old course with id " .
                 "'$originalcourseid' to a new course with id '$this->courseid'.";
         }
 
