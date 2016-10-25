@@ -397,3 +397,17 @@ select[multiple] {
 textarea[data-auto-rows] {
     overflow-x: hidden;
 }
+
+/** Allow wrapping an mform in a div with the form-inline class to have an inline, responsive form. */
+.form-inline {
+    @include media-breakpoint-up(md) {
+        .col-md-9,
+        .col-md-3 {
+            label {
+                margin-left: 1rem;
+            }
+            margin-bottom: 1rem;
+            width: auto;
+        }
+    }
+}
