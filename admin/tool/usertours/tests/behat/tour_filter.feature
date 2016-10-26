@@ -11,7 +11,7 @@ Feature: Apply tour filters to a tour
       | Name                | First tour |
       | Description         | My first tour |
       | Apply to URL match  | /my/% |
-      | Enabled             | 1 |
+      | Tour is enabled     | 1 |
       | Theme               | More |
     And I add steps to the "First tour" tour:
       | targettype                  | Title             | Content |
@@ -39,7 +39,7 @@ Feature: Apply tour filters to a tour
       | Name                | First tour |
       | Description         | My first tour |
       | Apply to URL match  | /course/view.php% |
-      | Enabled             | 1 |
+      | Tour is enabled     | 1 |
       | Role                | Student,Non-editing teacher |
     And I add steps to the "First tour" tour:
       | targettype                  | Title             | Content |
