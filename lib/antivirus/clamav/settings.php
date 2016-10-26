@@ -47,10 +47,6 @@ if ($ADMIN->fulltree) {
             new lang_string('pathtounixsocket', 'antivirus_clamav'),
             new lang_string('pathtounixsocketdesc', 'antivirus_clamav'), '', PARAM_PATH));
 
-    // Quarantine directory path.
-    $settings->add(new admin_setting_configdirectory('antivirus_clamav/quarantinedir',
-            new lang_string('quarantinedir', 'antivirus_clamav'), new lang_string('configquarantinedir', 'antivirus_clamav'), ''));
-
     // How to act on ClamAV failure.
     $options = array(
         'donothing' => new lang_string('configclamdonothing', 'antivirus_clamav'),
