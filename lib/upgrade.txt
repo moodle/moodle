@@ -117,6 +117,8 @@ information provided here is intended especially for developers.
   in minifier output.
 * context_header additional buttons can now have a class attribute provided in the link attributes.
 * Webservice function mod_assign_get_submissions returns a new field 'gradingstatus' from each submission.
+* The return signature for the antivirus::scan_file() function has changed.
+  The calling function will now handle removal of infected files from Moodle based on the new integer return value.
 
 === 3.1 ===
 
