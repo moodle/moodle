@@ -89,7 +89,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         $result = '';
 
         if ($options->readonly) {
-            // items cannot be dragged in readonly mode.
+            // Items cannot be dragged in readonly mode.
         } else {
             $script = "\n";
             $script .= "//<![CDATA[\n";
@@ -161,12 +161,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 }
                 $class = trim("$class $layoutclass");
 
-                // The original "id" revealed the correct order of the answers
-                // because $answer->fraction holds the correct order number.
-                // Therefore we use the $answer's md5key as the "id" for the LI.
+                // Format the answer text.
                 $answer = $question->answers[$answerid];
                 $answer->answer = $question->format_text($answer->answer, $answer->answerformat,
                                                          $qa, 'question', 'answer', $answerid);
+                // The original "id" revealed the correct order of the answers
+                // because $answer->fraction holds the correct order number.
+                // Therefore we use the $answer's md5key for the "id".
                 $params = array('class' => $class, 'id' => $answer->md5key);
                 $result .= html_writer::tag('li', $img.$answer->answer, $params);
             }
@@ -343,25 +344,24 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
             case qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
             case qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
-                $this->correctinfo = $question->get_next_answerids($question->correctresponse,
-                        $gradingtype == qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST);
-                $this->currentinfo = $question->get_next_answerids($question->currentresponse,
-                        $gradingtype == qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST);
+                $lastitem = ($gradingtype == qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST);
+                $this->correctinfo = $question->get_next_answerids($question->correctresponse, $lastitem);
+                $this->currentinfo = $question->get_next_answerids($question->currentresponse, $lastitem);
                 break;
 
             case qtype_ordering_question::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
             case qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
-                $this->correctinfo = $question->get_previous_and_next_answerids($question->correctresponse,
-                        $gradingtype == qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT);
-                $this->currentinfo = $question->get_previous_and_next_answerids($question->currentresponse,
-                        $gradingtype == qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT);
+                $all = ($gradingtype == qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT);
+                $this->correctinfo = $question->get_previous_and_next_answerids($question->correctresponse, $all);
+                $this->currentinfo = $question->get_previous_and_next_answerids($question->currentresponse, $all);
                 break;
 
             case qtype_ordering_question::GRADING_LONGEST_ORDERED_SUBSET:
             case qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET:
                 $this->correctinfo = $question->correctresponse;
                 $this->currentinfo = $question->currentresponse;
-                $subset = $question->get_ordered_subset($gradingtype == qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET);
+                $contiguous = ($gradingtype == qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET);
+                $subset = $question->get_ordered_subset($contiguous);
                 foreach ($this->currentinfo as $position => $answerid) {
                     if (array_search($position, $subset) === false) {
                         $this->currentinfo[$position] = 0;
