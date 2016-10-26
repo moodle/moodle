@@ -309,9 +309,10 @@ class behat_gradingform_rubric extends behat_base {
                 $levelnode = $this->find('xpath', $selectedlevelxpath);
 
                 // Using in_array() as there are only a few elements.
-                if (!in_array('checked', explode(' ', $levelnode->getAttribute('class')))) {
+                if (!$levelnode->hasClass('checked')) {
+                    $levelnodexpath = $selectedlevelxpath . "//div[contains(concat(' ', normalize-space(@class), ' '), ' score ')]";
                     $this->execute('behat_general::i_click_on_in_the',
-                        array($selectedlevelxpath, "xpath_element", $this->escape($name), "table_row")
+                        array($levelnodexpath, "xpath_element", $this->escape($name), "table_row")
                     );
                 }
 
