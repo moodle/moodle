@@ -19012,6 +19012,9 @@ input[type="reset"] .caret {
   border-top-color: #fff;
   border-bottom-color: #fff;
 }
+ul.indented-list {
+  margin-left: 20px;
+}
 .card {
   /* stylelint-disable-line no-empty-source */
 }
