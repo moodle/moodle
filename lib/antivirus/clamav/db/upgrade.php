@@ -40,5 +40,15 @@ function xmldb_antivirus_clamav_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016101700, 'antivirus', 'clamav');
     }
 
+    if ($oldversion < 2016102600) {
+        // Make command line a default running method for now. We depend on this
+        // config variable in antivirus scan running, it should be defined.
+        if (!get_config('antivirus_clamav', 'runningmethod')) {
+            set_config('runningmethod', 'commandline', 'antivirus_clamav');
+        }
+
+        upgrade_plugin_savepoint(true, 2016102600, 'antivirus', 'clamav');
+    }
+
     return true;
 }
