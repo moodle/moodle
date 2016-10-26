@@ -33,6 +33,19 @@ $blocks-column-width: 250px !default;
 
 $blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
 
+/* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
+#region-main-settings-menu {
+    position: relative;
+    float: left;
+    width: 100%;
+}
+#region-main-settings-menu > div {
+    position: absolute;
+    right: 0;
+    z-index: 100;
+    margin: 1rem;
+}
+#region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
     display: inline-block;
     width: calc(100% - #{$blocks-plus-gutter});
