@@ -58,7 +58,7 @@ Feature: Lesson reset
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test lesson name"
-    And I navigate to "Overview" node in "Reports"
+    And I navigate to "Overview" node in "Lesson administration > Reports"
     And I should see "Sam1 Student1"
     And I navigate to "Reset" node in "Course administration"
     And I set the following fields to these values:
@@ -67,7 +67,7 @@ Feature: Lesson reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test lesson name"
-    And I navigate to "Overview" node in "Reports"
+    And I navigate to "Overview" node in "Lesson administration > Reports"
     Then I should see "No attempts have been made on this lesson"
 
   Scenario: Use course reset to remove user overrides.
