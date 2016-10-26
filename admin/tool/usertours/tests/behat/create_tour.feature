@@ -14,7 +14,7 @@ Feature: Add a new user tour
       | Name                | First tour |
       | Description         | My first tour |
       | Apply to URL match  | /my/% |
-      | Enabled             | 1 |
+      | Tour is enabled     | 1 |
     And I add steps to the "First tour" tour:
       | targettype                  | Title             | Content |
       | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
@@ -54,7 +54,7 @@ Feature: Add a new user tour
       | Name                | First tour |
       | Description         | My first tour |
       | Apply to URL match  | /my/% |
-      | Enabled             | 0 |
+      | Tour is enabled     | 0 |
     And I add steps to the "First tour" tour:
       | targettype                  | Title             | Content |
       | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
@@ -71,7 +71,7 @@ Feature: Add a new user tour
       | Name                | First tour |
       | Description         | My first tour |
       | Apply to URL match  | /my/% |
-      | Enabled             | 0 |
+      | Tour is enabled     | 0 |
     And I add steps to the "First tour" tour:
       | targettype                  | Title             | Content |
       | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
