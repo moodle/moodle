@@ -99,7 +99,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $this->assertEquals(true, $siteinfo['downloadfiles']);
         $this->assertEquals($CFG->release, $siteinfo['release']);
         $this->assertEquals($CFG->version, $siteinfo['version']);
-        $this->assertEquals($CFG->mobilecssurl, $siteinfo['mobilecssurl']);
+        $this->assertEquals('', $siteinfo['mobilecssurl']);
         $this->assertEquals(count($siteinfo['functions']), 1);
         $function = array_pop($siteinfo['functions']);
         $this->assertEquals($function['name'], 'core_course_get_contents');

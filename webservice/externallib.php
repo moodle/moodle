@@ -163,7 +163,7 @@ class core_webservice_external extends external_api {
         $siteinfo['functions'] = $availablefunctions;
 
         // Mobile CSS theme and alternative login url.
-        $siteinfo['mobilecssurl'] = $CFG->mobilecssurl;
+        $siteinfo['mobilecssurl'] = !empty($CFG->mobilecssurl) ? $CFG->mobilecssurl : '';
 
         // Retrieve some advanced features. Only enable/disable ones (bool).
         $advancedfeatures = array("usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
