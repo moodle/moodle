@@ -49,14 +49,17 @@ class helper {
                                         $sort = 'timecreated ASC') {
         global $DB;
 
-        $sql = "SELECT id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
+        $messageid = $DB->sql_concat("'message_'", 'id');
+        $messagereadid = $DB->sql_concat("'messageread_'", 'id');
+
+        $sql = "SELECT {$messageid} AS fakeid, id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
                        smallmessage, notification, timecreated, 0 as timeread
                   FROM {message} m
                  WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
                     OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
                    AND notification = 0
              UNION ALL
-                SELECT id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
+                SELECT {$messagereadid} AS fakeid, id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
                        smallmessage, notification, timecreated, timeread
                   FROM {message_read} mr
                  WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
