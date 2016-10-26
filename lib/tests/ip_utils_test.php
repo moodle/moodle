@@ -78,6 +78,7 @@ class core_ip_utils_testcase extends basic_testcase {
             ["example.com.", true], // Null label explicitly provided - this is valid.
             [".example.com.", false],
             ["見.香港", false], // IDNs are invalid.
+            [null, false], // Non-strings are invalid.
         ];
     }
 
@@ -122,6 +123,7 @@ class core_ip_utils_testcase extends basic_testcase {
             ["*.example.com.", true], // Null label explicitly provided - this is valid.
             [".*.example.com.", false],
             ["*.香港", false], // IDNs are invalid.
+            [null, false], // None-strings are invalid.
         ];
     }
 
