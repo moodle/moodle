@@ -88,8 +88,9 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
         $result = '';
 
-        // Don't allow items to be dragged and dropped in readonly mode.
-        if (!($options->readonly || $options->correctness)) {
+        if ($options->readonly) {
+            // items cannot be dragged in readonly mode.
+        } else {
             $script = "\n";
             $script .= "//<![CDATA[\n";
             $script .= "if (window.$) {\n";
@@ -140,20 +141,32 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 }
 
                 // Set the CSS class and correctness img for this response.
-                if ($options->correctness) {
-                    $score = $this->get_ordering_item_score($question, $position, $answerid);
-                    list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
-                } else {
-                    $class = 'sortableitem';
-                    $img = '';
+                switch ($options->correctness) {
+
+                    case question_display_options::HIDDEN: // =0
+                    case question_display_options::EDITABLE: // =2
+                        $class = 'sortableitem';
+                        $img = '';
+                        break;
+
+                    case question_display_options::VISIBLE: // =1
+                        $score = $this->get_ordering_item_score($question, $position, $answerid);
+                        list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
+                        break;
+
+                    default: // Shouldn't happen !!
+                        $class = '';
+                        $img = '';
+                        break;
                 }
-                $class = "$class $layoutclass";
+                $class = trim("$class $layoutclass");
 
                 // The original "id" revealed the correct order of the answers
                 // because $answer->fraction holds the correct order number.
+                // Therefore we use the $answer's md5key as the "id" for the LI.
                 $answer = $question->answers[$answerid];
-                $answer->answer = $question->format_text($answer->answer, $answer->answerformat, $qa, 'question', 'answer',
-                        $answerid);
+                $answer->answer = $question->format_text($answer->answer, $answer->answerformat,
+                                                         $qa, 'question', 'answer', $answerid);
                 $params = array('class' => $class, 'id' => $answer->md5key);
                 $result .= html_writer::tag('li', $img.$answer->answer, $params);
             }
