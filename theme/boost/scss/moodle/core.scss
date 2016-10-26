@@ -1233,6 +1233,12 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     border: 1px solid #ccc;
 }
 
+// Show is a bootstrap 2 class - but we use it for modals. We don't want to enable it everywhere because they removed
+// it for a reason (conflicts with jquery .show()).
+.modal.show {
+    display: block;
+}
+
 .moodle-dialogue-base .moodle-dialogue-wrap.moodle-dialogue-content {
     @extend .modal-content;
 }
