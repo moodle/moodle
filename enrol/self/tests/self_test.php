@@ -651,4 +651,79 @@ class enrol_self_testcase extends advanced_testcase {
         $this->assertFalse($result);
 
     }
+
+    /**
+     * Test get_welcome_email_contact().
+     */
+    public function test_get_welcome_email_contact() {
+        global $DB;
+        self::resetAfterTest(true);
+
+        $user1 = $this->getDataGenerator()->create_user(['lastname' => 'Marsh']);
+        $user2 = $this->getDataGenerator()->create_user(['lastname' => 'Victoria']);
+        $user3 = $this->getDataGenerator()->create_user(['lastname' => 'Burch']);
+        $user4 = $this->getDataGenerator()->create_user(['lastname' => 'Cartman']);
+        $noreplyuser = core_user::get_noreply_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course1->id);
+
+        // Get editing teacher role.
+        $editingteacherrole = $DB->get_record('role', ['archetype' => 'editingteacher']);
+        $this->assertNotEmpty($editingteacherrole);
+
+        // Enable self enrolment plugin and set to send email from course contact.
+        $selfplugin = enrol_get_plugin('self');
+        $instance1 = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'self'], '*', MUST_EXIST);
+        $instance1->customint6 = 1;
+        $instance1->customint4 = ENROL_SEND_EMAIL_FROM_COURSE_CONTACT;
+        $DB->update_record('enrol', $instance1);
+        $selfplugin->update_status($instance1, ENROL_INSTANCE_ENABLED);
+
+        // We do not have a teacher enrolled at this point, so it should send as no reply user.
+        $contact = $selfplugin->get_welcome_email_contact(ENROL_SEND_EMAIL_FROM_COURSE_CONTACT, $context);
+        $this->assertEquals($noreplyuser, $contact);
+
+        // By default, course contact is assigned to teacher role.
+        // Enrol a teacher, now it should send emails from teacher email's address.
+        $selfplugin->enrol_user($instance1, $user1->id, $editingteacherrole->id);
+
+        // We should get the teacher email.
+        $contact = $selfplugin->get_welcome_email_contact(ENROL_SEND_EMAIL_FROM_COURSE_CONTACT, $context);
+        $this->assertEquals($user1->username, $contact->username);
+        $this->assertEquals($user1->email, $contact->email);
+
+        // Now let's enrol another teacher.
+        $selfplugin->enrol_user($instance1, $user2->id, $editingteacherrole->id);
+        $contact = $selfplugin->get_welcome_email_contact(ENROL_SEND_EMAIL_FROM_COURSE_CONTACT, $context);
+        $this->assertEquals($user1->username, $contact->username);
+        $this->assertEquals($user1->email, $contact->email);
+
+        // Get manager role, and enrol user as manager.
+        $managerrole = $DB->get_record('role', ['archetype' => 'manager']);
+        $this->assertNotEmpty($managerrole);
+        $instance1->customint4 = ENROL_SEND_EMAIL_FROM_KEY_HOLDER;
+        $DB->update_record('enrol', $instance1);
+        $selfplugin->enrol_user($instance1, $user3->id, $managerrole->id);
+
+        // Give manager role holdkey capability.
+        assign_capability('enrol/self:holdkey', CAP_ALLOW, $managerrole->id, $context);
+
+        // We should get the manager email contact.
+        $contact = $selfplugin->get_welcome_email_contact(ENROL_SEND_EMAIL_FROM_KEY_HOLDER, $context);
+        $this->assertEquals($user3->username, $contact->username);
+        $this->assertEquals($user3->email, $contact->email);
+
+        // Now let's enrol another manager.
+        $selfplugin->enrol_user($instance1, $user4->id, $managerrole->id);
+        $contact = $selfplugin->get_welcome_email_contact(ENROL_SEND_EMAIL_FROM_KEY_HOLDER, $context);
+        $this->assertEquals($user3->username, $contact->username);
+        $this->assertEquals($user3->email, $contact->email);
+
+        $instance1->customint4 = ENROL_SEND_EMAIL_FROM_NOREPLY;
+        $DB->update_record('enrol', $instance1);
+
+        $contact = $selfplugin->get_welcome_email_contact(ENROL_SEND_EMAIL_FROM_NOREPLY, $context);
+        $this->assertEquals($noreplyuser, $contact);
+    }
 }
