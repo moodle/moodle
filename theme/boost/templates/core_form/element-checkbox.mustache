@@ -32,6 +32,7 @@
         </div>
     </div>
 </div>
+{{^element.frozen}}
 {{#js}}
 require(['theme_boost/form-display-errors'], function(module) {
     module.enhance({{#quote}}{{element.id}}{{/quote}});
