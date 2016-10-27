@@ -391,6 +391,11 @@ fieldset.coursesearchbox label {
 .form-autocomplete-selection:focus {
     outline: none;
 }
+/** Undo some bootstrap things */
+.form-autocomplete-selection + .form-control {
+    width: auto;
+    display: inline-block;
+}
 
 .form-autocomplete-selection [data-active-selection=true] {
     padding: 0.5em;
