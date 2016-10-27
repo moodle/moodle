@@ -14183,6 +14183,7 @@ fieldset.coursesearchbox label {
   margin-bottom: 4px;
 }
 #fitem_id_availabilityconditionsjson .availability-plugincontrols {
+  min-height: 40px;
   padding: 2px 0 0 4px;
   background: none repeat scroll 0% 0% #f5f5f5;
   border: 1px solid #eee;
