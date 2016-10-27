@@ -854,6 +854,23 @@ class assign {
     }
 
     /**
+     * Returns whether an assign has any overrides.
+     *
+     * @return true if any, false if not
+     */
+    public function has_overrides() {
+        global $DB;
+
+        $override = $DB->record_exists('assign_overrides', array('assignid' => $this->get_instance()->id));
+
+        if ($override) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns user override
      *
      * Algorithm:  For each assign setting, if there is a matching user-specific override,
