@@ -107,6 +107,7 @@ function lesson_update_instance($data, $mform) {
 function lesson_update_events($lesson, $override = null) {
     global $CFG, $DB;
 
+    require_once($CFG->dirroot . '/mod/lesson/locallib.php');
     require_once($CFG->dirroot . '/calendar/lib.php');
 
     // Load the old events relating to this lesson.
