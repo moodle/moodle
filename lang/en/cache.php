@@ -53,6 +53,7 @@ $string['cachedef_groupdata'] = 'Course group information';
 $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
 $string['cachedef_langmenu'] = 'List of available languages';
 $string['cachedef_locking'] = 'Locking';
+$string['cachedef_message_processors_enabled'] = "Message processors enabled status";
 $string['cachedef_navigation_expandcourse'] = 'Navigation expandable courses';
 $string['cachedef_observers'] = 'Event observers';
 $string['cachedef_plugin_functions'] = 'Plugins available callbacks';

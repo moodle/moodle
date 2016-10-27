@@ -960,28 +960,7 @@ function get_message_processors($ready = false, $reset = false, $resetonly = fal
         // Get all processors, ensure the name column is the first so it will be the array key
         $processors = $DB->get_records('message_processors', null, 'name DESC', 'name, id, enabled');
         foreach ($processors as &$processor){
-            $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
-            if (is_readable($processorfile)) {
-                include_once($processorfile);
-                $processclass = 'message_output_' . $processor->name;
-                if (class_exists($processclass)) {
-                    $pclass = new $processclass();
-                    $processor->object = $pclass;
-                    $processor->configured = 0;
-                    if ($pclass->is_system_configured()) {
-                        $processor->configured = 1;
-                    }
-                    $processor->hassettings = 0;
-                    if (is_readable($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php')) {
-                        $processor->hassettings = 1;
-                    }
-                    $processor->available = 1;
-                } else {
-                    print_error('errorcallingprocessor', 'message');
-                }
-            } else {
-                $processor->available = 0;
-            }
+            $processor = \core_message\api::get_processed_processor_object($processor);
         }
     }
     if ($ready) {

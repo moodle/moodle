@@ -292,4 +292,13 @@ $definitions = array(
             'resettagindexbuilder',
         ),
     ),
+
+    // Caches message processors.
+    'message_processors_enabled' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 3
+    ),
 );
