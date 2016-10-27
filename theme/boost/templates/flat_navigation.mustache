@@ -10,9 +10,16 @@
     {{#action}}
     <a class="list-group-item list-group-item-action {{#isactive}}font-weight-bold{{/isactive}}" href="{{{action}}}"><span class="m-l-{{get_indent}}">
         {{#is_section}}
-            {{#pix}}i/folder{{/pix}}
+            <div class="media">
+                <span class="media-left">
+                    {{#pix}}i/folder{{/pix}}
+                </span>
+                <span class="media-body">{{text}}</span>
+            </div>
         {{/is_section}}
-        {{text}}
+        {{^is_section}}
+            {{text}}
+        {{/is_section}}
     </span></a>
     {{/action}}
     {{^action}}
