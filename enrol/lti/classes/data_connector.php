@@ -343,6 +343,7 @@ class data_connector extends DataConnector {
             $context->setRecordId($row->id);
             $context->setConsumerId($row->consumerid);
             $context->ltiContextId = $row->lticontextkey;
+            $context->type = $row->type;
             $settings = unserialize($row->settings);
             if (!is_array($settings)) {
                 $settings = array();
@@ -376,6 +377,7 @@ class data_connector extends DataConnector {
             $params = [
                 'consumerid' => $consumerpk,
                 'lticontextkey' => $context->ltiContextId,
+                'type' => $context->type,
                 'settings' => $settingsvalue,
                 'created' => $context->created,
                 'updated' => $context->updated,
@@ -390,6 +392,7 @@ class data_connector extends DataConnector {
                 'id' => $id,
                 'contextid' => $consumerpk,
                 'lticontextkey' => $context->ltiContextId,
+                'type' => $context->type,
                 'settings' => $settingsvalue,
                 'updated' => $context->updated,
             ];
