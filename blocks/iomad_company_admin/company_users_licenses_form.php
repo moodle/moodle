@@ -345,7 +345,7 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
             echo '<p>' . get_string('licensehelp', 'block_iomad_company_admin') . '</p>';
             echo '<div id="licenseSelector">';
             $selecturl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php', $urlparams);
-            $licenseselect = new single_select($selecturl, 'licenseid', $licenses, $licenseid);
+            $licenseselect = new single_select($selecturl, 'licenseid', $licenselist, $licenseid);
             $licenseselect->label = get_string('select_license', 'block_iomad_company_admin');
             $licenseselect->formid = 'chooselicense';
             echo html_writer::tag('div', $OUTPUT->render($licenseselect), array('id' => 'iomad_license_selector'));
