@@ -220,8 +220,9 @@ foreach ($overrides as $override) {
 
 
     } else {
-        $usergroupstr = '<a href="' . $userurl->out(true,
-                array('id' => $override->userid)) . '" >' . fullname($override) . '</a>';
+        $usergroupstr = html_writer::link($userurl->out(false,
+                array('id' => $override->userid, 'course' => $course->id)),
+                fullname($override));
     }
 
     $class = '';
