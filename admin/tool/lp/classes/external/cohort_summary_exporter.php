@@ -50,7 +50,8 @@ class cohort_summary_exporter extends \core_competency\external\exporter {
             ),
             'idnumber' => array(
                 'type' => PARAM_RAW,        // ID numbers are plain text.
-                'default' => ''
+                'default' => '',
+                'null' => NULL_ALLOWED
             ),
             'visible' => array(
                 'type' => PARAM_BOOL,
