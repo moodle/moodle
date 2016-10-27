@@ -45,6 +45,15 @@ $blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
     z-index: 100;
     margin: 1rem;
 }
+.region_main_settings_menu_proxy {
+    width: 4rem;
+    height: 2rem;
+    background-color: $card-bg;
+    margin-left: $card-spacer-x / 2;
+    margin-bottom: $card-spacer-x / 2;
+    border-bottom-left-radius: 0.5rem;
+    float: right;
+}
 #region-main-settings-menu.has-blocks,
 #region-main.has-blocks {
     display: inline-block;

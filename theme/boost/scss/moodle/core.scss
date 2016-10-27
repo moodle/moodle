@@ -19,6 +19,11 @@
     height: 24px;
     width: auto;
 }
+/** Prevent user notifications overlapping with region main settings menu */
+#user-notifications {
+    display: block;
+    overflow: hidden;
+}
 
 /** Page layout CSS starts **/
 .layout-option-noheader #page-header,
