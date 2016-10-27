@@ -34,6 +34,8 @@ $overrideid = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', null, PARAM_ALPHA);
 $reset = optional_param('reset', false, PARAM_BOOL);
 
+$pagetitle = get_string('editoverride', 'assign');
+
 $override = null;
 if ($overrideid) {
 
@@ -98,6 +100,7 @@ if ($action === 'duplicate') {
     $override->id = $data->id = null;
     $override->userid = $data->userid = null;
     $override->groupid = $data->groupid = null;
+    $pagetitle = get_string('duplicateoverride', 'assign');
 }
 
 $overridelisturl = new moodle_url('/mod/assign/overrides.php', array('cmid' => $cm->id));
@@ -227,7 +230,6 @@ if ($mform->is_cancelled()) {
 }
 
 // Print the form.
-$pagetitle = get_string('editoverride', 'assign');
 $PAGE->navbar->add($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($pagetitle);

@@ -148,6 +148,7 @@ $string['duedate'] = 'Due date';
 $string['duedatecolon'] = 'Due date: {$a}';
 $string['duedate_help'] = 'This is when the assignment is due. Submissions will still be allowed after this date but any assignments submitted after this date are marked as late. To prevent submissions after a certain date - set the assignment cut off date.';
 $string['duedateno'] = 'No due date';
+$string['duplicateoverride'] = 'Duplicate override';
 $string['submissionempty'] = 'Nothing was submitted';
 $string['submissionmodified'] = 'You have existing submission data. Please leave this page and try again.';
 $string['submissionmodifiedgroup'] = 'The submission has been modified by somebody else. Please leave this page and try again.';
