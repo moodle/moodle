@@ -50,6 +50,7 @@ require_once(__DIR__ . '/../message/lib.php');
  * Note: processor failure is is not reported as false return value,
  *       earlier versions did not do it consistently either.
  *
+ * @todo MDL-55449 Drop support for stdClass in Moodle 3.6
  * @category message
  * @param \core\message\message $eventdata information about the message (component, userfrom, userto, ...)
  * @return mixed the integer ID of the new message or false if there was a problem with submitted data
@@ -57,6 +58,7 @@ require_once(__DIR__ . '/../message/lib.php');
 function message_send($eventdata) {
     global $CFG, $DB;
 
+    // TODO MDL-55449 Drop support for stdClass in Moodle 3.6.
     if ($eventdata instanceof \stdClass) {
         if (!isset($eventdata->courseid)) {
             $eventdata->courseid = null;

@@ -50,6 +50,7 @@ class manager {
      *
      * NOTE: to be used from message_send() only.
      *
+     * @todo MDL-55449 Drop support for stdClass in Moodle 3.6
      * @param \core\message\message $eventdata fully prepared event data for processors
      * @param \stdClass $savemessage the message saved in 'message' table
      * @param array $processorlist list of processors for target user
@@ -58,11 +59,13 @@ class manager {
     public static function send_message($eventdata, \stdClass $savemessage, array $processorlist) {
         global $CFG;
 
+        // TODO MDL-55449 Drop support for stdClass in Moodle 3.6.
         if (!($eventdata instanceof \stdClass) && !($eventdata instanceof message)) {
             // Not a valid object.
             throw new \coding_exception('Message should be of type stdClass or \core\message\message');
         }
 
+        // TODO MDL-55449 Drop support for stdClass in Moodle 3.6.
         if ($eventdata instanceof \stdClass) {
             if (!isset($eventdata->courseid)) {
                 $eventdata->courseid = null;
