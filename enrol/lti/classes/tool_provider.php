@@ -287,6 +287,9 @@ class tool_provider extends ToolProvider {
             helper::update_user_profile_image($user->id, $image);
         }
 
+        // Check if we need to force the page layout to embedded.
+        $isforceembed = $this->resourceLink->getSetting('custom_force_embed') == 1;
+
         // Check if we are an instructor.
         $isinstructor = $this->user->isStaff() || $this->user->isAdmin();
 
@@ -294,23 +297,25 @@ class tool_provider extends ToolProvider {
             $courseid = $context->instanceid;
             $urltogo = new moodle_url('/course/view.php', ['id' => $courseid]);
 
-            // May still be set from previous session, so unset it.
-            unset($SESSION->forcepagelayout);
         } else if ($context->contextlevel == CONTEXT_MODULE) {
             $cm = get_coursemodule_from_id(false, $context->instanceid, 0, false, MUST_EXIST);
             $urltogo = new moodle_url('/mod/' . $cm->modname . '/view.php', ['id' => $cm->id]);
 
             // If we are a student in the course module context we do not want to display blocks.
-            if (!$isinstructor) {
-                // Force the page layout.
-                $SESSION->forcepagelayout = 'embedded';
-            } else {
-                // May still be set from previous session, so unset it.
-                unset($SESSION->forcepagelayout);
+            if (!$isforceembed && !$isinstructor) {
+                $isforceembed = true;
             }
         } else {
             print_error('invalidcontext');
             exit();
+        }
+
+        // Force page layout to embedded if necessary.
+        if ($isforceembed) {
+            $SESSION->forcepagelayout = 'embedded';
+        } else {
+            // May still be set from previous session, so unset it.
+            unset($SESSION->forcepagelayout);
         }
 
         // Enrol the user in the course with no role.
