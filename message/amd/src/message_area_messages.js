@@ -93,6 +93,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 CustomEvents.events.enter,
             ]);
 
+            // We have a responsive media query based on height that reduces this size on screens shorter than 670.
+            if ($(window).height() <= 670) {
+                MESSAGES_AREA_DEFAULT_HEIGHT = 400;
+            }
+
             AutoRows.init(this.messageArea.node);
 
             this.messageArea.onCustomEvent(Events.CONVERSATIONSELECTED, this._viewMessages.bind(this));

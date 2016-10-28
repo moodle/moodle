@@ -5842,6 +5842,11 @@ a.ygtvspacer:hover {
   display: inline-block;
   box-sizing: border-box;
 }
+@media (max-height: 670px) {
+  .messaging-area-container .messaging-area .contacts-area {
+    height: 500px;
+  }
+}
 .messaging-area-container .messaging-area .contacts-area.searchfilter .searchtextarea {
   height: 80px;
 }
@@ -5910,6 +5915,11 @@ a.ygtvspacer:hover {
   height: 500px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+@media (max-height: 670px) {
+  .messaging-area-container .messaging-area .contacts-area .contacts {
+    height: 400px;
+  }
 }
 .messaging-area-container .messaging-area .contacts-area .contacts .nocontacts {
   padding-top: 20px;
@@ -6038,6 +6048,11 @@ a.ygtvspacer:hover {
   position: relative;
   float: right;
 }
+@media (max-height: 670px) {
+  .messaging-area-container .messaging-area .messages-area {
+    height: 500px;
+  }
+}
 .messaging-area-container .messaging-area .messages-area .btn-container {
   position: absolute;
   top: 0;
@@ -6070,6 +6085,11 @@ a.ygtvspacer:hover {
   box-sizing: border-box;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+@media (max-height: 670px) {
+  .messaging-area-container .messaging-area .messages-area .profile {
+    height: 500px;
+  }
 }
 .messaging-area-container .messaging-area .messages-area .profile .user-container {
   height: 100px;
@@ -6166,6 +6186,11 @@ a.ygtvspacer:hover {
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   padding: 20px;
+}
+@media (max-height: 670px) {
+  .messaging-area-container .messaging-area .messages-area .messages {
+    height: 400px;
+  }
 }
 .messaging-area-container .messaging-area .messages-area .messages .blocktime {
   clear: both;
@@ -6455,6 +6480,11 @@ a.ygtvspacer:hover {
   margin-bottom: 30px;
   border: 1px solid #e3e3e3;
 }
+@media (max-height: 670px) {
+  .notification-area {
+    height: 500px;
+  }
+}
 .notification-area .control-area {
   box-sizing: border-box;
   display: inline-block;
@@ -6537,6 +6567,11 @@ a.ygtvspacer:hover {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   padding: 15px;
+}
+@media (max-height: 670px) {
+  .notification-area .content-area .content {
+    height: 400px;
+  }
 }
 .notification-area .content-area .content:empty {
   display: none;
@@ -6696,6 +6731,11 @@ a.ygtvspacer:hover {
     opacity: 1;
     visibility: visible;
     transition: right 0.25s;
+  }
+}
+@media (max-width: 979px) and (max-height: 670px) {
+  .messaging-area-container .messaging-area {
+    height: 500px;
   }
 }
 @media (max-width: 480px) {
