@@ -11,7 +11,7 @@
    }
 
 }}
-<label class="form-check-inline {{#error}}has-danger{{/error}}">
+<label class="form-check-inline {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
 {{^element.frozen}}
 <input type="radio" name="{{element.name}}"
     id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"

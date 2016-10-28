@@ -43,7 +43,7 @@
     font-weight: 900;
 }
 
-.path-mod-assign.jsenabled .gradingoptionsform .fsubmit {
+.path-mod-assign.jsenabled .gradingoptionsform [type=submit] {
     display: none;
 }
 
