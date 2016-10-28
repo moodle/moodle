@@ -91,6 +91,7 @@ class MoodleQuickForm_static extends HTML_QuickForm_static implements templatabl
     public function export_for_template(renderer_base $output) {
         $context = $this->export_for_template_base($output);
         $context['html'] = $this->toHtml();
+        $context['staticlabel'] = true;
         return $context;
     }
 }
