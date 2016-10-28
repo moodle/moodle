@@ -462,9 +462,8 @@ div#dock {
     }
 }
 
-/**
- * Assign.
- */
+
+// Assign.
 .path-mod-assign [data-region="grade-actions-panel"] [data-region="grade-actions"] .collapse-buttons {
     top: auto;
 }
@@ -472,38 +471,69 @@ div#dock {
     overflow: initial;
 }
 
-.path-mod-assign [data-region="grade-panel"] .has-popout {
-    background-color: $card-bg;
+// This section removes the responsiveness from the form in the grading panel
+$popout-header-font-size: 1.5 * $font-size-base;
+// This can't be calculated from modal-title-padding because we are mixing px and rem units.
+$popout-header-height: 4rem;
 
-    @include border-radius($card-border-radius);
-    border: $card-border-width solid $card-border-color;
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) .fcontainer .fitem.popout .felement {
+    height: calc(100% - #{$popout-header-height});
 }
+
+.path-mod-assign [data-region="grade-panel"] {
+    padding-top: $spacer;
+}
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3,
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-9 {
+    width: 100%;
+    padding: 0;
+}
+.path-mod-assign [data-region="grade-panel"] fieldset,
+.path-mod-assign [data-region="grade-panel"] .fitem.row {
+    margin: 0;
+}
+
+.path-mod-assign [data-region="grade-panel"] .fitem > .col-md-3 > .pull-xs-right {
+    float: none !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
+    width: 100%;
+}
+
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {
+    width: auto;
+}
+
+// Now styles for the popout sections.
 
 .path-mod-assign [data-region="grade-panel"] .popout {
     background-color: $modal-content-bg;
 }
 
-.path-mod-assign [data-region="grade-panel"] .col-md-3 {
-    width: 100%;
+.path-mod-assign [data-region="grade-panel"] .fitem.has-popout {
+    background-color: $card-bg;
+    @include border-radius($card-border-radius);
+    border: $card-border-width solid $card-border-color;
+    padding: $card-spacer-x;
+    margin-bottom: $spacer;
 }
+.path-mod-assign [data-region="grade-panel"] .has-popout .col-md-3 {
+    border-bottom: $hr-border-width solid $hr-border-color;
+    margin-bottom: $spacer;
+}
+
 
 .path-mod-assign [data-region="grade-panel"] .popout > .col-md-3 {
     @extend .modal-header;
-    font-size: 1.5rem;
-}
-
-.path-mod-assign [data-region="grade-panel"] [data-region="popout-button"] {
-    margin-top: 0.5rem;
+    font-size: $popout-header-font-size;
 }
 
 .path-mod-assign [data-region="grade-panel"] .popout [data-region="popout-button"] {
     margin-top: 0;
 }
 
-.path-mod-assign [data-region="grade-panel"] h3 {
-    margin: 10px 0;
-    line-height: 40px;
-}
+// Now style the fixed header elements.
 
 .path-mod-assign [data-region="assignment-info"] {
     overflow-y: hidden;
@@ -523,6 +553,15 @@ div#dock {
 
 .path-mod-assign [data-region="grading-navigation-panel"] {
     height: 85px;
+}
+
+@media (max-width: 767px) {
+    .path-mod-assign [data-region="grading-navigation-panel"] {
+        height: auto;
+    }
+    .path-mod-assign [data-region="user-info"] {
+        margin-top: 1rem;
+    }
 }
 
 .path-mod-assign [data-region="grading-navigation"] [data-region="input-field"] input {
