@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.3 ===
+* YUI module moodle-core-formautosubmit has been removed, use jquery .change() instead (see lib/templates/url_select.mustache for
+  an example)
+
 === 3.2 ===
 
 * Custom roles with access to any part of site administration that do not use the manager archetype will need

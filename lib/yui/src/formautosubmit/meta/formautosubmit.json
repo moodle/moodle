@@ -1,8 +1,0 @@
-{
-  "moodle-core-formautosubmit": {
-    "requires": [
-      "base",
-      "event-key"
-    ]
-  }
-}
