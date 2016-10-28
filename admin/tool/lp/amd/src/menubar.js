@@ -794,6 +794,7 @@ define(['jquery'], function($) {
         this.allItems.addClass('tool-lp-menu-item');
         this.rootMenus.addClass('tool-lp-root-menu');
         this.subMenus.addClass('tool-lp-sub-menu');
+        this.subMenuItems.addClass('dropdown-item');
     };
 
     return /** @alias module:tool_lp/menubar */ {

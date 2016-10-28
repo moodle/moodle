@@ -36,7 +36,7 @@
 {{#hascompetencies}}
 <span>
 <label for="competency-nav-{{uniqid}}" class="accesshide">{{#str}}jumptocompetency, tool_lp{{/str}}</label>
-<select id="competency-nav-{{uniqid}}">
+<select class="custom-select" id="competency-nav-{{uniqid}}">
 {{#competencies}}
 <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{shortname}}} {{idnumber}}</option>
 {{/competencies}}
