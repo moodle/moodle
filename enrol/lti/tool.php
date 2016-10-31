@@ -74,7 +74,7 @@ if ($ltiversion === \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1) {
     $consumer->ltiVersion = \IMSGlobal\LTI\ToolProvider\ToolProvider::LTI_VERSION1;
     // For LTIv1, set the tool secret as the consumer secret.
     $consumer->secret = $tool->secret;
-    $consumer->name = optional_param('tool_consumer_instance_name', null, PARAM_TEXT);
+    $consumer->name = optional_param('tool_consumer_instance_name', '', PARAM_TEXT);
     $consumer->consumerName = $consumer->name;
     $consumer->consumerGuid = optional_param('tool_consumer_instance_guid', null, PARAM_TEXT);
     $consumer->consumerVersion = optional_param('tool_consumer_info_version', null, PARAM_TEXT);
