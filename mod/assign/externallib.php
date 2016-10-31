@@ -1506,7 +1506,7 @@ class mod_assign_external extends external_api {
      * @param int $userid The id of the user the submission belongs to.
      * @param string $jsonformdata The data from the form, encoded as a json array.
      * @return array of warnings to indicate any errors.
-     * @since Moodle 2.6
+     * @since Moodle 3.1
      */
     public static function submit_grading_form($assignmentid, $userid, $jsonformdata) {
         global $CFG, $USER;
@@ -1536,6 +1536,12 @@ class mod_assign_external extends external_api {
             'rownum' => 0,
             'gradingpanel' => true
         );
+
+        if (WS_SERVER) {
+            // Assume form submission if coming from WS.
+            $USER->ignoresesskey = true;
+            $data['_qf__mod_assign_grade_form_'.$params['userid']] = 1;
+        }
 
         $customdata = (object) $data;
         $formparams = array($assignment, $customdata, $options);
