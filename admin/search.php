@@ -19,7 +19,7 @@ $errormsg  = '';
 $focus = '';
 
 // now we'll deal with the case that the admin has submitted the form with changed settings
-if ($data = data_submitted() and confirm_sesskey()) {
+if ($data = data_submitted() and confirm_sesskey() and isset($data->action) and $data->action == 'save-settings') {
     require_capability('moodle/site:config', $context);
     if (admin_write_settings($data)) {
         redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
