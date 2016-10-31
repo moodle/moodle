@@ -214,11 +214,24 @@ class core_message_external extends external_api {
      * @since Moodle 2.5
      */
     public static function create_contacts($userids, $userid = 0) {
-        global $CFG;
+        global $CFG, $USER;
 
         // Check if messaging is enabled.
         if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
+        }
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $userid) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
         $params = array('userids' => $userids, 'userid' => $userid);
@@ -276,11 +289,24 @@ class core_message_external extends external_api {
      * @since Moodle 2.5
      */
     public static function delete_contacts($userids, $userid = 0) {
-        global $CFG;
+        global $CFG, $USER;
 
         // Check if messaging is enabled.
         if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
+        }
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $userid) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
         $params = array('userids' => $userids, 'userid' => $userid);
@@ -331,11 +357,24 @@ class core_message_external extends external_api {
      * @since Moodle 2.5
      */
     public static function block_contacts($userids, $userid = 0) {
-        global $CFG;
+        global $CFG, $USER;
 
         // Check if messaging is enabled.
         if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
+        }
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $userid) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
         $params = array('userids' => $userids, 'userid' => $userid);
@@ -393,11 +432,24 @@ class core_message_external extends external_api {
      * @since Moodle 2.5
      */
     public static function unblock_contacts($userids, $userid = 0) {
-        global $CFG;
+        global $CFG, $USER;
 
         // Check if messaging is enabled.
         if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
+        }
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
+        // Validate context.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $userid) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
         $params = array('userids' => $userids, 'userid' => $userid);
@@ -1679,8 +1731,9 @@ class core_message_external extends external_api {
         core_user::require_active_user($user);
 
         // Check if we have permissions for retrieve the information.
-        if ($userid != $USER->id and !has_capability('moodle/site:readallmessages', $context)) {
-            throw new moodle_exception('accessdenied', 'admin');
+        $capability = 'moodle/site:manageallmessaging';
+        if (($USER->id != $userid) && !has_capability($capability, $context)) {
+            throw new required_capability_exception($context, $capability, 'nopermissions', '');
         }
 
         // Now, we can get safely all the blocked users.
