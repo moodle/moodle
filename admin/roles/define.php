@@ -252,7 +252,7 @@ if ($action === 'view') {
     echo '<div class="mform">';
 } else {
     ?>
-<form id="rolesform" class="mform" action="<?php p($baseurl->out(false)); ?>" method="post"><div>
+<form id="rolesform" class="mform fcontainer" action="<?php p($baseurl->out(false)); ?>" method="post"><div>
 <input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 <input type="hidden" name="return" value="<?php p($return); ?>" />
 <input type="hidden" name="resettype" value="none" />
