@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/lib.php');
 
 $THEME->name = 'boost';
-$THEME->scssfile = theme_boost_get_scss_file($THEME);
+$THEME->scssfile = 'preset';
 $THEME->sheets = [];
 $THEME->editor_sheets = [];
 
