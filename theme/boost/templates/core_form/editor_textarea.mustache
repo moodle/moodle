@@ -3,14 +3,14 @@
     onchange="{{onchange}}" {{/changelistener}}>{{value}}</textarea>
 </div>
 <div>
-    {{^onlyoneformat}}
+    {{#hasformats}}
         <select name="{{name}}[format]" id="menu{{name}}format" class="custom-select">
         {{#formats}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
         {{/formats}}
         </select>
-    {{/onlyoneformat}}
-    {{#onlyoneformat}}
+    {{/hasformats}}
+    {{^hasformats}}
         <input name="{{name}}[format]" id="menu{{name}}format" type="hidden" value="{{format}}"/>
-    {{/onlyoneformat}}
+    {{/hasformats}}
 </div>
