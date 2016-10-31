@@ -511,7 +511,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         // We are creating fake notifications but based on real ones.
 
         // This one omits notification = 1.
-        $eventdata = new stdClass();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = $course->id;
         $eventdata->modulename        = 'moodle';
         $eventdata->component         = 'enrol_paypal';
         $eventdata->name              = 'paypal_enrolment';
@@ -524,7 +525,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $eventdata->smallmessage      = '';
         message_send($eventdata);
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = $course->id;
         $message->notification      = 1;
         $message->component         = 'enrol_manual';
         $message->name              = 'expiry_notification';
@@ -541,7 +543,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
 
         $userfrom = core_user::get_noreply_user();
         $userfrom->maildisplay = true;
-        $eventdata = new stdClass();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = $course->id;
         $eventdata->component         = 'moodle';
         $eventdata->name              = 'badgecreatornotice';
         $eventdata->userfrom          = $userfrom;
@@ -554,7 +557,8 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $eventdata->smallmessage      = $eventdata->subject;
         message_send($eventdata);
 
-        $eventdata = new stdClass();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid         = $course->id;
         $eventdata->name             = 'submission';
         $eventdata->component        = 'mod_feedback';
         $eventdata->userfrom         = $user1;

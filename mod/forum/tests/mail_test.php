@@ -252,6 +252,43 @@ class mod_forum_mail_testcase extends advanced_testcase {
         return $messages;
     }
 
+    public function test_cron_message_includes_courseid() {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+
+        $options = array('course' => $course->id, 'forcesubscribe' => FORUM_FORCESUBSCRIBE);
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        // Create two users enrolled in the course as students.
+        list($author, $recipient) = $this->helper_create_users($course, 2);
+
+        // Post a discussion to the forum.
+        list($discussion, $post) = $this->helper_post_to_forum($forum, $author);
+
+        // Run cron and check that \core\event\message_sent contains the course id.
+        // Close the message sink so that message_send is run.
+        $this->helper->messagesink->close();
+
+        // Catch just the cron events. For each message sent two events are fired:
+        // core\event\message_sent
+        // core\event\message_viewed.
+        $this->helper->eventsink = $this->redirectEvents();
+        $this->expectOutputRegex('/Processing user/');
+
+        forum_cron();
+
+        // Get the events and close the sink so that remaining events can be triggered.
+        $events = $this->helper->eventsink->get_events();
+        $this->helper->eventsink->close();
+
+        // Reset the message sink for other tests.
+        $this->helper->messagesink = $this->redirectMessages();
+        $event = reset($events);
+        $this->assertEquals($course->id, $event->other['courseid']);
+    }
+
     public function test_forced_subscription() {
         $this->resetAfterTest(true);
 

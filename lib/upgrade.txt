@@ -119,6 +119,12 @@ information provided here is intended especially for developers.
 * Webservice function mod_assign_get_submissions returns a new field 'gradingstatus' from each submission.
 * The return signature for the antivirus::scan_file() function has changed.
   The calling function will now handle removal of infected files from Moodle based on the new integer return value.
+* The first parameter $eventdata of both message_send() and \core\message\manager::send_message() should
+  be \core\message\message. Use of stdClass is deprecated.
+* The message_sent event now expects other[courseid] to be always set, exception otherwise. For BC with contrib code,
+  message_sent::create_from_ids() will show a debugging notice if the \core\message\message being sent is missing
+  the courseid property, defaulting to SITEID automatically. In Moodle 3.6 (MDL-55449) courseid will be fully mandatory
+  for all messages sent.
 
 === 3.1 ===
 

@@ -1246,6 +1246,40 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
     }
 
+    public function test_cron_message_includes_courseid() {
+        // First run cron so there are no messages waiting to be sent (from other tests).
+        cron_setup_user();
+        assign::cron();
+
+        // Now create an assignment.
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance(array('sendstudentnotifications' => 1));
+
+        // Simulate adding a grade.
+        $this->setUser($this->teachers[0]);
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        $this->preventResetByRollback();
+        $sink = $this->redirectEvents();
+        $this->expectOutputRegex('/Done processing 1 assignment submissions/');
+
+        assign::cron();
+
+        $events = $sink->get_events();
+        // Two messages are sent, one to student and one to teacher. This generates
+        // four events:
+        // core\event\message_sent
+        // core\event\message_viewed
+        // core\event\message_sent
+        // core\event\message_viewed.
+        $event = reset($events);
+        $this->assertInstanceOf('\core\event\message_sent', $event);
+        $this->assertEquals($assign->get_course()->id, $event->other['courseid']);
+        $sink->close();
+    }
+
     public function test_is_graded() {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();

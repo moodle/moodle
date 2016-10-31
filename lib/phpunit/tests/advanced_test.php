@@ -424,7 +424,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user();
 
         // Any core message will do here.
-        $message1 = new stdClass();
+        $message1 = new \core\message\message();
+        $message1->courseid          = 1;
         $message1->component         = 'moodle';
         $message1->name              = 'instantmessage';
         $message1->userfrom          = $user1;
@@ -436,7 +437,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $message1->smallmessage      = 'small message';
         $message1->notification      = 0;
 
-        $message2 = new stdClass();
+        $message2 = new \core\message\message();
+        $message2->courseid          = 1;
         $message2->component         = 'moodle';
         $message2->name              = 'instantmessage';
         $message2->userfrom          = $user2;
@@ -501,7 +503,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $sink = $this->redirectMessages();
 
-        $message3 = new stdClass();
+        $message3 = new \core\message\message();
+        $message3->courseid          = 1;
         $message3->component         = 'xxxx_yyyyy';
         $message3->name              = 'instantmessage';
         $message3->userfrom          = $user2;
@@ -547,7 +550,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertTrue(phpunit_util::is_redirecting_messages());
         $this->assertEquals(1, $sink->count());
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = get_admin();

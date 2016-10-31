@@ -830,7 +830,8 @@ function message_format_contexturl($message) {
 function message_post_message($userfrom, $userto, $message, $format) {
     global $SITE, $CFG, $USER;
 
-    $eventdata = new stdClass();
+    $eventdata = new \core\message\message();
+    $eventdata->courseid         = 1;
     $eventdata->component        = 'moodle';
     $eventdata->name             = 'instantmessage';
     $eventdata->userfrom         = $userfrom;

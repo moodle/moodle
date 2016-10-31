@@ -85,7 +85,7 @@ if (! $course = $DB->get_record("course", array("id"=>$data->courseid))) {
 }
 
 if (! $context = context_course::instance($course->id, IGNORE_MISSING)) {
-    message_paypal_error_to_admin("Not a valid context id", $data);
+    \enrol_paypal\util::message_paypal_error_to_admin("Not a valid context id", $data);
     die;
 }
 
@@ -152,7 +152,8 @@ if (strlen($result) > 0) {
         // Email user to let them know. Email admin.
 
         if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
+            $eventdata->courseid          = empty($data->courseid) ? SITEID : $data->courseid;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -259,7 +260,8 @@ if (strlen($result) > 0) {
             $a->coursename = format_string($course->fullname, true, array('context' => $coursecontext));
             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
 
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
+            $eventdata->courseid          = $course->id;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -278,7 +280,8 @@ if (strlen($result) > 0) {
             $a->course = format_string($course->fullname, true, array('context' => $coursecontext));
             $a->user = fullname($user);
 
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
+            $eventdata->courseid          = $course->id;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -297,7 +300,8 @@ if (strlen($result) > 0) {
             $a->user = fullname($user);
             $admins = get_admins();
             foreach ($admins as $admin) {
-                $eventdata = new stdClass();
+                $eventdata = new \core\message\message();
+                $eventdata->courseid          = $course->id;
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_paypal';
                 $eventdata->name              = 'paypal_enrolment';
@@ -319,4 +323,3 @@ if (strlen($result) > 0) {
 }
 
 exit;
-

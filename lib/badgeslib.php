@@ -722,7 +722,8 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $plaintext = html_to_text($message);
 
     // Notify recipient.
-    $eventdata = new stdClass();
+    $eventdata = new \core\message\message();
+    $eventdata->courseid          = $badge->courseid;
     $eventdata->component         = 'moodle';
     $eventdata->name              = 'badgerecipientnotice';
     $eventdata->userfrom          = $userfrom;
@@ -758,7 +759,8 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
         $creatormessage = get_string('creatorbody', 'badges', $a);
         $creatorsubject = get_string('creatorsubject', 'badges', $badge->name);
 
-        $eventdata = new stdClass();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = $badge->courseid;
         $eventdata->component         = 'moodle';
         $eventdata->name              = 'badgecreatornotice';
         $eventdata->userfrom          = $userfrom;

@@ -2636,7 +2636,7 @@ class course_request {
         $a = new stdClass();
         $a->name = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
         $a->url = $CFG->wwwroot.'/course/view.php?id=' . $course->id;
-        $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a));
+        $this->notify($user, $USER, 'courserequestapproved', get_string('courseapprovedsubject'), get_string('courseapprovedemail2', 'moodle', $a), $course->id);
 
         return $course->id;
     }
@@ -2672,9 +2672,11 @@ class course_request {
      * @param string $name
      * @param string $subject
      * @param string $message
+     * @param int|null $courseid
      */
-    protected function notify($touser, $fromuser, $name='courserequested', $subject, $message) {
-        $eventdata = new stdClass();
+    protected function notify($touser, $fromuser, $name='courserequested', $subject, $message, $courseid = null) {
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = empty($courseid) ? SITEID : $courseid;
         $eventdata->component         = 'moodle';
         $eventdata->name              = $name;
         $eventdata->userfrom          = $fromuser;

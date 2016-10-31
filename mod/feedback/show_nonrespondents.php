@@ -97,7 +97,8 @@ if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $
     if (is_array($messageuser)) {
         foreach ($messageuser as $userid) {
             $senduser = $DB->get_record('user', array('id'=>$userid));
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
+            $eventdata->courseid         = $course->id;
             $eventdata->name             = 'message';
             $eventdata->component        = 'mod_feedback';
             $eventdata->userfrom         = $USER;
@@ -107,6 +108,9 @@ if ($action == 'sendmessage' AND has_capability('moodle/course:bulkmessaging', $
             $eventdata->fullmessageformat = FORMAT_PLAIN;
             $eventdata->fullmessagehtml  = $htmlmessage;
             $eventdata->smallmessage     = '';
+            $eventdata->courseid         = $course->id;
+            $eventdata->contexturl       = $link3;
+            $eventdata->contexturlname   = $feedback->name;
             $good = $good && message_send($eventdata);
         }
         if (!empty($good)) {

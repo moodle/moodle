@@ -263,7 +263,11 @@ switch ($mode) {
                 // Subject
                 $subject = get_string('essayemailsubject', 'lesson');
 
-                $eventdata = new stdClass();
+                // Context url.
+                $contexturl = new moodle_url('/grade/report/user/index.php', array('id' => $course->id));
+
+                $eventdata = new \core\message\message();
+                $eventdata->courseid         = $course->id;
                 $eventdata->modulename       = 'lesson';
                 $eventdata->userfrom         = $USER;
                 $eventdata->userto           = $users[$attempt->userid];
@@ -272,6 +276,7 @@ switch ($mode) {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml  = $message;
                 $eventdata->smallmessage     = '';
+                $eventdata->contexturl       = $contexturl;
 
                 // Required for messaging framework
                 $eventdata->component = 'mod_lesson';

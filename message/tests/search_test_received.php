@@ -72,7 +72,8 @@ class message_received_search_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         $sink = $this->redirectMessages();
 
-        $message = new StdClass();
+        $message = new \core\message\message();
+        $message->courseid = SITEID;
         $message->userfrom = $user1;
         $message->userto = $user2;
         $message->subject = "Test Subject";
@@ -129,7 +130,8 @@ class message_received_search_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         $sink = $this->redirectMessages();
 
-        $message = new StdClass();
+        $message = new \core\message\message();
+        $message->courseid = SITEID;
         $message->userfrom = $user1;
         $message->userto = $user2;
         $message->subject = "Test Subject";
@@ -175,7 +177,8 @@ class message_received_search_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         $sink = $this->redirectMessages();
 
-        $message = new StdClass();
+        $message = new \core\message\message();
+        $message->courseid = SITEID;
         $message->userfrom = $user1;
         $message->userto = $user2;
         $message->subject = "Test Subject";
