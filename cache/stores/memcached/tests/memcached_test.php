@@ -170,7 +170,7 @@ class cachestore_memcached_test extends cachestore_tests {
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_memcached', 'phpunit_test');
         $instance = cachestore_memcached::initialise_test_instance($definition);
 
-        if (!$instance) {
+        if (!$instance->is_ready()) {
             $this->markTestSkipped();
         }
 

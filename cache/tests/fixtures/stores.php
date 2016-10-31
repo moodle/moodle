@@ -65,7 +65,7 @@ abstract class cachestore_tests extends advanced_testcase {
             $instance = new $class($class.'_test', $class::unit_test_configuration());
             $instance->initialise($definition);
 
-            if (!$instance) {
+            if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for application caches.');
             } else {
                 $this->run_tests($instance);
@@ -76,7 +76,7 @@ abstract class cachestore_tests extends advanced_testcase {
             $instance = new $class($class.'_test', $class::unit_test_configuration());
             $instance->initialise($definition);
 
-            if (!$instance) {
+            if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for session caches.');
             } else {
                 $this->run_tests($instance);
@@ -87,7 +87,7 @@ abstract class cachestore_tests extends advanced_testcase {
             $instance = new $class($class.'_test', $class::unit_test_configuration());
             $instance->initialise($definition);
 
-            if (!$instance) {
+            if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for request caches.');
             } else {
                 $this->run_tests($instance);
