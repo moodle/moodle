@@ -169,7 +169,7 @@ class auth_email_external extends external_api {
                 ),
                 'recaptchapublickey' => new external_value(PARAM_RAW, 'Recaptcha public key', VALUE_OPTIONAL),
                 'recaptchachallengehash' => new external_value(PARAM_RAW, 'Recaptcha challenge hash', VALUE_OPTIONAL),
-                'recaptchachallengeimage' => new external_value(PARAM_URL, 'Recaptcha challenge <noscript> image', VALUE_OPTIONAL),
+                'recaptchachallengeimage' => new external_value(PARAM_URL, 'Recaptcha challenge noscript image', VALUE_OPTIONAL),
                 'recaptchachallengejs' => new external_value(PARAM_URL, 'Recaptcha challenge js url', VALUE_OPTIONAL),
                 'warnings'  => new external_warnings(),
             )
