@@ -185,7 +185,7 @@ EOD;
 
     public function export_for_template(renderer_base $output) {
         $context = $this->export_for_template_base($output);
-        $context['filepickerhtml'] = $this->getFilePickerHTML();
+        $context['filepickerhtml'] = !empty($this->_options['usefilepicker']) ? $this->getFilePickerHTML() : '';
         return $context;
     }
 
