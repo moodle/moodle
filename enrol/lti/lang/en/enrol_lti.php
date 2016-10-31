@@ -41,7 +41,9 @@ $string['maxenrolled'] = 'Maximum enrolled users';
 $string['maxenrolled_help'] = 'The maximum number of remote users who can access the tool. If set to zero, the number of enrolled users is unlimited.';
 $string['maxenrolledreached'] = 'The maximum number of remote users allowed to access the tool has been reached.';
 $string['membersync'] = 'User synchronisation';
-$string['membersync_help'] = 'Whether an account is created for each remote user and the user is enrolled in this course.';
+$string['membersync_help'] = 'Whether a scheduled task synchronises enrolled users in the remote system with enrolments in this course, creating an account for each remote user as necessary, and enrolling or unenrolling them as required.
+
+If set to no, at the moment when a remote user accesses the tool, an account will be created for them and they will be automatically enrolled.';
 $string['membersyncmode'] = 'User synchronisation mode';
 $string['membersyncmode_help'] = 'Whether remote users should be enrolled and/or unenrolled from this course.';
 $string['membersyncmodeenrolandunenrol'] = 'Enrol new and unenrol missing users';
