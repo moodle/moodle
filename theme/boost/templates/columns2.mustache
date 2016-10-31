@@ -24,15 +24,18 @@
                 <section data-region="blocks-column" class="hidden-md-down">
                     {{{ sidepreblocks }}}
                 </section>
+                <div id="region-main-settings-menu" class="has-blocks">
+                    <div> {{{ output.region_main_settings_menu }}} </div>
+                </div>
                 <section id="region-main" class="has-blocks">
                 {{/hasblocks}}
                 {{^hasblocks}}
+                <div id="region-main-settings-menu">
+                    <div> {{{ output.region_main_settings_menu }}} </div>
+                </div>
                 <section id="region-main">
                 {{/hasblocks}}
                     <div class="card card-block">
-                    <span class="pull-xs-right region-main-settings-menu">
-                        {{{ output.region_main_settings_menu }}}
-                    </span>
                     {{{ output.course_content_header }}}
                     {{{ output.main_content }}}
                     {{{ output.course_content_footer }}}
