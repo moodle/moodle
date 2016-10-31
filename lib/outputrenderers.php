@@ -656,8 +656,8 @@ class core_renderer extends renderer_base {
         if (isset($CFG->maintenance_later) and $CFG->maintenance_later > time()) {
             $timeleft = $CFG->maintenance_later - time();
             // If timeleft less than 30 sec, set the class on block to error to highlight.
-            $errorclass = ($timeleft < 30) ? 'error' : 'warning';
-            $output .= $this->box_start($errorclass . ' moodle-has-zindex maintenancewarning');
+            $errorclass = ($timeleft < 30) ? 'alert-error alert-danger' : 'alert-warning';
+            $output .= $this->box_start($errorclass . ' moodle-has-zindex maintenancewarning m-a-1 alert');
             $a = new stdClass();
             $a->hour = (int)($timeleft / 3600);
             $a->min = (int)(($timeleft / 60) % 60);
