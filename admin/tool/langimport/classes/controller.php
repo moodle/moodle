@@ -184,6 +184,8 @@ class controller {
 
         if ($updated) {
             $this->info[] = get_string('langupdatecomplete', 'tool_langimport');
+            // The strings have been changed so we need to purge their cache to ensure users see the changes.
+            get_string_manager()->reset_caches();
         } else {
             $this->info[] = get_string('nolangupdateneeded', 'tool_langimport');
         }
