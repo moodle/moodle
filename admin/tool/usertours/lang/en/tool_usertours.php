@@ -47,7 +47,7 @@ You can enter a content in the following formats:
     <dt>Moodle Translated string</dt>
     <dd>A value found in a standard Moodle language file in the format identifier,component</dd>
 </dl>';
-$string['cssselector'] = 'CSS Selector';
+$string['cssselector'] = 'CSS selector';
 $string['defaultvalue'] = 'Default ({$a})';
 $string['delay'] = 'Delay before showing the step';
 $string['done'] = 'Done';
@@ -60,12 +60,11 @@ $string['event_tour_ended'] = 'Tour ended';
 $string['event_step_shown'] = 'Step shown';
 $string['exporttour'] = 'Export tour';
 $string['filter_header'] = 'Tour filters';
-$string['filter_help'] = 'Your can choose which conditions your tour will be shown under.
-All of the filters must match for a tour to be shown to that user.';
+$string['filter_help'] = 'Select the conditions under which the tour will be shown. All of the filters must match for a tour to be shown to a user.';
 $string['filter_theme'] = 'Theme';
 $string['filter_theme_help'] = 'Show the tour when the user is using one of the selected themes.';
 $string['filter_role'] = 'Role';
-$string['filter_role_help'] = 'Only show the tour to users with one of the specified roles.';
+$string['filter_role_help'] = 'A tour may be restricted to users with selected roles in the context where the tour is shown. For example, restricting a Dashboard tour to users with the role of student won\'t work if users have the role of student in a course (as is generally the case). A Dashboard tour can only be restricted to users with a system role.';
 $string['importtour'] = 'Import tour';
 $string['left'] = 'Left';
 $string['movestepdown'] = 'Move step down';
@@ -89,7 +88,7 @@ Some example values include:
 * /mod/forum/view.php% - to match the forum discussion list
 * /user/profile.php% - to match the user profile page';
 $string['placement'] = 'Placement';
-$string['pluginname'] = 'User Tours';
+$string['pluginname'] = 'User tours';
 $string['resettouronpage'] = 'Reset user tour on this page';
 $string['right'] = 'Right';
 $string['select_block'] = 'Select a block';
@@ -149,7 +148,7 @@ $string['selecttype'] = 'Select step type';
 $string['sharedtourslink'] = 'Tour repository';
 $string['usertours'] = 'User tours';
 $string['usertours:managetours'] = 'Create, edit, and remove user tours';
-$string['target_selector_targetvalue'] = 'CSS Selectors';
+$string['target_selector_targetvalue'] = 'CSS selectors';
 $string['target_selector_targetvalue_help'] = 'You can use a "CSS Selector" to target almost any element on the page.
 
 CSS Selectors are very powerful and you can easily find parts of the page by building up the selector gradually.
