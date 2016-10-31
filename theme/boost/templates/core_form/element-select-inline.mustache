@@ -7,7 +7,7 @@
         {{#error}}
             autofocus aria-describedby="id_error_{{element.name}}"
         {{/error}}
-        {{element.attributes}} >
+        {{{element.attributes}}} >
         {{#element.options}}
         <option value="{{value}}" {{#selected}}selected{{/selected}} {{#disabled}}disabled{{/disabled}} {{{optionattributes}}}>{{text}}</option>
         {{/element.options}}
