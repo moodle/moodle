@@ -121,8 +121,11 @@ class MoodleQuickForm_autocomplete extends MoodleQuickForm_select {
         // Enhance the select with javascript.
         $this->_generateId();
         $id = $this->getAttribute('id');
-        $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params = array('#' . $id, $this->tags, $this->ajax,
-            $this->placeholder, $this->casesensitive, $this->showsuggestions, $this->noselectionstring));
+
+        if (!$this->isFrozen()) {
+            $PAGE->requires->js_call_amd('core/form-autocomplete', 'enhance', $params = array('#' . $id, $this->tags, $this->ajax,
+                $this->placeholder, $this->casesensitive, $this->showsuggestions, $this->noselectionstring));
+        }
 
         return parent::toHTML();
     }
