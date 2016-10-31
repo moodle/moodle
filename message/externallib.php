@@ -1717,7 +1717,7 @@ class core_message_external extends external_api {
         if (empty($CFG->messaging)) {
             throw new moodle_exception('disabled', 'message');
         }
-        
+
         // Warnings array, it can be empty at the end but is mandatory.
         $warnings = array();
 
