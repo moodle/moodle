@@ -36,7 +36,7 @@ class blog_edit_external_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $mform->addElement('url', 'url', get_string('url', 'blog'), array('size' => 50), array('usefilepicker' => false));
+        $mform->addElement('url', 'url', get_string('url', 'blog'), array('size' => 60), array('usefilepicker' => false));
         $mform->setType('url', PARAM_URL);
         $mform->addRule('url', get_string('emptyurl', 'blog'), 'required', null, 'client');
         $mform->addHelpButton('url', 'url', 'blog');

@@ -56,7 +56,7 @@ class user_evidence extends persistent {
         $mform->addElement('editor', 'description', get_string('userevidencedescription', 'tool_lp'), array('rows' => 10));
         $mform->setType('description', PARAM_RAW);
 
-        $mform->addElement('url', 'url', get_string('userevidenceurl', 'tool_lp'), array(), array('usefilepicker' => false));
+        $mform->addElement('url', 'url', get_string('userevidenceurl', 'tool_lp'), array('size' => '60'), array('usefilepicker' => false));
         $mform->setType('url', PARAM_RAW_TRIMMED);      // Can not use PARAM_URL, it silently converts bad URLs to ''.
         $mform->addHelpButton('url', 'userevidenceurl', 'tool_lp');
 
