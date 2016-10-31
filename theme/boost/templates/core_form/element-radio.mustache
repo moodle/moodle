@@ -22,8 +22,8 @@
                 autofocus aria-describedby="id_error_{{element.name}}"
             {{/error}} {{{element.attributes}}} >
         {{/element.frozen}}
-            {{{label}}} {{{helpbutton}}}
-        </label>
+            {{{label}}}
+        </label> {{{helpbutton}}}
         <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
             {{{error}}}
         </div>
