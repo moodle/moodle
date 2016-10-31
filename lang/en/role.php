@@ -387,6 +387,7 @@ $string['siteadministrators'] = 'Site administrators';
 $string['site:approvecourse'] = 'Approve course creation';
 $string['site:backup'] = 'Backup courses';
 $string['site:config'] = 'Change site configuration';
+$string['site:configview'] = 'View the site administration tree (but not all the pages in it)';
 $string['site:deleteanymessage'] = 'Delete any messages on the site';
 $string['site:deleteownmessage'] = 'Delete messages sent by and to the user';
 $string['site:doanything'] = 'Allowed to do everything';

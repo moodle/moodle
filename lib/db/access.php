@@ -64,6 +64,13 @@ $capabilities = array(
         'archetypes' => array(
         )
     ),
+    'moodle/site:configview' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+        )
+    ),
 
     'moodle/site:readallmessages' => array(
 

@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 3.2 ===
 
+* Custom roles with access to any part of site administration that do not use the manager archetype will need
+  moodle/site:configview capability added.
 * Admin setting "Show My courses expanded on Dashboard" has been removed.
 * Some backwards and forwards compatibility has been added for different bootstrap versions.
   This is to allow the same markup to work in "clean" and "boost" themes alot of the time. It is also to allow user text
