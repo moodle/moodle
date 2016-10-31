@@ -15,11 +15,8 @@
     margin: 0 $spacer 0 0;
     overflow: hidden;
     float: right;
-    height: 100%;
     width: 16px;
     transition: width 0.5s ease, left 0.5s ease;
-    padding-top: $navbar-brand-padding-y;
-    padding-bottom: $navbar-brand-padding-y;
 }
 
 .search-input-wrapper > div {

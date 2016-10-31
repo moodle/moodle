@@ -4,7 +4,3 @@ $navbar-height: 60px !default;
 .navbar {
     max-height: $navbar-height;
 }
-
-.navbar-brand {
-    margin-top: (($font-size-base * $line-height-base) - ($font-size-lg * $line-height-base)) / 2;
-}
