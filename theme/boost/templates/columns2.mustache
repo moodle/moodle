@@ -65,23 +65,12 @@
 
         <div id="page-content" class="row">
             <div id="region-main-box" class="col-xs-12">
-                {{#hasblocks}}
-                <section data-region="blocks-column" class="hidden-md-down">
-                    {{{ sidepreblocks }}}
-                </section>
                 {{#hasregionmainsettingsmenu}}
-                    <div id="region-main-settings-menu" class="has-blocks">
-                        <div> {{{ regionmainsettingsmenu }}} </div>
-                    </div>
-                {{/hasregionmainsettingsmenu}}
-                <section id="region-main" class="has-blocks">
-                {{/hasblocks}}
-                {{^hasblocks}}
-                <div id="region-main-settings-menu">
+                <div id="region-main-settings-menu" {{#hasblocks}}class="has-blocks"{{/hasblocks}}>
                     <div> {{{ output.region_main_settings_menu }}} </div>
                 </div>
-                <section id="region-main">
-                {{/hasblocks}}
+                {{/hasregionmainsettingsmenu}}
+                <section id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}}>
                     <div class="card card-block">
                     {{#hasregionmainsettingsmenu}}
                         <div class="region_main_settings_menu_proxy"></div>
@@ -91,6 +80,11 @@
                     {{{ output.course_content_footer }}}
                     </div>
                 </section>
+                {{#hasblocks}}
+                <section data-region="blocks-column">
+                    {{{ sidepreblocks }}}
+                </section>
+                {{/hasblocks}}
             </div>
         </div>
     </div>
