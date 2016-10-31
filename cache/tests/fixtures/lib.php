@@ -73,13 +73,13 @@ class cache_config_testing extends cache_config_writer {
             if (class_exists($class) && $class::ready_to_be_used_for_testing()) {
                 /* @var cache_store $class */
                 $writer->configstores['test_application'] = array(
-                    'use_test_store' => true,
                     'name' => 'test_application',
                     'plugin' => $expectedstore,
-                    'alt' => $writer->configstores[$defaultapplication],
                     'modes' => $class::get_supported_modes(),
-                    'features' => $class::get_supported_features()
+                    'features' => $class::get_supported_features(),
+                    'configuration' => $class::unit_test_configuration()
                 );
+
                 $defaultapplication = 'test_application';
             }
         }
@@ -534,48 +534,5 @@ class cache_phpunit_factory extends cache_factory {
      */
     public static function phpunit_disable() {
         parent::disable();
-    }
-
-    /**
-     * @var bool Whether the warning notice about alternative cache store used has been displayed.
-     */
-    protected $altcachestorenotice = false;
-
-    /**
-     * Creates a store instance given its name and configuration.
-     *
-     * If the store has already been instantiated then the original object will be returned. (reused)
-     *
-     * @param string $name The name of the store (must be unique remember)
-     * @param array $details
-     * @param cache_definition $definition The definition to instantiate it for.
-     * @return boolean|cache_store
-     */
-    public function create_store_from_config($name, array $details, cache_definition $definition) {
-
-        if (isset($details['use_test_store'])) {
-            // name, plugin, alt
-            $class = 'cachestore_'.$details['plugin'];
-            $method = 'initialise_unit_test_instance';
-            if (class_exists($class) && method_exists($class, $method)) {
-                $instance = $class::$method($definition);
-
-                if ($instance) {
-                    return $instance;
-                }
-            }
-
-            // Notify user that alternative store is being used, so action can be taken.
-            if (!$this->altcachestorenotice) {
-                echo PHP_EOL . "++ WARNING: " . 'Failed to use "' . $details['plugin'] . '" cache store, alt "' .
-                    $details['alt']['plugin'] . '" cache store is used.' . PHP_EOL . PHP_EOL;
-                $this->altcachestorenotice = true;
-            }
-            $details = $details['alt'];
-            $details['class'] = 'cachestore_'.$details['plugin'];
-            $name = $details['name'];
-        }
-
-        return parent::create_store_from_config($name, $details, $definition);
     }
 }

@@ -678,6 +678,15 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
     }
 
     /**
+     * Generates the appropriate configuration required for unit testing.
+     *
+     * @return array Array of unit test configuration data to be used by initialise().
+     */
+    public static function unit_test_configuration() {
+        return array();
+    }
+
+    /**
      * Writes your madness to a file.
      *
      * There are several things going on in this function to try to ensure what we don't end up with partial writes etc.

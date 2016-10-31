@@ -277,6 +277,9 @@ class cache_factory {
         if (!array_key_exists($name, $this->stores)) {
             // Properties: name, plugin, configuration, class.
             $class = $details['class'];
+            if (!$class::are_requirements_met()) {
+                return false;
+            }
             $store = new $class($details['name'], $details['configuration']);
             $this->stores[$name] = $store;
         }

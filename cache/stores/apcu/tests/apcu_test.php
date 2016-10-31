@@ -57,7 +57,8 @@ class cachestore_apcu_test extends cachestore_tests {
      */
     public function test_cross_application_interaction() {
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test');
-        $instance = cachestore_apcu::initialise_unit_test_instance($definition);
+        $instance = new cachestore_apcu('Test', cachestore_apcu::unit_test_configuration());
+        $instance->initialise($definition);
 
         // Test purge with custom data.
         $this->assertTrue($instance->set('test', 'monster'));
@@ -75,9 +76,12 @@ class cachestore_apcu_test extends cachestore_tests {
 
     public function test_different_caches_have_different_prefixes() {
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test');
-        $instance = cachestore_apcu::initialise_unit_test_instance($definition);
+        $instance = new cachestore_apcu('Test', cachestore_apcu::unit_test_configuration());
+        $instance->initialise($definition);
+
         $definition2 = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test2');
-        $instance2 = cachestore_apcu::initialise_unit_test_instance($definition2);
+        $instance2 = new cachestore_apcu('Test', cachestore_apcu::unit_test_configuration());
+        $instance2->initialise($definition2);
 
         $instance->set('test1', 1);
         $this->assertFalse($instance2->get('test1'));
