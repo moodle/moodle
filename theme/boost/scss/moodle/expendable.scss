@@ -43,27 +43,3 @@ table#modules,
 table#permissions {
     @extend .table-hover;
 }
-
-// colored buttons
-input.form-submit,
-input#id_submitbutton,
-input#id_submitbutton2,
-.path-admin .buttons input[type="submit"],
-td.submit input {
-    @extend .btn-primary;
-}
-// override .btn-primary
-#notice .singlebutton + .singlebutton input,
-.submit.buttons input[name="cancel"] {
-    @extend .btn;
-}
-
-#notice .singlebutton + .singlebutton input,
-.submit.buttons input[name="cancel"] {
-    @extend .btn-lineup;
-}
-
-input[id="_clearbutton"],
-input[type="reset"] {
-    @extend .btn-warning;
-}
