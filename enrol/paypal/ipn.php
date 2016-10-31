@@ -153,6 +153,7 @@ if (strlen($result) > 0) {
 
         if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
             $eventdata = new \core\message\message();
+            $eventdata->courseid          = empty($data->courseid) ? SITEID : $data->courseid;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -260,6 +261,7 @@ if (strlen($result) > 0) {
             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
 
             $eventdata = new \core\message\message();
+            $eventdata->courseid          = $course->id;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -279,6 +281,7 @@ if (strlen($result) > 0) {
             $a->user = fullname($user);
 
             $eventdata = new \core\message\message();
+            $eventdata->courseid          = $course->id;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
@@ -298,6 +301,7 @@ if (strlen($result) > 0) {
             $admins = get_admins();
             foreach ($admins as $admin) {
                 $eventdata = new \core\message\message();
+                $eventdata->courseid          = $course->id;
                 $eventdata->modulename        = 'moodle';
                 $eventdata->component         = 'enrol_paypal';
                 $eventdata->name              = 'paypal_enrolment';

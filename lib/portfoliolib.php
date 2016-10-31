@@ -1110,6 +1110,7 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
 
     foreach ($admins as $admin) {
         $eventdata = new \core\message\message();
+        $eventdata->courseid = SITEID;
         $eventdata->modulename = 'portfolio';
         $eventdata->component = 'portfolio';
         $eventdata->name = 'notices';

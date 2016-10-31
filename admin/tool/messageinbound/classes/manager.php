@@ -930,6 +930,7 @@ class manager {
         $userfrom->customheaders[] = 'In-Reply-To: ' . $messageid;
 
         // The message will be sent from the intended user.
+        $eventdata->courseid            = SITEID;
         $eventdata->userfrom            = \core_user::get_support_user();
         $eventdata->userto              = $USER;
         $eventdata->subject             = $this->get_reply_subject($this->currentmessagedata->envelope->subject);
@@ -971,6 +972,7 @@ class manager {
         $messagedata->error = $error;
 
         $eventdata = new \core\message\message();
+        $eventdata->courseid            = SITEID;
         $eventdata->component           = 'tool_messageinbound';
         $eventdata->name                = 'messageprocessingerror';
         $eventdata->userfrom            = $userfrom;
@@ -1030,6 +1032,7 @@ class manager {
         $messagedata->subject = $this->currentmessagedata->envelope->subject;
 
         $eventdata = new \core\message\message();
+        $eventdata->courseid            = SITEID;
         $eventdata->component           = 'tool_messageinbound';
         $eventdata->name                = 'messageprocessingsuccess';
         $eventdata->userfrom            = $userfrom;

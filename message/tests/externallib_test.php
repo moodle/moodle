@@ -507,7 +507,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         message_send($eventdata);
 
         $message = new \core\message\message();
-        $message->courseid        = $course->id;
+        $message->courseid          = $course->id;
         $message->notification      = 1;
         $message->component         = 'enrol_manual';
         $message->name              = 'expiry_notification';

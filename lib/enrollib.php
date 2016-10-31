@@ -2656,6 +2656,7 @@ abstract class enrol_plugin {
         $body = get_string('expirymessageenrolledbody', 'enrol_'.$name, $a);
 
         $message = new \core\message\message();
+        $message->courseid          = $ue->courseid;
         $message->notification      = 1;
         $message->component         = 'enrol_'.$name;
         $message->name              = 'expiry_notification';
@@ -2717,6 +2718,7 @@ abstract class enrol_plugin {
         $body = get_string('expirymessageenrollerbody', 'enrol_'.$name, $a);
 
         $message = new \core\message\message();
+        $message->courseid          = $course->id;
         $message->notification      = 1;
         $message->component         = 'enrol_'.$name;
         $message->name              = 'expiry_notification';

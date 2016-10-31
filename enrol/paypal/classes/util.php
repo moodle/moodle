@@ -52,6 +52,7 @@ final class util {
         }
 
         $eventdata = new \core\message\message();
+        $eventdata->courseid          = empty($data->courseid) ? SITEID : $data->courseid;
         $eventdata->modulename        = 'moodle';
         $eventdata->component         = 'enrol_paypal';
         $eventdata->name              = 'paypal_enrolment';

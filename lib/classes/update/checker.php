@@ -799,6 +799,7 @@ class checker {
 
         foreach ($admins as $admin) {
             $message = new \core\message\message();
+            $message->courseid          = SITEID;
             $message->component         = 'moodle';
             $message->name              = 'availableupdate';
             $message->userfrom          = get_admin();

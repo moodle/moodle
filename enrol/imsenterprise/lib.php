@@ -223,6 +223,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             }
 
             $eventdata = new \core\message\message();
+            $eventdata->courseid          = SITEID;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_imsenterprise';
             $eventdata->name              = 'imsenterprise_enrolment';

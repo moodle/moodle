@@ -123,6 +123,7 @@ abstract class scanner {
         $admins = get_admins();
         foreach ($admins as $admin) {
             $eventdata = new \core\message\message();
+            $eventdata->courseid          = SITEID;
             $eventdata->component         = 'moodle';
             $eventdata->name              = 'errors';
             $eventdata->userfrom          = get_admin();

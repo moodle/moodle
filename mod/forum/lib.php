@@ -1186,6 +1186,7 @@ function forum_cron() {
                 }
 
                 $eventdata = new \core\message\message();
+                $eventdata->courseid            = SITEID;
                 $eventdata->component           = 'mod_forum';
                 $eventdata->name                = 'digests';
                 $eventdata->userfrom            = core_user::get_noreply_user();
