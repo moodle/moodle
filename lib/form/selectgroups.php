@@ -522,6 +522,8 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element implements tem
             ];
         }
 
+        // Standard option attributes.
+        $standardoptionattributes = ['text', 'value', 'selected', 'disabled'];
         foreach ($this->_optGroups as $group) {
             $options = [];
 
@@ -533,6 +535,15 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element implements tem
                     $o['selected'] = false;
                 }
                 $o['text'] = $option['text'];
+                $o['disabled'] = !empty($option['attr']['disabled']);
+                // Set other attributes.
+                $otheroptionattributes = [];
+                foreach ($option['attr'] as $attr => $value) {
+                    if (!in_array($attr, $standardoptionattributes) && $attr != 'class' && !is_object($value)) {
+                        $otheroptionattributes[] = $attr . '="' . s($value) . '"';
+                    }
+                }
+                $o['optionattributes'] = implode(' ', $otheroptionattributes);
                 $options[] = $o;
             }
 
