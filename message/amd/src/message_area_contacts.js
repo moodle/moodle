@@ -535,8 +535,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         Contacts.prototype._setSelectedUser = function(selector) {
             // Remove the 'selected' class from any other contact.
             this.messageArea.find(SELECTORS.CONTACT).removeClass('selected');
+            this.messageArea.find(SELECTORS.CONTACT).removeAttr('tabindex');
             // Set the tab for the user to selected.
             this.messageArea.find(SELECTORS.CONTACT + selector).addClass('selected');
+            this.messageArea.find(SELECTORS.CONTACT + selector).attr('tabIndex', 0);
         };
 
         /**
