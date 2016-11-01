@@ -16721,7 +16721,7 @@ span[data-flexitour="container"][x-placement="top-start"] {
 }
 span[data-flexitour="container"][x-placement="top"] div[data-role="arrow"],
 span[data-flexitour="container"][x-placement="top-start"] div[data-role="arrow"] {
-  bottom: -11px;
+  bottom: -10px;
   left: 50%;
   margin-left: -11px;
   border-bottom-width: 0;
@@ -16740,7 +16740,7 @@ span[data-flexitour="container"][x-placement="bottom-start"] {
 }
 span[data-flexitour="container"][x-placement="bottom"] div[data-role="arrow"],
 span[data-flexitour="container"][x-placement="bottom-start"] div[data-role="arrow"] {
-  top: -11px;
+  top: -10px;
   left: 50%;
   margin-left: -11px;
   border-top-width: 0;
@@ -16759,7 +16759,7 @@ span[data-flexitour="container"][x-placement="left-start"] {
 }
 span[data-flexitour="container"][x-placement="left"] div[data-role="arrow"],
 span[data-flexitour="container"][x-placement="left-start"] div[data-role="arrow"] {
-  right: -11px;
+  right: -10px;
   top: 50%;
   margin-top: -11px;
   border-right-width: 0;
@@ -16778,7 +16778,7 @@ span[data-flexitour="container"][x-placement="right-start"] {
 }
 span[data-flexitour="container"][x-placement="right"] div[data-role="arrow"],
 span[data-flexitour="container"][x-placement="right-start"] div[data-role="arrow"] {
-  left: -11px;
+  left: -10px;
   top: 50%;
   margin-top: -11px;
   border-left-width: 0;
