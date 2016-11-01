@@ -32,6 +32,8 @@ $getroles = optional_param('getroles', 0, PARAM_BOOL);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
+$PAGE->set_context($context);
+
 require_login($course, false, $cm);
 require_capability('moodle/role:review', $context);
 require_sesskey();
