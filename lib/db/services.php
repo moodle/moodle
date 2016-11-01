@@ -832,6 +832,15 @@ $functions = array(
         'capabilities' => 'moodle/user:editownmessageprofile',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_message_get_user_message_preferences' => array(
+        'classname' => 'core_message_external',
+        'methodname' => 'get_user_message_preferences',
+        'classpath' => 'message/externallib.php',
+        'description' => 'Get the message preferences for a given user.',
+        'type' => 'read',
+        'capabilities' => 'moodle/user:editownmessageprofile',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_notes_create_notes' => array(
         'classname' => 'core_notes_external',
         'methodname' => 'create_notes',
