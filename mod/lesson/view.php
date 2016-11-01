@@ -604,7 +604,8 @@ if ($pageid != LESSON_EOL) {
 
             $url = new moodle_url('/mod/lesson/view.php', array('id'=>$PAGE->cm->id, 'pageid'=>$pageid));
         }
-        $lessoncontent .= html_writer::link($url, get_string('reviewlesson', 'lesson'), array('class' => 'centerpadded lessonbutton standardbutton'));
+        $lessoncontent .= html_writer::link($url, get_string('reviewlesson', 'lesson'),
+                array('class' => 'centerpadded lessonbutton standardbutton p-r-1'));
     } elseif ($lesson->modattempts && $canmanage) {
         $lessoncontent .= $lessonoutput->paragraph(get_string("modattemptsnoteacher", "lesson"), 'centerpadded');
     }
@@ -614,13 +615,14 @@ if ($pageid != LESSON_EOL) {
     }
 
     $url = new moodle_url('/course/view.php', array('id'=>$course->id));
-    $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)), array('class'=>'centerpadded lessonbutton standardbutton'));
+    $lessoncontent .= html_writer::link($url, get_string('returnto', 'lesson', format_string($course->fullname, true)),
+            array('class' => 'centerpadded lessonbutton standardbutton p-r-1'));
 
     if (has_capability('gradereport/user:view', context_course::instance($course->id))
             && $course->showgrades && $lesson->grade != 0 && !$lesson->practice) {
         $url = new moodle_url('/grade/index.php', array('id' => $course->id));
         $lessoncontent .= html_writer::link($url, get_string('viewgrades', 'lesson'),
-            array('class' => 'centerpadded lessonbutton standardbutton'));
+            array('class' => 'centerpadded lessonbutton standardbutton p-r-1'));
     }
 
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
