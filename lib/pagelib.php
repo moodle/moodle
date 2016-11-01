@@ -344,6 +344,33 @@ class moodle_page {
      */
     protected $_popup_notification_allowed = true;
 
+    /**
+     * @var bool Is the settings menu being forced to display on this page (activities / resources only).
+     * This is only used by themes that use the settings menu.
+     */
+    protected $_forcesettingsmenu = false;
+
+    /**
+     * Force the settings menu to be displayed on this page. This will only force the
+     * settings menu on an activity / resource page that is being displayed on a theme that
+     * uses a settings menu.
+     *
+     * @param bool $forced default of true, can be sent false to turn off the force.
+     */
+    public function force_settings_menu($forced = true) {
+        $this->_forcesettingsmenu = $forced;
+    }
+
+    /**
+     * Check to see if the settings menu is forced to display on this activity / resource page.
+     * This only applies to themes that use the settings menu.
+     *
+     * @return bool True if the settings menu is forced to display.
+     */
+    public function is_settings_menu_forced() {
+        return $this->_forcesettingsmenu;
+    }
+
     // Magic getter methods =============================================================
     // Due to the __get magic below, you normally do not call these as $PAGE->magic_get_x
     // methods, but instead use the $PAGE->x syntax.
