@@ -200,12 +200,11 @@ img.iconsmall {
     text-align: left;
 }
 
-#notice {
-    // Would like the use the alert stuff below for this,
-    // but the way buttons are used makes it tricky.
-    width: 60%;
-    min-width: 220px;
-    margin: auto;
+// Allow in-page modals like bootstrap 4.
+.modal.modal-in-page {
+    position: static;
+    z-index: 0;
+    margin: 0;
 }
 
 #page-admin-index .releasenoteslink,
