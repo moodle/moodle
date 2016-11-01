@@ -206,7 +206,14 @@ class assign_grading_table extends table_sql implements renderable {
             } else if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND
                                  s.status = :submitted AND
-                                 (s.timemodified >= g.timemodified OR g.timemodified IS NULL OR g.grade IS NULL))';
+                                 (s.timemodified >= g.timemodified OR g.timemodified IS NULL OR g.grade IS NULL';
+
+                if ($this->assignment->get_grade_item()->gradetype == GRADE_TYPE_SCALE) {
+                    // Scale grades are set to -1 when not graded.
+                    $where .= ' OR g.grade = -1';
+                }
+
+                $where .= '))';
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
             } else if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
