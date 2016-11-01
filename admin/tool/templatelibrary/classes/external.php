@@ -107,7 +107,7 @@ class external extends external_api {
      *
      * @param string $component The component that holds the template.
      * @param string $template The name of the template.
-     * @return string the template
+     * @return string the template, false if template doesn't exist.
      */
     public static function load_canonical_template($component, $template) {
         $params = self::validate_parameters(self::load_canonical_template_parameters(),

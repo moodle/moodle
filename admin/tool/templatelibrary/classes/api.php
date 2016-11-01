@@ -111,7 +111,7 @@ class api {
      *
      * @param string $component The component that holds the template.
      * @param string $template The name of the template.
-     * @return string the template
+     * @return string the template or false if template doesn't exist.
      */
     public static function load_canonical_template($component, $template) {
         // Get the list of possible template directories.
@@ -133,7 +133,8 @@ class api {
         }
 
         if ($filename === false) {
-            throw new moodle_exception('filenotfound', 'error');
+            // There are occasions where we don't have a core template.
+            return false;
         }
 
         $templatestr = file_get_contents($filename);
