@@ -273,6 +273,10 @@
     *word-spacing: -0.43em;
 }
 
+#scorm_layout {
+    margin-bottom: 50px;
+}
+
 /**
 * Opera as of 12 on Windows needs word-spacing.
 * The ".opera-only" selector is used to prevent actual prefocus styling
