@@ -60,7 +60,8 @@ class cachestore_memcache_test extends cachestore_tests {
         $instance = new cachestore_memcache('Memcache Test', cachestore_memcache::unit_test_configuration());
         $instance->initialise($definition);
 
-        if (!$instance) { // Something prevented memcache store to be inited (extension, TEST_CACHESTORE_MEMCACHE_TESTSERVERS...).
+        if (!$instance->is_ready()) {
+            // Something prevented memcache store to be inited (extension, TEST_CACHESTORE_MEMCACHE_TESTSERVERS...).
             $this->markTestSkipped();
         }
 
