@@ -102,7 +102,7 @@ class tool_usertours_role_filter_testcase extends advanced_testcase {
         $context = \context_course::instance($this->course->id);
 
         $roles = [
-            $this->roles['student'],
+            'student',
         ];
 
         // Note: No need to persist this tour.
@@ -131,8 +131,8 @@ class tool_usertours_role_filter_testcase extends advanced_testcase {
         $context = \context_course::instance($this->course->id);
 
         $roles = [
-            $this->roles['teacher'],
-            $this->roles['editingteacher'],
+            'teacher',
+            'editingteacher',
         ];
 
         // Note: No need to persist this tour.
@@ -161,7 +161,7 @@ class tool_usertours_role_filter_testcase extends advanced_testcase {
         $context = \context_course::instance($this->course->id);
 
         $roles = [
-            $this->roles['student'],
+            'student',
         ];
 
         $this->getDataGenerator()->enrol_user($this->student->id, $this->course->id, $this->roles['teacher']);
@@ -222,8 +222,8 @@ class tool_usertours_role_filter_testcase extends advanced_testcase {
 
         $roles = [
             \tool_usertours\local\filter\role::ROLE_SITEADMIN,
-            $this->roles['teacher'],
-            $this->roles['editingteacher'],
+            'teacher',
+            'editingteacher',
         ];
 
         // Note: No need to persist this tour.

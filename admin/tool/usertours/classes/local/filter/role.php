@@ -105,7 +105,11 @@ class role extends base {
             return true;
         }
 
+        // Use a request cache to save on DB queries.
+        // We may be checking multiple tours and they'll all be for the same userid, and contextid
         $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'tool_usertours', 'filter_role');
+
+        // Get all of the roles used in this context, including special roles such as user, and frontpageuser.
         $cachekey = "{$USER->id}_{$context->id}";
         $userroles = $cache->get($cachekey);
         if ($userroles === false) {
@@ -113,8 +117,20 @@ class role extends base {
             $cache->set($cachekey, $userroles);
         }
 
+        // Some special roles do not include the shortname.
+        // Therefore we must fetch all roles too. Thankfully these don't actually change based on context.
+        // They do require a DB call, so let's cache it.
+        $cachekey = "allroles";
+        $allroles = $cache->get($cachekey);
+        if ($allroles === false) {
+            $allroles = get_all_roles();
+            $cache->set($cachekey, $allroles);
+        }
+
+        // Now we can check whether any of the user roles are in the list of allowed roles for this filter.
         foreach ($userroles as $role) {
-            if (isset($values[$role->roleid])) {
+            $shortname = $allroles[$role->roleid]->shortname;
+            if (isset($values[$shortname])) {
                 return true;
             }
         }
