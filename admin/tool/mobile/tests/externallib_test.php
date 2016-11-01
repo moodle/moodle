@@ -164,7 +164,6 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
 
         $token = external_generate_token_for_current_user($service);
-        $this->assertDebuggingCalled(); // MDL-55992.
 
         // Check we got the private token.
         $this->assertTrue(isset($token->privatetoken));
@@ -253,7 +252,6 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
 
         $token = external_generate_token_for_current_user($service);
-        $this->assertDebuggingCalled(); // MDL-55992.
         $_GET['wstoken'] = $token->token;   // Mock parameters.
 
         $result = external::get_autologin_key($token->privatetoken);
