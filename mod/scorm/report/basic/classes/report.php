@@ -498,7 +498,8 @@ class report extends \mod_scorm\report {
                                                     get_string('selectnone', 'scorm'));
                         echo '&nbsp;&nbsp;';
                         echo \html_writer::empty_tag('input', array('type' => 'submit',
-                                                                    'value' => get_string('deleteselected', 'scorm')));
+                                                                    'value' => get_string('deleteselected', 'scorm'),
+                                                                    'class' => 'btn btn-secondary'));
                         echo \html_writer::end_tag('td').\html_writer::end_tag('tr').\html_writer::end_tag('table');
                         // Close form.
                         echo \html_writer::end_tag('div');

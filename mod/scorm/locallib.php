@@ -949,11 +949,13 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
                                                         'action' => $CFG->wwwroot.'/mod/scorm/player.php'));
         if ($scorm->hidebrowse == 0) {
             print_string('mode', 'scorm');
-            echo ': '.html_writer::empty_tag('input', array('type' => 'radio', 'id' => 'b', 'name' => 'mode', 'value' => 'browse')).
+            echo ': '.html_writer::empty_tag('input', array('type' => 'radio', 'id' => 'b', 'name' => 'mode',
+                    'value' => 'browse', 'class' => 'm-r-1')).
                         html_writer::label(get_string('browse', 'scorm'), 'b');
             echo html_writer::empty_tag('input', array('type' => 'radio',
                                                         'id' => 'n', 'name' => 'mode',
-                                                        'value' => 'normal', 'checked' => 'checked')).
+                                                        'value' => 'normal', 'checked' => 'checked',
+                                                        'class' => 'm-x-1')).
                     html_writer::label(get_string('normal', 'scorm'), 'n');
 
         } else {
@@ -976,7 +978,8 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'scoid', 'value' => $scorm->launch));
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'cm', 'value' => $cm->id));
         echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'currentorg', 'value' => $orgidentifier));
-        echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('enter', 'scorm')));
+        echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('enter', 'scorm'),
+                'class' => 'btn btn-primary'));
         echo html_writer::end_tag('form');
         echo html_writer::end_div();
     }
