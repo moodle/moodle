@@ -24,9 +24,8 @@ p.arrow_button {
 }
 
 #addcontrols {
-    // The margin top is equal the combination of the line-height and margin of a <p>,
-    // because the visual parent is a <p>.
-    margin-top: $line-height-base + ($line-height-base / 2);
+    // This is displayed in a column between 2 20 row multi-selects. This should be just short of half way.
+    margin-top: 8 * $line-height-base * $font-size-base;
     text-align: center;
     margin-bottom: 3em;
 

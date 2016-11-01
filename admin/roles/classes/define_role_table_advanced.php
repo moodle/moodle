@@ -471,13 +471,13 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     }
 
     protected function get_name_field($id) {
-        return '<input type="text" class="form-control" id="' . $id . '" name="' . $id . '" size="30"
-            value="' . s($this->role->name) . '" />';
+        return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->name) . '"' .
+                ' class="form-control"/>';
     }
 
     protected function get_shortname_field($id) {
-        return '<input type="text" class="form-control" id="' . $id . '" name="' . $id . '" size="30"
-            value="' . s($this->role->shortname) . '" />';
+        return '<input type="text" id="' . $id . '" name="' . $id . '" maxlength="254" value="' . s($this->role->shortname) . '"' .
+                ' class="form-control"/>';
     }
 
     protected function get_description_field($id) {

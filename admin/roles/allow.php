@@ -80,7 +80,7 @@ echo $OUTPUT->box($controller->get_intro_text());
 echo '<form action="' . $baseurl . '" method="post">';
 echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
 echo html_writer::table($table);
-echo '<div class="submitbuttons">';
+echo '<div class="buttons">';
 echo '<input type="submit" class="btn btn-primary" name="submit" value="' . get_string('savechanges') . '"/>';
 echo '</div></form>';
 

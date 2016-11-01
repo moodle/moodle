@@ -131,6 +131,7 @@ a.autolink.glossary:hover {
 /* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
 .collapsibleregioncaption {
     white-space: nowrap;
+    min-height: $line-height-base * $font-size-base;
 }
 
 .pagelayout-mydashboard.jsenabled .collapsibleregioncaption {
@@ -155,6 +156,7 @@ a.autolink.glossary:hover {
 
 .jsenabled .collapsibleregion {
     overflow: hidden;
+    box-sizing: content-box;
 }
 
 .jsenabled .collapsed .collapsibleregioninner {
