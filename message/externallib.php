@@ -2306,11 +2306,6 @@ class core_message_external extends external_api {
     public static function get_user_notification_preferences($userid = 0) {
         global $USER, $PAGE, $CFG;
 
-        // Check if messaging is enabled.
-        if (empty($CFG->messaging)) {
-            throw new moodle_exception('disabled', 'message');
-        }
-
         $params = self::validate_parameters(
             self::get_user_notification_preferences_parameters(),
             array(
