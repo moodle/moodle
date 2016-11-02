@@ -741,4 +741,21 @@ class core_upgradelib_testcase extends advanced_testcase {
         $this->assertEquals($gradecategoryitem->grademax, $grade->rawgrademax);
         $this->assertEquals($gradecategoryitem->grademin, $grade->rawgrademin);
     }
+
+    /**
+     * Test libcurl custom check api.
+     */
+    public function test_check_libcurl_version() {
+        $supportedversion = 0x071304;
+        $curlinfo = curl_version();
+        $currentversion = $curlinfo['version_number'];
+
+        $result = new environment_results("custom_checks");
+        if ($currentversion < $supportedversion) {
+            $this->assertFalse(check_libcurl_version($result)->getStatus());
+        } else {
+            $this->assertNull(check_libcurl_version($result));
+        }
+    }
+
 }
