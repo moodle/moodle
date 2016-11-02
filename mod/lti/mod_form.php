@@ -154,7 +154,7 @@ class mod_lti_mod_form extends moodleform_mod {
         } else {
             // Disable select content button if the selected tool doesn't support content item or it's set to Automatic.
             $allnoncontentitemtypes = $noncontentitemtypes;
-            $allnoncontentitemtypes[] = '0'; // Add option value for "Automatic, based on launch URL".
+            $allnoncontentitemtypes[] = '0'; // Add option value for "Automatic, based on tool URL".
             $mform->disabledIf('selectcontent', 'typeid', 'in', $allnoncontentitemtypes);
         }
 

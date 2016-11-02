@@ -24,7 +24,6 @@
 
 $string['allowframeembedding'] = 'Note: It is recommended that the site administration setting \'Allow frame embedding\' is enabled, so that tools are displayed within a frame rather than in a new window.';
 $string['authltimustbeenabled'] = 'Note: This plugin requires the LTI authentication plugin to be enabled too.';
-$string['cartridgeurl'] = 'Cartridge URL';
 $string['couldnotestablishproxy'] = 'Could not establish proxy with consumer.';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users can access until this date only.';
@@ -56,12 +55,13 @@ $string['membersyncmodeenrolandunenrol'] = 'Enrol new and unenrol missing users'
 $string['membersyncmodeenrolnew'] = 'Enrol new users';
 $string['membersyncmodeunenrolmissing'] = 'Unenrol missing users';
 $string['notoolsprovided'] = 'No tools provided';
+$string['lti1'] = 'LTI 1';
+$string['lti2'] = 'LTI 2';
 $string['lti:config'] = 'Configure \'Publish as LTI tool\' instances';
 $string['lti:unenrol'] = 'Unenrol users from the course';
 $string['opentool'] = 'Open tool';
 $string['pluginname'] = 'Publish as LTI tool';
 $string['pluginname_desc'] = 'The \'Publish as LTI tool\' plugin, together with the LTI authentication plugin, allows remote users to access selected courses and activities. In other words, Moodle functions as an LTI tool provider.';
-$string['proxyurl'] = 'Proxy URL';
 $string['registration'] = 'Published tool registration';
 $string['remotesystem'] = 'Remote system';
 $string['requirecompletion'] = 'Require course or activity completion prior to grade synchronisation';
@@ -77,5 +77,9 @@ $string['successfulregistration'] = 'Successful registration';
 $string['tasksyncgrades'] = 'Publish as LTI tool grade sync';
 $string['tasksyncmembers'] = 'Publish as LTI tool users sync';
 $string['toolsprovided'] = 'Published tools';
+$string['toolsprovided_help'] = 'This is the information you need to paste into any system to add these tools. In other systems the Tool URL may be referred to as a configuration URL or a web link.';
 $string['tooltobeprovided'] = 'Tool to be published';
+$string['toolurl'] = 'Tool URL';
 $string['userdefaultvalues'] = 'User default values';
+// Deprecated since Moodle 3.2.
+$string['cartridgeurl'] = 'Cartridge URL';

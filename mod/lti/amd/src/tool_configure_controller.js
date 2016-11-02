@@ -168,21 +168,6 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
     };
 
     /**
-     * JAWS does not notice visibility changes with aria-live.
-     * Remove and add the content back to force it to read it out.
-     * This function can be removed once JAWS supports visibility.
-     *
-     * @method screenReaderAnnounce
-     * @param {Object} element
-     * @private
-     */
-    var screenReaderAnnounce = function(element) {
-        var childClones = element.children().clone(true, true);
-        element.empty();
-        element.append(childClones);
-    };
-
-    /**
      * Display the registration choices panel and hides the other
      * panels.
      *
@@ -194,6 +179,21 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
         hideCartridgeRegistration();
         getRegistrationChoiceContainer().removeClass('hidden');
         screenReaderAnnounce(getRegistrationChoiceContainer());
+    };
+
+    /**
+     * JAWS does not notice visibility changes with aria-live.
+     * Remove and add the content back to force it to read it out.
+     * This function can be removed once JAWS supports visibility.
+     *
+     * @method screenReaderAnnounce
+     * @param {Object} element
+     * @private
+     */
+    var screenReaderAnnounce = function(element) {
+        var children = element.children().detach();
+        children.appendTo(element);
+        $('[data-toggle="popover"]').popover();
     };
 
     /**

@@ -31,16 +31,25 @@
     * none
 
     Context variables required for this template:
-    *
+    * none
+
+    Example context (json):
+    {
+    }
 
 }}
 <div class="centered-menu">
     <div class="well">
         <form id="cartridge-registration-form" class="form-horizontal">
             <p class="lead text-center">{{#str}} enterkeyandsecret, mod_lti {{/str}}</p>
-            <p class="text-center">{{#str}} leaveblank, mod_lti {{/str}}</p>
+            <p class="text-center">{{#str}} enterkeyandsecret_help, mod_lti {{/str}}</p>
             <div class="control-group">
-                <label class="control-label" for="registration-key">{{#str}} resourcekey_admin, mod_lti {{/str}}</label>
+                <div class="control-label">
+                    <label for="registration-key" style="display: inline-block">{{#str}} resourcekey_admin, mod_lti {{/str}}</label>
+                    {{#keyhelp}}
+                        {{>core/help_icon}}
+                    {{/keyhelp}}
+                </div>
                 <div class="controls">
                     <input name="tool-key"
                         class="input-block-level"
@@ -49,7 +58,12 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="registration-secret">{{#str}} password_admin, mod_lti {{/str}}</label>
+                <div class ="control-label">
+                    <label for="registration-secret" style="display: inline-block">{{#str}} password_admin, mod_lti {{/str}}</label>
+                    {{#secrethelp}}
+                        {{>core/help_icon}}
+                    {{/secrethelp}}
+                </div>
                 <div class="controls">
                     <input name="tool-secret"
                         class="input-block-level"

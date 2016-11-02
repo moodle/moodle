@@ -69,16 +69,14 @@ class manage_table extends \table_sql {
 
         $this->define_columns(array(
             'name',
-            'cartridge_url',
-            'secret',
-            'proxy_url',
+            'lti1',
+            'lti2',
             'edit'
         ));
         $this->define_headers(array(
             get_string('name'),
-            get_string('cartridgeurl', 'enrol_lti'),
-            get_string('secret', 'enrol_lti'),
-            get_string('proxyurl', 'enrol_lti'),
+            get_string('lti1', 'enrol_lti'),
+            get_string('lti2', 'enrol_lti'),
             get_string('edit')
         ));
         $this->collapsible(false);
@@ -104,37 +102,54 @@ class manage_table extends \table_sql {
     }
 
     /**
-     * Generate the cartridge URL column.
+     * Generate the LTI1 column.
      *
-     * @param \stdClass $tool event data.
+     * @param \stdClass $tool instance data.
      * @return string
      */
-    public function col_cartridge_url($tool) {
+    public function col_lti1($tool) {
+        global $OUTPUT;
+
         $url = helper::get_cartridge_url($tool);
 
-        return $this->get_copyable_text($tool, $url);
+        $toolurllabel = get_string('toolurl', 'enrol_lti');
+        $toolurl = $url;
+        $secretlabel = get_string('secret', 'enrol_lti');
+        $secret = $tool->secret;
+
+        $data = [
+                "rows" => [
+                    [ "label" => $toolurllabel, "text" => $toolurl, "id" => "toolurl" ],
+                    [ "label" => $secretlabel, "text" => $secret, "id" => "secret" ],
+                ]
+            ];
+
+        $return = $OUTPUT->render_from_template("enrol_lti/copy_grid", $data);
+        return $return;
     }
 
     /**
-     * Generate the proxy URL column.
+     * Generate the LTI2 column.
      *
-     * @param \stdClass $tool event data.
+     * @param \stdClass $tool instance data.
      * @return string
      */
-    public function col_proxy_url($tool) {
+    public function col_lti2($tool) {
+        global $OUTPUT;
+
         $url = helper::get_proxy_url($tool);
 
-        return $this->get_copyable_text($tool, $url);
-    }
+        $toolurllabel = get_string('toolurl', 'enrol_lti');
+        $toolurl = $url;
 
-    /**
-     * Generate the secret column.
-     *
-     * @param \stdClass $tool event data.
-     * @return string
-     */
-    public function col_secret($tool) {
-        return $this->get_copyable_text($tool, $tool->secret);
+        $data = [
+                "rows" => [
+                    [ "label" => $toolurllabel, "text" => $toolurl, "id" => "toolurl" ],
+                ]
+            ];
+
+        $return = $OUTPUT->render_from_template("enrol_lti/copy_grid", $data);
+        return $return;
     }
 
 
@@ -224,23 +239,5 @@ class manage_table extends \table_sql {
         }
 
         return $text;
-    }
-
-    /**
-     * Returns text to display in the columns.
-     *
-     * @param \stdClass $tool the tool
-     * @param string $text the text to alter
-     * @return string
-     * @since Moodle 3.2
-     */
-    protected function get_copyable_text($tool, $text) {
-        global $OUTPUT;
-        $copyable = $OUTPUT->render_from_template('core/copy_box', array('text' => $text));
-        if ($tool->status != ENROL_INSTANCE_ENABLED) {
-            return \html_writer::tag('span', $copyable, array('class' => 'dimmed_text', 'style' => 'overflow: scroll'));
-        }
-
-        return $copyable;
     }
 }

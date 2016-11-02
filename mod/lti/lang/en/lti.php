@@ -73,7 +73,7 @@ $string['allow'] = 'Allow';
 $string['allowinstructorcustom'] = 'Allow teachers to add custom parameters';
 $string['allowsetting'] = 'Allow tool to store 8K of settings in Moodle';
 $string['always'] = 'Always';
-$string['automatic'] = 'Automatic, based on launch URL';
+$string['automatic'] = 'Automatic, based on tool URL';
 $string['autoaddtype'] = 'Add tool';
 $string['baseurl'] = 'Base URL/tool registration name';
 $string['basiclti'] = 'LTI';
@@ -154,7 +154,7 @@ It is possible that the tool provider may also display the title. This option ca
 being displayed twice.
 
 The title is never displayed when the tool\'s launch container is in a new window.';
-$string['domain_mismatch'] = 'Launch URL\'s domain does not match tool configuration.';
+$string['domain_mismatch'] = 'Tool URL\'s domain does not match tool configuration.';
 $string['donot'] = 'Do not send';
 $string['donotaccept'] = 'Do not accept';
 $string['donotallow'] = 'Do not allow';
@@ -166,6 +166,7 @@ $string['embed_no_blocks'] = 'Embed, without blocks';
 $string['enableemailnotification'] = 'Send notification emails';
 $string['enableemailnotification_help'] = 'If enabled, students will receive email notification when their tool submissions are graded.';
 $string['enterkeyandsecret'] = 'Enter your consumer key and shared secret';
+$string['enterkeyandsecret_help'] = 'If you were given a consumer key and/or shared secret, input them here';
 $string['errorbadurl'] = 'URL is not a valid tool URL or cartridge.';
 $string['errorincorrectconsumerkey'] = 'Consumer key is incorrect.';
 $string['errorinvaliddata'] = 'Invalid data: {$a}';
@@ -176,25 +177,15 @@ $string['errortooltypenotfound'] = 'LTI tool type not found.';
 $string['existing_window'] = 'Existing window';
 $string['extensions'] = 'LTI extension services';
 $string['external_tool_type'] = 'Preconfigured tool';
-$string['external_tool_type_help'] = 'The main purpose of a tool configuration is to set up a secure communication channel between Moodle and the tool provider.
-It also provides an opportunity for configuration defaults and setting up additional services provided by the tool.
-
-* **Automatic, based on Launch URL** - This setting should be used in almost all cases. Moodle will select the most appropriate tool configuration
-       based on the Launch URL. Tools configured by both an administrator or within this course will be used.
-       When the Launch URL is specified, Moodle will provide feedback on whether it recognizes it or not. If Moodle does not recognize the Launch URL,
-       you may need to enter the tool configuration details manually.
-* **A specific preconfigured tool** - By selecting a preconfigured tool, you can force Moodle to use that tool configuration when communicating with the
-       external tool provider. If the Launch URL does not appear to belong to the tool provider, a warning will appear. In some cases, it is not necessary
-       to enter a Launch URL when providing a specific preconfigured tool (if not launching to a particular resource within the tool provider).
-* **Custom configuration** - To setup custom tool configuration on just this instance, show Advanced options, and enter the consumer key and
-       shared secret yourself. If you do not have a consumer key and shared secret, you may be able to request them from the tool provider.
-       Not all tools require a consumer key and shared secret, in which case the fields may be left blank.
+$string['external_tool_type_help'] = '* **Automatic, based on tool URL** - The best tool configuration is selected automatically. If the tool URL is not recognised, the tool configuration details may need to be entered manually.
+* **A specific preconfigured tool** - The tool configuration for the specified tool will be used when communicating with the external tool provider. If the tool URL does not appear to belong to the tool provider, a warning will be shown. It is not always necessary to enter a tool URL.
+* **Custom configuration** - A consumer key and shared secret may need to be entered manually. The consumer key and shared secret may be obtained from the tool provider. However, not all tools require a consumer key and shared secret, in which case the fields may be left blank.
 
 ### Preconfigured tool editing
 
 Three icons are available after the preconfigured tool dropdown list:
 
-* **Add** - Create a course level tool configuration. All External Tool instances in this course may use the tool configuration.
+* **Add** - Create a course level tool configuration. All External tool instances in this course may use the tool configuration.
 * **Edit** - Select a course level tool from the dropdown, then click this icon. The details of the tool configuration may be edited.
 * **Delete** - Remove the selected course level tool.';
 $string['external_tool_types'] = 'Preconfigured tools';
@@ -226,13 +217,13 @@ $string['id'] = 'id';
 $string['invalidid'] = 'LTI ID was incorrect';
 $string['launch_in_moodle'] = 'Launch tool in moodle';
 $string['launch_in_popup'] = 'Launch tool in a pop-up';
-$string['launch_url'] = 'Launch/cartridge URL';
-$string['launch_url_help'] = 'The Launch URL indicates the web address of the External Tool, and may contain additional information, such as the resource to show.
-If you are unsure what to enter for the Launch URL, please check with the tool provider for more information.
+$string['launch_url'] = 'Tool URL';
+$string['launch_url_help'] = 'The tool URL indicates the web address of the External Tool, and may contain additional information, such as the resource to show.
+If you are unsure what to enter for the tool URL, please check with the tool provider for more information.
 
-You can also enter a cartridge URL if you have one, and the rest of the form details will fill automatically.
+You can enter a cartridge URL if you have one, and the rest of the form details will fill automatically.
 
-If you have selected a preconfigured tool, you may not need to enter a Launch URL. If the tool link is used to just launch
+If you have selected a preconfigured tool, you may not need to enter a tool URL. If the tool link is used to just launch
 into the tool provider\'s system, and not go to a specific resource, this will likely be the case.';
 $string['launchinpopup'] = 'Launch container';
 $string['launchinpopup_help'] = 'The launch container affects the display of the tool when launched from the course. Some launch containers provide more screen
@@ -406,10 +397,10 @@ $string['search:activity'] = 'External tool - activity information';
 $string['secure_icon_url'] = 'Secure icon URL';
 $string['secure_icon_url_help'] = 'Similar to the icon URL, but used if the user accessing Moodle securely through SSL. The main purpose for this field is to prevent
 the browser from warning the user if the underlying page was accessed over SSL, but requesting to show an unsecure image.';
-$string['secure_launch_url'] = 'Secure launch URL';
-$string['secure_launch_url_help'] = 'Similar to the launch URL, but used instead of the launch URL if high security is required. Moodle will use the secure launch URL instead of the launch URL if the Moodle site is accessed through SSL, or if the tool configuration is set to always launch through SSL.
+$string['secure_launch_url'] = 'Secure tool URL';
+$string['secure_launch_url_help'] = 'Similar to the tool URL, but used instead of the tool URL if high security is required. Moodle will use the secure tool URL instead of the tool URL if the Moodle site is accessed through SSL, or if the tool configuration is set to always launch through SSL.
 
-The launch URL may also be set to an https address to force launching through SSL, and this field may be left blank.';
+The tool URL may also be set to an https address to force launching through SSL, and this field may be left blank.';
 $string['selectcontent'] = 'Select content';
 $string['send'] = 'Send';
 $string['services'] = 'Services';
@@ -442,10 +433,10 @@ $string['share_roster_help'] = 'Specify whether the tool can access the list of 
 Note that this setting may be overridden in the tool configuration.';
 $string['show_in_course_activity_chooser'] = 'Show in activity chooser and as a preconfigured tool';
 $string['show_in_course_lti1'] = 'Tool configuration usage';
-$string['show_in_course_lti1_help'] = 'This tool may be shown in the activity chooser for a teacher to select to add to a course. Alternatively, it may be shown in the preconfigured tool dropdown menu when adding an external tool to a course. A further option is for the tool configuration to only be used if the exact launch URL is entered when adding an external tool to a course.';
+$string['show_in_course_lti1_help'] = 'This tool may be shown in the activity chooser for a teacher to select to add to a course. Alternatively, it may be shown in the preconfigured tool dropdown menu when adding an external tool to a course. A further option is for the tool configuration to only be used if the exact tool URL is entered when adding an external tool to a course.';
 $string['show_in_course_lti2'] = 'Tool configuration usage';
 $string['show_in_course_lti2_help'] = 'This tool can be shown in the activity chooser for a teacher to select to add to a course or in the preconfigured tool dropdown menu when adding an external tool to a course.';
-$string['show_in_course_no'] = 'Do not show; use only when a matching launch URL is entered';
+$string['show_in_course_no'] = 'Do not show; use only when a matching tool URL is entered';
 $string['show_in_course_preconfigured'] = 'Show as preconfigured tool when adding an external tool';
 $string['size'] = 'Size parameters';
 $string['submission'] = 'Submission';
@@ -488,11 +479,11 @@ $string['tooltypeadded'] = 'Preconfigured tool added';
 $string['tooltypedeleted'] = 'Preconfigured tool deleted';
 $string['tooltypenotdeleted'] = 'Could not delete preconfigured tool';
 $string['tooltypeupdated'] = 'Preconfigured tool updated';
-$string['toolurl'] = 'Tool base URL/cartridge URL';
+$string['toolurl'] = 'Tool URL';
 $string['toolurlplaceholder'] = 'Tool URL...';
-$string['toolurl_help'] = 'The tool base URL is used to match tool launch URLs to the correct tool configuration. Prefixing the URL with http(s) is optional.
+$string['toolurl_help'] = 'The tool URL is used to match tool URLs to the correct tool configuration. Prefixing the URL with http(s) is optional.
 
-Additionally, the base URL is used as the launch URL if a launch URL is not specified in the external tool instance.
+Additionally, the base URL is used as the tool URL if a tool URL is not specified in the external tool instance.
 
 For example, a base URL of *tool.com* would match the following:
 

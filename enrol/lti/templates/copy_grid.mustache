@@ -15,27 +15,38 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/copy_box
+    @template enrol_lti/copy_grid
 
-    Interface element to contain text that the user should copy. Will automaticaly select when clicked.
+    The content to display when editing a tool.
 
     Classes required for JS:
-    * copy_box
+    * none
 
     Data attributes required for JS:
     * none
 
     Context variables required for this template:
-    * text The content to be displayed ready for copying
+    * rows An array of objects with label, text and id
 
     Example context (json):
-    { "text": "Copyable text"}
+    {
+        "rows": [
+            {
+                "label": "Tool URL",
+                "text": "http://example.com/",
+                "id": "toolurl"
+            },
+            {
+                "label": "Secret",
+                "text": "ABCDEF1234567890",
+                "id": "secret"
+            }
+        ]
+    }
 }}
-<input type="text" class="copy_box" value="{{{ text }}}" readonly="readonly" size="48" {{#id}}id={{#quote}}{{{id}}}-{{{uniqid}}}{{/quote}}{{/id}}/>
-{{# js }}
-require(['jquery', 'theme_bootstrapbase/bootstrap'], function($) {
-    $('.copy_box').on('click', function() {
-        $(this).select();
-    });
-});
-{{/ js }}
+{{#rows}}
+    <div>
+        <label style="display: inline-block; width: 5em" {{#id}}for={{#quote}}{{{id}}}-{{{uniqid}}}{{/quote}}{{/id}}>{{label}}</label>
+        <div style="display: inline-block">{{> core/copy_box }}</div>
+    </div>
+{{/rows}}
