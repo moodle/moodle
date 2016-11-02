@@ -490,7 +490,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     $attemptobj->attempt_url($slot, $page), $this);
         }
 
-        $output .= $this->attempt_navigation_buttons($page, $attemptobj->is_last_page($page));
+        $navmethod = $attemptobj->get_quiz()->navmethod;
+        $output .= $this->attempt_navigation_buttons($page, $attemptobj->is_last_page($page), $navmethod);
 
         // Some hidden fields to trach what is going on.
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'attempt',
@@ -526,13 +527,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
      *
      * @param int $page the page number. Starts at 0 for the first page.
      * @param bool $lastpage is this the last page in the quiz?
+     * @param string $navmethod Optional quiz attribute, 'free' (default) or 'sequential'
      * @return string HTML fragment.
      */
-    protected function attempt_navigation_buttons($page, $lastpage) {
+    protected function attempt_navigation_buttons($page, $lastpage, $navmethod = 'free') {
         $output = '';
 
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
-        if ($page > 0) {
+        if ($page > 0 && $navmethod == 'free') {
             $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'previous',
                     'value' => get_string('navigateprevious', 'quiz'), 'class' => 'mod_quiz-prev-nav'));
         }
