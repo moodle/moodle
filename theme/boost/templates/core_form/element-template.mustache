@@ -1,7 +1,12 @@
 <div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
     <div class="col-md-3">
+        <span class="pull-xs-right text-nowrap">
+            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">✲</abbr>{{/required}}
+            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">❗</abbr>{{/advanced}}
+            {{{helpbutton}}}
+        </span>
         {{^element.staticlabel}}
-        <label class="col-form-label {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+        <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
             {{{label}}}
         </label>
         {{/element.staticlabel}}
@@ -10,14 +15,6 @@
             {{{label}}}
         </span>
         {{/element.staticlabel}}
-        <span class="pull-xs-right text-nowrap">
-            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">✲</abbr>{{/required}}
-            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">❗</abbr>{{/advanced}}
-            {{{helpbutton}}}
-        </span>
-        <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
-            {{{label}}}
-        </label>
     </div>
     <div class="col-md-9 form-inline felement" data-fieldtype="{{element.type}}">
         {{$ element }}
