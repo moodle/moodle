@@ -1050,6 +1050,7 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/user:editownmessageprofile, moodle/user:editmessageprofile',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_view_user_list' => array(
         'classname' => 'core_user_external',
