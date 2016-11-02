@@ -10,19 +10,12 @@ select {
 }
 
 // Feedback module
-.path-mod-feedback .feedback_form .col-md-9,
-.path-mod-feedback .feedback_form .col-md-3,
-.path-mod-feedback .feedback_form .col-md-3 label {
-    width: 100%;
-}
-
-.path-mod-feedback .feedback_form .col-md-9 {
-    margin-left: 1rem;
-    margin-bottom: -2rem;
-}
-
 .path-mod-feedback .itemactions {
     float: right;
+}
+.path-mod-feedback .itemhandle {
+    position: absolute;
+    right: 1rem;
 }
 
 // Forum module
