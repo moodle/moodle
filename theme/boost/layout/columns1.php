@@ -25,11 +25,14 @@
 defined('MOODLE_INTERNAL') || die();
 
 $bodyattributes = $OUTPUT->body_attributes([]);
+$regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
     'output' => $OUTPUT,
     'bodyattributes' => $bodyattributes,
+    'regionmainsettingsmenu' => $regionmainsettingsmenu,
+    'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu)
 ];
 
 echo $OUTPUT->render_from_template('theme_boost/columns1', $templatecontext);
