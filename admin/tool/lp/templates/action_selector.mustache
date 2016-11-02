@@ -15,6 +15,8 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template tool_lp/action_selector
+
     Select an action to execute.
 
     Classes required for JS:
@@ -28,18 +30,29 @@
     * choices - List of possible actions
     * confirm - Text for button confirms
     * cancel -  Text for button cancel
- }}
+
+    Example context (json):
+    {
+        "message": "Message",
+        "choices": [
+            { "value": "1", "text": "One" },
+            { "value": "2", "text": "Two" }
+        ],
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+    }
+}}
 <div data-region="action-selector">
     <div data-region="action-selector-message">
        {{message}}<br>
     </div><br>
     <div data-region="action-selector-radio-buttons">
        {{#choices}}
-        <input id="action-selection-option-{{value}}" type="radio" name="choice" value="{{value}}"/><label for="action-selection-option-{{value}}">{{text}}</label><br>
+        <input id="action-selection-option-{{value}}" type="radio" class="m-r-1" name="choice" value="{{value}}"/><label for="action-selection-option-{{value}}">{{text}}</label><br>
        {{/choices}}
     </div><br>
     <div data-region="action_selector-buttons">
-       <input type="button" data-action="action-selector-confirm" value="{{confirm}}"/>
-       <input type="button" data-action="action-selector-cancel" value="{{cancel}}"/>
+       <input type="button" data-action="action-selector-confirm" class="btn btn-primary" value="{{confirm}}"/>
+       <input type="button" data-action="action-selector-cancel" class="btn btn-secondary" value="{{cancel}}"/>
     </div>
 </div>

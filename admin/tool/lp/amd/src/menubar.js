@@ -258,7 +258,7 @@ define(['jquery'], function($) {
     Menubar.prototype.setOpenDirection = function() {
         var pos = this.menuRoot.offset();
         var isRTL = $(document.body).hasClass('dir-rtl');
-        var openLeft = false;
+        var openLeft = true;
         var heightmenuRoot = this.rootMenus.outerHeight();
         var widthmenuRoot = this.rootMenus.outerWidth();
         // Sometimes the menuMinWidth is not enough to figure out if menu exceeds the window width.

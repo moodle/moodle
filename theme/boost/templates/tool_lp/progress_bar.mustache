@@ -15,19 +15,33 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tool_lp/no_frameworks_warning
+    @template tool_lp/progress_bar
 
-    No frameworks warning template.
+    Moodle progress bar template for tool_lp.
+
+    The purpose of this template is to render a progress bar with a brief description.
 
     Classes required for JS:
-      None
+    * none
+
+    Data attributes required for JS:
+    * none
 
     Context variables required for this template:
-      None
+    * progresstextvalue A brief text that describes the progress bar.
+    * percentagevalue The numeric value for the progress bar's percentage.
+    * percentlabelvalue The progress bar's label that shows the percentage value.
+
     Example context (json):
     {
+        "progresstextvalue": "Progress:",
+        "percentagevalue": "50",
+        "percentlabelvalue": "50.00 %"
     }
+
 }}
-<p class="alert alert-danger">
-    {{#str}}nocompetencyframeworks, tool_lp{{/str}}
-</p>
+<div id="progress-{{uniqid}}">
+    {{$progresstext}}{{progresstextvalue}}{{/progresstext}}
+</div>
+<progress class="progress" aria-describedby="progress-{{uniqid}}"
+    value="{{$percentage}}{{percentagevalue}}{{/percentage}}" max="100"></progress>

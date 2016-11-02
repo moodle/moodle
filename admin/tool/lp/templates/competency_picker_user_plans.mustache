@@ -1,22 +1,80 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/competency_picker_user_plans
+
+    Show a competency tree and allow picking a competency.
+
+    Context variables required for this template:
+    * singlePlan - boolean
+
+    * plans - array of plans
+      * id
+      * selected
+      * name
+
+    * plan
+      * id
+      * name
+
+    * competencies - array of nodes
+      * id - competency id
+      * name - competency idnumber
+      * children - array of children
+      * haschildren - boolean
+
+    Example context (json):
+    {
+        "singlePlan": false,
+        "plans": [
+            {
+                "id": "1",
+                "name": "Plan"
+            }
+        ],
+        "plan": {
+            "id": "1",
+            "name": "Plan"
+        },
+        "competencies": []
+    }
+}}
+
 <div data-region="competencylinktree">
 {{^singlePlan}}
     <h3>{{#str}}learningplans, tool_lp{{/str}}</h3>
-    <select data-action="chooseplan">
+    <select data-action="chooseplan" class="custom-select">
     {{#plans}}
         <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{name}}}</option>
     {{/plans}}
     </select>
 {{/singlePlan}}
 
-<h3>{{#str}}locatecompetency, tool_lp{{/str}}</h3>
+<h3 class="m-t-1">{{#str}}locatecompetency, tool_lp{{/str}}</h3>
 
-<form data-region="filtercompetencies" data-planid="{{plan.id}}">
-    <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
-    <input type="text" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
-    <button>{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>
+<form data-region="filtercompetencies" data-planid="{{plan.id}}" class="form-inline">
+    <div class="form-group">
+        <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
+        <input type="text" class="form-control" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
+        <button class="btn btn-secondary">{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>
+    </div>
 </form>
 
-<ul data-enhance="linktree" style="display: none;">
+<ul data-enhance="linktree" style="display: none;" class="m-t-1 competency-tree">
     <li><span>{{{plan.name}}}</span>
         <ul>
             {{#competencies}}
@@ -26,9 +84,9 @@
     </li>
 </ul>
 
-<div data-region="link-buttons">
-    <input type="button" data-action="add" value="{{#str}}add{{/str}}"/>
-    <input type="button" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
+<div data-region="link-buttons" class="m-t-1 pull-xs-right">
+    <input type="button" class="btn btn-primary" data-action="add" value="{{#str}}add{{/str}}"/>
+    <input type="button" class="btn btn-secondary" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
 </div>
-
+<div class="clearfix"></div>
 </div>

@@ -47,6 +47,8 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
         var searchStr = $('[data-field="search"]').val();
 
         // Trigger the search.
+        document.location.hash = searchStr;
+
         ajax.call([
             {methodname: 'tool_templatelibrary_list_templates',
               args: {component: componentStr, search: searchStr, themename: themename},
@@ -83,6 +85,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
     $('[data-region="list-templates"]').on('change', '[data-field="component"]', changeHandler);
     $('[data-region="list-templates"]').on('input', '[data-field="search"]', changeHandler);
 
+    $('[data-field="search"]').val(document.location.hash.replace('#', ''));
     refreshSearch(config.theme);
     return {};
 });

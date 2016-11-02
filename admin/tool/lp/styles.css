@@ -181,7 +181,8 @@
 }
 
 .tool-lp-menu.tool-lp-menu-open-left .tool-lp-sub-menu {
-    margin-left: -120px;
+    left: auto;
+    right: 0;
 }
 
 /** This highlighting is copied from bootstrap - but can be overridden by a theme */

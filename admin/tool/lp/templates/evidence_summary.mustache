@@ -46,7 +46,7 @@
 }}
 <div class="well well-small evidence" data-region="evidence" data-id="{{id}}">
     {{#candelete}}
-        <div class="pull-right">
+        <div class="pull-xs-right">
             <a href="#" data-action="delete-evidence">{{#pix}}t/delete{{/pix}}</a>
         </div>
     {{/candelete}}
@@ -57,7 +57,7 @@
 {{/actionuser}}
 <strong><time datetime="{{userdate}}">{{userdate}}</time></strong>
 {{#grade}}
-    <p><span class="label">{{gradename}}</span></p>
+    <p><span class="tag tag-info">{{gradename}}</span></p>
 {{/grade}}
 <p>{{description}}</p>
 {{#note}}
