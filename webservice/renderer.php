@@ -410,7 +410,7 @@ class core_webservice_renderer extends plugin_renderer_base {
             $paramdesc .= html_writer::start_tag('i', array());
             $paramdesc .= "//";
 
-            $paramdesc .= $params->desc;
+            $paramdesc .= s($params->desc);
 
             $paramdesc .= html_writer::end_tag('i');
 
@@ -685,7 +685,7 @@ EOF;
             $documentationhtml .= html_writer::start_tag('div',
                             array('style' => 'border:solid 1px #DEDEDE;background:#E2E0E0;
                         color:#222222;padding:4px;'));
-            $documentationhtml .= $description->description;
+            $documentationhtml .= s($description->description);
             $documentationhtml .= html_writer::end_tag('div');
             $documentationhtml .= $br . $br;
 
@@ -719,7 +719,7 @@ EOF;
                 $documentationhtml .= " (" . $required . ")"; // argument is required or optional ?
                 $documentationhtml .= $br;
                 $documentationhtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-                        . $paramdesc->desc; // argument description
+                        . s($paramdesc->desc); // Argument description.
                 $documentationhtml .= $br . $br;
                 // general structure of the argument
                 $documentationhtml .= $this->colored_box_with_pre_tag(
