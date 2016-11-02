@@ -258,7 +258,9 @@ class cachestore_dummy extends cache_store {
      */
     public static function initialise_test_instance(cache_definition $definition) {
         $cache = new cachestore_dummy('Dummy store test');
-        $cache->initialise($definition);
+        if ($cache->is_ready()) {
+            $cache->initialise($definition);
+        }
         return $cache;
     }
 

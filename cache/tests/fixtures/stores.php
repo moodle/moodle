@@ -63,33 +63,33 @@ abstract class cachestore_tests extends advanced_testcase {
         if ($modes & cache_store::MODE_APPLICATION) {
             $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, $class, 'phpunit_test');
             $instance = new $class($class.'_test', $class::unit_test_configuration());
-            $instance->initialise($definition);
 
             if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for application caches.');
             } else {
+                $instance->initialise($definition);
                 $this->run_tests($instance);
             }
         }
         if ($modes & cache_store::MODE_SESSION) {
             $definition = cache_definition::load_adhoc(cache_store::MODE_SESSION, $class, 'phpunit_test');
             $instance = new $class($class.'_test', $class::unit_test_configuration());
-            $instance->initialise($definition);
 
             if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for session caches.');
             } else {
+                $instance->initialise($definition);
                 $this->run_tests($instance);
             }
         }
         if ($modes & cache_store::MODE_REQUEST) {
             $definition = cache_definition::load_adhoc(cache_store::MODE_REQUEST, $class, 'phpunit_test');
             $instance = new $class($class.'_test', $class::unit_test_configuration());
-            $instance->initialise($definition);
 
             if (!$instance->is_ready()) {
                 $this->markTestSkipped('Could not test '.$class.'. No test instance configured for request caches.');
             } else {
+                $instance->initialise($definition);
                 $this->run_tests($instance);
             }
         }

@@ -576,7 +576,9 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
         }
 
         $store = new cachestore_memcache('Test memcache', $configuration);
-        $store->initialise($definition);
+        if ($store->is_ready()) {
+            $store->initialise($definition);
+        }
 
         return $store;
     }
