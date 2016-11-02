@@ -160,6 +160,7 @@ class tool_provider extends ToolProvider {
         );
 
         $this->requiredServices[] = new ServiceDefinition(['application/vnd.ims.lti.v2.toolproxy+json'], ['POST']);
+        $this->requiredServices[] = new ServiceDefinition(['application/vnd.ims.lis.v2.membershipcontainer+json'], ['GET']);
     }
 
     /**

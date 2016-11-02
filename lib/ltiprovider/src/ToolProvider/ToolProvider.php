@@ -983,6 +983,9 @@ EOD;
                 if (empty($title)) {
                     $title = "Course {$this->context->getId()}";
                 }
+                if (isset($_POST['context_type'])) {
+                    $this->context->type = trim($_POST['context_type']);
+                }
                 $this->context->title = $title;
             }
 

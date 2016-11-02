@@ -227,5 +227,20 @@ function xmldb_enrol_lti_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016052303, 'enrol', 'lti');
     }
 
+    if ($oldversion < 2016052304) {
+
+        // Define field type to be added to enrol_lti_lti2_context.
+        $table = new xmldb_table('enrol_lti_lti2_context');
+        $field = new xmldb_field('type', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'lticontextkey');
+
+        // Conditionally launch add field type.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Lti savepoint reached.
+        upgrade_plugin_savepoint(true, 2016052304, 'enrol', 'lti');
+    }
+
     return true;
 }

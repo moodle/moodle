@@ -452,13 +452,13 @@ class DataConnector_pdo extends DataConnector
 
         $ok = false;
         if (!empty($context->getRecordId())) {
-            $sql = 'SELECT context_pk, consumer_pk, lti_context_id, settings, created, updated ' .
+            $sql = 'SELECT context_pk, consumer_pk, lti_context_id, type, settings, created, updated ' .
                    "FROM {$this->dbTableNamePrefix}" . DataConnector::CONTEXT_TABLE_NAME . ' ' .
                    'WHERE (context_pk = :id)';
             $query = $this->db->prepare($sql);
             $query->bindValue('id', $context->getRecordId(), PDO::PARAM_INT);
         } else {
-            $sql = 'SELECT context_pk, consumer_pk, lti_context_id, settings, created, updated ' .
+            $sql = 'SELECT context_pk, consumer_pk, lti_context_id, type, settings, created, updated ' .
                    "FROM {$this->dbTableNamePrefix}" . DataConnector::CONTEXT_TABLE_NAME . ' ' .
                    'WHERE (consumer_pk = :cid) AND (lti_context_id = :ctx)';
             $query = $this->db->prepare($sql);
@@ -475,6 +475,7 @@ class DataConnector_pdo extends DataConnector
             $context->setRecordId(intval($row['context_pk']));
             $context->setConsumerId(intval($row['consumer_pk']));
             $context->ltiContextId = $row['lti_context_id'];
+            $context->type = $row['type'];
             $settings = unserialize($row['settings']);
             if (!is_array($settings)) {
                 $settings = array();
@@ -505,21 +506,23 @@ class DataConnector_pdo extends DataConnector
         $consumer_pk = $context->getConsumer()->getRecordId();
         if (empty($id)) {
             $sql = "INSERT INTO {$this->dbTableNamePrefix}" . DataConnector::CONTEXT_TABLE_NAME . ' (consumer_pk, lti_context_id, ' .
-                   'settings, created, updated) ' .
-                   'VALUES (:cid, :ctx, :settings, :created, :updated)';
+                   'type, settings, created, updated) ' .
+                   'VALUES (:cid, :ctx, :type, :settings, :created, :updated)';
             $query = $this->db->prepare($sql);
             $query->bindValue('cid', $consumer_pk, PDO::PARAM_INT);
             $query->bindValue('ctx', $context->ltiContextId, PDO::PARAM_STR);
+            $query->bindValue('type', $context->type, PDO::PARAM_STR);
             $query->bindValue('settings', $settingsValue, PDO::PARAM_STR);
             $query->bindValue('created', $now, PDO::PARAM_STR);
             $query->bindValue('updated', $now, PDO::PARAM_STR);
         } else {
             $sql = "UPDATE {$this->dbTableNamePrefix}" . DataConnector::CONTEXT_TABLE_NAME . ' SET ' .
-                   'lti_context_id = :ctx, settings = :settings, '.
+                   'lti_context_id = :ctx, type = :type, settings = :settings, '.
                    'updated = :updated ' .
                    'WHERE (consumer_pk = :cid) AND (context_pk = :ctxid)';
             $query = $this->db->prepare($sql);
             $query->bindValue('ctx', $context->ltiContextId, PDO::PARAM_STR);
+            $query->bindValue('type', $context->type, PDO::PARAM_STR);
             $query->bindValue('settings', $settingsValue, PDO::PARAM_STR);
             $query->bindValue('updated', $now, PDO::PARAM_STR);
             $query->bindValue('cid', $consumer_pk, PDO::PARAM_INT);
