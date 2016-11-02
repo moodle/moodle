@@ -430,6 +430,7 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->completionexpected = $rawmods[$seq]->completionexpected;
                    $mod[$seq]->showdescription  = $rawmods[$seq]->showdescription;
                    $mod[$seq]->availability = $rawmods[$seq]->availability;
+                   $mod[$seq]->deletioninprogress = $rawmods[$seq]->deletioninprogress;
 
                    $modname = $mod[$seq]->mod;
                    $functionname = $modname."_get_coursemodule_info";
@@ -504,7 +505,7 @@ function get_array_of_activities($courseid) {
                     foreach (array('idnumber', 'groupmode', 'groupingid',
                             'indent', 'completion', 'extra', 'extraclasses', 'iconurl', 'onclick', 'content',
                             'icon', 'iconcomponent', 'customdata', 'availability', 'completionview',
-                            'completionexpected', 'score', 'showdescription') as $property) {
+                            'completionexpected', 'score', 'showdescription', 'deletioninprogress') as $property) {
                        if (property_exists($mod[$seq], $property) &&
                                empty($mod[$seq]->{$property})) {
                            unset($mod[$seq]->{$property});
@@ -1072,9 +1073,25 @@ function set_coursemodule_name($id, $name) {
  * event to the DB.
  *
  * @param int $cmid the course module id
+ * @param bool $async whether or not to try to delete the module using an adhoc task. Async also depends on a plugin hook.
+ * @throws moodle_exception
  * @since Moodle 2.5
  */
-function course_delete_module($cmid) {
+function course_delete_module($cmid, $async = false) {
+    // Check the 'course_module_background_deletion_recommended' hook first.
+    // Only use asynchronous deletion if at least one plugin returns true and if async deletion has been requested.
+    // Both are checked because plugins should not be allowed to dictate the deletion behaviour, only support/decline it.
+    // It's up to plugins to handle things like whether or not they are enabled.
+    if ($async && $pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                if ($pluginfunction()) {
+                    return course_module_flag_for_async_deletion($cmid);
+                }
+            }
+        }
+    }
+
     global $CFG, $DB;
 
     require_once($CFG->libdir.'/gradelib.php');
@@ -1192,6 +1209,104 @@ function course_delete_module($cmid) {
     rebuild_course_cache($cm->course, true);
 }
 
+/**
+ * Schedule a course module for deletion in the background using an adhoc task.
+ *
+ * This method should not be called directly. Instead, please use course_delete_module($cmid, true), to denote async deletion.
+ * The real deletion of the module is handled by the task, which calls 'course_delete_module($cmid)'.
+ *
+ * @param int $cmid the course module id.
+ * @return bool whether the module was successfully scheduled for deletion.
+ * @throws \moodle_exception
+ */
+function course_module_flag_for_async_deletion($cmid) {
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/questionlib.php');
+    require_once($CFG->dirroot.'/blog/lib.php');
+    require_once($CFG->dirroot.'/calendar/lib.php');
+
+    // Get the course module.
+    if (!$cm = $DB->get_record('course_modules', array('id' => $cmid))) {
+        return true;
+    }
+
+    // We need to be reasonably certain the deletion is going to succeed before we background the process.
+    // Make the necessary delete_instance checks, etc. before proceeding further. Throw exceptions if required.
+
+    // Get the course module name.
+    $modulename = $DB->get_field('modules', 'name', array('id' => $cm->module), MUST_EXIST);
+
+    // Get the file location of the delete_instance function for this module.
+    $modlib = "$CFG->dirroot/mod/$modulename/lib.php";
+
+    // Include the file required to call the delete_instance function for this module.
+    if (file_exists($modlib)) {
+        require_once($modlib);
+    } else {
+        throw new \moodle_exception('cannotdeletemodulemissinglib', '', '', null,
+            "Cannot delete this module as the file mod/$modulename/lib.php is missing.");
+    }
+
+    $deleteinstancefunction = $modulename . '_delete_instance';
+
+    // Ensure the delete_instance function exists for this module.
+    if (!function_exists($deleteinstancefunction)) {
+        throw new \moodle_exception('cannotdeletemodulemissingfunc', '', '', null,
+            "Cannot delete this module as the function {$modulename}_delete_instance is missing in mod/$modulename/lib.php.");
+    }
+
+    // We are going to defer the deletion as we can't be sure how long the module's pre_delete code will run for.
+    $cm->deletioninprogress = '1';
+    $DB->update_record('course_modules', $cm);
+
+    // Create an adhoc task for the deletion of the course module. The task takes an array of course modules for removal.
+    $removaltask = new \core_course\task\course_delete_modules();
+    $removaltask->set_custom_data(array('cms' => array($cm)));
+
+    // Queue the task for the next run.
+    \core\task\manager::queue_adhoc_task($removaltask);
+
+    // Reset the course cache to hide the module.
+    rebuild_course_cache($cm->course, true);
+}
+
+/**
+ * Checks whether the given course has any course modules scheduled for adhoc deletion.
+ *
+ * @param int $courseid the id of the course.
+ * @return bool true if the course contains any modules pending deletion, false otherwise.
+ */
+function course_modules_pending_deletion($courseid) {
+    if (empty($courseid)) {
+        return false;
+    }
+    $modinfo = get_fast_modinfo($courseid);
+    foreach ($modinfo->get_cms() as $module) {
+        if ($module->deletioninprogress == '1') {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Checks whether the course module, as defined by modulename and instanceid, is scheduled for deletion within the given course.
+ *
+ * @param int $courseid the course id.
+ * @param string $modulename the module name. E.g. 'assign', 'book', etc.
+ * @param int $instanceid the module instance id.
+ * @return bool true if the course module is pending deletion, false otherwise.
+ */
+function course_module_instance_pending_deletion($courseid, $modulename, $instanceid) {
+    if (empty($courseid) || empty($modulename) || empty($instanceid)) {
+        return false;
+    }
+    $modinfo = get_fast_modinfo($courseid);
+    $instances = $modinfo->get_instances_of($modulename);
+    return isset($instances[$instanceid]) && $instances[$instanceid]->deletioninprogress;
+}
+
 function delete_mod_from_section($modid, $sectionid) {
     global $DB;
 
@@ -1285,9 +1400,10 @@ function move_section_to($course, $section, $destination, $ignorenumsections = f
  * @param int|stdClass $course
  * @param int|stdClass|section_info $section
  * @param bool $forcedeleteifnotempty if set to false section will not be deleted if it has modules in it.
+ * @param bool $async whether or not to try to delete the section using an adhoc task. Async also depends on a plugin hook.
  * @return bool whether section was deleted
  */
-function course_delete_section($course, $section, $forcedeleteifnotempty = true) {
+function course_delete_section($course, $section, $forcedeleteifnotempty = true, $async = false) {
     global $DB;
 
     // Prepare variables.
@@ -1298,6 +1414,21 @@ function course_delete_section($course, $section, $forcedeleteifnotempty = true)
         // No section exists, can't proceed.
         return false;
     }
+
+    // Check the 'course_module_background_deletion_recommended' hook first.
+    // Only use asynchronous deletion if at least one plugin returns true and if async deletion has been requested.
+    // Both are checked because plugins should not be allowed to dictate the deletion behaviour, only support/decline it.
+    // It's up to plugins to handle things like whether or not they are enabled.
+    if ($async && $pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
+        foreach ($pluginsfunction as $plugintype => $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                if ($pluginfunction()) {
+                    return course_delete_section_async($section, $forcedeleteifnotempty);
+                }
+            }
+        }
+    }
+
     $format = course_get_format($course);
     $sectionname = $format->get_section_name($section);
 
@@ -1308,19 +1439,99 @@ function course_delete_section($course, $section, $forcedeleteifnotempty = true)
     if ($result) {
         $context = context_course::instance($courseid);
         $event = \core\event\course_section_deleted::create(
-                array(
-                    'objectid' => $section->id,
-                    'courseid' => $courseid,
-                    'context' => $context,
-                    'other' => array(
-                        'sectionnum' => $section->section,
-                        'sectionname' => $sectionname,
-                    )
+            array(
+                'objectid' => $section->id,
+                'courseid' => $courseid,
+                'context' => $context,
+                'other' => array(
+                    'sectionnum' => $section->section,
+                    'sectionname' => $sectionname,
                 )
-            );
+            )
+        );
         $event->add_record_snapshot('course_sections', $section);
         $event->trigger();
     }
+    return $result;
+}
+
+/**
+ * Course section deletion, using an adhoc task for deletion of the modules it contains.
+ * 1. Schedule all modules within the section for adhoc removal.
+ * 2. Move all modules to course section 0.
+ * 3. Delete the resulting empty section.
+ *
+ * @param \stdClass $section the section to schedule for deletion.
+ * @param bool $forcedeleteifnotempty whether to force section deletion if it contains modules.
+ * @return bool true if the section was scheduled for deletion, false otherwise.
+ */
+function course_delete_section_async($section, $forcedeleteifnotempty = true) {
+    global $DB;
+
+    // Objects only, and only valid ones.
+    if (!is_object($section) || empty($section->id)) {
+        return false;
+    }
+
+    // Does the object currently exist in the DB for removal (check for stale objects).
+    $section = $DB->get_record('course_sections', array('id' => $section->id));
+    if (!$section || !$section->section) {
+        // No section exists, or the section is 0. Can't proceed.
+        return false;
+    }
+
+    // Check whether the section can be removed.
+    if (!$forcedeleteifnotempty && (!empty($section->sequence) || !empty($section->summary))) {
+        return false;
+    }
+
+    $format = course_get_format($section->course);
+    $sectionname = $format->get_section_name($section);
+
+    // Flag those modules having no existing deletion flag. Some modules may have been scheduled for deletion manually, and we don't
+    // want to create additional adhoc deletion tasks for these. Moving them to section 0 will suffice.
+    $affectedmods = $DB->get_records_select('course_modules', 'course = ? AND section = ? AND deletioninprogress <> ?',
+                                            [$section->course, $section->id, 1], '', 'id');
+    $DB->set_field('course_modules', 'deletioninprogress', '1', ['course' => $section->course, 'section' => $section->id]);
+
+    // Move all modules to section 0.
+    $modules = $DB->get_records('course_modules', ['section' => $section->id], '');
+    $sectionzero = $DB->get_record('course_sections', ['course' => $section->course, 'section' => '0']);
+    foreach ($modules as $mod) {
+        moveto_module($mod, $sectionzero);
+    }
+
+    // Create and queue an adhoc task for the deletion of the modules.
+    $removaltask = new \core_course\task\course_delete_modules();
+    $data = array(
+        'cms' => $affectedmods
+    );
+    $removaltask->set_custom_data($data);
+    \core\task\manager::queue_adhoc_task($removaltask);
+
+    // Delete the now empty section, passing in only the section number, which forces the function to fetch a new object.
+    // The refresh is needed because the section->sequence is now stale.
+    $result = $format->delete_section($section->section, $forcedeleteifnotempty);
+
+    // Trigger an event for course section deletion.
+    if ($result) {
+        $context = \context_course::instance($section->course);
+        $event = \core\event\course_section_deleted::create(
+            array(
+                'objectid' => $section->id,
+                'courseid' => $section->course,
+                'context' => $context,
+                'other' => array(
+                    'sectionnum' => $section->section,
+                    'sectionname' => $sectionname,
+                )
+            )
+        );
+        $event->add_record_snapshot('course_sections', $section);
+        $event->trigger();
+    }
+    rebuild_course_cache($section->course, true);
+
     return $result;
 }
 
