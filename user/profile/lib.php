@@ -208,7 +208,7 @@ class profile_field_base {
      * @param  moodleform $mform instance of the moodleform class
      */
     public function edit_field_set_default($mform) {
-        if (!empty($default)) {
+        if (!empty($this->field->defaultdata)) {
             $mform->setDefault($this->inputname, $this->field->defaultdata);
         }
     }
