@@ -48,5 +48,10 @@ $observers = array(
         'eventname'   => '\core\event\competency_template_deleted',
         'callback'    => 'local_iomad_observer::competency_template_deleted',
     ),
+
+    array(
+        'eventname'   => '\core\event\course_completed',
+        'callback'    => 'local_iomad_observer::course_completed',
+    ),
 );
 

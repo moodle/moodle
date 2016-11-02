@@ -72,4 +72,14 @@ class local_iomad_observer {
         company::competency_template_deleted($event);
         return true;
     }
+
+     * Triggered via course_completed event.
+     *
+     * @param \core\event\course_completed $event
+     * @return bool true on success.
+     */
+    public static function course_completed(\core\event\course_completed $event) {
+        company::course_completed_supervisor($event);
+        return true;
+    }
 }

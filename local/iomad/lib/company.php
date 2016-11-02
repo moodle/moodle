@@ -517,6 +517,47 @@ class company {
     }
 
     /**
+     * Get the department a user is associated to.
+     *
+     * Parameters -
+     *              $user = stdclass();
+     *
+     * Returns stdclass();
+     *
+     **/
+    public static function get_usersupervisor($userid) {
+        global $DB, $CFG;
+
+        // get the company info.
+        $companyinfo = self::get_company_byuserid($userid);
+        if (!empty($company->emailprofileid)) {
+            // Does the user have one defined by the company field?
+            if (!$supervisor = $DB->get_record('user_profile_data', array('userid' => $userid, 'fieldid' => $company->emailprofileid))) {
+                return false;
+            }
+        } else if (!empty($CFG->comanyemailprofileid)) {
+            // Does the user have one defined by the default field?
+            if (!$supervisor = $DB->get_record('user_profile_data', array('userid' => $userid, 'fieldid' => $CFG->companyemailprofileid))) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+        // Is it a valid email address?
+        if (validate_email($supervisor->data)) {
+            // Are we diverting everything??
+            if (empty($CFG->divertallemailsto)) {
+                return $supervisor->data;
+            } else {
+                return $CFG->divertallemailsto;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the department details given an id.
      *
      * Parameters -
@@ -1830,7 +1871,6 @@ class company {
         $data = $event->get_data();
         if (!empty($data['companyid'])) {
             self::add_competency_template($data['companyid'], $event->objectid);
-        }
         return true;
     }
 
@@ -1843,6 +1883,106 @@ class company {
     public static function competency_template_deleted(\core\event\competency_template_deleted $event) {
         global $DB;
         $DB->delete_records('company_comp_templates', array('templateid' => $event->objectid));
+        return true;
+    }
+
+    /**
+     * Triggered via course_completed event.
+     *
+     * @param \core\event\course_completed $event
+     * @return bool true on success.
+     */
+    public static function course_completed_supervisor(\core\event\course_completed $event) {
+        global $DB, $CFG;
+
+        $data = $event->get_data();
+        $userid = $data['relateduserid'];
+        $courseid = $data['courseid'];
+        $timecompleted = $data['timecreated'];
+
+        // Do we have a supervisor?
+        if ($supervisoremail = self::get_usersupervisor($userid)) {
+            // Get the user info.
+            if ($userinfo = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
+                if ($courseinfo = $DB->get_record('course', array('id' => $courseid))) {
+                    // We have to do this manually as the normal Moodle functions require a proper registered user.
+                    $params = new stdclass();
+                    $params->fullname = $courseinfo->fullname;
+                    $params->firstname = $userinfo->firstname;
+                    $params->lastname = $userinfo->lastname;
+                    $params->date = date('d-m-Y', time());
+                    $mail = get_mailer();
+
+                    $supportuser = core_user::get_support_user();
+                    $subject = get_string('completion_course_supervisor_subject', 'block_iomad_company_admin', $params);
+                    $messagetext = get_string('completion_course_supervisor_body', 'block_iomad_company_admin', $params);
+                
+                    $mail->Sender = $supportuser->email;
+                    $mail->From     = $CFG->noreplyaddress;
+                    $mail->Subject = substr($subject, 0, 900);
+
+                    if (!empty($CFG->noreplyaddress)) {
+                        $mail->addAddress($CFG->noreplyaddress, get_string('noreplyname'));
+                    } else {
+                        $mail->addAddress($supervisoremail, '');
+                    }
+                
+                    // Set word wrap.
+                    $mail->WordWrap = 79;
+
+                    $mail->MessageID = generate_email_messageid();
+                    $mail->Body =  "\n$messagetext\n";
+                    if (empty($CFG->noemailever)) {
+                        $mail->send;
+                    }
+
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Triggered via course_completed event.
+     *
+     * @param \core\event\course_completed $event
+     * @return bool true on success.
+     */
+    public static function send_supervisor_warning_email($user, $course) {
+        global $DB, $CFG;
+
+        // Do we have a supervisor?
+        if ($supervisoremail = self::get_usersupervisor($user->id)) {
+            $params = new stdclass();
+            $params->fullname = $course->fullname;
+            $params->firstname = $user->firstname;
+            $params->lastname = $user->lastname;
+            $mail = get_mailer();
+
+            $supportuser = core_user::get_support_user();
+            $subject = get_string('completion_warn_supervisor_subject', 'block_iomad_company_admin', $params);
+            $messagetext = get_string('completion_warn_supervisor_body', 'block_iomad_company_admin', $params);
+        
+            $mail->Sender = $supportuser->email;
+            $mail->From     = $CFG->noreplyaddress;
+            $mail->Subject = substr($subject, 0, 900);
+
+            if (!empty($CFG->noreplyaddress)) {
+                $mail->addAddress($CFG->noreplyaddress, get_string('noreplyname'));
+            } else {
+                $mail->addAddress($supervisoremail, '');
+            }
+        
+            // Set word wrap.
+            $mail->WordWrap = 79;
+
+            $mail->MessageID = generate_email_messageid();
+            $mail->Body =  "\n$messagetext\n";
+            if (empty($CFG->noemailever)) {
+                $mail->send;
+            }
+
+        }
         return true;
     }
 }

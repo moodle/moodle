@@ -104,6 +104,8 @@ function email_reports_cron() {
         }
         mtrace("Sending completion warning email to $user->email");
         EmailTemplate::send('completion_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
+        // Send the supervisor email too.
+        company::send_supervisor_warning_email($user, $course);
     }
 
     // Email the managers
