@@ -156,15 +156,6 @@ class cachestore_apcu extends cache_store implements cache_is_key_aware, cache_i
     }
 
     /**
-     * Returns true if this cache store instance is ready to use.
-     * @return bool
-     */
-    public function is_ready() {
-        // No set up is actually required, providing apc is installed and enabled.
-        return true;
-    }
-
-    /**
      * Prepares the given key for use.
      *
      * Should be called before all interaction.
@@ -325,6 +316,7 @@ class cachestore_apcu extends cache_store implements cache_is_key_aware, cache_i
         }
         $name = 'APCu test';
         $cache = new cachestore_apcu($name);
+        // No need to check if is_ready() as this has already being done by requirement check.
         $cache->initialise($definition);
         return $cache;
     }
