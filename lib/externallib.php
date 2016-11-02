@@ -316,7 +316,7 @@ class external_api {
                     }
                     if ($subdesc->required == VALUE_DEFAULT) {
                         try {
-                            $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
+                            $result[$key] = static::validate_parameters($subdesc, $subdesc->default);
                         } catch (invalid_parameter_exception $e) {
                             //we are only interested by exceptions returned by validate_param() and validate_parameters()
                             //(in order to build the path to the faulty attribut)
@@ -325,7 +325,7 @@ class external_api {
                     }
                 } else {
                     try {
-                        $result[$key] = self::validate_parameters($subdesc, $params[$key]);
+                        $result[$key] = static::validate_parameters($subdesc, $params[$key]);
                     } catch (invalid_parameter_exception $e) {
                         //we are only interested by exceptions returned by validate_param() and validate_parameters()
                         //(in order to build the path to the faulty attribut)
@@ -346,7 +346,7 @@ class external_api {
             }
             $result = array();
             foreach ($params as $param) {
-                $result[] = self::validate_parameters($description->content, $param);
+                $result[] = static::validate_parameters($description->content, $param);
             }
             return $result;
 
@@ -409,7 +409,7 @@ class external_api {
                     if ($subdesc instanceof external_value) {
                         if ($subdesc->required == VALUE_DEFAULT) {
                             try {
-                                    $result[$key] = self::clean_returnvalue($subdesc, $subdesc->default);
+                                    $result[$key] = static::clean_returnvalue($subdesc, $subdesc->default);
                             } catch (invalid_response_exception $e) {
                                 //build the path to the faulty attribut
                                 throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
@@ -418,7 +418,7 @@ class external_api {
                     }
                 } else {
                     try {
-                        $result[$key] = self::clean_returnvalue($subdesc, $response[$key]);
+                        $result[$key] = static::clean_returnvalue($subdesc, $response[$key]);
                     } catch (invalid_response_exception $e) {
                         //build the path to the faulty attribut
                         throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
@@ -436,7 +436,7 @@ class external_api {
             }
             $result = array();
             foreach ($response as $param) {
-                $result[] = self::clean_returnvalue($description->content, $param);
+                $result[] = static::clean_returnvalue($description->content, $param);
             }
             return $result;
 
