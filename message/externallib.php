@@ -1713,11 +1713,6 @@ class core_message_external extends external_api {
     public static function get_blocked_users($userid) {
         global $CFG, $USER, $PAGE;
 
-        // Check if messaging is enabled.
-        if (empty($CFG->messaging)) {
-            throw new moodle_exception('disabled', 'message');
-        }
-
         // Warnings array, it can be empty at the end but is mandatory.
         $warnings = array();
 
