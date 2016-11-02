@@ -524,6 +524,14 @@ class grade_item extends grade_object {
      * @return bool Locked state
      */
     public function is_locked($userid=NULL) {
+        global $CFG;
+
+        // Override for any grade items belonging to activities which are in the process of being deleted.
+        require_once($CFG->dirroot . '/course/lib.php');
+        if (course_module_instance_pending_deletion($this->courseid, $this->itemmodule, $this->iteminstance)) {
+            return true;
+        }
+
         if (!empty($this->locked)) {
             return true;
         }
@@ -1393,7 +1401,12 @@ class grade_item extends grade_object {
     public function get_name($fulltotal=false) {
         if (strval($this->itemname) !== '') {
             // MDL-10557
-            return format_string($this->itemname);
+
+            // Make it obvious to users if the course module to which this grade item relates, is currently being removed.
+            $deletionpending = course_module_instance_pending_deletion($this->courseid, $this->itemmodule, $this->iteminstance);
+            $deletionnotice = get_string('gradesmoduledeletionprefix', 'grades');
+            
+            return $deletionpending ? format_string($deletionnotice . ' ' . $this->itemname) : format_string($this->itemname);
 
         } else if ($this->is_course_item()) {
             return get_string('coursetotal', 'grades');

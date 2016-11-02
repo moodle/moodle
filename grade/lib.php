@@ -970,6 +970,13 @@ function print_grade_page_head($courseid, $active_type, $active_plugin=null,
                                $user = null) {
     global $CFG, $OUTPUT, $PAGE;
 
+    // Put a warning on all gradebook pages if the course has modules currently scheduled for background deletion.
+    require_once($CFG->dirroot . '/course/lib.php');
+    if (course_modules_pending_deletion($courseid)) {
+        \core\notification::add(get_string('gradesmoduledeletionpendingwarning', 'grades'),
+            \core\output\notification::NOTIFY_WARNING);
+    }
+
     if ($active_type === 'preferences') {
         // In Moodle 2.8 report preferences were moved under 'settings'. Allow backward compatibility for 3rd party grade reports.
         $active_type = 'settings';
