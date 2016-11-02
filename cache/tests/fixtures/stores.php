@@ -106,11 +106,24 @@ abstract class cachestore_tests extends advanced_testcase {
         $this->assertTrue($instance->set('test1', 'test1'));
         $this->assertTrue($instance->set('test2', 'test2'));
         $this->assertTrue($instance->set('test3', '3'));
+        $this->assertTrue($instance->set('other3', '3'));
 
         // Test get with a string.
         $this->assertSame('test1', $instance->get('test1'));
         $this->assertSame('test2', $instance->get('test2'));
         $this->assertSame('3', $instance->get('test3'));
+
+        // Test find and find with prefix if this class implements the searchable interface.
+        if ($instance->is_searchable()) {
+            // Extra settings here ignore the return order of the array.
+            $this->assertEquals(['test3', 'test1', 'test2', 'other3'], $instance->find_all(), '', 0, 1, true);
+
+            // Extra settings here ignore the return order of the array.
+            $this->assertEquals(['test2', 'test1', 'test3'], $instance->find_by_prefix('test'), '', 0, 1, true);
+            $this->assertEquals(['test2'], $instance->find_by_prefix('test2'));
+            $this->assertEquals(['other3'], $instance->find_by_prefix('other'));
+            $this->assertEquals([], $instance->find_by_prefix('nothere'));
+        }
 
         // Test set with an int.
         $this->assertTrue($instance->set('test1', 1));

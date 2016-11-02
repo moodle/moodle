@@ -1744,7 +1744,7 @@ class core_plugin_manager {
             ),
 
             'cachestore' => array(
-                'file', 'memcache', 'memcached', 'mongodb', 'session', 'static', 'apcu'
+                'file', 'memcache', 'memcached', 'mongodb', 'session', 'static', 'apcu', 'redis'
             ),
 
             'calendartype' => array(
