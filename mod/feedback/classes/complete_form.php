@@ -111,7 +111,6 @@ class mod_feedback_complete_form extends moodleform {
                     array('class' => 'form-submit'));
             $buttonarray[] = &$mform->createElement('submit', 'savevalues', get_string('save_entries', 'feedback'),
                     array('class' => 'form-submit'));
-            $buttonarray[] = &$mform->createElement('static', 'buttonsseparator', '', '<br>');
             $buttonarray[] = &$mform->createElement('cancel');
             $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
             $mform->closeHeaderBefore('buttonar');
