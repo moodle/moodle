@@ -288,6 +288,10 @@ class cachestore_memcached_test extends cachestore_tests {
 
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_memcached', 'phpunit_test');
         $cachestore = $this->create_test_cache_with_config($definition, array('isshared' => true));
+        if (!$cachestore->is_connection_ready()) {
+            $this->markTestSkipped('Could not test cachestore_memcached. Connection is not ready.');
+        }
+
         $connection = new Memcached(crc32(__METHOD__));
         $connection->addServers($this->get_servers(TEST_CACHESTORE_MEMCACHED_TESTSERVERS));
         $connection->setOptions(array(
