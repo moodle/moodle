@@ -160,7 +160,6 @@ class core_message_messagelib_testcase extends advanced_testcase {
         // Noreply user being valid user.
         core_user::reset_internal_users();
         $CFG->noreplyuserid = $user3->id;
-        $noreplyuser = core_user::get_noreply_user();
         list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts();
         $this->assertCount(0, $onlinecontacts);
         $this->assertCount(1, $offlinecontacts);

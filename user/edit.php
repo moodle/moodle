@@ -258,17 +258,20 @@ if ($usernew = $userform->get_data()) {
         $tempuser = $DB->get_record('user', array('id' => $user->id), '*', MUST_EXIST);
         $tempuser->email = $usernew->preference_newemail;
 
+        $supportuser = core_user::get_support_user();
+
         $a = new stdClass();
         $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;
         $a->site = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
         $a->fullname = fullname($tempuser, true);
+        $a->supportemail = $supportuser->email;
 
         $emailupdatemessage = get_string('emailupdatemessage', 'auth', $a);
         $emailupdatetitle = get_string('emailupdatetitle', 'auth', $a);
 
         // Email confirmation directly rather than using messaging so they will definitely get an email.
-        $supportuser = core_user::get_support_user();
-        if (!$mailresults = email_to_user($tempuser, $supportuser, $emailupdatetitle, $emailupdatemessage)) {
+        $noreplyuser = core_user::get_noreply_user();
+        if (!$mailresults = email_to_user($tempuser, $noreplyuser, $emailupdatetitle, $emailupdatemessage)) {
             die("could not send email!");
         }
     }

@@ -520,6 +520,21 @@ define('COURSE_DISPLAY_MULTIPAGE', 1);
  */
 define('AUTH_PASSWORD_NOT_CACHED', 'not cached');
 
+/**
+ * Email from header to never include via information.
+ */
+define('EMAIL_VIA_NEVER', 0);
+
+/**
+ * Email from header to always include via information.
+ */
+define('EMAIL_VIA_ALWAYS', 1);
+
+/**
+ * Email from header to only include via information if the address is no-reply.
+ */
+define('EMAIL_VIA_NO_REPLY_ONLY', 2);
+
 // PARAMETER HANDLING.
 
 /**
@@ -5739,35 +5754,58 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     $temprecipients = array();
     $tempreplyto = array();
 
-    $supportuser = core_user::get_support_user();
+    // Make sure that we fall back onto some reasonable no-reply address.
+    $noreplyaddress = empty($CFG->noreplyaddress) ? 'noreply@' . get_host_from_url($CFG->wwwroot) : $CFG->noreplyaddress;
 
     // Make up an email address for handling bounces.
     if (!empty($CFG->handlebounces)) {
         $modargs = 'B'.base64_encode(pack('V', $user->id)).substr(md5($user->email), 0, 16);
         $mail->Sender = generate_email_processing_address(0, $modargs);
     } else {
-        $mail->Sender = $supportuser->email;
+        $mail->Sender = $noreplyaddress;
     }
 
-    if (!empty($CFG->emailonlyfromnoreplyaddress)) {
+    $alloweddomains = null;
+    if (!empty($CFG->allowedemaildomains)) {
+        $alloweddomains = explode(PHP_EOL, $CFG->allowedemaildomains);
+    }
+
+    // Email will be sent using no reply address.
+    if (empty($alloweddomains)) {
         $usetrueaddress = false;
-        if (empty($replyto) && $from->maildisplay) {
-            $replyto = $from->email;
-            $replytoname = fullname($from);
-        }
     }
 
     if (is_string($from)) { // So we can pass whatever we want if there is need.
-        $mail->From     = $CFG->noreplyaddress;
+        $mail->From     = $noreplyaddress;
         $mail->FromName = $from;
-    } else if ($usetrueaddress and $from->maildisplay) {
-        $mail->From     = $from->email;
-        $mail->FromName = fullname($from);
-    } else {
-        $mail->From     = $CFG->noreplyaddress;
-        $mail->FromName = fullname($from);
+    // Check if using the true address is true, and the email is in the list of allowed domains for sending email,
+    // and that the senders email setting is either displayed to everyone, or display to only other users that are enrolled
+    // in a course with the sender.
+    } else if ($usetrueaddress && can_send_from_real_email_address($from, $user, $alloweddomains)) {
+        $mail->From = $from->email;
+        $fromdetails = new stdClass();
+        $fromdetails->name = fullname($from);
+        $fromdetails->url = $CFG->wwwroot;
+        $fromstring = $fromdetails->name;
+        if ($CFG->emailfromvia == EMAIL_VIA_ALWAYS) {
+            $fromstring = get_string('emailvia', 'core', $fromdetails);
+        }
+        $mail->FromName = $fromstring;
         if (empty($replyto)) {
-            $tempreplyto[] = array($CFG->noreplyaddress, get_string('noreplyname'));
+            $tempreplyto[] = array($from->email, fullname($from));
+        }
+    } else {
+        $mail->From = $noreplyaddress;
+        $fromdetails = new stdClass();
+        $fromdetails->name = fullname($from);
+        $fromdetails->url = $CFG->wwwroot;
+        $fromstring = $fromdetails->name;
+        if ($CFG->emailfromvia != EMAIL_VIA_NEVER) {
+            $fromstring = get_string('emailvia', 'core', $fromdetails);
+        }
+        $mail->FromName = $fromstring;
+        if (empty($replyto)) {
+            $tempreplyto[] = array($noreplyaddress, get_string('noreplyname'));
         }
     }
 
@@ -5965,6 +6003,27 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         }
         return false;
     }
+}
+
+/**
+ * Check to see if a user's real email address should be used for the "From" field.
+ *
+ * @param  object $from The user object for the user we are sending the email from.
+ * @param  object $user The user object that we are sending the email to.
+ * @param  array $alloweddomains An array of allowed domains that we can send email from.
+ * @return bool Returns true if we can use the from user's email adress in the "From" field.
+ */
+function can_send_from_real_email_address($from, $user, $alloweddomains) {
+    // Email is in the list of allowed domains for sending email,
+    // and the senders email setting is either displayed to everyone, or display to only other users that are enrolled
+    // in a course with the sender.
+    if (\core\ip_utils::is_domain_in_allowed_list(substr($from->email, strpos($from->email, '@') + 1), $alloweddomains)
+                && ($from->maildisplay == core_user::MAILDISPLAY_EVERYONE
+                || ($from->maildisplay == core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY
+                && enrol_get_shared_courses($user, $from, false, true)))) {
+        return true;
+    }
+    return false;
 }
 
 /**

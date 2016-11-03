@@ -213,6 +213,60 @@ $ADMIN->add('server', $temp);
 $ADMIN->add('server', new admin_externalpage('adminregistration', new lang_string('hubs', 'admin'),
     "$CFG->wwwroot/$CFG->admin/registration/index.php"));
 
+// E-mail settings.
+$ADMIN->add('server', new admin_category('email', new lang_string('categoryemail', 'admin')));
+
+$temp = new admin_settingpage('outgoingmailconfig', new lang_string('outgoingmailconfig', 'admin'));
+
+$temp->add(new admin_setting_heading('smtpheading', new lang_string('smtp', 'admin'),
+            new lang_string('smtpdetail', 'admin')));
+$temp->add(new admin_setting_configtext('smtphosts', new lang_string('smtphosts', 'admin'),
+            new lang_string('configsmtphosts', 'admin'), '', PARAM_RAW));
+$options = array('' => new lang_string('none', 'admin'), 'ssl' => 'SSL', 'tls' => 'TLS');
+$temp->add(new admin_setting_configselect('smtpsecure', new lang_string('smtpsecure', 'admin'),
+            new lang_string('configsmtpsecure', 'admin'), '', $options));
+$authtypeoptions = array('LOGIN' => 'LOGIN', 'PLAIN' => 'PLAIN', 'NTLM' => 'NTLM', 'CRAM-MD5' => 'CRAM-MD5');
+$temp->add(new admin_setting_configselect('smtpauthtype', new lang_string('smtpauthtype', 'admin'),
+            new lang_string('configsmtpauthtype', 'admin'), 'LOGIN', $authtypeoptions));
+$temp->add(new admin_setting_configtext('smtpuser', new lang_string('smtpuser', 'admin'),
+            new lang_string('configsmtpuser', 'admin'), '', PARAM_NOTAGS));
+$temp->add(new admin_setting_configpasswordunmask('smtppass', new lang_string('smtppass', 'admin'),
+            new lang_string('configsmtpuser', 'admin'), ''));
+$temp->add(new admin_setting_configtext('smtpmaxbulk', new lang_string('smtpmaxbulk', 'admin'),
+           new lang_string('configsmtpmaxbulk', 'admin'), 1, PARAM_INT));
+$temp->add(new admin_setting_heading('noreplydomainheading', new lang_string('noreplydomain', 'admin'),
+        new lang_string('noreplydomaindetail', 'admin')));
+$temp->add(new admin_setting_configtext('noreplyaddress', new lang_string('noreplyaddress', 'admin'),
+          new lang_string('confignoreplyaddress', 'admin'), 'noreply@' . get_host_from_url($CFG->wwwroot), PARAM_NOTAGS));
+$temp->add(new admin_setting_configtextarea('allowedemaildomains',
+        new lang_string('allowedemaildomains', 'admin'),
+        new lang_string('configallowedemaildomains', 'admin'),
+        ''));
+$temp->add(new admin_setting_heading('emaildoesnotfit', new lang_string('doesnotfit', 'admin'),
+        new lang_string('doesnotfitdetail', 'admin')));
+$charsets = get_list_of_charsets();
+unset($charsets['UTF-8']); // Not needed here.
+$options = array();
+$options['0'] = 'UTF-8';
+$options = array_merge($options, $charsets);
+$temp->add(new admin_setting_configselect('sitemailcharset', new lang_string('sitemailcharset', 'admin'),
+          new lang_string('configsitemailcharset','admin'), '0', $options));
+$temp->add(new admin_setting_configcheckbox('allowusermailcharset', new lang_string('allowusermailcharset', 'admin'),
+          new lang_string('configallowusermailcharset', 'admin'), 0));
+$temp->add(new admin_setting_configcheckbox('allowattachments', new lang_string('allowattachments', 'admin'),
+          new lang_string('configallowattachments', 'admin'), 1));
+$options = array('LF' => 'LF', 'CRLF' => 'CRLF');
+$temp->add(new admin_setting_configselect('mailnewline', new lang_string('mailnewline', 'admin'),
+          new lang_string('configmailnewline', 'admin'), 'LF', $options));
+
+$choices = array(new lang_string('never', 'admin'),
+                 new lang_string('always', 'admin'),
+                 new lang_string('onlynoreply', 'admin'));
+$temp->add(new admin_setting_configselect('emailfromvia', new lang_string('emailfromvia', 'admin'),
+          new lang_string('configemailfromvia', 'admin'), 1, $choices));
+
+$ADMIN->add('email', $temp);
+
 // "update notifications" settingpage
 if (empty($CFG->disableupdatenotifications)) {
     $temp = new admin_settingpage('updatenotifications', new lang_string('updatenotifications', 'core_admin'));

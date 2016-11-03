@@ -29,9 +29,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('forum_displaymode', get_string('displaymode', 'forum'),
                        get_string('configdisplaymode', 'forum'), FORUM_MODE_NESTED, forum_get_layout_modes()));
 
-    $settings->add(new admin_setting_configcheckbox('forum_replytouser', get_string('replytouser', 'forum'),
-                       get_string('configreplytouser', 'forum'), 1));
-
     // Less non-HTML characters than this is short
     $settings->add(new admin_setting_configtext('forum_shortpost', get_string('shortpost', 'forum'),
                        get_string('configshortpost', 'forum'), 300, PARAM_INT));
