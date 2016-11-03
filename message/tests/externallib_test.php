@@ -2625,4 +2625,59 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertNotEmpty($result['systemconfigured']);
         $this->assertNotEmpty($result['userconfigured']);
     }
+
+    /**
+     * Test get_user_notification_preferences
+     */
+    public function test_get_user_message_preferences() {
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Set a couple of preferences to test.
+        set_user_preference('message_provider_moodle_instantmessage_loggedin', 'email', $user);
+        set_user_preference('message_provider_moodle_instantmessage_loggedoff', 'email', $user);
+        set_user_preference('message_blocknoncontacts', 1, $user);
+
+        $prefs = core_message_external::get_user_message_preferences();
+        $prefs = external_api::clean_returnvalue(core_message_external::get_user_message_preferences_returns(), $prefs);
+        $this->assertEquals($user->id, $prefs['preferences']['userid']);
+
+        // Check components.
+        $this->assertCount(1, $prefs['preferences']['components']);
+        $this->assertTrue($prefs['blocknoncontacts']);
+
+        // Check some preferences that we previously set.
+        $found = false;
+        foreach ($prefs['preferences']['components'] as $component) {
+            foreach ($component['notifications'] as $prefdata) {
+                if ($prefdata['preferencekey'] != 'message_provider_moodle_instantmessage') {
+                    continue;
+                }
+                foreach ($prefdata['processors'] as $processor) {
+                    if ($processor['name'] == 'email') {
+                        $this->assertTrue($processor['loggedin']['checked']);
+                        $this->assertTrue($processor['loggedoff']['checked']);
+                        $found = true;
+                    }
+                }
+            }
+        }
+        $this->assertTrue($found);
+    }
+
+    /**
+     * Test get_user_message_preferences permissions
+     */
+    public function test_get_user_message_preferences_permissions() {
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+        $otheruser = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $this->expectException('moodle_exception');
+        $prefs = core_message_external::get_user_message_preferences($otheruser->id);
+    }
 }
