@@ -59,7 +59,7 @@ class mod_data_export_form extends moodleform {
         $mform->addElement('header', 'notice', get_string('chooseexportfields', 'data'));
         foreach($this->_datafields as $field) {
             if($field->text_export_supported()) {
-                $mform->addElement('advcheckbox', 'field_'.$field->field->id, '<div title="' . s($field->field->description) . '">' . $field->field->name . '</div>', ' (' . $field->name() . ')', array('group'=>1));
+                $mform->addElement('advcheckbox', 'field_'.$field->field->id, '<div title="' . s($field->field->description) . '" class="d-inline-block">' . $field->field->name . '</div>', ' (' . $field->name() . ')', array('group'=>1));
                 $mform->setDefault('field_'.$field->field->id, 1);
             } else {
                 $a = new stdClass();

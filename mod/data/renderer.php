@@ -40,7 +40,7 @@ class mod_data_renderer extends plugin_renderer_base {
             foreach ($newfields as $nid => $newfield) {
                 $row = array();
                 $row[0] = html_writer::tag('label', $newfield->name, array('for'=>'id_'.$newfield->name));
-                $row[1] = html_writer::start_tag('select', array('name'=>'field_'.$nid, 'id'=>'id_'.$newfield->name));
+                $row[1] = html_writer::start_tag('select', array('name'=>'field_'.$nid, 'id'=>'id_'.$newfield->name, 'class' => 'custom-select'));
 
                 $selected = false;
                 foreach ($currentfields as $cid => $currentfield) {
@@ -72,9 +72,9 @@ class mod_data_renderer extends plugin_renderer_base {
 
         $html .= html_writer::start_tag('div', array('class'=>'overwritesettings'));
         $html .= html_writer::tag('label', get_string('overwritesettings', 'data'), array('for'=>'overwritesettings'));
-        $html .= html_writer::empty_tag('input', array('type'=>'checkbox', 'name'=>'overwritesettings', 'id'=>'overwritesettings'));
+        $html .= html_writer::empty_tag('input', array('type'=>'checkbox', 'name'=>'overwritesettings', 'id'=>'overwritesettings', 'class'=>'m-l-1'));
         $html .= html_writer::end_tag('div');
-        $html .= html_writer::empty_tag('input', array('type'=>'submit', 'class'=>'button', 'value'=>$strcontinue));
+        $html .= html_writer::empty_tag('input', array('type'=>'submit', 'class'=>'btn btn-primary', 'value'=>$strcontinue));
 
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('form');
