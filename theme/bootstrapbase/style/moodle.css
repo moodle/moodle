@@ -14704,15 +14704,9 @@ canvas {
 div#dock {
   display: none;
 }
-.path-mod-choice .horizontal .choices {
-  margin: 0;
-}
-.path-mod-choice .horizontal .choices .option {
-  display: inline-block;
-  padding: 10px;
-}
-.path-mod-choice .results .data {
-  white-space: normal;
+.path-mod-choice .media-left {
+  float: left;
+  padding-right: 1em;
 }
 .path-mod-lesson .firstpageoptions {
   margin: auto;

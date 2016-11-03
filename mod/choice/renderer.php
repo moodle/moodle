@@ -44,7 +44,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $disabled = empty($options['previewonly']) ? array() : array('disabled' => 'disabled');
 
         $html = html_writer::start_tag('form', $attributes);
-        $html .= html_writer::start_tag('ul', array('class'=>'choices' ));
+        $html .= html_writer::start_tag('ul', array('class'=>'choices list-unstyled unstyled' ));
 
         $availableoption = count($options['options']);
         $choicecount = 0;
@@ -59,6 +59,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 $option->attributes->type = 'radio';
             }
             $option->attributes->id = 'choice_'.$choicecount;
+            $option->attributes->class = 'm-x-1';
 
             $labeltext = $option->text;
             if (!empty($option->attributes->disabled)) {
@@ -83,7 +84,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                     $html .= html_writer::tag('label', get_string('choicefull', 'choice'));
                 } else {
                     $html .= html_writer::empty_tag('input',
-                            array('type' => 'submit', 'value' => get_string('savemychoice', 'choice'), 'class' => 'button'));
+                            array('type' => 'submit', 'value' => get_string('savemychoice', 'choice'), 'class' => 'btn btn-primary'));
                 }
 
                 if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
@@ -147,7 +148,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->cellpadding = 0;
         $table->cellspacing = 0;
-        $table->attributes['class'] = 'results names ';
+        $table->attributes['class'] = 'results names table table-bordered';
         $table->tablealign = 'center';
         $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
         $table->data = array();
@@ -223,6 +224,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                         }
 
                         $userfullname = fullname($user, $choices->fullnamecapability);
+                        $mediabody = '';
                         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
                             $checkboxid = 'attempt-user'.$user->id.'-option'.$optionid;
                             $attemptaction = html_writer::label($userfullname . ' ' . $optionsnames[$optionid],
@@ -234,16 +236,17 @@ class mod_choice_renderer extends plugin_renderer_base {
                                 $attemptaction .= html_writer::checkbox('userid[]', $user->id, '', null,
                                     array('id' => $checkboxid));
                             }
-                            $data .= html_writer::tag('div', $attemptaction, array('class'=>'attemptaction'));
+                            $mediabody .= html_writer::tag('div', $attemptaction, array('class'=>'media-left p-t-1'));
                         }
                         $userimage = $this->output->user_picture($user, array('courseid'=>$choices->courseid));
-                        $data .= html_writer::tag('div', $userimage, array('class'=>'image'));
+                        $mediabody .= html_writer::tag('div', $userimage, array('class'=>'media-left'));
 
-                        $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course'=>$choices->courseid));
-                        $name = html_writer::tag('a', $userfullname, array('href'=>$userlink, 'class'=>'username'));
-                        $data .= html_writer::tag('div', $name, array('class'=>'fullname'));
-                        $data .= html_writer::tag('div','', array('class'=>'clearfloat'));
-                        $optionusers .= html_writer::tag('div', $data, array('class'=>'user'));
+                        $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course' => $choices->courseid));
+                        $name = html_writer::tag('a', $userfullname, array('href' => $userlink));
+                        $mediabody .= html_writer::tag('div', $name, array('class' => 'media-body'));
+                        $data .= html_writer::tag('div', $mediabody, array('class' => 'media m-b-1'));
+
+                        $optionusers .= $data;
                     }
                     $cell->text = $optionusers;
                 }
