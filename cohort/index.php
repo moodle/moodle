@@ -103,7 +103,7 @@ if ($editcontrols = cohort_edit_controls($context, $baseurl)) {
 }
 
 // Add search form.
-$search  = html_writer::start_tag('form', array('id'=>'searchcohortquery', 'method'=>'get', 'class' => 'form-inline'));
+$search  = html_writer::start_tag('form', array('id'=>'searchcohortquery', 'method'=>'get', 'class' => 'form-inline search-cohort'));
 $search .= html_writer::start_div('m-b-1');
 $search .= html_writer::label(get_string('searchcohort', 'cohort'), 'cohort_search_q', true,
         array('class' => 'm-r-1')); // No : in form labels!

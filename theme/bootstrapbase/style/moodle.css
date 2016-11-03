@@ -15818,6 +15818,20 @@ input[type="submit"],
 input[type="reset"] {
   margin: 0 0 10px 5px;
 }
+form.search-cohort input[type="text"],
+form.search-cohort input[type="submit"],
+form.search-cohort label {
+  margin-top: 14px !important;
+  /* stylelint-disable-line declaration-no-important */
+}
+form.search-cohort label {
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+form.search-cohort input[type="submit"] {
+  margin-bottom: 0;
+  margin-left: 0;
+}
 button.yui3-button.closebutton {
   background-position: 0 0;
 }
