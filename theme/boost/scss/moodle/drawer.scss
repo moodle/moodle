@@ -30,7 +30,7 @@ $drawer-bg: $gray-lighter !default;
     padding: $drawer-padding-x $drawer-padding-y;
     width: $drawer-width;
     top: $fixed-header-y;
-    height: 100%;
+    height: calc(100% - #{$navbar-height});
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     z-index: $zindex-dropdown - 1;
