@@ -288,6 +288,47 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         // The term Totara doesn't appear anywhere in the badges.
         $result = badges_get_user_badges($user2->id, 0, 0, 0, 'Totara');
         $this->assertCount(0, $result);
+
+        // Issue a user with a course badge and verify its returned based on if
+        // coursebadges are enabled or disabled.
+        $sitebadgeid = key($badges);
+        $badges[$sitebadgeid]->issue($this->user->id, true);
+
+        $badge = new stdClass();
+        $badge->id = null;
+        $badge->name = "Test course badge";
+        $badge->description = "Testing course badge";
+        $badge->timecreated = $now;
+        $badge->timemodified = $now;
+        $badge->usercreated = $user1->id;
+        $badge->usermodified = $user1->id;
+        $badge->issuername = "Test issuer";
+        $badge->issuerurl = "http://issuer-url.domain.co.nz";
+        $badge->issuercontact = "issuer@example.com";
+        $badge->expiredate = null;
+        $badge->expireperiod = null;
+        $badge->type = BADGE_TYPE_COURSE;
+        $badge->courseid = $this->course->id;
+        $badge->messagesubject = "Test message subject for course badge";
+        $badge->message = "Test message body for course badge";
+        $badge->attachment = 1;
+        $badge->notification = 0;
+        $badge->status = BADGE_STATUS_ACTIVE;
+
+        $badgeid = $DB->insert_record('badge', $badge, true);
+        $badges[$badgeid] = new badge($badgeid);
+        $badges[$badgeid]->issue($this->user->id, true);
+
+        // With coursebadges off, we should only get the site badge.
+        set_config('badges_allowcoursebadges', false);
+        $result = badges_get_user_badges($this->user->id);
+        $this->assertCount(1, $result);
+
+        // With it on, we should get both.
+        set_config('badges_allowcoursebadges', true);
+        $result = badges_get_user_badges($this->user->id);
+        $this->assertCount(2, $result);
+
     }
 
     public function data_for_message_from_template() {
