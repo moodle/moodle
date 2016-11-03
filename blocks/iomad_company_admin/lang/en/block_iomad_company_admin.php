@@ -78,6 +78,13 @@ $string['companyprofileshortname'] = 'Short name (must be unique)';
 $string['companysearchfields'] = 'Company search fields';
 $string['companyshortname'] = 'Short Name';
 $string['companyshortnametaken'] = 'Short name is already used for another company ({$a})';
+$string['company_templates_for'] = 'Company learning plan templates for {$a}';
+$string['companytemplates'] = 'Assign learning plan templates to company';
+$string['currcompanytemplates'] = 'Assigned templates';
+$string['currcompanytemplatesmatching'] = 'Assigned templates matching \'{$a}\'';
+$string['currentcompany'] = 'Your company is \'{$a}\'';
+$string['company_competency_framework_form_title'] = 'Manage company competency framewrorks';
+$string['company_competency_template_form_title'] = 'Manage company learning plan templates';
 $string['companyuser'] = 'Company user';
 $string['company_user_form_title'] = 'Assign users to company';
 $string['companyusers'] = 'Company users';
@@ -239,6 +246,12 @@ $string['newuser'] = 'New user';
 $string['nocompanies'] = 'There are no companies - please add a company first';
 $string['nocompaniesfound'] = 'There are no companies which match your criteria';
 $string['nocompany'] = 'Unallocated courses';
+<<<<<<< HEAD
+=======
+$string['nocompanyframeworks'] = 'Unallocated competency frameworks';
+$string['nocompanyselected'] = 'No company is selected. Please make a selection above';
+$string['nocompanytemplates'] = 'Unallocated competency templates';
+>>>>>>> 3a70267... Select company if only one. Do not display main menu items if no company selected - Closes #387.  Show user company if only one - closes #395. Add some padding and margin if no company select box - closes #396
 $string['nocourses'] = 'There are no courses.';
 $string['licensecount'] = 'Licenses allocated:';
 $string['licenseerrors'] = 'Licenses not allocated:';

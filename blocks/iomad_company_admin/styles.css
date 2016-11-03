@@ -70,3 +70,48 @@ padding-bottom: 15px;
 width: 50%;
 border-radius: 10px;
 }
+.iomad_company_selector .singleselect {
+    float: left;
+}
+
+.companyselect {
+    padding-bottom: 10px;
+    margin-bottom: 3px;
+}
+
+.companyselect .singlebutton {
+    float: right;
+    position: relative;
+    top: -30px;
+    left: 4px;
+}
+
+.block_iomad_company_admin .nav-tabs {
+    clear:both;
+    position: relative;
+    top: -30px;
+}
+
+.fitem .singleselect label {
+    font-weight: normal;
+    float: left;
+    width: 25%;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: right;
+}
+
+.fitem .singleselect select {
+    position: relative;
+    float: left;
+    width: 75%;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+    left: 0.6%;
+}
+
+.iomadclear {
+    clear:both;
+}
