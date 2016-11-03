@@ -3639,6 +3639,24 @@ class flat_navigation_node extends navigation_node {
     }
 
     /**
+     * In flat navigation - sections are active if we are looking at activities in the section.
+     * @return boolean
+     */
+    public function isactive() {
+        global $PAGE;
+
+        if ($this->is_section()) {
+            $active = $PAGE->navigation->find_active_node();
+            while ($active = $active->parent) {
+                if ($active->key == $this->key && $active->type == $this->type) {
+                    return true;
+                }
+            }
+        }
+        return $this->isactive;
+    }
+
+    /**
      * Getter for "showdivider"
      * @return boolean
      */
