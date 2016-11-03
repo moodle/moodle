@@ -56,22 +56,27 @@ require_login(0, false);
 core_user::require_active_user($USER);
 
 // Get an existing token or create a new one.
+$timenow = time();
 $token = external_generate_token_for_current_user($service);
+$privatetoken = $token->privatetoken;
+external_log_token_request($token);
 
-// Log token access.
-$DB->set_field('external_tokens', 'lastaccess', time(), array('id' => $token->id));
+// Invalidate the private token if external_generate_token_for_current_user did not create a new token.
+if ($token->timecreated < $timenow) {
+    $privatetoken = null;
+}
 
-$params = array(
-    'objectid' => $token->id,
-);
-$event = \core\event\webservice_token_sent::create($params);
-$event->add_record_snapshot('external_tokens', $token);
-$event->trigger();
+$siteadmin = has_capability('moodle/site:config', context_system::instance(), $USER->id);
 
 // Passport is generated in the mobile app, so the app opening can be validated using that variable.
 // Passports are valid only one time, it's deleted in the app once used.
 $siteid = md5($CFG->wwwroot . $passport);
-$apptoken = base64_encode($siteid . ':::' . $token->token);
+$apptoken = $siteid . ':::' . $token->token;
+if ($privatetoken and is_https() and !$siteadmin) {
+    $apptoken .= ':::' . $privatetoken;
+}
+
+$apptoken = base64_encode($apptoken);
 
 // Redirect using the custom URL scheme checking first if a URL scheme is forced in the site settings.
 $forcedurlscheme = get_config('tool_mobile', 'forcedurlscheme');
