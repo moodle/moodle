@@ -7,7 +7,8 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
 
-$PAGE->set_context(context_system::instance());
+$context = context_system::instance();
+$PAGE->set_context($context);
 
 admin_externalpage_setup('search', '', array('query' => $query)); // now hidden page
 
@@ -19,6 +20,7 @@ $focus = '';
 
 // now we'll deal with the case that the admin has submitted the form with changed settings
 if ($data = data_submitted() and confirm_sesskey()) {
+    require_capability('moodle/site:config', $context);
     if (admin_write_settings($data)) {
         redirect($PAGE->url, get_string('changessaved'), null, \core\output\notification::NOTIFY_SUCCESS);
     }
@@ -45,14 +47,20 @@ if ($errormsg !== '') {
     echo $OUTPUT->notification($statusmsg, 'notifysuccess');
 }
 
-require_once("admin_settings_search_form.php");
-$form = new admin_settings_search_form();
-$form->display();
-echo '<hr>';
+$showsettingslinks = true;
 
-if ($query) {
-    echo admin_search_settings_html($query);
-} else {
+if (has_capability('moodle/site:config', $context)) {
+    require_once("admin_settings_search_form.php");
+    $form = new admin_settings_search_form();
+    $form->display();
+    echo '<hr>';
+    if ($query) {
+        echo admin_search_settings_html($query);
+        $showsettingslinks = false;
+    }
+}
+
+if ($showsettingslinks) {
     $node = $PAGE->settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN);
     if ($node) {
         echo $OUTPUT->render_from_template('core/settings_link_page', ['node' => $node]);
