@@ -1,3 +1,18 @@
+{{!
+    @template theme_boost/block
+
+    Example context (json):
+    {
+        "id": "block0",
+        "showskiplink": true,
+        "type": "html",
+        "ariarole": "complementary",
+        "title": "Test block",
+        "blockinstanceid": 1,
+        "content": "<p>Hello block world!</p>"
+    }
+
+}}
 {{! Block Skip Link }}
 {{#showskiplink}}
   <a href="#sb-{{skipid}}" class="sr-only sr-only-focusable">{{#str}}skipa, access, {{title}}{{/str}}</a>
