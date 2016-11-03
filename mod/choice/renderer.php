@@ -44,7 +44,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $disabled = empty($options['previewonly']) ? array() : array('disabled' => 'disabled');
 
         $html = html_writer::start_tag('form', $attributes);
-        $html .= html_writer::start_tag('ul', array('class'=>'choices list-unstyled unstyled' ));
+        $html .= html_writer::start_tag('ul', array('class' => 'choices list-unstyled unstyled'));
 
         $availableoption = count($options['options']);
         $choicecount = 0;
@@ -83,8 +83,11 @@ class mod_choice_renderer extends plugin_renderer_base {
                 if ($availableoption < 1) {
                     $html .= html_writer::tag('label', get_string('choicefull', 'choice'));
                 } else {
-                    $html .= html_writer::empty_tag('input',
-                            array('type' => 'submit', 'value' => get_string('savemychoice', 'choice'), 'class' => 'btn btn-primary'));
+                    $html .= html_writer::empty_tag('input', array(
+                        'type' => 'submit',
+                        'value' => get_string('savemychoice', 'choice'),
+                        'class' => 'btn btn-primary'
+                    ));
                 }
 
                 if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
@@ -238,8 +241,8 @@ class mod_choice_renderer extends plugin_renderer_base {
                             }
                             $mediabody .= html_writer::tag('div', $attemptaction, array('class'=>'media-left p-t-1'));
                         }
-                        $userimage = $this->output->user_picture($user, array('courseid'=>$choices->courseid));
-                        $mediabody .= html_writer::tag('div', $userimage, array('class'=>'media-left'));
+                        $userimage = $this->output->user_picture($user, array('courseid' => $choices->courseid));
+                        $mediabody .= html_writer::tag('div', $userimage, array('class' => 'media-left'));
 
                         $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course' => $choices->courseid));
                         $name = html_writer::tag('a', $userfullname, array('href' => $userlink));

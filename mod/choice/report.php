@@ -257,19 +257,19 @@
         $options["id"] = "$cm->id";
         $options["download"] = "ods";
         $button =  $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadods"));
-        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption list-inline-item'));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
 
         $options["download"] = "xls";
         $button = $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadexcel"));
-        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption list-inline-item'));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
 
         $options["download"] = "txt";
         $button = $OUTPUT->single_button(new moodle_url("report.php", $options), get_string("downloadtext"));
-        $downloadoptions[] = html_writer::tag('li', $button, array('class'=>'reportoption list-inline-item'));
+        $downloadoptions[] = html_writer::tag('li', $button, array('class' => 'reportoption list-inline-item'));
 
         $downloadlist = html_writer::tag('ul', implode('', $downloadoptions), array('class' => 'list-inline inline'));
-        $downloadlist .= html_writer::tag('div', '', array('class'=>'clearfloat'));
-        echo html_writer::tag('div',$downloadlist, array('class'=>'downloadreport m-t-1'));
+        $downloadlist .= html_writer::tag('div', '', array('class' => 'clearfloat'));
+        echo html_writer::tag('div',$downloadlist, array('class' => 'downloadreport m-t-1'));
     }
     echo $OUTPUT->footer();
 
