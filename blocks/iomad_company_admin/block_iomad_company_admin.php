@@ -59,6 +59,12 @@ class block_iomad_company_admin extends block_base {
         $this->content = new stdClass();
         $this->content->text = $this->company_selector();
 
+        // If no selected company no point showing tabs.
+        if (!iomad::get_my_companyid(context_system::instance(), false)) {
+            $this->content->text .= '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_company_admin') . '</div>';
+            return $this->content;
+        }
+
         // Build tabs.
         $tabs = array();
         if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $context)) {
@@ -243,9 +249,15 @@ class block_iomad_company_admin extends block_base {
         global $USER, $CFG, $DB, $OUTPUT, $SESSION;
 
         // Only display if you have the correct capability, or you are not in more than one company.
+        // Just display name of current company if no choice. 
         if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
             if ($DB->count_records('company_users', array('userid' => $USER->id)) <= 1 ) {
-                return;
+                $companyuser = $DB->get_record('company_users', array('userid' => $USER->id), '*', MUST_EXIST);
+                $company = $DB->get_record('company', array('id' => $companyuser->companyid), '*', MUST_EXIST);
+                $html = $OUTPUT->container_start(array('companyselect', 'clearfix'));
+                $html .= '<div class="alert alert-info">' . get_string('currentcompany', 'block_iomad_company_admin', $company->name) . '</div>';
+                $html .= $OUTPUT->container_end();
+                return $html;
             }
         }
 

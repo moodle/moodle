@@ -39,6 +39,12 @@ class block_iomad_reports extends block_base {
         $this->content = new stdClass();
         $this->content->text = '<h3>'.get_string('pluginname', 'block_iomad_reports')."</h3>\n";
 
+        // If no selected company then no report options to be shown.
+        if (!iomad::get_my_companyid(context_system::instance(), false)) {
+            $this->content->text .= '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_reports') . '</div>';
+            return $this->content;
+        }
+
         // Get all local/report_*.
         $reports = $this->getreportpaths();
 

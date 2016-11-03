@@ -46,6 +46,14 @@ if (!$companycount = $DB->count_records('company')) {
                              array('createnew' => 1)));
 }
 
+// If there is only one company, make that the current one
+if ($companycount == 1) {
+     $companies = $DB->get_records('company');
+     $firstcompany = reset($companies);
+     $SESSION->currenteditingcompany = $firstcompany->id;
+     $company = $firstcompany->id;
+}
+
 // Page setup stuff.
 // The page layout for my moodle does the job here
 // as it allows blocks in the centre column.

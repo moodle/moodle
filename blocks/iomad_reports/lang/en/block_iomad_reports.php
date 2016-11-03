@@ -18,4 +18,5 @@ $string['iomad_reports:addinstance'] = 'Add a new Iomad Reports block';
 $string['iomad_reports:myaddinstance'] = 'Add a new Iomad Reports block to the users dashboard';
 $string['iomad_reports:view'] = 'Access to Iomad Reports';
 $string['link'] = 'Go to Iomad Dashboard';
+$string['nocompanyselected'] = 'No company is selected';
 $string['pluginname'] = 'Iomad Reports';

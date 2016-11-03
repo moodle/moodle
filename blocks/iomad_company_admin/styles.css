@@ -76,6 +76,11 @@ border-radius: 10px;
     float: left;
 }
 
+.companyselect {
+    padding-bottom: 10px;
+    margin-bottom: 3px;
+}
+
 .companyselect .singlebutton {
     float: right;
     position: relative;
