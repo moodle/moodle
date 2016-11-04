@@ -163,9 +163,9 @@
 {{#js}}
 // Initialise the JS.
 require(['tool_lp/planactions'],
-        function(actionsMod) {
+        function(ActionsMod) {
 
-    var planActions = new actionsMod('plans');
+    var planActions = new ActionsMod('plans');
     planActions.enhanceMenubar('.planactions');
 });
 
