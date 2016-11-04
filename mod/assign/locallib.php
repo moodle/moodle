@@ -91,7 +91,7 @@ class assign {
     /** @var stdClass the assignment record that contains the global settings for this assign instance */
     private $instance;
 
-    /** @var stdClass the grade_item record for this assign instance's primary grade item. */
+    /** @var grade_item the grade_item record for this assign instance's primary grade item. */
     private $gradeitem;
 
     /** @var context the context of the course module for this assign instance
@@ -1245,7 +1245,7 @@ class assign {
     /**
      * Get the primary grade item for this assign instance.
      *
-     * @return stdClass The grade_item record
+     * @return grade_item The grade_item record
      */
     public function get_grade_item() {
         if ($this->gradeitem) {
