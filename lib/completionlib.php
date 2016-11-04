@@ -1063,7 +1063,7 @@ class completion_info {
         $modinfo = get_fast_modinfo($this->course);
         $result = array();
         foreach ($modinfo->get_cms() as $cm) {
-            if ($cm->completion != COMPLETION_TRACKING_NONE) {
+            if ($cm->completion != COMPLETION_TRACKING_NONE && !$cm->deletioninprogress) {
                 $result[$cm->id] = $cm;
             }
         }
