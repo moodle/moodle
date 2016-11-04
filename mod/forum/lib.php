@@ -7426,15 +7426,6 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
                 continue;
             }
 
-            // Check whether the requested user is enrolled or has access to view the course
-            // if they don't we immediately have a problem.
-            if (!can_access_course($course, $user) && !is_enrolled($coursecontext, $user)) {
-                if ($musthaveaccess) {
-                    print_error('notenrolled', 'forum');
-                }
-                continue;
-            }
-
             // If groups are in use and enforced throughout the course then make sure
             // we can meet in at least one course level group.
             // Note that we check if either the current user or the requested user have
