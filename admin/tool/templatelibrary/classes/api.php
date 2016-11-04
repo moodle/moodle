@@ -47,7 +47,12 @@ class api {
      * @return array[string] Where each template is in the form "component/templatename".
      */
     public static function list_templates($component = '', $search = '', $themename = '') {
-        global $CFG;
+        global $CFG, $PAGE;
+
+        if (empty($themename)) {
+            $themename = $PAGE->theme->name;
+        }
+        $themeconfig = \theme_config::load($themename);
 
         $templatedirs = array();
         $results = array();
@@ -77,6 +82,9 @@ class api {
             foreach ($plugintypes as $type => $dir) {
                 $plugins = core_component::get_plugin_list_with_file($type, 'templates', false);
                 foreach ($plugins as $plugin => $dir) {
+                    if ($type == 'theme' && $plugin != $themename && !in_array($plugin, $themeconfig->parents)) {
+                        continue;
+                    }
                     if (!empty($dir) && is_dir($dir)) {
                         $pluginname = $type . '_' . $plugin;
                         $dirs = mustache_template_finder::get_template_directories_for_component($pluginname, $themename);
