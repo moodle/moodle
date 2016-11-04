@@ -59,7 +59,13 @@ class external extends external_api {
             VALUE_DEFAULT,
             ''
         );
-        $params = array('component' => $component, 'search' => $search);
+        $themename = new external_value(
+            PARAM_COMPONENT,
+            'The current theme',
+            VALUE_DEFAULT,
+            ''
+        );
+        $params = array('component' => $component, 'search' => $search, 'themename' => $themename);
         return new external_function_parameters($params);
     }
 
@@ -69,14 +75,15 @@ class external extends external_api {
      * @param string $search The search string.
      * @return array[string]
      */
-    public static function list_templates($component, $search) {
+    public static function list_templates($component, $search, $themename) {
         $params = self::validate_parameters(self::list_templates_parameters(),
                                             array(
                                                 'component' => $component,
                                                 'search' => $search,
+                                                'themename' => $themename,
                                             ));
 
-        return api::list_templates($component, $search);
+        return api::list_templates($component, $search, $themename);
     }
 
     /**
