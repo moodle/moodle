@@ -665,7 +665,7 @@ function get_scorm_objectives($scormid) {
     $params[] = $scormid;
     $params[] = "cmi.objectives%.id";
     $value = $DB->sql_compare_text('value');
-    $rs = $DB->get_recordset_select("scorm_scoes_track", $select, $params, $value, "DISTINCT $value, scoid");
+    $rs = $DB->get_recordset_select("scorm_scoes_track", $select, $params, 'value', "DISTINCT $value AS value, scoid");
     if ($rs->valid()) {
         foreach ($rs as $record) {
             $objectives[$record->scoid][] = $record->value;
