@@ -2322,7 +2322,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016110300.00);
     }
 
-    if ($oldversion < 2016110400.01) {
+    if ($oldversion < 2016110500.00) {
 
         $oldplayers = [
             'vimeo' => null,
@@ -2389,7 +2389,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Savepoint reached.
-        upgrade_main_savepoint(true, 2016110400.01);
+        upgrade_main_savepoint(true, 2016110500.00);
     }
 
     return true;
