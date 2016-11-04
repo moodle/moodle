@@ -119,7 +119,7 @@ class sync_members extends scheduled_task {
 
             // Now we check if we have to unenrol users who were not listed.
             if ($this->should_sync_unenrol($tool->membersyncmode)) {
-                $this->sync_unenrol($tool);
+                $unenrolcount = $this->sync_unenrol($tool);
             }
 
             mtrace("Completed - Synced members for tool '$tool->id' in the course '$tool->courseid'. " .
