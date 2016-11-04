@@ -161,6 +161,7 @@ class cache_factory {
         $factory->reset_cache_instances();
         $factory->configs = array();
         $factory->definitions = array();
+        $factory->definitionstores = array();
         $factory->lockplugins = array(); // MUST be null in order to force its regeneration.
         // Reset the state to uninitialised.
         $factory->state = self::STATE_UNINITIALISED;
