@@ -2322,5 +2322,75 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016110300.00);
     }
 
+    if ($oldversion < 2016110400.01) {
+
+        $oldplayers = [
+            'vimeo' => null,
+            'mp3' => ['.mp3'],
+            'html5video' => ['.mov', '.mp4', '.m4v', '.mpeg', '.mpe', '.mpg', '.ogv', '.webm'],
+            'flv' => ['.flv', '.f4v'],
+            'html5audio' => ['.aac', '.flac', '.mp3', '.m4a', '.oga', '.ogg', '.wav'],
+            'youtube' => null,
+            'swf' => null,
+        ];
+
+        // Convert hardcoded media players to the settings of the new media player plugin type.
+        if (get_config('core', 'media_plugins_sortorder') === false) {
+            $enabledplugins = [];
+            $videoextensions = [];
+            $audioextensions = [];
+            foreach ($oldplayers as $oldplayer => $extensions) {
+                $settingname = 'core_media_enable_'.$oldplayer;
+                if (!empty($CFG->$settingname)) {
+                    if ($extensions) {
+                        // VideoJS will be used for all media files players that were used previously.
+                        $enabledplugins['videojs'] = 'videojs';
+                        if ($oldplayer === 'mp3' || $oldplayer === 'html5audio') {
+                            $audioextensions += array_combine($extensions, $extensions);
+                        } else {
+                            $videoextensions += array_combine($extensions, $extensions);
+                        }
+                    } else {
+                        // Enable youtube, vimeo and swf.
+                        $enabledplugins[$oldplayer] = $oldplayer;
+                    }
+                }
+            }
+
+            set_config('media_plugins_sortorder', join(',', $enabledplugins));
+
+            // Configure VideoJS to match the existing players set up.
+            if ($enabledplugins['videojs']) {
+                $enabledplugins[] = 'videojs';
+                set_config('audioextensions', join(',', $audioextensions), 'media_videojs');
+                set_config('videoextensions', join(',', $videoextensions), 'media_videojs');
+                $useflash = !empty($CFG->core_media_enable_flv) || !empty($CFG->core_media_enable_mp3);
+                set_config('useflash', $useflash, 'media_videojs');
+                if (empty($CFG->core_media_enable_youtube)) {
+                    // Normally YouTube is enabled in videojs, but if youtube converter was disabled before upgrade
+                    // disable it in videojs as well.
+                    set_config('youtube', false, 'media_videojs');
+                }
+            }
+        }
+
+        // Unset old settings.
+        foreach ($oldplayers as $oldplayer => $extensions) {
+            unset_config('core_media_enable_' . $oldplayer);
+        }
+
+        // Preset defaults if CORE_MEDIA_VIDEO_WIDTH and CORE_MEDIA_VIDEO_HEIGHT are specified in config.php .
+        // After this upgrade step these constants will not be used any more.
+        if (defined('CORE_MEDIA_VIDEO_WIDTH')) {
+            set_config('media_default_width', CORE_MEDIA_VIDEO_WIDTH);
+        }
+        if (defined('CORE_MEDIA_VIDEO_HEIGHT')) {
+            set_config('media_default_height', CORE_MEDIA_VIDEO_HEIGHT);
+        }
+
+        // Savepoint reached.
+        upgrade_main_savepoint(true, 2016110400.01);
+    }
+
     return true;
 }

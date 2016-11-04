@@ -1815,6 +1815,10 @@ class core_plugin_manager {
                 'memberships', 'profile', 'toolproxy', 'toolsettings'
             ),
 
+            'media' => array(
+                'html5audio', 'html5video', 'swf', 'videojs', 'vimeo', 'youtube'
+            ),
+
             'message' => array(
                 'airnotifier', 'email', 'jabber', 'popup'
             ),

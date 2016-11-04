@@ -71,13 +71,6 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>flowplayer</location>
-    <name>Flowplayer</name>
-    <license>GPL</license>
-    <version>3.2.18</version>
-    <licenseversion>3.0+</licenseversion>
-  </library>
-  <library>
     <location>pear/Auth/RADIUS.php</location>
     <name>Pear_Auth_Radius</name>
     <license>BSD</license>

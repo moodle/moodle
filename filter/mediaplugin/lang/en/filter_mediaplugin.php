@@ -25,4 +25,5 @@
 $string['fallbackaudio'] = 'Audio link';
 $string['fallbackvideo'] = 'Video link';
 $string['filtername'] = 'Multimedia plugins';
-
+$string['linktomedia'] = 'Multimedia plugins filter engages the existing media players to convert links to media files into embedded objects. '.
+    ' It can also enhance &lt;video&gt; and &lt;audio&gt; tags with selected video and audio players.<br><a href="{$a}">Manage media players</a>';

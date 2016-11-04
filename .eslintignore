@@ -24,7 +24,6 @@ lib/htmlpurifier/
 lib/jabber/
 lib/minify/matthiasmullie-minify/
 lib/minify/matthiasmullie-pathconverter/
-lib/flowplayer/
 lib/pear/Auth/RADIUS.php
 lib/pear/Crypt/CHAP.php
 lib/pear/HTML/Common.php
@@ -57,6 +56,8 @@ lib/amd/src/chartjs-lazy.js
 lib/maxmind/GeoIp2/
 lib/maxmind/MaxMind/
 lib/ltiprovider/
+media/player/videojs/amd/src/
+media/player/videojs/videojs/
 mod/assign/feedback/editpdf/fpdi/
 repository/s3/S3.php
 theme/boost/scss/bootstrap/
