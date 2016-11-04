@@ -95,13 +95,13 @@ class data_field_checkbox extends data_field_base {
 
         $str = '';
         $found = false;
+        $marginclass = ['class' => 'm-r-1'];
         foreach (explode("\n",$this->field->param1) as $checkbox) {
             $checkbox = trim($checkbox);
-
             if (in_array($checkbox, $content)) {
-                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), true, $checkbox, array('class' => 'm-r-1'));
+                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), true, $checkbox, $marginclass);
             } else {
-                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), false, $checkbox, array('class' => 'm-r-1'));
+                $str .= html_writer::checkbox('f_'.$this->field->id.'[]', s($checkbox), false, $checkbox, $marginclass);
             }
             $str .= html_writer::empty_tag('br');
             $found = true;
@@ -110,7 +110,8 @@ class data_field_checkbox extends data_field_base {
             return '';
         }
 
-        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired, get_string('selectedrequired', 'data'), array('class' => 'm-r-1'));
+        $requiredstr = get_string('selectedrequired', 'data');
+        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired, $requiredstr, $marginclass);
         return $str;
     }
 

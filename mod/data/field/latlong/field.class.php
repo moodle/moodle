@@ -62,20 +62,27 @@ class data_field_latlong extends data_field_base {
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<table class="form-inline"><tr><td align="right">';
-        $str .= '<label for="field_'.$this->field->id.'_0" class="mod-data-input form-control-static">' . get_string('latitude', 'data');
+        $classes = 'mod-data-input form-control-static';
+        $str .= '<label for="field_'.$this->field->id.'_0" class="' . $classes . '">' . get_string('latitude', 'data');
         if ($this->field->required) {
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
         }
-        $str .= '</label></td><td><input class="form-control m-x-1" type="text" name="field_'.$this->field->id.'_0" id="field_'.$this->field->id.'_0" value="';
+        $classes = 'form-control m-x-1';
+        $str .= '</label></td><td>';
+        $str .= '<input class="' . $classes . '" type="text" name="field_'.$this->field->id.'_0" ';
+        $str .= ' id="field_'.$this->field->id.'_0" value="';
         $str .= s($lat).'" size="10" />°N</td></tr>';
-        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1" class="mod-data-input form-control-static">';
+        $classes = 'mod-data-input form-control-static';
+        $str .= '<tr><td align="right"><label for="field_'.$this->field->id.'_1" class="' . $classes . '">';
         $str .= get_string('longitude', 'data');
         if ($this->field->required) {
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
         }
-        $str .= '</label></td><td><input class="form-control m-x-1" type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="';
+        $classes = 'form-control m-x-1';
+        $str .= '</label></td><td><input class="' . $classes . '" type="text" ';
+        $str .= 'name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="';
         $str .= s($long).'" size="10" />°E</td>';
         $str .= '</tr>';
         $str .= '</table>';
@@ -103,8 +110,10 @@ class data_field_latlong extends data_field_base {
         }
         $latlongsrs->close();
 
-        $return = html_writer::label(get_string('latlong', 'data'), 'menuf_'.$this->field->id, false, array('class' => 'accesshide'));
-        $return .= html_writer::select($options, 'f_'.$this->field->id, $value, null, array('class' => 'custom-select'));
+        $classes = array('class' => 'accesshide');
+        $return = html_writer::label(get_string('latlong', 'data'), 'menuf_'.$this->field->id, false, $classes);
+        $classes = array('class' => 'custom-select');
+        $return .= html_writer::select($options, 'f_'.$this->field->id, $value, null, $classes);
        return $return;
     }
 
@@ -185,7 +194,8 @@ class data_field_latlong extends data_field_base {
                 }
                 // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
                 //   which allows the "Go" button to refer to the drop-down selector.
-                $str .= "\n</select><input type='button' class='btn m-l-1 btn-secondary' value='" . get_string('go') . "' onclick='if(previousSibling.value){self.location=previousSibling.value}'/>";
+                $str .= '\n</select><input type="button" class="btn m-l-1 btn-secondary" value="' . get_string('go');
+                $str .= '" onclick="if(previousSibling.value){self.location=previousSibling.value}"/>';
                 $str .= '</form>';
             } else {
                 $str = "$compasslat, $compasslong";

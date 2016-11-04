@@ -308,8 +308,9 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
             $str .= html_writer::div($image, 'inline-req');
         }
-        $str .= '</label><input class="basefieldinput form-control d-inline mod-data-input" type="text" name="field_'.$this->field->id.'"';
-        $str .= ' id="field_' . $this->field->id . '" value="'.s($content).'" />';
+        $str .= '</label><input class="basefieldinput form-control d-inline mod-data-input" ' .
+                'type="text" name="field_' . $this->field->id . '" ' .
+                'id="field_' . $this->field->id . '" value="' . s($content) . '" />';
         $str .= '</div>';
 
         return $str;
@@ -1663,7 +1664,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '<label for="pref_perpage">'.get_string('pagesize','data').'</label> ';
     $pagesizes = array(2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10=>10,15=>15,
                        20=>20,30=>30,40=>40,50=>50,100=>100,200=>200,300=>300,400=>400,500=>500,1000=>1000);
-    echo html_writer::select($pagesizes, 'perpage', $perpage, false, array('id'=>'pref_perpage', 'class' => 'custom-select'));
+    echo html_writer::select($pagesizes, 'perpage', $perpage, false, array('id' => 'pref_perpage', 'class' => 'custom-select'));
 
     if ($advanced) {
         $regsearchclass = 'search_none';
@@ -1673,7 +1674,8 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $advancedsearchclass = 'search_none';
     }
     echo '<div id="reg_search" class="' . $regsearchclass . ' form-inline" >&nbsp;&nbsp;&nbsp;';
-    echo '<label for="pref_search">'.get_string('search').'</label> <input type="text" class="form-control" size="16" name="search" id= "pref_search" value="'.s($search).'" /></div>';
+    echo '<label for="pref_search">' . get_string('search') . '</label> <input type="text" ' .
+         'class="form-control" size="16" name="search" id= "pref_search" value="' . s($search) . '" /></div>';
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     // foreach field, print the option
     echo '<select name="sort" id="pref_sortby" class="custom-select m-r-1">';
@@ -1729,8 +1731,10 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $PAGE->requires->js('/mod/data/data.js');
     echo '&nbsp;<input type="hidden" name="advanced" value="0" />';
     echo '&nbsp;<input type="hidden" name="filter" value="1" />';
-    echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" class="m-x-1" /><label for="advancedcheckbox">'.get_string('advancedsearch', 'data').'</label>';
-    echo '&nbsp;<input type="submit" class="btn btn-secondary" value="'.get_string('savesettings','data').'" />';
+    echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" ' . $checked . ' ' .
+         'onchange="showHideAdvSearch(this.checked);" class="m-x-1" />' .
+         '<label for="advancedcheckbox">' . get_string('advancedsearch', 'data') . '</label>';
+    echo '&nbsp;<input type="submit" class="btn btn-secondary" value="' . get_string('savesettings', 'data') . '" />';
 
     echo '<br />';
     echo '<div class="' . $advancedsearchclass . '" id="data_adv_form">';
@@ -1781,9 +1785,11 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $fn = !empty($search_array[DATA_FIRSTNAME]->data) ? $search_array[DATA_FIRSTNAME]->data : '';
     $ln = !empty($search_array[DATA_LASTNAME]->data) ? $search_array[DATA_LASTNAME]->data : '';
     $patterns[]    = '/##firstname##/';
-    $replacement[] = '<label class="accesshide" for="u_fn">'.get_string('authorfirstname', 'data').'</label><input type="text" class="form-control" size="16" id="u_fn" name="u_fn" value="'.s($fn).'" />';
+    $replacement[] = '<label class="accesshide" for="u_fn">' . get_string('authorfirstname', 'data') . '</label>' .
+                     '<input type="text" class="form-control" size="16" id="u_fn" name="u_fn" value="' . s($fn) . '" />';
     $patterns[]    = '/##lastname##/';
-    $replacement[] = '<label class="accesshide" for="u_ln">'.get_string('authorlastname', 'data').'</label><input type="text" class="form-control" size="16" id="u_ln" name="u_ln" value="'.s($ln).'" />';
+    $replacement[] = '<label class="accesshide" for="u_ln">' . get_string('authorlastname', 'data') . '</label>' .
+                     '<input type="text" class="form-control" size="16" id="u_ln" name="u_ln" value="' . s($ln) . '" />';
 
     // actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
@@ -1795,7 +1801,10 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo format_text($newtext, FORMAT_HTML, $options);
     echo '</td></tr>';
 
-    echo '<tr><td colspan="4"><br/><input type="submit" class="btn btn-primary m-r-1" value="'.get_string('savesettings','data').'" /><input type="submit" class="btn btn-secondary" name="resetadv" value="'.get_string('resetsettings','data').'" /></td></tr>';
+    echo '<tr><td colspan="4"><br/>' .
+         '<input type="submit" class="btn btn-primary m-r-1" value="' . get_string('savesettings', 'data') . '" />' .
+         '<input type="submit" class="btn btn-secondary" name="resetadv" value="' . get_string('resetsettings', 'data') . '" />' .
+         '</td></tr>';
     echo '</table>';
     echo '</div>';
     echo '</div>';
