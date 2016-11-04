@@ -111,6 +111,7 @@ class webservice {
 
         // setup user session to check capability
         \core\session\manager::set_user($user);
+        set_login_session_preferences();
 
         //assumes that if sid is set then there must be a valid associated session no matter the token type
         if ($token->sid) {
@@ -1001,6 +1002,7 @@ abstract class webservice_server implements webservice_server_interface {
         // now fake user login, the session is completely empty too
         enrol_check_plugins($user);
         \core\session\manager::set_user($user);
+        set_login_session_preferences();
         $this->userid = $user->id;
 
         if ($this->authmethod != WEBSERVICE_AUTHMETHOD_SESSION_TOKEN && !has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
