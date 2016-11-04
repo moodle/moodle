@@ -160,6 +160,7 @@ class core_course_external extends external_api {
             //retrieve sections
             $modinfo = get_fast_modinfo($course);
             $sections = $modinfo->get_section_info_all();
+            $coursenumsections = course_get_format($course)->get_course()->numsections;
 
             //for each sections (first displayed to last displayed)
             $modinfosections = $modinfo->get_sections();
@@ -201,6 +202,7 @@ class core_course_external extends external_api {
                         external_format_text($section->summary, $section->summaryformat,
                                 $context->id, 'course', 'section', $section->id, $options);
                 $sectionvalues['section'] = $section->section;
+                $sectionvalues['hiddenbynumsections'] = $section->section > $coursenumsections ? 1 : 0;
                 $sectioncontents = array();
 
                 //for each module of the section
@@ -329,6 +331,8 @@ class core_course_external extends external_api {
                     'summary' => new external_value(PARAM_RAW, 'Section description'),
                     'summaryformat' => new external_format_value('summary'),
                     'section' => new external_value(PARAM_INT, 'Section number inside the course', VALUE_OPTIONAL),
+                    'hiddenbynumsections' => new external_value(PARAM_INT, 'Whether is a section hidden in the course format',
+                                                                VALUE_OPTIONAL),
                     'modules' => new external_multiple_structure(
                             new external_single_structure(
                                 array(
