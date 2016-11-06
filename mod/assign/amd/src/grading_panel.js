@@ -28,10 +28,6 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
         'mod_assign/grading_events'],
        function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents) {
 
-    Y.use('moodle-core-formchangechecker', function(){
-        // moodle-core-formchangechecker is now available via M.core_formchangechecker
-    });
-
     /**
      * GradingPanel class.
      *
@@ -148,8 +144,10 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
                 { key: 'gradechangessaveddetail', component: 'mod_assign' },
             ]).done(function(strs) {
                 notification.alert(strs[0], strs[1]);
-                M.core_formchangechecker.reset_form_dirty_state();
             }).fail(notification.exception);
+            Y.use('moodle-core-formchangechecker', function() {
+                M.core_formchangechecker.reset_form_dirty_state();
+            });
             if (nextUserId == this._lastUserId) {
                 $(document).trigger('reset', nextUserId);
             } else {
