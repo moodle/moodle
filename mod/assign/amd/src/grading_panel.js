@@ -23,10 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
-define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
+define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragment',
         'core/ajax', 'core/str', 'mod_assign/grading_form_change_checker',
         'mod_assign/grading_events'],
-       function($, notification, templates, fragment, ajax, str, checker, GradingEvents) {
+       function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents) {
+
+    Y.use('moodle-core-formchangechecker', function(){
+        // moodle-core-formchangechecker is now available via M.core_formchangechecker
+    });
 
     /**
      * GradingPanel class.
@@ -144,6 +148,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
                 { key: 'gradechangessaveddetail', component: 'mod_assign' },
             ]).done(function(strs) {
                 notification.alert(strs[0], strs[1]);
+                M.core_formchangechecker.reset_form_dirty_state();
             }).fail(notification.exception);
             if (nextUserId == this._lastUserId) {
                 $(document).trigger('reset', nextUserId);
