@@ -19232,3 +19232,7 @@ input[type="reset"] .caret {
 .pull-xs-right {
   /* stylelint-disable-line no-empty-source */
 }
+.text-nowrap {
+  white-space: nowrap !important;
+  /* stylelint-disable-line declaration-no-important */
+}
