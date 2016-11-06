@@ -89,7 +89,7 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
         }
 
         // Copy data from notify students checkbox which was moved out of the form.
-        var checked = $('[data-region="grading-actions-form"] [name="sendstudentnotifications"]').val();
+        var checked = $('[data-region="grading-actions-form"] [name="sendstudentnotifications"]').prop("checked");
         $('.gradeform [name="sendstudentnotifications"]').val(checked);
     };
 
