@@ -1405,7 +1405,7 @@ class grade_item extends grade_object {
             // Make it obvious to users if the course module to which this grade item relates, is currently being removed.
             $deletionpending = course_module_instance_pending_deletion($this->courseid, $this->itemmodule, $this->iteminstance);
             $deletionnotice = get_string('gradesmoduledeletionprefix', 'grades');
-            
+
             return $deletionpending ? format_string($deletionnotice . ' ' . $this->itemname) : format_string($this->itemname);
 
         } else if ($this->is_course_item()) {

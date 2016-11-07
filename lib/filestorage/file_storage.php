@@ -2215,7 +2215,7 @@ class file_storage {
             mkdir($trashpath, $this->dirpermissions, true);
         }
         rename($contentfile, $trashfile);
-        
+
         // Fix permissions, only if needed.
         $currentperms = octdec(substr(decoct(fileperms($trashfile)), -4));
         if ((int)$this->filepermissions !== $currentperms) {
