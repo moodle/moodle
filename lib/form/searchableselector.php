@@ -44,12 +44,12 @@ class MoodleQuickForm_searchableselector extends MoodleQuickForm_autocomplete {
      *
      * @param string $elementname Element name
      * @param mixed $elementlabel Label(s) for an element
-     * @param array $choices List of valid choices for the select.
-     * @param array $options List of valid options for the select.
+     * @param array $options List of valid options for the select
+     * @param array $attributes List of HTML attributes for the select
      */
-    public function __construct($elementname = null, $elementlabel = null, $choices = array(), $options = array()) {
-        $choices = array_merge(['' => get_string('noselection', 'form')], $choices);
-        parent::__construct($elementname, $elementlabel, $choices, $options);
+    public function __construct($elementname = null, $elementlabel = null, $options = [], $attributes = []) {
+        $options = array_merge(['' => get_string('noselection', 'form')], $options);
+        parent::__construct($elementname, $elementlabel, $options, $attributes);
     }
 
     /**
