@@ -33,7 +33,7 @@
      {{/arialabel}}>
 
     {{! Block contents }}
-    <div class="card-block content">
+    <div class="card-block">
 
         {{#hascontrols}}
             <div class="block-controls pull-xs-right">
@@ -43,12 +43,12 @@
 
         {{! Block header }}
         {{#title}}
-            <h3 id="instance-{{blockinstanceid}}-header" class="card-title">{{{title}}}</h3>
+            <h3 id="instance-{{blockinstanceid}}-header" class="card-title header">{{{title}}}</h3>
         {{/title}}
 
-        <div class="card-text">
+        <div class="card-text content">
             {{{content}}}
-            {{{footer}}}
+            <div class="footer">{{{footer}}}</div>
             {{{annotation}}}
         </div>
 
