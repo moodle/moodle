@@ -3379,4 +3379,288 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertFalse($updates->introfiles->updated);
         $this->assertFalse($updates->outcomes->updated);
     }
+
+    public function test_async_module_deletion_hook_implemented() {
+        // Async module deletion depends on the 'true' being returned by at least one plugin implementing the hook,
+        // 'course_module_adhoc_deletion_recommended'. In core, is implemented by the course recyclebin, which will only return
+        // true if the recyclebin plugin is enabled. To make sure async deletion occurs, this test force-enables the recyclebin.
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Ensure recyclebin is enabled.
+        set_config('coursebinenable', true, 'tool_recyclebin');
+
+        // Create course, module and context.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 5]);
+        $module = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $modcontext = context_module::instance($module->cmid);
+
+        // Verify context exists.
+        $this->assertInstanceOf('context_module', $modcontext);
+
+        // Check events generated on the course_delete_module call.
+        $sink = $this->redirectEvents();
+
+        // Try to delete the module using the async flag.
+        course_delete_module($module->cmid, true); // Try to delete the module asynchronously.
+
+        // Verify that no event has been generated yet.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertEmpty($event);
+
+        // Grab the record, in it's final state before hard deletion, for comparison with the event snapshot.
+        // We need to do this because the 'deletioninprogress' flag has changed from '0' to '1'.
+        $cm = $DB->get_record('course_modules', ['id' => $module->cmid], '*', MUST_EXIST);
+
+        // Verify the course_module is marked as 'deletioninprogress'.
+        $this->assertNotEquals($cm, false);
+        $this->assertEquals($cm->deletioninprogress, '1');
+
+        // Verify the context has not yet been removed.
+        $this->assertEquals($modcontext, context_module::instance($module->cmid, IGNORE_MISSING));
+
+        // Set up a sink to catch the 'course_module_deleted' event.
+        $sink = $this->redirectEvents();
+
+        // Now, run the adhoc task which performs the hard deletion.
+        phpunit_util::run_all_adhoc_tasks();
+
+        // Fetch and validate the event data.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertInstanceOf('\core\event\course_module_deleted', $event);
+        $this->assertEquals($module->cmid, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals('course_modules', $event->objecttable);
+        $this->assertEquals(null, $event->get_url());
+        $this->assertEquals($cm, $event->get_record_snapshot('course_modules', $module->cmid));
+
+        // Verify the context has been removed.
+        $this->assertFalse(context_module::instance($module->cmid, IGNORE_MISSING));
+
+        // Verify the course_module record has been deleted.
+        $cmcount = $DB->count_records('course_modules', ['id' => $module->cmid]);
+        $this->assertEmpty($cmcount);
+    }
+
+    public function test_async_module_deletion_hook_not_implemented() {
+        // Only proceed if we are sure that no plugin is going to advocate async removal of a module. I.e. no plugin returns
+        // 'true' from the 'course_module_adhoc_deletion_recommended' hook.
+        // In the case of core, only recyclebin implements this hook, and it will only return true if enabled, so disable it.
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        set_config('coursebinenable', false, 'tool_recyclebin');
+
+        // Non-core plugins might implement the 'course_module_adhoc_deletion_recommended' hook and spoil this test.
+        // If at least one plugin still returns true, then skip this test.
+        if ($pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    if ($pluginfunction()) {
+                        $this->markTestSkipped();
+                    }
+                }
+            }
+        }
+
+        // Create course, module and context.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 5]);
+        $module = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
+        $modcontext = context_module::instance($module->cmid);
+        $cm = $DB->get_record('course_modules', ['id' => $module->cmid], '*', MUST_EXIST);
+
+        // Verify context exists.
+        $this->assertInstanceOf('context_module', $modcontext);
+
+        // Check events generated on the course_delete_module call.
+        $sink = $this->redirectEvents();
+
+        // Try to delete the module using the async flag.
+        course_delete_module($module->cmid, true); // Try to delete the module asynchronously.
+
+        // Fetch and validate the event data.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertInstanceOf('\core\event\course_module_deleted', $event);
+        $this->assertEquals($module->cmid, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals('course_modules', $event->objecttable);
+        $this->assertEquals(null, $event->get_url());
+        $this->assertEquals($cm, $event->get_record_snapshot('course_modules', $module->cmid));
+
+        // Verify the context has been removed.
+        $this->assertFalse(context_module::instance($module->cmid, IGNORE_MISSING));
+
+        // Verify the course_module record has been deleted.
+        $cmcount = $DB->count_records('course_modules', ['id' => $module->cmid]);
+        $this->assertEmpty($cmcount);
+    }
+
+    public function test_async_section_deletion_hook_implemented() {
+        // Async section deletion (provided section contains modules), depends on the 'true' being returned by at least one plugin
+        // implementing the 'course_module_adhoc_deletion_recommended' hook. In core, is implemented by the course recyclebin,
+        // which will only return true if the plugin is enabled. To make sure async deletion occurs, this test enables recyclebin.
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Ensure recyclebin is enabled.
+        set_config('coursebinenable', true, 'tool_recyclebin');
+
+        // Create course, module and context.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['numsections' => 4, 'format' => 'topics'], ['createsections' => true]);
+        $assign0 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+        $assign1 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+        $assign2 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+        $assign3 = $generator->create_module('assign', ['course' => $course, 'section' => 0]);
+
+        // Delete empty section. No difference from normal, synchronous behaviour.
+        $this->assertTrue(course_delete_section($course, 4, false, true));
+        $this->assertEquals(3, course_get_format($course)->get_course()->numsections);
+
+        // Delete a module in section 2 (using async). Need to verify this doesn't generate two tasks when we delete
+        // the section in the next step.
+        course_delete_module($assign2->cmid, true);
+
+        // Confirm that the module is pending deletion in its current section.
+        $section = $DB->get_record('course_sections', ['course' => $course->id, 'section' => '2']); // For event comparison.
+        $this->assertEquals(true, $DB->record_exists('course_modules', ['id' => $assign2->cmid, 'deletioninprogress' => 1,
+                                                     'section' => $section->id]));
+
+        // Now, delete section 2.
+        $this->assertFalse(course_delete_section($course, 2, false, true)); // Non-empty section, no forcedelete, so no change.
+
+        $sink = $this->redirectEvents(); // To capture the event.
+        $this->assertTrue(course_delete_section($course, 2, true, true));
+
+        // Now, confirm that:
+        // a) the section's modules have been flagged for deletion and moved to section 0 and;
+        // b) the section has been deleted and;
+        // c) course_section_deleted event has been fired. The course_module_deleted events will only fire once they have been
+        // removed from section 0 via the adhoc task.
+
+        // Modules should have been flagged for deletion and moved to section 0.
+        $sectionid = $DB->get_field('course_sections', 'id', ['course' => $course->id, 'section' => 0]);
+        $this->assertEquals(3, $DB->count_records('course_modules', ['section' => $sectionid, 'deletioninprogress' => 1]));
+
+        // Confirm the section has been deleted.
+        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
+
+        // Check event fired.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertInstanceOf('\core\event\course_section_deleted', $event);
+        $this->assertEquals($section->id, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals(null, $event->get_url());
+        $this->assertEquals($section, $event->get_record_snapshot('course_sections', $section->id));
+
+        // Now, run the adhoc task to delete the modules from section 0.
+        $sink = $this->redirectEvents(); // To capture the events.
+        phpunit_util::run_all_adhoc_tasks();
+
+        // Confirm the modules have been deleted.
+        list($insql, $assignids) = $DB->get_in_or_equal([$assign0->cmid, $assign1->cmid, $assign2->cmid]);
+        $cmcount = $DB->count_records_select('course_modules', 'id ' . $insql,  $assignids);
+        $this->assertEmpty($cmcount);
+
+        // Confirm other modules in section 0 still remain.
+        $this->assertEquals(1, $DB->count_records('course_modules', ['id' => $assign3->cmid]));
+
+        // Confirm that events were generated for all 3 of the modules.
+        $events = $sink->get_events();
+        $sink->close();
+        $count = 0;
+        while (!empty($events)) {
+            $event = array_pop($events);
+            if (in_array($event->objectid, [$assign0->cmid, $assign1->cmid, $assign2->cmid])) {
+                $count++;
+            }
+        }
+        $this->assertEquals(3, $count);
+    }
+
+    public function test_async_section_deletion_hook_not_implemented() {
+        // If no plugins advocate async removal, then normal synchronous removal will take place.
+        // Only proceed if we are sure that no plugin is going to advocate async removal of a module. I.e. no plugin returns
+        // 'true' from the 'course_module_adhoc_deletion_recommended' hook.
+        // In the case of core, only recyclebin implements this hook, and it will only return true if enabled, so disable it.
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        set_config('coursebinenable', false, 'tool_recyclebin');
+
+        // Non-core plugins might implement the 'course_module_adhoc_deletion_recommended' hook and spoil this test.
+        // If at least one plugin still returns true, then skip this test.
+        if ($pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    if ($pluginfunction()) {
+                        $this->markTestSkipped();
+                    }
+                }
+            }
+        }
+
+        // Create course, module and context.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['numsections' => 4, 'format' => 'topics'], ['createsections' => true]);
+        $assign0 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+        $assign1 = $generator->create_module('assign', ['course' => $course, 'section' => 2]);
+
+        // Delete empty section. No difference from normal, synchronous behaviour.
+        $this->assertTrue(course_delete_section($course, 4, false, true));
+        $this->assertEquals(3, course_get_format($course)->get_course()->numsections);
+
+        // Delete section in the middle (2).
+        $section = $DB->get_record('course_sections', ['course' => $course->id, 'section' => '2']); // For event comparison.
+        $this->assertFalse(course_delete_section($course, 2, false, true)); // Non-empty section, no forcedelete, so no change.
+
+        $sink = $this->redirectEvents(); // To capture the event.
+        $this->assertTrue(course_delete_section($course, 2, true, true));
+
+        // Now, confirm that:
+        // a) The section's modules have deleted and;
+        // b) the section has been deleted and;
+        // c) course_section_deleted event has been fired and;
+        // d) course_module_deleted events have both been fired.
+
+        // Confirm modules have been deleted.
+        list($insql, $assignids) = $DB->get_in_or_equal([$assign0->cmid, $assign1->cmid]);
+        $cmcount = $DB->count_records_select('course_modules', 'id ' . $insql, $assignids);
+        $this->assertEmpty($cmcount);
+
+        // Confirm the section has been deleted.
+        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
+
+        // Confirm the course_section_deleted event has been generated.
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $this->assertInstanceOf('\core\event\course_section_deleted', $event);
+        $this->assertEquals($section->id, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals(null, $event->get_url());
+        $this->assertEquals($section, $event->get_record_snapshot('course_sections', $section->id));
+
+        // Confirm that the course_module_deleted events have both been generated.
+        $count = 0;
+        while (!empty($events)) {
+            $event = array_pop($events);
+            if (in_array($event->objectid, [$assign0->cmid, $assign1->cmid])) {
+                $count++;
+            }
+        }
+        $this->assertEquals(2, $count);
+    }
 }

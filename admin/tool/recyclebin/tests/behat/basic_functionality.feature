@@ -69,6 +69,7 @@ Feature: Basic recycle bin functionality
       | Assignment name | Test assign |
       | Description | Test |
     And I delete "Test assign" activity
+    And I run all adhoc tasks
     And I navigate to "Recycle bin" node in "Course administration"
     When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected item from the recycle bin?"
@@ -92,6 +93,7 @@ Feature: Basic recycle bin functionality
       | Description | Test 2 |
     And I delete "Test assign 1" activity
     And I delete "Test assign 2" activity
+    And I run all adhoc tasks
     And I navigate to "Recycle bin" node in "Course administration"
     And I should see "Test assign 1"
     And I should see "Test assign 2"

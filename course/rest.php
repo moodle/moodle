@@ -168,7 +168,7 @@ switch($requestmethod) {
         switch ($class) {
             case 'resource':
                 require_capability('moodle/course:manageactivities', $modcontext);
-                course_delete_module($cm->id);
+                course_delete_module($cm->id, true);
                 break;
         }
         break;

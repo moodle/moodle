@@ -50,7 +50,7 @@ if ($deletesection) {
     if (course_can_delete_section($course, $sectioninfo)) {
         $confirm = optional_param('confirm', false, PARAM_BOOL) && confirm_sesskey();
         if ($confirm) {
-            course_delete_section($course, $sectioninfo, true);
+            course_delete_section($course, $sectioninfo, true, true);
             $courseurl = course_get_url($course, 0, array('sr' => $sectionreturn));
             redirect($courseurl);
         } else {
