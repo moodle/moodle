@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @javascript
 Feature: Lesson user override
   In order to grant a student special access to a lesson
   As a teacher
@@ -43,6 +43,7 @@ Feature: Lesson user override
       | id_jumpto_1          | This page |
     And I press "Save page"
 
+  @javascript
   Scenario: Add, modify then delete a user override
     When I follow "Test lesson name"
     And I navigate to "User overrides" node in "Lesson administration"

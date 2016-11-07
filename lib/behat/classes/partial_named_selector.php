@@ -190,7 +190,7 @@ XPATH
         ,
              'passwordunmask' => <<<XPATH
 .//*[@data-passwordunmask='wrapper']
-    /descendant::input[@id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
+    /descendant::input[@id = %locator% or @id = //label[contains(normalize-space(string(.)), %locator%)]/@for]
 XPATH
         ],
     ];

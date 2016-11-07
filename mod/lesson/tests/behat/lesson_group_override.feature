@@ -288,6 +288,7 @@ Feature: Lesson user override
     Then I press "Continue"
     And I should see "Congratulations - end of lesson reached"
 
+  @javascript
   Scenario: Add both a user and group override and verify that both are applied correctly
     When I follow "Test lesson name"
     And I navigate to "Edit settings" node in "Lesson administration"

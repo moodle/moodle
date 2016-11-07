@@ -70,6 +70,7 @@ Feature: Lesson reset
     And I navigate to "Overview" node in "Lesson administration > Reports"
     Then I should see "No attempts have been made on this lesson"
 
+  @javascript
   Scenario: Use course reset to remove user overrides.
     When I follow "Test lesson name"
     And I navigate to "User overrides" node in "Lesson administration"
