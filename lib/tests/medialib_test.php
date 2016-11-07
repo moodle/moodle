@@ -217,7 +217,7 @@ class core_medialib_testcase extends advanced_testcase {
         $this->assertContains($link, $t);
 
         // Enable media players that can play the same media formats. (ie. test & html5audio for mp3 files, etc.)
-        \core\plugininfo\media::set_enabled_plugins('html5video,html5audio,test,swf');
+        \core\plugininfo\media::set_enabled_plugins('test,html5video,html5audio,swf');
         $manager = core_media_manager::instance();
 
         // Test media formats that can be played by 2 or more players.

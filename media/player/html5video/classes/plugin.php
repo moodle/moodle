@@ -93,7 +93,9 @@ document.getElementById('$id').addEventListener('click', function() {
 OET;
         }
 
-        $fallback = core_media_player::PLACEHOLDER;
+        // We don't want fallback to another player because list_supported_urls() is already smart.
+        // Otherwise we could end up with nested <video> tags. Fallback to link only.
+        $fallback = self::LINKPLACEHOLDER;
         return <<<OET
 <span class="mediaplugin mediaplugin_html5video">
 <video $idtag controls="true" $size preload="metadata" title="$title">

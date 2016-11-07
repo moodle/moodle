@@ -65,7 +65,9 @@ class media_html5audio_plugin extends core_media_player_native {
             $size = 'width="' . $width . '"';
         }
 
-        $fallback = core_media_player::PLACEHOLDER;
+        // We don't want fallback to another player because list_supported_urls() is already smart.
+        // Otherwise we could end up with nested <audio> tags. Fallback to link only.
+        $fallback = self::LINKPLACEHOLDER;
 
         return <<<OET
 <audio controls="true" $size class="mediaplugin mediaplugin_html5audio" preload="none" title="$title">
