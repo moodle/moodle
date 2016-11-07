@@ -1083,8 +1083,8 @@ class core_useragent {
     public static function supports_html5($extension) {
         $extension = strtolower($extension);
 
-        $supportedvideo = array('m4v', 'webm', 'ogv', 'mp4');
-        $supportedaudio = array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav', 'mov');
+        $supportedvideo = array('m4v', 'webm', 'ogv', 'mp4', 'mov');
+        $supportedaudio = array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav');
         // TODO MDL-56549 Flac will be supported in Firefox 51 in January 2017.
 
         // Basic extension support.
