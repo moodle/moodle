@@ -513,6 +513,8 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $data = new stdClass();
         $data->reset_assign_submissions = 1;
         $data->reset_gradebook_grades = 1;
+        $data->reset_assign_user_overrides = 1;
+        $data->reset_assign_group_overrides = 1;
         $data->courseid = $this->course->id;
         $data->timeshift = 24*60*60;
         $this->setUser($this->editingteachers[0]);

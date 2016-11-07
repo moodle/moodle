@@ -436,6 +436,12 @@
     font-style: normal;
 }
 
+.path-mod-assign [data-region="user-info"] em.nowrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .path-mod-assign [data-region="grading-actions-form"] label {
     display: inline-block;
 }
