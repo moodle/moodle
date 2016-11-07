@@ -24,7 +24,7 @@
     </div>
     <div class="name-container">
         <div class="name">
-            {{otheruserfullname}}
+            <button class="btn btn-link" data-action="view-contact-profile" data-userid="{{otheruserid}}">{{otheruserfullname}}</button>
         </div>
         <div class="status {{#isonline}}online{{/isonline}}">
             <span class="offline-text">{{#str}} offline, message {{/str}}</span>
