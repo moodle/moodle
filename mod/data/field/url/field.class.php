@@ -57,7 +57,7 @@ class data_field_url extends data_field_base {
             }
         }
 
-        $autolinkable = !empty($this->field->param1) and empty($this->field->param2);
+        $autolinkable = !empty($this->field->param1) && empty($this->field->param2);
 
         $str = '<div title="' . s($this->field->description) . '">';
 
