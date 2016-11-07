@@ -164,9 +164,6 @@ class quiz_override_form extends moodleform {
                 }
                 unset($users);
 
-                if (count($userchoices) == 0) {
-                    $userchoices[0] = get_string('none');
-                }
                 $mform->addElement('searchableselector', 'userid',
                         get_string('overrideuser', 'quiz'), $userchoices);
                 $mform->addRule('userid', get_string('required'), 'required', null, 'client');
