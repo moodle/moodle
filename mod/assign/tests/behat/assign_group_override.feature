@@ -54,7 +54,7 @@ Feature: Assign group override
       | duedate[minute]    | 00 |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
-    Then I click on "Edit" "link"
+    Then I click on "Edit" "link" in the "Group 1" "table_row"
     And I set the following fields to these values:
       | duedate[year] | 2030 |
     And I press "Save"
