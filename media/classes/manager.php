@@ -256,14 +256,15 @@ class core_media_manager {
             }
         }
 
-        if (empty($options[self::OPTION_FALLBACK_TO_BLANK]) || $out !== core_media_player::PLACEHOLDER) {
-            // Fallback to the link. Exception: in case of OPTION_FALLBACK_TO_BLANK and no other player matched do not fallback.
-            $text = $this->fallback_to_link($alternatives, $name, $options);
-            $out = str_replace(core_media_player::PLACEHOLDER, $text, $out);
+        if (!empty($options[self::OPTION_FALLBACK_TO_BLANK]) && $out === core_media_player::PLACEHOLDER) {
+            // In case of OPTION_FALLBACK_TO_BLANK and no player matched do not fallback to link, just return empty string.
+            return '';
         }
 
         // Remove 'fallback' slot from final version and return it.
-        $out = str_replace(core_media_player::PLACEHOLDER, '', $out);
+        $fallback = $this->fallback_to_link($alternatives, $name, $options);
+        $out = str_replace(core_media_player::PLACEHOLDER, $fallback, $out);
+        $out = str_replace(core_media_player::LINKPLACEHOLDER, $fallback, $out);
         if (!empty($options[self::OPTION_BLOCK]) && $out !== '') {
             $out = html_writer::tag('div', $out, array('class' => 'resourcecontent'));
         }
@@ -280,7 +281,7 @@ class core_media_manager {
      */
     protected function fallback_to_link($urls, $name, $options) {
         // If link is turned off, return empty.
-        if (!empty($options[core_media_manager::OPTION_NO_LINK])) {
+        if (!empty($options[self::OPTION_NO_LINK])) {
             return '';
         }
 
@@ -290,7 +291,7 @@ class core_media_manager {
             if (strval($name) !== '' && $output === '') {
                 $title = $name;
             } else {
-                $title = core_media_manager::instance()->get_filename($url);
+                $title = $this->get_filename($url);
             }
             $printlink = html_writer::link($url, $title, array('class' => 'mediafallbacklink'));
             if ($output) {

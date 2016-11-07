@@ -134,6 +134,49 @@ class media_videojs_testcase extends advanced_testcase {
     }
 
     /**
+     * Test that only supported URLs are listed as sources but all URLs are present in links fallbacks.
+     */
+    public function test_fallback() {
+
+        $urls = [
+            new moodle_url('http://example.org/1.rv'), // Not supported.
+            new moodle_url('http://example.org/2.webm'), // Supported.
+            new moodle_url('http://example.org/3.ogv'), // Supported.
+        ];
+
+        $manager = core_media_manager::instance();
+        $content = $manager->embed_alternatives($urls, '', 0, 0, []);
+
+        $this->assertRegExp('~mediaplugin_videojs~', $content);
+        $this->assertRegExp('~</video>~', $content);
+        // Title is taken from the name of the first supported file.
+        $this->assertRegExp('~title="2"~', $content);
+        // Only supported files are in <source>'s.
+        $this->assertNotRegExp('~<source src="http://example.org/1.rv"~', $content);
+        $this->assertRegExp('~<source src="http://example.org/2.webm"~', $content);
+        $this->assertRegExp('~<source src="http://example.org/3.ogv"~', $content);
+        // Links to all files are included.
+        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/1.rv">1.rv</a>~', $content);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/2.webm">2.webm</a>~', $content);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/3.ogv">3.ogv</a>~', $content);
+    }
+
+    /**
+     * Assert other players do not apply after videojs was applied.
+     */
+    public function test_prevent_other_players() {
+        \core\plugininfo\media::set_enabled_plugins('videojs,html5video');
+        $url = new moodle_url('http://example.org/some_filename.webm');
+        $text = html_writer::link($url, 'Apply one player only');
+        $content = format_text($text, FORMAT_HTML);
+
+        $this->assertRegExp('~mediaplugin_videojs~', $content);
+        $this->assertEquals(1, substr_count($content, '</video>'));
+        $this->assertNotRegExp('~mediaplugin_html5video~', $content);
+        $this->assertRegExp('~<a class="mediafallbacklink" href="http://example.org/some_filename.webm">Apply one player only</a>~', $content);
+    }
+
+    /**
      * Test that mediaplugin filter adds player code on top of <video> tags.
      *
      * filter_mediaplugin is enabled by default.

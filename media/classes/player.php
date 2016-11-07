@@ -54,6 +54,13 @@ abstract class core_media_player {
     const PLACEHOLDER = '<!--FALLBACK-->';
 
     /**
+     * Placeholder text used to indicate where the link fallback is placed.
+     * No other players will apply to it but it will be converted to the link in the
+     * end (unless prevented by OPTION_NO_LINK).
+     */
+    const LINKPLACEHOLDER = '<!--LINKFALLBACK-->';
+
+    /**
      * Generates code required to embed the player.
      *
      * The returned code contains a placeholder comment '<!--FALLBACK-->'
