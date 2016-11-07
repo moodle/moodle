@@ -124,16 +124,15 @@ class feedback_edit_create_template_form extends moodleform {
                                                      get_string('public', 'feedback'));
         }
 
-        // buttons
-        $elementgroup[] = $mform->createElement('submit',
-                                                 'create_template',
-                                                 get_string('save_as_new_template', 'feedback'));
 
         $mform->addGroup($elementgroup,
                          'elementgroup',
                          get_string('name', 'feedback'),
                          array(' '),
                          false);
+
+        // Buttons.
+        $mform->addElement('submit', 'create_template', get_string('save_as_new_template', 'feedback'));
 
         $mform->setType('templatename', PARAM_TEXT);
 

@@ -12,14 +12,14 @@
         {{/error}}
         {{{element.attributes}}} >
         {{#element.options}}
-        <option value="{{value}}" {{#selected}}selected{{/selected}} {{#disabled}}disabled{{/disabled}} {{{optionattributes}}}>{{text}}</option>
+        <option value="{{value}}" {{#selected}}selected{{/selected}} {{#disabled}}disabled{{/disabled}} {{{optionattributes}}}>{{{text}}}</option>
         {{/element.options}}
     </select>
         {{/element.frozen}}
         {{#element.frozen}}
             {{#element.options}}
                 {{#selected}}
-                    {{text}}
+                    {{{text}}}
                     {{^element.hardfrozen}}
                         <input type="hidden" name="{{element.name}}" value="{{value}}" id="{{element.id}}">
                     {{/element.hardfrozen}}
