@@ -1399,6 +1399,8 @@ class grade_item extends grade_object {
      * @return string name
      */
     public function get_name($fulltotal=false) {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
         if (strval($this->itemname) !== '') {
             // MDL-10557
 
