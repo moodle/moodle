@@ -82,6 +82,7 @@ foreach ($requests as $request) {
     } catch (Exception $e) {
         $jsonexception = get_exception_info($e);
         unset($jsonexception->a);
+        $jsonexception->backtrace = format_backtrace($jsonexception->backtrace, true);
         if (!debugging('', DEBUG_DEVELOPER)) {
             unset($jsonexception->debuginfo);
             unset($jsonexception->backtrace);
