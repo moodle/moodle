@@ -87,19 +87,9 @@ if (!empty($user)) {
     // Get an existing token or create a new one.
     $token = external_generate_token_for_current_user($service);
     $privatetoken = $token->privatetoken;
-    $token->privatetoken = null;
+    external_log_token_request($token);
 
-    // log token access
-    $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
-
-    $params = array(
-        'objectid' => $token->id,
-    );
-    $event = \core\event\webservice_token_sent::create($params);
-    $event->add_record_snapshot('external_tokens', $token);
-    $event->trigger();
-
-    $siteadmin = has_capability('moodle/site:config', $systemcontext, $USER->id) || is_siteadmin($USER->id);
+    $siteadmin = has_capability('moodle/site:config', $systemcontext, $USER->id);
 
     $usertoken = new stdClass;
     $usertoken->token = $token->token;
