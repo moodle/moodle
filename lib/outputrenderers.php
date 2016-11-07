@@ -2795,6 +2795,9 @@ EOD;
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             if (empty($_SERVER['HTTP_RANGE'])) {
                 @header($protocol . ' 404 Not Found');
+            } else if (core_useragent::check_safari_ios_version(602) && !empty($_SERVER['HTTP_X_PLAYBACK_SESSION_ID'])) {
+                // Coax iOS 10 into sending the session cookie.
+                @header($protocol . ' 403 Forbidden');
             } else {
                 // Must stop byteserving attempts somehow,
                 // this is weird but Chrome PDF viewer can be stopped only with 407!
