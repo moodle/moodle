@@ -108,6 +108,8 @@ abstract class core_media_player_native extends core_media_player {
     }
 
     public function get_supported_extensions() {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
         return file_get_typegroup('extension', ['html_video', 'html_audio']);
     }
 

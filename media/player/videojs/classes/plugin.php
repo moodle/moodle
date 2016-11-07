@@ -52,6 +52,9 @@ class media_videojs_plugin extends core_media_player_native {
      * @return string
      */
     public function embed($urls, $name, $width, $height, $options) {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
         $sources = array();
         $mediamanager = core_media_manager::instance();
         $datasetup = [];
@@ -157,7 +160,7 @@ class media_videojs_plugin extends core_media_player_native {
         } else {
             // Create <video> or <audio> tag with necessary attributes and all sources.
             $attributes += ['preload' => 'auto', 'controls' => 'true', 'title' => $title];
-            $text = html_writer::tag($isaudio ? 'audio' : 'video', $sources, $attributes);
+            $text = html_writer::tag($isaudio ? 'audio' : 'video', $sources . self::PLACEHOLDER, $attributes);
         }
 
         // Limit the width of the video if width is specified.
@@ -188,6 +191,8 @@ class media_videojs_plugin extends core_media_player_native {
     }
 
     public function get_supported_extensions() {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
         if ($this->extensions === null) {
             $filetypes = preg_split('/\s*,\s*/',
                 strtolower(trim(get_config('media_videojs', 'videoextensions') . ',' .

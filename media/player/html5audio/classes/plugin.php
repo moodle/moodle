@@ -76,6 +76,8 @@ OET;
     }
 
     public function get_supported_extensions() {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
         return file_get_typegroup('extension', 'html_audio');
     }
 

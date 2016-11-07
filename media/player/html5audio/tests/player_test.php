@@ -61,6 +61,9 @@ class media_html5audio_testcase extends advanced_testcase {
      * Test method get_supported_extensions()
      */
     public function test_supported_extensions() {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
         $nativeextensions = file_get_typegroup('extension', 'html_audio');
 
         // Make sure that the list of extensions from the setting is exactly the same as html_audio group.
