@@ -1213,4 +1213,3 @@ class assign_events_testcase extends mod_assign_base_testcase {
         $this->assertEventContextNotUsed($event);
     }
 }
-
