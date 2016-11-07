@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use moodle_url;
 
-require_once($CFG->dirroot . '/admin/renderer.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/renderer.php');
 
 /**
  * Admin renderer class.
