@@ -304,7 +304,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                                            && ($defaultvalues['width'] <= 100)) {
             $defaultvalues['width'] .= '%';
         }
-        if (isset($defaultvalues['width']) && (strpos($defaultvalues['height'], '%') === false)
+        if (isset($defaultvalues['height']) && (strpos($defaultvalues['height'], '%') === false)
                                            && ($defaultvalues['height'] <= 100)) {
             $defaultvalues['height'] .= '%';
         }
