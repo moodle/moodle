@@ -606,6 +606,7 @@ class core_renderer extends \core_renderer {
 
         if ($context->contextlevel == CONTEXT_MODULE) {
 
+            $this->page->navigation->initialise();
             $node = $this->page->navigation->find_active_node();
             $buildmenu = false;
             // If the settings menu has been forced then show the menu.

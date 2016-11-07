@@ -62,3 +62,9 @@ $blocks-plus-gutter: $blocks-column-width + $grid-gutter-width;
         width: 100%;
     }
 }
+
+[data-region="blocks-column"] {
+    @include media-breakpoint-down(md) {
+        width: 100%;
+    }
+}
