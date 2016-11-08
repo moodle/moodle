@@ -34,6 +34,10 @@ defined('MOODLE_INTERNAL') || die();
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class tree_node {
+
+    /** @var int Counter to be used in {@link tree_node::unique_sql_parameter()}. */
+    protected static $uniquesqlparametercounter = 1;
+
     /**
      * Determines whether this particular item is currently available
      * according to the availability criteria.
@@ -242,10 +246,11 @@ abstract class tree_node {
      * @return SQL code for the parameter, e.g. ':pr1234'
      */
     protected static function unique_sql_parameter(array &$params, $value) {
-        static $count = 1;
+
+        // Note we intentionally do not use self:: here.
+        $count = tree_node::$uniquesqlparametercounter++;
         $unique = 'usp' . $count;
         $params[$unique] = $value;
-        $count++;
         return ':' . $unique;
     }
 }
