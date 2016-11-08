@@ -3282,4 +3282,26 @@ class core_moodlelib_testcase extends advanced_testcase {
              'samecourse' => false, 'result' => false],
         ];
     }
+
+    /**
+     * Unit tests for the version_to_timestamp function.
+     */
+    public function test_version_to_timestamp() {
+        $baseversion = 2016110100.00;
+        $basestamp = version_to_timestamp($baseversion);
+        $this->assertEquals(1477929600, $basestamp);
+
+        // Adding 00.99 to the version should increase the timestamp.
+        $stamp = version_to_timestamp($baseversion + .99);
+        $this->assertGreaterThan($basestamp, $stamp);
+
+        // Adding 01.00 to the base version should increase the stamp higher than the 00.99 version.
+        $newstamp = version_to_timestamp($baseversion + 01.00);
+        $this->assertGreaterThan($basestamp, $newstamp);
+        $this->assertGreaterThan($stamp, $newstamp);
+
+        // The previous day's timestamp at it's highest increment should be lower than the base version.
+        $stamp = version_to_timestamp($baseversion - 00.01);
+        $this->assertLessThan($basestamp, $stamp);
+    }
 }
