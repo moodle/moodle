@@ -830,9 +830,10 @@ class manager {
      * Login as another user - no security checks here.
      * @param int $userid
      * @param \context $context
+     * @param bool $generateevent Set to false to prevent the loginas event to be generated
      * @return void
      */
-    public static function loginas($userid, \context $context) {
+    public static function loginas($userid, \context $context, $generateevent = true) {
         global $USER;
 
         if (self::is_loggedinas()) {
@@ -854,21 +855,27 @@ class manager {
         // Let enrol plugins deal with new enrolments if necessary.
         enrol_check_plugins($user);
 
-        // Create event before $USER is updated.
-        $event = \core\event\user_loggedinas::create(
-            array(
-                'objectid' => $USER->id,
-                'context' => $context,
-                'relateduserid' => $userid,
-                'other' => array(
-                    'originalusername' => fullname($USER, true),
-                    'loggedinasusername' => fullname($user, true)
+        if ($generateevent) {
+            // Create event before $USER is updated.
+            $event = \core\event\user_loggedinas::create(
+                array(
+                    'objectid' => $USER->id,
+                    'context' => $context,
+                    'relateduserid' => $userid,
+                    'other' => array(
+                        'originalusername' => fullname($USER, true),
+                        'loggedinasusername' => fullname($user, true)
+                    )
                 )
-            )
-        );
+            );
+        }
+
         // Set up global $USER.
         \core\session\manager::set_user($user);
-        $event->trigger();
+
+        if ($generateevent) {
+            $event->trigger();
+        }
     }
 
     /**

@@ -1220,7 +1220,7 @@ function course_delete_module($cmid, $async = false) {
  * @throws \moodle_exception
  */
 function course_module_flag_for_async_deletion($cmid) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->libdir.'/questionlib.php');
     require_once($CFG->dirroot.'/blog/lib.php');
@@ -1262,7 +1262,11 @@ function course_module_flag_for_async_deletion($cmid) {
 
     // Create an adhoc task for the deletion of the course module. The task takes an array of course modules for removal.
     $removaltask = new \core_course\task\course_delete_modules();
-    $removaltask->set_custom_data(array('cms' => array($cm)));
+    $removaltask->set_custom_data(array(
+        'cms' => array($cm),
+        'userid' => $USER->id,
+        'realuserid' => \core\session\manager::get_realuser()->id
+    ));
 
     // Queue the task for the next run.
     \core\task\manager::queue_adhoc_task($removaltask);
@@ -1466,7 +1470,7 @@ function course_delete_section($course, $section, $forcedeleteifnotempty = true,
  * @return bool true if the section was scheduled for deletion, false otherwise.
  */
 function course_delete_section_async($section, $forcedeleteifnotempty = true) {
-    global $DB;
+    global $DB, $USER;
 
     // Objects only, and only valid ones.
     if (!is_object($section) || empty($section->id)) {
@@ -1504,7 +1508,9 @@ function course_delete_section_async($section, $forcedeleteifnotempty = true) {
     // Create and queue an adhoc task for the deletion of the modules.
     $removaltask = new \core_course\task\course_delete_modules();
     $data = array(
-        'cms' => $affectedmods
+        'cms' => $affectedmods,
+        'userid' => $USER->id,
+        'realuserid' => \core\session\manager::get_realuser()->id
     );
     $removaltask->set_custom_data($data);
     \core\task\manager::queue_adhoc_task($removaltask);
