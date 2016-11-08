@@ -194,6 +194,7 @@ Feature: Assign group override
     And I follow "Test assignment name"
     And I should not see "This assignment will accept submissions from Wednesday, 1 January 2020, 8:00"
 
+  @javascript
   Scenario: Add both a user and group override and verify that both are applied correctly
     When I follow "Test assignment name"
     And I navigate to "Edit settings" node in "Assignment administration"
