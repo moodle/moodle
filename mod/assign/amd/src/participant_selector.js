@@ -53,6 +53,7 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
          */
         transport: function(selector, query, success, failure) {
             var assignmentid = $(selector).attr('data-assignmentid');
+            var groupid = $(selector).attr('data-groupid');
             var filters = $('[data-region="configure-filters"] input[type="checkbox"]');
             var filterstrings = [];
 
@@ -62,7 +63,7 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
 
             var promise = ajax.call([{
                 methodname: 'mod_assign_list_participants',
-                args: {assignid: assignmentid, groupid: 0, filter: query, limit: 30, includeenrolments: false}
+                args: {assignid: assignmentid, groupid: groupid, filter: query, limit: 30, includeenrolments: false}
             }]);
 
             promise[0].then(function(results) {

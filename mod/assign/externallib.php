@@ -2648,7 +2648,10 @@ class mod_assign_external extends external_api {
         $assign = new assign($context, null, null);
         $assign->require_view_grades();
 
-        $participants = $assign->list_participants_with_filter_status_and_group($params['groupid']);
+        $participants = array();
+        if (groups_group_visible($params['groupid'], $course, $cm)) {
+            $participants = $assign->list_participants_with_filter_status_and_group($params['groupid']);
+        }
 
         $userfields = user_get_default_fields();
         if (!$params['includeenrolments']) {
