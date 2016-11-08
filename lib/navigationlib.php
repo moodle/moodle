@@ -606,6 +606,26 @@ class navigation_node implements renderable {
     }
 
     /**
+     * To better balance the admin tree, we want to group all the short top branches together.
+     *
+     * This means < 8 nodes and no subtrees.
+     *
+     * @return bool
+     */
+    public function is_short_branch() {
+        $limit = 8;
+        if ($this->children->count() >= $limit) {
+            return false;
+        }
+        foreach ($this->children as $child) {
+            if ($child->has_children()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Finds the active node.
      *
      * Searches this nodes children plus all of the children for the active node
