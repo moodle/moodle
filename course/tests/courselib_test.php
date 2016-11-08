@@ -3582,7 +3582,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $count = 0;
         while (!empty($events)) {
             $event = array_pop($events);
-            if (in_array($event->objectid, [$assign0->cmid, $assign1->cmid, $assign2->cmid])) {
+            if ($event instanceof \core\event\course_module_deleted &&
+                in_array($event->objectid, [$assign0->cmid, $assign1->cmid, $assign2->cmid])) {
                 $count++;
             }
         }
@@ -3657,7 +3658,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         $count = 0;
         while (!empty($events)) {
             $event = array_pop($events);
-            if (in_array($event->objectid, [$assign0->cmid, $assign1->cmid])) {
+            if ($event instanceof \core\event\course_module_deleted &&
+                in_array($event->objectid, [$assign0->cmid, $assign1->cmid])) {
                 $count++;
             }
         }
