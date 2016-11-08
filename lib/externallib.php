@@ -1054,20 +1054,24 @@ function external_generate_token_for_current_user($service) {
             $token->externalserviceid = $service->id;
             // MDL-43119 Token valid for 3 months (12 weeks).
             $token->validuntil = $token->timecreated + 12 * WEEKSECS;
+            $token->iprestriction = null;
+            $token->sid = null;
+            $token->lastaccess = null;
             // Generate the private token, it must be transmitted only via https.
             $token->privatetoken = random_string(64);
             $token->id = $DB->insert_record('external_tokens', $token);
-            $token = $DB->get_record('external_tokens', ['id' => $token->id]);
 
+            $eventtoken = clone $token;
+            $eventtoken->privatetoken = null;
             $params = array(
-                'objectid' => $token->id,
+                'objectid' => $eventtoken->id,
                 'relateduserid' => $USER->id,
                 'other' => array(
                     'auto' => true
                 )
             );
             $event = \core\event\webservice_token_created::create($params);
-            $event->add_record_snapshot('external_tokens', $token);
+            $event->add_record_snapshot('external_tokens', $eventtoken);
             $event->trigger();
         } else {
             throw new moodle_exception('cannotcreatetoken', 'webservice', '', $service->shortname);
