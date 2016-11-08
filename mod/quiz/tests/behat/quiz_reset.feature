@@ -54,6 +54,7 @@ Feature: Quiz reset
     And I navigate to "Results" node in "Quiz administration"
     Then I should see "Attempts: 0"
 
+  @javascript
   Scenario: Use course reset to remove user overrides.
     When I log in as "teacher1"
     And I follow "Course 1"

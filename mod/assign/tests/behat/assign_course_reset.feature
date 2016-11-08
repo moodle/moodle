@@ -61,6 +61,7 @@ Feature: Assign reset
     And I navigate to "View all submissions" node in "Assignment administration"
     Then I should not see "Submitted for grading"
 
+  @javascript
   Scenario: Use course reset to remove user overrides.
     When I follow "Test assignment name"
     And I navigate to "User overrides" node in "Assignment administration"

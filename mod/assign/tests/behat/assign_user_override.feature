@@ -1,4 +1,4 @@
-@mod @mod_assign
+@mod @mod_assign @javascript
 Feature: Assign user override
   In order to grant a student special access to an assignment
   As a teacher
