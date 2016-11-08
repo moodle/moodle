@@ -147,7 +147,7 @@ Feature: Using the activity grade form element
     And I set the field "Grade" to "C"
     And I press "Save changes"
     And I press "Ok"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I follow "Edit settings"
     When I expand all fieldsets
     Then I should see "Some grades have already been awarded, so the grade type and scale cannot be changed"
     # Try saving the form and visiting it back to verify everything is working ok.
@@ -207,6 +207,6 @@ Feature: Using the activity grade form element
     And I set the field "Grade out of 100" to "50"
     And I press "Save changes"
     And I press "Ok"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I follow "Edit settings"
     When I expand all fieldsets
     Then I should see "Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."

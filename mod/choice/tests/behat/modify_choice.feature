@@ -84,7 +84,7 @@ Feature: Teacher can modify choices of the students
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Choice name"
-    And I follow "View 1 responses"
+    And I click on "View 1 responses" "link" in the "Administration" "block"
     And I click on "Student 1 Option 2" "checkbox"
     And I select "Delete" from the "With selected" singleselect
     And I click on "Student 1 Option 1" "checkbox"
