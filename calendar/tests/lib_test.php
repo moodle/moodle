@@ -111,4 +111,64 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $this->expectOutputRegex('/Error updating calendar subscription: The given iCal URL is invalid/');
         calendar_cron();
     }
+
+    /**
+     * Test the calendar_get_events() function only returns activity
+     * events that are enabled.
+     */
+    public function test_calendar_get_events_with_disabled_module() {
+        global $DB;
+
+        $course = $this->getDataGenerator()->create_course();
+        $events = [[
+                        'name' => 'Start of assignment',
+                        'description' => '',
+                        'format' => 1,
+                        'courseid' => $course->id,
+                        'groupid' => 0,
+                        'userid' => 2,
+                        'modulename' => 'assign',
+                        'instance' => 1,
+                        'eventtype' => 'due',
+                        'timestart' => time(),
+                        'timeduration' => 86400,
+                        'visible' => 1
+                    ], [
+                        'name' => 'Start of lesson',
+                        'description' => '',
+                        'format' => 1,
+                        'courseid' => $course->id,
+                        'groupid' => 0,
+                        'userid' => 2,
+                        'modulename' => 'lesson',
+                        'instance' => 1,
+                        'eventtype' => 'end',
+                        'timestart' => time(),
+                        'timeduration' => 86400,
+                        'visible' => 1
+                    ]
+                ];
+
+        foreach ($events as $event) {
+            calendar_event::create($event, false);
+        }
+
+        $timestart = time() - 60;
+        $timeend = time() + 60;
+
+        // Get all events.
+        $events = calendar_get_events($timestart, $timeend, true, 0, true);
+        $this->assertCount(2, $events);
+
+        // Disable the lesson module.
+        $modulerecord = $DB->get_record('modules', ['name' => 'lesson']);
+        $modulerecord->visible = 0;
+        $DB->update_record('modules', $modulerecord);
+
+        // Check that we only return the assign event.
+        $events = calendar_get_events($timestart, $timeend, true, 0, true);
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertEquals('assign', $event->modulename);
+    }
 }
