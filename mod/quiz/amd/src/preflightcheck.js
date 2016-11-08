@@ -45,7 +45,7 @@ define(['jquery', 'core/yui'], function($, Y) {
         init: function(startButton, confirmationTitle, confirmationForm, popupoptions) {
             var finalStartButton = startButton;
 
-            Y.use('moodle-core-notification', 'moodle-core-formchangechecker', 'io-form', function () {
+            Y.use('moodle-core-notification', function() {
                 if (Y.one(confirmationForm)) {
                     t.confirmDialogue = new M.core.dialogue({
                         headerContent: confirmationTitle,
@@ -97,13 +97,15 @@ define(['jquery', 'core/yui'], function($, Y) {
          */
         launchQuizPopup: function(e, popupoptions) {
             e.halt();
-            M.core_formchangechecker.reset_form_dirty_state();
-            var form = e.target.ancestor('form');
-            window.openpopup(e, {
-                url: form.get('action') + '?' + Y.IO.stringify(form).replace(/\bcancel=/, 'x='),
-                windowname: 'quizpopup',
-                options: popupoptions,
-                fullscreen: true,
+            Y.use('moodle-core-formchangechecker', 'io-form', function() {
+                M.core_formchangechecker.reset_form_dirty_state();
+                var form = e.target.ancestor('form');
+                window.openpopup(e, {
+                    url: form.get('action') + '?' + Y.IO.stringify(form).replace(/\bcancel=/, 'x='),
+                    windowname: 'quizpopup',
+                    options: popupoptions,
+                    fullscreen: true,
+                });
             });
         }
     };
