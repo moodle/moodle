@@ -26,46 +26,46 @@ Feature: Check that the assignment grade can be rescaled when the max grade is c
       | Assignment name | Test assignment name |
       | Description | Test assignment description |
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I press "Save changes"
     And I press "Ok"
-    And I click on "Edit settings" "link"
+    And I follow "Edit settings"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
 
   Scenario: Update the max grade for an assignment without rescaling existing grades
-    Given I follow "Edit settings"
+    Given I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And I set the field "Rescale existing grades" to "No"
     And I set the field "Maximum grade" to "80"
     When I press "Save and display"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
 
   Scenario: Update an assignment without touching the max grades
-    Given I follow "Edit settings"
+    Given I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And I set the field "Rescale existing grades" to "No"
     And I set the field "Maximum grade" to "80"
     And I press "Save and display"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I press "Save and display"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And I set the field "Rescale existing grades" to "Yes"
     And I set the field "Maximum grade" to "80"
     When I press "Save and display"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "40.00"
 
   Scenario: Update the max grade for an assignment rescaling existing grades
-    Given I follow "Edit settings"
+    Given I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And I set the field "Rescale existing grades" to "Yes"
     And I set the field "Maximum grade" to "50"
     When I press "Save and display"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     Then "Student 1" row "Grade" column of "generaltable" table should contain "20.00"

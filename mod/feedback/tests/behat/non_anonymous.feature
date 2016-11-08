@@ -96,7 +96,7 @@ Feature: Non anonymous feedback
     And I log in as "manager"
     And I am on site homepage
     And I navigate to "Site feedback" node in "Site pages"
-    And I follow "Show responses"
+    And I click on "Show responses" "link" in the "Administration" "block"
     And I should see "Username"
     And I should see "Non anonymous entries (2)"
     And I should not see "Anonymous entries"
@@ -152,7 +152,7 @@ Feature: Non anonymous feedback
     And I should see "Do you like this course?"
     And I press "Continue"
     And I should not see "Answer the questions..."
-    And I follow "Show responses"
+    And I click on "Show responses" "link" in the "Administration" "block"
     And I should see "Non anonymous entries (2)"
     And I should not see "Anonymous"
     And I click on "," "link" in the "Username 1" "table_row"

@@ -46,7 +46,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Description       | Test forum description |
       | Subscription mode | Forced subscription |
     And I follow "Forced Forum 1"
-    And I follow "Show/edit current subscribers"
+    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
     Then I should see "Student 1"
     And I should see "Teacher Teacher"
     And I should see "Student 2"
@@ -57,7 +57,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I click on "Grouping" "button" in the "Add restriction..." "dialogue"
     And I set the field with xpath "//select[@name='id']" to "Grouping 1"
     And I press "Save and display"
-    And I follow "Show/edit current subscribers"
+    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
     And I should see "Student 1"
     And I should see "Teacher Teacher"
     And I should not see "Student 2"
@@ -71,7 +71,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Subscription mode | Forced subscription |
       | Visible           | Show |
     And I follow "Forced Forum 2"
-    And I follow "Show/edit current subscribers"
+    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
     Then I should see "Teacher Teacher"
     And I should see "Student 1"
     And I should see "Student 2"
@@ -86,7 +86,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Subscription mode | Forced subscription |
       | Visible           | Hide |
     And I follow "Forced Forum 2"
-    And I follow "Show/edit current subscribers"
+    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
     Then I should see "Teacher Teacher"
     And I should not see "Student 1"
     And I should not see "Student 2"
@@ -100,7 +100,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Description       | Test forum description |
       | Subscription mode | Auto subscription |
     And I follow "Forced Forum 1"
-    And I follow "Show/edit current subscribers"
+    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
     Then I should see "Student 1"
     And I should see "Teacher Teacher"
     And I should see "Student 2"
@@ -111,7 +111,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
     And I click on "Grouping" "button" in the "Add restriction..." "dialogue"
     And I set the field with xpath "//select[@name='id']" to "Grouping 1"
     And I press "Save and display"
-    And I follow "Show/edit current subscribers"
+    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
     And I should see "Student 1"
     And I should see "Teacher Teacher"
     And I should not see "Student 2"
