@@ -33,7 +33,7 @@ Feature: Edit quiz page - drag-and-drop
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I follow "Edit quiz"
+    And I click on "Edit quiz" "link" in the "Administration" "block"
 
   @javascript
   Scenario: Re-order questions by clicking on the move icon.

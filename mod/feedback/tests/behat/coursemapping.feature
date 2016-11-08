@@ -114,7 +114,7 @@ Feature: Mapping courses in a feedback
     And I am on site homepage
     And I navigate to "Course feedback" node in "Site pages"
 
-    And I follow "Analysis"
+    And I click on "Analysis" "link" in the "Administration" "block"
     And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "1 (33.33 %)" in the "option a" "table_row"
@@ -197,7 +197,7 @@ Feature: Mapping courses in a feedback
     And I log in as "manager"
     And I am on site homepage
     And I navigate to "Course feedback" node in "Site pages"
-    And I follow "Analysis"
+    And I click on "Analysis" "link" in the "Administration" "block"
     And I should see "All courses" in the "#feedback_course_filter [data-fieldtype=autocomplete] .form-autocomplete-selection [role=listitem]" "css_element"
     And I show chart data for the "multichoicerated" feedback
     And I should see "0" in the "option a" "table_row"

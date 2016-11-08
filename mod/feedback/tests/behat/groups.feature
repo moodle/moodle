@@ -139,7 +139,7 @@ Feature: Feedbacks in courses with groups
     And I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course feedback"
-    And I follow "Analysis"
+    And I click on "Analysis" "link" in the "Administration" "block"
     And the field "Separate groups" matches value "All participants"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
@@ -249,7 +249,7 @@ Feature: Feedbacks in courses with groups
     And I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course anon feedback"
-    And I follow "Analysis"
+    And I click on "Analysis" "link" in the "Administration" "block"
     And the field "Separate groups" matches value "All participants"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"

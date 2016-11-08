@@ -96,7 +96,13 @@ class behat_mod_workshop extends behat_base {
 
         $this->execute('behat_general::click_link', $workshopname);
 
-        $this->execute('behat_general::click_link', $editassessmentform);
+        $this->execute('behat_general::i_click_on_in_the',
+            array(
+                $editassessmentform,
+                'link',
+                'Administration',
+                'block'
+            ));
 
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $table);
 

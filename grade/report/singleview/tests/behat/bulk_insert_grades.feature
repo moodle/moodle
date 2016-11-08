@@ -33,7 +33,7 @@ Feature: We can bulk insert grades for students in a course
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment one"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
@@ -74,7 +74,7 @@ Feature: We can bulk insert grades for students in a course
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment two"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |

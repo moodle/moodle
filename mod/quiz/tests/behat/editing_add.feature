@@ -192,7 +192,7 @@ Feature: Edit quiz page - adding things
     # Add Essay 03 from question bank.
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I follow "Edit quiz"
+    And I click on "Edit quiz" "link" in the "Administration" "block"
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And I click on "Add to quiz" "link" in the "Essay 03" "table_row"

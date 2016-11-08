@@ -101,7 +101,7 @@ Feature: Anonymous feedback
     And I log in as "manager"
     And I am on site homepage
     And I navigate to "Site feedback" node in "Site pages"
-    And I follow "Show responses"
+    And I click on "Show responses" "link" in the "Administration" "block"
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
     And I follow "Response number: 1"
@@ -166,7 +166,7 @@ Feature: Anonymous feedback
     And I log in as "manager"
     And I am on site homepage
     And I navigate to "Site feedback" node in "Site pages"
-    And I follow "Show responses"
+    And I click on "Show responses" "link" in the "Administration" "block"
     And I should see "Anonymous entries (2)"
     And I follow "Response number: 1"
     And I should see "Response number: 1 (Anonymous)"
@@ -225,7 +225,7 @@ Feature: Anonymous feedback
     And I should see "Do you like this course?"
     And I press "Continue"
     And I should not see "Answer the questions..."
-    And I follow "Show responses"
+    And I click on "Show responses" "link" in the "Administration" "block"
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
     And I follow "Response number: 1"

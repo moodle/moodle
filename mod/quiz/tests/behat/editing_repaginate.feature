@@ -21,7 +21,7 @@ Feature: Edit quiz page - pagination
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I follow "Edit quiz"
+    And I click on "Edit quiz" "link" in the "Administration" "block"
 
   @javascript
   Scenario: Repaginate questions with N question(s) per page as well as clicking
