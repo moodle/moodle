@@ -1057,6 +1057,7 @@ function external_generate_token_for_current_user($service) {
             // Generate the private token, it must be transmitted only via https.
             $token->privatetoken = random_string(64);
             $token->id = $DB->insert_record('external_tokens', $token);
+            $token = $DB->get_record('external_tokens', ['id' => $token->id]);
 
             $params = array(
                 'objectid' => $token->id,
