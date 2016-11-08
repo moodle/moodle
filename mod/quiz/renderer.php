@@ -216,7 +216,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 'value' => sesskey()));
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
         $output .= html_writer::empty_tag('input', array('type' => 'submit',
-                'class' => 'questionflagsavebutton', 'name' => 'savingflags',
+                'class' => 'questionflagsavebutton btn btn-secondary', 'name' => 'savingflags',
                 'value' => get_string('saveflags', 'question')));
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
@@ -239,7 +239,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             return html_writer::empty_tag('input', array('type' => 'button',
                     'value' => get_string('finishreview', 'quiz'),
                     'id' => 'secureclosebutton',
-                    'class' => 'mod_quiz-next-nav'));
+                    'class' => 'mod_quiz-next-nav btn btn-primary'));
 
         } else {
             return html_writer::link($url, get_string('finishreview', 'quiz'),
@@ -351,7 +351,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     protected function render_quiz_nav_question_button(quiz_nav_question_button $button) {
-        $classes = array('qnbutton', $button->stateclass, $button->navmethod);
+        $classes = array('qnbutton', $button->stateclass, $button->navmethod, 'btn', 'btn-secondary');
         $extrainfo = array();
 
         if ($button->currentpage) {
@@ -536,7 +536,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::start_tag('div', array('class' => 'submitbtns'));
         if ($page > 0 && $navmethod == 'free') {
             $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'previous',
-                    'value' => get_string('navigateprevious', 'quiz'), 'class' => 'mod_quiz-prev-nav'));
+                    'value' => get_string('navigateprevious', 'quiz'), 'class' => 'mod_quiz-prev-nav btn btn-secondary'));
         }
         if ($lastpage) {
             $nextlabel = get_string('endtest', 'quiz');
@@ -544,7 +544,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
             $nextlabel = get_string('navigatenext', 'quiz');
         }
         $output .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'next',
-                'value' => $nextlabel, 'class' => 'mod_quiz-next-nav'));
+                'value' => $nextlabel, 'class' => 'mod_quiz-next-nav btn btn-primary'));
         $output .= html_writer::end_tag('div');
 
         return $output;

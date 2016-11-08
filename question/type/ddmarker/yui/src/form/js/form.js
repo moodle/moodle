@@ -33,7 +33,7 @@ Y.extend(DDMARKER_FORM, M.qtype_ddmarker.dd_base_class, {
                 '<div class="markertexts"></div>' +
                 '<div class="droparea"></div>' +
                 '<div class="dropzones"></div>' +
-                '<ul class="pager">' +
+                '<ul class="pager unstyled list-unstyled">' +
                 '<li><span id="xcoordpreview">X = </span></li>' +
                 '<li><span id="ycoordpreview">Y = </span></li>' +
                 '</ul>' +

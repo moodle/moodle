@@ -760,19 +760,19 @@ class qtype_calculated extends question_type {
             }
             $menu1 = html_writer::label(get_string('lengthoption', 'qtype_calculated'),
                 'menucalclength', false, array('class' => 'accesshide'));
-            $menu1 .= html_writer::select($lengthoptions, 'calclength[]', $regs[4], null);
+            $menu1 .= html_writer::select($lengthoptions, 'calclength[]', $regs[4], null, array('class' => 'custom-select'));
 
             $options = array('uniform' => get_string('uniformbit', 'qtype_calculated'),
                 'loguniform' => get_string('loguniformbit', 'qtype_calculated'));
             $menu2 = html_writer::label(get_string('distributionoption', 'qtype_calculated'),
                 'menucalcdistribution', false, array('class' => 'accesshide'));
-            $menu2 .= html_writer::select($options, 'calcdistribution[]', $regs[1], null);
-            return '<input type="submit" onclick="'
+            $menu2 .= html_writer::select($options, 'calcdistribution[]', $regs[1], null, array('class' => 'custom-select'));
+            return '<input type="submit" class="btn btn-secondary" onclick="'
                 . "getElementById('addform').regenerateddefid.value='{$defid}'; return true;"
                 .'" value="'. get_string('generatevalue', 'qtype_calculated') . '"/><br/>'
-                . '<input type="text" size="3" name="calcmin[]" '
+                . '<input type="text" class="form-control" size="3" name="calcmin[]" '
                 . " value=\"{$regs[2]}\"/> &amp; <input name=\"calcmax[]\" "
-                . ' type="text" size="3" value="' . $regs[3] .'"/> '
+                . ' type="text" class="form-control" size="3" value="' . $regs[3] .'"/> '
                 . $menu1 . '<br/>'
                 . $menu2;
         } else {

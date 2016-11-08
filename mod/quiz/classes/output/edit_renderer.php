@@ -159,16 +159,17 @@ class edit_renderer extends \plugin_renderer_base {
         $output = '';
         $output .= html_writer::start_div('maxgrade');
         $output .= html_writer::start_tag('form', array('method' => 'post', 'action' => 'edit.php',
-                'class' => 'quizsavegradesform'));
+                'class' => 'quizsavegradesform form-inline'));
         $output .= html_writer::start_tag('fieldset', array('class' => 'invisiblefieldset'));
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
         $output .= html_writer::input_hidden_params($pageurl);
         $a = html_writer::empty_tag('input', array('type' => 'text', 'id' => 'inputmaxgrade',
                 'name' => 'maxgrade', 'size' => ($structure->get_decimal_places_for_grades() + 2),
-                'value' => $structure->formatted_quiz_grade()));
+                'value' => $structure->formatted_quiz_grade(),
+                'class' => 'form-control'));
         $output .= html_writer::tag('label', get_string('maximumgradex', '', $a),
                 array('for' => 'inputmaxgrade'));
-        $output .= html_writer::empty_tag('input', array('type' => 'submit',
+        $output .= html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'btn btn-secondary m-l-1',
                 'name' => 'savechanges', 'value' => get_string('save', 'quiz')));
         $output .= html_writer::end_tag('fieldset');
         $output .= html_writer::end_tag('form');
@@ -198,6 +199,7 @@ class edit_renderer extends \plugin_renderer_base {
             'name'  => 'repaginate',
             'id'    => 'repaginatecommand',
             'value' => get_string('repaginatecommand', 'quiz'),
+            'class' => 'btn btn-secondary m-b-1',
         );
         if (!$structure->can_be_repaginated()) {
             $buttonoptions['disabled'] = 'disabled';
@@ -226,9 +228,14 @@ class edit_renderer extends \plugin_renderer_base {
         $hiddenurl->param('sesskey', sesskey());
 
         $select = html_writer::select($perpage, 'questionsperpage',
-                $structure->get_questions_per_page(), false);
+                $structure->get_questions_per_page(), false, array('class' => 'custom-select'));
 
-        $buttonattributes = array('type' => 'submit', 'name' => 'repaginate', 'value' => get_string('go'));
+        $buttonattributes = array(
+            'type' => 'submit',
+            'name' => 'repaginate',
+            'value' => get_string('go'),
+            'class' => 'btn btn-secondary m-l-1'
+        );
 
         $formcontent = html_writer::tag('form', html_writer::div(
                     html_writer::input_hidden_params($hiddenurl) .

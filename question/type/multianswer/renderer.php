@@ -222,6 +222,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
             'value' => $response,
             'id' => $qa->get_qt_field_name($fieldname),
             'size' => $size,
+            'class' => 'form-control',
         );
         if ($options->readonly) {
             $inputattributes['readonly'] = 'readonly';
@@ -229,7 +230,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
 
         $feedbackimg = '';
         if ($options->correctness) {
-            $inputattributes['class'] = $this->feedback_class($matchinganswer->fraction);
+            $inputattributes['class'] .= ' ' . $this->feedback_class($matchinganswer->fraction);
             $feedbackimg = $this->feedback_image($matchinganswer->fraction);
         }
 
@@ -244,7 +245,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
                         $qa, 'question', 'answerfeedback', $matchinganswer->id),
                 s($correctanswer->answer), $options);
 
-        $output = html_writer::start_tag('span', array('class' => 'subquestion'));
+        $output = html_writer::start_tag('span', array('class' => 'subquestion form-inline'));
         $output .= html_writer::tag('label', get_string('answer'),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
         $output .= html_writer::empty_tag('input', $inputattributes);
