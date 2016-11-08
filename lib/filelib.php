@@ -2789,6 +2789,10 @@ class curl {
     private $cookie   = false;
     /** @var bool tracks multiple headers in response - redirect detection */
     private $responsefinished = false;
+    /** @var security helper class, responsible for checking host/ports against blacklist/whitelist entries.*/
+    private $securityhelper;
+    /** @var bool ignoresecurity a flag which can be supplied to the constructor, allowing security to be bypassed. */
+    private $ignoresecurity;
 
     /**
      * Curl constructor.
@@ -2799,6 +2803,8 @@ class curl {
      *  cookie: (string) path to cookie file, false if none
      *  cache: (bool) use cache
      *  module_cache: (string) type of cache
+     *  securityhelper: (\core\files\curl_security_helper_base) helper object providing URL checking for requests.
+     *  ignoresecurity: (bool) set true to override and ignore the security helper when making requests.
      *
      * @param array $settings
      */
@@ -2863,6 +2869,14 @@ class curl {
         if (!isset($this->emulateredirects)) {
             $this->emulateredirects = ini_get('open_basedir');
         }
+
+        // Curl security setup. Allow injection of a security helper, but if not found, default to the core helper.
+        if (isset($settings['securityhelper']) && $settings['securityhelper'] instanceof \core\files\curl_security_helper_base) {
+            $this->set_security($settings['securityhelper']);
+        } else {
+            $this->set_security(new \core\files\curl_security_helper());
+        }
+        $this->ignoresecurity = isset($settings['ignoresecurity']) ? $settings['ignoresecurity'] : false;
     }
 
     /**
@@ -3216,6 +3230,29 @@ class curl {
     }
 
     /**
+     * Returns the current curl security helper.
+     *
+     * @return \core\files\curl_security_helper instance.
+     */
+    public function get_security() {
+        return $this->securityhelper;
+    }
+
+    /**
+     * Sets the curl security helper.
+     *
+     * @param \core\files\curl_security_helper $securityobject instance/subclass of the base curl_security_helper class.
+     * @return bool true if the security helper could be set, false otherwise.
+     */
+    public function set_security($securityobject) {
+        if ($securityobject instanceof \core\files\curl_security_helper) {
+            $this->securityhelper = $securityobject;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Multi HTTP Requests
      * This function could run multi-requests in parallel.
      *
@@ -3265,6 +3302,20 @@ class curl {
     }
 
     /**
+     * Helper function to reset the request state vars.
+     *
+     * @return void.
+     */
+    protected function reset_request_state_vars() {
+        $this->info             = array();
+        $this->error            = '';
+        $this->errno            = 0;
+        $this->response         = array();
+        $this->rawresponse      = array();
+        $this->responsefinished = false;
+    }
+
+    /**
      * Single HTTP Request
      *
      * @param string $url The URL to request
@@ -3272,19 +3323,21 @@ class curl {
      * @return bool
      */
     protected function request($url, $options = array()) {
+        // Reset here so that the data is valid when result returned from cache, or if we return due to a blacklist hit.
+        $this->reset_request_state_vars();
+
+        // If curl security is enabled, check the URL against the blacklist before calling curl_exec.
+        // Note: This will only check the base url. In the case of redirects, the blacklist is also after the curl_exec.
+        if (!$this->ignoresecurity && $this->securityhelper->url_is_blocked($url)) {
+            $this->error = $this->securityhelper->get_blocked_url_string();
+            return $this->error;
+        }
+
         // Set the URL as a curl option.
         $this->setopt(array('CURLOPT_URL' => $url));
 
         // Create curl instance.
         $curl = curl_init();
-
-        // Reset here so that the data is valid when result returned from cache.
-        $this->info             = array();
-        $this->error            = '';
-        $this->errno            = 0;
-        $this->response         = array();
-        $this->rawresponse      = array();
-        $this->responsefinished = false;
 
         $this->apply_opt($curl, $options);
         if ($this->cache && $ret = $this->cache->get($this->options)) {
@@ -3296,6 +3349,15 @@ class curl {
         $this->error = curl_error($curl);
         $this->errno = curl_errno($curl);
         // Note: $this->response and $this->rawresponse are filled by $hits->formatHeader callback.
+
+        // In the case of redirects (which curl blindly follows), check the post-redirect URL against the blacklist entries too.
+        if (intval($this->info['redirect_count']) > 0 && !$this->ignoresecurity
+            && $this->securityhelper->url_is_blocked($this->info['url'])) {
+            $this->reset_request_state_vars();
+            $this->error = $this->securityhelper->get_blocked_url_string();
+            curl_close($curl);
+            return $this->error;
+        }
 
         if ($this->emulateredirects and $this->options['CURLOPT_FOLLOWLOCATION'] and $this->info['http_code'] != 200) {
             $redirects = 0;
