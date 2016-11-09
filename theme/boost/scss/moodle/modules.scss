@@ -541,3 +541,13 @@ div#dock {
     padding: 0;
 }
 
+
+/**
+ * Mod LTI.
+ */
+.path-admin-mod-lti {
+    .btn .loader img,
+    #tool-list-loader-container .loader img {
+        height: auto;
+    }
+}

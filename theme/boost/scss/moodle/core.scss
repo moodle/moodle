@@ -297,7 +297,8 @@ form.popupform div {
 }
 
 span.hide,
-div.hide {
+div.hide,
+.hidden {
     display: none;
 }
 // Accessibility: Skip block link, for keyboard-only users.
@@ -1290,18 +1291,6 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     right: 0;
     margin: 0;
     border: 0;
-}
-
-.moodle-dialogue-confirm .confirmation-dialogue {
-    text-align: center;
-}
-
-.moodle-dialogue-confirm .confirmation-dialogue input {
-    text-align: center;
-}
-
-.moodle-dialogue-exception .moodle-exception-message {
-    text-align: center;
 }
 
 .moodle-dialogue-exception .moodle-exception-param label {
