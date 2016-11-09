@@ -144,7 +144,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'action', 'value' => 'new'));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'course', 'value' => $courseid));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'time', 'value' => $time));
-        $output .= html_writer::empty_tag('input', array('type'=>'submit', 'value' => get_string('newevent', 'calendar')));
+        $attributes = array('type'=>'submit', 'value' => get_string('newevent', 'calendar'), 'class' => 'btn btn-secondary');
+        $output .= html_writer::empty_tag('input', $attributes);
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('form');
         $output .= html_writer::end_tag('div');
@@ -222,51 +223,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $context = $event->context;
         $output = '';
 
-        if (!empty($event->icon)) {
-            $output .= $event->icon;
-        } else {
-            $output .= $this->output->spacer(array('height' => 16, 'width' => 16));
-        }
-
-        if (!empty($event->referer)) {
-            $output .= $this->output->heading($event->referer, 3, array('class' => 'referer'));
-        } else {
-            $output .= $this->output->heading(
-                format_string($event->name, false, array('context' => $context)),
-                3,
-                array('class' => 'name')
-            );
-        }
-        if (!empty($event->courselink)) {
-            $output .= html_writer::tag('div', $event->courselink, array('class' => 'course'));
-        }
-        // Show subscription source if needed.
-        if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
-            if (!empty($event->subscription->url)) {
-                $source = html_writer::link($event->subscription->url, get_string('subsource', 'calendar', $event->subscription));
-            } else {
-                // File based ical.
-                $source = get_string('subsource', 'calendar', $event->subscription);
-            }
-            $output .= html_writer::tag('div', $source, array('class' => 'subscription'));
-        }
-        if (!empty($event->time)) {
-            $output .= html_writer::tag('span', $event->time, array('class' => 'date'));
-        } else {
-            $output .= html_writer::tag('span', calendar_time_representation($event->timestart), array('class' => 'date'));
-        }
-
-        $eventdetailshtml = '';
-        $eventdetailsclasses = '';
-
-        $eventdetailshtml .= format_text($event->description, $event->format, array('context' => $context));
-        $eventdetailsclasses .= 'description';
-        if (isset($event->cssclass)) {
-            $eventdetailsclasses .= ' '.$event->cssclass;
-        }
-
-        $output .= html_writer::tag('div', $eventdetailshtml, array('class' => $eventdetailsclasses));
-
+        $output .= $this->output->box_start('card-header clearfix');
         if (calendar_edit_event_allowed($event) && $showactions) {
             if (empty($event->cmid)) {
                 $editlink = new moodle_url(CALENDAR_URL.'event.php', array('action'=>'edit', 'id'=>$event->id));
@@ -280,19 +237,72 @@ class core_calendar_renderer extends plugin_renderer_base {
                 $deletelink = null;
             }
 
-            $commands  = html_writer::start_tag('div', array('class'=>'commands'));
+            $commands  = html_writer::start_tag('div', array('class'=>'commands pull-xs-right'));
             $commands .= html_writer::start_tag('a', array('href'=>$editlink));
-            $commands .= html_writer::empty_tag('img', array('src'=>$this->output->pix_url('t/edit'), 'alt'=>get_string('tt_editevent', 'calendar'), 'title'=>get_string('tt_editevent', 'calendar')));
+            $url = $this->output->pix_url('t/edit');
+            $str = get_string('tt_editevent', 'calendar');
+            $commands .= html_writer::empty_tag('img', array('src' => $url, 'alt' => $str, 'title' => $str, 'class' => 'icon'));
             $commands .= html_writer::end_tag('a');
             if ($deletelink != null) {
                 $commands .= html_writer::start_tag('a', array('href'=>$deletelink));
-                $commands .= html_writer::empty_tag('img', array('src'=>$this->output->pix_url('t/delete'), 'alt'=>get_string('tt_deleteevent', 'calendar'), 'title'=>get_string('tt_deleteevent', 'calendar')));
+                $url = $this->output->pix_url('t/delete');
+                $str = get_string('tt_deleteevent', 'calendar');
+                $commands .= html_writer::empty_tag('img', array('src' => $url, 'alt' => $str, 'title' => $str, 'class' => 'icon'));
                 $commands .= html_writer::end_tag('a');
             }
             $commands .= html_writer::end_tag('div');
             $output .= $commands;
         }
-        return html_writer::tag('div', $output , array('class' => 'event', 'id' => 'event_' . $event->id));
+        if (!empty($event->icon)) {
+            $output .= $event->icon;
+        } else {
+            $output .= $this->output->spacer(array('height' => 16, 'width' => 16));
+        }
+
+        if (!empty($event->referer)) {
+            $output .= $this->output->heading($event->referer, 3, array('class' => 'referer'));
+        } else {
+            $output .= $this->output->heading(
+                format_string($event->name, false, array('context' => $context)),
+                3,
+                array('class' => 'name d-inline-block')
+            );
+        }
+        // Show subscription source if needed.
+        if (!empty($event->subscription) && $CFG->calendar_showicalsource) {
+            if (!empty($event->subscription->url)) {
+                $source = html_writer::link($event->subscription->url, get_string('subsource', 'calendar', $event->subscription));
+            } else {
+                // File based ical.
+                $source = get_string('subsource', 'calendar', $event->subscription);
+            }
+            $output .= html_writer::tag('div', $source, array('class' => 'subscription'));
+        }
+        if (!empty($event->time)) {
+            $output .= html_writer::tag('span', $event->time, array('class' => 'date pull-xs-right m-r-1'));
+        } else {
+            $output .= html_writer::tag('span', calendar_time_representation($event->timestart), array('class' => 'date pull-xs-right m-r-1'));
+        }
+        if (!empty($event->courselink)) {
+            $output .= html_writer::tag('div', $event->courselink, array('class' => 'course'));
+        }
+
+        $output .= $this->output->box_end();
+        $eventdetailshtml = '';
+        $eventdetailsclasses = '';
+
+        $eventdetailshtml .= format_text($event->description, $event->format, array('context' => $context));
+        $eventdetailsclasses .= 'description card-block';
+        if (isset($event->cssclass)) {
+            $eventdetailsclasses .= ' '.$event->cssclass;
+        }
+
+        if (!empty($eventdetailshtml)) {
+            $output .= html_writer::tag('div', $eventdetailshtml, array('class' => $eventdetailsclasses));
+        }
+
+        $eventhtml = html_writer::tag('div', $output, array('class' => 'card'));
+        return html_writer::tag('div', $eventhtml, array('class' => 'event', 'id' => 'event_' . $event->id));
     }
 
     /**
@@ -580,7 +590,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $courseurl = new moodle_url($returnurl);
         $courseurl->remove_params('course');
         $select = new single_select($courseurl, 'course', $courseoptions, $selected, null);
-        $select->class = 'cal_courses_flt';
+        $select->class = 'cal_courses_flt m-r-1';
         if ($label !== null) {
             $select->set_label($label);
         } else {

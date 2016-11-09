@@ -1,10 +1,10 @@
 /* calendar.less */
 
 // Calendar colour variables defined.
-$calendarEventCourseColor: #ffd3bd; // Pale red.
-$calendarEventGlobalColor: #d6f8cd; // Pale green.
-$calendarEventGroupColor: #fee7ae; // Pale yellow.
-$calendarEventUserColor: #dce7ec; // Pale blue.
+$calendarEventCourseColor: #ffd3bd !default; // Pale red.
+$calendarEventGlobalColor: #d6f8cd !default; // Pale green.
+$calendarEventGroupColor: #fee7ae !default; // Pale yellow.
+$calendarEventUserColor: #dce7ec !default; // Pale blue.
 
 // Calendar event background colours defined.
 .calendar_event_course {
@@ -65,14 +65,6 @@ $calendarEventUserColor: #dce7ec; // Pale blue.
             border-collapse: separate;
             border-spacing: 2px;
             width: 100%;
-        }
-    }
-
-    .cal_courses_flt {
-        float: left;
-
-        label {
-            margin-right: .45em;
         }
     }
 
@@ -190,80 +182,10 @@ $calendarEventUserColor: #dce7ec; // Pale blue.
             }
         }
 
-        .eventlist {
-            margin: 0;
-
-            .event {
-                //width: 92%;
-                //border-spacing: 0;
-                //border-collapse: separate;
-                //position: relative;
-                //padding: 20px 4%;
-                //margin-bottom: 20px;
-                //background-color: lighten($wellBackground, 3%);
-                //border: 1px solid darken($wellBackground, 7%);
-                //@include border-radius($baseBorderRadius);
-                //@include box-shadow(inset 0 1px 1px rgba(0,0,0,.05));
-                @extend .card;
-                list-style-type: none;
-
-                > img {
-                    padding-top: 3px;
-                    float: left;
-                }
-
-                .name {
-                    //font-size: $fontSizeLarge;
-                    //font-weight: 200;
-                    //line-height: 24px;
-                    @extend .h2;
-                    float: left;
-                    //margin: 0;
-                }
-
-                .name,
-                .course {
-                    margin-bottom: 5px;
-                }
-
-                .date {
-                    float: right;
-                }
-
-                .course,
-                .subscription {
-                    float: left;
-                    clear: left;
-                }
-
-                .side {
-                    width: 22px;
-                }
-
-                .description {
-                    background-color: $body-bg;
-                    padding: 5px;
-                    clear: both;
-
-                    .commands {
-                        position: absolute;
-                        right: 0;
-                        top: 0;
-                        margin: 3px;
-                    }
-                }
-
-                .commands {
-                    position: absolute;
-                    top: 2px;
-                    right: 2px;
-
-                    a {
-                        margin: 0 3px;
-                    }
-                }
-            }
+        .event .card-header img {
+            vertical-align: baseline;
         }
+
     }
 }
 

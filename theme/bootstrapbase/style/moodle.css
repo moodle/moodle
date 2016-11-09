@@ -3441,20 +3441,10 @@ img.iconsmall {
   margin: 0;
 }
 .path-calendar .maincalendar .eventlist .event {
-  width: 92%;
   border-spacing: 0;
   border-collapse: separate;
   position: relative;
-  padding: 20px 4%;
   margin-bottom: 20px;
-  background-color: #fdfdfd;
-  border: 1px solid #e3e3e3;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
   list-style-type: none;
 }
 .path-calendar .maincalendar .eventlist .event > img {
@@ -3467,6 +3457,7 @@ img.iconsmall {
   line-height: 24px;
   float: left;
   margin: 0;
+  margin-right: 0.5rem;
 }
 .path-calendar .maincalendar .eventlist .event .name,
 .path-calendar .maincalendar .eventlist .event .course {
@@ -3487,17 +3478,6 @@ img.iconsmall {
   background-color: #fff;
   padding: 5px;
   clear: both;
-}
-.path-calendar .maincalendar .eventlist .event .description .commands {
-  position: absolute;
-  right: 0;
-  top: 0;
-  margin: 3px;
-}
-.path-calendar .maincalendar .eventlist .event .commands {
-  position: absolute;
-  top: 2px;
-  right: 2px;
 }
 .path-calendar .maincalendar .eventlist .event .commands a {
   margin: 0 3px;
