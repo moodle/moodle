@@ -867,4 +867,90 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         // As the admin you should still be able to send messages to the user.
         $this->assertFalse(\core_message\api::is_user_blocked($user1));
     }
+
+    /*
+     * Tes get_message_processor api.
+     */
+    public function test_get_message_processor() {
+        $processors = get_message_processors();
+        if (empty($processors)) {
+            $this->markTestSkipped("No message processors found");
+        }
+
+        list($name, $processor) = each($processors);
+        $testprocessor = \core_message\api::get_message_processor($name);
+        $this->assertEquals($processor->name, $testprocessor->name);
+        $this->assertEquals($processor->enabled, $testprocessor->enabled);
+        $this->assertEquals($processor->available, $testprocessor->available);
+        $this->assertEquals($processor->configured, $testprocessor->configured);
+
+        // Disable processor and test.
+        \core_message\api::update_processor_status($testprocessor, 0);
+        $testprocessor = \core_message\api::get_message_processor($name, true);
+        $this->assertEmpty($testprocessor);
+        $testprocessor = \core_message\api::get_message_processor($name);
+        $this->assertEquals($processor->name, $testprocessor->name);
+        $this->assertEquals(0, $testprocessor->enabled);
+
+        // Enable again and test.
+        \core_message\api::update_processor_status($testprocessor, 1);
+        $testprocessor = \core_message\api::get_message_processor($name, true);
+        $this->assertEquals($processor->name, $testprocessor->name);
+        $this->assertEquals(1, $testprocessor->enabled);
+        $testprocessor = \core_message\api::get_message_processor($name);
+        $this->assertEquals($processor->name, $testprocessor->name);
+        $this->assertEquals(1, $testprocessor->enabled);
+    }
+
+    /**
+     * Test method update_processor_status.
+     */
+    public function test_update_processor_status() {
+        $processors = get_message_processors();
+        if (empty($processors)) {
+            $this->markTestSkipped("No message processors found");
+        }
+        list($name, $testprocessor) = each($processors);
+
+        // Enable.
+        \core_message\api::update_processor_status($testprocessor, 1);
+        $testprocessor = \core_message\api::get_message_processor($name);
+        $this->assertEquals(1, $testprocessor->enabled);
+
+        // Disable.
+        \core_message\api::update_processor_status($testprocessor, 0);
+        $testprocessor = \core_message\api::get_message_processor($name);
+        $this->assertEquals(0, $testprocessor->enabled);
+
+        // Enable again.
+        \core_message\api::update_processor_status($testprocessor, 1);
+        $testprocessor = \core_message\api::get_message_processor($name);
+        $this->assertEquals(1, $testprocessor->enabled);
+    }
+
+    /**
+     * Test method is_user_enabled.
+     */
+    public function is_user_enabled() {
+        $processors = get_message_processors();
+        if (empty($processors)) {
+            $this->markTestSkipped("No message processors found");
+        }
+        list($name, $testprocessor) = each($processors);
+
+        // Enable.
+        \core_message\api::update_processor_status($testprocessor, 1);
+        $status = \core_message\api::is_processor_enabled($name);
+        $this->assertEquals(1, $status);
+
+        // Disable.
+        \core_message\api::update_processor_status($testprocessor, 0);
+        $status = \core_message\api::is_processor_enabled($name);
+        $this->assertEquals(0, $status);
+
+        // Enable again.
+        \core_message\api::update_processor_status($testprocessor, 1);
+        $status = \core_message\api::is_processor_enabled($name);
+        $this->assertEquals(1, $status);
+    }
 }

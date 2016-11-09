@@ -673,4 +673,111 @@ class api {
 
         return false;
     }
+
+    /**
+     * Get specified message processor, validate corresponding plugin existence and
+     * system configuration.
+     *
+     * @param string $name  Name of the processor.
+     * @param bool $ready only return ready-to-use processors.
+     * @return mixed $processor if processor present else empty array.
+     * @since Moodle 3.2
+     */
+    public static function get_message_processor($name, $ready = false) {
+        global $DB, $CFG;
+
+        $processor = $DB->get_record('message_processors', array('name' => $name));
+        if (empty($processor)) {
+            // Processor not found, return.
+            return array();
+        }
+
+        $processor = self::get_processed_processor_object($processor);
+        if ($ready) {
+            if ($processor->enabled && $processor->configured) {
+                return $processor;
+            } else {
+                return array();
+            }
+        } else {
+            return $processor;
+        }
+    }
+
+    /**
+     * Returns weather a given processor is enabled or not.
+     * Note:- This doesn't check if the processor is configured or not.
+     *
+     * @param string $name Name of the processor
+     * @return bool
+     */
+    public static function is_processor_enabled($name) {
+
+        $cache = \cache::make('core', 'message_processors_enabled');
+        $status = $cache->get($name);
+
+        if ($status === false) {
+            $processor = self::get_message_processor($name);
+            if (!empty($processor)) {
+                $cache->set($name, $processor->enabled);
+                return $processor->enabled;
+            } else {
+                return false;
+            }
+        }
+
+        return $status;
+    }
+
+    /**
+     * Set status of a processor.
+     *
+     * @param \stdClass $processor processor record.
+     * @param 0|1 $enabled 0 or 1 to set the processor status.
+     * @return bool
+     * @since Moodle 3.2
+     */
+    public static function update_processor_status($processor, $enabled) {
+        global $DB;
+        $cache = \cache::make('core', 'message_processors_enabled');
+        $cache->delete($processor->name);
+        return $DB->set_field('message_processors', 'enabled', $enabled, array('id' => $processor->id));
+    }
+
+    /**
+     * Given a processor object, loads information about it's settings and configurations.
+     * This is not a public api, instead use @see \core_message\api::get_message_processor()
+     * or @see \get_message_processors()
+     *
+     * @param \stdClass $processor processor object
+     * @return \stdClass processed processor object
+     * @since Moodle 3.2
+     */
+    public static function get_processed_processor_object(\stdClass $processor) {
+        global $CFG;
+
+        $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
+        if (is_readable($processorfile)) {
+            include_once($processorfile);
+            $processclass = 'message_output_' . $processor->name;
+            if (class_exists($processclass)) {
+                $pclass = new $processclass();
+                $processor->object = $pclass;
+                $processor->configured = 0;
+                if ($pclass->is_system_configured()) {
+                    $processor->configured = 1;
+                }
+                $processor->hassettings = 0;
+                if (is_readable($CFG->dirroot.'/message/output/'.$processor->name.'/settings.php')) {
+                    $processor->hassettings = 1;
+                }
+                $processor->available = 1;
+            } else {
+                print_error('errorcallingprocessor', 'message');
+            }
+        } else {
+            $processor->available = 0;
+        }
+        return $processor;
+    }
 }

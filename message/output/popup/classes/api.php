@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class api {
     /**
-     * Get popup notifications for the specified users.
+     * Get popup notifications for the specified users. Nothing is returned if notifications are disabled.
      *
      * @param int $useridto the user id who received the notification
      * @param string $sort the column name to order by including optionally direction
@@ -60,6 +60,18 @@ class api {
             'useridto1' => $useridto,
             'useridto2' => $useridto,
         ];
+
+        // Is notification enabled ?
+        if ($useridto == $USER->id) {
+            $disabled = $USER->emailstop;
+        } else {
+            $user = \core_user::get_user($useridto, "emailstop", MUST_EXIST);
+            $disabled = $user->emailstop;
+        }
+        if ($disabled) {
+            // Notifications are disabled, no need to run giant queries.
+            return array();
+        }
 
         $sql = "SELECT * FROM (
                     SELECT concat('r', r.id) as uniqueid, r.id, r.useridfrom, r.useridto,
