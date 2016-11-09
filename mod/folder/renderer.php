@@ -75,9 +75,7 @@ class mod_folder_renderer extends plugin_renderer_base {
                     get_string('downloadfolder', 'folder')
                 );
 
-                $output .= $this->output->container(
-                    $downloadbutton,
-                    'mdl-align folder-download-button');
+                $output .= $downloadbutton;
             }
 
             if (has_capability('mod/folder:managefiles', $context)) {
@@ -86,9 +84,7 @@ class mod_folder_renderer extends plugin_renderer_base {
                     get_string('edit')
                 );
 
-                $output .= $this->output->container(
-                    $editbutton,
-                    'mdl-align folder-edit-button');
+                $output .= $editbutton;
             }
         }
         return $output;
