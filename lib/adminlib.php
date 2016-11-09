@@ -3681,12 +3681,12 @@ class admin_setting_configmixedhostiplist extends admin_setting_configtextarea {
     /**
      * Override, providing utf8-decoding for ascii-encoded IDN strings.
      *
-     * @return string the setting string, with any punycode strings converted back to their utf-8 string representation.
+     * @return mixed returns punycode-converted setting string if successful, else null.
      */
     public function get_setting() {
         // Here, we need to decode any ascii-encoded IDNs back to their native, utf-8 representation.
         $data = $this->config_read($this->name);
-        if (function_exists('idn_to_utf8')) {
+        if (function_exists('idn_to_utf8') && !is_null($data)) {
             $data = $this->ace_decode($data);
         }
         return $data;
