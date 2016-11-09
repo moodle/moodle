@@ -472,14 +472,14 @@
          echo "<form action=\"report.php\" method=\"post\">";
          echo "<h3>$strnotes:</h3>";
          echo "<blockquote>";
-         echo "<textarea name=\"notes\" rows=\"10\" cols=\"60\">";
+         echo "<textarea class=\"form-control\" name=\"notes\" rows=\"10\" cols=\"60\">";
          p($notes);
          echo "</textarea><br />";
          echo "<input type=\"hidden\" name=\"action\" value=\"student\" />";
          echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />";
          echo "<input type=\"hidden\" name=\"student\" value=\"$student\" />";
          echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-         echo "<input type=\"submit\" value=\"".get_string("savechanges")."\" />";
+         echo "<input type=\"submit\" class=\"btn btn-primary\" value=\"".get_string("savechanges")."\" />";
          echo "</blockquote>";
          echo "</form>";
          echo "</div>";

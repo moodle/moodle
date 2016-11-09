@@ -191,7 +191,7 @@ $PAGE->requires->string_for_js('questionsnotanswered', 'survey');
 $PAGE->requires->js_init_call('M.mod_survey.init', $checkarray, true, $module);
 
 echo '<br />';
-echo '<input type="submit" value="'.get_string("clicktocontinue", "survey").'" />';
+echo '<input type="submit" class="btn btn-primary" value="'.get_string("clicktocontinue", "survey").'" />';
 echo '</div>';
 echo "</form>";
 
