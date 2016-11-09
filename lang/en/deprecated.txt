@@ -38,3 +38,4 @@ revealpassword,core_form
 mediasettings,core_media
 legacyheading,core_media
 legacyheading_desc,core_media
+for,core_calendar
