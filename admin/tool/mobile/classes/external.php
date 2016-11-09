@@ -246,15 +246,9 @@ class external extends external_api {
         // We must toletare these two exceptions: forcepasswordchangenotice and usernotfullysetup.
         try {
             self::validate_context($context);
-        } catch (Exception $e) {
-            if ($e instanceof moodle_exception) {
-                if (($e->errorcode != 'usernotfullysetup') and
-                    ($e->errorcode != 'forcepasswordchangenotice')) {
-
-                    // In case we receive a different exception, throw it.
-                    throw $e;
-                }
-            } else {
+        } catch (moodle_exception $e) {
+            if ($e->errorcode != 'usernotfullysetup' && $e->errorcode != 'forcepasswordchangenotice') {
+                // In case we receive a different exception, throw it.
                 throw $e;
             }
         }

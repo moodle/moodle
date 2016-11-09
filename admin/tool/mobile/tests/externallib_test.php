@@ -174,6 +174,9 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $CFG->enablemobilewebservice = 1;
         $_GET['wstoken'] = $token->token;   // Mock parameters.
 
+        // Even if we force the password change for the current user we should be able to retrieve the key.
+        set_user_preference('auth_forcepasswordchange', 1, $user->id);
+
         $this->setCurrentTimeStart();
         $result = external::get_autologin_key($token->privatetoken);
         $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
