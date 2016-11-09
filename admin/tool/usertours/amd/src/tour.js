@@ -521,6 +521,10 @@ Tour.prototype.normalizeStepConfig = function (stepConfig) {
         attachPoint: 'after'
     }, stepConfig);
 
+    if (stepConfig.attachTo) {
+        stepConfig.attachTo = $(stepConfig.attachTo).first();
+    }
+
     return stepConfig;
 };
 
@@ -739,10 +743,10 @@ Tour.prototype.addStepToPage = function (stepConfig) {
         this.positionBackdrop(stepConfig);
 
         if (stepConfig.attachPoint === 'append') {
-            $(stepConfig.attachTo).append(currentStepNode);
+            stepConfig.attachTo.append(currentStepNode);
             this.currentStepNode = currentStepNode;
         } else {
-            this.currentStepNode = currentStepNode.insertAfter($(stepConfig.attachTo));
+            this.currentStepNode = currentStepNode.insertAfter(stepConfig.attachTo);
         }
 
         // Ensure that the step node is positioned.
@@ -762,7 +766,7 @@ Tour.prototype.addStepToPage = function (stepConfig) {
         stepConfig.isOrphan = true;
 
         // This will be appended to the body instead.
-        stepConfig.attachTo = 'body';
+        stepConfig.attachTo = $('body').first();
         stepConfig.attachPoint = 'append';
 
         // Add the backdrop.
@@ -772,7 +776,7 @@ Tour.prototype.addStepToPage = function (stepConfig) {
         currentStepNode.addClass('orphan');
 
         // It lives in the body.
-        $(stepConfig.attachTo).append(currentStepNode);
+        stepConfig.attachTo.append(currentStepNode);
         this.currentStepNode = currentStepNode;
 
         this.currentStepNode.offset(this.calculateStepPositionInPage());
@@ -1214,9 +1218,9 @@ Tour.prototype.positionBackdrop = function (stepConfig) {
 
         if (stepConfig.zIndex) {
             if (stepConfig.attachPoint === 'append') {
-                $(stepConfig.attachTo).append(backdrop);
+                stepConfig.attachTo.append(backdrop);
             } else {
-                backdrop.insertAfter($(stepConfig.attachTo));
+                backdrop.insertAfter(stepConfig.attachTo);
             }
         } else {
             $('body').append(backdrop);
@@ -1277,10 +1281,10 @@ Tour.prototype.positionBackdrop = function (stepConfig) {
 
             if (stepConfig.zIndex) {
                 if (stepConfig.attachPoint === 'append') {
-                    $(stepConfig.attachTo).append(background);
+                    stepConfig.attachTo.append(background);
                 } else {
-                    fader.insertAfter($(stepConfig.attachTo));
-                    background.insertAfter($(stepConfig.attachTo));
+                    fader.insertAfter(stepConfig.attachTo);
+                    background.insertAfter(stepConfig.attachTo);
                 }
             } else {
                 $('body').append(fader);
