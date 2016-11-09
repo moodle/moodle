@@ -35,13 +35,6 @@
     min-height: 100px;
 }
 
-.wiki_editor {
-    width: 50%;
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
 .wiki_previewbox {
     width: 50%;
     margin: auto;
@@ -90,12 +83,6 @@
 
 .wiki_form-button {
     margin-left: 0%;
-}
-
-.wiki-form-center {
-    text-align: center;
-    margin: auto;
-    width: 320px;
 }
 
 .wiki-upload-table {
@@ -362,12 +349,6 @@ a.wiki_edit_section {
 
 .wiki-diff-container .wiki-diff-rightside .wiki_diffversion {
     text-align: right;
-}
-
-.wikieditor-toolbar img {
-    width: 22px;
-    height: 22px;
-    vertical-align: middle;
 }
 
 .path-mod-wiki .printicon {
