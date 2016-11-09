@@ -52,6 +52,7 @@ class import extends moodleform {
         $mform = $this->_form;
         $element = $mform->createElement('filepicker', 'importfile', get_string('importfile', 'tool_lpimportcsv'));
         $mform->addElement($element);
+        $mform->addHelpButton('importfile', 'importfile', 'tool_lpimportcsv');
         $mform->addRule('importfile', null, 'required');
         $mform->addElement('hidden', 'confirm', 0);
         $mform->setType('confirm', PARAM_BOOL);
@@ -65,12 +66,10 @@ class import extends moodleform {
         } else {
             $mform->setDefault('delimiter_name', 'comma');
         }
-        $mform->addHelpButton('delimiter_name', 'csvdelimiter', 'tool_lpimportcsv');
 
         $choices = core_text::get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'tool_lpimportcsv'), $choices);
         $mform->setDefault('encoding', 'UTF-8');
-        $mform->addHelpButton('encoding', 'encoding', 'tool_lpimportcsv');
 
         $this->add_action_buttons(false, get_string('import', 'tool_lpimportcsv'));
     }
