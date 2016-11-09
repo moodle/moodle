@@ -28,7 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
 
-    $temp = new admin_settingpage('mobile', new lang_string('mobile', 'admin'), 'moodle/site:config', false);
+    $ADMIN->add('root', new admin_category('mobileapp', new lang_string('mobileapp', 'tool_mobile')), 'development');
+
+    $temp = new admin_settingpage('mobilesettings', new lang_string('mobilesettings', 'tool_mobile'), 'moodle/site:config', false);
 
     // We should wait to the installation to finish since we depend on some configuration values that are set once
     // the admin user profile is configured.
@@ -41,32 +43,43 @@ if ($hassiteconfig) {
                 new lang_string('configenablemobilewebservice', 'admin', $enablemobiledoclink), $default));
     }
 
-    $temp->add(new admin_setting_configtext('mobilecssurl', new lang_string('mobilecssurl', 'admin'),
-                new lang_string('configmobilecssurl', 'admin'), '', PARAM_URL));
+    $ADMIN->add('mobileapp', $temp);
 
-    // Type of login.
-    $options = array(
-        tool_mobile\api::LOGIN_VIA_APP => new lang_string('loginintheapp', 'tool_mobile'),
-        tool_mobile\api::LOGIN_VIA_BROWSER => new lang_string('logininthebrowser', 'tool_mobile'),
-        tool_mobile\api::LOGIN_VIA_EMBEDDED_BROWSER => new lang_string('loginintheembeddedbrowser', 'tool_mobile'),
-    );
-    $temp->add(new admin_setting_configselect('tool_mobile/typeoflogin',
-                new lang_string('typeoflogin', 'tool_mobile'),
-                new lang_string('typeoflogin_desc', 'tool_mobile'), 1, $options));
+    // Show only mobile settings if the mobile service is enabled.
+    if (!empty($CFG->enablemobilewebservice)) {
+        // Type of login.
+        $temp = new admin_settingpage('mobileauthentication', new lang_string('mobileauthentication', 'tool_mobile'));
+        $options = array(
+            tool_mobile\api::LOGIN_VIA_APP => new lang_string('loginintheapp', 'tool_mobile'),
+            tool_mobile\api::LOGIN_VIA_BROWSER => new lang_string('logininthebrowser', 'tool_mobile'),
+            tool_mobile\api::LOGIN_VIA_EMBEDDED_BROWSER => new lang_string('loginintheembeddedbrowser', 'tool_mobile'),
+        );
+        $temp->add(new admin_setting_configselect('tool_mobile/typeoflogin',
+                    new lang_string('typeoflogin', 'tool_mobile'),
+                    new lang_string('typeoflogin_desc', 'tool_mobile'), 1, $options));
 
-    $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
-                new lang_string('forcedurlscheme_key', 'tool_mobile'),
-                new lang_string('forcedurlscheme', 'tool_mobile'), '', PARAM_NOTAGS));
+        $temp->add(new admin_setting_configtext('tool_mobile/forcedurlscheme',
+                    new lang_string('forcedurlscheme_key', 'tool_mobile'),
+                    new lang_string('forcedurlscheme', 'tool_mobile'), '', PARAM_NOTAGS));
 
-    $temp->add(new admin_setting_heading('tool_mobile/smartappbanners',
-                new lang_string('smartappbanners', 'tool_mobile'), ''));
+        $ADMIN->add('mobileapp', $temp);
 
-    $temp->add(new admin_setting_configcheckbox('tool_mobile/enablesmartappbanners',
-                new lang_string('enablesmartappbanners', 'tool_mobile'),
-                new lang_string('enablesmartappbanners_desc', 'tool_mobile'), 0));
+        // Appearance related settings.
+        $temp = new admin_settingpage('mobileappearance', new lang_string('mobileappearance', 'tool_mobile'));
 
-    $temp->add(new admin_setting_configtext('tool_mobile/iosappid', new lang_string('iosappid', 'tool_mobile'),
-                new lang_string('iosappid_desc', 'tool_mobile'), '633359593', PARAM_ALPHANUM));
+        $temp->add(new admin_setting_configtext('mobilecssurl', new lang_string('mobilecssurl', 'tool_mobile'),
+                    new lang_string('configmobilecssurl', 'tool_mobile'), '', PARAM_URL));
 
-    $ADMIN->add('webservicesettings', $temp);
+        $temp->add(new admin_setting_heading('tool_mobile/smartappbanners',
+                    new lang_string('smartappbanners', 'tool_mobile'), ''));
+
+        $temp->add(new admin_setting_configcheckbox('tool_mobile/enablesmartappbanners',
+                    new lang_string('enablesmartappbanners', 'tool_mobile'),
+                    new lang_string('enablesmartappbanners_desc', 'tool_mobile'), 0));
+
+        $temp->add(new admin_setting_configtext('tool_mobile/iosappid', new lang_string('iosappid', 'tool_mobile'),
+                    new lang_string('iosappid_desc', 'tool_mobile'), '633359593', PARAM_ALPHANUM));
+
+        $ADMIN->add('mobileapp', $temp);
+    }
 }
