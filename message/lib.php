@@ -1407,7 +1407,7 @@ function message_print_search_results($frm, $showicontext=false, $currentuser=nu
             $headertdend   = html_writer::end_tag('td');
             echo html_writer::start_tag('tr');
             echo $headertdstart.get_string('from').$headertdend;
-            echo $headertdstart.get_string('to').$headertdend;
+            echo $headertdstart.get_string('addressedto').$headertdend;
             echo $headertdstart.get_string('message', 'message').$headertdend;
             echo $headertdstart.get_string('timesent', 'message').$headertdend;
             echo html_writer::end_tag('tr');
