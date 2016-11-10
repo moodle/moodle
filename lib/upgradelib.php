@@ -2266,3 +2266,32 @@ function check_database_tables_row_format(environment_results $result) {
 
     return null;
 }
+
+/**
+ * Check if recommended version of libcurl is installed or not.
+ *
+ * @param environment_results $result object to update, if relevant.
+ * @return environment_results|null updated results or null.
+ */
+function check_libcurl_version(environment_results $result) {
+
+    // Supported version and version number.
+    $supportedversion = 0x071304;
+    $supportedversionstring = "7.19.4";
+
+    // Installed version.
+    $curlinfo = curl_version();
+    $currentversion = $curlinfo['version_number'];
+
+    if ($currentversion < $supportedversion) {
+        // Test fail.
+        // Set info, we want to let user know how to resolve the problem.
+        $result->setInfo('Libcurl version check');
+        $result->setNeededVersion($supportedversionstring);
+        $result->setCurrentVersion($curlinfo['version']);
+        $result->setStatus(false);
+        return $result;
+    }
+
+    return null;
+}
