@@ -728,8 +728,8 @@ class tree_testcase extends \advanced_testcase {
         shuffle($conditions);
         $tree = new tree(tree::get_root_json($conditions));
         list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
-        $result = $DB->get_fieldset_sql($sql, $params);
-        $this->assertEquals(array($user->id), $result);
+        // This must not throw exception.
+        $DB->fix_sql_params($sql, $params);
     }
 
     /**
