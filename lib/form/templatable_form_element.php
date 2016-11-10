@@ -82,6 +82,11 @@ trait templatable_form_element {
         $context['type'] = $this->getType();
         $context['attributes'] = implode(' ', $otherattributes);
 
+        // Elements with multiple values need array syntax.
+        if ($this->getAttribute('multiple')) {
+            $context['name'] = $context['name'] . '[]';
+        }
+
         return $context;
     }
 }
