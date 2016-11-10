@@ -315,7 +315,7 @@ class mod_workshop_portfolio_caller extends portfolio_module_caller_base {
             $output .= $content;
         }
 
-        return $output;
+        return html_writer::div($output);
     }
 
     /**
