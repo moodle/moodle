@@ -1,14 +1,13 @@
-VideoJS 5.11.8
+VideoJS 5.12.6
 --------------
 https://github.com/videojs/video.js
 
 Instructions to import VideoJS player into Moodle:
 
-0. Checkout and build videojs source in a separate directory
-1. copy 'build/temp/video.js' into 'amd/src/video.js'
-2. copy 'build/temp/font/' into 'fonts/' folder
-3. copy contens of 'images/' folder into 'pix/' folder
-4. copy 'build/temp/video-js.css' into 'styles.css'
+1. Download the latest release from https://github.com/videojs/video.js/releases in a separate directory
+2. copy 'dist/video.js' into 'amd/src/video.js'
+3. copy 'dist/font/' into 'fonts/' folder
+4. copy 'dist/video-js.css' into 'styles.css'
    Replace
      url("font/VideoJS.eot?#iefix")
    with
@@ -16,14 +15,13 @@ Instructions to import VideoJS player into Moodle:
    Search for other relative URLs in this file.
    Add stylelint-disable in the beginning.
    Add "Modifications of player made by Moodle" to the end of the styles file.
-5. copy 'LICENSE' and 'lang/' into 'videojs/' subfolder
-6. search source code of video.js for the path to video-js.swf,
-   download it and store in this folder
+   Check status of:
+   https://github.com/videojs/video.js/issues/2777
+6. copy 'LICENSE', 'dist/video-js.swf' and 'dist/lang/' into 'videojs/' subfolder
 
 Import plugins:
 
-1. Checkout from https://github.com/videojs/videojs-youtube and build in a separate directory
-2. copy 'dist/Youtube.js' into 'amd/src/Youtube.js'
+1. Copy https://github.com/videojs/videojs-youtube/blob/master/dist/Youtube.js into 'amd/src/Youtube.js'
    In the beginning of the js file replace
      define(['videojs']
    with

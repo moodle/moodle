@@ -77,7 +77,7 @@ THE SOFTWARE. */
       this.el_.parentNode.className = this.el_.parentNode.className
         .replace(' vjs-youtube', '')
         .replace(' vjs-youtube-mobile', '');
-      this.el_.parentNode.removeChild(this.el_);
+      this.el_.remove();
 
       //Needs to be called after the YouTube player is destroyed, otherwise there will be a null reference exception
       Tech.prototype.dispose.call(this);

@@ -264,7 +264,7 @@ class media_videojs_plugin extends core_media_player_native {
         $alias = '';
         if ($module === 'video') {
             $alias = 'videojs';
-            $path = new moodle_url('/media/player/videojs/video-js.swf');
+            $path = new moodle_url('/media/player/videojs/videojs/video-js.swf');
             $contents .= $alias . '.options.flash.swf = "' . $path . '";' . "\n";
             $contents .= $this->find_language(current_language());
         }
