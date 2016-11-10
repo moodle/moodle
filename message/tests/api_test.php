@@ -957,7 +957,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     /**
      * Test retrieving messages by providing a minimum timecreated value.
      */
-    public function test_get_messages_created_from_only() {
+    public function test_get_messages_time_from_only() {
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -972,7 +972,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($user1, $user2, 'Message 3', 0, $time + 3);
         $this->send_fake_message($user2, $user1, 'Message 4', 0, $time + 4);
 
-        // Retrieve the messages.
+        // Retrieve the messages from $time, which should be all of them.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time);
 
         // Confirm the message data is correct.
@@ -988,7 +988,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertContains('Message 3', $message3->text);
         $this->assertContains('Message 4', $message4->text);
 
-        // Retrieve the messages.
+        // Retrieve the messages from $time + 3, which should only be the 2 last messages.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time + 3);
 
         // Confirm the message data is correct.
@@ -1004,7 +1004,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     /**
      * Test retrieving messages by providing a maximum timecreated value.
      */
-    public function test_get_messages_created_to_only() {
+    public function test_get_messages_time_to_only() {
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -1019,7 +1019,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($user1, $user2, 'Message 3', 0, $time + 3);
         $this->send_fake_message($user2, $user1, 'Message 4', 0, $time + 4);
 
-        // Retrieve the messages.
+        // Retrieve the messages up until $time + 4, which should be all of them.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', 0, $time + 4);
 
         // Confirm the message data is correct.
@@ -1035,7 +1035,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertContains('Message 3', $message3->text);
         $this->assertContains('Message 4', $message4->text);
 
-        // Retrieve the messages.
+        // Retrieve the messages up until $time + 2, which should be the first two.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', 0, $time + 2);
 
         // Confirm the message data is correct.
@@ -1051,7 +1051,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
     /**
      * Test retrieving messages by providing a minimum and maximum timecreated value.
      */
-    public function test_get_messages_created_from_and_to() {
+    public function test_get_messages_time_from_and_to() {
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -1066,7 +1066,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->send_fake_message($user1, $user2, 'Message 3', 0, $time + 3);
         $this->send_fake_message($user2, $user1, 'Message 4', 0, $time + 4);
 
-        // Retrieve the messages.
+        // Retrieve the messages from $time + 2 up until $time + 3, which should be 2nd and 3rd message.
         $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 0, 'timecreated ASC', $time + 2, $time + 3);
 
         // Confirm the message data is correct.

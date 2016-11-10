@@ -302,12 +302,11 @@ $definitions = array(
         'staticaccelerationsize' => 3
     ),
 
-    // Cache for storing the user's last received message time.
-    'message_last_created' => array(
+    // Caches the time of the last message between two users.
+    'message_time_last_message_between_users' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // The id of the sender and recipient is used.
         'simplevalues' => true,
-        'datasource' => 'message_last_created_cache_source',
-        'datasourcefile' => 'message/classes/message_last_created_cache_source.php'
+        'datasource' => '\core_message\time_last_message_between_users',
     ),
 );

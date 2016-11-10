@@ -77,6 +77,13 @@ define('MESSAGE_PERMITTED_MASK', 0x0c); // 1100
 define('MESSAGE_DEFAULT_PERMITTED', 'permitted');
 
 /**
+ * Set default values for polling.
+ */
+define('MESSAGE_DEFAULT_MIN_POLL_IN_SECONDS', 10);
+define('MESSAGE_DEFAULT_MAX_POLL_IN_SECONDS', 2 * MINSECS);
+define('MESSAGE_DEFAULT_TIMEOUT_POLL_IN_SECONDS', 5 * MINSECS);
+
+/**
  * Retrieve users blocked by $user1
  *
  * @param object $user1 the user whose messages are being viewed

@@ -1982,7 +1982,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Tests retrieving messages.
      */
-    public function test_messagearea_messages_createfrom() {
+    public function test_messagearea_messages_timefrom() {
         $this->resetAfterTest(true);
 
         // Create some users.
@@ -1999,7 +1999,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->send_message($user1, $user2, 'Message 3', 0, $time - 2);
         $this->send_message($user2, $user1, 'Message 4', 0, $time - 1);
 
-        // Retrieve the messages.
+        // Retrieve the messages from $time - 3, which should be the 3 most recent messages.
         $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id, 0, 0, false, $time - 3);
 
         // We need to execute the return values cleaning process to simulate the web service server.

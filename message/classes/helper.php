@@ -43,12 +43,12 @@ class helper {
      * @param int $limitfrom
      * @param int $limitnum
      * @param string $sort
-     * @param int $createdfrom the time from which the message was created
-     * @param int $createdto the time up until which the message was created
+     * @param int $timefrom the time from the message being sent
+     * @param int $timeto the time up until the message being sent
      * @return array of messages
      */
     public static function get_messages($userid, $otheruserid, $timedeleted = 0, $limitfrom = 0, $limitnum = 0,
-                                        $sort = 'timecreated ASC', $createdfrom = 0, $createdto = 0) {
+                                        $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
         global $DB;
 
         $messageid = $DB->sql_concat("'message_'", 'id');
@@ -77,16 +77,16 @@ class helper {
                          $otheruserid, $userid, $timedeleted);
         $where = array();
 
-        if (!empty($createdfrom)) {
+        if (!empty($timefrom)) {
             $where[] = 'AND timecreated >= ?';
-            $params1[] = $createdfrom;
-            $params2[] = $createdfrom;
+            $params1[] = $timefrom;
+            $params2[] = $timefrom;
         }
 
-        if (!empty($createdto)) {
+        if (!empty($timeto)) {
             $where[] = 'AND timecreated <= ?';
-            $params1[] = $createdto;
-            $params2[] = $createdto;
+            $params1[] = $timeto;
+            $params2[] = $timeto;
         }
 
         $sql = str_replace('%where%', implode(' ', $where), $sql);
@@ -269,5 +269,18 @@ class helper {
         );
 
         return $params;
+    }
+
+    /**
+     * Returns the cache key for the time created value of the last message between two users.
+     *
+     * @param int $userid
+     * @param int $user2id
+     * @return string
+     */
+    public static function get_last_message_time_created_cache_key($userid, $user2id) {
+        $ids = [$userid, $user2id];
+        sort($ids);
+        return implode('_', $ids);
     }
 }

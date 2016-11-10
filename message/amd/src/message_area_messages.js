@@ -53,6 +53,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             STARTDELETEMESSAGES: "[data-action='start-delete-messages']"
         };
 
+        /** @type {int} The number of milliseconds in a second. */
+        var MILLISECONDSINSEC = 1000;
+
         /**
          * Messages class.
          *
@@ -81,8 +84,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /** @type {int} the timestamp for the earliest visible message */
         Messages.prototype._earliestMessageTimestamp = 0;
 
-        /** @type {BackOffTime} the backoff timer */
-        Messages.prototype._timer = null;
+        /** @type {BackOffTimer} the backoff timer */
+        Messages.prototype._backoffTimer = null;
 
         /** @type {Messagearea} The messaging area object. */
         Messages.prototype.messageArea = null;
@@ -146,12 +149,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }
 
             // Create a timer to poll the server for new messages.
-            this._timer = new BackOffTimer(function() {
-                this._loadNewMessages();
-            }.bind(this));
+            this._backoffTimer = new BackOffTimer(this._loadNewMessages.bind(this),
+                BackOffTimer.getIncrementalCallback(this.messageArea.pollmin * MILLISECONDSINSEC, MILLISECONDSINSEC,
+                    this.messageArea.pollmax * MILLISECONDSINSEC, this.messageArea.polltimeout * MILLISECONDSINSEC));
 
             // Start the timer.
-            this._timer.start();
+            this._backoffTimer.start();
         };
 
         /**
@@ -166,7 +169,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // We are viewing another user, or re-loading the panel, so set number of messages displayed to 0.
             this._numMessagesDisplayed = 0;
             // Stop the existing timer so we can set up the new user's messages.
-            this._timer.stop();
+            this._backoffTimer.stop();
             // Reset the earliest timestamp when we change the messages view.
             this._earliestMessageTimestamp = 0;
 
@@ -203,7 +206,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 Templates.replaceNodeContents(this.messageArea.find(SELECTORS.MESSAGESAREA), html, js);
                 this._addScrollEventListener(numberreceived);
                 // Restart the poll timer.
-                this._timer.restart();
+                this._backoffTimer.restart();
             }.bind(this)).fail(Notification.exception);
         };
 
@@ -321,7 +324,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     // Increment the number of messages displayed.
                     this._numMessagesDisplayed += numberreceived;
                     // Reset the poll timer because the user may be active.
-                    this._timer.restart();
+                    this._backoffTimer.restart();
                 }
             }.bind(this)).always(function() {
                 // Mark that we are no longer busy loading data.
@@ -349,7 +352,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // If we're trying to load new messages since the message UI was
             // rendered. Used for ajax polling while user is on the message UI.
             if (fromTimestamp) {
-                args.createdfrom = this._earliestMessageTimestamp;
+                args.timefrom = this._earliestMessageTimestamp;
                 // Remove limit and offset. We want all new messages.
                 args.limitfrom = 0;
                 args.limitnum = 0;
@@ -381,10 +384,11 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 }
 
                 return data;
-            }.bind(this)).fail(function() {
+            }.bind(this)).fail(function(ex) {
                 // Stop the timer if we received an error so that we don't keep spamming the server.
-                this._timer.stop();
-            }.bind(this)).fail(Notification.exception);
+                this._backoffTimer.stop();
+                Notification.exception(ex);
+            }.bind(this));
         };
 
         /**

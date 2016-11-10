@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cache data source for the last created message between users.
+ * Cache data source for the time of the last message between users.
  *
  * @package    core_message
  * @category   cache
@@ -23,32 +23,33 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_message;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Cache data source for the last created message between users.
+ * Cache data source for the time of the last message between users.
  *
  * @package    core_message
  * @category   cache
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class message_last_created_cache_source implements \cache_data_source {
+class time_last_message_between_users implements \cache_data_source {
 
-    /** @var message_last_created_cache_source the singleton instance of this class. */
+    /** @var time_last_message_between_users the singleton instance of this class. */
     protected static $instance = null;
 
     /**
      * Returns an instance of the data source class that the cache can use for loading data using the other methods
      * specified by the cache_data_source interface.
      *
-     * @param cache_definition $definition
+     * @param \cache_definition $definition
      * @return object
      */
-    public static function get_instance_for_cache(cache_definition $definition) {
+    public static function get_instance_for_cache(\cache_definition $definition) {
         if (is_null(self::$instance)) {
-            self::$instance = new message_last_created_cache_source();
+            self::$instance = new time_last_message_between_users();
         }
         return self::$instance;
     }
@@ -62,7 +63,7 @@ class message_last_created_cache_source implements \cache_data_source {
     public function load_for_cache($key) {
         list($userid1, $userid2) = explode('_', $key);
 
-        $message = \core_message\api::get_most_recent_message($userid1, $userid2);
+        $message = api::get_most_recent_message($userid1, $userid2);
 
         if ($message) {
             return $message->timecreated;

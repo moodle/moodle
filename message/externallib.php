@@ -901,7 +901,7 @@ class core_message_external extends external_api {
                 'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
                 'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0),
                 'newest' => new external_value(PARAM_BOOL, 'Newest first?', VALUE_DEFAULT, false),
-                'createdfrom' => new external_value(PARAM_INT,
+                'timefrom' => new external_value(PARAM_INT,
                     'The timestamp from which the messages were created', VALUE_DEFAULT, 0),
             )
         );
@@ -920,7 +920,7 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0,
-                                                         $newest = false, $createdfrom = 0) {
+                                                         $newest = false, $timefrom = 0) {
         global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
@@ -936,7 +936,7 @@ class core_message_external extends external_api {
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum,
             'newest' => $newest,
-            'createdfrom' => $createdfrom,
+            'timefrom' => $timefrom,
         );
         self::validate_parameters(self::data_for_messagearea_messages_parameters(), $params);
         self::validate_context($systemcontext);
@@ -959,18 +959,18 @@ class core_message_external extends external_api {
         // case those messages will be lost.
         //
         // Instead we ignore the current time in the result set to ensure that second is allowed to finish.
-        if (!empty($createdfrom)) {
-            $createdto = time() - 1;
+        if (!empty($timefrom)) {
+            $timeto = time() - 1;
         } else {
-            $createdto = 0;
+            $timeto = 0;
         }
 
         // No requesting messages from the current time, as stated above.
-        if ($createdfrom == time()) {
-            $mesages = [];
+        if ($timefrom == time()) {
+            $messages = [];
         } else {
             $messages = \core_message\api::get_messages($currentuserid, $otheruserid, $limitfrom,
-                                                        $limitnum, $sort, $createdfrom, $createdto);
+                                                        $limitnum, $sort, $timefrom, $timeto);
         }
 
         $messages = new \core_message\output\messagearea\messages($currentuserid, $otheruserid, $messages);
