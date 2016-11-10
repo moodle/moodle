@@ -1318,5 +1318,21 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016090500, 'local', 'iomad');
     }
 
+    if ($oldversion < 2016090502) {
+
+        // Define field frameworkid to be added to company_comp_frameworks.
+        $table = new xmldb_table('company_comp_frameworks');
+        $field = new xmldb_field('frameworkid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null, 'companyid');
+
+        // Conditionally launch add field frameworkid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2016090502, 'local', 'iomad');
+    }
+
+
     return $result;
 }
