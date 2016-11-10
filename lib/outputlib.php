@@ -86,7 +86,13 @@ function theme_get_revision() {
 
     if (empty($CFG->themedesignermode)) {
         if (empty($CFG->themerev)) {
-            return -1;
+            // If theme designer mode is not set, and there is no themerev, this is almost certainly part of the installation.
+            // We attempt to set a themerev based on the Moodle version number to avoid costly rebuilds of the dynamic
+            // theme files between each page load.
+            $version = null;
+            require("{$CFG->dirroot}/version.php");
+
+            return version_to_timestamp($version);
         } else {
             return $CFG->themerev;
         }
