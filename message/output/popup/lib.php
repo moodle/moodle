@@ -46,6 +46,7 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
         $context = [
             'userid' => $USER->id,
             'urls' => [
+                'seeall' => (new moodle_url('/message/index.php'))->out(),
                 'writeamessage' => (new moodle_url('/message/index.php', ['contactsfirst' => 1]))->out(),
                 'preferences' => (new moodle_url('/message/edit.php', ['id' => $USER->id]))->out(),
             ],
