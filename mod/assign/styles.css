@@ -387,6 +387,7 @@
 }
 
 .path-mod-assign [data-region="configure-filters"] label {
+    display: block;
     padding: 3px 20px;
 }
 
