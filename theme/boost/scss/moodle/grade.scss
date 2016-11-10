@@ -27,7 +27,22 @@
 }
 
 .path-grade-report #maincontent + .urlselect {
-    float: right;
+    position: absolute;
+    left: 40vw;
+}
+
+.path-grade-report-grader {
+    #region-main {
+        width: auto;
+        & > .card {
+            width: auto;
+            overflow-x: initial;
+        }
+    }
+    [data-region="blocks-column"] {
+        width: 100%;
+        clear: both;
+    }
 }
 
 // Rubrics
