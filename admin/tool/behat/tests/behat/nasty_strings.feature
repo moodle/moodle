@@ -31,9 +31,8 @@ Feature: Transform steps arguments
     And I press "Update profile"
     And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should not see "NASTYSTRING"
-    # BEHAT Transformation regression - See MDL-56397
-    #And the field "Surname" matches value "$NASTYSTRING1"
-    #And the field "City/town" matches value "$NASTYSTRING3"
+    And the field "Surname" matches value "$NASTYSTRING1"
+    And the field "City/town" matches value "$NASTYSTRING3"
 
   Scenario: Use double quotes
     When I set the following fields to these values:
@@ -57,5 +56,4 @@ Feature: Transform steps arguments
     And I should see "My Firstname"
     And I should see "My Surname"
     And the field "First name" matches value "My Firstname $NASTYSTRING1"
-    # BEHAT Transformation regression - See MDL-56397
-    #And the field "Surname" matches value "My Surname $NASTYSTRING2"
+    And the field "Surname" matches value "My Surname $NASTYSTRING2"
