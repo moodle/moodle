@@ -52,7 +52,7 @@ class filter_mediaplugin_testcase extends advanced_testcase {
         $validtexts = array (
             '<a href="http://moodle.org/testfile/test.mp3">test mp3</a>',
             '<a href="http://moodle.org/testfile/test.ogg">test ogg</a>',
-            '<a id="movie player" class="center" href="http://moodle.org/testfile/test.mpg">test mpg</a>',
+            '<a id="movie player" class="center" href="http://moodle.org/testfile/test.mp4">test mp4</a>',
             '<a href="http://moodle.org/testfile/test.webm">test</a>',
             '<a href="http://www.youtube.com/watch?v=JghQgA2HMX8" class="href=css">test file</a>',
             '<a href="http://www.youtube-nocookie.com/watch?v=JghQgA2HMX8" class="href=css">test file</a>',

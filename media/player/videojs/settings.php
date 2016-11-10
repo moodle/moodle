@@ -29,7 +29,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('media_videojs/videoextensions',
         new lang_string('videoextensions', 'media_videojs'),
         new lang_string('configvideoextensions', 'media_videojs'),
-        '.mov, .mp4, .m4v, .mpeg, .mpe, .mpg, .ogv, .webm, .flv, .f4v'));
+        '.mov, .mp4, .m4v, .ogv, .webm, .flv, .f4v'));
 
     $settings->add(new admin_setting_configtext('media_videojs/audioextensions',
         new lang_string('audioextensions', 'media_videojs'),
