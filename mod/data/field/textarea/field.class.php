@@ -61,8 +61,8 @@ class data_field_textarea extends data_field_base {
         $text   = '';
         $format = 0;
         $str = '<div title="' . s($this->field->description) . '">';
-        $str .= '<label for="field_' . $this->field->id . '">';
-        $str .= html_writer::span($this->field->name, "accesshide");
+        $str .= '<label for="field_' . $this->field->id . '" class="accesshide">';
+        $str .= html_writer::span($this->field->name);
         if ($this->field->required) {
             $image = html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
                                      array('class' => 'req', 'title' => get_string('requiredelement', 'form')));

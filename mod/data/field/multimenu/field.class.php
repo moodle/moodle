@@ -52,8 +52,8 @@ class data_field_multimenu extends data_field_base {
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<input name="field_' . $this->field->id . '[xxx]" type="hidden" value="xxx"/>'; // hidden field - needed for empty selection
 
-        $str .= '<label for="field_' . $this->field->id . '">';
-        $str .= html_writer::span($this->field->name, 'accesshide');
+        $str .= '<label for="field_' . $this->field->id . '" class="accesshide">';
+        $str .= html_writer::span($this->field->name);
         if ($this->field->required) {
             $str .= '<div class="inline-req">';
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
