@@ -39,3 +39,4 @@ mediasettings,core_media
 legacyheading,core_media
 legacyheading_desc,core_media
 mobile,core_admin
+for,core_calendar
