@@ -1,11 +1,3 @@
-.path-mod-data .fieldadd,
-.path-mod-data .sortdefault,
-.path-mod-data .defaulttemplate,
-#page-mod-data-view .datapreferences,
-#page-mod-data-preset .presetmapping {
-    text-align: center;
-}
-
 .path-mod-data-field .c0,
 #page-mod-data-view #sortsearch .c0 {
     text-align: right;

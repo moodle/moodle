@@ -241,7 +241,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
     echo '<br />';
 
     echo '<div class="no-overflow" id="availabletags_wrapper">';
-    echo '<select name="fields1[]" id="availabletags" size="12" onclick="insert_field_tags(this)">';
+    echo '<select name="fields1[]" id="availabletags" size="12" onclick="insert_field_tags(this)" class="form-control">';
 
     $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
     echo '<optgroup label="'.get_string('fields', 'data').'">';
@@ -300,7 +300,8 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
 
     echo '</select>';
     echo '</div>';
-    echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
+    echo '<br /><br /><br /><br />';
+    echo '<input type="submit" class="btn btn-secondary" name="defaultform" value="'.get_string('resettemplate', 'data').'" />';
     echo '<br /><br />';
     if ($usehtmleditor) {
         $switchlink = new moodle_url($PAGE->url, ['useeditor' => false]);
@@ -315,7 +316,8 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
             ]);
     }
 } else {
-    echo '<br /><br /><br /><br /><input type="submit" name="defaultform" value="'.get_string('resettemplate','data').'" />';
+    echo '<br /><br /><br /><br />';
+    echo '<input type="submit" class="btn btn-primary" name="defaultform" value="' . get_string('resettemplate', 'data') . '" />';
 }
 echo '</td>';
 
@@ -329,7 +331,10 @@ if ($mode == 'listtemplate'){
 $field = 'template';
 $editor->set_text($data->{$mode});
 $editor->use_editor($field, $options);
-echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->{$mode}).'</textarea></div>';
+echo '<div>';
+echo '<textarea class="form-control" id="' . $field . '" ' .
+     'name="' . $field . '" rows="15" cols="80">' . s($data->{$mode}) . '</textarea>';
+echo '</div>';
 echo '</td>';
 echo '</tr>';
 
@@ -342,25 +347,33 @@ if ($mode == 'listtemplate'){
     $field = 'listtemplatefooter';
     $editor->set_text($data->listtemplatefooter);
     $editor->use_editor($field, $options);
-    echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->listtemplatefooter).'</textarea></div>';
+    echo '<div>';
+    echo '<textarea id="' . $field . '" class="form-control" ' .
+         'name="' . $field . '" rows="15" cols="80">' . s($data->listtemplatefooter) . '</textarea>';
+    echo '</div>';
     echo '</td>';
     echo '</tr>';
 } else if ($mode == 'rsstemplate') {
     echo '<tr>';
     echo '<td>&nbsp;</td>';
     echo '<td>';
-    echo '<div class="template_heading"><label for="edit-rsstitletemplate">'.get_string('rsstitletemplate','data').'</label></div>';
+    echo '<div class="template_heading">';
+    echo '<label for="edit-rsstitletemplate">' . get_string('rsstitletemplate', 'data') . '</label>';
+    echo '</div>';
 
     $field = 'rsstitletemplate';
     $editor->set_text($data->rsstitletemplate);
     $editor->use_editor($field, $options);
-    echo '<div><textarea id="'.$field.'" name="'.$field.'" rows="15" cols="80">'.s($data->rsstitletemplate).'</textarea></div>';
+    echo '<div>';
+    echo '<textarea id="' . $field . '" name="' . $field . '" ' .
+         'class="form-control" rows="15" cols="80">' . s($data->rsstitletemplate) . '</textarea>';
+    echo '</div>';
     echo '</td>';
     echo '</tr>';
 }
 
 echo '<tr><td class="save_template" colspan="2">';
-echo '<input type="submit" value="'.get_string('savetemplate','data').'" />&nbsp;';
+echo '<input type="submit" class="btn btn-primary" value="'.get_string('savetemplate','data').'" />&nbsp;';
 
 echo '</td></tr></table>';
 

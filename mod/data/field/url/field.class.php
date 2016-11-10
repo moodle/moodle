@@ -65,7 +65,7 @@ class data_field_url extends data_field_base {
 
         $autolinkable = !empty($this->field->param1) and empty($this->field->param2);
 
-        $str = '<div title="' . s($this->field->description) . '">';
+        $str = '<div title="' . s($this->field->description) . '" class="form-inline">';
 
         $label = '<label for="' . $fieldid . '"><span class="accesshide">' . $this->field->name . '</span>';
         if ($this->field->required) {
@@ -87,19 +87,22 @@ class data_field_url extends data_field_base {
             }
             $str .= '</td><td>';
             $str .= $label;
-            $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'" size="60" />';
-            $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button></td></tr>';
-            $str .= '<tr><td align="right"><span class="mod-data-input">'.get_string('text', 'data').':</span></td><td>';
-            $str .= '<input type="text" name="field_'.$this->field->id.'_1" id="field_'.$this->field->id.'_1" value="'.s($text).'"';
-            $str .= ' size="60" /></td></tr>';
+            $str .= '<input type="text" name="field_' . $this->field->id . '_0" id="' . $fieldid . '" value="' . s($url) . '" ' .
+                    'size="40" class="form-control d-inline"/>';
+            $str .= '<button class="btn btn-secondary m-l-1" id="filepicker-button-' . $options->client_id . '" ' .
+                    'style="display:none">' . $straddlink . '</button></td></tr>';
+            $str .= '<tr><td align="right"><span class="mod-data-input">' . get_string('text', 'data') . ':</span></td><td>';
+            $str .= '<input type="text" name="field_' . $this->field->id . '_1" id="field_' . $this->field->id . '_1" ' .
+                    'value="' . s($text) . '" size="40" class="form-control d-inline"/></td></tr>';
             $str .= '</table>';
         } else {
             // Just the URL field
             $str .= $label;
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'"';
-            $str .= ' size="60" class="mod-data-input" />';
+            $str .= ' size="40" class="mod-data-input form-control d-inline" />';
             if (count($options->repositories) > 0) {
-                $str .= '<button id="filepicker-button-'.$options->client_id.'" class="visibleifjs">'.$straddlink.'</button>';
+                $str .= '<button id="filepicker-button-' . $options->client_id . '" class="visibleifjs btn btn-secondary m-l-1">' .
+                        $straddlink . '</button>';
             }
         }
 
@@ -113,8 +116,9 @@ class data_field_url extends data_field_base {
     }
 
     function display_search_field($value = '') {
-        return '<label class="accesshide" for="f_'.$this->field->id.'">' . get_string('fieldname', 'data') . '</label>' .
-               '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
+        return '<label class="accesshide" for="f_' . $this->field->id . '">' . get_string('fieldname', 'data') . '</label>' .
+               '<input type="text" size="16" id="f_' . $this->field->id . '" '.
+               ' name="f_' . $this->field->id . '" value="' . s($value) . '" class="form-control d-inline"/>';
     }
 
     function parse_search_field() {
