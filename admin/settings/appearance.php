@@ -258,8 +258,11 @@ preferences,moodle|/user/preferences.php|preferences',
     $temp->add(new admin_setting_configcheckbox('blockeditingmenu', new lang_string('blockeditingmenu', 'admin'), new lang_string('blockeditingmenu_desc', 'admin'), 1));
     $ADMIN->add('appearance', $temp);
 
-    // link to tag management interface
-    $ADMIN->add('appearance', new admin_externalpage('managetags', new lang_string('managetags', 'tag'), $CFG->wwwroot.'/tag/manage.php', 'moodle/tag:manage'));
+    // Link to tag management interface.
+    $url = new moodle_url('/tag/manage.php');
+    $hidden = empty($CFG->usetags);
+    $page = new admin_externalpage('managetags', new lang_string('managetags', 'tag'), $url, 'moodle/tag:manage', $hidden);
+    $ADMIN->add('appearance', $page);
 
     $temp = new admin_settingpage('additionalhtml', new lang_string('additionalhtml', 'admin'));
     $temp->add(new admin_setting_heading('additionalhtml_heading', new lang_string('additionalhtml_heading', 'admin'), new lang_string('additionalhtml_desc', 'admin')));
