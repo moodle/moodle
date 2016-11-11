@@ -315,6 +315,11 @@ if (!$cache and $version > $CFG->version) {  // upgrade
         $testsite = 'behat';
     }
 
+    if (isset($CFG->themerev)) {
+        // Store the themerev to restore after purging caches.
+        $themerev = $CFG->themerev;
+    }
+
     // We purge all of MUC's caches here.
     // Caches are disabled for upgrade by CACHE_DISABLE_ALL so we must set the first arg to true.
     // This ensures a real config object is loaded and the stores will be purged.
@@ -323,6 +328,11 @@ if (!$cache and $version > $CFG->version) {  // upgrade
     cache_helper::purge_all(true);
     // We then purge the regular caches.
     purge_all_caches();
+
+    if (isset($themerev)) {
+        // Restore the themerev
+        set_config('themerev', $themerev);
+    }
 
     $output = $PAGE->get_renderer('core', 'admin');
 
