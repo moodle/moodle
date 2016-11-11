@@ -2337,6 +2337,7 @@ function create_course($data, $editoroptions = NULL) {
         'other' => array('shortname' => $course->shortname,
             'fullname' => $course->fullname)
     ));
+
     $event->trigger();
 
     // Setup the blocks
