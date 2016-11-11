@@ -211,7 +211,7 @@ function blog_rss_get_feed($context, $args) {
     if ($blogentries) {
         $items = array();
         foreach ($blogentries as $blogentry) {
-            $item = null;
+            $item = new stdClass();
             $item->author = fullname($DB->get_record('user', array('id' => $blogentry->userid))); // TODO: this is slow.
             $item->title = $blogentry->subject;
             $item->pubdate = $blogentry->lastmodified;
@@ -234,7 +234,7 @@ function blog_rss_get_feed($context, $args) {
 
     switch ($type) {
         case 'user':
-            $info = fullname($DB->get_record('user', array('id' => $id), 'firstname,lastname'));
+            $info = fullname($DB->get_record('user', array('id' => $id), get_all_user_name_fields(true)));
             break;
         case 'course':
             $info = $DB->get_field('course', 'fullname', array('id' => $id));
