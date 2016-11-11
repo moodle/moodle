@@ -1582,3 +1582,14 @@ function restrict_php_version(&$result, $version) {
         return true;
     }
 }
+
+/**
+ * Check if the current PHP version is greater than or equal to
+ * PHP version 7.1.
+ *
+ * @param object $result an environment_results instance
+ * @return bool result of version check
+ */
+function restrict_php_version_71(&$result) {
+    return restrict_php_version($result, '7.1');
+}
