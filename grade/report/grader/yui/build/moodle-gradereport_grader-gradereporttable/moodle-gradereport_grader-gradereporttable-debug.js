@@ -973,7 +973,7 @@ FloatingHeaders.prototype = {
         } else {
             floatingUserRelativePoint = Y.config.win.pageXOffset + bodyMargin;
             floatingUserTriggerPoint = floatingUserRelativePoint + this.dockWidth + bodyMargin;
-            userFloats = floatingUserTriggerPoint > this.firstUserCellLeft;
+            userFloats = floatingUserTriggerPoint > this.firstUserCellLeft + bodyMargin;
             leftTitleFloats = floatingUserTriggerPoint > (this.firstNonUserCellLeft - this.firstUserCellWidth);
         }
 
