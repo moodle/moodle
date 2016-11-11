@@ -5497,9 +5497,6 @@ a.ygtvspacer:hover {
 .fitem.disabled .filemanager-container {
   background-color: #ebebe4;
 }
-.fitem.disabled .fp-btn-choose {
-  color: #999;
-}
 .fitem.disabled .filepicker-filelist .filepicker-filename {
   display: none;
 }
@@ -15877,13 +15874,6 @@ button.yui3-button.closebutton {
 }
 button.yui3-button.closebutton:hover {
   background-position: 0 0;
-}
-input.fp-btn-choose {
-  padding: 2px 10px;
-  font-size: 11.9px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
 }
 .user-enroller-panel .uep-search-results .user .options .enrol,
 .user-enroller-panel .uep-search-results .cohort .options .enrol {
