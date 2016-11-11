@@ -38,6 +38,10 @@ $context = context_module::instance($cm->id);
 require_capability('mod/lesson:manage', $context);
 
 $mode    = optional_param('mode', get_user_preferences('lesson_view', 'collapsed'), PARAM_ALPHA);
+// Ensure a valid mode is set.
+if (!in_array($mode, array('single', 'full', 'collapsed'))) {
+    $mode = 'collapsed';
+}
 $PAGE->set_url('/mod/lesson/edit.php', array('id'=>$cm->id,'mode'=>$mode));
 
 if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
