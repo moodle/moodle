@@ -47,6 +47,7 @@ $maxmark    = optional_param('maxmark', '', PARAM_FLOAT);
 $newheading = optional_param('newheading', '', PARAM_TEXT);
 $shuffle    = optional_param('newshuffle', 0, PARAM_INT);
 $page       = optional_param('page', '', PARAM_INT);
+$bulkslots  = optional_param('slots', '', PARAM_SEQUENCE);
 $PAGE->set_url('/mod/quiz/edit-rest.php',
         array('quizid' => $quizid, 'class' => $class));
 
@@ -142,6 +143,23 @@ switch($requestmethod) {
                                                             'page' => $slot->page);
                         }
                         echo json_encode(array('slots' => $json));
+                        break;
+
+                    case 'bulkdelete':
+                        require_capability('mod/quiz:manage', $modcontext);
+
+                        $bulkslots = explode(',', $bulkslots);
+                        rsort($bulkslots);  // Work backwards, since removing a question renumbers following slots.
+
+                        foreach ($bulkslots as $slot) {
+                            if (quiz_has_question_use($quiz, $slot)) {
+                                $structure->remove_slot($slot);
+                            }
+                        }
+                        quiz_delete_previews($quiz);
+                        quiz_update_sumgrades($quiz);
+
+                        echo json_encode(array('deleted' => true));
                         break;
 
                     case 'updatedependency':

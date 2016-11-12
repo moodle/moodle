@@ -676,6 +676,77 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
 M.mod_quiz.resource_toolbox = null;
 M.mod_quiz.init_resource_toolbox = function(config) {
     M.mod_quiz.resource_toolbox = new RESOURCETOOLBOX(config);
+
+    var bulkactions = function() {
+        var CSS = {
+                QUIZBULKACTIONMODE: 'quiz-bulk-action-mode'
+            },
+            SELECTOR = {
+                BULKACTIONS: '#bulkactionscommand',
+                CANCELBULKACTIONS: '#bulkactionscancelcommand',
+                SELECTALL: '#questionselectall',
+                DELETEACTION: '#bulkactionsdeletecommand',
+                DESELECTALL: '#questiondeselectall',
+                CHECKBOXES: '.quiz-question-bulk-selector'
+
+            };
+        Y.one(SELECTOR.BULKACTIONS).on('click', function(e) {
+            e.preventDefault();
+            Y.one('body').addClass(CSS.QUIZBULKACTIONMODE);
+        });
+
+        Y.one(SELECTOR.CANCELBULKACTIONS).on('click', function(e) {
+            e.preventDefault();
+            Y.one('body').removeClass(CSS.QUIZBULKACTIONMODE);
+        });
+
+        Y.one(SELECTOR.SELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.CHECKBOXES).set('checked', 'checked');
+        });
+
+        Y.one(SELECTOR.DESELECTALL).on('click', function(e) {
+            e.preventDefault();
+            Y.all(SELECTOR.CHECKBOXES).set('checked', '');
+        });
+
+        var submitdeletion = function() {
+            var slots = '';
+            Y.all(SELECTOR.CHECKBOXES + ':checked').each(function(node) {
+                slots += slots === '' ? '' : ',';
+                slots += node.get('value');
+            });
+            var spinnercont = Y.one('div.mod-quiz-edit-content'),
+                spinner = M.mod_quiz.resource_toolbox.add_spinner(spinnercont),
+                data = {
+                    'class': 'resource',
+                    field: 'bulkdelete',
+                    slots: slots
+                };
+            M.mod_quiz.resource_toolbox.send_request(data, spinner, function() {
+                Y.all(SELECTOR.CHECKBOXES + ':checked').each(function(node) {
+                    node.ancestor('li.activity').remove(true);
+                });
+            });
+        };
+
+        Y.one(SELECTOR.DELETEACTION).on('click', function(e) {
+            e.preventDefault();
+            // Create the confirmation dialogue.
+            var confirm = new M.core.confirm({
+                question: M.util.get_string('areyousureremoveselected', 'quiz'),
+                modal: true
+            });
+
+            // If it is confirmed.
+            confirm.on('complete-yes', function() {
+                submitdeletion();
+            }, self);
+        });
+    };
+
+    bulkactions();
+
     return M.mod_quiz.resource_toolbox;
 };
 /* global TOOLBOX, BODY, SELECTOR */

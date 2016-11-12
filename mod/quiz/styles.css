@@ -879,10 +879,6 @@ table.quizreviewsummary td.cell {
     width: 100%;
 }
 
-#page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer {
-    padding-left: 22px;
-}
-
 #page-mod-quiz-edit ul.slots .activityinstance form {
     display: inline;
 }
@@ -1115,6 +1111,68 @@ table#categoryquestions {
 .questionbank .categorypagingbarcontainer,
 .questionbank .categoryselectallcontainer {
     background-color: #fff;
+}
+
+/* Bulk edit actions */
+
+.bulkactioncommandbuttons {
+    margin: 0.6em 0.4em;
+}
+
+.bulkactioncommand,
+.bulkactioncommandbuttons,
+.quiz-question-bulk-selector {
+    display: none;
+}
+
+body.quiz-bulk-action-mode .bulkactioncommand,
+body.quiz-bulk-action-mode .bulkactioncommandbuttons,
+body.quiz-bulk-action-mode .quiz-question-bulk-selector {
+    display: inherit;
+}
+
+body.quiz-bulk-action-mode input.quiz-question-bulk-selector[type="checkbox"] {
+    display: inline;
+}
+
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section .activity .editing_move,
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section .activity .commands {
+    display: none;
+}
+
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section .page_split_join_wrapper {
+    display: none;
+}
+
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section .activity .actions {
+    display: none;
+}
+
+body.quiz-bulk-action-mode#page-mod-quiz-edit .maxgrade,
+body.quiz-bulk-action-mode#page-mod-quiz-edit .totalpoints,
+body.quiz-bulk-action-mode .mod-quiz-edit-content .last-add-menu {
+    display: none;
+}
+
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section-heading,
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section-heading form,
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section-heading .instancesectioncontainer,
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section-heading .instanceshufflequestions,
+body.quiz-bulk-action-mode .mod-quiz-edit-content .section-heading .instancesectioncontainer h3 {
+    display: none;
+}
+
+body.quiz-bulk-action-mode .mod-quiz-edit-content .rpcontainerclass {
+    display: none;
+}
+
+body.quiz-bulk-action-mode#page-mod-quiz-edit ul.slots li.section li.activity .mod-indent-outer {
+    padding-left: 3px;
+}
+
+.section .summary .iconsmall,
+.section .activity .iconsmall {
+    float: left;
 }
 
 /* Base theme needs extra support. */
