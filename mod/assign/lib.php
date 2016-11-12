@@ -408,7 +408,7 @@ function assign_print_overview($courses, &$htmlarray) {
         $context = context_module::instance($assignment->coursemodule);
 
         // Does the submission status of the assignment require notification?
-        if (has_capability('mod/assign:submit', $context)) {
+        if (has_capability('mod/assign:submit', $context, null, false)) {
             // Does the submission status of the assignment require notification?
             $submitdetails = assign_get_mysubmission_details_for_print_overview($mysubmissions, $sqlassignmentids,
                     $assignmentidparams, $assignment);
@@ -416,7 +416,7 @@ function assign_print_overview($courses, &$htmlarray) {
             $submitdetails = false;
         }
 
-        if (has_capability('mod/assign:grade', $context)) {
+        if (has_capability('mod/assign:grade', $context, null, false)) {
             // Does the grading status of the assignment require notification ?
             $gradedetails = assign_get_grade_details_for_print_overview($unmarkedsubmissions, $sqlassignmentids,
                     $assignmentidparams, $assignment, $context);
