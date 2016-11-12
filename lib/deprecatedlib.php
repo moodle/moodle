@@ -214,7 +214,7 @@ function get_plugin_directory($plugintype, $name) {
  * @deprecated since 2.6, use core_component::normalize_component()
  *
  * @param string $component
- * @return array as (string)$type => (string)$plugin
+ * @return array two-items list of [(string)type, (string|null)name]
  */
 function normalize_component($component) {
 
