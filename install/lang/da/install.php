@@ -41,8 +41,8 @@ $string['databasehost'] = 'Databasevært';
 $string['databasename'] = 'Databasenavn';
 $string['databasetypehead'] = 'Vælg databasedriver';
 $string['dataroot'] = 'Datamappe';
-$string['datarootpermission'] = 'Rettighed til data mapper';
-$string['dbprefix'] = 'Præfix for tabeller';
+$string['datarootpermission'] = 'Rettighed til datamapper';
+$string['dbprefix'] = 'Præfiks til tabeller';
 $string['dirroot'] = 'Moodle-mappe';
 $string['environmenthead'] = 'Kontrollerer din serveropsætning...';
 $string['environmentsub2'] = 'Hver version af Moodle har nogle minimumskrav til PHP-version og nogle obligatoriske PHP-extensions.
@@ -72,13 +72,14 @@ $string['pathshead'] = 'Bekræft stier';
 $string['pathsrodataroot'] = 'Datamappen er skrivebeskyttet.';
 $string['pathsroparentdataroot'] = 'Den overordnede mappe ({$a->parent}) er skrivebeskyttet. Datamappen ({$a->dataroot}) kan ikke oprettes af installationsprogrammet.';
 $string['pathssubadmindir'] = 'Enkelte webhoteller bruger /admin som speciel URL til kontrolpanelet el. lign. Desværre konflikter det med Moodles standardplacering af admin-sider. Du kan klare dette ved at give admin-mappen et andet navn i din installation og skrive det her. Det kan f.eks. være <em>moodleadmin</em>. Det vil fikse admin-links i Moodle.';
-$string['pathssubdataroot'] = 'Du har brug for et sted, hvor Moodle kan gemme uploadede filer. Denne mappe skal kunne læses OG SKRIVES I af webserverbrugeren (oftest \'ingen\' eller \'apache\'), men må ikke være tilgængelig direkte via internettet. Installationsprogrammet vil forsøge at oprette mappen, hvis ikke den allerede eksisterer.';
-$string['pathssubdirroot'] = 'Den fulde sti til Moodleinstallationen.';
-$string['pathssubwwwroot'] = 'Moodles fulde web-adresse.
-Det er ikke muligt at komme ind på Moodle fra mere end en adresse.
-Hvis dit websted har flere offentlige adresser skal du opsætte permanent viderestilling til dem alle undtagen denne.
-Hvis dit websted er tilgængeligt fra både internet og intranet skal du bruge internetadressen her og opsætte din DNS sådan at intranet-brugerne kan bruge den offentlige adresse også.
-Hvis ikke adressen er korrekt må du ændre URL\'en i din browser og genstarte installationen med den rigtige adresse.';
+$string['pathssubdataroot'] = '<p>En mappe hvori Moodle kan gemme alle brugeres uploadede filer.</p>
+<p>Mappen skal både have læse- og skriveadgang Webserver-brugeren (som regel \'www-data\', \'nobody\', eller \'apache\') skal have både læse- og skriveadgang til den.</p>
+<p>Mappen må ikke have direkte adgang fra internettet.</p>
+<p>Installationsprogrammet vil forsøge at oprette mappen, hvis ikke den findes i forvejen.</p>';
+$string['pathssubdirroot'] = '<p>Den fulde sti til mappen med Moodles kode.</p>';
+$string['pathssubwwwroot'] = '<p>Moodles fulde web-adresse, dvs. den adresse brugere skal indtaste i browserens adressefelt for at få adgang til Moodle.</p>
+<p>Det er ikke muligt at komme ind på Moodle fra mere end en adresse. Er dit site tilgængeligt via flere adresser skal du vælge den letteste og opsætte en permanent viderestilling til hver af de andre adresser.</p> <p>Er dit site tilgængeligt fra både internettet og et internt netværk (ofte kaldet intranet), brug da den offentlige adresse her.</p>
+<p>Hvis ikke den aktuelle adresse er korrekt, skal du rette URL\'en i din browsers adressefelt og genstarte installationen.</p>';
 $string['pathsunsecuredataroot'] = 'Datamappen er ikke sikret';
 $string['pathswrongadmindir'] = 'Adminmappe eksisterer ikke';
 $string['phpextension'] = '{$a} PHP-extension';
@@ -93,6 +94,6 @@ Tillykke med det!';
 $string['welcomep30'] = 'Denne udgave af <strong>{$a->installername}</strong> indeholder programmerne til at oprette et miljø, hvori <strong>Moodle</strong> vil operere, nemlig:';
 $string['welcomep40'] = 'Pakken indeholder også <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Brugen af programmerne i denne pakke er styret af deres respektive licenser. Hele <strong>{$a->installername}</strong>-pakken er <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> og distribueret under <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>-licensen.';
-$string['welcomep60'] = 'De følgende sider vil hjælpe dig gennem nogle nemme trin til konfiguration og opsætning af <strong>Moodle</strong> på din computer. Du kan acceptere standardindstillingerne eller vælge at ændre dem så de bedre svarer til dine egne behov.';
+$string['welcomep60'] = 'De følgende sider vil hjælpe dig gennem nogle nemme trin til konfiguration og opsætning af <strong>Moodle</strong> på din computer. Du kan acceptere standardindstillingerne eller, hvis du foretrækker det, vælge at ændre dem så de bedre svarer til dine egne behov.';
 $string['welcomep70'] = 'Klik på "Næste" herunder for at forsætte opsætningen af <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Webadresse';
