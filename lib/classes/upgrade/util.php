@@ -86,7 +86,9 @@ final class util {
      * @return bool
      */
     public static function can_use_tls12(array $curlinfo, $uname) {
-        if ($curlinfo['version_number'] < 467456 || !defined('CURL_SSLVERSION_TLSv1_2')) {
+        // Do not compare the cURL version, e.g. $curlinfo['version_number'], with v7.34.0 (467456):
+        // some Linux distros backport security issues and keep lower version numbers.
+        if (!defined('CURL_SSLVERSION_TLSv1_2')) {
             return false;
         }
 
