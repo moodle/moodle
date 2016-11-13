@@ -53,6 +53,7 @@
     max-width: calc(100% - 1em);
 }
 
+/*rtl:begin:ignore*/
 .atto_image_button_left {
     float: left;
     margin: 0 0.5em 0 0;
@@ -64,3 +65,4 @@
     margin: 0 0 0 0.5em;
     max-width: calc(100% - 1em);
 }
+/*rtl:end:ignore*/
