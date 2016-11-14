@@ -143,10 +143,11 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/custom_interaction_eve
             }
         }.bind(this));
 
-        this.root.on(CustomEvents.events.activate, SELECTORS.PROCESSOR_SETTING, function(e) {
+        this.root.on(CustomEvents.events.activate, SELECTORS.PROCESSOR_SETTING, function(e, data) {
             var element = $(e.target).closest(SELECTORS.PROCESSOR_SETTING);
             var processorSettings = new NotificationProcessorSettings(element);
             processorSettings.show();
+            data.originalEvent.preventDefault();
         });
 
         CustomEvents.define(disabledNotificationsElement, [
