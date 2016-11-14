@@ -594,7 +594,7 @@ function assign_get_grade_details_for_print_overview(&$unmarkedsubmissions, $sql
                                              g.attemptnumber = s.attemptnumber
                                        WHERE
                                              ( g.timemodified is NULL OR
-                                             s.timemodified > g.timemodified OR
+                                             s.timemodified >= g.timemodified OR
                                              g.grade IS NULL ) AND
                                              s.timemodified IS NOT NULL AND
                                              s.status = ? AND
