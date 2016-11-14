@@ -558,7 +558,7 @@ class core_renderer extends \core_renderer {
 
                     // We only add a list to the full settings menu if we didn't include every node in the short menu.
                     if ($skipped) {
-                        $text = get_string('frontpagesettings');
+                        $text = get_string('morenavigationlinks');
                         $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
                         $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
                         $menu->add_secondary_action($link);
@@ -572,7 +572,7 @@ class core_renderer extends \core_renderer {
 
                     // We only add a list to the full settings menu if we didn't include every node in the short menu.
                     if ($skipped) {
-                        $text = get_string('courseadministration');
+                        $text = get_string('morenavigationlinks');
                         $url = new moodle_url('/course/admin.php', array('courseid' => $this->page->course->id));
                         $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
                         $menu->add_secondary_action($link);
