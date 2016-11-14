@@ -434,36 +434,42 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         Messages.prototype._deleteAllMessages = function() {
             // Create the confirmation modal if we haven't already.
             if (!this._confirmationModal) {
-                ModalFactory.create({
-                    type: ModalFactory.types.CONFIRM,
-                    body: Str.get_string('deleteallconfirm', 'message'),
-                }, this.messageArea.find(SELECTORS.DELETEALLMESSAGES))
-                .done(function(modal) {
-                    this._confirmationModal = modal;
+                Str.get_strings([
+                    {key: 'confirm'},
+                    {key: 'deleteallconfirm', component: 'message'}
+                ]).done(function(s) {
+                    ModalFactory.create({
+                        title: s[0],
+                        type: ModalFactory.types.CONFIRM,
+                        body: s[1]
+                    }, this.messageArea.find(SELECTORS.DELETEALLMESSAGES))
+                        .done(function(modal) {
+                            this._confirmationModal = modal;
 
-                    // Only delete the conversation if the user agreed in the confirmation modal.
-                    modal.getRoot().on(ModalEvents.yes, function() {
-                        var otherUserId = this._getUserId();
-                        var request = {
-                            methodname: 'core_message_delete_conversation',
-                            args: {
-                                userid: this.messageArea.getCurrentUserId(),
-                                otheruserid: otherUserId
-                            }
-                        };
+                            // Only delete the conversation if the user agreed in the confirmation modal.
+                            modal.getRoot().on(ModalEvents.yes, function() {
+                                var otherUserId = this._getUserId();
+                                var request = {
+                                    methodname: 'core_message_delete_conversation',
+                                    args: {
+                                        userid: this.messageArea.getCurrentUserId(),
+                                        otheruserid: otherUserId
+                                    }
+                                };
 
-                        // Delete the conversation.
-                        Ajax.call([request])[0].then(function() {
-                            // Clear the message area.
-                            this.messageArea.find(SELECTORS.MESSAGESAREA).empty();
-                            // Let the app know a conversation was deleted.
-                            this.messageArea.trigger(Events.CONVERSATIONDELETED, otherUserId);
-                            this._hideDeleteAction();
-                        }.bind(this), Notification.exeption);
-                    }.bind(this));
+                                // Delete the conversation.
+                                Ajax.call([request])[0].then(function() {
+                                    // Clear the message area.
+                                    this.messageArea.find(SELECTORS.MESSAGESAREA).empty();
+                                    // Let the app know a conversation was deleted.
+                                    this.messageArea.trigger(Events.CONVERSATIONDELETED, otherUserId);
+                                    this._hideDeleteAction();
+                                }.bind(this), Notification.exception);
+                            }.bind(this));
 
-                    // Display the confirmation.
-                    modal.show();
+                            // Display the confirmation.
+                            modal.show();
+                        }.bind(this));
                 }.bind(this));
             } else {
                 // Otherwise just show the existing modal.
