@@ -58,12 +58,7 @@ $exporturl = moodle_url::make_pluginfile_url($context->id, 'mod_glossary', 'expo
 
 ?>
     <form action="<?php echo $exporturl->out(); ?>" method="post">
-    <table border="0" cellpadding="6" cellspacing="6" width="100%">
-    <tr><td align="center">
-        <input type="submit" value="<?php p($strexportfile)?>" />
-    </td></tr></table>
-    <div>
-    </div>
+        <input class="btn btn-primary" type="submit" value="<?php p($strexportfile)?>" />
     </form>
 <?php
     // don't need cap check here, we share with the general export.

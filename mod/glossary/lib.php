@@ -1181,7 +1181,7 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',
         foreach ($aliases as $alias) {
             if (trim($alias->alias)) {
                 if ($return == '') {
-                    $return = '<select id="keyword" style="font-size:8pt">';
+                    $return = '<select id="keyword" class="custom-select">';
                 }
                 $return .= "<option>$alias->alias</option>";
             }
@@ -1233,7 +1233,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
     if (has_capability('mod/glossary:approve', $context) && !$glossary->defaultapproval && $entry->approved) {
         $output = true;
-        $return .= '<a class="action-icon" title="' . get_string('disapprove', 'glossary').
+        $return .= '<a class="icon" title="' . get_string('disapprove', 'glossary').
                    '" href="approve.php?newstate=0&amp;eid='.$entry->id.'&amp;mode='.$mode.
                    '&amp;hook='.urlencode($hook).'&amp;sesskey='.sesskey().
                    '"><img src="'.$OUTPUT->pix_url('t/block').'" class="smallicon" alt="'.
@@ -1248,7 +1248,10 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $mainglossary = $DB->get_record('glossary', array('mainglossary'=>1,'course'=>$course->id));
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
-                $return .= '<a class="action-icon" title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$entry->id.'&amp;prevmode='.$mode.'&amp;hook='.urlencode($hook).'"><img src="'.$OUTPUT->pix_url('export', 'glossary').'" class="smallicon" alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
+                $return .= '<a class="icon" title="'.get_string('exporttomainglossary','glossary') . '" ' .
+                    'href="exportentry.php?id='.$entry->id.'&amp;prevmode='.$mode.'&amp;hook='.urlencode($hook).'">' .
+                    '<img src="'.$OUTPUT->pix_url('export', 'glossary').'" class="smallicon" ' .
+                    'alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
             }
         }
 
@@ -1264,11 +1267,16 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
         if ( !$importedentry and (has_capability('mod/glossary:manageentries', $context) or ($entry->userid == $USER->id and ($ineditperiod and has_capability('mod/glossary:write', $context))))) {
             $output = true;
-            $return .= "<a class='action-icon' title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=".urlencode($hook)."\"><img src=\"";
+            $url = "deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=".urlencode($hook);
+            $return .= "<a class='icon' title=\"" . get_string("delete") . "\" " .
+                       "href=\"$url\"><img src=\"";
             $return .= $icon;
             $return .= "\" class=\"smallicon\" alt=\"" . get_string("delete") .$altsuffix."\" /></a>";
 
-            $return .= "<a class='action-icon' title=\"" . get_string("edit") . "\" href=\"edit.php?cmid=$cm->id&amp;id=$entry->id&amp;mode=$mode&amp;hook=".urlencode($hook)."\"><img src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"smallicon\" alt=\"" . get_string("edit") .$altsuffix. "\" /></a>";
+            $url = "edit.php?cmid=$cm->id&amp;id=$entry->id&amp;mode=$mode&amp;hook=".urlencode($hook);
+            $return .= "<a class='icon' title=\"" . get_string("edit") . "\" href=\"$url\">" .
+                       "<img src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"smallicon\" " .
+                       "alt=\"" . get_string("edit") .$altsuffix. "\" /></a>";
         } elseif ( $importedentry ) {
             $return .= "<font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }
@@ -1311,6 +1319,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $return .= '<div>'.$comment->output(true).'</div>';
         $output = true;
     }
+    $return .= '<hr>';
 
     //If we haven't calculated any REAL thing, delete result ($return)
     if (!$output) {
