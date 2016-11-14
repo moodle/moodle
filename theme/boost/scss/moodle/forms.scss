@@ -118,11 +118,6 @@ div.backup-section + form,
     padding-left: 0;
 }
 
-.path-admin .buttons,
-.form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
-    padding-left: $display1-size;
-}
-
 .form-item .form-setting .defaultsnext > input {
     display: inline-block;
 }

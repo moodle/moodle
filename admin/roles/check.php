@@ -172,7 +172,8 @@ echo $OUTPUT->heading('<label for="reportuser">' . $selectheading . '</label>', 
 $userselector->display();
 
 // Submit button and the end of the form.
-echo '<p id="chooseusersubmit"><input type="submit" value="' . get_string('showthisuserspermissions', 'core_role') . '" /></p>';
+echo '<p id="chooseusersubmit"><input type="submit" value="' . get_string('showthisuserspermissions', 'core_role') . '" ' .
+     'class="btn btn-primary"/></p>';
 echo '</form>';
 echo $OUTPUT->box_end();
 
