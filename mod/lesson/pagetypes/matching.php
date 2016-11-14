@@ -443,14 +443,16 @@ class lesson_page_type_matching extends lesson_page {
                 if ($useranswer != null) {
                     $userresponse = explode(",", $useranswer->useranswer);
                     $data .= '<label class="accesshide" for="stu_answer_response_' . $n . '">' . get_string('matchesanswer', 'lesson') . '</label>';
-                    $data .= "<select id=\"stu_answer_response_" . $n . "\" disabled=\"disabled\"><option selected=\"selected\">";
+                    $data .= "<select class=\"custom-select\" id=\"stu_answer_response_" . $n . "\" " .
+                             "disabled=\"disabled\"><option selected=\"selected\">";
                     if (array_key_exists($i, $userresponse)) {
                         $data .= $userresponse[$i];
                     }
                     $data .= "</option></select>";
                 } else {
                     $data .= '<label class="accesshide" for="answer_response_' . $n . '">' . get_string('matchesanswer', 'lesson') . '</label>';
-                    $data .= "<select id=\"answer_response_" . $n . "\" disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answer->response))."</option></select>";
+                    $data .= "<select class=\"custom-select\" id=\"answer_response_" . $n . "\" " .
+                             "disabled=\"disabled\"><option selected=\"selected\">".strip_tags(format_string($answer->response))."</option></select>";
                 }
 
                 if ($n == 2) {
