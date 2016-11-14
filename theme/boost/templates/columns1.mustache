@@ -23,16 +23,12 @@
     * sitename - The name of the site
     * output - The core renderer for the page
     * bodyattributes - attributes for the body tag as a string of html attributes
-    * regionmainsettingsmenu - HTML for the region main settings menu
-    * hasregionmainsettingsmenu - There is a region main settings menu on this page.
 
     Example context (json):
     {
         "sitename": "Moodle",
         "output": {"doctype": "<!DOCTYPE html>", "page_title": "Test page", "favicon": "favicon.ico"},
-        "bodyattributes":"",
-        "regionmainsettingsmenu": "",
-        "hasregionmainsettingsmenu": false
+        "bodyattributes":""
     }
 }}
 {{{ output.doctype }}}
@@ -53,16 +49,8 @@
     <div id="page" class="container-fluid">
         <div id="page-content" class="row">
             <div id="region-main-box" class="col-xs-12">
-                {{#hasregionmainsettingsmenu}}
-                    <div id="region-main-settings-menu" class="has-blocks">
-                        <div> {{{ regionmainsettingsmenu }}} </div>
-                    </div>
-                {{/hasregionmainsettingsmenu}}
                 <section id="region-main">
                     <div class="card card-block">
-                    {{#hasregionmainsettingsmenu}}
-                        <div class="region_main_settings_menu_proxy"></div>
-                    {{/hasregionmainsettingsmenu}}
                     {{{ output.course_content_header }}}
                     {{{ output.main_content }}}
                     {{{ output.course_content_footer }}}
