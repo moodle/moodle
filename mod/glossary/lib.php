@@ -1319,6 +1319,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $return .= '<div>'.$comment->output(true).'</div>';
         $output = true;
     }
+    $return .= '<hr>';
 
     //If we haven't calculated any REAL thing, delete result ($return)
     if (!$output) {

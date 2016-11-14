@@ -368,15 +368,14 @@ if ($showcommonelements ) {
     } else {
         echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" class="form-control"/> ';
     }
-    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" class="btn btn-secondary"/> ';
+    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" class="btn btn-secondary m-r-1"/> ';
     if ($fullsearch || $mode != 'search') {
         $fullsearchchecked = 'checked="checked"';
     } else {
         $fullsearchchecked = '';
     }
-    echo '<span class="form-check"><label for="fullsearch" class="form-check-label">';
-    echo '<input type="checkbox" class="form-check-input m-l-1" ' .
-         'name="fullsearch" id="fullsearch" value="1" '.$fullsearchchecked.'/>';
+    echo '<span class="checkbox"><label for="fullsearch">';
+    echo ' <input type="checkbox" name="fullsearch" id="fullsearch" value="1" '.$fullsearchchecked.'/> ';
     echo '<input type="hidden" name="mode" value="search" />';
     echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
     echo $strsearchindefinition.'</label></span>';
