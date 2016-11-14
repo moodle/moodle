@@ -15878,20 +15878,6 @@ button.yui3-button.closebutton {
 button.yui3-button.closebutton:hover {
   background-position: 0 0;
 }
-.user-enroller-panel .uep-search-results .user .options .enrol,
-.user-enroller-panel .uep-search-results .cohort .options .enrol {
-  padding: 0 6px;
-  font-size: 10.5px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-.user-enroller-panel .uep-search-results .user .options .enrol .label,
-.user-enroller-panel .uep-search-results .cohort .options .enrol .label,
-.user-enroller-panel .uep-search-results .user .options .enrol .badge,
-.user-enroller-panel .uep-search-results .cohort .options .enrol .badge {
-  top: 0;
-}
 .gradetreebox h4 {
   font-size: 14px;
 }

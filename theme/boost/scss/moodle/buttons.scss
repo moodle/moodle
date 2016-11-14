@@ -46,15 +46,3 @@ p.arrow_button {
     margin: 0 0 10px 5px;
 }
 
-.user-enroller-panel {
-    .uep-search-results {
-        .user,
-        .cohort {
-            .options {
-                .enrol {
-                    @extend .btn-sm;
-                }
-            }
-        }
-    }
-}
