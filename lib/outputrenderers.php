@@ -1707,10 +1707,11 @@ class core_renderer extends renderer_base {
     public function confirm($message, $continue, $cancel) {
         if ($continue instanceof single_button) {
             // ok
+            $continue->primary = true;
         } else if (is_string($continue)) {
-            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post');
+            $continue = new single_button(new moodle_url($continue), get_string('continue'), 'post', true);
         } else if ($continue instanceof moodle_url) {
-            $continue = new single_button($continue, get_string('continue'), 'post');
+            $continue = new single_button($continue, get_string('continue'), 'post', true);
         } else {
             throw new coding_exception('The continue param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
@@ -1725,9 +1726,18 @@ class core_renderer extends renderer_base {
             throw new coding_exception('The cancel param to $OUTPUT->confirm() must be either a URL (string/moodle_url) or a single_button instance.');
         }
 
-        $output = $this->box_start('generalbox', 'notice');
+        $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice');
+        $output .= $this->box_start('modal-content', 'modal-content');
+        $output .= $this->box_start('modal-header', 'modal-header');
+        $output .= html_writer::tag('h4', get_string('confirm'));
+        $output .= $this->box_end();
+        $output .= $this->box_start('modal-body', 'modal-body');
         $output .= html_writer::tag('p', $message);
+        $output .= $this->box_end();
+        $output .= $this->box_start('modal-footer', 'modal-footer');
         $output .= html_writer::tag('div', $this->render($continue) . $this->render($cancel), array('class' => 'buttons'));
+        $output .= $this->box_end();
+        $output .= $this->box_end();
         $output .= $this->box_end();
         return $output;
     }

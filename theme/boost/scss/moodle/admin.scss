@@ -180,17 +180,6 @@
     text-align: left;
 }
 
-#notice {
-    width: 60%;
-    min-width: 220px;
-    margin: auto;
-    text-align: center;
-
-    .buttons {
-        padding: 0;
-    }
-}
-
 #page-admin-index .releasenoteslink,
 #page-admin-index .adminwarning,
 #page-admin-index .adminerror {
@@ -803,4 +792,8 @@
 
 #adminsettings .form-overridden {
     @extend .form-control-feedback;
+}
+
+.modal.modal-in-page {
+    z-index: 0;
 }
