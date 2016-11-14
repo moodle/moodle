@@ -3,7 +3,8 @@ information provided here is intended especially for theme designer.
 
 === 3.2 ===
 
-* All themes have "course theme" option for mod_chat (it was just bootstrap2 based themes).
+* mod_chat will not display the 'course theme' option for all themes (previously it was only displayed on
+  bootstrap2 based themes).
 * A new theme config 'undeletableblocktypes' allows a theme to define which blocks are deletable.
 * A new core setting now enables admins to upload the logos of their site. Using the
   following methods, themers can instantly support branding logos without the need

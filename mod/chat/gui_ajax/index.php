@@ -73,7 +73,6 @@ $modulecfg = array(
     'home' => $CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id,
     'chaturl' => $CFG->httpswwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
     'theme' => $theme,
-    'showcoursetheme' => 1,
     'userid' => $USER->id,
     'sid' => $chatsid,
     'timer' => 3000,
