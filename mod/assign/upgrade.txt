@@ -15,6 +15,7 @@ This files describes API changes in the assign code.
   which will then be included in backup and restore; see assign_plugin::get_config_file_areas().
 * Submission and feedback plugins must now return the specific list of configs available for external functions,
   this can be done implementing the new assign plugin method get_config_for_external()
+* Webservice function mod_assign_get_submissions returns a new field 'gradingstatus' from each submission.
 
 === 3.1 ===
 * The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true
