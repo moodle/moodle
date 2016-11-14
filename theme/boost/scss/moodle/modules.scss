@@ -148,6 +148,10 @@ select {
 #page-mod-forum-discuss .discussioncontrols {
     width: auto;
     margin: 0;
+
+    .form-inline input {
+        margin-top: -1px;
+    }
 }
 
 .maincalendar .calendarmonth td,
