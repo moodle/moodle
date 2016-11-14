@@ -631,6 +631,18 @@ class core_renderer extends \core_renderer {
                     $this->build_action_menu_from_navigation($menu, $node);
                 }
             }
+        } else {
+            $items = $this->page->navbar->get_items();
+            $navbarnode = end($items);
+
+            if ($navbarnode->key == 'participants') {
+                $node = $this->page->settingsnav->find('users', navigation_node::TYPE_CONTAINER);
+                if ($node) {
+                    // Build an action menu based on the visible nodes from this navigation tree.
+                    $this->build_action_menu_from_navigation($menu, $node);
+                }
+
+            }
         }
         return $this->render($menu);
     }

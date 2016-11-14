@@ -294,3 +294,8 @@
         }
     }
 }
+
+// Remove the little cog from participants page because we are putting a cog menu there.
+.userlist h3 .action-icon {
+    display: none;
+}
