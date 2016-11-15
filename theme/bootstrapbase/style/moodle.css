@@ -5500,6 +5500,9 @@ a.ygtvspacer:hover {
 .fitem.disabled .filemanager-container {
   background-color: #ebebe4;
 }
+.fitem.disabled .fp-btn-choose {
+  color: #999;
+}
 .fitem.disabled .filepicker-filelist .filepicker-filename {
   display: none;
 }
