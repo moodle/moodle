@@ -451,7 +451,9 @@ if ($action === 'delete') {
         $checklinks  = '<a href="javascript: checkall();">'.get_string('selectall').'</a> / ';
         $checklinks .= '<a href="javascript: checknone();">'.get_string('deselectall').'</a>';
         $checklinks .= html_writer::label('action', 'menuaction', false, array('class' => 'accesshide'));
-        $checklinks .= html_writer::select(array('delete' => get_string('deleteselected')), 'action', 0, array(''=>'choosedots'), array('id'=>'actionid', 'class' => 'autosubmit'));
+        $options = array('delete' => get_string('deleteselected'));
+        $attributes = array('id' => 'actionid', 'class' => 'custom-select m-l-1 autosubmit');
+        $checklinks .= html_writer::select($options, 'action', 0, array('' => 'choosedots'), $attributes);
         $PAGE->requires->yui_module('moodle-core-formautosubmit',
             'M.core.init_formautosubmit',
             array(array('selectid' => 'actionid', 'nothing' => false))
@@ -664,7 +666,7 @@ if ($action === 'delete') {
 
         $table->head = array();
         $table->align = array('right', 'left');
-        $table->attributes['class'] = 'compacttable generaltable';
+        $table->attributes['class'] = 'compacttable generaltable form-inline';
 
         $params = array("lessonid"=>$lesson->id, "userid"=>$userid);
         if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $try, 1)) {
@@ -706,7 +708,7 @@ if ($action === 'delete') {
 
     $table->align = array('left', 'left');
     $table->size = array('70%', null);
-    $table->attributes['class'] = 'compacttable generaltable';
+    $table->attributes['class'] = 'compacttable generaltable form-inline';
 
     foreach ($answerpages as $page) {
         unset($table->data);
