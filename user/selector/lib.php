@@ -624,11 +624,14 @@ abstract class user_selector_base {
             $checked = '';
         }
         $name = 'userselector_' . $name;
-        $output = '<p><input type="hidden" name="' . $name . '" value="0" />' .
-                // For the benefit of brain-dead IE, the id must be different from the name of the hidden form field above.
-                // It seems that document.getElementById('frog') in IE will return and element with name="frog".
-                '<input type="checkbox" id="' . $name . 'id" name="' . $name . '" value="1"' . $checked . ' /> ' .
-                '<label for="' . $name . 'id">' . $label . "</label></p>\n";
+        // For the benefit of brain-dead IE, the id must be different from the name of the hidden form field above.
+        // It seems that document.getElementById('frog') in IE will return and element with name="frog".
+        $output = '<div class="form-check"><input type="hidden" name="' . $name . '" value="0" />' .
+                    '<label class="form-check-label" for="' . $name . 'id">' .
+                        '<input class="form-check-input" type="checkbox" id="' . $name . 'id" name="' . $name .
+                            '" value="1"' . $checked . ' /> ' . $label .
+                    "</label>
+                   </div>\n";
         user_preference_allow_ajax_update($name, PARAM_BOOL);
         return $output;
     }
