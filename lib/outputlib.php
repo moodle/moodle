@@ -1513,6 +1513,13 @@ class theme_config {
             }
         }
 
+        // Now resolve all theme settings or do any other postprocessing.
+        // This needs to be done before calling core parser, since the parser strips [[settings]] tags.
+        $csspostprocess = $this->csspostprocess;
+        if (function_exists($csspostprocess)) {
+            $css = $csspostprocess($css, $this);
+        }
+
         // Post processing using an object representation of CSS.
         $hastreeprocessor = !empty($this->csstreepostprocessor) && function_exists($this->csstreepostprocessor);
         $needsparsing = $hastreeprocessor || !empty($this->rtlmode);
@@ -1532,12 +1539,6 @@ class theme_config {
 
             $css = $csstree->render();
             unset($csstree);
-        }
-
-        // now resolve all theme settings or do any other postprocessing
-        $csspostprocess = $this->csspostprocess;
-        if (function_exists($csspostprocess)) {
-            $css = $csspostprocess($css, $this);
         }
 
         return $css;
