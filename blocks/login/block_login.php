@@ -78,20 +78,24 @@ class block_login extends block_base {
 
             $this->content->text .= "\n".'<form class="loginform" id="login" method="post" action="'.get_login_url().'" '.$autocomplete.'>';
 
-            $this->content->text .= '<div class="c1 fld username"><label for="login_username">'.$strusername.'</label>';
-            $this->content->text .= '<input type="text" name="username" id="login_username" value="'.s($username).'" /></div>';
+            $this->content->text .= '<div class="form-group"><label for="login_username">'.$strusername.'</label>';
+            $this->content->text .= '<input type="text" name="username" id="login_username" class="form-control" value="'.s($username).'" /></div>';
 
-            $this->content->text .= '<div class="c1 fld password"><label for="login_password">'.get_string('password').'</label>';
+            $this->content->text .= '<div class="form-group"><label for="login_password">'.get_string('password').'</label>';
 
-            $this->content->text .= '<input type="password" name="password" id="login_password" value="" '.$autocomplete.' /></div>';
+            $this->content->text .= '<input type="password" name="password" id="login_password" class="form-control" value="" '.$autocomplete.' /></div>';
 
             if (isset($CFG->rememberusername) and $CFG->rememberusername == 2) {
                 $checked = $username ? 'checked="checked"' : '';
-                $this->content->text .= '<div class="c1 rememberusername"><input type="checkbox" name="rememberusername" id="rememberusername" value="1" '.$checked.'/>';
-                $this->content->text .= ' <label for="rememberusername">'.get_string('rememberusername', 'admin').'</label></div>';
+                $this->content->text .= '<div class="form-check-inline">';
+                $this->content->text .= '<input type="checkbox" name="rememberusername" id="rememberusername" class="form-check-input" value="1" '.$checked.'/>';
+                $this->content->text .= ' <label for="rememberusername" class="form-check-label">'.get_string('rememberusername', 'admin').'</label>';
+                $this->content->text .= '</div>';
             }
 
-            $this->content->text .= '<div class="c1 btn"><input type="submit" value="'.get_string('login').'" /></div>';
+            $this->content->text .= '<div class="form-group">';
+            $this->content->text .= '<input type="submit" class="btn btn-primary" value="'.get_string('login').'" />';
+            $this->content->text .= '</div>';
 
             $this->content->text .= "</form>\n";
 
