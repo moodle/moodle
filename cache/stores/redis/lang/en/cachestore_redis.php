@@ -30,7 +30,7 @@ $string['prefix_help'] = 'This prefix is used for all key names on the Redis ser
 * If you only have one Moodle instance using this server, you can leave this value default.
 * Due to key length restrictions, a maximum of 5 characters is permitted.';
 $string['prefixinvalid'] = 'Invalid prefix. You can only use a-z A-Z 0-9-_.';
-$string['test_server'] = 'Test Server';
+$string['test_server'] = 'Test server';
 $string['test_server_desc'] = 'Redis server to use for testing.';
 $string['server'] = 'Server';
 $string['server_help'] = 'This sets the hostname or IP address of the Redis server to use.';

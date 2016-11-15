@@ -24,13 +24,13 @@
 
 $string['audioextensions'] = 'Audio: {$a}';
 $string['defaultwidth'] = 'Default width';
-$string['defaultwidthdesc'] = 'Default width of video or other embedded object if no width is specified and player is not able to pick the real video width';
+$string['defaultwidthdesc'] = 'Media player width if a width is not specified and the actual media file width cannot be determined by the player.';
 $string['defaultheight'] = 'Default height';
-$string['defaultheightdesc'] = 'Default height of video or other embedded object if no height is specified and player is not able to pick the real video height';
+$string['defaultheightdesc'] = 'Media player height if a height is not specified and the actual media file height cannot be determined by the player.';
 $string['extensions'] = 'Extensions: {$a}';
 $string['managemediaplayers'] = 'Manage media players';
 $string['mediaformats'] = 'Available players';
-$string['mediaformats_desc'] = 'When players are enabled in these settings, files can be embedded using the media filter (if enabled) or using a File or URL resources with the Embed option. When not enabled, these formats are not embedded and users can manually download or follow links to these resources.
+$string['mediaformats_desc'] = 'When players are enabled, media files can be embedded using the multimedia plugins filter (if enabled) or using a file or URL resource. When not enabled, these formats are not embedded and users can download or follow links to these resources.
 
 Where two players support the same format, enabling both increases compatibility across different devices such as mobile phones. It is possible to increase compatibility further by providing multiple files in different formats for a single audio or video clip.';
 $string['supports'] = 'Supports';

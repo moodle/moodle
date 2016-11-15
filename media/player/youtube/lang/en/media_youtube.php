@@ -23,6 +23,6 @@
  */
 
 $string['pluginname'] = 'YouTube';
-$string['pluginname_help'] = 'YouTube video sharing site, video and playlist links supported.';
+$string['pluginname_help'] = 'The video-sharing website youtube.com. Video and playlist links are supported.';
 $string['supportsvideo'] = 'YouTube videos';
 $string['supportsplaylist'] = 'YouTube playlists';

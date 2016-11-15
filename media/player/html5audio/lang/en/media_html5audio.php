@@ -22,5 +22,5 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'HTML 5 audio';
-$string['pluginname_help'] = 'Audio files played by browser native audio player. (Format support depends on browser.)';
+$string['pluginname'] = 'HTML5 audio';
+$string['pluginname_help'] = 'Audio files played by the browser\'s native audio player. (Format support depends on the browser.)';

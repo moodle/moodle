@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['autologinkeygenerationlockout'] = 'Auto-login key generation is locked out, too much requests in an hour.';
-$string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed to site admins';
+$string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked because of too many requests within an hour.';
+$string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed for site admins.';
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
 $string['configmobilecssurl'] = 'A CSS file to customise your mobile app interface.';
 $string['enablesmartappbanners'] = 'Enable Smart App Banners';
