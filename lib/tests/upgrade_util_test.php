@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// Hack to let tests run on travis..
+// Hack to let tests run on Travis CI.
 defined('CURL_SSLVERSION_TLSv1_2') || define('CURL_SSLVERSION_TLSv1_2', 6);
 
 /**
@@ -35,16 +35,6 @@ defined('CURL_SSLVERSION_TLSv1_2') || define('CURL_SSLVERSION_TLSv1_2', 6);
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upgrade_util_testcase extends advanced_testcase {
-
-    /**
-     * A cURL version that supports TLS 1.2.
-     */
-    const VALID_CURL_VERSION = 467456;
-
-    /**
-     * A cURL version that does not support TLS 1.2.
-     */
-    const INVALID_CURL_VERSION = 467455;
 
     /**
      * The value of PHP_ZTS when thread safety is enabled.
@@ -132,17 +122,11 @@ class upgrade_util_testcase extends advanced_testcase {
 
         // Set the curl values we are testing to the passed data.
         $curlinfo['ssl_version'] = $sslversion;
-        $curlinfo['version_number'] = self::VALID_CURL_VERSION;
 
         // Set uname to system value if none passed in test case.
         $uname = !empty($uname) ? $uname : php_uname('r');
 
         $this->assertSame($expected, \core\upgrade\util::can_use_tls12($curlinfo, $uname));
-
-        // Now set the curl version to outdated one.
-        $curlinfo['version_number'] = self::INVALID_CURL_VERSION;
-        // Tls12 should never be possible now curl version is bad.
-        $this->assertFalse(\core\upgrade\util::can_use_tls12($curlinfo, $uname));
     }
 
     /**
