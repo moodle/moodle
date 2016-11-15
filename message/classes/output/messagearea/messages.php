@@ -26,6 +26,7 @@ namespace core_message\output\messagearea;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_message\api;
 use renderable;
 use templatable;
 
@@ -94,6 +95,8 @@ class messages implements templatable, renderable {
             $message = new message($message);
             $data->messages[] = $message->export_for_template($output);
         }
+
+        $data->isblocked = api::is_user_blocked($this->currentuserid, $this->otheruserid);
 
         return $data;
     }

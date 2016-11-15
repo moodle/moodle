@@ -839,13 +839,13 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->setUser($user1);
 
         // User shouldn't be blocked.
-        $this->assertFalse(\core_message\api::is_user_blocked($user1, $user2));
+        $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
 
         // Block the user.
         message_block_contact($user2->id);
 
         // User should be blocked.
-        $this->assertTrue(\core_message\api::is_user_blocked($user1, $user2));
+        $this->assertTrue(\core_message\api::is_user_blocked($user1->id, $user2->id));
     }
 
     /**
@@ -865,7 +865,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->setAdminUser();
 
         // As the admin you should still be able to send messages to the user.
-        $this->assertFalse(\core_message\api::is_user_blocked($user1));
+        $this->assertFalse(\core_message\api::is_user_blocked($user1->id));
     }
 
     /*

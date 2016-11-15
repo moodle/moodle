@@ -5616,7 +5616,11 @@ function message_is_user_blocked($recipient, $sender = null) {
     debugging('message_is_user_blocked() is deprecated and is no longer used, please use
         \core_message\api::is_user_blocked() instead.', DEBUG_DEVELOPER);
 
-    return \core_message\api::is_user_blocked($recipient, $sender);
+    $senderid = null;
+    if ($sender !== null && isset($sender->id)) {
+        $senderid = $sender->id;
+    }
+    return \core_message\api::is_user_blocked($recipient->id, $senderid);
 }
 
 /**

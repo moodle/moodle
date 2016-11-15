@@ -970,7 +970,8 @@ class core_message_external extends external_api {
                 'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                 'messages' => new external_multiple_structure(
                     self::get_messagearea_message_structure()
-                )
+                ),
+                'isblocked' => new external_value(PARAM_BOOL, 'Is this user blocked by the current user?', VALUE_DEFAULT, false),
             )
         );
     }

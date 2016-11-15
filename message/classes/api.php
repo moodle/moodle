@@ -601,8 +601,12 @@ class api {
             return false;
         }
 
+        $senderid = null;
+        if ($sender !== null && isset($sender->id)) {
+            $senderid = $sender->id;
+        }
         // The recipient has specifically blocked this sender.
-        if (self::is_user_blocked($recipient, $sender)) {
+        if (self::is_user_blocked($recipient->id, $senderid)) {
             return false;
         }
 
@@ -648,27 +652,25 @@ class api {
      * Note: This function will always return false if the sender has the
      * readallmessages capability at the system context level.
      *
-     * @param object $recipient User object.
-     * @param object $sender User object.
+     * @param int $recipientid User ID of the recipient.
+     * @param int $senderid User ID of the sender.
      * @return bool true if $sender is blocked, false otherwise.
      */
-    public static function is_user_blocked($recipient, $sender = null) {
+    public static function is_user_blocked($recipientid, $senderid = null) {
         global $USER, $DB;
 
-        if (is_null($sender)) {
+        if (is_null($senderid)) {
             // The message is from the logged in user, unless otherwise specified.
-            $sender = $USER;
+            $senderid = $USER->id;
         }
 
         $systemcontext = \context_system::instance();
-        if (has_capability('moodle/site:readallmessages', $systemcontext, $sender)) {
+        if (has_capability('moodle/site:readallmessages', $systemcontext, $senderid)) {
             return false;
         }
 
-        if ($contact = $DB->get_record('message_contacts', array('userid' => $recipient->id, 'contactid' => $sender->id))) {
-            if ($contact->blocked) {
-                return true;
-            }
+        if ($DB->get_field('message_contacts', 'blocked', ['userid' => $recipientid, 'contactid' => $senderid])) {
+            return true;
         }
 
         return false;
