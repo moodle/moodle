@@ -296,8 +296,13 @@ fieldset.coursesearchbox label {
     font-size: large;
 }
 
+/* Non-bootstrap selects with a size show their contents outside of the element. Remove when we update to stable bootstrap 4. */
+select[size],
 select[multiple] {
     overflow: auto;
+}
+select[size=1] {
+    overflow: visible;
 }
 
 textarea[data-auto-rows] {
