@@ -98,14 +98,7 @@ $string['self:manage'] = 'Manage enrolled users';
 $string['self:unenrol'] = 'Unenrol users from course';
 $string['self:unenrolself'] = 'Unenrol self from the course';
 $string['sendcoursewelcomemessage'] = 'Send course welcome message';
-$string['sendcoursewelcomemessage_help'] = 'When a user self enrols in the course, they may be sent an welcome message email.<br />
-If sent from the course contact (by default the teacher), and more than one user has this role, the email is sent from the first user to be assigned the role.
-
-The welcome email can be sent as:
-
-* First user with key holder capability assigned.
-* First user with assigned as course contact.
-* No reply address contact.';
+$string['sendcoursewelcomemessage_help'] = 'When a user self enrols in the course, they may be sent a welcome message email. If sent from the course contact (by default the teacher), and more than one user has this role, the email is sent from the first user to be assigned the role.';
 $string['showhint'] = 'Show hint';
 $string['showhint_desc'] = 'Show first letter of the guest access key.';
 $string['status'] = 'Allow existing enrolments';

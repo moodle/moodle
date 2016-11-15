@@ -22,22 +22,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['audiocssclass'] = 'CSS class for audios';
-$string['audioextensions'] = 'Audio files extensions';
-$string['configaudiocssclass'] = 'CSS class that will be added to &lt;audio&gt; element';
-$string['configaudioextensions'] = 'Comma-separated list of supported video file extensions, VideoJS will try to use the browser native video player when available, ' .
-    'and fall back to flash player for other formats if flash is supported by the browser and flash playback is enabled here.';
-$string['configlimitsize'] = 'If width and height are not specified for the video, display with default width/height. If unchecked the videos without specified dimensions will stretch to maximum possible width';
-$string['configvideocssclass'] = 'CSS class that will be added to &lt;video&gt; element. For example class "vjs-big-play-centered" will place the play button in the middle. You can also set the custom skin, refer to <a href="http://docs.videojs.com/">VideoJS documentation</a>';
-$string['configvideoextensions'] = 'Comma-separated list of supported video file extensions, VideoJS will try to use the browser native video player when available, ' .
-    'and fall back to flash player for other formats if flash is supported by the browser and flash playback is enabled here.';
-$string['configyoutube'] = 'Use Video.JS to play YouTube videos. Youtube playlists are not currently supported by Video.JS';
-$string['configuseflash'] = 'Use Flash player if video format is not natively supported by the browser. If enabled, VideoJS will be engaged for any '.
-    'file extension from the above list without browser check. Please note that Flash is not available in mobile browsers and discouraged in many desktop ones.';
+defined('MOODLE_INTERNAL') || die();
+
+$string['audiocssclass'] = 'CSS class for audio';
+$string['audioextensions'] = 'Audio file extensions';
+$string['configaudiocssclass'] = 'A CSS class that will be added to the &lt;audio&gt; element.';
+$string['configaudioextensions'] = 'A comma-separated list of supported audio file extensions. VideoJS will try to use the browser\'s native video player when available, and fall back to a Flash player for other formats if Flash is supported by the browser and Flash fallback is enabled below.';
+$string['configlimitsize'] = 'If enabled, and width and height are not specified, the video will display with default width and height. Otherwise it will stretch to the maximum possible width.';
+$string['configvideocssclass'] = 'A CSS class that will be added to the &lt;video&gt; element. For example, the CSS class "vjs-big-play-centered" will place the play button in the middle. For details, including how to set a custom skin, see docs.videojs.com.';
+$string['configvideoextensions'] = 'A comma-separated list of supported video file extensions. VideoJS will try to use the browser\'s native video player when available, and fall back to a Flash player for other formats if Flash is supported by the browser and Flash fallback is enabled below.';
+$string['configyoutube'] = 'Use VideoJS to play YouTube videos. Note that YouTube playlists are not yet supported by VideoJS.';
+$string['configuseflash'] = 'Use Flash player if video format is not natively supported by the browser. If enabled, VideoJS will be engaged for any file extension from the above list without browser check. Please note that Flash is not available in mobile browsers and discouraged in many desktop ones.';
 $string['limitsize'] = 'Limit size';
 $string['pluginname'] = 'VideoJS player';
-$string['pluginname_help'] = 'Javascript wrapper for video files played by browser native video player with fallback to Flash player. (Format support depends on browser.)';
-$string['videoextensions'] = 'Video files extensions';
+$string['pluginname_help'] = 'A JavaScript wrapper for video files played by the browser\'s native video player with a Flash player fallback. (Format support depends on the browser.)';
+$string['videoextensions'] = 'Video file extensions';
 $string['useflash'] = 'Use Flash fallback';
-$string['videocssclass'] = 'CSS class for videos';
+$string['videocssclass'] = 'CSS class for video';
 $string['youtube'] = 'YouTube videos';

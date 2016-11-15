@@ -23,4 +23,4 @@
  */
 
 $string['pluginname'] = 'Vimeo';
-$string['pluginname_help'] = 'Vimeo video sharing site.';
+$string['pluginname_help'] = 'The video-sharing website vimeo.com.';
