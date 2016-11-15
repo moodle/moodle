@@ -32,6 +32,8 @@ define('AJAX_SCRIPT', true);
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/externallib.php');
 
+define('PREFERRED_RENDERER_TARGET', RENDERER_TARGET_GENERAL);
+
 $rawjson = file_get_contents('php://input');
 
 $requests = json_decode($rawjson, true);
