@@ -54,13 +54,16 @@ class redis extends handler {
      * @var int $lockexpire how long to wait in seconds before expiring the lock automatically
      * so that other requests may continue execution, ignored if PECL redis is below version 2.2.0.
      */
-    protected $lockexpire = 7200;
+    protected $lockexpire;
 
     /** @var Redis Connection */
     protected $connection = null;
 
     /** @var array $locks List of currently held locks by this page. */
     protected $locks = array();
+
+    /** @var int $timeout How long sessions live before expiring. */
+    protected $timeout;
 
     /**
      * Create new instance of handler.
@@ -88,6 +91,13 @@ class redis extends handler {
             $this->acquiretimeout = (int)$CFG->session_redis_acquire_lock_timeout;
         }
 
+        // The following configures the session lifetime in redis to allow some
+        // wriggle room in the user noticing they've been booted off and
+        // letting them log back in before they lose their session entirely.
+        $updatefreq = empty($CFG->session_update_timemodified_frequency) ? 20 : $CFG->session_update_timemodified_frequency;
+        $this->timeout = $CFG->sessiontimeout + $updatefreq + MINSECS;
+
+        $this->lockexpire = $CFG->sessiontimeout;
         if (isset($CFG->session_redis_lock_expire)) {
             $this->lockexpire = (int)$CFG->session_redis_lock_expire;
         }
@@ -210,7 +220,7 @@ class redis extends handler {
                 $this->unlock_session($id);
                 return '';
             }
-            $this->connection->expire($id, $this->lockexpire);
+            $this->connection->expire($id, $this->timeout);
         } catch (RedisException $e) {
             error_log('Failed talking to redis: '.$e->getMessage());
             throw $e;
@@ -237,7 +247,7 @@ class redis extends handler {
         // There can be race conditions on new sessions racing each other but we can
         // address that in the future.
         try {
-            $this->connection->setex($id, $this->lockexpire, $data);
+            $this->connection->setex($id, $this->timeout, $data);
         } catch (RedisException $e) {
             error_log('Failed talking to redis: '.$e->getMessage());
             return false;
