@@ -607,10 +607,6 @@ a.ygtvspacer:hover {
     background-color: #ebebe4;
 }
 
-.fitem.disabled .fp-btn-choose {
-    @extend .text-muted;
-}
-
 .fitem.disabled .filepicker-filelist .filepicker-filename {
     display: none;
 }
