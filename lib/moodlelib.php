@@ -6134,9 +6134,10 @@ function reset_password_and_mail($user) {
  * Send email to specified user with confirmation text and activation link.
  *
  * @param stdClass $user A {@link $USER} object
+ * @param string $confirmationurl user confirmation URL
  * @return bool Returns true if mail was sent OK and false if there was an error.
  */
-function send_confirmation_email($user) {
+function send_confirmation_email($user, $confirmationurl = null) {
     global $CFG;
 
     $site = get_site();
@@ -6151,7 +6152,12 @@ function send_confirmation_email($user) {
 
     $username = urlencode($user->username);
     $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
-    $data->link  = $CFG->wwwroot .'/login/confirm.php?data='. $user->secret .'/'. $username;
+    if (empty($confirmationurl)) {
+        $confirmationurl = '/login/confirm.php';
+    }
+    $confirmationurl = new moodle_url($confirmationurl, array('data' => $user->secret .'/'. $username));
+    $data->link = $confirmationurl->out(false);
+
     $message     = get_string('emailconfirmation', '', $data);
     $messagehtml = text_to_html(get_string('emailconfirmation', '', $data), false, false, true);
 
