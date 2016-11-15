@@ -31,6 +31,7 @@ $data = optional_param('data', '', PARAM_RAW);  // Formatted as:  secret/usernam
 
 $p = optional_param('p', '', PARAM_ALPHANUM);   // Old parameter:  secret
 $s = optional_param('s', '', PARAM_RAW);        // Old parameter:  username
+$redirect = optional_param('redirect', '', PARAM_LOCALURL);    // Where to redirect the browser once the user has been confirmed.
 
 $PAGE->set_url('/login/confirm.php');
 $PAGE->set_context(context_system::instance());
@@ -78,10 +79,14 @@ if (!empty($data) || (!empty($p) && !empty($s))) {
 
             \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
 
-            if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going.
-                $goto = $SESSION->wantsurl;
+            // Check where to go, $redirect has a higher preference.
+            if (empty($redirect) and !empty($SESSION->wantsurl) ) {
+                $redirect = $SESSION->wantsurl;
                 unset($SESSION->wantsurl);
-                redirect($goto);
+            }
+
+            if (!empty($redirect)) {
+                redirect($redirect);
             }
         }
 
