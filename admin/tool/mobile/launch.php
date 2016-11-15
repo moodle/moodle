@@ -63,8 +63,8 @@ $token = external_generate_token_for_current_user($service);
 $privatetoken = $token->privatetoken;
 external_log_token_request($token);
 
-// Invalidate the private token if external_generate_token_for_current_user did not create a new token.
-if ($token->timecreated < $timenow) {
+// Don't return the private token if the user didn't just log in and a new token wasn't created.
+if (empty($SESSION->justloggedin) and $token->timecreated < $timenow) {
     $privatetoken = null;
 }
 
