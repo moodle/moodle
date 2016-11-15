@@ -63,7 +63,7 @@
     {{/showdivider}}
     {{#action}}
     <a class="list-group-item list-group-item-action {{#isactive}}font-weight-bold{{/isactive}}" href="{{{action}}}">
-        <span class="m-l-{{get_indent}}">
+        <div class="m-l-{{get_indent}}">
             {{#is_section}}
                 <div class="media">
                     <span class="media-left">
@@ -75,17 +75,17 @@
             {{^is_section}}
                 {{{text}}}
             {{/is_section}}
-        </span>
+        </div>
     </a>
     {{/action}}
     {{^action}}
     <div class="list-group-item">
-        <span class="m-l-{{get_indent}}">
+        <div class="m-l-{{get_indent}}">
             {{#is_section}}
                 {{#pix}}i/folder{{/pix}}
             {{/is_section}}
             {{{text}}}
-        </span>
+        </div>
     </div>
     {{/action}}
 {{/ flatnavigation }}
