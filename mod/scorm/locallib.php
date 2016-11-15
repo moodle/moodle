@@ -897,7 +897,7 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
     $organization = optional_param('organization', '', PARAM_INT);
 
     if ($scorm->displaycoursestructure == 1) {
-        echo $OUTPUT->box_start('generalbox boxaligncenter toc', 'toc');
+        echo $OUTPUT->box_start('generalbox boxaligncenter toc container', 'toc');
         echo html_writer::div(get_string('contents', 'scorm'), 'structurehead');
     }
     if (empty($organization)) {
@@ -946,7 +946,8 @@ function scorm_print_launch ($user, $scorm, $action, $cm) {
             echo html_writer::start_div('scorm-center');
             echo html_writer::start_tag('form', array('id' => 'scormviewform',
                                                         'method' => 'post',
-                                                        'action' => $CFG->wwwroot.'/mod/scorm/player.php'));
+                                                        'action' => $CFG->wwwroot.'/mod/scorm/player.php',
+                                                        'class' => 'container'));
         if ($scorm->hidebrowse == 0) {
             print_string('mode', 'scorm');
             echo ': '.html_writer::empty_tag('input', array('type' => 'radio', 'id' => 'b', 'name' => 'mode',

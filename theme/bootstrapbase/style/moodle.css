@@ -15200,6 +15200,15 @@ div#dock {
 .path-mod-quiz #mod_quiz_navblock .qnbutton.requiresgrading .trafficlight {
   background-color: #999;
 }
+.path-mod-scorm .scorm-center {
+  text-align: center;
+}
+.path-mod-scorm.forcejavascript .scorm-center {
+  display: none;
+}
+.path-mod-scorm.jsenabled .scorm-center {
+  display: block;
+}
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax {
   background-color: #fff;
 }

@@ -6,10 +6,6 @@
     text-align: left;
 }
 
-.path-mod-scorm .scorm-center {
-    text-align: center;
-}
-
 .path-mod-scorm .scorm-right {
     text-align: right;
 }
@@ -187,10 +183,6 @@
     overflow: auto;
 }
 
-.path-mod-scorm.forcejavascript .scorm-center {
-    display: none;
-}
-
 .path-mod-scorm.forcejavascript .toc {
     display: none;
 }
@@ -201,10 +193,6 @@
 
 .path-mod-scorm.jsenabled .forcejavascriptmessage {
     display: none;
-}
-
-.path-mod-scorm.jsenabled .scorm-center {
-    display: block;
 }
 
 .path-mod-scorm.jsenabled .toc {
