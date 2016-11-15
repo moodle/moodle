@@ -239,14 +239,14 @@ class mod_choice_renderer extends plugin_renderer_base {
                                 $attemptaction .= html_writer::checkbox('userid[]', $user->id, '', null,
                                     array('id' => $checkboxid));
                             }
-                            $mediabody .= html_writer::tag('div', $attemptaction, array('class'=>'media-left p-t-1'));
+                            $mediabody .= html_writer::tag('div', $attemptaction, array('class'=>'media-left media-middle p-t-1'));
                         }
                         $userimage = $this->output->user_picture($user, array('courseid' => $choices->courseid));
-                        $mediabody .= html_writer::tag('div', $userimage, array('class' => 'media-left'));
+                        $mediabody .= html_writer::tag('div', $userimage, array('class' => 'media-left media-middle'));
 
                         $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course' => $choices->courseid));
                         $name = html_writer::tag('a', $userfullname, array('href' => $userlink));
-                        $mediabody .= html_writer::tag('div', $name, array('class' => 'media-body'));
+                        $mediabody .= html_writer::tag('div', $name, array('class' => 'media-body media-middle'));
                         $data .= html_writer::tag('div', $mediabody, array('class' => 'media m-b-1'));
 
                         $optionusers .= $data;
