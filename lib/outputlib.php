@@ -297,7 +297,7 @@ class theme_config {
      * object as second parameter. A return value is not required, the tree can
      * be edited in place.
      */
-    public $csstreepostprocess = null;
+    public $csstreepostprocessor = null;
 
     /**
      * @var string Accessibility: Right arrow-like character is
@@ -1563,8 +1563,8 @@ class theme_config {
         }
 
         // Post processing using an object representation of CSS.
-        $hastreeprocessor = !empty($this->csstreepostprocessor) && function_exists($this->csstreepostprocessor);
-        $needsparsing = $hastreeprocessor || !empty($this->rtlmode);
+        $treeprocessor = $this->get_css_tree_post_processor();
+        $needsparsing = !empty($treeprocessor) || !empty($this->rtlmode);
         if ($needsparsing) {
             $parser = new core_cssparser($css);
             $csstree = $parser->parse();
@@ -1574,9 +1574,8 @@ class theme_config {
                 $this->rtlize($csstree);
             }
 
-            if ($hastreeprocessor) {
-                $fn = $this->csstreepostprocessor;
-                $fn($csstree, $this);
+            if ($treeprocessor) {
+                $treeprocessor($csstree, $this);
             }
 
             $css = $csstree->render();
@@ -2222,6 +2221,21 @@ class theme_config {
         }
         // Default it to blocks.
         return 'blocks';
+    }
+
+    /**
+     * Get the callable for CSS tree post processing.
+     *
+     * @return string|null
+     */
+    public function get_css_tree_post_processor() {
+        $configs = [$this] + $this->parent_configs;
+        foreach ($configs as $config) {
+            if ($config->csstreepostprocessor && is_callable($config->csstreepostprocessor)) {
+                return $config->csstreepostprocessor;
+            }
+        }
+        return null;
     }
 }
 
