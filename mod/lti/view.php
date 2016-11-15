@@ -125,10 +125,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
         <script type="text/javascript">
         //<![CDATA[
             YUI().use("node", "event", function(Y) {
-                //Take scrollbars off the outer document to prevent double scroll bar effect
                 var doc = Y.one("body");
-                doc.setStyle("overflow", "hidden");
-
                 var frame = Y.one("#contentframe");
                 var padding = 15; //The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
                 var lastHeight;
