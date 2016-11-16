@@ -137,7 +137,9 @@ abstract class renderer_factory_base implements renderer_factory {
             // If the target hasn't been specified we need to guess the defaults.
             // We also override the target with the default if the maintenance target has been provided.
             // This ensures we don't use the maintenance renderer if we are processing a special target.
-            if (CLI_SCRIPT) {
+            if (defined('PREFERRED_RENDERER_TARGET')) {
+                $target = PREFERRED_RENDERER_TARGET;
+            } else if (CLI_SCRIPT) {
                 $target = RENDERER_TARGET_CLI;
             } else if (AJAX_SCRIPT) {
                 $target = RENDERER_TARGET_AJAX;
