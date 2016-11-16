@@ -222,13 +222,23 @@ function report_participation_print_filter_form($course, $timefrom, $minlog, $ac
 
     echo '<form class="participationselectform" action="index.php" method="get"><div>'."\n".
         '<input type="hidden" name="id" value="'.$course->id.'" />'."\n";
+    echo '<div class="form-group">'."\n";
     echo '<label for="menuinstanceid">'.get_string('activitymodule').'</label>'."\n";
     echo html_writer::select($instanceoptions, 'instanceid', $instanceid);
+    echo '</div>'."\n";
+    echo '<div class="form-group form-inline">'."\n";
+    echo '<div class="form-group">'."\n";
     echo '<label for="menutimefrom">'.get_string('lookback').'</label>'."\n";
     echo html_writer::select($timeoptions,'timefrom',$timefrom);
+    echo '</div>'."\n";
+    echo '<div class="form-group">'."\n";
     echo '<label for="menuroleid">'.get_string('showonly').'</label>'."\n";
     echo html_writer::select($roleoptions,'roleid',$roleid,false);
+    echo '</div>'."\n";
+    echo '<div class="form-group">'."\n";
     echo '<label for="menuaction">'.get_string('showactions').'</label>'."\n";
     echo html_writer::select($actionoptions,'action',$action,false);
-    echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
+    echo '</div>'."\n";
+    echo '</div>'."\n";
+    echo '<input type="submit" value="'.get_string('go').'" class="btn btn-primary" />'."\n</div></form>\n";
 }
