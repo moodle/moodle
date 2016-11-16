@@ -149,9 +149,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this.messageArea.onDelegateEvent(CustomEvents.events.scrollBottom, SELECTORS.CONTACTS,
                 this._loadContacts.bind(this));
 
-            // Set the number of conversations. We set this to the number of conversations we asked to retrieve not by
-            // the number that was actually retrieved, see MDL-55870.
-            this._numConversationsDisplayed = 20;
+            if (!this.messageArea.showContactsFirst()) {
+                // Set the initial number of conversations to retrieve. Otherwise it will display no conversations.
+                this._numConversationsDisplayed = 20;
+            }
         };
 
         /**

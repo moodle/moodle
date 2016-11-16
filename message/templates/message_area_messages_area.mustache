@@ -40,6 +40,15 @@
     </div>
 </div>
 {{/otheruserid}}
+{{#contactsfirst}}
+<div class="messages-header">
+    <div class="name-container">
+        <div class="name">
+            {{#str}}newmessagesearch, message{{/str}}
+        </div>
+    </div>
+</div>
+{{/contactsfirst}}
 <div class="messages" data-region="messages" data-userid="{{otheruserid}}">
     {{> core_message/message_area_messages }}
 </div>

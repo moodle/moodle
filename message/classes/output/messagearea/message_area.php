@@ -79,6 +79,11 @@ class message_area implements templatable, renderable {
     public $polltimeout;
 
     /**
+     * @var bool Are we creating a new message and show the contacts section first?
+     */
+    public $contactsfirst;
+
+    /**
      * Constructor.
      *
      * @param int $userid The ID of the user whose contacts and messages we are viewing
@@ -86,20 +91,23 @@ class message_area implements templatable, renderable {
      * @param array $contacts
      * @param array|null $messages
      * @param bool $requestedconversation
+     * @param bool $contactsfirst Whether we are viewing the contacts first.
      * @param int $pollmin
      * @param int $pollmax
      * @param int $polltimeout
      */
-    public function __construct($userid, $otheruserid, $contacts, $messages, $requestedconversation, $pollmin, $pollmax,
-            $polltimeout) {
+    public function __construct($userid, $otheruserid, $contacts, $messages, $requestedconversation, $contactsfirst, $pollmin,
+            $pollmax, $polltimeout) {
         $this->userid = $userid;
-        $this->otheruserid = $otheruserid;
+        // Setting the other user to null when showing contacts will remove any contact from being selected.
+        $this->otheruserid = (!$contactsfirst) ? $otheruserid : null;
         $this->contacts = $contacts;
         $this->messages = $messages;
         $this->requestedconversation = $requestedconversation;
         $this->pollmin = $pollmin;
         $this->pollmax = $pollmax;
         $this->polltimeout = $polltimeout;
+        $this->contactsfirst = $contactsfirst;
     }
 
     public function export_for_template(\renderer_base $output) {
@@ -107,13 +115,19 @@ class message_area implements templatable, renderable {
         $data->userid = $this->userid;
         $contacts = new contacts($this->otheruserid, $this->contacts);
         $data->contacts = $contacts->export_for_template($output);
-        $messages = new messages($this->userid, $this->otheruserid, $this->messages);
+        if ($this->contactsfirst) {
+            // Don't show any messages if we are creating a new message.
+            $messages = new messages($this->userid, null, array());
+        } else {
+            $messages = new messages($this->userid, $this->otheruserid, $this->messages);
+        }
         $data->messages = $messages->export_for_template($output);
-        $data->isconversation = true;
+        $data->isconversation = ($this->contactsfirst) ? false : true;
         $data->requestedconversation = $this->requestedconversation;
         $data->pollmin = $this->pollmin;
         $data->pollmax = $this->pollmax;
         $data->polltimeout = $this->polltimeout;
+        $data->contactsfirst = $this->contactsfirst;
 
         return $data;
     }

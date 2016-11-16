@@ -52,6 +52,12 @@
 
     {{$headertext}}{{#str}} messages, message {{/str}}{{/headertext}}
     {{$headeractions}}
+        <div class="newmessage-link">
+            {{$anchor}}
+                <a href="{{{urls.writeamessage}}}">{{#str}} newmessage, message {{/str}}
+                </a>
+            {{/anchor}}
+        </div>
         {{< core/hover_tooltip }}
             {{$anchor}}
                 <a class="mark-all-read-button"
