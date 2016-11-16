@@ -128,6 +128,21 @@ class core_coursecatlib_testcase extends advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('moodle_exception', $e);
         }
+        // Test that duplicates with an idnumber of 0 cannot be created.
+        coursecat::create(array('name' => 'Cat3', 'idnumber' => '0'));
+        try {
+            coursecat::create(array('name' => 'Cat4', 'idnumber' => '0'));
+            $this->fail('Duplicate idnumber "0" exception expected in coursecat::create');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
+        }
+        // Test an update cannot make a duplicate idnumber of 0.
+        try {
+            $cat2->update(array('idnumber' => '0'));
+            $this->fail('Duplicate idnumber "0" exception expected in coursecat::update');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
+        }
     }
 
     public function test_visibility() {
