@@ -519,8 +519,19 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
             if ($attempt->state != quiz_attempt::FINISHED) {
                 echo quiz_attempt_state_name($attempt->state);
             } else {
-                echo quiz_format_grade($quiz, $attempt->sumgrades) . '/' .
-                        quiz_format_grade($quiz, $quiz->sumgrades);
+                if (!isset($gitem)) {
+                    if (!empty($grades->items[0]->grades)) {
+                        $gitem = grade_item::fetch(array('id' => $grades->items[0]->id));
+                    } else {
+                        $gitem = new stdClass();
+                        $gitem->hidden = true;
+                    }
+                }
+                if (!$gitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+                    echo quiz_format_grade($quiz, $attempt->sumgrades) . '/' . quiz_format_grade($quiz, $quiz->sumgrades);
+                } else {
+                    echo get_string('hidden', 'grades');
+                }
             }
             echo ' - '.userdate($attempt->timemodified).'<br />';
         }
