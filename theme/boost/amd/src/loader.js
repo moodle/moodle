@@ -40,7 +40,10 @@ define(['jquery', './tether'], function(jQuery, Tether) {
             'theme_boost/tooltip',
             'theme_boost/popover'],
             function() {
-        jQuery('[data-toggle="popover"]').popover();
+                jQuery('body').popover({
+                    selector: '[data-toggle="popover"]',
+                    trigger: 'focus'
+                });
     });
 
     return {};
