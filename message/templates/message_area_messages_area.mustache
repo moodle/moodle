@@ -51,7 +51,9 @@
         <button class="btn btn-link" data-action="show-contacts">&lt; {{#str}} messages, message {{/str}}</button>
     </div>
     <div class="delete-all btn-container">
-        <button class="btn btn-link" data-action="delete-all-messages">{{#str}} deleteall {{/str}}</button>
+        <button class="btn btn-link" data-action="delete-all-messages" aria-label="{{#str}} deleteallmessages, message {{/str}}">
+            {{#str}} deleteall {{/str}}
+        </button>
     </div>
     <div class="name-container">
         <div class="name">
@@ -71,8 +73,10 @@
         {{#str}} selectmessagestodelete, message {{/str}}
     </div>
     <div class="actions" data-region="messages-header-actions">
-        <button class="btn btn-link messages-delete" data-action="start-delete-messages">{{#str}}edit{{/str}}</button>
-        <button class="btn btn-link cancel-messages-delete" data-action="cancel-delete-messages">{{#str}}cancel{{/str}}</button>
+        <button class="btn btn-link messages-delete" data-action="start-delete-messages"
+                aria-label="{{#str}} editmessages, message {{/str}}">{{#str}}edit{{/str}}</button>
+        <button class="btn btn-link cancel-messages-delete" data-action="cancel-delete-messages"
+                aria-label="{{#str}} canceledit, message {{/str}}">{{#str}}cancel{{/str}}</button>
     </div>
 </div>
 {{/otheruserid}}

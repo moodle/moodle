@@ -16,7 +16,8 @@
 }}
 <div class="contact {{#selected}}selected{{/selected}} {{#lastmessage}}{{^isread}}unread{{/isread}}{{/lastmessage}}"
      data-action="view-contact-msg"
-     data-userid="{{userid}}" data-messageid="{{#messageid}}{{.}}{{isread}}{{/messageid}}" data-region="contact" tabindex="0">
+     data-userid="{{userid}}" data-messageid="{{#messageid}}{{.}}{{isread}}{{/messageid}}" data-region="contact" role="button"
+     aria-pressed="{{#selected}}true{{/selected}}{{^selected}}false{{/selected}}" tabindex="0">
     <div class="picture">
         <img src="{{profileimageurl}}" alt="" />
     </div>

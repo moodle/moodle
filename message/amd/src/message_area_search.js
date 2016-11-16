@@ -30,7 +30,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         CONTACTS: "[data-region='contacts'][data-region-content='contacts']",
         CONTACTSAREA: "[data-region='contacts-area']",
         CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
-        DELETESEARCHFILTER: "[data-action='search-filter-delete']",
+        DELETESEARCHFILTER: "[data-region='search-filter-area']",
         LOADINGICON: '.loading-icon',
         SEARCHBOX: "[data-region='search-box']",
         SEARCHFILTER: "[data-region='search-filter']",
@@ -94,23 +94,25 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         this.messageArea.find(SELECTORS.SEARCHTEXTAREA).on('input', this._searchRequest.bind(this));
 
         // Handle clicking on a course in the list of users.
-        this.messageArea.onDelegateEvent('click', SELECTORS.SEARCHUSERSINCOURSE, function(e) {
+        this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.SEARCHUSERSINCOURSE, function(e) {
             this._setFilter($(e.currentTarget).html());
             this._setPlaceholderText('searchforuser');
             this._clearSearchArea();
             this._searchArea = this._searchAreas.USERSINCOURSE;
             this._courseid = $(e.currentTarget).data('courseid');
             this._searchUsersInCourse();
+            this.messageArea.find(SELECTORS.SEARCHBOX).focus();
         }.bind(this));
 
         // Handle deleting the search filter.
-        this.messageArea.onDelegateEvent('click', SELECTORS.DELETESEARCHFILTER, function() {
+        this.messageArea.onDelegateEvent(CustomEvents.events.activate, SELECTORS.DELETESEARCHFILTER, function() {
             this._hideSearchResults();
             // Filter has been removed, so we don't want to be searching in a course anymore.
             this._searchArea = this._searchAreas.USERS;
             this._setPlaceholderText('searchforuserorcourse');
             // Go back the contacts.
             this.messageArea.trigger(Events.USERSSEARCHCANCELED);
+            this.messageArea.find(SELECTORS.SEARCHBOX).focus();
         }.bind(this));
 
         // Handle events that occur outside this module.

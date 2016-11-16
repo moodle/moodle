@@ -5901,6 +5901,7 @@ a.ygtvspacer:hover {
 }
 .messaging-area-container .messaging-area .contacts-area .searchtextarea .searchfilterarea {
   line-height: 20px;
+  cursor: pointer;
 }
 .messaging-area-container .messaging-area .contacts-area .searchtextarea .searchfilterarea .searchfilter {
   float: left;
@@ -5908,7 +5909,6 @@ a.ygtvspacer:hover {
 .messaging-area-container .messaging-area .contacts-area .searchtextarea .searchfilterarea .searchfilterdelete {
   float: left;
   margin-left: 5px;
-  cursor: pointer;
 }
 .messaging-area-container .messaging-area .contacts-area .searcharea .heading {
   text-align: center;

@@ -17,7 +17,7 @@
 <div class="searchtextarea" data-region="search-text-area">
     <label class="accesshide" for="searchtext">{{#str}}search{{/str}}</label>
     <input data-region="search-box" type="text" id="searchtext" placeholder="{{#contactsfirst}} {{#str}}searchforuserorcourse, message{{/str}} {{/contactsfirst}} {{^contactsfirst}} {{#str}}searchmessages, message{{/str}} {{/contactsfirst}}">
-    <div data-region="search-filter-area" class="searchfilterarea" style="display:none">
+    <div data-region="search-filter-area" class="searchfilterarea" style="display:none" role="button" tabindex="0">
         <div data-region="search-filter" class="searchfilter"></div>
         <div data-action="search-filter-delete" class="searchfilterdelete">{{#pix}}t/delete{{/pix}}</div>
     </div>
@@ -36,7 +36,7 @@
 {{/contactsfirst}}
 {{! Hidden divs to load the other tab and search panels via JS when appropriate. }}
 <div class="contacts searcharea" data-region="search-results-area" style="display:none;"></div>
-<div class="tabs">
+<div class="tabs" role="tablist">
     <div class="tab tabconversations {{^contactsfirst}}selected{{/contactsfirst}} " data-action="conversations-view" role="tab" aria-controls="conversations-tab-panel" aria-selected="{{^contactsfirst}}true{{/contactsfirst}}{{#contactsfirst}}false{{/contactsfirst}}" tabindex="0">
         <div class="tabimage">{{#pix}}t/message, moodle{{/pix}}</div>
         <div>{{#str}}messages, message{{/str}}</div>

@@ -38,6 +38,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             BLOCKTIME: "[data-region='blocktime']",
             CANCELDELETEMESSAGES: "[data-action='cancel-delete-messages']",
             CONTACT: "[data-region='contact']",
+            CONTACTPROFILE: "[data-action='view-contact-profile']",
             CONVERSATIONS: "[data-region='contacts'][data-region-content='conversations']",
             DELETEALLMESSAGES: "[data-action='delete-all-messages']",
             DELETEMESSAGES: "[data-action='delete-messages']",
@@ -50,7 +51,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             SENDMESSAGE: "[data-action='send-message']",
             SENDMESSAGETEXT: "[data-region='send-message-txt']",
             SHOWCONTACTS: "[data-action='show-contacts']",
-            STARTDELETEMESSAGES: "[data-action='start-delete-messages']"
+            STARTDELETEMESSAGES: "[data-action='start-delete-messages']",
         };
 
         /** @type {int} The number of milliseconds in a second. */
@@ -207,6 +208,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 this._addScrollEventListener(numberreceived);
                 // Restart the poll timer.
                 this._backoffTimer.restart();
+                this.messageArea.find(SELECTORS.CONTACTPROFILE).focus();
             }.bind(this)).fail(Notification.exception);
         };
 
@@ -447,6 +449,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                 this._isSendingMessage = false;
             }.bind(this)).always(function() {
                 element.prop('disabled', false);
+                element.focus();
             }).fail(Notification.exception);
         };
 
