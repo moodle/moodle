@@ -348,3 +348,20 @@ Feature: Test category management actions
       | Category ID number | CAT1 |
     When I press "Create category"
     Then I should see "ID number is already used for another category"
+
+  Scenario: Test that is possible to remove an idnumber from a course category
+    Given the following "categories" exist:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+      | Cat 2 | 0 ||
+    And I log in as "admin"
+    And I go to the courses management page
+    And I should see "CAT1" in the "#category-listing" "css_element"
+    When I click on "edit" action for "Cat 1" in management category listing
+    And I set the following fields to these values:
+      | Category name | Category 1 (edited) |
+      | Category ID number ||
+    And I press "Save changes"
+    # Redirect
+    Then I should see "Category 1 (edited)" in the "#category-listing" "css_element"
+    And I should not see "CAT1" in the "#course-listing" "css_element"
