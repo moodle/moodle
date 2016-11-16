@@ -247,7 +247,7 @@ class behat_backup extends behat_base {
 
         // The first category in the list.
         $radionode = $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), ' bcs-new-course ')]" .
-            "/descendant::div[@class='restore-course-search']" .
+            "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' restore-course-search ')]" .
             "/descendant::input[@type='radio']");
         $radionode->click();
 
