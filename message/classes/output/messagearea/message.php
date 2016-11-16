@@ -107,6 +107,7 @@ class message implements templatable, renderable {
             $message->position = 'right';
         }
         $message->timesent = userdate($this->timecreated, get_string('strftimetime'));
+        $message->timecreated = $this->timecreated;
         $message->isread = !empty($this->timeread) ? 1 : 0;
 
         return $message;

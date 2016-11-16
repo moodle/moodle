@@ -43,10 +43,12 @@ class helper {
      * @param int $limitfrom
      * @param int $limitnum
      * @param string $sort
+     * @param int $timefrom the time from the message being sent
+     * @param int $timeto the time up until the message being sent
      * @return array of messages
      */
     public static function get_messages($userid, $otheruserid, $timedeleted = 0, $limitfrom = 0, $limitnum = 0,
-                                        $sort = 'timecreated ASC') {
+                                        $sort = 'timecreated ASC', $timefrom = 0, $timeto = 0) {
         global $DB;
 
         $messageid = $DB->sql_concat("'message_'", 'id');
@@ -58,6 +60,7 @@ class helper {
                  WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
                     OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
                    AND notification = 0
+                   %where%
              UNION ALL
                 SELECT {$messagereadid} AS fakeid, id, useridfrom, useridto, subject, fullmessage, fullmessagehtml, fullmessageformat,
                        smallmessage, notification, timecreated, timeread
@@ -65,11 +68,29 @@ class helper {
                  WHERE ((useridto = ? AND useridfrom = ? AND timeusertodeleted = ?)
                     OR (useridto = ? AND useridfrom = ? AND timeuserfromdeleted = ?))
                    AND notification = 0
+                   %where%
               ORDER BY $sort";
-        $params = array($userid, $otheruserid, $timedeleted,
-                        $otheruserid, $userid, $timedeleted,
-                        $userid, $otheruserid, $timedeleted,
-                        $otheruserid, $userid, $timedeleted);
+        $params1 = array($userid, $otheruserid, $timedeleted,
+                         $otheruserid, $userid, $timedeleted);
+
+        $params2 = array($userid, $otheruserid, $timedeleted,
+                         $otheruserid, $userid, $timedeleted);
+        $where = array();
+
+        if (!empty($timefrom)) {
+            $where[] = 'AND timecreated >= ?';
+            $params1[] = $timefrom;
+            $params2[] = $timefrom;
+        }
+
+        if (!empty($timeto)) {
+            $where[] = 'AND timecreated <= ?';
+            $params1[] = $timeto;
+            $params2[] = $timeto;
+        }
+
+        $sql = str_replace('%where%', implode(' ', $where), $sql);
+        $params = array_merge($params1, $params2);
 
         return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     }
@@ -248,5 +269,18 @@ class helper {
         );
 
         return $params;
+    }
+
+    /**
+     * Returns the cache key for the time created value of the last message between two users.
+     *
+     * @param int $userid
+     * @param int $user2id
+     * @return string
+     */
+    public static function get_last_message_time_created_cache_key($userid, $user2id) {
+        $ids = [$userid, $user2id];
+        sort($ids);
+        return implode('_', $ids);
     }
 }

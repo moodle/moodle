@@ -1980,6 +1980,46 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Tests retrieving messages.
+     */
+    public function test_messagearea_messages_timefrom() {
+        $this->resetAfterTest(true);
+
+        // Create some users.
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // The person asking for the messages.
+        $this->setUser($user1);
+
+        // Send some messages back and forth.
+        $time = time();
+        $this->send_message($user1, $user2, 'Message 1', 0, $time - 4);
+        $this->send_message($user2, $user1, 'Message 2', 0, $time - 3);
+        $this->send_message($user1, $user2, 'Message 3', 0, $time - 2);
+        $this->send_message($user2, $user1, 'Message 4', 0, $time - 1);
+
+        // Retrieve the messages from $time - 3, which should be the 3 most recent messages.
+        $result = core_message_external::data_for_messagearea_messages($user1->id, $user2->id, 0, 0, false, $time - 3);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_message_external::data_for_messagearea_messages_returns(),
+            $result);
+
+        // Confirm the message data is correct. We shouldn't get 'Message 1' back.
+        $messages = $result['messages'];
+        $this->assertCount(3, $messages);
+
+        $message1 = $messages[0];
+        $message2 = $messages[1];
+        $message3 = $messages[2];
+
+        $this->assertContains('Message 2', $message1['text']);
+        $this->assertContains('Message 3', $message2['text']);
+        $this->assertContains('Message 4', $message3['text']);
+    }
+
+    /**
      * Tests retrieving messages as another user.
      */
     public function test_messagearea_messages_as_other_user() {

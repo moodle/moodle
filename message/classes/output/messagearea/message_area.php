@@ -64,6 +64,21 @@ class message_area implements templatable, renderable {
     public $requestedconversation;
 
     /**
+     * @var int The minimum time to poll for messages.
+     */
+    public $pollmin;
+
+    /**
+     * @var int The maximum time to poll for messages.
+     */
+    public $pollmax;
+
+    /**
+     * @var int The time used once we have reached the maximum polling time.
+     */
+    public $polltimeout;
+
+    /**
      * Constructor.
      *
      * @param int $userid The ID of the user whose contacts and messages we are viewing
@@ -71,13 +86,20 @@ class message_area implements templatable, renderable {
      * @param array $contacts
      * @param array|null $messages
      * @param bool $requestedconversation
+     * @param int $pollmin
+     * @param int $pollmax
+     * @param int $polltimeout
      */
-    public function __construct($userid, $otheruserid, $contacts, $messages, $requestedconversation) {
+    public function __construct($userid, $otheruserid, $contacts, $messages, $requestedconversation, $pollmin, $pollmax,
+            $polltimeout) {
         $this->userid = $userid;
         $this->otheruserid = $otheruserid;
         $this->contacts = $contacts;
         $this->messages = $messages;
         $this->requestedconversation = $requestedconversation;
+        $this->pollmin = $pollmin;
+        $this->pollmax = $pollmax;
+        $this->polltimeout = $polltimeout;
     }
 
     public function export_for_template(\renderer_base $output) {
@@ -89,6 +111,9 @@ class message_area implements templatable, renderable {
         $data->messages = $messages->export_for_template($output);
         $data->isconversation = true;
         $data->requestedconversation = $this->requestedconversation;
+        $data->pollmin = $this->pollmin;
+        $data->pollmax = $this->pollmax;
+        $data->polltimeout = $this->polltimeout;
 
         return $data;
     }

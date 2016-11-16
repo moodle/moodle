@@ -32,7 +32,7 @@
 {{#js}}
     require(['core_message/message_area'],
         function(Messagearea) {
-            new Messagearea('.messaging-area-container');
+            new Messagearea('.messaging-area-container', {{pollmin}}, {{pollmax}}, {{polltimeout}});
         }
     );
 {{/js}}

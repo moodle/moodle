@@ -515,6 +515,7 @@ class core_message_external extends external_api {
                 'blocktime' => new external_value(PARAM_NOTAGS, 'The time to display above the message'),
                 'position' => new external_value(PARAM_ALPHA, 'The position of the text'),
                 'timesent' => new external_value(PARAM_NOTAGS, 'The time the message was sent'),
+                'timecreated' => new external_value(PARAM_INT, 'The timecreated timestamp for the message'),
                 'isread' => new external_value(PARAM_INT, 'Determines if the message was read or not'),
             )
         );
@@ -900,6 +901,8 @@ class core_message_external extends external_api {
                 'limitfrom' => new external_value(PARAM_INT, 'Limit from', VALUE_DEFAULT, 0),
                 'limitnum' => new external_value(PARAM_INT, 'Limit number', VALUE_DEFAULT, 0),
                 'newest' => new external_value(PARAM_BOOL, 'Newest first?', VALUE_DEFAULT, false),
+                'timefrom' => new external_value(PARAM_INT,
+                    'The timestamp from which the messages were created', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -917,7 +920,7 @@ class core_message_external extends external_api {
      * @since 3.2
      */
     public static function data_for_messagearea_messages($currentuserid, $otheruserid, $limitfrom = 0, $limitnum = 0,
-                                                         $newest = false) {
+                                                         $newest = false, $timefrom = 0) {
         global $CFG, $PAGE, $USER;
 
         // Check if messaging is enabled.
@@ -932,7 +935,8 @@ class core_message_external extends external_api {
             'otheruserid' => $otheruserid,
             'limitfrom' => $limitfrom,
             'limitnum' => $limitnum,
-            'newest' => $newest
+            'newest' => $newest,
+            'timefrom' => $timefrom,
         );
         self::validate_parameters(self::data_for_messagearea_messages_parameters(), $params);
         self::validate_context($systemcontext);
@@ -946,7 +950,29 @@ class core_message_external extends external_api {
         } else {
             $sort = 'timecreated ASC';
         }
-        $messages = \core_message\api::get_messages($currentuserid, $otheruserid, $limitfrom, $limitnum, $sort);
+
+        // We need to enforce a one second delay on messages to avoid race conditions of current
+        // messages still being sent.
+        //
+        // There is a chance that we could request messages before the current time's
+        // second has elapsed and while other messages are being sent in that same second. In which
+        // case those messages will be lost.
+        //
+        // Instead we ignore the current time in the result set to ensure that second is allowed to finish.
+        if (!empty($timefrom)) {
+            $timeto = time() - 1;
+        } else {
+            $timeto = 0;
+        }
+
+        // No requesting messages from the current time, as stated above.
+        if ($timefrom == time()) {
+            $messages = [];
+        } else {
+            $messages = \core_message\api::get_messages($currentuserid, $otheruserid, $limitfrom,
+                                                        $limitnum, $sort, $timefrom, $timeto);
+        }
+
         $messages = new \core_message\output\messagearea\messages($currentuserid, $otheruserid, $messages);
 
         $renderer = $PAGE->get_renderer('core_message');

@@ -127,8 +127,11 @@ if (!empty($user2->id)) {
     $messages = \core_message\api::get_messages($user1->id, $user2->id, 0, 20, 'timecreated DESC');
 }
 
+$pollmin = !empty($CFG->messagingminpoll) ? $CFG->messagingminpoll : MESSAGE_DEFAULT_MIN_POLL_IN_SECONDS;
+$pollmax = !empty($CFG->messagingmaxpoll) ? $CFG->messagingmaxpoll : MESSAGE_DEFAULT_MAX_POLL_IN_SECONDS;
+$polltimeout = !empty($CFG->messagingtimeoutpoll) ? $CFG->messagingtimeoutpoll : MESSAGE_DEFAULT_TIMEOUT_POLL_IN_SECONDS;
 $messagearea = new \core_message\output\messagearea\message_area($user1->id, $user2->id, $conversations, $messages,
-    $requestedconversation);
+    $requestedconversation, $pollmin, $pollmax, $polltimeout);
 
 // Now the page contents.
 echo $OUTPUT->header();
