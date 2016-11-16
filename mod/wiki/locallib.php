@@ -1771,6 +1771,7 @@ function mod_wiki_get_tagged_pages($tag, $exclusivemode = false, $fromctx = 0, $
                 JOIN {course} c ON cm.course = c.id
                 JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :coursemodulecontextlevel
                WHERE tt.itemtype = :itemtype AND tt.tagid = :tagid AND tt.component = :component
+                 AND cm.deletioninprogress = 0
                  AND wp.id %ITEMFILTER% AND c.id %COURSEFILTER%";
 
     $params = array('itemtype' => 'wiki_pages', 'tagid' => $tag->id, 'component' => 'mod_wiki',

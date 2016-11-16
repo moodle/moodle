@@ -3607,6 +3607,7 @@ function course_get_tagged_course_modules($tag, $exclusivemode = false, $fromcon
                 JOIN {course} c ON cm.course = c.id
                 JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :coursemodulecontextlevel
                WHERE tt.itemtype = :itemtype AND tt.tagid = :tagid AND tt.component = :component
+                AND cm.deletioninprogress = 0
                 AND c.id %COURSEFILTER% AND cm.id %ITEMFILTER%";
 
     $params = array('itemtype' => 'course_modules', 'tagid' => $tag->id, 'component' => 'core',
