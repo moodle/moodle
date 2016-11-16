@@ -41,6 +41,7 @@ $id = optional_param('id', 0, PARAM_INT);
 // we are going to accept other URL parameters to figure this out.
 $user1id = optional_param('user1', $USER->id, PARAM_INT);
 $user2id = optional_param('user2', $id, PARAM_INT);
+$contactsfirst = optional_param('contactsfirst', 0, PARAM_INT);
 
 $url = new moodle_url('/message/index.php');
 if ($id) {
@@ -51,6 +52,9 @@ if ($id) {
     }
     if ($user2id) {
         $url->param('user2', $user2id);
+    }
+    if ($contactsfirst) {
+        $url->param('contactsfirst', $contactsfirst);
     }
 }
 $PAGE->set_url($url);
@@ -98,7 +102,11 @@ $settings->make_active();
 // Get the renderer and the information we are going to be use.
 $renderer = $PAGE->get_renderer('core_message');
 $requestedconversation = false;
-$conversations = \core_message\api::get_conversations($user1->id, 0, 20);
+if ($contactsfirst) {
+    $conversations = \core_message\api::get_contacts($user1->id, 0, 20);
+} else {
+    $conversations = \core_message\api::get_conversations($user1->id, 0, 20);
+}
 $messages = [];
 if (!$user2realuser) {
     // If there are conversations, but the user has not chosen a particular one, then render the most recent one.
@@ -131,7 +139,7 @@ $pollmin = !empty($CFG->messagingminpoll) ? $CFG->messagingminpoll : MESSAGE_DEF
 $pollmax = !empty($CFG->messagingmaxpoll) ? $CFG->messagingmaxpoll : MESSAGE_DEFAULT_MAX_POLL_IN_SECONDS;
 $polltimeout = !empty($CFG->messagingtimeoutpoll) ? $CFG->messagingtimeoutpoll : MESSAGE_DEFAULT_TIMEOUT_POLL_IN_SECONDS;
 $messagearea = new \core_message\output\messagearea\message_area($user1->id, $user2->id, $conversations, $messages,
-    $requestedconversation, $pollmin, $pollmax, $polltimeout);
+        $requestedconversation, $contactsfirst, $pollmin, $pollmax, $polltimeout);
 
 // Now the page contents.
 echo $OUTPUT->header();

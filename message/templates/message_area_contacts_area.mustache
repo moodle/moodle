@@ -16,24 +16,32 @@
 }}
 <div class="searchtextarea" data-region="search-text-area">
     <label class="accesshide" for="searchtext">{{#str}}search{{/str}}</label>
-    <input data-region="search-box" type="text" id="searchtext" placeholder="{{#str}}searchmessages, message{{/str}}">
+    <input data-region="search-box" type="text" id="searchtext" placeholder="{{#contactsfirst}} {{#str}}searchforuserorcourse, message{{/str}} {{/contactsfirst}} {{^contactsfirst}} {{#str}}searchmessages, message{{/str}} {{/contactsfirst}}">
     <div data-region="search-filter-area" class="searchfilterarea" style="display:none">
         <div data-region="search-filter" class="searchfilter"></div>
         <div data-action="search-filter-delete" class="searchfilterdelete">{{#pix}}t/delete{{/pix}}</div>
     </div>
 </div>
+{{#contactsfirst}}
+<div class="contacts" data-region="contacts" data-region-content="conversations" style="display:none;" role="tabpanel" id="conversations-tab-panel"></div>
+<div class="contacts" data-region="contacts" data-region-content="contacts" role="tabpanel" id="contacts-tab-panel">
+    {{> core_message/message_area_contacts }}
+</div>
+{{/contactsfirst}}
+{{^contactsfirst}}
 <div class="contacts" data-region="contacts" data-region-content="conversations" role="tabpanel" id="conversations-tab-panel">
     {{> core_message/message_area_contacts }}
 </div>
-{{! Hidden divs to load the other tab and search panels via JS when appropriate. }}
 <div class="contacts" data-region="contacts" data-region-content="contacts" style="display:none;" role="tabpanel" id="contacts-tab-panel"></div>
+{{/contactsfirst}}
+{{! Hidden divs to load the other tab and search panels via JS when appropriate. }}
 <div class="contacts searcharea" data-region="search-results-area" style="display:none;"></div>
 <div class="tabs">
-    <div class="tab tabconversations selected" data-action="conversations-view" role="tab" aria-controls="conversations-tab-panel" aria-selected="true" tabindex="0">
+    <div class="tab tabconversations {{^contactsfirst}}selected{{/contactsfirst}} " data-action="conversations-view" role="tab" aria-controls="conversations-tab-panel" aria-selected="{{^contactsfirst}}true{{/contactsfirst}}{{#contactsfirst}}false{{/contactsfirst}}" tabindex="0">
         <div class="tabimage">{{#pix}}t/message, moodle{{/pix}}</div>
         <div>{{#str}}messages, message{{/str}}</div>
     </div>
-    <div class="tab tabcontacts" data-action="contacts-view" role="tab" aria-controls="contacts-tab-panel" aria-selected="false" tabindex="-1">
+    <div class="tab tabcontacts {{#contactsfirst}}selected{{/contactsfirst}}" data-action="contacts-view" role="tab" aria-controls="contacts-tab-panel" aria-selected="{{#contactsfirst}}true{{/contactsfirst}}{{^contactsfirst}}false{{/contactsfirst}}" tabindex="-1">
         <div class="tabimage">{{#pix}}i/cohort, moodle{{/pix}}</div>
         <div>{{#str}}contacts, message{{/str}}</div>
     </div>

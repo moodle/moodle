@@ -7815,6 +7815,9 @@ body.path-question-type .mform fieldset.hidden {
   height: 12px;
   width: 12px;
 }
+.popover-region-header-actions .newmessage-link {
+  margin-right: 10px;
+}
 .popover-region-header-actions label {
   display: inline-block;
   text-align: center;
@@ -8059,6 +8062,9 @@ body.path-question-type .mform fieldset.hidden {
 }
 .dir-rtl .popover-region .popover-region-header-actions {
   float: left;
+}
+.dir-rtl .popover-region .popover-region-header-actions .newmessage-link {
+  margin-left: 10px;
 }
 .dir-rtl .navbar .popover-region {
   float: left;

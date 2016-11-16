@@ -117,6 +117,15 @@ define(['jquery', 'core_message/message_area_contacts', 'core_message/message_ar
             return this.node.data('userid');
         };
 
+        /**
+         * Function to determine if we should be showing contacts initially or messages.
+         *
+         * @return {boolean} True to show contacts first, otherwise show messages.
+         */
+        Messagearea.prototype.showContactsFirst = function() {
+            return !!this.node.data('displaycontacts');
+        };
+
         return Messagearea;
     }
 );
