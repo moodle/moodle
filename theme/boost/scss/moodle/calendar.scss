@@ -425,6 +425,11 @@ $calendarEventUserColor: #dce7ec; // Pale blue.
     }
 }
 
+/* Display month name above the calendar */
+table.calendartable caption {
+    caption-side: top;
+}
+
 .ical-link {
     font-size: 10px;
     font-weight: bold;
