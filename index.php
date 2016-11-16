@@ -145,7 +145,7 @@ if (!empty($CFG->customfrontpageinclude)) {
         $context = context_course::instance(SITEID);
 
         // If the section name is set we show it.
-        if (!is_null($section->name)) {
+        if (trim($section->name) !== '') {
             echo $OUTPUT->heading(
                 format_string($section->name, true, array('context' => $context)),
                 2,
