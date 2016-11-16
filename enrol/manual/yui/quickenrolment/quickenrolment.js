@@ -32,7 +32,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
     /** CSS classes for nodes in structure **/
     var CSS = {
         PANEL : 'user-enroller-panel',
-        WRAP : 'uep-wrap',
+        WRAP : 'uep-wrap modal-dialog',
         HEADER : 'uep-header',
         CONTENT : 'uep-content',
         AJAXCONTENT : 'uep-ajax-content',
@@ -90,33 +90,33 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             if (this.get(UEP.DISABLEGRADEHISTORY) != true) {
                 recovergrades = create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.RECOVERGRADES+'"></div>')
                     .append(create('<label class="'+CSS.RECOVERGRADESTITLE+'" for="'+CSS.RECOVERGRADES+'">'+M.util.get_string('recovergrades', 'enrol')+'</label>'))
-                    .append(create('<input type="checkbox" id="'+CSS.RECOVERGRADES+'" name="'+CSS.RECOVERGRADES+'"'+ this.get(UEP.RECOVERGRADESDEFAULT) +' />'))
+                    .append(create('<input type="checkbox" class="m-x-1" id="'+CSS.RECOVERGRADES+'" name="'+CSS.RECOVERGRADES+'"'+ this.get(UEP.RECOVERGRADESDEFAULT) +' />'))
             }
 
             this.set(UEP.BASE, create('<div class="'+CSS.PANEL+' '+CSS.HIDDEN+'"></div>')
-                .append(create('<div class="'+CSS.WRAP+'"></div>')
-                    .append(create('<div class="'+CSS.HEADER+' header"></div>')
-                        .append(create('<div class="'+CSS.CLOSE+'"></div>'))
-                        .append(create('<h2>'+M.util.get_string('enrolusers', 'enrol')+'</h2>')))
-                    .append(create('<div class="'+CSS.CONTENT+'"></div>')
-                        .append(create('<div class="'+CSS.SEARCHCONTROLS+'"></div>')
+                .append(create('<div class="'+CSS.WRAP+' modal show modal-dialog modal-content"></div>')
+                    .append(create('<div class="'+CSS.HEADER+' header modal-header"></div>')
+                        .append(create('<div class="'+CSS.CLOSE+'">&times;</div>'))
+                        .append(create('<h2 class="modal-title">'+M.util.get_string('enrolusers', 'enrol')+'</h2>')))
+                    .append(create('<div class="'+CSS.CONTENT+' modal-body"></div>')
+                        .append(create('<div class="'+CSS.SEARCHCONTROLS+' form-inline"></div>')
                             .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.ROLE+'"><label for="id_enrol_manual_assignable_roles">'+M.util.get_string('assignroles', 'role')+'</label></div>')
-                                    .append(create('<select id="id_enrol_manual_assignable_roles"><option value="">'+M.util.get_string('none', 'enrol')+'</option></select>'))
+                                    .append(create('<select id="id_enrol_manual_assignable_roles" class="custom-select"><option value="">'+M.util.get_string('none', 'enrol')+'</option></select>'))
                             )
-                            .append(create('<div class="'+CSS.ENTITYSELECTOR+'"></div>'))
+                            .append(create('<div class="'+CSS.ENTITYSELECTOR+' m-y-1"></div>'))
                             .append(create('<div class="'+CSS.SEARCHOPTIONS+'"></div>')
                                 .append(create('<div class="'+CSS.COLLAPSIBLEHEADING+'"><img alt="" />'+M.util.get_string('enrolmentoptions', 'enrol')+'</div>'))
                                 .append(create('<div class="'+CSS.COLLAPSIBLEAREA+' '+CSS.HIDDEN+'"></div>')
                                     .append(recovergrades)
                                     .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.STARTDATE+'">'+M.util.get_string('startingfrom', 'moodle')+'</div>')
-                                        .append(create('<select></select>')))
+                                        .append(create('<select class="custom-select"></select>')))
                                     .append(create('<div class="'+CSS.ENROLMENTOPTION+' '+CSS.DURATION+'">'+M.util.get_string('enrolperiod', 'enrol')+'</div>')
-                                        .append(create('<select><option value="0" selected="selected">'+M.util.get_string('unlimitedduration', 'enrol')+'</option></select>')))
+                                        .append(create('<select class="custom-select"><option value="0" selected="selected">'+M.util.get_string('unlimitedduration', 'enrol')+'</option></select>')))
                                 )
                             )
                             .append(create('<div class="'+CSS.SEARCH+'"><label for="enrolusersearch" class="accesshide">'+M.util.get_string('usersearch', 'enrol')+'</label></div>')
-                                .append(create('<input type="text" id="enrolusersearch" value="" />'))
-                                .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+'" value="'+M.util.get_string('usersearch', 'enrol')+'" />'))
+                                .append(create('<input class="form-control" type="text" id="enrolusersearch" value="" />'))
+                                .append(create('<input type="button" id="searchbtn" class="'+CSS.SEARCHBTN+' btn btn-secondary m-l-1" value="'+M.util.get_string('usersearch', 'enrol')+'" />'))
                             )
                         )
                         .append(create('<div class="'+CSS.AJAXCONTENT+'"></div>'))
@@ -124,9 +124,9 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                             .append(create('<img alt="loading" class="'+CSS.LOADINGICON+'" />')
                                 .setAttribute('src', M.util.image_url('i/loading', 'moodle')))
                             .setStyle('opacity', 0.5)))
-                    .append(create('<div class="'+CSS.FOOTER+'"></div>')
+                    .append(create('<div class="'+CSS.FOOTER+' modal-footer"></div>')
                         .append(create('<div class="'+CSS.CLOSEBTN+'"></div>')
-                            .append(create('<input type="button" value="'+M.util.get_string('finishenrollingusers', 'enrol')+'" />'))
+                            .append(create('<input type="button" class="btn btn-primary" value="'+M.util.get_string('finishenrollingusers', 'enrol')+'" />'))
                         )
                     )
                 )
@@ -151,9 +151,9 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
 
             if (this.get(UEP.COHORTSAVAILABLE)) {
                 this.get(UEP.BASE).one('.'+CSS.ENTITYSELECTOR)
-                    .append(create('<input type="radio" id="id_enrol_manual_entity_users" name="enrol_manual_entity" value="users" checked="checked"/>'))
+                    .append(create('<input type="radio" id="id_enrol_manual_entity_users" name="enrol_manual_entity" value="users" class="m-r-1" checked="checked"/>'))
                     .append(create('<label for="id_enrol_manual_entity_users">'+ M.util.get_string('browseusers', 'enrol_manual')+'</label>'))
-                    .append(create('<input type="radio" id="id_enrol_manual_entity_cohorts" name="enrol_manual_entity" value="cohorts"/>'))
+                    .append(create('<input type="radio" id="id_enrol_manual_entity_cohorts" name="enrol_manual_entity" class="m-x-1" value="cohorts"/>'))
                     .append(create('<label for="id_enrol_manual_entity_cohorts">'+M.util.get_string('browsecohorts', 'enrol_manual')+'</label>'));
                 this.get(UEP.BASE).one('#id_enrol_manual_entity_cohorts').on('change', this.search, this);
                 this.get(UEP.BASE).one('#id_enrol_manual_entity_users').on('change', this.search, this);
@@ -397,7 +397,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             }
             var users;
             if (!args.append) {
-                users = create('<div class="'+CSS.USERS+'"></div>');
+                users = create('<div class="'+CSS.USERS+' list-group"></div>');
             } else {
                 users = this.get(UEP.BASE).one('.'+CSS.SEARCHRESULTS+' .'+CSS.USERS);
             }
@@ -405,7 +405,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
             for (var i in result.response.users) {
                 count++;
                 var user = result.response.users[i];
-                users.append(create('<div class="'+CSS.USER+' clearfix" rel="'+user.id+'"></div>')
+                users.append(create('<div class="'+CSS.USER+' clearfix list-group-item list-group-item-action" rel="'+user.id+'"></div>')
                     .addClass((count%2)?CSS.ODD:CSS.EVEN)
                     .append(create('<div class="'+CSS.COUNT+'">'+count+'</div>'))
                     .append(create('<div class="'+CSS.PICTURE+'"></div>')
@@ -414,7 +414,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                         .append(create('<div class="'+CSS.FULLNAME+'">'+user.fullname+'</div>'))
                         .append(create('<div class="'+CSS.EXTRAFIELDS+'">'+user.extrafields+'</div>')))
                     .append(create('<div class="'+CSS.OPTIONS+'"></div>')
-                        .append(create('<input type="button" class="'+CSS.ENROL+'" value="'+M.util.get_string('enrol', 'enrol')+'" />')))
+                        .append(create('<input type="button" class="'+CSS.ENROL+' btn btn-secondary" value="'+M.util.get_string('enrol', 'enrol')+'" />')))
                 );
             }
             this.set(UEP.USERCOUNT, count);
@@ -464,7 +464,7 @@ YUI.add('moodle-enrol_manual-quickenrolment', function(Y) {
                     .append(create('<div class="'+CSS.DETAILS+'"></div>')
                         .append(create('<div class="'+CSS.COHORTNAME+'">'+cohort.name+'</div>')))
                     .append(create('<div class="'+CSS.OPTIONS+'"></div>')
-                        .append(create('<input type="button" class="' + CSS.ENROL + '" value="' + M.util.get_string('enrolxusers', 'enrol', cohort.cnt) + '" />')))
+                        .append(create('<input type="button" class="' + CSS.ENROL + ' btn btn-secondary" value="' + M.util.get_string('enrolxusers', 'enrol', cohort.cnt) + '" />')))
                 );
             }
             this.set(UEP.COHORTCOUNT, count);

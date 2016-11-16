@@ -358,12 +358,18 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
         submitevent : null,
         initializer : function() {
             var i, m = this.get(MANIPULATOR);
-            var element = Y.Node.create('<div class="enrolpanel roleassign"><div class="container"><div class="header"><h2>'+M.util.get_string('assignroles', 'role')+'</h2><div class="close"></div></div><div class="content"></div></div></div>');
+            var element = Y.Node.create('<div class="popover popover-bottom"><div class="arrow"></div>' +
+                                        '<div class="header popover-title">' +
+                                        '<div role="button" class="close" aria-label="Close">' +
+                                        '<span aria-hidden="true">&times;</span></div>' +
+                                        '<h3>'+M.util.get_string('assignroles', 'role')+'</h3>' +
+                                        '</div><div class="content popover-content form-inline form-group"></div></div>');
             var content = element.one('.content');
             var roles = m.get(ASSIGNABLEROLES);
             for (i in roles) {
                 var buttonid = 'add_assignable_role_' + roles[i].id;
-                var buttonhtml = '<input type="button" value="' + roles[i].name + '" id="' + buttonid + '" />';
+                var buttonhtml = '<input type="button" class="btn btn-secondary m-r-1" value="' +
+                                 roles[i].name + '" id="' + buttonid + '" />';
                 var button = Y.Node.create(buttonhtml);
                 button.on('click', this.submit, this, roles[i].id);
                 content.append(button);
@@ -392,7 +398,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             } else {
                 this.get('elementNode').setStyle('left', x).setStyle('top', y);
             }
-            this.get('elementNode').addClass('visible');
+            this.get('elementNode').setStyle('display', 'block');
             this.escCloseEvent = Y.on('key', this.hide, document.body, 'down:27', this);
             this.displayed = true;
         },
@@ -409,7 +415,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             }
             this.roles = [];
             this.user = null;
-            this.get('elementNode').removeClass('visible');
+            this.get('elementNode').setStyle('display', 'none');
             if (this.submitevent) {
                 this.submitevent.detach();
                 this.submitevent = null;
