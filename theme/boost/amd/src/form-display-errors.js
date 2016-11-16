@@ -29,6 +29,11 @@ define(['jquery', 'core/event'], function($, Event) {
                 event.preventDefault();
                 var parent = $(element).closest('.form-group');
                 var feedback = parent.find('.form-control-feedback');
+
+                // Sometimes (atto) we have a hidden textarea backed by a real contenteditable div.
+                if (($(element).prop("tagName") == 'TEXTAREA') && parent.find('[contenteditable]')) {
+                    element = parent.find('[contenteditable]');
+                }
                 if (msg !== '') {
                     parent.addClass('has-danger');
                     parent.data('client-validation-error', true);
