@@ -2789,7 +2789,17 @@ img.iconsmall {
 .modal.modal-in-page {
   position: static;
   z-index: 0;
-  margin: 0;
+  margin: 0 auto 0 auto;
+}
+#page-admin-index #notice {
+  width: 60%;
+  min-width: 220px;
+  margin: auto;
+}
+#page-admin-index #notice .buttons {
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
 }
 #page-admin-index .releasenoteslink,
 #page-admin-index .adminwarning,
