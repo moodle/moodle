@@ -458,7 +458,13 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     }
 
     $result = new stdClass();
-    $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+    // If the user can't see hidden grades, don't return that information.
+    $gitem = grade_item::fetch(array('id' => $grades->items[0]->id));
+    if (!$gitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+        $result->info = get_string('grade') . ': ' . $grade->str_long_grade;
+    } else {
+        $result->info = get_string('grade') . ': ' . get_string('hidden', 'grades');
+    }
 
     // Datesubmitted == time created. dategraded == time modified or time overridden
     // if grade was last modified by the user themselves use date graded. Otherwise use
@@ -491,9 +497,18 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
     $grades = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $user->id);
     if (!empty($grades->items[0]->grades)) {
         $grade = reset($grades->items[0]->grades);
-        echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
-        if ($grade->str_feedback) {
-            echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+        // If the user can't see hidden grades, don't return that information.
+        $gitem = grade_item::fetch(array('id' => $grades->items[0]->id));
+        if (!$gitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+            echo $OUTPUT->container(get_string('grade').': '.$grade->str_long_grade);
+            if ($grade->str_feedback) {
+                echo $OUTPUT->container(get_string('feedback').': '.$grade->str_feedback);
+            }
+        } else {
+            echo $OUTPUT->container(get_string('grade') . ': ' . get_string('hidden', 'grades'));
+            if ($grade->str_feedback) {
+                echo $OUTPUT->container(get_string('feedback').': '.get_string('hidden', 'grades'));
+            }
         }
     }
 
@@ -504,8 +519,19 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
             if ($attempt->state != quiz_attempt::FINISHED) {
                 echo quiz_attempt_state_name($attempt->state);
             } else {
-                echo quiz_format_grade($quiz, $attempt->sumgrades) . '/' .
-                        quiz_format_grade($quiz, $quiz->sumgrades);
+                if (!isset($gitem)) {
+                    if (!empty($grades->items[0]->grades)) {
+                        $gitem = grade_item::fetch(array('id' => $grades->items[0]->id));
+                    } else {
+                        $gitem = new stdClass();
+                        $gitem->hidden = true;
+                    }
+                }
+                if (!$gitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+                    echo quiz_format_grade($quiz, $attempt->sumgrades) . '/' . quiz_format_grade($quiz, $quiz->sumgrades);
+                } else {
+                    echo get_string('hidden', 'grades');
+                }
             }
             echo ' - '.userdate($attempt->timemodified).'<br />';
         }
