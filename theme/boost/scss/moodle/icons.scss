@@ -26,9 +26,15 @@ a:first-of-type > .icon {
     margin-left: 0;
 }
 
-// Fix the first item in a drop down menu (it's a list of links and icons, but has been made vertical.
-.dropdown .dropdown-item .icon {
-    margin-left: 0;
+// Fix the space between the dropdown icon and the caret.
+.action-menu {
+    .dropdown-toggle {
+        .icon {
+            // Use a negative margin on the icon to ensure that the dropdown toggle
+            // is an icon and not just text in which case the margin is needed.
+            margin-right: -$caret-width;
+        }
+    }
 }
 
 // YUI 2 Tree View icons must not have a margin left.
