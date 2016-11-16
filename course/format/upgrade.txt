@@ -7,6 +7,9 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 * Course formats can overwrite get_default_course_enddate function to set the default course end date for new courses.
   format_base::get_default_course_enddate uses the new "Course duration" site setting to calculate the default course end date
   from the default course start date.
+* New method format_base::supports_news() which is used to determine whether an Announcements forum will be automatically created on
+  course creation. For course format plugin developers, please override format_base::supports_news() to return true if you want the
+  Announcements forum to be created upon course creation and remove the block names defined in format_base::get_default_blocks().
 
 === 3.1 ===
 * Course format may use the inplace_editable template to allow quick editing of section names, see

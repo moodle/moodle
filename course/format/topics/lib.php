@@ -401,6 +401,15 @@ class format_topics extends format_base {
         }
         return parent::inplace_editable_render_section_name($section, $linkifneeded, $editable, $edithint, $editlabel);
     }
+
+    /**
+     * Indicates whether the course format supports the creation of a news forum.
+     *
+     * @return bool
+     */
+    public function supports_news() {
+        return true;
+    }
 }
 
 /**
