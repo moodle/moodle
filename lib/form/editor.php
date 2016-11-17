@@ -381,9 +381,19 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
             $link_options->env = 'editor';
             $link_options->itemid = $draftitemid;
 
+            $args->accepted_types = array('.vtt');
+            $subtitle_options = initialise_filepicker($args);
+            $subtitle_options->context = $ctx;
+            $subtitle_options->client_id = uniqid();
+            $subtitle_options->maxbytes  = $this->_options['maxbytes'];
+            $subtitle_options->areamaxbytes  = $this->_options['areamaxbytes'];
+            $subtitle_options->env = 'editor';
+            $subtitle_options->itemid = $draftitemid;
+
             $fpoptions['image'] = $image_options;
             $fpoptions['media'] = $media_options;
             $fpoptions['link'] = $link_options;
+            $fpoptions['subtitle'] = $subtitle_options;
         }
 
         //If editor is required and tinymce, then set required_tinymce option to initalize tinymce validation.
