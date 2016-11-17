@@ -10,6 +10,8 @@ The bootstrap repository is available on:
 https://github.com/twitter/bootstrap.git
 
 To update to the latest release of twitter bootstrap:
+* re-apply /* rtl:begin:ignore */ on the top of _popover.scss before .popover rule and /* rtl:end:ignore */ before
+  .popover-arrow::after rule. See MDL-56763 commit (1a4faf9b).
 * remove all files from scss/bootstrap,
 * download the new scss files and store them in scss/bootstrap
 * update ./thirdpartylibs.xml
