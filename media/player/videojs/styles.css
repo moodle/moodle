@@ -586,9 +586,6 @@ body.vjs-full-window {
   -moz-transition: visibility 1s, opacity 1s;
   -o-transition: visibility 1s, opacity 1s;
   transition: visibility 1s, opacity 1s; }
-  @media \0screen {
-    .vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
-      visibility: hidden; } }
 
 .vjs-controls-disabled .vjs-control-bar,
 .vjs-using-native-controls .vjs-control-bar,
@@ -598,10 +595,6 @@ body.vjs-full-window {
 .vjs-audio.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
   opacity: 1;
   visibility: visible; }
-
-@media \0screen {
-  .vjs-user-inactive.vjs-playing .vjs-control-bar :before {
-    content: ""; } }
 
 .vjs-has-started.vjs-no-flex .vjs-control-bar {
   display: table; }
@@ -1302,7 +1295,21 @@ video::-webkit-media-text-track-display {
   .video-js > *:not(.vjs-tech):not(.vjs-poster) {
     visibility: hidden; } }
 
+@media \0screen {
+  .vjs-user-inactive.vjs-playing .vjs-control-bar :before {
+    content: "";
+  }
+}
+
+@media \0screen {
+  .vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
+    visibility: hidden;
+  }
+}
+
 /* Modifications of player made by Moodle: */
+
+/* Audio: https://github.com/videojs/video.js/issues/2777 */
 
 /* Audio: Remove big play button (leave only the button in controls). */
 .video-js.vjs-audio .vjs-big-play-button {
