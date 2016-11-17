@@ -756,11 +756,11 @@ class view {
 
             // Print delete and move selected question.
             if ($caneditall) {
-                echo '<input type="submit" name="deleteselected" value="' . get_string('delete') . "\" />\n";
+                echo '<input type="submit" class="btn btn-secondary" name="deleteselected" value="' . get_string('delete') . "\" />\n";
             }
 
             if ($canmoveall && count($addcontexts)) {
-                echo '<input type="submit" name="move" value="' . get_string('moveto', 'question') . "\" />\n";
+                echo '<input type="submit" class="btn btn-secondary" name="move" value="' . get_string('moveto', 'question') . "\" />\n";
                 question_category_select_menu($addcontexts, false, 0, "{$category->id},{$category->contextid}");
             }
         }

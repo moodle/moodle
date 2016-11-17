@@ -116,7 +116,7 @@ class qtype_multianswer_walkthrough_test extends qbehaviour_walkthrough_test_bas
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_marked_out_of_summary(),
-                new question_pattern_expectation('~<input[^>]* class="incorrect" [^>]*/>~'),
+                new question_pattern_expectation('~<input[^>]* class="[^"]*incorrect[^"]*" [^>]*/>~'),
                 $this->get_contains_subq_status(question_state::$gaveup),
                 $this->get_does_not_contain_validation_error_expectation());
     }

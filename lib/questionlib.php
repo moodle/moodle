@@ -984,7 +984,8 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
         $options[] = array($group => $opts);
     }
     echo html_writer::label(get_string('questioncategory', 'core_question'), 'id_movetocategory', false, array('class' => 'accesshide'));
-    echo html_writer::select($options, 'category', $selected, $choose, array('id' => 'id_movetocategory'));
+    $attrs = array('id' => 'id_movetocategory', 'class' => 'custom-select');
+    echo html_writer::select($options, 'category', $selected, $choose, $attrs);
 }
 
 /**
