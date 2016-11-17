@@ -124,13 +124,16 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $result = external::get_config();
         $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
 
+        // SITE summary is null in phpunit which gets transformed to an empty string by format_text.
+        list($sitesummary, $unused) = external_format_text($SITE->summary, $SITE->summaryformat, context_system::instance()->id);
+
         // Test default values.
         $context = context_system::instance();
         $expected = array(
             array('name' => 'fullname', 'value' => $SITE->fullname),
             array('name' => 'shortname', 'value' => $SITE->shortname),
+            array('name' => 'summary', 'value' => $sitesummary),
             array('name' => 'summaryformat', 'value' => FORMAT_HTML),
-            array('name' => 'summary', 'value' => $SITE->summary),
             array('name' => 'frontpage', 'value' => $CFG->frontpage),
             array('name' => 'frontpageloggedin', 'value' => $CFG->frontpageloggedin),
             array('name' => 'maxcategorydepth', 'value' => $CFG->maxcategorydepth),
