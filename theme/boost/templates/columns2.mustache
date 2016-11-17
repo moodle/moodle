@@ -34,9 +34,14 @@
     Example context (json):
     {
         "sitename": "Moodle",
-        "output": {"doctype": "<!DOCTYPE html>", "page_title": "Test page", "favicon": "favicon.ico"},
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+         },
         "bodyattributes":"",
-        "sitepreblocks":"BLOCKS HTML",
+        "sidepreblocks": "<h2>Blocks html goes here</h2>",
         "hasblocks":true,
         "navdraweropen":true,
         "regionmainsettingsmenu": "",
@@ -46,7 +51,7 @@
 {{{ output.doctype }}}
 <html {{{ output.htmlattributes }}}>
 <head>
-    <title>{{ output.page_title }}</title>
+    <title>{{{ output.page_title }}}</title>
     <link rel="shortcut icon" href="{{{ output.favicon }}}" />
     {{{ output.standard_head_html }}}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -115,6 +120,8 @@
 </body>
 </html>
 {{#js}}
-require(['theme_boost/loader'], function() {});
-require(['theme_boost/drawer'], function(mod) {mod.init();});
+require(['theme_boost/loader']);
+require(['theme_boost/drawer'], function(mod) {
+    mod.init();
+});
 {{/js}}
