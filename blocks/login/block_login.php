@@ -87,9 +87,11 @@ class block_login extends block_base {
 
             if (isset($CFG->rememberusername) and $CFG->rememberusername == 2) {
                 $checked = $username ? 'checked="checked"' : '';
-                $this->content->text .= '<div class="form-check-inline">';
-                $this->content->text .= '<input type="checkbox" name="rememberusername" id="rememberusername" class="form-check-input" value="1" '.$checked.'/>';
-                $this->content->text .= ' <label for="rememberusername" class="form-check-label">'.get_string('rememberusername', 'admin').'</label>';
+                $this->content->text .= '<div class="form-check">';
+                $this->content->text .= '<label class="form-check-label">';
+                $this->content->text .= '<input type="checkbox" name="rememberusername" id="rememberusername"
+                        class="form-check-input" value="1" '.$checked.'/> ';
+                $this->content->text .= get_string('rememberusername', 'admin').'</label>';
                 $this->content->text .= '</div>';
             }
 
