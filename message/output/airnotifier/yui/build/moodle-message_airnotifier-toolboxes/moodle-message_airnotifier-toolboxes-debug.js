@@ -8,7 +8,7 @@ YUI.add('moodle-message_airnotifier-toolboxes', function (Y, NAME) {
 
 // The CSS selectors we use.
 var CSS = {
-    AIRNOTIFIERCONTENT: 'fieldset#messageprocessor_airnotifier',
+    AIRNOTIFIERCONTENT: 'div[data-processor-name="airnotifier"]',
     HIDEDEVICE: 'a.hidedevice',
     DEVICELI: 'li.airnotifierdevice',
     DIMCLASS: 'dimmed',
