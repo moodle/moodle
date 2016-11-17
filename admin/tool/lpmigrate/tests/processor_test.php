@@ -396,12 +396,8 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
     }
 
     public function test_permission_exception() {
-        global $DB;
-        if ($DB->get_dbfamily() === 'postgres' or $DB->get_dbfamily() === 'mssql') {
-            $this->markTestSkipped('The processor is having issues with the transaction initialised in '
-                . 'advanced_testcase::runBare().');
-            return;
-        }
+
+        $this->preventResetByRollback(); // Test uses transactions, so we cannot use them for speedy reset.
 
         $dg = $this->getDataGenerator();
         $u = $dg->create_user();
