@@ -39,7 +39,7 @@ Feature: Calculated grade items can be used in the gradebook
       | grade item 1 | gi1 |
     And I set the following settings for grade item "Calc cat":
       | Maximum grade | 50 |
-    And I follow "Grader report"
+    And I follow "View"
     And I turn editing mode on
     And I give the grade "75.00" to the user "Student 1" for the grade item "grade item 1"
     And I press "Save changes"
@@ -66,8 +66,8 @@ Feature: Calculated grade items can be used in the gradebook
       | grade item 1 | gi1 |
     And I set the following settings for grade item "Calc cat":
       | Maximum grade | 50 |
-    And I follow "Grader report"
-    And I turn editing mode on
+    And I follow "View"
+    And I press "Turn editing on"
     And I give the grade "75.00" to the user "Student 1" for the grade item "grade item 1"
     And I press "Save changes"
     And I follow "User report"
@@ -80,6 +80,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I navigate to "Gradebook setup" node in "Grade administration > Setup"
     And I set the following settings for grade item "Calc cat":
       | Maximum grade | 40 |
+    And I follow "View"
     And I follow "Grader report"
     And I give the grade "65.00" to the user "Student 2" for the grade item "grade item 1"
     And I press "Save changes"
@@ -132,8 +133,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I set the following fields to these values:
       | Min and max grades used in calculation | Initial min and max grades |
     And I press "Save changes"
-    And I follow "Grader report"
-    And I turn editing mode on
+    And I press "Turn editing on"
     And I give the grade "75.00" to the user "Student 1" for the grade item "grade item 1"
     And I press "Save changes"
     And I follow "User report"
@@ -147,6 +147,7 @@ Feature: Calculated grade items can be used in the gradebook
     And I set the following settings for grade item "calc item":
       | Rescale existing grades | No |
       | Maximum grade | 40 |
+    And I follow "View"
     And I follow "Grader report"
     And I give the grade "65.00" to the user "Student 2" for the grade item "grade item 1"
     And I press "Save changes"

@@ -56,7 +56,7 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I press "Save changes"
 
   Scenario Outline: The contribution of extra credit items is normalised
-    Given I set the field "Grade report" to "Gradebook setup"
+    Given I follow "Setup"
     When I set the following settings for grade item "Course 1":
       | Aggregation | <aggregation> |
     And I set the following settings for grade item "Manual item 2":
@@ -65,7 +65,8 @@ Feature: Extra credit contributions are normalised when going out of bounds
       | Extra credit | 1 |
     And I set the following settings for grade item "Manual item 4":
       | Extra credit | 1 |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |

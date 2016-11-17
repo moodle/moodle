@@ -61,7 +61,6 @@ Feature: We can change what we are viewing on the grader report
     And I click on "Hide" "link" in the "Test assignment name 2" activity
     And I follow "Course 1"
     And I click on "Grades" "link" in the "Navigation" "block"
-    And I select "Grader report" from the "Grade report" singleselect
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"
     And I should see "Course total"
@@ -98,7 +97,6 @@ Feature: We can change what we are viewing on the grader report
     And I log in as "teacher1"
     And I follow "Course 1"
     And I click on "Grades" "link" in the "Navigation" "block"
-    And I select "Grader report" from the "Grade report" singleselect
     And I should see "Test assignment name 1"
     And I should see "Test assignment name 2"
     And I should see "Course total"

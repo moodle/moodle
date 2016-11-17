@@ -242,7 +242,7 @@ Feature: We can use calculated grade totals
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 1       |
       | Exclude empty grades            | 0       |
-    And I follow "Grader report"
+    And I follow "View"
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
@@ -307,7 +307,7 @@ Feature: We can use calculated grade totals
     And I set the following settings for grade item "Test outcome item one":
      | Weight adjusted  | 1   |
      | aggregationcoef2 | 100 |
-    And I follow "Grader report"
+    And I follow "View"
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
     And I navigate to "Course grade settings" node in "Grade administration > Setup"
@@ -344,7 +344,7 @@ Feature: We can use calculated grade totals
     And I set the field "Show contribution to course total" to "Show"
     And I set the field "Show weightings" to "Show"
     And I press "Save changes"
-    And I select "User report" from the "Grade report" singleselect
+    And I follow "User report"
     And I select "Myself" from the "View report as" singleselect
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
@@ -412,7 +412,7 @@ Feature: We can use calculated grade totals
       | Item name | Manual item 3 |
       | Grade category | Sub category 3 |
     And I press "Save changes"
-    And I follow "Grader report"
+    And I follow "View"
     And I give the grade "60.00" to the user "Student 1" for the grade item "Manual item 1"
     And I give the grade "20.00" to the user "Student 1" for the grade item "Manual item 2"
     And I give the grade "40.00" to the user "Student 1" for the grade item "Manual item 3"
@@ -452,12 +452,12 @@ Feature: We can use calculated grade totals
       | Category name | Sub sub category 1 |
       | Parent category | Sub category 3 |
     And I press "Save changes"
-    And I follow "Grader report"
+    And I follow "View"
     And I should see "270.00 (24.77 %)" in the ".course" "css_element"
 
   @javascript
   Scenario: Natural aggregation from the setup screen
-    And I select "Gradebook setup" from the "Grade report" singleselect
+    And I follow "Setup"
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Natural |
     And I set the following settings for grade item "Sub category 1":
@@ -519,7 +519,7 @@ Feature: We can use calculated grade totals
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
     And I turn editing mode off
-    And I select "Gradebook setup" from the "Grade report" singleselect
+    And I follow "Setup"
     And I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "0"
     And I set the field "Override weight of Test assignment six" to "1"
@@ -534,7 +534,7 @@ Feature: We can use calculated grade totals
     And I set the field "Show weightings" to "Show"
     And I press "Save changes"
     Then I should see "75.00 (16.85 %)" in the ".course" "css_element"
-    And I select "User report" from the "Grade report" singleselect
+    And I follow "User report"
     And I select "Myself" from the "View report as" singleselect
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:

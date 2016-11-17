@@ -23,7 +23,8 @@ Feature: We can customise the letter boundary of a course.
     And I log in as "teacher1"
     And I follow "Course 1"
     And I click on "Grades" "link" in the "Navigation" "block"
-    And I select "Course grade settings" from the "Grade report" singleselect
+    And I follow "Setup"
+    And I follow "Course grade settings"
     And I set the following fields to these values:
       | Grade display type | Letter |
     And I press "Save changes"
@@ -33,7 +34,7 @@ Feature: We can customise the letter boundary of a course.
       | id_override | 1 |
       | id_gradeboundary10 | 57 |
     And I press "Save changes"
-    And I select "Grader report" from the "Grade report" singleselect
+    And I follow "View"
     And I press "Turn editing on"
     And I give the grade "57" to the user "Student 1" for the grade item "Test assignment one"
     And I press "Save changes"

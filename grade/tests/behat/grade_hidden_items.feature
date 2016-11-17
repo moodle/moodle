@@ -45,7 +45,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I press "Save changes"
     And I follow "Course 1"
     And I click on "Grades" "link" in the "Navigation" "block"
-    And I select "User report" from the "Grade report" singleselect
+    And I follow "User report"
     And I select "Myself" from the "View report as" singleselect
     And I select "Student 1" from the "Select all or one user" singleselect
     Then the following should exist in the "user-grade" table:
