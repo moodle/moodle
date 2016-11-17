@@ -6260,7 +6260,7 @@ class assign {
             if ($current->grade !== null) {
                 $current->grade = floatval($current->grade);
             }
-            $gradechanged = $gradecolpresent && $current->grade !== $modified->grade;
+            $gradechanged = $gradecolpresent && grade_floats_different($current->grade, $modified->grade);
             $markingallocationchanged = $this->get_instance()->markingworkflow &&
                                         $this->get_instance()->markingallocation &&
                                             ($modified->allocatedmarker !== false) &&
