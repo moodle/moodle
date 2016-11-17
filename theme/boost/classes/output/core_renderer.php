@@ -564,7 +564,8 @@ class core_renderer extends \core_renderer {
                         $menu->add_secondary_action($link);
                     }
                 }
-            } else if (!empty($node) && $node->type == navigation_node::TYPE_COURSE) {
+            } else if (!empty($node) &&
+                ($node->type == navigation_node::TYPE_COURSE || $node->type == navigation_node::TYPE_SECTION)) {
                 $settingsnode = $this->page->settingsnav->find('courseadmin', navigation_node::TYPE_COURSE);
                 if ($settingsnode) {
                     // Build an action menu based on the visible nodes from this navigation tree.
