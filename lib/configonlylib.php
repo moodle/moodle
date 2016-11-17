@@ -89,18 +89,16 @@ function min_clean_param($value, $type) {
  * @return string
  */
 function min_fix_utf8($value) {
-    // Lower error reporting because glibc throws bogus notices.
-    $olderror = error_reporting();
-    if ($olderror & E_NOTICE) {
-        error_reporting($olderror ^ E_NOTICE);
-    }
-
     // No null bytes expected in our data, so let's remove it.
     $value = str_replace("\0", '', $value);
 
     static $buggyiconv = null;
     if ($buggyiconv === null) {
+        set_error_handler(function () {
+            return true;
+        });
         $buggyiconv = (!function_exists('iconv') or iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
+        restore_error_handler();
     }
 
     if ($buggyiconv) {
@@ -116,11 +114,7 @@ function min_fix_utf8($value) {
         }
 
     } else {
-        $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
-    }
-
-    if ($olderror & E_NOTICE) {
-        error_reporting($olderror);
+        $result = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
     }
 
     return $result;
