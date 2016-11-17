@@ -150,6 +150,14 @@ class cache_testcase extends advanced_testcase {
                 'name' => 'my_glob_2',
                 'pathmatch' => '/my/%'
             ],
+            (object) [
+                'name' => 'frontpage_only',
+                'pathmatch' => 'FRONTPAGE'
+            ],
+            (object) [
+                'name' => 'frontpage_match',
+                'pathmatch' => '/?%'
+            ],
         ];
 
         return [
@@ -162,6 +170,16 @@ class cache_testcase extends advanced_testcase {
                 $tourconfigs,
                 '/my/view.php',
                 ['my_exact_1', 'my_glob_1', 'my_glob_2'],
+            ],
+            'Special constant FRONTPAGE must match front page only' => [
+                $tourconfigs,
+                '/',
+                ['frontpage_only'],
+            ],
+            'Standard frontpage URL matches both the special constant, and a correctly formed pathmatch' => [
+                $tourconfigs,
+                '/?redirect=0',
+                ['frontpage_only', 'frontpage_match'],
             ],
         ];
     }
@@ -181,7 +199,7 @@ class cache_testcase extends advanced_testcase {
             $this->helper_create_step((object) ['tourid' => $tour->get_id()]);
         }
 
-        $matches = \tool_usertours\cache::get_matching_tourdata((new moodle_url($targetmatch))->out_as_local_url());
+        $matches = \tool_usertours\cache::get_matching_tourdata(new moodle_url($targetmatch));
         $this->assertCount(count($expected), $matches);
 
         for ($i = 0; $i < count($matches); $i++) {
