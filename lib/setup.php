@@ -552,8 +552,8 @@ if (!PHPUNIT_TEST or PHPUNIT_UTIL) {
 }
 
 // Acceptance tests needs special output to capture the errors,
-// but not necessary for behat CLI command.
-if (defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_TEST')) {
+// but not necessary for behat CLI command and init script.
+if (defined('BEHAT_SITE_RUNNING') && !defined('BEHAT_TEST') && !defined('BEHAT_UTIL')) {
     require_once(__DIR__ . '/behat/lib.php');
     set_error_handler('behat_error_handler', E_ALL | E_STRICT);
 }
