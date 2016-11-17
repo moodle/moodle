@@ -31,7 +31,7 @@ use moodle_url;
 use moodle_exception;
 
 /**
- * API exposed by tool_mobile
+ * API exposed by tool_mobile, to be used mostly by external functions.
  *
  * @copyright  2016 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -106,6 +106,8 @@ class api {
         // We need this to make work the format text functions.
         $PAGE->set_context($context);
 
+        list($authinstructions, $notusedformat) = external_format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
+        list($maintenancemessage, $notusedformat) = external_format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
         $settings = array(
             'wwwroot' => $CFG->wwwroot,
             'httpswwwroot' => $CFG->httpswwwroot,
@@ -115,12 +117,12 @@ class api {
             'authloginviaemail' => $CFG->authloginviaemail,
             'registerauth' => $CFG->registerauth,
             'forgottenpasswordurl' => $CFG->forgottenpasswordurl,
-            'authinstructions' => format_text($CFG->auth_instructions),
+            'authinstructions' => $authinstructions,
             'authnoneenabled' => (int) is_enabled_auth('none'),
             'enablewebservices' => $CFG->enablewebservices,
             'enablemobilewebservice' => $CFG->enablemobilewebservice,
             'maintenanceenabled' => $CFG->maintenance_enabled,
-            'maintenancemessage' => format_text($CFG->maintenance_message),
+            'maintenancemessage' => $maintenancemessage,
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');
@@ -162,9 +164,10 @@ class api {
         if (empty($section) or $section == 'frontpagesettings') {
             require_once($CFG->dirroot . '/course/format/lib.php');
             // First settings that anyone can deduce.
-            $settings->fullname = $SITE->fullname;
-            $settings->shortname = $SITE->shortname;
-            $settings->summary = $SITE->summary;
+            $settings->fullname = external_format_string($SITE->fullname, $context->id);
+            $settings->shortname = external_format_string($SITE->shortname, $context->id);
+            list($settings->summary, $settings->summaryformat) = external_format_text($SITE->summary, $SITE->summaryformat,
+                                                                                        $context->id);
             $settings->frontpage = $CFG->frontpage;
             $settings->frontpageloggedin = $CFG->frontpageloggedin;
             $settings->maxcategorydepth = $CFG->maxcategorydepth;

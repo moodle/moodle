@@ -64,6 +64,9 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         // Test default values.
         $context = context_system::instance();
+        list($authinstructions, $notusedformat) = external_format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
+        list($maintenancemessage, $notusedformat) = external_format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
+
         $expected = array(
             'wwwroot' => $CFG->wwwroot,
             'httpswwwroot' => $CFG->httpswwwroot,
@@ -73,12 +76,12 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'authloginviaemail' => $CFG->authloginviaemail,
             'registerauth' => $CFG->registerauth,
             'forgottenpasswordurl' => $CFG->forgottenpasswordurl,
-            'authinstructions' => format_text($CFG->auth_instructions),
+            'authinstructions' => $authinstructions,
             'authnoneenabled' => (int) is_enabled_auth('none'),
             'enablewebservices' => $CFG->enablewebservices,
             'enablemobilewebservice' => $CFG->enablemobilewebservice,
             'maintenanceenabled' => $CFG->maintenance_enabled,
-            'maintenancemessage' => format_text($CFG->maintenance_message),
+            'maintenancemessage' => $maintenancemessage,
             'typeoflogin' => api::LOGIN_VIA_APP,
             'warnings' => array()
         );
@@ -92,8 +95,9 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         set_config('logo', 'mock.png', 'core_admin');
         set_config('logocompact', 'mock.png', 'core_admin');
 
+        list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
-        $expected['authinstructions'] = format_text($authinstructions);
+        $expected['authinstructions'] = $authinstructions;
         $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
         $expected['launchurl'] = "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php";
 
@@ -125,6 +129,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $expected = array(
             array('name' => 'fullname', 'value' => $SITE->fullname),
             array('name' => 'shortname', 'value' => $SITE->shortname),
+            array('name' => 'summaryformat', 'value' => FORMAT_HTML),
             array('name' => 'summary', 'value' => $SITE->summary),
             array('name' => 'frontpage', 'value' => $CFG->frontpage),
             array('name' => 'frontpageloggedin', 'value' => $CFG->frontpageloggedin),
@@ -141,9 +146,9 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
 
         // Change a value and retrieve filtering by section.
         set_config('commentsperpage', 1);
-        $expected[9]['value'] = 1;
-        unset($expected[10]);
+        $expected[10]['value'] = 1;
         unset($expected[11]);
+        unset($expected[12]);
 
         $result = external::get_config('frontpagesettings');
         $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
