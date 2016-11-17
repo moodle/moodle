@@ -110,6 +110,7 @@ class profile implements templatable, renderable {
         $data = new \stdClass();
         $data->userid = $this->userid;
         $data->fullname = $this->fullname;
+        $data->showonlinestatus = is_null($this->isonline) ? false : true;
         $data->isonline = $this->isonline;
         $data->email = $this->email;
         if (!empty($this->country)) {

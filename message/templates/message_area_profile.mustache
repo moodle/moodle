@@ -24,10 +24,12 @@
         <img class="profile-picture" src="{{profileimageurl}}" alt="" />
         <div class="name-container">
             <div class="name">{{fullname}}</div>
-            <div class="status {{#isonline}}online{{/isonline}}">
-                <div class="online-text">{{#str}} online, message {{/str}}</div>
-                <div class="offline-text">{{#str}} offline, message {{/str}}</div>
-            </div>
+            {{#showonlinestatus}}
+                <div class="status {{#isonline}}online{{/isonline}}">
+                    <div class="online-text">{{#str}} online, message {{/str}}</div>
+                    <div class="offline-text">{{#str}} offline, message {{/str}}</div>
+                </div>
+            {{/showonlinestatus}}
         </div>
         <ul class="information">
             {{#email}}<li><div class="name">{{#str}} email {{/str}}</div><div class="value">{{.}}</div></li>{{/email}}

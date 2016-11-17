@@ -178,13 +178,35 @@ class helper {
                 $data->messageid = $contact->messageid;
             }
         }
-        // Check if the user is online.
-        $data->isonline = self::is_online($userfields->lastaccess);
+        $data->isonline = null;
+        if (self::show_online_status($userfields)) {
+            $data->isonline = self::is_online($userfields->lastaccess);
+        }
         $data->isblocked = isset($contact->blocked) ? (bool) $contact->blocked : false;
         $data->isread = isset($contact->isread) ? (bool) $contact->isread : false;
         $data->unreadcount = isset($contact->unreadcount) ? $contact->unreadcount : null;
 
         return $data;
+    }
+
+    /**
+     * Helper function for checking if we should show the user's online status.
+     *
+     * @param \stdClass $user
+     * @return boolean
+     */
+    public static function show_online_status($user) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/user/lib.php');
+
+        if ($lastaccess = user_get_user_details($user, null, array('lastaccess'))) {
+            if (isset($lastaccess['lastaccess'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

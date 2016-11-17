@@ -164,7 +164,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertFalse($user->ismessaging);
         $this->assertNull($user->lastmessage);
         $this->assertNull($user->messageid);
-        $this->assertTrue($user->isonline);
+        $this->assertNull($user->isonline);
         $this->assertFalse($user->isread);
         $this->assertTrue($user->isblocked);
         $this->assertNull($user->unreadcount);
@@ -303,7 +303,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message1->ismessaging);
         $this->assertEquals('Word.', $message1->lastmessage);
         $this->assertNotEmpty($message1->messageid);
-        $this->assertFalse($message1->isonline);
+        $this->assertNull($message1->isonline);
         $this->assertFalse($message1->isread);
         $this->assertFalse($message1->isblocked);
         $this->assertNull($message1->unreadcount);
@@ -314,7 +314,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message2->ismessaging);
         $this->assertEquals('Yo!', $message2->lastmessage);
         $this->assertNotEmpty($message2->messageid);
-        $this->assertFalse($message2->isonline);
+        $this->assertNull($message2->isonline);
         $this->assertTrue($message2->isread);
         $this->assertFalse($message2->isblocked);
         $this->assertNull($message2->unreadcount);
@@ -364,7 +364,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message1->ismessaging);
         $this->assertEquals('Dope.', $message1->lastmessage);
         $this->assertNull($message1->messageid);
-        $this->assertFalse($message1->isonline);
+        $this->assertNull($message1->isonline);
         $this->assertTrue($message1->isread);
         $this->assertFalse($message1->isblocked);
         $this->assertEquals(0, $message1->unreadcount);
@@ -374,7 +374,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message2->ismessaging);
         $this->assertEquals('Cool.', $message2->lastmessage);
         $this->assertNull($message2->messageid);
-        $this->assertFalse($message2->isonline);
+        $this->assertNull($message2->isonline);
         $this->assertFalse($message2->isread);
         $this->assertFalse($message2->isblocked);
         $this->assertEquals(2, $message2->unreadcount);
@@ -384,7 +384,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertTrue($message3->ismessaging);
         $this->assertEquals('Word.', $message3->lastmessage);
         $this->assertNull($message3->messageid);
-        $this->assertFalse($message3->isonline);
+        $this->assertNull($message3->isonline);
         $this->assertFalse($message3->isread);
         $this->assertFalse($message3->isblocked);
         $this->assertEquals(2, $message3->unreadcount);
@@ -440,7 +440,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertFalse($contact1->ismessaging);
         $this->assertNull($contact1->lastmessage);
         $this->assertNull($contact1->messageid);
-        $this->assertFalse($contact1->isonline);
+        $this->assertNull($contact1->isonline);
         $this->assertFalse($contact1->isread);
         $this->assertFalse($contact1->isblocked);
         $this->assertNull($contact1->unreadcount);
@@ -450,7 +450,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertFalse($contact2->ismessaging);
         $this->assertNull($contact2->lastmessage);
         $this->assertNull($contact2->messageid);
-        $this->assertFalse($contact2->isonline);
+        $this->assertNull($contact2->isonline);
         $this->assertFalse($contact2->isread);
         $this->assertFalse($contact2->isblocked);
         $this->assertNull($contact2->unreadcount);
@@ -460,7 +460,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertFalse($contact3->ismessaging);
         $this->assertNull($contact3->lastmessage);
         $this->assertNull($contact3->messageid);
-        $this->assertFalse($contact3->isonline);
+        $this->assertNull($contact3->isonline);
         $this->assertFalse($contact3->isread);
         $this->assertFalse($contact3->isblocked);
         $this->assertNull($contact3->unreadcount);
@@ -566,7 +566,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertEmpty($profile->country);
         $this->assertEmpty($profile->city);
         $this->assertEquals(fullname($user2), $profile->fullname);
-        $this->assertFalse($profile->isonline);
+        $this->assertNull($profile->isonline);
         $this->assertFalse($profile->isblocked);
         $this->assertFalse($profile->iscontact);
     }

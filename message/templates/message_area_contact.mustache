@@ -23,9 +23,11 @@
     <div class="information">
         <div class="name">
             {{fullname}}
-            <span {{^isonline}}class="hidden"{{/isonline}} data-region="contact-icon-online">
-                {{#pix}} t/go, core, {{#str}} online, message {{/str}} {{/pix}}
-            </span>
+            {{#showonlinestatus}}
+                <span {{^isonline}}class="hidden"{{/isonline}} data-region="contact-icon-online">
+                    {{#pix}} t/go, core, {{#str}} online, message {{/str}} {{/pix}}
+                </span>
+            {{/showonlinestatus}}
             <span {{^isblocked}}class="hidden"{{/isblocked}} data-region="contact-icon-blocked">
                 {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}
             </span>
