@@ -20,12 +20,12 @@ Feature: Search messages
   Scenario: Search for messages
     When I log in as "user1"
     And I follow "Messages" in the user menu
-    And I set the field "Search messages" to "User 2 to User 1"
+    And I set the field "searchtext" to "User 2 to User 1"
     Then I should see "User 2" in the "search-results-area" "message_area_region"
     And I should not see "User 3" in the "search-results-area" "message_area_region"
 
   Scenario: Search for messages no results
     When I log in as "user1"
     And I follow "Messages" in the user menu
-    And I set the field "Search messages" to "No message"
+    And I set the field "searchtext" to "No message"
     Then I should see "No results" in the "search-results-area" "message_area_region"
