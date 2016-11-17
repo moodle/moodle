@@ -19,9 +19,10 @@ Removed themes:
  * CLI svgtool.php has moved from theme/base/cli to admin/cli and paths should be relative to the new location.
 * Bootstrap 4 was added as part of a the new theme 'boost'.
 * Themes can now automatically compile SCSS on the fly. This works the same way as it
-  does compiling LESS on the fly, effecitvely adding $THEME->scssfile to your config.
+  does compiling LESS on the fly, effecitvely adding $THEME->scss to your config.
 * Two new callbacks allow themes to inject SCSS code before and after the content provided
-  by the SCSS file $THEME->scssfile. See $THEME->prescsscallback and $THEME->extrascsscallback.
+  by the SCSS file $THEME->scss. See $THEME->prescsscallback and $THEME->extrascsscallback.
+* $THEME->scss can also be a Closure which will return the main SCSS content.
 * Using .dir-rtl for RTL styling is deprecated and should not be used any more. From now
   the styles are automatically flipped when the language is right-to-left. However,
   as this is not always perfect, you can define exceptions. Please refer to the documentation
