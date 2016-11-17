@@ -36,7 +36,7 @@ M.question.preview.init = function() {
     M.core_question_engine.init_form(Y, '#responseform');
 
     // Add a close button to the window.
-    var closebutton = Y.Node.create('<input type="button" />')
+    var closebutton = Y.Node.create('<input type="button" class="btn btn-secondary"/>')
             .set('value', M.util.get_string('closepreview', 'question'));
 
     closebutton.on('click', function() {
