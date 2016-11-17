@@ -2517,6 +2517,7 @@ function get_login_url() {
  * @return mixed Void, exit, and die depending on path
  * @throws coding_exception
  * @throws require_login_exception
+ * @throws moodle_exception
  */
 function require_login($courseorid = null, $autologinguest = true, $cm = null, $setwantsurltome = true, $preventredirect = false) {
     global $CFG, $SESSION, $USER, $PAGE, $SITE, $DB, $OUTPUT;
@@ -2684,8 +2685,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     // Make sure the USER has a sesskey set up. Used for CSRF protection.
     sesskey();
 
-    // Do not bother admins with any formalities.
-    if (is_siteadmin()) {
+    // Do not bother admins with any formalities, except for activities pending deletion.
+    if (is_siteadmin() && !($cm && $cm->deletioninprogress)) {
         // Set the global $COURSE.
         if ($cm) {
             $PAGE->set_cm($cm, $course);
@@ -2871,6 +2872,15 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
             }
             redirect($CFG->wwwroot .'/enrol/index.php?id='. $course->id);
         }
+    }
+
+    // Check whether the activity has been scheduled for deletion. If so, then deny access, even for admins.
+    if ($cm && $cm->deletioninprogress) {
+        if ($preventredirect) {
+            throw new moodle_exception('activityisscheduledfordeletion');
+        }
+        require_once($CFG->dirroot . '/course/lib.php');
+        redirect(course_get_url($course), get_string('activityisscheduledfordeletion', 'error'));
     }
 
     // Check visibility of activity to current user; includes visible flag, conditional availability, etc.
