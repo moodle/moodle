@@ -113,20 +113,21 @@ function chat_add_instance($chat) {
 
     $returnid = $DB->insert_record("chat", $chat);
 
-    $event = new stdClass();
-    $event->name        = $chat->name;
-    $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
-    $event->courseid    = $chat->course;
-    $event->groupid     = 0;
-    $event->userid      = 0;
-    $event->modulename  = 'chat';
-    $event->instance    = $returnid;
-    $event->eventtype   = 'chattime';
-    $event->timestart   = $chat->chattime;
-    $event->timeduration = 0;
+    if ($chat->schedule > 0) {
+        $event = new stdClass();
+        $event->name        = $chat->name;
+        $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
+        $event->courseid    = $chat->course;
+        $event->groupid     = 0;
+        $event->userid      = 0;
+        $event->modulename  = 'chat';
+        $event->instance    = $returnid;
+        $event->eventtype   = 'chattime';
+        $event->timestart   = $chat->chattime;
+        $event->timeduration = 0;
 
-    calendar_event::create($event);
-
+        calendar_event::create($event);
+    }
     return $returnid;
 }
 
@@ -151,12 +152,35 @@ function chat_update_instance($chat) {
 
     if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
 
-        $event->name        = $chat->name;
-        $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
-        $event->timestart   = $chat->chattime;
+        if ($chat->schedule > 0) {
+            $event->name        = $chat->name;
+            $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
+            $event->timestart   = $chat->chattime;
 
-        $calendarevent = calendar_event::load($event->id);
-        $calendarevent->update($event);
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
+        } else {
+            // Do not publish this event, so delete it.
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->delete();
+        }
+    } else {
+        // No event, do we need to create one?
+        if ($chat->schedule > 0) {
+            $event = new stdClass();
+            $event->name        = $chat->name;
+            $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
+            $event->courseid    = $chat->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'chat';
+            $event->instance    = $chat->id;
+            $event->eventtype   = 'chattime';
+            $event->timestart   = $chat->chattime;
+            $event->timeduration = 0;
+
+            calendar_event::create($event);
+        }
     }
 
     return true;
