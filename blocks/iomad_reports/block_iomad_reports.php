@@ -64,7 +64,7 @@ class block_iomad_reports extends block_base {
 
 
                 // Put together link.
-                $this->content->text .= "<a href=\"$url\">";
+                $this->content->text .= "<a class=\"testlink\" href=\"$url\">";
                 $this->content->text .= '<div class="iomadlink">';
                 if ($CFG->theme == 'iomadbootstrap') {
                     $this->content->text .= '<div class="iomadicon"><div class="fa fa-topic fa-bar-chart-o"> </div>';
@@ -73,8 +73,8 @@ class block_iomad_reports extends block_base {
                 }
                 $this->content->text .= '<div class="actiondescription">' . $name . "</div>";
                 $this->content->text .= '</div>';
-                $this->content->text .= '</a>';
                 $this->content->text .= '</div>';
+                $this->content->text .= '</a>';
 
             }
 
