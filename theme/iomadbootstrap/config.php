@@ -18,7 +18,7 @@
 /**
  * Renderers to align Moodle's HTML with that expected by Bootstrap
  *
- * @package    theme_iomadbootstrap
+ * @package    theme_bootstrap
  * @copyright  2014 Bas Brands, www.basbrands.nl
  * @authors    Bas Brands, David Scotson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,9 +29,9 @@ $THEME->yuicssmodules = array();
 $THEME->name = 'iomadbootstrap';
 $THEME->parents = array();
 if ('ltr' === get_string('thisdirection', 'langconfig')) {
-    $THEME->sheets = array('moodle', 'font-awesome', 'iomad');
+    $THEME->sheets = array('moodle', 'font-awesome', 'font-iomad', 'iomad');
 } else {
-    $THEME->sheets = array('moodle-rtl', 'font-awesome', 'iomad');
+    $THEME->sheets = array('moodle-rtl', 'font-awesome', 'font-iomad', 'iomad');
 }
 $THEME->enable_dock = true;
 $THEME->supportscssoptimisation = false;
@@ -45,10 +45,12 @@ $THEME->plugins_exclude_sheets = array(
     'tool' => array(
         'customlang'
     ),
+    'mod' => array(
+        'feedback'
+    ),
 );
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
-$THEME->csspostprocess = 'theme_iomadbootstrap_process_css';
 
 $THEME->layouts = array(
     // Most backwards compatible layout without the blocks - this is the layout used by default.
@@ -156,7 +158,7 @@ $THEME->layouts = array(
     ),
     // The pagelayout used for safebrowser and securewindow.
     'secure' => array(
-        'file' => 'secure.php',
+        'file' => 'default.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre'
     ),
@@ -164,12 +166,9 @@ $THEME->layouts = array(
 
 $THEME->javascripts = array(
 );
+
 $THEME->javascripts_footer = array(
     'moodlebootstrap', 'dock'
 );
-
-if (core_useragent::is_ie() && !core_useragent::check_ie_version('9.0')) {
-    $THEME->javascripts[] = 'html5shiv';
-}
 
 $THEME->hidefromselector = false;

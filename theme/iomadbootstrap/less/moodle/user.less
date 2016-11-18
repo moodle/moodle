@@ -1,5 +1,3 @@
-/* user.less */
-
 .user-box {
     margin: 8px;
     width: 115px;
@@ -8,136 +6,271 @@
     float: left;
     clear: none;
 }
-.userlist .action-icon img {
-    vertical-align: middle;
+.userlist {
+    .action-icon {
+        img {
+            vertical-align: middle;
+        }
+    }
+    #showall {
+        margin: 10px 0;
+    }
+    .buttons {
+        text-align: center;
+        label {
+            padding: 0 3px;
+        }
+    }
+    table#participants {
+        text-align: center;
+    }
+    table.controls {
+        width: 100%;
+        tr {
+            vertical-align: top;
+        }
+        .right {
+            text-align: right;
+        }
+    }
 }
-.userlist #showall {
-    margin: 10px 0;
-}
-.userlist .buttons {
-    text-align: center;
-}
-.userlist .buttons label {
-    padding: 0 3px;
-}
-.userlist table#participants {
-    text-align: center;
-}
-.userlist table#participants td,
-.userlist table#participants th {
+.userlist table#participants td,.userlist table#participants th {
     vertical-align: middle;
     text-align: left;
     padding: 4px;
 }
-.userlist table.controls {
-    width: 100%;
-}
-.userlist table.controls tr {
-    vertical-align: top;
-}
-.userlist table.controls td.right,
-.userlist table.controls td.left {
+.userlist table.controls td.right,.userlist table.controls td.left {
     padding: 4px;
-}
-.userlist table.controls .right {
-    text-align: right;
 }
 .userinfobox {
     width: 100%;
     border: 1px solid;
     border-collapse: separate;
     padding: 10px;
+    .userpicture {
+        width: 100px;
+        height: 100px;
+    }
+    .content {
+        vertical-align: top;
+    }
+    .links {
+        width: 100px;
+        padding: 5px;
+        vertical-align: bottom;
+        a {
+            display: block;
+        }
+    }
+    .list {
+        td {
+            padding: 3px;
+        }
+    }
+    .username {
+        padding-bottom: 20px;
+        font-weight: bold;
+    }
+    td.label {
+        text-align: right;
+        white-space: nowrap;
+        vertical-align: top;
+        font-weight: bold;
+    }
 }
-.userinfobox .left,
-.userinfobox .side {
+.userinfobox .left,.userinfobox .side {
     width: 100px;
     vertical-align: top;
-}
-.userinfobox .userpicture {
-    width: 100px;
-    height: 100px;
-}
-.userinfobox .content {
-    vertical-align: top;
-}
-.userinfobox .links {
-    width: 100px;
-    padding: 5px;
-    vertical-align: bottom;
-}
-.userinfobox .links a {
-    display: block;
-}
-.userinfobox .list td {
-    padding: 3px;
-}
-.userinfobox .username {
-    padding-bottom: 20px;
-    font-weight: bold;
-}
-.userinfobox td.label {
-    text-align: right;
-    white-space: nowrap;
-    vertical-align: top;
-    font-weight: bold;
 }
 .groupinfobox {
-    .well
+    .well;
+    .left {
+        padding: 10px;
+        width: 100px;
+        vertical-align: top;
+    }
 }
-.groupinfobox .left {
-    padding: 10px;
-    width: 100px;
-    vertical-align: top;
+.course-participation {
+    #showall {
+        text-align: center;
+        margin: 10px 0;
+    }
 }
-.course-participation #showall {
-    text-align: center;
-    margin: 10px 0;
+#user-policy {
+    .noticebox {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 10px;
+        width: 80%;
+        height: 250px;
+    }
+    #policyframe {
+        width: 100%;
+        height: 100%;
+    }
 }
-#user-policy .noticebox {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 10px;
-    width: 80%;
-    height: 250px;
+.iplookup {
+    #map {
+        margin: auto;
+    }
 }
-#user-policy #policyframe {
-    width: 100%;
-    height: 100%;
+.userselector {
+    select {
+        width: 100%;
+    }
+    div {
+        margin-top: 0.2em;
+        label {
+            margin-right: 0.3em;
+        }
+    }
+    .userselector-infobelow {
+        font-size: 0.8em;
+    }
 }
-.iplookup #map {
-    margin: auto;
+#userselector_options {
+    .collapsibleregioncaption {
+        font-weight: bold;
+    }
+    p {
+        margin: 0.2em 0;
+        text-align: left;
+    }
 }
-.userselector select {
-    width: 100%;
+#page-user-profile {
+    .messagebox {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
-.userselector div {
-    margin-top: 0.2em;
+#page-course-view-weeks {
+    .messagebox {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
-.userselector div label {
-    margin-right: 0.3em;
-}
-/* Next style does not work in all browsers but looks nicer when it does */
-.userselector .userselector-infobelow {
-    font-size: 0.8em;
+.preferences-group {
+    ul {
+        list-style: none;
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
 
-#userselector_options .collapsibleregioncaption {
-    font-weight: bold;
+.groupmanagementtable {
+    .make-row();
+    .groups,
+    .members {
+        .make-sm-column(6);
+    }
 }
-#userselector_options p {
-    margin: 0.2em 0;
-    text-align: left;
+.notloggedin .usermenu {
+    padding-top:    @navbar-padding-vertical;
+    padding-bottom: @navbar-padding-vertical;
 }
-/** user full profile */
-#page-user-profile .messagebox {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-}
-/** user course profile */
-#page-course-view-weeks .messagebox {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+.jsenabled {
+    .usermenu {
+        .moodle-actionmenu {
+            .usertext {
+                display: inline-block;
+                vertical-align: middle;
+                line-height: 1em;
+                color: inherit;
+                .meta,
+                .role {
+                    display: block;
+                    font-size: 12px;
+                    .value {
+                        font-weight: bold;
+                    }
+                }
+                .role {
+                    font-weight: bold;
+                }
+            }
+            .toggle-display {
+                display: block;
+
+                &.textmenu {
+                    padding: 7px;
+                    .usertext {
+                        margin-right: 3px;
+                    }
+                }
+                .caret {
+                    display: inline-block;
+                    position: relative;
+                }
+            }
+            > .menu {
+                min-width: 160px;
+                .filler {
+                    display: block;
+                    .nav-divider();
+                }
+            }
+
+            &.show {
+                background-color: @navbar-default-link-active-bg;
+                .menu {
+                    padding: 5px 0;
+                    margin: 2px 0 0;
+                    background-clip: padding-box;
+                    &:before {
+                        content: '';
+                        display: inline-block;
+                        border-left:   7px solid transparent;
+                        border-right:  7px solid transparent;
+                        border-bottom: 7px solid #ccc;
+                        border-bottom-color: @dropdown-border;
+                        position: absolute;
+                        top: -7px;
+                    }
+                    &:after {
+                        content: '';
+                        display: inline-block;
+                        border-left:   6px solid transparent;
+                        border-right:  6px solid transparent;
+                        border-bottom: 6px solid @dropdown-bg;
+                        position: absolute;
+                        top: -6px;
+                    }
+
+                    a {
+                        border-radius: 0;
+
+                        &:focus {
+                            text-decoration: none;
+                        }
+                        &:hover {
+                            color: @text-color;
+                            text-decoration: none;
+                            #gradient > .vertical(@dropdown-link-hover-bg, darken(@dropdown-link-hover-bg, 5%));
+                        }
+                    }
+                    &.align-tr-br {
+                        margin-top: 2px;
+                    }
+                    .box-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+                }
+            }
+        }
+    }
+    &.userloggedinas .usermenu .userbutton .avatars .avatar.current {
+        position: relative;
+        top: 12px;
+        left: 42px;
+        width: 25px;
+        height: 25px;
+        img {
+            border-radius: 50%;
+            border: 1px solid #fff;
+            .box-shadow(-2px -2px 2px rgba(0,0,0,.125));
+            width: inherit;
+            height: inherit;
+        }
+    }
 }

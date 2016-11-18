@@ -1,0 +1,13 @@
+node_modules
+pix/header.jpg
+pix_core/**
+.DS_Store
+Thumbs.db
+.buildpath
+.project
+.settings
+*.swp
+sourcemap-moodle.json
+sourcemap-editor.json
+.idea
+*.iml

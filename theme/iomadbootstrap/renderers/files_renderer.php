@@ -1,5 +1,5 @@
 <?php
-// This file is part of The Bootstrap 3 Moodle theme
+// This file is part of The Bootstrap Moodle theme
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 /**
  * Rendering of files viewer related widgets.
  *
- * @package    theme_iomadbootstrap
+ * @package    theme_bootstrap
  * @copyright  2012
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -85,7 +85,6 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
         $restrictions = $this->fm_print_restrictions($fm);
         $strdndnotsupported = get_string('dndnotsupported_insentence', 'moodle').$OUTPUT->help_icon('dndnotsupported');
         $strdndenabledinbox = get_string('dndenabled_inbox', 'moodle');
-        $loading = get_string('loading', 'repository');
 
         $html = '
 <div id="filemanager-'.$clientid.'" class="filemanager fm-loading">
@@ -380,8 +379,9 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
         $classmethods = get_class_methods($this);
         $templates = array();
         foreach ($classmethods as $methodname) {
-            if (preg_match('/^fm_js_template_(.*)$/', $methodname, $matches))
-            $templates[$matches[1]] = $this->$methodname();
+            if (preg_match('/^fm_js_template_(.*)$/', $methodname, $matches)) {
+                $templates[$matches[1]] = $this->$methodname();
+            }
         }
         return $templates;
     }
@@ -904,8 +904,9 @@ class theme_iomadbootstrap_core_files_renderer extends core_files_renderer {
         $classmethods = get_class_methods($this);
         $templates = array();
         foreach ($classmethods as $methodname) {
-            if (preg_match('/^fp_js_template_(.*)$/', $methodname, $matches))
-            $templates[$matches[1]] = $this->$methodname();
+            if (preg_match('/^fp_js_template_(.*)$/', $methodname, $matches)) {
+                $templates[$matches[1]] = $this->$methodname();
+            }
         }
         return $templates;
     }

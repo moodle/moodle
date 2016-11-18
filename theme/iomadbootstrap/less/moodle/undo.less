@@ -144,17 +144,12 @@ img.icon.hide {
 
 // Bootstrap lists usually needs a class. But when using the editor you can't
 // expect users to do so. This will fix it when lists are used in the content area.
-div[role="main"] {
-    ul,
-    ol {
-        padding-left: 20px;
-        overflow: visible;
+.pagelayout-admin .show {
+  display: inline !important;
+}
 
-        &.section,
-        &.weeks,
-        &.topics {
-            padding: 0;
-            overflow: visible;
-        }
-    }
+// When adding lots of levels the table overflows
+// Content. The rubric styles.css set this to a max with of 720px which only makes things worse.
+.gradingform_rubric {
+  max-width: none !important;
 }

@@ -155,7 +155,15 @@ select {
 .navbar-fixed-bottom {
     z-index: 4030;
 }
-
+@media (max-width: @grid-float-breakpoint) {
+    .navbar-collapse.collapse,
+    .navbar-collapse.collapsing {
+        margin-top: @navbar-height;
+        .nav {
+            float: none !important;
+        }
+    }
+}
 .langmenu form {
     margin: 0;
 }
@@ -226,5 +234,17 @@ div#dock {
     }
     .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
         text-align:center;
+    }
+}
+
+.path-mod-assign {
+    .assignfeedback_editpdf_widget .pageheader button,
+    .assignfeedback_editpdf_widget .pageheader select {
+        padding: 3px 7px;
+        height: 28px;
+        line-height: 24px;
+    }
+    a.btn {
+        .btn-default;
     }
 }

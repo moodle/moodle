@@ -1,4 +1,5 @@
 .box.message {
+    .make-row();
     .mdl-align {
         text-align: left;
     }
@@ -42,12 +43,10 @@
         }
     }
     .contactselector {
-        .panel;
-        .panel-default;
-        .heading {
-            margin: 10px 15px;
-            color: @headings-color;
+        .singleselect select {
+            width: 100%;
         }
+        .make-md-column(4);
         form#usergroupform {
             padding: 5px 10px;
             fieldset {
@@ -102,15 +101,50 @@
                 }
             }
         }
+        ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .message-contacts {
+            position: relative;
+            border-bottom: 1px solid @table-border-color;
+            margin-bottom: 10px;
+
+            li:nth-child(odd) {
+                background-color: @table-bg-accent;
+            }
+
+            li {
+                padding: 5px 0;
+                line-height: 26px;
+                border-top: 1px solid @table-border-color;
+            }
+            .contact {
+                margin: 0 24% 0 25px;
+                text-align: left;
+            }
+            .link {
+                .pull-right;
+            }
+            .pix {
+                position: absolute;
+                left: 0;
+            }
+        }
     }
     .messagearea {
-        .panel;
-        .panel-default;
+        .make-md-column(8);
 
         p.heading {
             margin: 10px 15px;
             font-size: @font-size-h2;
             color: @headings-color;
+        }
+
+        textarea {
+            .form-control;
+            height: 200px;
         }
 
         #personsearch {
@@ -181,8 +215,6 @@
         .messagehistory {
             .messagehistory {
                 border-top: 1px solid @nav-tabs-border-color;
-                margin: 0 15px 20px;
-                padding: 15px;
                 clear: both;
                 .mdl-left {
                     .make-row();
@@ -211,37 +243,21 @@
                 }
                     
             }
-            .box.center {
-                table.message_user_pictures {
-                    .make-md-column-push(2);
-                    .make-md-column(8);
-                    float: none !important;
-                    tr {
-                        border: 0;
-                    }
-                    td {
-                        background-color: @body-bg;
-                    }
-                    td#user1,
-                    td#user2 {
-                        display: block;
-                        height: 160px;
-                        img.userpicture {
-                            .img-circle;
-                        }
-                    }
-                    td#user1 img.userpicture {
-                        border: 3px solid @state-success-border;
-                    }
-                    td#user2 img.userpicture {
-                        border: 3px solid @state-info-border;
-                    }
+
+            #message_user_pictures {
+                .make-row();
+                .box.user {
+                    .make-xs-column(5);
+                    text-align: center;
+                }
+                .box.between {
+                    .make-xs-column(2);
+                    text-align: center;
                 }
             }
             .messagehistorytype {
                 color: #fff;
-                padding: 5px 15px;
-                .nav-tabs;
+                //.nav-tabs;
                 border: 0;
                 .hiddenelement {
                     display: none;
@@ -267,12 +283,15 @@
         }
         .messagesend {
             .mform {
-                margin: 0 20px;
                 fieldset .fitem .felement,
                 fieldset.hidden > div {
-                    margin-left: 0;
+                    padding: 0;
+                    margin: 0;
                     float: none;
                     width: 100%;
+                    #id_submitbutton {
+                        margin: 5px 0 0 0;
+                    }
                 }
                 .fitemtitle, .form-label {
                     .h3;
@@ -280,9 +299,7 @@
                     text-align: left;
                 }
                 fieldset .fitem {
-                    margin-left: 0;
-                    margin-right: 0;
-                    margin-bottom: 0 !important;
+                    margin: 0;
                 }
                 .fitem_ftextarea {
                     margin: 15px;
@@ -322,7 +339,55 @@
     }
 }
 
-textarea {
-    .form-control;
-    height: 200px;
+/** Messenger send message dialog */
+.core_message-messenger-sendmessage-hidden {
+    display:none;
+}
+.core_message-messenger-sendmessage {
+    .message-actions {
+        position: relative;
+    }
+    .message-area {
+        height: 240px;
+        max-height: 100%;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .message-input {
+        width: 100%;
+        height: 100%;
+        .box-sizing(border-box);
+    }
+    .message-send {
+        margin: 0;
+        float: right;
+    }
+    .message-notice-area {
+        display: table;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .message-notice {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        > div {
+            background: #eee;
+            padding: 5px;
+            font-size: 12px;
+        }
+    }
+    .message-footer {
+        margin-top: 3px;
+        line-height: 20px;
+    }
+    .message-history {
+        position: absolute;
+        bottom: 0;
+    }
 }

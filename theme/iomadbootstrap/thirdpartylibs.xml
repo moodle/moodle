@@ -1,17 +1,10 @@
 <?xml version="1.0"?>
 <libraries>
   <library>
-    <location>less/bootstrap</location>
+    <location>less/bootstrap3-3-6</location>
     <name>Bootstrap</name>
-    <license>Apache</license>
-    <version>3.2.0</version>
-    <licenseversion>2.0</licenseversion>
-  </library>
-  <library>
-    <location>javascript/html5shiv.js</location>
-    <name>Html5Shiv</name>
-    <license>Apache</license>
-    <version>3.7.0</version>
-    <licenseversion>2.0</licenseversion>
+    <license>MIT</license>
+    <version>3.3.6</version>
+    <licenseversion></licenseversion>
   </library>
 </libraries>

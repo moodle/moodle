@@ -7,7 +7,7 @@
  *   - Constrain the width of the docked block to the window width using a responsible max-width.
  *   - Handle the opening/closing of the Bootstrap collapsible navbar on small screens.
  */
-function customise_dock_for_theme(dock) {
+function customise_dock_for_theme(dock) { // jshint ignore:line
     // Add the "block" class to docked blocks.
     // This prevents having to restyle all docked blocks and simply use standard block styling.
     // First we wait until the panel has been generated.

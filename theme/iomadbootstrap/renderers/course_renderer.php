@@ -1,5 +1,5 @@
 <?php
-// This file is part of The Bootstrap 3 Moodle theme
+// This file is part of The Bootstrap Moodle theme
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 /**
  * Renderers to align Moodle's HTML with that expected by Bootstrap
  *
- * @package    theme_iomadbootstrap
+ * @package    theme_bootstrap
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -45,7 +45,7 @@ class theme_iomadbootstrap_core_course_renderer extends core_course_renderer {
             $classes .= ' collapsed';
         }
 
-        // .coursebox
+        // Start .coursebox div.
         $content .= html_writer::start_tag('div', array(
             'class' => $classes,
             'data-courseid' => $course->id,
@@ -54,7 +54,7 @@ class theme_iomadbootstrap_core_course_renderer extends core_course_renderer {
 
         $content .= html_writer::start_tag('div', array('class' => 'panel-heading info'));
 
-        // course name
+        // Course name.
         $coursename = $chelper->get_course_formatted_name($course);
         $coursenamelink = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
                                             $coursename, array('class' => $course->visible ? '' : 'dimmed'));
@@ -71,38 +71,25 @@ class theme_iomadbootstrap_core_course_renderer extends core_course_renderer {
                 $this->coursecat_include_js();
             }
         }
-        $content .= html_writer::end_tag('span'); // .moreinfo
+        $content .= html_writer::end_tag('span'); // End .moreinfo span.
 
-        // print enrolmenticons
+        // Print enrolmenticons.
         if ($icons = enrol_get_course_info_icons($course)) {
             $content .= html_writer::start_tag('div', array('class' => 'enrolmenticons'));
-            foreach ($icons as $pix_icon) {
-                $content .= $this->render($pix_icon);
+            foreach ($icons as $pixicon) {
+                $content .= $this->render($pixicon);
             }
-            $content .= html_writer::end_tag('div'); // .enrolmenticons
+            $content .= html_writer::end_tag('div'); // End .enrolmenticons div.
         }
 
-        $content .= html_writer::end_tag('div'); // .info
+        $content .= html_writer::end_tag('div'); // End .info div.
 
         $content .= html_writer::start_tag('div', array('class' => 'content panel-body'));
         $content .= $this->coursecat_coursebox_content($chelper, $course);
 
-        if ($chelper->get_show_courses() >= self::COURSECAT_SHOW_COURSES_EXPANDED) {
-            $icondirection = 'left';
-            if ('ltr' === get_string('thisdirection', 'langconfig')) {
-                $icondirection = 'right';
-            }
-            if (is_enrolled(context_course::instance($course->id))) {
-                $arrow = html_writer::tag('span', '', array('class' => ' glyphicon glyphicon-arrow-'.$icondirection));
-                $visit = html_writer::tag('span', get_string('course') . ' ' . $arrow);
-                $visitlink = html_writer::link(new moodle_url('/course/view.php',
-                    array('id' => $course->id)), $visit);
-                $content .= html_writer::tag('div', $visitlink, array('class' => 'visitlink'));
-            }
-        }
-        $content .= html_writer::end_tag('div'); // .content
+        $content .= html_writer::end_tag('div'); // End .content div.
 
-        $content .= html_writer::end_tag('div'); // .coursebox
+        $content .= html_writer::end_tag('div'); // End .coursebox div.
         return $content;
     }
 
@@ -148,7 +135,6 @@ class theme_iomadbootstrap_core_course_renderer extends core_course_renderer {
             $content .= $chelper->get_course_formatted_summary($course);
         }
 
-
         // Display course contacts. See course_in_list::get_course_contacts().
         if ($course->has_course_contacts()) {
             $content .= html_writer::start_tag('ul', array('class' => 'teachers'));
@@ -159,7 +145,7 @@ class theme_iomadbootstrap_core_course_renderer extends core_course_renderer {
                             $coursecontact['username']);
                 $content .= html_writer::tag('li', $name);
             }
-            $content .= html_writer::end_tag('ul'); // .teachers
+            $content .= html_writer::end_tag('ul'); // End .teachers div.
         }
 
         // Display course category if necessary (for example in search results).
@@ -170,7 +156,7 @@ class theme_iomadbootstrap_core_course_renderer extends core_course_renderer {
                 $content .= get_string('category').': '.
                         html_writer::link(new moodle_url('/course/index.php', array('categoryid' => $cat->id)),
                                 $cat->get_formatted_name(), array('class' => $cat->visible ? '' : 'dimmed'));
-                $content .= html_writer::end_tag('div'); // .coursecat
+                $content .= html_writer::end_tag('div'); // End .coursecat div.
             }
         }
 

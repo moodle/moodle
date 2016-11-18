@@ -1,5 +1,5 @@
 <?php
-// This file is part of The Bootstrap 3 Moodle theme
+// This file is part of The Bootstrap Moodle theme
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,15 @@
  * Theme version info
  *
  * @package    theme_iomadbootstrap
- * @copyright  2014 Bas Brands, www.basbrands.nl
+ * @copyright  2016 Bas Brands, www.basbrands.nl
  * @authors    Bas Brands, David Scotson
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2014120803;
-$plugin->requires  = 2013110500;
+$plugin->version   = 2016111800;
+$plugin->requires  = 2016052300;
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 2014120803;
+$plugin->release = '3.1.0';
 $plugin->component = 'theme_iomadbootstrap';

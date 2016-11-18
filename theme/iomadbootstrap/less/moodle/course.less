@@ -129,10 +129,11 @@
         .right {
             display: inherit;
         }
-    }
-    ul.weeks {
-        h3.sectionname {
-            white-space: normal;
+        .left {
+            float: left;
+        }
+        .right {
+            float: right;
         }
     }
 }
@@ -145,6 +146,7 @@
 
 .section {
     padding: 0;
+    margin: 0;
     .activity {
         .commands {
             white-space: nowrap;
@@ -163,10 +165,10 @@
     }
     .activity.modtype_label.label {
         font-weight: normal;
-        padding: .2em;
+        // padding: .2em;
     }
     li.activity {
-        padding: .2em;
+        padding: 0;
         clear: both;
     }
     img.movetarget {
@@ -178,7 +180,6 @@
     margin-top: 0.5em;
     margin-left: 30px;
 }
-
 
 .course-content {
     margin-top: 0;
@@ -263,6 +264,43 @@
     }
 }
 
+.course-content li {
+    &.activity {
+        ul,ol {
+            margin-left: 25px;
+        }
+    }
+    &.section {
+        ul {
+            list-style: disc;
+            ul {
+                list-style: circle;
+                ul {
+                    list-style: square;
+                }
+            }
+        }
+        li {
+            &.activity {
+                ul {
+                    list-style: disc;
+                    ul {
+                        list-style: circle;
+                        ul {
+                            list-style: square;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Collapsed Topics support */
+.course-content ul.ctopics li.section.main, .course-content ul.ctopics li.tcsection {
+    margin: 0;
+}
+
 .path-course-view {
     .completionprogress {
         margin-left: 25px;
@@ -327,11 +365,6 @@
 }
 li.section.hidden span.commands a.editing_hide,li.section.hidden span.commands a.editing_show {
     cursor: default;
-}
-ul.weeks {
-    h3.sectionname {
-        white-space: nowrap;
-    }
 }
 
 .single-section {
@@ -424,6 +457,9 @@ span.editinstructions {
 
 .coursebox {
     position: relative;
+    img {
+        max-width: 100%;
+    }
     img.courseimage {
         .img-rounded;
         float: left;
@@ -431,6 +467,7 @@ span.editinstructions {
         margin-right: 10px;
         max-width: 140px;
     }
+
     .teachers {
         li {
             list-style-type:none;
@@ -453,22 +490,6 @@ span.editinstructions {
         }
     }
 }
-
-// .coursebox {
-//    .panel;
-//    .panel-default;
-//    .info {
-//           .panel-heading;
-//           padding: 10px 15px;
-//           border-bottom: 1px solid transparent;
-//           .border-top-radius(@panel-border-radius - 1);
-//         .coursename {
-//             .panel-title;
-//             display: inline-block;
-//         }
-//     }
-// }
-
 
 .coursebox.remotehost {
     & > .info {
@@ -682,6 +703,11 @@ span.editinstructions {
 #course-category-listings {
     background-color: @table-bg;
     margin-bottom: 200px;
+
+    ul.ml ul.ml {
+        margin: 0;
+        padding: 0;
+    }
 
     /** Two column layout */
     &.columns-2 {
@@ -1073,6 +1099,16 @@ span.editinstructions {
 }
 .course-being-dragged {
     .opacity(.5);
+}
+// Reported by Aalborg University
+#coursesearch {
+    text-align: left;
+    label.hidden {
+        display: none;
+    }
+}
+.searchhelp {
+    text-align: left;
 }
 
 /**

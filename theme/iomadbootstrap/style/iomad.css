@@ -1,20 +1,23 @@
-@font-face {
-  font-family: iomad;
-  src: url([[font:theme|astonish.woff]]);
+.navbar {
+    margin-bottom : 3px;
 }
 .navbar .brand {
-  font-family: iomad;
+  font-family: Ubuntu;
   font-size: 36px;
   color: red;
+}
+.moodleheader h1 {
+    font-family: Ubuntu;
+    color: #f75701;
+    margin: 10px 0;
 }
 .dashboard-section .headingblock {
   display: none;
 }
 .iomadlink {
-  font-family: iomad;
-  font-size: 11px;
+  font-family: Ubuntu;
+  font-size: 12px;
   font-weight: normal;
-  text-transform: uppercase;
   text-align: center;
   line-height: 120%;
 }
@@ -26,7 +29,7 @@
   color: #f75701;
 }
 #page-header h1 {
-  font-family: iomad;
+  font-family: Ubuntu;
   font-size: 40px;
   font-weight: normal;
   color: #f75701;
@@ -46,21 +49,19 @@
   color: #f75701;
   font-size: 14px;
   text-transform: uppercase;
-  font-family: iomad;
+  font-family: Ubuntu;
   font-weight: normal;
 }
 .block .header .title h2 {
   color: #f75701;
-  font-size: 14px;
-  text-transform: uppercase;
-  font-family: iomad;
+  font-size: 16px;
+  font-family: Ubuntu;
   font-weight: normal;
 }
 .block .content h3 {
   color: #f75701;
-  font-size: 14px;
-  text-transform: uppercase;
-  font-family: iomad;
+  font-size: 18px;
+  font-family: Ubuntu;
   font-weight: normal;
 }
 .block {
@@ -146,4 +147,38 @@ body {
 .block_iomad_reports .iomadlink_container {
   border-top-color: #DDD;
 }
+div.iomadlink {
+    min-height: 130px;
+    background-color: #ffec70;
+    background-color: #d2ff70;
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px #888888;
+}
 
+/* block icons */
+.block_navigation h2:before {
+    font-family: FontAwesome;
+    content: "\f018  ";
+}
+.block_settings h2:before {
+    font-family: FontAwesome;
+    content: "\f013  ";
+}
+.block_news_items h2:before {
+    font-family: FontAwesome;
+    content: "\f130  ";
+}
+.block_course_list h2:before {
+    font-family: FontAwesome;
+    content: "\f0eb  ";
+}
+.block_iomad_reports h3:before {
+    font-family: FontAwesome;
+    content: "\f200  ";
+}
+
+/* header icons */
+.moodleheader h1:before {
+    font-family: FontAwesome;
+    content: "\f0e4  ";
+}

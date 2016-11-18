@@ -1,26 +1,26 @@
 .userenrolment {
     width: 100%;
     border-collapse: collapse;
+    tr {
+        vertical-align:top;
+    }
+    td {
+        padding: 0;
+        height: 41px;
+    }
+    .subfield {
+        margin-right: 5px;
+    }
     .col_userdetails {
         .subfield_picture {
             float: left;
-            margin: 0 5px;
         }
     }
     .col_lastseen {
+        width: 150px;
     }
     .col_role {
-
-        a, span {
-            display: inline-block;
-            vertical-align: middle;
-        }
-        a {
-            float: right;
-        }
-        .addrole {
-            text-align: center;
-        }
+        width: 262px;
     }
     .hasAllRoles {
         .col_role {
@@ -29,24 +29,46 @@
             }
         }
     }
-    .col_group {
-        .group {
+    .col_enrol {
+        .enrolment {
             float: left;
-            white-space: nowrap;
+            padding: 3px;
+            margin: 3px;
             a {
+                float: right;
                 margin-left: 3px;
-                cursor: pointer;
-            }
-        }
-        .addgroup {
-            text-align: center;
-            a {
-                img {
-                    vertical-align: bottom;
-                }
             }
         }
     }
+}
+.userenrolment .col_role .roles,
+.userenrolment .col_group .groups {
+    margin-right: 30px;
+}
+.userenrolment .col_role .role,
+.userenrolment .col_group .group {
+    float: left;
+    padding: 3px;
+    margin: 3px;
+    white-space: nowrap;
+}
+.userenrolment .col_role .role a,
+.userenrolment .col_group .group a {
+    margin-left: 3px;
+    cursor: pointer;
+}
+.userenrolment .col_role .addrole,
+.userenrolment .col_group .addgroup {
+    float: right;
+    padding: 3px;
+    margin: 3px;
+    > a:hover {
+        border-bottom:1px solid #666;
+    }
+}
+.userenrolment .col_role .addrole img,
+.userenrolment .col_group .addgroup img {
+    vertical-align: baseline;
 }
 
 .enrolpanel.roleassign.visible {

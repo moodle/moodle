@@ -357,7 +357,7 @@ img.icon-post {
 }
 #maincontent {
     display: block;
-    height: 1px;
+    // height: 1px;
     overflow: hidden;
 }
 img.uihint {
@@ -379,9 +379,12 @@ form.popupform div {
     vertical-align: text-bottom;
     margin: 0 0.3em;
 }
+.smallicon {
+    box-sizing: initial;
+}
 
 .no-overflow {
-    margin-bottom: (@line-height-computed * 0.75);
+    margin-bottom: 1px;
     overflow-y: hidden;
     overflow-x: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
@@ -1066,7 +1069,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 /* Center the submit buttons within the area */
 .choosercontainer #chooseform .submitbuttons {
-    margin: 0.7em 0;
+    padding: 0.7em 0;
     text-align: center;
 }
 .choosercontainer #chooseform .submitbuttons input {
@@ -1309,8 +1312,7 @@ body.jsenabled .formlisting {
             color: @dropdown-link-color;
             padding: 3px 20px;
             line-height: @line-height-base;
-            &:hover,
-            &:focus {
+            &:hover {
                 color: @dropdown-link-active-color;
                 background-color: @dropdown-link-active-bg;
                 text-decoration: none;
@@ -1322,8 +1324,13 @@ body.jsenabled .formlisting {
         img {
             vertical-align: middle;
         }
-        .iconsmall {
+        .iconsmall,
+        .smallicon {
             margin: 4px 4px 4px -10px;
+        }
+        .smallicon {
+            padding: 4px;
+            .box-sizing(inherit);
         }
         > li {
             display:block;
@@ -1336,7 +1343,7 @@ body.jsenabled .formlisting {
         &.align-br-bl {bottom: 100%;right: 100%;}
         /** bottom right of button **/
         &.align-tl-br {top: 100%;left:100%;}
-        &.align-tr-br {top: 100% !important;right: 0;left: inherit;margin-top: 4px;}
+        &.align-tr-br {top: 100%;right: 0;left: inherit;margin-top: 4px;}
         &.align-bl-br {bottom: 100%;left:100%;}
         &.align-br-br {bottom: 100%;right: 0;}
         /** top left of button **/

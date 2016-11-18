@@ -17,12 +17,19 @@
             .make-lg-column(9);
             select,
             input[type="text"],
-            input[type="password"] {
+            input[type="password"],
+            textarea {
                 .form-control;
+            }
+            textarea {
+                height: auto;
             }
         }
         select[multiple], select[size] {
             height: auto;
+        }
+        .felement.fautocomplete input[type="text"] {
+            display: inline-block;
         }
         .felement.fduration input[type="text"] {
             min-width: 0;
@@ -81,6 +88,7 @@
 }
 
 .mform span.error {
+    background-color: @state-danger-bg;
     color: @state-danger-text;
 }
 
@@ -118,7 +126,6 @@
 
 .mform .iconhelp {
     margin-left: 4px;
-    margin-right: -16px;
 }
 
 // Basic admin forms layout.
@@ -234,8 +241,13 @@ select.singleselect {
         > input[type="text"],
         > input[type="password"] {
             width: auto;
-            min-width: 480px;
+            // Disabling min with just to try
+            // min-width: 480px;
             margin-bottom: 5px;
+        }
+        textarea {
+            .form-control;
+            height: auto;
         }
     }
     #page-mod-quiz-mod #id_reviewoptionshdr .fitem.fitem_fgroup {
@@ -385,4 +397,61 @@ input[type="checkbox"] {
         margin-right: 1em;
         margin-top: 4px;
     }
+}
+
+/* Custom styles for autocomplete form element */
+.form-autocomplete-selection {
+    margin: 0.2em;
+    min-height: 21px;
+    .label-info {
+        display: inline-block;
+    }
+}
+
+.form-autocomplete-multiple [role=listitem] {
+    cursor: pointer;
+}
+
+.form-autocomplete-suggestions {
+    position: absolute;
+    background-color: white;
+    border: 2px solid @gray-lighter;
+    border-radius: 3px;
+    min-width: 206px;
+    max-height: 20.4em;
+    overflow: auto;
+    margin: 0px;
+    padding: 0px;
+    z-index: 1;
+    li {
+        list-style-type: none;
+        padding: 0.2em;
+        margin: 0;
+        cursor: pointer;
+        color: @text-color;
+        &:hover {
+            background-color: lighten(@dropdown-link-active-bg, 15%);
+            color: @dropdown-link-active-color;
+        }
+    }
+    li[aria-selected=true] {
+        background-color: darken(white, 5%);
+        color: @gray;
+    }
+}
+
+.form-autocomplete-downarrow {
+    color: @text-color;
+    position: relative;
+    left: -1.5em;
+    cursor: pointer;
+    &.dir-rtl {
+        right: -1.5em;
+        left: inherit;
+    }
+}
+
+.form-autocomplete-selection [data-active-selection=true] {
+    padding: 0.5em;
+    font-size: large;
 }

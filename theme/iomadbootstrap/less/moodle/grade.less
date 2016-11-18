@@ -43,6 +43,8 @@
             margin: 0.5em;
             padding: 1em;
             border: 1px solid #aaa;
+            box-sizing: content-box;
+            white-space: normal;
             .action-icon {
                 display: inline-block;
                 position: relative;
@@ -74,51 +76,12 @@
     }
 }
 
-.dir-rtl {
-    #rubric-rubric.gradingform_rubric {
-        #rubric-criteria .criterion {
-            .level {
-                .score {
-                    text-align: right;
-                    float: right;
-                    margin-left: 28px;
-                    margin-right: 0px;
-                }
-                .delete {
-                    float: left;
-                    input {
-                        left: 0;
-                        right: auto;
-                    }
-                }
-            }
-        }
-        .addcriterion {
-            margin-right: 5px;
-            margin-left: 0px;
-
-            input {
-                padding-right: 26px;
-                padding-left: 10px;
-                background-position: right 8px top 8px;
-            }
-        }
-        .options {
-            .option {
-                .value {
-                    margin-left: 0px;
-                    margin-right: 5px;
-                }
-                input {
-                    // margins flipped for RTL.
-                    margin-left: 12px;
-                    margin-right: 5px;
-                }
-            }
-        }
-    }
+.criteria .remark textarea {
+    height: auto;
 }
 
+.mform.gradingform_rubric_editform .fitem .felement .hiddenelement {display:none;}
+.mform.gradingform_rubric_editform .fitem .felement .pseudotablink {background-color:transparent;border:0 solid;height:1px;width:1px;color:transparent;padding:0;margin:0;position:relative;float:right;}
 #rubric-rubric {
     &.gradingform_rubric {
         #rubric-criteria {
@@ -175,11 +138,11 @@
                     input {
                         // Should handle at least three chars with room to spare.
                         float: none;
-                        width: 2em;
+                        width: 3em;
                         &.hiddenelement,&.pseudotablink {
                             // Zero out the width if it's still in the block flow for some reason
                             // when hidden
-                            width: 0;
+                            width: 0 !important;
                         }
                     }
                 }
@@ -232,4 +195,9 @@
 }
 .path-grade-report-grader .grade_icons {
     display: inline;
+}
+#page-mod-assign-grader {
+    .span4 {
+        .make-md-column(4);
+    }
 }

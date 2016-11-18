@@ -1,5 +1,9 @@
  // File Picker and File Manager
-
+.filemanager,
+.filepicker,
+.file-picker {
+    font-size: 11px;
+}
 .filemanager a,
 .file-picker a,
 .filemanager a:hover,
@@ -21,7 +25,10 @@
     }
 }
 .fp-content-center {
-    vertical-align: middle;
+    height: 100%;
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;;
 }
 .fp-content-hidden {
     visibility: hidden;
@@ -60,6 +67,12 @@
     box-shadow: 2px 2px 3px .1px #999;
 }
 
+.moodle-dialogue h3 {
+    font-size: 14px;
+    margin: 0;
+    line-height: 20px;
+}
+
  .moodle-dialogue-base .filepicker .moodle-dialogue-wrap .moodle-dialogue-bd {
     padding: 0px;
 }
@@ -80,21 +93,30 @@
     height: 490px;
     border-right: 1px solid #bbb;
 }
+
 .file-picker .fp-repo-items {
-    float: left;
-    width: 693px;
+    float: none;
+    width: auto;
+    margin-left:181px;
+}
+.dir-rtl .moodle-dialogue-fullscreen .file-picker .fp-repo-items {
+    margin-left: 0px;
+    margin-right:0px;
+    float: right;
 }
 .file-picker .fp-navbar {
     background: #f2f2f2;
     border-bottom: 1px solid #bbb;
-    min-height: 36px;
+    min-height: 40px;
+    overflow: hidden;
 }
 .file-picker .fp-navbar .fp-viewbar {
-    margin: 2px 4px;
+    margin: 4px;
 }
 
 .file-picker .fp-content {
-    padding-top: 0px;
+    background: #fff;
+    clear: none;
     overflow: auto;
     height: 452px;
 }
@@ -167,6 +189,7 @@
     border: 1px solid #ccc;
     border-bottom: 1px solid #b3b3b3;
     border-radius: 4px;
+    box-sizing: unset;
     background: white;
 }
 .fp-repo-items fp-viewbar {
@@ -220,9 +243,7 @@
     display: none;
 }
 .fp-pathbar .fp-path-folder {
-    background-image: url('[[pix:theme|fp/path_folder]]');
-    background-position: left;
-    background-repeat: no-repeat;
+    background: url('[[pix:theme|fp/path_folder]]') no-repeat 0 0;
     width: 27px;
     height: 12px;
     margin-left: 4px;
@@ -297,28 +318,22 @@
 // first or middle sibling, no children
 .file-picker .ygtvtn,
 .filemanager .ygtvtn {
-    background-image: url('[[pix:y/tn]]');
-    background-position: left;
-    background-repeat: no-repeat;
+    background: url('[[pix:y/tn]]')  0 0 no-repeat;
     width: 17px;
     height: 22px;
 }
 // first or middle sibling, collapsable
 .file-picker .ygtvtm,
 .filemanager .ygtvtm {
-    background-image: url('[[pix:y/tm]]');
-    background-position: left 10px;
-    background-repeat: no-repeat;
-    width: 13px;
-    height: 12px;
+    background: url('[[pix:y/tm]]') 0 0 no-repeat;
+    width: 17px;
+    height: 22px;
     cursor: pointer;
 }
 // first or middle sibling, collapsable, hover
 .file-picker .ygtvtmh,
 .filemanager .ygtvtmh {
-    background-image: url('[[pix:y/tm]]');
-    background-position: left 10px;
-    background-repeat: no-repeat;
+    background: url('[[pix:y/tm]]') 0 10px no-repeat;
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -326,9 +341,7 @@
 // first or middle sibling, expandable
 .file-picker .ygtvtp,
 .filemanager .ygtvtp {
-    background-image: url('[[pix:y/tp]]');
-    background-position: left 10px;
-    background-repeat: no-repeat;
+    background-image: url('[[pix:y/tp]]') 0 10px no-repeat;
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -336,9 +349,7 @@
 // first or middle sibling, expandable, hover
 .file-picker .ygtvtph,
 .filemanager .ygtvtph {
-    background-image: url('[[pix:y/tp]]');
-    background-position: left 10px;
-    background-repeat: no-repeat;
+    background-image: url('[[pix:y/tp]]') 0 10px no-repeat;
     width: 13px;
     height: 22px;
     cursor: pointer;
@@ -346,18 +357,14 @@
 // last sibling, no children
 .file-picker .ygtvln,
 .filemanager .ygtvln {
-    background-image: url('[[pix:y/ln]]');
-    background-position: left;
-    background-repeat: no-repeat;
+    background-image: url('[[pix:y/ln]]') 0 0 no-repeat;
     width: 17px;
     height: 22px;
 }
 // Last sibling, collapsable
 .file-picker .ygtvlm,
 .filemanager .ygtvlm {
-    background-image: url('[[pix:y/lm]]');
-    background-position: left 10px;
-    background-repeat: no-repeat;
+    background-image: url('[[pix:y/lm]]')  0 10px no-repeat;
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -365,9 +372,7 @@
 // Last sibling, collapsable, hover
 .file-picker .ygtvlmh,
 .filemanager .ygtvlmh {
-    background-image: url('[[pix:y/lm]]');
-    background-position: left 10px;
-    background-repeate: no-repeat;
+    background-image: url('[[pix:y/lm]]')  0 10px no-repeat;
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -375,9 +380,7 @@
 // Last sibling, expandable
 .file-picker .ygtvlp,
 .filemanager .ygtvlp {
-    background-image: url('[[pix:y/lp]]');
-    background-position: left 10px;
-    background-repeat: no-repeat;
+    background-image: url('[[pix:y/lp]]')  0 0 no-repeat;
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -385,7 +388,7 @@
 // Last sibling, expandable, hover
 .file-picker .ygtvlph,
 .filemanager .ygtvlph {
-    background-image: url('[[pix:y/lp]]');
+    background-image: url('[[pix:y/lp]]') 0 10px no-repeat;
     background-position: left 10px;
     background-repeat: no-repeat;
     width: 13px;
@@ -1043,6 +1046,7 @@ a.ygtvspacer:hover {
 .fp-formset .control-label {
     font-size: @font-size-base;
     line-height: @line-height-base;
+    font-weight: normal;
 }
 .fp-formset .controls {
     input[type="text"],
@@ -1053,5 +1057,44 @@ a.ygtvspacer:hover {
 
 .fp-formset {
     margin: 0 15px;
+}
+
+ .fp-forminset {
+    max-width: 400px;
+    padding: 0 10px;
+    .control-group.control-radio {
+        margin-bottom: 0;
+    }
+    .control-group {
+        label.control-label {
+           width: 105px;
+           font-weight: normal;
+           float: left;
+        }
+        label.control-radio {
+            padding-top: 0;
+            float: right;
+            text-align: left;
+            width: 215px;
+            font-weight: normal;
+        }
+        .controls {
+            margin-left: 125px;
+        }
+        .controls.control-radio input {
+                margin-top: 3px;
+        }
+    }
+    .fp-select-buttons {
+        float: none;
+    }
+    input[type="text"] {
+        width: 228px;
+    }
+}
+
+.fp-fileinfo .fp-value {
+    display: inline-block;
+    padding-left: 5px;
 }
 

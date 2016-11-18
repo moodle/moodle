@@ -1,5 +1,5 @@
 <?php
-// This file is part of The Bootstrap 3 Moodle theme
+// This file is part of The Bootstrap Moodle theme
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 /**
  * Renderers to align Moodle's HTML with that expected by Bootstrap
  *
- * @package    theme_iomadbootstrap
+ * @package    theme_bootstrap
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -43,12 +43,12 @@ class theme_iomadbootstrap_core_course_management_renderer extends core_course_m
     public function grid_column_start($size, $id = null, $class = null) {
 
         // Calculate Bootstrap grid sizing.
-        $iomadbootstrapclass = 'col-md-'.$size;
+        $bootstrapclass = 'col-md-'.$size;
 
         if (is_null($class)) {
-            $class = $iomadbootstrapclass;
+            $class = $bootstrapclass;
         } else {
-            $class .= ' ' . $iomadbootstrapclass;
+            $class .= ' ' . $bootstrapclass;
         }
         $attributes = array();
         if (!is_null($id)) {

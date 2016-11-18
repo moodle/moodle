@@ -1,0 +1,205 @@
+// Core Feedback CSS
+span.feedback_info {
+    font-weight:bold;
+}
+div.feedback_depend {
+    background:#DDDDDD;
+}
+div.feedback_complete_depend {
+    background:#EEEEEE;
+}
+span.feedback_depend {
+    color:#ff0000;
+}
+li.feedback_item_check_h_left {
+    display:inline;
+    list-style-type:none;
+}
+li.feedback_item_check_h_right {
+    display:inline;
+    list-style-type:none;
+}
+li.feedback_item_radio_h_left {
+    display:inline;
+    list-style-type:none;
+}
+li.feedback_item_radio_h_right {
+    display:inline;
+    list-style-type:none;
+}
+li.feedback_item_check_v_left {
+    display:block;
+    list-style-type:none;
+}
+li.feedback_item_check_v_right {
+    display:block;
+    list-style-type:none;
+}
+li.feedback_item_radio_v_left {
+    display:block;
+    list-style-type:none;
+}
+li.feedback_item_radio_v_right {
+    display:block;
+    list-style-type:none;
+}
+div.feedback_item_captcha_text_left {
+    display:inline;
+    margin: 5px;
+}
+div.feedback_item_captcha_img_left {
+    display:inline;
+    margin: 5px;
+}
+div.feedback_item_captcha_text_right {
+    display:inline;
+    margin: 5px;
+}
+div.feedback_item_captcha_img_right {
+    display:inline;
+    margin: 5px;
+}
+hr.feedback_pagebreak {
+    background-color:#aaaaaa;
+    border:0px;
+    color:#aaaaaa;
+    height:8px;
+}
+.drag_target_active {
+    opacity: .25;
+}
+.drag_item_active {
+    opacity: .5;
+}
+ul#feedback_draglist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+div#feedback_dragarea {
+    width:95%;
+}
+div {
+    img.feedback_bar_image {
+        height: 10px;
+    }
+}
+
+.path-mod-feedback {
+    input {
+        width: auto;
+    }
+    textarea {
+        width: auto;
+    }
+    .uneditable-input {
+        width: auto;
+    }
+}
+
+// Custom Feedback CSS
+.path-mod-feedback {
+    .feedback_itemlist {
+        border-top: 1px solid #EEEEEE;
+        margin: 10px 0;
+        padding-top: 5px;
+        .itemhandle {
+            display: block;
+            position: absolute;
+            z-index: 1;
+        }
+    }
+    .feedback_item_box_left {
+        &:extend(.form-group);
+        &:extend(.form-horizontal .form-group);
+        margin-left: 0;
+        margin-right: 0;
+        .boxalign_left {
+            .no-overflow {
+                width: 100%;
+                padding: 0 15px;
+            }
+        }
+    }
+    #feedback_dragarea {
+        .feedback_item_box_left {
+            margin-left: 20px;
+        }
+    }
+
+    div.feedback_item_label_left {
+        margin: 0;
+        .make-md-column(4);
+        .make-lg-column(3);
+        label {
+            font-weight: normal;
+        }
+    }
+    div.feedback_item_presentation_left {
+        margin: 0;
+        .make-md-column(8);
+        .make-lg-column(9);
+        ul {
+            margin: 0;
+            padding-top: 5px;
+        }
+        .boxalignleft {
+            margin-left: 0;
+            padding-top: 5px;
+        }
+    }
+
+    .feedback_form {
+        input[type="submit"] {
+            .btn-success;
+        }
+    }
+    #id_save_item,
+    #id_update_item {
+        .btn-success;
+    }
+
+    .fitem_fgroup {
+        input[type="checkbox"] {
+            vertical-align: middle;
+        }
+    }
+    div.error {
+        background-color: #FFAAAA;
+        display: inline-block;
+    }
+    .feedback_complete_cancel {
+        button[type="submit"] {
+            .btn-warning;
+        }
+    }
+    .boxalign_left {
+        position: relative;
+    }
+    textarea {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 100%;
+    }
+}
+#page-mod-feedback-analysis {
+    th {
+        background: #F7F7F7;
+        text-align: left;
+    }
+    div.form-buttons {
+        border-top: #EEEEEE 1px solid;
+        margin-left: 0;
+        padding-top: 10px;
+    }
+}
+#page-mod-feedback-edit {
+    input[type="submit"] {
+        .btn-warning;
+    }
+}
+
+div.feedback_item_commands_left {
+    text-align: right;
+}

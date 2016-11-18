@@ -1,5 +1,5 @@
 <?php
-// This file is part of The Bootstrap 3 Moodle theme
+// This file is part of The Bootstrap Moodle theme
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,57 +23,53 @@ $knownregionpost = $PAGE->blocks->is_known_region('side-post');
 
 $regions = iomadbootstrap_grid($hassidepre, $hassidepost);
 $PAGE->set_popup_notification_allowed(false);
-if ($knownregionpre || $knownregionpost) {
-    theme_iomadbootstrap_initialise_zoom($PAGE);
-}
-$setzoom = theme_iomadbootstrap_get_zoom();
-
-$settingshtml = theme_iomadbootstrap_html_for_settings($PAGE);
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
 <head>
     <title><?php echo $OUTPUT->page_title(); ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>" />
-    <?php echo $settingshtml->brandfontlink; ?>
     <?php echo $OUTPUT->standard_head_html(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui">
-    <style><?php echo $settingshtml->companycss ?></style>
 </head>
 
-<body <?php echo $OUTPUT->body_attributes($setzoom); ?>>
+<body <?php echo $OUTPUT->body_attributes(); ?>>
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<nav role="navigation" class="<?php echo $settingshtml->navbarclass ?>">
-    <div class="container-fluid">
+<nav role="navigation" class="navbar navbar-default">
+    <div class="container">
     <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#moodle-navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="<?php echo $CFG->wwwroot;?>"><?php echo $SITE->shortname; ?></a>
+        <?php echo $OUTPUT->navbar_button(); ?>
+        <span class="navbar-brand"><?php echo $SITE->shortname; ?></span>
     </div>
 
     <div id="moodle-navbar" class="navbar-collapse collapse">
-        <?php echo $OUTPUT->custom_menu(); ?>
-        <?php echo $OUTPUT->user_menu(); ?>
         <ul class="nav pull-right">
             <li><?php echo $OUTPUT->page_heading_menu(); ?></li>
+            <li class="navbar-text"><?php echo $OUTPUT->login_info(false) ?></li>
         </ul>
     </div>
     </div>
 </nav>
 <header class="moodleheader">
-    <div class="container-fluid">
+    <div class="container">
     <a href="<?php echo $CFG->wwwroot ?>" class="logo"></a>
     <?php echo $OUTPUT->page_heading(); ?>
-    <?php echo $settingshtml->heading; ?>
     </div>
 </header>
 
+<div id="page" class="container">
+    <header id="page-header" class="clearfix">
+        <div id="page-navbar" class="clearfix">
+            <?php echo $OUTPUT->navbar(); ?>
+            <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>
+        </div>
+
+        <div id="course-header">
+            <?php echo $OUTPUT->course_header(); ?>
+        </div>
+    </header>
 
     <div id="page-content" class="row">
         <div id="region-main" class="<?php echo $regions['content']; ?>">
@@ -94,16 +90,6 @@ echo $OUTPUT->doctype() ?>
             echo $OUTPUT->blocks('side-post', $regions['post']);
         }?>
     </div>
-
-    <footer id="page-footer">
-        <div id="course-footer"><?php echo $OUTPUT->course_footer(); ?></div>
-        <p class="helplink"><?php echo $OUTPUT->page_doc_link(); ?></p>
-        <?php
-        echo $OUTPUT->login_info();
-        echo $OUTPUT->home_link();
-        echo $OUTPUT->standard_footer_html();
-        ?>
-    </footer>
 
     <?php echo $OUTPUT->standard_end_of_body_html() ?>
 

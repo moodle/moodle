@@ -1,7 +1,0 @@
-{
-  "moodle-theme_bootstrap-zoom": {
-    "requires": [
-        "node"
-    ]
-  }
-}

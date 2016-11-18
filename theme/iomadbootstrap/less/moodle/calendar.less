@@ -279,6 +279,27 @@
 }
 
 // Block minicalendar.
+.block.block_calendar_month {
+    th, td {
+        border: 1px solid #ddd;
+    }
+    .content {
+        padding: 11px 0 0 0;
+    }
+    td.today {
+        background-color: @brand-primary;
+        color: #FFF;
+        a {
+            color: #FFF;
+        }
+        .calendar-event-panel {
+            color: @text-color;
+        }
+    }
+    td {
+        width: (100/7)*1%;
+    }
+}
 .block {
     .minicalendar {
         max-width: 280px;
