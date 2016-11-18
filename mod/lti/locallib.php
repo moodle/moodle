@@ -1193,6 +1193,10 @@ function lti_get_url_thumbprint($url) {
         $urlparts['path'] = '';
     }
 
+    if (!isset($urlparts['query'])) {
+        $urlparts['query'] = '';
+    }
+
     if (!isset($urlparts['host'])) {
         $urlparts['host'] = '';
     }
@@ -1201,7 +1205,13 @@ function lti_get_url_thumbprint($url) {
         $urlparts['host'] = substr($urlparts['host'], 4);
     }
 
-    return $urllower = $urlparts['host'] . '/' . $urlparts['path'];
+    $urllower = $urlparts['host'] . '/' . $urlparts['path'];
+
+    if ($urlparts['query'] != '') {
+        $urllower .= '?' . $urlparts['query'];
+    }
+
+    return $urllower;
 }
 
 function lti_get_best_tool_by_url($url, $tools, $courseid = null) {
