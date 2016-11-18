@@ -2232,7 +2232,7 @@ class theme_config {
     public function get_css_tree_post_processor() {
         $configs = [$this] + $this->parent_configs;
         foreach ($configs as $config) {
-            if ($config->csstreepostprocessor && is_callable($config->csstreepostprocessor)) {
+            if (!empty($config->csstreepostprocessor) && is_callable($config->csstreepostprocessor)) {
                 return $config->csstreepostprocessor;
             }
         }
