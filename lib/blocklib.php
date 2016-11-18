@@ -42,6 +42,14 @@ define('BUI_CONTEXTS_ENTIRE_SITE', 2);
 define('BUI_CONTEXTS_CURRENT', 0);
 define('BUI_CONTEXTS_CURRENT_SUBS', 1);
 
+// Position of "Add block" control, to be used in theme config as a value for $THEME->addblockposition:
+// - default: as a fake block that is displayed in editing mode
+// - flatnav: "Add block" item in the flat navigation drawer in editing mode
+// - custom: none of the above, theme will take care of displaying the control.
+define('BLOCK_ADDBLOCK_POSITION_DEFAULT', 0);
+define('BLOCK_ADDBLOCK_POSITION_FLATNAV', 1);
+define('BLOCK_ADDBLOCK_POSITION_CUSTOM', -1);
+
 /**
  * Exception thrown when someone tried to do something with a block that does
  * not exist on a page.
@@ -216,10 +224,12 @@ class block_manager {
                     ($bi->instance_allow_multiple() || !$this->is_block_present($block->name)) &&
                     blocks_name_allowed_in_format($block->name, $pageformat) &&
                     $bi->user_can_addto($this->page)) {
+                $block->title = $bi->get_title();
                 $this->addableblocks[$block->name] = $block;
             }
         }
 
+        core_collator::asort_objects_by_property($this->addableblocks, 'title');
         return $this->addableblocks;
     }
 
@@ -1141,7 +1151,8 @@ class block_manager {
                 $contents = $this->extracontent[$region];
             }
             $contents = array_merge($contents, $this->create_block_contents($this->blockinstances[$region], $output, $region));
-            if ($region == $this->defaultregion) {
+            if (($region == $this->defaultregion) && (!isset($this->page->theme->addblockposition) ||
+                    $this->page->theme->addblockposition == BLOCK_ADDBLOCK_POSITION_DEFAULT)) {
                 $addblockui = block_add_block_ui($this->page, $output);
                 if ($addblockui) {
                     $contents[] = $addblockui;
@@ -1286,8 +1297,10 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_add() {
+        global $CFG, $PAGE, $OUTPUT;
+
         $blocktype = optional_param('bui_addblock', null, PARAM_PLUGIN);
-        if (!$blocktype) {
+        if ($blocktype === null) {
             return false;
         }
 
@@ -1297,7 +1310,54 @@ class block_manager {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('addblock'));
         }
 
-        if (!array_key_exists($blocktype, $this->get_addable_blocks())) {
+        $addableblocks = $this->get_addable_blocks();
+
+        if ($blocktype === '') {
+            // Display add block selection.
+            $addpage = new moodle_page();
+            $addpage->set_pagelayout('admin');
+            $addpage->blocks->show_only_fake_blocks(true);
+            $addpage->set_course($this->page->course);
+            $addpage->set_context($this->page->context);
+            if ($this->page->cm) {
+                $addpage->set_cm($this->page->cm);
+            }
+
+            $addpagebase = str_replace($CFG->wwwroot . '/', '/', $this->page->url->out_omit_querystring());
+            $addpageparams = $this->page->url->params();
+            $addpage->set_url($addpagebase, $addpageparams);
+            $addpage->set_block_actions_done();
+            // At this point we are going to display the block selector, overwrite global $PAGE ready for this.
+            $PAGE = $addpage;
+            // Some functions use $OUTPUT so we need to replace that too.
+            $OUTPUT = $addpage->get_renderer('core');
+
+            $site = get_site();
+            $straddblock = get_string('addblock');
+
+            $PAGE->navbar->add($straddblock);
+            $PAGE->set_title($straddblock);
+            $PAGE->set_heading($site->fullname);
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading($straddblock);
+
+            if (!$addableblocks) {
+                echo $OUTPUT->box(get_string('noblockstoaddhere'));
+                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('back')), 'm-x-3 m-b-1');
+            } else {
+                foreach ($addableblocks as $blockname => $block) {
+                    $url = new moodle_url($addpage->url, array('sesskey' => sesskey(), 'bui_addblock' => $blockname));
+                    echo $OUTPUT->container($OUTPUT->single_button($url, $block->title), 'm-x-3 m-b-1');
+                }
+                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('cancel')), 'm-x-3 m-b-1');
+            }
+
+            echo $OUTPUT->footer();
+            // Make sure that nothing else happens after we have displayed this form.
+            exit;
+        }
+
+        if (!array_key_exists($blocktype, $addableblocks)) {
             throw new moodle_exception('cannotaddthisblocktype', '', $this->page->url->out(), $blocktype);
         }
 
@@ -1332,6 +1392,7 @@ class block_manager {
         if (!$confirmdelete) {
             $deletepage = new moodle_page();
             $deletepage->set_pagelayout('admin');
+            $deletepage->blocks->show_only_fake_blocks(true);
             $deletepage->set_course($this->page->course);
             $deletepage->set_context($this->page->context);
             if ($this->page->cm) {
@@ -1452,6 +1513,7 @@ class block_manager {
 
         $editpage = new moodle_page();
         $editpage->set_pagelayout('admin');
+        $editpage->blocks->show_only_fake_blocks(true);
         $editpage->set_course($this->page->course);
         //$editpage->set_context($block->context);
         $editpage->set_context($this->page->context);
@@ -2072,12 +2134,8 @@ function block_add_block_ui($page, $output) {
 
     $menu = array();
     foreach ($missingblocks as $block) {
-        $blockobject = block_instance($block->name);
-        if ($blockobject !== false && $blockobject->user_can_addto($page)) {
-            $menu[$block->name] = $blockobject->get_title();
-        }
+        $menu[$block->name] = $block->title;
     }
-    core_collator::asort($menu);
 
     $actionurl = new moodle_url($page->url, array('sesskey'=>sesskey()));
     $select = new single_select($actionurl, 'bui_addblock', $menu, null, array(''=>get_string('adddots')), 'add_block');

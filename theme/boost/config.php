@@ -152,3 +152,4 @@ $THEME->prescsscallback = 'theme_boost_get_pre_scss';
 $THEME->yuicssmodules = array();
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->undeletableblocktypes = '';
+$THEME->addblockposition = BLOCK_ADDBLOCK_POSITION_FLATNAV;

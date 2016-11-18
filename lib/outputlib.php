@@ -546,7 +546,7 @@ class theme_config {
             'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'uarrow', 'darrow',
             'hidefromselector', 'doctype', 'yuicssmodules', 'blockrtlmanipulations',
             'lessfile', 'extralesscallback', 'lessvariablescallback', 'blockrendermethod',
-            'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor');
+            'scss', 'extrascsscallback', 'prescsscallback', 'csstreepostprocessor', 'addblockposition');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {

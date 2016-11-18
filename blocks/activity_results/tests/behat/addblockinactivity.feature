@@ -83,16 +83,19 @@ Scenario: Block should select current activity by default
     When I add the "Activity results" block
     And I configure the "Activity results" block
     Then the field "id_config_activitygradeitemid" matches value "Test assignment 1"
+    And I press "Cancel"
     And I follow "Course 1"
     And I follow "Test assignment 2"
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "id_config_activitygradeitemid" matches value "Test assignment 2"
+    And I press "Cancel"
     And I follow "Course 1"
     And I follow "Test assignment 3"
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "id_config_activitygradeitemid" matches value "Test assignment 3"
+    And I press "Cancel"
     And I follow "Course 1"
     And I follow "Test page name"
     And I add the "Activity results" block
