@@ -162,7 +162,7 @@ a.autolink.glossary:hover {
 }
 /*rtl:raw:
 .collapsible-actions .collapseexpand {
-    background: url([[pix:t/collapsed_rtl]]);
+    background: url([[pix:t/collapsed_rtl]]) right center no-repeat;
 }
 */
 .collapsible-actions .collapse-all {
@@ -13833,7 +13833,7 @@ form {
 .mform fieldset.collapsible legend a.fheader {
   padding: 0 5px 0 20px;
   margin-left: -20px;
-  background: url([[pix:t/expanded]]) 2px center no-repeat;
+  background: url([[pix:t/expanded]]) left center no-repeat;
 }
 .mform fieldset.collapsed legend a.fheader {
   /*rtl:raw:
