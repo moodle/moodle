@@ -166,8 +166,13 @@ class api {
             // First settings that anyone can deduce.
             $settings->fullname = external_format_string($SITE->fullname, $context->id);
             $settings->shortname = external_format_string($SITE->shortname, $context->id);
-            list($settings->summary, $settings->summaryformat) = external_format_text($SITE->summary, $SITE->summaryformat,
+
+            // Return to a var instead of directly to $settings object because of differences between
+            // list() in php5 and php7. {@link http://php.net/manual/en/function.list.php}
+            $formattedsummary = external_format_text($SITE->summary, $SITE->summaryformat,
                                                                                         $context->id);
+            $settings->summary = $formattedsummary[0];
+            $settings->summaryformat = $formattedsummary[1];
             $settings->frontpage = $CFG->frontpage;
             $settings->frontpageloggedin = $CFG->frontpageloggedin;
             $settings->maxcategorydepth = $CFG->maxcategorydepth;
