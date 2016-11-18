@@ -2406,5 +2406,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016110600.00);
     }
 
+    if ($oldversion < 2016111900.00) {
+
+        // Define field requiredbytheme to be added to block_instances.
+        $table = new xmldb_table('block_instances');
+        $field = new xmldb_field('requiredbytheme', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'showinsubcontexts');
+
+        // Conditionally launch add field requiredbytheme.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016111900.00);
+    }
+
     return true;
 }
