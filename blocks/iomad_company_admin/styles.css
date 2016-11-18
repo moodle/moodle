@@ -9,6 +9,10 @@
 div.iomadlink_container {
     min-height: 100px;
     position: relative;
+    /* top: -30px; */
+    }
+
+div.block_iomad_company_admin div.iomadlink_container {
     top: -30px;
     }
 
