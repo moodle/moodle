@@ -3934,7 +3934,7 @@ function course_check_module_updates_since($cm, $from, $fileareas = array(), $fi
     }
     if (!empty($fileareas) and (empty($filter) or in_array('fileareas', $filter))) {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, $component, $fileareas, false, "filearea, timemodified DESC", true, $from);
+        $files = $fs->get_area_files($context->id, $component, $fileareas, false, "filearea, timemodified DESC", false, $from);
         foreach ($fileareas as $filearea) {
             $updates->{$filearea . 'files'} = (object) array('updated' => false);
         }
