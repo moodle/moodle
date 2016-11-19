@@ -8,6 +8,7 @@ require_once("lib.php");
 $id            = required_param('id', PARAM_INT);                     // Course Module ID
 $sortorder     = optional_param('sortorder', 'asc', PARAM_ALPHA);     // Sorting order
 $offset        = optional_param('offset', 0, PARAM_INT);              // number of entries to bypass
+$pagelimit     = optional_param('pagelimit', 0, PARAM_INT);           // Number of entries per page, 0 if unlimited.
 $displayformat = optional_param('displayformat',-1, PARAM_INT);
 
 $mode    = required_param('mode', PARAM_ALPHA);             // mode to show the entries
@@ -47,8 +48,8 @@ if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
     print_error('invalidid', 'glossary');
 }
 
-if ( !$entriesbypage = $glossary->entbypage ) {
-    $entriesbypage = $CFG->glossary_entbypage;
+if ($pagelimit < 0) {
+    $pagelimit = 0;
 }
 
 require_course_login($course, true, $cm);
