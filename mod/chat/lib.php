@@ -448,7 +448,8 @@ function chat_refresh_events($courseid = 0) {
         if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
             $calendarevent = calendar_event::load($event->id);
             $calendarevent->update($event);
-        } else {
+        } else if ($chat->schedule > 0) {
+            // The chat is scheduled and the event should be published.
             $event->courseid    = $chat->course;
             $event->groupid     = 0;
             $event->userid      = 0;
