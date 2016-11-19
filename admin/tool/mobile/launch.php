@@ -94,7 +94,8 @@ $isios = core_useragent::is_ios();
 if ($confirmed or $isios) {
     $PAGE->set_context(context_system::instance());
     $PAGE->set_heading($COURSE->fullname);
-    $PAGE->set_url('/local/mobile/launch.php', array('service' => $serviceshortname, 'passport' => $passport, 'urlscheme' => $urlscheme));
+    $params = array('service' => $serviceshortname, 'passport' => $passport, 'urlscheme' => $urlscheme, 'confirmed' => $confirmed);
+    $PAGE->set_url("/$CFG->admin/tool/mobile/launch.php", $params);
 
     echo $OUTPUT->header();
     if ($confirmed) {
