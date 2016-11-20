@@ -49,7 +49,7 @@ function mycourses_get_my_completion($datefrom = 0) {
                                           WHERE cc.userid = :userid
                                           AND c.visible = 1
                                           AND cc.timecompleted IS NULL
-                                          AND cc.timeenrolled != 0",
+                                          AND ue.timestart != 0",
                                           array('userid' => $USER->id));
 
     // We dont care about these.  If you have enrolled then you are started.

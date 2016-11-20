@@ -175,6 +175,10 @@ foreach ($usercourses as $usercourse) {
         $usercourseid = $usercourse->id;
 
         // Check if the course is also in progress.
+
+        if (empty($usercompletion[$usercourse->id]->data[$usercourseid]->completion)) {
+            continue;
+        }
         foreach ($usercompletion[$usercourse->id]->data[$usercourseid]->completion as $usercompcourse) {
 
             // Get the completion summary.

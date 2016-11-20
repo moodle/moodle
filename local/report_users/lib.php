@@ -192,12 +192,14 @@ class userrep {
 
         // Populate it.
         $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
-                          SELECT cc.userid, cc.course, cc.timeenrolled, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
+                          SELECT cc.userid, cc.course, ue.timestart, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
                           FROM {course_completions} cc LEFT JOIN {grade_grades} gg ON (gg.userid = cc.userid)
                           JOIN {grade_items} gi
                           ON (cc.course = gi.courseid
                           AND gg.itemid = gi.id
                           AND gi.itemtype = 'course')
+                          JOIN {user_enrolments} ue ON (cc.userid = ue.userid)
+                          JOIN {enrol} e ON (cc.course = e.courseid AND e.id = ue.enrolid)
                           WHERE cc.userid = :userid ";
         if (!empty($courseid)) {
             $tempcreatesql .= " AND cc.course = ".$courseid;

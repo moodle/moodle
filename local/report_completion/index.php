@@ -466,7 +466,6 @@ if (empty($charttype)) {
                              'lastname',
                              'department',
                              'email',
-                             'timecreated',
                              'status',
                              'timeenrolled',
                              'timestarted',
@@ -477,7 +476,6 @@ if (empty($charttype)) {
                              'lastname',
                              'department',
                              'email',
-                             'timecreated',
                              'status',
                              'timeenrolled',
                              'timestarted',
@@ -514,7 +512,6 @@ if (empty($charttype)) {
             }
             echo '"'.get_string('name', 'local_report_completion').'","'
                  .get_string('email', 'local_report_completion').'","'
-                 .get_string('timecreated', 'local_report_completion').'","'
                  .get_string('course').'","'
                  .get_string('department', 'block_iomad_company_admin').'","'
                  .get_string('status', 'local_report_completion').'","'
@@ -544,8 +541,6 @@ if (empty($charttype)) {
             $linkparams['sort'] = 'department';
             $departmenturl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'email';
-            $emailurl = new moodle_url('index.php', $linkparams);
-            $linkparams['sort'] = 'timecreated';
             $emailurl = new moodle_url('index.php', $linkparams);
             $linkparams['sort'] = 'status';
             $statusurl = new moodle_url('index.php', $linkparams);
@@ -595,15 +590,6 @@ if (empty($charttype)) {
                     } else {
                         $linkparams['dir'] = 'ASC';
                         $emailurl = new moodle_url('index.php', $linkparams);
-                    }
-                } else if ($params['sort'] == 'timecreated') {
-                    $linkparams['sort'] = 'timecreated';
-                    if ($params['dir'] == 'ASC') {
-                        $linkparams['dir'] = 'DESC';
-                        $timecreatedurl = new moodle_url('index.php', $linkparams);
-                    } else {
-                        $linkparams['dir'] = 'ASC';
-                        $timecreatedurl = new moodle_url('index.php', $linkparams);
                     }
                 } else if ($params['sort'] == 'status') {
                     $linkparams['sort'] = 'status';
@@ -658,7 +644,6 @@ if (empty($charttype)) {
         if (!$showexpiry) {
             $compusertable->head = array ($fullnamedisplay,
                                           $OUTPUT->action_link($emailurl, $email),
-                                          $OUTPUT->action_link($timecreatedurl, $timecreated),
                                           get_string('course'),
                                           $OUTPUT->action_link($departmenturl, $department),
                                           $OUTPUT->action_link($timeenrolledurl, $timeenrolled),
@@ -670,7 +655,6 @@ if (empty($charttype)) {
         } else {
             $compusertable->head = array ($fullnamedisplay,
                                           $OUTPUT->action_link($emailurl, $email),
-                                          $OUTPUT->action_link($timecreatedurl, $timecreated),
                                           get_string('course'),
                                           $OUTPUT->action_link($departmenturl, $department),
                                           $OUTPUT->action_link($timeenrolledurl, $timeenrolled),
@@ -701,13 +685,6 @@ if (empty($charttype)) {
                 }
                 if (!empty($user->timecompleted)) {
                     $statusstring = get_string('completed', 'local_report_completion');
-                }
-
-                // Get the timecreated date information.
-                if (!empty($user->timecreated)) {
-                    $createdtime = date('Y-m-d', $user->timecreated);
-                } else {
-                    $createdtime = "";
                 }
 
                 // Get the completion date information.
@@ -759,12 +736,6 @@ if (empty($charttype)) {
                                 // create the file download link.
                                 $coursecontext = context_course::instance($courseid);
                                 $certtabledata = "<a class=\"btn btn-info\" href='".
-                                              /*moodle_url::make_pluginfile_url($coursecontext->id,
-                                                                               'local_iomad_track',
-                                                                               'issue',
-                                                                               $traccertrec->trackid,
-                                                                               '/',
-                                                                               $traccertrec->filename) .*/
                                                moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename) .
                                               "'>" . get_string('downloadcert', 'local_report_users').
                                               "</a>";
@@ -779,7 +750,6 @@ if (empty($charttype)) {
                                                                                         'courseid' => $courseid)).
                                                        "'>$user->fullname</a>",
                                                         $user->email,
-                                                        $createdtime,
                                                         $user->coursename,
                                                         $user->department,
                                                         $enrolledtime,
@@ -794,7 +764,6 @@ if (empty($charttype)) {
                                                                                         'courseid' => $courseid)).
                                                        "'>$user->fullname</a>",
                                                         $user->email,
-                                                        $createdtime,
                                                         $user->coursename,
                                                         $user->department,
                                                         $enrolledtime,
@@ -812,7 +781,6 @@ if (empty($charttype)) {
                                                                                         'courseid' => $courseid)).
                                                        "'>$user->fullname</a>",
                                                         $user->email,
-                                                        $createdtime,
                                                         $user->coursename,
                                                         $user->department,
                                                         $enrolledtime,
@@ -826,7 +794,6 @@ if (empty($charttype)) {
                                                                                         'courseid' => $courseid)).
                                                        "'>$user->fullname</a>",
                                                         $user->email,
-                                                        $createdtime,
                                                         $user->coursename,
                                                         $user->department,
                                                         $enrolledtime,
@@ -841,7 +808,6 @@ if (empty($charttype)) {
                     if (!$showexpiry) {
                         echo '"'.$user->fullname.
                              '","'.$user->email.
-                             '","'.$createdtime.
                              '","'.$user->coursename.
                              '","'.$user->department.
                              '","'.$statusstring.
@@ -853,7 +819,6 @@ if (empty($charttype)) {
                     } else {
                         echo '"'.$user->fullname.
                              '","'.$user->email.
-                             '","'.$createdtime.
                              '","'.$user->coursename.
                              '","'.$user->department.
                              '","'.$statusstring.

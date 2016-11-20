@@ -33,12 +33,12 @@ class block_mycourses_renderer extends plugin_renderer_base {
         global $OUTPUT, $CFG; 
 
         //  Block info header.
-        $returntext = '<div class="header"><h2>'.
+        $returntext = '<div class="header" id="mycourses_title"><h2>'.
               get_string('mycoursesheader', 'block_mycourses').
               '</h2></div>';
 
         // Not started courses header block.
-        $returntext .= '<div class="header"><h2>'.
+        $returntext .= '<div class="header" id="mycourses_notstarted"><h2>'.
               get_string('notstartedheader', 'block_mycourses').
               '</h2></div>';
 
@@ -74,7 +74,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
         $returntext .= '</div>';
 
         // In progress courses header block.
-        $returntext .= '<div class="header"><h2>'.
+        $returntext .= '<div class="header" id="mycourses_inprogress"><h2>'.
               get_string('inprogressheader', 'block_mycourses').
               '</h2></div>';
 
@@ -97,7 +97,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
         $returntext .= '</div>';
 
         // Completed courses header block.
-        $returntext .= '<div class="header"><h2>'.
+        $returntext .= '<div class="header" id="mycourses_completed"><h2>'.
               get_string('completedheader', 'block_mycourses').
               '</h2></div>';
 
@@ -144,7 +144,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
         global $OUTPUT, $CFG; 
 
         //  Block info header.
-        $returntext = '<div class="header"><h2>'.
+        $returntext = '<div class="header" id="mycourses_archive"><h2>'.
               get_string('myarchiveheader', 'block_mycourses').
               '</h2></div>';
 

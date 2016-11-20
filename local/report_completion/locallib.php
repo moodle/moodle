@@ -69,10 +69,12 @@ class report_completion {
         foreach ($courses as $course) {
             $courseobj = new stdclass();
             $courseobj->id = $course->courseid;
-            $courseobj->numenrolled = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
-                                                   JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
+
+            $courseobj->numenrolled = $DB->count_records_sql("SELECT COUNT(ue.id) FROM {user_enrolments} ue
+                                                   JOIN {enrol} e ON (e.id = ue.enrolid)
+                                                   JOIN {".$temptablename."} tt ON (ue.userid = tt.userid)
                                                    WHERE
-                                                   cc.course = :course", array('course' => $course->courseid));
+                                                   e.courseid = :course", array('course' => $course->courseid));
             $courseobj->numnotstarted = $DB->count_records_sql("SELECT COUNT(cc.id) FROM {course_completions} cc
                                                    JOIN {".$temptablename."} tt ON (cc.userid = tt.userid)
                                                    WHERE
@@ -239,7 +241,7 @@ class report_completion {
         // Get the user details.
         $shortname = addslashes($course->shortname);
         $countsql = "SELECT cc.id,
-                     cc.timeenrolled,
+                     ue.timestart AS timeenrolled,
                      cc.timestarted,
                      cc.timecompleted,
                      cc.finalscore ";
@@ -249,16 +251,18 @@ class report_completion {
                       u.email AS email,
                       '{$shortname}' AS coursename,
                       '$courseid' AS courseid,
-                      cc.timeenrolled AS timeenrolled,
+                      ue.timestart AS timeenrolled,
                       cc.timestarted AS timestarted,
                       cc.timecompleted AS timecompleted,
                       cc.certsource as certsource,
                       d.name as department,
                       cc.finalscore as result ";
-        $fromsql = " FROM {user} u, {".$tempcomptablename."} cc, {department} d, {company_users} du
+        $fromsql = " FROM {user} u, {".$tempcomptablename."} cc, {department} d, {company_users} du, {user_enrolments} ue, {enrol} e
                     WHERE $searchinfo->sqlsearch
                     AND cc.userid = u.id
                     AND u.id = cc.userid
+                    AND e.courseid = cc.courseid
+                    AND ue.userid = cc.userid
                     AND du.userid = u.id
                     AND d.id = du.departmentid
                     $completionsql ";
@@ -325,16 +329,18 @@ class report_completion {
                 u.email AS email,
                 co.shortname AS coursename,
                 co.id AS courseid,
-                cc.timeenrolled AS timeenrolled,
+                ue.timestart AS timeenrolled,
                 cc.timestarted AS timestarted,
                 cc.timecompleted AS timecompleted,
                 cc.finalscore AS result,
                 d.name AS department";
-        $fromsql = " FROM {user} u, {".$tempcomptablename."} cc, {department} d, {company_users} du, {course} co
+        $fromsql = " FROM {user} u, {".$tempcomptablename."} cc, {department} d, {company_users} du, {course} co, {user_enrolments} ue, {enrol} e
 
                 WHERE $searchinfo->sqlsearch
                 AND co.id = cc.courseid
                 AND u.id = cc.userid
+                AND e.courseid = cc.courseid
+                AND ue.userid = cc.userid
                 AND du.userid = u.id
                 AND d.id = du.departmentid
                 $completionsql

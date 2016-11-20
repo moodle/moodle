@@ -28,7 +28,7 @@ require_once('locallib.php');
 class block_mycourses extends block_base {
 
     function init() {
-                                                                                                                                                                                                                                                                                                        $this->title = '';
+        $this->title = '';
     }
 
     function get_content() {
@@ -78,10 +78,8 @@ class block_mycourses extends block_base {
     function has_config() {return true;}
 
     public function cron() {
-            mtrace( "Hey, my cron script is running" );
-             
-                 // do something
-                  
-                      return true;
+        mtrace( "Hey, my cron script is running" );
+        // do something
+        return true;
     }
 }
