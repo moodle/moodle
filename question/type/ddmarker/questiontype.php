@@ -124,7 +124,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
                                     array('questionid' => $formdata->id),
                                     '', 'no, id');
         foreach (array_keys($formdata->drags) as $dragno) {
-            if (!empty($formdata->drags[$dragno]['label'])) {
+            if ($formdata->drags[$dragno]['label'] !== '') {
                 $drag = new stdClass();
                 $drag->questionid = $formdata->id;
                 $drag->no = $dragno + 1;
@@ -144,10 +144,9 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
                 } else {
                     $drag->id = $DB->insert_record('qtype_ddmarker_drags', $drag);
                 }
-
             }
-
         }
+
         if (!empty($olddragids)) {
             list($sql, $params) = $DB->get_in_or_equal(array_values($olddragids));
             $DB->delete_records_select('qtype_ddmarker_drags', "id $sql", $params);
