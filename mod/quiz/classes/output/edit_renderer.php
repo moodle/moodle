@@ -163,11 +163,11 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= html_writer::start_tag('fieldset', array('class' => 'invisiblefieldset'));
         $output .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
         $output .= html_writer::input_hidden_params($pageurl);
-        $a = html_writer::empty_tag('input', array('type' => 'text', 'id' => 'inputmaxgrade',
+        $output .= html_writer::tag('label', get_string('maximumgrade') . ' ',
+                array('for' => 'inputmaxgrade'));
+        $output .= html_writer::empty_tag('input', array('type' => 'text', 'id' => 'inputmaxgrade',
                 'name' => 'maxgrade', 'size' => ($structure->get_decimal_places_for_grades() + 2),
                 'value' => $structure->formatted_quiz_grade()));
-        $output .= html_writer::tag('label', get_string('maximumgradex', '', $a),
-                array('for' => 'inputmaxgrade'));
         $output .= html_writer::empty_tag('input', array('type' => 'submit',
                 'name' => 'savechanges', 'value' => get_string('save', 'quiz')));
         $output .= html_writer::end_tag('fieldset');
