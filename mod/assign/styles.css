@@ -927,14 +927,6 @@
     display: table-row;
 }
 
-.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem .fitemtitle,
-.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem .felement {
-    display: table-cell;
-    float: none;
-    border-top: 1px solid #ddd;
-    padding: 8px 0;
-}
-
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem:last-of-type .fitemtitle,
 .path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem:last-of-type .felement {
     border-bottom: 1px solid #ddd;

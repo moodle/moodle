@@ -14459,6 +14459,13 @@ body.modal-open {
 select {
   width: auto;
 }
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem .fitemtitle,
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem .felement {
+  display: table-cell;
+  float: none;
+  border-top: 1px solid #ddd;
+  padding: 8px 0;
+}
 .path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
   display: block;
   margin-top: 4px;
