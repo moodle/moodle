@@ -2935,11 +2935,19 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertTrue($navoptions->tags);
         $this->assertFalse($navoptions->search);
         $this->assertTrue($navoptions->calendar);
+        $this->assertTrue($navoptions->competencies);
 
         // Enable global search now.
         $CFG->enableglobalsearch = 1;
         $navoptions = course_get_user_navigation_options($context, $course);
         $this->assertTrue($navoptions->search);
+
+        // Disable competencies.
+        $oldcompetencies = get_config('core_competency', 'enabled');
+        set_config('enabled', false, 'core_competency');
+        $navoptions = course_get_user_navigation_options($context, $course);
+        $this->assertFalse($navoptions->competencies);
+        set_config('enabled', $oldcompetencies, 'core_competency');
 
         // Now try with a standard user.
         $user = $this->getDataGenerator()->create_user();
