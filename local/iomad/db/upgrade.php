@@ -1238,7 +1238,23 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016083100, 'local', 'iomad');
     }
 
-    if ($oldversion < 2016090500) {
+    if ($oldversion < 2016090502) {
+
+        // Define field frameworkid to be added to company_comp_frameworks.
+        $table = new xmldb_table('company_comp_frameworks');
+        $field = new xmldb_field('frameworkid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null, 'companyid');
+
+        // Conditionally launch add field frameworkid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2016090502, 'local', 'iomad');
+    }
+
+    if ($oldversion < 2016090503) {
+
         // Deal with new competencies based capabilities.
         $companydepartmentmanagercaps = array(
             'moodle/competency:plancomment',
@@ -1298,39 +1314,29 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
         
         if ($companydepartmentmanager = $DB->get_record( 'role', array( 'shortname' => 'companydepartmentmanager') )) {
-            foreach ($companydepartmentmanager as $cap) {
+            foreach ($companydepartmentmanagercaps as $cap) {
                 assign_capability( $cap, CAP_ALLOW, $companydepartmentmanager->id, $systemcontext->id );
             }
         }
         
         if ($companycourseeditor = $DB->get_record( 'role', array( 'shortname' => 'companycourseeditor') )) {
-            foreach ($companycourseeditor as $cap) {
+            foreach ($companycourseeditorcaps as $cap) {
                 assign_capability( $cap, CAP_ALLOW, $companycourseeditor->id, $systemcontext->id );
             }
         }
         
         if ($companycoursenoneditor = $DB->get_record( 'role', array( 'shortname' => 'companycoursenoneditor') )) {
-            foreach ($companycoursenoneditor as $cap) {
+            foreach ($companycoursenoneditorcaps as $cap) {
                 assign_capability( $cap, CAP_ALLOW, $companycoursenoneditor->id, $systemcontext->id );
             }
         }
         
-        upgrade_plugin_savepoint(true, 2016090500, 'local', 'iomad');
-    }
-
-    if ($oldversion < 2016090502) {
-
-        // Define field frameworkid to be added to company_comp_frameworks.
-        $table = new xmldb_table('company_comp_frameworks');
-        $field = new xmldb_field('frameworkid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null, 'companyid');
-
-        // Conditionally launch add field frameworkid.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
+        // Remove moodle/my:manageblocks capability from authenticated user
+        if ($authenticateduser = $DB->get_record('role', array('shortname' => 'user'))) {
+            assign_capability('moodle/my:manageblocks', CAP_PREVENT, $authenticateduser->id, $systemcontext->id, true);
         }
 
-        // Iomad savepoint reached.
-        upgrade_plugin_savepoint(true, 2016090502, 'local', 'iomad');
+        upgrade_plugin_savepoint(true, 2016090503, 'local', 'iomad');
     }
 
 
