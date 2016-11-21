@@ -21,9 +21,15 @@ require_once($CFG->dirroot.'/local/iomad/lib/company.php');
  * Event handler for 'user_created'
  * For 'email' authentication (only) add this user
  * to the defined role and company.
+ * @param mixed $user user id or user object
  */
 function local_iomad_signup_user_created($user) {
     global $CFG, $DB;
+
+    // check if we already have the user object
+    if (is_int($user)) {
+        $user = $DB->get_record('user', array('id' => $user), '*', MUST_EXIST);
+    }
 
     // the plugin needs to be enabled
     if (!$CFG->local_iomad_signup_enable) {
