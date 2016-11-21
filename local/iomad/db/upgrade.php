@@ -1136,5 +1136,209 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2015083101, 'local', 'iomad');
     }
 
+    if ($oldversion < 2016083100) {
+
+        // Define table company_comp_frameworks to be created.
+        $table = new xmldb_table('company_comp_frameworks');
+
+        // Adding fields to table company_comp_frameworks.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table company_comp_frameworks.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for company_comp_frameworks.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table company_comp_templates to be created.
+        $table = new xmldb_table('company_comp_templates');
+
+        // Adding fields to table company_comp_templates.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('templateid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table company_comp_templates.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for company_comp_templates.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+
+        // Define table iomad_templates to be created.
+        $table = new xmldb_table('iomad_templates');
+
+        // Adding fields to table iomad_templates.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('templateid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('shared', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table iomad_templates.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for iomad_templates.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table iomad_frameworks to be created.
+        $table = new xmldb_table('iomad_frameworks');
+
+        // Adding fields to table iomad_frameworks.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('frameworkid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('shared', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table iomad_frameworks.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for iomad_frameworks.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table company_shared_templates to be created.
+        $table = new xmldb_table('company_shared_templates');
+
+        // Adding fields to table company_shared_templates.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('templateid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table company_shared_templates.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for company_shared_templates.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define table company_shared_frameworks to be created.
+        $table = new xmldb_table('company_shared_frameworks');
+
+        // Adding fields to table company_shared_frameworks.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('companyid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('frameworkid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table company_shared_frameworks.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for company_shared_frameworks.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2016083100, 'local', 'iomad');
+    }
+
+    if ($oldversion < 2016090502) {
+
+        // Define field frameworkid to be added to company_comp_frameworks.
+        $table = new xmldb_table('company_comp_frameworks');
+        $field = new xmldb_field('frameworkid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null, 'companyid');
+
+        // Conditionally launch add field frameworkid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2016090502, 'local', 'iomad');
+    }
+
+    if ($oldversion < 2016090503) {
+
+        // Deal with new competencies based capabilities.
+        $companydepartmentmanagercaps = array(
+            'moodle/competency:plancomment',
+            'moodle/competency:planmanage',
+            'moodle/competency:planmanageowndraft',
+            'moodle/competency:planreview',
+            'moodle/competency:planview',
+            'moodle/competency:usercompetencycomment',
+            'moodle/competency:usercompetencyreview',
+            'moodle/competency:usercompetencyview',
+            'moodle/competency:userevidencemanage',
+            'moodle/competency:userevidenceview',
+            'moodle/competency:competencymanage',
+            'moodle/competency:competencyview',
+            'moodle/competency:templatemanage',
+            'moodle/competency:templateview',
+            'block/iomad_company_admin:competencymanagement_view',
+            'block/iomad_company_admin:templateview',
+        );
+
+        $companymanagercaps = array(
+            'moodle/competency:plancomment',
+            'moodle/competency:planmanage',
+            'moodle/competency:planmanageowndraft',
+            'moodle/competency:planreview',
+            'moodle/competency:planview',
+            'moodle/competency:usercompetencycomment',
+            'moodle/competency:usercompetencyreview',
+            'moodle/competency:usercompetencyview',
+            'moodle/competency:userevidencemanage',
+            'moodle/competency:userevidenceview',
+            'moodle/competency:competencymanage',
+            'moodle/competency:competencyview',
+            'moodle/competency:templatemanage',
+            'moodle/competency:templateview',
+            'block/iomad_company_admin:competencymanagement_view',
+            'block/iomad_company_admin:competencyview',
+            'block/iomad_company_admin:templateview',
+        );
+
+        $companycoursenoneditorcaps = array(
+            'moodle/competency:coursecompetencyview',
+        );
+
+        $companycourseeditorcaps = array(
+            'moodle/competency:competencygrade',
+            'moodle/competency:coursecompetencymanage',
+            'moodle/competency:coursecompetencyview',
+            'moodle/competency:coursecompetencyconfigure',
+        );
+
+        $systemcontext = context_system::instance();
+        if ($companymanager = $DB->get_record( 'role', array( 'shortname' => 'companymanager') )) {
+            foreach ($companymanagercaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companymanager->id, $systemcontext->id );
+            }
+        }
+        
+        if ($companydepartmentmanager = $DB->get_record( 'role', array( 'shortname' => 'companydepartmentmanager') )) {
+            foreach ($companydepartmentmanagercaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companydepartmentmanager->id, $systemcontext->id );
+            }
+        }
+        
+        if ($companycourseeditor = $DB->get_record( 'role', array( 'shortname' => 'companycourseeditor') )) {
+            foreach ($companycourseeditorcaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companycourseeditor->id, $systemcontext->id );
+            }
+        }
+        
+        if ($companycoursenoneditor = $DB->get_record( 'role', array( 'shortname' => 'companycoursenoneditor') )) {
+            foreach ($companycoursenoneditorcaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companycoursenoneditor->id, $systemcontext->id );
+            }
+        }
+        
+        // Remove moodle/my:manageblocks capability from authenticated user
+        if ($authenticateduser = $DB->get_record('role', array('shortname' => 'user'))) {
+            assign_capability('moodle/my:manageblocks', CAP_PREVENT, $authenticateduser->id, $systemcontext->id, true);
+        }
+
+        upgrade_plugin_savepoint(true, 2016090503, 'local', 'iomad');
+    }
+
+
     return $result;
 }
