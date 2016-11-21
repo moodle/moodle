@@ -50,6 +50,10 @@
         border: 1px solid #e3e3e3;
         clear: both;
 
+        img {
+            max-width: 100%;
+        }
+
         .contacts-area {
             border-right: 1px solid #e3e3e3;
             height: 600px;
