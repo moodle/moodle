@@ -4327,6 +4327,14 @@ class restore_create_categories_and_questions extends restore_structure_step {
         }
         $data->contextid = $mapping->parentitemid;
 
+        // Before 3.1, the 'stamp' field could be erroneously duplicated.
+        // From 3.1 onwards, there's a unique index of (contextid, stamp).
+        // If we encounter a duplicate in an old restore file, just generate a new stamp.
+        // This is the same as what happens during an upgrade to 3.1+ anyway.
+        if ($DB->record_exists('question_categories', ['stamp' => $data->stamp, 'contextid' => $data->contextid])) {
+            $data->stamp = make_unique_id_code();
+        }
+
         // Let's create the question_category and save mapping
         $newitemid = $DB->insert_record('question_categories', $data);
         $this->set_mapping('question_category', $oldid, $newitemid);
