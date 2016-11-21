@@ -56,9 +56,9 @@ class user_search_results implements templatable, renderable {
     /**
      * Constructor.
      *
-     * @param array $contacts
-     * @param array $courses
-     * @param array $noncontacts
+     * @param array $contacts list of contacts.
+     * @param array $courses list of courses.
+     * @param array $noncontacts list of nonconcat users.
      */
     public function __construct($contacts, $courses = array(), $noncontacts = array()) {
         $this->contacts = $contacts;
@@ -88,7 +88,13 @@ class user_search_results implements templatable, renderable {
         // Check if there are any courses.
         if (!empty($this->courses)) {
             $data->hascourses = true;
-            $data->courses = $this->courses;
+            $data->courses = [];
+            foreach ($this->courses as $course) {
+                $coursecontext = \context_course::instance($course->id);
+                $course->shortname = external_format_string($course->shortname, $coursecontext->id, true);
+                $course->fullname = external_format_string($course->fullname, $coursecontext->id, true);
+                $data->courses[] = $course;
+            }
         }
 
         // Check if there are any non-contacts.

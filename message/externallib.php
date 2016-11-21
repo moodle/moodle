@@ -670,8 +670,8 @@ class core_message_external extends external_api {
                     new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'The course id'),
-                            'shortname' => new external_value(PARAM_NOTAGS, 'The course shortname'),
-                            'fullname' => new external_value(PARAM_NOTAGS, 'The course fullname'),
+                            'shortname' => new external_value(PARAM_TEXT, 'The course shortname'),
+                            'fullname' => new external_value(PARAM_TEXT, 'The course fullname'),
                         )
                     )
                 ),
