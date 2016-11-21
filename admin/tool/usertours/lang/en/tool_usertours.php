@@ -79,7 +79,10 @@ Some example values include:
 * /my/% - to match the Dashboard
 * /course/view.php?id=2 - to match a specific course
 * /mod/forum/view.php% - to match the forum discussion list
-* /user/profile.php% - to match the user profile page';
+* /user/profile.php% - to match the user profile page
+
+If you wish to display a tour on the Site Home page, you can use the value: "FRONTPAGE".
+';
 $string['placement'] = 'Placement';
 $string['pluginname'] = 'User tours';
 $string['resettouronpage'] = 'Reset user tour on this page';

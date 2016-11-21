@@ -76,15 +76,22 @@ EOF;
     /**
      * Fetch all enabled tours matching the specified target.
      *
-     * @param   string      $targetmatch    The URL to match.
+     * @param   moodle_url  $targetmatch    The URL to match.
      */
-    public static function get_matching_tourdata($targetmatch) {
+    public static function get_matching_tourdata(\moodle_url $targetmatch) {
         $tours = self::get_enabled_tourdata();
 
-        return array_filter($tours, function($tour) use ($targetmatch) {
+        // Attempt to determine whether this is the front page.
+        // This is a special case because the frontpage uses a shortened page path making it difficult to detect exactly.
+        $isfrontpage = $targetmatch->compare(new \moodle_url('/'), URL_MATCH_BASE);
+        $target = $targetmatch->out_as_local_url();
+        return array_filter($tours, function($tour) use ($isfrontpage, $target) {
+            if ($isfrontpage && $tour->pathmatch === 'FRONTPAGE') {
+                return true;
+            }
             $pattern = preg_quote($tour->pathmatch, '@');
             $pattern = str_replace('%', '.*', $pattern);
-            return !!preg_match("@{$pattern}@", $targetmatch);
+            return !!preg_match("@{$pattern}@", $target);
         });
     }
 

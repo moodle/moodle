@@ -559,7 +559,7 @@ class manager {
     public static function get_matching_tours(\moodle_url $pageurl) {
         global $PAGE;
 
-        $tours = cache::get_matching_tourdata($pageurl->out_as_local_url());
+        $tours = cache::get_matching_tourdata($pageurl);
 
         foreach ($tours as $record) {
             $tour = tour::load_from_record($record);
