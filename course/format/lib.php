@@ -1140,6 +1140,26 @@ abstract class format_base {
     }
 
     /**
+     * Indicates whether the course format supports the creation of the Announcements forum.
+     *
+     * For course format plugin developers, please override this to return true if you want the Announcements forum
+     * to be created upon course creation.
+     *
+     * @return bool
+     */
+    public function supports_news() {
+        // For backwards compatibility, check if default blocks include the news_items block.
+        $defaultblocks = $this->get_default_blocks();
+        foreach ($defaultblocks as $blocks) {
+            if (in_array('news_items', $blocks)) {
+                return true;
+            }
+        }
+        // Return false by default.
+        return false;
+    }
+
+    /**
      * Get the start date value from the course settings page form.
      *
      * @param moodleform $mform

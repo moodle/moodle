@@ -124,8 +124,8 @@ class mod_forum_observer {
         global $CFG;
 
         $course = $event->get_record_snapshot('course', $event->objectid);
-
-        if (!empty($course->newsitems)) {
+        $format = course_get_format($course);
+        if ($format->supports_news() && !empty($course->newsitems)) {
             require_once($CFG->dirroot . '/mod/forum/lib.php');
             // Auto create the announcements forum.
             forum_get_course_forum($event->objectid, 'news');
@@ -142,8 +142,8 @@ class mod_forum_observer {
         global $CFG;
 
         $course = $event->get_record_snapshot('course', $event->objectid);
-
-        if (!empty($course->newsitems)) {
+        $format = course_get_format($course);
+        if ($format->supports_news() && !empty($course->newsitems)) {
             require_once($CFG->dirroot . '/mod/forum/lib.php');
             // Auto create the announcements forum.
             forum_get_course_forum($event->objectid, 'news');
