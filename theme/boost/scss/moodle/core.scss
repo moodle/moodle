@@ -1260,6 +1260,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+    /*rtl:raw:
+        left: 0;
+        right: auto;
+    */
     padding: $spacer;
 }
 
