@@ -203,7 +203,8 @@ class auth_email_external extends external_api {
                         )
                     ), 'User custom fields (also known as user profile fields)', VALUE_DEFAULT, array()
                 ),
-                'redirect' => new external_value(PARAM_URL, 'Redirect the user to this url after confirmation.', VALUE_DEFAULT, ''),
+                'redirect' => new external_value(PARAM_LOCALURL, 'Redirect the user to this site url after confirmation.',
+                                                    VALUE_DEFAULT, ''),
             )
         );
     }
@@ -221,7 +222,7 @@ class auth_email_external extends external_api {
      * @param  string $recaptchachallengehash recaptcha challenge hash
      * @param  string $recaptcharesponse      recaptcha response
      * @param  array  $customprofilefields    user custom fields (also known as user profile fields)
-     * @param  string $redirect               Url to redirect the user after confirmation
+     * @param  string $redirect               Site url to redirect the user after confirmation
      * @return array settings and possible warnings
      * @since Moodle 3.2
      * @throws moodle_exception
