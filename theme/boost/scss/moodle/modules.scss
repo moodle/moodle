@@ -355,7 +355,7 @@ div#dock {
     float: left;
     width: 20rem;
     display: inline-block;
-    height: 12rem;
+    min-height: 12rem;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
@@ -366,7 +366,7 @@ div#dock {
     float: left;
     clear: left;
 }
-#page-mod-quiz-mod #id_reviewoptionshdr .form-check-inline {
+#page-mod-quiz-mod #id_reviewoptionshdr .form-check {
     width: 90%;
     height: 22px;
 }
