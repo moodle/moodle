@@ -8,7 +8,7 @@
   color: red;
 }
 .dashboard-section .headingblock {
-  display: none;
+  /* display: none; */
 }
 .iomadlink {
   font-family: iomad;

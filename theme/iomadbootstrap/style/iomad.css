@@ -172,6 +172,26 @@ div.iomadlink {
     font-family: FontAwesome;
     content: "\f0eb  ";
 }
+.block_private_files h2:before {
+    font-family: FontAwesome;
+    content: "\f07b  ";
+}
+.block_online_users h2:before {
+    font-family: FontAwesome;
+    content: "\f0c0  ";
+}
+.block_badges h2:before {
+    font-family: FontAwesome;
+    content: "\f2bd  ";
+}
+.block_calendar_month h2:before {
+    font-family: FontAwesome;
+    content: "\f073  ";
+}
+.block_calendar_upcoming h2:before {
+    font-family: FontAwesome;
+    content: "\f1fd  ";
+}
 .block_iomad_reports h3:before {
     font-family: FontAwesome;
     content: "\f200  ";
