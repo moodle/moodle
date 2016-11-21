@@ -228,7 +228,7 @@ class gradingform_guide_renderer extends plugin_renderer_base {
             $remarkparams = array(
                 'name' => '{NAME}[criteria][{CRITERION-id}][remark]',
                 'id' => $remarkid,
-                'cols' => '65', 'rows' => '5', 'class' => 'markingguideremark',
+                'cols' => '65', 'rows' => '5', 'class' => 'markingguideremark form-control',
                 'aria-labelledby' => '{NAME}-remarklabel{CRITERION-id}'
             );
 
@@ -239,7 +239,7 @@ class gradingform_guide_renderer extends plugin_renderer_base {
             if (!empty($comments)) {
                 // Frequently used comments chooser.
                 $chooserbuttonid = 'criteria-' . $criterion['id'] . '-commentchooser';
-                $commentchooserparams = array('id' => $chooserbuttonid, 'class' => 'commentchooser');
+                $commentchooserparams = array('id' => $chooserbuttonid, 'class' => 'commentchooser btn btn-secondary');
                 $commentchooser = html_writer::tag('button', get_string('insertcomment', 'gradingform_guide'),
                     $commentchooserparams);
 
@@ -273,7 +273,7 @@ class gradingform_guide_renderer extends plugin_renderer_base {
             $scoreinputparams = array(
                 'type' => 'text',
                 'name' => '{NAME}[criteria][{CRITERION-id}][score]',
-                'class' => $scoreclass,
+                'class' => $scoreclass . ' form-control',
                 'id' => '{NAME}-criteria-{CRITERION-id}-score',
                 'size' => '3',
                 'value' => $currentscore,
@@ -534,7 +534,7 @@ class gradingform_guide_renderer extends plugin_renderer_base {
         }
         $html = html_writer::start_tag('div', array('class' => 'options'));
         $html .= html_writer::tag('div', get_string('guideoptions', 'gradingform_guide'), array('class' => 'optionsheading'));
-        $attrs = array('type' => 'hidden', 'name' => '{NAME}[options][optionsset]', 'value' => 1);
+        $attrs = array('type' => 'hidden', 'name' => '{NAME}[options][optionsset]', 'value' => 1, 'class' => 'form-control');
         $html .= html_writer::empty_tag('input', $attrs);
         foreach ($options as $option => $value) {
             $html .= html_writer::start_tag('div', array('class' => 'option '.$option));

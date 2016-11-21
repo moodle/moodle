@@ -554,6 +554,21 @@ div#dock {
     padding: 0;
 }
 
+.path-mod-assign [data-region="grade-panel"] .gradingform_guide .remark .commentchooser {
+    float: none;
+}
+.path-mod-assign [data-region="grade-panel"] .gradingform_guide .markingguideremark {
+    width: 100%;
+}
+.path-mod-assign [data-region="grade-panel"] .mform .fitem .felement[data-fieldtype="grading"] {
+    padding-left: $spacer;
+    padding-right: $spacer;
+}
+.path-mod-assign [data-region="grade-panel"] .showmarkerdesc,
+.path-mod-assign [data-region="grade-panel"] .showstudentdesc {
+    background-color: $card-bg;
+}
+
 
 /**
  * Mod LTI.
