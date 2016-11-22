@@ -729,7 +729,7 @@ class tour_testcase extends advanced_testcase {
                     $this->greaterThanOrEqual($time),
                     true,
                     null,
-                    sprintf('tool_usertours_%d_%s', $id, $time),
+                    sprintf('tool_usertours_\d_%d_%s', $id, $time),
                 ],
 
             'Initial tour time, no user pref' => [
@@ -738,7 +738,7 @@ class tour_testcase extends advanced_testcase {
                     null,
                     false,
                     null,
-                    sprintf('tool_usertours_%d_%s', $id, $time),
+                    sprintf('tool_usertours_\d_%d_%s', $id, $time),
                 ],
             'Initial tour time, with user reset lower' => [
                     $id,
@@ -746,7 +746,7 @@ class tour_testcase extends advanced_testcase {
                     null,
                     false,
                     $time - DAYSECS,
-                    sprintf('tool_usertours_%d_%s', $id, $time),
+                    sprintf('tool_usertours_\d_%d_%s', $id, $time),
                 ],
             'Initial tour time, with user reset higher' => [
                     $id,
@@ -754,7 +754,7 @@ class tour_testcase extends advanced_testcase {
                     null,
                     false,
                     $time + DAYSECS,
-                    sprintf('tool_usertours_%d_%s', $id, $time + DAYSECS),
+                    sprintf('tool_usertours_\d_%d_%s', $id, $time + DAYSECS),
                 ],
         ];
     }
@@ -823,8 +823,8 @@ class tour_testcase extends advanced_testcase {
             set_user_preference(\tool_usertours\tour::TOUR_REQUESTED_BY_USER . $id, $userpref);
         }
 
-        $this->assertEquals(
-                $expectation,
+        $this->assertRegExp(
+                '/' . $expectation . '/',
                 $tour->get_tour_key()
             );
     }
