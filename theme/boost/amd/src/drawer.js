@@ -106,6 +106,7 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
             // Open.
             trigger.attr('aria-expanded', 'true');
             drawer.attr('aria-hidden', 'false');
+            drawer.focus();
             body.addClass('drawer-open-' + side);
             drawer.removeClass('closed');
             M.util.set_user_preference(preference, 'true');
