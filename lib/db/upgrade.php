@@ -2420,6 +2420,18 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2016111900.00);
     }
+    if ($oldversion < 2016111900.02) {
+
+        // Change the existing site level admin and settings blocks to be requiredbytheme which means they won't show in boost.
+        $context = context_system::instance();
+        $params = array('blockname' => 'settings', 'parentcontextid' => $context->id);
+        $DB->set_field('block_instances', 'requiredbytheme', 1, $params);
+
+        $params = array('blockname' => 'navigation', 'parentcontextid' => $context->id);
+        $DB->set_field('block_instances', 'requiredbytheme', 1, $params);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2016111900.02);
+    }
 
     return true;
 }
