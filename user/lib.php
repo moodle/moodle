@@ -864,7 +864,6 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
 
     // Links: Role-return or logout link.
     $lastobj = null;
-    $buildlogout = true;
     $returnobject->metadata['asotherrole'] = false;
     if (is_role_switched($course->id)) {
         if ($role = $DB->get_record('role', array('id' => $user->access['rsw'][$context->path]))) {
@@ -880,13 +879,32 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
             $rolereturn->pix = "a/logout";
             $rolereturn->title = get_string('switchrolereturn');
             $rolereturn->titleidentifier = 'switchrolereturn,moodle';
-            $lastobj = $rolereturn;
+            $returnobject->navitems[] = $rolereturn;
 
             $returnobject->metadata['asotherrole'] = true;
             $returnobject->metadata['rolename'] = role_get_name($role, $context);
 
-            $buildlogout = false;
         }
+    } else {
+        // Build role-return link instead of logout link.
+        $switchrole = new stdClass();
+        $switchrole->itemtype = 'link';
+        $switchrole->url = new moodle_url('/course/switchrole.php', array(
+            'id' => $course->id,
+            'switchrole' => -1,
+            'returnurl' => $page->url->out_as_local_url(false)
+        ));
+        $switchrole->pix = "a/logout";
+        $switchrole->title = get_string('switchroleto');
+        $switchrole->titleidentifier = 'switchroleto,moodle';
+        $returnobject->navitems[] = $switchrole;
+    }
+
+    // Before we add the last item (usually a logout link), add any
+    // custom-defined items.
+    $customitems = user_convert_text_to_menu_items($CFG->customusermenuitems, $page);
+    foreach ($customitems as $item) {
+        $returnobject->navitems[] = $item;
     }
 
     if ($returnobject->metadata['asotheruser'] = \core\session\manager::is_loggedinas()) {
@@ -911,12 +929,10 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
         $userrevert->pix = "a/logout";
         $userrevert->title = get_string('logout');
         $userrevert->titleidentifier = 'logout,moodle';
-        $lastobj = $userrevert;
+        $returnobject->navitems[] = $userrevert;
 
-        $buildlogout = false;
-    }
+    } else {
 
-    if ($buildlogout) {
         // Build a logout link.
         $logout = new stdClass();
         $logout->itemtype = 'link';
@@ -924,19 +940,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
         $logout->pix = "a/logout";
         $logout->title = get_string('logout');
         $logout->titleidentifier = 'logout,moodle';
-        $lastobj = $logout;
-    }
-
-    // Before we add the last item (usually a logout link), add any
-    // custom-defined items.
-    $customitems = user_convert_text_to_menu_items($CFG->customusermenuitems, $page);
-    foreach ($customitems as $item) {
-        $returnobject->navitems[] = $item;
-    }
-
-    // Add the last item to the list.
-    if (!is_null($lastobj)) {
-        $returnobject->navitems[] = $lastobj;
+        $returnobject->navitems[] = $logout;
     }
 
     return $returnobject;
