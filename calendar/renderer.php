@@ -144,7 +144,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'action', 'value' => 'new'));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'course', 'value' => $courseid));
         $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name' => 'time', 'value' => $time));
-        $attributes = array('type'=>'submit', 'value' => get_string('newevent', 'calendar'), 'class' => 'btn btn-secondary');
+        $attributes = array('type' => 'submit', 'value' => get_string('newevent', 'calendar'), 'class' => 'btn btn-secondary');
         $output .= html_writer::empty_tag('input', $attributes);
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('form');
@@ -226,25 +226,26 @@ class core_calendar_renderer extends plugin_renderer_base {
         $output .= $this->output->box_start('card-header clearfix');
         if (calendar_edit_event_allowed($event) && $showactions) {
             if (empty($event->cmid)) {
-                $editlink = new moodle_url(CALENDAR_URL.'event.php', array('action'=>'edit', 'id'=>$event->id));
-                $deletelink = new moodle_url(CALENDAR_URL.'delete.php', array('id'=>$event->id));
+                $editlink = new moodle_url(CALENDAR_URL.'event.php', array('action' => 'edit', 'id' => $event->id));
+                $deletelink = new moodle_url(CALENDAR_URL.'delete.php', array('id' => $event->id));
                 if (!empty($event->calendarcourseid)) {
                     $editlink->param('course', $event->calendarcourseid);
                     $deletelink->param('course', $event->calendarcourseid);
                 }
             } else {
-                $editlink = new moodle_url('/course/mod.php', array('update'=>$event->cmid, 'return'=>true, 'sesskey'=>sesskey()));
+                $params = array('update' => $event->cmid, 'return' => true, 'sesskey' => sesskey());
+                $editlink = new moodle_url('/course/mod.php', $params);
                 $deletelink = null;
             }
 
-            $commands  = html_writer::start_tag('div', array('class'=>'commands pull-xs-right'));
-            $commands .= html_writer::start_tag('a', array('href'=>$editlink));
+            $commands  = html_writer::start_tag('div', array('class' => 'commands pull-xs-right'));
+            $commands .= html_writer::start_tag('a', array('href' => $editlink));
             $url = $this->output->pix_url('t/edit');
             $str = get_string('tt_editevent', 'calendar');
             $commands .= html_writer::empty_tag('img', array('src' => $url, 'alt' => $str, 'title' => $str, 'class' => 'icon'));
             $commands .= html_writer::end_tag('a');
             if ($deletelink != null) {
-                $commands .= html_writer::start_tag('a', array('href'=>$deletelink));
+                $commands .= html_writer::start_tag('a', array('href' => $deletelink));
                 $url = $this->output->pix_url('t/delete');
                 $str = get_string('tt_deleteevent', 'calendar');
                 $commands .= html_writer::empty_tag('img', array('src' => $url, 'alt' => $str, 'title' => $str, 'class' => 'icon'));
@@ -281,7 +282,8 @@ class core_calendar_renderer extends plugin_renderer_base {
         if (!empty($event->time)) {
             $output .= html_writer::tag('span', $event->time, array('class' => 'date pull-xs-right m-r-1'));
         } else {
-            $output .= html_writer::tag('span', calendar_time_representation($event->timestart), array('class' => 'date pull-xs-right m-r-1'));
+            $attrs = array('class' => 'date pull-xs-right m-r-1');
+            $output .= html_writer::tag('span', calendar_time_representation($event->timestart), $attrs);
         }
         if (!empty($event->courselink)) {
             $output .= html_writer::tag('div', $event->courselink, array('class' => 'course'));
