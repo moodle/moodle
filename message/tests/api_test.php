@@ -846,6 +846,10 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
 
         // User should be blocked.
         $this->assertTrue(\core_message\api::is_user_blocked($user1->id, $user2->id));
+
+        // Unblock the user.
+        message_unblock_contact($user2->id);
+        $this->assertFalse(\core_message\api::is_user_blocked($user1->id, $user2->id));
     }
 
     /**
