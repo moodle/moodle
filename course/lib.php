@@ -2206,7 +2206,12 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 
     if ($category) {
         if ($category->visible or has_capability('moodle/category:viewhiddencategories', context_system::instance())) {
-            print_category_info($category, $depth, $showcourses);
+            $function = $CFG->theme.'_print_category_info';
+            if (function_exists ($function)) {
+                $function($category, $depth, $showcourses);
+            } else {
+                print_category_info($category, $depth, $showcourses);
+            }
         } else {
             return;  // Don't bother printing children of invisible categories
         }
