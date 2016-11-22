@@ -63,6 +63,10 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
         }.bind(this));
 
         this.registerEventListeners();
+        var small = $(document).width() < 768;
+        if (small) {
+            this.closeAll();
+        }
     };
 
     Drawer.prototype.closeAll = function() {
@@ -99,7 +103,7 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
         body.addClass('drawer-ease');
         var open = trigger.attr('aria-expanded') == 'true';
         if (!open) {
-            var small = $(document).width() < 512;
+            var small = $(document).width() < 768;
             if (small) {
                 this.closeAll();
             }
