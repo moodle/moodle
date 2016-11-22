@@ -915,6 +915,12 @@ table.quizreviewsummary td.cell {
     color: #555;
 }
 
+#page-mod-quiz-edit .section .activity .editing_move {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
 #page-mod-quiz-edit ul.slots li.activity div.activityinstance .mod_quiz_random_qbank_link {
     font-size: 0.8em;
 }
