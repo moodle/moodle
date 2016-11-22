@@ -1831,6 +1831,9 @@ $string['switchdevicedefault'] = 'Switch to the standard theme';
 $string['switchdevicerecommended'] = 'Switch to the recommended theme for your device';
 $string['switchrolereturn'] = 'Return to my normal role';
 $string['switchroleto'] = 'Switch role to...';
+$string['switchroleto_help'] = 'Choose a role to get an idea of how someone with that role will see this course.
+
+Please note that this view may not be perfect (<a href="https://docs.moodle.org/en/Switch_roles">See details and alternatives</a>).';
 $string['tag'] = 'Tag';
 $string['tagalready'] = 'This tag already exists';
 $string['tagmanagement'] = 'Add/delete tags ...';
