@@ -61,6 +61,7 @@ function message_popup_render_navbar_output(\renderer_base $renderer) {
         $context = [
             'userid' => $USER->id,
             'urls' => [
+                'seeall' => (new moodle_url('/message/output/popup/notifications.php'))->out(),
                 'preferences' => (new moodle_url('/message/notificationpreferences.php', ['userid' => $USER->id]))->out(),
             ],
         ];
