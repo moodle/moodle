@@ -694,4 +694,12 @@ class core_renderer extends \core_renderer {
         return $skipped;
     }
 
+    /**
+     * Secure login info.
+     *
+     * @return string
+     */
+    public function secure_login_info() {
+        return $this->login_info(false);
+    }
 }
