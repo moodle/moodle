@@ -104,6 +104,9 @@ if ($switchrole > 0 && has_capability('moodle/role:switchroles', $context)) {
         echo $OUTPUT->container($OUTPUT->single_button($url, $role), 'm-x-3 m-b-1');
     }
 
+    $url = new moodle_url($returnurl);
+    echo $OUTPUT->container($OUTPUT->action_link($url, get_string('cancel')), 'm-x-3 m-b-1');
+
     echo $OUTPUT->footer();
     exit;
 }
