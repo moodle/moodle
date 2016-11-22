@@ -60,5 +60,10 @@ JS;
         }
 
         $this->field->setValue($value);
+
+        // Ensure all pending JS is finished.
+        if ($this->running_javascript()) {
+            $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
+        }
     }
 }
