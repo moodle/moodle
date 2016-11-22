@@ -174,6 +174,8 @@ $string['configcustommenuitems'] = 'You can configure a custom menu here to be s
 <pre>
 Moodle community|https://moodle.org
 -Moodle free support|https://moodle.org/support
+-Moodle Docs|http://docs.moodle.org|Moodle Docs
+-German Moodle Docs|http://docs.moodle.org/de|Documentation in German|de
 -###
 -Moodle development|https://moodle.org/development
 Moodle.com|http://moodle.com/
