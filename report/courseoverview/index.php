@@ -70,7 +70,7 @@ if (empty($timeoptions)) {
     print_error('nostatstodisplay', 'error', $CFG->wwwroot.'/course/view.php?id='.$course->id);
 }
 
-echo html_writer::start_tag('form', array('action' => 'index.php', 'method' => 'post'));
+echo html_writer::start_tag('form', array('action' => 'index.php', 'method' => 'post', 'class' => 'form-inline'));
 echo html_writer::start_tag('div');
 
 $table = new html_table();
@@ -85,8 +85,11 @@ $timeoptionsmenu .= html_writer::select($timeoptions,'time',$time, false);
 $table->data[] = array(get_string('statsreporttype'),$reporttypemenu,
                        get_string('statstimeperiod'),$timeoptionsmenu,
                        html_writer::label(get_string('numberofcourses'), 'numcourses', false, array('class' => 'accesshide')) .
-                       html_writer::empty_tag('input', array('type' => 'text', 'id' => 'numcourses', 'name' => 'numcourses', 'size' => '3', 'maxlength' => '2', 'value' => $numcourses)),
-                       html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('view'))));
+                       html_writer::empty_tag('input', array('type' => 'text', 'class' => 'form-control',
+                           'id' => 'numcourses', 'name' => 'numcourses', 'size' => '3', 'maxlength' => '2',
+                           'value' => $numcourses)),
+                       html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'btn btn-secondary',
+                           'value' => get_string('view'))));
 
 echo html_writer::table($table);
 echo html_writer::end_tag('div');

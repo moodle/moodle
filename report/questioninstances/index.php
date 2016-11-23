@@ -52,7 +52,7 @@ echo '<p id="intro">', get_string('intro', 'report_questioninstances') , '</p>';
 echo '<p><label for="menuqtype"> ' . get_string('questiontype', 'admin') . '</label> ';
 echo html_writer::select($qtypechoices, 'qtype', $requestedqtype, array('_all_'=>get_string('all')));
 echo '</p>';
-echo '<p><input type="submit" id="settingssubmit" value="' .
+echo '<p><input type="submit" class="btn btn-secondary" id="settingssubmit" value="' .
         get_string('getreport', 'report_questioninstances') . '" /></p>';
 echo '</div></form>';
 echo $OUTPUT->box_end();
