@@ -49,10 +49,7 @@
                 self.updateAutomaticToolMatch(Y.one('#id_securetoolurl'));
             };
 
-            var contentItemButton = Y.one('[name="selectcontent"]');
-            var contentItemUrl = contentItemButton.getAttribute('data-contentitemurl');
             var typeSelector = Y.one('#id_typeid');
-
             typeSelector.on('change', function(e){
                 updateToolMatches();
 
@@ -69,8 +66,13 @@
                     allowgrades.set('checked', !self.getSelectedToolTypeOption().getAttribute('nogrades'));
                     self.toggleGradeSection();
                 }
+
+                // Reset configuration fields when another preconfigured tool is selected.
+                self.resetToolFields();
             });
 
+            var contentItemButton = Y.one('[name="selectcontent"]');
+            var contentItemUrl = contentItemButton.getAttribute('data-contentitemurl');
             // Handle configure from link button click.
             contentItemButton.on('click', function() {
                 var contentItemId = self.getContentItemId();
@@ -529,6 +531,18 @@
                 return selected.getAttribute('data-id');
             }
             return false;
+        },
+
+        /**
+         * Resets the values of fields related to the LTI tool settings.
+         */
+        resetToolFields: function() {
+            // Reset values for all text fields.
+            var fields = Y.all('#id_toolurl, #id_securetoolurl, #id_instructorcustomparameters, #id_icon, #id_secureicon');
+            fields.set('value', null);
+
+            // Reset value for launch container select box.
+            Y.one('#id_launchcontainer').set('value', 1);
         }
     };
 })();
