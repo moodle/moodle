@@ -31,12 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  * @return string The HTML
  */
 function message_popup_render_navbar_output(\renderer_base $renderer) {
-    global $USER, $DB, $CFG;
+    global $USER, $CFG;
 
     // Early bail out conditions.
     if (!isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
         get_user_preferences('auth_forcepasswordchange') ||
-        (!$USER->policyagreed && $CFG->sitepolicy)) {
+        ($CFG->sitepolicy && !$USER->policyagreed && !is_siteadmin())) {
         return '';
     }
 
