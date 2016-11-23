@@ -62,7 +62,7 @@
 <nav class="list-group m-t-1">
     {{/showdivider}}
     {{#action}}
-    <a class="list-group-item list-group-item-action {{#isactive}}font-weight-bold{{/isactive}}" href="{{{action}}}">
+    <a class="list-group-item list-group-item-action {{#isactive}}font-weight-bold{{/isactive}}" href="{{{action}}}" data-key="{{key}}">
         <div class="m-l-{{get_indent}}">
             {{#is_section}}
                 <div class="media">
@@ -79,7 +79,7 @@
     </a>
     {{/action}}
     {{^action}}
-    <div class="list-group-item">
+    <div class="list-group-item" data-key="{{key}}">
         <div class="m-l-{{get_indent}}">
             {{#is_section}}
                 {{#pix}}i/folder{{/pix}}

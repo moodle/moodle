@@ -3769,13 +3769,19 @@ class flat_navigation extends navigation_node_collection {
         if (isset($this->page->theme->addblockposition) &&
                 $this->page->theme->addblockposition == BLOCK_ADDBLOCK_POSITION_FLATNAV &&
                 $PAGE->user_is_editing() && $PAGE->user_can_edit_blocks() &&
-                $PAGE->blocks->get_addable_blocks()) {
+                ($addable = $PAGE->blocks->get_addable_blocks())) {
             $url = new moodle_url($PAGE->url, ['bui_addblock' => '', 'sesskey' => sesskey()]);
             $addablock = navigation_node::create(get_string('addblock'), $url);
             $flat = new flat_navigation_node($addablock, 0);
             $flat->set_showdivider(true);
             $flat->key = 'addblock';
             $this->add($flat);
+            $blocks = [];
+            foreach ($addable as $block) {
+                $blocks[] = $block->name;
+            }
+            $params = array('blocks' => $blocks, 'url' => '?' . $url->get_query_string(false));
+            $PAGE->requires->js_call_amd('core/addblockmodal', 'init', array($params));
         }
     }
 

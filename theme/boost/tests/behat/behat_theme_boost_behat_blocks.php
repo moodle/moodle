@@ -39,7 +39,12 @@ class behat_theme_boost_behat_blocks extends behat_blocks {
 
     public function i_add_the_block($blockname) {
         $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', get_string('addblock'));
-        $this->execute('behat_forms::press_button', $blockname);
+
+        if (!$this->running_javascript()) {
+            $this->execute('behat_forms::press_button', $blockname);
+        } else {
+            $this->execute('behat_general::i_click_on_in_the', $blockname, 'link', '.modal-body', 'css_element');
+        }
     }
 
     public function i_open_the_blocks_action_menu($blockname) {
