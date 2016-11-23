@@ -227,17 +227,11 @@
     font-weight: bold;
 }
 
-#page-mod-forum-index .unread a:first-child,
-#page-mod-forum-view .unread a:first-child {
+.path-mod-forum span.unread a:first-child {
     padding-right: 10px;
 }
 
-#page-mod-forum-index .unread img,
-#page-mod-forum-view .unread img {
-    margin-left: 5px;
-}
-
-#page-mod-forum-view .unread img {
+.path-mod-forum span.unread img {
     margin-left: 5px;
 }
 
@@ -248,7 +242,6 @@
 
 /* Forumpost unread
 -------------------------*/
-#page-mod-forum-view .unread,
 .forumpost.unread .row.header,
 .path-course-view .unread,
 span.unread {
