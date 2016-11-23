@@ -532,29 +532,33 @@ class company {
         $companyinfo = self::get_company_byuserid($userid);
         if (!empty($company->emailprofileid)) {
             // Does the user have one defined by the company field?
-            if (!$supervisor = $DB->get_record('user_profile_data', array('userid' => $userid, 'fieldid' => $company->emailprofileid))) {
+            if (!$supervisor = $DB->get_record('user_info_data', array('userid' => $userid, 'fieldid' => $company->emailprofileid))) {
                 return false;
             }
-        } else if (!empty($CFG->comanyemailprofileid)) {
+        } else if (!empty($CFG->companyemailprofileid)) {
             // Does the user have one defined by the default field?
-            if (!$supervisor = $DB->get_record('user_profile_data', array('userid' => $userid, 'fieldid' => $CFG->companyemailprofileid))) {
+            if (!$supervisor = $DB->get_record('user_info_data', array('userid' => $userid, 'fieldid' => $CFG->companyemailprofileid))) {
                 return false;
             }
-        } else {
+        }
+        if (empty($supervisor)) {
             return false;
         }
 
-        // Is it a valid email address?
-        if (validate_email($supervisor->data)) {
-            // Are we diverting everything??
-            if (empty($CFG->divertallemailsto)) {
-                return $supervisor->data;
-            } else {
-                return $CFG->divertallemailsto;
+        $emaillist = array();
+        foreach(explode(',', $supervisor->data) as $testemail) {
+            // Is it a valid email address?
+            if (validate_email($testemail)) {
+                // Are we diverting everything??
+                if (empty($CFG->divertallemailsto)) {
+                    $emaillist[$testemail] = $testemail;
+                } else {
+                    $emaillist[$CFG->divertallemailsto] = $CFG->divertallemailsto;
+                }
             }
         }
 
-        return false;
+        return $emaillist;
     }
 
     /**
@@ -1576,7 +1580,7 @@ class company {
     /**
      * Checks that a passed department id is valid for the companyid.
      *
-     * Parameters - 
+     * Parameters -
      *              $companyid = int;
      *              $departmentid = int;
      *
@@ -1599,7 +1603,7 @@ class company {
     /**
      * Checks that a userid and department id is valid for the companyid.
      *
-     * Parameters - 
+     * Parameters -
      *              $companyid = int;
      *              $departmentid = int;
      *              $userid = int;
@@ -1631,7 +1635,7 @@ class company {
     /**
      * Checks that the USER can edit a userid in a companyid.
      *
-     * Parameters - 
+     * Parameters -
      *              $companyid = int;
      *              $userid = int;
      *
@@ -1653,12 +1657,12 @@ class company {
         // Check if the user is in the company.
         if ($userrec = $DB->get_record('company_users', array('companyid' => $companyid,
                                                               'userid' => $userid))) {
-            
+
             // If current user is a site admin then they can.
             if (is_siteadmin($USER->id)) {
                 return true;
             }
-    
+
             // Can't edit an admin user here.
             if (is_siteadmin($userid)) {
                 return false;
@@ -1684,7 +1688,7 @@ class company {
     /**
      * Checks that a licenseid is valid for the companyid.
      *
-     * Parameters - 
+     * Parameters -
      *              $companyid = int;
      *              $licenseid = int;
      *
@@ -1706,7 +1710,7 @@ class company {
     /**
      * Checks that a two user id's are in the same company.
      *
-     * Parameters - 
+     * Parameters -
      *              $userid = int;
      *
      * Returns boolean.
@@ -1899,43 +1903,135 @@ class company {
         $userid = $data['relateduserid'];
         $courseid = $data['courseid'];
         $timecompleted = $data['timecreated'];
+        // Need to make sure any certificate is created.
+        sleep(9);
 
         // Do we have a supervisor?
-        if ($supervisoremail = self::get_usersupervisor($userid)) {
-            // Get the user info.
-            if ($userinfo = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
-                if ($courseinfo = $DB->get_record('course', array('id' => $courseid))) {
-                    // We have to do this manually as the normal Moodle functions require a proper registered user.
-                    $params = new stdclass();
-                    $params->fullname = $courseinfo->fullname;
-                    $params->firstname = $userinfo->firstname;
-                    $params->lastname = $userinfo->lastname;
-                    $params->date = date('d-m-Y', time());
-                    $mail = get_mailer();
+        if ($supervisoremails = self::get_usersupervisor($userid)) {
+            foreach ($supervisoremails as $supervisoremail) {
+                // Get the user info.
+                if ($userinfo = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
+                    if ($courseinfo = $DB->get_record('course', array('id' => $courseid))) {
+                        // We have to do this manually as the normal Moodle functions require a proper registered user.
+                        $params = new stdclass();
+                        $params->fullname = $courseinfo->fullname;
+                        $params->firstname = $userinfo->firstname;
+                        $params->lastname = $userinfo->lastname;
+                        $params->date = date('d-m-Y', time());
+                        $mail = get_mailer();
 
-                    $supportuser = core_user::get_support_user();
-                    $subject = get_string('completion_course_supervisor_subject', 'block_iomad_company_admin', $params);
-                    $messagetext = get_string('completion_course_supervisor_body', 'block_iomad_company_admin', $params);
-                
-                    $mail->Sender = $supportuser->email;
-                    $mail->From     = $CFG->noreplyaddress;
-                    $mail->Subject = substr($subject, 0, 900);
+                        $supportuser = core_user::get_support_user();
+                        if (!empty($CFG->supportemail)) {
+                            $supportuser->email = $CFG->supportemail;
+                        }
+                        if ($CFG->supportname) {
+                            $supportuser->firstname = $CFG->supportname;
+                        }
 
-                    if (!empty($CFG->noreplyaddress)) {
-                        $mail->addAddress($CFG->noreplyaddress, get_string('noreplyname'));
-                    } else {
+                        $subject = get_string('completion_course_supervisor_subject', 'block_iomad_company_admin', $params);
+                        $messagetext = get_string('completion_course_supervisor_body', 'block_iomad_company_admin', $params);
+
+                        $mail->Sender = $supportuser->firstname;
+                        $mail->From     = $CFG->noreplyaddress;
+                        $mail->FromName = $supportuser->firstname;
+                        if (empty($CFG->divertallemailsto)) {
+                            $mail->Subject = substr($subject, 0, 900);
+                        } else {
+                            $mail->Subject = substr('[DIVERTED ' . $supervisoremail . '] ' . $subject, 0, 900);
+                        }
+
                         $mail->addAddress($supervisoremail, '');
-                    }
-                
-                    // Set word wrap.
-                    $mail->WordWrap = 79;
 
-                    $mail->MessageID = generate_email_messageid();
-                    $mail->Body =  "\n$messagetext\n";
-                    if (empty($CFG->noemailever)) {
-                        $mail->send;
-                    }
+                        // Add the certificate attachment.
+                        // need to pause to make sure the other events create it.
+                        $trackinfos = $DB->get_records_sql('SELECT * FROM {local_iomad_track}
+                                                          WHERE userid = :userid
+                                                          AND courseid = :courseid
+                                                          ORDER BY id DESC',
+                                                          array('userid' => $userid, 'courseid' => $courseid), 0, 1);
+                        $trackinfo = array_pop($trackinfos);
+                        $trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id));
+                        $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
+                        $filedir1 = substr($fileinfo->contenthash,0,2);
+                        $filedir2 = substr($fileinfo->contenthash,2,2);
+                        $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
+                        $mimetype = mimeinfo('type', $trackfileinfo->filename);
+                        $mail->addAttachment($filepath, $trackfileinfo->filename, 'base64', $mimetype);
+                        // Set word wrap.
+                        $mail->WordWrap = 79;
 
+                        $mail->Body =  "\n$messagetext\n";
+                        if (empty($CFG->noemailever)) {
+                            $mail->send();
+                        }
+
+                    }
+                }
+            }
+        }
+
+        // Email the company managers.
+        if ($mymanagers = self::get_my_managers($userid, 1)) {
+            foreach ($mymanagers as $managerid) {
+                // Get the user info.
+                if ($managerinfo = $DB->get_record('user', array('id' => $managerid->userid, 'deleted' => 0, 'suspended' => 0))) {
+                    if ($userinfo = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
+                        if ($courseinfo = $DB->get_record('course', array('id' => $courseid))) {
+                            // We have to do this manually as the normal Moodle functions require a proper registered user.
+                            $params = new stdclass();
+                            $params->fullname = $courseinfo->fullname;
+                            $params->firstname = $userinfo->firstname;
+                            $params->lastname = $userinfo->lastname;
+                            $params->date = date('d-m-Y', time());
+                            $mail = get_mailer();
+    
+                            $supportuser = core_user::get_support_user();
+                            if (!empty($CFG->supportemail)) {
+                                $supportuser->email = $CFG->supportemail;
+                            }
+                            if ($CFG->supportname) {
+                                $supportuser->firstname = $CFG->supportname;
+                            }
+
+                            $subject = get_string('completion_course_supervisor_subject', 'block_iomad_company_admin', $params);
+                            $messagetext = get_string('completion_course_supervisor_body', 'block_iomad_company_admin', $params);
+
+                            $mail->Sender = $supportuser->firstname;
+                            $mail->From     = $CFG->noreplyaddress;
+                            $mail->FromName = $supportuser->firstname;
+                            if (empty($CFG->divertallemailsto)) {
+                                $mail->Subject = substr($subject, 0, 900);
+                                $mail->addAddress($managerinfo->email, '');
+                            } else {
+                                $mail->Subject = substr('[DIVERTED ' . $managerinfo->email . '] ' . $subject, 0, 900);
+                                $mail->addAddress($CFG->divertallemailsto, '');
+                            }
+
+
+                            // Add the certificate attachment.
+                            // need to pause to make sure the other events create it.
+                            $trackinfos = $DB->get_records_sql('SELECT * FROM {local_iomad_track}
+                                                                WHERE userid = :userid
+                                                                AND courseid = :courseid
+                                                                ORDER BY id DESC',
+                                                                array('userid' => $userid, 'courseid' => $courseid), 0, 1);
+                            $trackinfo = array_pop($trackinfos);
+                            $trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id));
+                            $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
+                            $filedir1 = substr($fileinfo->contenthash,0,2);
+                            $filedir2 = substr($fileinfo->contenthash,2,2);
+                            $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
+                            $mimetype = mimeinfo('type', $trackfileinfo->filename);
+                            $mail->addAttachment($filepath, $trackfileinfo->filename, 'base64', $mimetype);
+                            // Set word wrap.
+                            $mail->WordWrap = 79;
+
+                            $mail->Body =  "\n$messagetext\n";
+                            if (empty($CFG->noemailever)) {
+                                $mail->send();
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1943,45 +2039,108 @@ class company {
     }
 
     /**
-     * Triggered via course_completed event.
+     * Send a user's supervisor a warning email that a user hasn't completed a course.
      *
-     * @param \core\event\course_completed $event
+     * @param user object
+     * @param course object
      * @return bool true on success.
      */
     public static function send_supervisor_warning_email($user, $course) {
         global $DB, $CFG;
 
         // Do we have a supervisor?
-        if ($supervisoremail = self::get_usersupervisor($user->id)) {
-            $params = new stdclass();
-            $params->fullname = $course->fullname;
-            $params->firstname = $user->firstname;
-            $params->lastname = $user->lastname;
-            $mail = get_mailer();
+        if ($supervisoremails = self::get_usersupervisor($user->id)) {
+            foreach ($supervisoremails as $supervisoremail) {
+                $params = new stdclass();
+                $params->fullname = $course->fullname;
+                $params->firstname = $user->firstname;
+                $params->lastname = $user->lastname;
+                $mail = get_mailer();
 
-            $supportuser = core_user::get_support_user();
-            $subject = get_string('completion_warn_supervisor_subject', 'block_iomad_company_admin', $params);
-            $messagetext = get_string('completion_warn_supervisor_body', 'block_iomad_company_admin', $params);
-        
-            $mail->Sender = $supportuser->email;
-            $mail->From     = $CFG->noreplyaddress;
-            $mail->Subject = substr($subject, 0, 900);
+                $supportuser = core_user::get_support_user();
+                if (!empty($CFG->supportemail)) {
+                    $supportuser->email = $CFG->supportemail;
+                }
+                if ($CFG->supportname) {
+                    $supportuser->firstname = $CFG->supportname;
+                }
 
-            if (!empty($CFG->noreplyaddress)) {
-                $mail->addAddress($CFG->noreplyaddress, get_string('noreplyname'));
-            } else {
+                $subject = get_string('completion_warn_supervisor_subject', 'block_iomad_company_admin', $params);
+                $messagetext = get_string('completion_warn_supervisor_body', 'block_iomad_company_admin', $params);
+
+                $mail->Sender = $supportuser->firstname;
+                $mail->FromName = $supportuser->firstname;
+                $mail->From     = $CFG->noreplyaddress;
+                if (empty($CFG->divertallemailsto)) {
+                    $mail->Subject = substr($subject, 0, 900);
+                } else {
+                    $mail->Subject = substr('[DIVERTED ' . $user->email . '] ' . $subject, 0, 900);
+                }
+
                 $mail->addAddress($supervisoremail, '');
-            }
-        
-            // Set word wrap.
-            $mail->WordWrap = 79;
 
-            $mail->MessageID = generate_email_messageid();
-            $mail->Body =  "\n$messagetext\n";
-            if (empty($CFG->noemailever)) {
-                $mail->send;
-            }
+                // Set word wrap.
+                $mail->WordWrap = 79;
 
+                $mail->Body =  "\n$messagetext\n";
+                if (empty($CFG->noemailever)) {
+                    $mail->send();
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Send a user's supervisor a warning email that a user hasn't completed a course.
+     *
+     * @param user object
+     * @param course object
+     * @return bool true on success.
+     */
+    public static function send_supervisor_expiry_warning_email($user, $course) {
+        global $DB, $CFG;
+
+        // Do we have a supervisor?
+        if ($supervisoremails = self::get_usersupervisor($user->id)) {
+            foreach ($supervisoremails as $supervisoremail) {
+                $params = new stdclass();
+                $params->fullname = $course->fullname;
+                $params->firstname = $user->firstname;
+                $params->lastname = $user->lastname;
+                $mail = get_mailer();
+
+                $supportuser = core_user::get_support_user();
+                if (!empty($CFG->supportemail)) {
+                    $supportuser->email = $CFG->supportemail;
+                }
+                if ($CFG->supportname) {
+                    $supportuser->firstname = $CFG->supportname;
+                }
+
+                $subject = get_string('completion_expiry_warn_supervisor_subject', 'block_iomad_company_admin', $params);
+                $messagetext = get_string('completion_expiry_warn_supervisor_body', 'block_iomad_company_admin', $params);
+
+                $mail->Sender = $supportuser->firstname;
+                $mail->From     = $CFG->noreplyaddress;
+                $mail->FromName = $supportuser->firstname;
+                if (empty($CFG->divertallemailsto)) {
+                    $mail->Subject = substr($subject, 0, 900);
+                } else {
+                    $mail->Subject = substr('[DIVERTED ' . $user->email . '] ' . $subject, 0, 900);
+                }
+
+                $mail->addAddress($supervisoremail, '');
+
+                // Set word wrap.
+                $mail->WordWrap = 79;
+
+                $mail->Body =  "\n$messagetext\n";
+                if (empty($CFG->noemailever)) {
+                    $mail->send();
+                }
+
+            }
         }
         return true;
     }

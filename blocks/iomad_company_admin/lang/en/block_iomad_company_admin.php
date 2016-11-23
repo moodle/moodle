@@ -105,9 +105,13 @@ $string['companyusersmatching'] = 'Company users matching \'{$a}\'';
 $string['company_users'] = 'Users';
 $string['competencymanagement'] = 'Competencies management';
 $string['completion_course_supervisor_subject'] = 'Notice: Course {$a->fullname} has been completed';
-$string['completion_course_supervisor_body'] = '{$a->firstname} {$a->lastname} has completed their training in course {$a->fullname} on {$a->date}';
+$string['completion_course_supervisor_body'] = '{$a->firstname} {$a->lastname} has completed the AC Education training course, {$a->fullname}, on {$a->date}. Please find attached a copy of their certificate for your records.
+
+The certificate is also available from the User Report section on our system should you need a copy in the future.';
 $string['completion_warn_supervisor_subject'] = 'Notice: Course {$a->fullname} has not been completed';
 $string['completion_warn_supervisor_body'] = '{$a->firstname} {$a->lastname} has not completed their training in course {$a->fullname} within the normal timeframe';
+$string['completion_expiry_warn_supervisor_subject'] = 'Notice: Course {$a->fullname} training expiry';
+$string['completion_expiry_warn_supervisor_body'] = 'The training for {$a->firstname} {$a->lastname} in course {$a->fullname} will expiry shortly.  Please arrange for them to retake this training if appropriate.';
 $string['coursemanagement'] = 'Course management';
 $string['courses'] = 'Available Courses';
 $string['coursesmatching'] = 'Courses matching \'{$a}\'';

@@ -26,6 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/local/iomad/classes/observer.php');
+
 // List of observers.
 $observers = array(
 

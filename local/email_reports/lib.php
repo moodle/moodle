@@ -105,10 +105,11 @@ function email_reports_cron() {
         mtrace("Sending completion warning email to $user->email");
         EmailTemplate::send('completion_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
         // Send the supervisor email too.
+        mtrace("Sending completion warning email to $user->email supervisor");
         company::send_supervisor_warning_email($user, $course);
     }
 
-    // Email the managers
+    /*// Email the managers
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename . "}");
     foreach ($companies as $company) {
@@ -172,7 +173,7 @@ function email_reports_cron() {
                 EmailTemplate::send('completion_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyrec));
             }
         }
-    }
+    } */
 
     $dbman->drop_table($table);
 
@@ -257,9 +258,12 @@ function email_reports_cron() {
         }
         mtrace("Sending expiry warning email to $user->email");
         EmailTemplate::send('expiry_warn_user', array('course' => $course, 'user' => $user, 'company' => $company));
+        // Send the supervisor email too.
+        mtrace("Sending supervisor warning email for $user->email");
+        company::send_supervisor_expiry_warning_email($user, $course);
     }
 
-    // Email the managers
+    /*// Email the managers
     // Get the companies from the list of users in the temp table.
     $companies = $DB->get_records_sql("SELECT DISTINCT companyid FROM {" . $tempcomptablename ."}");
     foreach ($companies as $company) {
@@ -323,6 +327,6 @@ function email_reports_cron() {
                 EmailTemplate::send('expiry_warn_manager', array('user' => $user, 'course' => $course, 'company' => $companyrec));
             }
         }
-    }
+    }*/
     $dbman->drop_table($table);
 }
