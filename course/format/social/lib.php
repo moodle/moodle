@@ -71,7 +71,7 @@ class format_social extends format_base {
     public function get_default_blocks() {
         return array(
             BLOCK_POS_LEFT => array(),
-            BLOCK_POS_RIGHT => array()
+            BLOCK_POS_RIGHT => array('social_activities')
         );
     }
 
