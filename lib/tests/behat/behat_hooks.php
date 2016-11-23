@@ -97,6 +97,13 @@ class behat_hooks extends behat_base {
     protected static $timings = array();
 
     /**
+     * Keeps track of php error generated during reset.
+     *
+     * @var int keep track of how many php errors were generated.
+     */
+    public static $phperrorduringresetcounter = 0;
+
+    /**
      * Hook to capture BeforeSuite event so as to give access to moodle codebase.
      * This will try and catch any exception and exists if anything fails.
      *
@@ -302,7 +309,30 @@ class behat_hooks extends behat_base {
         // Reset $SESSION.
         \core\session\manager::init_empty_session();
 
+        // Set custom handler to try reset all data, if failed because of previous ajax.
+        set_error_handler(
+            function($errno, $errstr, $errfile, $errline) {
+                behat_hooks::$phperrorduringresetcounter++;
+                if (behat_hooks::$phperrorduringresetcounter < self::TIMEOUT) {
+                    sleep(1);
+                    behat_util::reset_all_data();
+                }
+                return true;
+            }, -1 & ~E_NOTICE & ~E_WARNING);
         behat_util::reset_all_data();
+        restore_error_handler();
+
+        // Trigger an error which will be ignored by behat_shutdown_function, this is hacky way to clear last error in php < 7.0.
+        if (self::$phperrorduringresetcounter > 0) {
+            if (function_exists('error_clear_last')) {
+                error_clear_last();
+            } else {
+                trigger_error('before_scenario', E_USER_WARNING);
+            }
+        }
+
+        // Reset the counter here, as this won't be required.
+        self::$phperrorduringresetcounter = 0;
 
         // Assign valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
@@ -336,6 +366,29 @@ class behat_hooks extends behat_base {
         }
         // Run all test with medium (1024x768) screen size, to avoid responsive problems.
         $this->resize_window('medium');
+    }
+
+    /**
+     * Executed after scenario to go to a page where no JS is executed.
+     * This will ensure there are no unwanted ajax calls from browser and
+     * site can be reset safely.
+     *
+     * @param AfterScenarioScope $scope scope passed by event fired after scenario.
+     * @AfterScenario
+     */
+    public function after_scenario(AfterScenarioScope $scope) {
+        try {
+            $this->wait_for_pending_js();
+            $this->getSession()->visit($this->locate_path('/README.txt'));
+            $this->getSession()->reset();
+        } catch (DriverException $e) {
+            // Try restart session, if DriverException caught.
+            try {
+                $this->getSession()->restart();
+            } catch (DriverException $e) {
+                // Do nothing, as this will be caught while starting session in before_scenario.
+            }
+        }
     }
 
     /**
