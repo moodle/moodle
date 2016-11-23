@@ -253,4 +253,15 @@ abstract class core_media_player {
             $height = $CFG->media_default_height;
         }
     }
+
+    /**
+     * Setup page requirements.
+     *
+     * @param moodle_page $page The page we are going to add requirements to.
+     * @since Moodle 3.2
+     */
+    public function setup($page) {
+        // Override is need be.
+    }
+
 }
