@@ -17,7 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * A two column layout for the boost theme.
+ * A login page layout for the boost theme.
  *
  * @package   theme_boost
  * @copyright 2016 Damyon Wiese
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 $bodyattributes = $OUTPUT->body_attributes();
 
 $templatecontext = [
-    'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
+    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
     'bodyattributes' => $bodyattributes
 ];
