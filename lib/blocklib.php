@@ -234,12 +234,18 @@ class block_manager {
             return false;
         }
 
+        $undeletableblocks = self::get_undeletable_block_types();
         foreach ($this->blockinstances as $region) {
             foreach ($region as $instance) {
                 if (empty($instance->instance->blockname)) {
                     continue;
                 }
                 if ($instance->instance->blockname == $blockname) {
+                    if ($instance->instance->requiredbytheme) {
+                        if (!in_array($block->name, $undeletableblocks)) {
+                            continue;
+                        }
+                    }
                     return true;
                 }
             }
@@ -579,6 +585,20 @@ class block_manager {
             return;
         }
 
+        // Exclude auto created blocks if they are not undeletable in this theme.
+        $undeletable = $this->get_undeletable_block_types();
+        $undeletablecheck = '';
+        $undeletableparams = array();
+        $undeletablenotparams = array();
+        if (!empty($undeletable)) {
+            list($testsql, $undeletableparams) = $DB->get_in_or_equal($undeletable, SQL_PARAMS_NAMED, 'undeletable');
+            list($testnotsql, $undeletablenotparams) = $DB->get_in_or_equal($undeletable, SQL_PARAMS_NAMED, 'deletable', false);
+            $undeletablecheck = 'AND ((bi.blockname ' . $testsql . ' AND bi.requiredbytheme = 1) OR ' .
+                                ' (bi.blockname ' . $testnotsql . ' AND bi.requiredbytheme = 0))';
+        } else {
+            $undeletablecheck = 'AND (bi.requiredbytheme = 0)';
+        }
+
         if (is_null($includeinvisible)) {
             $includeinvisible = $this->page->user_is_editing();
         }
@@ -626,6 +646,7 @@ class block_manager {
                     bi.parentcontextid,
                     bi.showinsubcontexts,
                     bi.pagetypepattern,
+                    bi.requiredbytheme,
                     bi.subpagepattern,
                     bi.defaultregion,
                     bi.defaultweight,
@@ -649,12 +670,15 @@ class block_manager {
                 AND (bi.subpagepattern IS NULL OR bi.subpagepattern = :subpage2)
                 $visiblecheck
                 AND b.visible = 1
+                $undeletablecheck
 
                 ORDER BY
                     COALESCE(bp.region, bi.defaultregion),
                     COALESCE(bp.weight, bi.defaultweight),
                     bi.id";
-        $blockinstances = $DB->get_recordset_sql($sql, $params + $parentcontextparams + $pagetypepatternparams);
+
+        $allparams = $params + $parentcontextparams + $pagetypepatternparams + $undeletableparams + $undeletablenotparams;
+        $blockinstances = $DB->get_recordset_sql($sql, $allparams);
 
         $this->birecordsbyregion = $this->prepare_per_region_arrays();
         $unknown = array();
@@ -957,6 +981,10 @@ class block_manager {
      * load_blocks. This is used, for example, to ensure that all blocks get a
      * chance to initialise themselves via the {@link block_base::specialize()}
      * method, before any output is done.
+     *
+     * It is also used to create any blocks that are "undeletable" by the current theme.
+     * These blocks that are auto-created have requiredbytheme set on the block instance
+     * so they are only visible on themes that require them.
      */
     public function create_all_block_instances() {
         global $PAGE;
@@ -977,7 +1005,7 @@ class block_manager {
                 }
             }
             if (!$found) {
-                $this->add_block_at_end_of_default_region($forced);
+                $this->add_block_required_by_theme($forced);
                 $missing = true;
             }
         }
@@ -991,6 +1019,45 @@ class block_manager {
             $this->ensure_instances_exist($region);
         }
 
+    }
+
+    /**
+     * Add a block that is required by the current theme but has not been
+     * created yet. This is a special type of block that only shows in themes that
+     * require it (by listing it in undeletable_block_types).
+     *
+     * @param string $blockname the name of the block type.
+     */
+    protected function add_block_required_by_theme($blockname) {
+        global $DB;
+
+        if (empty($this->birecordsbyregion)) {
+            // No blocks or block regions exist yet.
+            return;
+        }
+
+        $systemcontext = context_system::instance();
+        $defaultregion = $this->get_default_region();
+        // Add a special system wide block instance only for themes that require it.
+        $blockinstance = new stdClass;
+        $blockinstance->blockname = $blockname;
+        $blockinstance->parentcontextid = $systemcontext->id;
+        $blockinstance->showinsubcontexts = true;
+        $blockinstance->requiredbytheme = true;
+        $blockinstance->pagetypepattern = '*';
+        $blockinstance->subpagepattern = null;
+        $blockinstance->defaultregion = $defaultregion;
+        $blockinstance->defaultweight = 0;
+        $blockinstance->configdata = '';
+        $blockinstance->id = $DB->insert_record('block_instances', $blockinstance);
+
+        // Ensure the block context is created.
+        context_block::instance($blockinstance->id);
+
+        // If the new instance was created, allow it to do additional setup.
+        if ($block = block_instance($blockname, $blockinstance)) {
+            $block->instance_create();
+        }
     }
 
     /**

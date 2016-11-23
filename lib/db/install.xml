@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20160804" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20161119" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -2459,6 +2459,7 @@
         <FIELD NAME="blockname" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="The type of block this is. Foreign key, references block.name."/>
         <FIELD NAME="parentcontextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The context within which this block appears. Foreign key, references context.id."/>
         <FIELD NAME="showinsubcontexts" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="If 1, this block appears on all matching pages in subcontexts of parentcontextid, as well in pages belonging to parentcontextid."/>
+        <FIELD NAME="requiredbytheme" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 1, this block was created because it was required by the theme and did not exist."/>
         <FIELD NAME="pagetypepattern" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The types of page this block appears on. Either an exact page type like mod-quiz-view, or a pattern like mod-quiz-* or course-view-*. Note that course-view-* will match course-view."/>
         <FIELD NAME="subpagepattern" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="Further restrictions on where this block appears. In some places, e.g. during a quiz or lesson attempt, different pages have different subpage ids. If this field is not null, the block only appears on that particular subpage."/>
         <FIELD NAME="defaultregion" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="Which block region this block should appear in on each page, in the absence of a specific position in the block_positions table."/>

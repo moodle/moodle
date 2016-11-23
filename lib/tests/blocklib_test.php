@@ -542,6 +542,58 @@ class core_blocklib_testcase extends advanced_testcase {
         context_block::instance($tokeep);   // Would throw an exception if it was deleted.
     }
 
+    public function test_create_all_block_instances() {
+        global $CFG, $PAGE, $DB;
+
+        $this->resetAfterTest();
+        $regionname = 'side-pre';
+        $context = context_system::instance();
+
+        $PAGE->reset_theme_and_output();
+        $CFG->theme = 'boost';
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertEmpty($blocks);
+        // There should be no blocks in the DB.
+
+        $PAGE->reset_theme_and_output();
+        // Change to a theme with undeletable blocks.
+        $CFG->theme = 'clean';
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertCount(2, $blocks);
+
+        $undeletable = block_manager::get_undeletable_block_types();
+        foreach ($undeletable as $blockname) {
+            $instance = $DB->get_record('block_instances', array('blockname' => $blockname));
+            $this->assertEquals(1, $instance->requiredbytheme);
+        }
+
+        // Switch back and those auto blocks should not be returned.
+        $PAGE->reset_theme_and_output();
+        $CFG->theme = 'boost';
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertEmpty($blocks);
+        // But they should exist in the DB.
+        foreach ($undeletable as $blockname) {
+            $count = $DB->count_records('block_instances', array('blockname' => $blockname));
+            $this->assertEquals(1, $count);
+        }
+    }
+
 }
 
 /**
