@@ -14,6 +14,37 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
+{{!
+    @template core_message/message_area_messages_area
+
+    Messages area template.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * isonline - boolean
+    * isblocked - boolean
+    * otheruserid - int
+    * otheruserfullname - string
+    * messages - array of messages
+
+    Example context (json):
+    {
+        "isonline": true,
+        "isblocked": true,
+        "otheruserid": 1,
+        "otheruserfullname": "Sam Student",
+        "messages": [
+            {
+                "text": "Hello there!"
+            }
+        ]
+    }
+}}
 {{#otheruserid}}
 <div class="messages-header">
     <div class="view-toggle btn-container">
@@ -25,6 +56,11 @@
     <div class="name-container">
         <div class="name">
             <button class="btn btn-link" data-action="view-contact-profile" data-userid="{{otheruserid}}">{{otheruserfullname}}</button>
+            {{#isblocked}}
+                <span data-region="contact-icon-blocked">
+                    {{#pix}} t/block, core, {{#str}} contactblocked, message {{/str}} {{/pix}}
+                </span>
+            {{/isblocked}}
         </div>
         <div class="status {{#isonline}}online{{/isonline}}">
             <span class="offline-text">{{#str}} offline, message {{/str}}</span>

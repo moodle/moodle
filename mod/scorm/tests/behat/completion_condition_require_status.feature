@@ -45,6 +45,7 @@ Feature: Scorm multi-sco completion
     And I should see "Play of the game"
     And I switch to the main frame
     And I follow "Exit activity"
+    And I wait until the page is ready
     Then I should see "Basic Multi-sco SCORM package"
     And I log out
     And I log in as "teacher1"
@@ -80,6 +81,7 @@ Feature: Scorm multi-sco completion
     And I should see "Play of the game"
     And I switch to the main frame
     And I follow "Exit activity"
+    And I wait until the page is ready
     Then I should see "ADV Multi-sco SCORM package"
     And I log out
     And I log in as "teacher1"

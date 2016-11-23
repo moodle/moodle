@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      2.9
  */
-define(['jquery', './tether'], function(jQuery, Tether) {
+define(['jquery', './tether', 'core/event'], function(jQuery, Tether, Event) {
 
     window.jQuery = jQuery;
     window.Tether = Tether;
@@ -40,11 +40,23 @@ define(['jquery', './tether'], function(jQuery, Tether) {
             'theme_boost/tooltip',
             'theme_boost/popover'],
             function() {
+
+        jQuery('body').popover({
+            selector: '[data-toggle="popover"]',
+            trigger: 'focus'
+        });
+
+        // We need to call popover automatically if nodes are added to the page later.
+        Event.getLegacyEvents().done(function(events) {
+            jQuery(document).on(events.FILTER_CONTENT_UPDATED, function() {
                 jQuery('body').popover({
                     selector: '[data-toggle="popover"]',
                     trigger: 'focus'
                 });
+            });
+        });
     });
+
 
     return {};
 });

@@ -1246,11 +1246,7 @@ class global_navigation extends navigation_node {
         } else {
             $this->rootnodes['courses']->isexpandable = true;
         }
-
-        // Load the users enrolled courses if they are viewing the My Moodle page AND the admin has not
-        // set that they wish to keep the My Courses branch collapsed by default.
         $this->rootnodes['mycourses']->forceopen = true;
-        $this->load_courses_enrolled();
 
         $canviewcourseprofile = true;
 

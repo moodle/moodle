@@ -608,6 +608,8 @@ class tour {
      * This is used in the session cookie to determine whether the user has seen this tour before.
      */
     public function get_tour_key() {
+        global $USER;
+
         $tourtime = $this->get_config('majorupdatetime', null);
 
         if ($tourtime === null) {
@@ -622,7 +624,7 @@ class tour {
             $tourtime = max($tourtime, $userresetdate);
         }
 
-        return sprintf('tool_usertours_%d_%s', $this->get_id(), $tourtime);
+        return sprintf('tool_usertours_%d_%d_%s', $USER->id, $this->get_id(), $tourtime);
     }
 
     /**

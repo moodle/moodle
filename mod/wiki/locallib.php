@@ -1438,14 +1438,14 @@ function wiki_print_edit_form_default_fields($format, $pageid, $version = -1, $u
 
     echo "<fieldset class=\"wiki-upload-section clearfix\"><legend class=\"ftoggler\">" . get_string("uploadtitle", 'wiki') . "</legend>";
 
-    echo $OUTPUT->container_start('mdl-align wiki-form-center aaaaa');
+    echo $OUTPUT->container_start('container');
     print $filemanager->toHtml();
     echo $OUTPUT->container_end();
 
     $cm = $PAGE->cm;
     $context = context_module::instance($cm->id);
 
-    echo $OUTPUT->container_start('mdl-align wiki-form-center wiki-upload-table');
+    echo $OUTPUT->container_start('container wiki-upload-table');
     wiki_print_upload_table($context, 'wiki_upload', $pageid, $deleteuploads);
     echo $OUTPUT->container_end();
 

@@ -4872,7 +4872,7 @@ class assign {
 
         if ($this->can_view_submission($user->id)) {
 
-            if (has_capability('mod/assign:submit', $this->get_context(), $user)) {
+            if (has_capability('mod/assign:submit', $this->get_context(), $user, false)) {
                 $submissionstatus = $this->get_assign_submission_status_renderable($user, $showlinks);
                 $o .= $this->get_renderer()->render($submissionstatus);
             }

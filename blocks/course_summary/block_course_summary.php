@@ -65,14 +65,6 @@ class block_course_summary extends block_base {
         $context = context_course::instance($this->page->course->id);
         $this->page->course->summary = file_rewrite_pluginfile_urls($this->page->course->summary, 'pluginfile.php', $context->id, 'course', 'summary', NULL);
         $this->content->text = format_text($this->page->course->summary, $this->page->course->summaryformat, $options);
-        if ($this->page->user_is_editing()) {
-            if($this->page->course->id == SITEID) {
-                $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/settings.php?section=frontpagesettings';
-            } else {
-                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->page->course->id;
-            }
-            $this->content->text .= "<div class=\"editbutton\"><a href=\"$editpage\"><img src=\"" . $OUTPUT->pix_url('t/edit') . "\" alt=\"".get_string('edit')."\" /></a></div>";
-        }
         $this->content->footer = '';
 
         return $this->content;

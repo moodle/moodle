@@ -348,58 +348,54 @@ class api {
      * @return \stdClass
      */
     public static function get_profile($userid, $otheruserid) {
-        global $CFG, $DB;
+        global $CFG, $DB, $PAGE;
 
         require_once($CFG->dirroot . '/user/lib.php');
 
-        if ($user = \core_user::get_user($otheruserid)) {
-            // Create the data we are going to pass to the renderable.
-            $userfields = user_get_user_details($user, null, array('city', 'country', 'email',
-                'profileimageurl', 'profileimageurlsmall', 'lastaccess'));
-            if ($userfields) {
-                $data = new \stdClass();
-                $data->userid = $userfields['id'];
-                $data->fullname = $userfields['fullname'];
-                $data->city = isset($userfields['city']) ? $userfields['city'] : '';
-                $data->country = isset($userfields['country']) ? $userfields['country'] : '';
-                $data->email = isset($userfields['email']) ? $userfields['email'] : '';
-                $data->profileimageurl = isset($userfields['profileimageurl']) ? $userfields['profileimageurl'] : '';
-                if (isset($userfields['profileimageurlsmall'])) {
-                    $data->profileimageurlsmall = $userfields['profileimageurlsmall'];
-                } else {
-                    $data->profileimageurlsmall = '';
-                }
-                if (isset($userfields['lastaccess'])) {
-                    $data->isonline = helper::is_online($userfields['lastaccess']);
-                } else {
-                    $data->isonline = false;
-                }
-            } else {
-                // Technically the access checks in user_get_user_details are correct,
-                // but messaging has never obeyed them. In order to keep messaging working
-                // we at least need to return a minimal user record.
-                $data = new \stdClass();
-                $data->userid = $otheruserid;
-                $data->fullname = fullname($user);
-                $data->city = '';
-                $data->country = '';
-                $data->email = '';
-                $data->profileimageurl = '';
-                $data->profileimageurlsmall = '';
-                $data->isonline = false;
-            }
-            // Check if the contact has been blocked.
-            $contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $otheruserid));
-            if ($contact) {
-                $data->isblocked = (bool) $contact->blocked;
-                $data->iscontact = true;
-            } else {
-                $data->isblocked = false;
-                $data->iscontact = false;
-            }
+        $user = \core_user::get_user($otheruserid, '*', MUST_EXIST);
 
-            return $data;
+        // Create the data we are going to pass to the renderable.
+        $data = new \stdClass();
+        $data->userid = $otheruserid;
+        $data->fullname = fullname($user);
+        $data->city = '';
+        $data->country = '';
+        $data->email = '';
+        $data->isonline = false;
+        // Get the user picture data - messaging has always shown these to the user.
+        $userpicture = new \user_picture($user);
+        $userpicture->size = 1; // Size f1.
+        $data->profileimageurl = $userpicture->get_url($PAGE)->out(false);
+        $userpicture->size = 0; // Size f2.
+        $data->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
+
+        $userfields = user_get_user_details($user, null, array('city', 'country', 'email', 'lastaccess'));
+        if ($userfields) {
+            if (isset($userfields['city'])) {
+                $data->city = $userfields['city'];
+            }
+            if (isset($userfields['country'])) {
+                $data->country = $userfields['country'];
+            }
+            if (isset($userfields['email'])) {
+                $data->email = $userfields['email'];
+            }
+            if (isset($userfields['lastaccess'])) {
+                $data->isonline = helper::is_online($userfields['lastaccess']);
+            }
         }
+
+        // Check if the contact has been blocked.
+        $contact = $DB->get_record('message_contacts', array('userid' => $userid, 'contactid' => $otheruserid));
+        if ($contact) {
+            $data->isblocked = (bool) $contact->blocked;
+            $data->iscontact = true;
+        } else {
+            $data->isblocked = false;
+            $data->iscontact = false;
+        }
+
+        return $data;
     }
 
     /**
@@ -620,8 +616,12 @@ class api {
             return false;
         }
 
+        $senderid = null;
+        if ($sender !== null && isset($sender->id)) {
+            $senderid = $sender->id;
+        }
         // The recipient has specifically blocked this sender.
-        if (self::is_user_blocked($recipient, $sender)) {
+        if (self::is_user_blocked($recipient->id, $senderid)) {
             return false;
         }
 
@@ -667,27 +667,25 @@ class api {
      * Note: This function will always return false if the sender has the
      * readallmessages capability at the system context level.
      *
-     * @param object $recipient User object.
-     * @param object $sender User object.
+     * @param int $recipientid User ID of the recipient.
+     * @param int $senderid User ID of the sender.
      * @return bool true if $sender is blocked, false otherwise.
      */
-    public static function is_user_blocked($recipient, $sender = null) {
+    public static function is_user_blocked($recipientid, $senderid = null) {
         global $USER, $DB;
 
-        if (is_null($sender)) {
+        if (is_null($senderid)) {
             // The message is from the logged in user, unless otherwise specified.
-            $sender = $USER;
+            $senderid = $USER->id;
         }
 
         $systemcontext = \context_system::instance();
-        if (has_capability('moodle/site:readallmessages', $systemcontext, $sender)) {
+        if (has_capability('moodle/site:readallmessages', $systemcontext, $senderid)) {
             return false;
         }
 
-        if ($contact = $DB->get_record('message_contacts', array('userid' => $recipient->id, 'contactid' => $sender->id))) {
-            if ($contact->blocked) {
-                return true;
-            }
+        if ($DB->get_field('message_contacts', 'blocked', ['userid' => $recipientid, 'contactid' => $senderid])) {
+            return true;
         }
 
         return false;

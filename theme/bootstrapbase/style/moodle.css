@@ -162,7 +162,7 @@ a.autolink.glossary:hover {
 }
 /*rtl:raw:
 .collapsible-actions .collapseexpand {
-    background: url([[pix:t/collapsed_rtl]]);
+    background: url([[pix:t/collapsed_rtl]]) right center no-repeat;
 }
 */
 .collapsible-actions .collapse-all {
@@ -5837,6 +5837,9 @@ a.ygtvspacer:hover {
   border: 1px solid #e3e3e3;
   clear: both;
   border-radius: 4px;
+}
+.messaging-area-container .messaging-area img {
+  max-width: 100%;
 }
 .messaging-area-container .messaging-area .contacts-area {
   border-right: 1px solid #e3e3e3;
@@ -13821,7 +13824,7 @@ form {
 .mform fieldset.collapsible legend a.fheader {
   padding: 0 5px 0 20px;
   margin-left: -20px;
-  background: url([[pix:t/expanded]]) 2px center no-repeat;
+  background: url([[pix:t/expanded]]) left center no-repeat;
 }
 .mform fieldset.collapsed legend a.fheader {
   /*rtl:raw:
@@ -14455,6 +14458,13 @@ body.modal-open {
 /* modules.less */
 select {
   width: auto;
+}
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem .fitemtitle,
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem .felement {
+  display: table-cell;
+  float: none;
+  border-top: 1px solid #ddd;
+  padding: 8px 0;
 }
 .path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
   display: block;

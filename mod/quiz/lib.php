@@ -1961,7 +1961,7 @@ function quiz_check_updates_since(cm_info $cm, $from, $filter = array()) {
         $select = 'id ' . $questionsql . ' AND (timemodified > :time1 OR timecreated > :time2)';
         $params['time1'] = $from;
         $params['time2'] = $from;
-        $questions = $DB->count_records_select('question', $select, $params) > 0;
+        $questions = $DB->get_records_select('question', $select, $params, '', 'id');
         if (!empty($questions)) {
             $updates->questions->updated = true;
             $updates->questions->itemids = array_keys($questions);

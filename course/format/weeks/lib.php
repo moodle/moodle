@@ -488,6 +488,15 @@ class format_weeks extends format_base {
         $dates = $this->get_section_dates(intval($numsections), $startdate);
         return $dates->end;
     }
+
+    /**
+     * Indicates whether the course format supports the creation of a news forum.
+     *
+     * @return bool
+     */
+    public function supports_news() {
+        return true;
+    }
 }
 
 /**

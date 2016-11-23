@@ -24,10 +24,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$blockshtml = $OUTPUT->blocks('side-pre');
+$hasblocks = strpos($blockshtml, 'data-block=') !== false;
+$bodyattributes = $OUTPUT->body_attributes();
+
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))),
     'output' => $OUTPUT,
-    'sidepreblocks' => $OUTPUT->blocks('side-pre'),
+    'bodyattributes' => $bodyattributes,
+    'sidepreblocks' => $blockshtml,
+    'hasblocks' => $hasblocks
 ];
 
 echo $OUTPUT->render_from_template('theme_boost/secure', $templatecontext);

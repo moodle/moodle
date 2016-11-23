@@ -792,6 +792,7 @@
 
 #adminsettings .form-overridden {
     @extend .form-control-feedback;
+    @extend .alert-info;
 }
 
 .modal.modal-in-page {
