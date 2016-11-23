@@ -43,15 +43,15 @@ function email_reports_cron() {
     $table->add_field('notifyperiod', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
     $table->add_field('timeenrolled', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null);
     $table->add_field('companyname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('departmentname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('coursename', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('firstname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('lastname', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('email', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
-    $table->add_field('username', XMLDB_TYPE_CHAR, '50', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('departmentname', XMLDB_TYPE_CHAR, '255', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('coursename', XMLDB_TYPE_CHAR, '254', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('firstname', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('lastname', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('email', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
+    $table->add_field('username', XMLDB_TYPE_CHAR, '100', XMLDB_UNSIGNED, null, null, null);
     $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        $dbman->create_temp_table($table);
+    $dbman->create_temp_table($table);
 
     // Populate this table.
     $populatesql = "INSERT INTO {" . $tempcomptablename . "} (companyid, companyname, departmentid, departmentname, courseid,
