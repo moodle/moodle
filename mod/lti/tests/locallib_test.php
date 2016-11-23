@@ -185,7 +185,8 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('http://moodle.org/this/is/moodle'));
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('https://moodle.org/this/is/moodle'));
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle'));
-        $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar'));
+        $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle?'));
+        $this->assertEquals('moodle.org//this/is/moodle?foo=bar', lti_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar'));
     }
 
     /*
@@ -324,5 +325,116 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals('https://www.example.com/lti/provider.php', $lti->securetoolurl);
         $this->assertEquals('http://download.moodle.org/unittest/test.jpg', $lti->icon);
         $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $lti->secureicon);
+    }
+
+    /**
+     * Provider for test_lti_get_best_tool_by_url.
+     *
+     * @return array of [urlToTest, expectedTool, allTools]
+     */
+    public function lti_get_best_tool_by_url_provider() {
+        $tools = [
+            (object) [
+                'name' => 'Here',
+                'baseurl' => 'https://example.com/i/am/?where=here',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'There',
+                'baseurl' => 'https://example.com/i/am/?where=there',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'Not here',
+                'baseurl' => 'https://example.com/i/am/?where=not/here',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'Here',
+                'baseurl' => 'https://example.com/i/am/',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'Here',
+                'baseurl' => 'https://example.com/i/was',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'Here',
+                'baseurl' => 'https://badexample.com/i/am/?where=here',
+                'tooldomain' => 'badexample.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+        ];
+
+        $data = [
+            [
+                'url' => $tools[0]->baseurl,
+                'expected' => $tools[0],
+            ],
+            [
+                'url' => $tools[1]->baseurl,
+                'expected' => $tools[1],
+            ],
+            [
+                'url' => $tools[2]->baseurl,
+                'expected' => $tools[2],
+            ],
+            [
+                'url' => $tools[3]->baseurl,
+                'expected' => $tools[3],
+            ],
+            [
+                'url' => $tools[4]->baseurl,
+                'expected' => $tools[4],
+            ],
+            [
+                'url' => $tools[5]->baseurl,
+                'expected' => $tools[5],
+            ],
+            [
+                'url' => 'https://nomatch.com/i/am/',
+                'expected' => null
+            ],
+            [
+                'url' => 'https://example.com',
+                'expected' => null
+            ],
+            [
+                'url' => 'https://example.com/i/am/?where=unknown',
+                'expected' => $tools[3]
+            ]
+        ];
+
+        // Construct the final array as required by the provider API. Each row
+        // of the array contains the URL to test, the expected tool, and
+        // the complete list of tools.
+        return array_map(function($data) use ($tools) {
+            return [$data['url'], $data['expected'], $tools];
+        }, $data);
+    }
+
+    /**
+     * Test lti_get_best_tool_by_url.
+     *
+     * @dataProvider lti_get_best_tool_by_url_provider
+     * @param string $url The URL to test.
+     * @param object $expected The expected tool matching the URL.
+     * @param array $tools The pool of tools to match the URL with.
+     */
+    public function test_lti_get_best_tool_by_url($url, $expected, $tools) {
+        $actual = lti_get_best_tool_by_url($url, $tools, null);
+        $this->assertSame($expected, $actual);
     }
 }
