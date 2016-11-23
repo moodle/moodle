@@ -29,8 +29,8 @@ $tasks = array(
     array(
         'classname' => 'local_email_reports\task\cron_task',
         'blocking' => 0,
-        'minute' => '*/10',
-        'hour' => '*',
+        'minute' => '0',
+        'hour' => '0',
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*'
