@@ -1680,7 +1680,7 @@ class html_writer {
             $class = str_replace(']', '', $class);
             $attributes['class'] = $class;
         }
-        $attributes['class'] = 'select ' . $attributes['class']; // Add 'select' selector always
+        $attributes['class'] = 'select custom-select ' . $attributes['class']; // Add 'select' selector always.
 
         $attributes['name'] = $name;
 

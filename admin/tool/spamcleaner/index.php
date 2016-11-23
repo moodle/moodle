@@ -96,12 +96,12 @@ echo $OUTPUT->box_start();     // The forms section at the top
 
 <div class="mdl-align">
 
-<form method="post" action="index.php">
+<form method="post" action="index.php" class="form-inline spamcleanerform">
   <div>
     <label class="accesshide" for="keyword_el"><?php print_string('spamkeyword', 'tool_spamcleaner') ?></label>
-    <input type="text" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" />
+    <input type="text" class="form-control" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" />
     <input type="hidden" name="sesskey" value="<?php echo sesskey();?>" />
-    <input type="submit" value="<?php echo get_string('spamsearch', 'tool_spamcleaner')?>" />
+    <input type="submit" class="btn btn-primary" value="<?php echo get_string('spamsearch', 'tool_spamcleaner')?>" />
   </div>
 </form>
 <p><?php echo get_string('spameg', 'tool_spamcleaner');?></p>
@@ -110,7 +110,8 @@ echo $OUTPUT->box_start();     // The forms section at the top
 
 <form method="post"  action="index.php">
   <div>
-    <input type="submit" name="autodetect" value="<?php echo get_string('spamauto', 'tool_spamcleaner');?>" />
+    <input type="submit" class="btn btn-primary" name="autodetect"
+           value="<?php echo get_string('spamauto', 'tool_spamcleaner');?>" />
   </div>
 </form>
 
@@ -256,7 +257,9 @@ function print_user_list($users_rs, $keywords) {
     foreach ($users_rs as $rs){
         foreach ($rs as $user) {
             if (!$count) {
-                echo '<table border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th><th>'.get_string('user','admin').'</th><th>'.get_string('spamdesc', 'tool_spamcleaner').'</th><th>'.get_string('spamoperation', 'tool_spamcleaner').'</th></tr>';
+                echo '<table class="table table-bordered" border="1" width="100%" id="data-grid"><tr><th>&nbsp;</th>
+                    <th>'.get_string('user', 'admin').'</th><th>'.get_string('spamdesc', 'tool_spamcleaner').'</th>
+                    <th>'.get_string('spamoperation', 'tool_spamcleaner').'</th></tr>';
             }
             $count++;
             filter_user($user, $keywords, $count);
@@ -269,7 +272,7 @@ function print_user_list($users_rs, $keywords) {
     } else {
         echo '</table>';
         echo '<div class="mld-align">
-              <button id="removeall_btn">'.get_string('spamdeleteall', 'tool_spamcleaner').'</button>
+              <button id="removeall_btn" class="btn btn-secondary">'.get_string('spamdeleteall', 'tool_spamcleaner').'</button>
               </div>';
     }
 }
@@ -357,8 +360,10 @@ function print_user_entry($user, $keywords, $count) {
 
         $html .= '<td align="left">'.format_text($user->description, $user->descriptionformat, array('overflowdiv'=>true)).'</td>';
         $html .= '<td width="100px" align="center">';
-        $html .= '<button onclick="M.tool_spamcleaner.del_user(this,'.$user->id.')">'.get_string('deleteuser', 'admin').'</button><br />';
-        $html .= '<button onclick="M.tool_spamcleaner.ignore_user(this,'.$user->id.')">'.get_string('ignore', 'admin').'</button>';
+        $html .= '<button class="btn btn-primary" onclick="M.tool_spamcleaner.del_user(this,'.$user->id.')">'.
+            get_string('deleteuser', 'admin').'</button><br />';
+        $html .= '<button class="btn btn-secondary" onclick="M.tool_spamcleaner.ignore_user(this,'.$user->id.')">'.
+            get_string('ignore', 'admin').'</button>';
         $html .= '</td>';
         $html .= '</tr>';
         return $html;

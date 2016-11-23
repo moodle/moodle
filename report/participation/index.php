@@ -370,19 +370,20 @@ if (!empty($instanceid) && !empty($roleid)) {
     }
 
     if (!empty($CFG->messaging)) {
-        echo '<div class="selectbuttons">';
-        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> '."\n";
-        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> '."\n";
+        $buttonclasses = 'btn btn-secondary';
+        echo '<div class="selectbuttons btn-group">';
+        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" class="'. $buttonclasses .'"> '."\n";
+        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" class="'. $buttonclasses .'"> '."\n";
         if ($perpage >= $matchcount) {
-            echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" />'."\n";
+            echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" class="'. $buttonclasses .'">'."\n";
         }
         echo '</div>';
-        echo '<div>';
+        echo '<div class="p-y-1">';
         echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         echo html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionselect'));
         echo $OUTPUT->help_icon('withselectedusers');
-        echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
+        echo '<input type="submit" value="' . get_string('ok') . '" class="'. $buttonclasses .'"/>'."\n";
         echo '</div>';
         echo '</div>'."\n";
         echo '</form>'."\n";
