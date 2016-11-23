@@ -566,6 +566,18 @@ class core_blocklib_testcase extends advanced_testcase {
 
         list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
             $context, 'page-type');
+
+        $blockmanager->show_only_fake_blocks(true);
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        $this->assertEmpty($blocks);
+
+        $PAGE->reset_theme_and_output();
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->show_only_fake_blocks(false);
         $blockmanager->load_blocks();
         $blockmanager->create_all_block_instances();
         $blocks = $blockmanager->get_blocks_for_region($regionname);

@@ -992,21 +992,23 @@ class block_manager {
 
         // If there are any un-removable blocks that were not created - force them.
         $undeletable = $this->get_undeletable_block_types();
-        foreach ($undeletable as $forced) {
-            if (empty($forced)) {
-                continue;
-            }
-            $found = false;
-            foreach ($this->get_regions() as $region) {
-                foreach($this->birecordsbyregion[$region] as $instance) {
-                    if ($instance->blockname == $forced) {
-                        $found = true;
+        if (!$this->fakeblocksonly) {
+            foreach ($undeletable as $forced) {
+                if (empty($forced)) {
+                    continue;
+                }
+                $found = false;
+                foreach ($this->get_regions() as $region) {
+                    foreach($this->birecordsbyregion[$region] as $instance) {
+                        if ($instance->blockname == $forced) {
+                            $found = true;
+                        }
                     }
                 }
-            }
-            if (!$found) {
-                $this->add_block_required_by_theme($forced);
-                $missing = true;
+                if (!$found) {
+                    $this->add_block_required_by_theme($forced);
+                    $missing = true;
+                }
             }
         }
 
@@ -1033,6 +1035,11 @@ class block_manager {
 
         if (empty($this->birecordsbyregion)) {
             // No blocks or block regions exist yet.
+            return;
+        }
+
+        // Never auto create blocks when we are showing fake blocks only.
+        if ($this->fakeblocksonly) {
             return;
         }
 
