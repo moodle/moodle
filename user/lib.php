@@ -929,18 +929,21 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
 
         }
     } else {
-        // Build role-return link instead of logout link.
-        $switchrole = new stdClass();
-        $switchrole->itemtype = 'link';
-        $switchrole->url = new moodle_url('/course/switchrole.php', array(
-            'id' => $course->id,
-            'switchrole' => -1,
-            'returnurl' => $page->url->out_as_local_url(false)
-        ));
-        $switchrole->pix = "i/switchrole";
-        $switchrole->title = get_string('switchroleto');
-        $switchrole->titleidentifier = 'switchroleto,moodle';
-        $returnobject->navitems[] = $switchrole;
+        // Build switch role link.
+        $roles = get_switchable_roles($context);
+        if (is_array($roles) && (count($roles) > 0)) {
+            $switchrole = new stdClass();
+            $switchrole->itemtype = 'link';
+            $switchrole->url = new moodle_url('/course/switchrole.php', array(
+                'id' => $course->id,
+                'switchrole' => -1,
+                'returnurl' => $page->url->out_as_local_url(false)
+            ));
+            $switchrole->pix = "i/switchrole";
+            $switchrole->title = get_string('switchroleto');
+            $switchrole->titleidentifier = 'switchroleto,moodle';
+            $returnobject->navitems[] = $switchrole;
+        }
     }
 
     return $returnobject;
