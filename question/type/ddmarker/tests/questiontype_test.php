@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_ddmarker_test extends basic_testcase {
+class qtype_ddmarker_test extends advanced_testcase {
     /** @var qtype_ddmarker instance of the question type class to test. */
     protected $qtype;
 
@@ -55,5 +55,18 @@ class qtype_ddmarker_test extends basic_testcase {
 
     public function test_can_analyse_responses() {
         $this->assertTrue($this->qtype->can_analyse_responses());
+    }
+
+    public function test_save_question() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category(array());
+
+        $dd = $questiongenerator->create_question('ddmarker', 'zerodrag',
+                array('category' => $cat->id));
+        $actual = question_bank::load_question_data($dd->id);
+
+        $this->assertCount(2, $actual->options->drags);
     }
 }
