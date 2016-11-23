@@ -15,6 +15,7 @@ Feature: Forms manipulation
     Then the field "First name" matches value "Field value"
     And the "Select a country" select box should contain "Japan"
     And the field "New password" matches value "TestPass"
+    And I take focus off "Update profile" "button"
     And I press "Update profile"
 
   @javascript
