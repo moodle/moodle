@@ -21,7 +21,11 @@
 </div>
 <div class="profile" data-userid="{{userid}}" data-region="profile">
     <div class="user-container">
-        <img class="profile-picture" src="{{profileimageurl}}" alt="" />
+        <a data-action="profile-view" href="#">
+            <img class="profile-picture" src="{{profileimageurl}}"
+                 alt="{{#str}}pictureof, moodle, {{fullname}}{{/str}}"
+                 title="{{#str}}pictureof, moodle, {{fullname}}{{/str}}" />
+        </a>
         <div class="name-container">
             <div class="name">{{fullname}}</div>
             <div class="status {{#isonline}}online{{/isonline}}">
@@ -37,10 +41,7 @@
     </div>
     <div class="actions">
         <div class="separator">
-            <a data-action="profile-view" href="#">{{#str}}viewprofile{{/str}}</a>
-        </div>
-        <div class="separator">
-            <a data-action="profile-send-message" href="#">{{#str}}viewmessages, message{{/str}}</a>
+            <a data-action="profile-send-message" href="#">{{#str}}sendmessage, message{{/str}}</a>
         </div>
         <div class="separator">
             {{#isblocked}}
