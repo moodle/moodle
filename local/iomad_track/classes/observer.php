@@ -189,11 +189,19 @@ class observer {
                                                                    AND gi.courseid = :courseid)
                                          WHERE gg.userid = :userid", array('courseid' => $courseid,
                                                                            'userid' => $userid)); 
+
+        // Get the enrolment time for the user on the course.
+        $enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
+                                         JOIN {enrol} e ON (ue.enrolid = e.id)
+                                         WHERE ue.userid = :userid
+                                         AND e.courseid = :courseid",
+                                         array('userid' => $userid,
+                                               'courseid' => $courseid));
         // Record the completion event.
         $completion = new \StdClass();
         $completion->courseid = $courseid;
         $completion->userid = $userid;
-        $completion->timeenroled = $comprec->timeenrolled;
+        $completion->timeenroled = $enrolrec->timestart;
         $completion->timestarted = $comprec->timestarted;
         $completion->timecompleted = $timecompleted;
         $completion->finalscore = $graderec->finalgrade;
