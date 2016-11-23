@@ -916,3 +916,21 @@ function signup_get_user_confirmation_authplugin() {
     }
     return $authplugin;
 }
+
+/**
+ * Check if sign-up is enabled in the site. If is enabled, the function will return the authplugin instance.
+ *
+ * @return mixed false if sign-up is not enabled, the authplugin instance otherwise.
+ * @since  Moodle 3.2
+ */
+function signup_is_enabled() {
+    global $CFG;
+
+    if (!empty($CFG->registerauth)) {
+        $authplugin = get_auth_plugin($CFG->registerauth);
+        if ($authplugin->can_signup()) {
+            return $authplugin;
+        }
+    }
+    return false;
+}
