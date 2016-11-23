@@ -122,6 +122,7 @@ $string['unreadnotification'] = 'Unread notification: {$a}';
 $string['unreadnewmessage'] = 'New message from {$a}';
 $string['userisblockingyou'] = 'This user has blocked you from sending messages to them';
 $string['userisblockingyounoncontact'] = '{$a} only accepts messages from their contacts.';
+$string['viewfullnotification'] = 'View full notification';
 $string['viewinganotherusersmessagearea'] = 'You are viewing another user\'s message area.';
 $string['viewmessages'] = 'View messages';
 $string['viewmessageswith'] = 'View messages with {$a}';
