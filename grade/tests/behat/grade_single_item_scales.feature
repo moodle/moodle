@@ -54,7 +54,6 @@ Feature: View gradebook when single item scales are used
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
-    And I follow "Grader report"
     And I turn editing mode on
 
   Scenario: Test displaying single item scales in gradebook in aggregation method Natural
@@ -79,7 +78,7 @@ Feature: View gradebook when single item scales are used
       | Test assignment one | -     | Ace!–Ace! | -                            |
       | Sub category 1 total| -     | 0–1       | -                            |
       | Course total        | -     | 0–1       | -                            |
-    And I select "Gradebook setup" from the "jump" singleselect
+    And I follow "Setup"
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | 1.00      |
@@ -111,7 +110,7 @@ Feature: View gradebook when single item scales are used
       | Test assignment one                              | Ace!           | Ace!–Ace!   | <contrib1>                   |
       | Sub category (<aggregation>) total<aggregation>. | <cattotal1>    | 0–100       | -                            |
       | Course total<aggregation>.                       | <coursetotal1> | 0–100       | -                            |
-    And I select "Gradebook setup" from the "jump" singleselect
+    And I follow "Setup"
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                                             | Max grade |
       | Test assignment one                              | Ace! (1)  |

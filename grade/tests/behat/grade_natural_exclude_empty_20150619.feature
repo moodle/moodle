@@ -27,7 +27,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I log in as "teacher1"
     And I follow "Course 1"
     And I click on "Grades" "link" in the "Navigation" "block"
-    And I set the field "Grade report" to "Gradebook setup"
+    And I follow "Setup"
     And I set the following settings for grade item "Test assignment four (extra)":
       | Extra credit | 1 |
     And I set the following settings for grade item "Test assignment five (extra)":
@@ -43,7 +43,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade  | Range | Percentage | Contribution to course total |
@@ -64,7 +64,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -83,7 +83,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -110,7 +110,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -135,7 +135,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade  | Range | Percentage | Contribution to course total |
@@ -160,7 +160,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -183,7 +183,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -210,7 +210,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -237,7 +237,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -262,7 +262,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |

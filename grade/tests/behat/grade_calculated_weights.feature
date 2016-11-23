@@ -43,7 +43,7 @@ Feature: We can understand the gradebook user report
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
-    And I set the field "Grade report" to "Gradebook setup"
+    And I follow "Setup"
     And I press "Add category"
     And I set the field "Category name" to "Sub category"
     And I press "Save changes"
@@ -59,7 +59,7 @@ Feature: We can understand the gradebook user report
   Scenario: Mean of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation | Mean of grades |
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -84,7 +84,7 @@ Feature: We can understand the gradebook user report
       | Item weight | 1.0 |
     And I set the following settings for grade item "Sub category":
       | Item weight | 1.0 |
-    And I set the field "Grade report" to "User report"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -105,7 +105,8 @@ Feature: We can understand the gradebook user report
       | Aggregation | Simple weighted mean of grades |
     And I set the following settings for grade item "Test assignment three":
       | Extra credit | 1 |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -124,7 +125,8 @@ Feature: We can understand the gradebook user report
       | Aggregation | Mean of grades (with extra credits) |
     And I set the following settings for grade item "Test assignment three":
       | Extra credit weight | 1.0 |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -141,7 +143,8 @@ Feature: We can understand the gradebook user report
   Scenario: Median of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation | Median of grades |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -158,7 +161,8 @@ Feature: We can understand the gradebook user report
   Scenario: Lowest grade aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation | Lowest grade |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -175,7 +179,8 @@ Feature: We can understand the gradebook user report
   Scenario: Highest grade aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation | Highest grade |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -192,7 +197,8 @@ Feature: We can understand the gradebook user report
   Scenario: Mode of grades aggregation
     And I set the following settings for grade item "Course 1":
       | Aggregation | Mode of grades |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -213,7 +219,8 @@ Feature: We can understand the gradebook user report
       | Aggregation | Weighted mean of grades |
     And I set the following settings for grade item "Test assignment three":
       | Extra credit | 1 |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.
@@ -232,7 +239,8 @@ Feature: We can understand the gradebook user report
   Scenario: View user report with natural aggregation
     And I set the following settings for grade item "Test assignment three":
       | Extra credit | 1 |
-    And I set the field "Grade report" to "User report"
+    And I follow "View"
+    And I follow "User report"
     And I set the field "Select all or one user" to "Student 1"
 
     # Check the values in the weights column.

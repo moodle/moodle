@@ -56,7 +56,7 @@ Feature: We can use Single view
 
   @javascript
   Scenario: I can update grades, add feedback and exclude grades.
-    Given I select "Single view" from the "Grade report" singleselect
+    Given I follow "Single view"
     And I select "Student 4" from the "Select user..." singleselect
     And I set the field "Override for Test assignment one" to "1"
     When I set the following fields to these values:
@@ -98,7 +98,7 @@ Feature: We can use Single view
     And I log in as "teacher2"
     And I follow "Course 1"
     And I click on "Grades" "link" in the "Navigation" "block"
-    And I click on "Single view" "option"
+    And I follow "Single view"
     And I click on "Student 4" "option"
     And the "Exclude for Test assignment one" "checkbox" should be disabled
     And the "Override for Test assignment one" "checkbox" should be enabled
