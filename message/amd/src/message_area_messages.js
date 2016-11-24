@@ -81,8 +81,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
         /** @type {Modal} the confirmation modal */
         Messages.prototype._confirmationModal = null;
 
-        /** @type {int} the timestamp for the earliest visible message */
-        Messages.prototype._earliestMessageTimestamp = 0;
+        /** @type {int} the timestamp for the most recent visible message */
+        Messages.prototype._latestMessageTimestamp = 0;
 
         /** @type {BackOffTimer} the backoff timer */
         Messages.prototype._backoffTimer = null;
@@ -146,6 +146,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             var messages = this.messageArea.find(SELECTORS.MESSAGES);
             if (messages.length) {
                 this._addScrollEventListener(messages.find(SELECTORS.MESSAGE).length);
+                this._latestMessageTimestamp = messages.find(SELECTORS.MESSAGE + ':last').data('timecreated');
             }
 
             // Create a timer to poll the server for new messages.
@@ -170,8 +171,8 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             this._numMessagesDisplayed = 0;
             // Stop the existing timer so we can set up the new user's messages.
             this._backoffTimer.stop();
-            // Reset the earliest timestamp when we change the messages view.
-            this._earliestMessageTimestamp = 0;
+            // Reset the latest timestamp when we change the messages view.
+            this._latestMessageTimestamp = 0;
 
             // Mark all the messages as read.
             var markMessagesAsRead = Ajax.call([{
@@ -306,7 +307,6 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     var result = messagesArea.find(SELECTORS.MESSAGE + '[data-id="' + id + '"]');
                     return !result.length;
                 });
-
                 numberreceived = data.messages.length;
                 // We have the data - lets render the template with it.
                 return Templates.render('core_message/message_area_messages', data);
@@ -337,7 +337,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          * Handles returning a list of messages to display.
          *
          * @param {int} userid
-         * @param {bool} fromTimestamp Load messages from the earliest known timestamp
+         * @param {bool} fromTimestamp Load messages from the latest known timestamp
          * @return {Promise} The promise resolved when the contact area has been rendered
          * @private
          */
@@ -353,7 +353,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             // If we're trying to load new messages since the message UI was
             // rendered. Used for ajax polling while user is on the message UI.
             if (fromTimestamp) {
-                args.timefrom = this._earliestMessageTimestamp;
+                args.timefrom = this._latestMessageTimestamp;
                 // Remove limit and offset. We want all new messages.
                 args.limitfrom = 0;
                 args.limitnum = 0;
@@ -371,16 +371,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
                 // Did we get any new messages?
                 if (messages && messages.length) {
-                    var earliestMessage = messages[messages.length - 1];
+                    var latestMessage = messages[messages.length - 1];
 
-                    // If we haven't set the timestamp yet then just use the earliest message.
-                    if (!this._earliestMessageTimestamp) {
+                    // Update our record of the latest known message for future requests.
+                    if (latestMessage.timecreated > this._latestMessageTimestamp) {
                         // Next request should be for the second after the most recent message we've seen.
-                        this._earliestMessageTimestamp = earliestMessage.timecreated + 1;
-                    // Update our record of the earliest known message for future requests.
-                    } else if (earliestMessage.timecreated < this._earliestMessageTimestamp) {
-                        // Next request should be for the second after the most recent message we've seen.
-                        this._earliestMessageTimestamp = earliestMessage.timecreated + 1;
+                        this._latestMessageTimestamp = latestMessage.timecreated + 1;
                     }
                 }
 
