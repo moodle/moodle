@@ -84,7 +84,7 @@ Feature: Access to full profiles of users
     And I log out
     When I log in as "student1"
     And I view the "Student 3" contact in the message area
-    And I follow "View profile"
+    And I click on ".profile-picture" "css_element"
     Then I should see "First access to site"
 
   @javascript
@@ -100,7 +100,7 @@ Feature: Access to full profiles of users
     And I log out
     When I log in as "student1"
     And I view the "Student 2" contact in the message area
-    And I follow "View profile"
+    And I click on ".profile-picture" "css_element"
     And I should not see "First access to site"
     And I should see "The details of this user are not available to you"
     And I log out
@@ -118,5 +118,5 @@ Feature: Access to full profiles of users
     And I log out
     And I log in as "student1"
     And I view the "Student 2" contact in the message area
-    And I follow "View profile"
+    And I click on ".profile-picture" "css_element"
     Then I should see "First access to site"
