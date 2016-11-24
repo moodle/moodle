@@ -58,6 +58,7 @@ Feature: Add media to Atto
   And I click on "Private files" "link" in the ".moodle-dialogue-base[aria-hidden='false'] .fp-repo-area" "css_element"
   And I click on "moodle-logo.png" "link"
   And I click on "Select this file" "button" in the ".moodle-dialogue-base[aria-hidden='false']" "css_element"
+  And I change window size to "large"
   And I set the field with xpath "//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_width_entry ')]" to "420"
   And I set the field with xpath "//*[contains(concat(' ', normalize-space(@class), ' '), ' atto_media_height_entry ')]" to "69"
   And I click on "Display options" "link"
