@@ -1539,12 +1539,21 @@ class global_navigation extends navigation_node {
                                    WHERE shared=1)
                                OR c.id IN (
                                    SELECT courseid FROM {company_shared_courses}
-                                   WHERE companyid = $companyid)) ";
+                                   WHERE companyid = $companyid))
+                               OR c.id IN (
+                                   SELECT clu.licensecourseid FROM {companylicense_users} clu 
+                                   JOIN {companylicense} cl ON (clu.userid = cl.userid)
+                                   WHERE cl.companyid = $companyid
+                                   AND clu.userid = " . $USER->id ."
+                                   AND cl.expirydate > " . time() .")";
+
+
             } else if (!is_siteadmin()) {
                 $sharedsql = " AND c.id IN (select courseid FROM {iomad_courses} WHERE shared=1) ";
             } else {
                 $sharedsql = "";
             }
+
 
             // Hmmm we need to show categories... this is going to be painful.
             // We now need to fetch up to $limit courses for each category to
