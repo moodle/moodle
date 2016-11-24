@@ -5093,6 +5093,7 @@ function reset_course_userdata($data) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->libdir.'/completionlib.php');
+    require_once($CFG->dirroot.'/completion/criteria/completion_criteria_date.php');
     require_once($CFG->dirroot.'/group/lib.php');
 
     $data->courseid = $data->id;
@@ -5135,6 +5136,27 @@ function reset_course_userdata($data) {
         // Update any date activity restrictions.
         if ($CFG->enableavailability) {
             \availability_date\condition::update_all_dates($data->courseid, $data->timeshift);
+        }
+
+        // Update completion expected dates.
+        if ($CFG->enablecompletion) {
+            $modinfo = get_fast_modinfo($data->courseid);
+            $changed = false;
+            foreach ($modinfo->get_cms() as $cm) {
+                if ($cm->completion && !empty($cm->completionexpected)) {
+                    $DB->set_field('course_modules', 'completionexpected', $cm->completionexpected + $data->timeshift,
+                        array('id' => $cm->id));
+                    $changed = true;
+                }
+            }
+
+            // Clear course cache if changes made.
+            if ($changed) {
+                rebuild_course_cache($data->courseid, true);
+            }
+
+            // Update course date completion criteria.
+            \completion_criteria_date::update_date($data->courseid, $data->timeshift);
         }
 
         $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
