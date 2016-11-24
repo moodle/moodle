@@ -26,7 +26,7 @@ Feature: Rename roles within a course
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
     And I press "Save and display"
-    And I expand "Switch role to..." node
+    And I follow "Switch role to..." in the user menu
     Then I should see "Tutor"
     And I should see "Learner"
     And I follow "Participants"
@@ -38,7 +38,7 @@ Feature: Rename roles within a course
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
     And I press "Save and display"
-    And I expand "Switch role to..." node
+    And I follow "Switch role to..." in the user menu
     And I should see "Teacher"
     And I should see "Student"
     And I should not see "Learner"

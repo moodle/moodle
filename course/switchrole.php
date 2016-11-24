@@ -81,9 +81,31 @@ if ($switchrole > 0 && has_capability('moodle/role:switchroles', $context)) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('switchroleto'));
 
-    require_once($CFG->dirroot.'/course/switchrole_form.php');
-    $form = new switchrole_form(null, ['course' => $course]);
-    $form->display();
+    // Overall criteria aggregation.
+    $roles = array();
+    $assumedrole = -1;
+    if (is_role_switched($course->id)) {
+        $roles[0] = get_string('switchrolereturn');
+        $assumedrole = $USER->access['rsw'][$context->path];
+    }
+    $availableroles = get_switchable_roles($context);
+    if (is_array($availableroles)) {
+        foreach ($availableroles as $key => $role) {
+            if ($assumedrole == (int)$key) {
+                continue;
+            }
+            $roles[$key] = $role;
+        }
+    }
+    echo $OUTPUT->box(markdown_to_html(get_string('switchroleto_help')));
+
+    foreach ($roles as $key => $role) {
+        $url = new moodle_url('/course/switchrole.php', array('id' => $id, 'switchrole' => $key, 'returnurl' => $returnurl));
+        echo $OUTPUT->container($OUTPUT->single_button($url, $role), 'm-x-3 m-b-1');
+    }
+
+    $url = new moodle_url($returnurl);
+    echo $OUTPUT->container($OUTPUT->action_link($url, get_string('cancel')), 'm-x-3 m-b-1');
 
     echo $OUTPUT->footer();
     exit;

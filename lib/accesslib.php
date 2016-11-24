@@ -3169,6 +3169,11 @@ function get_assignable_roles(context $context, $rolenamedisplay = ROLENAME_ALIA
 function get_switchable_roles(context $context) {
     global $USER, $DB;
 
+    // You can't switch roles without this capability.
+    if (!has_capability('moodle/role:switchroles', $context)) {
+        return [];
+    }
+
     $params = array();
     $extrajoins = '';
     $extrawhere = '';

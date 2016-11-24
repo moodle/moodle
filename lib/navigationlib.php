@@ -4271,35 +4271,6 @@ class settings_navigation extends navigation_node {
 
         }
 
-        // Switch roles
-        $roles = array();
-        $assumedrole = $this->in_alternative_role();
-        if ($assumedrole !== false) {
-            $roles[0] = get_string('switchrolereturn');
-        }
-        if ($adminoptions->roles) {
-            $availableroles = get_switchable_roles($coursecontext);
-            if (is_array($availableroles)) {
-                foreach ($availableroles as $key=>$role) {
-                    if ($assumedrole == (int)$key) {
-                        continue;
-                    }
-                    $roles[$key] = $role;
-                }
-            }
-        }
-        if (is_array($roles) && count($roles)>0) {
-            $url = new moodle_url('/course/switchrole.php', array('id'=>$course->id, 'switchrole'=>'-1', 'returnurl'=>$this->page->url->out_as_local_url(false)));
-            $switchroles = $coursenode->add(get_string('switchroleto'), $url, self::TYPE_CONTAINER, null, 'switchroleto');
-            if ((count($roles)==1 && array_key_exists(0, $roles))|| $assumedrole!==false) {
-                $switchroles->force_open();
-            }
-            foreach ($roles as $key => $name) {
-                $url = new moodle_url('/course/switchrole.php', array('id'=>$course->id, 'sesskey'=>sesskey(), 'switchrole'=>$key, 'returnurl'=>$this->page->url->out_as_local_url(false)));
-                $switchroles->add($name, $url, self::TYPE_SETTING, null, $key, new pix_icon('i/switchrole', ''));
-            }
-        }
-
         // Let plugins hook into course navigation.
         $pluginsfunction = get_plugins_with_function('extend_navigation_course', 'lib.php');
         foreach ($pluginsfunction as $plugintype => $plugins) {
