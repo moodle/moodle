@@ -347,6 +347,11 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
      */
     GradingPanel.prototype.registerEventListeners = function() {
         var docElement = $(document);
+        var region = $(this._region);
+        // Add an event listener to prevent form submission when pressing enter key.
+        region.on('submit', 'form', function(e) {
+            e.preventDefault();
+        });
 
         docElement.on('user-changed', this._refreshGradingPanel.bind(this));
         docElement.on('save-changes', this._submitForm.bind(this));
