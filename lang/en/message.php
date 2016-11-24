@@ -97,6 +97,7 @@ $string['outputnotconfigured'] = 'Not configured';
 $string['permitted'] = 'Permitted';
 $string['processorsettings'] = 'Processor settings';
 $string['removecontact'] = 'Remove contact';
+$string['removecoursefilter'] = 'Remove filter for course {$a}';
 $string['removefromyourcontacts'] = 'Remove from your contacts';
 $string['requiresconfiguration'] = 'Requires configuration';
 $string['searchforuser'] = 'Search for a user';
