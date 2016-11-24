@@ -67,11 +67,13 @@ class messages implements templatable, renderable {
      * @param array $messages
      */
     public function __construct($currentuserid, $otheruserid, $messages) {
-        $ufields = get_all_user_name_fields(true) . ', lastaccess';
+        $ufields = 'id, ' . get_all_user_name_fields(true) . ', lastaccess';
 
         $this->currentuserid = $currentuserid;
-        $this->otheruserid = $otheruserid;
-        $this->otheruser = \core_user::get_user($otheruserid, $ufields);
+        if ($otheruserid) {
+            $this->otheruserid = $otheruserid;
+            $this->otheruser = \core_user::get_user($otheruserid, $ufields, MUST_EXIST);
+        }
         $this->messages = $messages;
     }
 
@@ -81,14 +83,17 @@ class messages implements templatable, renderable {
         $data = new \stdClass();
         $data->iscurrentuser = $USER->id == $this->currentuserid;
         $data->currentuserid = $this->currentuserid;
-        $data->otheruserid = $this->otheruserid;
-        $data->otheruserfullname = fullname($this->otheruser);
-
-        if (empty($this->otheruser)) {
-            $data->isonline = false;
-        } else {
-            $data->isonline = \core_message\helper::is_online($this->otheruser->lastaccess);
+        if ($this->otheruserid) {
+            $data->otheruserid = $this->otheruserid;
+            $data->otheruserfullname = fullname($this->otheruser);
         }
+        $data->isonline = null;
+        if ($this->otheruserid) {
+            if (\core_message\helper::show_online_status($this->otheruser)) {
+                $data->isonline = \core_message\helper::is_online($this->otheruser->lastaccess);
+            }
+        }
+        $data->showonlinestatus = is_null($data->isonline) ? false : true;
 
         $data->messages = array();
         foreach ($this->messages as $message) {

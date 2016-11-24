@@ -140,6 +140,7 @@ class contact implements templatable, renderable {
         } else {
             $contact->lastmessage = null;
         }
+        $contact->showonlinestatus = is_null($this->isonline) ? false : true;
         $contact->isonline = $this->isonline;
         $contact->isblocked = $this->isblocked;
         $contact->isread = $this->isread;

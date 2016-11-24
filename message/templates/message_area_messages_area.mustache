@@ -64,10 +64,12 @@
                 </span>
             {{/isblocked}}
         </div>
-        <div class="status {{#isonline}}online{{/isonline}}">
-            <span class="offline-text">{{#str}} offline, message {{/str}}</span>
-            <span class="online-text">{{#str}} online, message {{/str}}</span>
-        </div>
+        {{#showonlinestatus}}
+            <div class="status {{#isonline}}online{{/isonline}}">
+                <span class="offline-text">{{#str}} offline, message {{/str}}</span>
+                <span class="online-text">{{#str}} online, message {{/str}}</span>
+            </div>
+        {{/showonlinestatus}}
     </div>
     <div class="delete-instructions">
         {{#str}} selectmessagestodelete, message {{/str}}

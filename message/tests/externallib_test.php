@@ -1030,7 +1030,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($user['sentfromcurrentuser']);
         $this->assertNull($user['lastmessage']);
         $this->assertNull($user['messageid']);
-        $this->assertTrue($user['isonline']);
+        $this->assertNull($user['isonline']);
         $this->assertFalse($user['isread']);
         $this->assertTrue($user['isblocked']);
         $this->assertNull($user['unreadcount']);
@@ -1402,7 +1402,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($message1['sentfromcurrentuser']);
         $this->assertEquals('Word.', $message1['lastmessage']);
         $this->assertNotEmpty($message1['messageid']);
-        $this->assertFalse($message1['isonline']);
+        $this->assertNull($message1['isonline']);
         $this->assertFalse($message1['isread']);
         $this->assertFalse($message1['isblocked']);
         $this->assertNull($message1['unreadcount']);
@@ -1413,7 +1413,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertTrue($message2['sentfromcurrentuser']);
         $this->assertEquals('Yo!', $message2['lastmessage']);
         $this->assertNotEmpty($message2['messageid']);
-        $this->assertFalse($message2['isonline']);
+        $this->assertNull($message2['isonline']);
         $this->assertTrue($message2['isread']);
         $this->assertFalse($message2['isblocked']);
         $this->assertNull($message2['unreadcount']);
@@ -1567,7 +1567,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertTrue($message1['sentfromcurrentuser']);
         $this->assertEquals('Dope.', $message1['lastmessage']);
         $this->assertNull($message1['messageid']);
-        $this->assertFalse($message1['isonline']);
+        $this->assertNull($message1['isonline']);
         $this->assertTrue($message1['isread']);
         $this->assertFalse($message1['isblocked']);
         $this->assertEquals(0, $message1['unreadcount']);
@@ -1577,7 +1577,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($message2['sentfromcurrentuser']);
         $this->assertEquals('Cool.', $message2['lastmessage']);
         $this->assertNull($message2['messageid']);
-        $this->assertFalse($message2['isonline']);
+        $this->assertNull($message2['isonline']);
         $this->assertFalse($message2['isread']);
         $this->assertFalse($message2['isblocked']);
         $this->assertEquals(2, $message2['unreadcount']);
@@ -1587,7 +1587,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($message3['sentfromcurrentuser']);
         $this->assertEquals('Word.', $message3['lastmessage']);
         $this->assertNull($message3['messageid']);
-        $this->assertFalse($message3['isonline']);
+        $this->assertNull($message3['isonline']);
         $this->assertFalse($message3['isread']);
         $this->assertFalse($message3['isblocked']);
         $this->assertEquals(2, $message3['unreadcount']);
@@ -1767,7 +1767,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($contact1['sentfromcurrentuser']);
         $this->assertNull($contact1['lastmessage']);
         $this->assertNull($contact1['messageid']);
-        $this->assertFalse($contact1['isonline']);
+        $this->assertNull($contact1['isonline']);
         $this->assertFalse($contact1['isread']);
         $this->assertFalse($contact1['isblocked']);
         $this->assertNull($contact1['unreadcount']);
@@ -1777,7 +1777,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($contact2['sentfromcurrentuser']);
         $this->assertNull($contact2['lastmessage']);
         $this->assertNull($contact2['messageid']);
-        $this->assertFalse($contact2['isonline']);
+        $this->assertNull($contact2['isonline']);
         $this->assertFalse($contact2['isread']);
         $this->assertFalse($contact2['isblocked']);
         $this->assertNull($contact2['unreadcount']);
@@ -1787,7 +1787,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertFalse($contact3['sentfromcurrentuser']);
         $this->assertNull($contact3['lastmessage']);
         $this->assertNull($contact3['messageid']);
-        $this->assertFalse($contact3['isonline']);
+        $this->assertNull($contact3['isonline']);
         $this->assertFalse($contact3['isread']);
         $this->assertFalse($contact3['isblocked']);
         $this->assertNull($contact3['unreadcount']);
@@ -1947,7 +1947,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals($user1->id, $result['currentuserid']);
         $this->assertEquals($user2->id, $result['otheruserid']);
         $this->assertEquals(fullname($user2), $result['otheruserfullname']);
-        $this->assertFalse($result['isonline']);
+        $this->assertNull($result['isonline']);
 
         // Confirm the message data is correct.
         $messages = $result['messages'];
@@ -2258,7 +2258,7 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEmpty($result['country']);
         $this->assertEmpty($result['city']);
         $this->assertEquals(fullname($user2), $result['fullname']);
-        $this->assertFalse($result['isonline']);
+        $this->assertNull($result['isonline']);
         $this->assertFalse($result['isblocked']);
         $this->assertFalse($result['iscontact']);
     }

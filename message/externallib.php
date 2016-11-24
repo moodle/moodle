@@ -489,6 +489,7 @@ class core_message_external extends external_api {
                 'sentfromcurrentuser' => new external_value(PARAM_BOOL, 'Was the last message sent from the current user?'),
                 'lastmessage' => new external_value(PARAM_NOTAGS, 'The user\'s last message'),
                 'messageid' => new external_value(PARAM_INT, 'The unique search message id', VALUE_DEFAULT, null),
+                'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
                 'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                 'isread' => new external_value(PARAM_BOOL, 'If the user has read the message'),
                 'isblocked' => new external_value(PARAM_BOOL, 'If the user has been blocked'),
@@ -993,6 +994,7 @@ class core_message_external extends external_api {
                 'currentuserid' => new external_value(PARAM_INT, 'The current user\'s id'),
                 'otheruserid' => new external_value(PARAM_INT, 'The other user\'s id'),
                 'otheruserfullname' => new external_value(PARAM_NOTAGS, 'The other user\'s fullname'),
+                'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
                 'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                 'messages' => new external_multiple_structure(
                     self::get_messagearea_message_structure()
@@ -1132,6 +1134,7 @@ class core_message_external extends external_api {
                 'fullname' => new external_value(PARAM_NOTAGS, 'The user\'s name'),
                 'profileimageurl' => new external_value(PARAM_URL, 'User picture URL'),
                 'profileimageurlsmall' => new external_value(PARAM_URL, 'Small user picture URL'),
+                'showonlinestatus' => new external_value(PARAM_BOOL, 'Show the user\'s online status?'),
                 'isonline' => new external_value(PARAM_BOOL, 'The user\'s online status'),
                 'isblocked' => new external_value(PARAM_BOOL, 'Is the user blocked?'),
                 'iscontact' => new external_value(PARAM_BOOL, 'Is the user a contact?')

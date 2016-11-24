@@ -361,7 +361,7 @@ class api {
         $data->city = '';
         $data->country = '';
         $data->email = '';
-        $data->isonline = false;
+        $data->isonline = null;
         // Get the user picture data - messaging has always shown these to the user.
         $userpicture = new \user_picture($user);
         $userpicture->size = 1; // Size f1.
