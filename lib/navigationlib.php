@@ -3724,8 +3724,16 @@ class flat_navigation extends navigation_node_collection {
             $flat = new flat_navigation_node(navigation_node::create($course->shortname, $url), 0);
             $flat->key = 'coursehome';
 
+            $courseformat = course_get_format($course);
             $coursenode = $PAGE->navigation->find_active_node();
-            while (!empty($coursenode) && ($coursenode->type != navigation_node::TYPE_COURSE)) {
+            $targettype = navigation_node::TYPE_COURSE;
+
+            // Single activity format has no course node - the course node is swapped for the activity node.
+            if (!$courseformat->has_view_page()) {
+                $targettype = navigation_node::TYPE_ACTIVITY;
+            }
+
+            while (!empty($coursenode) && ($coursenode->type != $targettype)) {
                 $coursenode = $coursenode->parent;
             }
             // There is one very strange page in mod/feedback/view.php which thinks it is both site and course
