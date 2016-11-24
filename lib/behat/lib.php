@@ -134,13 +134,6 @@ function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
         return true;
     }
 
-    // No need to report the before_scenario warning generated to clear last error.
-    // As error_clear_last is only available in php 7.0+, we trigger E_USER_WARNING
-    // to clear any last error which was generated during reset in before_scenario.
-    if (($errno === E_USER_WARNING) && $errstr == 'before_scenario') {
-        return;
-    }
-
     // This error handler receives E_ALL | E_STRICT, running the behat test site the debug level is
     // set to DEVELOPER and will always include E_NOTICE,E_USER_NOTICE... as part of E_ALL, if the current
     // error_reporting() value does not include one of those levels is because it has been forced through
@@ -182,13 +175,6 @@ function behat_shutdown_function() {
     if ($error = error_get_last()) {
         // Ignore E_WARNING, as they might come via ( @ )suppression and might lead to false failure.
         if (isset($error['type']) && !($error['type'] & E_WARNING)) {
-
-            // No need to report the before_scenario warning generated to clear last error.
-            // As error_clear_last is only available in php 7.0+, we trigger E_USER_WARNING
-            // to clear any last error which was generated during reset in before_scenario.
-            if (($error['type'] & E_USER_WARNING) && $error['message'] == 'before_scenario') {
-                return;
-            }
 
             $errors = behat_get_shutdown_process_errors();
 
