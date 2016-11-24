@@ -80,8 +80,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I click on "Grades" "link" in the "Navigation" "block"
-    And I follow "User report"
+    And I go to "User report" in the course gradebook
     Then I should see "50"
     And I should see "Great job! Lol, not really."
 
@@ -108,7 +107,6 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I click on "Grades" "link" in the "Navigation" "block"
-    And I follow "User report"
+    And I go to "User report" in the course gradebook
     Then I should see "50"
     And I should see "Great job! Lol, not really."

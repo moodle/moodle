@@ -813,13 +813,23 @@ function grade_print_tabs($active_type, $active_plugin, $plugin_info, $return=fa
         }
     }
 
-    $tabs[] = $top_row;
-    $tabs[] = $bottom_row;
+    // Do not display rows that contain only one item, they are not helpful.
+    if (count($top_row) > 1) {
+        $tabs[] = $top_row;
+    }
+    if (count($bottom_row) > 1) {
+        $tabs[] = $bottom_row;
+    }
+    if (empty($tabs)) {
+        return;
+    }
+
+    $rv = html_writer::div(print_tabs($tabs, $active_plugin, $inactive, $activated, true), 'grade-navigation');
 
     if ($return) {
-        return print_tabs($tabs, $active_plugin, $inactive, $activated, true);
+        return $rv;
     } else {
-        print_tabs($tabs, $active_plugin, $inactive, $activated);
+        echo $rv;
     }
 }
 

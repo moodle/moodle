@@ -54,7 +54,7 @@ Feature: We can set the grade to pass value
       | grade[modgrade_type] | Point |
       | grade[modgrade_point] | 50 |
       | Grade to pass | 25 |
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  assign Test Assignment 1" "link"
     Then the field "Grade to pass" matches value "25"
@@ -64,7 +64,7 @@ Feature: We can set the grade to pass value
     And I expand all fieldsets
     And I set the field "Grade to pass" to "30"
     And I press "Save and return to course"
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I click on "Edit  assign Test Assignment 1" "link"
     And the field "Grade to pass" matches value "30"
 
@@ -76,7 +76,7 @@ Feature: We can set the grade to pass value
       | grade[modgrade_type] | Scale |
       | grade[modgrade_scale] | Test Scale 1 |
       | Grade to pass | 3 |
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  assign Test Assignment 1" "link"
     And I expand all fieldsets
@@ -107,7 +107,7 @@ Feature: We can set the grade to pass value
       | Submission grade to pass | 40 |
       | gradinggrade | 20 |
       | Assessment grade to pass | 10 |
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  workshop Test Workshop 1 (submission)" "link"
     And I expand all fieldsets
@@ -142,7 +142,7 @@ Feature: We can set the grade to pass value
     And I add a "Quiz" to section "1" and I fill the form with:
       | Name | Test Quiz 1 |
       | Grade to pass | 9.5 |
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  quiz Test Quiz 1" "link"
     And I expand all fieldsets
@@ -160,7 +160,7 @@ Feature: We can set the grade to pass value
       | Name          | Test Lesson 1 |
       | Description   | Test          |
       | Grade to pass | 90            |
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  lesson Test Lesson 1" "link"
     And I expand all fieldsets
@@ -179,7 +179,7 @@ Feature: We can set the grade to pass value
       | Description    | Test               |
       | Aggregate type | Average of ratings |
       | Grade to pass  | 90                 |
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  data Test Database 1" "link"
     And I expand all fieldsets
@@ -208,7 +208,7 @@ Feature: We can set the grade to pass value
       | Description    | Test               |
       | Aggregate type | Average of ratings |
       | Grade to pass  | 90                 |
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  forum Test Forum 1" "link"
     And I expand all fieldsets
@@ -227,7 +227,7 @@ Feature: We can set the grade to pass value
       | Description    | Test               |
       | Aggregate type | Average of ratings |
       | Grade to pass  | 90                 |
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I click on "Edit  glossary Test Glossary 1" "link"
     And I expand all fieldsets
