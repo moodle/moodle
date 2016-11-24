@@ -213,6 +213,7 @@ abstract class core_filetypes {
             'rtx' => array('type' => 'text/richtext', 'icon' => 'text'),
             'rv' => array('type' => 'audio/x-pn-realaudio-plugin', 'icon' => 'audio',
                     'groups' => array('video'), 'string' => 'video'),
+            'scss' => array('type' => 'text/x-scss', 'icon' => 'text', 'groups' => array('web_file')),
             'sh' => array('type' => 'application/x-sh', 'icon' => 'sourcecode'),
             'sit' => array('type' => 'application/x-stuffit', 'icon' => 'archive',
                     'groups' => array('archive'), 'string' => 'archive'),
