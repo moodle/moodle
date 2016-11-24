@@ -383,6 +383,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         this.messageArea.find(SELECTORS.CONTACTSAREA).addClass('searchfilter');
         this.messageArea.find(SELECTORS.SEARCHFILTERAREA).show();
         this.messageArea.find(SELECTORS.SEARCHFILTER).html(text);
+        Str.get_string('removecoursefilter', 'message', text).then(function(languagestring) {
+            this.messageArea.find(SELECTORS.SEARCHFILTERAREA).attr('aria-label', languagestring);
+        }.bind(this));
     };
 
     /**
@@ -394,6 +397,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/str'
         this.messageArea.find(SELECTORS.CONTACTSAREA).removeClass('searchfilter');
         this.messageArea.find(SELECTORS.SEARCHFILTER).empty();
         this.messageArea.find(SELECTORS.SEARCHFILTERAREA).hide();
+        this.messageArea.find(SELECTORS.SEARCHFILTERAREA).removeAttr('aria-label');
     };
 
     /**
