@@ -33,6 +33,8 @@ class block_login extends block_base {
 
     function get_content () {
         global $USER, $CFG, $SESSION, $OUTPUT;
+        require_once($CFG->libdir . '/authlib.php');
+
         $wwwroot = '';
         $signup = '';
 
@@ -48,11 +50,8 @@ class block_login extends block_base {
             $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
         }
 
-        if (!empty($CFG->registerauth)) {
-            $authplugin = get_auth_plugin($CFG->registerauth);
-            if ($authplugin->can_signup()) {
-                $signup = $wwwroot . '/login/signup.php';
-            }
+        if (signup_is_enabled()) {
+            $signup = $wwwroot . '/login/signup.php';
         }
         // TODO: now that we have multiauth it is hard to find out if there is a way to change password
         $forgot = $wwwroot . '/login/forgot_password.php';

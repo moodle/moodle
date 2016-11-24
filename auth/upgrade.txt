@@ -9,6 +9,7 @@ information provided here is intended especially for developers.
 * The authentication plugin auth_radius has been moved to https://github.com/moodlehq/moodle-auth_radius
 * New auth_email::user_signup_with_confirmation() method has a new optional parameter $confirmationurl to provide a different
   confirmation URL.
+* New signup_is_enabled() function available in lib/authlib.php to safely check if sign-up is enabled in the site.
 
 === 3.0 ===
 
