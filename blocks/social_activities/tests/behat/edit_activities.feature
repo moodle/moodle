@@ -18,7 +18,6 @@ Feature: Edit activities in social activities block
     Given I log in as "user1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add the "Social activities" block
     And I set the field "Add an activity to section 'section 0'" to "Forum"
     And I set the field "Forum name" to "My forum name"
     And I press "Save and return to course"
