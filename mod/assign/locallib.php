@@ -1371,7 +1371,6 @@ class assign {
 
         static $scalegrades = array();
 
-        $decimals = $this->get_grade_item()->get_decimals();
         $o = '';
 
         if ($this->get_instance()->grade >= 0) {
@@ -1380,7 +1379,7 @@ class assign {
                 if ($grade < 0) {
                     $displaygrade = '';
                 } else {
-                    $displaygrade = format_float($grade, $decimals);
+                    $displaygrade = format_float($grade, $this->get_grade_item()->get_decimals());
                 }
                 $o .= '<label class="accesshide" for="quickgrade_' . $userid . '">' .
                        get_string('usergrade', 'assign') .
@@ -1392,7 +1391,7 @@ class assign {
                               size="6"
                               maxlength="10"
                               class="quickgrade"/>';
-                $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade, $decimals);
+                $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade, $this->get_grade_item()->get_decimals());
                 return $o;
             } else {
                 if ($grade == -1 || $grade === null) {
@@ -1402,7 +1401,7 @@ class assign {
                     $o .= grade_format_gradevalue($grade, $item);
                     if ($item->get_displaytype() == GRADE_DISPLAY_TYPE_REAL) {
                         // If displaying the raw grade, also display the total value.
-                        $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade, $decimals);
+                        $o .= '&nbsp;/&nbsp;' . format_float($this->get_instance()->grade, $item->get_decimals());
                     }
                 }
                 return $o;
