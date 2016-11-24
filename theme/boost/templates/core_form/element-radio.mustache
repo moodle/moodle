@@ -12,7 +12,14 @@
 
 }}
 <div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
-    <div class="col-md-9 push-md-3 checkbox">
+    <div class="col-md-3">
+        {{#text}}
+            <label for="{{element.id}}">
+                {{{label}}}
+            </label>
+        {{/text}}
+    </div>
+    <div class="col-md-9 checkbox">
         <label>
         {{^element.frozen}}
         <input type="radio" name="{{element.name}}"
@@ -22,8 +29,18 @@
                 autofocus aria-describedby="id_error_{{element.name}}"
             {{/error}} {{{element.attributes}}} >
         {{/element.frozen}}
+        {{#text}}
+            {{{.}}}
+        {{/text}}
+        {{^text}}
             {{{label}}}
-        </label> {{{helpbutton}}}
+        {{/text}}
+        </label>
+        <span class="text-nowrap">
+            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">✲</abbr>{{/required}}
+            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">❗</abbr>{{/advanced}}
+            {{{helpbutton}}}
+        </span>
         <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
             {{{error}}}
         </div>
