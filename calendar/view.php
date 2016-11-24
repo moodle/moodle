@@ -168,7 +168,7 @@ if (!empty($CFG->enablecalendarexport)) {
             array('preset_what'=>'all', 'preset_time' => 'recentupcoming', 'userid' => $USER->id, 'authtoken'=>$authtoken)
         );
         echo html_writer::tag('a', 'iCal',
-            array('href' => $link, 'title' => get_string('quickdownloadcalendar', 'calendar'), 'class' => 'ical-link'));
+            array('href' => $link, 'title' => get_string('quickdownloadcalendar', 'calendar'), 'class' => 'ical-link m-l-1'));
     }
 }
 
