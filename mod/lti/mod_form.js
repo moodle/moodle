@@ -51,6 +51,9 @@
 
             var typeSelector = Y.one('#id_typeid');
             typeSelector.on('change', function(e){
+                // Reset configuration fields when another preconfigured tool is selected.
+                self.resetToolFields();
+
                 updateToolMatches();
 
                 self.toggleEditButtons();
@@ -66,9 +69,6 @@
                     allowgrades.set('checked', !self.getSelectedToolTypeOption().getAttribute('nogrades'));
                     self.toggleGradeSection();
                 }
-
-                // Reset configuration fields when another preconfigured tool is selected.
-                self.resetToolFields();
             });
 
             var contentItemButton = Y.one('[name="selectcontent"]');
