@@ -661,7 +661,7 @@ class core_renderer extends \core_renderer {
                 $navbarnode = end($items);
                 // We only want to show the menu on the first page of the activity. This means
                 // the breadcrumb has no additional nodes.
-                if ($navbarnode && ($navbarnode->key == $node->key && $navbarnode->type == $node->type)) {
+                if ($navbarnode && ($navbarnode->key === $node->key && $navbarnode->type == $node->type)) {
                     $buildmenu = true;
                 }
             }
@@ -677,7 +677,7 @@ class core_renderer extends \core_renderer {
             $items = $this->page->navbar->get_items();
             $navbarnode = end($items);
 
-            if ($navbarnode && ($navbarnode->key == 'participants')) {
+            if ($navbarnode && ($navbarnode->key === 'participants')) {
                 $node = $this->page->settingsnav->find('users', navigation_node::TYPE_CONTAINER);
                 if ($node) {
                     // Build an action menu based on the visible nodes from this navigation tree.
