@@ -1348,10 +1348,10 @@ class block_manager {
                 echo $OUTPUT->box(get_string('noblockstoaddhere'));
                 echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('back')), 'm-x-3 m-b-1');
             } else {
-                foreach ($addableblocks as $blockname => $block) {
-                    $url = new moodle_url($addpage->url, array('sesskey' => sesskey(), 'bui_addblock' => $blockname));
-                    echo $OUTPUT->container($OUTPUT->single_button($url, $block->title), 'm-x-3 m-b-1');
-                }
+                $url = new moodle_url($addpage->url, array('sesskey' => sesskey()));
+                echo $OUTPUT->render_from_template('core/add_block_body',
+                    ['blocks' => array_values($addableblocks),
+                     'url' => '?' . $url->get_query_string(false)]);
                 echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('cancel')), 'm-x-3 m-b-1');
             }
 
