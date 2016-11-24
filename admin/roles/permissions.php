@@ -33,7 +33,7 @@ $prevent    = optional_param('prevent', 0, PARAM_BOOL);
 $allow      = optional_param('allow', 0, PARAM_BOOL);
 $unprohibit = optional_param('unprohibit', 0, PARAM_BOOL);
 $prohibit   = optional_param('prohibit', 0, PARAM_BOOL);
-$return     = optional_param('return', null, PARAM_ALPHANUMEXT);
+$returnurl  = optional_param('returnurl', null, PARAM_LOCALURL);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -56,7 +56,13 @@ if ($course) {
 // Security first.
 require_login($course, false, $cm);
 require_capability('moodle/role:review', $context);
-$PAGE->set_url($url);
+
+navigation_node::override_active_url($url);
+$pageurl = new moodle_url($url);
+if ($returnurl) {
+    $pageurl->param('returnurl', $returnurl);
+}
+$PAGE->set_url($pageurl);
 
 if ($context->contextlevel == CONTEXT_USER and $USER->id != $context->instanceid) {
     $PAGE->navbar->includesettingsbase = true;
@@ -85,6 +91,11 @@ $straction = get_string('permissions', 'core_role'); // Used by tabs.php.
 $currenttab = 'permissions';
 
 $PAGE->set_pagelayout('admin');
+if ($context->contextlevel == CONTEXT_BLOCK) {
+    // Do not show blocks when changing block's settings, it is confusing.
+    $PAGE->blocks->show_only_fake_blocks(true);
+}
+
 $PAGE->set_title($title);
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:
@@ -219,8 +230,8 @@ echo $OUTPUT->box_end();
 
 if ($context->contextlevel > CONTEXT_USER) {
 
-    if ($context->contextlevel === CONTEXT_COURSECAT && $return === 'management') {
-        $url = new moodle_url('/course/management.php', array('categoryid' => $context->instanceid));
+    if ($returnurl) {
+        $url = new moodle_url($returnurl);
     } else {
         $url = $context->get_url();
     }

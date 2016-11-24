@@ -57,6 +57,8 @@ information provided here is intended especially for theme designer.
 * CLI svgtool.php has moved from theme/base/cli to admin/cli and paths should be relative to the new location.
 * mod_chat will now display the 'course theme' option for all themes (previously it was only displayed on
   bootstrap2 based themes).
+* Theme can choose how to display "Add a block" control in $THEME->addblockposition, default value is
+  BLOCK_ADDBLOCK_POSITION_DEFAULT that displays it as a fake block in editing mode.
 
 === 3.1 ===
 

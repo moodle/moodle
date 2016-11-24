@@ -15,32 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/modal_save_cancel
+    @template core/add_block_body
 
-    Moodle modal template with save and cancel buttons.
-
-    The purpose of this template is to render a modal.
-
-    Classes required for JS:
-    * none
-
-    Data attributes required for JS:
-    * none
+    Template for the body of the add block modal.
 
     Context variables required for this template:
-    * title A cleaned string (use clean_text()) to display.
-    * body HTML content for the boday
+    * blocks - list of blocks containing name and title
+    * url - base url for links back to same page.
 
     Example context (json):
     {
-        "title": "Example save cancel modal",
-        "body": "Some example content for the body"
+        "blocks" : [ { "name": "test", "title": "Test block" } ],
+        "url" : "?a=b"
     }
-}}
 
-{{< core/modal }}
-    {{$footer}}
-        <button type="button" class="btn btn-primary" data-action="save">{{#str}} savechanges {{/str}}</button>
-        <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel {{/str}}</button>
-    {{/footer}}
-{{/ core/modal }}
+}}
+<div class="list-group">
+{{#blocks}}
+    <a href="{{url}}&amp;bui_addblock={{name}}" class="list-group-item list-group-item-action">{{title}}</a>
+{{/blocks}}
+</div>

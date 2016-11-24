@@ -17,7 +17,7 @@
 {{!
     @template core/modal_save_cancel
 
-    Moodle modal template with save and cancel buttons.
+    Moodle modal template with one cancel button.
 
     The purpose of this template is to render a modal.
 
@@ -33,14 +33,13 @@
 
     Example context (json):
     {
-        "title": "Example save cancel modal",
+        "title": "Example cancel modal",
         "body": "Some example content for the body"
     }
 }}
 
 {{< core/modal }}
     {{$footer}}
-        <button type="button" class="btn btn-primary" data-action="save">{{#str}} savechanges {{/str}}</button>
         <button type="button" class="btn btn-secondary" data-action="cancel">{{#str}} cancel {{/str}}</button>
     {{/footer}}
 {{/ core/modal }}

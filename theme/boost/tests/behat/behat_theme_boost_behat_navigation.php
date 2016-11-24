@@ -76,4 +76,56 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
 
         return $node;
     }
+
+    /**
+     * Opens the flat navigation drawer if it is not already open
+     *
+     * @When /^I open flat navigation drawer$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     */
+    public function i_open_flat_navigation_drawer() {
+        if (!$this->running_javascript()) {
+            // Navigation drawer is always open without JS.
+            return;
+        }
+        $xpath = "//button[contains(@data-action,'toggle-drawer')]";
+        $node = $this->find('xpath', $xpath);
+        $expanded = $node->getAttribute('aria-expanded');
+        if ($expanded === 'false') {
+            $node->click();
+            $this->wait_for_pending_js();
+        }
+    }
+
+    /**
+     * Closes the flat navigation drawer if it is open (does nothing if JS disabled)
+     *
+     * @When /^I close flat navigation drawer$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     */
+    public function i_close_flat_navigation_drawer() {
+        if (!$this->running_javascript()) {
+            // Navigation drawer can not be closed without JS.
+            return;
+        }
+        $xpath = "//button[contains(@data-action,'toggle-drawer')]";
+        $node = $this->find('xpath', $xpath);
+        $expanded = $node->getAttribute('aria-expanded');
+        if ($expanded === 'true') {
+            $node->click();
+            $this->wait_for_pending_js();
+        }
+    }
+
+    /**
+     * Clicks link with specified id|title|alt|text in the flat navigation drawer.
+     *
+     * @When /^I select "(?P<link_string>(?:[^"]|\\")*)" from flat navigation drawer$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $link
+     */
+    public function i_select_from_flat_navigation_drawer($link) {
+        $this->i_open_flat_navigation_drawer();
+        $this->execute('behat_general::i_click_on_in_the', [$link, 'link', '#nav-drawer', 'css_element']);
+    }
 }

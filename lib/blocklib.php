@@ -42,6 +42,14 @@ define('BUI_CONTEXTS_ENTIRE_SITE', 2);
 define('BUI_CONTEXTS_CURRENT', 0);
 define('BUI_CONTEXTS_CURRENT_SUBS', 1);
 
+// Position of "Add block" control, to be used in theme config as a value for $THEME->addblockposition:
+// - default: as a fake block that is displayed in editing mode
+// - flatnav: "Add block" item in the flat navigation drawer in editing mode
+// - custom: none of the above, theme will take care of displaying the control.
+define('BLOCK_ADDBLOCK_POSITION_DEFAULT', 0);
+define('BLOCK_ADDBLOCK_POSITION_FLATNAV', 1);
+define('BLOCK_ADDBLOCK_POSITION_CUSTOM', -1);
+
 /**
  * Exception thrown when someone tried to do something with a block that does
  * not exist on a page.
@@ -216,10 +224,12 @@ class block_manager {
                     ($bi->instance_allow_multiple() || !$this->is_block_present($block->name)) &&
                     blocks_name_allowed_in_format($block->name, $pageformat) &&
                     $bi->user_can_addto($this->page)) {
+                $block->title = $bi->get_title();
                 $this->addableblocks[$block->name] = $block;
             }
         }
 
+        core_collator::asort_objects_by_property($this->addableblocks, 'title');
         return $this->addableblocks;
     }
 
@@ -1141,7 +1151,8 @@ class block_manager {
                 $contents = $this->extracontent[$region];
             }
             $contents = array_merge($contents, $this->create_block_contents($this->blockinstances[$region], $output, $region));
-            if ($region == $this->defaultregion) {
+            if (($region == $this->defaultregion) && (!isset($this->page->theme->addblockposition) ||
+                    $this->page->theme->addblockposition == BLOCK_ADDBLOCK_POSITION_DEFAULT)) {
                 $addblockui = block_add_block_ui($this->page, $output);
                 if ($addblockui) {
                     $contents[] = $addblockui;
@@ -1210,36 +1221,39 @@ class block_manager {
             $controls[] = new action_menu_link_secondary($url, $icon, $str, $attributes);
         }
 
-        // Display either "Assign roles" or "Permissions" or "Change permissions" icon (whichever first is available).
-        $rolesurl = null;
-
+        // Assign roles.
         if (get_assignable_roles($block->context, ROLENAME_SHORT)) {
-            $rolesurl = new moodle_url('/admin/roles/assign.php', array('contextid' => $block->context->id));
+            $rolesurl = new moodle_url('/admin/roles/assign.php', array('contextid' => $block->context->id,
+                'returnurl' => $this->page->url->out_as_local_url()));
             $str = new lang_string('assignrolesinblock', 'block', $blocktitle);
-            $icon = 'i/assignroles';
-        } else if (has_capability('moodle/role:review', $block->context) or get_overridable_roles($block->context)) {
-            $rolesurl = new moodle_url('/admin/roles/permissions.php', array('contextid' => $block->context->id));
-            $str = get_string('permissions', 'role');
-            $icon = 'i/permissions';
-        } else if (has_any_capability(array('moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:assign'), $block->context)) {
-            $rolesurl = new moodle_url('/admin/roles/check.php', array('contextid' => $block->context->id));
-            $str = get_string('checkpermissions', 'role');
-            $icon = 'i/checkpermissions';
-        }
-
-        if ($rolesurl) {
-            // TODO: please note it is sloppy to pass urls through page parameters!!
-            //      it is shortened because some web servers (e.g. IIS by default) give
-            //      a 'security' error if you try to pass a full URL as a GET parameter in another URL.
-            $return = $this->page->url->out(false);
-            $return = str_replace($CFG->wwwroot . '/', '', $return);
-            $rolesurl->param('returnurl', $return);
-
             $controls[] = new action_menu_link_secondary(
                 $rolesurl,
-                new pix_icon($icon, $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-                $str,
-                array('class' => 'editing_roles')
+                new pix_icon('i/assignroles', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $str, array('class' => 'editing_assignroles')
+            );
+        }
+
+        // Permissions.
+        if (has_capability('moodle/role:review', $block->context) or get_overridable_roles($block->context)) {
+            $rolesurl = new moodle_url('/admin/roles/permissions.php', array('contextid' => $block->context->id,
+                'returnurl' => $this->page->url->out_as_local_url()));
+            $str = get_string('permissions', 'role');
+            $controls[] = new action_menu_link_secondary(
+                $rolesurl,
+                new pix_icon('i/permissions', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $str, array('class' => 'editing_permissions')
+            );
+        }
+
+        // Change permissions.
+        if (has_any_capability(array('moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:assign'), $block->context)) {
+            $rolesurl = new moodle_url('/admin/roles/check.php', array('contextid' => $block->context->id,
+                'returnurl' => $this->page->url->out_as_local_url()));
+            $str = get_string('checkpermissions', 'role');
+            $controls[] = new action_menu_link_secondary(
+                $rolesurl,
+                new pix_icon('i/checkpermissions', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $str, array('class' => 'editing_checkroles')
             );
         }
 
@@ -1286,8 +1300,10 @@ class block_manager {
      * @return boolean true if anything was done. False if not.
      */
     public function process_url_add() {
+        global $CFG, $PAGE, $OUTPUT;
+
         $blocktype = optional_param('bui_addblock', null, PARAM_PLUGIN);
-        if (!$blocktype) {
+        if ($blocktype === null) {
             return false;
         }
 
@@ -1297,7 +1313,54 @@ class block_manager {
             throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('addblock'));
         }
 
-        if (!array_key_exists($blocktype, $this->get_addable_blocks())) {
+        $addableblocks = $this->get_addable_blocks();
+
+        if ($blocktype === '') {
+            // Display add block selection.
+            $addpage = new moodle_page();
+            $addpage->set_pagelayout('admin');
+            $addpage->blocks->show_only_fake_blocks(true);
+            $addpage->set_course($this->page->course);
+            $addpage->set_context($this->page->context);
+            if ($this->page->cm) {
+                $addpage->set_cm($this->page->cm);
+            }
+
+            $addpagebase = str_replace($CFG->wwwroot . '/', '/', $this->page->url->out_omit_querystring());
+            $addpageparams = $this->page->url->params();
+            $addpage->set_url($addpagebase, $addpageparams);
+            $addpage->set_block_actions_done();
+            // At this point we are going to display the block selector, overwrite global $PAGE ready for this.
+            $PAGE = $addpage;
+            // Some functions use $OUTPUT so we need to replace that too.
+            $OUTPUT = $addpage->get_renderer('core');
+
+            $site = get_site();
+            $straddblock = get_string('addblock');
+
+            $PAGE->navbar->add($straddblock);
+            $PAGE->set_title($straddblock);
+            $PAGE->set_heading($site->fullname);
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading($straddblock);
+
+            if (!$addableblocks) {
+                echo $OUTPUT->box(get_string('noblockstoaddhere'));
+                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('back')), 'm-x-3 m-b-1');
+            } else {
+                $url = new moodle_url($addpage->url, array('sesskey' => sesskey()));
+                echo $OUTPUT->render_from_template('core/add_block_body',
+                    ['blocks' => array_values($addableblocks),
+                     'url' => '?' . $url->get_query_string(false)]);
+                echo $OUTPUT->container($OUTPUT->action_link($addpage->url, get_string('cancel')), 'm-x-3 m-b-1');
+            }
+
+            echo $OUTPUT->footer();
+            // Make sure that nothing else happens after we have displayed this form.
+            exit;
+        }
+
+        if (!array_key_exists($blocktype, $addableblocks)) {
             throw new moodle_exception('cannotaddthisblocktype', '', $this->page->url->out(), $blocktype);
         }
 
@@ -1332,6 +1395,7 @@ class block_manager {
         if (!$confirmdelete) {
             $deletepage = new moodle_page();
             $deletepage->set_pagelayout('admin');
+            $deletepage->blocks->show_only_fake_blocks(true);
             $deletepage->set_course($this->page->course);
             $deletepage->set_context($this->page->context);
             if ($this->page->cm) {
@@ -1452,6 +1516,7 @@ class block_manager {
 
         $editpage = new moodle_page();
         $editpage->set_pagelayout('admin');
+        $editpage->blocks->show_only_fake_blocks(true);
         $editpage->set_course($this->page->course);
         //$editpage->set_context($block->context);
         $editpage->set_context($this->page->context);
@@ -2072,12 +2137,8 @@ function block_add_block_ui($page, $output) {
 
     $menu = array();
     foreach ($missingblocks as $block) {
-        $blockobject = block_instance($block->name);
-        if ($blockobject !== false && $blockobject->user_can_addto($page)) {
-            $menu[$block->name] = $blockobject->get_title();
-        }
+        $menu[$block->name] = $block->title;
     }
-    core_collator::asort($menu);
 
     $actionurl = new moodle_url($page->url, array('sesskey'=>sesskey()));
     $select = new single_select($actionurl, 'bui_addblock', $menu, null, array(''=>get_string('adddots')), 'add_block');
