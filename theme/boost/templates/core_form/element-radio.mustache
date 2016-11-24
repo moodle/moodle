@@ -14,14 +14,13 @@
 <div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
     <div class="col-md-9 push-md-3 checkbox">
         <label>
-        {{^element.frozen}}
         <input type="radio" name="{{element.name}}"
             id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
             {{#element.checked}}checked{{/element.checked}}
+            {{#element.frozen}}disabled{{/element.frozen}}
             {{#error}}
                 autofocus aria-describedby="id_error_{{element.name}}"
             {{/error}} {{{element.attributes}}} >
-        {{/element.frozen}}
             {{{label}}}
         </label> {{{helpbutton}}}
         <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>

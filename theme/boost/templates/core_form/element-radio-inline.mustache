@@ -12,15 +12,14 @@
 
 }}
 <label class="form-check-inline {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
-{{^element.frozen}}
 <input type="radio" name="{{element.name}}"
     id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
     {{#element.checked}}checked{{/element.checked}}
+    {{#element.frozen}}disabled{{/element.frozen}}
     {{#error}}
         autofocus aria-describedby="id_error_{{element.name}}"
     {{/error}}
     {{{element.attributes}}} >
-{{/element.frozen}}
     {{{label}}}
 </label> {{{helpbutton}}}
 <span class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
