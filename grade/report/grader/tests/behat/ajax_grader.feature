@@ -55,7 +55,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | grade_report_showquickfeedback | 0 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I click on student "Student 2" for grade item "Item VU"
     Then I should see a grade field for "Student 2" and grade item "Item VU"
     And I should not see a feedback field for "Student 2" and grade item "Item VU"
@@ -93,7 +93,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And the following should exist in the "user-grades" table:
       | -1-                | -16-      |
       | Student 1          | 90.00     |
-    And I navigate to "Grader report" node in "Grade administration"
+    And I go to "View > Grader report" in the course gradebook
     And the following should exist in the "user-grades" table:
       | -1-                | -6-   | -7-   | -13-      | -16-      |
       | Student 1          | -     | -     | -         | 90.00     |
@@ -107,7 +107,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | grade_report_showquickfeedback | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I click on student "Student 2" for grade item "Item VU"
     Then I should see a grade field for "Student 2" and grade item "Item VU"
     And I should see a feedback field for "Student 2" and grade item "Item VU"
@@ -126,7 +126,9 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
     And I set the field "ajaxgrade" to "Very good"
     And I set the field "ajaxfeedback" to "Student 2 SU feedback"
     And I press key "13" in the field "ajaxfeedback"
-    And I navigate to "Grader report" node in "Grade administration"
+    # Reload grader report:
+    And I go to "View > User report" in the course gradebook
+    And I go to "View > Grader report" in the course gradebook
     And the following should exist in the "user-grades" table:
       | -1-       | -7-   | -13-      | -16-  |
       | Student 2 | 33.00 | Very good | 36.00 |
@@ -142,7 +144,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | grade_report_showquickfeedback | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I click on student "Student 2" for grade item "Item VU"
     Then I should see a grade field for "Student 2" and grade item "Item VU"
     And I should see a feedback field for "Student 2" and grade item "Item VU"
@@ -162,7 +164,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | grade_report_showquickfeedback | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     Then I should not see a grade field for "Student 2" and grade item "Item VL"
     And I should not see a feedback field for "Student 2" and grade item "Item VL"
@@ -193,7 +195,7 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
       | grade_report_showquickfeedback | 1 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "Grades" "link" in the "Navigation" "block"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I change window size to "large"
     And I set "=[[i1]] + [[i3]] + [[gsc]]" calculation for grade item "Calc Item" with idnumbers:
