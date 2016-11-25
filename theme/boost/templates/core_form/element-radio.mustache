@@ -4,9 +4,8 @@
     Example context (json):
     {
         "element": {
-            "id": "test-radio",
-            "name": "Test radio button",
-            "size": "10"
+            "id": "id_test_radio0",
+            "name": "test_radio_button"
         }
     }
 
@@ -14,14 +13,13 @@
 <div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
     <div class="col-md-9 push-md-3 checkbox">
         <label>
-        {{^element.frozen}}
         <input type="radio" name="{{element.name}}"
-            id="{{element.id}}" value="{{element.value}}" size="{{element.size}}"
+            id="{{element.id}}" value="{{element.value}}"
             {{#element.checked}}checked{{/element.checked}}
+            {{#element.frozen}}disabled{{/element.frozen}}
             {{#error}}
                 autofocus aria-describedby="id_error_{{element.name}}"
             {{/error}} {{{element.attributes}}} >
-        {{/element.frozen}}
             {{{label}}}
         </label> {{{helpbutton}}}
         <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
