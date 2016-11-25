@@ -2091,6 +2091,7 @@ ul {
         opacity: 0;
         visibility: hidden;
         position: absolute;
+        /*rtl:ignore*/
         left: 50%;
         top: calc(-50% - 5px);
         transform: translate(-50%, -50%);
