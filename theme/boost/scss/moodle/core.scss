@@ -1642,41 +1642,6 @@ table.collection {
     @extend .table-striped;
 }
 
-table.collection .name {
-    text-align: left;
-    vertical-align: middle;
-}
-
-table.collection .awards {
-    width: 10%;
-    text-align: center;
-    vertical-align: middle;
-}
-
-table.collection .criteria {
-    width: 40%;
-    text-align: left;
-    vertical-align: top;
-}
-
-table.collection .badgeimage,
-table.collection .status {
-    width: 15%;
-    text-align: center;
-    vertical-align: middle;
-}
-
-table.collection .description {
-    width: 25%;
-    text-align: left;
-}
-
-table.collection .actions {
-    width: 11em;
-    text-align: center;
-    vertical-align: middle;
-}
-
 a.criteria-action {
     padding: 0 3px;
     float: right;
