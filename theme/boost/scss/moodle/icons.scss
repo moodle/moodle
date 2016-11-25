@@ -10,7 +10,8 @@
     margin-right: 0.5rem;
 }
 
-a:first-of-type > .icon {
+a:first-of-type > .icon,
+span:first-of-type > .icon {
     margin-left: 0.5rem;
 }
 
