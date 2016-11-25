@@ -96,7 +96,7 @@ Feature: Perform basic calendar functionality
       | Type of event | user |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
-    And I click on "//div[@class='commands']//a[contains(@href, 'delete')]" "xpath_element"
+    And I click on "Delete event" "link" in the ".event div.commands" "css_element"
     And I click on "Delete" "button"
     And I should not see "Really awesome event!"
 
@@ -105,7 +105,7 @@ Feature: Perform basic calendar functionality
       | Type of event | user |
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
-    And I click on "//div[@class='commands']//a[contains(@href, 'edit')]" "xpath_element"
+    And I click on "Edit event" "link" in the ".event div.commands" "css_element"
     And I set the following fields to these values:
       | Event title | Mediocre event :( |
       | Description | Wait, this event isn't that great. |
