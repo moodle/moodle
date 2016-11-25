@@ -1,3 +1,11 @@
+{{!
+    @template core/filemanager_loginform
+
+    This template is actually a template which is then used by YUI JS to
+    generate the markup, so it doesn't make much sense on its own.
+
+    Example context (json): {}
+}}
 <div class="fp-login-form">
     <div class="fp-content-center">
         <form class="form">
@@ -23,6 +31,10 @@
                 <div class="fp-login-radiogroup form-group">
                     <label class="form-control-label"></label>
                     <div class="fp-login-radio"><input class="form-control" /> <label></label></div>
+                </div>
+                <div class="fp-login-checkbox form-group form-inline">
+                    <label class="form-control-label"></label>
+                    <input class="form-control"/>
                 </div>
             </div>
             <p class="mdl-align"><button class="fp-login-submit btn-primary btn">{{#str}}submit, repository{{/str}}</button></p>
