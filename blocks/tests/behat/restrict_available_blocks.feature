@@ -38,5 +38,5 @@ Feature: Allowed blocks controls
     When I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    Then the "Add a block" select box should not contain "Activities"
-    And the "Add a block" select box should not contain "Course completion status"
+    Then the add block selector should not contain "Activities" block
+    And the add block selector should not contain "Course completion status" block

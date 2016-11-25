@@ -65,4 +65,30 @@ class behat_theme_boost_behat_blocks extends behat_blocks {
         );
     }
 
+    public function the_add_block_selector_should_contain_block($blockname) {
+        $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', get_string('addblock'));
+
+        $cancelstr = get_string('cancel');
+        if (!$this->running_javascript()) {
+            $this->execute('behat_general::should_exist_in_the', [$blockname, 'link', '#region-main', 'css_element']);
+            $this->execute('behat_general::i_click_on_in_the', [$cancelstr, 'link', '#region-main', 'css_element']);
+        } else {
+            $this->execute('behat_general::should_exist_in_the', [$blockname, 'link', '.modal-body', 'css_element']);
+            $this->execute('behat_general::i_click_on_in_the', [$cancelstr, 'link', '.modal-body', 'css_element']);
+        }
+    }
+
+    public function the_add_block_selector_should_not_contain_block($blockname) {
+        $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', get_string('addblock'));
+
+        $cancelstr = get_string('cancel');
+        if (!$this->running_javascript()) {
+            $this->execute('behat_general::should_not_exist_in_the', [$blockname, 'link', '#region-main', 'css_element']);
+            $this->execute('behat_general::i_click_on_in_the', [$cancelstr, 'link', '#region-main', 'css_element']);
+        } else {
+            $this->execute('behat_general::should_not_exist_in_the', [$blockname, 'link', '.modal-body', 'css_element']);
+            $this->execute('behat_general::i_click_on_in_the', [$cancelstr, 'link', '.modal-body', 'css_element']);
+        }
+    }
+
 }
