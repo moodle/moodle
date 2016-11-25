@@ -77,7 +77,8 @@
                                 <hr>
                                 <div class="row">
                                     <div class="span6">
-                                        <h4>{{text}}<h4>
+                                        {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
+                                        {{^action}}<h4>{{text}}<h4>{{/action}}
                                     </div>
                                     <div class="span6">
                                         <ul class="unstyled indented-list">
@@ -101,7 +102,8 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="span6">
-                                <h4>{{text}}<h4>
+                                {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
+                                {{^action}}<h4>{{text}}<h4>{{/action}}
                             </div>
                             <div class="span6">
                                 <ul class="unstyled">
@@ -121,7 +123,8 @@
                                     <hr>
                                     <div class="row">
                                         <div class="span6">
-                                            <h4>{{text}}<h4>
+                                            {{#action}}<h4><a href="{{action}}">{{text}}</a><h4>{{/action}}
+                                            {{^action}}<h4>{{text}}<h4>{{/action}}
                                         </div>
                                         <div class="span6">
                                             <ul class="unstyled indented-list">
