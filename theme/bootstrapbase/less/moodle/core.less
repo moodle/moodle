@@ -1924,43 +1924,34 @@ table.collection {
     .table-bordered;
     .table-striped;
 }
-table.collection .name {
+table.collection td.name {
     text-align: left;
     vertical-align: middle;
 }
-table.collection .awards {
-    width: 10%;
-    text-align: center;
-    vertical-align: middle;
-}
-table.collection .criteria {
-    width: 40%;
-    text-align: left;
-    vertical-align: top;
-}
-table.collection .badgeimage,
-table.collection .status {
+table.collection td.awards {
     width: 15%;
     text-align: center;
     vertical-align: middle;
 }
-table.collection .description {
+table.collection td.criteria {
+    width: 40%;
+    text-align: left;
+    vertical-align: top;
+}
+table.collection td.status {
+    width: 15%;
+    text-align: center;
+    vertical-align: middle;
+}
+table.collection td.description {
     width: 25%;
     text-align: left;
 }
-.dir-rtl table.collection {
-    .name,
-    .criteria,
-    .description  {
-        text-align: right;
-    }
-}
-table.collection .actions {
+table.collection td.actions {
     width: 11em;
     text-align: center;
     vertical-align: middle;
 }
-
 a.criteria-action {
     padding: 0px 3px;
     float: right;
