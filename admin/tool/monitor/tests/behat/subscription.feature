@@ -115,7 +115,7 @@ Feature: tool_monitor_subscriptions
     And I trigger cron
     And I am on site homepage
     When I click on ".popover-region-notifications" "css_element"
-    And I click on "View more" "link" in the ".popover-region-notifications" "css_element"
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
     Then I should see "New rule site level"
     And I should see "The course was viewed"
 
@@ -137,7 +137,7 @@ Feature: tool_monitor_subscriptions
     And I trigger cron
     And I am on site homepage
     When I click on ".popover-region-notifications" "css_element"
-    And I click on "View more" "link" in the ".popover-region-notifications" "css_element"
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
     Then I should see "New rule course level"
     And I should see "The course was viewed"
 
