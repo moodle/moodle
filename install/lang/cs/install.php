@@ -74,7 +74,10 @@ $string['pathssubdataroot'] = '<p>Moodle potřebuje prostor, kam si bude ukláda
 <p>Tento adresář ale zároveň nesmí být dostupný přímo přes webové rozhraní. .</p>
 <p>Instalační skript se pokusí tento adresář vytvořit, pokud nebude existovat..</p>';
 $string['pathssubdirroot'] = '<p>Absolutní cesta k adresáři s instalací Moodle.</p>';
-$string['pathssubwwwroot'] = 'Zadejte úplnou webovou adresu, na níž bude Moodle dostupný. Moodle potřebuje jedinečnou adresu, není možné jej provozovat na několika URL současně. Používáte-li několik veřejných domén, musíte si sami nastavit permanentní přesměrování na jednu z nich a tu pak použít. Pokud je váš server dostupný z vnější a z vnitřní sítě pod různými IP adresami, použijte jeho veřejnou adresu a nastavte si váš DNS server tak, že ji mohou používat i uživatelé z vnitřní sítě.';
+$string['pathssubwwwroot'] = '<p>Zadejte úplnou webovou adresu, na níž bude Moodle dostupný, t.j. adresa, kterou zadají uživatelé do adresního řádku svého prohlížeče, aby spustili Moodle.</p>
+<p>Moodle potřebuje jedinečnou adresu, není možné jej provozovat na několika URL současně. Používáte-li několik veřejných domén, musíte si sami nastavit permanentní přesměrování na jednu z nich a tu pak použít.</p>
+<p> Pokud je váš server dostupný z vnější a z vnitřní sítě pod různými IP adresami, použijte jeho veřejnou adresu a nastavte si váš DNS server tak, že ji mohou používat i uživatelé z vnitřní sítě.</p>
+<p>Pokud aktuální adresa není správná, změňte URL adresu v adresním řádku prohlížeče a spusťte instalaci.</p>';
 $string['pathsunsecuredataroot'] = 'Umístění datového adresáře není bezpečné';
 $string['pathswrongadmindir'] = 'Adresář pro správu serveru (admin) neexistuje';
 $string['phpextension'] = '{$a} PHP rozšíření';
