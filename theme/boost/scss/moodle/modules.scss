@@ -91,6 +91,17 @@ select {
             }
         }
     }
+
+    // Style for the forum subscription mode node.
+    .subscriptionmode {
+        color: $body-color;
+    }
+
+    // Style for the currently selected subscription mode.
+    .activesetting {
+        color: $body-color;
+        font-weight: bold;
+    }
 }
 
 .forumpost {
