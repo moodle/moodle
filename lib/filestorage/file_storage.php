@@ -1754,21 +1754,29 @@ class file_storage {
         // Hopefully this works around most potential race conditions.
 
         $prev = ignore_user_abort(true);
-        $newsize = file_put_contents($hashfile.'.tmp', $content, LOCK_EX);
+        // Use a unique temporary name to ensure exclusivity (attempting
+        // LOCK_EX fails on some platforms).
+        $tempfile = $hashfile.'.'.mt_rand().'.tmp';
+        $newsize = file_put_contents($tempfile, $content);
         if ($newsize === false) {
             // Borked permissions most likely.
             ignore_user_abort($prev);
             throw new file_exception('storedfilecannotcreatefile');
         }
-        if (filesize($hashfile.'.tmp') !== $filesize) {
+        if (filesize($tempfile) !== $filesize) {
             // Out of disk space?
-            unlink($hashfile.'.tmp');
+            unlink($tempfile);
             ignore_user_abort($prev);
             throw new file_exception('storedfilecannotcreatefile');
         }
-        rename($hashfile.'.tmp', $hashfile);
+        if (!rename($tempfile, $hashfile)) {
+            // a competing process has created an identical file
+            unlink($tempfile);
+            ignore_user_abort($prev);
+            throw new file_exception('storedfilecannotcreatefile');
+        }
         chmod($hashfile, $this->filepermissions); // Fix permissions if needed.
-        @unlink($hashfile.'.tmp'); // Just in case anything fails in a weird way.
+        @unlink($tempfile); // Just in case anything fails in a weird way.
         ignore_user_abort($prev);
 
         return array($contenthash, $filesize, $newfile);
