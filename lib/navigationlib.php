@@ -1133,8 +1133,13 @@ class global_navigation extends navigation_node {
             $this->rootnodes['courses']->isexpandable = true;
         }
 
-        if ($this->rootnodes['mycourses']->isactive) {
-            $this->load_courses_enrolled();
+        if (empty($CFG->navcollapsemycourses)){
+            if ($this->rootnodes['mycourses']->isactive) {
+                $this->load_courses_enrolled();
+            }
+        } else {  
+            $this->rootnodes['mycourses']->collapse = true; 
+            $this->rootnodes['mycourses']->make_inactive(); 
         }
 
         $canviewcourseprofile = true;

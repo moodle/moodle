@@ -2404,11 +2404,14 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      */
     public function resort_subcategories($field, $cleanup = true) {
         global $DB;
+        $desc = $field === 'idnumberdesc' ? true : false;
+        $field = $field === 'idnumberdesc' ? 'idnumber' : $field;
         if ($field !== 'name' && $field !== 'idnumber') {
             throw new coding_exception('Invalid field requested');
         }
         $children = $this->get_children();
-        core_collator::asort_objects_by_property($children, $field, core_collator::SORT_NATURAL);
+        core_collator::asort_objects_by_property($children, $field, core_collator::SORT_NATURAL);    
+        $children = empty($desc) ? $children : array_reverse($children);
         $i = 1;
         foreach ($children as $cat) {
             $i++;
@@ -2437,24 +2440,34 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     /**
      * Resort the courses within this category by the given field.
      *
-     * @param string $field One of fullname, shortname or idnumber
+     * @param string $field One of fullname, shortname, idnumber or idnumberdesc
      * @param bool $cleanup
      * @return bool True for success.
      * @throws coding_exception
      */
     public function resort_courses($field, $cleanup = true) {
         global $DB;
+          
+        if ($field === 'idnumberdesc') {
+            $field = "idnumber";
+            $desc = array(
+                'sortdesc' => " DESC",
+                'counter' => 1
+            );
+        }
+        
         if ($field !== 'fullname' && $field !== 'shortname' && $field !== 'idnumber') {
             // This is ultra important as we use $field in an SQL statement below this.
             throw new coding_exception('Invalid field requested');
         }
+        
         $ctxfields = context_helper::get_preload_record_columns_sql('ctx');
         $sql = "SELECT c.id, c.sortorder, c.{$field}, $ctxfields
                   FROM {course} c
              LEFT JOIN {context} ctx ON ctx.instanceid = c.id
                  WHERE ctx.contextlevel = :ctxlevel AND
                        c.category = :categoryid
-              ORDER BY c.{$field}, c.sortorder";
+              ORDER BY c.{$field}".(empty($desc) ? '' : $desc['sortdesc']).", c.sortorder";
         $params = array(
             'ctxlevel' => CONTEXT_COURSE,
             'categoryid' => $this->id
@@ -2464,7 +2477,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             foreach ($courses as $courseid => $course) {
                 context_helper::preload_from_record($course);
                 if ($field === 'idnumber') {
-                    $course->sortby = $course->idnumber;
+                    $course->sortby = empty($desc) ? $course->idnumber : $desc["counter"]++;
                 } else {
                     // It'll require formatting.
                     $options = array(

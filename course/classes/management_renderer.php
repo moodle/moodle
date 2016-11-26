@@ -409,6 +409,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                     array(
                         'name' => get_string('sortcategoriesbyname'),
                         'idnumber' => get_string('sortcategoriesbyidnumber'),
+                        'idnumberdesc' => get_string('sortcategoriesbyidnumberdesc'),
                         'none' => get_string('dontsortcategories')
                     ),
                     'resortcategoriesby',
@@ -423,6 +424,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                         'fullname' => get_string('sortcoursesbyfullname'),
                         'shortname' => get_string('sortcoursesbyshortname'),
                         'idnumber' => get_string('sortcoursesbyidnumber'),
+                        'idnumberdesc' => get_string('sortcoursesbyidnumberdesc'), 
                         'none' => get_string('dontsortcourses')
                     ),
                     'resortcoursesby',
@@ -678,10 +680,12 @@ class core_course_management_renderer extends plugin_renderer_base {
             $fullnameurl = new moodle_url($baseurl, array('resort' => 'fullname'));
             $shortnameurl = new moodle_url($baseurl, array('resort' => 'shortname'));
             $idnumberurl = new moodle_url($baseurl, array('resort' => 'idnumber'));
+            $idnumberdescurl = new moodle_url($baseurl, array('resort' => 'idnumberdesc'));
             $menu = new action_menu(array(
                 new action_menu_link_secondary($fullnameurl, null, get_string('resortbyfullname')),
                 new action_menu_link_secondary($shortnameurl, null, get_string('resortbyshortname')),
-                new action_menu_link_secondary($idnumberurl, null, get_string('resortbyidnumber'))
+                new action_menu_link_secondary($idnumberurl, null, get_string('resortbyidnumber')),
+                new action_menu_link_secondary($idnumberdescurl, null, get_string('resortbyidnumberdesc'))
             ));
             $menu->set_menu_trigger(get_string('resortcourses'));
             $actions[] = $this->render($menu);
