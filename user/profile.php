@@ -253,9 +253,10 @@ echo '<div class="userprofilebox clearfix"><div class="profilepicture">';
 echo $OUTPUT->user_picture($user, array('size' => 100));
 echo '</div>';
 
-echo '<div class="descriptionbox"><div class="description">';
+echo '<div class="descriptionbox">';
 // Print the description.
 if ($user->description && !isset($hiddenfields['description'])) {
+    echo '<div class="description">';
     if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser &&
         !$DB->record_exists('role_assignments', array('userid' => $user->id))) {
         echo get_string('profilenotshown', 'moodle');
@@ -265,8 +266,8 @@ if ($user->description && !isset($hiddenfields['description'])) {
         $options = array('overflowdiv' => true);
         echo format_text($user->description, $user->descriptionformat, $options);
     }
+    echo '</div>';
 }
-echo '</div>';
 
 
 // Print all the little details in a list.
