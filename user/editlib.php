@@ -413,6 +413,7 @@ function useredit_shared_definition_preferences($user, &$mform, $editoroptions =
             $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
         }
         $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
+        $mform->addHelpButton('preference_htmleditor', 'textediting');
         $mform->setDefault('preference_htmleditor', '');
     } else {
         // Empty string means use the first chosen text editor.
