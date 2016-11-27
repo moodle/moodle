@@ -93,6 +93,7 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
         $expanded = $node->getAttribute('aria-expanded');
         if ($expanded === 'false') {
             $node->click();
+            $this->ensure_node_attribute_is_set($node, 'aria-expanded', 'true');
             $this->wait_for_pending_js();
         }
     }
