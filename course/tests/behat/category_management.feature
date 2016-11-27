@@ -140,7 +140,7 @@ Feature: Test category management actions
     And I click on "Back to Category: Cat 1" "link"
     # Redirect
     And I should see the "Course categories and courses" management page
-    And I should see "Cat 1" in the "#course-listing h3" "css_element"
+    And I should see "Cat 1" in the "#course-listing" "css_element"
 
   Scenario: Test clicking to manage cohorts for a category through the management interface.
     Given the following "categories" exist:
