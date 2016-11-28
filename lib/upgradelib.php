@@ -2333,6 +2333,12 @@ function check_unoconv_version(environment_results $result) {
 function check_tls_libraries(environment_results $result) {
     global $CFG;
 
+    if (!function_exists('curl_version')) {
+        $result->setInfo('cURL PHP extension is not installed');
+        $result->setStatus(false);
+        return $result;
+    }
+
     if (!\core\upgrade\util::validate_php_curl_tls(curl_version(), PHP_ZTS)) {
         $result->setInfo('invalid ssl/tls configuration');
         $result->setStatus(false);
