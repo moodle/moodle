@@ -274,7 +274,7 @@ class behat_grade extends behat_base {
 
         // If the first row of the grade-navigation tabs does not have $gradepath[0] as active tab, click on it.
         $link = '\'' . $this->escape($gradepath[0]) . '\'';
-        $xpathrow1 = $xpath . '//ul[1]//*[contains(@class,\'active\') and text()=' . $link . ']';
+        $xpathrow1 = $xpath . '//ul[1]//*[contains(@class,\'active\') and contains(normalize-space(.), ' . $link . ')]';
         if (!$this->getSession()->getPage()->findAll('xpath', $xpathrow1)) {
             $this->find('xpath', $xpath . '//ul[1]/li/a[text()=' . $link . ']')->click();
             $this->wait_for_pending_js();
@@ -283,7 +283,7 @@ class behat_grade extends behat_base {
         if (isset($gradepath[1])) {
             // If the second row of the grade-navigation tabs does not have $gradepath[1] as active tab, click on it.
             $link = '\'' . $this->escape($gradepath[1]) . '\'';
-            $xpathrow2 = $xpath . '//ul[2]//*[contains(@class,\'active\') and text()=' . $link . ']';
+            $xpathrow2 = $xpath . '//ul[2]//*[contains(@class,\'active\') and contains(normalize-space(.), ' . $link . ')]';
             if (!$this->getSession()->getPage()->findAll('xpath', $xpathrow2)) {
                 $this->find('xpath', $xpath . '//ul[2]/li/a[text()=' . $link . ']')->click();
                 $this->wait_for_pending_js();
