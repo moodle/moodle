@@ -1053,6 +1053,11 @@ class block_manager {
             return;
         }
 
+        // Never add a duplicate block required by theme.
+        if ($DB->record_exists('block_instances', array('blockname' => $blockname, 'requiredbytheme' => 1))) {
+            return;
+        }
+
         $systemcontext = context_system::instance();
         $defaultregion = $this->get_default_region();
         // Add a special system wide block instance only for themes that require it.
