@@ -1220,7 +1220,7 @@ class engine extends \core_search\engine {
 
         if (!empty($this->config->server_username) && !empty($this->config->server_password)) {
             $authorization = $this->config->server_username . ':' . $this->config->server_password;
-            $this->curl->setHeader('Authorization', 'Basic ' . base64_encode($authorization));
+            $this->curl->setHeader('Authorization: Basic ' . base64_encode($authorization));
         }
 
         return $this->curl;
