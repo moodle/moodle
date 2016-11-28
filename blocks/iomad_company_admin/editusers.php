@@ -544,10 +544,12 @@ if (!empty($userrecords)) {
 }
 if (!empty($userlist)) {
     $users = iomad_get_users_listing($sort, $dir, $page * $perpage, $perpage, '', '', '', $userlist);
+    $totalusers = iomad_get_users_listing($sort, $dir, 0, 0, '', '', '', $userlist);
+
 } else {
     $users = array();
 }
-$usercount = count($users);
+$usercount = count($totalusers);
 
 echo $OUTPUT->heading("$usercount ".get_string('users'));
 
@@ -563,6 +565,7 @@ $params['delete'] = '';
 $params['confirm'] = '';
 
 $baseurl = new moodle_url('editusers.php', $params);
+//echo "usercount = $usercount - page = $page - perpage = $perpage</br>";
 echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
 
 flush();
