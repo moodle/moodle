@@ -157,7 +157,7 @@ function kalvidpres_get_participants($kalvidpresid) {
 function kalvidpres_supports($feature) {
     switch($feature) {
         case FEATURE_MOD_ARCHETYPE:
-            return MOD_ARCHETYPE_RESOURCE;
+            return MOD_ARCHETYPE_SYSTEM;
         case FEATURE_GROUPS:
             return true;
         case FEATURE_GROUPINGS:
