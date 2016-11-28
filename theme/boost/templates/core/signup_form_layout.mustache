@@ -2,10 +2,16 @@
     <div class="row">
         <div class="col-md-8 push-md-2 col-xl-6 push-xl-3">
             <div class="card">
-                {{#logourl}}
-                    <img class="card-img-top" src="{{logourl}}">
-                {{/logourl}}
                 <div class="card-block">
+                    <div class="card-title text-xs-center">
+                        {{#logourl}}
+                            <h2><img src="{{logourl}}" title="{{sitename}}" alt="{{sitename}}"/></h2>
+                        {{/logourl}}
+                        {{^logourl}}
+                            <h2>{{sitename}}</h2>
+                        {{/logourl}}
+                        <hr>
+                    </div>
                     <div class="card-title">
                         <h3>{{#str}}newaccount{{/str}}</h3>
                     </div>

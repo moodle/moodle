@@ -97,12 +97,15 @@
 <div class="row">
 <div class="col-xl-6 push-xl-3 m-2-md col-sm-8 push-sm-2">
 <div class="card">
-    {{#logourl}}
-        <img class="card-img-top" src="{{logourl}}" alt="" role="presentation"/>
-    {{/logourl}}
     <div class="card-block">
-        <div class="card-title">
-            <h2 class="m-t-1">{{sitename}}</h2>
+        <div class="card-title text-xs-center">
+            {{#logourl}}
+                <h2><img src="{{logourl}}" title="{{sitename}}" alt="{{sitename}}"/></h2>
+            {{/logourl}}
+            {{^logourl}}
+                <h2>{{sitename}}</h2>
+            {{/logourl}}
+            <hr>
         </div>
 
         {{#cansignup}}
