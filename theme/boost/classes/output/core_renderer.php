@@ -73,16 +73,20 @@ class core_renderer extends \core_renderer {
      * @return string HTML to display the main header.
      */
     public function full_header() {
+        global $PAGE;
+
         $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'row'));
         $html .= html_writer::start_div('col-xs-12 p-a-1');
         $html .= html_writer::start_div('card');
         $html .= html_writer::start_div('card-block');
         $html .= html_writer::div($this->context_header_settings_menu(), 'pull-xs-right context-header-settings-menu');
         $html .= $this->context_header();
-        $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
-        $html .= html_writer::tag('div', $this->navbar(), array('class' => 'breadcrumb-nav'));
-        $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
-        $html .= html_writer::end_div();
+        if (empty($PAGE->layout_options['nonavbar'])) {
+            $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
+            $html .= html_writer::tag('div', $this->navbar(), array('class' => 'breadcrumb-nav'));
+            $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
+            $html .= html_writer::end_div();
+        }
         $html .= html_writer::tag('div', $this->course_header(), array('id' => 'course-header'));
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
@@ -140,7 +144,7 @@ class core_renderer extends \core_renderer {
         if ($this->should_display_main_logo($headinglevel)) {
             $sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
             return html_writer::div(html_writer::empty_tag('img', [
-                'src' => $this->get_logo_url(null, 75), 'alt' => $sitename]), 'logo');
+                'src' => $this->get_logo_url(null, 150), 'alt' => $sitename]), 'logo');
         }
 
         return parent::context_header($headerinfo, $headinglevel);
@@ -152,7 +156,7 @@ class core_renderer extends \core_renderer {
      * @return string
      */
     public function get_compact_logo_url($maxwidth = 100, $maxheight = 100) {
-        return parent::get_compact_logo_url(null, 35);
+        return parent::get_compact_logo_url(null, 70);
     }
 
     /**
