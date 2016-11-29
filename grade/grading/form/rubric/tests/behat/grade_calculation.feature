@@ -29,7 +29,7 @@ Feature: Converting rubric score to grades
     And I set the following fields to these values:
       | Name | Assignment 1 rubric |
       | Description | Rubric test description |
-      | When converting rubric score to points/scale assume that minimum number of points is 0 | <lockzeropoints> |
+      | Calculate grade based on the rubric having a minimum score of 0 | <lockzeropoints> |
     And I define the following rubric:
       | Criterion 1 | Level 11 | 20 | Level 12 | 25 | Level 13 | 40 | Level 14  | 50  |
       | Criterion 2 | Level 21 | 20 | Level 22 | 25 | Level 23 | 30 |           |     |
