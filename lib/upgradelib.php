@@ -2326,6 +2326,12 @@ function check_unoconv_version(environment_results $result) {
  */
 function check_libcurl_version(environment_results $result) {
 
+    if (!function_exists('curl_version')) {
+        $result->setInfo('cURL PHP extension is not installed');
+        $result->setStatus(false);
+        return $result;
+    }
+
     // Supported version and version number.
     $supportedversion = 0x071304;
     $supportedversionstring = "7.19.4";
