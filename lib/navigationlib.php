@@ -4958,7 +4958,8 @@ class settings_navigation extends navigation_node {
             throw new coding_exception('Unexpected context while loading category settings.');
         }
 
-        $categorynode = $this->add($catcontext->get_context_name(), null, null, null, 'categorysettings');
+        $categorynodetype = navigation_node::TYPE_CONTAINER;
+        $categorynode = $this->add($catcontext->get_context_name(), null, $categorynodetype, null, 'categorysettings');
         $categorynode->nodetype = navigation_node::NODETYPE_BRANCH;
         $categorynode->force_open();
 
