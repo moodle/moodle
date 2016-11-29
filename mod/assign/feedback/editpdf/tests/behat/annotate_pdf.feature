@@ -26,7 +26,7 @@ Feature: In an assignment, teacher can annotate PDF files during grading
     Then I should see "Changes saved"
     And I follow "Test ghostscript path"
     And I should see "The ghostscript path appears to be OK"
-    And I press "Continue"
+    And I am on site homepage
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
