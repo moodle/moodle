@@ -740,10 +740,12 @@ class core_backup_renderer extends plugin_renderer_base {
                 if (!$category->visible) {
                     $row->attributes['class'] .= ' dimmed';
                 }
+                $context = context_coursecat::instance($category->id);
                 $row->cells = array(
                     html_writer::empty_tag('input', array('type' => 'radio', 'name' => 'targetid', 'value' => $category->id)),
                     format_string($category->name, true, array('context' => context_coursecat::instance($category->id))),
-                    format_text($category->description, $category->descriptionformat, array('overflowdiv' => true))
+                    format_text(file_rewrite_pluginfile_urls($category->description, 'pluginfile.php', $context->id,
+                        'coursecat', 'description', null), $category->descriptionformat, array('overflowdiv' => true))
                 );
                 $table->data[] = $row;
             }
