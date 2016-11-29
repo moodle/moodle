@@ -786,7 +786,10 @@ class manager {
         // A list of tours that are shipped with Moodle. They are in
         // the format filename => version. The version value needs to
         // be increased if the tour has been updated.
-        $shippedtours = [];
+        $shippedtours = [
+            'boost_administrator.json' => 1,
+            'boost_course_view.json' => 1,
+        ];
 
         $existingtourrecords = $DB->get_recordset('tool_usertours_tours');
 

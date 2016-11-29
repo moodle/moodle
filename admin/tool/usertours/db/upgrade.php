@@ -35,11 +35,11 @@ use tool_usertours\manager;
 function xmldb_tool_usertours_upgrade($oldversion) {
     global $CFG, $DB;
 
-    if ($oldversion < 2016102002) {
+    if ($oldversion < 2016112900) {
         // Update the tours shipped with Moodle.
         manager::update_shipped_tours();
 
-        upgrade_plugin_savepoint(true, 2016102002, 'tool', 'usertours');
+        upgrade_plugin_savepoint(true, 2016112900, 'tool', 'usertours');
     }
 
     return true;
