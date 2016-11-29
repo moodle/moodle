@@ -892,6 +892,7 @@ EOF;
                 get_mimetype_description(array('filename' => 'test.frog')));
 
         // Test custom description using multilang filter.
+        filter_manager::reset_caches();
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', true);
         core_filetypes::update_type('frog', 'frog', 'application/x-frog', 'document',
