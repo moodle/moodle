@@ -13,3 +13,7 @@ ul.iomad_user_list {
 ul.iomad_user_list li {
     list-style-type: none;
 }
+
+.iomad_Theme {
+    display: none;
+}

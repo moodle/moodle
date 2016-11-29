@@ -159,15 +159,20 @@ class report_completion {
 
         // Populate it.
         $tempcreatesql = "INSERT INTO {".$tempcomptablename."} (userid, courseid, timeenrolled, timestarted, timecompleted, finalscore, certsource)
-                          SELECT cc.userid, cc.course, cc.timeenrolled, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
-                          FROM {".$tempusertablename."} tut, {course_completions} cc LEFT JOIN {grade_grades} gg ON (gg.userid = cc.userid)
-                          JOIN {grade_items} gi
+                          SELECT ue.userid, e.courseid, ue.timestart, cc.timestarted, cc.timecompleted, gg.finalgrade, 0
+                          FROM {".$tempusertablename."} tut
+                          JOIN {user_enrolments} ue ON (tut.userid = ue.userid)
+                          INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
+                          JOIN {course_completions} cc ON (ue.userid = cc.userid AND e.courseid = cc.course)
+                          LEFT JOIN {grade_items} gi
                           ON (cc.course = gi.courseid
-                          AND gg.itemid = gi.id
                           AND gi.itemtype = 'course')
-                          WHERE tut.userid = cc.userid";
+                          LEFT JOIN {grade_grades} gg ON (gg.userid = cc.userid AND gi.id = gg.itemid)";
+                          
+                          //WHERE tut.userid = cc.userid";
         if (!empty($courseid)) {
-            $tempcreatesql .= " AND cc.course = ".$courseid;
+            //$tempcreatesql .= " AND cc.course = ".$courseid;
+            $tempcreatesql .= " WHERE cc.course = ".$courseid;
         }
         $DB->execute($tempcreatesql);
 

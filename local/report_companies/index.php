@@ -71,9 +71,7 @@ foreach ($companies as $company) {
         echo "<strong>".get_string('nousers', 'local_report_companies')."</strong>";
     } else {
         echo "<h4>".get_string('courseusers', 'local_report_companies')."</h4>\n";
-        echo get_string('totalusercount', 'local_report_companies') . count($company->users) . ' <a href="' .
-        new moodle_url('/local/report_users/index.php').'">'.
-        get_string('completionreportlink', 'local_report_companies') . '</a>';
+        echo get_string('totalusercount', 'local_report_companies') . count($company->users);
     }
     echo "</div>\n";
 
@@ -83,9 +81,7 @@ foreach ($companies as $company) {
         echo "<strong>".get_string('nocourses', 'local_report_companies')."</strong>";
     } else {
         echo "<h4>".get_string('courses', 'local_report_companies')."</h4>\n";
-        echo get_string('totalcoursecount', 'local_report_companies'). count($company->courses) . ' <a href="' .
-        new moodle_url('/local/report_completion/index.php').'">'.
-        get_string('completionreportlink', 'local_report_companies') . '</a>';
+        echo get_string('totalcoursecount', 'local_report_companies'). count($company->courses);
     }
     echo "</div>\n";
 

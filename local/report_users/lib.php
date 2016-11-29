@@ -83,6 +83,7 @@ class userrep {
         if ($completionsinfo = $DB->get_records_sql("SELECT DISTINCT id as uniqueid, userid,courseid,timeenrolled,timestarted,timecompleted,finalscore
                                                      FROM {".$tempcomptablename."}
                                                      ORDER BY timeenrolled DESC")) {
+
             foreach ($completionsinfo as $testcompletioninfo) {
                 $u = new stdclass();
                 // get the first occurrance of this info.
@@ -145,6 +146,21 @@ class userrep {
             // Does the user have a license for this course?
             if ($DB->get_record('companylicense_users', array('licensecourseid' => $courseid, 'userid' => $userid, 'isusing' => 0))) {
                 $u->timeenrolled = 0;
+                $u->timecompleted = 0;
+                $u->timestarted = 0;
+                $u->status = 'notstarted';
+                $u->certsource = null;
+                ++$notstarted;
+                $datum->completion->$courseid = $u;
+                $data[$courseid] = $datum;
+            }
+            // user is in the course and hasn't accessed it yet.
+            if ($enrolinfo = $DB->get_records_sql("SELECT ue.* FROM {user_enrolments} ue JOIN {enrol} e ON (ue.enrolid = e.id)
+                                                   WHERE e.status = 0
+                                                   AND e.courseid = :courseid
+                                                   AND ue.userid = :userid",
+                                                   array('courseid' => $courseid, 'userid' => $userid))) {
+                $u->timeenrolled = $enrolinfo->timestart;
                 $u->timecompleted = 0;
                 $u->timestarted = 0;
                 $u->status = 'notstarted';
