@@ -2152,12 +2152,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                     }
                     //for editor element, [text] is appended to the name.
                     $fullelementname = $elementName;
-                    if ($element->getType() == 'editor') {
-                        $fullelementname .= '[text]';
-                        //Add format to rule as moodleform check which format is supported by browser
-                        //it is not set anywhere... So small hack to make sure we pass it down to quickform
-                        if (is_null($rule['format'])) {
-                            $rule['format'] = $element->getFormat();
+                    if (is_object($element) && $element->getType() == 'editor') {
+                        if ($element->getType() == 'editor') {
+                            $fullelementname .= '[text]';
+                            // Add format to rule as moodleform check which format is supported by browser
+                            // it is not set anywhere... So small hack to make sure we pass it down to quickform.
+                            if (is_null($rule['format'])) {
+                                $rule['format'] = $element->getFormat();
+                            }
                         }
                     }
                     // Fix for bug displaying errors for elements in a group
@@ -2246,7 +2248,12 @@ var skipClientValidation = false;
                 $elementName);
             $valFunc = 'validate_' . $this->_formName . '_' . $escapedElementName . '(ev.target, \''.$escapedElementName.'\')';
 
-            $js .= '
+            if (!is_array($element)) {
+                $element = [$element];
+            }
+            foreach ($element as $elem) {
+                if (key_exists('id', $elem->_attributes)) {
+                    $js .= '
     function validate_' . $this->_formName . '_' . $escapedElementName . '(element, escapedName) {
       if (undefined == element) {
          //required element was not found, then let form be submitted without client side validation
@@ -2269,13 +2276,15 @@ var skipClientValidation = false;
       }
     }
 
-    document.getElementById(\'' . $element->_attributes['id'] . '\').addEventListener(\'blur\', function(ev) {
+    document.getElementById(\'' . $elem->_attributes['id'] . '\').addEventListener(\'blur\', function(ev) {
         ' . $valFunc . '
     });
-    document.getElementById(\'' . $element->_attributes['id'] . '\').addEventListener(\'change\', function(ev) {
+    document.getElementById(\'' . $elem->_attributes['id'] . '\').addEventListener(\'change\', function(ev) {
         ' . $valFunc . '
     });
 ';
+                }
+            }
             $validateJS .= '
       ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\'], \''.$escapedElementName.'\') && ret;
       if (!ret && !first_focus) {
