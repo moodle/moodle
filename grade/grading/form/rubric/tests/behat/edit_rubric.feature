@@ -136,7 +136,7 @@ Feature: Rubrics can be created and edited
     And I log in as "teacher1"
     And I follow "Course 1"
     And I go to "Test assignment 1 name" advanced grading definition page
-    And I set the field "Allow users to preview rubric used in the module (otherwise rubric will only become visible after grading)" to ""
+    And I set the field "Allow users to preview rubric (otherwise it will only be displayed after grading)" to ""
     And I set the field "Display rubric description during evaluation" to ""
     And I set the field "Display rubric description to those being graded" to ""
     And I set the field "Display points for each level during evaluation" to ""
