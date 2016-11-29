@@ -1882,7 +1882,7 @@ img#persona_signin {
     .logo {
         margin: $spacer 0;
         img {
-            height: 75px;
+            max-height: 75px;
         }
     }
 }
@@ -1890,7 +1890,7 @@ img#persona_signin {
 /** Header. */
 header {
     .logo img {
-        height: 35px;
+        max-height: 35px;
     }
     .collapse.in,
     .collapsing {
