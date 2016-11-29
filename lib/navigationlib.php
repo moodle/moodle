@@ -1542,7 +1542,7 @@ class global_navigation extends navigation_node {
                                    WHERE companyid = $companyid))
                                OR c.id IN (
                                    SELECT clu.licensecourseid FROM {companylicense_users} clu 
-                                   JOIN {companylicense} cl ON (clu.userid = cl.userid)
+                                   JOIN {companylicense} cl ON (clu.licenseid = cl.id)
                                    WHERE cl.companyid = $companyid
                                    AND clu.userid = " . $USER->id ."
                                    AND cl.expirydate > " . time() .")";
