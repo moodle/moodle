@@ -184,7 +184,8 @@ function report_security_check_mediafilterswf($detailed=false) {
     $result->info    = null;
     $result->details = null;
     $result->status  = null;
-    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=filtersettingfiltermediaplugin\">".get_string('filtersettings', 'admin').'</a>';
+    $result->link    = "<a href=\"$CFG->wwwroot/$CFG->admin/settings.php?section=managemediaplayers\">" .
+        get_string('managemediaplayers', 'media') . '</a>';
 
     $activefilters = filter_get_globally_enabled();
 
