@@ -145,6 +145,15 @@ class media_videojs_plugin extends core_media_player_native {
             $attributes += ['width' => $width] + ($height ? ['height' => $height] : []);
         }
 
+        if (core_useragent::is_ios(10)) {
+            // Hides native controls and plays videos inline instead of fullscreen,
+            // see https://github.com/videojs/video.js/issues/3761 and
+            // https://github.com/videojs/video.js/issues/3762 .
+            // iPhone with iOS 9 still displays double controls and plays fullscreen.
+            // iPhone with iOS before 9 display only native controls.
+            $attributes += ['playsinline' => 'true'];
+        }
+
         if ($text !== null) {
             // Original text already had media tag - add necessary attributes and replace sources
             // with the supported URLs only.
