@@ -192,7 +192,7 @@ function label_supports($feature) {
 function label_dndupload_register() {
     $strdnd = get_string('dnduploadlabel', 'mod_label');
     if (get_config('label', 'dndmedia')) {
-        $mediaextensions = file_get_typegroup('extension', 'web_image');
+        $mediaextensions = file_get_typegroup('extension', ['web_image', 'web_video', 'web_audio']);
         $files = array();
         foreach ($mediaextensions as $extn) {
             $extn = trim($extn, '.');
