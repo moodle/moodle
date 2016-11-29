@@ -15,14 +15,48 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    Action link.
+    @template core/action_link
+
+    Action link template.
+
+    Context variables required for this template:
+    * disabled - Flag that indicates whether the action link to be rendered is disabled or not.
+    * url - The action link URL.
+    * id - The ID.
+    * classes - CSS classes for the action link.
+    * attributes - Array of attributes.
+      * name - Attribute name.
+      * value - Attribute value.
+    * icon - The icon context data for this action link.
+    * text - The text for this action link.
+
+    Example context (json):
+    {
+        "disabled": false,
+        "url": "#",
+        "id": "test-id",
+        "classes": "btn btn-link",
+        "attributes": [
+            {
+                "name": "title",
+                "value": "Action link's title"
+            }
+        ],
+        "icon": {
+            "attributes": [
+                {"name": "src", "value": "https://raw.githubusercontent.com/moodle/moodle/master/pix/t/check.png"},
+                {"name": "alt", "value": "Action link's icon"}
+            ]
+        },
+        "text": "This is an action link"
+    }
 }}
 {{^disabled}}
-    <a href="{{{url}}}" id="{{id}}" class="{{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}}{{/attributes}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{{text}}}</a>
+    <a href="{{{url}}}" id="{{id}}" class="{{classes}}" {{#attributes}} {{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{{text}}}</a>
     {{#hasactions}}
         {{> core/actions }}
     {{/hasactions}}
 {{/disabled}}
 {{#disabled}}
-    <span class="currentlink">{{#icon}}{{>core/pix_icon}}{{/icon}}{{{text}}}</span>
+    <span class="currentlink {{classes}}" {{#attributes}} {{name}}={{#quote}}{{value}}{{/quote}} {{/attributes}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{{text}}}</span>
 {{/disabled}}

@@ -719,22 +719,25 @@ class core_renderer extends \core_renderer {
                     continue;
                 }
                 if ($menuitem->action) {
-                    $text = $menuitem->text;
                     if ($menuitem->action instanceof action_link) {
                         $link = $menuitem->action;
                     } else {
                         $link = new action_link($menuitem->action, $menuitem->text, null, null, $menuitem->icon);
-                    }
-                    if ($indent) {
-                        $link->add_class('m-l-1');
                     }
                 } else {
                     if ($onlytopleafnodes) {
                         $skipped = true;
                         continue;
                     }
-                    $link = $menuitem->text;
+                    $link = new action_link(new moodle_url('#'), $menuitem->text, null, ['disabled' => true], $menuitem->icon);
                 }
+                if ($indent) {
+                    $link->add_class('m-l-1');
+                }
+                if (!empty($menuitem->classes)) {
+                    $link->add_class(implode(" ", $menuitem->classes));
+                }
+
                 $menu->add_secondary_action($link);
                 $skipped = $skipped || $this->build_action_menu_from_navigation($menu, $menuitem, true);
             }
