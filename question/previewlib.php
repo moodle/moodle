@@ -44,7 +44,7 @@ class preview_options_form extends moodleform {
             question_display_options::VISIBLE => get_string('shown', 'question'),
         );
 
-        $mform->addElement('header', 'optionsheader', get_string('attemptoptions', 'question'));
+        $mform->addElement('header', 'attemptoptionsheader', get_string('attemptoptions', 'question'));
 
         $behaviours = question_engine::get_behaviour_options(
                 $this->_customdata['quba']->get_preferred_behaviour());
@@ -66,7 +66,7 @@ class preview_options_form extends moodleform {
         $mform->addElement('submit', 'saverestart',
                 get_string('restartwiththeseoptions', 'question'));
 
-        $mform->addElement('header', 'optionsheader', get_string('displayoptions', 'question'));
+        $mform->addElement('header', 'displayoptionsheader', get_string('displayoptions', 'question'));
 
         $mform->addElement('select', 'correctness', get_string('whethercorrect', 'question'),
                 $hiddenofvisible);
