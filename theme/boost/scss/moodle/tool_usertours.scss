@@ -103,3 +103,10 @@ span[data-flexitour="container"] {
         }
     }
 }
+
+// Hack the bone! Hack the bone!
+[data-region="drawer"] [data-flexitour="container"] {
+    /*rtl:ignore*/
+    margin-left: -15px;
+    width: $drawer-width - 10px;
+}

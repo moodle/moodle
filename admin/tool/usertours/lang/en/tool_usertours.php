@@ -60,6 +60,7 @@ $string['filter_role'] = 'Role';
 $string['filter_role_help'] = 'A tour may be restricted to users with selected roles in the context where the tour is shown. For example, restricting a Dashboard tour to users with the role of student won\'t work if users have the role of student in a course (as is generally the case). A Dashboard tour can only be restricted to users with a system role.';
 $string['importtour'] = 'Import tour';
 $string['left'] = 'Left';
+$string['modifyshippedtourwarning'] = 'This is a user tour that has shipped with Moodle. Any modifications you make may be overridden during your next site upgrade.';
 $string['movestepdown'] = 'Move step down';
 $string['movestepup'] = 'Move step up';
 $string['movetourdown'] = 'Move tour down';

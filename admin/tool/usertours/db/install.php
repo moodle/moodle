@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use tool_usertours\manager;
+
 /**
  * Perform the post-install procedures.
  */
@@ -71,4 +73,7 @@ function xmldb_tool_usertours_install() {
         $DB->delete_records('usertours_steps', null);
         $DB->delete_records('usertours_tours', null);
     }
+
+    // Update the tours shipped with Moodle.
+    manager::update_shipped_tours();
 }
