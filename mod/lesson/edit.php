@@ -43,6 +43,7 @@ if (!in_array($mode, array('single', 'full', 'collapsed'))) {
     $mode = 'collapsed';
 }
 $PAGE->set_url('/mod/lesson/edit.php', array('id'=>$cm->id,'mode'=>$mode));
+$PAGE->force_settings_menu();
 
 if ($mode != get_user_preferences('lesson_view', 'collapsed') && $mode !== 'single') {
     set_user_preference('lesson_view', $mode);
