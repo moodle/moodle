@@ -15,23 +15,17 @@
 }
 
 .environmenttable {
-    p.warn {
+    .warn {
         background-color: @warningBackground;
         color: @warningText;
     }
-    .error,
-    span.warn,
-    .ok {
-        .label;
-    }
     .error {
-        background-color: @errorText;
-    }
-    span.warn {
-        background-color: @orange;
+        background-color: @errorBackground;
+        color: @errorText;
     }
     .ok {
-        background-color: @successText;
+        background-color: @successBackground;
+        color: @successText;
     }
 }
 
