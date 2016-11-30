@@ -1008,10 +1008,18 @@ class core_renderer extends renderer_base {
      * @return string HTML that you must output this, preferably immediately.
      */
     public function header() {
-        global $USER, $CFG;
+        global $USER, $CFG, $SESSION;
 
         if (\core\session\manager::is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
+        }
+
+        if (isset($SESSION->justloggedin) && !empty($CFG->displayloginfailures)) {
+            require_once($CFG->dirroot . '/user/lib.php');
+            // Set second parameter to false as we do not want reset the counter, the same message appears on footer.
+            if ($count = user_count_login_failures($USER, false)) {
+                $this->page->add_body_class('loginfailures');
+            }
         }
 
         // If the user is logged in, and we're not in initial install,
