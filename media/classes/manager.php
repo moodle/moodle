@@ -110,6 +110,20 @@ class core_media_manager {
     }
 
     /**
+     * Setup page requirements.
+     *
+     * This should must only be called once per page request.
+     *
+     * @param moodle_page $page The page we are going to add requirements to.
+     */
+    public function setup($page) {
+        $players = $this->get_players();
+        foreach ($players as $player) {
+            $player->setup($page);
+        }
+    }
+
+    /**
      * Resets cached singleton instance. To be used after $CFG->media_plugins_sortorder is modified
      */
     public static function reset_caches() {

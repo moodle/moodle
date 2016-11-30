@@ -43,6 +43,24 @@ class filter_mediaplugin extends moodle_text_filter {
     /** @var bool True if currently filtering trusted text */
     private $trusted;
 
+    /**
+     * Setup page with filter requirements and other prepare stuff.
+     *
+     * @param moodle_page $page The page we are going to add requirements to.
+     * @param context $context The context which contents are going to be filtered.
+     */
+    public function setup($page, $context) {
+        // This only requires execution once per request.
+        static $jsinitialised = false;
+        if ($jsinitialised) {
+            return;
+        }
+        $jsinitialised = true;
+
+        $mediamanager = core_media_manager::instance();
+        $mediamanager->setup($page);
+    }
+
     public function filter($text, array $options = array()) {
         global $CFG, $PAGE;
 

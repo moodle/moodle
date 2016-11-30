@@ -451,6 +451,7 @@ class core_coursecatlib_testcase extends advanced_testcase {
 
         try {
             // Enable the multilang filter and set it to apply to headings and content.
+            filter_manager::reset_caches();
             filter_set_global_state('multilang', TEXTFILTER_ON);
             filter_set_applies_to_strings('multilang', true);
             $expected = array($c3, $c4, $c1, $c2);

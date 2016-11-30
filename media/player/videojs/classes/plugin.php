@@ -99,10 +99,7 @@ class media_videojs_plugin extends core_media_player_native {
         $title = $this->get_name($name, $urls);
         $title = preg_replace(['/&amp;/', '/&gt;/', '/&lt;/'], ['&', '>', '<'], $title);
 
-        // Ensure JS is loaded. This will also load language strings and populate $this->language with the current language.
-        $this->load_amd_module();
         if ($this->youtube) {
-            $this->load_amd_module('Youtube');
             $datasetup[] = '"techOrder": ["youtube"]';
             $datasetup[] = '"sources": [{"type": "video/youtube", "src":"' . $urls[0] . '"}]';
             $sources = ''; // Do not specify <source> tags - it may confuse browser.
@@ -132,10 +129,9 @@ class media_videojs_plugin extends core_media_player_native {
         }
 
         // Attributes for the video/audio tag.
-        static $playercounter = 1;
         $attributes = [
             'data-setup' => '{' . join(', ', $datasetup) . '}',
-            'id' => 'id_videojs_' . ($playercounter++),
+            'id' => 'id_videojs_' . uniqid(),
             'class' => get_config('media_videojs', $isaudio ? 'audiocssclass' : 'videocssclass')
         ];
 
@@ -256,39 +252,6 @@ class media_videojs_plugin extends core_media_player_native {
     }
 
     /**
-     * Makes sure the player is loaded on the page and the language strings are set.
-     * We only need to do it once on a page.
-     *
-     * @param string $module module to load
-     */
-    protected function load_amd_module($module = 'video') {
-        global $PAGE;
-        if (array_key_exists($module, $this->loadedonpage) && $PAGE === $this->loadedonpage[$module]) {
-            // This is exactly the same page object we used last time.
-            // Prevent from calling multiple times on the same page.
-            return;
-        }
-
-        $contents = '';
-        $alias = '';
-        if ($module === 'video') {
-            $alias = 'videojs';
-            $path = new moodle_url('/media/player/videojs/videojs/video-js.swf');
-            $contents .= $alias . '.options.flash.swf = "' . $path . '";' . "\n";
-            $contents .= $this->find_language(current_language());
-        }
-
-        $PAGE->requires->js_amd_inline(<<<EOT
-require(["media_videojs/$module"], function($alias) {
-$contents
-});
-EOT
-        );
-
-        $this->loadedonpage[$module] = $PAGE;
-    }
-
-    /**
      * Tries to match the current language to existing language files
      *
      * Matched language is stored in $this->language
@@ -362,5 +325,30 @@ EOT
         // Middle bit: Video key value.
         $middle = '([a-z0-9\-_]+)';
         return $start . $middle . core_media_player_external::END_LINK_REGEX_PART;
+    }
+
+    /**
+     * Setup page requirements.
+     *
+     * @param moodle_page $page The page we are going to add requirements to.
+     */
+    public function setup($page) {
+
+        // Load core video JS.
+        $path = new moodle_url('/media/player/videojs/videojs/video-js.swf');
+        $contents = 'videojs.options.flash.swf = "' . $path . '";' . "\n";
+        $contents .= $this->find_language(current_language());
+        $page->requires->js_amd_inline(<<<EOT
+require(["media_videojs/video"], function(videojs) {
+$contents
+});
+EOT
+        );
+
+        // Load Youtube JS.
+        $page->requires->js_amd_inline('require(["media_videojs/Youtube"])');
+
+        // Load dynamic loader.
+        $page->requires->js_call_amd('media_videojs/loader', 'setUp');
     }
 }
