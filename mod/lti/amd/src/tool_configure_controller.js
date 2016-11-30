@@ -193,7 +193,6 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/e
     var screenReaderAnnounce = function(element) {
         var children = element.children().detach();
         children.appendTo(element);
-        $('[data-toggle="popover"]').popover();
     };
 
     /**
