@@ -6561,7 +6561,7 @@ a.ygtvspacer:hover {
 .notification-area .content-area .header:empty {
   display: none;
 }
-.notification-area .content-area .content {
+.notification-area .content-area > .content {
   height: 500px;
   box-sizing: border-box;
   overflow: auto;
@@ -6569,14 +6569,14 @@ a.ygtvspacer:hover {
   padding: 15px;
 }
 @media (max-height: 670px) {
-  .notification-area .content-area .content {
+  .notification-area .content-area > .content {
     height: 400px;
   }
 }
-.notification-area .content-area .content:empty {
+.notification-area .content-area > .content:empty {
   display: none;
 }
-.notification-area .content-area .content:empty + .empty-text {
+.notification-area .content-area > .content:empty + .empty-text {
   display: block;
   text-align: center;
   padding-top: 100px;

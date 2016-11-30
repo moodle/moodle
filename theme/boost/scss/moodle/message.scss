@@ -970,7 +970,7 @@
             }
         }
 
-        .content {
+        > .content {
             height: 500px;
             @media (max-height: 670px) {
                 height: 400px;
