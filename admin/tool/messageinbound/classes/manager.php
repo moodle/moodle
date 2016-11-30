@@ -125,9 +125,7 @@ class manager {
 
         } catch (\Horde_Imap_Client_Exception $e) {
             $message = $e->getMessage();
-            mtrace("Unable to connect to IMAP server. Failed with '{$message}'");
-
-            return false;
+            throw new \moodle_exception('imapconnectfailure', 'tool_messageinbound', '', null, $message);
         }
     }
 
