@@ -267,33 +267,17 @@ class course_publish_manager {
     public function get_sorted_subjects() {
         $subjects = get_string_manager()->load_component_strings('edufields', current_language());
 
-        //sort the subjects
+        // Sort the subjects.
+        $return  = [];
         asort($subjects);
         foreach ($subjects as $key => $option) {
             $keylength = strlen($key);
-            if ($keylength == 8) {
-                $toplevel[$key] = $option;
-            } else if ($keylength == 10) {
-                $sublevel[substr($key, 0, 8)][$key] = $option;
-            } else if ($keylength == 12) {
-                $subsublevel[substr($key, 0, 8)][substr($key, 0, 10)][$key] = $option;
+            if ($keylength == 12) {
+                $return[$key] = $option; // We want only selectable categories.
             }
         }
-
-        //recreate the initial structure returned by get_string_manager()
-        $subjects = array();
-        foreach ($toplevel as $key => $name) {
-            $subjects[$key] = $name;
-            foreach ($sublevel[$key] as $subkey => $subname) {
-                $subjects[$subkey] = $subname;
-                foreach ($subsublevel[$key][$subkey] as $subsubkey => $subsubname) {
-                    $subjects[$subsubkey] = $subsubname;
-                }
-            }
-        }
-
-        return $subjects;
+        return $return;
     }
 
 }
-?>
+

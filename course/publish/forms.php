@@ -303,23 +303,12 @@ class course_publication_form extends moodleform {
 
         $options = $publicationmanager->get_sorted_subjects();
 
-        //prepare data for the smartselect
-        foreach ($options as $key => &$option) {
-            $keylength = strlen($key);
-            if ($keylength == 10) {
-                $option = "&nbsp;&nbsp;" . $option;
-            } else if ($keylength == 12) {
-                $option = "&nbsp;&nbsp;&nbsp;&nbsp;" . $option;
-            }
-        }
-
-        $options = array('none' => get_string('none', 'hub')) + $options;
-        $mform->addElement('select', 'subject', get_string('subject', 'hub'), $options);
+        $mform->addElement('searchableselector', 'subject',
+            get_string('subject', 'hub'), $options);
         unset($options);
         $mform->addHelpButton('subject', 'subject', 'hub');
         $mform->setDefault('subject', $defaultsubject);
         $mform->addRule('subject', $strrequired, 'required', null, 'client');
-        $this->init_javascript_enhancement('subject', 'smartselect', array('selectablecategories' => false, 'mode' => 'compact'));
 
         $options = array();
         $options[HUB_AUDIENCE_EDUCATORS] = get_string('audienceeducators', 'hub');
