@@ -41,6 +41,7 @@ define(['jquery', 'core/ajax', 'core/log', 'core/notification', 'core/templates'
      * Get the current values for the form inputs and refresh the list of matching templates.
      *
      * @method refreshSearch
+     * @param {String} themename The naeme of the theme.
      */
     var refreshSearch = function(themename) {
         var componentStr = $('[data-field="component"]').val();

@@ -83,7 +83,7 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
             drawer.attr('aria-hidden', 'true');
             drawer.addClass('closed');
             M.util.set_user_preference(preference, 'false');
-        }.bind(this));
+        });
     };
 
     /**
@@ -128,6 +128,7 @@ define(['jquery', 'core/custom_interaction_events', 'core/log'],
      * Prevent the page from scrolling when the drawer is at max scroll.
      *
      * @method preventPageScroll
+     * @param  {Event} e
      */
     Drawer.prototype.preventPageScroll = function(e) {
         var delta = e.wheelDelta || (e.originalEvent && e.originalEvent.wheelDelta) || -e.originalEvent.detail,
