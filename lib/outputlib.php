@@ -1573,6 +1573,10 @@ class theme_config {
         $treeprocessor = $this->get_css_tree_post_processor();
         $needsparsing = !empty($treeprocessor) || !empty($this->rtlmode);
         if ($needsparsing) {
+
+            // We might need more memory to do this, so let's play safe.
+            raise_memory_limit(MEMORY_EXTRA);
+
             $parser = new core_cssparser($css);
             $csstree = $parser->parse();
             unset($parser);
