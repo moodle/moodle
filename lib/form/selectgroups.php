@@ -371,6 +371,9 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element {
         if (is_array($this->_values)) {
             foreach ($this->_values as $key => $val) {
                 foreach ($this->_optGroups as $optGroup) {
+                    if (empty($optGroup['options'])) {
+                        continue;
+                    }
                     for ($i = 0, $optCount = count($optGroup['options']); $i < $optCount; $i++) {
                         if ((string)$val == (string)$optGroup['options'][$i]['attr']['value']) {
                             $value[$key] = $optGroup['options'][$i]['text'];
