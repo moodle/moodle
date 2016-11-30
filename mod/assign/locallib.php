@@ -4513,7 +4513,7 @@ class assign {
 
         $cangrade = has_capability('mod/assign:grade', $this->get_context());
         // If there is a visible grade, show the summary.
-        if ((!is_null($gradebookgrade->grade) || !$emptyplugins)
+        if (!is_null($gradebookgrade) && (!is_null($gradebookgrade->grade) || !$emptyplugins)
                 && ($cangrade || !$gradebookgrade->hidden)) {
 
             $gradefordisplay = null;
