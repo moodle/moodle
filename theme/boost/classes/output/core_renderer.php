@@ -73,16 +73,23 @@ class core_renderer extends \core_renderer {
      * @return string HTML to display the main header.
      */
     public function full_header() {
+        global $PAGE;
+
         $html = html_writer::start_tag('header', array('id' => 'page-header', 'class' => 'row'));
         $html .= html_writer::start_div('col-xs-12 p-a-1');
         $html .= html_writer::start_div('card');
         $html .= html_writer::start_div('card-block');
         $html .= html_writer::div($this->context_header_settings_menu(), 'pull-xs-right context-header-settings-menu');
         $html .= $this->context_header();
-        $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
-        $html .= html_writer::tag('div', $this->navbar(), array('class' => 'breadcrumb-nav'));
-        $html .= html_writer::div($this->page_heading_button(), 'breadcrumb-button');
-        $html .= html_writer::end_div();
+        $pageheadingbutton = $this->page_heading_button();
+        if (empty($PAGE->layout_options['nonavbar'])) {
+            $html .= html_writer::start_div('clearfix', array('id' => 'page-navbar'));
+            $html .= html_writer::tag('div', $this->navbar(), array('class' => 'breadcrumb-nav'));
+            $html .= html_writer::div($pageheadingbutton, 'breadcrumb-button');
+            $html .= html_writer::end_div();
+        } else if ($pageheadingbutton) {
+            $html .= html_writer::div($pageheadingbutton, 'breadcrumb-button nonavbar');
+        }
         $html .= html_writer::tag('div', $this->course_header(), array('id' => 'course-header'));
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
@@ -140,7 +147,7 @@ class core_renderer extends \core_renderer {
         if ($this->should_display_main_logo($headinglevel)) {
             $sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
             return html_writer::div(html_writer::empty_tag('img', [
-                'src' => $this->get_logo_url(null, 75), 'alt' => $sitename]), 'logo');
+                'src' => $this->get_logo_url(null, 150), 'alt' => $sitename]), 'logo');
         }
 
         return parent::context_header($headerinfo, $headinglevel);
@@ -152,7 +159,7 @@ class core_renderer extends \core_renderer {
      * @return string
      */
     public function get_compact_logo_url($maxwidth = 100, $maxheight = 100) {
-        return parent::get_compact_logo_url(null, 35);
+        return parent::get_compact_logo_url(null, 70);
     }
 
     /**
@@ -511,7 +518,7 @@ class core_renderer extends \core_renderer {
             $url = $url->out(false);
         }
         $context->logourl = $url;
-        $context->sitename = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
+        $context->sitename = format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID), "escape" => false]);
 
         return $this->render_from_template('core/login', $context);
     }
@@ -531,7 +538,7 @@ class core_renderer extends \core_renderer {
             $url = $url->out(false);
         }
         $context['logourl'] = $url;
-        $context['sitename'] = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
+        $context['sitename'] = format_string($SITE->fullname, true, ['context' => context_course::instance(SITEID), "escape" => false]);
 
         return $this->render_from_template('core/signup_form_layout', $context);
     }
@@ -712,22 +719,25 @@ class core_renderer extends \core_renderer {
                     continue;
                 }
                 if ($menuitem->action) {
-                    $text = $menuitem->text;
                     if ($menuitem->action instanceof action_link) {
                         $link = $menuitem->action;
                     } else {
                         $link = new action_link($menuitem->action, $menuitem->text, null, null, $menuitem->icon);
-                    }
-                    if ($indent) {
-                        $link->add_class('m-l-1');
                     }
                 } else {
                     if ($onlytopleafnodes) {
                         $skipped = true;
                         continue;
                     }
-                    $link = $menuitem->text;
+                    $link = new action_link(new moodle_url('#'), $menuitem->text, null, ['disabled' => true], $menuitem->icon);
                 }
+                if ($indent) {
+                    $link->add_class('m-l-1');
+                }
+                if (!empty($menuitem->classes)) {
+                    $link->add_class(implode(" ", $menuitem->classes));
+                }
+
                 $menu->add_secondary_action($link);
                 $skipped = $skipped || $this->build_action_menu_from_navigation($menu, $menuitem, true);
             }

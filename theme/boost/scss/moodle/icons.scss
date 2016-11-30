@@ -10,20 +10,28 @@
     margin-right: 0.5rem;
 }
 
-a:first-of-type > .icon {
+a:first-of-type > .icon,
+span:first-of-type > .icon {
     margin-left: 0.5rem;
 }
 
+// Fix the first icon for an action menu. This rule exists to reverse the
+// icon margin defined in the a:first-of-type > .icon rule.
+.action-menu .dropdown a:first-of-type > .icon {
+    margin-left: 0;
+}
+
 .pull-xs-right {
+    // Now we need to override the .action-menu .dropdown a:first-of-type > .icon
+    // rule above for when actions menus are in the pull-xs-right class.
+    .action-menu .dropdown a:first-of-type > .icon {
+        margin-left: 0.5rem;
+    }
+
     .icon {
         margin-right: 0;
         margin-left: 0.5rem;
     }
-}
-
-// Fix the cog icon for an action menu.
-.action-menu > .dropdown .icon {
-    margin-left: 0;
 }
 
 // Fix the space between the dropdown icon and the caret.

@@ -1881,11 +1881,17 @@ img#persona_signin {
 #page-header {
     .logo {
         margin: $spacer 0;
+        img {
+            max-height: 75px;
+        }
     }
 }
 
 /** Header. */
 header {
+    .logo img {
+        max-height: 35px;
+    }
     .collapse.in,
     .collapsing {
         display: block;

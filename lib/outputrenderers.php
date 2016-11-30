@@ -283,12 +283,15 @@ class renderer_base {
      * @param int $maxheight The maximum height, or null when the maximum height does not matter.
      * @return moodle_url|false
      */
-    public function get_logo_url($maxwidth = null, $maxheight = 100) {
+    public function get_logo_url($maxwidth = null, $maxheight = 200) {
         global $CFG;
         $logo = get_config('core_admin', 'logo');
         if (empty($logo)) {
             return false;
         }
+
+        // 200px high is the default image size which should be displayed at 100px in the page to account for retina displays.
+        // It's not worth the overhead of detecting and serving 2 different images based on the device.
 
         // Hide the requested size in the file path.
         $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
@@ -4374,13 +4377,21 @@ EOD;
                     $helpbutton = $element->getHelpButton();
                 }
                 $label = $element->getLabel();
+                $text = '';
                 if (method_exists($element, 'getText')) {
-                    $label .= ' ' . $element->getText();
+                    // There currently exists code that adds a form element with an empty label.
+                    // If this is the case then set the label to the description.
+                    if (empty($label)) {
+                        $label = $element->getText();
+                    } else {
+                        $text = $element->getText();
+                    }
                 }
 
                 $context = array(
                     'element' => $elementcontext,
                     'label' => $label,
+                    'text' => $text,
                     'required' => $required,
                     'advanced' => $advanced,
                     'helpbutton' => $helpbutton,

@@ -27,8 +27,8 @@ Feature: Rename roles within a course
       | Your word for 'Student' | Learner |
     And I press "Save and display"
     And I follow "Switch role to..." in the user menu
-    Then I should see "Tutor"
-    And I should see "Learner"
+    Then "Tutor" "button" should exist
+    And "Learner" "button" should exist
     And I follow "Participants"
     And the "roleid" select box should contain "Tutor"
     And the "roleid" select box should contain "Learner"
@@ -40,8 +40,8 @@ Feature: Rename roles within a course
     And I press "Save and display"
     And I follow "Switch role to..." in the user menu
     And I should see "Teacher"
-    And I should see "Student"
-    And I should not see "Learner"
+    And "Student" "button" should exist
+    And "Learner" "button" should not exist
     And I follow "Participants"
     And the "roleid" select box should contain "Non-editing teacher"
     And the "roleid" select box should contain "Student"
