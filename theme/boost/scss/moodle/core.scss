@@ -121,6 +121,10 @@ a.dimmed_text:visited,
     @extend .text-info;
 }
 
+.fitem.advanced .text-info {
+    font-weight: bold;
+}
+
 .reportlink {
     text-align: right;
 }

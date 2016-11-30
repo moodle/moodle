@@ -2,7 +2,7 @@
     <label class="col-form-label {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
         {{{label}}} {{{helpbutton}}}
         {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">✲</abbr>{{/required}}
-        {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">❗</abbr>{{/advanced}}
+        {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
     </label>
     <span data-fieldtype="{{element.type}}">
         {{$ element }}
