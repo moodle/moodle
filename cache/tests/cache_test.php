@@ -1784,6 +1784,12 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
     }
 
+    /**
+     * Test static acceleration
+     *
+     * Note: All the assertGreaterThanOrEqual() in this test should be assertGreaterThan() be because of some microtime()
+     * resolution problems under some OSs / PHP versions, we are accepting equal as valid outcome. For more info see MDL-57147.
+     */
     public function test_static_acceleration() {
         $instance = cache_config_testing::instance();
         $instance->phpunit_add_definition('phpunit/accelerated', array(
@@ -1890,7 +1896,7 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertTrue($cache->set('b', $cacheableobject2));
         $staticaccelerationreturntime = $cache->phpunit_static_acceleration_get('a')->propertytime;
         $staticaccelerationreturntimeb = $cache->phpunit_static_acceleration_get('b')->propertytime;
-        $this->assertGreaterThan($startmicrotime, $staticaccelerationreturntime, 'Restore time of static must be newer.');
+        $this->assertGreaterThanOrEqual($startmicrotime, $staticaccelerationreturntime, 'Restore time of static must be newer.');
 
         // Reset the static cache without resetting backing store.
         $cache->phpunit_static_acceleration_purge();
@@ -1898,12 +1904,12 @@ class core_cache_testcase extends advanced_testcase {
         // Get the value from the backend store, populating the static cache.
         $cachevalue = $cache->get('a');
         $this->assertInstanceOf('cache_phpunit_dummy_object', $cachevalue);
-        $this->assertGreaterThan($staticaccelerationreturntime, $cachevalue->propertytime);
+        $this->assertGreaterThanOrEqual($staticaccelerationreturntime, $cachevalue->propertytime);
         $backingstorereturntime = $cachevalue->propertytime;
 
         $results = $cache->get_many(array('b'));
         $this->assertInstanceOf('cache_phpunit_dummy_object', $results['b']);
-        $this->assertGreaterThan($staticaccelerationreturntimeb, $results['b']->propertytime);
+        $this->assertGreaterThanOrEqual($staticaccelerationreturntimeb, $results['b']->propertytime);
         $backingstorereturntimeb = $results['b']->propertytime;
 
         // Obtain the value again and confirm that static cache is using wake_from_cache.
@@ -1911,11 +1917,11 @@ class core_cache_testcase extends advanced_testcase {
         // value is stored serialized in the static acceleration cache.
         $cachevalue = $cache->phpunit_static_acceleration_get('a');
         $this->assertInstanceOf('cache_phpunit_dummy_object', $cachevalue);
-        $this->assertGreaterThan($backingstorereturntime, $cachevalue->propertytime);
+        $this->assertGreaterThanOrEqual($backingstorereturntime, $cachevalue->propertytime);
 
         $results = $cache->get_many(array('b'));
         $this->assertInstanceOf('cache_phpunit_dummy_object', $results['b']);
-        $this->assertGreaterThan($backingstorereturntimeb, $results['b']->propertytime);
+        $this->assertGreaterThanOrEqual($backingstorereturntimeb, $results['b']->propertytime);
 
         /** @var cache_phpunit_application $cache */
         $cache = cache::make('phpunit', 'accelerated2');

@@ -651,4 +651,26 @@ class repository_dropbox_legacy extends repository {
             } catch (moodle_exception $e) {}
         }
     }
+
+    /**
+     * Get dropbox options
+     * @param string $config
+     * @return mixed
+     */
+    public function get_option($config = '') {
+        if ($config === 'dropbox_key') {
+            return trim(get_config('dropbox', 'dropbox_key'));
+        } else if ($config === 'dropbox_secret') {
+            return trim(get_config('dropbox', 'dropbox_secret'));
+        } else if ($config === 'dropbox_cachelimit') {
+            return $this->max_cache_bytes();
+        } else {
+            $options = parent::get_option();
+            $options['dropbox_key'] = trim(get_config('dropbox', 'dropbox_key'));
+            $options['dropbox_secret'] = trim(get_config('dropbox', 'dropbox_secret'));
+            $options['dropbox_cachelimit'] = $this->max_cache_bytes();
+        }
+
+        return $options;
+    }
 }
