@@ -129,6 +129,17 @@ information provided here is intended especially for developers.
   the courseid property, defaulting to SITEID automatically. In Moodle 3.6 (MDL-55449) courseid will be fully mandatory
   for all messages sent.
 * The send_confirmation_email() function has a new optional parameter $confirmationurl to provide a different confirmation URL.
+* Introduced a new hook for plugin developers:
+    - <component>_course_module_background_deletion_recommended()
+  This hook should be used in conjunction with the existing '<component>_pre_course_module_delete($mod)'. It must
+  return a boolean and is called by core to check whether a plugin's implementation of
+  <component>_pre_course_module_deleted($mod) will take a long time. A plugin should therefore only implement this
+  function if it also implements <component>_pre_course_module_delete($mod).
+  An example in current use is recyclebin, which performs what can be a lengthy backup process in
+  tool_recyclebin_pre_course_module_delete. The recyclebin, if enabled, now returns true in its implementation of
+  tool_recyclebin_course_module_background_deletion_recommended(), to indicate to core that the deletion (and
+  execution of tool_recyclebin_pre_course_module_delete) should be handled with an adhoc task, meaning it will not
+  occur in real time.
 
 === 3.1 ===
 
