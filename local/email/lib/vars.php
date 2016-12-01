@@ -161,8 +161,12 @@ class EmailVars {
             return $this->course->url;
         } else {
             // Get the company theme.
-            $theme = $this->company->get_theme();
-            return new moodle_url($this->course->url, array('theme' => $theme));
+            if (method_exists($this->company,'get_theme')) {
+                $theme = $this->company->get_theme();
+                return new moodle_url($this->course->url, array('theme' => $theme));
+            } else {
+                return new moodle_url($this->course->url);
+            }
         }            
     }
 
@@ -179,8 +183,12 @@ class EmailVars {
             return $CFG->wwwroot;
         } else {
             // Get the company theme.
-            $theme = $this->company->get_theme();
-            return new moodle_url($CFG->wwwroot, array('theme' => $theme));
+            if (method_exists($this->company,'get_theme')) {
+                $theme = $this->company->get_theme();
+                return new moodle_url($CFG->wwwroot, array('theme' => $theme));
+            } else {
+                return new moodle_url($CFG->wwwroot);
+            }
         }            
     }
 
@@ -197,8 +205,12 @@ class EmailVars {
             return $this->url;
         } else {
             // Get the company theme.
-            $theme = $this->company->get_theme();
-            return new moodle_url($this->url, array('theme' => $theme));
+            if (method_exists($this->company,'get_theme')) {
+                $theme = $this->company->get_theme();
+                return new moodle_url($this->url, array('theme' => $theme)); 
+            } else {
+                return new moodle_url($this->url);
+            }
         }            
     }
 }

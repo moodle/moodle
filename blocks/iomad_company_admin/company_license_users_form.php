@@ -267,28 +267,25 @@ class company_license_users_form extends moodleform {
 
         // Process incoming unallocations.
         if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
-            $userstounassign = $this->currentusers->get_selected_users();
+            $licensestounassign = optional_param_array('currentlyenrolledusers', null, PARAM_INT);
             $count = $this->license->used;
             $licenserecord = (array) $this->license;
 
-            if (!empty($userstounassign)) {
-                foreach ($userstounassign as $removeuser) {
+            if (!empty($licensestounassign)) {
+                foreach ($licensestounassign as $unassignid) {
+                    $licensedata = $DB->get_record('companylicense_users',array('id' => $unassignid, 'licenseid' => $this->licenseid), 'userid,isusing', MUST_EXIST);
 
                     // Check the userid is valid.
-                    if (!company::check_valid_user($this->selectedcompany, $removeuser->id, $this->departmentid)) {
+                    if (!company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
 
-                    if ($licensedata = $DB->get_record('companylicense_users',
-                                                        array('userid' => $removeuser->id,
-                                                              'id' => $removeuser->licenseid))) {
-                        if (!$licensedata->isusing) {
-                            $DB->delete_records('companylicense_users', array('id' => $licensedata->id));
-                            $count--;
-                        }
+                    if (!$licensedata->isusing) {
+                        $DB->delete_records('companylicense_users', array('id' => $unassignid));
+                        $count--;
+                        // Create an email event.
+                        EmailTemplate::send('license_removed', array('course' => $licensedata->licensecourseid, 'user' => $licensedata->userid));
                     }
-                    // Create an email event.
-                    EmailTemplate::send('license_removed', array('course' => $licensedata->licensecourseid, 'user' => $removeuser));
                 }
 
                 // Update the number of allocated records..
