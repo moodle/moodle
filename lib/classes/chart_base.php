@@ -76,6 +76,7 @@ class chart_base implements JsonSerializable, renderable {
      * @return array
      */
     public function jsonSerialize() { // @codingStandardsIgnoreLine (CONTRIB-6469).
+        global $CFG;
         return [
             'type' => $this->get_type(),
             'series' => $this->series,
@@ -84,7 +85,8 @@ class chart_base implements JsonSerializable, renderable {
             'axes' => [
                 'x' => $this->xaxes,
                 'y' => $this->yaxes,
-            ]
+            ],
+            'config_colorset' => !empty($CFG->chart_colorset) ? $CFG->chart_colorset : null
         ];
     }
 
