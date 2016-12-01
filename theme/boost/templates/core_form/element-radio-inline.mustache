@@ -10,7 +10,7 @@
    }
 
 }}
-<label class="form-check-inline {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+<label class="form-check-inline form-check-label {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
 {{^element.hardfrozen}}{{#element.frozen}}{{#element.checked}}
     <input type="hidden" name="{{element.name}}" value="{{element.value}}">
 {{/element.checked}}{{/element.frozen}}{{/element.hardfrozen}}
