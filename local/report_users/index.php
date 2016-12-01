@@ -222,9 +222,10 @@ $returnurl = $CFG->wwwroot."/local/report_users/index.php";
 $columns = array("firstname", "lastname", "department", "email", "city", "country", "timecreated", "lastaccess");
 
 foreach ($columns as $column) {
-    $string[$column] = get_string("$column");
     if ($column == 'timecreated') {
         $string[$column] = get_string("$column", 'local_report_completion');
+    } else {
+        $string[$column] = get_string("$column");
     }
     if ($sort != $column) {
         $columnicon = "";

@@ -155,7 +155,7 @@ class userrep {
                 $data[$courseid] = $datum;
             }
             // user is in the course and hasn't accessed it yet.
-            if ($enrolinfo = $DB->get_records_sql("SELECT ue.* FROM {user_enrolments} ue JOIN {enrol} e ON (ue.enrolid = e.id)
+            if ($enrolinfo = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue JOIN {enrol} e ON (ue.enrolid = e.id)
                                                    WHERE e.status = 0
                                                    AND e.courseid = :courseid
                                                    AND ue.userid = :userid",
