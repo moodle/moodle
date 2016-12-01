@@ -30,17 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * Media players return embed HTML for a particular way of playing back audio
  * or video (or another file type).
  *
- * In order to make the code more lightweight, this is not a plugin type
- * (players cannot have their own settings, database tables, capabilities, etc).
- * These classes are used only by core_media_renderer in outputrenderers.php.
- * If you add a new class here (in core code) you must modify the
- * get_players_raw function in that file to include it.
- *
- * If a Moodle installation wishes to add extra player objects they can do so
- * by overriding that renderer in theme, and overriding the get_players_raw
- * function. The new player class should then of course be defined within the
- * custom theme or other suitable location, not in this file.
- *
  * @package   core_media
  * @copyright 2016 Marina Glancy
  * @author    2011 The Open University
@@ -256,6 +245,12 @@ abstract class core_media_player {
 
     /**
      * Setup page requirements.
+     *
+     * The typical javascript requirements MUST not take action on the content
+     * directly. They are meant to load the required libraries and listen
+     * to events in order to know when to take action. The role of this method
+     * is not to provide a way for plugins to look for content to embed on the
+     * page. The {@link self::embed()} method is meant to be used for that.
      *
      * @param moodle_page $page The page we are going to add requirements to.
      * @since Moodle 3.2
