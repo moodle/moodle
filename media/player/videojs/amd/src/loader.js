@@ -40,8 +40,15 @@ define(['jquery', 'media_videojs/video'], function($, videojs) {
      * @param {NodeList} nodes List of new nodes.
      */
     var notifyVideoJS = function(e, nodes) {
-        nodes.find('.mediaplugin_videojs audio, .mediaplugin_videojs video')
-            .each(function() {
+        var selector = '.mediaplugin_videojs';
+
+        // Find the descendants matching the expected parent of the audio and video
+        // tags. Then also addBack the nodes matching the same selector. Finally,
+        // we find the audio and video tags contained in those parents. Kind thanks
+        // to jQuery for the simplicity.
+        nodes.find(selector)
+            .addBack(selector)
+            .find('audio, video').each(function() {
                 var id = $(this).attr('id'),
                     config = $(this).data('setup');
 
