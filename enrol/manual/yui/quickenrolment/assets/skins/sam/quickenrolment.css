@@ -46,6 +46,7 @@ Structure of the user enroller panel
 
 .user-enroller-panel .uep-wrap {
     height: inherit;
+    position: relative;
 }
 
 .user-enroller-panel .uep-search-results .user .count {
