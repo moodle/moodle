@@ -246,6 +246,12 @@ abstract class core_media_player {
     /**
      * Setup page requirements.
      *
+     * The typical javascript requirements MUST not take action on the content
+     * directly. They are meant to load the required libraries and listen
+     * to events in order to know when to take action. The role of this method
+     * is not to provide a way for plugins to look for content to embed on the
+     * page. The {@link self::embed()} method is meant to be used for that.
+     *
      * @param moodle_page $page The page we are going to add requirements to.
      * @since Moodle 3.2
      */

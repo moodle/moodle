@@ -1601,7 +1601,7 @@ class moodle_page {
 
         if (!during_initial_install()) {
             $filtermanager = filter_manager::instance();
-            $filtermanager->setup_page_for_filters($this, $this->context);
+            $filtermanager->setup_page_for_globally_available_filters($this);
         }
 
         $this->_wherethemewasinitialised = debug_backtrace();
