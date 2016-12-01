@@ -142,42 +142,17 @@ class core_media_manager {
     protected function get_players() {
         // Save time by only building the list once.
         if (!$this->players) {
-            // Get raw list of players.
-            $allplayers = $this->get_players_raw();
             $sortorder = \core\plugininfo\media::get_enabled_plugins();
 
             $this->players = [];
-            foreach ($sortorder as $key) {
-                if (array_key_exists($key, $allplayers)) {
-                    $this->players[] = $allplayers[$key];
+            foreach ($sortorder as $name) {
+                $classname = "media_" . $name . "_plugin";
+                if (class_exists($classname)) {
+                    $this->players[] = new $classname();
                 }
             }
         }
         return $this->players;
-    }
-
-    /**
-     * Obtains a raw list of player objects that includes objects regardless
-     * of whether they are disabled or not, and without sorting.
-     *
-     * You can override this in a subclass if you need to add additional_
-     * players.
-     *
-     * The return array is be indexed by player name to make it easier to
-     * remove players in a subclass.
-     *
-     * @return array $players Array of core_media_player objects in any order
-     */
-    protected function get_players_raw() {
-        $plugins = core_plugin_manager::instance()->get_plugins_of_type('media');
-        $rv = [];
-        foreach ($plugins as $name => $dir) {
-            $classname = "media_" . $name . "_plugin";
-            if (class_exists($classname)) {
-                $rv[$name] = new $classname();
-            }
-        }
-        return $rv;
     }
 
     /**
