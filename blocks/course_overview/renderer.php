@@ -117,7 +117,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
                     new moodle_url('/auth/mnet/jump.php', array('hostid' => $course->hostid, 'wantsurl' => '/course/view.php?id='.$course->remoteid)),
                     format_string($course->shortname, true), $attributes) . ' (' . format_string($course->hostname) . ')', 2, 'title');
             }
-            $html .= $this->output->box('', 'flush');
+            $html .= $this->output->container('', 'flush');
             $html .= html_writer::end_tag('div');
 
             if (!empty($config->showchildren) && ($course->id > 0)) {
@@ -150,7 +150,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
                 }
             }
 
-            $html .= $this->output->box('', 'flush');
+            $html .= $this->output->container('', 'flush');
             $html .= $this->output->box_end();
             $courseordernumber++;
             if ($ismovingcourse) {
@@ -348,7 +348,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
                     get_string('message'.$plural, 'block_course_overview'));
         }
         $output .= $this->output->box_end();
-        $output .= $this->output->box('', 'flush');
+        $output .= $this->output->container('', 'flush');
         $output .= $this->output->box_end();
 
         return $output;
