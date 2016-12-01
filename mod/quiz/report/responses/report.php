@@ -106,7 +106,7 @@ class quiz_responses_report extends quiz_attempts_report {
             // This option is only available to users who can access all groups in
             // groups mode, so setting allowed to empty (which means all quiz attempts
             // are accessible, is not a security problem.
-            $allowedjoins = array();
+            $allowedjoins = new \core\dml\sql_join();
         }
 
         $this->process_actions($quiz, $cm, $currentgroup, $groupstudentsjoins, $allowedjoins, $options->get_url());
