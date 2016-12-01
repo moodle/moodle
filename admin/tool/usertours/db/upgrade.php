@@ -15,15 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information.
+ * Upgrade code for install
  *
  * @package   tool_usertours
- * @copyright 2016 Andrew Nicols <andrew@nicols.co.uk>
+ * @copyright 2016 Ryan Wyllie <ryan@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2016120501;            // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2016112900;            // Requires this Moodle version.
-$plugin->component = 'tool_usertours';      // Full name of the plugin (used for diagnostics).
+use tool_usertours\manager;
+
+/**
+ * Upgrade the user tours plugin.
+ *
+ * @param int $oldversion The old version of the user tours plugin
+ * @return bool
+ */
+function xmldb_tool_usertours_upgrade($oldversion) {
+    global $CFG, $DB;
+
+    if ($oldversion < 2016120501) {
+        // Update the tours shipped with Moodle.
+        manager::update_shipped_tours();
+
+        upgrade_plugin_savepoint(true, 2016120501, 'tool', 'usertours');
+    }
+
+    return true;
+}

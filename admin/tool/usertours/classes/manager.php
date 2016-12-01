@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use tool_usertours\local\forms;
 use tool_usertours\local\table;
+use core\notification;
 
 /**
  * Tour manager.
@@ -116,6 +117,21 @@ class manager {
      * @var ACTION_RESETFORALL
      */
     const ACTION_RESETFORALL = 'resetforall';
+
+    /**
+     * @var CONFIG_SHIPPED_TOUR
+     */
+    const CONFIG_SHIPPED_TOUR = 'shipped_tour';
+
+    /**
+     * @var CONFIG_SHIPPED_FILENAME
+     */
+    const CONFIG_SHIPPED_FILENAME = 'shipped_filename';
+
+    /**
+     * @var CONFIG_SHIPPED_VERSION
+     */
+    const CONFIG_SHIPPED_VERSION = 'shipped_version';
 
     /**
      * This is the entry point for this controller class.
@@ -349,6 +365,10 @@ class manager {
             if (empty($tour)) {
                 $this->header('newtour');
             } else {
+                if (!empty($tour->get_config(self::CONFIG_SHIPPED_TOUR))) {
+                    notification::add(get_string('modifyshippedtourwarning', 'tool_usertours'), notification::WARNING);
+                }
+
                 $this->header($tour->get_name());
                 $data = $tour->prepare_data_for_form();
 
@@ -646,6 +666,11 @@ class manager {
         }
 
         $tour = $step->get_tour();
+
+        if (!empty($tour->get_config(self::CONFIG_SHIPPED_TOUR))) {
+            notification::add(get_string('modifyshippedtourwarning', 'tool_usertours'), notification::WARNING);
+        }
+
         $PAGE->navbar->add($tour->get_name(), $tour->get_view_link());
         if (isset($id)) {
             $PAGE->navbar->add($step->get_title(), $step->get_edit_link());
@@ -749,5 +774,69 @@ class manager {
 
         $step->remove();
         redirect($tour->get_view_link());
+    }
+
+    /**
+     * Make sure all of the default tours that are shipped with Moodle are created
+     * and up to date with the latest version.
+     */
+    public static function update_shipped_tours() {
+        global $DB, $CFG;
+
+        // A list of tours that are shipped with Moodle. They are in
+        // the format filename => version. The version value needs to
+        // be increased if the tour has been updated.
+        $shippedtours = [
+            'boost_administrator.json' => 1,
+            'boost_course_view.json' => 1,
+        ];
+
+        $existingtourrecords = $DB->get_recordset('tool_usertours_tours');
+
+        // Get all of the existing shipped tours and check if they need to be
+        // updated.
+        foreach ($existingtourrecords as $tourrecord) {
+            $tour = tour::load_from_record($tourrecord);
+
+            if (!empty($tour->get_config(self::CONFIG_SHIPPED_TOUR))) {
+                $filename = $tour->get_config(self::CONFIG_SHIPPED_FILENAME);
+                $version = $tour->get_config(self::CONFIG_SHIPPED_VERSION);
+
+                // If we know about this tour (otherwise leave it as is).
+                if (isset($shippedtours[$filename])) {
+                    // And the version in the DB is an older version.
+                    if ($version < $shippedtours[$filename]) {
+                        // Remove the old version because it's been updated
+                        // and needs to be recreated.
+                        $tour->remove();
+                    } else {
+                        // The tour has not been updated so we don't need to
+                        // do anything with it.
+                        unset($shippedtours[$filename]);
+                    }
+                }
+            }
+        }
+
+        $existingtourrecords->close();
+
+        foreach ($shippedtours as $filename => $version) {
+            $filepath = $CFG->dirroot . '/admin/tool/usertours/tours/' . $filename;
+            $tourjson = file_get_contents($filepath);
+            $tour = self::import_tour_from_json($tourjson);
+
+            // Set some additional config data to record that this tour was
+            // added as a shipped tour.
+            $tour->set_config(self::CONFIG_SHIPPED_TOUR, true);
+            $tour->set_config(self::CONFIG_SHIPPED_FILENAME, $filename);
+            $tour->set_config(self::CONFIG_SHIPPED_VERSION, $version);
+
+            if (defined('BEHAT_SITE_RUNNING') || (defined('PHPUNIT_TEST') && PHPUNIT_TEST)) {
+                // Disable this tour if this is behat or phpunit.
+                $tour->set_enabled(false);
+            }
+
+            $tour->persist();
+        }
     }
 }
