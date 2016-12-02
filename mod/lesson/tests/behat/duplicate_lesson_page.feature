@@ -27,7 +27,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
       | Name | Test lesson name |
       | Description | Test lesson description |
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Duplicate content page with an image.
     Given I follow "Test lesson name"
     And I follow "Add a content page"
@@ -57,7 +57,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
     And I should see "First page name"
     Then "//*[contains(@id, 'id_contents_editor')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
 
-  @javascript
+  @javascript @_file_upload
   Scenario: Duplicate question page with image in answer.
     Given I follow "Test lesson name"
     And I follow "Add a question page"
@@ -94,7 +94,7 @@ Feature: In a lesson activity, a teacher can duplicate a lesson page
     And I should see "Select the picture"
     Then "//*[contains(@id, 'id_answer_editor_0')]//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist
 
-@javascript
+@javascript @_file_upload
   Scenario: Duplicate question page with image in feedback.
     Given I follow "Test lesson name"
     And I follow "Add a question page"
