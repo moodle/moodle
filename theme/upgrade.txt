@@ -35,7 +35,7 @@ information provided here is intended especially for theme designer.
 * A new class .text-ltr may be used to force the direction to LTR. This is especially useful
   for forms fields (numbers, emails, URLs must not be RTL'd), and for displaying code
   snippets or configuration samples.
-* A new theme config 'undeletableblocktypes' allows a theme to define which blocks are deletable.
+* A new theme config 'requiredblocks' allows a theme to define which blocks are deletable.
 * You may no longer override the following core_course_renderer methods.
   See course/upgrade.txt for more information:
   - course_modchooser_module_types
