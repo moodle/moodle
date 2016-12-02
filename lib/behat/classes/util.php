@@ -108,9 +108,6 @@ class behat_util extends testing_util {
         set_config('debug', DEBUG_DEVELOPER);
         set_config('debugdisplay', 1);
 
-        // Force the navigation and settings blocks, even if the theme has made them optional.
-        set_config('undeletableblocktypes', 'navigation,settings');
-
         // Disable some settings that are not wanted on test sites.
         set_config('noemailever', 1);
 

@@ -387,7 +387,10 @@ class block_manager {
             $requiredbythemeblocks = $PAGE->theme->requiredblocks;
         }
 
-        if ($requiredbythemeblocks === false) {
+        // We need blocks for behat, till MDL-56614 gets in.
+        if (defined('BEHAT_SITE_RUNNING')) {
+            return array('navigation', 'settings');
+        } else if ($requiredbythemeblocks === false) {
             return array('navigation', 'settings');
         } else if ($requiredbythemeblocks === '') {
             return array();
