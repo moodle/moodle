@@ -22,7 +22,7 @@
  * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'media_videojs/video'], function($, videojs) {
+define(['jquery', 'media_videojs/video', 'core/event'], function($, videojs, Event) {
 
     /**
      * Set-up.
@@ -30,7 +30,10 @@ define(['jquery', 'media_videojs/video'], function($, videojs) {
      * Adds the listener for the event to then notify video.js.
      */
     var setUp = function() {
-        $(document).on(M.core.event.FILTER_CONTENT_UPDATED, notifyVideoJS);
+        // We need to call popover automatically if nodes are added to the page later.
+        Event.getLegacyEvents().done(function(events) {
+            $(document).on(events.FILTER_CONTENT_UPDATED, notifyVideoJS);
+        });
     };
 
     /**
