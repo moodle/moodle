@@ -31,6 +31,9 @@ class auth_db_testcase extends advanced_testcase {
     /** @var string Original error log */
     protected $oldlog;
 
+    /** @var int The amount of users to create for the large user set deletion test  */
+    protected $largedeletionsetsize = 128;
+
     protected function init_auth_database() {
         global $DB, $CFG;
         require_once("$CFG->dirroot/auth/db/auth.php");
@@ -442,6 +445,58 @@ class auth_db_testcase extends advanced_testcase {
         $this->assertEmpty($user2);
         $this->assertEquals($extdbuser3->name, $user3->username);
         $this->assertEquals('useralert(1);xss', $user3->lastname);
+
+        $this->cleanup_auth_database();
+    }
+
+    /**
+     * Testing the deletion of a user when there are many users in the external DB.
+     */
+    public function test_deleting_with_many_users() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->preventResetByRollback();
+        $this->init_auth_database();
+        $auth = get_auth_plugin('db');
+        $auth->db_init();
+
+        // Set to delete from moodle when missing from DB.
+        set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth/db');
+        $auth->config->removeuser = AUTH_REMOVEUSER_FULLDELETE;
+
+        // Create users.
+        $users = [];
+        for ($i = 0; $i < $this->largedeletionsetsize; $i++) {
+            $user = (object)array('username' => "u$i", 'name' => "u$i", 'pass' => 'heslo', 'email' => "u$i@example.com");
+            $user->id  = $DB->insert_record('auth_db_users', $user);
+            $users[] = $user;
+        }
+
+        // Sync to moodle.
+        $trace = new null_progress_trace();
+        $auth->sync_users($trace, true);
+
+        // Check user is there.
+        $user = array_shift($users);
+        $moodleuser = $DB->get_record('user', array('email' => $user->email, 'auth' => 'db'));
+        $this->assertNotNull($moodleuser);
+        $this->assertEquals($user->username, $moodleuser->username);
+
+        // Delete a user.
+        $DB->delete_records('auth_db_users', array('id' => $user->id));
+
+        // Sync again.
+        $auth->sync_users($trace, true);
+
+        // Check user is no longer there.
+        $moodleuser = $DB->get_record('user', array('id' => $moodleuser->id));
+        $this->assertFalse($auth->user_login($user->username, 'heslo'));
+        $this->assertEquals(1, $moodleuser->deleted);
+
+        // Make sure it was the only user deleted.
+        $numberdeleted = $DB->count_records('user', array('deleted' => 1, 'auth' => 'db'));
+        $this->assertEquals(1, $numberdeleted);
 
         $this->cleanup_auth_database();
     }
