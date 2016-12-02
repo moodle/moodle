@@ -302,18 +302,24 @@ class auth_plugin_db extends auth_plugin_base {
 
             // Find obsolete users.
             if (count($userlist)) {
-                $remove_users = array();
-                // All the drivers can cope with chunks of 10,000. See line 4491 of lib/dml/tests/dml_est.php
-                $userlistchunks = array_chunk($userlist , 10000);
-                foreach($userlistchunks as $userlistchunk) {
-                    list($notin_sql, $params) = $DB->get_in_or_equal($userlistchunk, SQL_PARAMS_NAMED, 'u', false);
-                    $params['authtype'] = $this->authtype;
-                    $sql = "SELECT u.id, u.username
+                $removeusers = array();
+                $params['authtype'] = $this->authtype;
+                $sql = "SELECT u.id, u.username
                           FROM {user} u
-                         WHERE u.auth=:authtype AND u.deleted=0 AND u.mnethostid=:mnethostid $suspendselect AND u.username $notin_sql";
-                    $params['mnethostid'] = $CFG->mnet_localhost_id;
-                    $remove_users = $remove_users + $DB->get_records_sql($sql, $params);
+                         WHERE u.auth=:authtype
+                           AND u.deleted=0
+                           AND u.mnethostid=:mnethostid
+                           $suspendselect";
+                $params['mnethostid'] = $CFG->mnet_localhost_id;
+                $internalusersrs = $DB->get_recordset_sql($sql, $params);
+
+                $usernamelist = array_flip($userlist);
+                foreach ($internalusersrs as $internaluser) {
+                    if (!array_key_exists($internaluser->username, $usernamelist)) {
+                        $removeusers[] = $internaluser;
+                    }
                 }
+                $internalusersrs->close();
             } else {
                 $sql = "SELECT u.id, u.username
                           FROM {user} u
@@ -321,13 +327,13 @@ class auth_plugin_db extends auth_plugin_base {
                 $params = array();
                 $params['authtype'] = $this->authtype;
                 $params['mnethostid'] = $CFG->mnet_localhost_id;
-                $remove_users = $DB->get_records_sql($sql, $params);
+                $removeusers = $DB->get_records_sql($sql, $params);
             }
 
-            if (!empty($remove_users)) {
-                $trace->output(get_string('auth_dbuserstoremove','auth_db', count($remove_users)));
+            if (!empty($removeusers)) {
+                $trace->output(get_string('auth_dbuserstoremove', 'auth_db', count($removeusers)));
 
-                foreach ($remove_users as $user) {
+                foreach ($removeusers as $user) {
                     if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         delete_user($user);
                         $trace->output(get_string('auth_dbdeleteuser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)), 1);
@@ -340,7 +346,7 @@ class auth_plugin_db extends auth_plugin_base {
                     }
                 }
             }
-            unset($remove_users);
+            unset($removeusers);
         }
 
         if (!count($userlist)) {
@@ -934,5 +940,3 @@ class auth_plugin_db extends auth_plugin_base {
         return core_user::clean_data($user);
     }
 }
-
-
