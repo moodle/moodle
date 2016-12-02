@@ -215,12 +215,14 @@ class block_manager {
         }
 
         $unaddableblocks = self::get_undeletable_block_types();
+        $requiredbythemeblocks = self::get_required_by_theme_block_types();
         $pageformat = $this->page->pagetype;
         foreach($allblocks as $block) {
             if (!$bi = block_instance($block->name)) {
                 continue;
             }
             if ($block->visible && !in_array($block->name, $unaddableblocks) &&
+                    !in_array($block->name, $requiredbythemeblocks) &&
                     ($bi->instance_allow_multiple() || !$this->is_block_present($block->name)) &&
                     blocks_name_allowed_in_format($block->name, $pageformat) &&
                     $bi->user_can_addto($this->page)) {
@@ -376,6 +378,80 @@ class block_manager {
     }
 
     /**
+     * @return array names of block types that must exist on every page with this theme.
+     */
+    public static function get_required_by_theme_block_types() {
+        global $CFG, $PAGE;
+        $requiredbythemeblocks = false;
+        if (isset($PAGE->theme->requiredblocks)) {
+            $requiredbythemeblocks = $PAGE->theme->requiredblocks;
+        }
+
+        if ($requiredbythemeblocks === false) {
+            return array('navigation', 'settings');
+        } else if ($requiredbythemeblocks === '') {
+            return array();
+        } else if (is_string($requiredbythemeblocks)) {
+            return explode(',', $requiredbythemeblocks);
+        } else {
+            return $requiredbythemeblocks;
+        }
+    }
+
+    /**
+     * Make this block type undeletable and unaddable.
+     *
+     * @param mixed $blockidorname string or int
+     */
+    public static function protect_block($blockidorname) {
+        global $DB;
+
+        $syscontext = context_system::instance();
+
+        require_capability('moodle/site:config', $syscontext);
+
+        $block = false;
+        if (is_int($blockidorname)) {
+            $block = $DB->get_record('block', array('id' => $blockidorname), 'id, name', MUST_EXIST);
+        } else {
+            $block = $DB->get_record('block', array('name' => $blockidorname), 'id, name', MUST_EXIST);
+        }
+        $undeletableblocktypes = self::get_undeletable_block_types();
+        if (!in_array($block->name, $undeletableblocktypes)) {
+            $undeletableblocktypes[] = $block->name;
+            set_config('undeletableblocktypes', implode(',', $undeletableblocktypes));
+        }
+    }
+
+    /**
+     * Make this block type deletable and addable.
+     *
+     * @param mixed $blockidorname string or int
+     */
+    public static function unprotect_block($blockidorname) {
+        global $DB;
+
+        $syscontext = context_system::instance();
+
+        require_capability('moodle/site:config', $syscontext);
+
+        $block = false;
+        if (is_int($blockidorname)) {
+            $block = $DB->get_record('block', array('id' => $blockidorname), 'id, name', MUST_EXIST);
+        } else {
+            $block = $DB->get_record('block', array('name' => $blockidorname), 'id, name', MUST_EXIST);
+        }
+        $undeletableblocktypes = self::get_undeletable_block_types();
+        if (in_array($block->name, $undeletableblocktypes)) {
+            $undeletableblocktypes = array_diff($undeletableblocktypes, array($block->name));
+            set_config('undeletableblocktypes', implode(',', $undeletableblocktypes));
+        }
+
+    }
+
+    /**
+     * Get the list of "protected" blocks via admin block manager ui.
+     *
      * @return array names of block types that cannot be added or deleted. E.g. array('navigation','settings').
      */
     public static function get_undeletable_block_types() {
@@ -383,13 +459,9 @@ class block_manager {
         $undeletableblocks = false;
         if (isset($CFG->undeletableblocktypes)) {
             $undeletableblocks = $CFG->undeletableblocktypes;
-        } else if (isset($PAGE->theme->undeletableblocktypes)) {
-            $undeletableblocks = $PAGE->theme->undeletableblocktypes;
         }
 
-        if ($undeletableblocks === false) {
-            return array('navigation','settings');
-        } else if ($undeletableblocks === '') {
+        if (empty($undeletableblocks)) {
             return array();
         } else if (is_string($undeletableblocks)) {
             return explode(',', $undeletableblocks);
@@ -596,17 +668,18 @@ class block_manager {
         }
 
         // Exclude auto created blocks if they are not undeletable in this theme.
-        $undeletable = $this->get_undeletable_block_types();
-        $undeletablecheck = '';
-        $undeletableparams = array();
-        $undeletablenotparams = array();
-        if (!empty($undeletable)) {
-            list($testsql, $undeletableparams) = $DB->get_in_or_equal($undeletable, SQL_PARAMS_NAMED, 'undeletable');
-            list($testnotsql, $undeletablenotparams) = $DB->get_in_or_equal($undeletable, SQL_PARAMS_NAMED, 'deletable', false);
-            $undeletablecheck = 'AND ((bi.blockname ' . $testsql . ' AND bi.requiredbytheme = 1) OR ' .
+        $requiredbytheme = $this->get_required_by_theme_block_types();
+        $requiredbythemecheck = '';
+        $requiredbythemeparams = array();
+        $requiredbythemenotparams = array();
+        if (!empty($requiredbytheme)) {
+            list($testsql, $requiredbythemeparams) = $DB->get_in_or_equal($requiredbytheme, SQL_PARAMS_NAMED, 'requiredbytheme');
+            list($testnotsql, $requiredbythemenotparams) = $DB->get_in_or_equal($requiredbytheme, SQL_PARAMS_NAMED,
+                                                                                'notrequiredbytheme', false);
+            $requiredbythemecheck = 'AND ((bi.blockname ' . $testsql . ' AND bi.requiredbytheme = 1) OR ' .
                                 ' (bi.blockname ' . $testnotsql . ' AND bi.requiredbytheme = 0))';
         } else {
-            $undeletablecheck = 'AND (bi.requiredbytheme = 0)';
+            $requiredbythemecheck = 'AND (bi.requiredbytheme = 0)';
         }
 
         if (is_null($includeinvisible)) {
@@ -680,14 +753,14 @@ class block_manager {
                 AND (bi.subpagepattern IS NULL OR bi.subpagepattern = :subpage2)
                 $visiblecheck
                 AND b.visible = 1
-                $undeletablecheck
+                $requiredbythemecheck
 
                 ORDER BY
                     COALESCE(bp.region, bi.defaultregion),
                     COALESCE(bp.weight, bi.defaultweight),
                     bi.id";
 
-        $allparams = $params + $parentcontextparams + $pagetypepatternparams + $undeletableparams + $undeletablenotparams;
+        $allparams = $params + $parentcontextparams + $pagetypepatternparams + $requiredbythemeparams + $requiredbythemenotparams;
         $blockinstances = $DB->get_recordset_sql($sql, $allparams);
 
         $this->birecordsbyregion = $this->prepare_per_region_arrays();
@@ -992,7 +1065,7 @@ class block_manager {
      * chance to initialise themselves via the {@link block_base::specialize()}
      * method, before any output is done.
      *
-     * It is also used to create any blocks that are "undeletable" by the current theme.
+     * It is also used to create any blocks that are "requiredbytheme" by the current theme.
      * These blocks that are auto-created have requiredbytheme set on the block instance
      * so they are only visible on themes that require them.
      */
@@ -1001,9 +1074,9 @@ class block_manager {
         $missing = false;
 
         // If there are any un-removable blocks that were not created - force them.
-        $undeletable = $this->get_undeletable_block_types();
+        $requiredbytheme = $this->get_required_by_theme_block_types();
         if (!$this->fakeblocksonly) {
-            foreach ($undeletable as $forced) {
+            foreach ($requiredbytheme as $forced) {
                 if (empty($forced)) {
                     continue;
                 }
@@ -1283,7 +1356,8 @@ class block_manager {
     protected function user_can_delete_block($block) {
         return $this->page->user_can_edit_blocks() && $block->user_can_edit() &&
                 $block->user_can_addto($this->page) &&
-                !in_array($block->instance->blockname, self::get_undeletable_block_types());
+                !in_array($block->instance->blockname, self::get_undeletable_block_types()) &&
+                !in_array($block->instance->blockname, self::get_required_by_theme_block_types());
     }
 
     /**
@@ -2453,7 +2527,7 @@ function blocks_add_default_system_blocks() {
 
     $page = new moodle_page();
     $page->set_context(context_system::instance());
-    $page->blocks->add_blocks(array(BLOCK_POS_LEFT => block_manager::get_undeletable_block_types()), '*', null, true);
+    // We don't add blocks required by the theme, they will be auto-created.
     $page->blocks->add_blocks(array(BLOCK_POS_LEFT => array('admin_bookmarks')), 'admin-*', null, null, 2);
 
     if ($defaultmypage = $DB->get_record('my_pages', array('userid' => null, 'name' => '__default', 'private' => 1))) {
