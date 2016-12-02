@@ -302,15 +302,18 @@ class auth_plugin_db extends auth_plugin_base {
             // Find obsolete users.
             if (count($userlist)) {
                 $removeusers = array();
-                  $params['authtype'] = $this->authtype;
-                  $sql = "SELECT u.id, u.username
-                        FROM {user} u
-                       WHERE u.auth=:authtype AND u.deleted=0 AND u.mnethostid=:mnethostid $suspendselect";
-                  $params['mnethostid'] = $CFG->mnet_localhost_id;
-                  $internalusersrs = $DB->get_recordset_sql($sql, $params);
+                $params['authtype'] = $this->authtype;
+                $sql = "SELECT u.id, u.username
+                          FROM {user} u
+                         WHERE u.auth=:authtype
+                           AND u.deleted=0
+                           AND u.mnethostid=:mnethostid
+                           $suspendselect";
+                $params['mnethostid'] = $CFG->mnet_localhost_id;
+                $internalusersrs = $DB->get_recordset_sql($sql, $params);
+
+                $usernamelist = array_flip($userlist);
                 foreach ($internalusersrs as $internaluser) {
-                    // Arrange the associative array.
-                    $usernamelist = array_flip($userlist);
                     if (!array_key_exists($internaluser->username, $usernamelist)) {
                         $removeusers[] = $internaluser;
                     }
