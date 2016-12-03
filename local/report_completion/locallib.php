@@ -71,7 +71,7 @@ class report_completion {
             $courseobj->id = $course->courseid;
 
             $courseobj->numenrolled = $DB->count_records_sql("SELECT COUNT(ue.id) FROM {user_enrolments} ue
-                                                   JOIN {enrol} e ON (e.id = ue.enrolid)
+                                                   JOIN {enrol} e ON (e.id = ue.enrolid AND e.status = 0)
                                                    JOIN {".$temptablename."} tt ON (ue.userid = tt.userid)
                                                    WHERE
                                                    e.courseid = :course", array('course' => $course->courseid));
