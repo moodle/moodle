@@ -120,7 +120,12 @@ if ($comptoraw) {
     }
     $params['compto'] = $compto;
 } else {
-    $compto = 0;
+    if (!empty($comptfrom)) {
+        $compto = time();
+        $params['compto'] = $compto;
+    } else {
+        $compto = 0;
+    }
 }
 
 // Url stuff.
@@ -221,7 +226,7 @@ if (empty($dodownload) && empty($showchart)) {
 
 if (empty($dodownload) && empty($showchart)) {
     echo "<h3>".get_string('coursesummary', 'local_report_completion')."</h3>";
-    if (!empty($companyid)) {
+    if (!empty($companyid) && !empty($courseid)) {
         echo $fwselectoutput;
         $dateform = new iomad_date_filter_form($params);
         $dateform->display();
