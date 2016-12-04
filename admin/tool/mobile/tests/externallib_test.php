@@ -31,9 +31,10 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use tool_mobile\external;
+use tool_mobile\api;
 
 /**
- * External learning plans webservice API tests.
+ * Moodle Mobile admin tool external functions tests.
  *
  * @package     tool_mobile
  * @copyright   2016 Juan Leyva
@@ -54,15 +55,18 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue(is_array($result['plugins']));
     }
 
-    public function test_get_site_public_settings() {
-        global $CFG, $SITE;
+    public function test_get_public_config() {
+        global $CFG, $SITE, $OUTPUT;
 
         $this->resetAfterTest(true);
-        $result = external::get_site_public_settings();
-        $result = external_api::clean_returnvalue(external::get_site_public_settings_returns(), $result);
+        $result = external::get_public_config();
+        $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
 
         // Test default values.
         $context = context_system::instance();
+        list($authinstructions, $notusedformat) = external_format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
+        list($maintenancemessage, $notusedformat) = external_format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
+
         $expected = array(
             'wwwroot' => $CFG->wwwroot,
             'httpswwwroot' => $CFG->httpswwwroot,
@@ -72,27 +76,207 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'authloginviaemail' => $CFG->authloginviaemail,
             'registerauth' => $CFG->registerauth,
             'forgottenpasswordurl' => $CFG->forgottenpasswordurl,
-            'authinstructions' => format_text($CFG->auth_instructions),
+            'authinstructions' => $authinstructions,
             'authnoneenabled' => (int) is_enabled_auth('none'),
             'enablewebservices' => $CFG->enablewebservices,
             'enablemobilewebservice' => $CFG->enablemobilewebservice,
             'maintenanceenabled' => $CFG->maintenance_enabled,
-            'maintenancemessage' => format_text($CFG->maintenance_message),
+            'maintenancemessage' => $maintenancemessage,
+            'typeoflogin' => api::LOGIN_VIA_APP,
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
 
-        // Change a value.
+        // Change some values.
         set_config('registerauth', 'email');
         $authinstructions = 'Something with <b>html tags</b>';
         set_config('auth_instructions', $authinstructions);
+        set_config('typeoflogin', api::LOGIN_VIA_BROWSER, 'tool_mobile');
+        set_config('logo', 'mock.png', 'core_admin');
+        set_config('logocompact', 'mock.png', 'core_admin');
 
+        list($authinstructions, $notusedformat) = external_format_text($authinstructions, FORMAT_MOODLE, $context->id);
         $expected['registerauth'] = 'email';
-        $expected['authinstructions'] = format_text($authinstructions);
+        $expected['authinstructions'] = $authinstructions;
+        $expected['typeoflogin'] = api::LOGIN_VIA_BROWSER;
+        $expected['launchurl'] = "$CFG->wwwroot/$CFG->admin/tool/mobile/launch.php";
 
-        $result = external::get_site_public_settings();
-        $result = external_api::clean_returnvalue(external::get_site_public_settings_returns(), $result);
+        if ($logourl = $OUTPUT->get_logo_url()) {
+            $expected['logourl'] = $logourl->out(false);
+        }
+        if ($compactlogourl = $OUTPUT->get_compact_logo_url()) {
+            $expected['compactlogourl'] = $compactlogourl->out(false);
+        }
+
+        $result = external::get_public_config();
+        $result = external_api::clean_returnvalue(external::get_public_config_returns(), $result);
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * Test get_config
+     */
+    public function test_get_config() {
+        global $CFG, $SITE;
+        require_once($CFG->dirroot . '/course/format/lib.php');
+
+        $this->resetAfterTest(true);
+        $result = external::get_config();
+        $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
+
+        // SITE summary is null in phpunit which gets transformed to an empty string by format_text.
+        list($sitesummary, $unused) = external_format_text($SITE->summary, $SITE->summaryformat, context_system::instance()->id);
+
+        // Test default values.
+        $context = context_system::instance();
+        $expected = array(
+            array('name' => 'fullname', 'value' => $SITE->fullname),
+            array('name' => 'shortname', 'value' => $SITE->shortname),
+            array('name' => 'summary', 'value' => $sitesummary),
+            array('name' => 'summaryformat', 'value' => FORMAT_HTML),
+            array('name' => 'frontpage', 'value' => $CFG->frontpage),
+            array('name' => 'frontpageloggedin', 'value' => $CFG->frontpageloggedin),
+            array('name' => 'maxcategorydepth', 'value' => $CFG->maxcategorydepth),
+            array('name' => 'frontpagecourselimit', 'value' => $CFG->frontpagecourselimit),
+            array('name' => 'numsections', 'value' => course_get_format($SITE)->get_course()->numsections),
+            array('name' => 'newsitems', 'value' => $SITE->newsitems),
+            array('name' => 'commentsperpage', 'value' => $CFG->commentsperpage),
+            array('name' => 'disableuserimages', 'value' => $CFG->disableuserimages),
+            array('name' => 'mygradesurl', 'value' => user_mygrades_url()->out(false)),
+        );
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($expected, $result['settings']);
+
+        // Change a value and retrieve filtering by section.
+        set_config('commentsperpage', 1);
+        $expected[10]['value'] = 1;
+        unset($expected[11]);
+        unset($expected[12]);
+
+        $result = external::get_config('frontpagesettings');
+        $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($expected, $result['settings']);
+    }
+
+    /*
+     * Test get_autologin_key.
+     */
+    public function test_get_autologin_key() {
+        global $DB, $CFG, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+
+        $token = external_generate_token_for_current_user($service);
+
+        // Check we got the private token.
+        $this->assertTrue(isset($token->privatetoken));
+
+        // Enable requeriments.
+        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);    // Mock https.
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+        $_GET['wstoken'] = $token->token;   // Mock parameters.
+
+        // Even if we force the password change for the current user we should be able to retrieve the key.
+        set_user_preference('auth_forcepasswordchange', 1, $user->id);
+
+        $this->setCurrentTimeStart();
+        $result = external::get_autologin_key($token->privatetoken);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+        // Validate the key.
+        $this->assertEquals(32, core_text::strlen($result['key']));
+        $key = $DB->get_record('user_private_key', array('value' => $result['key']));
+        $this->assertEquals($USER->id, $key->userid);
+        $this->assertTimeCurrent($key->validuntil - api::LOGIN_KEY_TTL);
+
+        // Now, try with an invalid private token.
+        set_user_preference('tool_mobile_autologin_request_last', time() - HOURSECS, $USER);
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('invalidprivatetoken', 'tool_mobile'));
+        $result = external::get_autologin_key(random_string('64'));
+    }
+
+    /**
+     * Test get_autologin_key missing ws.
+     */
+    public function test_get_autologin_key_missing_ws() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('enablewsdescription', 'webservice'));
+        $result = external::get_autologin_key('');
+    }
+
+    /**
+     * Test get_autologin_key missing https.
+     */
+    public function test_get_autologin_key_missing_https() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('httpsrequired', 'tool_mobile'));
+        $result = external::get_autologin_key('');
+    }
+
+    /**
+     * Test get_autologin_key missing admin.
+     */
+    public function test_get_autologin_key_missing_admin() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('autologinnotallowedtoadmins', 'tool_mobile'));
+        $result = external::get_autologin_key('');
+    }
+
+    /**
+     * Test get_autologin_key locked.
+     */
+    public function test_get_autologin_key_missing_locked() {
+        global $CFG, $DB, $USER;
+
+        $this->resetAfterTest(true);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $CFG->enablewebservices = 1;
+        $CFG->enablemobilewebservice = 1;
+        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->httpswwwroot);
+
+        $service = $DB->get_record('external_services', array('shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE));
+
+        $token = external_generate_token_for_current_user($service);
+        $_GET['wstoken'] = $token->token;   // Mock parameters.
+
+        $result = external::get_autologin_key($token->privatetoken);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+
+        // Mock last time request.
+        $mocktime = time() - 7 * MINSECS;
+        set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
+        $result = external::get_autologin_key($token->privatetoken);
+        $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
+
+        // We just requested one token, we must wait.
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('autologinkeygenerationlockout', 'tool_mobile'));
+        $result = external::get_autologin_key($token->privatetoken);
+    }
 }

@@ -95,7 +95,7 @@ Feature: We can change the visibility of courses in the management interface.
     And I toggle visibility of category "CAT1" in management listing
     And I toggle visibility of course "C1" in management listing
     And I click on "Course categories and courses" "link" in the ".view-mode-selector" "css_element"
-    And I click on "Courses" "link"
+    And I click on "Courses" "link" in the ".view-mode-selector" "css_element"
     And a new page should have loaded since I started watching
     And I start watching to see if a new page loads
     And I should see "Course 1" in the "#course-listing ul.ml" "css_element"

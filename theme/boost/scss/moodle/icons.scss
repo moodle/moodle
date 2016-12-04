@@ -1,0 +1,63 @@
+// The only class we need for icons is .icon
+// Standardize the size, padding and alignment for all icons in Moodle.
+.icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    box-sizing: content-box;
+    margin-right: 0.5rem;
+}
+
+a:first-of-type > .icon,
+span:first-of-type > .icon {
+    margin-left: 0.5rem;
+}
+
+// Fix the first icon for an action menu. This rule exists to reverse the
+// icon margin defined in the a:first-of-type > .icon rule.
+.action-menu .dropdown a:first-of-type > .icon {
+    margin-left: 0;
+}
+
+.pull-xs-right {
+    // Now we need to override the .action-menu .dropdown a:first-of-type > .icon
+    // rule above for when actions menus are in the pull-xs-right class.
+    .action-menu .dropdown a:first-of-type > .icon {
+        margin-left: 0.5rem;
+    }
+
+    .icon {
+        margin-right: 0;
+        margin-left: 0.5rem;
+    }
+}
+
+// Fix the space between the dropdown icon and the caret.
+.action-menu {
+    .dropdown-toggle {
+        .icon {
+            // Use a negative margin on the icon to ensure that the dropdown toggle
+            // is an icon and not just text in which case the margin is needed.
+            margin-right: -$caret-width;
+        }
+    }
+}
+
+// YUI 2 Tree View icons must not have a margin left.
+.ygtvcell .icon {
+    margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
+}
+
+// In the navigation, tree icons should not have margins.
+.block_navigation,
+.block_settings {
+    .tree_item .icon {
+        margin-left: 0;
+    }
+}
+
+[data-action=toggle-drawer] .icon {
+    margin: 0;
+}

@@ -37,6 +37,23 @@ require_once($CFG->dirroot . '/mod/data/lib.php');
  */
 class mod_data_lib_testcase extends advanced_testcase {
 
+    /**
+     * @var moodle_database
+     */
+    protected $DB = null;
+
+    /**
+     * Tear Down to reset DB.
+     */
+    public function tearDown() {
+        global $DB;
+
+        if (isset($this->DB)) {
+            $DB = $this->DB;
+            $this->DB = null;
+        }
+    }
+
     public function test_data_delete_record() {
         global $DB;
 
@@ -665,5 +682,201 @@ class mod_data_lib_testcase extends advanced_testcase {
                 $this->assertEquals($event->timestart, $timeclose);
             }
         }
+    }
+
+    /**
+     * Data provider for tests of data_get_config.
+     *
+     * @return array
+     */
+    public function data_get_config_provider() {
+        $initialdata = (object) [
+            'template_foo' => true,
+            'template_bar' => false,
+            'template_baz' => null,
+        ];
+
+        $database = (object) [
+            'config' => json_encode($initialdata),
+        ];
+
+        return [
+            'Return full dataset (no key/default)' => [
+                [$database],
+                $initialdata,
+            ],
+            'Return full dataset (no default)' => [
+                [$database, null],
+                $initialdata,
+            ],
+            'Return full dataset' => [
+                [$database, null, null],
+                $initialdata,
+            ],
+            'Return requested key only, value true, no default' => [
+                [$database, 'template_foo'],
+                true,
+            ],
+            'Return requested key only, value false, no default' => [
+                [$database, 'template_bar'],
+                false,
+            ],
+            'Return requested key only, value null, no default' => [
+                [$database, 'template_baz'],
+                null,
+            ],
+            'Return unknown key, value null, no default' => [
+                [$database, 'template_bum'],
+                null,
+            ],
+            'Return requested key only, value true, default null' => [
+                [$database, 'template_foo', null],
+                true,
+            ],
+            'Return requested key only, value false, default null' => [
+                [$database, 'template_bar', null],
+                false,
+            ],
+            'Return requested key only, value null, default null' => [
+                [$database, 'template_baz', null],
+                null,
+            ],
+            'Return unknown key, value null, default null' => [
+                [$database, 'template_bum', null],
+                null,
+            ],
+            'Return requested key only, value true, default 42' => [
+                [$database, 'template_foo', 42],
+                true,
+            ],
+            'Return requested key only, value false, default 42' => [
+                [$database, 'template_bar', 42],
+                false,
+            ],
+            'Return requested key only, value null, default 42' => [
+                [$database, 'template_baz', 42],
+                null,
+            ],
+            'Return unknown key, value null, default 42' => [
+                [$database, 'template_bum', 42],
+                42,
+            ],
+        ];
+    }
+
+    /**
+     * Tests for data_get_config.
+     *
+     * @dataProvider    data_get_config_provider
+     * @param   array   $funcargs       The args to pass to data_get_config
+     * @param   mixed   $expectation    The expected value
+     */
+    public function test_data_get_config($funcargs, $expectation) {
+        $this->assertEquals($expectation, call_user_func_array('data_get_config', $funcargs));
+    }
+
+    /**
+     * Data provider for tests of data_set_config.
+     *
+     * @return array
+     */
+    public function data_set_config_provider() {
+        $basevalue = (object) ['id' => rand(1, 1000)];
+        $config = [
+            'template_foo'  => true,
+            'template_bar'  => false,
+        ];
+
+        $withvalues = clone $basevalue;
+        $withvalues->config = json_encode((object) $config);
+
+        return [
+            'Empty config, New value' => [
+                $basevalue,
+                'etc',
+                'newvalue',
+                true,
+                json_encode((object) ['etc' => 'newvalue'])
+            ],
+            'Has config, New value' => [
+                clone $withvalues,
+                'etc',
+                'newvalue',
+                true,
+                json_encode((object) array_merge($config, ['etc' => 'newvalue']))
+            ],
+            'Has config, Update value, string' => [
+                clone $withvalues,
+                'template_foo',
+                'newvalue',
+                true,
+                json_encode((object) array_merge($config, ['template_foo' => 'newvalue']))
+            ],
+            'Has config, Update value, true' => [
+                clone $withvalues,
+                'template_bar',
+                true,
+                true,
+                json_encode((object) array_merge($config, ['template_bar' => true]))
+            ],
+            'Has config, Update value, false' => [
+                clone $withvalues,
+                'template_foo',
+                false,
+                true,
+                json_encode((object) array_merge($config, ['template_foo' => false]))
+            ],
+            'Has config, Update value, null' => [
+                clone $withvalues,
+                'template_foo',
+                null,
+                true,
+                json_encode((object) array_merge($config, ['template_foo' => null]))
+            ],
+            'Has config, No update, value true' => [
+                clone $withvalues,
+                'template_foo',
+                true,
+                false,
+                $withvalues->config,
+            ],
+        ];
+    }
+
+    /**
+     * Tests for data_set_config.
+     *
+     * @dataProvider    data_set_config_provider
+     * @param   object  $database       The example row for the entry
+     * @param   string  $key            The config key to set
+     * @param   mixed   $value          The value of the key
+     * @param   bool    $expectupdate   Whether we expected an update
+     * @param   mixed   $newconfigvalue The expected value
+     */
+    public function test_data_set_config($database, $key, $value, $expectupdate, $newconfigvalue) {
+        global $DB;
+
+        // Mock the database.
+        // Note: Use the actual test class here rather than the abstract because are testing concrete methods.
+        $this->DB = $DB;
+        $DB = $this->getMockBuilder(get_class($DB))
+            ->setMethods(['set_field'])
+            ->getMock();
+
+        $DB->expects($this->exactly((int) $expectupdate))
+            ->method('set_field')
+            ->with(
+                'data',
+                'config',
+                $newconfigvalue,
+                ['id' => $database->id]
+            );
+
+        // Perform the update.
+        data_set_config($database, $key, $value);
+
+        // Ensure that the value was updated by reference in $database.
+        $config = json_decode($database->config);
+        $this->assertEquals($value, $config->$key);
     }
 }

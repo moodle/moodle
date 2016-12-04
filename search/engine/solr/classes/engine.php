@@ -745,7 +745,7 @@ class engine extends \core_search\engine {
                     if (isset($files[$fileid])) {
                         // Check for changes that would mean we need to re-index the file. If so, just leave in $files.
                         // Filelib does not guarantee time modified is updated, so we will check important values.
-                        if ($indexedfile->modified < $files[$fileid]->get_timemodified()) {
+                        if ($indexedfile->modified != $files[$fileid]->get_timemodified()) {
                             continue;
                         }
                         if (strcmp($indexedfile->title, $files[$fileid]->get_filename()) !== 0) {
@@ -1101,9 +1101,11 @@ class engine extends \core_search\engine {
                 return get_string('minimumsolr4', 'search_solr');
             }
         } catch (\SolrClientException $ex) {
-            return 'Solr client error: ' . $ex->getMessage();
+            debugging('Solr client error: ' . html_to_text($ex->getMessage()), DEBUG_DEVELOPER);
+            return get_string('engineserverstatus', 'search');
         } catch (\SolrServerException $ex) {
-            return 'Solr server error: ' . $ex->getMessage();
+            debugging('Solr server error: ' . html_to_text($ex->getMessage()), DEBUG_DEVELOPER);
+            return get_string('engineserverstatus', 'search');
         }
 
         return true;
@@ -1115,7 +1117,10 @@ class engine extends \core_search\engine {
      * @return int
      */
     public function get_solr_major_version() {
-        $systemdata = $this->get_search_client()->system();
+        // We should really ping first the server to see if the specified indexname is valid but
+        // we want to minimise solr server requests as they are expensive. system() emits a warning
+        // if it can not connect to the configured index in the configured server.
+        $systemdata = @$this->get_search_client()->system();
         $solrversion = $systemdata->getResponse()->offsetGet('lucene')->offsetGet('solr-spec-version');
         return intval(substr($solrversion, 0, strpos($solrversion, '.')));
     }

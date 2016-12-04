@@ -216,7 +216,7 @@ class behat_backup extends behat_base {
 
         // Selecting the specified course (we can not call behat_forms::select_radio here as is in another behat subcontext).
         $radionode = $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), ' bcs-existing-course ')]" .
-            "/descendant::div[@class='restore-course-search']" .
+            "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' restore-course-search ')]" .
             "/descendant::tr[contains(., $existingcourse)]" .
             "/descendant::input[@type='radio']");
         $radionode->click();
@@ -247,7 +247,7 @@ class behat_backup extends behat_base {
 
         // The first category in the list.
         $radionode = $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), ' bcs-new-course ')]" .
-            "/descendant::div[@class='restore-course-search']" .
+            "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' restore-course-search ')]" .
             "/descendant::input[@type='radio']");
         $radionode->click();
 

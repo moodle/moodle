@@ -11,6 +11,8 @@ Feature: Enable the calendar block on the site front page
       | student1 | Student | 1 | student1@example.com | S1 |
     And I log in as "admin"
     And I am on site homepage
+    And I turn editing mode on
+    And I add the "Calendar" block
     And I create a calendar event with form data:
       | id_eventtype | Site |
       | id_name | Site Event |

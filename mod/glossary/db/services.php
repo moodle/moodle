@@ -153,4 +153,13 @@ $functions = array(
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
+    'mod_glossary_add_entry' => array(
+        'classname'     => 'mod_glossary_external',
+        'methodname'    => 'add_entry',
+        'description'   => 'Add a new entry to a given glossary',
+        'type'          => 'write',
+        'capabilities'  => 'mod/glossary:write',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
+
 );

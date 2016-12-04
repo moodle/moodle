@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once $CFG->libdir.'/formslib.php';
+require_once($CFG->dirroot . '/course/lib.php');
 
 /**
  * Defines the course reset settings form.
@@ -42,6 +43,8 @@ class course_reset_form extends moodleform {
 
         $mform->addElement('date_selector', 'reset_start_date', get_string('startdate'), array('optional'=>true));
         $mform->addHelpButton('reset_start_date', 'startdate');
+        $mform->addElement('date_selector', 'reset_end_date', get_string('enddate'), array('optional' => true));
+        $mform->addHelpButton('reset_end_date', 'enddate');
         $mform->addElement('checkbox', 'reset_events', get_string('deleteevents', 'calendar'));
         $mform->addElement('checkbox', 'reset_notes', get_string('deletenotes', 'notes'));
         $mform->addElement('checkbox', 'reset_comments', get_string('deleteallcomments', 'moodle'));
@@ -160,4 +163,44 @@ class course_reset_form extends moodleform {
             $mform->setDefault($element, $default);
         }
     }
+
+    /**
+     * Validation.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array the errors that were found
+     */
+    public function validation($data, $files) {
+        global $DB;
+
+        $course = get_course($data['id']);
+
+        $errors = parent::validation($data, $files);
+
+        // We check the values that would be used as start and end.
+        if ($data['reset_start_date'] != 0) {
+            $coursedata['startdate'] = $data['reset_start_date'];
+        } else {
+            $coursedata['startdate'] = $course->startdate;
+        }
+
+        if ($data['reset_end_date'] != 0) {
+            // End date set by the user has preference.
+            $coursedata['enddate'] = $data['reset_end_date'];
+        } else if ($data['reset_start_date'] > 0 && $course->enddate != 0) {
+            // Otherwise, if the current course enddate is set, reset_course_userdata will add the start date time shift to it.
+            $timeshift = $data['reset_start_date'] - usergetmidnight($course->startdate);
+            $coursedata['enddate'] = $course->enddate + $timeshift;
+        } else {
+            $coursedata['enddate'] = $course->enddate;
+        }
+
+        if ($errorcode = course_validate_dates($coursedata)) {
+            $errors['reset_end_date'] = get_string($errorcode, 'error');
+        }
+
+        return $errors;
+    }
+
 }

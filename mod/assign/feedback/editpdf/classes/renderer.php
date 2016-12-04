@@ -76,7 +76,7 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
 
         // Build button alt text.
         $alttext = new stdClass();
-        $alttext->tool = $tool;
+        $alttext->tool = get_string($tool, 'assignfeedback_editpdf');
         if (!empty($accesskey)) {
             $alttext->shortcut = '(Alt/Shift-Alt/Ctrl-Option + ' . $accesskey . ')';
         } else {

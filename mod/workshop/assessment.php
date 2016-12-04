@@ -62,20 +62,7 @@ $canoverridegrades      = has_capability('mod/workshop:overridegrades', $worksho
 $isreviewer             = ($USER->id == $assessment->reviewerid);
 $isauthor               = ($USER->id == $submission->authorid);
 
-if ($canviewallsubmissions) {
-    // check this flag against the group membership yet
-    if (groups_get_activity_groupmode($workshop->cm) == SEPARATEGROUPS) {
-        // user must have accessallgroups or share at least one group with the submission author
-        if (!has_capability('moodle/site:accessallgroups', $workshop->context)) {
-            $usersgroups = groups_get_activity_allowed_groups($workshop->cm);
-            $authorsgroups = groups_get_all_groups($workshop->course->id, $submission->authorid, $workshop->cm->groupingid, 'g.id');
-            $sharedgroups = array_intersect_key($usersgroups, $authorsgroups);
-            if (empty($sharedgroups)) {
-                $canviewallsubmissions = false;
-            }
-        }
-    }
-}
+$canviewallsubmissions = $canviewallsubmissions && $workshop->check_group_membership($submission->authorid);
 
 if ($isreviewer or $isauthor or ($canviewallassessments and $canviewallsubmissions)) {
     // such a user can continue
@@ -265,7 +252,7 @@ echo $output->render($workshop->prepare_submission($submission, has_capability('
 // for evaluating the assessment
 if (trim($workshop->instructreviewers)) {
     $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
-        'mod_workshop', 'instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
+        'mod_workshop', 'instructreviewers', null, workshop::instruction_editors_options($PAGE->context));
     print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
     echo $output->box(format_text($instructions, $workshop->instructreviewersformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
     print_collapsible_region_end();

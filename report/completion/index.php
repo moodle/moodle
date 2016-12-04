@@ -311,7 +311,8 @@ if (!$csv) {
         exit;
     }
 
-    print '<table id="completion-progress" class="generaltable flexible boxaligncenter completionreport" style="text-align: left" cellpadding="5" border="1">';
+    print '<table id="completion-progress" class="table table-bordered generaltable flexible boxaligncenter
+        completionreport" style="text-align: left" cellpadding="5" border="1">';
 
     // Print criteria group names
     print PHP_EOL.'<thead><tr style="vertical-align: top">';

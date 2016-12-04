@@ -28,8 +28,9 @@ Y.Moodle.mod_quiz.util.page = {
     },
     SELECTORS: {
         ACTIONMENU: 'div.moodle-actionmenu',
-        ACTIONMENUBAR: 'ul.menubar',
-        ACTIONMENUMENU: 'ul.menu',
+        ACTIONMENUBAR: '.menubar',
+        ACTIONMENUMENU: '.menu',
+        ADDASECTION: '[data-action="addasection"]',
         PAGE: 'li.page',
         INSTANCENAME: '.instancename',
         NUMBER: 'h4'
@@ -206,7 +207,9 @@ Y.Moodle.mod_quiz.util.page = {
         beforenode.insert(page, 'after');
 
         // Enhance the add menu to make if fully visible and clickable.
-        M.core.actionmenu.newDOMNode(page);
+        if (typeof M.core.actionmenu !== "undefined") {
+            M.core.actionmenu.newDOMNode(page);
+        }
         return page;
     },
 
@@ -285,8 +288,8 @@ Y.Moodle.mod_quiz.util.page = {
             menumenu.set('id', this.CONSTANTS.ACTIONMENUIDPREFIX + id + this.CONSTANTS.ACTIONMENUMENUIDSUFFIX);
 
             // Update the URL of the add-section action.
-            menumenu.one('a.addasection').set('href',
-                    menumenu.one('a.addasection').get('href').replace(/\baddsectionatpage=\d/, 'addsectionatpage=' + id));
+            menumenu.one(this.SELECTORS.ADDASECTION).set('href',
+                menumenu.one(this.SELECTORS.ADDASECTION).get('href').replace(/\baddsectionatpage=\d/, 'addsectionatpage=' + id));
 
         }, this);
     },

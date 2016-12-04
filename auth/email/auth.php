@@ -95,6 +95,24 @@ class auth_plugin_email extends auth_plugin_base {
      * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify=true) {
+        // Standard signup, without custom confirmatinurl.
+        return $this->user_signup_with_confirmation($user, $notify);
+    }
+
+    /**
+     * Sign up a new user ready for confirmation.
+     *
+     * Password is passed in plaintext.
+     * A custom confirmationurl could be used.
+     *
+     * @param object $user new user object
+     * @param boolean $notify print notice with link and terminate
+     * @param string $confirmationurl user confirmation URL
+     * @return boolean true if everything well ok and $notify is set to true
+     * @throws moodle_exception
+     * @since Moodle 3.2
+     */
+    public function user_signup_with_confirmation($user, $notify=true, $confirmationurl = null) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/lib.php');

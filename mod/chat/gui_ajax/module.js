@@ -118,11 +118,9 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             this.thememenu = new Y.YUI2.widget.Menu('basicmenu', {xy:[0,0]});
             this.thememenu.addItems([
                 {text: M.util.get_string('bubble', 'mod_chat'), url: this.cfg.chaturl + '&theme=bubble'},
-                {text: M.util.get_string('compact', 'mod_chat'), url: this.cfg.chaturl + '&theme=compact'}
+                {text: M.util.get_string('compact', 'mod_chat'), url: this.cfg.chaturl + '&theme=compact'},
+                {text: M.util.get_string('coursetheme', 'mod_chat'), url: this.cfg.chaturl + '&theme=course_theme'}
             ]);
-            if (this.cfg.showcoursetheme == 1) {
-                this.thememenu.addItem({text: M.util.get_string('coursetheme', 'mod_chat'), url: this.cfg.chaturl + '&theme=course_theme'});
-            }
             this.thememenu.render(document.body);
             Y.one('#choosetheme').on('click', function(e) {
                 this.moveTo((e.pageX - 20), (e.pageY - 20));

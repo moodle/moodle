@@ -203,4 +203,47 @@ class mod_forum_renderer extends plugin_renderer_base {
     public function forum_post_template() {
         return 'forum_post';
     }
+
+    /**
+     * Create the inplace_editable used to select forum digest options.
+     *
+     * @param   stdClass    $forum  The forum to create the editable for.
+     * @param   int         $value  The current value for this user
+     * @return  inplace_editable
+     */
+    public function render_digest_options($forum, $value) {
+        $options = forum_get_user_digest_options();
+        $editable = new \core\output\inplace_editable(
+            'mod_forum',
+            'digestoptions',
+            $forum->id,
+            true,
+            $options[$value],
+            $value
+        );
+
+        $editable->set_type_select($options);
+
+        return $editable;
+    }
+
+    /**
+     * Render quick search form.
+     *
+     * @param \mod_forum\output\quick_search_form $form The renderable.
+     * @return string
+     */
+    public function render_quick_search_form(\mod_forum\output\quick_search_form $form) {
+        return $this->render_from_template('mod_forum/quick_search_form', $form->export_for_template($this));
+    }
+
+    /**
+     * Render big search form.
+     *
+     * @param \mod_forum\output\big_search_form $form The renderable.
+     * @return string
+     */
+    public function render_big_search_form(\mod_forum\output\big_search_form $form) {
+        return $this->render_from_template('mod_forum/big_search_form', $form->export_for_template($this));
+    }
 }

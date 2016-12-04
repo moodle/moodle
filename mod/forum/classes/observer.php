@@ -113,4 +113,40 @@ class mod_forum_observer {
             forum_instance_created($event->get_context(), $forum);
         }
     }
+
+    /**
+     * Observer for \core\event\course_created event.
+     *
+     * @param \core\event\course_created $event
+     * @return void
+     */
+    public static function course_created(\core\event\course_created $event) {
+        global $CFG;
+
+        $course = $event->get_record_snapshot('course', $event->objectid);
+        $format = course_get_format($course);
+        if ($format->supports_news() && !empty($course->newsitems)) {
+            require_once($CFG->dirroot . '/mod/forum/lib.php');
+            // Auto create the announcements forum.
+            forum_get_course_forum($event->objectid, 'news');
+        }
+    }
+
+    /**
+     * Observer for \core\event\course_updated event.
+     *
+     * @param \core\event\course_updated $event
+     * @return void
+     */
+    public static function course_updated(\core\event\course_updated $event) {
+        global $CFG;
+
+        $course = $event->get_record_snapshot('course', $event->objectid);
+        $format = course_get_format($course);
+        if ($format->supports_news() && !empty($course->newsitems)) {
+            require_once($CFG->dirroot . '/mod/forum/lib.php');
+            // Auto create the announcements forum.
+            forum_get_course_forum($event->objectid, 'news');
+        }
+    }
 }

@@ -74,6 +74,12 @@ class manage_competency_frameworks_page implements renderable, templatable {
                 'get'
             );
             $this->navigation[] = $addpage;
+            $competenciesrepository = new single_button(
+                new moodle_url('https://moodle.net/competencies'),
+                get_string('competencyframeworksrepository', 'tool_lp'),
+                'get'
+            );
+            $this->navigation[] = $competenciesrepository;
         }
 
         $this->competencyframeworks = api::list_frameworks('shortname', 'ASC', 0, 0, $this->pagecontext);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20160404" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20161119" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -81,6 +81,7 @@
         <FIELD NAME="showgrades" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="newsitems" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="enddate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="marker" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="maxbytes" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="legacyfiles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="course files are not necessary any more: 0 no legacy files, 1 legacy files disabled, 2 legacy files enabled"/>
@@ -299,6 +300,7 @@
         <FIELD NAME="completionexpected" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Date at which students are expected to complete this activity. This field is used when displaying student progress."/>
         <FIELD NAME="showdescription" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Some module types support a 'description' which shows within the module pages. This option controls whether it also displays on the course main page. 0 = does not display (default), 1 = displays"/>
         <FIELD NAME="availability" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Availability restrictions for viewing this activity, in JSON format. Null if no restrictions."/>
+        <FIELD NAME="deletioninprogress" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -536,6 +538,8 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timeuserfromdeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timeusertodeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="eventtype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -562,6 +566,8 @@
         <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timeuserfromdeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timeusertodeleted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="eventtype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -1218,6 +1224,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="contextid" UNIQUE="false" FIELDS="contextid" COMMENT="links to context table"/>
+        <INDEX NAME="contextidstamp" UNIQUE="true" FIELDS="contextid, stamp"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="question" COMMENT="The questions themselves">
@@ -1352,9 +1359,6 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="attemptstepid" TYPE="foreign" FIELDS="attemptstepid" REFTABLE="question_attempt_steps" REFFIELDS="id"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="attemptstepid-name" UNIQUE="true" FIELDS="attemptstepid, name"/>
-      </INDEXES>
     </TABLE>
     <TABLE NAME="question_statistics" COMMENT="Statistics for individual questions used in an activity.">
       <FIELDS>
@@ -2455,6 +2459,7 @@
         <FIELD NAME="blockname" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" COMMENT="The type of block this is. Foreign key, references block.name."/>
         <FIELD NAME="parentcontextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The context within which this block appears. Foreign key, references context.id."/>
         <FIELD NAME="showinsubcontexts" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="If 1, this block appears on all matching pages in subcontexts of parentcontextid, as well in pages belonging to parentcontextid."/>
+        <FIELD NAME="requiredbytheme" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 1, this block was created because it was required by the theme and did not exist."/>
         <FIELD NAME="pagetypepattern" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="The types of page this block appears on. Either an exact page type like mod-quiz-view, or a pattern like mod-quiz-* or course-view-*. Note that course-view-* will match course-view."/>
         <FIELD NAME="subpagepattern" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="Further restrictions on where this block appears. In some places, e.g. during a quiz or lesson attempt, different pages have different subpage ids. If this field is not null, the block only appears on that particular subpage."/>
         <FIELD NAME="defaultregion" TYPE="char" LENGTH="16" NOTNULL="true" SEQUENCE="false" COMMENT="Which block region this block should appear in on each page, in the absence of a specific position in the block_positions table."/>
@@ -2574,6 +2579,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="token" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" COMMENT="security token, aka private access key"/>
+        <FIELD NAME="privatetoken" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="private token, generated at the same time that the token, must be stored safely by the ws client, to be transmitted only via https"/>
         <FIELD NAME="tokentype" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="type of token: 0=permanent, no session; 1=linked to current browser session via sid; 2=permanent, with emulated session"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="owner of the token"/>
         <FIELD NAME="externalserviceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>

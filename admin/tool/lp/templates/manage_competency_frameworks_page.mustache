@@ -60,18 +60,18 @@
             <ul title="{{#str}}edit{{/str}}" class="competencyframeworkactions">
                 <li>
                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
-                    <ul class="dropdown-menu">
-                        <li>
+                    <ul class="dropdown dropdown-menu">
+                        <li class="dropdown-item">
                             <a href="{{pluginbaseurl}}/editcompetencyframework.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">
                                 {{#pix}}t/edit{{/pix}} {{#str}}edit{{/str}}
                             </a>
                         </li>
-                        <li>
+                        <li class="dropdown-item">
                             <a data-action="duplicatecompetencyframework" href="#" data-frameworkid="{{id}}">
                                 {{#pix}}t/copy{{/pix}} {{#str}}duplicate{{/str}}
                             </a>
                         </li>
-                        <li>
+                        <li class="dropdown-item">
                             <a data-action="deletecompetencyframework" href="#" data-frameworkid="{{id}}">
                                 {{#pix}}t/delete{{/pix}} {{#str}}delete{{/str}}
                             </a>

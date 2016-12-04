@@ -111,6 +111,7 @@ class webservice {
 
         // setup user session to check capability
         \core\session\manager::set_user($user);
+        set_login_session_preferences();
 
         //assumes that if sid is set then there must be a valid associated session no matter the token type
         if ($token->sid) {
@@ -120,9 +121,9 @@ class webservice {
             }
         }
 
-        //Non admin can not authenticate if maintenance mode
-        $hassiteconfig = has_capability('moodle/site:config', context_system::instance(), $user);
-        if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+        // Cannot authenticate unless maintenance access is granted.
+        $hasmaintenanceaccess = has_capability('moodle/site:maintenanceaccess', context_system::instance(), $user);
+        if (!empty($CFG->maintenance_enabled) and !$hasmaintenanceaccess) {
             //this is usually temporary, client want to implement code logic  => moodle_exception
             throw new moodle_exception('sitemaintenance', 'admin');
         }
@@ -340,6 +341,7 @@ class webservice {
                     $newtoken->contextid = context_system::instance()->id;
                     $newtoken->creatorid = $userid;
                     $newtoken->timecreated = time();
+                    $newtoken->privatetoken = null;
 
                     $DB->insert_record('external_tokens', $newtoken);
                 }
@@ -419,6 +421,16 @@ class webservice {
     public function delete_user_ws_token($tokenid) {
         global $DB;
         $DB->delete_records('external_tokens', array('id'=>$tokenid));
+    }
+
+    /**
+     * Delete all the tokens belonging to a user.
+     *
+     * @param int $userid the user id whose tokens must be deleted
+     */
+    public static function delete_user_ws_tokens($userid) {
+        global $DB;
+        $DB->delete_records('external_tokens', array('userid' => $userid));
     }
 
     /**
@@ -726,7 +738,22 @@ class webservice {
 
     }
 
+    /**
+     * Return a list with all the valid user tokens for the given user, it only excludes expired tokens.
+     *
+     * @param  string $userid user id to retrieve tokens from
+     * @return array array of token entries
+     * @since Moodle 3.2
+     */
+    public static function get_active_tokens($userid) {
+        global $DB;
 
+        $sql = 'SELECT t.*, s.name as servicename FROM {external_tokens} t JOIN
+                {external_services} s ON t.externalserviceid = s.id WHERE
+                t.userid = :userid AND (t.validuntil IS NULL OR t.validuntil > :now)';
+        $params = array('userid' => $userid, 'now' => time());
+        return $DB->get_records_sql($sql, $params);
+    }
 }
 
 /**
@@ -914,9 +941,9 @@ abstract class webservice_server implements webservice_server_interface {
             $user = $this->authenticate_by_token(EXTERNAL_TOKEN_EMBEDDED);
         }
 
-        //Non admin can not authenticate if maintenance mode
-        $hassiteconfig = has_capability('moodle/site:config', context_system::instance(), $user);
-        if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+        // Cannot authenticate unless maintenance access is granted.
+        $hasmaintenanceaccess = has_capability('moodle/site:maintenanceaccess', context_system::instance(), $user);
+        if (!empty($CFG->maintenance_enabled) and !$hasmaintenanceaccess) {
             throw new moodle_exception('sitemaintenance', 'admin');
         }
 
@@ -991,6 +1018,7 @@ abstract class webservice_server implements webservice_server_interface {
         // now fake user login, the session is completely empty too
         enrol_check_plugins($user);
         \core\session\manager::set_user($user);
+        set_login_session_preferences();
         $this->userid = $user->id;
 
         if ($this->authmethod != WEBSERVICE_AUTHMETHOD_SESSION_TOKEN && !has_capability("webservice/$this->wsname:use", $this->restricted_context)) {

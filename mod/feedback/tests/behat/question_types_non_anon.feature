@@ -25,7 +25,7 @@ Feature: Test creating different types of feedback questions for non-anonymous f
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
@@ -103,14 +103,14 @@ Feature: Test creating different types of feedback questions for non-anonymous f
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I follow "Analysis"
+    And I click on "Analysis" "link" in the "Administration" "block"
     And I should see "Submitted answers: 2"
     And I should see "Questions: 9"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I follow "Analysis"
+    And I click on "Analysis" "link" in the "Administration" "block"
     And I should see "C1" in the "(info)" "table"
     And I should see "my long answer" in the "(longertext)" "table"
     And I should see "lots of feedbacks" in the "(longertext)" "table"

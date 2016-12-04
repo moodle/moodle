@@ -2,6 +2,8 @@ This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
 === 3.2 ===
+ * The setting $CFG->forum_replytouser has been removed in favour of a centralized noreplyaddress setting.
+   Please use $CFG->noreplyaddress setting instead.
  * The following functions have been finally deprecated and should no longer be used.
   - forum_count_unrated_posts
   - forum_tp_count_discussion_read_records

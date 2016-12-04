@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * Quiz statistics report upgrade code.
  */
 function xmldb_quiz_statistics_upgrade($oldversion) {
-    global $CFG;
+    global $DB;
 
     // Moodle v2.8.0 release upgrade line.
     // Put any upgrade step following this.
@@ -41,6 +41,13 @@ function xmldb_quiz_statistics_upgrade($oldversion) {
 
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2016100500) {
+        // Clear the quiz_statistics table - it is only a cache table anyway.
+        // This will force re-calculation.
+        $DB->delete_records('quiz_statistics');
+        upgrade_plugin_savepoint(true, 2016100500, 'quiz', 'statistics');
+    }
 
     return true;
 }

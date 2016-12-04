@@ -24,8 +24,6 @@
 
 namespace dataformat_csv;
 
-require_once("$CFG->libdir/spout/src/Spout/Autoloader/autoload.php");
-
 defined('MOODLE_INTERNAL') || die();
 
 /**

@@ -155,6 +155,7 @@ $string['displayscorewithessays'] = '<p>You earned {$a->score} out of {$a->tempm
 <p>Your {$a->essayquestions} essay question(s) will be graded and added into your final score at a later date.</p>
 <p>Your current grade without the essay question(s) is {$a->score} out of {$a->grade}.</p>';
 $string['displayscorewithoutessays'] = 'Your score is {$a->score} (out of {$a->grade}).';
+$string['duplicatepagenamed'] = 'Duplicate page: {$a}';
 $string['edit'] = 'Edit';
 $string['editingquestionpage'] = 'Editing {$a} question page';
 $string['editlessonsettings'] = 'Edit lesson settings';
@@ -471,7 +472,7 @@ $string['thefollowingpagesjumptothispage'] = 'The following pages jump to this p
 $string['thispage'] = 'This page';
 $string['timeisup'] = 'Time is up';
 $string['timelimit'] = 'Time limit';
-$string['timelimit_help'] = 'If enabled, a warning about the time limit is displayed at the beginning of the lesson and a countdown timer is displayed. Answer given after time is elapsed aren\'t graded';
+$string['timelimit_help'] = 'If enabled, a warning about the time limit is displayed at the beginning of the lesson and a countdown timer is displayed. Any answers given after the time has elapsed are not graded.';
 $string['timelimitwarning'] = 'You have {$a} to finish the lesson.';
 $string['timeremaining'] = 'Time remaining';
 $string['timespenterror'] = 'Spend at least {$a} minutes in the lesson';

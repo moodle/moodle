@@ -21,6 +21,9 @@ Feature: The search forums block allows users to search for forum posts
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "id_newsitems" to "1"
     And I press "Save and display"
+    And I turn editing mode on
+    And I add the "Latest announcements" block
+    And I add the "Search forums" block
     And I log out
 
   Scenario: Use the search forum block in a course without any forum posts

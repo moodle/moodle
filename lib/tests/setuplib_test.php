@@ -174,7 +174,7 @@ class core_setuplib_testcase extends advanced_testcase {
         global $CFG;
 
         // Start with a file instead of a directory.
-        $base = $CFG->tempdir . DIRECTORY_SEPARATOR . md5(microtime() + rand());
+        $base = $CFG->tempdir . DIRECTORY_SEPARATOR . md5(microtime(true) + rand());
         touch($base);
 
         // First the false test.

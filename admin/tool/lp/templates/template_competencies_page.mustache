@@ -28,11 +28,11 @@
     {{#canmanagetemplatecompetencies}}
     <div data-region="actions" class="clearfix">
         <div class="pull-left">
-            <button disabled>{{#str}}addtemplatecompetencies, tool_lp{{/str}}</button>
+            <button disabled class="btn btn-secondary">{{#str}}addtemplatecompetencies, tool_lp{{/str}}</button>
         </div>
     </div>
     {{/canmanagetemplatecompetencies}}
-    <h3>{{#str}}templatecompetencies, tool_lp{{/str}}</h3>
+    <h3 class="m-t-1">{{#str}}templatecompetencies, tool_lp{{/str}}</h3>
     {{#statistics}}
         {{> tool_lp/template_statistics }}
     {{/statistics}}
@@ -44,7 +44,7 @@
                     <div class="well">
                         {{#canmanagetemplatecompetencies}}
                         <span class="drag-handlecontainer pull-left"></span>
-                        <div class="pull-right">
+                        <div class="pull-xs-right">
                             <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}</a>
                         </div>
                         {{/canmanagetemplatecompetencies}}
@@ -53,9 +53,9 @@
                         {{/competency}}
                         <strong>{{#str}}linkedcourseslist, tool_lp{{/str}}</strong>
                         {{#hascourses}}
-                        <ul class="inline">
+                        <ul class="inline list-inline">
                         {{#linkedcourses}}
-                            <li><a href="{{viewurl}}?id={{id}}">{{{fullname}}} ({{{shortname}}})</a></li>
+                            <li class="list-inline-item"><a href="{{viewurl}}?id={{id}}">{{{fullname}}} ({{{shortname}}})</a></li>
                         {{/linkedcourses}}
                         </ul>
                         {{/hascourses}}

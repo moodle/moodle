@@ -31,10 +31,10 @@ Feature: Basic recycle bin functionality
       | Assignment name | Test assign |
       | Description | Test |
     And I delete "Test assign" activity
-    When I follow "Recycle bin"
+    When I navigate to "Recycle bin" node in "Course administration"
     Then I should see "Test assign"
     And I should see "Contents will be permanently deleted after 7 days"
-    And I follow "Restore"
+    And I click on "Restore" "link" in the "region-main" "region"
     And I should see "'Test assign' has been restored"
     And I wait to be redirected
     And I am on homepage
@@ -51,10 +51,10 @@ Feature: Basic recycle bin functionality
     And I press "Continue"
     And I go to the courses management page
     And I should not see "Course 2" in the "#course-listing" "css_element"
-    When I follow "Recycle bin"
+    When I navigate to "Recycle bin" node in "Category: Miscellaneous"
     Then I should see "Course 2"
     And I should see "Contents will be permanently deleted after 14 days"
-    And I follow "Restore"
+    And I click on "Restore" "link" in the "region-main" "region"
     And I should see "'Course 2' has been restored"
     And I wait to be redirected
     And I go to the courses management page
@@ -69,7 +69,8 @@ Feature: Basic recycle bin functionality
       | Assignment name | Test assign |
       | Description | Test |
     And I delete "Test assign" activity
-    And I follow "Recycle bin"
+    And I run all adhoc tasks
+    And I navigate to "Recycle bin" node in "Course administration"
     When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected item from the recycle bin?"
     And I press "Cancel"
@@ -92,7 +93,8 @@ Feature: Basic recycle bin functionality
       | Description | Test 2 |
     And I delete "Test assign 1" activity
     And I delete "Test assign 2" activity
-    And I follow "Recycle bin"
+    And I run all adhoc tasks
+    And I navigate to "Recycle bin" node in "Course administration"
     And I should see "Test assign 1"
     And I should see "Test assign 2"
     When I click on "Delete all" "link"

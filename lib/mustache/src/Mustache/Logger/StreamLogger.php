@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2015 Justin Hileman
+ * (c) 2010-2016 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -36,7 +36,7 @@ class Mustache_Logger_StreamLogger extends Mustache_Logger_AbstractLogger
     protected $url    = null;
 
     /**
-     * @throws InvalidArgumentException if the logging level is unknown.
+     * @throws InvalidArgumentException if the logging level is unknown
      *
      * @param resource|string $stream Resource instance or URL
      * @param int             $level  The minimum logging level at which this handler will be triggered
@@ -65,7 +65,7 @@ class Mustache_Logger_StreamLogger extends Mustache_Logger_AbstractLogger
     /**
      * Set the minimum logging level.
      *
-     * @throws Mustache_Exception_InvalidArgumentException if the logging level is unknown.
+     * @throws Mustache_Exception_InvalidArgumentException if the logging level is unknown
      *
      * @param int $level The minimum logging level which will be written
      */
@@ -91,7 +91,7 @@ class Mustache_Logger_StreamLogger extends Mustache_Logger_AbstractLogger
     /**
      * Logs with an arbitrary level.
      *
-     * @throws Mustache_Exception_InvalidArgumentException if the logging level is unknown.
+     * @throws Mustache_Exception_InvalidArgumentException if the logging level is unknown
      *
      * @param mixed  $level
      * @param string $message
@@ -111,8 +111,8 @@ class Mustache_Logger_StreamLogger extends Mustache_Logger_AbstractLogger
     /**
      * Write a record to the log.
      *
-     * @throws Mustache_Exception_LogicException   If neither a stream resource nor url is present.
-     * @throws Mustache_Exception_RuntimeException If the stream url cannot be opened.
+     * @throws Mustache_Exception_LogicException   If neither a stream resource nor url is present
+     * @throws Mustache_Exception_RuntimeException If the stream url cannot be opened
      *
      * @param int    $level   The logging level
      * @param string $message The log message
@@ -139,7 +139,7 @@ class Mustache_Logger_StreamLogger extends Mustache_Logger_AbstractLogger
     /**
      * Gets the name of the logging level.
      *
-     * @throws InvalidArgumentException if the logging level is unknown.
+     * @throws InvalidArgumentException if the logging level is unknown
      *
      * @param int $level
      *

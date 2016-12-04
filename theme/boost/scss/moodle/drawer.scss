@@ -1,0 +1,67 @@
+/* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
+$fixed-header-y: $navbar-height;
+
+$drawer-width: 285px;
+$drawer-padding-x: 20px;
+$drawer-padding-y: 20px;
+$drawer-offscreen-gutter: 20px;
+
+:target {
+    padding-top: ($fixed-header-y + 30px) !important; /* stylelint-disable declaration-no-important */
+    margin-top: -$fixed-header-y !important; /* negative fixed header height */
+}
+.pagelayout-embedded :target {
+    padding-top: initial;
+    margin-top: initial;
+}
+
+#nav-drawer.closed {
+    left: -($drawer-width + $drawer-offscreen-gutter);
+}
+#page {
+    margin-top: $navbar-height;
+}
+
+/* Use a variable for the drawer background colors. */
+$drawer-bg: $gray-lighter !default;
+
+[data-region="drawer"] {
+    position: fixed;
+    padding: $drawer-padding-x $drawer-padding-y;
+    width: $drawer-width;
+    top: $fixed-header-y;
+    height: calc(100% - #{$navbar-height});
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    z-index: $zindex-dropdown - 1;
+    background-color: $drawer-bg;
+    -webkit-transition: right 0.5s ease, left 0.5s ease;
+    -moz-transition: right 0.5s ease, left 0.5s ease;
+    transition: right 0.5s ease, left 0.5s ease;
+}
+#nav-drawer {
+    right: auto;
+    left: 0;
+}
+#page {
+    margin-top: $fixed-header-y;
+}
+.pagelayout-embedded #page {
+    margin-top: 0;
+}
+body.drawer-ease {
+    -webkit-transition: margin-left 0.5s ease, margin-right 0.5s ease;
+    -moz-transition: margin-left 0.5s ease, margin-right 0.5s ease;
+    transition: margin-left 0.5s ease, margin-right 0.5s ease;
+}
+
+body.drawer-open-left {
+    @include media-breakpoint-up(md) {
+        margin-left: $drawer-width;
+    }
+}
+body.drawer-open-right {
+    @include media-breakpoint-up(md) {
+        margin-right: $drawer-width;
+    }
+}

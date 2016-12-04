@@ -26,7 +26,6 @@ Feature: Option to include groups and groupings when importing a course to anoth
       | Grouping 2 | C1 | GROUPING2 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I turn editing mode on
 
   Scenario: Include groups and groupings when importing a course to another course
     Given I import "Course 1" course into "Course 2" course using this options:

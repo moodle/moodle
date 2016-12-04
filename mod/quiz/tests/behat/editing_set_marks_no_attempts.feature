@@ -66,7 +66,7 @@ Feature: In order to create a quiz that awards marks the way I want
       | Decimal places in grades | 3 |
       | Decimal places in question grades | 5 |
     And I press "Save and display"
-    And I follow "Edit quiz"
+    And I click on "Edit quiz" "link" in the "Administration" "block"
     # Then the field "maxgrade" matches value "20.000" -- with exact match on decimal places.
     Then "//input[@name = 'maxgrade' and @value = '20.000']" "xpath_element" should exist
     And I should see "2.00000"

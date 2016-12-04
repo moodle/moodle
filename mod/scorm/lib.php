@@ -102,6 +102,9 @@ function scorm_add_instance($scorm, $mform=null) {
     if (empty($scorm->timeclose)) {
         $scorm->timeclose = 0;
     }
+    if (empty($scorm->completionstatusallscos)) {
+        $scorm->completionstatusallscos = 0;
+    }
     $cmid       = $scorm->coursemodule;
     $cmidnumber = $scorm->cmidnumber;
     $courseid   = $scorm->course;
@@ -191,6 +194,9 @@ function scorm_update_instance($scorm, $mform=null) {
     }
     if (empty($scorm->timeclose)) {
         $scorm->timeclose = 0;
+    }
+    if (empty($scorm->completionstatusallscos)) {
+        $scorm->completionstatusallscos = 0;
     }
 
     $cmid       = $scorm->coursemodule;
@@ -1210,6 +1216,7 @@ function scorm_get_completion_state($course, $cm, $userid, $type) {
             "
             SELECT
                 id,
+                scoid,
                 element,
                 value
             FROM
@@ -1240,23 +1247,32 @@ function scorm_get_completion_state($course, $cm, $userid, $type) {
         // Get status.
         $statuses = array_flip(scorm_status_options());
         $nstatus = 0;
-
+        // Check any track for these values.
+        $scostatus = array();
         foreach ($tracks as $track) {
             if (!in_array($track->element, array('cmi.core.lesson_status', 'cmi.completion_status', 'cmi.success_status'))) {
                 continue;
             }
-
             if (array_key_exists($track->value, $statuses)) {
+                $scostatus[$track->scoid] = true;
                 $nstatus |= $statuses[$track->value];
             }
         }
 
-        if ($scorm->completionstatusrequired & $nstatus) {
+        if (!empty($scorm->completionstatusallscos)) {
+            // Iterate over all scos and make sure each has a lesson_status.
+            $scos = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id, 'scormtype' => 'sco'));
+            foreach ($scos as $sco) {
+                if (empty($scostatus[$sco->id])) {
+                    return completion_info::aggregate_completion_states($type, $result, false);
+                }
+            }
+            return completion_info::aggregate_completion_states($type, $result, true);
+        } else if ($scorm->completionstatusrequired & $nstatus) {
             return completion_info::aggregate_completion_states($type, $result, true);
         } else {
             return completion_info::aggregate_completion_states($type, $result, false);
         }
-
     }
 
     // Check for score.
@@ -1477,4 +1493,36 @@ function scorm_view($scorm, $course, $cm, $context) {
     $event->add_record_snapshot('course', $course);
     $event->add_record_snapshot('scorm', $scorm);
     $event->trigger();
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function scorm_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $USER, $CFG;
+    require_once($CFG->dirroot . '/mod/scorm/locallib.php');
+
+    $scorm = $DB->get_record($cm->modname, array('id' => $cm->instance), '*', MUST_EXIST);
+    $updates = new stdClass();
+    list($available, $warnings) = scorm_get_availability_status($scorm, true, $cm->context);
+    if (!$available) {
+        return $updates;
+    }
+    $updates = course_check_module_updates_since($cm, $from, array('package'), $filter);
+
+    $updates->tracks = (object) array('updated' => false);
+    $select = 'scormid = ? AND userid = ? AND timemodified > ?';
+    $params = array($scorm->id, $USER->id, $from);
+    $tracks = $DB->get_records_select('scorm_scoes_track', $select, $params, '', 'id');
+    if (!empty($tracks)) {
+        $updates->tracks->updated = true;
+        $updates->tracks->itemids = array_keys($tracks);
+    }
+    return $updates;
 }

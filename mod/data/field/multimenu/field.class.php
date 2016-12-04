@@ -25,6 +25,12 @@
 class data_field_multimenu extends data_field_base {
 
     var $type = 'multimenu';
+    /**
+     * priority for globalsearch indexing
+     *
+     * @var int
+     * */
+    protected static $priority = self::LOW_PRIORITY;
 
     function display_add_field($recordid = 0, $formdata = null) {
         global $DB, $OUTPUT;
@@ -46,8 +52,8 @@ class data_field_multimenu extends data_field_base {
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<input name="field_' . $this->field->id . '[xxx]" type="hidden" value="xxx"/>'; // hidden field - needed for empty selection
 
-        $str .= '<label for="field_' . $this->field->id . '">';
-        $str .= html_writer::span($this->field->name, 'accesshide');
+        $str .= '<label for="field_' . $this->field->id . '" class="accesshide">';
+        $str .= html_writer::span($this->field->name);
         if ($this->field->required) {
             $str .= '<div class="inline-req">';
             $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
@@ -56,7 +62,7 @@ class data_field_multimenu extends data_field_base {
         }
         $str .= '</label>';
         $str .= '<select name="field_' . $this->field->id . '[]" id="field_' . $this->field->id . '"';
-        $str .= ' multiple="multiple" class="mod-data-input">';
+        $str .= ' multiple="multiple" class="mod-data-input form-control">';
 
         foreach (explode("\n", $this->field->param1) as $option) {
             $option = trim($option);
@@ -90,7 +96,7 @@ class data_field_multimenu extends data_field_base {
         static $c = 0;
 
         $str = '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name . '</label>';
-        $str .= '<select id="f_'.$this->field->id.'" name="f_'.$this->field->id.'[]" multiple="multiple">';
+        $str .= '<select id="f_'.$this->field->id.'" name="f_'.$this->field->id.'[]" multiple="multiple" class="form-control">';
 
         // display only used options
         $varcharcontent =  $DB->sql_compare_text('content', 255);
@@ -134,7 +140,8 @@ class data_field_multimenu extends data_field_base {
 
         $str .= '</select>';
 
-        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired, get_string('selectedrequired', 'data'));
+        $str .= html_writer::checkbox('f_'.$this->field->id.'_allreq', null, $allrequired,
+            get_string('selectedrequired', 'data'), array('class' => 'm-r-1'));
 
         return $str;
 
@@ -267,4 +274,24 @@ class data_field_multimenu extends data_field_base {
         unset($value['xxx']);
         return !empty($value);
     }
+
+    /**
+     * Returns the presentable string value for a field content.
+     *
+     * The returned string should be plain text.
+     *
+     * @param stdClass $content
+     * @return string
+     */
+    public static function get_content_value($content) {
+        $arr = explode('##', $content->content);
+
+        $strvalue = '';
+        foreach ($arr as $a) {
+            $strvalue .= $a . ' ';
+        }
+
+        return trim($strvalue, "\r\n ");
+    }
+
 }

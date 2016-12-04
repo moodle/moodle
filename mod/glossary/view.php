@@ -360,46 +360,41 @@ if ($glossary->intro && $showcommonelements) {
 
 /// Search box
 if ($showcommonelements ) {
-    echo '<form method="post" action="view.php">';
+    echo '<form method="post" class="form form-inline m-b-1" action="view.php">';
 
-    echo '<table class="boxaligncenter" width="70%" border="0">';
-    echo '<tr><td align="center" class="glossarysearchbox">';
 
-    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
     if ($mode == 'search') {
-        echo '<input type="text" name="hook" size="20" value="'.s($hook).'" alt="'.$strsearch.'" /> ';
+        echo '<input type="text" name="hook" size="20" value="'.s($hook).'" alt="'.$strsearch.'" class="form-control"/> ';
     } else {
-        echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" /> ';
+        echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" class="form-control"/> ';
     }
+    echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" class="btn btn-secondary m-r-1"/> ';
     if ($fullsearch || $mode != 'search') {
         $fullsearchchecked = 'checked="checked"';
     } else {
         $fullsearchchecked = '';
     }
-    echo '<input type="checkbox" name="fullsearch" id="fullsearch" value="1" '.$fullsearchchecked.' />';
+    echo '<span class="checkbox"><label for="fullsearch">';
+    echo ' <input type="checkbox" name="fullsearch" id="fullsearch" value="1" '.$fullsearchchecked.'/> ';
     echo '<input type="hidden" name="mode" value="search" />';
     echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
-    echo '<label for="fullsearch">'.$strsearchindefinition.'</label>';
-    echo '</td></tr></table>';
+    echo $strsearchindefinition.'</label></span>';
 
     echo '</form>';
-
-    echo '<br />';
 }
 
 /// Show the add entry button if allowed
 if (has_capability('mod/glossary:write', $context) && $showcommonelements ) {
     echo '<div class="singlebutton glossaryaddentry">';
-    echo "<form id=\"newentryform\" method=\"get\" action=\"$CFG->wwwroot/mod/glossary/edit.php\">";
+    echo "<form class=\"form form-inline m-b-1\" id=\"newentryform\" method=\"get\" action=\"$CFG->wwwroot/mod/glossary/edit.php\">";
     echo '<div>';
     echo "<input type=\"hidden\" name=\"cmid\" value=\"$cm->id\" />";
-    echo '<input type="submit" value="'.get_string('addentry', 'glossary').'" />';
+    echo '<input type="submit" value="'.get_string('addentry', 'glossary').'" class="btn btn-secondary" />';
     echo '</div>';
     echo '</form>';
     echo "</div>\n";
 }
 
-echo '<br />';
 
 require("tabs.php");
 

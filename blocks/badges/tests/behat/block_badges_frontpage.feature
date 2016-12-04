@@ -22,7 +22,7 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
     And I log in as "teacher1"
     And I follow "Course 1"
     # Issue badge 1 of 2
-    And I navigate to "Add a new badge" node in "Badges"
+    And I navigate to "Add a new badge" node in "Course administration > Badges"
     And I set the following fields to these values:
       | id_name | Badge 1 |
       | id_description | Badge 1 |

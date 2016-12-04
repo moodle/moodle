@@ -2320,6 +2320,24 @@ class quiz_attempt {
         $event->trigger();
     }
 
+    /**
+     * Update the timemodifiedoffline attempt field.
+     * This function should be used only when web services are being used.
+     *
+     * @param int $time time stamp
+     * @return boolean false if the field is not updated becase web services aren't being used.
+     * @since Moodle 3.2
+     */
+    public function set_offline_modified_time($time) {
+        global $DB;
+
+        // Update the timemodifiedoffline field only if web services are being used.
+        if (WS_SERVER) {
+            $attemptobj->attempt->timemodifiedoffline = $time;
+        }
+        return false;
+    }
+
 }
 
 

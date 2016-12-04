@@ -40,16 +40,20 @@ list($options, $unrecognized) = cli_get_params(
         'help'        => false,
         'install'     => false,
         'parallel'    => 0,
-        'run'         => '',
+        'run'         => 0,
         'drop'        => false,
         'enable'      => false,
         'disable'     => false,
         'diag'        => false,
         'tags'        => '',
         'updatesteps' => false,
+        'optimize-runs' => '',
+        'add-core-features-to-theme' => false,
     ),
     array(
-        'h' => 'help'
+        'h' => 'help',
+        'o' => 'optimize-runs',
+        'a' => 'add-core-features-to-theme',
     )
 );
 
@@ -65,12 +69,15 @@ Usage:
   php util_single_run.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--help]
 
 Options:
---install     Installs the test environment for acceptance tests
---drop        Drops the database tables and the dataroot contents
---enable      Enables test environment and updates tests list
---disable     Disables test environment
---diag        Get behat test environment status code
---updatesteps Update feature step file.
+--install        Installs the test environment for acceptance tests
+--drop           Drops the database tables and the dataroot contents
+--enable         Enables test environment and updates tests list
+--disable        Disables test environment
+--diag           Get behat test environment status code
+--updatesteps    Update feature step file.
+
+-o, --optimize-runs Split features with specified tags in all parallel runs.
+-a, --add-core-features-to-theme Add all core features to specified theme's
 
 -h, --help Print out this help
 
@@ -130,15 +137,22 @@ require_once($CFG->libdir . '/behat/classes/behat_command.php');
 require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
 
 // Ensure run option is <= parallel run installed.
+$run = 0;
+$parallel = 0;
 if ($options['run']) {
+    $run = $options['run'];
+    // If parallel option is not passed, then try get it form config.
     if (!$options['parallel']) {
-        $options['parallel'] = behat_config_manager::get_parallel_test_runs();
+        $parallel = behat_config_manager::get_parallel_test_runs();
+    } else {
+        $parallel = $options['parallel'];
     }
-    if (empty($options['parallel']) || $options['run'] > $options['parallel']) {
-        echo "Parallel runs can't be more then ".$options['parallel'].PHP_EOL;
+
+    if (empty($parallel) || $run > $parallel) {
+        echo "Parallel runs can't be more then ".$parallel.PHP_EOL;
         exit(1);
     }
-    $CFG->behatrunprocess = $options['run'];
+    $CFG->behatrunprocess = $run;
 }
 
 // Run command (only one per time).
@@ -146,7 +160,7 @@ if ($options['install']) {
     behat_util::install_site();
 
     // This is only displayed once for parallel install.
-    if (empty($options['run'])) {
+    if (empty($run)) {
         mtrace("Acceptance tests site installed");
     }
 
@@ -155,30 +169,30 @@ if ($options['install']) {
     test_lock::acquire('behat');
     behat_util::drop_site();
     // This is only displayed once for parallel install.
-    if (empty($options['run'])) {
+    if (empty($run)) {
         mtrace("Acceptance tests site dropped");
     }
 
 } else if ($options['enable']) {
-    if (!empty($options['parallel'])) {
+    if (!empty($parallel)) {
         // Save parallel site info for enable and install options.
         $filepath = behat_config_manager::get_parallel_test_file_path();
-        if (!file_put_contents($filepath, $options['parallel'])) {
+        if (!file_put_contents($filepath, $parallel)) {
             behat_error(BEHAT_EXITCODE_PERMISSIONS, 'File ' . $filepath . ' can not be created');
         }
     }
 
     // Enable test mode.
-    behat_util::start_test_mode();
+    behat_util::start_test_mode($options['add-core-features-to-theme'], $options['optimize-runs'], $parallel, $run);
 
     // This is only displayed once for parallel install.
-    if (empty($options['run'])) {
+    if (empty($run)) {
         // Notify user that 2.5 profile has been converted to 3.5.
         if (behat_config_manager::$autoprofileconversion) {
             mtrace("2.5 behat profile detected, automatically converted to current 3.x format");
         }
 
-        $runtestscommand = behat_command::get_behat_command(true, !empty($options['run']));
+        $runtestscommand = behat_command::get_behat_command(true, !empty($run));
 
         $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
         mtrace("Acceptance tests environment enabled on $CFG->behat_wwwroot, to run the tests use: " . PHP_EOL .
@@ -188,7 +202,7 @@ if ($options['install']) {
 } else if ($options['disable']) {
     behat_util::stop_test_mode();
     // This is only displayed once for parallel install.
-    if (empty($options['run'])) {
+    if (empty($run)) {
         mtrace("Acceptance tests environment disabled");
     }
 

@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2015 Justin Hileman
+ * (c) 2010-2016 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -25,8 +25,8 @@ class Mustache_LambdaHelper
     /**
      * Mustache Lambda Helper constructor.
      *
-     * @param Mustache_Engine  $mustache Mustache engine instance.
-     * @param Mustache_Context $context  Rendering context.
+     * @param Mustache_Engine  $mustache Mustache engine instance
+     * @param Mustache_Context $context  Rendering context
      * @param string           $delims   Optional custom delimiters, in the format `{{= <% %> =}}`. (default: null)
      */
     public function __construct(Mustache_Engine $mustache, Mustache_Context $context, $delims = null)
@@ -41,7 +41,7 @@ class Mustache_LambdaHelper
      *
      * @param string $string
      *
-     * @return string Rendered template.
+     * @return string Rendered template
      */
     public function render($string)
     {
@@ -65,7 +65,7 @@ class Mustache_LambdaHelper
     /**
      * Get a Lambda Helper with custom delimiters.
      *
-     * @param string $delims Custom delimiters, in the format `{{= <% %> =}}`.
+     * @param string $delims Custom delimiters, in the format `{{= <% %> =}}`
      *
      * @return Mustache_LambdaHelper
      */

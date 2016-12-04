@@ -1,6 +1,6 @@
 <?php
 /*
-@version   v5.20.3  01-Jan-2016
+@version   v5.20.7  20-Sep-2016
 @copyright (c) 2000-2013 John Lim (jlim#natsoft.com). All rights reserved.
 @copyright (c) 2014      Damien Regad, Mark Newnham and the ADOdb community
   Released under both BSD license and Lesser GPL library license.
@@ -70,7 +70,9 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	{
 		$save = $this->metaTablesSQL;
 		if ($showSchema && is_string($showSchema)) {
-			$this->metaTablesSQL .= " from $showSchema";
+			$this->metaTablesSQL .= $this->qstr($showSchema);
+		} else {
+			$this->metaTablesSQL .= 'schema()';
 		}
 
 		if ($mask) {

@@ -47,12 +47,12 @@
         <dt>{{#str}}activities, tool_lp{{/str}}</dt>
         <dd data-region="coursecompetencyactivities">
         <p>
-        <ul class="inline">
+        <ul class="inline list-inline">
         {{#coursemodules}}
-            <li><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
+            <li class="list-inline-item"><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
         {{/coursemodules}}
         {{^coursemodules}}
-            <li><span class="alert">{{#str}}noactivities, tool_lp{{/str}}</span></li>
+            <li class="list-inline-item"><span class="alert">{{#str}}noactivities, tool_lp{{/str}}</span></li>
         {{/coursemodules}}
         </ul>
         </p>
@@ -75,7 +75,7 @@
         <dt>{{#str}}rating, tool_lp{{/str}}</dt>
         <dd>{{gradename}}
             {{#cangrade}}
-                <button class="btn" id="rate_{{uniqid}}">{{#str}}rate, tool_lp{{/str}}</button>
+                <button class="btn btn-secondary" id="rate_{{uniqid}}">{{#str}}rate, tool_lp{{/str}}</button>
             {{/cangrade}}
         </dd>
         {{/usercompetencycourse}}

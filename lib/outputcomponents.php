@@ -447,7 +447,7 @@ class user_picture implements renderable {
  * @package core
  * @category output
  */
-class help_icon implements renderable {
+class help_icon implements renderable, templatable {
 
     /**
      * @var string lang pack identifier (without the "_help" suffix),
@@ -490,6 +490,39 @@ class help_icon implements renderable {
         if (!$sm->string_exists($this->identifier.'_help', $this->component)) {
             debugging("Help contents string does not exist: [{$this->identifier}_help, $this->component]");
         }
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+        global $CFG;
+
+        $title = get_string($this->identifier, $this->component);
+
+        if (empty($this->linktext)) {
+            $alt = get_string('helpprefix2', '', trim($title, ". \t"));
+        } else {
+            $alt = get_string('helpwiththis');
+        }
+
+        $data = get_formatted_help_string($this->identifier, $this->component, false);
+
+        $data->alt = $alt;
+        $data->icon = (new pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($output);
+        $data->linktext = $this->linktext;
+        $data->title = get_string('helpprefix2', '', trim($title, ". \t"));
+        $data->url = (new moodle_url($CFG->httpswwwroot . '/help.php', [
+            'component' => $this->component,
+            'identifier' => $this->identifier,
+            'lang' => current_language()
+        ]))->out(false);
+
+        $data->ltr = !right_to_left();
+        return $data;
     }
 }
 
@@ -564,7 +597,7 @@ class pix_icon implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $attributes = $this->attributes;
-        $attributes['src'] = $output->pix_url($this->pix, $this->component);
+        $attributes['src'] = $output->pix_url($this->pix, $this->component)->out(false);
         $templatecontext = array();
         foreach ($attributes as $name => $value) {
             $templatecontext[] = array('name' => $name, 'value' => $value);
@@ -615,52 +648,57 @@ class single_button implements renderable {
     /**
      * @var moodle_url Target url
      */
-    var $url;
+    public $url;
 
     /**
      * @var string Button label
      */
-    var $label;
+    public $label;
 
     /**
      * @var string Form submit method post or get
      */
-    var $method = 'post';
+    public $method = 'post';
 
     /**
      * @var string Wrapping div class
      */
-    var $class = 'singlebutton';
+    public $class = 'singlebutton';
+
+    /**
+     * @var bool True if button is primary button. Used for styling.
+     */
+    public $primary = false;
 
     /**
      * @var bool True if button disabled, false if normal
      */
-    var $disabled = false;
+    public $disabled = false;
 
     /**
      * @var string Button tooltip
      */
-    var $tooltip = null;
+    public $tooltip = null;
 
     /**
      * @var string Form id
      */
-    var $formid;
+    public $formid;
 
     /**
      * @var array List of attached actions
      */
-    var $actions = array();
+    public $actions = array();
 
     /**
      * @var array $params URL Params
      */
-    var $params;
+    public $params;
 
     /**
      * @var string Action id
      */
-    var $actionid;
+    public $actionid;
 
     /**
      * Constructor
@@ -668,10 +706,11 @@ class single_button implements renderable {
      * @param string $label button text
      * @param string $method get or post submit method
      */
-    public function __construct(moodle_url $url, $label, $method='post') {
+    public function __construct(moodle_url $url, $label, $method='post', $primary=false) {
         $this->url    = clone($url);
         $this->label  = $label;
         $this->method = $method;
+        $this->primary = $primary;
     }
 
     /**
@@ -691,6 +730,45 @@ class single_button implements renderable {
     public function add_action(component_action $action) {
         $this->actions[] = $action;
     }
+
+    /**
+     * Export data.
+     *
+     * @param renderer_base $output Renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $url = $this->method === 'get' ? $this->url->out_omit_querystring(true) : $this->url->out_omit_querystring();
+
+        $data = new stdClass();
+        $data->id = html_writer::random_id('single_button');
+        $data->formid = $this->formid;
+        $data->method = $this->method;
+        $data->url = $url === '' ? '#' : $url;
+        $data->label = $this->label;
+        $data->classes = $this->class;
+        $data->disabled = $this->disabled;
+        $data->tooltip = $this->tooltip;
+        $data->primary = $this->primary;
+
+        // Form parameters.
+        $params = $this->url->params();
+        if ($this->method === 'post') {
+            $params['sesskey'] = sesskey();
+        }
+        $data->params = array_map(function($key) use ($params) {
+            return ['name' => $key, 'value' => $params[$key]];
+        }, array_keys($params));
+
+        // Button actions.
+        $actions = $this->actions;
+        $data->actions = array_map(function($action) use ($output) {
+            return $action->export_for_template($output);
+        }, $actions);
+        $data->hasactions = !empty($data->actions);
+
+        return $data;
+    }
 }
 
 
@@ -705,7 +783,7 @@ class single_button implements renderable {
  * @package core
  * @category output
  */
-class single_select implements renderable {
+class single_select implements renderable, templatable {
 
     /**
      * @var moodle_url Target url - includes hidden fields
@@ -847,6 +925,97 @@ class single_select implements renderable {
         $this->labelattributes = $attributes;
 
     }
+
+    /**
+     * Export data.
+     *
+     * @param renderer_base $output Renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $attributes = $this->attributes;
+
+        $data = new stdClass();
+        $data->name = $this->name;
+        $data->method = $this->method;
+        $data->action = $this->method === 'get' ? $this->url->out_omit_querystring(true) : $this->url->out_omit_querystring();
+        $data->classes = 'autosubmit ' . $this->class;
+        $data->label = $this->label;
+        $data->disabled = $this->disabled;
+        $data->title = $this->tooltip;
+        $data->formid = $this->formid;
+        $data->id = !empty($attributes['id']) ? $attributes['id'] : html_writer::random_id('single_select');
+        unset($attributes['id']);
+
+        // Form parameters.
+        $params = $this->url->params();
+        if ($this->method === 'post') {
+            $params['sesskey'] = sesskey();
+        }
+        $data->params = array_map(function($key) use ($params) {
+            return ['name' => $key, 'value' => $params[$key]];
+        }, array_keys($params));
+
+        // Select options.
+        $hasnothing = false;
+        if (is_string($this->nothing) && $this->nothing !== '') {
+            $nothing = ['' => $this->nothing];
+            $hasnothing = true;
+        } else if (is_array($this->nothing)) {
+            $nothingvalue = reset($this->nothing);
+            if ($nothingvalue === 'choose' || $nothingvalue === 'choosedots') {
+                $nothing = [key($this->nothing) => get_string('choosedots')];
+            } else {
+                $nothing = $this->nothing;
+            }
+            $hasnothing = true;
+        }
+        if ($hasnothing) {
+            $options = $nothing + $this->options;
+        } else {
+            $options = $this->options;
+        }
+        $data->hasnothing = $hasnothing;
+        $data->nothingkey = $hasnothing ? key($nothing) : false;
+
+        foreach ($options as $value => $name) {
+            if (is_array($options[$value])) {
+                foreach ($options[$value] as $optgroupname => $optgroupvalues) {
+                    $sublist = [];
+                    foreach ($optgroupvalues as $optvalue => $optname) {
+                        $sublist[] = [
+                            'value' => $optvalue,
+                            'name' => $optname,
+                            'selected' => strval($this->selected) === strval($optvalue),
+                        ];
+                    }
+                    $data->options[] = [
+                        'name' => $optgroupname,
+                        'optgroup' => true,
+                        'options' => $sublist
+                    ];
+                }
+            } else {
+                $data->options[] = [
+                    'value' => $value,
+                    'name' => $options[$value],
+                    'selected' => strval($this->selected) === strval($value),
+                    'optgroup' => false
+                ];
+            }
+        }
+
+        // Label attributes.
+        $data->labelattributes = [];
+        foreach ($this->labelattributes as $key => $value) {
+            $data->labelattributes = ['name' => $key, 'value' => $value];
+        }
+
+        // Help icon.
+        $data->helpicon = !empty($this->helpicon) ? $this->helpicon->export_for_template($output) : false;
+
+        return $data;
+    }
 }
 
 /**
@@ -858,7 +1027,7 @@ class single_select implements renderable {
  * @package core
  * @category output
  */
-class url_select implements renderable {
+class url_select implements renderable, templatable {
     /**
      * @var array $urls associative array value=>label ex.: array(1=>'One, 2=>Two)
      *     it is also possible to specify optgroup as complex label array ex.:
@@ -968,6 +1137,153 @@ class url_select implements renderable {
         $this->label = $label;
         $this->labelattributes = $attributes;
     }
+
+    /**
+     * Clean a URL.
+     *
+     * @param string $value The URL.
+     * @return The cleaned URL.
+     */
+    protected function clean_url($value) {
+        global $CFG;
+
+        if (empty($value)) {
+            // Nothing.
+
+        } else if (strpos($value, $CFG->wwwroot . '/') === 0) {
+            $value = str_replace($CFG->wwwroot, '', $value);
+
+        } else if (strpos($value, '/') !== 0) {
+            debugging("Invalid url_select urls parameter: url '$value' is not local relative url!", DEBUG_DEVELOPER);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Flatten the options for Mustache.
+     *
+     * This also cleans the URLs.
+     *
+     * @param array $options The options.
+     * @param array $nothing The nothing option.
+     * @return array
+     */
+    protected function flatten_options($options, $nothing) {
+        $flattened = [];
+
+        foreach ($options as $value => $option) {
+            if (is_array($option)) {
+                foreach ($option as $groupname => $optoptions) {
+                    if (!isset($flattened[$groupname])) {
+                        $flattened[$groupname] = [
+                            'name' => $groupname,
+                            'isgroup' => true,
+                            'options' => []
+                        ];
+                    }
+                    foreach ($optoptions as $optvalue => $optoption) {
+                        $cleanedvalue = $this->clean_url($optvalue);
+                        $flattened[$groupname]['options'][$cleanedvalue] = [
+                            'name' => $optoption,
+                            'value' => $cleanedvalue,
+                            'selected' => $this->selected == $optvalue,
+                        ];
+                    }
+                }
+
+            } else {
+                $cleanedvalue = $this->clean_url($value);
+                $flattened[$cleanedvalue] = [
+                    'name' => $option,
+                    'value' => $cleanedvalue,
+                    'selected' => $this->selected == $value,
+                ];
+            }
+        }
+
+        if (!empty($nothing)) {
+            $value = key($nothing);
+            $name = reset($nothing);
+            $flattened = [
+                $value => ['name' => $name, 'value' => $value, 'selected' => $this->selected == $value]
+            ] + $flattened;
+        }
+
+        // Make non-associative array.
+        foreach ($flattened as $key => $value) {
+            if (!empty($value['options'])) {
+                $flattened[$key]['options'] = array_values($value['options']);
+            }
+        }
+        $flattened = array_values($flattened);
+
+        return $flattened;
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output Renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $attributes = $this->attributes;
+
+        $data = new stdClass();
+        $data->formid = !empty($this->formid) ? $this->formid : html_writer::random_id('url_select_f');
+        $data->classes = $this->class;
+        $data->label = $this->label;
+        $data->disabled = $this->disabled;
+        $data->title = $this->tooltip;
+        $data->id = !empty($attributes['id']) ? $attributes['id'] : html_writer::random_id('url_select');
+        $data->sesskey = sesskey();
+        $data->action = (new moodle_url('/course/jumpto.php'))->out(false);
+
+        // Remove attributes passed as property directly.
+        unset($attributes['class']);
+        unset($attributes['id']);
+        unset($attributes['name']);
+        unset($attributes['title']);
+
+        $data->showbutton = $this->showbutton;
+        if (empty($this->showbutton)) {
+            $data->classes .= ' autosubmit';
+        }
+
+        // Select options.
+        $nothing = false;
+        if (is_string($this->nothing) && $this->nothing !== '') {
+            $nothing = ['' => $this->nothing];
+        } else if (is_array($this->nothing)) {
+            $nothingvalue = reset($this->nothing);
+            if ($nothingvalue === 'choose' || $nothingvalue === 'choosedots') {
+                $nothing = [key($this->nothing) => get_string('choosedots')];
+            } else {
+                $nothing = $this->nothing;
+            }
+        }
+        $data->hasnothing = !empty($nothing);
+        $data->nothingkey = $data->hasnothing ? key($nothing) : false;
+        $data->options = $this->flatten_options($this->urls, $nothing);
+
+        // Label attributes.
+        $data->labelattributes = [];
+        foreach ($this->labelattributes as $key => $value) {
+            $data->labelattributes[] = ['name' => $key, 'value' => $value];
+        }
+
+        // Help icon.
+        $data->helpicon = !empty($this->helpicon) ? $this->helpicon->export_for_template($output) : false;
+
+        // Finally all the remaining attributes.
+        $data->attributes = [];
+        foreach ($this->attributes as $key => $value) {
+            $data->attributes = ['name' => $key, 'value' => $value];
+        }
+
+        return $data;
+    }
 }
 
 /**
@@ -1056,6 +1372,58 @@ class action_link implements renderable {
      */
     public function has_class($class) {
         return strpos(' ' . $this->attributes['class'] . ' ', ' ' . $class . ' ') !== false;
+    }
+
+    /**
+     * Return the rendered HTML for the icon. Useful for rendering action links in a template.
+     * @return string
+     */
+    public function get_icon_html() {
+        global $OUTPUT;
+        if (!$this->icon) {
+            return '';
+        }
+        return $OUTPUT->render($this->icon);
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $data = new stdClass();
+        $attributes = $this->attributes;
+
+        if (empty($attributes['id'])) {
+            $attributes['id'] = html_writer::random_id('action_link');
+        }
+        $data->id = $attributes['id'];
+        unset($attributes['id']);
+
+        $data->disabled = !empty($attributes['disabled']);
+        unset($attributes['disabled']);
+
+        $data->text = $this->text instanceof renderable ? $output->render($this->text) : (string) $this->text;
+        $data->url = $this->url ? $this->url->out(false) : '';
+        $data->icon = $this->icon ? $this->icon->export_for_template($output) : null;
+        $data->classes = isset($attributes['class']) ? $attributes['class'] : '';
+        unset($attributes['class']);
+
+        $data->attributes = array_map(function($key, $value) {
+            return [
+                'name' => $key,
+                'value' => $value
+            ];
+        }, array_keys($attributes), $attributes);
+
+        $data->actions = array_map(function($action) use ($output) {
+            return $action->export_for_template($output);
+        }, !empty($this->actions) ? $this->actions : []);
+        $data->hasactions = !empty($this->actions);
+
+        return $data;
     }
 }
 
@@ -1312,7 +1680,7 @@ class html_writer {
             $class = str_replace(']', '', $class);
             $attributes['class'] = $class;
         }
-        $attributes['class'] = 'select ' . $attributes['class']; // Add 'select' selector always
+        $attributes['class'] = 'select custom-select ' . $attributes['class']; // Add 'select' selector always.
 
         $attributes['name'] = $name;
 
@@ -1383,6 +1751,8 @@ class html_writer {
      * @return HTML fragment
      */
     public static function select_time($type, $name, $currenttime = 0, $step = 5, array $attributes = null) {
+        global $OUTPUT;
+
         if (!$currenttime) {
             $currenttime = time();
         }
@@ -1423,13 +1793,30 @@ class html_writer {
                 throw new coding_exception("Time type $type is not supported by html_writer::select_time().");
         }
 
-        if (empty($attributes['id'])) {
-            $attributes['id'] = self::random_id('ts_');
-        }
-        $timerselector = self::select($timeunits, $name, $currentdate[$userdatetype], null, $attributes);
-        $label = self::tag('label', get_string(substr($type, 0, -1), 'form'), array('for'=>$attributes['id'], 'class'=>'accesshide'));
+        $attributes = (array) $attributes;
+        $data = (object) [
+            'name' => $name,
+            'id' => !empty($attributes['id']) ? $attributes['id'] : self::random_id('ts_'),
+            'label' => get_string(substr($type, 0, -1), 'form'),
+            'options' => array_map(function($value) use ($timeunits, $currentdate, $userdatetype) {
+                return [
+                    'name' => $timeunits[$value],
+                    'value' => $value,
+                    'selected' => $currentdate[$userdatetype] == $value
+                ];
+            }, array_keys($timeunits)),
+        ];
 
-        return $label.$timerselector;
+        unset($attributes['id']);
+        unset($attributes['name']);
+        $data->attributes = array_map(function($name) use ($attributes) {
+            return [
+                'name' => $name,
+                'value' => $attributes[$name]
+            ];
+        }, array_keys($attributes));
+
+        return $OUTPUT->render_from_template('core/select_time', $data);
     }
 
     /**
@@ -2312,7 +2699,7 @@ class html_table_cell {
  * @package core
  * @category output
  */
-class paging_bar implements renderable {
+class paging_bar implements renderable, templatable {
 
     /**
      * @var int The maximum number of pagelinks to display.
@@ -2463,6 +2850,82 @@ class paging_bar implements renderable {
                 $this->nextlink = html_writer::link(new moodle_url($this->baseurl, array($this->pagevar=>$pagenum)), get_string('next'), array('class'=>'next'));
             }
         }
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $data = new stdClass();
+        $data->previous = null;
+        $data->next = null;
+        $data->first = null;
+        $data->last = null;
+        $data->label = get_string('page');
+        $data->pages = [];
+        $data->haspages = $this->totalcount > $this->perpage;
+
+        if (!$data->haspages) {
+            return $data;
+        }
+
+        if ($this->page > 0) {
+            $data->previous = [
+                'page' => $this->page - 1,
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page - 1]))->out(false)
+            ];
+        }
+
+        $currpage = 0;
+        if ($this->page > round(($this->maxdisplay / 3) * 2)) {
+            $currpage = $this->page - round($this->maxdisplay / 3);
+            $data->first = [
+                'page' => 1,
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => 0]))->out(false)
+            ];
+        }
+
+        $lastpage = 1;
+        if ($this->perpage > 0) {
+            $lastpage = ceil($this->totalcount / $this->perpage);
+        }
+
+        $displaycount = 0;
+        $displaypage = 0;
+        while ($displaycount < $this->maxdisplay and $currpage < $lastpage) {
+            $displaypage = $currpage + 1;
+
+            $iscurrent = $this->page == $currpage;
+            $link = new moodle_url($this->baseurl, [$this->pagevar => $currpage]);
+
+            $data->pages[] = [
+                'page' => $displaypage,
+                'active' => $iscurrent,
+                'url' => $iscurrent ? null : $link->out(false)
+            ];
+
+            $displaycount++;
+            $currpage++;
+        }
+
+        if ($currpage < $lastpage) {
+            $data->last = [
+                'page' => $lastpage,
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $lastpage - 1]))->out(false)
+            ];
+        }
+
+        if ($this->page + 1 != $lastpage) {
+            $data->next = [
+                'page' => $this->page + 1,
+                'url' => (new moodle_url($this->baseurl, [$this->pagevar => $this->page + 1]))->out(false)
+            ];
+        }
+
+        return $data;
     }
 }
 
@@ -2645,7 +3108,7 @@ class block_move_target {
  * @package core
  * @category output
  */
-class custom_menu_item implements renderable {
+class custom_menu_item implements renderable, templatable {
 
     /**
      * @var string The text to show for the item
@@ -2832,6 +3295,37 @@ class custom_menu_item implements renderable {
     public function set_url(moodle_url $url) {
         $this->url = $url;
     }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+        global $CFG;
+
+        require_once($CFG->libdir . '/externallib.php');
+
+        $syscontext = context_system::instance();
+
+        $context = new stdClass();
+        $context->text = external_format_string($this->text, $syscontext->id);
+        $context->url = $this->url ? $this->url->out() : null;
+        $context->title = external_format_string($this->title, $syscontext->id);
+        $context->sort = $this->sort;
+        $context->children = array();
+        if (preg_match("/^#+$/", $this->text)) {
+            $context->divider = true;
+        }
+        $context->haschildren = !empty($this->children) && (count($this->children) > 0);
+        foreach ($this->children as $child) {
+            $child = $child->export_for_template($output);
+            array_push($context->children, $child);
+        }
+
+        return $context;
+    }
 }
 
 /**
@@ -3005,7 +3499,7 @@ class custom_menu extends custom_menu_item {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  */
-class tabobject implements renderable {
+class tabobject implements renderable, templatable {
     /** @var string unique id of the tab in this tree, it is used to find selected and/or inactive tabs */
     var $id;
     /** @var moodle_url|string link */
@@ -3096,6 +3590,32 @@ class tabobject implements renderable {
             $tab->set_level($level + 1);
         }
     }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output Renderer.
+     * @return object
+     */
+    public function export_for_template(renderer_base $output) {
+        if ($this->inactive || ($this->selected && !$this->linkedwhenselected) || $this->activated) {
+            $link = null;
+        } else {
+            $link = $this->link;
+        }
+        $active = $this->activated || $this->selected;
+
+        return (object) [
+            'id' => $this->id,
+            'link' => is_object($link) ? $link->out(false) : $link,
+            'text' => $this->text,
+            'title' => $this->title,
+            'inactive' => !$active && $this->inactive,
+            'active' => $active,
+            'level' => $this->level,
+        ];
+    }
+
 }
 
 /**
@@ -3171,9 +3691,15 @@ class context_header implements renderable {
                     $this->additionalbuttons[$buttontype]['formattedimage'] = $button['image'];
                 }
             }
+
+            if (isset($button['linkattributes']['class'])) {
+                $class = $button['linkattributes']['class'] . ' btn';
+            } else {
+                $class = 'btn';
+            }
             // Add the bootstrap 'btn' class for formatting.
             $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'],
-                    array('class' => 'btn'));
+                    array('class' => $class));
         }
     }
 }
@@ -3229,6 +3755,29 @@ class tabtree extends tabobject {
         }
         $this->set_level(0);
     }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output Renderer.
+     * @return object
+     */
+    public function export_for_template(renderer_base $output) {
+        $tabs = [];
+        $secondrow = false;
+
+        foreach ($this->subtree as $tab) {
+            $tabs[] = $tab->export_for_template($output);
+            if (!empty($tab->subtree) && ($tab->level == 0 || $tab->selected || $tab->activated)) {
+                $secondrow = new tabtree($tab->subtree);
+            }
+        }
+
+        return (object) [
+            'tabs' => $tabs,
+            'secondrow' => $secondrow ? $secondrow->export_for_template($output) : false
+        ];
+    }
 }
 
 /**
@@ -3243,7 +3792,7 @@ class tabtree extends tabobject {
  * @copyright 2013 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_menu implements renderable {
+class action_menu implements renderable, templatable {
 
     /**
      * Top right alignment.
@@ -3361,6 +3910,15 @@ class action_menu implements renderable {
 
     public function set_menu_trigger($trigger) {
         $this->menutrigger = $trigger;
+    }
+
+    /**
+     * Return true if there is at least one visible link in the menu.
+     *
+     * @return bool
+     */
+    public function is_empty() {
+        return !count($this->primaryactions) && !count($this->secondaryactions);
     }
 
     /**
@@ -3551,9 +4109,11 @@ class action_menu implements renderable {
      * If you call this method the action menu will be displayed but will not be enhanced.
      *
      * By not displaying the menu enhanced all items will be displayed in a single row.
+     *
+     * @deprecated since Moodle 3.2
      */
     public function do_not_enhance() {
-        unset($this->attributes['data-enhance']);
+        debugging('The method action_menu::do_not_enhance() is deprecated, use a list of action_icon instead.', DEBUG_DEVELOPER);
     }
 
     /**
@@ -3592,6 +4152,98 @@ class action_menu implements renderable {
             $this->attributes['class'] = $class;
         }
     }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        $data = new stdClass();
+        $attributes = $this->attributes;
+        $attributesprimary = $this->attributesprimary;
+        $attributessecondary = $this->attributessecondary;
+
+        $data->instance = $this->instance;
+
+        $data->classes = isset($attributes['class']) ? $attributes['class'] : '';
+        unset($attributes['class']);
+
+        $data->attributes = array_map(function($key, $value) {
+            return [ 'name' => $key, 'value' => $value ];
+        }, array_keys($attributes), $attributes);
+
+        $primary = new stdClass();
+        $primary->title = '';
+        $primary->prioritise = $this->prioritise;
+
+        $primary->classes = isset($attributesprimary['class']) ? $attributesprimary['class'] : '';
+        unset($attributesprimary['class']);
+        $primary->attributes = array_map(function($key, $value) {
+            return [ 'name' => $key, 'value' => $value ];
+        }, array_keys($attributesprimary), $attributesprimary);
+
+        $actionicon = $this->actionicon;
+        if (!empty($this->menutrigger)) {
+            $primary->menutrigger = $this->menutrigger;
+        } else {
+            $primary->title = get_string('actions');
+            $actionicon = new pix_icon('t/edit_menu', '', 'moodle', ['class' => 'iconsmall actionmenu', 'title' => '']);
+        }
+
+        if ($actionicon instanceof pix_icon) {
+            $primary->icon = $actionicon->export_for_template($output);
+            $primary->title = !empty($actionicon->attributes['alt']) ? $this->actionicon->attributes['alt'] : '';
+        } else {
+            $primary->iconraw = $actionicon ? $output->render($actionicon) : '';
+        }
+
+        $primary->actiontext = $this->actiontext ? (string) $this->actiontext : '';
+        $primary->items = array_map(function($item) use ($output) {
+            $data = (object) [];
+            if ($item instanceof action_menu_link) {
+                $data->actionmenulink = $item->export_for_template($output);
+            } else if ($item instanceof action_menu_filler) {
+                $data->actionmenufiller = $item->export_for_template($output);
+            } else if ($item instanceof action_link) {
+                $data->actionlink = $item->export_for_template($output);
+            } else if ($item instanceof pix_icon) {
+                $data->pixicon = $item->export_for_template($output);
+            } else {
+                $data->rawhtml = ($item instanceof renderable) ? $output->render($item) : $item;
+            }
+            return $data;
+        }, $this->primaryactions);
+
+        $secondary = new stdClass();
+        $secondary->classes = isset($attributessecondary['class']) ? $attributessecondary['class'] : '';
+        unset($attributessecondary['class']);
+        $secondary->attributes = array_map(function($key, $value) {
+            return [ 'name' => $key, 'value' => $value ];
+        }, array_keys($attributessecondary), $attributessecondary);
+        $secondary->items = array_map(function($item) use ($output) {
+            $data = (object) [];
+            if ($item instanceof action_menu_link) {
+                $data->actionmenulink = $item->export_for_template($output);
+            } else if ($item instanceof action_menu_filler) {
+                $data->actionmenufiller = $item->export_for_template($output);
+            } else if ($item instanceof action_link) {
+                $data->actionlink = $item->export_for_template($output);
+            } else if ($item instanceof pix_icon) {
+                $data->pixicon = $item->export_for_template($output);
+            } else {
+                $data->rawhtml = ($item instanceof renderable) ? $output->render($item) : $item;
+            }
+            return $data;
+        }, $this->secondaryactions);
+
+        $data->primary = $primary;
+        $data->secondary = $secondary;
+
+        return $data;
+    }
+
 }
 
 /**
@@ -3653,6 +4305,64 @@ class action_menu_link extends action_link implements renderable {
         $this->primary = (bool)$primary;
         $this->add_class('menu-action');
         $this->attributes['role'] = 'menuitem';
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output The renderer.
+     * @return stdClass
+     */
+    public function export_for_template(renderer_base $output) {
+        static $instance = 1;
+
+        $data = parent::export_for_template($output);
+        $data->instance = $instance++;
+
+        // Ignore what the parent did with the attributes, except for ID and class.
+        $data->attributes = [];
+        $attributes = $this->attributes;
+        unset($attributes['id']);
+        unset($attributes['class']);
+
+        // Handle text being a renderable.
+        $comparetoalt = $this->text;
+        if ($this->text instanceof renderable) {
+            $data->text = $this->render($this->text);
+            $comparetoalt = '';
+        }
+        $comparetoalt = (string) $comparetoalt;
+
+        $data->showtext = (!$this->icon || $this->primary === false);
+
+        $data->icon = null;
+        if ($this->icon) {
+            $icon = $this->icon;
+            if ($this->primary || !$this->actionmenu->will_be_enhanced()) {
+                $attributes['title'] = $data->text;
+            }
+            if (!$this->primary && $this->actionmenu->will_be_enhanced()) {
+                if ((string) $icon->attributes['alt'] === $comparetoalt) {
+                    $icon->attributes['alt'] = '';
+                }
+                if (isset($icon->attributes['title']) && (string) $icon->attributes['title'] === $comparetoalt) {
+                    unset($icon->attributes['title']);
+                }
+            }
+            $data->icon = $icon ? $icon->export_for_template($output) : null;
+        }
+
+        $data->disabled = !empty($attributes['disabled']);
+        unset($attributes['disabled']);
+
+        $data->attributes = array_map(function($key, $value) {
+            return [
+                'name' => $key,
+                'value' => $value
+            ];
+        }, array_keys($attributes), $attributes);
+
+        return $data;
     }
 }
 
@@ -3756,5 +4466,187 @@ class preferences_group implements renderable {
     public function __construct($title, $nodes) {
         $this->title = $title;
         $this->nodes = $nodes;
+    }
+}
+
+/**
+ * Progress bar class.
+ *
+ * Manages the display of a progress bar.
+ *
+ * To use this class.
+ * - construct
+ * - call create (or use the 3rd param to the constructor)
+ * - call update or update_full() or update() repeatedly
+ *
+ * @copyright 2008 jamiesensei
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ * @category output
+ */
+class progress_bar implements renderable, templatable {
+    /** @var string html id */
+    private $html_id;
+    /** @var int total width */
+    private $width;
+    /** @var int last percentage printed */
+    private $percent = 0;
+    /** @var int time when last printed */
+    private $lastupdate = 0;
+    /** @var int when did we start printing this */
+    private $time_start = 0;
+
+    /**
+     * Constructor
+     *
+     * Prints JS code if $autostart true.
+     *
+     * @param string $htmlid The container ID.
+     * @param int $width The suggested width.
+     * @param bool $autostart Whether to start the progress bar right away.
+     */
+    public function __construct($htmlid = '', $width = 500, $autostart = false) {
+        if (!empty($htmlid)) {
+            $this->html_id  = $htmlid;
+        } else {
+            $this->html_id  = 'pbar_'.uniqid();
+        }
+
+        $this->width = $width;
+
+        if ($autostart) {
+            $this->create();
+        }
+    }
+
+    /**
+     * Create a new progress bar, this function will output html.
+     *
+     * @return void Echo's output
+     */
+    public function create() {
+        global $OUTPUT;
+
+        $this->time_start = microtime(true);
+        if (CLI_SCRIPT) {
+            return; // Temporary solution for cli scripts.
+        }
+
+        flush();
+        echo $OUTPUT->render($this);
+        flush();
+    }
+
+    /**
+     * Update the progress bar.
+     *
+     * @param int $percent From 1-100.
+     * @param string $msg The message.
+     * @return void Echo's output
+     * @throws coding_exception
+     */
+    private function _update($percent, $msg) {
+        if (empty($this->time_start)) {
+            throw new coding_exception('You must call create() (or use the $autostart ' .
+                    'argument to the constructor) before you try updating the progress bar.');
+        }
+
+        if (CLI_SCRIPT) {
+            return; // Temporary solution for cli scripts.
+        }
+
+        $estimate = $this->estimate($percent);
+
+        if ($estimate === null) {
+            // Always do the first and last updates.
+        } else if ($estimate == 0) {
+            // Always do the last updates.
+        } else if ($this->lastupdate + 20 < time()) {
+            // We must update otherwise browser would time out.
+        } else if (round($this->percent, 2) === round($percent, 2)) {
+            // No significant change, no need to update anything.
+            return;
+        }
+
+        $estimatemsg = null;
+        if (is_numeric($estimate)) {
+            $estimatemsg = get_string('secondsleft', 'moodle', round($estimate, 2));
+        }
+
+        $this->percent = round($percent, 2);
+        $this->lastupdate = microtime(true);
+
+        echo html_writer::script(js_writer::function_call('updateProgressBar',
+            array($this->html_id, $this->percent, $msg, $estimatemsg)));
+        flush();
+    }
+
+    /**
+     * Estimate how much time it is going to take.
+     *
+     * @param int $pt From 1-100.
+     * @return mixed Null (unknown), or int.
+     */
+    private function estimate($pt) {
+        if ($this->lastupdate == 0) {
+            return null;
+        }
+        if ($pt < 0.00001) {
+            return null; // We do not know yet how long it will take.
+        }
+        if ($pt > 99.99999) {
+            return 0; // Nearly done, right?
+        }
+        $consumed = microtime(true) - $this->time_start;
+        if ($consumed < 0.001) {
+            return null;
+        }
+
+        return (100 - $pt) * ($consumed / $pt);
+    }
+
+    /**
+     * Update progress bar according percent.
+     *
+     * @param int $percent From 1-100.
+     * @param string $msg The message needed to be shown.
+     */
+    public function update_full($percent, $msg) {
+        $percent = max(min($percent, 100), 0);
+        $this->_update($percent, $msg);
+    }
+
+    /**
+     * Update progress bar according the number of tasks.
+     *
+     * @param int $cur Current task number.
+     * @param int $total Total task number.
+     * @param string $msg The message needed to be shown.
+     */
+    public function update($cur, $total, $msg) {
+        $percent = ($cur / $total) * 100;
+        $this->update_full($percent, $msg);
+    }
+
+    /**
+     * Restart the progress bar.
+     */
+    public function restart() {
+        $this->percent    = 0;
+        $this->lastupdate = 0;
+        $this->time_start = 0;
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param  renderer_base $output The renderer.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+        return [
+            'id' => $this->html_id,
+            'width' => $this->width,
+        ];
     }
 }

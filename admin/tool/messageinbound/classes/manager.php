@@ -125,9 +125,7 @@ class manager {
 
         } catch (\Horde_Imap_Client_Exception $e) {
             $message = $e->getMessage();
-            mtrace("Unable to connect to IMAP server. Failed with '{$message}'");
-
-            return false;
+            throw new \moodle_exception('imapconnectfailure', 'tool_messageinbound', '', null, $message);
         }
     }
 
@@ -920,7 +918,7 @@ class manager {
         $addressmanager->set_handler('\tool_messageinbound\message\inbound\invalid_recipient_handler');
         $addressmanager->set_data($record->id);
 
-        $eventdata = new \stdClass();
+        $eventdata = new \core\message\message();
         $eventdata->component           = 'tool_messageinbound';
         $eventdata->name                = 'invalidrecipienthandler';
 
@@ -930,7 +928,8 @@ class manager {
         $userfrom->customheaders[] = 'In-Reply-To: ' . $messageid;
 
         // The message will be sent from the intended user.
-        $eventdata->userfrom            = \core_user::get_support_user();
+        $eventdata->courseid            = SITEID;
+        $eventdata->userfrom            = \core_user::get_noreply_user();
         $eventdata->userto              = $USER;
         $eventdata->subject             = $this->get_reply_subject($this->currentmessagedata->envelope->subject);
         $eventdata->fullmessage         = get_string('invalidrecipientdescription', 'tool_messageinbound', $this->currentmessagedata);
@@ -970,7 +969,8 @@ class manager {
         $messagedata->subject = $this->currentmessagedata->envelope->subject;
         $messagedata->error = $error;
 
-        $eventdata = new \stdClass();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid            = SITEID;
         $eventdata->component           = 'tool_messageinbound';
         $eventdata->name                = 'messageprocessingerror';
         $eventdata->userfrom            = $userfrom;
@@ -1029,7 +1029,8 @@ class manager {
         $messagedata = new \stdClass();
         $messagedata->subject = $this->currentmessagedata->envelope->subject;
 
-        $eventdata = new \stdClass();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid            = SITEID;
         $eventdata->component           = 'tool_messageinbound';
         $eventdata->name                = 'messageprocessingsuccess';
         $eventdata->userfrom            = $userfrom;

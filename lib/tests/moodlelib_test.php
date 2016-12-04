@@ -202,12 +202,18 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             @optional_param('username');
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             optional_param('', 'default_user', PARAM_RAW);
@@ -248,12 +254,18 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             @optional_param_array('username');
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             optional_param_array('', array('a'=>'default_user'), PARAM_RAW);
@@ -305,6 +317,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             required_param('username', '');
@@ -348,6 +363,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('coding_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('coding_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
         try {
             required_param_array('', PARAM_RAW);
@@ -409,6 +427,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('moodle_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
     }
 
@@ -429,6 +450,9 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->fail('moodle_exception expected');
         } catch (moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
+        } catch (Error $error) {
+            // PHP 7.1 throws Error even earlier.
+            $this->assertRegExp('/Too few arguments to function/', $error->getMessage());
         }
 
         try {
@@ -2766,8 +2790,10 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        $user1 = $this->getDataGenerator()->create_user();
-        $user2 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user2 = $this->getDataGenerator()->create_user(array('maildisplay' => 1));
+        $user3 = $this->getDataGenerator()->create_user(array('maildisplay' => 0));
+        set_config('allowedemaildomains', 'example.com');
 
         $subject = 'subject';
         $messagetext = 'message text';
@@ -2809,16 +2835,29 @@ class core_moodlelib_testcase extends advanced_testcase {
         email_to_user($user1, $user2, $subject, $messagetext);
         $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
 
-        // Test $CFG->emailonlyfromnoreplyaddress.
-        set_config('emailonlyfromnoreplyaddress', 1);
-        $this->assertNotEmpty($CFG->emailonlyfromnoreplyaddress);
+        // Test that an empty noreplyaddress will default to a no-reply address.
         $sink = $this->redirectEmails();
-        email_to_user($user1, $user2, $subject, $messagetext);
-        unset_config('emailonlyfromnoreplyaddress');
-        email_to_user($user1, $user2, $subject, $messagetext);
+        email_to_user($user1, $user3, $subject, $messagetext);
         $result = $sink->get_messages();
         $this->assertEquals($CFG->noreplyaddress, $result[0]->from);
-        $this->assertNotEquals($CFG->noreplyaddress, $result[1]->from);
+        $sink->close();
+        set_config('noreplyaddress', '');
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user3, $subject, $messagetext);
+        $result = $sink->get_messages();
+        $this->assertEquals('noreply@www.example.com', $result[0]->from);
+        $sink->close();
+
+        // Test $CFG->allowedemaildomains.
+        set_config('noreplyaddress', 'noreply@www.example.com');
+        $this->assertNotEmpty($CFG->allowedemaildomains);
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user2, $subject, $messagetext);
+        unset_config('allowedemaildomains');
+        email_to_user($user1, $user2, $subject, $messagetext);
+        $result = $sink->get_messages();
+        $this->assertNotEquals($CFG->noreplyaddress, $result[0]->from);
+        $this->assertEquals($CFG->noreplyaddress, $result[1]->from);
         $sink->close();
     }
 
@@ -3047,6 +3086,9 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = random_bytes_emulate(666);
         $this->assertSame(666, strlen($result));
 
+        $result = random_bytes_emulate(40);
+        $this->assertSame(40, strlen($result));
+
         $this->assertDebuggingNotCalled();
 
         $result = random_bytes_emulate(0);
@@ -3126,5 +3168,118 @@ class core_moodlelib_testcase extends advanced_testcase {
         $result = complex_random_string(-1);
         $this->assertSame('', $result);
         $this->assertDebuggingCalled();
+    }
+
+    /**
+     * Data provider for private ips.
+     */
+    public function data_private_ips() {
+        return array(
+            array('10.0.0.0'),
+            array('172.16.0.0'),
+            array('192.168.1.0'),
+            array('fdfe:dcba:9876:ffff:fdc6:c46b:bb8f:7d4c'),
+            array('fdc6:c46b:bb8f:7d4c:fdc6:c46b:bb8f:7d4c'),
+            array('fdc6:c46b:bb8f:7d4c:0000:8a2e:0370:7334'),
+            array('127.0.0.1'), // This has been buggy in past: https://bugs.php.net/bug.php?id=53150.
+        );
+    }
+
+    /**
+     * Checks ip_is_public returns false for private ips.
+     *
+     * @param string $ip the ipaddress to test
+     * @dataProvider data_private_ips
+     */
+    public function test_ip_is_public_private_ips($ip) {
+        $this->assertFalse(ip_is_public($ip));
+    }
+
+    /**
+     * Data provider for public ips.
+     */
+    public function data_public_ips() {
+        return array(
+            array('2400:cb00:2048:1::8d65:71b3'),
+            array('2400:6180:0:d0::1b:2001'),
+            array('141.101.113.179'),
+            array('123.45.67.178'),
+        );
+    }
+
+    /**
+     * Checks ip_is_public returns true for public ips.
+     *
+     * @param string $ip the ipaddress to test
+     * @dataProvider data_public_ips
+     */
+    public function test_ip_is_public_public_ips($ip) {
+        $this->assertTrue(ip_is_public($ip));
+    }
+
+    /**
+     * Test the function can_send_from_real_email_address
+     *
+     * @param string $email Email address for the from user.
+     * @param int $display The user's email display preference.
+     * @param bool $samecourse Are the users in the same course?
+     * @param bool $result The expected result.
+     * @dataProvider data_can_send_from_real_email_address
+     */
+    public function test_can_send_from_real_email_address($email, $display, $samecourse, $result) {
+        global $DB;
+        $this->resetAfterTest();
+
+        $fromuser = $this->getDataGenerator()->create_user();
+        $touser = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $alloweddomains = ['example.com'];
+
+        $fromuser->email = $email;
+        $fromuser->maildisplay = $display;
+        if ($samecourse) {
+            $this->getDataGenerator()->enrol_user($fromuser->id, $course->id, 'student');
+            $this->getDataGenerator()->enrol_user($touser->id, $course->id, 'student');
+        } else {
+            $this->getDataGenerator()->enrol_user($fromuser->id, $course->id, 'student');
+        }
+        $this->assertEquals($result, can_send_from_real_email_address($fromuser, $touser, $alloweddomains));
+    }
+
+    /**
+     * Data provider for test_can_send_from_real_email_address.
+     *
+     * @return array Returns an array of test data for the above function.
+     */
+    public function data_can_send_from_real_email_address() {
+        return [
+            // Test from email is in allowed domain.
+            // Test that from display is set to show no one.
+            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_HIDE,
+             'samecourse' => false, 'result' => false],
+            // Test that from display is set to course members only (course member).
+            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+             'samecourse' => true, 'result' => true],
+            // Test that from display is set to course members only (Non course member).
+            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+             'samecourse' => false, 'result' => false],
+             // Test that from display is set to show everyone.
+            ['email' => 'fromuser@example.com', 'display' => core_user::MAILDISPLAY_EVERYONE,
+             'samecourse' => false, 'result' => true],
+
+            // Test from email is not in allowed domain.
+            // Test that from display is set to show no one.
+            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_HIDE,
+             'samecourse' => false, 'result' => false],
+             // Test that from display is set to course members only (course member).
+            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+             'samecourse' => true, 'result' => false],
+             // Test that from display is set to course members only (Non course member.
+            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_COURSE_MEMBERS_ONLY,
+             'samecourse' => false, 'result' => false],
+             // Test that from display is set to show everyone.
+            ['email' => 'fromuser@moodle.com', 'display' => core_user::MAILDISPLAY_EVERYONE,
+             'samecourse' => false, 'result' => false],
+        ];
     }
 }

@@ -72,6 +72,21 @@ abstract class AbstractWriter implements WriterInterface
     }
 
     /**
+     * Sets the default styles for all rows added with "addRow".
+     * Overriding the default style instead of using "addRowWithStyle" improves performance by 20%.
+     * @see https://github.com/box/spout/issues/272
+     *
+     * @param Style\Style $defaultStyle
+     * @return AbstractWriter
+     */
+    public function setDefaultRowStyle($defaultStyle)
+    {
+        $this->defaultRowStyle = $defaultStyle;
+        $this->resetRowStyleToDefault();
+        return $this;
+    }
+
+    /**
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      * @return AbstractWriter
      */
@@ -120,6 +135,10 @@ abstract class AbstractWriter implements WriterInterface
 
         $this->filePointer = $this->globalFunctionsHelper->fopen('php://output', 'w');
         $this->throwIfFilePointerIsNotAvailable();
+
+        // Clear any previous output (otherwise the generated file will be corrupted)
+        // @see https://github.com/box/spout/issues/241
+        $this->globalFunctionsHelper->ob_end_clean();
 
         // Set headers
         $this->globalFunctionsHelper->header('Content-Type: ' . static::$headerContentType);
@@ -238,7 +257,8 @@ abstract class AbstractWriter implements WriterInterface
     public function addRows(array $dataRows)
     {
         if (!empty($dataRows)) {
-            if (!is_array($dataRows[0])) {
+            $firstRow = reset($dataRows);
+            if (!is_array($firstRow)) {
                 throw new InvalidArgumentException('The input should be an array of arrays');
             }
 

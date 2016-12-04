@@ -61,7 +61,7 @@ Feature: A history of each wiki page is available
     And I follow "History"
     And I click on "3" "link" in the "Student 2" "table_row"
     And I should see "Third edition"
-    And I should see "Student 2" in the "#region-main" "css_element"
+    And I should see "Student 2" in the "region-main" "region"
     And I follow "History"
     And I click on "comparewith" "radio" in the "Student 1" "table_row"
     And I click on "compare" "radio" in the "Teacher 1" "table_row"

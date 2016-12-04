@@ -101,10 +101,12 @@ class user_bulk_form extends moodleform {
         $objs = array();
         $objs[] =& $mform->createElement('submit', 'addsel', get_string('addsel', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'removesel', get_string('removesel', 'bulkusers'));
+        $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedlist', 'bulkusers'), $objs, null, false);
+        $mform->addHelpButton('buttonsgrp', 'selectedlist', 'bulkusers');
+        $objs = array();
         $objs[] =& $mform->createElement('submit', 'addall', get_string('addall', 'bulkusers'));
         $objs[] =& $mform->createElement('submit', 'removeall', get_string('removeall', 'bulkusers'));
-        $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedlist', 'bulkusers'), $objs, array(' ', '<br />'), false);
-        $mform->addHelpButton('buttonsgrp', 'selectedlist', 'bulkusers');
+        $grp =& $mform->addElement('group', 'buttonsgrp2', '', $objs, null, false);
 
         $renderer =& $mform->defaultRenderer();
         $template = '<label class="qflabel" style="vertical-align:top">{label}</label> {element}';

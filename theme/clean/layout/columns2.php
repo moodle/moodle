@@ -25,14 +25,8 @@
 // Get the HTML for the settings bits.
 $html = theme_clean_get_html_for_settings($OUTPUT, $PAGE);
 
-// Set default (LTR) layout mark-up for a two column page (side-pre-only).
 $regionmain = 'span9 pull-right';
 $sidepre = 'span3 desktop-first-column';
-// Reset layout mark-up for RTL languages.
-if (right_to_left()) {
-    $regionmain = 'span9';
-    $sidepre = 'span3 pull-right';
-}
 
 echo $OUTPUT->doctype() ?>
 <html <?php echo $OUTPUT->htmlattributes(); ?>>
@@ -53,6 +47,7 @@ echo $OUTPUT->doctype() ?>
             <?php echo $OUTPUT->navbar_home(); ?>
             <?php echo $OUTPUT->navbar_button(); ?>
             <?php echo $OUTPUT->user_menu(); ?>
+            <?php echo $OUTPUT->navbar_plugin_output(); ?>
             <?php echo $OUTPUT->search_box(); ?>
             <div class="nav-collapse collapse">
                 <?php echo $OUTPUT->custom_menu(); ?>

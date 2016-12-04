@@ -68,7 +68,7 @@ Feature: Settings form fields disabled if not required
 
     When I press "Save and display"
     And I navigate to "User overrides" node in "Quiz administration"
-    And I follow "Edit"
+    And I click on "Edit" "link" in the "region-main" "region"
     And I set the field "Attempts allowed" to "2"
     And I press "Save"
     And I navigate to "Edit settings" node in "Quiz administration"

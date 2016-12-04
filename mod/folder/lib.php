@@ -556,3 +556,207 @@ function folder_downloaded($folder, $course, $cm, $context) {
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
 }
+
+/**
+ * Returns all uploads since a given time in specified folder.
+ *
+ * @param array $activities
+ * @param int $index
+ * @param int $timestart
+ * @param int $courseid
+ * @param int $cmid
+ * @param int $userid
+ * @param int $groupid not used, but required for compatibilty with other modules
+ */
+function folder_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+    global $COURSE, $DB, $OUTPUT;
+
+    if ($COURSE->id == $courseid) {
+        $course = $COURSE;
+    } else {
+        $course = $DB->get_record('course', array('id' => $courseid));
+    }
+
+    $modinfo = get_fast_modinfo($course);
+    $cm = $modinfo->cms[$cmid];
+
+    $context = context_module::instance($cm->id);
+    if (!has_capability('mod/folder:view', $context)) {
+        return;
+    }
+    $files = folder_get_recent_activity($context, $timestart, $userid);
+
+    foreach ($files as $file) {
+        $tmpactivity = new stdClass();
+
+        $tmpactivity->type       = 'folder';
+        $tmpactivity->cmid       = $cm->id;
+        $tmpactivity->sectionnum = $cm->sectionnum;
+        $tmpactivity->timestamp  = $file->get_timemodified();
+        $tmpactivity->user       = core_user::get_user($file->get_userid());
+
+        $tmpactivity->content           = new stdClass();
+        $tmpactivity->content->url      = moodle_url::make_pluginfile_url($file->get_contextid(), 'mod_folder', 'content',
+            $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+
+        if (file_extension_in_typegroup($file->get_filename(), 'web_image')) {
+            $image = $tmpactivity->content->url->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
+            $image = html_writer::empty_tag('img', array('src' => $image));
+        } else {
+            $image = $OUTPUT->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+        }
+
+        $tmpactivity->content->image    = $image;
+        $tmpactivity->content->filename = $file->get_filename();
+
+        $activities[$index++] = $tmpactivity;
+    }
+
+}
+
+/**
+ * Outputs the folder uploads indicated by $activity.
+ *
+ * @param object $activity      the activity object the folder resides in
+ * @param int    $courseid      the id of the course the folder resides in
+ * @param bool   $detail        not used, but required for compatibilty with other modules
+ * @param int    $modnames      not used, but required for compatibilty with other modules
+ * @param bool   $viewfullnames not used, but required for compatibilty with other modules
+ */
+function folder_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
+    global $OUTPUT;
+
+    $content = $activity->content;
+    $tableoptions = [
+        'border' => '0',
+        'cellpadding' => '3',
+        'cellspacing' => '0'
+    ];
+    $output = html_writer::start_tag('table', $tableoptions);
+    $output .= html_writer::start_tag('tr');
+    $output .= html_writer::tag('td', $content->image, ['class' => 'fp-icon', 'valign' => 'top']);
+    $output .= html_writer::start_tag('td');
+    $output .= html_writer::start_div('fp-filename');
+    $output .= html_writer::link($content->url, $content->filename);
+    $output .= html_writer::end_div();
+
+    // Show the uploader.
+    $fullname = fullname($activity->user, $viewfullnames);
+    $userurl = new moodle_url('/user/view.php');
+    $userurl->params(['id' => $activity->user->id, 'course' => $courseid]);
+    $by = new stdClass();
+    $by->name = html_writer::link($userurl, $fullname);
+    $by->date = userdate($activity->timestamp);
+    $authornamedate = get_string('bynameondate', 'folder', $by);
+    $output .= html_writer::div($authornamedate, 'user');
+
+    // Finish up the table.
+    $output .= html_writer::end_tag('tr');
+    $output .= html_writer::end_tag('table');
+
+    echo $output;
+}
+
+/**
+ * Gets recent file uploads in a given folder. Does not perform security checks.
+ *
+ * @param object $context
+ * @param int $timestart
+ * @param int $userid
+ *
+ * @return array
+ */
+function folder_get_recent_activity($context, $timestart, $userid=0) {
+    $newfiles = array();
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_folder', 'content');
+    foreach ($files as $file) {
+        if ($file->get_timemodified() <= $timestart) {
+            continue;
+        }
+        if ($file->get_filename() === '.') {
+            continue;
+        }
+        if (!empty($userid) && $userid !== $file->get_userid()) {
+            continue;
+        }
+        $newfiles[] = $file;
+    }
+    return $newfiles;
+}
+
+/**
+ * Given a course and a date, prints a summary of all the new
+ * files posted in folder resources since that date
+ *
+ * @uses CONTEXT_MODULE
+ * @param object $course
+ * @param bool $viewfullnames capability
+ * @param int $timestart
+ * @return bool success
+ */
+function folder_print_recent_activity($course, $viewfullnames, $timestart) {
+    global $OUTPUT;
+
+    $folders = get_all_instances_in_course('folder', $course);
+
+    if (empty($folders)) {
+        return false;
+    }
+
+    $newfiles = array();
+
+    $modinfo = get_fast_modinfo($course);
+    foreach ($folders as $folder) {
+        // Skip resources if the user can't view them.
+        $cm = $modinfo->cms[$folder->coursemodule];
+        $context = context_module::instance($cm->id);
+        if (!has_capability('mod/folder:view', $context)) {
+            continue;
+        }
+
+        // Get the files uploaded in the current time frame.
+        $newfiles = array_merge($newfiles, folder_get_recent_activity($context, $timestart));
+    }
+
+    if (empty($newfiles)) {
+        return false;
+    }
+
+    // Build list of files.
+    echo $OUTPUT->heading(get_string('newfoldercontent', 'folder').':', 3);
+    $list = html_writer::start_tag('ul', ['class' => 'unlist']);
+    foreach ($newfiles as $file) {
+        $filename = $file->get_filename();
+        $url = moodle_url::make_pluginfile_url($file->get_contextid(), 'mod_folder', 'content',
+            $file->get_itemid(), $file->get_filepath(), $filename);
+
+        $list .= html_writer::start_tag('li');
+        $list .= html_writer::start_div('head');
+        $list .= html_writer::div(userdate($file->get_timemodified(), get_string('strftimerecent')), 'date');
+        $list .= html_writer::div($file->get_author(), 'name');
+        $list .= html_writer::end_div(); // Head.
+
+        $list .= html_writer::start_div('info');
+        $list .= html_writer::link($url, $filename);
+        $list .= html_writer::end_div(); // Info.
+        $list .= html_writer::end_tag('li');
+    }
+    $list .= html_writer::end_tag('ul');
+    echo $list;
+    return true;
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function folder_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
+    return $updates;
+}

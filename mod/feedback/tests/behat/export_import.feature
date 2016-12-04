@@ -24,7 +24,7 @@ Feature: Exporting and importing feedbacks
     When I log in as "teacher"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
@@ -76,7 +76,7 @@ Feature: Exporting and importing feedbacks
     When I log in as "teacher"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Numeric answer" question to the feedback with:
       | Question               | Existing question |
       | Label                  | numeric           |
@@ -85,7 +85,7 @@ Feature: Exporting and importing feedbacks
     And I follow "Import questions"
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
     And I press "Yes"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     Then I should not see "Existing question"
     And I should see "this is an information question"
     And I should see "label text"
@@ -103,7 +103,7 @@ Feature: Exporting and importing feedbacks
     When I log in as "teacher"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Numeric answer" question to the feedback with:
       | Question               | Existing question |
       | Label                  | numeric           |
@@ -113,7 +113,7 @@ Feature: Exporting and importing feedbacks
     And I set the field "Append new items" to "1"
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
     And I press "Yes"
-    And I follow "Edit questions"
+    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     Then I should see "Existing question"
     And "Existing question" "text" should appear before "this is an information question" "text"
     And I should see "this is an information question"

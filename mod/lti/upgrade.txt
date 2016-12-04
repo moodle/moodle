@@ -1,5 +1,12 @@
 This files describes API changes in the lti code.
 
+=== 3.2 ===
+
+* Support for LTI ContentItem message type.
+* New function lti_build_content_item_selection_request() for building an LTI ContentItemSelectionRequest.
+* New Select content button in External tool configuration page that lets the user configure an external tool by fetching tool
+  configuration content from the preconfigured tool's content selection interface.
+
 === 3.1 ===
 
 * When requesting a grade from the outcome service, and empty grade will now be returned as

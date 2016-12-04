@@ -1,0 +1,1219 @@
+/** The message area **/
+@mixin setSelectedContact() {
+    background-color: #4f94cd;
+    color: #fff;
+    border: none;
+
+    .information {
+        .lastmessage {
+            color: #fff;
+        }
+    }
+    .picture {
+        border: none;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.messaging-area-container {
+    margin-bottom: 30px;
+
+    .status {
+        .online-text {
+            display: none;
+            color: #7d7;
+        }
+
+        .offline-text {
+            color: #ff6961;
+        }
+
+        &.online {
+            .online-text {
+                display: block;
+            }
+            .offline-text {
+                display: none;
+            }
+        }
+    }
+
+    a,
+    .btn.btn-link {
+        color: #4f94cd;
+    }
+
+    .messaging-area {
+        border: 1px solid #e3e3e3;
+        clear: both;
+
+        img {
+            max-width: 100%;
+        }
+
+        .contacts-area {
+            border-right: 1px solid #e3e3e3;
+            height: 600px;
+            @media (max-height: 670px) {
+                height: 500px;
+            }
+            width: 280px;
+            display: inline-block;
+            box-sizing: border-box;
+
+            &.searchfilter {
+
+                .searchtextarea {
+                    height: 80px;
+                }
+
+                .searcharea {
+                    height: 470px;
+                }
+            }
+
+            .searchtextarea {
+                padding: 5px;
+                text-align: center;
+                height: 50px;
+                box-sizing: border-box;
+                line-height: 50px;
+                background-color: #fff;
+                transition: background-color linear 0.2s;
+
+                input {
+                    height: 28px;
+                    line-height: 20px;
+                    margin-bottom: 10px;
+                    vertical-align: middle;
+                    padding: 4px 6px;
+                    background-color: #f5f5f5;
+                    border: 0;
+                    width: 90%;
+                    box-shadow: none;
+                    transition: background-color linear 0.2s;
+
+                    &:focus {
+                        box-shadow: none;
+                    }
+                }
+
+                &.searching {
+                    background-color: #f5f5f5;
+                    transition: background-color linear 0.2s;
+
+                    input {
+                        background-color: #fff;
+                        transition: background-color linear 0.2s;
+                    }
+                }
+
+                .searchfilterarea {
+                    line-height: 20px;
+                    cursor: pointer;
+
+                    .searchfilter {
+                        float: left;
+                    }
+
+                    .searchfilterdelete {
+                        float: left;
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            .searcharea {
+
+                .heading {
+                    text-align: center;
+                    border-top: 1px solid black;
+                    border-bottom: 1px solid black;
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+
+                .course {
+                    text-align: center;
+
+                    &:hover {
+                        background-color: #4f94cd;
+                        color: #fff;
+                        border: none;
+                        cursor: pointer;
+                    }
+                }
+
+                .noresults {
+                    padding-top: 20px;
+                    text-align: center;
+                }
+            }
+
+            .contacts {
+                height: 500px;
+                @media (max-height: 670px) {
+                    height: 400px;
+                }
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+
+                .nocontacts {
+                    padding-top: 20px;
+                    text-align: center;
+                }
+
+                .contact {
+                    height: 66px;
+                    cursor: pointer;
+                    border-bottom: 1px solid #e3e3e3;
+                    box-sizing: border-box;
+
+                    &.unread {
+                        background-color: #f1f1f1;
+
+                        .picture {
+                            border-color: #f1f1f1;
+                        }
+
+                        .information {
+                            width: 60%;
+                        }
+
+                        .unread-count-container {
+                            display: inline-block;
+                            width: 15%;
+                            float: left;
+                        }
+                    }
+
+                    &:hover {
+                        @include setSelectedContact();
+                        background-color: #79b5e6;
+                    }
+
+                    &.selected {
+                        @include setSelectedContact();
+                    }
+
+                    .picture {
+                        line-height: 66px;
+                        text-align: center;
+                        height: 66px;
+                        border-bottom: 1px solid #fff;
+                        width: 25%;
+                        float: left;
+                        display: inline-block;
+                        box-sizing: border-box;
+
+                        img {
+                            border-radius: 50%;
+                            height: 54px;
+                        }
+                    }
+
+                    .information {
+                        padding: 6px 0;
+                        height: 66px;
+                        width: 75%;
+                        float: left;
+                        display: inline-block;
+                        box-sizing: border-box;
+
+                        .name {
+                            font-weight: bold;
+
+                            img {
+                                vertical-align: baseline;
+                            }
+                        }
+
+                        .lastmessage {
+                            word-wrap: break-word;
+                            margin: 0;
+                            height: 40px;
+                            line-height: 17px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            color: #a1a1a1;
+                            padding-right: 10px;
+                        }
+                    }
+
+                    .unread-count-container {
+                        display: none;
+                        line-height: 66px;
+                        text-align: center;
+                        box-sizing: border-box;
+                    }
+                }
+            }
+
+            @mixin setSelectedTab() {
+                color: #4f94cd;
+            }
+
+            .tabs {
+                border-top: 1px solid #e3e3e3;
+                height: 50px;
+                box-sizing: border-box;
+
+                .tab {
+                    cursor: pointer;
+                    height: 100%;
+                    background-color: #f5f5f5;
+                    margin: 0;
+                    width: 50%;
+                    text-align: center;
+                    float: left;
+
+                    &:hover {
+                        @include setSelectedTab();
+                    }
+
+                    .tabimage {
+                        height: 30px;
+                        line-height: 30px;
+
+                        img {
+                            height: 20px;
+                        }
+                    }
+                }
+
+                .tab.selected {
+                    @include setSelectedTab();
+                }
+            }
+        }
+
+        .messages-area {
+            width: calc(100% - 280px);
+            height: 600px;
+            @media (max-height: 670px) {
+                height: 500px;
+            }
+            box-sizing: border-box;
+            margin: 0;
+            position: relative;
+            float: right;
+
+            .btn-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding-left: 15px;
+                font-weight: normal;
+
+                &.view-toggle {
+                    display: none;
+                }
+
+                &.delete-all {
+                    display: none;
+                }
+            }
+
+            .profile-header {
+                height: 50px;
+                line-height: 50px;
+                display: none;
+
+                .btn-container {
+                    display: block;
+
+                    .btn-link {
+                        padding: 0;
+                        line-height: inherit;
+                    }
+                }
+            }
+
+            .profile {
+                padding: 30px;
+                font-size: 16px;
+                height: 600px;
+                @media (max-height: 670px) {
+                    height: 500px;
+                }
+                box-sizing: border-box;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+
+                .user-container {
+                    height: 100px;
+
+                    .profile-picture {
+                        border-radius: 50%;
+                        max-height: 100px;
+                        display: inline-block;
+                    }
+
+                    .name-container {
+                        display: inline-block;
+                        vertical-align: top;
+                        margin-top: 20px;
+                        margin-left: 10px;
+
+                        .name {
+                            font-weight: bold;
+                            display: block;
+                        }
+
+                        .status {
+                            display: block;
+                            font-size: 14px;
+                        }
+                    }
+                }
+
+                .information {
+                    margin: 0;
+                    display: inline-block;
+                    float: right;
+                    margin-top: 20px;
+                    font-size: 14px;
+                    list-style: none;
+
+                    .name {
+                        display: inline-block;
+                        font-weight: bold;
+                        text-align: right;
+                        margin-right: 10px;
+                    }
+
+                    .value {
+                        display: inline-block;
+                    }
+                }
+
+                .actions {
+                    padding-top: 80px;
+
+                    .separator {
+                        border-bottom: 1px solid #e3e3e3;
+                        margin-bottom: 20px;
+                        padding-bottom: 5px;
+
+                        a {
+                            &.danger {
+                                color: #ff6961;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .messages-header {
+                height: 50px;
+                font-weight: bold;
+                line-height: 50px;
+                box-sizing: border-box;
+                border-bottom: 1px solid #e3e3e3;
+                text-align: center;
+                position: relative;
+
+                .btn-link {
+                    padding: 0;
+                    line-height: inherit;
+                }
+
+                .delete-instructions {
+                    display: none;
+                }
+
+                .name-container {
+                    padding-top: 9px;
+                    display: inline-block;
+
+                    .name {
+                        line-height: 20px;
+                    }
+
+                    .status {
+                        line-height: 12px;
+                        font-size: 12px;
+                        font-weight: normal;
+                    }
+                }
+
+                .actions {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    padding-right: 15px;
+                    font-weight: normal;
+
+                    .cancel-messages-delete {
+                        display: none;
+                    }
+                }
+            }
+
+            .messages {
+                height: 500px;
+                @media (max-height: 670px) {
+                    height: 400px;
+                }
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+                box-sizing: border-box;
+                padding: 20px;
+
+                .blocktime {
+                    clear: both;
+                    text-align: center;
+                    color: #a1a1a1;
+                    font-size: 12px;
+                    margin: 5px 0;
+                }
+
+                .message {
+                    @include make-row(0);
+
+                    .deletemessagecheckbox {
+                        display: none;
+                        text-align: center;
+                        padding-top: 5px;
+                    }
+
+                    .content {
+                        border: 1px solid #e3e3e3;
+                        padding: 10px;
+                        margin-bottom: 5px;
+                        font-size: 12px;
+                        word-wrap: break-word;
+                        max-width: 55%;
+                        position: relative;
+
+                        .text {
+                            display: block;
+
+                            p {
+                                margin: 0;
+                            }
+                        }
+
+                        .timesent {
+                            font-size: 10px;
+                            color: #a1a1a1;
+                            float: right;
+                        }
+                    }
+
+                    .content.left {
+                        float: left;
+                    }
+
+                    .content.right {
+                        float: right;
+                    }
+                }
+            }
+
+            .response {
+                display: table;
+                padding: 10px 10px 9px;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                line-height: 28px;
+                text-align: center;
+                border-top: 1px solid #e3e3e3;
+                box-sizing: border-box;
+                background-color: #fff;
+                transition: background-color linear 0.2s;
+
+                .delete-confirmation {
+                    display: none;
+
+                    .btn.btn-link.confirm {
+                        border: 1px solid #4f94cd;
+                        height: 30px;
+
+                        &:hover {
+                            background-color: #4f94cd;
+                            color: #fff;
+                            text-shadow: none;
+                        }
+                    }
+                }
+
+                .message-box {
+                    display: table-row;
+
+                    .message-text-container {
+                        display: table-cell;
+
+                        textarea {
+                            line-height: 20px;
+                            padding: 4px 6px;
+                            vertical-align: middle;
+                            width: 100%;
+                            margin: 0;
+                            resize: none;
+                            border: none;
+                            box-shadow: none;
+                            box-sizing: border-box;
+                            background-color: #f5f5f5;
+                            transition: background-color linear 0.2s;
+
+                            &:focus {
+                                box-shadow: none;
+                            }
+                        }
+                    }
+
+                    .send-button-container {
+                        display: table-cell;
+                        width: 1px;
+
+                        button {
+                            height: 30px;
+                        }
+                    }
+                }
+
+                &.messaging {
+                    background-color: #f5f5f5;
+                    transition: background-color linear 0.2s;
+
+                    .message-box {
+                        .message-text-container {
+                            textarea {
+                                background-color: #fff;
+                                transition: background-color linear 0.2s;
+                            }
+                        }
+                    }
+                }
+            }
+
+            &.editing {
+                .messages-header {
+                    .btn-container {
+                        &.view-all {
+                            display: none;
+                        }
+
+                        &.delete-all {
+                            display: block;
+                        }
+                    }
+
+                    .delete-instructions {
+                        display: block;
+                    }
+
+                    .name-container {
+                        display: none;
+                    }
+
+                    .actions {
+                        .messages-delete {
+                            display: none;
+                        }
+
+                        .cancel-messages-delete {
+                            display: block;
+                        }
+                    }
+                }
+
+                .messages {
+                    .message {
+                        cursor: pointer;
+
+                        &[aria-checked="true"] {
+                            .content {
+                                background-color: #4f94cd;
+                                border-color: #4f94cd;
+                                color: #fff;
+
+                                .timesent {
+                                    color: #fff;
+                                }
+                            }
+                        }
+
+                        &[aria-checked="false"] {
+                            .content {
+                                &:hover {
+                                    background-color: #79b5e6;
+                                    color: #fff;
+
+                                    .timesent {
+                                        color: #fff;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .response {
+                    .delete-confirmation {
+                        display: block;
+                    }
+
+                    .message-box {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.preferences-container {
+    .container-fluid {
+        padding: 0;
+
+        .span6 {
+            min-height: 20px;
+        }
+    }
+    .align-bottom {
+        vertical-align: bottom;
+    }
+    .preference-table {
+        border: 1px solid #ddd;
+
+        thead {
+            th {
+                text-align: center;
+
+                .config-warning {
+                    display: none;
+                }
+
+                &.unconfigured {
+                    .config-warning {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+        tr {
+            td {
+                &:not(:first-child) {
+                    width: 150px;
+                    text-align: center;
+                }
+                &:nth-child(even) {
+                    background-color: #f7f7f7;
+                }
+            }
+            th:nth-child(even) {
+                background-color: #f7f7f7;
+            }
+        }
+        .preference-row {
+            .hover-tooltip-container {
+                display: inline-block;
+            }
+
+            .preference-name {
+                vertical-align: middle;
+            }
+            .disabled-message {
+                text-align: center;
+                height: 30px;
+                line-height: 30px;
+            }
+            .preference-state {
+                margin: 0;
+                padding: 0;
+                display: inline-block;
+                vertical-align: middle;
+
+                input[type="checkbox"]:checked + .preference-state-status-container {
+                    background-color: #5cb85c;
+
+                    .on-text {
+                        display: inline-block;
+                    }
+                    .off-text {
+                        display: none;
+                    }
+                }
+                .preference-state-status-container {
+                    width: 30px;
+                    height: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                    border-radius: 4px;
+                    background-color: #d9534f;
+                    color: #fff;
+                    cursor: pointer;
+
+                    .loading-icon {
+                        display: none;
+                    }
+                    .on-text {
+                        display: none;
+                    }
+                    .off-text {
+                        display: inline-block;
+                    }
+                }
+                &.loading {
+                    input[type="checkbox"]:checked + .preference-state-status-container {
+                        .on-text,
+                        .off-text {
+                            display: none;
+                        }
+                    }
+
+                    .preference-state-status-container {
+                        .on-text,
+                        .off-text {
+                            display: none;
+                        }
+                        .loading-icon {
+                            display: block;
+                        }
+                    }
+                }
+            }
+            &.loading {
+                .preference-name {
+                    .loading-icon {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.disabled-message {
+    display: none;
+}
+
+.disabled {
+    .disabled-message {
+        display: block;
+
+        + form {
+            display: none;
+        }
+    }
+}
+
+.general-settings-container {
+    .loading-icon {
+        display: none;
+    }
+    .loading {
+        .loading-icon {
+            display: inline-block;
+        }
+    }
+    label {
+        display: inline-block;
+    }
+}
+.processor-container {
+    position: relative;
+
+    .loading-container {
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.5);
+
+        .vertical-align {
+            height: 100%;
+            width: 0%;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+
+    &.loading {
+        .loading-container {
+            display: block;
+        }
+    }
+}
+
+.preferences-page-container {
+    .checkbox-container {
+        margin: 30px 5px;
+        line-height: 20px;
+
+        input {
+            line-height: 20px;
+            margin: 0;
+        }
+
+        .loading-icon {
+            display: none;
+        }
+
+        &.loading {
+            .loading-icon {
+                display: inline-block;
+            }
+        }
+    }
+}
+
+.notification-area {
+    height: 600px;
+    @media (max-height: 670px) {
+        height: 500px;
+    }
+    box-sizing: border-box;
+    border-radius: 4px;
+    margin-bottom: 30px;
+    border: 1px solid #e3e3e3;
+
+    .control-area {
+        box-sizing: border-box;
+        display: inline-block;
+        width: 300px;
+        height: 100%;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        border-right: 1px solid #e3e3e3;
+
+        .content {
+            position: relative;
+
+            .content-item-container {
+                cursor: pointer;
+            }
+
+            &:empty + .empty-text {
+                display: block;
+            }
+        }
+
+        .loading-icon {
+            display: none;
+        }
+
+        .empty-text {
+            display: none;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        &.loading {
+            .loading-icon {
+                display: block;
+                text-align: center;
+                box-sizing: border-box;
+                padding: 5px;
+            }
+
+            .content:empty + .empty-text {
+                display: none;
+            }
+        }
+    }
+
+    .content-area {
+        box-sizing: border-box;
+        display: inline-block;
+        width: calc(100% - 300px);
+        float: right;
+
+        .toggle-mode {
+            display: none;
+        }
+
+        .header {
+            height: 50px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #e3e3e3;
+            padding: 5px;
+
+            .image-container {
+                display: inline-block;
+                height: 25px;
+                width: 24px;
+                float: left;
+            }
+
+            .subject-container {
+                display: inline-block;
+                max-width: calc(100% - 24px);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                height: 25px;
+                padding-left: 5px;
+                box-sizing: border-box;
+            }
+
+            .timestamp {
+                font-size: 10px;
+                line-height: 10px;
+                margin: 0;
+                color: #666;
+                margin-left: 30px;
+            }
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        > .content {
+            height: 500px;
+            @media (max-height: 670px) {
+                height: 400px;
+            }
+            box-sizing: border-box;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 15px;
+
+            &:empty {
+                display: none;
+
+                & + .empty-text {
+                    display: block;
+                    text-align: center;
+                    padding-top: 100px;
+                }
+            }
+        }
+
+        .empty-text {
+            display: none;
+        }
+
+        .footer {
+            height: 50px;
+            box-sizing: border-box;
+            text-align: center;
+
+            a {
+                line-height: 50px;
+            }
+
+            &:empty {
+                display: none;
+            }
+        }
+    }
+}
+
+@media (max-width: 979px) {
+    .messaging-area-container {
+        .messaging-area {
+            position: relative;
+            overflow: hidden;
+            height: 600px;
+            @media (max-height: 670px) {
+                height: 500px;
+            }
+
+            .messages-area {
+                .messages-header {
+                    .btn-container {
+                        &.view-toggle {
+                            display: block;
+                        }
+
+                        &.delete-all {
+                            display: none;
+                        }
+                    }
+                }
+
+                .profile-header {
+                    display: block;
+                }
+
+                .profile {
+                    height: 550px;
+                }
+
+                &.editing {
+                    .messages-header {
+                        .btn-container {
+                            &.view-toggle {
+                                display: none;
+                            }
+
+                            &.delete-all {
+                                display: block;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .contacts-area {
+                width: 100%;
+                border-right: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: auto;
+                bottom: auto;
+            }
+
+            .messages-area {
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: auto;
+                right: 0;
+                bottom: auto;
+            }
+
+            &.show-messages {
+                .contacts-area {
+                    left: -100%;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: left 0.25s, opacity 0.25s, visibility 0.25s;
+                }
+
+                .messages-area {
+                    right: 0;
+                    opacity: 1;
+                    visibility: visible;
+                    transition: right 0.25s, opacity 0.25s, visibility 0.25s;
+                }
+            }
+
+            &.hide-messages {
+                .contacts-area {
+                    left: 0;
+                    opacity: 1;
+                    visibility: visible;
+                    transition: left 0.25s, opacity 0.25s, visibility 0.25s;
+
+                    .contact {
+                        &.selected {
+                            background-color: inherit;
+                            color: inherit;
+                            border-bottom: 1px solid #e3e3e3;
+
+                            &:hover {
+                                @include setSelectedContact();
+                                background-color: #79b5e6;
+                            }
+
+                            .picture {
+                                border-bottom: 1px solid #fff;
+                            }
+
+                            .information {
+                                .lastmessage {
+                                    color: #a1a1a1;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                .messages-area {
+                    right: -100%;
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: right 0.25s, opacity 0.25s, visibility 0.25s;
+                }
+            }
+        }
+    }
+
+    .notification-area {
+        position: relative;
+        overflow: hidden;
+
+        .control-area {
+            border-right: none;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 1;
+            visibility: visible;
+            transition: left 0.25s;
+        }
+
+        .content-area {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            right: -100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: right 0.25s, opacity 0.25s, visibility 0.25s;
+
+            .toggle-mode {
+                display: inline-block;
+                float: left;
+                width: 70px;
+                height: 50px;
+                line-height: 50px;
+                box-sizing: border-box;
+                border-right: 1px solid #e3e3e3;
+                border-bottom: 1px solid #e3e3e3;
+            }
+
+            .header {
+                display: inline-block;
+                width: calc(100% - 70px);
+            }
+        }
+
+        &.show-content-area {
+            .control-area {
+                left: -100%;
+                opacity: 0;
+                visibility: hidden;
+                transition: left 0.25s, opacity 0.25s, visibility 0.25s;
+            }
+
+            .content-area {
+                right: 0;
+                opacity: 1;
+                visibility: visible;
+                transition: right 0.25s;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .messaging-area-container {
+        .messaging-area {
+            .messages-area {
+                &.editing {
+                    .messages-header {
+                        height: 80px;
+
+                        .delete-all {
+                            top: 30px;
+                        }
+
+                        .actions {
+                            top: 30px;
+                        }
+                    }
+
+                    .messages {
+                        height: 470px;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,15 @@
+    {{#children}}
+        {{^divider}}
+            {{#url}}
+                <li><a href="{{{url}}}" title="{{{title}}}">{{{text}}}</a></li>
+            {{/url}}
+            {{^url}}
+                <li>{{{text}}}</li>
+            {{/url}}
+        {{/divider}}
+        {{#haschildren}}
+            <ul class="list-unstyled m-l-1">
+                {{> theme_boost/custom_menu_footer }}
+            </ul>
+        {{/haschildren}}
+    {{/children}}

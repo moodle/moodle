@@ -1,3 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/competency_summary
+
+    Summary of a competency
+
+    Context variables required for this template:
+    * competency
+      * id
+      * shortname
+      * idnumber
+      * description
+    * framework
+      * shortname
+    * comppath array of ancestors
+    * showrelatedcompetencies boolean
+    * related
+    * showrule boolean
+    * rule
+      * outcome
+      * type
+
+    Example context (json):
+    {
+        "competency": {
+            "id": 1,
+            "shortname": "C1",
+            "idnumber": "PATH",
+            "description": "Can do something"
+        },
+        "framework": {
+            "shortname": "F1"
+        }
+    }
+}}
 <div class='competency-heading'>
     <h4 id="competency_link_{{competency.id}}">{{{competency.shortname}}}
         <small>{{competency.idnumber}}</small>

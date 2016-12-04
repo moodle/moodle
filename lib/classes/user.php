@@ -43,6 +43,21 @@ class core_user {
      */
     const SUPPORT_USER = -20;
 
+    /**
+     * Hide email address from everyone.
+     */
+    const MAILDISPLAY_HIDE = 0;
+
+    /**
+     * Display email address to everyone.
+     */
+    const MAILDISPLAY_EVERYONE = 1;
+
+    /**
+     * Display email address to course members only.
+     */
+    const MAILDISPLAY_COURSE_MEMBERS_ONLY = 2;
+
     /** @var stdClass keep record of noreply user */
     public static $noreplyuser = false;
 

@@ -69,10 +69,20 @@ class core_component {
     protected static $filestomap = array('lib.php', 'settings.php');
     /** @var array associative array of PSR-0 namespaces and corresponding paths. */
     protected static $psr0namespaces = array(
-        'Horde' => 'lib/horde/framework/Horde'
+        'Horde' => 'lib/horde/framework/Horde',
+        'Mustache' => 'lib/mustache/src/Mustache',
     );
     /** @var array associative array of PRS-4 namespaces and corresponding paths. */
     protected static $psr4namespaces = array(
+        'MaxMind' => 'lib/maxmind/MaxMind',
+        'GeoIp2' => 'lib/maxmind/GeoIp2',
+        'Sabberworm\\CSS' => 'lib/php-css-parser',
+        'MoodleHQ\\RTLCSS' => 'lib/rtlcss',
+        'Leafo\\ScssPhp' => 'lib/scssphp',
+        'Box\\Spout' => 'lib/spout/src/Spout',
+        'MatthiasMullie\\Minify' => 'lib/minify/matthiasmullie-minify/src/',
+        'MatthiasMullie\\PathConverter' => 'lib/minify/matthiasmullie-pathconverter/src/',
+        'IMSGlobal\LTI' => 'lib/ltiprovider/src',
     );
 
     /**
@@ -444,7 +454,7 @@ $cache = '.var_export($cache, true).';
             'langconfig'  => null,
             'license'     => null,
             'mathslib'    => null,
-            'media'       => null,
+            'media'       => $CFG->dirroot.'/media',
             'message'     => $CFG->dirroot.'/message',
             'mimetypes'   => null,
             'mnet'        => $CFG->dirroot.'/mnet',
@@ -492,6 +502,7 @@ $cache = '.var_export($cache, true).';
             'enrol'         => $CFG->dirroot.'/enrol',
             'message'       => $CFG->dirroot.'/message/output',
             'block'         => $CFG->dirroot.'/blocks',
+            'media'         => $CFG->dirroot.'/media/player',
             'filter'        => $CFG->dirroot.'/filter',
             'editor'        => $CFG->dirroot.'/lib/editor',
             'format'        => $CFG->dirroot.'/course/format',
@@ -903,18 +914,24 @@ $cache = '.var_export($cache, true).';
      * e.g. get_component_classes_in_namespace('mod_forum', 'event')
      *
      * @param string $component A valid moodle component (frankenstyle)
-     * @param string $namespace Namespace from the component name.
+     * @param string $namespace Namespace from the component name or empty if all $component namespace classes.
      * @return array The full class name as key and the class path as value.
      */
     public static function get_component_classes_in_namespace($component, $namespace = '') {
 
-        // We will add them later.
-        $namespace = ltrim($namespace, '\\');
+        $component = self::normalize_componentname($component);
 
-        // We need add double backslashes as it is how classes are stored into self::$classmap.
-        $namespace = implode('\\\\', explode('\\', $namespace));
+        if ($namespace) {
 
-        $regex = '/^' . $component . '\\\\' . $namespace . '/';
+            // We will add them later.
+            $namespace = trim($namespace, '\\');
+
+            // We need add double backslashes as it is how classes are stored into self::$classmap.
+            $namespace = implode('\\\\', explode('\\', $namespace));
+            $namespace = $namespace . '\\\\';
+        }
+
+        $regex = '|^' . $component . '\\\\' . $namespace . '|';
         $it = new RegexIterator(new ArrayIterator(self::$classmap), $regex, RegexIterator::GET_MATCH, RegexIterator::USE_KEY);
 
         // We want to be sure that they exist.
@@ -1012,7 +1029,7 @@ $cache = '.var_export($cache, true).';
      * Note: this does not verify the validity of plugin or type names.
      *
      * @param string $component
-     * @return array as (string)$type => (string)$plugin
+     * @return array two-items list of [(string)type, (string|null)name]
      */
     public static function normalize_component($component) {
         if ($component === 'moodle' or $component === 'core' or $component === '') {

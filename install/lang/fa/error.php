@@ -30,4 +30,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotfindcomponent'] = 'کامپوننت پیدا نشد';
 $string['missingrequiredfield'] = 'بعضی از فیلدهای ضروری خالی است';

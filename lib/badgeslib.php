@@ -722,7 +722,8 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $plaintext = html_to_text($message);
 
     // Notify recipient.
-    $eventdata = new stdClass();
+    $eventdata = new \core\message\message();
+    $eventdata->courseid          = is_null($badge->courseid) ? SITEID : $badge->courseid; // Profile/site come with no courseid.
     $eventdata->component         = 'moodle';
     $eventdata->name              = 'badgerecipientnotice';
     $eventdata->userfrom          = $userfrom;
@@ -758,7 +759,8 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
         $creatormessage = get_string('creatorbody', 'badges', $a);
         $creatorsubject = get_string('creatorsubject', 'badges', $badge->name);
 
-        $eventdata = new stdClass();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid          = $badge->courseid;
         $eventdata->component         = 'moodle';
         $eventdata->name              = 'badgecreatornotice';
         $eventdata->userfrom          = $userfrom;
@@ -884,7 +886,7 @@ function badges_get_badges($type, $courseid = 0, $sort = '', $dir = '', $page = 
  * @return array of badges ordered by decreasing date of issue
  */
 function badges_get_user_badges($userid, $courseid = 0, $page = 0, $perpage = 0, $search = '', $onlypublic = false) {
-    global $DB;
+    global $CFG, $DB;
 
     $params = array(
         'userid' => $userid
@@ -913,7 +915,9 @@ function badges_get_user_badges($userid, $courseid = 0, $page = 0, $perpage = 0,
         $sql .= ' AND (bi.visible = 1) ';
     }
 
-    if ($courseid != 0) {
+    if (empty($CFG->badges_allowcoursebadges)) {
+        $sql .= ' AND b.courseid IS NULL';
+    } else if ($courseid != 0) {
         $sql .= ' AND (b.courseid = :courseid) ';
         $params['courseid'] = $courseid;
     }

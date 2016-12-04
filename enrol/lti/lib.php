@@ -22,6 +22,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use enrol_lti\data_connector;
+use IMSGlobal\LTI\ToolProvider\ToolConsumer;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -156,6 +159,21 @@ class enrol_lti_plugin extends enrol_plugin {
 
         // Delete any users associated with this tool.
         $DB->delete_records('enrol_lti_users', array('toolid' => $tool->id));
+
+        // Get tool and consumer mappings.
+        $rsmapping = $DB->get_recordset('enrol_lti_tool_consumer_map', array('toolid' => $tool->id));
+
+        // Delete consumers that are linked to this tool and their related data.
+        $dataconnector = new data_connector();
+        foreach ($rsmapping as $mapping) {
+            $consumer = new ToolConsumer(null, $dataconnector);
+            $consumer->setRecordId($mapping->consumerid);
+            $dataconnector->deleteToolConsumer($consumer);
+        }
+        $rsmapping->close();
+
+        // Delete mapping records.
+        $DB->delete_records('enrol_lti_tool_consumer_map', array('toolid' => $tool->id));
 
         // Delete the lti tool record.
         $DB->delete_records('enrol_lti_tools', array('id' => $tool->id));

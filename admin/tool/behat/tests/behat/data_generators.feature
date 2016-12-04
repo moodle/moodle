@@ -325,7 +325,7 @@ Feature: Set up contextual data for tests
     And I am on site homepage
     And I follow "Courses"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I go to "View > Grader report" in the course gradebook
     Then I should see "Grade category 1"
     And I should see "Grade sub category 2"
 
@@ -349,9 +349,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I expand "Setup" node
-    And I follow "Gradebook setup"
+    And I go to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Grade Item 1"
     And I follow "Edit   Test Grade Item 1"
     And I expand all fieldsets
@@ -380,8 +378,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I follow "Scales"
+    And I go to "Scales" in the course gradebook
     Then I should see "Test Scale 1"
     And I should see "Disappointing,  Good,  Very good,  Excellent"
 
@@ -432,14 +429,12 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I expand "Setup" node
-    And I follow "Gradebook setup"
+    And I go to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Outcome Grade Item 1"
     And I follow "Edit   Test Outcome Grade Item 1"
     And the field "Outcome" matches value "Grade outcome 1"
     And I expand all fieldsets
-    And "//div[contains(@class, 'fitem')]/div[contains(@class, 'fitemtitle')]/div[contains(@class, fstaticlabel) and contains(., 'Grade category')]/../../div[contains(@class, 'felement') and contains(., 'Grade category 1')]" "xpath_element" should exist
+    And I should see "Grade category 1" in the "Grade category" "form_row"
     And I press "Cancel"
 
   Scenario: Add a block

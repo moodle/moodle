@@ -60,4 +60,9 @@ echo $OUTPUT->header();
 echo $OUTPUT->skip_link_target();
 echo $content;
 
+// Trigger event, course category viewed.
+$eventparams = array('context' => $PAGE->context, 'objectid' => $categoryid);
+$event = \core\event\course_category_viewed::create($eventparams);
+$event->trigger();
+
 echo $OUTPUT->footer();

@@ -118,7 +118,7 @@ class behat_repository_upload extends behat_files {
             'xpath',
             "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
                 "[contains(concat(' ', normalize-space(@class), ' '), ' repository_upload ')]" .
-                "/descendant::div[@class='fp-content']" .
+                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
                 "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-upload-form ')]" .
                 "/descendant::form",
             $noformexception

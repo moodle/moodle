@@ -27,9 +27,10 @@ M.availability_date.form.initInner = function(html, defaultTime) {
 };
 
 M.availability_date.form.getNode = function(json) {
-    var html = M.util.get_string('direction_before', 'availability_date') + ' <span class="availability-group">' +
+    var html = '<span class="col-form-label p-r-1">' +
+                    M.util.get_string('direction_before', 'availability_date') + '</span> <span class="availability-group">' +
             '<label><span class="accesshide">' + M.util.get_string('direction_label', 'availability_date') + ' </span>' +
-            '<select name="direction">' +
+            '<select name="direction" class="custom-select">' +
             '<option value="&gt;=">' + M.util.get_string('direction_from', 'availability_date') + '</option>' +
             '<option value="&lt;">' + M.util.get_string('direction_until', 'availability_date') + '</option>' +
             '</select></label></span> ' + this.html;
@@ -70,7 +71,7 @@ M.availability_date.form.getNode = function(json) {
     if (!M.availability_date.form.addedEvents) {
         M.availability_date.form.addedEvents = true;
 
-        var root = Y.one('#fitem_id_availabilityconditionsjson');
+        var root = Y.one('.availability-field');
         root.delegate('change', function() {
             // For the direction, just update the form fields.
             M.core_availability.form.update();

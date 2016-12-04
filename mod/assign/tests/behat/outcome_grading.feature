@@ -36,7 +36,7 @@ Feature: Outcome grading
     And I press "Save changes"
     And I am on site homepage
     And I follow "Course 1"
-    And I follow "Outcomes"
+    And I navigate to "Outcomes" node in "Course administration"
     And I set the field "Available standard outcomes" to "Outcome Test"
     And I click on "#add" "css_element"
     And I log out
@@ -62,7 +62,7 @@ Feature: Outcome grading
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
@@ -70,7 +70,7 @@ Feature: Outcome grading
     And I press "Ok"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 1" "table_row"
 
@@ -112,7 +112,7 @@ Feature: Outcome grading
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I click on "Grade" "link" in the "Student 0" "table_row"
     And I set the following fields to these values:
       | Outcome Test: | Excellent |
@@ -121,7 +121,7 @@ Feature: Outcome grading
     And I press "Ok"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Excellent" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 2" "table_row"
@@ -133,7 +133,7 @@ Feature: Outcome grading
     And I press "Ok"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should see "Outcome Test: Disappointing" in the "Student 1" "table_row"
     And I should not see "Outcome Test: Disappointing" in the "Student 0" "table_row"

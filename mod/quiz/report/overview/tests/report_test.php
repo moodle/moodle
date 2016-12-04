@@ -40,20 +40,23 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/report.php');
 class quiz_overview_report_testcase extends advanced_testcase {
 
     public function test_report_sql() {
-        global $DB, $SITE;
+        global $DB;
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
         $quizgenerator = $generator->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id,
+        $quiz = $quizgenerator->create_instance(array('course' => $course->id,
                 'grademethod' => QUIZ_GRADEHIGHEST, 'grade' => 100.0, 'sumgrades' => 10.0,
                 'attempts' => 10));
 
         $student1 = $generator->create_user();
         $student2 = $generator->create_user();
         $student3 = $generator->create_user();
+        $generator->enrol_user($student1->id, $course->id);
+        $generator->enrol_user($student2->id, $course->id);
+        $generator->enrol_user($student3->id, $course->id);
 
-        $quizid = 123;
         $timestamp = 1234567890;
 
         // The test data.
@@ -87,12 +90,13 @@ class quiz_overview_report_testcase extends advanced_testcase {
             $DB->insert_record('quiz_attempts', $data);
         }
 
-        // Actually getting the SQL to run is quit hard. Do a minimal set up of
+        // Actually getting the SQL to run is quite hard. Do a minimal set up of
         // some objects.
         $context = context_module::instance($quiz->cmid);
         $cm = get_coursemodule_from_id('quiz', $quiz->cmid);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
-        $reportstudents = array($student1->id, $student2->id, $student3->id);
+        $studentsjoins = get_enrolled_with_capabilities_join($context);
+        $empty = new \core\dml\sql_join();
 
         // Set the options.
         $reportoptions = new quiz_overview_options('overview', $quiz, $cm, null);
@@ -102,19 +106,19 @@ class quiz_overview_report_testcase extends advanced_testcase {
 
         // Now do a minimal set-up of the table class.
         $table = new quiz_overview_table($quiz, $context, $qmsubselect, $reportoptions,
-                array(), $reportstudents, array(1), null);
+                $empty, $studentsjoins, array(1), null);
         $table->define_columns(array('attempt'));
         $table->sortable(true, 'uniqueid');
         $table->define_baseurl(new moodle_url('/mod/quiz/report.php'));
         $table->setup();
 
         // Run the query.
-        list($fields, $from, $where, $params) = $table->base_sql($reportstudents);
+        list($fields, $from, $where, $params) = $table->base_sql($studentsjoins);
         $table->set_sql($fields, $from, $where, $params);
         $table->query_db(30, false);
 
         // Verify what was returned: Student 1's best and in progress attempts.
-        // Stuent 2's finshed attempt, and Student 3 with no attempt.
+        // Student 2's finshed attempt, and Student 3 with no attempt.
         // The array key is {student id}#{attempt number}.
         $this->assertEquals(4, count($table->rawdata));
         $this->assertArrayHasKey($student1->id . '#3', $table->rawdata);

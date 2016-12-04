@@ -91,7 +91,7 @@ class framework_autocomplete extends MoodleQuickForm_autocomplete {
         $ids = array();
 
         foreach ($values as $onevalue) {
-            if ((!$this->optionExists($onevalue)) &&
+            if (!empty($onevalue) && (!$this->optionExists($onevalue)) &&
                     ($onevalue !== '_qf__force_multiselect_submission')) {
                 array_push($ids, $onevalue);
             }

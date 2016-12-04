@@ -890,6 +890,7 @@ class core_useragent_testcase extends advanced_testcase {
                 array(
                     // Note: We do *not* identify mobile Safari as Safari.
                     'is_safari_ios'                 => true,
+                    'is_ios'                        => true,
                     'check_safari_ios_version'      => array(
                         '527'                       => true,
                     ),
@@ -911,6 +912,7 @@ class core_useragent_testcase extends advanced_testcase {
                 array(
                     // Note: We do *not* identify mobile Safari as Safari.
                     'is_safari_ios'                 => true,
+                    'is_ios'                        => true,
                     'check_safari_ios_version'      => array(
                         '527'                       => true,
                         '590'                       => true,
@@ -934,6 +936,7 @@ class core_useragent_testcase extends advanced_testcase {
                 array(
                     // Note: We do *not* identify mobile Safari as Safari.
                     'is_safari_ios'                 => true,
+                    'is_ios'                        => true,
                     'check_safari_ios_version'      => array(
                         '527'                       => true,
                     ),
@@ -1222,6 +1225,7 @@ class core_useragent_testcase extends advanced_testcase {
                     'is_web_crawler'                => true,
                     'is_webkit'                     => true,
                     'is_safari_ios'                 => true,
+                    'is_ios'                        => true,
                     'check_safari_ios_version'      => array(
                         '527'                       => true,
                     ),
@@ -1700,6 +1704,24 @@ class core_useragent_testcase extends advanced_testcase {
         foreach ($versions as $version => $result) {
             $this->assertEquals($result, core_useragent::check_safari_ios_version($version),
                 "Version incorrectly determined for iOS Safari version '{$version}'");
+        }
+    }
+
+    /**
+     * @dataProvider user_agents_providers
+     */
+    public function test_useragent_ios($useragent, $tests) {
+        // Setup the core_useragent instance.
+        core_useragent::instance(true, $useragent);
+
+        if (isset($tests['is_ios']) && $tests['is_ios']) {
+            $this->assertTrue(core_useragent::is_ios(),
+                "Browser was not identified as an iOS device browser");
+            $this->assertTrue(core_useragent::check_safari_ios_version());
+        } else {
+            $this->assertFalse(core_useragent::is_ios(),
+                "Browser was incorrectly identified as an iOS device browser");
+            $this->assertFalse(core_useragent::check_safari_ios_version());
         }
     }
 

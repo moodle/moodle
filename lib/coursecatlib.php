@@ -364,15 +364,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         $newcategory->name = $data->name;
 
         // Validate and set idnumber.
-        if (!empty($data->idnumber)) {
+        if (isset($data->idnumber)) {
             if (core_text::strlen($data->idnumber) > 100) {
                 throw new moodle_exception('idnumbertoolong');
             }
-            if ($DB->record_exists('course_categories', array('idnumber' => $data->idnumber))) {
+            if (strval($data->idnumber) !== '' && $DB->record_exists('course_categories', array('idnumber' => $data->idnumber))) {
                 throw new moodle_exception('categoryidnumbertaken');
             }
-        }
-        if (isset($data->idnumber)) {
             $newcategory->idnumber = $data->idnumber;
         }
 
@@ -487,11 +485,11 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $newcategory->name = $data->name;
         }
 
-        if (isset($data->idnumber) && $data->idnumber != $this->idnumber) {
+        if (isset($data->idnumber) && $data->idnumber !== $this->idnumber) {
             if (core_text::strlen($data->idnumber) > 100) {
                 throw new moodle_exception('idnumbertoolong');
             }
-            if ($DB->record_exists('course_categories', array('idnumber' => $data->idnumber))) {
+            if (strval($data->idnumber) !== '' && $DB->record_exists('course_categories', array('idnumber' => $data->idnumber))) {
                 throw new moodle_exception('categoryidnumbertaken');
             }
             $newcategory->idnumber = $data->idnumber;
@@ -937,7 +935,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
         $fields = array('c.id', 'c.category', 'c.sortorder',
                         'c.shortname', 'c.fullname', 'c.idnumber',
-                        'c.startdate', 'c.visible', 'c.cacherev');
+                        'c.startdate', 'c.enddate', 'c.visible', 'c.cacherev');
         if (!empty($options['summary'])) {
             $fields[] = 'c.summary';
             $fields[] = 'c.summaryformat';
@@ -2787,6 +2785,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
  * @property-read int $showgrades Retrieved from DB on first request
  * @property-read int $newsitems Retrieved from DB on first request
  * @property-read int $startdate
+ * @property-read int $enddate
  * @property-read int $marker Retrieved from DB on first request
  * @property-read int $maxbytes Retrieved from DB on first request
  * @property-read int $legacyfiles Retrieved from DB on first request

@@ -676,6 +676,63 @@ class tree_testcase extends \advanced_testcase {
     }
 
     /**
+     * Tests the behaviour of the counter in unique_sql_parameter().
+     *
+     * There was a problem with static counters used to implement a sequence of
+     * parameter placeholders (MDL-53481). As always with static variables, it
+     * is a bit tricky to unit test the behaviour reliably as it depends on the
+     * actual tests executed and also their order.
+     *
+     * To minimise risk of false expected behaviour, this test method should be
+     * first one where {@link core_availability\tree::get_user_list_sql()} is
+     * used. We also use higher number of condition instances to increase the
+     * risk of the counter collision, should there remain a problem.
+     */
+    public function test_unique_sql_parameter_behaviour() {
+        global $DB;
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+
+        // Create a test course with multiple groupings and groups and a student in each of them.
+        $course = $generator->create_course();
+        $user = $generator->create_user();
+        $studentroleid = $DB->get_field('role', 'id', array('shortname' => 'student'));
+        $generator->enrol_user($user->id, $course->id, $studentroleid);
+        // The total number of groupings and groups must not be greater than 61.
+        // There is a limit in MySQL on the max number of joined tables.
+        $groups = [];
+        for ($i = 0; $i < 25; $i++) {
+            $group = $generator->create_group(array('courseid' => $course->id));
+            groups_add_member($group, $user);
+            $groups[] = $group;
+        }
+        $groupings = [];
+        for ($i = 0; $i < 25; $i++) {
+            $groupings[] = $generator->create_grouping(array('courseid' => $course->id));
+        }
+        foreach ($groupings as $grouping) {
+            foreach ($groups as $group) {
+                groups_assign_grouping($grouping->id, $group->id);
+            }
+        }
+        $info = new \core_availability\mock_info($course);
+
+        // Make a huge tree with 'AND' of all groups and groupings conditions.
+        $conditions = [];
+        foreach ($groups as $group) {
+            $conditions[] = \availability_group\condition::get_json($group->id);
+        }
+        foreach ($groupings as $groupingid) {
+            $conditions[] = \availability_grouping\condition::get_json($grouping->id);
+        }
+        shuffle($conditions);
+        $tree = new tree(tree::get_root_json($conditions));
+        list($sql, $params) = $tree->get_user_list_sql(false, $info, false);
+        // This must not throw exception.
+        $DB->fix_sql_params($sql, $params);
+    }
+
+    /**
      * Tests get_user_list_sql.
      */
     public function test_get_user_list_sql() {

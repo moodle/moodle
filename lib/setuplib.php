@@ -384,7 +384,8 @@ function default_exception_handler($ex) {
                 // If you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
                 $DB->set_debug(0);
             }
-            echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo);
+            echo $OUTPUT->fatal_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo,
+                $info->errorcode);
         } catch (Exception $e) {
             $out_ex = $e;
         } catch (Throwable $e) {
@@ -728,6 +729,9 @@ function get_docs_url($path = null) {
 
 /**
  * Formats a backtrace ready for output.
+ *
+ * This function does not include function arguments because they could contain sensitive information
+ * not suitable to be exposed in a response.
  *
  * @param array $callers backtrace array, as returned by debug_backtrace().
  * @param boolean $plaintext if false, generates HTML, if true generates plain text.
@@ -1387,7 +1391,7 @@ function disable_output_buffering() {
  */
 function redirect_if_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2014093001.00;
+    $lastmajordbchanges = 2016112200.03;
     if (empty($CFG->version) or (float)$CFG->version < $lastmajordbchanges or
             during_initial_install() or !empty($CFG->adminsetuppending)) {
         try {

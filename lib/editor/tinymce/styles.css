@@ -10,15 +10,15 @@
     }
     .moodleSkin .mceLayout .mceToolbar .mceNoWrap {
         clear: none;
-        width: 0px;
+        width: 0;
     }
 
     .o2k7Skin tr.mceLast .mceToolbar tr td.mceWrap,
     .o2k7Skin tr.mceFirst .mceToolbar tr td.mceWrap {
         margin-left: -3px;
     }
-    .dir-rtl .o2k7Skin tr.mceLast .mceToolbar tr td.mceWrap,
-    .dir-rtl .o2k7Skin tr.mceFirst .mceToolbar tr td.mceWrap {
-        margin-left: 0px;
-    }
+}
+
+.mceToolbar td {
+    box-sizing: content-box;
 }

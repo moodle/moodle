@@ -51,6 +51,9 @@
 
             var typeSelector = Y.one('#id_typeid');
             typeSelector.on('change', function(e){
+                // Reset configuration fields when another preconfigured tool is selected.
+                self.resetToolFields();
+
                 updateToolMatches();
 
                 self.toggleEditButtons();
@@ -66,7 +69,30 @@
                     allowgrades.set('checked', !self.getSelectedToolTypeOption().getAttribute('nogrades'));
                     self.toggleGradeSection();
                 }
+            });
 
+            var contentItemButton = Y.one('[name="selectcontent"]');
+            var contentItemUrl = contentItemButton.getAttribute('data-contentitemurl');
+            // Handle configure from link button click.
+            contentItemButton.on('click', function() {
+                var contentItemId = self.getContentItemId();
+                if (contentItemId) {
+                    // Get activity name and description values.
+                    var title = Y.one('#id_name').get('value').trim();
+                    var text = Y.one('#id_introeditor').get('value').trim();
+
+                    // Set data to be POSTed.
+                    var postData = {
+                        id: contentItemId,
+                        course: self.settings.courseId,
+                        title: title,
+                        text: text
+                    };
+
+                    require(['mod_lti/contentitem'], function(contentitem) {
+                        contentitem.init(contentItemUrl, postData);
+                    });
+                }
             });
 
             this.createTypeEditorButtons();
@@ -492,7 +518,31 @@
                     }
                 }
             });
-        }
+        },
 
+        /**
+         * Gets the tool type ID of the selected tool that supports Content-Item selection.
+         *
+         * @returns {number|boolean} The ID of the tool type if it supports Content-Item selection. False, otherwise.
+         */
+        getContentItemId: function() {
+            var selected = this.getSelectedToolTypeOption();
+            if (selected.getAttribute('data-contentitem')) {
+                return selected.getAttribute('data-id');
+            }
+            return false;
+        },
+
+        /**
+         * Resets the values of fields related to the LTI tool settings.
+         */
+        resetToolFields: function() {
+            // Reset values for all text fields.
+            var fields = Y.all('#id_toolurl, #id_securetoolurl, #id_instructorcustomparameters, #id_icon, #id_secureicon');
+            fields.set('value', null);
+
+            // Reset value for launch container select box.
+            Y.one('#id_launchcontainer').set('value', 1);
+        }
     };
 })();

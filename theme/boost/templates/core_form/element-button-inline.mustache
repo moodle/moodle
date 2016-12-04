@@ -1,0 +1,17 @@
+{{< core_form/element-template-inline }}
+    {{$element}}
+        {{^element.frozen}}
+            <button
+                class="btn btn-secondary"
+                name="{{element.name}}"
+                id="{{element.id}}"
+                {{#error}}
+                    autofocus aria-describedby="id_error_{{element.name}}"
+                {{/error}}
+                {{{element.attributes}}}
+                >
+                {{{element.value}}}
+            </button>
+        {{/element.frozen}}
+    {{/element}}
+{{/ core_form/element-template-inline }}

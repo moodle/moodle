@@ -50,10 +50,10 @@
                 - {{reviewer.fullname}}
             {{/isstatusinreview}}
 
-            {{#isrequestreviewallowed}}<button data-action="request-review">{{#str}}requestreview, tool_lp{{/str}}</button>{{/isrequestreviewallowed}}
-            {{#iscancelreviewrequestallowed}}<button data-action="cancel-review-request">{{#str}}cancelreviewrequest, tool_lp{{/str}}</button>{{/iscancelreviewrequestallowed}}
-            {{#isstartreviewallowed}}<button data-action="start-review">{{#str}}startreview, tool_lp{{/str}}</button>{{/isstartreviewallowed}}
-            {{#isstopreviewallowed}}<button data-action="stop-review">{{#str}}stopreview, tool_lp{{/str}}</button>{{/isstopreviewallowed}}
+            {{#isrequestreviewallowed}}<button class="btn btn-secondary" data-action="request-review">{{#str}}requestreview, tool_lp{{/str}}</button>{{/isrequestreviewallowed}}
+            {{#iscancelreviewrequestallowed}}<button class="btn btn-secondary" data-action="cancel-review-request">{{#str}}cancelreviewrequest, tool_lp{{/str}}</button>{{/iscancelreviewrequestallowed}}
+            {{#isstartreviewallowed}}<button class="btn btn-secondary" data-action="start-review">{{#str}}startreview, tool_lp{{/str}}</button>{{/isstartreviewallowed}}
+            {{#isstopreviewallowed}}<button class="btn btn-secondary" data-action="stop-review">{{#str}}stopreview, tool_lp{{/str}}</button>{{/isstopreviewallowed}}
         </dd>
         <dt>{{#str}}proficient, tool_lp{{/str}}</dt>
         <dd>
@@ -64,7 +64,7 @@
         <dt>{{#str}}rating, tool_lp{{/str}}</dt>
         <dd>{{gradename}}
             {{#cangrade}}
-                <button class="btn" id="rate_{{uniqid}}">{{#str}}rate, tool_lp{{/str}}</button>
+                <button class="btn btn-secondary" id="rate_{{uniqid}}">{{#str}}rate, tool_lp{{/str}}</button>
             {{/cangrade}}
         </dd>
         {{#js}}

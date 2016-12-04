@@ -627,11 +627,11 @@ function survey_print_single($question) {
 
 
     if ($question->type == 0) {           // Plain text field
-        echo "<textarea rows=\"3\" cols=\"30\" name=\"q$question->id\" id=\"q$question->id\">$question->options</textarea>";
+        echo "<textarea rows=\"3\" cols=\"30\" class=\"form-control\" name=\"q$question->id\" id=\"q$question->id\">$question->options</textarea>";
 
     } else if ($question->type > 0) {     // Choose one of a number
         $strchoose = get_string("choose");
-        echo "<select name=\"q$question->id\" id=\"q$question->id\">";
+        echo "<select name=\"q$question->id\" id=\"q$question->id\" class=\"custom-select\">";
         echo "<option value=\"0\" selected=\"selected\">$strchoose...</option>";
         $options = explode( ",", $question->options);
         foreach ($options as $key => $val) {
@@ -1049,4 +1049,33 @@ function survey_get_completion_state($course, $cm, $userid, $type) {
         // Completion option is not enabled so just return $type.
         return $type;
     }
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function survey_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $USER;
+
+    $updates = new stdClass();
+    if (!has_capability('mod/survey:participate', $cm->context)) {
+        return $updates;
+    }
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+
+    $updates->answers = (object) array('updated' => false);
+    $select = 'survey = ? AND userid = ? AND time > ?';
+    $params = array($cm->instance, $USER->id, $from);
+    $answers = $DB->get_records_select('survey_answers', $select, $params, '', 'id');
+    if (!empty($answers)) {
+        $updates->answers->updated = true;
+        $updates->answers->itemids = array_keys($answers);
+    }
+    return $updates;
 }

@@ -37,45 +37,32 @@ require_once("$CFG->libdir/externallib.php");
  */
 class gradereport_user_external extends external_api {
 
-    /**
-     * Describes the parameters for get_grades_table.
-     *
-     * @return external_external_function_parameters
-     * @since Moodle 2.9
-     */
-    public static function get_grades_table_parameters() {
-        return new external_function_parameters (
-            array(
-                'courseid' => new external_value(PARAM_INT, 'Course Id', VALUE_REQUIRED),
-                'userid'   => new external_value(PARAM_INT, 'Return grades only for this user (optional)', VALUE_DEFAULT, 0)
-            )
-        );
-    }
 
     /**
-     * Returns a list of grades tables for users in a course.
+     * Validate access permissions to the report
      *
-     * @param int $courseid Course Id
-     * @param int $userid   Only this user (optional)
-     *
-     * @return array the grades tables
-     * @since Moodle 2.9
+     * @param  int  $courseid the courseid
+     * @param  int  $userid   the user id to retrieve data from
+     * @param  int $groupid   the group id
+     * @return array with the parameters cleaned and other required information
+     * @since  Moodle 3.2
      */
-    public static function get_grades_table($courseid, $userid = 0) {
-        global $CFG, $USER;
-
-        $warnings = array();
+    protected static function check_report_access($courseid, $userid, $groupid = 0) {
+        global $USER;
 
         // Validate the parameter.
         $params = self::validate_parameters(self::get_grades_table_parameters(),
             array(
                 'courseid' => $courseid,
-                'userid' => $userid)
-            );
+                'userid' => $userid,
+                'groupid' => $groupid,
+            )
+        );
 
         // Compact/extract functions are not recommended.
         $courseid = $params['courseid'];
         $userid   = $params['userid'];
+        $groupid  = $params['groupid'];
 
         // Function get_course internally throws an exception if the course doesn't exist.
         $course = get_course($courseid);
@@ -93,6 +80,11 @@ class gradereport_user_external extends external_api {
         } else {
             $user = core_user::get_user($userid, '*', MUST_EXIST);
             core_user::require_active_user($user);
+            // Check if we can view the user group (if any).
+            // When userid == 0, we are retrieving all the users, we'll check then if a groupid is required.
+            if (!groups_user_groups_visible($course, $user->id)) {
+                throw new moodle_exception('notingroup');
+            }
         }
 
         $access = false;
@@ -109,6 +101,42 @@ class gradereport_user_external extends external_api {
             throw new moodle_exception('nopermissiontoviewgrades', 'error');
         }
 
+        if (!empty($groupid)) {
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode = groups_get_course_groupmode($course)) {
+                $groupid = groups_get_course_group($course);
+                // Determine is the group is visible to user (this is particullary for the group 0).
+                if (!groups_group_visible($groupid, $course)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        return array($params, $course, $context, $user, $groupid);
+    }
+
+    /**
+     * Get the report data
+     * @param  stdClass $course  course object
+     * @param  stdClass $context context object
+     * @param  stdClass $user    user object (it can be null for all the users)
+     * @param  int $userid       the user to retrieve data from, 0 for all
+     * @param  int $groupid      the group id to filter
+     * @param  bool $tabledata   whether to get the table data (true) or the gradeitemdata
+     * @return array data and possible warnings
+     * @since  Moodle 3.2
+     */
+    protected static function get_report_data($course, $context, $user, $userid, $groupid, $tabledata = true) {
+        global $CFG;
+
+        $warnings = array();
         // Require files here to save some memory in case validation fails.
         require_once($CFG->dirroot . '/group/lib.php');
         require_once($CFG->libdir  . '/gradelib.php');
@@ -122,49 +150,95 @@ class gradereport_user_external extends external_api {
             array(
                 'type' => 'report',
                 'plugin' => 'user',
-                'courseid' => $courseid,
+                'courseid' => $course->id,
                 'userid' => $userid)
             );
 
-        $tables = array();
+        $reportdata = array();
 
         // Just one user.
         if ($user) {
-            $report = new grade_report_user($courseid, $gpr, $context, $userid);
+            $report = new grade_report_user($course->id, $gpr, $context, $userid);
             $report->fill_table();
 
-            $tables[] = array(
-                'courseid'      => $courseid,
+            $gradeuserdata = array(
+                'courseid'      => $course->id,
                 'userid'        => $user->id,
                 'userfullname'  => fullname($user),
                 'maxdepth'      => $report->maxdepth,
-                'tabledata'     => $report->tabledata
             );
-
+            if ($tabledata) {
+                $gradeuserdata['tabledata'] = $report->tabledata;
+            } else {
+                $gradeuserdata['gradeitems'] = $report->gradeitemsdata;
+            }
+            $reportdata[] = $gradeuserdata;
         } else {
             $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
             $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
             $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
 
-            $gui = new graded_users_iterator($course);
+            $gui = new graded_users_iterator($course, null, $groupid);
             $gui->require_active_enrolment($showonlyactiveenrol);
             $gui->init();
 
             while ($userdata = $gui->next_user()) {
                 $currentuser = $userdata->user;
-                $report = new grade_report_user($courseid, $gpr, $context, $currentuser->id);
+                $report = new grade_report_user($course->id, $gpr, $context, $currentuser->id);
                 $report->fill_table();
 
-                $tables[] = array(
-                    'courseid'      => $courseid,
+                $gradeuserdata = array(
+                    'courseid'      => $course->id,
                     'userid'        => $currentuser->id,
                     'userfullname'  => fullname($currentuser),
                     'maxdepth'      => $report->maxdepth,
-                    'tabledata'     => $report->tabledata
                 );
+                if ($tabledata) {
+                    $gradeuserdata['tabledata'] = $report->tabledata;
+                } else {
+                    $gradeuserdata['gradeitems'] = $report->gradeitemsdata;
+                }
+                $reportdata[] = $gradeuserdata;
             }
             $gui->close();
         }
+        return array($reportdata, $warnings);
+    }
+
+    /**
+     * Describes the parameters for get_grades_table.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 2.9
+     */
+    public static function get_grades_table_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseid' => new external_value(PARAM_INT, 'Course Id', VALUE_REQUIRED),
+                'userid'   => new external_value(PARAM_INT, 'Return grades only for this user (optional)', VALUE_DEFAULT, 0),
+                'groupid'  => new external_value(PARAM_INT, 'Get users from this group only', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Returns a list of grades tables for users in a course.
+     *
+     * @param int $courseid Course Id
+     * @param int $userid   Only this user (optional)
+     * @param int $groupid  Get users from this group only
+     *
+     * @return array the grades tables
+     * @since Moodle 2.9
+     */
+    public static function get_grades_table($courseid, $userid = 0, $groupid = 0) {
+        global $CFG, $USER;
+
+        list($params, $course, $context, $user, $groupid) = self::check_report_access($courseid, $userid, $groupid);
+        $userid   = $params['userid'];
+
+        // We pass userid because it can be still 0.
+        list($tables, $warnings) = self::get_report_data($course, $context, $user, $userid, $groupid);
 
         $result = array();
         $result['tables'] = $tables;
@@ -268,7 +342,7 @@ class gradereport_user_external extends external_api {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, 'id of the course'),
-                'userid' => new external_value(PARAM_INT, 'id of the user, 0 means current user', VALUE_DEFAULT, 0)
+                'userid' => new external_value(PARAM_INT, 'id of the user, 0 means current user', VALUE_DEFAULT, 0),
             )
         );
     }
@@ -342,6 +416,107 @@ class gradereport_user_external extends external_api {
         return new external_single_structure(
             array(
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_grade_items.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.2
+     */
+    public static function get_grade_items_parameters() {
+        return self::get_grades_table_parameters();
+    }
+
+    /**
+     * Returns the complete list of grade items for users in a course.
+     *
+     * @param int $courseid Course Id
+     * @param int $userid   Only this user (optional)
+     * @param int $groupid  Get users from this group only
+     *
+     * @return array the grades tables
+     * @since Moodle 3.2
+     */
+    public static function get_grade_items($courseid, $userid = 0, $groupid = 0) {
+        global $CFG, $USER;
+
+        list($params, $course, $context, $user, $groupid) = self::check_report_access($courseid, $userid, $groupid);
+        $userid   = $params['userid'];
+
+        // We pass userid because it can be still 0.
+        list($gradeitems, $warnings) = self::get_report_data($course, $context, $user, $userid, $groupid, false);
+
+        foreach ($gradeitems as $gradeitem) {
+            if (isset($gradeitem['feedback']) and isset($gradeitem['feedbackformat'])) {
+                list($gradeitem['feedback'], $gradeitem['feedbackformat']) =
+                    external_format_text($gradeitem['feedback'], $gradeitem['feedbackformat'], $context->id);
+            }
+        }
+
+        $result = array();
+        $result['usergrades'] = $gradeitems;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes tget_grade_items return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.2
+     */
+    public static function get_grade_items_returns() {
+        return new external_single_structure(
+            array(
+                'usergrades' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'courseid' => new external_value(PARAM_INT, 'course id'),
+                            'userid'   => new external_value(PARAM_INT, 'user id'),
+                            'userfullname' => new external_value(PARAM_TEXT, 'user fullname'),
+                            'maxdepth'   => new external_value(PARAM_INT, 'table max depth (needed for printing it)'),
+                            'gradeitems' => new external_multiple_structure(
+                                new external_single_structure(
+                                    array(
+                                        'id' => new external_value(PARAM_INT, 'Grade item id'),
+                                        'itemtype' => new external_value(PARAM_ALPHA, 'Grade item type'),
+                                        'itemmodule' => new external_value(PARAM_PLUGIN, 'Grade item module'),
+                                        'iteminstance' => new external_value(PARAM_INT, 'Grade item instance'),
+                                        'itemnumber' => new external_value(PARAM_INT, 'Grade item item number'),
+                                        'categoryid' => new external_value(PARAM_INT, 'Grade item category id'),
+                                        'outcomeid' => new external_value(PARAM_INT, 'Outcome id'),
+                                        'scaleid' => new external_value(PARAM_INT, 'Scale id'),
+                                        'cmid' => new external_value(PARAM_INT, 'Course module id (if type mod)', VALUE_OPTIONAL),
+                                        'weightraw' => new external_value(PARAM_FLOAT, 'Weight raw', VALUE_OPTIONAL),
+                                        'weightformatted' => new external_value(PARAM_NOTAGS, 'Weight', VALUE_OPTIONAL),
+                                        'status' => new external_value(PARAM_ALPHA, 'Status', VALUE_OPTIONAL),
+                                        'graderaw' => new external_value(PARAM_FLOAT, 'Grade raw', VALUE_OPTIONAL),
+                                        'gradedatesubmitted' => new external_value(PARAM_INT, 'Grade submit date', VALUE_OPTIONAL),
+                                        'gradedategraded' => new external_value(PARAM_INT, 'Grade graded date', VALUE_OPTIONAL),
+                                        'gradehiddenbydate' => new external_value(PARAM_BOOL, 'Grade hidden by date?', VALUE_OPTIONAL),
+                                        'gradeneedsupdate' => new external_value(PARAM_BOOL, 'Grade needs update?', VALUE_OPTIONAL),
+                                        'gradeishidden' => new external_value(PARAM_BOOL, 'Grade is hidden?', VALUE_OPTIONAL),
+                                        'gradeformatted' => new external_value(PARAM_NOTAGS, 'The grade formatted', VALUE_OPTIONAL),
+                                        'grademin' => new external_value(PARAM_FLOAT, 'Grade min', VALUE_OPTIONAL),
+                                        'grademax' => new external_value(PARAM_FLOAT, 'Grade max', VALUE_OPTIONAL),
+                                        'rangeformatted' => new external_value(PARAM_NOTAGS, 'Range formatted', VALUE_OPTIONAL),
+                                        'percentageformatted' => new external_value(PARAM_NOTAGS, 'Percentage', VALUE_OPTIONAL),
+                                        'lettergradeformatted' => new external_value(PARAM_NOTAGS, 'Letter grade', VALUE_OPTIONAL),
+                                        'rank' => new external_value(PARAM_INT, 'Rank in the course', VALUE_OPTIONAL),
+                                        'numusers' => new external_value(PARAM_INT, 'Num users in course', VALUE_OPTIONAL),
+                                        'averageformatted' => new external_value(PARAM_NOTAGS, 'Grade average', VALUE_OPTIONAL),
+                                        'feedback' => new external_value(PARAM_RAW, 'Grade feedback', VALUE_OPTIONAL),
+                                        'feedbackformat' => new external_format_value('feedback'),
+                                    ), 'Grade items'
+                                )
+                            )
+                        )
+                    )
+                ),
                 'warnings' => new external_warnings()
             )
         );

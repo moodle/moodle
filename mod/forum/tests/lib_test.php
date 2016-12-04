@@ -3203,4 +3203,61 @@ class mod_forum_lib_testcase extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test the forum_discussion_is_locked function.
+     *
+     * @dataProvider forum_discussion_is_locked_provider
+     * @param   stdClass    $forum
+     * @param   stdClass    $discussion
+     * @param   bool        $expect
+     */
+    public function test_forum_discussion_is_locked($forum, $discussion, $expect) {
+        $this->assertEquals($expect, forum_discussion_is_locked($forum, $discussion));
+    }
+
+    /**
+     * Dataprovider for forum_discussion_is_locked tests.
+     *
+     * @return  array
+     */
+    public function forum_discussion_is_locked_provider() {
+        return [
+            'Unlocked: lockdiscussionafter is unset' => [
+                (object) [],
+                (object) [],
+                false
+            ],
+            'Unlocked: lockdiscussionafter is false' => [
+                (object) ['lockdiscussionafter' => false],
+                (object) [],
+                false
+            ],
+            'Unlocked: lockdiscussionafter is null' => [
+                (object) ['lockdiscussionafter' => null],
+                (object) [],
+                false
+            ],
+            'Unlocked: lockdiscussionafter is set; forum is of type single; post is recent' => [
+                (object) ['lockdiscussionafter' => DAYSECS, 'type' => 'single'],
+                (object) ['timemodified' => time()],
+                false
+            ],
+            'Unlocked: lockdiscussionafter is set; forum is of type single; post is old' => [
+                (object) ['lockdiscussionafter' => MINSECS, 'type' => 'single'],
+                (object) ['timemodified' => time() - DAYSECS],
+                false
+            ],
+            'Unlocked: lockdiscussionafter is set; forum is of type eachuser; post is recent' => [
+                (object) ['lockdiscussionafter' => DAYSECS, 'type' => 'eachuser'],
+                (object) ['timemodified' => time()],
+                false
+            ],
+            'Locked: lockdiscussionafter is set; forum is of type eachuser; post is old' => [
+                (object) ['lockdiscussionafter' => MINSECS, 'type' => 'eachuser'],
+                (object) ['timemodified' => time() - DAYSECS],
+                true
+            ],
+        ];
+    }
 }

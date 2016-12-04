@@ -52,12 +52,14 @@ if ($CFG->forcelogin) {
     user_accesstime_log();
 }
 
-$hassiteconfig = has_capability('moodle/site:config', context_system::instance());
+$hasmaintenanceaccess = has_capability('moodle/site:maintenanceaccess', context_system::instance());
 
 // If the site is currently under maintenance, then print a message.
-if (!empty($CFG->maintenance_enabled) and !$hassiteconfig) {
+if (!empty($CFG->maintenance_enabled) and !$hasmaintenanceaccess) {
     print_maintenance_message();
 }
+
+$hassiteconfig = has_capability('moodle/site:config', context_system::instance());
 
 if ($hassiteconfig && moodle_needs_upgrading()) {
     redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
@@ -145,7 +147,7 @@ if (!empty($CFG->customfrontpageinclude)) {
         $context = context_course::instance(SITEID);
 
         // If the section name is set we show it.
-        if (!is_null($section->name)) {
+        if (trim($section->name) !== '') {
             echo $OUTPUT->heading(
                 format_string($section->name, true, array('context' => $context)),
                 2,

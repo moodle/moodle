@@ -15,6 +15,8 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template tool_lp/competency_path
+
     Competency path template.
 
     Classes required for JS:
@@ -24,18 +26,33 @@
     * framework - The competency framework
       * id - competency id
       * name - competency idnumber
-      * first - true if node is in first position
-      * last - true if node is in last position
-      * position - the position of the node in the list
 
     * ancestors - array of nodes
       * id - competency id
       * name - competency idnumber
       * first - true if node is in first position
       * last - true if node is in last position
-      * position - the position of the node in the list
 
     * pluginbaseurl - base url of plugin tool_lp
+
+    Example context (json):
+    {
+        "framework": {
+            "id": "1",
+            "name": "Framework"
+        },
+        "ancestors": [
+            {
+                "id": "1",
+                "name": "C1"
+            },
+            {
+                "id": "1",
+                "name": "C2",
+                "last": true
+            }
+        ]
+    }
 }}
 <nav id="competency-path-{{uniqid}}">
     <small>

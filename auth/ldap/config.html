@@ -134,7 +134,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="host_url"><?php print_string('auth_ldap_host_url_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="host_url" id="host_url" type="text" size="30" value="<?php echo $config->host_url?>" />
+        <input name="host_url" id="host_url" type="text" class="text-ltr" size="30" value="<?php echo $config->host_url?>" />
         <?php if (isset($err['host_url'])) { echo $OUTPUT->error_text($err['host_url']); } ?>
     </td>
     <td>
@@ -174,7 +174,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="ldapencoding"><?php print_string('auth_ldap_ldap_encoding_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input id="ldapencoding" name="ldapencoding" type="text" value="<?php echo $config->ldapencoding ?>" />
+        <input id="ldapencoding" name="ldapencoding" type="text" class="text-ltr" value="<?php echo $config->ldapencoding ?>" />
         <?php if (isset($err['ldapencoding'])) { echo $OUTPUT->error_text($err['ldapencoding']); } ?>
     </td>
     <td>
@@ -186,7 +186,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="pagesize"><?php print_string('pagesize_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input id="pagesize" name="pagesize" type="text" value="<?php echo $config->pagesize ?>" <?php echo $disabled ?>/>
+        <input id="pagesize" name="pagesize" type="text" class="text-ltr" value="<?php echo $config->pagesize ?>" <?php echo $disabled ?>/>
         <?php
             if (isset($err['pagesize'])) { echo $OUTPUT->error_text($err['pagesize']); }
             if ($disabled) {
@@ -221,7 +221,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="bind_dn"><?php print_string('auth_ldap_bind_dn_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="bind_dn" id="bind_dn" type="text" size="30" value="<?php echo $config->bind_dn?>" />
+        <input name="bind_dn" id="bind_dn" type="text" class="text-ltr" size="30" value="<?php echo $config->bind_dn?>" />
         <?php if (isset($err['bind_dn'])) { echo $OUTPUT->error_text($err['bind_dn']); } ?>
     </td>
     <td>
@@ -233,7 +233,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="bind_pw"><?php print_string('auth_ldap_bind_pw_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="bind_pw" id="bind_pw" type="password" size="30" value="<?php echo $config->bind_pw?>" autocomplete="off"/>
+        <input name="bind_pw" id="bind_pw" type="password" class="text-ltr" size="30" value="<?php echo $config->bind_pw?>" autocomplete="off"/>
         <?php if (isset($err['bind_pw'])) { echo $OUTPUT->error_text($err['bind_pw']); } ?>
     </td>
     <td>
@@ -264,7 +264,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="contexts"><?php print_string('auth_ldap_contexts_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="contexts" id="contexts" type="text" size="30" value="<?php echo $config->contexts?>" />
+        <input name="contexts" id="contexts" type="text" class="text-ltr" size="30" value="<?php echo $config->contexts?>" />
         <?php if (isset($err['contexts'])) { echo $OUTPUT->error_text($err['contexts']); } ?>
     </td>
     <td>
@@ -304,7 +304,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="user_attribute"><?php print_string('auth_ldap_user_attribute_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="user_attribute" id="user_attribute" type="text" size="30" value="<?php echo $config->user_attribute?>" />
+        <input name="user_attribute" id="user_attribute" type="text" class="text-ltr" size="30" value="<?php echo $config->user_attribute?>" />
         <?php if (isset($err['user_attribute'])) { echo $OUTPUT->error_text($err['user_attribute']); } ?>
     </td>
     <td>
@@ -316,7 +316,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="suspended_attribute"><?php print_string('auth_ldap_suspended_attribute_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="suspended_attribute" id="suspended_attribute" type="text" size="30" value="<?php echo $config->suspended_attribute?>" />
+        <input name="suspended_attribute" id="suspended_attribute" type="text" class="text-ltr" size="30" value="<?php echo $config->suspended_attribute?>" />
         <?php if (isset($err['suspended_attribute'])) { echo $OUTPUT->error_text($err['suspended_attribute']); } ?>
     </td>
     <td>
@@ -328,7 +328,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="memberattribute"><?php print_string('auth_ldap_memberattribute_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="memberattribute" id="memberattribute" type="text" size="30" value="<?php echo $config->memberattribute?>" />
+        <input name="memberattribute" id="memberattribute" type="text" class="text-ltr" size="30" value="<?php echo $config->memberattribute?>" />
         <?php if (isset($err['memberattribute'])) { echo $OUTPUT->error_text($err['memberattribute']); } ?>
     </td>
     <td>
@@ -340,7 +340,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="memberattribute_isdn"><?php print_string('auth_ldap_memberattribute_isdn_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="memberattribute_isdn" id="memberattribute_isdn" type="text" size="30" value="<?php echo $config->memberattribute_isdn?>" />
+        <input name="memberattribute_isdn" id="memberattribute_isdn" type="text" class="text-ltr" size="30" value="<?php echo $config->memberattribute_isdn?>" />
         <?php if (isset($err['memberattribute_isdn'])) { echo $OUTPUT->error_text($err['memberattribute_isdn']); } ?>
     </td>
     <td>
@@ -352,7 +352,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="objectclass"><?php print_string('auth_ldap_objectclass_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="objectclass" id="objectclass" type="text" size="30" value="<?php echo $config->objectclass?>" />
+        <input name="objectclass" id="objectclass" type="text" class="text-ltr" size="30" value="<?php echo $config->objectclass?>" />
         <?php if (isset($err['objectclass'])) { echo $OUTPUT->error_text($err['objectclass']); } ?>
     </td>
     <td>
@@ -409,7 +409,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="changepasswordurl"><?php print_string('auth_ldap_changepasswordurl_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="changepasswordurl" id="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <input name="changepasswordurl" id="changepasswordurl" type="text" class="text-ltr" value="<?php echo $config->changepasswordurl ?>" />
         <?php if (isset($err['changepasswordurl'])) { echo $OUTPUT->error_text($err['changepasswordurl']); } ?>
     </td>
     <td>
@@ -443,7 +443,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="expiration_warning"><?php print_string('auth_ldap_expiration_warning_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="expiration_warning" id="expiration_warning" type="text" size="2" value="<?php echo $config->expiration_warning?>" />
+        <input name="expiration_warning" id="expiration_warning" type="text" class="text-ltr" size="2" value="<?php echo $config->expiration_warning?>" />
         <?php if (isset($err['expiration_warning'])) { echo $OUTPUT->error_text($err['expiration_warning']); } ?>
     </td>
     <td>
@@ -455,7 +455,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="expireattr"><?php print_string('auth_ldap_expireattr_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="expireattr" id="expireattr" type="text" size="30" value="<?php echo $config->expireattr?>" />
+        <input name="expireattr" id="expireattr" type="text" class="text-ltr" size="30" value="<?php echo $config->expireattr?>" />
         <?php if (isset($err['expireattr'])) { echo $OUTPUT->error_text($err['expireattr']); } ?>
     </td>
     <td>
@@ -478,7 +478,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="graceattr"><?php print_string('auth_ldap_gracelogin_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="graceattr" id="graceattr" type="text" size="30" value="<?php echo $config->graceattr?>" />
+        <input name="graceattr" id="graceattr" type="text" class="text-ltr" size="30" value="<?php echo $config->graceattr?>" />
         <?php if (isset($err['graceattr'])) { echo $OUTPUT->error_text($err['graceattr']); } ?>
     </td>
     <td>
@@ -506,7 +506,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="create_context"><?php print_string('auth_ldap_create_context_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="create_context" id="create_context" type="text" size="30" value="<?php echo $config->create_context?>" />
+        <input name="create_context" id="create_context" type="text" class="text-ltr" size="30" value="<?php echo $config->create_context?>" />
         <?php if (isset($err['create_context'])) { echo $OUTPUT->error_text($err['create_context']); } ?>
     </td>
     <td>
@@ -523,7 +523,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="creators"><?php print_string('auth_ldap_creators_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="creators" id="creators" type="text" size="30" value="<?php echo $config->creators?>" />
+        <input name="creators" id="creators" type="text" class="text-ltr" size="30" value="<?php echo $config->creators?>" />
         <?php if (isset($err['creators'])) { echo $OUTPUT->error_text($err['creators']); } ?>
     </td>
     <td>
@@ -584,7 +584,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="ntlmsso_subnet"><?php print_string('auth_ntlmsso_subnet_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="ntlmsso_subnet" id="ntlmsso_subnet" type="text" size="30" value="<?php p($config->ntlmsso_subnet) ?>" />
+        <input name="ntlmsso_subnet" id="ntlmsso_subnet" type="text" class="text-ltr" size="30" value="<?php p($config->ntlmsso_subnet) ?>" />
     </td>
     <td>
         <?php print_string('auth_ntlmsso_subnet', 'auth_ldap') ?>
@@ -622,7 +622,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="ntlmsso_remoteuserformat"><?php print_string('auth_ntlmsso_remoteuserformat_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="ntlmsso_remoteuserformat" id="ntlmsso_remoteuserformat" type="text" size="30" value="<?php echo $config->ntlmsso_remoteuserformat?>" />
+        <input name="ntlmsso_remoteuserformat" id="ntlmsso_remoteuserformat" type="text" class="text-ltr" size="30" value="<?php echo $config->ntlmsso_remoteuserformat?>" />
         <?php if (isset($err['ntlmsso_remoteuserformat'])) { echo $OUTPUT->error_text($err['ntlmsso_remoteuserformat']); } ?>
     </td>
     <td>

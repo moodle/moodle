@@ -98,8 +98,9 @@ Feature: View the course overview block on the dashboard and test it's functiona
     Then I should see "Welcome Student" in the "Course overview" "block"
     And I should see "You have no unread messages" in the "Course overview" "block"
     And I follow "messages"
-    And I should see "Contact list empty"
+    And I should see "No messages"
 
+  @javascript
   Scenario: View the block by a user with the welcome area and the user having messages.
     Given the following config values are set as admin:
       | showwelcomearea | 1 | block_course_overview |
@@ -152,7 +153,7 @@ Feature: View the course overview block on the dashboard and test it's functiona
     And I click on "Enable" "link" in the "Course meta link" "table_row"
     And I am on site homepage
     And I follow "Course 2"
-    And I navigate to "Enrolment methods" node in "Users"
+    And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I add "Course meta link" enrolment method with:
       | Link course | C1 |
     And I log out

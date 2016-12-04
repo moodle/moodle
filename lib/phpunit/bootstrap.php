@@ -219,6 +219,10 @@ require_once("$CFG->dirroot/lib/phpunit/lib.php");
 
 // finish moodle init
 define('ABORT_AFTER_CONFIG_CANCEL', true);
+if (isset($CFG->phpunit_profilingenabled) && $CFG->phpunit_profilingenabled) {
+    $CFG->profilingenabled = true;
+    $CFG->profilingincluded = '*';
+}
 require("$CFG->dirroot/lib/setup.php");
 
 raise_memory_limit(MEMORY_HUGE);

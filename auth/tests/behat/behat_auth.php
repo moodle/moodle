@@ -61,18 +61,11 @@ class behat_auth extends behat_base {
      * @Given /^I log out$/
      */
     public function i_log_out() {
-        // There is no longer any need to worry about whether the navigation
-        // bar needs to be expanded; user_menu now lives outside the
-        // hamburger.
 
-        // However, the user menu *always* needs to be expanded. if running JS.
-        if ($this->running_javascript()) {
-            $xpath = "//div[@class='usermenu']//a[contains(concat(' ', @class, ' '), ' toggle-display ')]";
+        // Wait for page to be loaded.
+        $this->wait_for_pending_js();
 
-            $this->execute('behat_general::i_click_on', array($xpath, "xpath_element"));
-        }
-
-        // No need to check for exceptions as it will checked after this step execution.
-        $this->execute('behat_general::click_link', get_string('logout'));
+        // Click on logout link in footer, as it's much faster.
+        $this->execute('behat_general::i_click_on_in_the', array(get_string('logout'), 'link', '#page-footer', "css_element"));
     }
 }

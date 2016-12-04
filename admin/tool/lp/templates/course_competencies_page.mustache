@@ -16,12 +16,14 @@
 }}
 {{!
     Course competencies template.
+
+    For a full list of the context for this template see the course_competencies_page renderable.
 }}
 <div data-region="coursecompetenciespage">
     <div data-region="actions" class="clearfix">
-        <div class="pull-left">
+        <div class="pull-xs-left">
             {{#canmanagecoursecompetencies}}
-                <button disabled>{{#str}}addcoursecompetencies, tool_lp{{/str}}</button>
+                <button class="btn btn-secondary" disabled>{{#str}}addcoursecompetencies, tool_lp{{/str}}</button>
             {{/canmanagecoursecompetencies}}
         </div>
     </div>
@@ -55,12 +57,13 @@
     <tr class="drag-samenode" data-id="{{competency.id}}">
     <td>
         {{#canmanagecoursecompetencies}}
-        <span class="drag-handlecontainer pull-left"></span>
-        <div class="pull-right">
+        <span class="drag-handlecontainer pull-xs-left"></span>
+        <div class="pull-xs-right">
             <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">
                 {{#pix}}t/delete, core, {{#str}}delete{{/str}}{{/pix}}
             </a>
         </div>
+        <div class="clearfix"></div>
         {{/canmanagecoursecompetencies}}
         {{#competency}}
             <a href="{{pluginbaseurl}}user_competency_in_course.php?courseid={{courseid}}&competencyid={{competency.id}}&userid={{gradableuserid}}"
@@ -71,7 +74,7 @@
             <p>{{{competency.description}}}</p>
         {{/competency}}
         {{#comppath}}
-            <span class="pull-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
+            <span class="pull-xs-left">{{#str}}path, tool_lp{{/str}}&nbsp;</span>{{> tool_lp/competency_path }}
         {{/comppath}}
         {{#usercompetencycourse}}
             {{#grade}}
@@ -82,7 +85,7 @@
         <div data-region="coursecompetency-ruleoutcome">
             <label>
                 {{#str}}uponcoursecompletion, tool_lp{{/str}}
-                <select data-field="ruleoutcome" data-id="{{coursecompetency.id}}">
+                <select data-field="ruleoutcome" data-id="{{coursecompetency.id}}" class="custom-select">
                   {{#ruleoutcomeoptions}}
                      <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
                   {{/ruleoutcomeoptions}}
@@ -92,12 +95,12 @@
         {{/canmanagecoursecompetencies}}
         <div data-region="coursecompetencyactivities">
         <p>
-        <ul class="inline">
+        <ul class="inline list-inline">
         {{#coursemodules}}
-            <li><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
+            <li class="list-inline-item"><a href="{{url}}"><img src="{{iconurl}}"> {{name}} </a></li>
         {{/coursemodules}}
         {{^coursemodules}}
-            <li><span class="alert">{{#str}}noactivities, tool_lp{{/str}}</span></li>
+            <li class="list-inline-item"><span class="alert">{{#str}}noactivities, tool_lp{{/str}}</span></li>
         {{/coursemodules}}
         </ul>
         </p>

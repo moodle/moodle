@@ -282,23 +282,21 @@ if (empty($SESSION->wantsurl)) {
 
 /// Redirect to alternative login URL if needed
 if (!empty($CFG->alternateloginurl)) {
-    $loginurl = $CFG->alternateloginurl;
+    $loginurl = new moodle_url($CFG->alternateloginurl);
 
-    if (strpos($SESSION->wantsurl, $loginurl) === 0) {
-        //we do not want to return to alternate url
-        $SESSION->wantsurl = NULL;
+    $loginurlstr = $loginurl->out(false);
+
+    if (strpos($SESSION->wantsurl, $loginurlstr) === 0) {
+        // We do not want to return to alternate url.
+        $SESSION->wantsurl = null;
     }
 
+    // If error code then add that to url.
     if ($errorcode) {
-        if (strpos($loginurl, '?') === false) {
-            $loginurl .= '?';
-        } else {
-            $loginurl .= '&';
-        }
-        $loginurl .= 'errorcode='.$errorcode;
+        $loginurl->param('errorcode', $errorcode);
     }
 
-    redirect($loginurl);
+    redirect($loginurl->out(false));
 }
 
 // make sure we really are on the https page when https login required
@@ -319,12 +317,6 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
     }
 
     $frm->password = "";
-}
-
-if (!empty($frm->username)) {
-    $focus = "password";
-} else {
-    $focus = "username";
 }
 
 // IOMAD changes to display the instructions.
@@ -374,13 +366,9 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
     echo $OUTPUT->box_end();
 } else {
-    include("index_form.html");
-    if ($errormsg) {
-        $PAGE->requires->js_init_call('M.util.focus_login_error', null, true);
-    } else if (!empty($CFG->loginpageautofocus)) {
-        //focus username or password
-        $PAGE->requires->js_init_call('M.util.focus_login_form', null, true);
-    }
+    $loginform = new \core_auth\output\login($authsequence, $frm->username);
+    $loginform->set_error($errormsg);
+    echo $OUTPUT->render($loginform);
 }
 
 echo $OUTPUT->footer();

@@ -184,16 +184,17 @@ class file_storage {
      *
      * @param stored_file $file the file we want to preview
      * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
+     * @param boolean $forcerefresh If true, the file will be converted every time (not cached).
      * @return stored_file|bool false if unable to create the conversion, stored file otherwise
      */
-    public function get_converted_document(stored_file $file, $format) {
+    public function get_converted_document(stored_file $file, $format, $forcerefresh = false) {
 
         $context = context_system::instance();
         $path = '/' . $format . '/';
         $conversion = $this->get_file($context->id, 'core', 'documentconversion', 0, $path, $file->get_contenthash());
 
-        if (!$conversion) {
-            $conversion = $this->create_converted_document($file, $format);
+        if (!$conversion || $forcerefresh) {
+            $conversion = $this->create_converted_document($file, $format, $forcerefresh);
             if (!$conversion) {
                 return false;
             }
@@ -259,7 +260,7 @@ class file_storage {
     }
 
     /**
-     * If the test pdf has been generated correctly and send it direct to the browser.
+     * Regenerate the test pdf and send it direct to the browser.
      */
     public static function send_test_pdf() {
         global $CFG;
@@ -286,7 +287,7 @@ class file_storage {
         }
 
         // Convert the doc file to pdf and send it direct to the browser.
-        $result = $fs->get_converted_document($testdocx, 'pdf');
+        $result = $fs->get_converted_document($testdocx, 'pdf', true);
         readfile_accel($result, 'application/pdf', true);
     }
 
@@ -334,7 +335,7 @@ class file_storage {
      * @param string $format The desired format - e.g. 'pdf'. Formats are specified by file extension.
      * @return stored_file|bool false if unable to create the conversion, stored file otherwise
      */
-    protected function create_converted_document(stored_file $file, $format) {
+    protected function create_converted_document(stored_file $file, $format, $forcerefresh = false) {
         global $CFG;
 
         if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
@@ -365,7 +366,7 @@ class file_storage {
                 throw new file_exception('storedfileproblem', 'Could not copy file contents to temp file.');
             }
         } catch (file_exception $fe) {
-            remove_dir($uniqdir);
+            remove_dir($tmp);
             throw $fe;
         }
 
@@ -386,25 +387,34 @@ class file_storage {
         chdir($tmp);
         $result = exec($cmd, $output);
         chdir($currentdir);
-        if (!file_exists($newtmpfile)) {
-            remove_dir($uniqdir);
+        touch($newtmpfile);
+        if (filesize($newtmpfile) === 0) {
+            remove_dir($tmp);
             // Cleanup.
             return false;
         }
 
         $context = context_system::instance();
+        $path = '/' . $format . '/';
         $record = array(
             'contextid' => $context->id,
             'component' => 'core',
             'filearea'  => 'documentconversion',
             'itemid'    => 0,
-            'filepath'  => '/' . $format . '/',
+            'filepath'  => $path,
             'filename'  => $file->get_contenthash(),
         );
 
+        if ($forcerefresh) {
+            $existing = $this->get_file($context->id, 'core', 'documentconversion', 0, $path, $file->get_contenthash());
+            if ($existing) {
+                $existing->delete();
+            }
+        }
+
         $convertedfile = $this->create_file_from_pathname($record, $newtmpfile);
         // Cleanup.
-        remove_dir($uniqdir);
+        remove_dir($tmp);
         return $convertedfile;
     }
 
@@ -784,21 +794,34 @@ class file_storage {
      *
      * @param int $contextid context ID
      * @param string $component component
-     * @param string $filearea file area
+     * @param mixed $filearea file area/s, you cannot specify multiple fileareas as well as an itemid
      * @param int $itemid item ID or all files if not specified
      * @param string $sort A fragment of SQL to use for sorting
      * @param bool $includedirs whether or not include directories
+     * @param int $updatedsince return files updated since this time
      * @return stored_file[] array of stored_files indexed by pathanmehash
      */
-    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "itemid, filepath, filename", $includedirs = true) {
+    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "itemid, filepath, filename",
+                                    $includedirs = true, $updatedsince = 0) {
         global $DB;
 
-        $conditions = array('contextid'=>$contextid, 'component'=>$component, 'filearea'=>$filearea);
-        if ($itemid !== false) {
+        list($areasql, $conditions) = $DB->get_in_or_equal($filearea, SQL_PARAMS_NAMED);
+        $conditions['contextid'] = $contextid;
+        $conditions['component'] = $component;
+
+        if ($itemid !== false && is_array($filearea)) {
+            throw new coding_exception('You cannot specify multiple fileareas as well as an itemid.');
+        } else if ($itemid !== false) {
             $itemidsql = ' AND f.itemid = :itemid ';
             $conditions['itemid'] = $itemid;
         } else {
             $itemidsql = '';
+        }
+
+        $updatedsincesql = '';
+        if (!empty($updatedsince)) {
+            $conditions['time'] = $updatedsince;
+            $updatedsincesql = 'AND f.timemodified > :time';
         }
 
         $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
@@ -807,7 +830,8 @@ class file_storage {
                        ON f.referencefileid = r.id
                  WHERE f.contextid = :contextid
                        AND f.component = :component
-                       AND f.filearea = :filearea
+                       AND f.filearea $areasql
+                       $updatedsincesql
                        $itemidsql";
         if (!empty($sort)) {
             $sql .= " ORDER BY {$sort}";
@@ -2191,7 +2215,12 @@ class file_storage {
             mkdir($trashpath, $this->dirpermissions, true);
         }
         rename($contentfile, $trashfile);
-        chmod($trashfile, $this->filepermissions); // fix permissions if needed
+
+        // Fix permissions, only if needed.
+        $currentperms = octdec(substr(decoct(fileperms($trashfile)), -4));
+        if ((int)$this->filepermissions !== $currentperms) {
+            chmod($trashfile, $this->filepermissions);
+        }
     }
 
     /**

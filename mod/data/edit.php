@@ -352,12 +352,17 @@ foreach ($generalnotifications as $notification) {
 }
 echo $newtext;
 
-echo '<div class="mdl-align"><input type="submit" name="saveandview" value="'.get_string('saveandview','data').'" />';
+echo '<div class="mdl-align m-t-1"><input type="submit" class="btn btn-primary" name="saveandview" ' .
+     'value="' . get_string('saveandview', 'data') . '" />';
 if ($rid) {
-    echo '&nbsp;<input type="submit" name="cancel" value="'.get_string('cancel').'" onclick="javascript:history.go(-1)" />';
+    echo '&nbsp;<input type="submit" class="btn btn-primary" name="cancel" ' .
+         'value="' . get_string('cancel') . '" onclick="javascript:history.go(-1)" />';
 } else {
-    if ((!$data->maxentries) || has_capability('mod/data:manageentries', $context) || (data_numentries($data) < ($data->maxentries - 1))) {
-        echo '&nbsp;<input type="submit" name="saveandadd" value="' . get_string('saveandadd', 'data') . '" />';
+    if ((!$data->maxentries) ||
+            has_capability('mod/data:manageentries', $context) ||
+            (data_numentries($data) < ($data->maxentries - 1))) {
+        echo '&nbsp;<input type="submit" class="btn btn-primary" name="saveandadd" ' .
+             'value="' . get_string('saveandadd', 'data') . '" />';
     }
 }
 echo '</div>';

@@ -41,6 +41,7 @@ Feature: Manage competencies linked to evidence of prior learning
 
   Scenario: Link competency to evidence of prior learning from list
     Given I follow "Evidence of prior learning"
+    And I change window size to "large"
     And I should see "List of evidence"
     And I should see "Test-Evidence"
     And I click on "Link" of edit menu in the "Test-Evidence" row

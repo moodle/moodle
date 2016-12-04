@@ -23,10 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      3.1
  */
-define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
+define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragment',
         'core/ajax', 'core/str', 'mod_assign/grading_form_change_checker',
         'mod_assign/grading_events'],
-       function($, notification, templates, fragment, ajax, str, checker, GradingEvents) {
+       function($, Y, notification, templates, fragment, ajax, str, checker, GradingEvents) {
 
     /**
      * GradingPanel class.
@@ -89,7 +89,7 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
         }
 
         // Copy data from notify students checkbox which was moved out of the form.
-        var checked = $('[data-region="grading-actions-form"] [name="sendstudentnotifications"]').val();
+        var checked = $('[data-region="grading-actions-form"] [name="sendstudentnotifications"]').prop("checked");
         $('.gradeform [name="sendstudentnotifications"]').val(checked);
     };
 
@@ -147,6 +147,9 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
             ]).done(function(strs) {
                 notification.alert(strs[0], strs[1]);
             }).fail(notification.exception);
+            Y.use('moodle-core-formchangechecker', function() {
+                M.core_formchangechecker.reset_form_dirty_state();
+            });
             if (nextUserId == this._lastUserId) {
                 $(document).trigger('reset', nextUserId);
             } else {
@@ -216,9 +219,9 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
         var region = $(selector);
 
         templates.render('mod_assign/popout_button', {}).done(function(html) {
-            region.find('.fitem_ffilemanager .fitemtitle').append(html);
-            region.find('.fitem_feditor .fitemtitle').append(html);
-            region.find('.fitem_f .fitemtitle').append(html);
+            var parents = region.find('[data-fieldtype="filemanager"],[data-fieldtype="editor"],[data-fieldtype="grading"]')
+                    .closest('.fitem');
+            parents.addClass('has-popout').find('label').parent().append(html);
 
             region.on('click', '[data-region="popout-button"]', this._togglePopout.bind(this));
         }.bind(this)).fail(notification.exception);
@@ -344,6 +347,11 @@ define(['jquery', 'core/notification', 'core/templates', 'core/fragment',
      */
     GradingPanel.prototype.registerEventListeners = function() {
         var docElement = $(document);
+        var region = $(this._region);
+        // Add an event listener to prevent form submission when pressing enter key.
+        region.on('submit', 'form', function(e) {
+            e.preventDefault();
+        });
 
         docElement.on('user-changed', this._refreshGradingPanel.bind(this));
         docElement.on('save-changes', this._submitForm.bind(this));

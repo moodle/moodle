@@ -85,6 +85,36 @@ function behat_error($errorcode, $text = '') {
 }
 
 /**
+ * Return logical error string.
+ *
+ * @param int $errtype php error type.
+ * @return string string which will be returned.
+ */
+function behat_get_error_string($errtype) {
+    switch ($errtype) {
+        case E_USER_ERROR:
+            $errnostr = 'Fatal error';
+            break;
+        case E_WARNING:
+        case E_USER_WARNING:
+            $errnostr = 'Warning';
+            break;
+        case E_NOTICE:
+        case E_USER_NOTICE:
+        case E_STRICT:
+            $errnostr = 'Notice';
+            break;
+        case E_RECOVERABLE_ERROR:
+            $errnostr = 'Catchable';
+            break;
+        default:
+            $errnostr = 'Unknown error type';
+    }
+
+    return $errnostr;
+}
+
+/**
  * PHP errors handler to use when running behat tests.
  *
  * Adds specific CSS classes to identify
@@ -121,33 +151,57 @@ function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
     // Using the default one in case there is a fatal catchable error.
     default_error_handler($errno, $errstr, $errfile, $errline, $errcontext);
 
-    switch ($errno) {
-        case E_USER_ERROR:
-            $errnostr = 'Fatal error';
-            break;
-        case E_WARNING:
-        case E_USER_WARNING:
-            $errnostr = 'Warning';
-            break;
-        case E_NOTICE:
-        case E_USER_NOTICE:
-        case E_STRICT:
-            $errnostr = 'Notice';
-            break;
-        case E_RECOVERABLE_ERROR:
-            $errnostr = 'Catchable';
-            break;
-        default:
-            $errnostr = 'Unknown error type';
-    }
+    $errnostr = behat_get_error_string($errno);
 
-    // Wrapping the output.
-    echo '<div class="phpdebugmessage" data-rel="phpdebugmessage">' . PHP_EOL;
-    echo "$errnostr: $errstr in $errfile on line $errline" . PHP_EOL;
-    echo '</div>';
+    // If ajax script then throw exception, so the calling api catch it and show it on web page.
+    if (defined('AJAX_SCRIPT')) {
+        throw new Exception("$errnostr: $errstr in $errfile on line $errline");
+    } else {
+        // Wrapping the output.
+        echo '<div class="phpdebugmessage" data-rel="phpdebugmessage">' . PHP_EOL;
+        echo "$errnostr: $errstr in $errfile on line $errline" . PHP_EOL;
+        echo '</div>';
+    }
 
     // Also use the internal error handler so we keep the usual behaviour.
     return false;
+}
+
+/**
+ * Before shutdown save last error entries, so we can fail the test.
+ */
+function behat_shutdown_function() {
+    // If any error found, then save it.
+    if ($error = error_get_last()) {
+        // Ignore E_WARNING, as they might come via ( @ )suppression and might lead to false failure.
+        if (isset($error['type']) && !($error['type'] & E_WARNING)) {
+
+            $errors = behat_get_shutdown_process_errors();
+
+            $errors[] = $error;
+            $errorstosave = json_encode($errors);
+
+            set_config('process_errors', $errorstosave, 'tool_behat');
+        }
+    }
+}
+
+/**
+ * Return php errors save which were save during shutdown.
+ *
+ * @return array
+ */
+function behat_get_shutdown_process_errors() {
+    global $DB;
+
+    // Don't use get_config, as it use cache and return invalid value, between selenium and cli process.
+    $phperrors = $DB->get_field('config_plugins', 'value', array('name' => 'process_errors', 'plugin' => 'tool_behat'));
+
+    if (!empty($phperrors)) {
+        return json_decode($phperrors, true);
+    } else {
+        return array();
+    }
 }
 
 /**

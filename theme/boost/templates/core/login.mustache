@@ -1,0 +1,235 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/login
+
+    Moodle template for the login page.
+
+    Context variables required for this template:
+    * autofocusform: Auto focus on form ?,
+    * canloginasguest - Is guest login allowed?,
+    * canloginbyemail - Is login by email allowed?,
+    * cansignup - Signup allowed?,
+    * cookieshelpicon - cookies help icon details
+    * error - Any errors in the form?,
+    * forgotpasswordurl - Forgot password url,
+    * hasidentityproviders - Flag, set to true to hide identity providers,
+    * hasinstructions - Flag, set to true to show instructions,
+    * identityproviders - List of identiy providers,
+    * instructions - Instructions,
+    * instructionsformat - Format of instructions,
+    * loginurl - Login url,
+    * rememberusername - Remeber username?,
+    * passwordautocomplete - Allow password autocomplete?,
+    * signupurl - Signup url,
+    * cookieshelpiconformatted - Formatted html of cookies help icon,
+    * errorformatted - Formatted error,
+    * logourl - Flag, logo url,
+    * sitename - Name of site.
+
+    Example context (json):
+    {
+        "autofocusform": false,
+        "canloginasguest": "1",
+        "canloginbyemail": false,
+        "cansignup": true,
+        "cookieshelpicon": {
+            "heading": "Cookies must be enabled in your browser",
+            "text": "<div class=\"no-overflow\">Two cookies are used on this site. Both died..</div>",
+            "icon": {
+                "attributes": [
+                    {
+                        "name": "class",
+                        "value": "iconhelp"
+                    },
+                    {
+                        "name": "alt",
+                        "value": "Help with Cookies must be enabled in your browser"
+                    },
+                    {
+                        "name": "title",
+                        "value": "Help with Cookies must be enabled in your browser"
+                    },
+                    {
+                        "name": "src",
+                        "value": "http://localhost/stable_master/theme/image.php?theme=boost&component=core&image=help"
+                    }
+                ]
+            },
+            "linktext": null,
+            "title": "Help with Cookies must be enabled in your browser",
+            "url": "http://localhost/stable_master/help.php?component=core&identifier=cookiesenabled&lang=en",
+            "ltr": true
+        },
+        "error": "",
+        "forgotpasswordurl": "http://localhost/stable_master/login/forgot_password.php",
+        "hasidentityproviders": false,
+        "hasinstructions": true,
+        "identityproviders": [],
+        "instructions": "For full access to this site, you first need to create an account.",
+        "instructionsformat": "1",
+        "loginurl": "http://localhost/stable_master/login/index.php",
+        "rememberusername": true,
+        "passwordautocomplete": false,
+        "signupurl": "http://localhost/stable_master/login/signup.php",
+        "cookieshelpiconformatted": "",
+        "errorformatted": "",
+        "logourl": false,
+        "sitename": "Beer & Chips"
+    }
+}}
+
+<div class="m-y-3 hidden-sm-down"></div>
+<div class="row">
+<div class="col-xl-6 push-xl-3 m-2-md col-sm-8 push-sm-2">
+<div class="card">
+    <div class="card-block">
+        <div class="card-title text-xs-center">
+            {{#logourl}}
+                <h2><img src="{{logourl}}" title="{{sitename}}" alt="{{sitename}}"/></h2>
+            {{/logourl}}
+            {{^logourl}}
+                <h2>{{sitename}}</h2>
+            {{/logourl}}
+            <hr>
+        </div>
+
+        {{#cansignup}}
+            <div class="sr-only">
+                <a href="{{signupurl}}">{{#str}} tocreatenewaccount {{/str}}</a>
+            </div>
+        {{/cansignup}}
+
+        {{#error}}
+            <div class="loginerrors m-t-1">
+                <a href="#" id="loginerrormessage" class="accesshide">{{error}}</a>
+                <div class="alert alert-danger" role="alert">{{error}}</div>
+            </div>
+        {{/error}}
+
+        <div class="row">
+            <div class="col-md-4 push-md-1">
+                <form class="m-t-1" action="{{loginurl}}" method="post" id="login" {{^passwordautocomplete}}autocomplete="off"{{/passwordautocomplete}}>
+                    <input id="anchor" type="hidden" name="anchor" value="">
+                    <script>document.getElementById('anchor').value = location.hash;</script>
+
+                    <label for="username" class="sr-only">
+                        {{^canloginbyemail}}
+                            {{#str}} username {{/str}}
+                        {{/canloginbyemail}}
+                        {{#canloginbyemail}}
+                            {{#str}} usernameemail {{/str}}
+                        {{/canloginbyemail}}
+                    </label>
+                    <input type="text" name="username" id="username"
+                        class="form-control"
+                        value="{{username}}"
+                        placeholder={{#quote}}{{^canloginbyemail}}{{#str}}username{{/str}}{{/canloginbyemail}}{{#canloginbyemail}}{{#str}}usernameemail{{/str}}{{/canloginbyemail}}{{/quote}}>
+                    <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
+                    <input type="password" name="password" id="password" value=""
+                        class="form-control"
+                        placeholder={{#quote}}{{#str}}password{{/str}}{{/quote}}
+                        {{^passwordautocomplete}}autocomplete="off"{{/passwordautocomplete}}>
+
+                    {{#rememberusername}}
+                        <div class="rememberpass m-t-1">
+                            <input type="checkbox" name="rememberusername" id="rememberusername" value="1" {{#username}}checked="checked"{{/username}} />
+                            <label for="rememberusername">{{#str}} rememberusername, admin {{/str}}</label>
+                        </div>
+                    {{/rememberusername}}
+
+                    <button type="submit" class="btn btn-primary btn-block m-t-1" id="loginbtn">{{#str}}login{{/str}}</button>
+                </form>
+            </div>
+
+            <div class="col-md-4 push-md-3">
+                <div class="forgetpass m-t-1">
+                    <p><a href="{{forgotpasswordurl}}">{{#str}}forgotten{{/str}}</a></p>
+                </div>
+
+                <div class="m-t-1">
+                    {{#str}} cookiesenabled {{/str}}
+                    {{{cookieshelpiconformatted}}}
+                </div>
+            {{#canloginasguest}}
+                <div class="m-t-2">
+                    <p>{{#str}}someallowguest{{/str}}</p>
+                    <form action="{{loginurl}}" method="post" id="guestlogin">
+                        <input type="hidden" name="username" value="guest" />
+                        <input type="hidden" name="password" value="guest" />
+                        <button class="btn btn-secondary btn-block" type="submit">{{#str}}loginguest{{/str}}</button>
+                    </form>
+                </div>
+            {{/canloginasguest}}
+
+        {{#hasidentityproviders}}
+                <h6 class="m-t-2">{{#str}} potentialidps, auth {{/str}}</h6>
+                <div class="potentialidplist" class="m-t-1">
+                    {{#identityproviders}}
+                        <div class="potentialidp">
+                            <a href="{{url}}" title={{#quote}}{{name}}{{/quote}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{name}}</a>
+                        </div>
+                    {{/identityproviders}}
+                </div>
+        {{/hasidentityproviders}}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+{{#hasinstructions}}
+<div class="row">
+<div class="col-xl-6 push-xl-3 m-2-md col-sm-8 push-sm-2">
+<div class="card">
+    <div class="card-block">
+        <div class="card-title">
+            <h2>{{#str}}firsttime{{/str}}</h2>
+        </div>
+        <div>
+        {{{instructions}}}
+        {{#cansignup}}
+            <form class="m-t-1" action="{{signupurl}}" method="get" id="signup">
+                <button type="submit" class="btn btn-secondary">{{#str}}startsignup{{/str}}</button>
+            </form>
+        {{/cansignup}}
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{{/hasinstructions}}
+
+
+{{#js}}
+    require(['jquery', 'core/yui'], function($, Y) {
+    {{#error}}
+        $(function() {
+            M.util.focus_login_error(Y);
+        });
+    {{/error}}
+    {{^error}}
+        {{#autofocusform}}
+            $(function() {
+                M.util.focus_login_form(Y);
+            });
+        {{/autofocusform}}
+    {{/error}}
+    })
+{{/js}}

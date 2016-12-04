@@ -8,15 +8,14 @@ Feature: Forms manipulation
   Scenario: Basic forms manipulation
     Given I log in as "admin"
     And I follow "Preferences" in the user menu
-    And I follow "Edit profile"
+    And I click on "Edit profile" "link" in the "region-main" "region"
     When I set the field "First name" to "Field value"
     And I set the field "Select a country" to "Japan"
-    And I set the field "Unmask" to "1"
+    And I set the field "New password" to "TestPass"
     Then the field "First name" matches value "Field value"
     And the "Select a country" select box should contain "Japan"
-    And the field "Unmask" matches value "1"
-    And I set the field "Unmask" to ""
-    And the field "Unmask" matches value ""
+    And the field "New password" matches value "TestPass"
+    And I take focus off "Update profile" "button"
     And I press "Update profile"
 
   @javascript

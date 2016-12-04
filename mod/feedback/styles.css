@@ -1,20 +1,20 @@
 /* styles using by feedback */
 .path-mod-feedback span.feedback_info {
-    font-weight:bold;
+    font-weight: bold;
 }
 
 .path-mod-feedback div.feedback_is_dependent {
-    background:#DDDDDD;
+    background: #ddd;
 }
 
 .path-mod-feedback span.feedback_depend {
-    color:#ff0000;
+    color: #f00;
 }
 
 .path-mod-feedback hr.feedback_pagebreak {
-    height:4px;
-    color:#aaaaaa;
-    background-color:#aaaaaa;
+    height: 4px;
+    color: #aaa;
+    background-color: #aaa;
     border: 0;
     margin: 0;
 }
@@ -31,113 +31,8 @@
     height: 10px;
 }
 
-.path-mod-feedback #analysis-form label { display: inline; }
-
-.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
-    display: block;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    text-align: left;
-    width: 100%;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem .felement {
-    margin-left: 0;
-    width: 100%;
-    float: left;
-    padding-left: 0;
-    padding-right: 0;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem .fstatic:empty {
-    display: none;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem .fcheckbox > span,
-.path-mod-feedback .mform.feedback_form .fitem .fradio > span,
-.path-mod-feedback .mform.feedback_form .fitem .fgroup > span {
-    margin-top: 4px;
-}
-
-body.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
-    display: inline-block;
-    width: auto;
-    margin-right: 0;
-}
-
-.path-mod-feedback .mform.feedback_form .femptylabel .felement {
-    display: inline-block;
-    margin-top: 4px;
-    padding-top: 5px;
-    width: auto;
-}
-
-body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebreak .felement {
-    width: 100%;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .fitemtitle,
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-    display: inline-block;
-    width: auto;
-}
-
-.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-    padding: 6px;
-}
-
-body.dir-rtl.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
-    margin-right: 0px;
-    margin-left: 0;
-}
-
-.dir-rtl.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
-    text-align: right;
-}
-
-.dir-rtl.path-mod-feedback .mform.feedback_form .fitem .felement {
-    margin-right: 0;
-    float: right;
-    padding-right: 0;
-    padding-left: 0;
-}
-
-.dir-rtl.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
-    float: right;
-}
-
-.path-mod-feedback .mform.feedback_form#feedback_viewresponse_form .fitem.feedback_hasvalue:not(.feedback-item-captcha) .felement {
-    background: #FBFBF1;
-    min-height: 1em;
-    box-sizing: border-box;
-    padding: 3px;
-    border: 1px solid #ddd
-}
-
-.path-mod-feedback .mform.feedback_form .fitem.feedback_hasvalue .fstatic:empty {
-    display: inherit;
-}
-
-.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem:hover {
-    background: #f5f5f5;
-}
-
-.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle label {
-    width: 100%;
-}
-
-.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle {
-    position: relative;
-    width: 100%;
-}
-
-.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemdd,
-.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemname {
-    float: left;
-}
-
-.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemactions {
-    float: right;
+.path-mod-feedback #analysis-form label {
+    display: inline;
 }
 
 .path-mod-feedback .templateslist td.cell.action,
@@ -148,12 +43,12 @@ body.dir-rtl.path-mod-feedback #region-main .mform.feedback_form .femptylabel .f
 /* Analysis page */
 .path-mod-feedback table.analysis {
     width: 100%;
-    border-top: 1px solid #aaaaaa;
+    border-top: 1px solid #aaa;
     margin-top: 10px;
 }
 
 .path-mod-feedback table.analysis tr:first-child th {
-    padding-top:10px;
+    padding-top: 10px;
 }
 
 .path-mod-feedback table.analysis tr:hover {
@@ -162,7 +57,7 @@ body.dir-rtl.path-mod-feedback #region-main .mform.feedback_form .femptylabel .f
 
 .path-mod-feedback table.analysis td.singlevalue:before,
 .path-mod-feedback table.analysis td.optionname:before {
-    content:'- ';
+    content: '- ';
 }
 
 .path-mod-feedback table.analysis.itemtype_textarea td {
@@ -170,7 +65,7 @@ body.dir-rtl.path-mod-feedback #region-main .mform.feedback_form .femptylabel .f
 }
 
 .path-mod-feedback table.analysis tr.isempty {
-    display:none;
+    display: none;
 }
 
 /* Responses list */
@@ -189,28 +84,38 @@ body.dir-rtl.path-mod-feedback #region-main .mform.feedback_form .femptylabel .f
 .path-mod-feedback .response_navigation {
     margin: .5em 0;
 }
+
 .path-mod-feedback .response_navigation a {
     display: inline-block;
 }
+
 .path-mod-feedback .response_navigation a.back_to_list {
     margin: auto;
     float: right;
     left: -50%;
     position: relative;
 }
-.dir-rtl.path-mod-feedback .response_navigation .next_response:after,
+
 .path-mod-feedback .response_navigation .prev_response:before {
+    /*rtl:raw:
+    content: ' ► ';
+    */
+    /*rtl:remove*/
     content: ' ◄ ';
 }
-.dir-rtl.path-mod-feedback .response_navigation .prev_response:before,
+
 .path-mod-feedback .response_navigation .next_response:after {
+    /*rtl:raw:
+    content: ' ◄ ';
+    */
+    /*rtl:remove*/
     content: ' ► ';
 }
-.dir-rtl.path-mod-feedback .response_navigation .prev_response,
+
 .path-mod-feedback .response_navigation .next_response {
     float: right;
 }
-.dir-rtl.path-mod-feedback .response_navigation .next_response,
+
 .path-mod-feedback .response_navigation .prev_response {
     float: left;
 }

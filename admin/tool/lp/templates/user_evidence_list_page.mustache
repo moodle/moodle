@@ -89,25 +89,25 @@
                 <ul title="{{#str}}edit{{/str}}" class="user-evidence-actions">
                 <li>
                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
-                    <ul class="dropdown-menu">
-                        <li>
+                    <ul class="dropdown dropdown-menu">
+                        <li class="dropdown-item">
                             <a href="{{pluginbaseurl}}/user_evidence_edit.php?id={{id}}&amp;userid={{userid}}&amp;return=list">
                                 {{#pix}}t/edit{{/pix}} {{#str}}editthisuserevidence, tool_lp{{/str}}
                             </a>
                         </li>
                         {{#userhasplan}}
-                        <li>
+                        <li class="dropdown-item">
                             <a href="#" data-action="link-competency">
                                 {{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}
                             </a>
                         </li>
                         {{/userhasplan}}
-                        <li>
+                        <li class="dropdown-item">
                             <a data-action="send-competencies-review" href="#">
                                 {{#pix}}t/edit{{/pix}} {{#str}}sendcompetenciestoreview, tool_lp{{/str}}
                             </a>
                         </li>
-                        <li>
+                        <li class="dropdown-item">
                             <a data-action="user-evidence-delete" href="#">
                                 {{#pix}}t/delete{{/pix}} {{#str}}deletethisuserevidence, tool_lp{{/str}}
                             </a>
@@ -131,6 +131,6 @@
 {{#js}}
 require(['tool_lp/user_evidence_actions'], function(UserEvidenceActions) {
     var uea = new UserEvidenceActions('list');
-    uea.enhanceMenubar('.user-evidence-actions')
+    uea.enhanceMenubar('.user-evidence-actions');
 });
 {{/js}}

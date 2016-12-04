@@ -42,7 +42,7 @@ class Reader extends AbstractReader
         $this->zip = new \ZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            $this->sheetIterator = new SheetIterator($filePath);
+            $this->sheetIterator = new SheetIterator($filePath, $this->shouldFormatDates);
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }

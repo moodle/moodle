@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2015 Justin Hileman
+ * (c) 2010-2016 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -75,7 +75,7 @@ class Mustache_Compiler
     /**
      * Helper function for walking the Mustache token parse tree.
      *
-     * @throws Mustache_Exception_SyntaxException upon encountering unknown token types.
+     * @throws Mustache_Exception_SyntaxException upon encountering unknown token types
      *
      * @param array $tree  Parse tree of Mustache tokens
      * @param int   $level (default: 0)
@@ -191,7 +191,7 @@ class Mustache_Compiler
             {
                 $this->lambdaHelper = new Mustache_LambdaHelper($this->mustache, $context);
                 $buffer = \'\';
-                $newContext = array();
+                $blocksContext = array();
         %s
 
                 return $buffer;
@@ -207,7 +207,7 @@ class Mustache_Compiler
             public function renderInternal(Mustache_Context $context, $indent = \'\')
             {
                 $buffer = \'\';
-                $newContext = array();
+                $blocksContext = array();
         %s
 
                 return $buffer;
@@ -264,7 +264,7 @@ class Mustache_Compiler
         return sprintf($this->prepare(self::BLOCK_VAR, $level), $id, $this->walk($nodes, $level));
     }
 
-    const BLOCK_ARG = '$newContext[%s] = array($this, \'block%s\');';
+    const BLOCK_ARG = '$blocksContext[%s] = array($this, \'block%s\');';
 
     /**
      * Generate Mustache Template inheritance block argument PHP source.
@@ -291,7 +291,8 @@ class Mustache_Compiler
     const BLOCK_FUNCTION = '
         public function block%s($context)
         {
-            $indent = $buffer = \'\';%s
+            $indent = $buffer = \'\';
+            $blocksContext = array();%s
 
             return $buffer;
         }
@@ -326,6 +327,8 @@ class Mustache_Compiler
         private function section%s(Mustache_Context $context, $indent, $value)
         {
             $buffer = \'\';
+            $blocksContext = array();
+
             if (%s) {
                 $source = %s;
                 $result = call_user_func($value, $source, %s);
@@ -456,8 +459,8 @@ class Mustache_Compiler
     const PARENT = '
         %s
 
-        if ($parent = $this->mustache->LoadPartial(%s)) {
-            $context->pushBlockContext($newContext);
+        if ($parent = $this->mustache->loadPartial(%s)) {
+            $context->pushBlockContext($blocksContext);
             $buffer .= $parent->renderInternal($context, $indent);
             $context->popBlockContext();
         }
@@ -490,7 +493,7 @@ class Mustache_Compiler
      *
      * @param array $node
      *
-     * @return bool True if $node is a block arg token.
+     * @return bool True if $node is a block arg token
      */
     private static function onlyBlockArgs(array $node)
     {

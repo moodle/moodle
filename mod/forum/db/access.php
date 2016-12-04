@@ -366,5 +366,14 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+    'mod/forum:canoverridediscussionlock' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
 );
 

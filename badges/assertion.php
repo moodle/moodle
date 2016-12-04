@@ -43,7 +43,14 @@ if (!is_null($action)) {
     $json = ($action) ? $assertion->get_badge_class() : $assertion->get_issuer();
 } else {
     // Otherwise, get badge assertion.
-    $json = $assertion->get_badge_assertion();
+    $column = $DB->sql_compare_text('uniquehash', 255);
+    if ($DB->record_exists_sql(sprintf('SELECT * FROM {badge_issued} WHERE %s = ?', $column), array($hash))) {
+        $json = $assertion->get_badge_assertion();
+    } else { // Revoked badge.
+        header("HTTP/1.0 410 Gone");
+        echo json_encode(array("revoked" => true));
+        die();
+    }
 }
 
 

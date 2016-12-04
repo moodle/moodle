@@ -87,7 +87,7 @@ Feature: Marking guides can be created and edited
     And I press "Ok"
     And I follow "Edit settings"
     And I follow "Test assignment 1 name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     # Checking that the user grade is correct.
     Then I should see "80" in the "Student 1" "table_row"
     And I log out

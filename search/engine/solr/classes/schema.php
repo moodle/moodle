@@ -92,7 +92,9 @@ class schema {
             return $status;
         }
 
-        // We know that the server is ready here.
+        // At this stage we know that the server is properly configured with a valid host:port and indexname.
+        // We're not too concerned about repeating the SolrClient::system() call (already called in
+        // is_server_configured) because this is just a setup script.
         if ($engine->get_solr_major_version() < 5) {
             // Schema setup script only available for 5.0 onwards.
             return get_string('schemasetupfromsolr5', 'search_solr');

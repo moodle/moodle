@@ -106,6 +106,12 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $options = array('course' => $course->id);
         $forum = $this->getDataGenerator()->create_module('forum', $options);
 
+        // Create a user enrolled in the course as a student.
+        list($user) = $this->helper_create_users($course, 1);
+
+        // Must be logged in as the current user.
+        $this->setUser($user);
+
         \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_FORCESUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
         $this->assertEquals(FORUM_FORCESUBSCRIBE, \mod_forum\subscriptions::get_subscription_mode($forum));
@@ -1318,4 +1324,100 @@ class mod_forum_subscriptions_testcase extends advanced_testcase {
         $this->assertGreaterThan($suppliedcmcount, $calculatedcmcount);
     }
 
+    public function is_subscribable_forums() {
+        return [
+            [
+                'forcesubscribe' => FORUM_DISALLOWSUBSCRIBE,
+            ],
+            [
+                'forcesubscribe' => FORUM_CHOOSESUBSCRIBE,
+            ],
+            [
+                'forcesubscribe' => FORUM_INITIALSUBSCRIBE,
+            ],
+            [
+                'forcesubscribe' => FORUM_FORCESUBSCRIBE,
+            ],
+        ];
+    }
+
+    public function is_subscribable_provider() {
+        $data = [];
+        foreach ($this->is_subscribable_forums() as $forum) {
+            $data[] = [$forum];
+        }
+
+        return $data;
+    }
+
+    /**
+     * @dataProvider is_subscribable_provider
+     */
+    public function test_is_subscribable_logged_out($options) {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $options['course'] = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribable($forum));
+    }
+
+    /**
+     * @dataProvider is_subscribable_provider
+     */
+    public function test_is_subscribable_is_guest($options) {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $guest = $DB->get_record('user', array('username'=>'guest'));
+        $this->setUser($guest);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $options['course'] = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $this->assertFalse(\mod_forum\subscriptions::is_subscribable($forum));
+    }
+
+    public function is_subscribable_loggedin_provider() {
+        return [
+            [
+                ['forcesubscribe' => FORUM_DISALLOWSUBSCRIBE],
+                false,
+            ],
+            [
+                ['forcesubscribe' => FORUM_CHOOSESUBSCRIBE],
+                true,
+            ],
+            [
+                ['forcesubscribe' => FORUM_INITIALSUBSCRIBE],
+                true,
+            ],
+            [
+                ['forcesubscribe' => FORUM_FORCESUBSCRIBE],
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider is_subscribable_loggedin_provider
+     */
+    public function test_is_subscribable_loggedin($options, $expect) {
+        $this->resetAfterTest(true);
+
+        // Create a course, with a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $options['course'] = $course->id;
+        $forum = $this->getDataGenerator()->create_module('forum', $options);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        $this->setUser($user);
+
+        $this->assertEquals($expect, \mod_forum\subscriptions::is_subscribable($forum));
+    }
 }

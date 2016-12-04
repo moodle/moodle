@@ -1,0 +1,32 @@
+<div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+    <div class="col-md-3">
+        <span class="pull-xs-right text-nowrap">
+            {{#required}}<abbr class="initialism text-danger" title="{{#str}}required{{/str}}">✲</abbr>{{/required}}
+            {{#advanced}}<abbr class="initialism text-info" title="{{#str}}advanced{{/str}}">!</abbr>{{/advanced}}
+            {{{helpbutton}}}
+        </span>
+        {{^element.staticlabel}}
+        <label class="col-form-label d-inline {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}" for="{{element.id}}">
+            {{{label}}}
+        </label>
+        {{/element.staticlabel}}
+        {{#element.staticlabel}}
+        <span class="col-form-label d-inline-block {{#element.hiddenlabel}}sr-only{{/element.hiddenlabel}}">
+            {{{label}}}
+        </span>
+        {{/element.staticlabel}}
+    </div>
+    <div class="col-md-9 form-inline felement" data-fieldtype="{{element.type}}">
+        {{$ element }}
+            <!-- Element goes here -->
+        {{/ element }}
+        <div class="form-control-feedback" id="id_error_{{element.name}}" {{^error}} style="display: none;"{{/error}}>
+            {{{error}}}
+        </div>
+    </div>
+</div>
+{{#js}}
+require(['theme_boost/form-display-errors'], function(module) {
+    module.enhance({{#quote}}{{element.id}}{{/quote}});
+});
+{{/js}}

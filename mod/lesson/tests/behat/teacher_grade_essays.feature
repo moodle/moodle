@@ -62,7 +62,7 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
     And I set the field "Your answer" to "<p>Once upon a time there were two little green frogs."
     And I press "Submit"
     And I log out
-    When I log in as "teacher2"
+    When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test lesson name"
     Then I should see "Grade essays"
@@ -86,3 +86,11 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
     And I should not see "Student 1"
     And I select "Group C" from the "Separate groups" singleselect
     And I should see "No one in Group C has answered an essay question yet."
+    And I log out
+    And I log in as "teacher2"
+    And I follow "Course 1"
+    And I follow "Test lesson name"
+    Then I should see "Grade essays"
+    And I follow "Grade essays"
+    And I should not see "Student 1"
+    And I should see "Student 2"

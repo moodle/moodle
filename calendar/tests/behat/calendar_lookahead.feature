@@ -20,6 +20,7 @@ Feature: Limit displayed upcoming events
     Given I follow "C1"
     And I turn editing mode on
     And I add the "Calendar" block
+    And I add the "Upcoming events" block
     And I follow "This month"
     And I click on "a.next" "css_element"
     And I click on "a.next" "css_element"
@@ -28,11 +29,13 @@ Feature: Limit displayed upcoming events
       | Event title       | Two months away event |
     When I follow "C1"
     Then I should not see "Two months away event"
-    And I follow "Go to calendar"
-    And I click on "Preferences" "button"
+    And I am on site homepage
+    And I follow "Preferences" in the user menu
+    And I follow "Calendar preferences"
     And I set the following fields to these values:
       | Upcoming events look-ahead | 3 months |
     And I press "Save changes"
     And I wait to be redirected
-    And I follow "C1"
+    And I am on site homepage
+    And I follow "Course 1"
     And I should see "Two months away event"

@@ -124,11 +124,12 @@ class behat_completion extends behat_base {
         } else {
             $imgalttext = get_string("completion-alt-auto-y", 'core_completion', $activityname);
         }
-        $csselementforactivitytype = "li.modtype_".strtolower($activitytype);
+        $activityxpath = "//li[contains(concat(' ', @class, ' '), ' modtype_" . strtolower($activitytype) . " ')]";
+        $activityxpath .= "[descendant::*[contains(text(), '" . $activityname . "')]]";
 
         $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
         $this->execute("behat_general::should_exist_in_the",
-            array($xpathtocheck, "xpath_element", $csselementforactivitytype, "css_element")
+            array($xpathtocheck, "xpath_element", $activityxpath, "xpath_element")
         );
 
     }
@@ -144,12 +145,12 @@ class behat_completion extends behat_base {
         } else {
             $imgalttext = get_string("completion-alt-auto-n", 'core_completion', $activityname);
         }
-        $csselementforactivitytype = "li.modtype_".strtolower($activitytype);
+        $activityxpath = "//li[contains(concat(' ', @class, ' '), ' modtype_" . strtolower($activitytype) . " ')]";
+        $activityxpath .= "[descendant::*[contains(text(), '" . $activityname . "')]]";
 
         $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
         $this->execute("behat_general::should_exist_in_the",
-            array($xpathtocheck, "xpath_element", $csselementforactivitytype, "css_element")
+            array($xpathtocheck, "xpath_element", $activityxpath, "xpath_element")
         );
-
     }
 }

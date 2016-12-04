@@ -375,6 +375,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         $data->timestart = $this->apply_date_offset($data->timestart);
         $data->timefinish = $this->apply_date_offset($data->timefinish);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
+
         if (!empty($data->timecheckstate)) {
             $data->timecheckstate = $this->apply_date_offset($data->timecheckstate);
         } else {

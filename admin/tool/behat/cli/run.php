@@ -26,7 +26,6 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
     die(); // No access from web!
 }
 
-define('BEHAT_UTIL', true);
 define('CLI_SCRIPT', true);
 define('ABORT_AFTER_CONFIG', true);
 define('CACHE_DISABLE_ALL', true);
@@ -51,6 +50,7 @@ list($options, $unrecognised) = cli_get_params(
         'tags'     => '',
         'profile'  => '',
         'feature'  => '',
+        'suite'    => '',
         'fromrun'  => 1,
         'torun'    => 0,
         'single-run' => false,
@@ -73,6 +73,7 @@ Usage:
 Options:
 --BEHAT_OPTION     Any combination of behat option specified in http://behat.readthedocs.org/en/v2.5/guides/6.cli.html
 --feature          Only execute specified feature file (Absolute path of feature file).
+--suite            Specified theme scenarios will be executed.
 --replace          Replace args string with run process number, useful for output.
 --fromrun          Execute run starting from (Used for parallel runs on different vms)
 --torun            Execute run till (Used for parallel runs on different vms)
@@ -101,9 +102,6 @@ if (empty($options['torun'])) {
 if (extension_loaded('pcntl')) {
     $disabled = explode(',', ini_get('disable_functions'));
     if (!in_array('pcntl_signal', $disabled)) {
-        // Handle interrupts on PHP7.
-        declare(ticks = 1);
-
         pcntl_signal(SIGTERM, "signal_handler");
         pcntl_signal(SIGINT, "signal_handler");
     }
@@ -118,8 +116,6 @@ array_walk($unrecognised, function (&$v) {
     }
 });
 $extraopts = $unrecognised;
-
-$tags = '';
 
 if ($options['profile']) {
     $profile = $options['profile'];
@@ -144,6 +140,11 @@ if ($options['tags']) {
     $extraopts[] = '--tags="' . $tags . '"';
 }
 
+// Add suite option if specified.
+if ($options['suite']) {
+    $extraopts[] = '--suite="' . $options['suite'] . '"';
+}
+
 // Feature should be added to last, for behat command.
 if ($options['feature']) {
     $extraopts[] = $options['feature'];
@@ -166,31 +167,6 @@ if (empty($parallelrun)) {
     passthru("php $runtestscommand", $code);
     chdir($cwd);
     exit($code);
-}
-
-// Update config file if tags defined.
-if ($tags) {
-    // Hack to set proper dataroot and wwwroot.
-    $behatdataroot = $CFG->behat_dataroot;
-    $behatwwwroot  = $CFG->behat_wwwroot;
-    for ($i = 1; $i <= $parallelrun; $i++) {
-        $CFG->behatrunprocess = $i;
-
-        if (!empty($CFG->behat_parallel_run[$i - 1]['behat_wwwroot'])) {
-            $CFG->behat_wwwroot = $CFG->behat_parallel_run[$i - 1]['behat_wwwroot'];
-        } else {
-            $CFG->behat_wwwroot = $behatwwwroot . "/" . BEHAT_PARALLEL_SITE_NAME . $i;
-        }
-        if (!empty($CFG->behat_parallel_run[$i - 1]['behat_dataroot'])) {
-            $CFG->behat_dataroot = $CFG->behat_parallel_run[$i - 1]['behat_dataroot'];
-        } else {
-            $CFG->behat_dataroot = $behatdataroot . $i;
-        }
-        behat_config_manager::update_config_file('', true, $tags);
-    }
-    $CFG->behat_dataroot = $behatdataroot;
-    $CFG->behat_wwwroot = $behatwwwroot;
-    unset($CFG->behatrunprocess);
 }
 
 $cmds = array();
@@ -221,8 +197,8 @@ if (!behat_config_manager::create_parallel_site_links($options['fromrun'], $opti
     exit(1);
 }
 
-// Execute all commands.
-$processes = cli_execute_parallel($cmds, __DIR__);
+// Execute all commands, relative to moodle root directory.
+$processes = cli_execute_parallel($cmds, __DIR__ . "/../../../../");
 $stoponfail = empty($options['stop-on-failure']) ? false : true;
 
 // Print header.

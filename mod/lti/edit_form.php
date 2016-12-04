@@ -85,6 +85,7 @@ class mod_lti_edit_types_form extends moodleform{
             $mform->addElement('text', 'lti_resourcekey', get_string('resourcekey_admin', 'lti'));
             $mform->setType('lti_resourcekey', PARAM_TEXT);
             $mform->addHelpButton('lti_resourcekey', 'resourcekey_admin', 'lti');
+            $mform->setForceLtr('lti_resourcekey');
 
             $mform->addElement('passwordunmask', 'lti_password', get_string('password_admin', 'lti'));
             $mform->setType('lti_password', PARAM_TEXT);
@@ -96,11 +97,13 @@ class mod_lti_edit_types_form extends moodleform{
             $mform->setType('lti_parameters', PARAM_TEXT);
             $mform->addHelpButton('lti_parameters', 'parameter', 'lti');
             $mform->disabledIf('lti_parameters', null);
+            $mform->setForceLtr('lti_parameters');
         }
 
         $mform->addElement('textarea', 'lti_customparameters', get_string('custom', 'lti'), array('rows' => 4, 'cols' => 60));
         $mform->setType('lti_customparameters', PARAM_TEXT);
         $mform->addHelpButton('lti_customparameters', 'custom', 'lti');
+        $mform->setForceLtr('lti_customparameters');
 
         if (!empty($this->_customdata->isadmin)) {
             $options = array(
@@ -136,6 +139,13 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setDefault('lti_launchcontainer', LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS);
         $mform->addHelpButton('lti_launchcontainer', 'default_launch_container', 'lti');
         $mform->setType('lti_launchcontainer', PARAM_INT);
+
+        $mform->addElement('advcheckbox', 'lti_contentitem', get_string('contentitem', 'lti'));
+        $mform->addHelpButton('lti_contentitem', 'contentitem', 'lti');
+        $mform->setAdvanced('lti_contentitem');
+        if ($istool) {
+            $mform->disabledIf('lti_contentitem', null);
+        }
 
         $mform->addElement('hidden', 'oldicon');
         $mform->setType('oldicon', PARAM_URL);
@@ -228,5 +238,19 @@ class mod_lti_edit_types_form extends moodleform{
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
 
+    }
+
+    /**
+     * Retrieves the data of the submitted form.
+     *
+     * @return stdClass
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if ($data && !empty($this->_customdata->istool)) {
+            // Content item checkbox is disabled in tool settings, so this cannot be edited. Just unset it.
+            unset($data->lti_contentitem);
+        }
+        return $data;
     }
 }

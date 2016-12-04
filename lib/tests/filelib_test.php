@@ -218,6 +218,47 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame(0, $curl->get_errno());
     }
 
+    /**
+     * Test a curl basic request with security enabled.
+     */
+    public function test_curl_basics_with_security_helper() {
+        $this->resetAfterTest();
+
+        // Test a request with a basic hostname filter applied.
+        $testhtml = $this->getExternalTestFileUrl('/test.html');
+        $url = new moodle_url($testhtml);
+        $host = $url->get_host();
+        set_config('curlsecurityblockedhosts', $host); // Blocks $host.
+
+        // Create curl with the default security enabled. We expect this to be blocked.
+        $curl = new curl();
+        $contents = $curl->get($testhtml);
+        $expected = $curl->get_security()->get_blocked_url_string();
+        $this->assertSame($expected, $contents);
+        $this->assertSame(0, $curl->get_errno());
+
+        // Now, create a curl using the 'ignoresecurity' override.
+        // We expect this request to pass, despite the admin setting having been set earlier.
+        $curl = new curl(['ignoresecurity' => true]);
+        $contents = $curl->get($testhtml);
+        $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+        $this->assertSame(0, $curl->get_errno());
+
+        // Now, try injecting a mock security helper into curl. This will override the default helper.
+        $mockhelper = $this->getMockBuilder('\core\files\curl_security_helper')->getMock();
+
+        // Make the mock return a different string.
+        $mockhelper->expects($this->any())->method('get_blocked_url_string')->will($this->returnValue('You shall not pass'));
+
+        // And make the mock security helper block all URLs. This helper instance doesn't care about config.
+        $mockhelper->expects($this->any())->method('url_is_blocked')->will($this->returnValue(true));
+
+        $curl = new curl(['securityhelper' => $mockhelper]);
+        $contents = $curl->get($testhtml);
+        $this->assertSame('You shall not pass', $curl->get_security()->get_blocked_url_string());
+        $this->assertSame($curl->get_security()->get_blocked_url_string(), $contents);
+    }
+
     public function test_curl_redirects() {
         global $CFG;
 
@@ -851,6 +892,7 @@ EOF;
                 get_mimetype_description(array('filename' => 'test.frog')));
 
         // Test custom description using multilang filter.
+        filter_manager::reset_caches();
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', true);
         core_filetypes::update_type('frog', 'frog', 'application/x-frog', 'document',

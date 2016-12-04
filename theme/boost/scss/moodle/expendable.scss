@@ -1,0 +1,44 @@
+table#explaincaps,
+table#defineroletable,
+table.grading-report,
+table#listdirectories,
+table.rolecaps,
+table.userenrolment,
+form#movecourses table,
+#page-admin-course-index .editcourse,
+.forumheaderlist,
+table.flexible,
+.generaltable {
+    @extend .table-striped;
+}
+
+table {
+    caption {
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 42px;
+        text-align: left;
+        caption-side: top;
+    }
+}
+
+#page-report-loglive-index .generaltable,
+#page-admin-report-log-index .generaltable,
+#page-report-log-user .generaltable,
+#page-admin-user table,
+.environmenttable,
+.category_subcategories,
+.rcs-results,
+table#listdirectories {
+    @extend .table-sm;
+}
+
+table.grading-report,
+.forumheaderlist,
+.generaltable,
+table.flexible,
+.category_subcategories,
+table#modules,
+table#permissions {
+    @extend .table-hover;
+}

@@ -149,23 +149,36 @@ class toolproxy extends \mod_lti\local\ltiservice\resource_base {
         // Extract all launchable tools from the resource handlers.
         if ($ok) {
             $resources = $toolproxyjson->tool_profile->resource_handler;
+            $messagetypes = [
+                'basic-lti-launch-request',
+                'ContentItemSelectionRequest',
+            ];
             foreach ($resources as $resource) {
-                $found = false;
+                $launchable = false;
+                $messages = array();
                 $tool = new \stdClass();
-                foreach ($resource->message as $message) {
-                    if ($message->message_type == 'basic-lti-launch-request') {
-                        $found = true;
-                        $tool->path = $message->path;
-                        $tool->enabled_capability = $message->enabled_capability;
-                        $tool->parameter = $message->parameter;
-                        break;
-                    }
+
+                $iconinfo = null;
+                if (is_array($resource->icon_info)) {
+                    $iconinfo = $resource->icon_info[0];
+                } else {
+                    $iconinfo = $resource->icon_info;
                 }
-                if (!$found) {
-                    continue;
+                if (isset($iconinfo) && isset($iconinfo->default_location) && isset($iconinfo->default_location->path)) {
+                    $tool->iconpath = $iconinfo->default_location->path;
                 }
 
+                foreach ($resource->message as $message) {
+                    if (in_array($message->message_type, $messagetypes)) {
+                        $launchable = $launchable || ($message->message_type === 'basic-lti-launch-request');
+                        $messages[$message->message_type] = $message;
+                    }
+                }
+                if (!$launchable) {
+                    continue;
+                }
                 $tool->name = $resource->resource_name->default_value;
+                $tool->messages = $messages;
                 $tools[] = $tool;
             }
             $ok = count($tools) > 0;
@@ -185,25 +198,38 @@ class toolproxy extends \mod_lti\local\ltiservice\resource_base {
                 $securebaseurl = $toolproxyjson->tool_profile->base_url_choice[0]->secure_base_url;
             }
             foreach ($tools as $tool) {
+                $messages = $tool->messages;
+                $launchrequest = $messages['basic-lti-launch-request'];
                 $config = new \stdClass();
-                $config->lti_toolurl = "{$baseurl}{$tool->path}";
+                $config->lti_toolurl = "{$baseurl}{$launchrequest->path}";
                 $config->lti_typename = $tool->name;
                 $config->lti_coursevisible = 1;
                 $config->lti_forcessl = 0;
+                if (isset($messages['ContentItemSelectionRequest'])) {
+                    $contentitemrequest = $messages['ContentItemSelectionRequest'];
+                    $config->lti_contentitem = 1;
+                    if ($launchrequest->path !== $contentitemrequest->path) {
+                        $config->lti_toolurl_ContentItemSelectionRequest = $baseurl . $contentitemrequest->path;
+                    }
+                    $contentitemcapabilities = implode("\n", $contentitemrequest->enabled_capability);
+                    $config->lti_enabledcapability_ContentItemSelectionRequest = $contentitemcapabilities;
+                    $contentitemparams = self::lti_extract_parameters($contentitemrequest->parameter);
+                    $config->lti_parameter_ContentItemSelectionRequest = $contentitemparams;
+                }
 
                 $type = new \stdClass();
                 $type->state = LTI_TOOL_STATE_PENDING;
                 $type->toolproxyid = $toolproxy->id;
-                $type->enabledcapability = implode("\n", $tool->enabled_capability);
-                $type->parameter = self::lti_extract_parameters($tool->parameter);
+                $type->enabledcapability = implode("\n", $launchrequest->enabled_capability);
+                $type->parameter = self::lti_extract_parameters($launchrequest->parameter);
 
-                if (isset($resource->icon_info[0]->default_location->path)) {
-                    $iconpath = $resource->icon_info[0]->default_location->path;
-                    $type->icon = "{$baseurl}{$iconpath}";
+                if (!empty($tool->iconpath)) {
+                    $type->icon = "{$baseurl}{$tool->iconpath}";
                     if (!empty($securebaseurl)) {
-                        $type->secureicon = "{$securebaseurl}{$iconpath}";
+                        $type->secureicon = "{$securebaseurl}{$tool->iconpath}";
                     }
                 }
+
                 $ok = $ok && (lti_add_type($type, $config) !== false);
             }
             if (isset($toolproxyjson->custom)) {

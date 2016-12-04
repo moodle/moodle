@@ -54,6 +54,10 @@ $string['paths'] = 'Căi';
 $string['pathserrcreatedataroot'] = 'Data directory ({$a->dataroot}) nu poate fi creat de către installer.';
 $string['pathshead'] = 'Confirmare căi';
 $string['pathsrodataroot'] = 'Directorul dataroot nu poate fi scris.';
+$string['pathssubdataroot'] = '<p>Un director unde Moodle va stoca tot conținutul unui fișier încărcat de către utilizatori.</p>
+<p>Acest director trebuie să poată fi citit și scris de către utilizatrii serverului web (de obicei \'www-data\', \'nobody\', or \'apache\').</p>
+<p>Nu trebuie să fie direct accesibil de pe web.</p>
+<p>Dacă directorul nu există în prezent, procesul de instalare va încerca să îl creeze.</p>';
 $string['pathssubdirroot'] = '<p>Calea completă către directorul care conține codul Moodle .</p>';
 $string['pathsunsecuredataroot'] = 'Locația dataroot nu este sigură';
 $string['pathswrongadmindir'] = 'Directorul admin nu există';
@@ -65,5 +69,8 @@ $string['phpversionhelp'] = '<p>Moodle necesită o versiune PHP de cel puțin  4
 (În cazul 5.0.x puteți, de asemenea, să downgradați la versiunea 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Vedeți această pagină deoarece ați instalat și lansat cu succes pachetul  <strong>{$a->packname} {$a->packversion}</strong> în computerul dumneavoastră. Felicitări!';
+$string['welcomep30'] = 'Lansarea <strong>{$a->installername}</strong> include aplicațiile
+    pentru a crea un mediu în care <strong>Moodle</strong> va funcționa, și anume:';
 $string['welcomep40'] = 'Pachetul include și <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
+$string['welcomep70'] = 'Click pe butonul "Next" de mai jos pentru a continua setarea <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Adresă Web';

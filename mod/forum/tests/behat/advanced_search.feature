@@ -20,6 +20,8 @@ Feature: The forum search allows users to perform advanced searches for forum po
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
+    And I turn editing mode on
+    And I add the "Latest announcements" block
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "id_newsitems" to "1"
     And I press "Save and display"

@@ -30,6 +30,7 @@ Feature: Users can add entries to database activities
       | Field description | Test field 2 description |
     # To generate the default templates.
     And I follow "Templates"
+    And I wait until the page is ready
     And I log out
     When I log in as "student1"
     And I follow "Course 1"

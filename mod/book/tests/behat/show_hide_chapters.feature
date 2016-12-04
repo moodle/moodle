@@ -50,9 +50,9 @@ Feature: Book activity chapter visibility management
 
   @javascript
   Scenario: Show/hide chapters and subchapters
-    When I follow "Hide chapter \"2 Second chapter\""
-    And I follow "Hide chapter \"2 Third chapter\""
-    And I follow "Turn editing off"
+    When I follow "Hide chapter \"2. Second chapter\""
+    And I follow "Hide chapter \"2. Third chapter\""
+    And I turn editing mode off
     And I am on homepage
     And I follow "Course 1"
     And I follow "Test book"
@@ -63,7 +63,7 @@ Feature: Book activity chapter visibility management
     And I follow "Exit book"
     And I follow "Test book"
     And I should see "First chapter" in the ".book_content" "css_element"
-    And I follow "Turn editing on"
+    And I turn editing mode on
     And I follow "Next"
     And I should see "Second chapter" in the ".book_content" "css_element"
     And I should not see "Exit book"

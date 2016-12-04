@@ -25,9 +25,17 @@
 class data_field_text extends data_field_base {
 
     var $type = 'text';
+    /**
+     * priority for globalsearch indexing
+     *
+     * @var int
+     */
+    protected static $priority = self::MAX_PRIORITY;
 
     function display_search_field($value = '') {
-        return '<label class="accesshide" for="f_' . $this->field->id . '">'. $this->field->name.'</label>' . '<input type="text" size="16" id="f_'.$this->field->id.'" name="f_'.$this->field->id.'" value="'.s($value).'" />';
+        return '<label class="accesshide" for="f_' . $this->field->id . '">' . $this->field->name.'</label>' .
+               '<input type="text" class="form-control" size="16" id="f_' . $this->field->id . '" ' .
+               'name="f_' . $this->field->id . '" value="' . s($value) . '" />';
     }
 
     function parse_search_field() {

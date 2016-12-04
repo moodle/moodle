@@ -1,0 +1,9 @@
+This files describes API changes in /admin/*.
+
+=== 3.2 ===
+
+* Admin settings have been refined to better support right-to-left languages. In RTL,
+  most fields should not have their direction flipped, a URL, a path to a file, ...
+  are always displayed LTR. The admin setting will now best guess if they should be
+  RTLized based on their PARAM_* type. To override that guess, use
+  admin_setting::set_force_ltr(true/false).

@@ -50,7 +50,7 @@ Feature: The activity results block displays student scores
     And I press "Save and return to course"
     And I follow "Course 1"
     And I should see "Test page name"
-    And I navigate to "Grades" node in "Course administration"
+    And I go to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment 1"
     And I give the grade "80.00" to the user "Student 2" for the grade item "Test assignment 1"
@@ -83,16 +83,19 @@ Scenario: Block should select current activity by default
     When I add the "Activity results" block
     And I configure the "Activity results" block
     Then the field "id_config_activitygradeitemid" matches value "Test assignment 1"
+    And I press "Cancel"
     And I follow "Course 1"
     And I follow "Test assignment 2"
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "id_config_activitygradeitemid" matches value "Test assignment 2"
+    And I press "Cancel"
     And I follow "Course 1"
     And I follow "Test assignment 3"
     And I add the "Activity results" block
     And I configure the "Activity results" block
     And the field "id_config_activitygradeitemid" matches value "Test assignment 3"
+    And I press "Cancel"
     And I follow "Course 1"
     And I follow "Test page name"
     And I add the "Activity results" block

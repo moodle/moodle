@@ -131,6 +131,12 @@ class assign_grading_table extends table_sql implements renderable {
         $params['assignmentid2'] = (int)$this->assignment->get_instance()->id;
         $params['assignmentid3'] = (int)$this->assignment->get_instance()->id;
 
+        $params['assignmentid5'] = (int)$this->assignment->get_instance()->id;
+        $params['assignmentid6'] = (int)$this->assignment->get_instance()->id;
+        $params['assignmentid7'] = (int)$this->assignment->get_instance()->id;
+        $params['assignmentid8'] = (int)$this->assignment->get_instance()->id;
+        $params['assignmentid9'] = (int)$this->assignment->get_instance()->id;
+
         $extrauserfields = get_extra_user_fields($this->assignment->get_context());
 
         $fields = user_picture::fields('u', $extrauserfields) . ', ';
@@ -148,7 +154,7 @@ class assign_grading_table extends table_sql implements renderable {
         $fields .= 'uf.locked as locked, ';
         $fields .= 'uf.extensionduedate as extensionduedate, ';
         $fields .= 'uf.workflowstate as workflowstate, ';
-        $fields .= 'uf.allocatedmarker as allocatedmarker ';
+        $fields .= 'uf.allocatedmarker as allocatedmarker';
 
         $from = '{user} u
                          LEFT JOIN {assign_submission} s
@@ -176,7 +182,80 @@ class assign_grading_table extends table_sql implements renderable {
 
         $from .= 'LEFT JOIN {assign_user_flags} uf
                          ON u.id = uf.userid
-                        AND uf.assignment = :assignmentid3';
+                        AND uf.assignment = :assignmentid3 ';
+
+        $hasoverrides = $this->assignment->has_overrides();
+
+        if ($hasoverrides) {
+            $fields .= ', priority.priority, ';
+            $fields .= 'effective.allowsubmissionsfromdate, ';
+            $fields .= 'effective.duedate, ';
+            $fields .= 'effective.cutoffdate ';
+
+            $from .= ' LEFT JOIN (
+               SELECT merged.userid, min(merged.priority) priority FROM (
+                  ( SELECT u.id as userid, 9999999 AS priority
+                      FROM {user} u
+                  )
+                  UNION
+                  ( SELECT uo.userid, 0 AS priority
+                      FROM {assign_overrides} uo
+                     WHERE uo.assignid = :assignmentid5
+                  )
+                  UNION
+                  ( SELECT gm.userid, go.sortorder AS priority
+                      FROM {assign_overrides} go
+                      JOIN {groups} g ON g.id = go.groupid
+                      JOIN {groups_members} gm ON gm.groupid = g.id
+                     WHERE go.assignid = :assignmentid6
+                  )
+                ) AS merged
+                GROUP BY merged.userid
+              ) priority ON priority.userid = u.id
+
+            JOIN (
+              (SELECT 9999999 AS priority,
+                      u.id AS userid,
+
+                      a.allowsubmissionsfromdate,
+                      a.duedate,
+                      a.cutoffdate
+                 FROM {user} u
+                 JOIN {assign} a ON a.id = :assignmentid7
+              )
+              UNION
+              (SELECT 0 AS priority,
+                      uo.userid,
+
+                      uo.allowsubmissionsfromdate,
+                      uo.duedate,
+                      uo.cutoffdate
+                 FROM {assign_overrides} uo
+                WHERE uo.assignid = :assignmentid8
+              )
+              UNION
+              (SELECT go.sortorder AS priority,
+                      gm.userid,
+
+                      go.allowsubmissionsfromdate,
+                      go.duedate,
+                      go.cutoffdate
+                 FROM {assign_overrides} go
+                 JOIN {groups} g ON g.id = go.groupid
+                 JOIN {groups_members} gm ON gm.groupid = g.id
+                WHERE go.assignid = :assignmentid9
+              )
+
+            ) AS effective ON effective.priority = priority.priority AND effective.userid = priority.userid ';
+        }
+
+        if (!empty($this->assignment->get_instance()->blindmarking)) {
+            $from .= 'LEFT JOIN {assign_user_mapping} um
+                             ON u.id = um.userid
+                            AND um.assignment = :assignmentid5 ';
+            $params['assignmentid5'] = (int)$this->assignment->get_instance()->id;
+            $fields .= ', um.id as recordid ';
+        }
 
         $userparams = array();
         $userindex = 0;
@@ -198,7 +277,14 @@ class assign_grading_table extends table_sql implements renderable {
             } else if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND
                                  s.status = :submitted AND
-                                 (s.timemodified >= g.timemodified OR g.timemodified IS NULL OR g.grade IS NULL))';
+                                 (s.timemodified >= g.timemodified OR g.timemodified IS NULL OR g.grade IS NULL';
+
+                if ($this->assignment->get_grade_item()->gradetype == GRADE_TYPE_SCALE) {
+                    // Scale grades are set to -1 when not graded.
+                    $where .= ' OR g.grade = -1';
+                }
+
+                $where .= '))';
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
             } else if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
@@ -294,6 +380,20 @@ class assign_grading_table extends table_sql implements renderable {
         // Submission status.
         $columns[] = 'status';
         $headers[] = get_string('status', 'assign');
+
+        if ($hasoverrides) {
+            // Allowsubmissionsfromdate.
+            $columns[] = 'allowsubmissionsfromdate';
+            $headers[] = get_string('allowsubmissionsfromdate', 'assign');
+
+            // Duedate.
+            $columns[] = 'duedate';
+            $headers[] = get_string('duedate', 'assign');
+
+            // Cutoffdate.
+            $columns[] = 'cutoffdate';
+            $headers[] = get_string('cutoffdate', 'assign');
+        }
 
         // Team submission columns.
         if ($assignment->get_instance()->teamsubmission) {
@@ -463,8 +563,10 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_recordid(stdClass $row) {
-        return get_string('hiddenuser', 'assign') .
-               $this->assignment->get_uniqueid_for_user($row->userid);
+        if (empty($row->recordid)) {
+            $row->recordid = $this->assignment->get_uniqueid_for_user($row->userid);
+        }
+        return get_string('hiddenuser', 'assign') . $row->recordid;
     }
 
 
@@ -618,7 +720,8 @@ class assign_grading_table extends table_sql implements renderable {
                 if ($grade == -1 || $grade === null) {
                     return '';
                 }
-                return format_float($grade, 2);
+                $gradeitem = $this->assignment->get_grade_item();
+                return format_float($grade, $gradeitem->get_decimals());
             } else {
                 // This is a custom scale.
                 $scale = $this->assignment->display_grade($grade, false);
@@ -815,7 +918,8 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_grademax(stdClass $row) {
-        return format_float($this->assignment->get_instance()->grade, 2);
+        $gradeitem = $this->assignment->get_grade_item();
+        return format_float($this->assignment->get_instance()->grade, $gradeitem->get_decimals());
     }
 
     /**
@@ -838,7 +942,10 @@ class assign_grading_table extends table_sql implements renderable {
                                'action' => 'grader');
 
             if ($this->assignment->is_blind_marking()) {
-                $urlparams['blindid'] = $this->assignment->get_uniqueid_for_user($row->userid);
+                if (empty($row->recordid)) {
+                    $row->recordid = $this->assignment->get_uniqueid_for_user($row->userid);
+                }
+                $urlparams['blindid'] = $row->recordid;
             } else {
                 $urlparams['userid'] = $row->userid;
             }
@@ -1003,6 +1110,60 @@ class assign_grading_table extends table_sql implements renderable {
      * @param stdClass $row
      * @return string
      */
+    public function col_allowsubmissionsfromdate(stdClass $row) {
+        $o = '';
+
+        if ($row->allowsubmissionsfromdate) {
+            $userdate = userdate($row->allowsubmissionsfromdate);
+            $o = $this->output->container($userdate, 'allowsubmissionsfromdate');
+        }
+
+        return $o;
+
+    }
+
+    /**
+     * Format a column of data for display.
+     *
+     * @param stdClass $row
+     * @return string
+     */
+    public function col_duedate(stdClass $row) {
+        $o = '';
+
+        if ($row->duedate) {
+            $userdate = userdate($row->duedate);
+            $o = $this->output->container($userdate, 'duedate');
+        }
+
+        return $o;
+
+    }
+
+    /**
+     * Format a column of data for display.
+     *
+     * @param stdClass $row
+     * @return string
+     */
+    public function col_cutoffdate(stdClass $row) {
+        $o = '';
+
+        if ($row->cutoffdate) {
+            $userdate = userdate($row->cutoffdate);
+            $o = $this->output->container($userdate, 'cutoffdate');
+        }
+
+        return $o;
+
+    }
+
+    /**
+     * Format a column of data for display.
+     *
+     * @param stdClass $row
+     * @return string
+     */
     public function col_userid(stdClass $row) {
         global $USER;
 
@@ -1015,7 +1176,10 @@ class assign_grading_table extends table_sql implements renderable {
                                'action' => 'grader');
 
         if ($this->assignment->is_blind_marking()) {
-            $urlparams['blindid'] = $this->assignment->get_uniqueid_for_user($row->userid);
+            if (empty($row->recordid)) {
+                $row->recordid = $this->assignment->get_uniqueid_for_user($row->userid);
+            }
+            $urlparams['blindid'] = $row->recordid;
         } else {
             $urlparams['userid'] = $row->userid;
         }
@@ -1404,7 +1568,17 @@ class assign_grading_table extends table_sql implements renderable {
      */
     public function get_sort_columns() {
         $result = parent::get_sort_columns();
-        $result = array_merge($result, array('userid' => SORT_ASC));
+
+        $assignment = $this->assignment->get_instance();
+        if (empty($assignment->blindmarking)) {
+            $result = array_merge($result, array('userid' => SORT_ASC));
+        } else {
+            $result = array_merge($result, [
+                    'COALESCE(s.timecreated, '  . time()        . ')'   => SORT_ASC,
+                    'COALESCE(s.id, '           . PHP_INT_MAX   . ')'   => SORT_ASC,
+                    'um.id'                                             => SORT_ASC,
+                ]);
+        }
         return $result;
     }
 

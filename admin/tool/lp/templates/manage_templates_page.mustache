@@ -62,28 +62,28 @@
             <ul class="templateactions">
                 <li>
                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
-                    <ul class="dropdown-menu">
-                        <li>
+                    <ul class="dropdown dropdown-menu">
+                        <li class="dropdown-item">
                             <a href="{{pluginbaseurl}}/edittemplate.php?id={{id}}&amp;pagecontextid={{pagecontextid}}&amp;return=templates">
                                 {{#pix}}t/edit{{/pix}} {{#str}}edit{{/str}}
                             </a>
                         </li>
-                        <li>
+                        <li class="dropdown-item">
                             <a data-action="duplicatetemplate" data-templateid="{{id}}" href="#">
                                 {{#pix}}t/copy{{/pix}} {{#str}}duplicate{{/str}}
                             </a>
                         </li>
-                        <li>
+                        <li class="dropdown-item">
                             <a href="{{pluginbaseurl}}/template_plans.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">
                                 {{#pix}}t/add{{/pix}} {{#str}}createlearningplans, tool_lp{{/str}}
                             </a>
                         </li>
-                        <li>
+                        <li class="dropdown-item">
                             <a href="{{pluginbaseurl}}/template_cohorts.php?id={{id}}&amp;pagecontextid={{pagecontextid}}">
                                 {{#pix}}t/add{{/pix}} {{#str}}addcohortstosync, tool_lp{{/str}}
                             </a>
                         </li>
-                        <li>
+                        <li class="dropdown-item">
                             <a data-action="deletetemplate" data-templateid="{{id}}" href="#">
                                 {{#pix}}t/delete{{/pix}} {{#str}}delete{{/str}}
                             </a>

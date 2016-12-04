@@ -32,10 +32,16 @@
 
     Example context (json):
     {
-        competencycount: 4,
-        proficientcompetencycount: 3,
-        proficientcompetencypercentage: 75,
-        proficientcompetencypercentageformatted: 75.0
+        "competencycount": 4,
+        "canbegradedincourse": true,
+        "canmanagecoursecompetencies": true,
+        "proficientcompetencycount": 3,
+        "proficientcompetencypercentage": 75,
+        "proficientcompetencypercentageformatted": 75.0,
+        "leastproficientcount": 1,
+        "leastproficient": [
+            { "id": 1, "shortname": "Comp 1", "idnumber": "C1" }
+        ]
     }
 
 }}

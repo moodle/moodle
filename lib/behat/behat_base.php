@@ -574,6 +574,41 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     }
 
     /**
+     * Ensures that the provided node has a attribute value set. This step can be used to check if specific
+     * JS has finished modifying the node.
+     *
+     * @throws ExpectationException
+     * @param NodeElement $node
+     * @param string $attribute attribute name
+     * @param string $attributevalue attribute value to check.
+     * @return void Throws an exception if it times out without the element being visible
+     */
+    protected function ensure_node_attribute_is_set($node, $attribute, $attributevalue) {
+
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // Exception if it timesout and the element is still there.
+        $msg = 'The "' . $node->getXPath() . '" xpath node is not visible and it should be visible';
+        $exception = new ExpectationException($msg, $this->getSession());
+
+        // It will stop spinning once the $args[1]) == $args[2], and method returns true.
+        $this->spin(
+            function($context, $args) {
+                if ($args[0]->getAttribute($args[1]) == $args[2]) {
+                    return true;
+                }
+                return false;
+            },
+            array($node, $attribute, $attributevalue),
+            self::EXTENDED_TIMEOUT,
+            $exception,
+            true
+        );
+    }
+
+    /**
      * Ensures that the provided element is visible and we can interact with it.
      *
      * Returns the node in case other actions are interested in using it.
@@ -764,6 +799,17 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
             // Joined xpath expression. Most of the time there will be no exceptions, so this pre-check
             // is faster than to send the 4 xpath queries for each step.
             if (!$this->getSession()->getDriver()->find($joinedxpath)) {
+                // Check if we have recorded any errors in driver process.
+                $phperrors = behat_get_shutdown_process_errors();
+                if (!empty($phperrors)) {
+                    foreach ($phperrors as $error) {
+                        $errnostring = behat_get_error_string($error['type']);
+                        $msgs[] = $errnostring . ": " .$error['message'] . " at " . $error['file'] . ": " . $error['line'];
+                    }
+                    $msg = "PHP errors found:\n" . implode("\n", $msgs);
+                    throw new \Exception(htmlentities($msg));
+                }
+
                 return;
             }
 
@@ -772,12 +818,28 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
                 // Getting the debugging info and the backtrace.
                 $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-error');
+                // If errorinfoboxes is empty, try find alert-danger (bootstrap4) class.
+                if (empty($errorinfoboxes)) {
+                    $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.alert-danger');
+                }
                 // If errorinfoboxes is empty, try find notifytiny (original) class.
                 if (empty($errorinfoboxes)) {
                     $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
                 }
-                $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
-                    $this->get_debug_text($errorinfoboxes[1]->getHtml());
+
+                // If errorinfoboxes is empty, try find ajax/JS exception in dialogue.
+                if (empty($errorinfoboxes)) {
+                    $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.moodle-exception-message');
+
+                    // If ajax/JS exception.
+                    if ($errorinfoboxes) {
+                        $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml());
+                    }
+
+                } else {
+                    $errorinfo = $this->get_debug_text($errorinfoboxes[0]->getHtml()) . "\n" .
+                        $this->get_debug_text($errorinfoboxes[1]->getHtml());
+                }
 
                 $msg = "Moodle exception: " . $errormsg->getText() . "\n" . $errorinfo;
                 throw new \Exception(html_entity_decode($msg));

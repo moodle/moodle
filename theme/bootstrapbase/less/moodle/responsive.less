@@ -6,20 +6,6 @@
 // TODO: MDL-55142 remove browser hacks in this file:
 /* stylelint-disable declaration-block-no-duplicate-properties, no-browser-hacks */
 
-@media (min-width: 980px) {
-    .dir-rtl .navbar .nav.pull-right,
-    .dir-rtl .navbar .logininfo {
-        float: left;
-    }
-    .dir-rtl .navbar .nav {
-        float: right;
-        & > li {
-            float: right;
-        }
-    }
-
-}
-
 @media (min-width: (@navbarCollapseDesktopWidth)) {
 
     a[id]:empty::before,
@@ -51,16 +37,6 @@
     .form-horizontal .controls {
         margin-left: @horizontalComponentOffset980;
     }
-    .dir-rtl {
-        .form-item .form-setting,
-        .form-item .form-description,
-        .mform .fitem .felement,
-        .mform .fdescription.required,
-        .userprofile dl.list dd,
-        .form-horizontal .controls {
-            margin-right: @horizontalComponentOffset980;
-        }
-    }
     #page-mod-forum-search.dir-lrt .c1 {
         margin-right: @horizontalComponentOffset980;
     }
@@ -75,9 +51,8 @@
         width: 100%;
         height: auto;
         max-height: 220px;
-        y-scroll: auto;
         float: none;
-        border: 0px;
+        border: 0;
     }
     .file-picker .fp-repo-items {
         width: 100%;
@@ -87,35 +62,17 @@
     .file-picker .fp-login-form .fp-login-input label {
         text-align: left;
     }
-    .dir-rtl .file-picker .fp-login-form .fp-login-input label {
-        text-align: right;
-    }
     .file-picker .fp-content form td {
         display: block;
         width: 100%;
         text-align: left;
     }
-    .dir-rtl .file-picker .fp-content form td {
-        text-align: right;
-    }
     .fp-content .mdl-right {
         text-align: left;
-    }
-    .dir-rtl .fp-content .mdl-right {
-        text-align: right;
     }
 
     .fp-repo-items .fp-navbar {
         border-top: 1px solid rgb(187, 187, 187);
-    }
-
-    .dir-rtl {
-        .userprofile dl.list dt,
-        .userprofile dl.list dd {
-            float: none;
-            text-align: right;
-            margin-right: 0;
-        }
     }
 
     .fp-formset div {
@@ -155,35 +112,9 @@
     .form-horizontal .controls {
         margin-left: @horizontalComponentOffset1200;
     }
-    .dir-rtl {
-        .form-item .form-setting,
-        .form-item .form-description,
-        .mform .fitem .felement,
-        .mform .fdescription.required,
-        .userprofile dl.list dd,
-        .form-horizontal .controls {
-            margin-right: (@horizontalComponentOffset1200 - 100px);
-        }
-        #page-mod-forum-search .c1 {
-            margin-right: @horizontalComponentOffset1200;
-        }
-        .form-item .form-label,
-        .mform .fitem div.fitemtitle,
-        .userprofile dl.list dt,
-        .form-horizontal .control-label {
-            width: (@horizontalComponentOffset1200 - 120px);
-        }
-
-    }
     .path-admin .buttons,
     .form-buttons {
         padding-left: @horizontalComponentOffset1200;
-    }
-    .dir-rtl {
-        .path-admin .buttons,
-        .form-buttons {
-            padding-right: @horizontalComponentOffset1200;
-        }
     }
 
     // Core empty block regions.
@@ -263,6 +194,22 @@
 }
 
 @media (max-width: 480px) {
+    .navbar {
+        .mdl-popover {
+            .mdl-popover-container {
+                position: fixed;
+                width: 100%;
+                height: ~"calc(100% - 52px)";
+                top: 52px;
+
+                &::before,
+                &::after {
+                    display: none;
+                }
+            }
+        }
+    }
+
     // make tabs act like nav-stacked
     // (mostly) copied from bootstrap/navs.less
     .nav-tabs > li {
@@ -295,7 +242,6 @@
     }
     .fp-content-center {
         display: block;
-        vertical-align: top;
     }
     .course-content ul.topics li.section,
     .course-content ul.topics li.section .content,
@@ -397,8 +343,10 @@
         padding-right: 10px;
     }
     #helppopupbox {
+        /* stylelint-disable declaration-no-important */
         width: auto !important;
         left: 0 !important;
+        /* stylelint-enable declaration-no-important */
     }
 }
 // Shrink calender when short on space in block
@@ -407,34 +355,6 @@
     .block .minicalendar td {
         padding-left: 0;
         padding-right: 0;
-    }
-}
-
-.dir-rtl {
-    .dropdown-menu {
-        right: 0;
-        left: auto;
-        margin-right: 0px;
-    }
-    .navbar .nav > li > .dropdown-menu:before {
-        right: 9px;
-        left: auto;
-    }
-    .navbar .nav > li > .dropdown-menu:after {
-        right: 10px;
-        left: auto;
-    }
-    .dropdown-submenu > a:after {
-        margin-right: 0;
-        margin-left: -10px;
-        float: left;
-        border-right-color: #ccc;
-        border-left-color: transparent;
-        border-width: 5px 5px 5px 0px;
-    }
-    .dropdown-submenu > .dropdown-menu {
-        right: 100%;
-        left: auto;
     }
 }
 
@@ -630,44 +550,47 @@
             }
         }
     }
+}
 
-    .dir-rtl {
-        .navbar {
-            .nav-collapse.in {
-                > .nav {
-                    margin: 0;
-                    > li > a {
-                        padding-left: 0;
-                        padding-right: 20px;
-                    }
-                    .dropdown-menu {
-                        margin: 0 15px 0 0;
+@media (max-width: 767px) {
+    .usermenu {
+        .moodle-actionmenu {
+            .toggle-display {
+                .userbutton {
+                    .usertext {
+                        display: none;
                     }
                 }
-                .dropdown-menu {
-                    > li {
-                        > a {
-                            padding: 9px 15px;
+            }
+        }
+    }
+    .jsenabled {
+        &:not(.dir-rtl) {
+            .usermenu {
+                .moodle-actionmenu {
+                    .toggle-display {
+                        &.textmenu {
+                            margin-left: 0;
+                            padding-left: 0;
                         }
                     }
                 }
-                .nav,
-                .nav .dropdown-menu {
-                    .dropdown-submenu {
-                        .dropdown-toggle {
-                            &:after {
-                                margin-left: 0;
-                                margin-right: 4px;
-                            }
+            }
+        }
+        &.dir-rtl {
+            .usermenu {
+                .moodle-actionmenu {
+                    .toggle-display {
+                        &.textmenu {
+                            margin-right: 0;
+                            padding-right: 0;
                         }
                     }
                 }
             }
         }
     }
-}
 
-@media (max-width: 767px) {
     // Resize, reflow file-picker on small devices
     #filesskin .yui3-panel,
     #filesskin .file-picker.fp-generallayout {
@@ -828,10 +751,6 @@
             }
         }
     }
-
-    #page-mod-forum-discuss.dir-rtl .discussioncontrols {
-        text-align: left;
-    }
 }
 
 
@@ -839,20 +758,5 @@
 @media (max-width: 768px) {
     .fp-forminset .control-group .controls {
         margin-left: 0;
-    }
-    .dir-rtl .fp-formset .control-group {
-        label.control-label {
-            text-align: right;
-            float: none;
-        }
-    }
-    .dir-rtl .fp-forminset .control-group {
-        label.control-label {
-            text-align: right;
-            float: none;
-        }
-        .controls {
-            margin-right: 0;
-        }
     }
 }

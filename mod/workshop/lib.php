@@ -280,6 +280,40 @@ function workshop_delete_instance($id) {
 }
 
 /**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every workshop event in the site is checked, else
+ * only workshop events belonging to the course specified are checked.
+ *
+ * @param  integer $courseid The Course ID.
+ * @return bool Returns true if the calendar events were successfully updated.
+ */
+function workshop_refresh_events($courseid = 0) {
+    global $DB;
+
+    if ($courseid) {
+        // Make sure that the course id is numeric.
+        if (!is_numeric($courseid)) {
+            return false;
+        }
+        if (!$workshops = $DB->get_records('workshop', array('course' => $courseid))) {
+            return false;
+        }
+    } else {
+        if (!$workshops = $DB->get_records('workshop')) {
+            return false;
+        }
+    }
+    foreach ($workshops as $workshop) {
+        if (!$cm = get_coursemodule_from_instance('workshop', $workshop->id, $courseid, false)) {
+            continue;
+        }
+        workshop_calendar_update($workshop, $cm->id);
+    }
+    return true;
+}
+
+/**
  * List the actions that correspond to a view of this module.
  * This is used by the participation report.
  *
@@ -1284,8 +1318,8 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
 
     require_login($course, true, $cm);
 
-    if ($filearea === 'instructauthors') {
-        array_shift($args); // itemid is ignored here
+    if ($filearea === 'instructauthors' or $filearea === 'instructreviewers' or $filearea === 'conclusion') {
+        // The $args are supposed to contain just the path, not the item id.
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
 
@@ -1293,34 +1327,6 @@ function workshop_pluginfile($course, $cm, $context, $filearea, array $args, $fo
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
             send_file_not_found();
         }
-
-        // finally send the file
-        send_stored_file($file, null, 0, $forcedownload, $options);
-
-    } else if ($filearea === 'instructreviewers') {
-        array_shift($args); // itemid is ignored here
-        $relativepath = implode('/', $args);
-        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            send_file_not_found();
-        }
-
-        // finally send the file
-        send_stored_file($file, null, 0, $forcedownload, $options);
-
-    } else if ($filearea === 'conclusion') {
-        array_shift($args); // itemid is ignored here
-        $relativepath = implode('/', $args);
-        $fullpath = "/$context->id/mod_workshop/$filearea/0/$relativepath";
-
-        $fs = get_file_storage();
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            send_file_not_found();
-        }
-
-        // finally send the file
         send_stored_file($file, null, 0, $forcedownload, $options);
 
     } else if ($filearea === 'submission_content' or $filearea === 'submission_attachment') {

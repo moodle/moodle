@@ -27,7 +27,7 @@ namespace mod_choice\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_choice answer updated event class.
+ * The mod_choice answer deleted event class.
  *
  * @property-read array $other {
  *      Extra information about event.
@@ -42,6 +42,34 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class answer_deleted extends \core\event\base {
+
+    /**
+     * Creates an instance of the event from the records
+     *
+     * @param stdClass $choiceanswer record from 'choice_answers' table
+     * @param stdClass $choice record from 'choice' table
+     * @param stdClass $cm record from 'course_modules' table
+     * @param stdClass $course
+     * @return self
+     */
+    public static function create_from_object($choiceanswer, $choice, $cm, $course) {
+        global $USER;
+        $eventdata = array();
+        $eventdata['objectid'] = $choiceanswer->id;
+        $eventdata['context'] = \context_module::instance($cm->id);
+        $eventdata['userid'] = $USER->id;
+        $eventdata['courseid'] = $course->id;
+        $eventdata['relateduserid'] = $choiceanswer->userid;
+        $eventdata['other'] = array();
+        $eventdata['other']['choiceid'] = $choice->id;
+        $eventdata['other']['optionid'] = $choiceanswer->optionid;
+        $event = self::create($eventdata);
+        $event->add_record_snapshot('course', $course);
+        $event->add_record_snapshot('course_modules', $cm);
+        $event->add_record_snapshot('choice', $choice);
+        $event->add_record_snapshot('choice_answers', $choiceanswer);
+        return $event;
+    }
 
     /**
      * Returns description of what happened.

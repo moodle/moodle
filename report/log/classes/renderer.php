@@ -147,7 +147,9 @@ class report_log_renderer extends plugin_renderer_base {
                 'id' => $selectedcourseid, 'date' => $reportlog->date, 'modid' => $reportlog->modid,
                 'showusers' => 1, 'showcourses' => $reportlog->showcourses));
             $a->url = $a->url->out(false);
+            echo html_writer::start_span('m-x-1');
             print_string('logtoomanyusers', 'moodle', $a);
+            echo html_writer::end_span();
         }
 
         // Add date selector.
@@ -186,7 +188,8 @@ class report_log_renderer extends plugin_renderer_base {
                         array('class' => 'accesshide'));
                 echo html_writer::select($readers, 'logreader', $reportlog->selectedlogreader, false);
             }
-            echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('gettheselogs')));
+            echo html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('gettheselogs'),
+                'class' => 'btn btn-secondary'));
         }
         echo html_writer::end_div();
         echo html_writer::end_tag('form');

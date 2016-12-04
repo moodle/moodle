@@ -1,8 +1,0 @@
-{
-    "moodle-core_message-deletemessage": {
-        "requires": [
-            "node",
-            "event"
-        ]
-    }
-}

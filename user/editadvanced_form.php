@@ -98,7 +98,7 @@ class user_editadvanced_form extends moodleform {
 
         $mform->addElement('text', 'username', get_string('username'), 'size="20"');
         $mform->addHelpButton('username', 'username', 'auth');
-        $mform->setType('username', core_user::get_property_type('username'));
+        $mform->setType('username', PARAM_RAW);
 
         if ($userid !== -1) {
             $mform->disabledIf('username', 'auth', 'in', $cannotchangeusername);
@@ -122,6 +122,21 @@ class user_editadvanced_form extends moodleform {
         $mform->disabledIf('newpassword', 'createpassword', 'checked');
 
         $mform->disabledIf('newpassword', 'auth', 'in', $cannotchangepass);
+
+        // Check if the user has active external tokens.
+        if ($userid and empty($CFG->passwordchangetokendeletion)) {
+            if ($tokens = webservice::get_active_tokens($userid)) {
+                $services = '';
+                foreach ($tokens as $token) {
+                    $services .= format_string($token->servicename) . ',';
+                }
+                $services = get_string('userservices', 'webservice', rtrim($services, ','));
+                $mform->addElement('advcheckbox', 'signoutofotherservices', get_string('signoutofotherservices'), $services);
+                $mform->addHelpButton('signoutofotherservices', 'signoutofotherservices');
+                $mform->disabledIf('signoutofotherservices', 'newpassword', 'eq', '');
+                $mform->setDefault('signoutofotherservices', 1);
+            }
+        }
 
         $mform->addElement('advcheckbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
         $mform->addHelpButton('preference_auth_forcepasswordchange', 'forcepasswordchange');

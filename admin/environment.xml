@@ -1145,6 +1145,11 @@
           <ON_CHECK message="unsupporteddbtablerowformat" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_libcurl_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="libcurlwarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="2.8" requires="2.2">
@@ -1418,6 +1423,11 @@
           <ON_CHECK message="unsupporteddbtablerowformat" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_libcurl_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="libcurlwarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="3.0" requires="2.2">
@@ -1434,6 +1444,7 @@
       <VENDOR name="oracle" version="10.2" />
     </DATABASE>
     <PHP version="5.4.4" level="required">
+      <RESTRICT function="restrict_php_version_71" message="unsupportedphpversion71" />
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
@@ -1556,6 +1567,11 @@
           <ON_CHECK message="unsupporteddbtablerowformat" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_libcurl_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="libcurlwarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="3.1" requires="2.7">
@@ -1572,6 +1588,7 @@
       <VENDOR name="oracle" version="10.2" />
     </DATABASE>
     <PHP version="5.4.4" level="required">
+      <RESTRICT function="restrict_php_version_71" message="unsupportedphpversion71" />
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
@@ -1699,6 +1716,11 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_unoconv_version" level="optional">
         <FEEDBACK>
           <ON_CHECK message="unoconvwarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_libcurl_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="libcurlwarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
@@ -1844,6 +1866,16 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_unoconv_version" level="optional">
         <FEEDBACK>
           <ON_CHECK message="unoconvwarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_tls_libraries" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="tlswarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_libcurl_version" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="libcurlwarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>

@@ -27,7 +27,6 @@ require_once(__DIR__ . '/../config.php');
 $page = optional_param('page', 0, PARAM_INT);
 $q = optional_param('q', '', PARAM_NOTAGS);
 $title = optional_param('title', '', PARAM_NOTAGS);
-$areaid = optional_param('areaid', false, PARAM_ALPHANUMEXT);
 // Moving areaids, courseids, timestart, and timeend further down as they might come as an array if they come from the form.
 
 $context = context_system::instance();
@@ -117,6 +116,17 @@ $mform->display();
 
 if (!empty($results)) {
     echo $searchrenderer->render_results($results->results, $results->actualpage, $results->totalcount, $url);
+
+    \core_search\manager::trigger_search_results_viewed([
+        'q' => $data->q,
+        'page' => $page,
+        'title' => $data->title,
+        'areaids' => !empty($data->areaids) ? $data->areaids : array(),
+        'courseids' => !empty($data->courseids) ? $data->courseids : array(),
+        'timestart' => isset($data->timestart) ? $data->timestart : 0,
+        'timeend' => isset($data->timeend) ? $data->timeend : 0
+    ]);
+
 }
 
 echo $OUTPUT->footer();

@@ -44,19 +44,37 @@ class behat_context_helper {
      */
     protected static $environment = null;
 
-
     /**
      * @var Escaper::escapeLiteral
      */
     protected static $escaper;
 
     /**
+     * @var array keep track of nonexisting contexts, to avoid exception tracking.
+     */
+    protected static $nonexistingcontexts = array();
+
+    /**
      * Sets the browser session.
      *
      * @param Environment $environment
      * @return void
+     * @deprecated since 3.2 MDL-55072 - please use behat_context_helper::set_environment()
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
      */
     public static function set_session(Environment $environment) {
+        debugging('set_session is deprecated. Please use set_environment instead.', DEBUG_DEVELOPER);
+
+        self::set_environment($environment);
+    }
+
+    /**
+     * Sets behat environment.
+     *
+     * @param Environment $environment
+     * @return void
+     */
+    public static function set_environment(Environment $environment) {
         self::$environment = $environment;
     }
 
@@ -67,17 +85,33 @@ class behat_context_helper {
      * that uses direct API calls; steps returning step chains
      * can not be executed like this.
      *
-     * @throws coding_exception
+     * @throws Behat\Behat\Context\Exception\ContextNotFoundException
      * @param string $classname Context identifier (the class name).
      * @return behat_base
      */
     public static function get($classname) {
 
-        if (!$subcontext = self::$environment->getContext($classname)) {
-            throw coding_exception('The required "' . $classname . '" class does not exist');
+        $suitename = self::$environment->getSuite()->getName();
+        // If default suite, then get the default theme name.
+        if ($suitename == 'default') {
+            $suitename = theme_config::DEFAULT_THEME;
+        }
+        $overridencontextname = 'behat_theme_'.$suitename.'_'.$classname;
+
+        // If contexts has not been checked before and doesn't exist then just use core one.
+        if (!isset(self::$nonexistingcontexts[$overridencontextname])) {
+            try {
+                $subcontext = self::$environment->getContext($overridencontextname);
+
+                return $subcontext;
+            } catch (Behat\Behat\Context\Exception\ContextNotFoundException $e) {
+                // If context not found then it's not overridden.
+                self::$nonexistingcontexts[$overridencontextname] = 1;
+            }
         }
 
-        return $subcontext;
+        // Get the actual context.
+        return self::$environment->getContext($classname);
     }
 
     /**

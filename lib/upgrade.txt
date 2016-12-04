@@ -3,6 +3,16 @@ information provided here is intended especially for developers.
 
 === 3.2 ===
 
+* Custom roles with access to any part of site administration that do not use the manager archetype will need
+  moodle/site:configview capability added.
+* Admin setting "Show My courses expanded on Dashboard" has been removed.
+* Some backwards and forwards compatibility has been added for different bootstrap versions.
+  This is to allow the same markup to work in "clean" and "boost" themes alot of the time. It is also to allow user text
+  with bootstrap classes to keep working in the new theme. See MDL-56004 for the list of supported classes.
+* MForms element 'submitlink' has been deprecated.
+* Searchable selector form element is now a wrapper for autocomplete. A "No selection" option is automatically
+  added to the options list for best backwards compatibility - if you were manually adding a "no selection" option you will need
+  to remove it.
 * Node.js versions >=4 are now required to run grunt.
 * JQuery has been updated to 3.1.0. JQuery migrate plugins are no longer shipped - please read
   https://jquery.com/upgrade-guide/3.0/ and update your javascript.
@@ -19,14 +29,23 @@ information provided here is intended especially for developers.
 * The following functions have been removed and should not be used any more:
     - file_modify_html_header() - See MDL-29738 for more information.
 * core_grades_external::get_grades has been deprecated. Please do not call this function any more.
-  External function gradereport_user_external::get_grades_table can be used for retrieving the course grades table.
-  Please note that the information returned from that WS is intended for displaying (not for data consumption).
+  External function gradereport_user_external::get_grade_items can be used for retrieving the course grades information.
 * New option 'escape' added to format_string. When true (default), escapes HTML entities from the string
 * The following functions have been deprecated and are not used any more:
   - get_records_csv() Please use csv_import_reader::load_csv_content() instead.
   - put_records_csv() Please use download_as_dataformat (lib/dataformatlib.php) instead.
   - zip_files()   - See MDL-24343 for more information.
   - unzip_file()  - See MDL-24343 for more information.
+  - print_log()           - See MDL-43681 for more information
+  - print_log_csv()       - See MDL-43681 for more information
+  - print_log_ods()       - See MDL-43681 for more information
+  - print_log_xls()       - See MDL-43681 for more information
+  - print_mnet_log()      - See MDL-43681 for more information
+  - build_logs_array()    - See MDL-43681 for more information
+  - get_logs()            - See MDL-43681 for more information
+  - get_logs_usercourse() - See MDL-43681 for more information
+  - get_logs_userday()    - See MDL-43681 for more information
+  - prevent_form_autofill_password() Please do not use anymore.
 * The password_compat library was removed as it is no longer required.
 * Phpunit has been upgraded to 5.4.x and following has been deprecated and is not used any more:
   - setExpectedException(), use @expectedException or $this->expectException() and $this->expectExceptionMessage()
@@ -52,6 +71,75 @@ information provided here is intended especially for developers.
 * All file_packer implementations now accept an additional parameter to allow a simple boolean return value instead of
   an array of individual file statuses.
 * "I set the field "field_string" to multiline:" now end with colon (:), as PyStrings is supposed to end with ":"
+* New functions to support deprecation of events have been added to the base event. See MDL-46214 for further details.
+* A new function `get_name_with_info` has been added to the base event. This function adds information about event
+  deprecations and should be used where this information is relevant.
+* Following api's have been deprecated in behat_config_manager, please use behat_config_util instead.
+  - get_features_with_tags
+  - get_components_steps_definitions
+  - get_config_file_contents
+  - merge_behat_config
+  - get_behat_profile
+  - profile_guided_allocate
+  - merge_config
+  - clean_path
+  - get_behat_tests_path
+* behat_util::start_test_mode() accepts 3 options now:
+  - 1. Theme sute with all features: If behat should initialise theme suite with all core features.
+  - 2. Parallel runs: How many parallel runs will be running.
+  - 3. Run: Which process behat should be initialise for.
+* behat_context_helper::set_session() has been deprecated, please use behat_context_helper::set_environment() instead.
+* data-fieldtype="type" attribute has been added to form field default template.
+* form elements extending MoodleQuickForm_group must call $this->createFormElement() instead of
+  @MoodleQuickForm::createElement() in order to be compatible with PHP 7.1
+* Relative paths in $CFG->alternateloginurl will be resolved to absolute path within moodle site. Previously they
+  were resolved to absolute path within the server. That means:
+  - $CFG->wwwroot: http://example.com/moodle
+  - $CFG->alternateloginurl : /my/super/login.php
+  - Login url will be: http://example.com/moodle/my/super/login.php (moodle root based)
+* Database (DML) layer:
+  - new sql_equal() method available for places where case sensitive/insensitive varchar comparisons are required.
+* PostgreSQL connections now use advanced options to reduce connection overhead.  These options are not compatible
+  with some connection poolers.  The dbhandlesoptions parameter has been added to allow the database to configure the
+  required defaults. The parameters that are required in the database are;
+    ALTER DATABASE moodle SET client_encoding = UTF8;
+    ALTER DATABASE moodle SET standard_conforming_strings = on;
+    ALTER DATABASE moodle SET search_path = 'moodle,public';  -- Optional, if you wish to use a custom schema.
+  You can set these options against the database or the moodle user who connects.
+* Some form elements have been refined to better support right-to-left languages. In RTL,
+  most fields should not have their direction flipped, a URL, a path to a file, a number, ...
+  are always displayed LTR. Input fields and text areas now will best guess whether they
+  should be forced to be displayed in LTR based on the PARAM type associated with it. You
+  can call $mform->setForceLtr($elementName, true/false) on some form fields to manually
+  set the value.
+* Action menus do_not_enhance() is deprecated, use a list of action_icon instead.
+* The user_not_fully_set_up() function has a new $strict parameter (defaulting to true) in order to decide when
+  custom fields (and other checks) should be evaluated to determine if the user has been completely setup.
+* profile_field_base class has new methods: get_field_config_for_external() and get_field_properties().
+  This two new methods should be implemented by profile field plugins to make them compatible with Web Services.
+* The minifier library used by core_minify has been switched to https://github.com/matthiasmullie/minify - there are minor differences
+  in minifier output.
+* context_header additional buttons can now have a class attribute provided in the link attributes.
+* The return signature for the antivirus::scan_file() function has changed.
+  The calling function will now handle removal of infected files from Moodle based on the new integer return value.
+* The first parameter $eventdata of both message_send() and \core\message\manager::send_message() should
+  be \core\message\message. Use of stdClass is deprecated.
+* The message_sent event now expects other[courseid] to be always set, exception otherwise. For BC with contrib code,
+  message_sent::create_from_ids() will show a debugging notice if the \core\message\message being sent is missing
+  the courseid property, defaulting to SITEID automatically. In Moodle 3.6 (MDL-55449) courseid will be fully mandatory
+  for all messages sent.
+* The send_confirmation_email() function has a new optional parameter $confirmationurl to provide a different confirmation URL.
+* Introduced a new hook for plugin developers:
+    - <component>_course_module_background_deletion_recommended()
+  This hook should be used in conjunction with the existing '<component>_pre_course_module_delete($mod)'. It must
+  return a boolean and is called by core to check whether a plugin's implementation of
+  <component>_pre_course_module_deleted($mod) will take a long time. A plugin should therefore only implement this
+  function if it also implements <component>_pre_course_module_delete($mod).
+  An example in current use is recyclebin, which performs what can be a lengthy backup process in
+  tool_recyclebin_pre_course_module_delete. The recyclebin, if enabled, now returns true in its implementation of
+  tool_recyclebin_course_module_background_deletion_recommended(), to indicate to core that the deletion (and
+  execution of tool_recyclebin_pre_course_module_delete) should be handled with an adhoc task, meaning it will not
+  occur in real time.
 
 === 3.1 ===
 
@@ -182,6 +270,7 @@ information provided here is intended especially for developers.
   These hooks allow developers to use the item in question before it is deleted by core. For example, if your plugin is
   a module (plugins located in the mod folder) called 'xxx' and you wish to interact with the user object before it is
   deleted then the function to create would be mod_xxx_pre_user_delete($user) in mod/xxx/lib.php.
+* pear::Net::GeoIP has been removed.
 
 === 3.0 ===
 

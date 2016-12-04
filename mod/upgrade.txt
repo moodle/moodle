@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
 * update_module_button() and core_renderer::update_module_button() have been deprecated and should not be used anymore.
   Activity modules should not add the edit module button, the link is already available in the Administration block.
   Themes can choose to display the link in the buttons row consistently for all module types.
+* New callback check_updates_since available. Check if the module has any update that affects the current user since the given time.
+  Please refer to mod/assign/lib.php, mod/forum/lib.php or mod/quiz/lib.php for sample code.
 
 === 3.1 ===
 

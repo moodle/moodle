@@ -605,8 +605,26 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $context = context_system::instance();
         $roleid = $this->assignUserCapability('moodle/user:update', $context->id);
 
+        // Check we can't update deleted users, guest users, site admin.
+        $user2 = $user3 = $user4 = $user1;
+        $user2['id'] = $CFG->siteguest;
+
+        $siteadmins = explode(',', $CFG->siteadmins);
+        $user3['id'] = array_shift($siteadmins);
+
+        $userdeleted = self::getDataGenerator()->create_user();
+        $user4['id'] = $userdeleted->id;
+        user_delete_user($userdeleted);
+
         // Call the external function.
-        core_user_external::update_users(array($user1));
+        core_user_external::update_users(array($user1, $user2, $user3, $user4));
+
+        $dbuser2 = $DB->get_record('user', array('id' => $user2['id']));
+        $this->assertNotEquals($dbuser2->username, $user2['username']);
+        $dbuser3 = $DB->get_record('user', array('id' => $user3['id']));
+        $this->assertNotEquals($dbuser3->username, $user3['username']);
+        $dbuser4 = $DB->get_record('user', array('id' => $user4['id']));
+        $this->assertNotEquals($dbuser4->username, $user4['username']);
 
         $dbuser = $DB->get_record('user', array('id' => $user1['id']));
         $this->assertEquals($dbuser->username, $user1['username']);
@@ -854,4 +872,227 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $result = core_user_external::get_user_preferences('', $user->id);
     }
 
+    /**
+     * Test update_picture
+     */
+    public function test_update_picture() {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+        self::setUser($user);
+
+        $context = context_user::instance($USER->id);
+        $contextid = $context->id;
+        $filename = "reddot.png";
+        $filecontent = "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38"
+            . "GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+
+        // Call the files api to create a file.
+        $draftfile = core_files_external::upload($contextid, 'user', 'draft', 0, '/', $filename, $filecontent, null, null);
+        $draftid = $draftfile['itemid'];
+
+        // Change user profile image.
+        $result = core_user_external::update_picture($draftid);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
+        // The new revision is in the url for the user.
+        $this->assertContains($picture, $result['profileimageurl']);
+        // Check expected URL for serving the image.
+        $this->assertContains("/$contextid/user/icon", $result['profileimageurl']);
+
+        // Delete image.
+        $result = core_user_external::update_picture(0, true);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
+        // No picture.
+        $this->assertEquals(0, $picture);
+
+        // Add again the user profile image (as admin).
+        $this->setAdminUser();
+
+        $context = context_user::instance($USER->id);
+        $admincontextid = $context->id;
+        $draftfile = core_files_external::upload($admincontextid, 'user', 'draft', 0, '/', $filename, $filecontent, null, null);
+        $draftid = $draftfile['itemid'];
+
+        $result = core_user_external::update_picture($draftid, false, $user->id);
+        $result = external_api::clean_returnvalue(core_user_external::update_picture_returns(), $result);
+        // The new revision is in the url for the user.
+        $picture = $DB->get_field('user', 'picture', array('id' => $user->id));
+        $this->assertContains($picture, $result['profileimageurl']);
+        $this->assertContains("/$contextid/user/icon", $result['profileimageurl']);
+    }
+
+    /**
+     * Test update_picture disabled
+     */
+    public function test_update_picture_disabled() {
+        global $CFG;
+        $this->resetAfterTest(true);
+        $CFG->disableuserimages = true;
+
+        $this->setAdminUser();
+        $this->expectException('moodle_exception');
+        core_user_external::update_picture(0);
+    }
+
+    /**
+     * Test set_user_preferences
+     */
+    public function test_set_user_preferences_save() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        // Save users preferences.
+        $this->setAdminUser();
+        $preferences = array(
+            array(
+                'name' => 'some_random_pref',
+                'value' => 'abc',
+                'userid' => $user1->id,
+            ),
+            array(
+                'name' => 'some_random_pref',
+                'value' => 'def',
+                'userid' => $user2->id,
+            )
+        );
+
+        $result = core_user_external::set_user_preferences($preferences);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['saved']);
+
+        // Get preference from DB to avoid cache.
+        $this->assertEquals('abc', $DB->get_field('user_preferences', 'value',
+            array('userid' => $user1->id, 'name' => 'some_random_pref')));
+        $this->assertEquals('def', $DB->get_field('user_preferences', 'value',
+            array('userid' => $user2->id, 'name' => 'some_random_pref')));
+    }
+
+    /**
+     * Test set_user_preferences for an invalid user
+     */
+    public function test_set_user_preferences_invalid_user() {
+        $this->resetAfterTest(true);
+
+        $this->setAdminUser();
+        $preferences = array(
+            array(
+                'name' => 'calendar_maxevents',
+                'value' => 4,
+                'userid' => -2
+            )
+        );
+
+        $result = core_user_external::set_user_preferences($preferences);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertCount(0, $result['saved']);
+        $this->assertEquals('invaliduser', $result['warnings'][0]['warningcode']);
+        $this->assertEquals(-2, $result['warnings'][0]['itemid']);
+    }
+
+    /**
+     * Test set_user_preferences using an invalid preference
+     */
+    public function test_set_user_preferences_invalid_preference() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        // Create a very long value.
+        $this->setAdminUser();
+        $preferences = array(
+            array(
+                'name' => 'calendar_maxevents',
+                'value' => str_repeat('a', 1334),
+                'userid' => $USER->id
+            )
+        );
+
+        $result = core_user_external::set_user_preferences($preferences);
+        $result = external_api::clean_returnvalue(core_user_external::set_user_preferences_returns(), $result);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertCount(0, $result['saved']);
+        $this->assertEquals('errorsavingpreference', $result['warnings'][0]['warningcode']);
+    }
+
+    /**
+     * Test set_user_preferences for other user not being admin
+     */
+    public function test_set_user_preferences_other_user_not_being_admin() {
+        $this->resetAfterTest(true);
+
+        $user1 = self::getDataGenerator()->create_user();
+        $user2 = self::getDataGenerator()->create_user();
+
+        $this->setUser($user1);
+        $preferences = array(
+            array(
+                'name' => 'calendar_maxevents',
+                'value' => 4,
+                'userid' => $user2->id
+            )
+        );
+
+        $this->expectException('required_capability_exception');
+        $result = core_user_external::set_user_preferences($preferences);
+    }
+
+    /**
+     * Test agree_site_policy
+     */
+    public function test_agree_site_policy() {
+        global $CFG, $DB, $USER;
+        $this->resetAfterTest(true);
+
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Site policy not set.
+        $result = core_user_external::agree_site_policy();
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $this->assertFalse($result['status']);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('nositepolicy', $result['warnings'][0]['warningcode']);
+
+        // Set a policy issue.
+        $CFG->sitepolicy = 'https://moodle.org';
+        $this->assertEquals(0, $USER->policyagreed);
+
+        $result = core_user_external::agree_site_policy();
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals(1, $USER->policyagreed);
+        $this->assertEquals(1, $DB->get_field('user', 'policyagreed', array('id' => $USER->id)));
+
+        // Try again, we should get a warning.
+        $result = core_user_external::agree_site_policy();
+        $result = external_api::clean_returnvalue(core_user_external::agree_site_policy_returns(), $result);
+        $this->assertFalse($result['status']);
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('alreadyagreed', $result['warnings'][0]['warningcode']);
+
+        // Set something to make require_login throws an exception.
+        $otheruser = self::getDataGenerator()->create_user();
+        $this->setUser($otheruser);
+
+        $DB->set_field('user', 'lastname', '', array('id' => $USER->id));
+        $USER->lastname = '';
+        try {
+            $result = core_user_external::agree_site_policy();
+            $this->fail('Expecting \'usernotfullysetup\' moodle_exception to be thrown');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('usernotfullysetup', $e->errorcode);
+        } catch (Exception $e) {
+            $this->fail('Expecting \'usernotfullysetup\' moodle_exception to be thrown.');
+        }
+
+    }
 }

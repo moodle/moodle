@@ -237,13 +237,13 @@ class assignfeedback_file_zip_importer {
                 if ($this->is_file_modified($assignment, $user, $plugin, $filename, $unzippedfile)) {
                     $grade = $assignment->get_user_grade($user->id, true);
 
-                    // In 3.1 the download structure of the submission files changed so that each student had their own
+                    // In 3.1 the default download structure of the submission files changed so that each student had their own
                     // separate folder, the files were not renamed and the folder structure was kept. It is possible that
-                    // a user downloaded the submission files in 3.0 (or earlier) and edited the zip to add feedback and
-                    // in that time the site was updated to 3.1, the following code means that we will still support the
-                    // old file structure. For more information please see - MDL-52489.
+                    // a user downloaded the submission files in 3.0 (or earlier) and edited the zip to add feedback or
+                    // changed the behavior back to the previous format, the following code means that we will still support the
+                    // old file structure. For more information please see - MDL-52489 / MDL-56022.
                     $path = pathinfo($filename);
-                    if ($path['dirname'] == '.') { // Old structure as students are not in separate folders.
+                    if ($path['dirname'] == '.') { // Student submissions are not in separate folders.
                         $basename = $filename;
                         $dirname = "/";
                         $dirnamewslash = "/";

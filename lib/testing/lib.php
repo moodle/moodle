@@ -52,17 +52,21 @@ function testing_cli_argument_path($moodlepath) {
         // This is the real CLI script, work with relative paths.
         $cwd = getcwd();
     }
-    if (substr($cwd, -1) !== DIRECTORY_SEPARATOR) {
-        $cwd .= DIRECTORY_SEPARATOR;
+
+    // Remove last directory separator as $path will not contain one.
+    if ((substr($cwd, -1) === '/') || (substr($cwd, -1) === '\\')) {
+        $cwd = substr($cwd, -1);
     }
+
     $path = realpath($CFG->dirroot.$moodlepath);
 
-    if (strpos($path, $cwd) === 0) {
-        $path = substr($path, strlen($cwd));
-    }
+    // We need standrad directory seperator for path and cwd, so it can be compared.
+    $cwd = testing_cli_fix_directory_separator($cwd);
+    $path = testing_cli_fix_directory_separator($path);
 
-    if (testing_is_cygwin()) {
-        $path = str_replace('\\', '/', $path);
+    if (strpos($path, $cwd) === 0) {
+        // Remove current working directory and directory separator.
+        $path = substr($path, strlen($cwd) + 1);
     }
 
     return $path;
@@ -237,4 +241,49 @@ function testing_update_composer_dependencies() {
 
     // Return to our original location.
     chdir($cwd);
+}
+
+/**
+ * Fix DIRECTORY_SEPARATOR for windows.
+ *
+ * In PHP on Windows, DIRECTORY_SEPARATOR is set to the backslash (\)
+ * character. However, if you're running a Cygwin/Msys/Git shell
+ * exec() calls will return paths using the forward slash (/) character.
+ *
+ * NOTE: Because PHP on Windows will accept either forward or backslashes,
+ * paths should be built using ONLY forward slashes, regardless of
+ * OS. MOODLE_DIRECTORY_SEPARATOR should only be used when parsing
+ * paths returned by the shell.
+ *
+ * @param string $path
+ * @return string.
+ */
+function testing_cli_fix_directory_separator($path) {
+    global $CFG;
+
+    static $dirseparator = null;
+
+    if (!$dirseparator) {
+        // Default directory separator.
+        $dirseparator = DIRECTORY_SEPARATOR;
+
+        // On windows we need to find what directory separator is used.
+        if ($CFG->ostype = 'WINDOWS') {
+            if (!empty($_SERVER['argv'][0])) {
+                if (false === strstr($_SERVER['argv'][0], '\\')) {
+                    $dirseparator = '/';
+                } else {
+                    $dirseparator = '\\';
+                }
+            } else if (testing_is_cygwin()) {
+                $dirseparator = '/';
+            }
+        }
+    }
+
+    // Normalize \ and / to directory separator.
+    $path = str_replace('\\', $dirseparator, $path);
+    $path = str_replace('/', $dirseparator, $path);
+
+    return $path;
 }

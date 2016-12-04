@@ -15,6 +15,8 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template tool_lp/competencies_move_tree
+
     Manage competencies template.
 
     Classes required for JS:
@@ -25,6 +27,16 @@
     Context variables required for this template:
     * framework -
     * competencies - array of objects containing id, shortname, idnumber, sortorder, parentid, competencyframeworkid, path
+
+    Example context (json):
+    {
+        "framework": {
+            "shortname":"framework"
+        },
+        "competencies": [
+            { "name": "Competency", "id": 1 }
+        ]
+    }
 }}
 <div data-region="competencymovetree" >
 <label>{{#str}}selectcompetencymovetarget, tool_lp{{/str}}</label>
@@ -41,7 +53,8 @@
 </ul>
 </div>
 
-<div data-region="move-buttons">
-    <input type="button" data-action="move" value="{{#str}}move{{/str}}"/>
-    <input type="button" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
+<div data-region="move-buttons" class="pull-xs-right">
+    <input type="button" data-action="move" class="btn btn-primary" value="{{#str}}move{{/str}}"/>
+    <input type="button" data-action="cancel" class="btn btn-secondary" value="{{#str}}cancel{{/str}}"/>
 </div>
+<div class="clearfix"></div>

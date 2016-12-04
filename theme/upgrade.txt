@@ -1,6 +1,65 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.2 ===
+
+* Removed themes: base, canvas
+  During the upgrade process the themes will be uninstalled and all their settings will be deleted.
+  If you wish to keep your theme and its settings, download it from moodle.org and put it back in
+  the theme/ directory BEFORE UPGRADING.
+* Bootstrap 4 was added as part of a the new theme 'boost'.
+* Some backwards and forwards compatibility has been added for different bootstrap versions.
+  This is to allow the same markup to work in "clean" and "boost" themes a lot of the time.
+  It is also to allow user text with bootstrap classes to keep working in the new theme.
+* Using .dir-rtl for RTL styling is deprecated and should not be used any more. From now
+  the styles are automatically flipped when the language is right-to-left. However,
+  as this is not always perfect, you can define exceptions. Please refer to the documentation
+  of the tool RTLCSS-PHP for more information: https://github.com/moodlehq/rtlcss-php
+* Themes can now automatically compile SCSS on the fly. This works the same way as it
+  does compiling LESS on the fly, effecitvely adding $THEME->scss to your config. The
+  latter can either be the name a SCSS file (without extension) in your theme's scss/ folder,
+  or a Closure which will return the main SCSS content.
+* Two new callbacks allow themes to inject SCSS code before and after the content provided
+  by the SCSS file $THEME->scss. See $THEME->prescsscallback and $THEME->extrascsscallback.
+* A new callback can be defined to post process the CSS using an object representation
+  of the CSS tree ($THEME->csstreepostprocess). This gives a lot more flexibility than a
+  simple find and replace. Refer to 'boost' for an example, and to PHP-CSS-Parser.
+  (https://github.com/sabberworm/PHP-CSS-Parser) for the API.
+* A new core setting now enables admins to upload the logos of their site. Using the
+  following methods, themers can instantly support branding logos without the need
+  to implement specific theme settings:
+  * $OUTPUT->get_logo_url($maxwidth, $maxheight);
+  * $OUTPUT->get_compact_logo_url($maxwidth, $maxheight);
+* The class .dir-ltr should not be used any more. To force LTR styles use the directive
+  to remove the rule when the language is RTL. See RTLCSS-PHP for more information.
+* A new class .text-ltr may be used to force the direction to LTR. This is especially useful
+  for forms fields (numbers, emails, URLs must not be RTL'd), and for displaying code
+  snippets or configuration samples.
+* A new theme config 'requiredblocks' allows a theme to define which blocks are deletable.
+* You may no longer override the following core_course_renderer methods.
+  See course/upgrade.txt for more information:
+  - course_modchooser_module_types
+  - course_modchooser_module
+  - course_modchooser_title
+* The question chooser now uses a renderable and a template, the following methods
+  have been deprecated in favour of core_question_bank_renderer::render_qbank_chooser().
+  - qbank_chooser
+  - qbank_chooser_types
+  - qbank_chooser_qtype
+  - qbank_chooser_title
+* The 'css optimiser' has been removed. Developers are encouraged to use tools such as stylelint
+  to help optimise their css. Some functions and classes in lib/csslib.php (which was not for public use)
+  have been deprecated:
+  - css_is_colour
+  - css_is_width
+  - css_sort_by_count
+  - class css_optimiser no longer does anything.
+* CLI svgtool.php has moved from theme/base/cli to admin/cli and paths should be relative to the new location.
+* mod_chat will now display the 'course theme' option for all themes (previously it was only displayed on
+  bootstrap2 based themes).
+* Theme can choose how to display "Add a block" control in $THEME->addblockposition, default value is
+  BLOCK_ADDBLOCK_POSITION_DEFAULT that displays it as a fake block in editing mode.
+
 === 3.1 ===
 
 * A new search box for global search has been added to bootstrap and clean layout files, if

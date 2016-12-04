@@ -128,6 +128,21 @@ class core_coursecatlib_testcase extends advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('moodle_exception', $e);
         }
+        // Test that duplicates with an idnumber of 0 cannot be created.
+        coursecat::create(array('name' => 'Cat3', 'idnumber' => '0'));
+        try {
+            coursecat::create(array('name' => 'Cat4', 'idnumber' => '0'));
+            $this->fail('Duplicate idnumber "0" exception expected in coursecat::create');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
+        }
+        // Test an update cannot make a duplicate idnumber of 0.
+        try {
+            $cat2->update(array('idnumber' => '0'));
+            $this->fail('Duplicate idnumber "0" exception expected in coursecat::update');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
+        }
     }
 
     public function test_visibility() {
@@ -236,7 +251,7 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $timecreated = $category1->timemodified;
         $this->assertSame('Cat1', $category1->name);
         $this->assertTrue(empty($category1->description));
-        sleep(2);
+        $this->waitForSecond();
         $testdescription = 'This is cat 1 а также русский текст';
         $category1->update(array('description' => $testdescription));
         $this->assertSame($testdescription, $category1->description);
@@ -436,6 +451,7 @@ class core_coursecatlib_testcase extends advanced_testcase {
 
         try {
             // Enable the multilang filter and set it to apply to headings and content.
+            filter_manager::reset_caches();
             filter_set_global_state('multilang', TEXTFILTER_ON);
             filter_set_applies_to_strings('multilang', true);
             $expected = array($c3, $c4, $c1, $c2);

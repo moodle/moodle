@@ -50,7 +50,8 @@ class behat_mod_data extends behat_base {
     public function i_add_a_field_to_database_and_i_fill_the_form_with($fieldtype, $activityname, TableNode $fielddata) {
 
         $this->execute("behat_general::click_link", $this->escape($activityname));
-        $this->execute("behat_general::click_link", get_string('fields', 'mod_data'));
+        $this->execute("behat_navigation::i_navigate_to_node_in", array(get_string('fields', 'mod_data'),
+            get_string('pluginadministration', 'mod_data')));
 
         $this->execute('behat_forms::i_set_the_field_to', array('newtype', $this->escape($fieldtype)));
 
@@ -75,7 +76,8 @@ class behat_mod_data extends behat_base {
     public function i_add_an_entry_to_database_with($activityname, TableNode $entrydata) {
 
         $this->execute("behat_general::click_link", $this->escape($activityname));
-        $this->execute("behat_general::click_link", get_string('add', 'mod_data'));
+        $this->execute("behat_navigation::i_navigate_to_node_in", array(get_string('add', 'mod_data'),
+            get_string('pluginadministration', 'mod_data')));
 
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $entrydata);
     }

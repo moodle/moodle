@@ -86,7 +86,7 @@ class block_glossary_random extends block_base {
             switch ($this->config->type) {
 
                 case BGR_RANDOMLY:
-                    $i = rand(1,$numberofentries);
+                    $i = ($numberofentries > 1) ? rand(1, $numberofentries) : 1;
                     $limitfrom = $i-1;
                     break;
 

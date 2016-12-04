@@ -673,8 +673,19 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         $name = 'File test';
         $path = make_cache_directory('cachestore_file_test');
         $cache = new cachestore_file($name, array('path' => $path));
-        $cache->initialise($definition);
+        if ($cache->is_ready()) {
+            $cache->initialise($definition);
+        }
         return $cache;
+    }
+
+    /**
+     * Generates the appropriate configuration required for unit testing.
+     *
+     * @return array Array of unit test configuration data to be used by initialise().
+     */
+    public static function unit_test_configuration() {
+        return array();
     }
 
     /**

@@ -221,7 +221,7 @@ class user_competency_plan extends persistent {
         $record = $DB->get_record_sql($sql, array($planid, $competencyid));
 
         if (!$record) {
-            throw new coding_exception('The competency does not belong to this plan: ' . $competencyid . ', ' . $planid);
+            throw new \coding_exception('The competency does not belong to this plan: ' . $competencyid . ', ' . $planid);
         }
 
         return new competency(0, $record);

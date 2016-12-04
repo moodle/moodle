@@ -369,6 +369,12 @@ class core_course_management_renderer extends plugin_renderer_base {
         return $this->render($menu);
     }
 
+    public function render_action_menu($menu) {
+        global $OUTPUT;
+
+        return $OUTPUT->render($menu);
+    }
+
     /**
      * Renders bulk actions for categories.
      *

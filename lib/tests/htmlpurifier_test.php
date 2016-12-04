@@ -327,7 +327,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
      * @param string $expected expected result
      */
     public function test_media_tags($mediatag, $expected) {
-        $actual = format_text($mediatag, FORMAT_MOODLE, ['filter' => false, 'noclean' => true]);
+        $actual = format_text($mediatag, FORMAT_MOODLE, ['filter' => false]);
         $this->assertEquals($expected, $actual);
     }
 
@@ -353,8 +353,8 @@ class core_htmlpurifier_testcase extends basic_testcase {
         $videoattrs = [
             'crossorigin="anonymous"', 'crossorigin="use-credentials"',
             'poster="https://upload.wikimedia.org/wikipedia/en/1/14/Space_jam.jpg"',
-            'preload=""', 'autoplay=""', 'playsinline=""', 'loop=""', 'muted=""',
-            'controls=""', 'width="420px"', 'height="69px"'
+            'preload="auto"', 'autoplay=""', 'playsinline=""', 'loop=""', 'muted=""',
+            'controls=""', 'width="420"', 'height="69"'
         ];
         return $generatetestcases('Plain audio', $audioattrs + ['src="http://example.com/jam.wav"'], [
                 '<audio %1$s>Looks like you can\'t slam the jams.</audio>',
@@ -363,7 +363,7 @@ class core_htmlpurifier_testcase extends basic_testcase {
                 '<audio %1$s><source src="http://example.com/getup.wav">No tasty jams for you.</audio>',
                 '<div class="text_to_html">' .
                     '<audio %1$s>' .
-                        '<source src="http://example.com/getup.wav">' .
+                        '<source src="http://example.com/getup.wav" />' .
                         'No tasty jams for you.' .
                     '</audio>' .
                 '</div>'
@@ -375,21 +375,46 @@ class core_htmlpurifier_testcase extends basic_testcase {
                     'No tasty jams for you.' .
                 '</audio>',
                 '<div class="text_to_html">' .
-                     '<audio %1$s>' .
-                        '<source src="http://example.com/getup.wav" type="audio/wav">' .
-                        '<source src="http://example.com/getup.mp3" type="audio/mpeg">' .
-                        '<source src="http://example.com/getup.ogg" type="audio/ogg">' .
+                    '<audio %1$s>' .
+                        '<source src="http://example.com/getup.wav" type="audio/wav" />' .
+                        '<source src="http://example.com/getup.mp3" type="audio/mpeg" />' .
+                        '<source src="http://example.com/getup.ogg" type="audio/ogg" />' .
+                        'No tasty jams for you.' .
+                    '</audio>' .
+                '</div>'
+            ]) + $generatetestcases('Audio with sources and tracks', $audioattrs, [
+                '<audio %1$s>' .
+                    '<source src="http://example.com/getup.wav" type="audio/wav">' .
+                    '<track kind="subtitles" src="http://example.com/subtitles_en.vtt" label="English" srclang="en">' .
+                    '<track kind="subtitles" src="http://example.com/subtitles_es.vtt" label="Espanol" srclang="es">' .
+                    'No tasty jams for you.' .
+                '</audio>',
+                '<div class="text_to_html">' .
+                    '<audio %1$s>' .
+                        '<source src="http://example.com/getup.wav" type="audio/wav" />' .
+                        '<track kind="subtitles" src="http://example.com/subtitles_en.vtt" label="English" srclang="en" />' .
+                        '<track kind="subtitles" src="http://example.com/subtitles_es.vtt" label="Espanol" srclang="es" />' .
                         'No tasty jams for you.' .
                     '</audio>' .
                 '</div>'
             ]) + $generatetestcases('Plain video', $videoattrs + ['src="http://example.com/prettygood.mp4'], [
                 '<video %1$s>Oh, that\'s pretty bad 😦</video>',
                 '<div class="text_to_html"><video %1$s>Oh, that\'s pretty bad 😦</video></div>'
+            ]) + $generatetestcases('Video with illegal subtag', $videoattrs + ['src="http://example.com/prettygood.mp4'], [
+                '<video %1$s><subtag></subtag>Oh, that\'s pretty bad 😦</video>',
+                '<div class="text_to_html"><video %1$s>Oh, that\'s pretty bad 😦</video></div>'
+            ]) + $generatetestcases('Video with legal subtag', $videoattrs + ['src="http://example.com/prettygood.mp4'], [
+                '<video %1$s>Did not work <a href="http://example.com/prettygood.mp4">click here to download</a></video>',
+                '<div class="text_to_html"><video %1$s>Did not work <a href="http://example.com/prettygood.mp4">' .
+                'click here to download</a></video></div>'
+            ]) + $generatetestcases('Source tag without video or audio', $videoattrs, [
+                'some text <source src="http://example.com/getup.wav" type="audio/wav"> the end',
+                '<div class="text_to_html">some text  the end</div>'
             ]) + $generatetestcases('Video with one source', $videoattrs, [
                 '<video %1$s><source src="http://example.com/prettygood.mp4">Oh, that\'s pretty bad 😦</video>',
                 '<div class="text_to_html">' .
                     '<video %1$s>' .
-                        '<source src="http://example.com/prettygood.mp4">' .
+                        '<source src="http://example.com/prettygood.mp4" />' .
                         'Oh, that\'s pretty bad 😦' .
                     '</video>' .
                 '</div>'
@@ -397,38 +422,63 @@ class core_htmlpurifier_testcase extends basic_testcase {
                 '<video %1$s>' .
                     '<source src="http://example.com/prettygood.mp4" type="video/mp4">' .
                     '<source src="http://example.com/eljefe.mp4" type="video/mp4">' .
-                    '<source src="http://example.com/turnitup.mov type="video/mov"' .
+                    '<source src="http://example.com/turnitup.mov" type="video/mov">' .
                     'Oh, that\'s pretty bad 😦' .
                 '</video>',
                 '<div class="text_to_html">' .
                     '<video %1$s>' .
-                        '<source src="http://example.com/prettygood.mp4" type="video/mp4">' .
-                        '<source src="http://example.com/eljefe.mp4" type="video/mp4">' .
-                        '<source src="http://example.com/turnitup.mov type="video/mov"' .
+                        '<source src="http://example.com/prettygood.mp4" type="video/mp4" />' .
+                        '<source src="http://example.com/eljefe.mp4" type="video/mp4" />' .
+                        '<source src="http://example.com/turnitup.mov" type="video/mov" />' .
                         'Oh, that\'s pretty bad 😦' .
                     '</video>' .
                 '</div>'
-            ] + [
-                'Video with invalid crossorigin' => [
-                    '<video src="http://example.com/turnitup.mov type="video/mov crossorigin="can i pls hab?">' .
+            ]) + $generatetestcases('Video with sources and tracks', $audioattrs, [
+                '<video %1$s>' .
+                    '<source src="http://example.com/getup.wav" type="audio/wav">' .
+                    '<track kind="subtitles" src="http://example.com/subtitles_en.vtt" label="English" srclang="en">' .
+                    '<track kind="subtitles" src="http://example.com/subtitles_es.vtt" label="Espanol" srclang="es">' .
+                    'No tasty jams for you.' .
+                '</video>',
+                '<div class="text_to_html">' .
+                    '<video %1$s>' .
+                        '<source src="http://example.com/getup.wav" type="audio/wav" />' .
+                        '<track kind="subtitles" src="http://example.com/subtitles_en.vtt" label="English" srclang="en" />' .
+                        '<track kind="subtitles" src="http://example.com/subtitles_es.vtt" label="Espanol" srclang="es" />' .
+                    'No tasty jams for you.' .
+                    '</video>' .
+                '</div>'
+            ]) + ['Video with invalid crossorigin' => [
+                    '<video src="http://example.com/turnitup.mov" crossorigin="can i pls hab?">' .
                         'Oh, that\'s pretty bad 😦' .
                     '</video>',
                     '<div class="text_to_html">' .
-                       '<video src="http://example.com/turnitup.mov type="video/mov">' .
+                        '<video src="http://example.com/turnitup.mov">' .
                            'Oh, that\'s pretty bad 😦' .
-                        '</video>',
+                        '</video>' .
                     '</div>'
-                ],
-                'Audio with invalid crossorigin' => [
-                    '<audio src="http://example.com/getup.wav" type="audio/wav" crossorigin="give me. the jams.">' .
+            ]] + ['Audio with invalid crossorigin' => [
+                    '<audio src="http://example.com/getup.wav" crossorigin="give me. the jams.">' .
                         'nyemnyemnyem' .
                     '</audio>',
                     '<div class="text_to_html">' .
-                        '<audio src="http://example.com/getup.wav" type="audio/wav" crossorigin="give me. the jams.">' .
+                        '<audio src="http://example.com/getup.wav">' .
                             'nyemnyemnyem' .
                         '</audio>' .
                     '</div>'
-                ]
-            ]);
+            ]] + ['Other attributes' => [
+                '<video src="http://example.com/turnitdown.mov" class="nofilter" data-something="data attribute" someattribute="somevalue" onclick="boom">' .
+                    '<source src="http://example.com/getup.wav" type="audio/wav" class="shouldberemoved" data-sourcedata="source data" onmouseover="kill session" />' .
+                    '<track src="http://example.com/subtitles_en.vtt" class="shouldberemoved" data-trackdata="track data" onmouseover="removeme" />' .
+                    'Do not remove attribute class but remove other attributes' .
+                '</video>',
+                '<div class="text_to_html">' .
+                    '<video src="http://example.com/turnitdown.mov" class="nofilter">' .
+                        '<source src="http://example.com/getup.wav" type="audio/wav" />' .
+                        '<track src="http://example.com/subtitles_en.vtt" />' .
+                        'Do not remove attribute class but remove other attributes' .
+                    '</video>' .
+                '</div>'
+            ]];
     }
 }

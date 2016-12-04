@@ -281,7 +281,7 @@ class core_admin_renderer extends plugin_renderer_base {
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
             $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
-            $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0) {
+            $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0, $themedesignermode = false) {
         global $CFG;
         $output = '';
 
@@ -290,6 +290,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->legacy_log_store_writing_error();
         $output .= empty($CFG->disableupdatenotifications) ? $this->available_updates($availableupdates, $availableupdatesfetch) : '';
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
+        $output .= $this->themedesignermode_warning($themedesignermode);
         $output .= $this->display_errors_warning($errorsdisplayed);
         $output .= $this->buggy_iconv_warning($buggyiconvnomb);
         $output .= $this->cron_overdue_warning($cronoverdue);
@@ -530,6 +531,19 @@ class core_admin_renderer extends plugin_renderer_base {
         }
 
         return $this->warning(get_string('displayerrorswarning', 'admin'));
+    }
+
+    /**
+     * Render an appropriate message if themdesignermode is enabled.
+     * @param bool $themedesignermode true if enabled
+     * @return string HTML to output.
+     */
+    protected function themedesignermode_warning($themedesignermode) {
+        if (!$themedesignermode) {
+            return '';
+        }
+
+        return $this->warning(get_string('themedesignermodewarning', 'admin'));
     }
 
     /**

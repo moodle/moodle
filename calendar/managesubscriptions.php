@@ -110,7 +110,6 @@ $subscriptions = $DB->get_records_sql($sql, $params);
 // Print title and header.
 $PAGE->set_title("$course->shortname: ".get_string('calendar', 'calendar').": ".get_string('subscriptions', 'calendar'));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_button(calendar_preferences_button($course));
 
 $renderer = $PAGE->get_renderer('core_calendar');
 

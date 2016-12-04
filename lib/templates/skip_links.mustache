@@ -1,0 +1,10 @@
+<div class="skiplinks">
+{{#links}}
+    <a href="#{{{url}}}" class="skip">{{{text}}}</a>
+{{/links}}
+</div>
+{{#js}}
+require(['core/yui'], function(Y) {
+    M.util.init_skiplink(Y);
+});
+{{/js}}

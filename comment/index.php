@@ -88,7 +88,8 @@ if (empty($action)) {
     $return = $manager->print_comments($page);
     // if no comments available, $return will be false
     if ($return) {
-        echo '<input type="submit" id="comments_delete" name="batchdelete" value="'.get_string('delete').'" />';
+        echo '<input type="submit" class="btn btn-primary" id="comments_delete" name="batchdelete"
+            value="'.get_string('delete').'" />';
     }
     echo '</form>';
 }

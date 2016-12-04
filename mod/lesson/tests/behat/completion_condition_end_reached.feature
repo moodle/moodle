@@ -57,7 +57,7 @@ Feature: Set end of lesson reached as a completion condition for a lesson
     And I follow "Test lesson"
     And I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"
-    And I follow "No"
+    And I click on "No" "link" in the "#page-content" "css_element"
     And I press "Next page"
     And I press "Next page"
     And I follow "Course 1"

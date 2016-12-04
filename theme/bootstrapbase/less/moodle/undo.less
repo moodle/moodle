@@ -69,10 +69,9 @@ li.section.hidden,
  * basically if you see things shifted left or right compared
  * with where they should be check for a .row
  */
-
 #turnitintool_style .row,
 .forumpost .row {
-    margin-left: 0 !important;
+    margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
     // not sure if this needs !important
 }
 #turnitintool_style .row:before,
@@ -101,38 +100,6 @@ fieldset.hidden {
     visibility: inherit;
 }
 
-
-/* .controls vs .controls
- *
- * in expanding course list, can be fixed in renderer though
- */
-
-
-/* .btn vs .btn
- *
- * links, inputs and buttons are commonly styled with .btn in
- * bootstrap but it seems that some buttons in Moodle are
- * wrapped in div.btn e.g. the login block's "login" button
- */
-
-div.c1.btn {
-    display: block;
-    padding: 0;
-    margin-bottom: 0;
-    font-size: inherit;
-    line-height: inherit;
-    text-align: inherit;
-    vertical-align: inherit;
-    cursor: default;
-    color: inherit;
-    text-shadow: inherit;
-    background-color: inherit;
-    background-image: none;
-    background-repeat: no-repeat;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-}
 /* .container vs .container
  *
  * bootstrap uses .container to set the width of the layout at 960px or so, Moodle uses it
@@ -164,8 +131,8 @@ img.icon-pre {
 .loginbox.twocolumns {
     .signuppanel,
     .loginpanel {
-        padding: 0px;
-        margin: 0px;
+        padding: 0;
+        margin: 0;
     }
 }
 
@@ -195,10 +162,4 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 
 ol {
     margin: 0 0 @baseLineHeight / 2 2.5em;
-}
-
-.dir-rtl {
-    ol {
-        margin: 0 2.5em @baseLineHeight / 2 0;
-    }
 }

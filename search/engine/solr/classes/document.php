@@ -196,6 +196,7 @@ class document extends \core_search\document {
         $data['solr_filecontenthash'] = $file->get_contenthash();
         $data['solr_fileindexstatus'] = self::INDEXED_FILE_TRUE;
         $data['title'] = $file->get_filename();
+        $data['modified'] = self::format_time_for_engine($file->get_timemodified());
 
         return $data;
     }

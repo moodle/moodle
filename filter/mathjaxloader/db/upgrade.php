@@ -148,5 +148,12 @@ MathJax.Hub.Config({
         upgrade_plugin_savepoint(true, 2016080200, 'filter', 'mathjaxloader');
     }
 
+    if ($oldversion < 2016102500) {
+        $httpsurl = get_config('filter_mathjaxloader', 'httpsurl');
+        if ($httpsurl === "https://cdn.mathjax.org/mathjax/2.6-latest/MathJax.js") {
+            set_config('httpsurl', 'https://cdn.mathjax.org/mathjax/2.7-latest/MathJax.js', 'filter_mathjaxloader');
+        }
+        upgrade_plugin_savepoint(true, 2016102500, 'filter', 'mathjaxloader');
+    }
     return true;
 }

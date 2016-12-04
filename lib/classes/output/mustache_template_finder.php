@@ -116,6 +116,6 @@ class mustache_template_finder {
             }
         }
 
-        throw new moodle_exception('filenotfound', 'error');
+        throw new moodle_exception('filenotfound', 'error', '', null, $name);
     }
 }

@@ -92,6 +92,31 @@ class behat_grade extends behat_base {
     }
 
     /**
+     * Hids a grade item or category.
+     *
+     * Teacher must be either on the grade setup page or on the Grader report page with editing mode turned on.
+     *
+     * @Given /^I hide the grade item "(?P<grade_item_string>(?:[^"]|\\")*)"$/
+     * @param string $gradeitem
+     */
+    public function i_hide_the_grade_item($gradeitem) {
+
+        $gradeitem = behat_context_helper::escape($gradeitem);
+
+        if ($this->running_javascript()) {
+            $xpath = "//tr[contains(.,$gradeitem)]//*[contains(@class,'moodle-actionmenu')]//a[contains(@class,'toggle-display')]";
+            if ($this->getSession()->getPage()->findAll('xpath', $xpath)) {
+                $this->execute("behat_general::i_click_on", array($this->escape($xpath), "xpath_element"));
+            }
+        }
+
+        $hide = behat_context_helper::escape(get_string('hide') . '  ');
+        $linkxpath = "//a[./img[starts-with(@title,$hide) and contains(@title,$gradeitem)]]";
+
+        $this->execute("behat_general::i_click_on", array($this->escape($linkxpath), "xpath_element"));
+    }
+
+    /**
      * Sets a calculated manual grade item. Needs a table with item name - idnumber relation.
      * The step requires you to be in the 'Gradebook setup' page.
      *
@@ -219,5 +244,50 @@ class behat_grade extends behat_base {
         global $DB;
         $courseid = $DB->get_field('course', 'id', array('shortname' => $coursename), MUST_EXIST);
         set_config('gradebook_calculations_freeze_' . $courseid, $version);
+    }
+
+    /**
+     * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
+     *
+     * Examples:
+     * - I go to "Setup > Gradebook setup" in the course gradebook
+     * - I go to "Scales" in the course gradebook
+     * - I go to "Letters > View" in the course gradebook
+     * - I go to "View > User report" in the course gradebook // for teachers
+     * - I go to "User report" in the course gradebook // for students
+     *
+     * @Given /^I go to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
+     * @param string $gradepath
+     */
+    public function i_go_to_in_the_course_gradebook($gradepath) {
+        $gradepath = preg_split('/\s*>\s*/', trim($gradepath));
+        if (count($gradepath) > 2) {
+            throw new DriverException('Grade path is too long (must have no more than two items separated with ">")');
+        }
+
+        // If we are not on one of the gradebook pages already, follow "Grades" link in the navigation block.
+        $xpath = '//div[contains(@class,\'grade-navigation\')]';
+        if (!$this->getSession()->getPage()->findAll('xpath', $xpath)) {
+            $this->execute("behat_general::i_click_on_in_the", array(get_string('grades'), 'link',
+                get_string('pluginname', 'block_navigation'), 'block'));
+        }
+
+        // If the first row of the grade-navigation tabs does not have $gradepath[0] as active tab, click on it.
+        $link = '\'' . $this->escape($gradepath[0]) . '\'';
+        $xpathrow1 = $xpath . '//ul[1]//*[contains(@class,\'active\') and contains(normalize-space(.), ' . $link . ')]';
+        if (!$this->getSession()->getPage()->findAll('xpath', $xpathrow1)) {
+            $this->find('xpath', $xpath . '//ul[1]/li/a[text()=' . $link . ']')->click();
+            $this->wait_for_pending_js();
+        }
+
+        if (isset($gradepath[1])) {
+            // If the second row of the grade-navigation tabs does not have $gradepath[1] as active tab, click on it.
+            $link = '\'' . $this->escape($gradepath[1]) . '\'';
+            $xpathrow2 = $xpath . '//ul[2]//*[contains(@class,\'active\') and contains(normalize-space(.), ' . $link . ')]';
+            if (!$this->getSession()->getPage()->findAll('xpath', $xpathrow2)) {
+                $this->find('xpath', $xpath . '//ul[2]/li/a[text()=' . $link . ']')->click();
+                $this->wait_for_pending_js();
+            }
+        }
     }
 }

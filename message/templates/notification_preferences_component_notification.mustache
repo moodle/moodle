@@ -1,0 +1,126 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_message/notification_preferences_component_notification
+
+    The notification preferences page
+
+    Classes required for JS:
+    * disabled
+
+    Data attibutes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * displayname   The notification display name
+    * preferencekey The unique key to identify this preference
+    * processors    The list of processors for this notification
+
+    Example context (json):
+    {
+        "displayname": "Notices about minor problems",
+        "preferencekey": "message_provider_moodle_notices",
+        "processors": [
+            {
+                "displayname": "Popup notification",
+                "name": "popup",
+                "locked": 0,
+                "loggedin": {
+                    "name": "loggedin",
+                    "displayname": "When I'm logged in",
+                    "checked": 0,
+                    "iconurl": "some url"
+                },
+                "loggedoff": {
+                    "name": "loggedoff",
+                    "displayname": "When I'm offline",
+                    "checked": 0,
+                    "iconurl": "some url"
+                }
+            }
+        ]
+    }
+}}
+<tr class="preference-row" data-region="preference-row" data-preference-key="{{preferencekey}}">
+    <td class="preference-name">{{displayname}}</td>
+    {{#processors}}
+    <td {{^userconfigured}}class="disabled"{{/userconfigured}} data-processor-name="{{name}}">
+            {{#locked}}
+                <div class="dimmed_text">{{lockedmessage}}</div>
+            {{/locked}}
+            {{^locked}}
+                <div class="disabled-message">{{#str}} disabled, question {{/str}}</div>
+                <form>
+                    <div class="container-fluid">
+                        <div class="row-fluid">
+                            <div class="span6 col-xs-6">
+                                {{#loggedin}}
+                                    {{< core/hover_tooltip }}
+                                        {{$anchor}}
+                                            <label class="preference-state"
+                                                title="{{displayname}}"
+                                                data-state="{{name}}">
+
+                                                <span class="accesshide">{{displayname}}</span>
+                                                <input type="checkbox"
+                                                    tabindex="-1"
+                                                    class="accesshide"
+                                                    {{#checked}}checked{{/checked}}
+                                                    {{#disableall}}disabled{{/disableall}} />
+                                                <div class="preference-state-status-container" tabindex="0">
+                                                    <span class="on-text">{{#str}} on, message {{/str}}</span>
+                                                    <span class="off-text">{{#str}} off, message {{/str}}</span>
+                                                    {{> core/loading }}
+                                                </div>
+                                            </label>
+                                        {{/anchor}}
+                                        {{$tooltip}}{{displayname}}{{/tooltip}}
+                                    {{/ core/hover_tooltip }}
+                                {{/loggedin}}
+                            </div>
+                            <div class="span6 col-xs-6">
+                                {{#loggedoff}}
+                                    {{< core/hover_tooltip }}
+                                        {{$anchor}}
+                                            <label class="preference-state"
+                                                title="{{displayname}}"
+                                                data-state="{{name}}">
+
+                                                <span class="accesshide">{{displayname}}</span>
+                                                <input type="checkbox"
+                                                    tabindex="-1"
+                                                    class="accesshide"
+                                                    {{#checked}}checked{{/checked}}
+                                                    {{#disableall}}disabled{{/disableall}} />
+                                                <div class="preference-state-status-container" tabindex="0">
+                                                    <span class="on-text">{{#str}} on, message {{/str}}</span>
+                                                    <span class="off-text">{{#str}} off, message {{/str}}</span>
+                                                    {{> core/loading }}
+                                                </div>
+                                            </label>
+                                        {{/anchor}}
+                                        {{$tooltip}}{{displayname}}{{/tooltip}}
+                                    {{/ core/hover_tooltip }}
+                                {{/loggedoff}}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            {{/locked}}
+        </td>
+    {{/processors}}
+</tr>

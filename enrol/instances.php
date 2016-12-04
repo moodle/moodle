@@ -225,8 +225,6 @@ foreach ($instances as $instance) {
     $edit = array();
 
     if ($canconfig) {
-        // up/down link
-        $updown = '';
         if ($updowncount > 1) {
             $aurl = new moodle_url($url, array('action'=>'up', 'instance'=>$instance->id));
             $updown[] = $OUTPUT->action_icon($aurl, new pix_icon('t/up', $strup, 'core', array('class' => 'iconsmall')));

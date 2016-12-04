@@ -69,14 +69,14 @@ class manage_table extends \table_sql {
 
         $this->define_columns(array(
             'name',
-            'url',
-            'secret',
+            'lti1',
+            'lti2',
             'edit'
         ));
         $this->define_headers(array(
             get_string('name'),
-            get_string('url'),
-            get_string('secret', 'enrol_lti'),
+            get_string('lti1', 'enrol_lti'),
+            get_string('lti2', 'enrol_lti'),
             get_string('edit')
         ));
         $this->collapsible(false);
@@ -96,35 +96,60 @@ class manage_table extends \table_sql {
      * @return string
      */
     public function col_name($tool) {
-        if (empty($tool->name)) {
-            $toolcontext = \context::instance_by_id($tool->contextid);
-            $name = $toolcontext->get_context_name();
-        } else {
-            $name = $tool->name;
-        };
+        $name = helper::get_name($tool);
 
         return $this->get_display_text($tool, $name);
     }
 
     /**
-     * Generate the URL column.
+     * Generate the LTI1 column.
      *
-     * @param \stdClass $tool event data.
+     * @param \stdClass $tool instance data.
      * @return string
      */
-    public function col_url($tool) {
-        $url = new \moodle_url('/enrol/lti/tool.php', array('id' => $tool->id));
-        return $this->get_display_text($tool, $url);
+    public function col_lti1($tool) {
+        global $OUTPUT;
+
+        $url = helper::get_cartridge_url($tool);
+
+        $toolurllabel = get_string('toolurl', 'enrol_lti');
+        $toolurl = $url;
+        $secretlabel = get_string('secret', 'enrol_lti');
+        $secret = $tool->secret;
+
+        $data = [
+                "rows" => [
+                    [ "label" => $toolurllabel, "text" => $toolurl, "id" => "toolurl" ],
+                    [ "label" => $secretlabel, "text" => $secret, "id" => "secret" ],
+                ]
+            ];
+
+        $return = $OUTPUT->render_from_template("enrol_lti/copy_grid", $data);
+        return $return;
     }
 
     /**
-     * Generate the secret column.
+     * Generate the LTI2 column.
      *
-     * @param \stdClass $tool event data.
+     * @param \stdClass $tool instance data.
      * @return string
      */
-    public function col_secret($tool) {
-        return $this->get_display_text($tool, $tool->secret);
+    public function col_lti2($tool) {
+        global $OUTPUT;
+
+        $url = helper::get_proxy_url($tool);
+
+        $toolurllabel = get_string('toolurl', 'enrol_lti');
+        $toolurl = $url;
+
+        $data = [
+                "rows" => [
+                    [ "label" => $toolurllabel, "text" => $toolurl, "id" => "toolurl" ],
+                ]
+            ];
+
+        $return = $OUTPUT->render_from_template("enrol_lti/copy_grid", $data);
+        return $return;
     }
 
 

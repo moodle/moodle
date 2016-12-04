@@ -49,7 +49,6 @@ class quiz_grading_report extends quiz_default_report {
     protected $context;
 
     public function display($quiz, $cm, $course) {
-        global $CFG, $DB, $PAGE;
 
         $this->quiz = $quiz;
         $this->cm = $cm;
@@ -116,11 +115,10 @@ class quiz_grading_report extends quiz_default_report {
         // Get the group, and the list of significant users.
         $this->currentgroup = $this->get_current_group($cm, $course, $this->context);
         if ($this->currentgroup == self::NO_GROUPS_ALLOWED) {
-            $this->users = array();
+            $this->userssql = array();
         } else {
-            $this->users = get_users_by_capability($this->context,
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), '', '', '', '',
-                    $this->currentgroup, '', false);
+            $this->userssql = get_enrolled_sql($this->context,
+                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $this->currentgroup);
         }
 
         $hasquestions = quiz_has_questions($quiz->id);
@@ -158,29 +156,28 @@ class quiz_grading_report extends quiz_default_report {
     }
 
     protected function get_qubaids_condition() {
-        global $DB;
 
         $where = "quiza.quiz = :mangrquizid AND
                 quiza.preview = 0 AND
                 quiza.state = :statefinished";
         $params = array('mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED);
 
+        $usersjoin = '';
         $currentgroup = groups_get_activity_group($this->cm, true);
+        $enrolleduserscount = count_enrolled_users($this->context,
+                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
         if ($currentgroup) {
-            $users = get_users_by_capability($this->context,
-                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), 'u.id, u.id', '', '', '',
-                    $currentgroup, '', false);
-            if (empty($users)) {
+            $userssql = get_enrolled_sql($this->context,
+                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
+            if ($enrolleduserscount < 1) {
                 $where .= ' AND quiza.userid = 0';
             } else {
-                list($usql, $uparam) = $DB->get_in_or_equal(array_keys($users),
-                        SQL_PARAMS_NAMED, 'mangru');
-                $where .= ' AND quiza.userid ' . $usql;
-                $params += $uparam;
+                $usersjoin = "JOIN ({$userssql[0]}) AS enr ON quiza.userid = enr.id";
+                $params += $userssql[1];
             }
         }
 
-        return new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
+        return new qubaid_join("{quiz_attempts} quiza $usersjoin ", 'quiza.uniqueid', $where, $params);
     }
 
     protected function load_attempts_by_usage_ids($qubaids) {

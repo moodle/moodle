@@ -45,6 +45,23 @@ use Behat\Gherkin\Node\TableNode;
 class behat_transformations extends behat_base {
 
     /**
+     * Transformations for TableNode arguments.
+     *
+     * Transformations applicable to TableNode arguments should also
+     * be applied, adding them in a different method for Behat API restrictions.
+     *
+     * @deprecated since Moodle 3.2 MDL-56335 - please do not use this function any more.
+     * @param TableNode $tablenode
+     * @return TableNode The transformed table
+     */
+    public function prefixed_tablenode_transformations(TableNode $tablenode) {
+        debugging('prefixed_tablenode_transformations() is deprecated. Please use tablenode_transformations() instead.',
+            DEBUG_DEVELOPER);
+
+        return $this->tablenode_transformations($tablenode);
+    }
+
+    /**
      * Removes escaped argument delimiters.
      *
      * We use double quotes as arguments delimiters and
@@ -77,17 +94,15 @@ class behat_transformations extends behat_base {
     }
 
     /**
-     * Transformations for TableNode arguments.
+     * Convert string time to timestamp.
+     * Use ::time::STRING_TIME_TO_CONVERT::DATE_FORMAT::
      *
-     * Transformations applicable to TableNode arguments should also
-     * be applied, adding them in a different method for Behat API restrictions.
-     *
-     * @Transform table:Surname,My Surname $NASTYSTRING2
-     * @param TableNode $tablenode
-     * @return TableNode The transformed table
+     * @Transform /^##(.*)##$/
+     * @param string $time
+     * @return int timestamp.
      */
-    public function prefixed_tablenode_transformations(TableNode $tablenode) {
-        return $this->tablenode_transformations($tablenode);
+    public function arg_time_to_string($time) {
+        return $this->get_transformed_timestamp($time);
     }
 
     /**
@@ -96,7 +111,7 @@ class behat_transformations extends behat_base {
      * Transformations applicable to TableNode arguments should also
      * be applied, adding them in a different method for Behat API restrictions.
      *
-     * @Transform table:Surname,$NASTYSTRING1
+     * @Transform table:*
      * @param TableNode $tablenode
      * @return TableNode The transformed table
      */
@@ -109,6 +124,13 @@ class behat_transformations extends behat_base {
                 // Transforms vars into nasty strings.
                 if (preg_match('/\$NASTYSTRING(\d)/', $rows[$rowkey][$colkey])) {
                     $rows[$rowkey][$colkey] = $this->replace_nasty_strings($rows[$rowkey][$colkey]);
+                }
+
+                // Transform time.
+                if (preg_match('/^##(.*)##$/', $rows[$rowkey][$colkey], $match)) {
+                    if (isset($match[1])) {
+                        $rows[$rowkey][$colkey] = $this->get_transformed_timestamp($match[1]);
+                    }
                 }
             }
         }
@@ -138,4 +160,29 @@ class behat_transformations extends behat_base {
         );
     }
 
+    /**
+     * Return timestamp for the time passed.
+     *
+     * @param string $time time to convert
+     * @return string
+     */
+    protected function get_transformed_timestamp($time) {
+        $timepassed = explode('##', $time);
+
+        // If not a valid time string, then just return what was passed.
+        if ((($timestamp = strtotime($timepassed[0])) === false)) {
+            return $time;
+        }
+
+        $count = count($timepassed);
+        if ($count === 2) {
+            // If timestamp with spcified format, then retrun date.
+            return date($timepassed[1], $timestamp);
+        } else if ($count === 1) {
+            return $timestamp;
+        } else {
+            // If not a valid time string, then just return what was passed.
+            return $time;
+        }
+    }
 }

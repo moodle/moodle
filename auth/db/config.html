@@ -55,7 +55,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="host"><?php print_string("auth_dbhost_key", "auth_db") ?></label></td>
     <td>
-        <input id="host" name="host" type="text" size="30" value="<?php echo $config->host?>" />
+        <input id="host" name="host" type="text" class="text-ltr" size="30" value="<?php echo $config->host?>" />
         <?php
 
         if (isset($err["host"])) {
@@ -94,7 +94,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="name"><?php print_string("auth_dbname_key", "auth_db") ?></label></td>
     <td>
-        <input id="name" name="name" type="text" size="30" value="<?php echo $config->name?>" />
+        <input id="name" name="name" type="text" class="text-ltr" size="30" value="<?php echo $config->name?>" />
         <?php
 
         if (isset($err["name"])) {
@@ -109,7 +109,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="user"><?php print_string("auth_dbuser_key", "auth_db") ?></label></td>
     <td>
-        <input id="user" name="user" type="text" size="30" value="<?php echo $config->user?>" />
+        <input id="user" name="user" type="text" class="text-ltr" size="30" value="<?php echo $config->user?>" />
         <?php
 
         if (isset($err["user"])) {
@@ -124,7 +124,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="pass"><?php print_string("auth_dbpass_key", "auth_db") ?></label></td>
     <td>
-        <input id="pass" name="pass" type="password" size="30" value="<?php p($config->pass)?>" autocomplete="off"/>
+        <input id="pass" name="pass" type="password" class="text-ltr" size="30" value="<?php p($config->pass)?>" autocomplete="off"/>
         <?php
 
         if (isset($err["pass"])) {
@@ -141,7 +141,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="table"><?php print_string("auth_dbtable_key", "auth_db") ?></label></td>
     <td>
-        <input id="table" name="table" type="text" size="30" value="<?php echo $config->table?>" />
+        <input id="table" name="table" type="text" class="text-ltr" size="30" value="<?php echo $config->table?>" />
         <?php
 
         if (isset($err["table"])) {
@@ -156,7 +156,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="fielduser"><?php print_string("auth_dbfielduser_key", "auth_db") ?></label></td>
     <td>
-        <input id="fielduser" name="fielduser" type="text" size="30" value="<?php echo $config->fielduser?>" />
+        <input id="fielduser" name="fielduser" type="text" class="text-ltr" size="30" value="<?php echo $config->fielduser?>" />
         <?php
 
         if (isset($err["fielduser"])) {
@@ -171,7 +171,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="fieldpass"><?php print_string("auth_dbfieldpass_key", "auth_db") ?></label></td>
     <td>
-        <input id="fieldpass" name="fieldpass" type="text" size="30" value="<?php echo $config->fieldpass?>" />
+        <input id="fieldpass" name="fieldpass" type="text" class="text-ltr" size="30" value="<?php echo $config->fieldpass?>" />
         <?php
 
         if (isset($err["fieldpass"])) {
@@ -203,7 +203,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="extencoding"><?php print_string("auth_dbextencoding", "auth_db") ?></label></td>
     <td>
-        <input id="extencoding" name="extencoding" type="text" value="<?php echo $config->extencoding ?>" />
+        <input id="extencoding" name="extencoding" type="text" class="text-ltr" value="<?php echo $config->extencoding ?>" />
         <?php
 
         if (isset($err['extencoding'])) {
@@ -218,7 +218,7 @@
 <tr valign="top">
     <td align="right"><label for="setupsql"><?php print_string("auth_dbsetupsql", "auth_db") ?></label></td>
     <td>
-        <input id="setupsql" name="setupsql" type="text" value="<?php echo $config->setupsql ?>" />
+        <input id="setupsql" name="setupsql" type="text" class="text-ltr" value="<?php echo $config->setupsql ?>" />
     </td>
     <td><?php print_string('auth_dbsetupsqlhelp', 'auth_db') ?></td>
 </tr>
@@ -234,7 +234,7 @@
 <tr valign="top">
     <td align="right"><label for="changepasswordurl"><?php print_string("auth_dbchangepasswordurl_key", "auth_db") ?></label></td>
     <td>
-        <input id="changepasswordurl" name="changepasswordurl" type="text" value="<?php echo $config->changepasswordurl ?>" />
+        <input id="changepasswordurl" name="changepasswordurl" type="text" class="text-ltr" value="<?php echo $config->changepasswordurl ?>" />
         <?php
 
         if (isset($err['changepasswordurl'])) {

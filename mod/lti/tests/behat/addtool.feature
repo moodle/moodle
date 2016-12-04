@@ -21,18 +21,24 @@ Feature: Add tools
     And I set the following fields to these values:
       | Tool name | Teaching Tool 1 |
       | Tool configuration usage | Show in activity chooser and as a preconfigured tool |
-    And I set the field "Tool base URL/cartridge URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
+    And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
     And I press "Save changes"
     And I log out
 
   @javascript
-  Scenario: Add a tool via the acitivity picker
-    When I log in as "teacher1"
+  Scenario: Add a tool via the activity picker
+    Given I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I add a "Teaching Tool 1" to section "1" and I fill the form with:
-      | Activity name | Test tool activity 1 |
-      | Launch container | Embed |
-    And I open "Test tool activity 1" actions menu
-    And I follow "Edit settings" in the open menu
+    And I add a "Teaching Tool 1" to section "1"
+    # For tool that does not support Content-Item message type, the Select content button must be disabled.
+    And I set the field "Activity name" to "Test tool activity 1"
+    And I expand all fieldsets
+    And I set the field "Launch container" to "Embed"
+    And the "Select content" "button" should be disabled
+    And I press "Save and return to course"
+    When I open "Test tool activity 1" actions menu
+    And I choose "Edit settings" in the open action menu
     Then the field "Preconfigured tool" matches value "Teaching Tool 1"
+    And the "Select content" "button" should be disabled
+    And the "Tool URL" "field" should be disabled

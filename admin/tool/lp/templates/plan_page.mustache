@@ -28,11 +28,11 @@
     <div data-region="actions" class="clearfix">
         <div class="pull-left">
             <!-- Button to add competencies to the plan -->
-            <button class="btn" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
+            <button class="btn btn-secondary" data-action="add">{{#pix}}t/add{{/pix}} {{#str}}addcompetency, tool_lp{{/str}}</button>
         </div>
     </div>
     {{/plan.canbeedited}}
-    <div data-region="plan-summary">
+    <div data-region="plan-summary" class="m-t-1">
         {{{plan.description}}}
         <dl>
             <dt>{{#str}}status, tool_lp{{/str}}</dt>
@@ -103,12 +103,12 @@
     </div>
     {{#plan.commentarea}}
         {{#canpostorhascomments}}
-            <div data-region="comments">
+            <div data-region="comments" class="m-t-1">
                 {{>tool_lp/comment_area}}
             </div>
         {{/canpostorhascomments}}
     {{/plan.commentarea}}
-    <div data-region="plan-competencies">
+    <div data-region="plan-competencies" class="m-t-1">
         <h3>{{#str}}learningplancompetencies, tool_lp{{/str}}</h3>
         <table class="generaltable fullwidth managecompetencies">
             <thead>
@@ -152,23 +152,23 @@
                             <ul title="{{#str}}edit{{/str}}" class="user-competency-actions">
                                 <li>
                                     <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown dropdown-menu">
                                         {{#usercompetency.isrequestreviewallowed}}
-                                            <li>
+                                            <li class="dropdown-item">
                                                 <a href="#" data-action="request-review">{{#pix}}t/edit, core{{/pix}} {{#str}}requestreview, tool_lp{{/str}}</a>
                                             </li>
                                         {{/usercompetency.isrequestreviewallowed}}
                                         {{#usercompetency.iscancelreviewrequestallowed}}
-                                            <li>
+                                            <li class="dropdown-item">
                                                 <a href="#" data-action="cancel-review-request">{{#pix}}t/edit, core{{/pix}} {{#str}}cancelreviewrequest, tool_lp{{/str}}</a>
                                             </li>
                                         {{/usercompetency.iscancelreviewrequestallowed}}
                                         {{#plan.canbeedited}}
-                                            <li>
+                                            <li class="dropdown-item">
                                                 <a href="#" data-action="delete-competency-link" data-id="{{competency.id}}">{{#pix}}t/delete, core{{/pix}} {{#str}}delete{{/str}}</a>
                                             </li>
                                         {{/plan.canbeedited}}
-                                        <li>
+                                        <li class="dropdown-item">
                                             <a href="#" data-action="find-courses-link" data-id="{{competency.id}}">{{#pix}}t/preview, core{{/pix}} {{#str}}findcourses, tool_lp{{/str}}</a>
                                         </li>
                                     </ul>

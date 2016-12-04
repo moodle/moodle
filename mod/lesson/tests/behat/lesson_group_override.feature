@@ -64,7 +64,7 @@ Feature: Lesson user override
       | deadline[minute]    | 00 |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
-    Then I click on "Edit" "link"
+    Then I click on "Edit" "link" in the "region-main" "region"
     And I set the following fields to these values:
       | deadline[year] | 2030 |
     And I press "Save"
@@ -288,6 +288,7 @@ Feature: Lesson user override
     Then I press "Continue"
     And I should see "Congratulations - end of lesson reached"
 
+  @javascript
   Scenario: Add both a user and group override and verify that both are applied correctly
     When I follow "Test lesson name"
     And I navigate to "Edit settings" node in "Lesson administration"

@@ -171,13 +171,12 @@ class course_enrolment_manager {
             $sqltotal = "SELECT COUNT(DISTINCT u.id)
                            FROM {user} u
                            JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
-                           JOIN {enrol} e ON (e.id = ue.enrolid)
-                      LEFT JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid IN (
-                               SELECT g.id
-                                 FROM {groups} g
-                                WHERE g.courseid = e.courseid
-                              )
-                          WHERE $filtersql";
+                           JOIN {enrol} e ON (e.id = ue.enrolid)";
+            if ($this->groupfilter) {
+                $sqltotal .= " LEFT JOIN ({groups_members} gm JOIN {groups} g ON (g.id = gm.groupid))
+                                         ON (u.id = gm.userid AND g.courseid = e.courseid)";
+            }
+            $sqltotal .= "WHERE $filtersql";
             $this->totalusers = (int)$DB->count_records_sql($sqltotal, $params);
         }
         return $this->totalusers;
@@ -245,13 +244,12 @@ class course_enrolment_manager {
                       FROM {user} u
                       JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                       JOIN {enrol} e ON (e.id = ue.enrolid)
-                 LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)
-                 LEFT JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid IN (
-                               SELECT g.id
-                                 FROM {groups} g
-                                WHERE g.courseid = e.courseid
-                           )
-                     WHERE $filtersql
+                 LEFT JOIN {user_lastaccess} ul ON (ul.courseid = e.courseid AND ul.userid = u.id)";
+            if ($this->groupfilter) {
+                $sql .= " LEFT JOIN ({groups_members} gm JOIN {groups} g ON (g.id = gm.groupid))
+                                    ON (u.id = gm.userid AND g.courseid = e.courseid)";
+            }
+            $sql .= "WHERE $filtersql
                   ORDER BY $sort $direction";
             $this->users[$key] = $DB->get_records_sql($sql, $params, $page*$perpage, $perpage);
         }
@@ -621,6 +619,22 @@ class course_enrolment_manager {
         } else {
             return $this->_assignableroles;
         }
+    }
+
+    /**
+     * Gets all of the assignable roles for this course, wrapped in an array to ensure
+     * role sort order is not lost during json deserialisation.
+     *
+     * @param boolean $otherusers whether to include the assignable roles for other users
+     * @return array
+     */
+    public function get_assignable_roles_for_json($otherusers = false) {
+        $rolesarray = array();
+        $assignable = $this->get_assignable_roles($otherusers);
+        foreach ($assignable as $id => $role) {
+            $rolesarray[] = array('id' => $id, 'name' => $role);
+        }
+        return $rolesarray;
     }
 
     /**

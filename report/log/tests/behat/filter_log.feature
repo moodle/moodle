@@ -25,7 +25,7 @@ Feature: In a report, admin can filter log data
       | loglegacy | 1 | logstore_legacy |
     And I follow "Home"
     And I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "My courses > C1"
     And I follow "Student 1"
     And I click on "Log in as" "link"
     And I press "Continue"
@@ -45,7 +45,7 @@ Feature: In a report, admin can filter log data
   @javascript
   Scenario: Filter log report for standard log reader
     Given I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to "Participants" node in "My courses > C1"
     And I follow "Student 1"
     And I click on "Log in as" "link"
     And I press "Continue"

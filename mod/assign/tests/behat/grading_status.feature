@@ -50,7 +50,7 @@ Feature: View the grading status of an assignment
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should see "Not marked" in the "Student 1" "table_row"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
@@ -60,7 +60,7 @@ Feature: View the grading status of an assignment
     And I press "Ok"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should see "In review" in the "Student 1" "table_row"
     And I log out
     # View the grading status as a student.
@@ -77,7 +77,7 @@ Feature: View the grading status of an assignment
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should see "In review" in the "Student 1" "table_row"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Marking workflow state" to "Released"
@@ -85,7 +85,7 @@ Feature: View the grading status of an assignment
     And I press "Ok"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should see "Released" in the "Student 1" "table_row"
     And I log out
     # View the grading status as a student.
@@ -102,7 +102,7 @@ Feature: View the grading status of an assignment
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should see "Released" in the "Student 1" "table_row"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Marking workflow state" to "In marking"
@@ -110,7 +110,7 @@ Feature: View the grading status of an assignment
     And I press "Ok"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should see "In marking" in the "Student 1" "table_row"
     # The grade should also remain displayed as it's stored in the assign DB tables, but the final grade should be empty.
     And "Student 1" row "Grade" column of "generaltable" table should contain "50.00"
@@ -146,7 +146,7 @@ Feature: View the grading status of an assignment
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should not see "Graded" in the "Student 1" "table_row"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade out of 100" to "50"
@@ -155,7 +155,7 @@ Feature: View the grading status of an assignment
     And I press "Ok"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I follow "View all submissions"
+    And I click on "View all submissions" "link" in the "Administration" "block"
     And I should see "Graded" in the "Student 1" "table_row"
     And I log out
     # View the grading status as a student.

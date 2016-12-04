@@ -388,6 +388,15 @@ FloatingHeaders.prototype = {
     _eventHandles: [],
 
     /**
+     * The last value of the bodyMargin style. We need to recompute positions if it is changed.
+     *
+     * @property lastBodyMargin
+     * @type Number
+     * @protected
+     */
+    lastBodyMargin: 0,
+
+    /**
      * Setup the grader report table.
      *
      * @method setupFloatingHeaders
@@ -919,7 +928,19 @@ FloatingHeaders.prototype = {
             leftTitleFloats = false,
             floatingHeaderStyles = {},
             floatingFooterTitleStyles = {},
-            floatingFooterTitleRow = false;
+            floatingFooterTitleRow = false,
+            bodyMargin = 0;
+
+        if (window.right_to_left()) {
+            bodyMargin = parseInt(Y.one(Y.config.doc.body).getComputedStyle('marginRight'), 10);
+        } else {
+            bodyMargin = parseInt(Y.one(Y.config.doc.body).getComputedStyle('marginLeft'), 10);
+        }
+
+        if (bodyMargin != this.lastBodyMargin) {
+            // Recalculate the position of the edge cells for scroll positioning.
+            this._calculateCellPositions();
+        }
 
         // Header position.
         gradeItemHeadingContainerStyles.left = this._getRelativeXFromX(this.headerRow.getX());
@@ -942,16 +963,17 @@ FloatingHeaders.prototype = {
         }
 
         // User column position.
+
         if (window.right_to_left()) {
             floatingUserTriggerPoint = Y.config.win.innerWidth + Y.config.win.pageXOffset - this.dockWidth;
-            floatingUserRelativePoint = floatingUserTriggerPoint - this.firstUserCellWidth;
-            userFloats = floatingUserTriggerPoint < (this.firstUserCellLeft + this.firstUserCellWidth);
+            floatingUserRelativePoint = floatingUserTriggerPoint - this.firstUserCellWidth - bodyMargin;
+            userFloats = floatingUserTriggerPoint < (this.firstUserCellLeft + this.firstUserCellWidth + bodyMargin);
             leftTitleFloats = (floatingUserTriggerPoint - this.firstNonUserCellWidth) <
                               (this.firstNonUserCellLeft + this.firstUserCellWidth);
         } else {
-            floatingUserRelativePoint = Y.config.win.pageXOffset;
-            floatingUserTriggerPoint = floatingUserRelativePoint + this.dockWidth;
-            userFloats = floatingUserTriggerPoint > this.firstUserCellLeft;
+            floatingUserRelativePoint = Y.config.win.pageXOffset + bodyMargin;
+            floatingUserTriggerPoint = floatingUserRelativePoint + this.dockWidth + bodyMargin;
+            userFloats = floatingUserTriggerPoint > this.firstUserCellLeft + bodyMargin;
             leftTitleFloats = floatingUserTriggerPoint > (this.firstNonUserCellLeft - this.firstUserCellWidth);
         }
 

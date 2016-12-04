@@ -31,20 +31,20 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_iplookup_geoip_testcase extends advanced_testcase {
 
-    public function test_geoip() {
+    public function setUp() {
         global $CFG;
         require_once("$CFG->libdir/filelib.php");
         require_once("$CFG->dirroot/iplookup/lib.php");
 
         if (!PHPUNIT_LONGTEST) {
             // this may take a long time
-            return;
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }
 
         $this->resetAfterTest();
 
         // let's store the file somewhere
-        $gzfile = "$CFG->dataroot/phpunit/geoip/GeoLiteCity.dat.gz";
+        $gzfile = "$CFG->dataroot/phpunit/geoip/GeoLite2-City.mmdb.gz";
         check_dir_exists(dirname($gzfile));
         if (file_exists($gzfile) and (filemtime($gzfile) < time() - 60*60*24*30)) {
             // delete file if older than 1 month
@@ -52,35 +52,62 @@ class core_iplookup_geoip_testcase extends advanced_testcase {
         }
 
         if (!file_exists($gzfile)) {
-            download_file_content('http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz', null, null, false, 300, 20, false, $gzfile);
+            download_file_content('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz',
+                null, null, false, 300, 20, false, $gzfile);
         }
 
         $this->assertTrue(file_exists($gzfile));
 
-        $zd = gzopen($gzfile, "r");
-        $contents = gzread($zd, 50000000);
-        gzclose($zd);
+        $geoipfile = str_replace('.gz', '', $gzfile);
 
-        $geoipfile = "$CFG->dataroot/geoip/GeoLiteCity.dat";
-        check_dir_exists(dirname($geoipfile));
-        $fp = fopen($geoipfile, 'w');
-        fwrite($fp, $contents);
-        fclose($fp);
+        // Open our files (in binary mode).
+        $file = gzopen($gzfile, 'rb');
+        $geoipfilebuf = fopen($geoipfile, 'wb');
+
+        // Keep repeating until the end of the input file.
+        while (!gzeof($file)) {
+            // Read buffer-size bytes.
+            // Both fwrite and gzread and binary-safe.
+            fwrite($geoipfilebuf, gzread($file, 4096));
+        }
+
+        // Files are done, close files.
+        fclose($geoipfilebuf);
+        gzclose($file);
 
         $this->assertTrue(file_exists($geoipfile));
 
-        $CFG->geoipfile = $geoipfile;
+        $CFG->geoip2file = $geoipfile;
+    }
 
-        $result = iplookup_find_location('147.230.16.1');
+    public function test_ipv4() {
+
+        $result = iplookup_find_location('131.111.150.25');
 
         $this->assertEquals('array', gettype($result));
-        $this->assertEquals('Liberec', $result['city']);
-        $this->assertEquals(15.0653, $result['longitude'], '', 0.001);
-        $this->assertEquals(50.7639, $result['latitude'], '', 0.001);
+        $this->assertEquals('Cambridge', $result['city']);
+        $this->assertEquals(0.1167, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertEquals(52.2, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
         $this->assertNull($result['error']);
         $this->assertEquals('array', gettype($result['title']));
-        $this->assertEquals('Liberec', $result['title'][0]);
-        $this->assertEquals('Czech Republic', $result['title'][1]);
+        $this->assertEquals('Cambridge', $result['title'][0]);
+        $this->assertEquals('United Kingdom', $result['title'][1]);
+    }
+
+    public function test_ipv6() {
+        // NOTE: these tests can be altered by the geoip dataset, there has been an attempt to get
+        // a 'reliable' result.
+
+        $result = iplookup_find_location('2607:f010:3fe:fff1::ff:fe00:25');
+
+        $this->assertEquals('array', gettype($result));
+        $this->assertEquals('Los Angeles', $result['city']);
+        $this->assertEquals(-118.2987, $result['longitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertEquals(33.7866, $result['latitude'], 'Coordinates are out of accepted tolerance', 0.01);
+        $this->assertNull($result['error']);
+        $this->assertEquals('array', gettype($result['title']));
+        $this->assertEquals('Los Angeles', $result['title'][0]);
+        $this->assertEquals('United States', $result['title'][1]);
     }
 }
 

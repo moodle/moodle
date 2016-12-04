@@ -39,7 +39,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
-    And I press "Redo question"
+    And I press "Try another question like this one"
     Then the state of "First question" question is shown as "Not complete"
     And I should see "Marked out of 2.00" in the "First question" "question"
 
@@ -55,7 +55,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I follow "Quiz 1"
     And I follow "Attempts: 1"
     And I follow "Review attempt"
-    Then the "Redo question" "button" should be disabled
+    Then the "Try another question like this one" "button" should be disabled
 
   @javascript
   Scenario: The redo question buttons are no longer visible after the attempt is submitted.
@@ -66,7 +66,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
-    Then "Redo question" "button" should not exist
+    Then "Try another question like this one" "button" should not exist
 
   @javascript @_switch_window
   Scenario: Teachers reviewing can see all the qestions attempted in a slot
@@ -74,7 +74,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I press "Attempt quiz now"
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
-    And I press "Redo question"
+    And I press "Try another question like this one"
     And I press "Finish attempt ..."
     And I press "Submit all and finish"
     And I click on "Submit all and finish" "button" in the "Confirmation" "dialogue"
@@ -105,6 +105,6 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I click on "False" "radio" in the "First question" "question"
     And I click on "Check" "button" in the "First question" "question"
     And I click on "True" "radio" in the "Second question" "question"
-    And I press "Redo question"
+    And I press "Try another question like this one"
     And I click on "Check" "button" in the "Second question" "question"
     Then the state of "Second question" question is shown as "Correct"

@@ -393,6 +393,29 @@ class search_solr_engine_testcase extends advanced_testcase {
         $this->assertRegExp($regex, $exported['content']);
     }
 
+    public function test_export_file_for_engine() {
+        // Get area to work with.
+        $areaid = \core_search\manager::generate_areaid('core_mocksearch', 'mock_search_area');
+        $area = \core_search\manager::get_search_area($areaid);
+
+        $record = $this->generator->create_record();
+
+        $doc = $area->get_document($record);
+        $filerecord = new stdClass();
+        $filerecord->timemodified  = 978310800;
+        $file = $this->generator->create_file($filerecord);
+        $doc->add_stored_file($file);
+
+        $filearray = $doc->export_file_for_engine($file);
+
+        $this->assertEquals(\core_search\manager::TYPE_FILE, $filearray['type']);
+        $this->assertEquals($file->get_id(), $filearray['solr_fileid']);
+        $this->assertEquals($file->get_contenthash(), $filearray['solr_filecontenthash']);
+        $this->assertEquals(\search_solr\document::INDEXED_FILE_TRUE, $filearray['solr_fileindexstatus']);
+        $this->assertEquals($file->get_filename(), $filearray['title']);
+        $this->assertEquals(978310800, \search_solr\document::import_time_from_engine($filearray['modified']));
+    }
+
     public function test_index_file() {
         // Very simple test.
         $file = $this->generator->create_file();

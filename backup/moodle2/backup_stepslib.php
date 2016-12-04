@@ -375,7 +375,7 @@ class backup_course_structure_step extends backup_structure_step {
         $course = new backup_nested_element('course', array('id', 'contextid'), array(
             'shortname', 'fullname', 'idnumber',
             'summary', 'summaryformat', 'format', 'showgrades',
-            'newsitems', 'startdate',
+            'newsitems', 'startdate', 'enddate',
             'marker', 'maxbytes', 'legacyfiles', 'showreports',
             'visible', 'groupmode', 'groupmodeforce',
             'defaultgroupingid', 'lang', 'theme',
@@ -1780,6 +1780,7 @@ class backup_main_structure_step extends backup_structure_step {
         $info['original_course_fullname']  = $originalcourseinfo->fullname;
         $info['original_course_shortname'] = $originalcourseinfo->shortname;
         $info['original_course_startdate'] = $originalcourseinfo->startdate;
+        $info['original_course_enddate']   = $originalcourseinfo->enddate;
         $info['original_course_contextid'] = context_course::instance($this->get_courseid())->id;
         $info['original_system_contextid'] = context_system::instance()->id;
 
@@ -1795,7 +1796,7 @@ class backup_main_structure_step extends backup_structure_step {
             'name', 'moodle_version', 'moodle_release', 'backup_version',
             'backup_release', 'backup_date', 'mnet_remoteusers', 'include_files', 'include_file_references_to_external_content', 'original_wwwroot',
             'original_site_identifier_hash', 'original_course_id', 'original_course_format',
-            'original_course_fullname', 'original_course_shortname', 'original_course_startdate',
+            'original_course_fullname', 'original_course_shortname', 'original_course_startdate', 'original_course_enddate',
             'original_course_contextid', 'original_system_contextid'));
 
         $details = new backup_nested_element('details');

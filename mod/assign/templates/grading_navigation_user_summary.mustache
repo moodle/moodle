@@ -33,8 +33,8 @@
         "id": "5",
         "fullname": "Mr T",
         "hasidentity": true,
-        "identity": "t@example.org, T"
+        "identity": "t@example.org, T",
         "profileimageurl": "https://moodle.org/pix/u/f3.png"
     }
 }}
-<h4><a href="{{globals.config.wwwroot}}/user/view.php?id={{id}}&course={{courseid}}">{{#profileimageurl}}<img src="{{profileimageurl}}" class="img-rounded" height="40" role="presentation"/>{{/profileimageurl}} {{fullname}}{{#hasidentity}}<em><small> {{identity}} </small></em>{{/hasidentity}}</a></h4>
+<h4>{{^blindmarking}}<a href="{{globals.config.wwwroot}}/user/view.php?id={{id}}&course={{courseid}}">{{/blindmarking}}{{#profileimageurl}}<img src="{{profileimageurl}}" class="img-rounded" height="40" role="presentation"/>{{/profileimageurl}} {{fullname}}{{#hasidentity}}<em class='nowrap'><small> {{identity}} </small></em>{{/hasidentity}}{{#duedate}}<em class='nowrap'><small>{{#str}}duedatecolon, mod_assign, {{duedatestr}}{{/str}}</small></em>{{/duedate}}{{^blindmarking}}</a>{{/blindmarking}}</h4>

@@ -47,4 +47,4 @@ $ADMIN->add('root', new admin_category('development', new lang_string('developme
 $ADMIN->add('root', new admin_category('unsupported', new lang_string('unsupported', 'admin'), true));
 
 // hidden search script
-$ADMIN->add('root', new admin_externalpage('search', new lang_string('searchresults'), "$CFG->wwwroot/$CFG->admin/search.php", 'moodle/site:config', true));
+$ADMIN->add('root', new admin_externalpage('search', new lang_string('search', 'admin'), "$CFG->wwwroot/$CFG->admin/search.php", 'moodle/site:configview', true));

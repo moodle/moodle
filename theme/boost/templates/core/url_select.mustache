@@ -1,0 +1,49 @@
+<div class="{{classes}}">
+    <form method="post" action="{{action}}" class="form-inline" id="{{formid}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <div class="form-group">
+            {{#label}}
+                <label for="{{id}}" {{#labelattributes}}{{name}}="{{value}}" {{/labelattributes}}>
+                    {{label}}
+                </label>
+            {{/label}}
+            {{#helpicon}}
+                {{>core/help_icon}}
+            {{/helpicon}}
+            <select {{#attributes}}{{name}}="{{value}}" {{/attributes}} id="{{id}}" class="custom-select {{classes}}" name="jump">
+                {{#options}}
+                    {{#isgroup}}
+                        <optgroup label="{{name}}">
+                            {{#options}}
+                                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                            {{/options}}
+                        </optgroup>
+                    {{/isgroup}}
+                    {{^isgroup}}
+                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                    {{/isgroup}}
+                {{/options}}
+            </select>
+        </div>
+        {{#showbutton}}
+            <input type="submit" class="btn btn-secondary" value="{{showbutton}}">
+        {{/showbutton}}
+        {{^showbutton}}
+            <noscript>
+                <input type="submit" class="btn btn-secondary" value="{{#str}}go, core{{/str}}">
+            </noscript>
+        {{/showbutton}}
+    </form>
+</div>
+{{^showbutton}}
+    {{#js}}
+        require(['core/yui'], function(Y) {
+            Y.use('moodle-core-formautosubmit', function() {
+                M.core.init_formautosubmit({
+                    selectid: '{{id}}',
+                    nothing: {{#hasnothing}}'{{nothingkey}}'{{/hasnothing}}{{^hasnothing}}false{{/hasnothing}}
+                });
+            });
+        });
+    {{/js}}
+{{/showbutton}}

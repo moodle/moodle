@@ -36,7 +36,8 @@ class chart_bar extends chart_base {
 
     /** @var bool Whether the bars should be displayed horizontally or not. */
     protected $horizontal = false;
-
+    /** @var bool Whether the chart should be stacked or not. */
+    protected $stacked = null;
     /**
      * Add the horizontal to the parent and return the serialized data.
      *
@@ -45,6 +46,7 @@ class chart_bar extends chart_base {
     public function jsonSerialize() { // @codingStandardsIgnoreLine (CONTRIB-6469).
         $data = parent::jsonSerialize();
         $data['horizontal'] = $this->get_horizontal();
+        $data['stacked'] = $this->get_stacked();
         return $data;
     }
 
@@ -67,11 +69,29 @@ class chart_bar extends chart_base {
     }
 
     /**
-     * Get Set whether the bars should be displayed horizontally or not.
+     * Get whether the bars should be stacked or not.
+     *
+     * @return bool
+     */
+    public function get_stacked() {
+        return $this->stacked;
+    }
+
+    /**
+     * Set whether the bars should be displayed horizontally or not.
      *
      * @param bool $horizontal True if the bars should be displayed horizontally, false otherwise.
      */
     public function set_horizontal($horizontal) {
         $this->horizontal = $horizontal;
+    }
+
+    /**
+     * Set whether the bars should be stacked or not.
+     *
+     * @param bool $stacked True if the chart should be stacked or false otherwise.
+     */
+    public function set_stacked($stacked) {
+        $this->stacked = $stacked;
     }
 }

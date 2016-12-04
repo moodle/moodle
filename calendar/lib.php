@@ -737,12 +737,12 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         // Events from a number of users
         if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlusers, $inparamsusers) = $DB->get_in_or_equal($users, SQL_PARAMS_NAMED);
-        $whereclause .= " (userid $insqlusers AND courseid = 0 AND groupid = 0)";
+        $whereclause .= " (e.userid $insqlusers AND e.courseid = 0 AND e.groupid = 0)";
         $params = array_merge($params, $inparamsusers);
     } else if($users === true) {
         // Events from ALL users
         if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' (userid != 0 AND courseid = 0 AND groupid = 0)';
+        $whereclause .= ' (e.userid != 0 AND e.courseid = 0 AND e.groupid = 0)';
     } else if($users === false) {
         // No user at all, do nothing
     }
@@ -751,24 +751,24 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         // Events from a number of groups
         if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlgroups, $inparamsgroups) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED);
-        $whereclause .= " groupid $insqlgroups ";
+        $whereclause .= " e.groupid $insqlgroups ";
         $params = array_merge($params, $inparamsgroups);
     } else if($groups === true) {
         // Events from ALL groups
         if(!empty($whereclause)) $whereclause .= ' OR ';
-        $whereclause .= ' groupid != 0';
+        $whereclause .= ' e.groupid != 0';
     }
     // boolean false (no groups at all): we don't need to do anything
 
     if ((is_array($courses) && !empty($courses)) or is_numeric($courses)) {
         if(!empty($whereclause)) $whereclause .= ' OR';
         list($insqlcourses, $inparamscourses) = $DB->get_in_or_equal($courses, SQL_PARAMS_NAMED);
-        $whereclause .= " (groupid = 0 AND courseid $insqlcourses)";
+        $whereclause .= " (e.groupid = 0 AND e.courseid $insqlcourses)";
         $params = array_merge($params, $inparamscourses);
     } else if ($courses === true) {
         // Events from ALL courses
         if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' (groupid = 0 AND courseid != 0)';
+        $whereclause .= ' (e.groupid = 0 AND e.courseid != 0)';
     }
 
     // Security check: if, by now, we have NOTHING in $whereclause, then it means
@@ -780,10 +780,10 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
     }
 
     if($withduration) {
-        $timeclause = '(timestart >= '.$tstart.' OR timestart + timeduration > '.$tstart.') AND timestart <= '.$tend;
+        $timeclause = '(e.timestart >= '.$tstart.' OR e.timestart + e.timeduration > '.$tstart.') AND e.timestart <= '.$tend;
     }
     else {
-        $timeclause = 'timestart >= '.$tstart.' AND timestart <= '.$tend;
+        $timeclause = 'e.timestart >= '.$tstart.' AND e.timestart <= '.$tend;
     }
     if(!empty($whereclause)) {
         // We have additional constraints
@@ -795,10 +795,17 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
     }
 
     if ($ignorehidden) {
-        $whereclause .= ' AND visible = 1';
+        $whereclause .= ' AND e.visible = 1';
     }
 
-    $events = $DB->get_records_select('event', $whereclause, $params, 'timestart');
+    $sql = "SELECT e.*
+              FROM {event} e
+         LEFT JOIN {modules} m ON e.modulename = m.name
+                -- Non visible modules will have a value of 0.
+             WHERE (m.visible = 1 OR m.visible IS NULL) AND $whereclause
+          ORDER BY e.timestart";
+    $events = $DB->get_records_sql($sql, $params);
+
     if ($events === false) {
         $events = array();
     }
@@ -891,16 +898,11 @@ function calendar_top_controls($type, $data) {
                 $calendarlink->param('course', $data['id']);
             }
 
-            if (right_to_left()) {
-                $left = $nextlink;
-                $right = $prevlink;
-            } else {
-                $left = $prevlink;
-                $right = $nextlink;
-            }
+            $prevlink = $prevlink;
+            $right = $nextlink;
 
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left.'<span class="hide"> | </span>';
+            $content .= $prevlink.'<span class="hide"> | </span>';
             $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')), array('title'=>get_string('monththis','calendar'))), array('class'=>'current'));
             $content .= '<span class="hide"> | </span>'. $right;
             $content .= "<span class=\"clearer\"><!-- --></span>\n";
@@ -916,18 +918,10 @@ function calendar_top_controls($type, $data) {
                 $calendarlink->param('course', $data['id']);
             }
 
-            if (right_to_left()) {
-                $left = $nextlink;
-                $right = $prevlink;
-            } else {
-                $left = $prevlink;
-                $right = $nextlink;
-            }
-
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left.'<span class="hide"> | </span>';
+            $content .= $prevlink.'<span class="hide"> | </span>';
             $content .= html_writer::tag('span', html_writer::link($calendarlink, userdate($time, get_string('strftimemonthyear')), array('title'=>get_string('monththis','calendar'))), array('class'=>'current'));
-            $content .= '<span class="hide"> | </span>'. $right;
+            $content .= '<span class="hide"> | </span>'. $nextlink;
             $content .= "<span class=\"clearer\"><!-- --></span>";
             $content .= html_writer::end_tag('div');
             break;
@@ -951,18 +945,10 @@ function calendar_top_controls($type, $data) {
             $prevlink = calendar_get_link_previous(userdate($prevmonthtime, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', false, false, false, false, $prevmonthtime);
             $nextlink = calendar_get_link_next(userdate($nextmonthtime, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', false, false, false, false, $nextmonthtime);
 
-            if (right_to_left()) {
-                $left = $nextlink;
-                $right = $prevlink;
-            } else {
-                $left = $prevlink;
-                $right = $nextlink;
-            }
-
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left . '<span class="hide"> | </span>';
+            $content .= $prevlink . '<span class="hide"> | </span>';
             $content .= $OUTPUT->heading(userdate($time, get_string('strftimemonthyear')), 2, 'current');
-            $content .= '<span class="hide"> | </span>' . $right;
+            $content .= '<span class="hide"> | </span>' . $nextlink;
             $content .= '<span class="clearer"><!-- --></span>';
             $content .= html_writer::end_tag('div')."\n";
             break;
@@ -980,18 +966,10 @@ function calendar_top_controls($type, $data) {
             $prevlink = calendar_get_link_previous($prevname, 'view.php?view=day'.$courseid.'&amp;', false, false, false, false, $prevtimestamp);
             $nextlink = calendar_get_link_next($nextname, 'view.php?view=day'.$courseid.'&amp;', false, false, false, false, $nexttimestamp);
 
-            if (right_to_left()) {
-                $left = $nextlink;
-                $right = $prevlink;
-            } else {
-                $left = $prevlink;
-                $right = $nextlink;
-            }
-
             $content .= html_writer::start_tag('div', array('class'=>'calendar-controls'));
-            $content .= $left;
+            $content .= $prevlink;
             $content .= '<span class="hide"> | </span><span class="current">'.userdate($time, get_string('strftimedaydate')).'</span>';
-            $content .= '<span class="hide"> | </span>'. $right;
+            $content .= '<span class="hide"> | </span>'. $nextlink;
             $content .= "<span class=\"clearer\"><!-- --></span>";
             $content .= html_writer::end_tag('div')."\n";
 
@@ -1658,6 +1636,8 @@ function calendar_get_default_courses() {
  * Display calendar preference button
  *
  * @param stdClass $course course object
+ * @deprecated since Moodle 3.2
+ * @todo MDL-55875 This will be deleted in Moodle 3.6.
  * @return string return preference button in html
  */
 function calendar_preferences_button(stdClass $course) {
@@ -1667,8 +1647,9 @@ function calendar_preferences_button(stdClass $course) {
     if (!isloggedin() || isguestuser()) {
         return '';
     }
+    debugging('This should no longer be used, the calendar preferences are now linked to the user preferences page');
 
-    return $OUTPUT->single_button(new moodle_url('/calendar/preferences.php', array('course' => $course->id)), get_string("preferences", "calendar"));
+    return $OUTPUT->single_button(new moodle_url('/user/calendar.php'), get_string("preferences", "calendar"));
 }
 
 /**

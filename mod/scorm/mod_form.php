@@ -304,7 +304,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                                            && ($defaultvalues['width'] <= 100)) {
             $defaultvalues['width'] .= '%';
         }
-        if (isset($defaultvalues['width']) && (strpos($defaultvalues['height'], '%') === false)
+        if (isset($defaultvalues['height']) && (strpos($defaultvalues['height'], '%') === false)
                                            && ($defaultvalues['height'] <= 100)) {
             $defaultvalues['height'] .= '%';
         }
@@ -448,6 +448,17 @@ class mod_scorm_mod_form extends moodleform_mod {
                 $errors['timeclose'] = get_string('closebeforeopen', 'scorm');
             }
         }
+        if (!empty($data['completionstatusallscos'])) {
+            $requirestatus = false;
+            foreach (scorm_status_options(true) as $key => $value) {
+                if (!empty($data['completionstatusrequired'][$key])) {
+                    $requirestatus = true;
+                }
+            }
+            if (!$requirestatus) {
+                $errors['completionstatusallscos'] = get_string('youmustselectastatus', 'scorm');
+            }
+        }
 
         return $errors;
     }
@@ -512,6 +523,12 @@ class mod_scorm_mod_form extends moodleform_mod {
             $items[] = $key;
         }
         $mform->addHelpButton($firstkey, 'completionstatusrequired', 'scorm');
+
+        $mform->addElement('checkbox', 'completionstatusallscos', get_string('completionstatusallscos', 'scorm'));
+        $mform->setType('completionstatusallscos', PARAM_BOOL);
+        $mform->addHelpButton('completionstatusallscos', 'completionstatusallscos', 'scorm');
+        $mform->setDefault('completionstatusallscos', 0);
+        $items[] = 'completionstatusallscos';
 
         return $items;
     }

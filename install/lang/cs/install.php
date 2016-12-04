@@ -69,9 +69,15 @@ $string['pathshead'] = 'Potvrdit cesty';
 $string['pathsrodataroot'] = 'Do datového adresáře nelze zapisovat.';
 $string['pathsroparentdataroot'] = 'Do nadřazeného adresáře ({$a->parent}) nelze zapisovat. Datový adresář ({$a->dataroot}) nemůže být tímto průvodcem instalací vytvořen.';
 $string['pathssubadmindir'] = 'Na některých serverech je URL adresa /admin vyhrazena pro speciální účely (např. pro ovládací panel). Na takových serverech může dojít ke kolizi se standardním umístěním stránek pro správu Moodle. Máte-li tento problém, přejmenujte adresář <eM>admin</em> ve vaší instalaci Moodle a sem zadejte jeho nový název - například <em>moodleadmin</em>. Všechny generované odkazy na stránky správy Moodle budou používat tento nový název.';
-$string['pathssubdataroot'] = 'Moodle potřebuje prostor, kam si bude ukládat nahrané soubory a další údaje. K tomuto adresáři musí mít proces webového serveru právo ke čtení i k zápisu (webový server bývá většinou spouštěn pod uživatelem "www-data" nebo "apache"). Tento adresář ale zároveň nesmí být dostupný přímo přes webové rozhraní. Instalační skript se pokusí tento adresář vytvořit, pokud nebude existovat.';
+$string['pathssubdataroot'] = '<p>Moodle potřebuje prostor, kam si bude ukládat nahrané soubory a další údaje. .</p>
+<p>K tomuto adresáři musí mít proces webového serveru právo ke čtení i k zápisu (webový server bývá většinou spouštěn pod uživatelem "www-data" nebo "apache"). .</p>
+<p>Tento adresář ale zároveň nesmí být dostupný přímo přes webové rozhraní. .</p>
+<p>Instalační skript se pokusí tento adresář vytvořit, pokud nebude existovat..</p>';
 $string['pathssubdirroot'] = '<p>Absolutní cesta k adresáři s instalací Moodle.</p>';
-$string['pathssubwwwroot'] = 'Zadejte úplnou webovou adresu, na níž bude Moodle dostupný. Moodle potřebuje jedinečnou adresu, není možné jej provozovat na několika URL současně. Používáte-li několik veřejných domén, musíte si sami nastavit permanentní přesměrování na jednu z nich a tu pak použít. Pokud je váš server dostupný z vnější a z vnitřní sítě pod různými IP adresami, použijte jeho veřejnou adresu a nastavte si váš DNS server tak, že ji mohou používat i uživatelé z vnitřní sítě.';
+$string['pathssubwwwroot'] = '<p>Zadejte úplnou webovou adresu, na níž bude Moodle dostupný, t.j. adresa, kterou zadají uživatelé do adresního řádku svého prohlížeče, aby spustili Moodle.</p>
+<p>Moodle potřebuje jedinečnou adresu, není možné jej provozovat na několika URL současně. Používáte-li několik veřejných domén, musíte si sami nastavit permanentní přesměrování na jednu z nich a tu pak použít.</p>
+<p> Pokud je váš server dostupný z vnější a z vnitřní sítě pod různými IP adresami, použijte jeho veřejnou adresu a nastavte si váš DNS server tak, že ji mohou používat i uživatelé z vnitřní sítě.</p>
+<p>Pokud aktuální adresa není správná, změňte URL adresu v adresním řádku prohlížeče a spusťte instalaci.</p>';
 $string['pathsunsecuredataroot'] = 'Umístění datového adresáře není bezpečné';
 $string['pathswrongadmindir'] = 'Adresář pro správu serveru (admin) neexistuje';
 $string['phpextension'] = '{$a} PHP rozšíření';
@@ -82,7 +88,7 @@ $string['phpversionhelp'] = '<p>Moodle vyžaduje PHP alespoň verze 4.3.0 nebo 5
 (U PHP 5.0.x můžete také přejít na nižší verzi 4.4.x )</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Podařilo se vám úspěšně nainstalovat a spustit balíček <strong>{$a->packname} {$a->packversion}</strong>. Gratulujeme!';
-$string['welcomep30'] = '<strong>{$a->installername}</strong> obsahuje aplikace k vytvoření prostředí, ve kterém bude provozován váš <strong>Moodle</strong>. Jmenovitě se jedná o:';
+$string['welcomep30'] = 'Tato verze <strong>{$a->installername}</strong> obsahuje aplikace k vytvoření prostředí, ve kterém bude provozován váš <strong>Moodle</strong>. Jmenovitě se jedná o:';
 $string['welcomep40'] = 'Balíček rovněž obsahuje <strong>Moodle ve verzi {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Použití všech aplikací v tomto balíčku je vázáno jejich příslušnými licencemi. Kompletní balíček <strong>{$a->installername}</strong> je software s <a href="http://www.opensource.org/docs/definition_plain.html"> otevřeným kódem (open source)</a> a je šířen pod licencí <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'Následující stránky vás v několik jednoduchých krocích nastavením <strong>Moodlu</strong> na vašem počítači. Můžete přijmout výchozí nastavení, nebo si je upravit podle svých potřeb.';

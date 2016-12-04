@@ -64,8 +64,6 @@ echo "<form id=\"authmenu\" method=\"post\" action=\"auth_config.php\">\n";
 echo "<div>\n";
 echo "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n";
 echo "<input type=\"hidden\" name=\"auth\" value=\"".$auth."\" />\n";
-// HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
-echo prevent_form_autofill_password();
 
 // auth plugin description
 echo $OUTPUT->box_start();

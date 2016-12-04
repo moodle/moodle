@@ -34,75 +34,74 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_unoconv_testcase extends advanced_testcase {
 
-    /** @var $testfile1 */
-    private $testfile1 = null;
-    /** @var $testfile2 */
-    private $testfile2 = null;
+    public function get_converted_document_provider() {
+        $fixturepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
+        return [
+            'HTML => PDF' => [
+                'source'            => $fixturepath . 'unoconv-source.html',
+                'sourcefilename'    => 'test.html',
+                'format'            => 'pdf',
+                'mimetype'          => 'application/pdf',
+            ],
+            'docx => PDF' => [
+                'source'            => $fixturepath . 'unoconv-source.docx',
+                'sourcefilename'    => 'test.docx',
+                'format'            => 'pdf',
+                'mimetype'          => 'application/pdf',
+            ],
+            'HTML => TXT' => [
+                'source'            => $fixturepath . 'unoconv-source.html',
+                'sourcefilename'    => 'test.html',
+                'format'            => 'txt',
+                'mimetype'          => 'text/plain',
+            ],
+            'docx => TXT' => [
+                'source'            => $fixturepath . 'unoconv-source.docx',
+                'sourcefilename'    => 'test.docx',
+                'format'            => 'txt',
+                'mimetype'          => 'text/plain',
+            ],
+        ];
+    }
 
-    public function setUp() {
-        $this->fixturepath = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
+    /**
+     * @dataProvider get_converted_document_provider
+     */
+    public function test_get_converted_document($source, $sourcefilename, $format, $mimetype) {
+        global $CFG;
 
-        $fs = get_file_storage();
-        $filerecord = array(
-            'contextid' => context_system::instance()->id,
-            'component' => 'test',
-            'filearea' => 'unittest',
-            'itemid' => 0,
-            'filepath' => '/',
-            'filename' => 'test.html'
-        );
-        $teststring = file_get_contents($this->fixturepath . DIRECTORY_SEPARATOR . 'unoconv-source.html');
-        $this->testfile1 = $fs->create_file_from_string($filerecord, $teststring);
-
-        $filerecord = array(
-            'contextid' => context_system::instance()->id,
-            'component' => 'test',
-            'filearea' => 'unittest',
-            'itemid' => 0,
-            'filepath' => '/',
-            'filename' => 'test.docx'
-        );
-        $teststring = file_get_contents($this->fixturepath . DIRECTORY_SEPARATOR . 'unoconv-source.docx');
-        $this->testfile2 = $fs->create_file_from_string($filerecord, $teststring);
+        if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
+            // No conversions are possible, sorry.
+            return $this->markTestSkipped();
+        }
 
         $this->resetAfterTest();
-    }
 
-    public function test_generate_pdf() {
-        global $CFG;
+        $filerecord = array(
+            'contextid' => context_system::instance()->id,
+            'component' => 'test',
+            'filearea'  => 'unittest',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $sourcefilename,
+        );
 
-        if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
-            // No conversions are possible, sorry.
-            return $this->markTestSkipped();
-        }
         $fs = get_file_storage();
+        //$testfile = $fs->create_file_from_string($filerecord, file_get_contents($source));
+        $testfile = $fs->create_file_from_pathname($filerecord, $source);
 
-        $result = $fs->get_converted_document($this->testfile1, 'pdf');
+        $result = $fs->get_converted_document($testfile, $format);
         $this->assertNotFalse($result);
-        $this->assertSame($result->get_mimetype(), 'application/pdf');
+        $this->assertSame($mimetype, $result->get_mimetype());
         $this->assertGreaterThan(0, $result->get_filesize());
-        $result = $fs->get_converted_document($this->testfile2, 'pdf');
-        $this->assertNotFalse($result);
-        $this->assertSame($result->get_mimetype(), 'application/pdf');
-        $this->assertGreaterThan(0, $result->get_filesize());
-    }
 
-    public function test_generate_markdown() {
-        global $CFG;
-
-        if (empty($CFG->pathtounoconv) || !file_is_executable(trim($CFG->pathtounoconv))) {
-            // No conversions are possible, sorry.
-            return $this->markTestSkipped();
-        }
-        $fs = get_file_storage();
-
-        $result = $fs->get_converted_document($this->testfile1, 'txt');
-        $this->assertNotFalse($result);
-        $this->assertSame($result->get_mimetype(), 'text/plain');
-        $this->assertGreaterThan(0, $result->get_filesize());
-        $result = $fs->get_converted_document($this->testfile2, 'txt');
-        $this->assertNotFalse($result);
-        $this->assertSame($result->get_mimetype(), 'text/plain');
-        $this->assertGreaterThan(0, $result->get_filesize());
+        // Repeat immediately with the file forcing re-generation.
+        $new = $fs->get_converted_document($testfile, $format, true);
+        $this->assertNotFalse($new);
+        $this->assertSame($mimetype, $new->get_mimetype());
+        $this->assertGreaterThan(0, $new->get_filesize());
+        $this->assertNotEquals($result->get_id(), $new->get_id());
+        // Note: We cannot compare contenthash for PDF because the PDF has a unique ID, and a creation timestamp
+        // imprinted in the file.
     }
 }

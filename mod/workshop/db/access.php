@@ -244,4 +244,17 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
+
+    // Ability to export submissions to a portfolio. Applies to all submissions
+    // the user has access to.
+    'mod/workshop:exportsubmissions' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+        )
+    ),
 );

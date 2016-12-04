@@ -90,9 +90,10 @@ class report_loglive_renderer extends plugin_renderer_base {
     public function toggle_liveupdate_button(report_loglive_renderable $reportloglive) {
         // Add live log controls.
         if ($reportloglive->page == 0 && $reportloglive->selectedlogreader) {
-            echo html_writer::tag('button' , get_string('pause', 'report_loglive'), array('id' => 'livelogs-pause-button'));
+            echo html_writer::tag('button' , get_string('pause', 'report_loglive'),
+                array('id' => 'livelogs-pause-button', 'class' => 'btn btn-secondary'));
             $icon = new pix_icon('i/loading_small', 'loading', 'moodle', array('class' => 'spinner'));
-            return $this->output->render($icon);
+            return html_writer::tag('span', $this->output->render($icon), array('class' => 'spinner'));
         }
         return '';
     }

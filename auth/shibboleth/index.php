@@ -54,7 +54,7 @@
                 && $user = authenticate_user_login($frm->username, $frm->password)) {
             complete_user_login($user);
 
-            if (user_not_fully_set_up($USER)) {
+            if (user_not_fully_set_up($USER, true)) {
                 $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
                 // We don't delete $SESSION->wantsurl yet, so we get there later
 

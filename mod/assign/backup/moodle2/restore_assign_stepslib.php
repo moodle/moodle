@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
 /**
  * Define the complete assignment structure for restore, with file and id annotations
  *
@@ -63,6 +65,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $userflag = new restore_path_element('assign_userflag',
                                                    '/activity/assign/userflags/userflag');
             $paths[] = $userflag;
+            $paths[] = new restore_path_element('assign_override', '/activity/assign/overrides/override');
         }
         $paths[] = new restore_path_element('assign_plugin_config',
                                             '/activity/assign/plugin_configs/plugin_config');
@@ -92,6 +95,12 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         $groupinfo = $this->task->get_setting_value('groups');
         if ($data->teamsubmission && !$groupinfo) {
             $this->includesubmission = false;
+        }
+
+        // Reset revealidentities if blindmarking with no user data (MDL-43796).
+        $userinfo = $this->get_setting_value('userinfo');
+        if (!$userinfo && $data->blindmarking) {
+            $data->revealidentities = 0;
         }
 
         if (!empty($data->teamsubmissiongroupingid)) {
@@ -335,12 +344,70 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
     }
 
     /**
+     * Restore files from plugin configuration
+     * @param string $subtype the plugin type to handle
+     * @return void
+     */
+    protected function add_plugin_config_files($subtype) {
+        $dummyassign = new assign(null, null, null);
+        $plugins = $dummyassign->load_plugins($subtype);
+        foreach ($plugins as $plugin) {
+            $component = $plugin->get_subtype() . '_' . $plugin->get_type();
+            $areas = $plugin->get_config_file_areas();
+            foreach ($areas as $area) {
+                $this->add_related_files($component, $area, null);
+            }
+        }
+    }
+
+    /**
+     * Process a assign override restore
+     * @param object $data The data in object form
+     * @return void
+     */
+    protected function process_assign_override($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        // Based on userinfo, we'll restore user overides or no.
+        $userinfo = $this->get_setting_value('userinfo');
+
+        // Skip user overrides if we are not restoring userinfo.
+        if (!$userinfo && !is_null($data->userid)) {
+            return;
+        }
+
+        $data->assignid = $this->get_new_parentid('assign');
+
+        if (!is_null($data->userid)) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+        if (!is_null($data->groupid)) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
+
+        $data->allowsubmissionsfromdate = $this->apply_date_offset($data->allowsubmissionsfromdate);
+        $data->duedate = $this->apply_date_offset($data->duedate);
+        $data->cutoffdate = $this->apply_date_offset($data->cutoffdate);
+
+        $newitemid = $DB->insert_record('assign_overrides', $data);
+
+        // Add mapping, restore of logs needs it.
+        $this->set_mapping('assign_override', $oldid, $newitemid);
+    }
+
+    /**
      * Once the database tables have been fully restored, restore the files
      * @return void
      */
     protected function after_execute() {
         $this->add_related_files('mod_assign', 'intro', null);
         $this->add_related_files('mod_assign', 'introattachment', null);
+
+        $this->add_plugin_config_files('assignsubmission');
+        $this->add_plugin_config_files('assignfeedback');
 
         $this->set_latest_submission_field();
     }

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/src</location>
+        <name>VideoJS</name>
+        <license>Apache</license>
+        <version>5.12.6</version>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>videojs</location>
+        <name>VideoJS support files</name>
+        <license>Apache</license>
+        <version>5.12.6</version>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

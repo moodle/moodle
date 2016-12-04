@@ -340,7 +340,9 @@ class core_backup_moodle2_testcase extends advanced_testcase {
         // Create a course with specific start date.
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(array(
-                'startdate' => strtotime('1 Jan 2014 00:00 GMT')));
+            'startdate' => strtotime('1 Jan 2014 00:00 GMT'),
+            'enddate' => strtotime('3 Aug 2014 00:00 GMT')
+        ));
 
         // Add a forum with conditional availability date restriction, including
         // one of them nested inside a tree.
@@ -360,6 +362,9 @@ class core_backup_moodle2_testcase extends advanced_testcase {
 
         // Do backup and restore.
         $newcourseid = $this->backup_and_restore($course, strtotime('3 Jan 2015 00:00 GMT'));
+
+        $newcourse = $DB->get_record('course', array('id' => $newcourseid));
+        $this->assertEquals(strtotime('5 Aug 2015 00:00 GMT'), $newcourse->enddate);
 
         $modinfo = get_fast_modinfo($newcourseid);
 

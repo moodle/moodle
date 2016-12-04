@@ -1,0 +1,130 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    Big search form.
+}}
+<div id="intro" class="box searchbox boxaligncenter">
+    {{#str}}searchforumintro, forum{{/str}}
+</div>
+<div class="box generalbox boxaligncenter">
+    <script type="text/javascript" src="{{scripturl}}"></script>
+    <form id="searchform" action="{{actionurl}}" method="get">
+        <table class="searchbox table table-striped" id="form" cellpadding="10">
+            <tr>
+                <td class="c0 text-xs-right">
+                    <label for="words">{{#str}}searchwords, forum{{/str}}</label>
+                    <input type="hidden" value="{{courseid}}" name="id">
+                </td>
+                <td class="c1">
+                    <input type="text" class="form-control" name="words" id="words" value="{{words}}">
+                </td>
+            </tr>
+            <tr>
+                <td class="c0 text-xs-right">
+                    <label for="phrase">{{#str}}searchphrase, forum{{/str}}</label>
+                </td>
+                <td class="c1">
+                    <input type="text" class="form-control" name="phrase" id="phrase" value="{{phrase}}">
+                </td>
+            </tr>
+            <tr>
+                <td class="c0 text-xs-right">
+                    <label for="notwords">{{#str}}searchnotwords, forum{{/str}}</label>
+                </td>
+                <td class="c1">
+                    <input type="text" class="form-control" name="notwords" id="notwords" value="{{notwords}}">
+                </td>
+            </tr>
+            {{#showfullwords}}
+                <tr>
+                    <td class="c0 text-xs-right">
+                        <label for="fullwords">{{#str}}searchfullwords, forum{{/str}}</label>
+                    </td>
+                    <td class="c1">
+                        <input type="text" class="form-control" name="fullwords" id="fullwords" value="{{fullwords}}">
+                    </td>
+                </tr>
+            {{/showfullwords}}
+            <tr>
+                <td class="c0 text-xs-right">
+                    {{#str}}searchdatefrom, forum{{/str}}
+                </td>
+                <td class="c1 text-nowrap form-inline">
+                    <input type="checkbox" name="timefromrestrict" value="1" onclick="return lockoptions('searchform', 'timefromrestrict', timefromitems)" {{#datefromchecked}}checked{{/datefromchecked}}>
+                    {{{datefromfields}}}
+                    <input type="hidden" name="hfromday" value="0">
+                    <input type="hidden" name="hfrommonth" value="0">
+                    <input type="hidden" name="hfromyear" value="0">
+                    <input type="hidden" name="hfromhour" value="0">
+                    <input type="hidden" name="hfromminute" value="0">
+                </td>
+            </tr>
+            <tr>
+                <td class="c0 text-xs-right">
+                    {{#str}}searchdateto, forum{{/str}}
+                </td>
+                <td class="c1 text-nowrap form-inline">
+                    <input type="checkbox" name="timetorestrict" value="1" onclick="return lockoptions('searchform', 'timetorestrict', timetoitems)" {{#datetochecked}}checked{{/datetochecked}}>
+                    {{{datetofields}}}
+                    <input type="hidden" name="htoday" value="0">
+                    <input type="hidden" name="htomonth" value="0">
+                    <input type="hidden" name="htoyear" value="0">
+                    <input type="hidden" name="htohour" value="0">
+                    <input type="hidden" name="htominute" value="0">
+                </td>
+            </tr>
+            <tr>
+                <td class="c0 text-xs-right">
+                    <label for="menuforumid">{{#str}}searchwhichforums, forum{{/str}}</label>
+                </td>
+                <td class="c1">
+                    <select name="menuforumid" id="menuforumid" class="form-control">
+                        {{#forumoptions}}
+                            <option value="{{value}}">{{name}}</option>
+                        {{/forumoptions}}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="c0 text-xs-right">
+                    <label for="subject">{{#str}}searchsubject, forum{{/str}}</label>
+                </td>
+                <td class="c1">
+                    <input type="text" class="form-control" name="subject" id="subject" value="{{subject}}">
+                </td>
+            </tr>
+            <tr>
+                <td class="c0 text-xs-right">
+                    <label for="user">{{#str}}searchuser, forum{{/str}}</label>
+                </td>
+                <td class="c1">
+                    <input type="text" class="form-control" name="user" id="user" value="{{user}}">
+                </td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td class="submit">
+                    <button type="submit" class="btn btn-primary">{{#str}}searchforums, forum{{/str}}</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    {{#js}}
+        lockoptions_timetoitems();
+        lockoptions_timefromitems();
+    {{/js}}
+</div>

@@ -32,12 +32,12 @@
 
     Example context (json):
     {
-        linkedcompetencycount: 4,
-        competencycount: 8,
-        linkedcompetencypercentage: 50,
-        plancount: 40,
-        completedplancount: 30,
-        completedplanpercentage: 75,
+        "linkedcompetencycount": 4,
+        "competencycount": 8,
+        "linkedcompetencypercentage": 50,
+        "plancount": 40,
+        "completedplancount": 30,
+        "completedplanpercentage": 75
     }
 
 }}
@@ -45,7 +45,8 @@
     Template statistics template.
 }}
 {{#competencycount}}
-<div data-region="templatestatistics" class="well">
+<div data-region="templatestatistics" class="card">
+    <div class="card-block">
     {{< tool_lp/progress_bar}}
         {{$progresstext}}
             {{#str}}xcompetencieslinkedoutofy, tool_lp, { "x": "{{linkedcompetencycount}}", "y": "{{competencycount}}" } {{/str}}
@@ -89,5 +90,6 @@
         </div>
     </div>
     {{/leastproficientcount}}
+    </div>
 </div>
 {{/competencycount}}

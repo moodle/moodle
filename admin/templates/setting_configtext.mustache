@@ -1,0 +1,42 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/setting_configtext
+
+    Admin text setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+    * value - element value
+    * size - element size
+    * forceltr - always display as ltr
+    * attributes - list of additional attributes containing name, value
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0",
+        "value": "A tall, dark stranger will have more fun than you.",
+        "size": "21",
+        "forceltr": false,
+        "attributes": [ { "name": "readonly", "value": "readonly" } ]
+    }
+}}
+<div class="form-text defaultsnext">
+    <input type="text" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="{{#forceltr}}text-ltr{{/forceltr}}" {{#attributes}} {{name}}="{{value}}"{{/attributes}}>
+</div>

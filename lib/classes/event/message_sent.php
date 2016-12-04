@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  *      Extra information about event.
  *
  *      - int messageid: the id of the message.
+ *      - int courseid: the id of the related course.
  * }
  *
  * @package    core
@@ -43,17 +44,28 @@ defined('MOODLE_INTERNAL') || die();
 class message_sent extends base {
     /**
      * Create event using ids.
+     * @todo MDL-55449 Make $courseid mandatory in Moodle 3.6
      * @param int $userfromid
      * @param int $usertoid
      * @param int $messageid
+     * @param int|null $courseid course id the event is related with. Use SITEID if no relation exists.
      * @return message_sent
      */
-    public static function create_from_ids($userfromid, $usertoid, $messageid) {
+    public static function create_from_ids($userfromid, $usertoid, $messageid, $courseid = null) {
         // We may be sending a message from the 'noreply' address, which means we are not actually sending a
         // message from a valid user. In this case, we will set the userid to 0.
         // Check if the userid is valid.
         if (!\core_user::is_real_user($userfromid)) {
             $userfromid = 0;
+        }
+
+        // TODO: MDL-55449 Make $courseid mandatory in Moodle 3.6.
+        if (is_null($courseid)) {
+            // Arrived here with not defined $courseid to associate the event with.
+            // Let's default to SITEID and perform debugging so devs are aware. MDL-47162.
+            $courseid = SITEID;
+            debugging('message_sent::create_from_ids() needs a $courseid to be passed, nothing was detected. Please, change ' .
+                    'the call to include it, using SITEID if the message is unrelated to any real course.', DEBUG_DEVELOPER);
         }
 
         $event = self::create(array(
@@ -64,7 +76,8 @@ class message_sent extends base {
                 // In earlier versions it can either be the id in the 'message_read' or 'message' table.
                 // Now it is always the id from 'message' table. Please note that the record is still moved
                 // to the 'message_read' table later when message marked as read.
-                'messageid' => $messageid
+                'messageid' => $messageid,
+                'courseid' => $courseid
             )
         ));
 
@@ -143,6 +156,10 @@ class message_sent extends base {
         if (!isset($this->other['messageid'])) {
             throw new \coding_exception('The \'messageid\' value must be set in other.');
         }
+
+        if (!isset($this->other['courseid'])) {
+            throw new \coding_exception('The \'courseid\' value must be set in other.');
+        }
     }
 
     public static function get_objectid_mapping() {
@@ -155,6 +172,7 @@ class message_sent extends base {
         $othermapped = array();
         // The messages table could vary for older events - so cannot be mapped.
         $othermapped['messageid'] = array('db' => base::NOT_MAPPED, 'restore' => base::NOT_MAPPED);
+        $othermapped['courseid'] = array('db' => base::NOT_MAPPED, 'restore' => base::NOT_MAPPED);
         return $othermapped;
     }
 }

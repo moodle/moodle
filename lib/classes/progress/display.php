@@ -38,7 +38,7 @@ class display extends base {
      */
     private $bar;
 
-    private $lastwibble, $currentstate = 0, $direction = 1;
+    protected $lastwibble, $currentstate = 0, $direction = 1;
 
     /**
      * @var bool True to display names
@@ -127,6 +127,12 @@ class display extends base {
                     $this->currentstate += 2 * $this->direction;
                 }
                 $buffersize = ini_get('output_buffering');
+                if (!is_numeric($buffersize)) {
+                    // The output_buffering setting can be a number, but can also be "On" or "Off".
+                    // If "Off", there's no buffer, if "On", there's no limit to the size. In either case,
+                    // there's no point in trying to fill the buffer.
+                    $buffersize = 0;
+                }
                 if ($buffersize) {
                     // Force the buffer full.
                     echo str_pad('', $buffersize);
