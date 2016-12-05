@@ -53,7 +53,7 @@ Feature: View cohort list
 
   Scenario: Manager in category can see cohorts in the category
     When I log in as "user2"
-    And I follow "Courses"
+    And I am on course index
     And I follow "Cat 1"
     And I follow "Cohorts"
     And I should not see "All cohorts"

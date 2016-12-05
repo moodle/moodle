@@ -49,9 +49,7 @@ Feature: Change password
     And the following "course enrolments" exist:
       | user | course | role |
       | testuser | c1 | student |
-    And I am on site homepage
-    And I expand "Courses" node
-    When I follow "Course 1"
+    When I follow "Log in"
     And I set the field "Username" to "testuser"
     And I set the field "Password" to "testuser"
     And I press "Log in"

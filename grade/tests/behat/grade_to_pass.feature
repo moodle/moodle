@@ -187,8 +187,7 @@ Feature: We can set the grade to pass value
     And I set the field "Grade to pass" to "80"
     And I press "Save changes"
     And I follow "Course 1"
-    And I follow "Test Database 1"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Test Database 1" activity
     And the field "Grade to pass" matches value "80"
 
   Scenario: Set an invalid grade to pass for forum activity

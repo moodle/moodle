@@ -35,5 +35,4 @@ Feature: Enable Block Badges on the dashboard and view awarded badges
     And I press "Award badge"
     And I log out
     When I log in as "teacher1"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "Badge 1" in the "Latest badges" "block"

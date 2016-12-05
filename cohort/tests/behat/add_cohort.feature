@@ -38,7 +38,8 @@ Feature: Add cohorts of users
     And the "Current users" select box should not contain "Forth User (forth@example.com)"
 
   Scenario: Add users to a cohort using a bulk user action
-    When I follow "Bulk user actions"
+    When I follow "Accounts"
+    And I follow "Bulk user actions"
     And I set the field "Available" to "Third User"
     And I press "Add to selection"
     And I set the field "Available" to "Forth User"
@@ -47,6 +48,7 @@ Feature: Add cohorts of users
     And I press "Go"
     And I set the field "Cohort" to "Test cohort name [333]"
     And I press "Add to cohort"
+    And I follow "Accounts"
     And I follow "Cohorts"
     Then I should see "2" in the "#cohorts" "css_element"
     And I click on "Assign" "link" in the "Test cohort name" "table_row"

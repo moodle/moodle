@@ -19,7 +19,7 @@ Feature: Browse course list and return back from enrolment page
 
   Scenario: A user can return to the category page from enrolment page
     When I log in as "user2"
-    And I click on "Courses" "link" in the "Navigation" "block"
+    And I am on course index
     And I follow "Miscellaneous"
     And I follow "Sample course"
     And I press "Continue"
@@ -57,7 +57,7 @@ Feature: Browse course list and return back from enrolment page
       | moodle/course:view | Allow |
     And I log out
     When I log in as "user1"
-    And I click on "Courses" "link" in the "Navigation" "block"
+    And I am on course index
     And I follow "Miscellaneous"
     And I follow "Sample course"
     And I follow "Test choice"

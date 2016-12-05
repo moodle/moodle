@@ -16,7 +16,7 @@ Feature: Apply tour filters to a tour
     And I add steps to the "First tour" tour:
       | targettype                  | Title             | Content |
       | Display in middle of page   | Welcome           | Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful |
-    When I click on "Dashboard" "link" in the "Navigation" "block"
+    When I am on homepage
     Then I should not see "Welcome to your personal learning space. We'd like to give you a quick tour to show you some of the areas you may find helpful"
 
   @javascript

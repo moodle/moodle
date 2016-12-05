@@ -97,7 +97,7 @@ Background:
     And I follow "Course 1"
 
 Scenario: When number of discussions is decreased fewer discussions appear
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
     | numdiscussions | 5 |
     When I press "Save and display"
@@ -106,7 +106,7 @@ Scenario: When number of discussions is decreased fewer discussions appear
     And I should not see "This is forum post six"
 
 Scenario: When number of discussions is decreased to less than 1 only 1 discussion should appear
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
     | numdiscussions | -1 |
     When I press "Save and display"
@@ -115,7 +115,7 @@ Scenario: When number of discussions is decreased to less than 1 only 1 discussi
     And I should not see "This is forum post ten"
 
 Scenario: When number of discussions is increased more discussions appear
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
     | numdiscussions | 9 |
     When I press "Save and display"

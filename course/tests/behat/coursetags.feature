@@ -25,7 +25,7 @@ Feature: Tagging courses
       | teacher2 | c2     | teacher        |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Tags | Mathematics |
     And I press "Save and display"
@@ -34,16 +34,15 @@ Feature: Tagging courses
   Scenario: Set course tags using the course edit form
     When I log in as "teacher1"
     And I follow "Course 1"
-    And "Course tags" "link" should not exist in the "Administration" "block"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     Then I should see "Mathematics" in the ".form-autocomplete-selection" "css_element"
     And I set the following fields to these values:
       | Tags | Algebra |
     And I press "Save and display"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And I am on homepage
     And I follow "Course 2"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" node in "Course administration"
     And I set the following fields to these values:
       | Tags | Mathematics, Geometry |
     And I press "Save and display"
@@ -70,15 +69,14 @@ Feature: Tagging courses
     And I log out
     When I log in as "teacher2"
     And I follow "Course 1"
-    And "Edit settings" "link" should not exist in the "Administration" "block"
-    And I click on "Course tags" "link" in the "Administration" "block"
+    And I navigate to "Course tags" in current page administration
     Then I should see "Mathematics" in the ".form-autocomplete-selection" "css_element"
     And I set the following fields to these values:
       | Tags | Algebra |
     And I press "Save changes"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And I am on homepage
     And I follow "Course 2"
-    And I click on "Course tags" "link" in the "Administration" "block"
+    And I navigate to "Course tags" in current page administration
     And I set the following fields to these values:
       | Tags | Mathematics, Geometry |
     And I press "Save changes"

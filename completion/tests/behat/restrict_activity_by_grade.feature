@@ -56,7 +56,7 @@ Feature: Restrict activity availability through grade conditions
     And I am on site homepage
     And I follow "Course 1"
     And I follow "Grade assignment"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student First" "table_row"
     And I set the following fields to these values:
       | Grade | 21 |

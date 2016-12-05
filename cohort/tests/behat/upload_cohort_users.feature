@@ -28,7 +28,7 @@ Feature: Upload users to a cohort
     And I press "Upload users"
     And I press "Upload users"
     And I press "Continue"
-    And I follow "Cohorts"
+    And I navigate to "Users > Accounts > Cohorts" in site administration
     And I click on "Assign" "link" in the "Cohort 1" "table_row"
     Then the "Current users" select box should contain "Tom Jones (tomjones@example.com)"
     And the "Current users" select box should contain "Bob Jones (bobjones@example.com)"
@@ -38,15 +38,13 @@ Feature: Upload users to a cohort
     And the "Current users" select box should contain "Alice Smith (alicesmith@example.com)"
     And I am on site homepage
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Enrolled users"
+    And I navigate to "Users > Enrolled users" in current page administration
     And I should see "Tom Jones"
     And I should see "Bob Jones"
     And I should not see "Mary Smith"
     And I am on site homepage
     And I follow "Course 2"
-    And I expand "Users" node
-    And I follow "Enrolled users"
+    And I navigate to "Users > Enrolled users" in current page administration
     And I should see "Mary Smith"
     And I should see "Alice Smith"
     And I should not see "Tom Jones"

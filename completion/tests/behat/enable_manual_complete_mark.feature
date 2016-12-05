@@ -21,7 +21,7 @@ Feature: Allow students to manually mark an activity as complete
     And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -38,6 +38,5 @@ Feature: Allow students to manually mark an activity as complete
     And I log in as "teacher1"
     And I am on site homepage
     And I follow "Course 1"
-    And I expand "Reports" node
-    And I follow "Activity completion"
+    And I navigate to "Reports > Activity completion" in current page administration
     And "Student First" user has completed "Test forum name" activity

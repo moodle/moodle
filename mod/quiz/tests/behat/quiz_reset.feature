@@ -51,7 +51,7 @@ Feature: Quiz reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test quiz name"
-    And I navigate to "Results" node in "Quiz administration"
+    And I navigate to "Results" in current page administration
     Then I should see "Attempts: 0"
 
   @javascript
@@ -59,7 +59,7 @@ Feature: Quiz reset
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test quiz name"
-    And I navigate to "User overrides" node in "Quiz administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
         | Override user    | Student1  |
@@ -73,14 +73,14 @@ Feature: Quiz reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test quiz name"
-    And I navigate to "User overrides" node in "Quiz administration"
+    And I navigate to "User overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
 Scenario: Use course reset to remove group overrides.
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test quiz name"
-    And I navigate to "Group overrides" node in "Quiz administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
         | Override group    | Group 1  |
@@ -94,5 +94,5 @@ Scenario: Use course reset to remove group overrides.
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test quiz name"
-    And I navigate to "Group overrides" node in "Quiz administration"
+    And I navigate to "Group overrides" in current page administration
     Then I should not see "Group 1"

@@ -55,7 +55,7 @@ Feature: Atto Autosave
     And I follow "Manage private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And I am on homepage
     And I follow "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "<p>Image test</p>"

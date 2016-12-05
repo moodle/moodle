@@ -141,7 +141,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I navigate to "Analysis" in current page administration
     And I should see "Submitted answers: 2"
     And I should see "Questions: 3"
     And I show chart data for the "multichoice1" feedback
@@ -162,7 +162,7 @@ Feature: Testing multichoice questions in feedback
     And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I follow "Analysis"
     And I show chart data for the "multichoice1" feedback
     And I should see "1 (100.00 %)" in the "option a" "table_row"
     And I should not see "%" in the "option b" "table_row"
@@ -285,7 +285,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I navigate to "Analysis" in current page administration
     And I should see "Submitted answers: 2"
     And I should see "Questions: 3"
     And I show chart data for the "multichoice1" feedback
@@ -306,7 +306,7 @@ Feature: Testing multichoice questions in feedback
     And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I follow "Analysis"
     And I show chart data for the "multichoice1" feedback
     And I should see "1 (100.00 %)" in the "option a" "table_row"
     And I should see "1 (100.00 %)" in the "option b" "table_row"
@@ -408,7 +408,7 @@ Feature: Testing multichoice questions in feedback
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I navigate to "Analysis" in current page administration
     And I should see "Submitted answers: 2"
     And I should see "Questions: 3"
     And I show chart data for the "multichoice1" feedback
@@ -429,7 +429,7 @@ Feature: Testing multichoice questions in feedback
     And I choose "Edit question" in the open action menu
     And I set the field "Do not analyse empty submits" to "Yes"
     And I press "Save changes to question"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I follow "Analysis"
     And I show chart data for the "multichoice1" feedback
     And I should see "1 (100.00 %)" in the "option a" "table_row"
     And I should not see "%" in the "option b" "table_row"

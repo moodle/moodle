@@ -32,7 +32,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF1      | 1    | 1               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "be attempted" "link" should not be visible
     # The text "be attempted" is used as a relatively unique string in both the add and remove links.
 
@@ -51,7 +51,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF2      | 1    | 1               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "This question cannot be attempted until the previous question has been completed." "link" should be visible
 
   @javascript
@@ -69,7 +69,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF1                     | 1    | 1               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "This question cannot be attempted until the previous question has been completed." "link" should be visible
 
   @javascript
@@ -89,7 +89,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF3      | 1    | 0               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     When I follow "No restriction on when question 2 can be attempted • Click to change"
     Then "Question 2 cannot be attempted until the previous question 1 has been completed • Click to change" "link" should be visible
     And "No restriction on when question 3 can be attempted • Click to change" "link" should be visible
@@ -111,7 +111,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF3      | 1    | 1               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     When I follow "Question 3 cannot be attempted until the previous question 2 has been completed • Click to change"
     Then "Question 2 cannot be attempted until the previous question 1 has been completed • Click to change" "link" should be visible
     And "No restriction on when question 3 can be attempted • Click to change" "link" should be visible
@@ -133,7 +133,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF2                     | 1    | 1               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "be attempted" "link" in the "TF1" "list_item" should not be visible
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
@@ -155,7 +155,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | Section 1 | 1         | 1       |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
   @javascript
@@ -177,7 +177,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | Section 2 | 2         | 0       |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
   @javascript
@@ -195,7 +195,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF2      | 1    | 1               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "be attempted" "link" in the "TF2" "list_item" should not be visible
 
   @javascript
@@ -213,7 +213,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF1      | 1    | 0               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "be attempted" "link" in the "TF1" "list_item" should not be visible
 
   @javascript
@@ -231,7 +231,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF1      | 1    | 0               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then "be attempted" "link" in the "TF1" "list_item" should not be visible
 
   @javascript
@@ -251,7 +251,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF3      | 1    | 1               |
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     When I move "Question 1" to "After Question 3" in the quiz by clicking the move icon
     Then "Question 2 cannot be attempted until the previous question 1 has been completed • Click to change" "link" should be visible
     And "No restriction on when question 3 can be attempted • Click to change" "link" should be visible

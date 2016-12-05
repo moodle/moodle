@@ -34,7 +34,7 @@ Feature: In an assignment, teacher can submit feedback files during grading
       | Maximum number of uploaded files | 2                    |
       | Students submit in groups        | Yes                  |
     And I follow "Test assignment name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I follow "Expand all"
     And I set the field "assignfeedback_file_enabled" to "1"
     And I press "Save and display"

@@ -40,7 +40,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I set the following fields to these values:
       | Grade | 49 |
@@ -58,7 +58,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 2" "table_row"
     And I click on "View a different attempt" "link"
     And I click on "//div[contains(concat(' ', normalize-space(@class), ' '), ' confirmation-dialogue ')]//input[@value='0']" "xpath_element"

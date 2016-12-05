@@ -66,7 +66,7 @@ Feature: Show users who have not responded to the feedback survey
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Frogs"
-    And I click on "Show non-respondents" "link" in the "Administration" "block"
+    And I navigate to "Show non-respondents" in current page administration
 
     # Should only show student 2; not student 1 (they did it) or 3 (not in grouping).
     Then I should see "Student 2"
