@@ -197,8 +197,6 @@ function xmldb_lti_upgrade($oldversion) {
     // Moodle v3.1.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Moodle v3.2.0 release upgrade line.
-    // Put any upgrade step following this.
     if ($oldversion < 2016052301) {
 
         // Changing type of field value on table lti_types_config to text.
