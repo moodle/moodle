@@ -621,7 +621,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         try {
             $result = $this->update_competency_framework($f2->get_id(), 4, true);
             $this->fail('The scale cannot be changed once used.');
-        } catch (\core_competency\invalid_persistent_exception $e) {
+        } catch (\core\invalid_persistent_exception $e) {
             $this->assertRegexp('/scaleid/', $e->getMessage());
         }
     }

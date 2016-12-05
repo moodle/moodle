@@ -2824,7 +2824,7 @@ class core_competency_api_testcase extends advanced_testcase {
                 'proficiency' => true, 'grade' => 3 ));
             $usercompetency->create();
             $this->fail('Invalid grade not detected in framework scale');
-        } catch (\core_competency\invalid_persistent_exception $e) {
+        } catch (\core\invalid_persistent_exception $e) {
             $this->assertTrue(true);
         }
 
@@ -2834,7 +2834,7 @@ class core_competency_api_testcase extends advanced_testcase {
                 'proficiency' => true, 'grade' => 5 ));
             $usercompetency->create();
             $this->fail('Invalid grade not detected in competency scale');
-        } catch (\core_competency\invalid_persistent_exception $e) {
+        } catch (\core\invalid_persistent_exception $e) {
             $this->assertTrue(true);
         }
 
@@ -2844,7 +2844,7 @@ class core_competency_api_testcase extends advanced_testcase {
                 'proficiency' => true, 'grade' => 1 ));
             $usercompetency->create();
             $this->assertTrue(true);
-        } catch (\core_competency\invalid_persistent_exception $e) {
+        } catch (\core\invalid_persistent_exception $e) {
             $this->fail('Valide grade rejected in framework scale');
         }
 
@@ -2854,7 +2854,7 @@ class core_competency_api_testcase extends advanced_testcase {
                 'proficiency' => true, 'grade' => 4 ));
             $usercompetency->create();
             $this->assertTrue(true);
-        } catch (\core_competency\invalid_persistent_exception $e) {
+        } catch (\core\invalid_persistent_exception $e) {
             $this->fail('Valide grade rejected in competency scale');
         }
     }

@@ -17,25 +17,33 @@
 /**
  * Invalid persistent exception.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_competency;
+namespace core;
 
 defined('MOODLE_INTERNAL') || die();
-
-debugging('The class core_competency\\invalid_persistent_exception is deprecated. ' .
-    'Please use core\\invalid_persistent_exception instead.');
 
 /**
  * Invalid persistent exception class.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated since Moodle 3.3
  */
-class invalid_persistent_exception extends \core\invalid_persistent_exception {
+class invalid_persistent_exception extends \moodle_exception {
+
+    public function __construct(array $errors = array()) {
+        $forhumans = array();
+        $debuginfo = array();
+        foreach ($errors as $key => $message) {
+            $debuginfo[] = "$key: $message";
+            $forhumans[] = $message;
+        }
+        parent::__construct('invalidpersistenterror', 'core', null,
+                implode(', ', $forhumans), implode(' - ', $debuginfo));
+    }
+
 }

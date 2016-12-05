@@ -1,0 +1,9 @@
+This files describes API changes in /competency/*. The information provided
+here is intended especially for developers.
+
+=== 3.3 ===
+
+* Deprecated classes and their new equivalent:
+  - core_competency\persistent                     -> core\persistent
+  - core_competency\invalid_persistent_exception   -> core\invalid_persistent_exception
+
