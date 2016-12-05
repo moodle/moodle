@@ -99,14 +99,14 @@ Feature: Test creating different types of feedback questions for anonymous feedb
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I navigate to "Analysis" in current page administration
     And I should see "Submitted answers: 2"
     And I should see "Questions: 8"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Learning experience"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I navigate to "Analysis" in current page administration
     And I should see "C1" in the "(info)" "table"
     And I should see "my long answer" in the "(longertext)" "table"
     And I should see "lots of feedbacks" in the "(longertext)" "table"

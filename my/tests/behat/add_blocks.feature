@@ -17,7 +17,6 @@ Feature: Add blocks to dashboard page
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "student1"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
 
   Scenario: Add blocks to page
     When I press "Customise this page"

@@ -38,12 +38,12 @@ Feature: View gradebook when single item scales are used
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment one"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
     And I set the field "grade[modgrade_scale]" to "Singleitem"
     And I press "Save and display"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade" to "A"
     And I press "Save changes"

@@ -53,7 +53,7 @@ Feature: View subfolders in a course in-line
       And I click on "button.fp-dlg-butcreate" "css_element" in the "div.fp-mkdir-dlg" "css_element"
       And I press "Save changes"
       And I should see "Test sub subfolder"
-      And I navigate to "Edit settings" node in "Folder administration"
+      And I navigate to "Edit settings" in current page administration
       And I set the field "Display folder contents" to "Inline on a course page"
       And I set the field "Show subfolders expanded" to ""
       And I press "Save and return to course"

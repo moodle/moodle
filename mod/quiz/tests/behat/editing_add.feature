@@ -20,7 +20,7 @@ Feature: Edit quiz page - adding things
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I navigate to "Edit quiz" node in "Quiz administration"
+    And I navigate to "Edit quiz" in current page administration
     Then I should see "Editing quiz: Quiz 1"
 
   @javascript
@@ -192,7 +192,7 @@ Feature: Edit quiz page - adding things
     # Add Essay 03 from question bank.
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     And I open the "last" add to quiz menu
     And I follow "from question bank"
     And I click on "Add to quiz" "link" in the "Essay 03" "table_row"

@@ -92,7 +92,7 @@ Feature: Allow students to redo questions in a practice quiz, without starting a
     And I switch to the main window
     And the state of "First question" question is shown as "Not answered"
     And I should not see "Submit" in the ".history" "css_element"
-    And I navigate to "Statistics" node in "Quiz administration > Results"
+    And I navigate to "Results > Statistics" in current page administration
     And I follow "TF1"
     And "False" row "Frequency" column of "quizresponseanalysis" table should contain "100.00%"
     And "True" row "Frequency" column of "quizresponseanalysis" table should contain "0.00%"

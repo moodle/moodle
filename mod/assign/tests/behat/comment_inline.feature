@@ -40,7 +40,7 @@ Feature: In an assignment, teachers can edit a students submission inline
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
@@ -50,7 +50,7 @@ Feature: In an assignment, teachers can edit a students submission inline
     And I press "Ok"
     And I click on "Edit settings" "link"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     Then I should see "50.00" in the "Student 1" "table_row"
     And I should see "Submitted for grading" in the "Student 1" "table_row"
     And I should see "Graded" in the "Student 1" "table_row"

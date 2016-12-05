@@ -31,7 +31,7 @@ Feature: Assign user override
 
   Scenario: Add, modify then delete a user override
     When I follow "Test assignment name"
-    And I navigate to "User overrides" node in "Assignment administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user      | Student1 |
@@ -54,7 +54,7 @@ Feature: Assign user override
 
   Scenario: Duplicate a user override
     When I follow "Test assignment name"
-    And I navigate to "User overrides" node in "Assignment administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user      | Student1 |
@@ -76,7 +76,7 @@ Feature: Assign user override
 
   Scenario: Allow a user to have a different due date
     When I follow "Test assignment name"
-    And I navigate to "Edit settings" node in "Assignment administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_duedate_enabled | 1 |
       | id_allowsubmissionsfromdate_enabled | 0 |
@@ -87,7 +87,7 @@ Feature: Assign user override
       | duedate[hour]      | 08 |
       | duedate[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "User overrides" node in "Assignment administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
@@ -112,7 +112,7 @@ Feature: Assign user override
 
   Scenario: Allow a user to have a different cut off date
     When I follow "Test assignment name"
-    And I navigate to "Edit settings" node in "Assignment administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_duedate_enabled | 0 |
       | id_allowsubmissionsfromdate_enabled | 0 |
@@ -123,7 +123,7 @@ Feature: Assign user override
       | cutoffdate[hour]      | 08 |
       | cutoffdate[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "User overrides" node in "Assignment administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
@@ -148,7 +148,7 @@ Feature: Assign user override
 
   Scenario: Allow a user to have a different start date
     When I follow "Test assignment name"
-    And I navigate to "Edit settings" node in "Assignment administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_duedate_enabled | 0 |
       | id_allowsubmissionsfromdate_enabled | 1 |
@@ -159,7 +159,7 @@ Feature: Assign user override
       | allowsubmissionsfromdate[hour]      | 08 |
       | allowsubmissionsfromdate[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "User overrides" node in "Assignment administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user        | Student1 |

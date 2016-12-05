@@ -72,7 +72,7 @@ Feature: In a book, create chapters and sub chapters
     And "Delete chapter \"1. Dummy first chapter\"" "link" should exist in the "Table of contents" "block"
     And "Hide chapter \"1. Dummy first chapter\"" "link" should exist in the "Table of contents" "block"
     And "Add new chapter" "link" should exist in the "Table of contents" "block"
-    When I click on "Turn editing off" "link" in the "Administration" "block"
+    When I press "Turn editing off"
     Then "Edit chapter \"1. Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"
     And "Delete chapter \"1. Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"
     And "Hide chapter \"1. Dummy first chapter\"" "link" should not exist in the "Table of contents" "block"

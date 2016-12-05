@@ -25,7 +25,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I follow "Course 1"
     And I turn editing mode on
     And I follow "Test page name"
-    And I navigate to "Edit settings" node in "Page module administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | Require view | 1 |
@@ -47,7 +47,7 @@ Feature: Enable Block Completion in a course using activity completion
     And I follow "Course 1"
     And I turn editing mode on
     And I follow "Test page name"
-    And I navigate to "Edit settings" node in "Page module administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Completion tracking | Show activity as complete when conditions are met |
       | Require view | 1 |

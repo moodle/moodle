@@ -140,6 +140,5 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
     And I should see "Your score is 2 (out of 3)."
     And I log out
     And I log in as "teacher1"
-    When I click on "Dashboard" "link" in the "Navigation" "block"
     Then I should see "You have lessons that are due"
     And I should see "3 attempts"
