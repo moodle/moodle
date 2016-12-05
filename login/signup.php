@@ -48,8 +48,16 @@ $PAGE->https_required();
 $PAGE->set_url('/login/signup.php');
 $PAGE->set_context(context_system::instance());
 
-// Override wanted URL, we do not want to end up here again if user clicks "Login".
-$SESSION->wantsurl = $CFG->wwwroot . '/';
+// If wantsurl is empty or /login/signup.php, override wanted URL.
+// We do not want to end up here again if user clicks "Login".
+if (empty($SESSION->wantsurl)) {
+    $SESSION->wantsurl = $CFG->wwwroot . '/';
+} else {
+    $wantsurl = new moodle_url($SESSION->wantsurl);
+    if ($PAGE->url->compare($wantsurl, URL_MATCH_BASE)) {
+        $SESSION->wantsurl = $CFG->wwwroot . '/';
+    }
+}
 
 if (isloggedin() and !isguestuser()) {
     // Prevent signing up when already logged in.
