@@ -242,13 +242,9 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
                     SELECTORS.LOADINGICON).remove();
                 // Check if we got something to do.
                 if (numberreceived > 0) {
-                    // Let's check if we can remove the block time.
-                    // First, get the block time that is currently being displayed.
-                    var blocktime = this.messageArea.node.find(SELECTORS.BLOCKTIME + ":first");
-                    var newblocktime = $(html).find(SELECTORS.BLOCKTIME + ":first").addBack();
-                    if (blocktime.html() == newblocktime.html()) {
-                        // Remove the block time as it's present above.
-                        blocktime.remove();
+                    var newHtml = $('<div>' + html + '</div>');
+                    if (this._hasMatchingBlockTime(this.messageArea.node, newHtml, true)) {
+                        this.messageArea.node.find(SELECTORS.BLOCKTIME + ':first').remove();
                     }
                     // Get height before we add the messages.
                     var oldheight = this.messageArea.find(SELECTORS.MESSAGES)[0].scrollHeight;
@@ -313,11 +309,12 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
             }.bind(this)).then(function(html, js) {
                 // Check if we got something to do.
                 if (numberreceived > 0) {
-                    html = $(html);
-                    // Remove the new block time as it's present above.
-                    html.find(SELECTORS.BLOCKTIME).remove();
+                    var newHtml = $('<div>' + html + '</div>');
+                    if (this._hasMatchingBlockTime(this.messageArea.node, newHtml, false)) {
+                        newHtml.find(SELECTORS.BLOCKTIME + ':first').remove();
+                    }
                     // Show the new content.
-                    Templates.appendNodeContents(this.messageArea.find(SELECTORS.MESSAGES), html, js);
+                    Templates.appendNodeContents(this.messageArea.find(SELECTORS.MESSAGES), newHtml, js);
                     // Scroll the new message into view.
                     if (shouldScrollBottom) {
                         this._scrollBottom();
@@ -810,11 +807,47 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
 
         /**
          * Hide the messaging area. This only applies on smaller screen resolutions.
+         *
+         * @private
          */
         Messages.prototype._hideMessagingArea = function() {
             this.messageArea.find(SELECTORS.MESSAGINGAREA)
                 .removeClass('show-messages')
                 .addClass('hide-messages');
+        };
+
+        /**
+         * Checks if a day separator needs to be removed.
+         *
+         * Example - scrolling up and loading previous messages that belong to the
+         * same day as the last message that was previously shown, meaning we can
+         * remove the original separator.
+         *
+         * @param {jQuery} domHtml The HTML in the DOM.
+         * @param {jQuery} newHtml The HTML to compare to the DOM
+         * @param {boolean} loadingPreviousMessages Are we loading previous messages?
+         * @return {boolean}
+         * @private
+         */
+        Messages.prototype._hasMatchingBlockTime = function(domHtml, newHtml, loadingPreviousMessages) {
+            var blockTime, blockTimePos, newBlockTime, newBlockTimePos;
+
+            if (loadingPreviousMessages) {
+                blockTimePos = ':first';
+                newBlockTimePos = ':last';
+            } else {
+                blockTimePos = ':last';
+                newBlockTimePos = ':first';
+            }
+
+            blockTime = domHtml.find(SELECTORS.BLOCKTIME + blockTimePos);
+            newBlockTime = newHtml.find(SELECTORS.BLOCKTIME + newBlockTimePos);
+
+            if (blockTime.length && newBlockTime.length) {
+                return blockTime.data('blocktime') == newBlockTime.data('blocktime');
+            }
+
+            return false;
         };
 
         return Messages;
