@@ -97,7 +97,7 @@ $string['nocoursesnotontheshop'] = 'There are no courses available to be added t
 $string['nocoursesontheshop'] = 'There are no courses on the shop matching your criteria.';
 $string['noinvoices'] = 'There are no invoices matching your criteria.';
 $string['noproviders'] = 'No payment providers have been enabled. Please contact the site administrator';
-$string['notconfigured'] = 'The eCommerce block has not been configured. Check the settings page for the block';
+$string['notconfigured'] = 'The eCommerce block has not been configured. Check the <a href="{$a}">settings page</a> for the block';
 $string['or'] = 'or';
 $string['order'] = 'Order';
 $string['orders'] = 'Orders';

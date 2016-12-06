@@ -93,7 +93,8 @@ $blockpage->display_header();
 
 // Has this been setup properly
 if (!is_commerce_configured()) {
-    echo '<div class=\"alert alert-danger\">' . get_string('notconfigured', 'block_iomad_commerce') . '</div>';
+    $link = new moodle_url('/admin/settings.php', array('section' => 'blocksettingiomad_commerce'));
+    echo '<div class="alert alert-danger">' . get_string('notconfigured', 'block_iomad_commerce', $link->out()) . '</div>';
     echo $OUTPUT->footer();
     die;
 }

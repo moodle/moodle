@@ -42,7 +42,8 @@ class block_iomad_commerce extends block_base {
 
         // Has this been setup properly
         if (!is_commerce_configured()) {
-            $this->content->text = '<div class=\"alert alert-danger\">' . get_string('notconfigured', 'block_iomad_commerce') . '</div>';
+            $link = new moodle_url('/admin/settings.php', array('section' => 'blocksettingiomad_commerce'));
+            $this->content->text = '<div class="alert alert-danger">' . get_string('notconfigured', 'block_iomad_commerce', $link->out()) . '</div>';
             return $this->content;
         }
 
