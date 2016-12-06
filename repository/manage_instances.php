@@ -91,7 +91,6 @@ if ($context->contextlevel == CONTEXT_COURSE) {
         print_error('notyourinstances', 'repository');
     }
     $user = $USER;
-    $PAGE->set_pagelayout('mydashboard');
 } else {
     print_error('invalidcontext');
 }
