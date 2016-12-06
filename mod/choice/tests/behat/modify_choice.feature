@@ -35,7 +35,7 @@ Feature: Teacher can modify choices of the students
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Choice name"
-    And I click on "View 1 responses" "link" in the "Administration" "block"
+    And I navigate to "View 1 responses" in current page administration
     And I click on "Student 1 Option 1" "checkbox"
     And I select "Delete" from the "With selected" singleselect
     And "Student 1 Option 1" "checkbox" should not exist
@@ -53,7 +53,7 @@ Feature: Teacher can modify choices of the students
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Choice name"
-    And I click on "View 1 responses" "link" in the "Administration" "block"
+    And I navigate to "View 1 responses" in current page administration
     And I click on "Student 1 Option 1" "checkbox"
     And I click on "Student 2 Not answered yet" "checkbox"
     And I click on "Student 3 Not answered yet" "checkbox"
@@ -71,7 +71,7 @@ Feature: Teacher can modify choices of the students
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Choice name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the field "Allow more than one choice to be selected" to "Yes"
     And I press "Save and return to course"
     And I log out
@@ -84,7 +84,7 @@ Feature: Teacher can modify choices of the students
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Choice name"
-    And I click on "View 1 responses" "link" in the "Administration" "block"
+    And I navigate to "View 1 responses" in current page administration
     And I click on "Student 1 Option 2" "checkbox"
     And I select "Delete" from the "With selected" singleselect
     And I click on "Student 1 Option 1" "checkbox"
@@ -107,7 +107,7 @@ Feature: Teacher can modify choices of the students
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Choice name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Publish results | Always show results to students |
       | Privacy of results | Publish full results, showing names and their choices |

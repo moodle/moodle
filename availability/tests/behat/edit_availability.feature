@@ -216,7 +216,7 @@ Feature: edit_availability
 
     # Check the button still works after saving and editing.
     And I press "Save and display"
-    And I navigate to "Edit settings" node in "Forum administration"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And the "Add group/grouping access restriction" "button" should be disabled
     And I should see "Grouping" in the "Restrict access" "fieldset"

@@ -17,7 +17,7 @@ Feature: Edit course settings
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    When I click on "Edit settings" "link" in the "Administration" "block"
+    When I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course full name | Edited course fullname |
       | Course short name | Edited course shortname |
@@ -28,7 +28,7 @@ Feature: Edit course settings
     And I should not see "C1"
     And I should see "Edited course fullname"
     And I should see "Edited course shortname"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And the field "Course full name" matches value "Edited course fullname"
     And the field "Course short name" matches value "Edited course shortname"
     And the field "Course summary" matches value "Edited course summary"

@@ -12,7 +12,7 @@ Feature: User can be enrolled into a course
       | fullname   | shortname |
       | Course 001 | C001      |
     And I log in as "admin"
-    And I follow "Courses"
+    And I am on course index
     And I follow "Course 001"
 
   Scenario: User can be enrolled without javascript

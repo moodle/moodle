@@ -33,7 +33,7 @@ Feature: Basic use of the Manual grading report
     # Check report shows nothing when there are no attempts.
     And I follow "Course 1"
     And I follow "Quiz 1"
-    When I navigate to "Manual grading" node in "Quiz administration > Results"
+    When I navigate to "Results > Manual grading" in current page administration
     Then I should see "Manual grading"
     And I should see "Quiz 1"
     And I should see "Nothing to display"
@@ -60,7 +60,7 @@ Feature: Basic use of the Manual grading report
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I navigate to "Manual grading" node in "Quiz administration > Results"
+    And I navigate to "Results > Manual grading" in current page administration
     And I should see "Manual grading"
     And I follow "Also show questions that have been graded automatically"
     And I should see "Short answer 001"

@@ -16,8 +16,7 @@ Feature: Automatic updating of groups and groupings
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group (without ID) |
@@ -73,8 +72,7 @@ Feature: Automatic updating of groups and groupings
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     And I set the field "groups" to "Group (with ID)"
     When I press "Edit group settings"
     Then the "idnumber" "field" should be readonly
@@ -111,8 +109,7 @@ Feature: Automatic updating of groups and groupings
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     And I set the field "groups" to "Group (with ID)"
     And I press "Edit group settings"
     And I set the following fields to these values:
@@ -138,8 +135,7 @@ Feature: Automatic updating of groups and groupings
     And I should not see "This enrolment key is already used for another group."
     And I am on homepage
     And I follow "Course 2"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |

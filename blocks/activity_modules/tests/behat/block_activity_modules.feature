@@ -109,7 +109,7 @@ Feature: Block activity modules
       | workshop   | Test workshop name     | Test workshop description     | C1     | workshop1   |
 
     When I log in as "admin"
-    And I follow "Courses"
+    And I am on course index
     And I follow "Course 1"
     And I turn editing mode on
     And I add the "Activities" block

@@ -36,7 +36,7 @@ Feature: Edit quiz page - remove questions
       | Question A | 1    |
       | Question B | 1    |
       | Question C | 2    |
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
 
     # Confirm the starting point.
     Then I should see "Question A" on quiz page "1"
@@ -81,7 +81,7 @@ Feature: Edit quiz page - remove questions
       | heading   | firstslot | shuffle |
       | Heading 1 | 1         | 1       |
       | Heading 2 | 2         | 1       |
-    When I click on "Edit quiz" "link" in the "Administration" "block"
+    When I navigate to "Edit quiz" in current page administration
     Then "Delete" "link" in the "Question A" "list_item" should not be visible
     Then "Delete" "link" in the "Question B" "list_item" should be visible
     Then "Delete" "link" in the "Question C" "list_item" should be visible
@@ -94,6 +94,6 @@ Feature: Edit quiz page - remove questions
     And quiz "Quiz 1" contains the following questions:
       | question   | page |
       | Question A | 1    |
-    When I click on "Edit quiz" "link" in the "Administration" "block"
+    When I navigate to "Edit quiz" in current page administration
     And I delete "Question A" in the quiz by clicking the delete icon
     Then I should see "Questions: 0"

@@ -58,7 +58,7 @@ Feature: Lesson reset
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test lesson name"
-    And I navigate to "Overview" node in "Lesson administration > Reports"
+    And I navigate to "Reports > Overview" in current page administration
     And I should see "Sam1 Student1"
     And I navigate to "Reset" node in "Course administration"
     And I set the following fields to these values:
@@ -67,13 +67,13 @@ Feature: Lesson reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test lesson name"
-    And I navigate to "Overview" node in "Lesson administration > Reports"
+    And I navigate to "Reports > Overview" in current page administration
     Then I should see "No attempts have been made on this lesson"
 
   @javascript
   Scenario: Use course reset to remove user overrides.
     When I follow "Test lesson name"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
         | Override user    | Student1  |
@@ -87,12 +87,12 @@ Feature: Lesson reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test lesson name"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
   Scenario: Use course reset to remove group overrides.
     When I follow "Test lesson name"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
         | Override group   | Group 1  |
@@ -106,5 +106,5 @@ Feature: Lesson reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test lesson name"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     Then I should not see "Group 1"

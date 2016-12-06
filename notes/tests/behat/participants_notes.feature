@@ -20,6 +20,16 @@ Feature: Add notes to course participants
       | student1 | C1 | student |
       | student2 | C1 | student |
       | student3 | C1 | student |
+    # TODO MDL-57120 "Notes" and site "Participants" links are not accessible without navigation block.
+    Given I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Participants"

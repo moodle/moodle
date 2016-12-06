@@ -26,7 +26,7 @@ Feature: The activity results block displays student scores as scales
       | student5 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "Scales" in the course gradebook
+    And I navigate to "Scales" in the course gradebook
     And I press "Add a new scale"
     And I set the following fields to these values:
       | Name | My Scale |
@@ -41,7 +41,7 @@ Feature: The activity results block displays student scores as scales
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |
     And I follow "Course 1"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "Very good" to the user "Student 2" for the grade item "Test assignment"

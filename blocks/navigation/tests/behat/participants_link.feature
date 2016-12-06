@@ -15,13 +15,22 @@ Feature: Displaying the link to the Participants page
     And the following "course enrolments" exist:
       | user     | course | role    |
       | student1 | C1     | student |
+    And I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    And I log out
 
   @javascript
   Scenario: Course participants link is displayed to enrolled students after expanding the course node
     When I log in as "student1"
     And I expand "C1" node
     Then "Participants" "link" should exist in the "Navigation" "block"
-    And I navigate to "Participants" node in "My courses > C1"
+    And I click on "Participants" "link" in the "Navigation" "block"
     And I should see "Participants"
     And "Student One" "link" should exist
     And "Student Two" "link" should not exist
@@ -29,7 +38,7 @@ Feature: Displaying the link to the Participants page
   Scenario: Site participants link is displayed to admins
     When I log in as "admin"
     Then "Participants" "link" should exist in the "Navigation" "block"
-    And I navigate to "Participants" node in "Site pages"
+    And I click on "Participants" "link" in the "Navigation" "block"
     And I should see "Participants"
     And "Student One" "link" should exist
     And "Student Two" "link" should exist
