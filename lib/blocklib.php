@@ -423,6 +423,7 @@ class block_manager {
         if (!in_array($block->name, $undeletableblocktypes)) {
             $undeletableblocktypes[] = $block->name;
             set_config('undeletableblocktypes', implode(',', $undeletableblocktypes));
+            add_to_config_log('block_protect', "0", "1", $block->name);
         }
     }
 
@@ -448,6 +449,7 @@ class block_manager {
         if (in_array($block->name, $undeletableblocktypes)) {
             $undeletableblocktypes = array_diff($undeletableblocktypes, array($block->name));
             set_config('undeletableblocktypes', implode(',', $undeletableblocktypes));
+            add_to_config_log('block_protect', "1", "0", $block->name);
         }
 
     }
