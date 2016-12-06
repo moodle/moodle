@@ -16,7 +16,7 @@ Feature: Grade letters can be overridden
       | teacher1 | C1     | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "Letters > Edit" in the course gradebook
+    And I navigate to "Letters > Edit" in the course gradebook
 
   Scenario Outline: Grade letters can be completely overridden
     When I set the following fields to these values:

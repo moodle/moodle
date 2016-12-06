@@ -24,18 +24,18 @@ Feature: Average grades are displayed in the gradebook
     And I am on site homepage
     And I follow "Course 1"
     # Enable averages
-    And I go to "Setup > Course grade settings" in the course gradebook
+    And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the following fields to these values:
       | Show average | Show |
     And I press "Save changes"
     # Add a manual grade item
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |
     And I press "Save changes"
     # Give all student the same grade for the manual grade item
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "Manual item 1"
     And I give the grade "50.00" to the user "Student 2" for the grade item "Manual item 1"
@@ -51,7 +51,7 @@ Feature: Average grades are displayed in the gradebook
 
   Scenario: Grade a grade item and ensure the results display correctly in the gradebook
     # Check the admin grade table
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     Then I should see "50.00" in the ".avg.r0.lastrow .c1" "css_element"
     Then I should see "50.00" in the ".avg.r0.lastrow .c2" "css_element"
     And I log out
@@ -60,7 +60,7 @@ Feature: Average grades are displayed in the gradebook
     And I log in as "student1"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "User report" in the course gradebook
+    And I navigate to "User report" in the course gradebook
     Then I should see "50.00" in the ".level2.column-grade" "css_element"
     Then I should see "50.00" in the ".level2.column-average" "css_element"
     And I log out
