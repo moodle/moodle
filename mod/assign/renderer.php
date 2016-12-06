@@ -635,6 +635,7 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         $t = new html_table();
 
+        $warningmsg = '';
         if ($status->teamsubmissionenabled) {
             $row = new html_table_row();
             $cell1 = new html_table_cell(get_string('submissionteam', 'assign'));
@@ -646,10 +647,12 @@ class mod_assign_renderer extends plugin_renderer_base {
                     $cell2 = new html_table_cell(
                         html_writer::span(get_string('noteam', 'assign'), 'alert alert-error')
                     );
+                    $warningmsg = $this->output->notification(get_string('noteam_desc', 'assign'), 'error');
                 } else if (count($status->usergroups) > 1) {
                     $cell2 = new html_table_cell(
                         html_writer::span(get_string('multipleteams', 'assign'), 'alert alert-error')
                     );
+                    $warningmsg = $this->output->notification(get_string('multipleteams_desc', 'assign'), 'error');
                 }
             } else {
                 $cell2 = new html_table_cell(get_string('defaultteam', 'assign'));
@@ -906,6 +909,7 @@ class mod_assign_renderer extends plugin_renderer_base {
             }
         }
 
+        $o .= $warningmsg;
         $o .= html_writer::table($t);
         $o .= $this->output->box_end();
 
