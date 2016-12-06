@@ -117,6 +117,9 @@ Feature: Managers can create and manage tag collections
       | Searchable | 0 |
     And I press "Create"
     And "Yes" "text" should not exist in the "//table[contains(@class,'tag-collections-table')]//tr[contains(.,'Hiddencoll')]" "xpath_element"
+    And I press "Blocks editing on"
+    # TODO MDL-57120 "Tags" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
     And I navigate to "Tags" node in "Site pages"
     Then the "Select tag collection" select box should contain "Default collection"
     And the "Select tag collection" select box should contain "Hobbies"

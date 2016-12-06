@@ -26,7 +26,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
       | assign   | C1     | a5       | Test assignment five (extra) | x     | 10    |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Test assignment four (extra)":
       | Extra credit | 1 |
     And I set the following settings for grade item "Test assignment five (extra)":
@@ -34,7 +34,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
 
   @javascript
   Scenario: No weights are overridden and student has all grades present (before the fix 20150619)
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
@@ -42,7 +42,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade  | Range | Percentage | Contribution to course total |
@@ -56,14 +56,14 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
 
   @javascript
   Scenario: No weights are overridden, student has some grades present (before the fix 20150619)
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -77,12 +77,12 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
 
   @javascript
   Scenario: No weights are overridden, student has none grades present except for extra credit (before the fix 20150619)
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -102,14 +102,14 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
       | Extra credit | 1 |
     And I set the following settings for grade item "Test assignment three":
       | Extra credit | 1 |
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -126,7 +126,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     When I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "50"
     And I press "Save changes"
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
@@ -134,7 +134,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade  | Range | Percentage | Contribution to course total |
@@ -152,14 +152,14 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     When I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "50"
     And I press "Save changes"
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -177,12 +177,12 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     When I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "50"
     And I press "Save changes"
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -201,7 +201,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I set the field "Override weight of Test assignment four (extra)" to "1"
     And I set the field "Weight of Test assignment four (extra)" to "10"
     And I press "Save changes"
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
@@ -209,7 +209,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -229,14 +229,14 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I set the field "Override weight of Test assignment four (extra)" to "1"
     And I set the field "Weight of Test assignment four (extra)" to "10"
     And I press "Save changes"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -256,12 +256,12 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
     And I set the field "Override weight of Test assignment four (extra)" to "1"
     And I set the field "Weight of Test assignment four (extra)" to "10"
     And I press "Save changes"
-    When I go to "View > Grader report" in the course gradebook
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |

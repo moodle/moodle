@@ -32,7 +32,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
       | assign | C1 | a7 | Test assignment seven | Submit nothing! | Sub category 1 | 15 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
 
   @javascript
   Scenario: Setting all weights in a category to exactly one hundred in total.

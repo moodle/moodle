@@ -21,7 +21,7 @@ Feature: In a report, admin can filter log data by action
     # View Action.
     And I follow "Test assignment 1"
     # Update Action.
-    And I navigate to "Edit settings" node in "Assignment administration"
+    And I navigate to "Edit settings" in current page administration
     And I press "Save and return to course"
     # Delete Action.
     And I delete "Test assignment 1" activity

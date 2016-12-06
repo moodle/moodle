@@ -31,7 +31,7 @@ Feature: Chat reset
       | startdate[year]      | 2020 |
     And I press "Save and display"
     And I follow "Test chat name"
-    And I navigate to "Edit settings" node in "Chat administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | chattime[day]       | 1 |
       | chattime[month]     | January |
@@ -50,6 +50,6 @@ Feature: Chat reset
     And I press "Continue"
     Then I follow "Course 1"
     And I follow "Test chat name"
-    And I navigate to "Edit settings" node in "Chat administration"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And the "chattime[year]" select box should contain "2030"

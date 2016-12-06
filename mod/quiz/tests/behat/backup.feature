@@ -32,7 +32,7 @@ Feature: Backup and restore of quizzes
     And I duplicate "Quiz 1" activity editing the new copy with:
       | Name | Quiz 2 |
     And I follow "Quiz 2"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then I should see "TF1"
     And I should see "TF2"
 
@@ -46,6 +46,6 @@ Feature: Backup and restore of quizzes
     And I press "Save changes"
     And I restore "moodle_28_quiz.mbz" backup into "Course 1" course using this options:
     And I follow "Restored Moodle 2.8 quiz"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     Then I should see "TF1"
     And I should see "TF2"

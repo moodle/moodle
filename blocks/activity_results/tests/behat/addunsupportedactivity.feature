@@ -33,7 +33,7 @@ Feature: The activity results block displays student scores
       | id_config_nameformat | Display full names |
     And I press "Save changes"
     When I follow "Test assignment"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_grade_modgrade_type | None |
     And I press "Save and return to course"

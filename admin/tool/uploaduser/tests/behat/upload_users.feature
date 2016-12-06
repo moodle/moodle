@@ -29,14 +29,13 @@ Feature: Upload users
     And I should see "Section 1"
     And I press "Upload users"
     And I press "Continue"
-    And I follow "Browse list of users"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I should see "Tom Jones"
     And I should see "Trent Reznor"
     And I should see "reznor@example.com"
     And I am on site homepage
     And I follow "Maths"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     And I set the field "groups" to "Section 1 (1)"
     And the "members" select box should contain "Tom Jones"
 

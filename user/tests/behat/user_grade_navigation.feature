@@ -29,7 +29,7 @@ Feature: The student can navigate to their grades page and user grade report.
       | assign | C2 | a4 | Test assignment four | Submit something! | 150 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "150.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "67.00" to the user "Student 1" for the grade item "Test assignment two"
@@ -66,6 +66,12 @@ Feature: The student can navigate to their grades page and user grade report.
     And I am on site homepage
     And I turn editing mode on
     And I add the "Mentees" block
+    # TODO MDL-57216 this functionality should work without navigation block.
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
     And I navigate to "Define roles" node in "Site administration > Users > Permissions"
     And I click on "Add a new role" "button"
     And I click on "Continue" "button"
@@ -89,7 +95,7 @@ Feature: The student can navigate to their grades page and user grade report.
     And I log in as "parent1"
     And I am on site homepage
     And I follow "Student 1"
-    And I navigate to "Grades" node in "Users > Student 1"
+    And I click on "Grades" "link" in the "Navigation" "block"
     Then the following should exist in the "overview-grade" table:
     | Course name | Grade |
     | Course 2 | - |

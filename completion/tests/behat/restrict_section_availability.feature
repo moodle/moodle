@@ -23,7 +23,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -93,7 +93,7 @@ Feature: Restrict sections availability through completion or grade conditions
     And I am on site homepage
     And I follow "Course 1"
     And I follow "Grade assignment"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student First" "table_row"
     And I set the following fields to these values:
       | Grade | 21 |

@@ -225,18 +225,37 @@ class behat_navigation extends behat_base {
      *
      * @Given /^I navigate to "(?P<nodetext_string>(?:[^"]|\\")*)" node in "(?P<parentnodes_string>(?:[^"]|\\")*)"$/
      *
+     * @todo MDL-57281 deprecate in Moodle 3.1
+     *
      * @throws ExpectationException
      * @param string $nodetext navigation node to click.
      * @param string $parentnodes comma seperated list of parent nodes.
      * @return void
      */
     public function i_navigate_to_node_in($nodetext, $parentnodes) {
+        // This step needs to be deprecated and replaced with one of:
+        // - I navigate to "PATH" in current page administration
+        // - I navigate to "PATH" in site administration
+        // - I navigate to course participants
+        // - I navigate to "PATH" in the course gradebook
+        // - I click on "LINK" "link" in the "Navigation" "block" .
+        $parentnodes = array_map('trim', explode('>', $parentnodes));
+        $this->select_node_in_navigation($nodetext, $parentnodes);
+    }
+
+    /**
+     * Finds a node in the Navigation or Administration tree and clicks on it.
+     *
+     * @param string $nodetext
+     * @param array $parentnodes
+     * @throws ExpectationException
+     */
+    protected function select_node_in_navigation($nodetext, $parentnodes) {
 
         // Site admin is different and needs special treatment.
         $siteadminstr = get_string('administrationsite');
 
         // Create array of all parentnodes.
-        $parentnodes = array_map('trim', explode('>', $parentnodes));
         $countparentnode = count($parentnodes);
 
         // If JS is disabled and Site administration is not expanded we
@@ -414,5 +433,93 @@ class behat_navigation extends behat_base {
         }
 
         $this->execute('behat_general::i_click_on', array(".btn-navbar", "css_element"));
+    }
+
+    /**
+     * Go to current page setting item
+     *
+     * This can be used on front page, course, category or modules pages.
+     *
+     * @Given /^I navigate to "(?P<nodetext_string>(?:[^"]|\\")*)" in current page administration$/
+     *
+     * @throws ExpectationException
+     * @param string $nodetext navigation node to click, may contain path, for example "Reports > Overview"
+     * @return void
+     */
+    public function i_navigate_to_in_current_page_administration($nodetext) {
+        $parentnodes = array_map('trim', explode('>', $nodetext));
+        // Find the name of the first category of the administration block tree.
+        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
+        $node = $this->find('xpath', $xpath);
+        array_unshift($parentnodes, $node->getText());
+        $lastnode = array_pop($parentnodes);
+        $this->select_node_in_navigation($lastnode, $parentnodes);
+    }
+
+    /**
+     * Checks that current page administration contains text
+     *
+     * @Given /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should exist in current page administration$/
+     *
+     * @throws ExpectationException
+     * @param string $element The locator of the specified selector.
+     *     This may be a path, for example "Subscription mode > Forced subscription"
+     * @param string $selectortype The selector type
+     * @return void
+     */
+    public function should_exist_in_current_page_administration($element, $selectortype) {
+        $parentnodes = array_map('trim', explode('>', $element));
+        $element = array_pop($parentnodes);
+
+        foreach ($parentnodes as $parentnode) {
+            try {
+                $this->i_expand_node($parentnode);
+            } catch (ExpectationException $e) {
+                // Parent node not found.
+                return;
+            }
+        }
+
+        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]';
+        $this->execute('behat_general::should_exist_in_the', [$element, $selectortype, $xpath, 'xpath_element']);
+    }
+
+    /**
+     * Checks that current page administration contains text
+     *
+     * @Given /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" should not exist in current page administration$/
+     *
+     * @throws ExpectationException
+     * @param string $element The locator of the specified selector.
+     *     This may be a path, for example "Subscription mode > Forced subscription"
+     * @param string $selectortype The selector type
+     * @return void
+     */
+    public function should_not_exist_in_current_page_administration($element, $selectortype) {
+        $parentnodes = array_map('trim', explode('>', $element));
+        $element = array_pop($parentnodes);
+
+        foreach ($parentnodes as $parentnode) {
+            $this->i_expand_node($parentnode);
+        }
+
+        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]';
+        $this->execute('behat_general::should_not_exist_in_the', [$element, $selectortype, $xpath, 'xpath_element']);
+    }
+
+    /**
+     * Go to site administration item
+     *
+     * @Given /^I navigate to "(?P<nodetext_string>(?:[^"]|\\")*)" in site administration$/
+     *
+     * @throws ExpectationException
+     * @param string $nodetext navigation node to click, may contain path, for example "Reports > Overview"
+     * @return void
+     */
+    public function i_navigate_to_in_site_administration($nodetext) {
+        $parentnodes = array_map('trim', explode('>', $nodetext));
+        array_unshift($parentnodes, get_string('administrationsite'));
+        $lastnode = array_pop($parentnodes);
+        $this->select_node_in_navigation($lastnode, $parentnodes);
     }
 }

@@ -52,11 +52,11 @@ Feature: We can use Single view
       | gradereport/singleview:view | Allow      | teacher  | Course        | C1        |
     And I log in as "teacher1"
     And I follow "Course 1"
-    Given I go to "View > Grader report" in the course gradebook
+    Given I navigate to "View > Grader report" in the course gradebook
 
   @javascript
   Scenario: I can update grades, add feedback and exclude grades.
-    Given I go to "View > Single view" in the course gradebook
+    Given I navigate to "View > Single view" in the course gradebook
     And I select "Student 4" from the "Select user..." singleselect
     And I set the field "Override for Test assignment one" to "1"
     When I set the following fields to these values:
@@ -97,7 +97,7 @@ Feature: We can use Single view
     And I log out
     And I log in as "teacher2"
     And I follow "Course 1"
-    Given I go to "View > Single view" in the course gradebook
+    Given I navigate to "View > Single view" in the course gradebook
     And I click on "Student 4" "option"
     And the "Exclude for Test assignment one" "checkbox" should be disabled
     And the "Override for Test assignment one" "checkbox" should be enabled
@@ -105,7 +105,7 @@ Feature: We can use Single view
   Scenario: Single view links work on grade report.
     Given I follow "Single view for Test assignment one"
     Then I should see "Test assignment one"
-    Then I go to "View > Grader report" in the course gradebook
+    Then I navigate to "View > Grader report" in the course gradebook
     And I follow "Single view for Student 1"
     Then I should see "Student 1"
 

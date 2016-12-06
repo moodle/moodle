@@ -14,7 +14,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I follow "Turn editing on"
     And I add the "Tags" block
     Then I should see "Tags" in the "Tags" "block"
-    And I click on "Participants" "link" in the "//li[p/a[contains(normalize-space(string(.)), 'Courses')]]" "xpath_element"
+    And I navigate to course participants
     And I configure the "Tags" block
     And I set the following fields to these values:
       | Display on page types | Any page |
@@ -31,7 +31,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I should see "Tags" in the "Tags" "block"
     And I follow "Course 1"
     And "Tags" "block" should not exist
-    And I navigate to "Participants" node in "Courses > C1"
+    And I navigate to course participants
     And "Tags" "block" should not exist
     And I follow "Course 1"
     And I add a "Assignment" to section "1" and I fill the form with:
@@ -45,5 +45,5 @@ Feature: The context of a block can always be returned to it's original state.
     And I press "Save changes"
     And I follow "Course 1"
     And I should see "Tags" in the "Tags" "block"
-    And I navigate to "Participants" node in "Courses > C1"
+    And I navigate to course participants
     And I should see "Tags" in the "Tags" "block"

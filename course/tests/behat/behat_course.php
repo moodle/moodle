@@ -51,7 +51,7 @@ class behat_course extends behat_base {
         try {
             $this->execute("behat_forms::press_button", get_string('turneditingon'));
         } catch (Exception $e) {
-            $this->execute("behat_general::i_click_on_in_the", [get_string('turneditingon'), 'link', 'Administration', 'block']);
+            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingon')]);
         }
     }
 
@@ -64,7 +64,7 @@ class behat_course extends behat_base {
         try {
             $this->execute("behat_forms::press_button", get_string('turneditingoff'));
         } catch (Exception $e) {
-            $this->execute("behat_general::i_click_on_in_the", [get_string('turneditingoff'), 'link', 'Administration', 'block']);
+            $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", [get_string('turneditingoff')]);
         }
     }
 
@@ -1727,5 +1727,17 @@ class behat_course extends behat_base {
     public function i_click_on_category_in_the_management_category_listing($name) {
         $node = $this->get_management_category_listing_node_by_name($name);
         $node->find('css', 'a.categoryname')->click();
+    }
+
+    /**
+     * Go to the course participants
+     *
+     * @Given /^I navigate to course participants$/
+     */
+    public function i_navigate_to_course_participants() {
+        $coursestr = behat_context_helper::escape(get_string('courses'));
+        $mycoursestr = behat_context_helper::escape(get_string('mycourses'));
+        $xpath = "//div[contains(@class,'block')]//li[p/*[string(.)=$coursestr or string(.)=$mycoursestr]]";
+        $this->execute('behat_general::i_click_on_in_the', [get_string('participants'), 'link', $xpath, 'xpath_element']);
     }
 }

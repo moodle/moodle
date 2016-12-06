@@ -7,7 +7,7 @@ Feature: Adding and configuring HTML blocks
   Background:
     Given I log in as "admin"
     And I am on site homepage
-    When I click on "Turn editing on" "link" in the "Administration" "block"
+    When I turn editing mode on
     And I add the "HTML" block
 
   Scenario: Other users can not see HTML block that has not been configured

@@ -34,6 +34,7 @@ Feature: Test importing questions from Moodle XML format.
     # Now export again.
     And I navigate to "Export" node in "Course administration > Question bank"
     And I set the field "id_format_xml" to "1"
+    And I set the field "Export category" to "TrueFalse"
     And I press "Export questions to file"
     And following "click here" should download between "57000" and "58000" bytes
 

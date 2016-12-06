@@ -16,8 +16,7 @@ Feature: Automatic deletion of groups and groupings
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group (without ID) |
@@ -66,8 +65,7 @@ Feature: Automatic deletion of groups and groupings
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     When I set the field "groups" to "Group (with ID) (0)"
     Then the "Delete selected group" "button" should be disabled
     And I set the field "groups" to "Group (without ID) (0)"

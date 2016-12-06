@@ -258,4 +258,8 @@ class behat_theme_boost_behat_course extends behat_course {
 
         return true;
     }
+
+    public function i_navigate_to_course_participants() {
+        $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', get_string('participants'));
+    }
 }

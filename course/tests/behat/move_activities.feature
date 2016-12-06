@@ -20,10 +20,6 @@ Feature: Activities can be moved between sections
     And I add the "Recent activity" block
     And I follow "Delete Recent activity block"
     And I press "Yes"
-    And I follow "Configure Navigation block"
-    And I set the following fields to these values:
-      | Visible | Yes |
-    And I press "Save changes"
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
@@ -34,7 +30,7 @@ Feature: Activities can be moved between sections
     And I should not see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Move activities in the course home with Javascript disabled using paged mode
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
@@ -43,7 +39,7 @@ Feature: Activities can be moved between sections
     And I should not see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Move activities in a course section with Javascript disabled using paged mode
-    Given I click on "Edit settings" "link" in the "Administration" "block"
+    Given I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
