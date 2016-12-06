@@ -76,7 +76,7 @@ $string['pathssubdataroot'] = '<p>En mappe hvori Moodle kan gemme uploadede file
 <p>Webserver-brugeren (som regel \'www-data\', \'nobody\', eller \'apache\') skal have læse- og skriveadgang til den.</p>
 <p>Mappen  må ikke være tilgængelig direkte fra internettet.</p>
 <p>Hvis ikke den allerede eksisterer, vil Installationsprogrammet forsøge at oprette den</p>';
-$string['pathssubdirroot'] = 'Den fulde sti til Moodleinstallationen.';
+$string['pathssubdirroot'] = '<p>Den fulde sti til Moodleinstallationen.<p>';
 $string['pathssubwwwroot'] = '<p>Moodles fulde web-adresse, dvs. adressen som den skal stå i browserens adressefelt for at komme ind på Moodle.</p>
 <p>Moodle kan ikke bruges fra flere adresser. Hvis dit websted kan tilgås fra flere adresser, skal du vælge den enkleste og opsætte permanent viderestilling for hver af de øvrige.</p>
 <p>Hvis dit websted er tilgængeligt fra både internettet og et internt net (nogen gange kaldet intranet), skal du bruge den offentlige adresse her</p>
