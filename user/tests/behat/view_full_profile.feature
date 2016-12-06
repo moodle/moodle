@@ -108,7 +108,7 @@ Feature: Access to full profiles of users
     And I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Users > Groups" in current page administration
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group 1 |

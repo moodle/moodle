@@ -68,7 +68,7 @@ Feature: In a report, admin can filter log data
     And I follow "Course 1"
     And I follow "Home"
     And I follow "Course 1"
-    And I go to "Users > Enrolled users" in current page administration
+    And I navigate to "Users > Enrolled users" in current page administration
     And I follow "Student 1"
     And I click on "Log in as" "link"
     And I press "Continue"
