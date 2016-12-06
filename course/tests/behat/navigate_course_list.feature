@@ -32,6 +32,15 @@ Feature: Browse course list and return back from enrolment page
 
   @javascript
   Scenario: A user can return to the previous page from enrolment page by clicking navigation links
+    Given I log in as "admin"
+    And I am on site homepage
+    And I turn editing mode on
+    And I add the "Navigation" block if not present
+    And I configure the "Navigation" block
+    And I set the following fields to these values:
+      | Page contexts | Display throughout the entire site |
+    And I press "Save changes"
+    And I log out
     When I log in as "user2"
     And I follow "Preferences" in the user menu
     And I click on "Edit profile" "link" in the "region-main" "region"

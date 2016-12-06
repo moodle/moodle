@@ -14,12 +14,16 @@ Feature: Add badges to the system
     And I set the field "Default badge issuer name" to "Test Badge Site"
     And I set the field "Default badge issuer contact details" to "testuser@example.com"
     And I press "Save changes"
+    And I follow "Badges"
     When I follow "Add a new badge"
     Then the field "issuercontact" matches value "testuser@example.com"
     And the field "issuername" matches value "Test Badge Site"
 
   @javascript
   Scenario: Accessing the badges
+    And I press "Customise this page"
+   # TODO MDL-57120 site "Badges" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
     Given I navigate to "Site badges" node in "Site pages"
     Then I should see "There are no badges available."
 
