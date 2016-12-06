@@ -74,6 +74,7 @@ Structure of the user enroller panel
     float: left;
     margin: 3px;
 }
+/* Note this file isn't auto flipped, so we need dir-rtl rules*/
 .dir-rtl .user-enroller-panel .uep-search-results .user .picture {
     float: right;
 }
@@ -82,6 +83,7 @@ Structure of the user enroller panel
     float: left;
     margin: 3px;
 }
+/* Note this file isn't auto flipped, so we need dir-rtl rules*/
 .dir-rtl .user-enroller-panel .uep-search-results .user .details {
     float: right;
 }
@@ -95,6 +97,7 @@ Structure of the user enroller panel
     float: right;
     cursor: pointer;
 }
+/* Note this file isn't auto flipped, so we need dir-rtl rules*/
 .dir-rtl .user-enroller-panel .uep-search-results .user .options .enrol {
     float: left;
 }
