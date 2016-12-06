@@ -34,7 +34,7 @@ Feature: Editing a grade item
     And I log in as "teacher1"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Cat 1 |
@@ -69,11 +69,11 @@ Feature: Editing a grade item
     And I should not see "You cannot change the scale, as grades already exist for this item"
 
   Scenario: Attempting to change a category item's grade type when overridden grades already exist
-    Given I go to "View > Grader report" in the course gradebook
+    Given I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "20.00" to the user "Student 1" for the grade item "Cat 1 total"
     And I press "Save changes"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I click on "Edit" "link" in the "Cat 1" "table_row"
     When I click on "Edit settings" "link" in the "Cat 1" "table_row"
     Then I should see "This category has associated grade items which have been overridden. Therefore some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
@@ -85,22 +85,22 @@ Feature: Editing a grade item
     And I set the field "Grade type" to "Scale"
     And I set the field "Scale" to "ABCDEF"
     And I press "Save changes"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "C" to the user "Student 1" for the grade item "Cat 1 total"
     And I press "Save changes"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I click on "Edit" "link" in the "Cat 1" "table_row"
     When I click on "Edit settings" "link" in the "Cat 1" "table_row"
     Then I should see "This category has associated grade items which have been overridden. Therefore some grades have already been awarded, so the grade type and scale cannot be changed."
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'ABCDEF')]" "xpath_element" should exist
 
   Scenario: Attempting to change a category item's maximum grade when no rescaling option has been chosen
-    Given I go to "View > Grader report" in the course gradebook
+    Given I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "20.00" to the user "Student 1" for the grade item "Cat 1 total"
     And I press "Save changes"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I click on "Edit" "link" in the "Cat 1" "table_row"
     And I click on "Edit settings" "link" in the "Cat 1" "table_row"
     And I set the field "Maximum grade" to "50"

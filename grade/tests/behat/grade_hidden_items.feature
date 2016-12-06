@@ -35,7 +35,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     When I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test assignment three"
@@ -44,7 +44,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
       | Hidden | 1 |
     And I press "Save changes"
     And I follow "Course 1"
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I select "Myself" from the "View report as" singleselect
     And I select "Student 1" from the "Select all or one user" singleselect
     Then the following should exist in the "user-grade" table:
@@ -56,7 +56,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     When I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I go to "User report" in the course gradebook
+    And I navigate to "User report" in the course gradebook
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one | 100.00 % | 50.00 | 0–100 | 50.00 % |  25.00 % |

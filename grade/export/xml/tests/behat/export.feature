@@ -21,14 +21,14 @@ Feature: I need to export grades as xml
       | assign | C1 | a1 | Test assignment name | Submit something! |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
     And I press "Save changes"
 
   @javascript
   Scenario: Export grades as text
-    When I go to "Export > XML file" in the course gradebook
+    When I navigate to "Export > XML file" in the course gradebook
     And I expand all fieldsets
     And I set the field "Grade export decimal points" to "1"
     And I press "Download"

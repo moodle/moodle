@@ -21,7 +21,7 @@ Feature: Extra credit contributions are normalised when going out of bounds
       | grade_aggregations_visible | Simple weighted mean of grades,Mean of grades (with extra credits),Natural |
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |
@@ -39,14 +39,14 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I set the following fields to these values:
       | Item name | Manual item 4 |
     And I press "Save changes"
-    And I go to "Setup > Course grade settings" in the course gradebook
+    And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weighting" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Manual item 1"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Manual item 2"
@@ -55,7 +55,7 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I press "Save changes"
 
   Scenario Outline: The contribution of extra credit items is normalised
-    Given I go to "Setup > Gradebook setup" in the course gradebook
+    Given I navigate to "Setup > Gradebook setup" in the course gradebook
     When I set the following settings for grade item "Course 1":
       | Aggregation | <aggregation> |
     And I set the following settings for grade item "Manual item 2":
@@ -64,7 +64,7 @@ Feature: Extra credit contributions are normalised when going out of bounds
       | Extra credit | 1 |
     And I set the following settings for grade item "Manual item 4":
       | Extra credit | 1 |
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item    | Calculated weight | Grade  | Contribution to course total |

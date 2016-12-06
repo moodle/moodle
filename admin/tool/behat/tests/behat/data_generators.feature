@@ -322,7 +322,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on course index
     And I follow "Course 1"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     Then I should see "Grade category 1"
     And I should see "Grade sub category 2"
 
@@ -346,7 +346,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Grade Item 1"
     And I follow "Edit   Test Grade Item 1"
     And I expand all fieldsets
@@ -375,7 +375,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Scales" in the course gradebook
+    And I navigate to "Scales" in the course gradebook
     Then I should see "Test Scale 1"
     And I should see "Disappointing,  Good,  Very good,  Excellent"
 
@@ -426,7 +426,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Outcome Grade Item 1"
     And I follow "Edit   Test Outcome Grade Item 1"
     And the field "Outcome" matches value "Grade outcome 1"
