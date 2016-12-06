@@ -89,7 +89,7 @@ $PAGE->set_context($context);
 $title = get_string('badges', 'badges');
 $PAGE->set_title($title);
 $PAGE->set_heading(fullname($USER));
-$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_pagelayout('standard');
 
 // Include JS files for backpack support.
 badges_setup_backpack_js();
