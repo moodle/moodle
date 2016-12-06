@@ -732,6 +732,10 @@ class core_renderer extends \core_renderer {
                 if ($menuitem->action) {
                     if ($menuitem->action instanceof action_link) {
                         $link = $menuitem->action;
+                        // Give preference to setting icon over action icon.
+                        if (!empty($menuitem->icon)) {
+                            $link->icon = $menuitem->icon;
+                        }
                     } else {
                         $link = new action_link($menuitem->action, $menuitem->text, null, null, $menuitem->icon);
                     }
