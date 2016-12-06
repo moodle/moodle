@@ -12,6 +12,8 @@ Feature: Feature: Students can use the recent blog entries block to view recent 
     And I am on site homepage
     And I navigate to "Turn editing on" node in "Front page settings"
     And I add the "Recent blog entries" block
+    # TODO MDL-57120 site "Blogs" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
     And I log out
 
   Scenario: Students use the recent blog entries block to view blogs

@@ -48,6 +48,9 @@ Feature: Tagging courses
     And I press "Save and display"
     And I log out
     And I log in as "user1"
+    And I press "Customise this page"
+    # TODO MDL-57120 "Tags" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
     And I navigate to "Tags" node in "Site pages"
     And I follow "Mathematics"
     Then I should see "Course 1"
@@ -82,6 +85,9 @@ Feature: Tagging courses
     And I press "Save changes"
     And I log out
     And I log in as "user1"
+    And I press "Customise this page"
+    # TODO MDL-57120 "Tags" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
     And I navigate to "Tags" node in "Site pages"
     And I follow "Mathematics"
     Then I should see "Course 1"
