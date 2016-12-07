@@ -50,5 +50,8 @@ function xmldb_survey_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2016061400, 'survey');
     }
 
+    // Automatically generated Moodle v3.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
