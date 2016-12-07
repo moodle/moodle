@@ -6161,13 +6161,25 @@ function send_confirmation_email($user, $confirmationurl = null) {
 
     $subject = get_string('emailconfirmationsubject', '', format_string($site->fullname));
 
-    $username = urlencode($user->username);
-    $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
     if (empty($confirmationurl)) {
         $confirmationurl = '/login/confirm.php';
     }
-    $confirmationurl = new moodle_url($confirmationurl, array('data' => $user->secret .'/'. $username));
-    $data->link = $confirmationurl->out(false);
+
+    $confirmationurl = new moodle_url($confirmationurl);
+    // Remove data parameter just in case it was included in the confirmation so we can add it manually later.
+    $confirmationurl->remove_params('data');
+    $confirmationpath = $confirmationurl->out(false);
+
+    // We need to custom encode the username to include trailing dots in the link.
+    // Because of this custom encoding we can't use moodle_url directly.
+    // Determine if a query string is present in the confirmation url.
+    $hasquerystring = strpos($confirmationpath, '?') !== false;
+    // Perform normal url encoding of the username first.
+    $username = urlencode($user->username);
+    // Prevent problems with trailing dots not being included as part of link in some mail clients.
+    $username = str_replace('.', '%2E', $username);
+
+    $data->link = $confirmationpath . ( $hasquerystring ? '&' : '?') . 'data='. $user->secret .'/'. $username;
 
     $message     = get_string('emailconfirmation', '', $data);
     $messagehtml = text_to_html(get_string('emailconfirmation', '', $data), false, false, true);
