@@ -31,7 +31,7 @@ Feature: Managers can create courses
     And I follow "Course 1"
     And I follow "Announcements"
     And "Add a new topic" "button" should not exist
-    And "Subscription mode > Forced subscription" "text" should exist in current page administration
+    And "Forced subscription" "text" should exist in current page administration
 
   Scenario: Create a course from the management interface and return to it
     Given the following "courses" exist:
