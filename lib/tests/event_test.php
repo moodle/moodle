@@ -870,17 +870,23 @@ class core_event_testcase extends advanced_testcase {
         $observers = \core\event\manager::get_all_observers();
 
         // Expected information from the workshop allocation scheduled observer.
-        $expected = array();
-        $observer = new stdClass();
-        $observer->callable = '\workshopallocation_scheduled\observer::workshop_viewed';
-        $observer->priority = 0;
-        $observer->internal = true;
-        $observer->includefile = null;
-        $observer->plugintype = 'workshopallocation';
-        $observer->plugin = 'scheduled';
-        $expected[0] = $observer;
+        $expected = new stdClass();
+        $expected->callable = '\workshopallocation_scheduled\observer::workshop_viewed';
+        $expected->priority = 0;
+        $expected->internal = true;
+        $expected->includefile = null;
+        $expected->plugintype = 'workshopallocation';
+        $expected->plugin = 'scheduled';
 
-        $this->assertEquals($expected, $observers['\mod_workshop\event\course_module_viewed']);
+        // May be more than one observer for the mod_workshop event.
+        $found = false;
+        foreach ($observers['\mod_workshop\event\course_module_viewed'] as $observer) {
+            if ($expected == $observer) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
     }
 
     /**
