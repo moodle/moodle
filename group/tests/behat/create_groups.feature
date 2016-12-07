@@ -25,7 +25,7 @@ Feature: Organize students into groups
       | student3 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "Users > Groups" in current page administration
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group 1 |
@@ -72,7 +72,7 @@ Feature: Organize students into groups
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I go to "Users > Groups" in current page administration
+    And I navigate to "Users > Groups" in current page administration
     When I press "Create group"
     Then the "idnumber" "field" should be readonly
     And I set the following fields to these values:
@@ -95,7 +95,7 @@ Feature: Organize students into groups
     And I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Users > Groups" in current page administration
+    And I navigate to "Users > Groups" in current page administration
     When I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |
@@ -118,7 +118,7 @@ Feature: Organize students into groups
     And the "groups" select box should contain "Group B (0)"
     And I am on site homepage
     And I follow "Course 2"
-    And I go to "Users > Groups" in current page administration
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group A |
