@@ -244,14 +244,15 @@ class behat_navigation extends behat_base {
     }
 
     /**
-     * Finds a node in the Navigation or Administration tree and clicks on it.
+     * Finds a node in the Navigation or Administration tree
      *
      * @param string $nodetext
      * @param array $parentnodes
-     * @throws ExpectationException
+     * @param string $nodetype node type (link or text)
+     * @return NodeElement|null
+     * @throws ExpectationException when one of the parent nodes is not found
      */
-    protected function select_node_in_navigation($nodetext, $parentnodes) {
-
+    protected function find_node_in_navigation($nodetext, $parentnodes, $nodetype = 'link') {
         // Site admin is different and needs special treatment.
         $siteadminstr = get_string('administrationsite');
 
@@ -317,10 +318,21 @@ class behat_navigation extends behat_base {
 
         // Finally, click on requested node under navigation.
         $nodetextliteral = behat_context_helper::escape($nodetext);
+        $tagname = ($nodetype === 'link') ? 'a' : 'span';
         $xpath = "/ul/li/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]" .
-                "/a[normalize-space(.)=" . $nodetextliteral . "]";
-        $nodetoclick = $node->find('xpath', $xpath);
+            "/{$tagname}[normalize-space(.)=" . $nodetextliteral . "]";
+        return $node->find('xpath', $xpath);
+    }
 
+    /**
+     * Finds a node in the Navigation or Administration tree and clicks on it.
+     *
+     * @param string $nodetext
+     * @param array $parentnodes
+     * @throws ExpectationException
+     */
+    protected function select_node_in_navigation($nodetext, $parentnodes) {
+        $nodetoclick = $this->find_node_in_navigation($nodetext, $parentnodes);
         // Throw exception if no node found.
         if (!$nodetoclick) {
             throw new ExpectationException('Navigation node "' . $nodetext . '" not found under "' .
@@ -464,24 +476,21 @@ class behat_navigation extends behat_base {
      * @throws ExpectationException
      * @param string $element The locator of the specified selector.
      *     This may be a path, for example "Subscription mode > Forced subscription"
-     * @param string $selectortype The selector type
+     * @param string $selectortype The selector type (link or text)
      * @return void
      */
     public function should_exist_in_current_page_administration($element, $selectortype) {
         $parentnodes = array_map('trim', explode('>', $element));
-        $element = array_pop($parentnodes);
+        // Find the name of the first category of the administration block tree.
+        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
+        $node = $this->find('xpath', $xpath);
+        array_unshift($parentnodes, $node->getText());
+        $lastnode = array_pop($parentnodes);
 
-        foreach ($parentnodes as $parentnode) {
-            try {
-                $this->i_expand_node($parentnode);
-            } catch (ExpectationException $e) {
-                // Parent node not found.
-                return;
-            }
+        if (!$this->find_node_in_navigation($lastnode, $parentnodes, strtolower($selectortype))) {
+            throw new ExpectationException(ucfirst($selectortype) . ' "' . $element .
+                '" not found in current page administration"', $this->getSession());
         }
-
-        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]';
-        $this->execute('behat_general::should_exist_in_the', [$element, $selectortype, $xpath, 'xpath_element']);
     }
 
     /**
@@ -492,19 +501,21 @@ class behat_navigation extends behat_base {
      * @throws ExpectationException
      * @param string $element The locator of the specified selector.
      *     This may be a path, for example "Subscription mode > Forced subscription"
-     * @param string $selectortype The selector type
+     * @param string $selectortype The selector type (link or text)
      * @return void
      */
     public function should_not_exist_in_current_page_administration($element, $selectortype) {
         $parentnodes = array_map('trim', explode('>', $element));
-        $element = array_pop($parentnodes);
+        // Find the name of the first category of the administration block tree.
+        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span';
+        $node = $this->find('xpath', $xpath);
+        array_unshift($parentnodes, $node->getText());
+        $lastnode = array_pop($parentnodes);
 
-        foreach ($parentnodes as $parentnode) {
-            $this->i_expand_node($parentnode);
+        if ($this->find_node_in_navigation($lastnode, $parentnodes, strtolower($selectortype))) {
+            throw new ExpectationException(ucfirst($selectortype) . ' "' . $element .
+                '" found in current page administration"', $this->getSession());
         }
-
-        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]';
-        $this->execute('behat_general::should_not_exist_in_the', [$element, $selectortype, $xpath, 'xpath_element']);
     }
 
     /**
