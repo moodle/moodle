@@ -451,4 +451,26 @@ function grade_report_overview_settings_definition(&$mform) {
     $mform->addHelpButton('report_overview_showtotalsifcontainhidden', 'hidetotalifhiddenitems', 'grades');
 }
 
-
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ */
+function gradereport_overview_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    $systemcontext = context_system::instance();
+    $usercontext = context_user::instance($user->id);
+    $coursecontext = context_course::instance($course->id);
+    if (grade_report_overview::check_access($systemcontext, $coursecontext, $usercontext, $course, $user->id)) {
+        $url = new moodle_url('/grade/report/overview/index.php', array('userid' => $user->id));
+        $node = new core_user\output\myprofile\node('reports', 'grades', get_string('gradesoverview', 'gradereport_overview'),
+                null, $url);
+        $tree->add_node($node);
+    }
+}
