@@ -2504,6 +2504,12 @@ class core_accesslib_testcase extends advanced_testcase {
 
         assign_capability('mod/page:view', CAP_PREVENT, $allroles['guest'], $systemcontext, true);
 
+        // Prepare for prohibit test.
+        role_assign($allroles['editingteacher'], $testusers[19], context_system::instance());
+        role_assign($allroles['teacher'], $testusers[19], context_course::instance($testcourses[17]));
+        role_assign($allroles['editingteacher'], $testusers[19], context_course::instance($testcourses[17]));
+        assign_capability('moodle/course:update', CAP_PROHIBIT, $allroles['teacher'], context_course::instance($testcourses[17]), true);
+
         accesslib_clear_all_caches_for_unit_testing(); /// Must be done after assign_capability().
 
         // Extra tests for guests and not-logged-in users because they can not be verified by cross checking
@@ -2526,6 +2532,14 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse(has_capability('moodle/course:update', context_course::instance($testcourses[1]), $testusers[9]));
         $this->assertFalse(has_capability('moodle/course:update', context_course::instance($testcourses[19]), $testusers[9]));
         $this->assertFalse(has_capability('moodle/course:update', $systemcontext, $testusers[9]));
+
+        // Test prohibits.
+        $this->assertTrue(has_capability('moodle/course:update', context_system::instance(), $testusers[19]));
+        $ids = get_users_by_capability(context_system::instance(), 'moodle/course:update', 'u.id');
+        $this->assertArrayHasKey($testusers[19], $ids);
+        $this->assertFalse(has_capability('moodle/course:update', context_course::instance($testcourses[17]), $testusers[19]));
+        $ids = get_users_by_capability(context_course::instance($testcourses[17]), 'moodle/course:update', 'u.id');
+        $this->assertArrayNotHasKey($testusers[19], $ids);
 
         // Test the list of enrolled users.
         $coursecontext = context_course::instance($course1->id);
