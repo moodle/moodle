@@ -538,7 +538,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
 
     // Trigger updating grades based on a given set of SCORM CMI elements.
     $scorm = false;
-    if (strstr($element, '.score.raw') ||
+    if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw')) ||
         (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
          && in_array($track->value, array('completed', 'passed')))) {
         $scorm = $DB->get_record('scorm', array('id' => $scormid));
@@ -547,7 +547,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
     }
 
     // Trigger CMI element events.
-    if (strstr($element, '.score.raw') ||
+    if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw')) ||
         (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
         && in_array($track->value, array('completed', 'failed', 'passed')))) {
         if (!$scorm) {
@@ -560,7 +560,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
             'context' => context_module::instance($cm->id),
             'relateduserid' => $userid
         );
-        if (strstr($element, '.score.raw')) {
+        if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw'))) {
             // Create score submitted event.
             $event = \mod_scorm\event\scoreraw_submitted::create($data);
         } else {
