@@ -66,6 +66,13 @@ class user_editadvanced_form extends moodleform {
 
         // Print the required moodle fields first.
         $mform->addElement('header', 'moodle', $strgeneral);
+        
+                //Перенесено поле Инд. номер
+        $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
+        $mform->setType('idnumber', PARAM_NOTAGS);
+        if (!is_siteadmin())
+            $mform->disabledIf('idnumber', 'id', 'neq', -1);
+        //**********************************
 
         $mform->addElement('text', 'username', get_string('username'), 'size="20"');
         $mform->addRule('username', $strrequired, 'required', null, 'client');

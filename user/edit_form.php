@@ -71,6 +71,14 @@ class user_edit_form extends moodleform {
 
         // Print the required moodle fields first.
         $mform->addElement('header', 'moodle', $strgeneral);
+        
+        //*********************************
+        //Перенесено поле Инд. номер
+        $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
+        $mform->setType('idnumber', PARAM_NOTAGS);
+        if (!is_siteadmin())
+            $mform->disabledIf('idnumber', 'id', 'neq', -1);
+        //**********************************
 
         // Shared fields.
         useredit_shared_definition($mform, $editoroptions, $filemanageroptions, $user);
