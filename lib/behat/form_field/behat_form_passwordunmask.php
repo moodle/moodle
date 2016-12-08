@@ -63,6 +63,10 @@ JS;
 
         // Ensure all pending JS is finished.
         if ($this->running_javascript()) {
+            // Press enter key after setting password, so we have a stable page.
+            $this->field->keyDown(13);
+            $this->field->keyPress(13);
+            $this->field->keyUp(13);
             $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
         }
     }
