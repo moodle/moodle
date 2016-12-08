@@ -1130,8 +1130,9 @@ class theme_config {
             throw new coding_exception('The theme did not define a LESS file, or it is not readable.');
         }
 
-        // We might need more memory to do this, so let's play safe.
+        // We might need more memory/time to do this, so let's play safe.
         raise_memory_limit(MEMORY_EXTRA);
+        core_php_time_limit::raise(300);
 
         // Files list.
         $files = $this->get_css_files($themedesigner);
@@ -1195,8 +1196,9 @@ class theme_config {
             throw new coding_exception('The theme did not define a SCSS file, or it is not readable.');
         }
 
-        // We might need more memory to do this, so let's play safe.
+        // We might need more memory/time to do this, so let's play safe.
         raise_memory_limit(MEMORY_EXTRA);
+        core_php_time_limit::raise(300);
 
         // Set-up the compiler.
         $compiler = new core_scss();
@@ -1574,8 +1576,9 @@ class theme_config {
         $needsparsing = !empty($treeprocessor) || !empty($this->rtlmode);
         if ($needsparsing) {
 
-            // We might need more memory to do this, so let's play safe.
+            // We might need more memory/time to do this, so let's play safe.
             raise_memory_limit(MEMORY_EXTRA);
+            core_php_time_limit::raise(300);
 
             $parser = new core_cssparser($css);
             $csstree = $parser->parse();
