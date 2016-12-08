@@ -76,15 +76,11 @@ class user_evidence_exporter extends \core\external\persistent_exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        $contextcache = array();
+        $helper = new performance_helper();
 
         $competencies = array();
         foreach ($this->related['competencies'] as $competency) {
-            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
-            }
-            $context = $contextcache[$competency->get_competencyframeworkid()];
-
+            $context = $helper->get_context_from_competency($competency);
             $compexporter = new competency_exporter($competency, array('context' => $context));
             $competencies[] = $compexporter->export($output);
         }

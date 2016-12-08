@@ -35,6 +35,7 @@ use core_competency\api;
 use tool_lp\course_competency_statistics;
 use core_competency\competency;
 use core_competency\course_competency;
+use core_competency\external\performance_helper;
 use core_competency\external\competency_exporter;
 use core_competency\external\course_competency_exporter;
 use core_competency\external\course_competency_settings_exporter;
@@ -112,7 +113,6 @@ class course_competencies_page implements renderable, templatable {
         $data->courseid = $this->courseid;
         $data->pagecontextid = $this->context->id;
         $data->competencies = array();
-        $contextcache = array();
 
         $gradable = is_enrolled($this->context, $USER, 'moodle/competency:coursecompetencygradable');
         if ($gradable) {
@@ -126,13 +126,11 @@ class course_competencies_page implements renderable, templatable {
             $ruleoutcomeoptions[$value] = array('value' => $value, 'text' => (string) $text, 'selected' => false);
         }
 
+        $helper = new performance_helper();
         foreach ($this->coursecompetencylist as $coursecompetencyelement) {
             $coursecompetency = $coursecompetencyelement['coursecompetency'];
             $competency = $coursecompetencyelement['competency'];
-            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
-            }
-            $context = $contextcache[$competency->get_competencyframeworkid()];
+            $context = $helper->get_context_from_competency($competency);
 
             $compexporter = new competency_exporter($competency, array('context' => $context));
             $ccexporter = new course_competency_exporter($coursecompetency, array('context' => $context));
@@ -152,7 +150,7 @@ class course_competencies_page implements renderable, templatable {
             // Competency path.
             $pathexporter = new competency_path_exporter([
                 'ancestors' => $competency->get_ancestors(),
-                'framework' => $competency->get_framework(),
+                'framework' => $helper->get_framework_from_competency($competency),
                 'context' => $context
             ]);
 
@@ -172,7 +170,7 @@ class course_competencies_page implements renderable, templatable {
                 }
                 if ($foundusercompetencycourse) {
                     $related = array(
-                        'scale' => $competency->get_scale()
+                        'scale' => $helper->get_scale_from_competency($competency)
                     );
                     $exporter = new user_competency_course_exporter($foundusercompetencycourse, $related);
                     $onerow['usercompetencycourse'] = $exporter->export($output);

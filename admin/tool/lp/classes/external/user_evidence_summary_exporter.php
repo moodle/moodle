@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 use moodle_url;
 use renderer_base;
 use core_competency\external\stored_file_exporter;
+use core_competency\external\performance_helper;
 
 /**
  * Class for exporting user evidence with all competencies.
@@ -91,32 +92,19 @@ class user_evidence_summary_exporter extends \core\external\persistent_exporter 
         }
 
         $userevidencecompetencies = array();
-        $frameworks = array();
-        $scales = array();
         $usercompetencies = $this->persistent->get_user_competencies();
+        $helper = new performance_helper();
         foreach ($usercompetencies as $usercompetency) {
             $competency = $usercompetency->get_competency();
 
-            // Get the framework.
-            if (!isset($frameworks[$competency->get_competencyframeworkid()])) {
-                $frameworks[$competency->get_competencyframeworkid()] = $competency->get_framework();
-            }
-            $framework = $frameworks[$competency->get_competencyframeworkid()];
-
-            // Get the scale.
-            $scaleid = $competency->get_scaleid();
-            if ($scaleid === null) {
-                $scaleid = $framework->get_scaleid();
-            }
-            if (!isset($scales[$framework->get_scaleid()])) {
-                $scales[$framework->get_scaleid()] = $framework->get_scale();
-            }
-            $scale = $scales[$framework->get_scaleid()];
+            $context = $helper->get_context_from_competency($competency);
+            $framework = $helper->get_framework_from_competency($competency);
+            $scale = $helper->get_scale_from_competency($competency);
 
             $related = array('competency' => $competency,
                              'usercompetency' => $usercompetency,
                              'scale' => $scale,
-                             'context' => $framework->get_context());
+                             'context' => $context);
 
             $userevidencecompetencysummaryexporter = new user_evidence_competency_summary_exporter(null, $related);
 
