@@ -220,4 +220,50 @@ class behat_grade extends behat_base {
         $courseid = $DB->get_field('course', 'id', array('shortname' => $coursename), MUST_EXIST);
         set_config('gradebook_calculations_freeze_' . $courseid, $version);
     }
+
+    /**
+     * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
+     *
+     * Examples:
+     * - I navigate to "Setup > Gradebook setup" in the course gradebook
+     * - I navigate to "Scales" in the course gradebook
+     * - I navigate to "Letters > View" in the course gradebook
+     * - I navigate to "View > User report" in the course gradebook // for teachers
+     * - I navigate to "User report" in the course gradebook // for students
+     *
+     * @Given /^I navigate to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
+     * @param string $gradepath
+     */
+    public function i_navigate_to_in_the_course_gradebook($gradepath) {
+        $gradeadmin = get_string('gradeadministration', 'grades');
+
+        // If we are not on one of the gradebook pages already, follow "Grades" link in the administration block.
+        $xpath = '//div[contains(@class,\'block_settings\')]//div[@id=\'settingsnav\']/ul/li[1]/p[1]/span[string(.)=' .
+            behat_context_helper::escape($gradeadmin) . ']';
+        if (!$this->getSession()->getPage()->findAll('xpath', $xpath)) {
+            $this->execute("behat_general::i_click_on_in_the", array(get_string('grades'), 'link',
+                get_string('pluginname', 'block_settings'), 'block'));
+        }
+
+        $parentnodes = preg_split('/\s*>\s*/', trim($gradepath));
+        if ($parentnodes[0] === 'Letters' && count($parentnodes) > 1) {
+            // Make Letters navigation steps compatible with tabs in Moodle 3.2.
+            if ($parentnodes[1] === 'Edit') {
+                $this->execute("behat_navigation::i_navigate_to_node_in", [$parentnodes[0], $gradeadmin]);
+                $this->execute("behat_general::click_link", "Edit grade letters");
+                return;
+            } else {
+                array_pop($parentnodes);
+            }
+        }
+
+        $lastitem = array_pop($parentnodes);
+        if ($parentnodes && $parentnodes[0] === 'View') {
+            // When viewing reports (grader, user, single view), ignore the "View" in the path,
+            // it is only needed in Moodle 3.2 gradebook navigation.
+            array_shift($parentnodes);
+        }
+        array_unshift($parentnodes, $gradeadmin);
+        $this->execute("behat_navigation::i_navigate_to_node_in", [$lastitem, join('>', $parentnodes)]);
+    }
 }
