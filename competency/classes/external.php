@@ -2705,9 +2705,8 @@ class external extends external_api {
 
         $params = (object) $params;
         $result = api::update_plan($params);
-        $exporter = plan_exporter($result);
-        $record = $exporter->export($output);
-        return external_api::clean_returnvalue(self::update_plan_returns(), $record);
+        $exporter = new plan_exporter($result, ['template' => $plan->get_template()]);
+        return $exporter->export($output);
     }
 
     /**

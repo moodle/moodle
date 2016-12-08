@@ -1207,6 +1207,11 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $plan2 = $this->create_plan(3, $this->user->id, 0, plan::STATUS_DRAFT, 0);
 
+        // Basic update on the plan.
+        $this->assertNotEquals('Updated plan 2 name', $plan2->name);
+        $plan2 = external::update_plan(['id' => $plan2->id, 'name' => 'Updated plan 2 name']);
+        $this->assertEquals('Updated plan 2 name', $plan2->name);
+
         try {
             $plan3 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
             $this->fail('Exception expected due to not permissions to create active plans');
