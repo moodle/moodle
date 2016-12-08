@@ -37,7 +37,7 @@ Feature: In order to create a quiz that awards marks the way I want
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I navigate to "Edit quiz" node in "Quiz administration"
+    And I navigate to "Edit quiz" in current page administration
 
   @javascript
   Scenario: Set the max mark for a question.
@@ -73,12 +73,13 @@ Feature: In order to create a quiz that awards marks the way I want
     And I should not see "2.000"
     And I should not see "3.000"
     And I should not see "Total of marks: 5.000"
-    When I follow "Edit settings"
+    And I follow "Quiz 1"
+    When I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Decimal places in grades | 3 |
       | Decimal places in question grades | 5 |
     And I press "Save and display"
-    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I navigate to "Edit quiz" in current page administration
     # Then the field "maxgrade" matches value "20.000" -- with exact match on decimal places.
     Then "//input[@name = 'maxgrade' and @value = '20.000']" "xpath_element" should exist
     And I should see "2.00000"

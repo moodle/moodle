@@ -43,7 +43,7 @@ Feature: The search forums block allows users to search for forum posts
     And I follow "Course 1"
     And I turn editing mode on
     And I follow "Announcements"
-    And I navigate to "Edit settings" node in "Forum administration"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "id_visible" to "0"
     And I press "Save and return to course"

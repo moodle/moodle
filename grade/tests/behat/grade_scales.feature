@@ -44,12 +44,12 @@ Feature: View gradebook when scales are used
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment one"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
     And I set the field "grade[modgrade_scale]" to "Letterscale"
     And I press "Save and display"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade" to "A"
     And I press "Save changes"
@@ -71,11 +71,11 @@ Feature: View gradebook when scales are used
     And I press "Save changes"
     And I press "Ok"
     And I follow "Course 1"
-    And I go to "Setup > Course grade settings" in the course gradebook
+    And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
 
   Scenario: Test displaying scales in gradebook in aggregation method Natural
@@ -91,14 +91,14 @@ Feature: View gradebook when scales are used
       | -1-                | -2-      | -3-            | -4-          |
       | Range              | F–A      | 0.00–5.00      | 0.00–5.00    |
       | Overall average    | C        | 3.00           | 3.00         |
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I select "Student 3" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item          | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one | C     | F–A   | 50.00 %    | 60.00 %                      |
       | Sub category 1 total      | 3.00  | 0–5   | 60.00 %    | -                            |
       | Course total        | 3.00  | 0–5   | 60.00 %    | -                            |
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | 5.00      |
@@ -137,14 +137,14 @@ Feature: View gradebook when scales are used
       | -1-                | -2-      | -3-            | -4-            |
       | Range              | F–A      | 1.00–5.00      | 0.00–100.00    |
       | Overall average    | C        | 3.00           | <overallavg>   |
-    And I go to "View > User report" in the course gradebook
+    And I navigate to "View > User report" in the course gradebook
     And I select "Student 3" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item                   | Grade          | Range | Percentage    | Contribution to course total |
       | Test assignment one          | C              | F–A   | 50.00 %       | <contrib3>                   |
       | Sub category (<aggregation>) total<aggregation>. | 3.00           | 1–5   | 50.00 %       | -                            |
       | Course total<aggregation>.   | <coursetotal3> | 0–100 | <courseperc3> | -                            |
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                | Max grade |
       | Test assignment one | A (5)     |

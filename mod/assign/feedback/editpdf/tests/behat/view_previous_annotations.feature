@@ -43,7 +43,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Edit" "link" in the "Submitted for grading" "table_row"
     And I click on "Grade" "link" in the "Submitted for grading" "table_row"
     And I should see "Page 1 of 3"

@@ -463,7 +463,8 @@ class edit_item_form extends moodleform {
         }
         if ($grade_item) {
             if ($grade_item->gradetype == GRADE_TYPE_VALUE) {
-                if (grade_floats_different($data['grademin'], $grade_item->grademin) ||
+                if ((((bool) get_config('moodle', 'grade_report_showmin')) &&
+                    grade_floats_different($data['grademin'], $grade_item->grademin)) ||
                     grade_floats_different($data['grademax'], $grade_item->grademax)) {
                     if ($grade_item->has_grades() && empty($data['rescalegrades'])) {
                         $errors['rescalegrades'] = get_string('mustchooserescaleyesorno', 'grades');

@@ -49,7 +49,7 @@ Feature: Assign reset
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I navigate to "View all submissions" node in "Assignment administration"
+    And I navigate to "View all submissions" in current page administration
     And I should see "Submitted for grading"
     And I navigate to "Reset" node in "Course administration"
     And I set the following fields to these values:
@@ -58,13 +58,13 @@ Feature: Assign reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I navigate to "View all submissions" node in "Assignment administration"
+    And I navigate to "View all submissions" in current page administration
     Then I should not see "Submitted for grading"
 
   @javascript
   Scenario: Use course reset to remove user overrides.
     When I follow "Test assignment name"
-    And I navigate to "User overrides" node in "Assignment administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
         | Override user    | Student1  |
@@ -83,12 +83,12 @@ Feature: Assign reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I navigate to "User overrides" node in "Assignment administration"
+    And I navigate to "User overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
   Scenario: Use course reset to remove group overrides.
     When I follow "Test assignment name"
-    And I navigate to "Group overrides" node in "Assignment administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
         | Override group   | Group 1  |
@@ -107,5 +107,5 @@ Feature: Assign reset
     And I press "Continue"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I navigate to "Group overrides" node in "Assignment administration"
+    And I navigate to "Group overrides" in current page administration
     Then I should not see "Group 1"

@@ -27,7 +27,7 @@ Feature: Region main settings menu
     And I click on "#region-main-settings-menu [role=button]" "css_element"
     And I choose "Edit settings" in the open action menu
     And I should see "Updating: Choice"
-    And I follow "Participants"
+    And I navigate to course participants
     And I click on "#region-main-settings-menu [role=button]" "css_element"
     And I choose "Enrolment methods" in the open action menu
     And I should see "Enrolment methods"

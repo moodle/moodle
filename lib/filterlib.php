@@ -295,6 +295,9 @@ class filter_manager {
                 $filter = $this->textfilters[$context->id][$name];
             } else {
                 $filter = $this->make_filter_object($name, $context, $config);
+                if (is_null($filter)) {
+                    continue;
+                }
             }
             $filter->setup($page, $context);
         }

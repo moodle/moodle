@@ -1260,6 +1260,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+    /*rtl:raw:
+        left: 0;
+        right: auto;
+    */
     padding: $spacer;
 }
 
@@ -1640,41 +1644,6 @@ table.collection {
     @extend .table;
     @extend .table-bordered;
     @extend .table-striped;
-}
-
-table.collection .name {
-    text-align: left;
-    vertical-align: middle;
-}
-
-table.collection .awards {
-    width: 10%;
-    text-align: center;
-    vertical-align: middle;
-}
-
-table.collection .criteria {
-    width: 40%;
-    text-align: left;
-    vertical-align: top;
-}
-
-table.collection .badgeimage,
-table.collection .status {
-    width: 15%;
-    text-align: center;
-    vertical-align: middle;
-}
-
-table.collection .description {
-    width: 25%;
-    text-align: left;
-}
-
-table.collection .actions {
-    width: 11em;
-    text-align: center;
-    vertical-align: middle;
 }
 
 a.criteria-action {

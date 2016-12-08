@@ -544,7 +544,7 @@ class grade_report_user extends grade_report {
                 }
 
                 if ($this->showgrade) {
-                    $gradeitemdata['graderaw'] = '';
+                    $gradeitemdata['graderaw'] = null;
                     $gradeitemdata['gradehiddenbydate'] = false;
                     $gradeitemdata['gradeneedsupdate'] = $grade_grade->grade_item->needsupdate;
                     $gradeitemdata['gradeishidden'] = $grade_grade->is_hidden();

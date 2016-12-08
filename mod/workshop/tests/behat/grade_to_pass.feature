@@ -26,7 +26,7 @@ Feature: Setting grades to pass via workshop editing form
       | Assessment grade to pass | 10.5 |
     Then I should not see "Adding a new Workshop"
     And I follow "Awesome workshop"
-    And I navigate to "Edit settings" node in "Workshop administration"
+    And I navigate to "Edit settings" in current page administration
     And the field "Submission grade to pass" matches value "45.00"
     And the field "Assessment grade to pass" matches value "10.50"
 
@@ -41,7 +41,7 @@ Feature: Setting grades to pass via workshop editing form
       | Assessment grade to pass |    |
     Then I should not see "Adding a new Workshop"
     And I follow "Another awesome workshop"
-    And I navigate to "Edit settings" node in "Workshop administration"
+    And I navigate to "Edit settings" in current page administration
     And the field "Submission grade to pass" matches value "0.00"
     And the field "Assessment grade to pass" matches value "0.00"
 
@@ -78,7 +78,7 @@ Feature: Setting grades to pass via workshop editing form
       | Assessment grade to pass | 0.000 |
     And I should not see "Adding a new Workshop"
     And I follow "Super awesome workshop"
-    And I navigate to "Edit settings" node in "Workshop administration"
+    And I navigate to "Edit settings" in current page administration
     And the field "Submission grade to pass" matches value "59.99"
     And the field "Assessment grade to pass" matches value "0.00"
     When I set the field "Submission grade to pass" to ""
@@ -86,6 +86,6 @@ Feature: Setting grades to pass via workshop editing form
     And I press "Save and display"
     Then I should not see "Adding a new Workshop"
     And I follow "Super awesome workshop"
-    And I navigate to "Edit settings" node in "Workshop administration"
+    And I navigate to "Edit settings" in current page administration
     And the field "Submission grade to pass" matches value "0.00"
     And the field "Assessment grade to pass" matches value "0.00"

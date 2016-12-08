@@ -21,7 +21,7 @@ Feature: Toggle activities groups mode from the course page
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Group mode | No groups |
       | Force group mode | No |

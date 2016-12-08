@@ -22,6 +22,9 @@ Feature: Browsing tagged items
 
   Scenario: Browse tag index with javascript disabled
     When I log in as "user1"
+    And I press "Customise this page"
+    # TODO MDL-57120 "Tags" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
     And I navigate to "Tags" node in "Site pages"
     And I follow "Cat"
     Then I should see "Courses" in the ".tag-index-items h3" "css_element"
@@ -66,6 +69,9 @@ Feature: Browsing tagged items
   @javascript
   Scenario: Browse tag index with javascript enabled
     When I log in as "user1"
+    And I press "Customise this page"
+    # TODO MDL-57120 "Tags" link not accessible without navigation block.
+    And I add the "Navigation" block if not present
     And I navigate to "Tags" node in "Site pages"
     And I follow "Cat"
     Then I should see "Courses" in the "#tagarea-core-course" "css_element"

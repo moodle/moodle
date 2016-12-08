@@ -165,7 +165,7 @@ Feature: View structural changes in recent activity block
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "ForumNew"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | name | ForumUpdated |
     And I press "Save and return to course"

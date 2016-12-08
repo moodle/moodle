@@ -25,10 +25,7 @@ Feature: Exporting workshop submissions and assessments to a portfolio
     And I log in as "admin"
     And the following config values are set as admin:
       | enableportfolios | 1 |
-    And I expand "Site administration" node
-    And I expand "Plugins" node
-    And I expand "Portfolios" node
-    And I follow "Manage portfolios"
+    And I navigate to "Plugins > Portfolios > Manage portfolios" in site administration
     And I set portfolio instance "File download" to "Enabled and visible"
     And I click on "Save" "button"
     And I log out
@@ -77,7 +74,7 @@ Feature: Exporting workshop submissions and assessments to a portfolio
     Given I log in as "student1"
     And I follow "Course1"
     And I follow "TestWorkshop"
-    When I follow "My submission"
+    When I follow "Submission1"
     Then I should see "Submission1"
     And "Export this page" "button" should exist
     And I click on "Export this page" "button"
@@ -109,6 +106,6 @@ Feature: Exporting workshop submissions and assessments to a portfolio
     When I log in as "student1"
     And I follow "Course1"
     And I follow "TestWorkshop"
-    And I follow "My submission"
+    And I follow "Submission1"
     Then I should see "Submission1"
     And "Export this page" "button" should not exist

@@ -47,9 +47,7 @@ Feature: Edited wiki pages handle tags correctly
   @javascript
   Scenario: Wiki page edition of standard tags works as expected
     Given I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Appearance" node
-    And I follow "Manage tags"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
     And I follow "Add standard tags"
     And I set the field "Enter comma-separated list of new tags" to "OT1, OT2, OT3"

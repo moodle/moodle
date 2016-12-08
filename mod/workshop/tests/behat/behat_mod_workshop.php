@@ -90,23 +90,14 @@ class behat_mod_workshop extends behat_base {
      * @param TableNode $table data to fill the submission form with, must contain 'Title'
      */
     public function i_edit_assessment_form_in_workshop_as($workshopname, $table) {
-        $workshopname = $this->escape($workshopname);
-        $editassessmentform = $this->escape(get_string('editassessmentform', 'workshop'));
-        $saveandclose = $this->escape(get_string('saveandclose', 'workshop'));
-
         $this->execute('behat_general::click_link', $workshopname);
 
-        $this->execute('behat_general::i_click_on_in_the',
-            array(
-                $editassessmentform,
-                'link',
-                'Administration',
-                'block'
-            ));
+        $this->execute('behat_navigation::i_navigate_to_in_current_page_administration',
+            get_string('editassessmentform', 'workshop'));
 
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $table);
 
-        $this->execute("behat_forms::press_button", $saveandclose);
+        $this->execute("behat_forms::press_button", get_string('saveandclose', 'workshop'));
     }
 
     /**

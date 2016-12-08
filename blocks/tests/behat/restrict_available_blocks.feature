@@ -30,8 +30,7 @@ Feature: Allowed blocks controls
       | block/activity_modules:addinstance | Prohibit |
     And I am on site homepage
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Permissions"
+    And I navigate to "Users > Permissions" in current page administration
     And I override the system permissions of "Teacher" role with:
       | block/completionstatus:addinstance | Prohibit |
     And I log out

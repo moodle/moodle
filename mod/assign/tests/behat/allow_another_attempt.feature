@@ -38,7 +38,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Allow another attempt | 1 |
@@ -55,7 +55,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I should see "I'm the student first submission"
 
@@ -112,7 +112,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    When I click on "View all submissions" "link" in the "Administration" "block"
+    When I navigate to "View all submissions" in current page administration
     Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 2" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 3" row "Status" column of "generaltable" table should contain "No submission"
@@ -142,7 +142,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
 #    And I log in as "teacher1"
 #    And I follow "Course 1"
 #    And I follow "Test assignment name"
-#    And I click on "View all submissions" "link" in the "Administration" "block"
+#    And I navigate to "View all submissions" in current page administration
 #    And "Student 1" row "Status" column of "generaltable" table should contain "Reopened"
 #    And "Student 2" row "Status" column of "generaltable" table should contain "Reopened"
 #    And "Student 3" row "Status" column of "generaltable" table should contain "Submitted for grading"
@@ -164,6 +164,6 @@ Feature: In an assignment, students start a new attempt based on their previous 
 #    And I log in as "teacher1"
 #    And I follow "Course 1"
 #    And I follow "Test assignment name"
-#    I click on "View all submissions" "link" in the "Administration" "block"
+#    I navigate to "View all submissions" in current page administration
 #    And I click on "Grade" "link" in the "Student 1" "table_row"
     #And I should see "This is attempt 2 (3 attempts allowed)"

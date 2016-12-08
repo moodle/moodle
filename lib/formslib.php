@@ -1362,6 +1362,7 @@ abstract class moodleform {
         $_FILES = $simulatedsubmittedfiles;
         if ($formidentifier === null) {
             $formidentifier = get_called_class();
+            $formidentifier = str_replace('\\', '_', $formidentifier); // See MDL-56233 for more information.
         }
         $simulatedsubmitteddata['_qf__'.$formidentifier] = 1;
         $simulatedsubmitteddata['sesskey'] = sesskey();

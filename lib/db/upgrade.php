@@ -2433,5 +2433,8 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016112200.02);
     }
 
+    // Automatically generated Moodle v3.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

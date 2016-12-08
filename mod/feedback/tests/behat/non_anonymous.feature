@@ -23,12 +23,12 @@ Feature: Non anonymous feedback
       | user    | course               | role    |
       | manager | Acceptance test site | manager |
     And the following "activities" exist:
-      | activity   | name            | course               | idnumber  | anonymous | publish_stats |
-      | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             |
-      | feedback   | Course feedback | C1                   | feedback1 | 2         | 1             |
+      | activity   | name            | course               | idnumber  | anonymous | publish_stats | section |
+      | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             | 1       |
+      | feedback   | Course feedback | C1                   | feedback1 | 2         | 1             | 0       |
     When I log in as "manager"
     And I am on site homepage
-    And I navigate to "Site feedback" node in "Site pages"
+    And I follow "Site feedback"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
@@ -48,7 +48,7 @@ Feature: Non anonymous feedback
   Scenario: Complete non anonymous feedback on the front page as an authenticated user
     And I log in as "user1"
     And I am on site homepage
-    And I navigate to "Site feedback" node in "Site pages"
+    And I follow "Site feedback"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -69,7 +69,7 @@ Feature: Non anonymous feedback
     And I log out
     And I log in as "user1"
     And I am on site homepage
-    When I navigate to "Site feedback" node in "Site pages"
+    When I follow "Site feedback"
     And I follow "Answer the questions..."
     And I should see "Do you like our site?"
     And I set the following fields to these values:
@@ -78,7 +78,7 @@ Feature: Non anonymous feedback
     And I log out
     And I log in as "user2"
     And I am on site homepage
-    When I navigate to "Site feedback" node in "Site pages"
+    When I follow "Site feedback"
     And I follow "Answer the questions..."
     And I set the following fields to these values:
       | Not at all | 1 |
@@ -95,8 +95,8 @@ Feature: Non anonymous feedback
     And I log out
     And I log in as "manager"
     And I am on site homepage
-    And I navigate to "Site feedback" node in "Site pages"
-    And I click on "Show responses" "link" in the "Administration" "block"
+    And I follow "Site feedback"
+    And I navigate to "Show responses" in current page administration
     And I should see "Username"
     And I should see "Non anonymous entries (2)"
     And I should not see "Anonymous entries"
@@ -152,7 +152,7 @@ Feature: Non anonymous feedback
     And I should see "Do you like this course?"
     And I press "Continue"
     And I should not see "Answer the questions..."
-    And I click on "Show responses" "link" in the "Administration" "block"
+    And I navigate to "Show responses" in current page administration
     And I should see "Non anonymous entries (2)"
     And I should not see "Anonymous"
     And I click on "," "link" in the "Username 1" "table_row"

@@ -23,12 +23,12 @@ Feature: Anonymous feedback
       | user    | course               | role    |
       | manager | Acceptance test site | manager |
     And the following "activities" exist:
-      | activity   | name            | course               | idnumber  | anonymous | publish_stats |
-      | feedback   | Site feedback   | Acceptance test site | feedback0 | 1         | 1             |
-      | feedback   | Course feedback | C1                   | feedback1 | 1         | 1             |
+      | activity   | name            | course               | idnumber  | anonymous | publish_stats | section |
+      | feedback   | Site feedback   | Acceptance test site | feedback0 | 1         | 1             | 1       |
+      | feedback   | Course feedback | C1                   | feedback1 | 1         | 1             | 0       |
     When I log in as "manager"
     And I am on site homepage
-    And I navigate to "Site feedback" node in "Site pages"
+    And I follow "Site feedback"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
@@ -48,7 +48,7 @@ Feature: Anonymous feedback
   Scenario: Complete anonymous feedback on the front page as an authenticated user
     And I log in as "user1"
     And I am on site homepage
-    When I navigate to "Site feedback" node in "Site pages"
+    When I follow "Site feedback"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -69,7 +69,7 @@ Feature: Anonymous feedback
     And I log out
     And I log in as "user1"
     And I am on site homepage
-    When I navigate to "Site feedback" node in "Site pages"
+    When I follow "Site feedback"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -81,7 +81,7 @@ Feature: Anonymous feedback
     And I log out
     And I log in as "user2"
     And I am on site homepage
-    And I navigate to "Site feedback" node in "Site pages"
+    And I follow "Site feedback"
     And I follow "Preview"
     And I should see "Do you like our site?"
     And I press "Continue"
@@ -100,8 +100,8 @@ Feature: Anonymous feedback
     And I log out
     And I log in as "manager"
     And I am on site homepage
-    And I navigate to "Site feedback" node in "Site pages"
-    And I click on "Show responses" "link" in the "Administration" "block"
+    And I follow "Site feedback"
+    And I navigate to "Show responses" in current page administration
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
     And I follow "Response number: 1"
@@ -165,8 +165,8 @@ Feature: Anonymous feedback
     And I should see "1 (50.00 %)" in the "No" "table_row"
     And I log in as "manager"
     And I am on site homepage
-    And I navigate to "Site feedback" node in "Site pages"
-    And I click on "Show responses" "link" in the "Administration" "block"
+    And I follow "Site feedback"
+    And I navigate to "Show responses" in current page administration
     And I should see "Anonymous entries (2)"
     And I follow "Response number: 1"
     And I should see "Response number: 1 (Anonymous)"
@@ -225,7 +225,7 @@ Feature: Anonymous feedback
     And I should see "Do you like this course?"
     And I press "Continue"
     And I should not see "Answer the questions..."
-    And I click on "Show responses" "link" in the "Administration" "block"
+    And I navigate to "Show responses" in current page administration
     And I should not see "Username"
     And I should see "Anonymous entries (2)"
     And I follow "Response number: 1"

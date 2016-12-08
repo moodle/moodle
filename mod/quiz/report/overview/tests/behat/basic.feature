@@ -63,7 +63,7 @@ Feature: Basic use of the Grades report
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Quiz 1"
-    And I navigate to "Grades" node in "Quiz administration > Results"
+    And I navigate to "Results > Grades" in current page administration
     Then I should see "Attempts: 2"
     # Check student1's grade
     And I should see "25.00" in the "S1 Student1" "table_row"

@@ -12,13 +12,7 @@ Feature: Filter users by idnumber
       | student2 | Student2 | 1 | student2@example.com | 2000000 |
       | student3 | Student3 | 1 | student3@example.com | 3000000 |
     And I log in as "admin"
-    And I am on site homepage
-    And I expand "Site administration" node
-    # Front page settings also has a "Users" node.
-    And I expand "Users" node
-    And I expand "Users" node
-    And I expand "Accounts" node
-    When I follow "Browse list of users"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
 
   @javascript
   Scenario: Filtering id numbers - with case "is empty"

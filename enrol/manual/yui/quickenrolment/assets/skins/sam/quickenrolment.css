@@ -74,13 +74,19 @@ Structure of the user enroller panel
     float: left;
     margin: 3px;
 }
-
+/* Note this file isn't auto flipped, so we need dir-rtl rules*/
+.dir-rtl .user-enroller-panel .uep-search-results .user .picture {
+    float: right;
+}
 .user-enroller-panel .uep-search-results .user .details {
     width: 180px;
     float: left;
     margin: 3px;
 }
-
+/* Note this file isn't auto flipped, so we need dir-rtl rules*/
+.dir-rtl .user-enroller-panel .uep-search-results .user .details {
+    float: right;
+}
 .user-enroller-panel .uep-search-results .user .options {
     padding-right: 7px;
     margin: 3px;
@@ -90,6 +96,10 @@ Structure of the user enroller panel
     margin: 3px;
     float: right;
     cursor: pointer;
+}
+/* Note this file isn't auto flipped, so we need dir-rtl rules*/
+.dir-rtl .user-enroller-panel .uep-search-results .user .options .enrol {
+    float: left;
 }
 
 .user-enroller-panel .uep-search-results .cohort {

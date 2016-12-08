@@ -49,6 +49,9 @@ abstract class spout_base extends \core\dataformat\base {
      */
     public function send_http_headers() {
         $this->writer = \Box\Spout\Writer\WriterFactory::create($this->spouttype);
+        if (method_exists($this->writer, 'setTempFolder')) {
+            $this->writer->setTempFolder(make_request_directory());
+        }
         $filename = $this->filename . $this->get_extension();
         $this->writer->openToBrowser($filename);
         if ($this->sheettitle && $this->writer instanceof \Box\Spout\Writer\AbstractMultiSheetsWriter) {

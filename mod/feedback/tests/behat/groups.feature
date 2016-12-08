@@ -46,13 +46,13 @@ Feature: Feedbacks in courses with groups
       | user    | course               | role    |
       | manager | Acceptance test site | manager |
     And the following "activities" exist:
-      | activity   | name            | course               | idnumber  | anonymous | publish_stats | groupmode |
-      | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             | 1         |
-      | feedback   | Course feedback | C1                   | feedback1 | 2         | 1             | 1         |
-      | feedback   | Course anon feedback | C1              | feedback2 | 1         | 1             | 1         |
+      | activity   | name            | course               | idnumber  | anonymous | publish_stats | groupmode | section |
+      | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             | 1         | 1       |
+      | feedback   | Course feedback | C1                   | feedback1 | 2         | 1             | 1         | 0       |
+      | feedback   | Course anon feedback | C1              | feedback2 | 1         | 1             | 1         | 0       |
     When I log in as "manager"
     And I am on site homepage
-    And I navigate to "Site feedback" node in "Site pages"
+    And I follow "Site feedback"
     And I click on "Edit questions" "link" in the "[role=main]" "css_element"
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
@@ -139,7 +139,7 @@ Feature: Feedbacks in courses with groups
     And I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course feedback"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I navigate to "Analysis" in current page administration
     And the field "Separate groups" matches value "All participants"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"
@@ -249,7 +249,7 @@ Feature: Feedbacks in courses with groups
     And I log in as "teacher"
     And I follow "Course 1"
     And I follow "Course anon feedback"
-    And I click on "Analysis" "link" in the "Administration" "block"
+    And I navigate to "Analysis" in current page administration
     And the field "Separate groups" matches value "All participants"
     And I show chart data for the "multichoice1" feedback
     And I should see "2 (28.57 %)" in the "Yes of course" "table_row"

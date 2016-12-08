@@ -30,8 +30,9 @@ Feature: Add activities to courses
       | Allow comments on entries | Yes |
     And I turn editing mode off
     Then I should not see "Adding a new"
-    And I follow "Test name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I turn editing mode on
+    And I open "Test name" actions menu
+    And I click on "Edit settings" "link" in the "Test name" activity
     And I expand all fieldsets
     And the field "Name" matches value "Test name"
     And the field "Entries required for completion" matches value "9"

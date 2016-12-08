@@ -41,7 +41,7 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Course 1 restored in a new course"
     And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     And the field "id_format" matches value "Topics format"
     And the field "Number of sections" matches value "15"
@@ -83,7 +83,7 @@ Feature: Restore Moodle 2 course backups
     When I restore "test_backup.mbz" backup into a new course using this options:
     Then I should see "Topic 1"
     And I should see "Test forum name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     And the field "id_format" matches value "Topics format"
     And I set the following fields to these values:
@@ -95,14 +95,14 @@ Feature: Restore Moodle 2 course backups
     And I press "Save and display"
     And I should see "1 January - 7 January"
     And I should see "Test forum name"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     And the field "id_format" matches value "Weekly format"
     And I set the following fields to these values:
       | id_format | Social format |
     And I press "Save and display"
     And I should see "An open forum for chatting about anything you want to"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     And the field "id_format" matches value "Social format"
     And I press "Cancel"
@@ -119,7 +119,7 @@ Feature: Restore Moodle 2 course backups
       | Confirmation | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into "Course 2" course using this options:
       | Schema | Overwrite course configuration | Yes |
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     Then the field "id_format" matches value "Topics format"
     And the field "Number of sections" matches value "15"
