@@ -2893,6 +2893,149 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Data provider for test_generate_confirmation_link
+     * @return Array of confirmation urls and expected resultant confirmation links
+     */
+    public function generate_confirmation_link_provider() {
+        global $CFG;
+        return [
+            "Simple name" => [
+                "username" => "simplename",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/simplename"
+            ],
+            "Period in between words in username" => [
+                "username" => "period.inbetween",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/period%2Einbetween"
+            ],
+            "Trailing periods in username" => [
+                "username" => "trailingperiods...",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/trailingperiods%2E%2E%2E"
+            ],
+            "At symbol in username" => [
+                "username" => "at@symbol",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/at%40symbol"
+            ],
+            "Dash symbol in username" => [
+                "username" => "has-dash",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/has-dash"
+            ],
+            "Underscore in username" => [
+                "username" => "under_score",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/under_score"
+            ],
+            "Many different characters in username" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => null,
+                "expected" => $CFG->wwwroot . "/login/confirm.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom relative confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "/custom/local/url.php",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom relative confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "/custom/local/url.php?with=param",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?with=param&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom local confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => $CFG->wwwroot . "/custom/local/url.php",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom local confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => $CFG->wwwroot . "/custom/local/url.php?with=param",
+                "expected" => $CFG->wwwroot . "/custom/local/url.php?with=param&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/custom/external/url.php",
+                "expected" => "http://moodle.org/custom/external/url.php?data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/ext.php?with=some&param=eters",
+                "expected" => "http://moodle.org/ext.php?with=some&param=eters&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+            "Custom external confirmation url with parameters" => [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmationurl" => "http://moodle.org/ext.php?with=some&data=test",
+                "expected" => "http://moodle.org/ext.php?with=some&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E"
+            ],
+        ];
+    }
+
+    /**
+     * Test generate_confirmation_link
+     * @dataProvider generate_confirmation_link_provider
+     * @param string $username The name of the user
+     * @param string $confirmationurl The url the user should go to to confirm
+     * @param string $expected The expected url of the confirmation link
+     */
+    public function test_generate_confirmation_link($username, $confirmationurl, $expected) {
+        $this->resetAfterTest();
+        $sink = $this->redirectEmails();
+
+        $user = $this->getDataGenerator()->create_user(
+            [
+                "username" => $username,
+                "confirmed" => false,
+                "email" => 'test@example.com',
+            ]
+        );
+
+        send_confirmation_email($user, $confirmationurl);
+        $sink->close();
+        $messages = $sink->get_messages();
+        $message = array_shift($messages);
+        $messagebody = quoted_printable_decode($message->body);
+
+        $this->assertContains($expected, $messagebody);
+    }
+
+    /**
+     * Test generate_confirmation_link with custom admin link
+     */
+    public function test_generate_confirmation_link_with_custom_admin() {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $sink = $this->redirectEmails();
+
+        $admin = $CFG->admin;
+        $CFG->admin = 'custom/admin/path';
+
+        $user = $this->getDataGenerator()->create_user(
+            [
+                "username" => "many_-.@characters@_@-..-..",
+                "confirmed" => false,
+                "email" => 'test@example.com',
+            ]
+        );
+        $confirmationurl = "/admin/test.php?with=params";
+        $expected = $CFG->wwwroot . "/" . $CFG->admin . "/test.php?with=params&data=/many_-%2E%40characters%40_%40-%2E%2E-%2E%2E";
+
+        send_confirmation_email($user, $confirmationurl);
+        $sink->close();
+        $messages = $sink->get_messages();
+        $message = array_shift($messages);
+        $messagebody = quoted_printable_decode($message->body);
+
+        $sink->close();
+        $this->assertContains($expected, $messagebody);
+
+        $CFG->admin = $admin;
+    }
+
+
+    /**
      * Test remove_course_content deletes course contents
      * TODO Add asserts to verify other data related to course is deleted as well.
      */
