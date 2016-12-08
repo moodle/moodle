@@ -42,10 +42,6 @@ Feature: Basic recycle bin functionality
     And I should see "Test assign" in the "Topic 1" "section"
 
   Scenario: Restore a deleted course
-    # TODO MDL-57250 remove extra category.
-    Given the following "categories" exist:
-       | name | idnumber |
-       | There is a bug with navigation and we need an extra category | CAT1 |
     Given I log in as "admin"
     And I go to the courses management page
     And I click on "delete" action for "Course 2" in management course listing
@@ -54,7 +50,7 @@ Feature: Basic recycle bin functionality
     And I should see "C2 has been completely deleted"
     And I press "Continue"
     And I am on course index
-    And I follow "Miscellaneous"
+    And I should see "Course 1"
     And I should not see "Course 2"
     When I navigate to "Recycle bin" in current page administration
     Then I should see "Course 2"
