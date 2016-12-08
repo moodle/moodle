@@ -134,13 +134,10 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
      * If we are not on the course main page, click on the course link in the navbar
      */
     protected function go_to_main_course_page() {
-        $starturl = rtrim($this->getMinkParameter('base_url'), '/') . '/';
         $url = $this->getSession()->getCurrentUrl();
-        if (strpos($url, $starturl) === 0) {
-            $url = substr($url, strlen($starturl));
-        }
-        if (!preg_match('|^course/view.php?id=[\d]+|', $url)) {
+        if (!preg_match('|/course/view.php\?id=[\d]+$|', $url)) {
             $this->find('xpath', '//header//div[@id=\'page-navbar\']//a[contains(@href,\'/course/view.php?id=\')]')->click();
+            $this->execute('behat_general::wait_until_the_page_is_ready');
         }
     }
 
