@@ -6,4 +6,6 @@ here is intended especially for developers.
 * Deprecated classes and their new equivalent:
   - core_competency\persistent                     -> core\persistent
   - core_competency\invalid_persistent_exception   -> core\invalid_persistent_exception
+  - core_competency\external\exporter              -> core\external\exporter
+  - core_competency\external\persistent_exporter   -> core\external\persistent_exporter
 

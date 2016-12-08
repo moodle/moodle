@@ -40,7 +40,7 @@ use stdClass;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class comment_area_exporter extends exporter {
+class comment_area_exporter extends \core\external\exporter {
 
     /** @var comment The comment instance. */
     protected $comment = null;

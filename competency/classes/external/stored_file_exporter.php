@@ -37,7 +37,7 @@ use stored_file;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class stored_file_exporter extends exporter {
+class stored_file_exporter extends \core\external\exporter {
 
     /** @var stored_file */
     protected $file;

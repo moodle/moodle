@@ -33,7 +33,7 @@ use renderer_base;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_framework_exporter extends persistent_exporter {
+class competency_framework_exporter extends \core\external\persistent_exporter {
 
     /**
      * Define the name of persistent class.

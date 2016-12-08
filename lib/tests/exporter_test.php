@@ -17,7 +17,7 @@
 /**
  * Exporter class tests.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,11 +28,11 @@ global $CFG;
 /**
  * Exporter testcase.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_competency_exporter_testcase extends advanced_testcase {
+class core_exporter_testcase extends advanced_testcase {
 
     protected $validrelated = null;
     protected $invalidrelated = null;
@@ -50,7 +50,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_read_structure() {
-        $structure = core_competency_testable_exporter::get_read_structure();
+        $structure = core_testable_exporter::get_read_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -61,7 +61,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_create_structure() {
-        $structure = core_competency_testable_exporter::get_create_structure();
+        $structure = core_testable_exporter::get_create_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -72,7 +72,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_update_structure() {
-        $structure = core_competency_testable_exporter::get_update_structure();
+        $structure = core_testable_exporter::get_update_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -87,7 +87,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
      */
     public function test_invalid_data() {
         global $PAGE;
-        $exporter = new core_competency_testable_exporter($this->invaliddata, $this->validrelated);
+        $exporter = new core_testable_exporter($this->invaliddata, $this->validrelated);
         $output = $PAGE->get_renderer('tool_lp');
 
         $result = $exporter->export($output);
@@ -98,7 +98,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
      */
     public function test_invalid_related() {
         global $PAGE;
-        $exporter = new core_competency_testable_exporter($this->validdata, $this->invalidrelated);
+        $exporter = new core_testable_exporter($this->validdata, $this->invalidrelated);
         $output = $PAGE->get_renderer('tool_lp');
 
         $result = $exporter->export($output);
@@ -106,7 +106,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
 
     public function test_valid_data_and_related() {
         global $PAGE;
-        $exporter = new core_competency_testable_exporter($this->validdata, $this->validrelated);
+        $exporter = new core_testable_exporter($this->validdata, $this->validrelated);
 
         $output = $PAGE->get_renderer('tool_lp');
 
@@ -120,11 +120,11 @@ class core_competency_exporter_testcase extends advanced_testcase {
 /**
  * Example persistent class.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_competency_testable_exporter extends \core_competency\external\exporter {
+class core_testable_exporter extends \core\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the course.

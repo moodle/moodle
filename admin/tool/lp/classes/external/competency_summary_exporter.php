@@ -37,7 +37,7 @@ use core_competency\external\competency_framework_exporter;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_summary_exporter extends \core_competency\external\exporter {
+class competency_summary_exporter extends \core\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.

@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core_competency\external;
+defined('MOODLE_INTERNAL') || die();
 
 use renderer_base;
 use core_competency\evidence;
@@ -33,7 +34,7 @@ use core_competency\user_competency;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class evidence_exporter extends persistent_exporter {
+class evidence_exporter extends \core\external\persistent_exporter {
 
     protected static function define_related() {
         return array(

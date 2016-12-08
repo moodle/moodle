@@ -40,7 +40,7 @@ use core_competency\user_competency;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_summary_exporter extends \core_competency\external\exporter {
+class user_competency_summary_exporter extends \core\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.

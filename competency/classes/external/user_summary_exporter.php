@@ -33,7 +33,7 @@ use moodle_url;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_summary_exporter extends exporter {
+class user_summary_exporter extends \core\external\exporter {
 
     protected function get_other_values(renderer_base $output) {
         global $PAGE, $CFG;

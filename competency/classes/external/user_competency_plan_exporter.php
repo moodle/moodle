@@ -33,7 +33,7 @@ use stdClass;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_plan_exporter extends persistent_exporter {
+class user_competency_plan_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
         return 'core_competency\\user_competency_plan';

@@ -34,7 +34,7 @@ use core_competency\external\stored_file_exporter;
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_evidence_summary_exporter extends \core_competency\external\persistent_exporter {
+class user_evidence_summary_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
         return 'core_competency\\user_evidence';

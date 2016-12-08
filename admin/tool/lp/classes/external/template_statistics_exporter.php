@@ -34,7 +34,7 @@ use core_competency\external\competency_exporter;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class template_statistics_exporter extends \core_competency\external\exporter {
+class template_statistics_exporter extends \core\external\exporter {
 
     public static function define_properties() {
         return array(
