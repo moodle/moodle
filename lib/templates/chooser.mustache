@@ -15,7 +15,26 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/chooser
+
     Chooser.
+
+    Example context (json):
+    {
+        "title": "Chooser title",
+        "method": "post",
+        "actionurl": "http://example.org/test",
+        "instructions": "Choose one:",
+        "paramname": "param",
+        "sections": [{
+            "id": "section-1",
+            "label": "Section one",
+            "items": [{
+                "label": "item one",
+                "description": "description one"
+            }]
+        }]
+    }
 }}
 <div class="hd choosertitle">
     {{title}}
