@@ -15,7 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/action_menu
+
     Action menu.
+
+    Example context (json):
+    {
+        "classes": "",
+        "primary": {
+            "items": [{"rawhtml": "<p>Item in primary menu</p>"}]
+        },
+        "secondary": {
+            "items": [{"rawhtml": "<p>Item in secondary menu</p>"}]
+        }
+    }
 }}
 <div class="action-menu {{classes}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
     {{#primary}}
