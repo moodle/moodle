@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/email_html
+    @template core/email_fromname
 
     Template for all email subjects.
 
@@ -31,5 +31,10 @@
     * fromname
     * replyto
     * replytoname
+
+    Example context (json):
+    {
+        "fromname": "Joe Bloggs"
+    }
 }}
 {{{fromname}}}
