@@ -125,7 +125,11 @@ if ($availablelangs = $controller->availablelangs) {
     $remote = false;
     $availablelangs = array();
     echo $OUTPUT->box_start();
-    print_string('remotelangnotavailable', 'tool_langimport', $CFG->dataroot.'/lang/');
+    $a = [
+        'src' => $controller->lang_pack_url(),
+        'dest' => $CFG->dataroot.'/lang/',
+    ];
+    print_string('downloadnotavailable', 'tool_langimport', $a);
     echo $OUTPUT->box_end();
 }
 
