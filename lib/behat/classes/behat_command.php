@@ -219,6 +219,17 @@ class behat_command {
     }
 
     /**
+     * Returns the path to the parallel run file which specifies if parallel test environment is enabled
+     * and how many parallel runs to execute.
+     *
+     * @param int $runprocess run process for which behat dir is returned.
+     * @return string
+     */
+    public final static function get_last_failed_test_status_file_path($runprocess = 0) {
+        return self::get_behat_dir($runprocess) . '/lastfailed.txt';
+    }
+
+    /**
      * Outputs a message.
      *
      * Used in CLI + web UI methods. Stops the
