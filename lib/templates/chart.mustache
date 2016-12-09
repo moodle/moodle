@@ -15,17 +15,25 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/chart
+
     Chart rendering.
+
+    Example context (json):
+    {
+        "withtable": true,
+        "chartdata": "null"
+    }
 }}
 <div class="chart-area" id="chart-area-{{uniqid}}">
-    <div class="chart-image" role="decoration" aria-describedby="chart-table-data-{{uniqid}}"></div>
+    <div class="chart-image" role="presentation" aria-describedby="chart-table-data-{{uniqid}}"></div>
     <div class="chart-table {{^withtable}}accesshide{{/withtable}}">
         <p class="chart-table-expand">
             <a href="#" aria-controls="chart-table-data-{{uniqid}}" role="button">
                 {{#str}}showchartdata, moodle{{/str}}
             </a>
         </p>
-        <div class="chart-table-data" id="chart-table-data-{{uniqid}}" {{#withtable}}aria-expanded="false"{{/withtable}}></div>
+        <div class="chart-table-data" id="chart-table-data-{{uniqid}}" {{#withtable}}role="complementary" aria-expanded="false"{{/withtable}}></div>
     </div>
 </div>
 
