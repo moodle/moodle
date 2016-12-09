@@ -24,52 +24,15 @@
 namespace tool_lp\external;
 defined('MOODLE_INTERNAL') || die();
 
-use renderer_base;
-use moodle_url;
+debugging('The class \\tool_lp\\external\\cohort_summary_exporter has been deprecated. ' .
+    'Please use \\core_cohort\\external\\cohort_summary_exporter instead.', DEBUG_DEVELOPER);
 
 /**
  * Class for exporting a cohort summary from an stdClass.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 3.3
  */
-class cohort_summary_exporter extends \core\external\exporter {
-
-    protected static function define_related() {
-        // Cohorts can exist on a category context.
-        return array('context' => '\\context');
-    }
-
-    public static function define_properties() {
-        return array(
-            'id' => array(
-                'type' => PARAM_INT,
-            ),
-            'name' => array(
-                'type' => PARAM_TEXT,
-            ),
-            'idnumber' => array(
-                'type' => PARAM_RAW,        // ID numbers are plain text.
-                'default' => '',
-                'null' => NULL_ALLOWED
-            ),
-            'visible' => array(
-                'type' => PARAM_BOOL,
-            )
-        );
-    }
-
-    public static function define_other_properties() {
-        return array(
-            'contextname' => array(
-                'type' => PARAM_TEXT
-            ),
-        );
-    }
-
-    protected function get_other_values(renderer_base $output) {
-        return array(
-            'contextname' => $this->related['context']->get_context_name()
-        );
-    }
+class cohort_summary_exporter extends \core_cohort\external\cohort_summary_exporter {
 }

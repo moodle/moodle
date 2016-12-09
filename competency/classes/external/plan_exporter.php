@@ -29,6 +29,8 @@ use renderer_base;
 use stdClass;
 use moodle_url;
 use core_competency\url;
+use core_comment\external\comment_area_exporter;
+use core_user\external\user_summary_exporter;
 
 /**
  * Class for exporting plan data.

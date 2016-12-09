@@ -43,7 +43,7 @@ use core_competency\external\user_competency_course_exporter;
 use core_competency\external\user_competency_exporter;
 use tool_lp\external\competency_path_exporter;
 use tool_lp\external\course_competency_statistics_exporter;
-use tool_lp\external\course_module_summary_exporter;
+use core_course\external\course_module_summary_exporter;
 
 /**
  * Class containing data for course competencies page

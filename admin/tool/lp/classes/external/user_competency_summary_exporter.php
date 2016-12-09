@@ -22,16 +22,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\external;
+defined('MOODLE_INTERNAL') || die();
 
 use context_user;
 use renderer_base;
 use stdClass;
-use core_competency\external\comment_area_exporter;
+use core_comment\external\comment_area_exporter;
 use core_competency\external\evidence_exporter;
 use core_competency\external\user_competency_exporter;
 use core_competency\external\user_competency_plan_exporter;
 use core_competency\external\user_competency_course_exporter;
-use core_competency\external\user_summary_exporter;
+use core_user\external\user_summary_exporter;
 use core_competency\user_competency;
 
 /**

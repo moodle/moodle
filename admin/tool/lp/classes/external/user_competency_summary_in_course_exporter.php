@@ -22,9 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\external;
+defined('MOODLE_INTERNAL') || die();
 
 use core_competency\api;
 use core_competency\user_competency;
+use core_course\external\course_module_summary_exporter;
+use core_course\external\course_summary_exporter;
 use context_course;
 use renderer_base;
 use stdClass;

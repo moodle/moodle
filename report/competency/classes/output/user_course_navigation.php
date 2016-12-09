@@ -27,7 +27,7 @@ use renderable;
 use renderer_base;
 use templatable;
 use context_course;
-use core_competency\external\user_summary_exporter;
+use core_user\external\user_summary_exporter;
 use stdClass;
 
 /**

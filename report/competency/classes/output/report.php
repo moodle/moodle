@@ -32,12 +32,12 @@ use moodle_url;
 use stdClass;
 use core_competency\api;
 use core_competency\external\user_competency_course_exporter;
-use core_competency\external\user_summary_exporter;
+use core_user\external\user_summary_exporter;
 use core_competency\external\performance_helper;
 use core_competency\url;
 use core_competency\user_competency;
 use tool_lp\external\competency_summary_exporter;
-use tool_lp\external\course_summary_exporter;
+use core_course\external\course_summary_exporter;
 
 /**
  * Class containing data for learning plan template competencies page

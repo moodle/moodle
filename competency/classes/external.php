@@ -56,7 +56,6 @@ use core_competency\external\user_competency_exporter;
 use core_competency\external\user_competency_plan_exporter;
 use core_competency\external\user_evidence_competency_exporter;
 use core_competency\external\user_evidence_exporter;
-use core_competency\external\user_summary_exporter;
 
 /**
  * External API class.

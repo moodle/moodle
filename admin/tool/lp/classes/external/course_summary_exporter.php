@@ -24,50 +24,15 @@
 namespace tool_lp\external;
 defined('MOODLE_INTERNAL') || die();
 
-use renderer_base;
-use moodle_url;
+debugging('The class \\tool_lp\\external\\course_summary_exporter has been deprecated. ' .
+    'Please use \\core_course\\external\\course_summary_exporter instead.', DEBUG_DEVELOPER);
 
 /**
  * Class for exporting a course summary from an stdClass.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 3.3
  */
-class course_summary_exporter extends \core\external\exporter {
-
-    protected static function define_related() {
-        // We cache the context so it does not need to be retrieved from the course.
-        return array('context' => '\\context');
-    }
-
-    protected function get_other_values(renderer_base $output) {
-        return array(
-            'viewurl' => (new moodle_url('/course/view.php', array('id' => $this->data->id)))->out(false)
-        );
-    }
-
-    public static function define_properties() {
-        return array(
-            'id' => array(
-                'type' => PARAM_INT,
-            ),
-            'fullname' => array(
-                'type' => PARAM_TEXT,
-            ),
-            'shortname' => array(
-                'type' => PARAM_TEXT,
-            ),
-            'idnumber' => array(
-                'type' => PARAM_RAW,
-            )
-        );
-    }
-
-    public static function define_other_properties() {
-        return array(
-            'viewurl' => array(
-                'type' => PARAM_URL,
-            )
-        );
-    }
+class course_summary_exporter extends \core_course\external\course_summary_exporter {
 }
