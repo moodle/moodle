@@ -2486,90 +2486,17 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 .path-admin .admintable .leftalign {
   text-align: left;
 }
-.environmenttable p.warn {
+.environmenttable .warn {
   background-color: #fcf8e3;
   color: #8a6d3b;
 }
-.environmenttable .error,
-.environmenttable span.warn,
-.environmenttable .ok {
-  display: inline-block;
-  padding: 2px 4px;
-  font-size: 11.844px;
-  font-weight: bold;
-  line-height: 14px;
-  color: #fff;
-  vertical-align: baseline;
-  white-space: nowrap;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #999;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-.environmenttable .error:empty,
-.environmenttable span.warn:empty,
-.environmenttable .ok:empty {
-  display: none;
-}
-.environmenttable .error-important,
-.environmenttable span.warn-important,
-.environmenttable .ok-important {
-  background-color: #b94a48;
-}
-.environmenttable .error-important[href],
-.environmenttable span.warn-important[href],
-.environmenttable .ok-important[href] {
-  background-color: #953b39;
-}
-.environmenttable .error-warning,
-.environmenttable span.warn-warning,
-.environmenttable .ok-warning {
-  background-color: #f89406;
-}
-.environmenttable .error-warning[href],
-.environmenttable span.warn-warning[href],
-.environmenttable .ok-warning[href] {
-  background-color: #c67605;
-}
-.environmenttable .error-success,
-.environmenttable span.warn-success,
-.environmenttable .ok-success {
-  background-color: #468847;
-}
-.environmenttable .error-success[href],
-.environmenttable span.warn-success[href],
-.environmenttable .ok-success[href] {
-  background-color: #356635;
-}
-.environmenttable .error-info,
-.environmenttable span.warn-info,
-.environmenttable .ok-info {
-  background-color: #3a87ad;
-}
-.environmenttable .error-info[href],
-.environmenttable span.warn-info[href],
-.environmenttable .ok-info[href] {
-  background-color: #2d6987;
-}
-.environmenttable .error-inverse,
-.environmenttable span.warn-inverse,
-.environmenttable .ok-inverse {
-  background-color: #333;
-}
-.environmenttable .error-inverse[href],
-.environmenttable span.warn-inverse[href],
-.environmenttable .ok-inverse[href] {
-  background-color: #1a1a1a;
-}
 .environmenttable .error {
-  background-color: #b94a48;
-}
-.environmenttable span.warn {
-  background-color: #f89406;
+  background-color: #f2dede;
+  color: #b94a48;
 }
 .environmenttable .ok {
-  background-color: #468847;
+  background-color: #dff0d8;
+  color: #468847;
 }
 .path-admin .admintable.environmenttable .name,
 .path-admin .admintable.environmenttable .info,
