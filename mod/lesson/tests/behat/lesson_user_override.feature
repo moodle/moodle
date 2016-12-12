@@ -134,7 +134,6 @@ Feature: Lesson user override
     And I set the following fields to these values:
       | Password protected lesson | Yes |
       | id_password               | moodle_rules |
-    And I wait until the page is ready
     And I press "Save and display"
     And I navigate to "User overrides" in current page administration
     And I press "Add user override"
