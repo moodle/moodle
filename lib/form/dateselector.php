@@ -128,6 +128,10 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
         $this->_elements = array();
 
         $dateformat = $calendartype->get_date_order($this->_options['startyear'], $this->_options['stopyear']);
+        // Reverse date element (Day, Month, Year), in RTL mode.
+        if (right_to_left()) {
+            $dateformat = array_reverse($dateformat);
+        }
         foreach ($dateformat as $key => $value) {
             // E_STRICT creating elements without forms is nasty because it internally uses $this
             $this->_elements[] = @MoodleQuickForm::createElement('select', $key, get_string($key, 'form'), $value, $this->getAttributes(), true);
