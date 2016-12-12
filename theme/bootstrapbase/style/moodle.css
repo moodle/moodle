@@ -7599,6 +7599,7 @@ body.path-question-type .mform fieldset.hidden {
 #groupeditform .groups select,
 #groupeditform .members select {
   min-width: 175px;
+  max-width: 90%;
 }
 /** Preferences page */
 .preferences-group ul {
