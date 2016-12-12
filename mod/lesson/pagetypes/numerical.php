@@ -87,12 +87,12 @@ class lesson_page_type_numerical extends lesson_page {
         $result->response = '';
         $result->newpageid = 0;
 
-        if (isset($data->answer)) {
-            // just doing default PARAM_RAW, not doing PARAM_INT because it could be a float
-            $result->useranswer = (float)$data->answer;
-        } else {
+        if (!isset($data->answer) || !is_numeric($data->answer)) {
             $result->noanswer = true;
             return $result;
+        } else {
+            // Just doing default PARAM_RAW, not doing PARAM_INT because it could be a float.
+            $result->useranswer = (float)$data->answer;
         }
         $result->studentanswer = $result->userresponse = $result->useranswer;
         $answers = $this->get_answers();
