@@ -1266,6 +1266,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     white-space: nowrap;
     text-align: center;
 }
+
 .initialbar {
 
     overflow: auto;
@@ -1279,6 +1280,15 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         white-space: nowrap;
     }
 
+    .initialbarall {
+        float: left;
+        width: 4em;
+        margin-bottom: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .initialbargroups {
         float: left;
     }
@@ -1287,30 +1297,35 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
         float: left;
         display: inline-block;
         white-space: nowrap;
-    }
+        margin: 0;
+        padding: 0;
 
-    a,
-    strong {
-        display: inline-block;
-        min-width: 1.4em;
-        text-align: center;
-
-        &.initialbarall {
+        li {
             float: left;
-            width: 4em;
-            margin-bottom: 2px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            list-style: none;
         }
     }
 
-    strong {
-        background: @linkColor;
-        color: @bodyBackground;
+    .letter {
+        display: inline-block;
+        height: 1.35em;
+        min-width: 1.35em;
+        text-align: center;
+
+        color: @linkColor;
+        background: @paginationBackground;
+        border-width: 1px;
+        border-color: @paginationBorder;
+        border-style: solid;
+    }
+    .letter:hover,
+    .letter.active {
+        color: white;
+        background-color: @linkColor;
     }
 
 }
+
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
     background-color: #aaa;

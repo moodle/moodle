@@ -2926,6 +2926,32 @@ EOD;
     }
 
     /**
+     * Returns HTML to display initials bar to provide access to other pages  (usually in a search)
+     *
+     * @param string $current the currently selected letter.
+     * @param string $class class name to add to this initial bar.
+     * @param string $title the name to put in front of this initial bar.
+     * @param string $urlvar URL parameter name for this initial.
+     * @param string $url URL object.
+     * @param array $alpha of letters in the alphabet.
+     * @return string the HTML to output.
+     */
+    public function initials_bar($current, $class, $title, $urlvar, $url, $alpha = null) {
+        $ib = new initials_bar($current, $class, $title, $urlvar, $url, $alpha);
+        return $this->render($ib);
+    }
+
+    /**
+     * Internal implementation of initials bar rendering.
+     *
+     * @param initials_bar $initialsbar
+     * @return string
+     */
+    protected function render_initials_bar(initials_bar $initialsbar) {
+        return $this->render_from_template('core/initials_bar', $initialsbar->export_for_template($this));
+    }
+
+    /**
      * Output the place a skip link goes to.
      *
      * @param string $id The target name from the corresponding $PAGE->requires->skip_link_to($target) call.

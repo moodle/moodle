@@ -3610,10 +3610,54 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
   white-space: nowrap;
   text-align: center;
 }
-.initialbar a,
-.initialbar strong {
-  padding-left: 3px;
-  padding-right: 3px;
+.initialbar {
+  overflow: auto;
+}
+.initialbar .initialbarlabel {
+  display: inline-block;
+  width: 6em;
+  float: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.initialbar .initialbarall {
+  float: left;
+  width: 4em;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.initialbar .initialbargroups {
+  float: left;
+}
+.initialbar .initialbargroup {
+  float: left;
+  display: inline-block;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+}
+.initialbar .initialbargroup li {
+  float: left;
+  list-style: none;
+}
+.initialbar .letter {
+  display: inline-block;
+  height: 1.35em;
+  min-width: 1.35em;
+  text-align: center;
+  color: #0070a8;
+  background: #fff;
+  border-width: 1px;
+  border-color: #ddd;
+  border-style: solid;
+}
+.initialbar .letter:hover,
+.initialbar .letter.active {
+  color: white;
+  background-color: #0070a8;
 }
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
@@ -10290,7 +10334,6 @@ body.path-question-type .mform fieldset.hidden {
   }
 }
 /*!
-
  * Bootstrap v2.3.2
  *
  * Copyright 2013 Twitter, Inc
