@@ -76,7 +76,7 @@ class core_medialib_testcase extends advanced_testcase {
      */
     private function pretend_to_be_firefox() {
         // Pretend to be using Firefox browser (must support ogg for tests to work).
-        core_useragent::instance(true, 'Mozilla/5.0 (Windows NT 6.1; rv:8.0) Gecko/20100101 Firefox/8.0');
+        core_useragent::instance(true, 'Mozilla/5.0 (X11; Linux x86_64; rv:46.0) Gecko/20100101 Firefox/46.0 ');
     }
 
     /**
@@ -560,6 +560,7 @@ class core_medialib_testcase extends advanced_testcase {
         // MP3, WebM and FLV.
         $urls = array(
             new moodle_url('http://example.org/test.mp4'),
+            new moodle_url('http://example.org/test.ogv'),
             new moodle_url('http://example.org/test.webm'),
             new moodle_url('http://example.org/test.flv'),
         );
@@ -572,8 +573,9 @@ class core_medialib_testcase extends advanced_testcase {
         // Result should contain HTML5 with two sources + FLV.
         $t = $renderer->embed_alternatives($urls);
 
-        // HTML5 sources - mp4, not flv or webm (not supported in Safari).
+        // HTML5 sources - mp4, but not ogv, flv or webm (not supported in Safari).
         $this->assertContains('<source src="http://example.org/test.mp4"', $t);
+        $this->assertNotContains('<source src="http://example.org/test.ogv"', $t);
         $this->assertNotContains('<source src="http://example.org/test.webm"', $t);
         $this->assertNotContains('<source src="http://example.org/test.flv"', $t);
 
@@ -585,8 +587,9 @@ class core_medialib_testcase extends advanced_testcase {
         $this->pretend_to_be_firefox();
         $t = $renderer->embed_alternatives($urls);
 
-        // HTML5 sources - webm, not not flv or mp4 (not supported in Firefox).
-        $this->assertNotContains('<source src="http://example.org/test.mp4"', $t);
+        // HTML5 sources - mp4, ogv and webm, but not flv.
+        $this->assertContains('<source src="http://example.org/test.mp4"', $t);
+        $this->assertContains('<source src="http://example.org/test.ogv"', $t);
         $this->assertContains('<source src="http://example.org/test.webm"', $t);
         $this->assertNotContains('<source src="http://example.org/test.flv"', $t);
     }

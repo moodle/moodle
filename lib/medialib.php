@@ -1127,14 +1127,6 @@ OET;
                     if (core_useragent::is_ie() || core_useragent::is_edge() || core_useragent::is_safari()) {
                         continue;
                     }
-                } else {
-                    // Formats .m4v and .mp4 are not supported in Opera, or in Firefox before 27.
-                    // https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
-                    // has the details.
-                    if (core_useragent::is_opera() || (core_useragent::is_firefox() &&
-                            !core_useragent::check_firefox_version(27))) {
-                        continue;
-                    }
                 }
 
                 $result[] = $url;
@@ -1185,7 +1177,7 @@ OET;
     }
 
     public function get_supported_extensions() {
-        return array('ogg', 'oga', 'aac', 'm4a', 'mp3');
+        return array('ogg', 'oga', 'aac', 'm4a', 'mp3', 'wav');
     }
 
     public function list_supported_urls(array $urls, array $options = array()) {
@@ -1199,16 +1191,9 @@ OET;
                     if (core_useragent::is_ie() || core_useragent::is_edge() || core_useragent::is_safari()) {
                         continue;
                     }
-                } else {
-                    // Formats .aac, .mp3, and .m4a are not supported in Opera.
-                    if (core_useragent::is_opera()) {
-                        continue;
-                    }
-                    // Formats .mp3 and .m4a were not reliably supported in Firefox before 27.
-                    // https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
-                    // has the details. .aac is still not supported.
-                    if (core_useragent::is_firefox() && ($ext === 'aac' ||
-                            !core_useragent::check_firefox_version(27))) {
+                } else if ($ext === 'wav') {
+                    // Wave is not supported in IE.
+                    if (core_useragent::is_ie()) {
                         continue;
                     }
                 }
