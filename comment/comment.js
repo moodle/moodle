@@ -410,19 +410,21 @@ M.core_comment = {
     },
     init_admin: function(Y) {
         var select_all = Y.one('#comment_select_all');
-        select_all.on('click', function(e) {
-            var comments = document.getElementsByName('comments');
-            var checked = false;
-            for (var i in comments) {
-                if (comments[i].checked) {
-                    checked=true;
+        if (select_all) {
+            select_all.on('click', function(e) {
+                var comments = document.getElementsByName('comments');
+                var checked = false;
+                for (var i in comments) {
+                    if (comments[i].checked) {
+                        checked=true;
+                    }
                 }
-            }
-            for (i in comments) {
-                comments[i].checked = !checked;
-            }
-            this.set('checked', !checked);
-        });
+                for (i in comments) {
+                    comments[i].checked = !checked;
+                }
+                this.set('checked', !checked);
+            });
+        }
 
         var comments_delete = Y.one('#comments_delete');
         if (comments_delete) {
