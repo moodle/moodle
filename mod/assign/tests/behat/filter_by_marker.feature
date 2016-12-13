@@ -35,6 +35,7 @@ Feature: In an assignment, teachers can filter displayed submissions by assigned
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "allocatedmarker" to "Marker 1"
+    And I set the field "Notify students" to "0"
     And I press "Save changes"
     And I press "Ok"
     And I click on "Edit settings" "link"
