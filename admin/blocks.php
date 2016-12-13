@@ -37,6 +37,7 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
+        add_to_config_log('block_visibility', $block->visible, '0', $block->name);
         core_plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
@@ -46,6 +47,7 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Show block
+        add_to_config_log('block_visibility', $block->visible, '1', $block->name);
         core_plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
