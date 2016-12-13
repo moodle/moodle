@@ -144,7 +144,9 @@
 }
 
 #page-mod-scorm-player #scormpage #scorm_toc.disabled,
-#page-mod-scorm-player #scormpage #scorm_toc_toggle.disabled {
+#page-mod-scorm-player #scormpage #scorm_toc.loading,
+#page-mod-scorm-player #scormpage #scorm_toc_toggle.disabled,
+#page-mod-scorm-player #scormpage #scorm_toc_toggle.loading {
     display: none;
 }
 
