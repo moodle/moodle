@@ -931,6 +931,12 @@ a.ygtvspacer:hover {
     background: url('[[pix:theme|fp/alias]]') no-repeat;
     background-position: bottom left;
 }
+.dir-rtl .fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {
+    transform: scaleX(-1);
+}
+.dir-rtl .fp-iconview .fp-file.fp-isreference .fp-reficons2 {
+    transform: scaleX(-1);
+}
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {
     display: none;
 }
@@ -974,6 +980,14 @@ a.ygtvspacer:hover {
     top: 9px;
     left: -6px;
     z-index: 1001;
+}
+.dir-rtl .filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1 {
+    transform: scaleX(-1);
+    left: -17px;
+}
+.dir-rtl .filemanager .fp-filename-icon.fp-isreference .fp-reficons2 {
+    transform: scaleX(-1);
+    left: 6px;
 }
 // Folder Context Menu (File Manager only)
 .filemanager .fp-contextmenu {
