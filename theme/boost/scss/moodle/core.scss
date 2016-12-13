@@ -2144,3 +2144,14 @@ $footer-link-color: $brand-primary !default;
     }
 }
 
+.sr-only-focusable {
+    &:active,
+    &:focus {
+        z-index: $zindex-navbar-fixed + 1;
+        position: fixed;
+        background: #fff;
+        padding: 7px;
+        left: 0;
+        top: 0;
+    }
+}
