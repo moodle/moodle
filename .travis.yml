@@ -13,7 +13,7 @@ language: php
 
 php:
     # We only run the highest and lowest supported versions to reduce the load on travis-ci.org.
-    - 7.0
+    - 7.1
     - 5.6
 
 services:
@@ -23,7 +23,7 @@ env:
     # Although we want to run these jobs and see failures as quickly as possible, we also want to get the slowest job to
     # start first so that the total run time is not too high.
     #
-    # We only run MySQL on PHP 7.0, so run that first.
+    # We only run MySQL on PHP 7.1, so run that first.
     # CI Tests should be second-highest in priority as these only take <= 60 seconds to run under normal circumstances.
     # Postgres is significantly is pretty reasonable in its run-time.
 
@@ -47,22 +47,22 @@ matrix:
 
     include:
           # Run grunt/npm install on lowest supported npm version
-        - php: 7
+        - php: 7.1
           env: DB=none     TASK=GRUNT   NVM_VERSION='4'
           # Run grunt/npm install on highest version ('node' is an alias for the latest node.js version.)
-        - php: 7
+        - php: 7.1
           env: DB=none     TASK=GRUNT   NVM_VERSION='node'
 
     exclude:
         # MySQL - it's just too slow.
-        # Exclude it on all versions except for 7.0
+        # Exclude it on all versions except for 7.1
 
         - env: DB=mysqli   TASK=PHPUNIT
           php: 5.6
 
         # Moodle 2.7 is not compatible with PHP 7 for the upgrade test.
         - env: DB=pgsql    TASK=UPGRADE
-          php: 7.0
+          php: 7.1
 
 cache:
     directories:
@@ -70,9 +70,6 @@ cache:
       - $HOME/.npm
 
 install:
-    # Disable xdebug. We aren't generating code coverage, and it has a huge impact upon test performance.
-    - rm /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
-
     - >
         if [ "$TASK" = 'PHPUNIT' ];
         then
@@ -99,6 +96,7 @@ install:
         fi
 
 before_script:
+    - phpenv config-rm xdebug.ini
     - >
       if [ "$TASK" = 'PHPUNIT' -o "$TASK" = 'UPGRADE' ];
       then
