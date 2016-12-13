@@ -2471,6 +2471,8 @@ function glossary_xml_export_files($tag, $taglevel, $contextid, $filearea, $item
             $co .= glossary_full_tag('FILENAME', $taglevel + 2, false, $file->get_filename());
             $co .= glossary_full_tag('FILEPATH', $taglevel + 2, false, $file->get_filepath());
             $co .= glossary_full_tag('CONTENTS', $taglevel + 2, false, base64_encode($file->get_content()));
+            $co .= glossary_full_tag('FILEAUTHOR', $taglevel + 2, false, $file->get_author());
+            $co .= glossary_full_tag('FILELICENSE', $taglevel + 2, false, $file->get_license());
             $co .= glossary_end_tag('FILE', $taglevel + 1);
         }
         $co .= glossary_end_tag($tag, $taglevel);
@@ -2489,6 +2491,7 @@ function glossary_xml_export_files($tag, $taglevel, $contextid, $filearea, $item
  * @return int
  */
 function glossary_xml_import_files($xmlparent, $tag, $contextid, $filearea, $itemid) {
+    global $USER, $CFG;
     $count = 0;
     if (isset($xmlparent[$tag][0]['#']['FILE'])) {
         $fs = get_file_storage();
@@ -2501,7 +2504,18 @@ function glossary_xml_import_files($xmlparent, $tag, $contextid, $filearea, $ite
                 'itemid'    => $itemid,
                 'filepath'  => $file['#']['FILEPATH'][0]['#'],
                 'filename'  => $file['#']['FILENAME'][0]['#'],
+                'userid'    => $USER->id
             );
+            if (array_key_exists('FILEAUTHOR', $file['#'])) {
+                $filerecord['author'] = $file['#']['FILEAUTHOR'][0]['#'];
+            }
+            if (array_key_exists('FILELICENSE', $file['#'])) {
+                $license = $file['#']['FILELICENSE'][0]['#'];
+                require_once($CFG->libdir . "/licenselib.php");
+                if (license_manager::get_license_by_shortname($license)) {
+                    $filerecord['license'] = $license;
+                }
+            }
             $content =  $file['#']['CONTENTS'][0]['#'];
             $fs->create_file_from_string($filerecord, base64_decode($content));
             $count++;
