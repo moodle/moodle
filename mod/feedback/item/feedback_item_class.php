@@ -181,6 +181,7 @@ abstract class feedback_item_base {
      * If it is important which mode the form is in, use $form->get_mode()
      *
      * Each item type must add a single form element with the name $item->typ.'_'.$item->id
+     * This element must always be present in form data even if nothing is selected (i.e. use advcheckbox and not checkbox).
      * To add an element use either:
      * $form->add_form_element() - adds a single element to the form
      * $form->add_form_group_element() - adds a group element to the form
