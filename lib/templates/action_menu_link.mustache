@@ -29,7 +29,7 @@
     }
 }}
 {{^disabled}}
-    <a href="{{url}}" class="{{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}}{{/attributes}} {{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>
+    <a href="{{url}}" class="{{classes}}"{{#attributes}} {{name}}={{#quote}}{{value}}{{/quote}}{{/attributes}} {{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>
 {{/disabled}}
 {{#disabled}}
     <span class="currentlink" role="menuitem">{{#icon}}{{>core/pix_icon}}{{/icon}}{{{text}}}</span>

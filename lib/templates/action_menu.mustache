@@ -30,10 +30,10 @@
         }
     }
 }}
-<div class="{{classes}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
+<div class="{{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
     {{#primary}}
 
-        <ul class="{{classes}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
+        <ul class="{{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
 
             {{#prioritise}}<li role="presentation">{{> core/action_menu_trigger }}</li>{{/prioritise}}<!--
 
@@ -46,7 +46,7 @@
     {{/primary}}
 
     {{#secondary}}
-        <ul class="{{classes}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
+        <ul class="{{classes}}"{{#attributes}} {{name}}="{{value}}"{{/attributes}}>
             {{#items}}<li role="presentation">{{> core/action_menu_item }}</li>{{/items}}
         </ul>
     {{/secondary}}
