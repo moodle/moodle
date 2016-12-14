@@ -393,10 +393,10 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/notification', 'core/cust
          */
         Messages.prototype._sendMessage = function() {
             var element = this.messageArea.find(SELECTORS.SENDMESSAGETEXT);
-            var text = element.val();
+            var text = element.val().trim();
 
             // Do not do anything if it is empty.
-            if (text.trim() === '') {
+            if (text === '') {
                 return false;
             }
 
