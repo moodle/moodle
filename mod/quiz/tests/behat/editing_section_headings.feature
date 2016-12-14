@@ -386,3 +386,42 @@ Feature: Edit quiz page - section headings
     And I open the "Page 2" add to quiz menu
     And I follow "a new section heading" in the open menu
     Then "TF3" "list_item" should exist in the "Section heading ..." "list_item"
+
+  @javascript
+  Scenario: Add section works after removing a page break with more than 10 pages
+    Given the following "activities" exist:
+      | activity   | name   | intro              | course | idnumber |
+      | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |
+    And the following "questions" exist:
+      | questioncategory | qtype       | name | questiontext |
+      | Test questions   | truefalse   | TF1  | Question 1   |
+      | Test questions   | truefalse   | TF2  | Question 2   |
+      | Test questions   | truefalse   | TF3  | Question 3   |
+      | Test questions   | truefalse   | TF4  | Question 4   |
+      | Test questions   | truefalse   | TF5  | Question 5   |
+      | Test questions   | truefalse   | TF6  | Question 6   |
+      | Test questions   | truefalse   | TF7  | Question 7   |
+      | Test questions   | truefalse   | TF8  | Question 8   |
+      | Test questions   | truefalse   | TF9  | Question 9   |
+      | Test questions   | truefalse   | TF10 | Question 10  |
+      | Test questions   | truefalse   | TF11 | Question 11  |
+    And quiz "Quiz 1" contains the following questions:
+      | question | page |
+      | TF1      | 1    |
+      | TF2      | 2    |
+      | TF3      | 3    |
+      | TF4      | 4    |
+      | TF5      | 5    |
+      | TF6      | 6    |
+      | TF7      | 7    |
+      | TF8      | 8    |
+      | TF9      | 9    |
+      | TF10     | 10   |
+      | TF11     | 11   |
+    When I follow "Course 1"
+    And I follow "Quiz 1"
+    And I click on "Edit quiz" "link" in the "Administration" "block"
+    And I click on the "Remove" page break icon after question "TF10"
+    And I open the "Page 10" add to quiz menu
+    And I choose "a new section heading" in the open action menu
+    Then "TF10" "list_item" should exist in the "Section heading ..." "list_item"
