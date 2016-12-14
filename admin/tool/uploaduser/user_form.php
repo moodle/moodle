@@ -345,6 +345,7 @@ class admin_uploaduser_form2 extends moodleform {
         $errors = parent::validation($data, $files);
         $columns = $this->_customdata['columns'];
         $optype  = $data['uutype'];
+        $updatetype = $data['uuupdatetype'];
 
         // detect if password column needed in file
         if (!in_array('password', $columns)) {
@@ -375,6 +376,12 @@ class admin_uploaduser_form2 extends moodleform {
                     }
                     break;
              }
+        }
+
+        // If the 'Existing user details' value is set we need to ensure that the
+        // 'Upload type' is not set to something invalid.
+        if (!empty($updatetype) && ($optype == UU_USER_ADDNEW || $optype == UU_USER_ADDINC)) {
+            $errors['uuupdatetype'] = get_string('invalidupdatetype', 'tool_uploaduser');
         }
 
         // look for other required data
