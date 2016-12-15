@@ -76,7 +76,7 @@ $string['pathssubdataroot'] = '<p>En mappe hvori Moodle kan gemme uploadede file
 <p>Webserver-brugeren (som regel \'www-data\', \'nobody\', eller \'apache\') skal have læse- og skriveadgang til den.</p>
 <p>Mappen  må ikke være tilgængelig direkte fra internettet.</p>
 <p>Hvis ikke den allerede eksisterer, vil Installationsprogrammet forsøge at oprette den</p>';
-$string['pathssubdirroot'] = 'Den fulde sti til Moodleinstallationen.';
+$string['pathssubdirroot'] = '<p>Den fulde sti mappen med til Moodlekoden.</p>';
 $string['pathssubwwwroot'] = '<p>Moodles fulde web-adresse, dvs. adressen som den skal stå i browserens adressefelt for at komme ind på Moodle.</p>
 <p>Moodle kan ikke bruges fra flere adresser. Hvis dit websted kan tilgås fra flere adresser, skal du vælge den enkleste og opsætte permanent viderestilling for hver af de øvrige.</p>
 <p>Hvis dit websted er tilgængeligt fra både internettet og et internt net (nogen gange kaldet intranet), skal du bruge den offentlige adresse her</p>
@@ -90,11 +90,11 @@ $string['phpversionhelp'] = '<p>Moodle kræver mindst PHP version 4.3.0. eller 5
 <p>Du bliver nødt til at opdatere PHP eller flytte systemet over på en anden webserver der har en nyere version af PHP!</p>
 (Har du ver. 5.0.x kan du også nedgradere til 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Du ser denne side fordi du med succes har installeret og åbnet pakken <strong>{$a->packname} {$a->packversion}</strong> på din computer.
+$string['welcomep20'] = 'Du ser denne side fordi du har installeret og åbnet pakken <strong>{$a->packname} {$a->packversion}</strong> på din computer.
 Tillykke med det!';
-$string['welcomep30'] = 'Denne udgave af <strong>{$a->installername}</strong> indeholder programmerne til at oprette et miljø, hvori <strong>Moodle</strong> vil operere, nemlig:';
+$string['welcomep30'] = 'Denne version af <strong>{$a->installername}</strong> indeholder programmerne til at oprette et miljø, hvori <strong>Moodle</strong> vil operere, nemlig:';
 $string['welcomep40'] = 'Pakken indeholder også <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
-$string['welcomep50'] = 'Brugen af programmerne i denne pakke er styret af deres respektive licenser. Hele <strong>{$a->installername}</strong>-pakken er <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> og distribueret under <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>-licensen.';
-$string['welcomep60'] = 'De følgende sider vil hjælpe dig gennem nogle nemme trin til konfiguration og opsætning af <strong>Moodle</strong> på din computer. Du kan acceptere standardindstillingerne eller vælge at ændre dem så de bedre svarer til dine egne behov.';
+$string['welcomep50'] = 'Brugen af programmerne i denne pakke reguleres af deres respektive licenser. Hele <strong>{$a->installername}</strong>-pakken er <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> og distribueret under <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>-licensen.';
+$string['welcomep60'] = 'De følgende sider vil hjælpe dig gennem nogle nemme trin til konfiguration og opsætning af <strong>Moodle</strong> på din computer. Du kan acceptere standardindstillingerne, eller vælge at ændre dem så de bedre svarer til dine egne behov.';
 $string['welcomep70'] = 'Klik på "Næste" herunder for at forsætte opsætningen af <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Webadresse';
