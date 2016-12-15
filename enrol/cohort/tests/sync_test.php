@@ -99,6 +99,8 @@ class enrol_cohort_testcase extends advanced_testcase {
         $id = $cohortplugin->add_instance($course2, array('customint1'=>$cohort2->id, 'roleid'=>$studentrole->id));
         $cohortinstance3 = $DB->get_record('enrol', array('id'=>$id));
 
+        $id = $cohortplugin->add_instance($course2, array('customint1' => $cohort2->id, 'roleid' => $studentrole->id, 'status' => ENROL_INSTANCE_DISABLED));
+        $cohortinstance4 = $DB->get_record('enrol', array('id' => $id));
 
         // Test cohort member add event.
 
@@ -118,6 +120,7 @@ class enrol_cohort_testcase extends advanced_testcase {
         $this->assertEquals(7, $DB->count_records('user_enrolments', array()));
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$cohortinstance2->id, 'userid'=>$user3->id)));
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$cohortinstance3->id, 'userid'=>$user3->id)));
+        $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid' => $cohortinstance4->id, 'userid' => $user3->id)));
         $this->assertEquals(7, $DB->count_records('role_assignments', array()));
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>context_course::instance($course1->id)->id, 'userid'=>$user3->id, 'roleid'=>$teacherrole->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance2->id)));
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>context_course::instance($course2->id)->id, 'userid'=>$user3->id, 'roleid'=>$studentrole->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance3->id)));
@@ -313,6 +316,9 @@ class enrol_cohort_testcase extends advanced_testcase {
         $id = $cohortplugin->add_instance($course2, array('customint1'=>$cohort2->id, 'roleid'=>$studentrole->id));
         $cohortinstance3 = $DB->get_record('enrol', array('id'=>$id));
 
+        $id = $cohortplugin->add_instance($course2, array('customint1' => $cohort2->id, 'roleid' => $studentrole->id, 'status' => ENROL_INSTANCE_DISABLED));
+        $cohortinstance4 = $DB->get_record('enrol', array('id' => $id));
+
         cohort_add_member($cohort1->id, $user1->id);
         cohort_add_member($cohort1->id, $user2->id);
         cohort_add_member($cohort1->id, $user4->id);
@@ -343,6 +349,7 @@ class enrol_cohort_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$cohortinstance1->id, 'userid'=>$user2->id)));
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$cohortinstance1->id, 'userid'=>$user4->id)));
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$cohortinstance2->id, 'userid'=>$user3->id)));
+        $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid' => $cohortinstance4->id, 'userid' => $user3->id)));
         $this->assertEquals(7, $DB->count_records('role_assignments', array()));
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>context_course::instance($course1->id)->id, 'userid'=>$user1->id, 'roleid'=>$studentrole->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>context_course::instance($course1->id)->id, 'userid'=>$user2->id, 'roleid'=>$studentrole->id, 'component'=>'enrol_cohort', 'itemid'=>$cohortinstance1->id)));
