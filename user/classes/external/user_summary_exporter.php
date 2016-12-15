@@ -24,6 +24,7 @@
 namespace core_user\external;
 defined('MOODLE_INTERNAL') || die();
 
+use context_system;
 use renderer_base;
 use moodle_url;
 
@@ -64,6 +65,29 @@ class user_summary_exporter extends \core\external\exporter {
             'profileurl' => $profileurl,
             'identity' => $identity
         );
+    }
+
+
+    /**
+     * Get the format parameters for department.
+     *
+     * @return array
+     */
+    protected function get_format_parameters_for_department() {
+        return [
+            'context' => context_system::instance(), // The system context is cached, so we can get it right away.
+        ];
+    }
+
+    /**
+     * Get the format parameters for institution.
+     *
+     * @return array
+     */
+    protected function get_format_parameters_for_institution() {
+        return [
+            'context' => context_system::instance(), // The system context is cached, so we can get it right away.
+        ];
     }
 
     public static function define_properties() {

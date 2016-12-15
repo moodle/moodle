@@ -154,6 +154,7 @@ class user_competency_summary_exporter extends \core\external\exporter {
                     'scale' => $scale,
                     'usercompetency' => ($this->related['usercompetency'] ? $this->related['usercompetency'] : null),
                     'usercompetencyplan' => ($this->related['usercompetencyplan'] ? $this->related['usercompetencyplan'] : null),
+                    'context' => $evidence->get_context()
                 );
                 $related['actionuser'] = !empty($actionuserid) ? $usercache[$actionuserid] : null;
                 $exporter = new evidence_exporter($evidence, $related);

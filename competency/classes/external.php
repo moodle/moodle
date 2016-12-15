@@ -3709,6 +3709,7 @@ class external extends external_api {
             'scale' => $scale,
             'usercompetency' => $uc,
             'usercompetencyplan' => null,
+            'context' => $evidence->get_context()
         ]);
         return $exporter->export($output);
     }
@@ -3795,6 +3796,7 @@ class external extends external_api {
             'scale' => $scale,
             'usercompetency' => null,
             'usercompetencyplan' => null,
+            'context' => $evidence->get_context()
         ]);
         return $exporter->export($output);
     }
@@ -4107,6 +4109,7 @@ class external extends external_api {
             'scale' => $scale,
             'usercompetency' => null,
             'usercompetencyplan' => null,
+            'context' => $evidence->get_context(),
         ));
         return $exporter->export($output);
     }

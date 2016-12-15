@@ -443,6 +443,24 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('A', $summary->usercompetencysummary->evidence[1]->gradename);
     }
 
+    public function test_data_for_user_competency_summary() {
+        $this->setUser($this->creator);
+
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+
+        $evidence = \core_competency\external::grade_competency($this->user->id, $c1->get_id(), 1, true);
+        $evidence = \core_competency\external::grade_competency($this->user->id, $c1->get_id(), 2, true);
+
+        $summary = external::data_for_user_competency_summary($this->user->id, $c1->get_id());
+        $this->assertTrue($summary->cangrade);
+        $this->assertEquals('B', $summary->usercompetency->gradename);
+        $this->assertEquals('B', $summary->evidence[0]->gradename);
+        $this->assertEquals('A', $summary->evidence[1]->gradename);
+    }
+
     /**
      * Search cohorts.
      */

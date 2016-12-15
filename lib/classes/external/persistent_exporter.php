@@ -47,7 +47,7 @@ abstract class persistent_exporter extends exporter {
      * @param \core\persistent $persistent The persistent object to export.
      * @param array $related - An optional list of pre-loaded objects related to this persistent.
      */
-    public final function __construct(\core\persistent $persistent, $related = array()) {
+    public function __construct(\core\persistent $persistent, $related = array()) {
         $classname = static::define_class();
         if (!$persistent instanceof $classname) {
             throw new coding_exception('Invalid type for persistent. ' .

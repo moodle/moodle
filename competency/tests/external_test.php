@@ -2681,6 +2681,53 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $c2a->get_sortorder());
     }
 
+    public function test_grade_competency() {
+        global $CFG;
+
+        $this->setUser($this->creator);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $evidence = external::grade_competency($this->user->id, $c1->get_id(), 1, 'Evil note');
+
+        $this->assertEquals('The competency rating was manually set.', $evidence->description);
+        $this->assertEquals('A', $evidence->gradename);
+        $this->assertEquals('Evil note', $evidence->note);
+
+        $this->setUser($this->user);
+
+        $this->expectException('required_capability_exception');
+        $evidence = external::grade_competency($this->user->id, $c1->get_id(), 1);
+    }
+
+    public function test_grade_competency_in_course() {
+        global $CFG;
+
+        $this->setUser($this->creator);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $course = $dg->create_course(['fullname' => 'Evil course']);
+        $dg->enrol_user($this->creator->id, $course->id, 'editingteacher');
+        $dg->enrol_user($this->user->id, $course->id, 'student');
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(['competencyframeworkid' => $f1->get_id()]);
+        $lpg->create_course_competency(['courseid' => $course->id, 'competencyid' => $c1->get_id()]);
+
+        $evidence = external::grade_competency_in_course($course->id, $this->user->id, $c1->get_id(), 1, 'Evil note');
+
+        $this->assertEquals('The competency rating was manually set in the course \'Course: Evil course\'.', $evidence->description);
+        $this->assertEquals('A', $evidence->gradename);
+        $this->assertEquals('Evil note', $evidence->note);
+
+        $this->setUser($this->user);
+
+        $this->expectException('required_capability_exception');
+        $evidence = external::grade_competency_in_course($course->id, $this->user->id, $c1->get_id(), 1);
+    }
+
     public function test_grade_competency_in_plan() {
         global $CFG;
 

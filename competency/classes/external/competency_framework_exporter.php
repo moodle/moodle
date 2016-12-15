@@ -75,10 +75,10 @@ class competency_framework_exporter extends \core\external\persistent_exporter {
                 'type' => PARAM_INT
             ),
             'contextname' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_RAW
             ),
             'contextnamenoprefix' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_RAW
             )
         );
     }

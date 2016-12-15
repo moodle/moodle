@@ -24,7 +24,7 @@
 namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
-use core_user;
+use context_system;
 use renderer_base;
 use stdClass;
 
@@ -63,6 +63,17 @@ class user_competency_course_exporter extends \core\external\persistent_exporter
         $result->proficiencyname = $proficiencyname;
 
         return (array) $result;
+    }
+
+    /**
+     * Get the format parameters for gradename.
+     *
+     * @return array
+     */
+    protected function get_format_parameters_for_gradename() {
+        return [
+            'context' => context_system::instance(), // The system context is cached, so we can get it right away.
+        ];
     }
 
     protected static function define_other_properties() {

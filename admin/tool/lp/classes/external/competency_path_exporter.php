@@ -72,7 +72,7 @@ class competency_path_exporter extends \core\external\exporter {
                 'type' => path_node_exporter::read_properties_definition()
             ],
             'pluginbaseurl' => [
-                'type' => PARAM_TEXT
+                'type' => PARAM_URL
             ],
             'pagecontextid' => [
                 'type' => PARAM_INT

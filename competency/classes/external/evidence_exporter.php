@@ -24,6 +24,7 @@
 namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
+use context_system;
 use renderer_base;
 use core_competency\evidence;
 use core_competency\user_competency;
@@ -37,9 +38,27 @@ use core_user\external\user_summary_exporter;
  */
 class evidence_exporter extends \core\external\persistent_exporter {
 
+    /**
+     * Constructor.
+     *
+     * @param mixed $data The data.
+     * @param array $related Array of relateds.
+     */
+    public function __construct($data, $related = array()) {
+        if (!isset($related['context'])) {
+            // Previous code was automatically using the system context which was not correct.
+            // We let developers know that they must fix their code without breaking anything, and
+            // fallback on the previous behaviour. This should be removed at a later stage: Moodle 3.5.
+            debugging('Missing related context in evidence_exporter.', DEBUG_DEVELOPER);
+            $related['context'] = context_system::instance();
+        }
+        parent::__construct($data, $related);
+    }
+
     protected static function define_related() {
         return array(
             'actionuser' => 'stdClass?',
+            'context' => 'context',
             'scale' => 'grade_scale',
             'usercompetency' => 'core_competency\\user_competency?',
             'usercompetencyplan' => 'core_competency\\user_competency_plan?',
@@ -85,6 +104,17 @@ class evidence_exporter extends \core\external\persistent_exporter {
         return $other;
     }
 
+    /**
+     * Get the format parameters for gradename.
+     *
+     * @return array
+     */
+    protected function get_format_parameters_for_gradename() {
+        return [
+            'context' => context_system::instance(), // The system context is cached, so we can get it right away.
+        ];
+    }
+
     public static function define_other_properties() {
         return array(
             'actionuser' => array(
@@ -92,13 +122,13 @@ class evidence_exporter extends \core\external\persistent_exporter {
                 'optional' => true
             ),
             'description' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_TEXT,   // The description may contain course names, etc.. which may need filtering.
             ),
             'gradename' => array(
                 'type' => PARAM_TEXT,
             ),
             'userdate' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_NOTAGS
             ),
             'candelete' => array(
                 'type' => PARAM_BOOL

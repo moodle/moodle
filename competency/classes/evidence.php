@@ -111,6 +111,15 @@ class evidence extends persistent {
     }
 
     /**
+     * Return the evidence's context.
+     *
+     * @return context
+     */
+    public function get_context() {
+        return context::instance_by_id($this->get('contextid'));
+    }
+
+    /**
      * Convenience method to get the description $a.
      *
      * @return mixed
