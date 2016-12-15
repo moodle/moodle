@@ -35,7 +35,7 @@ $string['cliansweryes'] = 'نعم';
 $string['cliincorrectvalueerror'] = 'خطأ، القيمة "{$a->value}" غير صحيحة من أجل "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'قيمة غير صحيحة، حاول مرة أخرى';
 $string['clitypevalue'] = 'أدخل القيمة';
-$string['clitypevaluedefault'] = 'ادخل القيم أو اضغط انتر (Enter) لإستخدام القيم الأفتراضية  ({$a})';
+$string['clitypevaluedefault'] = 'ادخل القيم أو اضغط إدخال (Enter) لإستخدام القيم الأفتراضية  ({$a})';
 $string['cliunknowoption'] = 'خيارات غير معروفة
 {$a}
 الرجاء استخدام خيار المساعدة';
