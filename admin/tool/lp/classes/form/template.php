@@ -25,6 +25,8 @@
 namespace tool_lp\form;
 defined('MOODLE_INTERNAL') || die();
 
+use core\form\persistent;
+
 /**
  * Learning plan template form.
  *
