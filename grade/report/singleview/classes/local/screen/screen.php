@@ -64,6 +64,9 @@ abstract class screen {
     /** @var array $items List of items on the page, they could be users or grade_items */
     protected $items;
 
+    /** @var array $validperpage List of allowed values for 'perpage' setting */
+    protected static $validperpage = [20, 50, 100, 200, 400, 1000, 5000];
+
     /**
      * Constructor
      *
@@ -82,8 +85,19 @@ abstract class screen {
         $this->course = $DB->get_record('course', array('id' => $courseid));
 
         $this->page = optional_param('page', 0, PARAM_INT);
-        $this->perpage = optional_param('perpage', 100, PARAM_INT);
-        if ($this->perpage > 100) {
+
+        $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'gradereport_singleview', 'perpage');
+        $perpage = optional_param('perpage', null, PARAM_INT);
+        if (!in_array($perpage, self::$validperpage)) {
+            // Get from cache.
+            $perpage = $cache->get(get_class($this));
+        } else {
+            // Save to cache.
+            $cache->set(get_class($this), $perpage);
+        }
+        if ($perpage) {
+            $this->perpage = $perpage;
+        } else {
             $this->perpage = 100;
         }
 
@@ -406,5 +420,25 @@ abstract class screen {
             $users[$user->user->id] = $user->user;
         }
         return $users;
+    }
+
+    /**
+     * Allow selection of number of items to display per page.
+     * @return string
+     */
+    public function perpage_select() {
+        global $PAGE, $OUTPUT;
+
+        $options = array_combine(self::$validperpage, self::$validperpage);
+
+        $url = new moodle_url($PAGE->url);
+        $url->remove_params(['page', 'perpage']);
+
+        $out = '';
+        $select = new \single_select($url, 'perpage', $options, $this->perpage, null, 'perpagechanger');
+        $select->label = get_string('itemsperpage', 'gradereport_singleview');
+        $out .= $OUTPUT->render($select);
+
+        return $out;
     }
 }
