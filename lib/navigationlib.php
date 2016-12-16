@@ -2104,7 +2104,7 @@ class global_navigation extends navigation_node {
                 $onclick = htmlspecialchars_decode($activity->onclick, ENT_QUOTES);
                 // Build the JS function the click event will call
                 $jscode = "function {$functionname}(e) { $propogrationhandler $onclick }";
-                $this->page->requires->js_init_code($jscode);
+                $this->page->requires->js_amd_inline($jscode);
                 // Override the default url with the new action link
                 $action = new action_link($action, $activityname, new component_action('click', $functionname));
             }
