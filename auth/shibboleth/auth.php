@@ -178,13 +178,32 @@ class auth_plugin_shibboleth extends auth_plugin_base {
     }
 
     /**
-     * Returns true if this authentication plugin can change the user's
-     * password.
+     * Whether shibboleth users can change their password or not.
      *
-     * @return bool
+     * Shibboleth auth requires password to be changed on shibboleth server directly.
+     * So it is required to have  password change url set.
+     *
+     * @return bool true if there's a password url or false otherwise.
      */
     function can_change_password() {
-        return false;
+        if (!empty($this->config->changepasswordurl)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Get password change url.
+     *
+     * @return moodle_url|null Returns URL to change password or null otherwise.
+     */
+    function change_password_url() {
+        if (!empty($this->config->changepasswordurl)) {
+            return new moodle_url($this->config->changepasswordurl);
+        } else {
+            return null;
+        }
     }
 
      /**
