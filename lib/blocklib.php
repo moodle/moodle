@@ -246,7 +246,7 @@ class block_manager {
             return false;
         }
 
-        $undeletableblocks = self::get_undeletable_block_types();
+        $requiredbythemeblocks = self::get_required_by_theme_block_types();
         foreach ($this->blockinstances as $region) {
             foreach ($region as $instance) {
                 if (empty($instance->instance->blockname)) {
@@ -254,7 +254,7 @@ class block_manager {
                 }
                 if ($instance->instance->blockname == $blockname) {
                     if ($instance->instance->requiredbytheme) {
-                        if (!in_array($block->name, $undeletableblocks)) {
+                        if (!in_array($blockname, $requiredbythemeblocks)) {
                             continue;
                         }
                     }
