@@ -3034,7 +3034,7 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid, $timez
     $eventrecord->courseid = $sub->courseid;
     $eventrecord->eventtype = $sub->eventtype;
 
-    if ($updaterecord = $DB->get_record('event', array('uuid' => $eventrecord->uuid))) {
+    if ($updaterecord = $DB->get_record('event', array('uuid' => $eventrecord->uuid, 'subscriptionid' => $eventrecord->subscriptionid))) {
         $eventrecord->id = $updaterecord->id;
         $return = CALENDAR_IMPORT_EVENT_UPDATED; // Update.
     } else {
