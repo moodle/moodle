@@ -27,5 +27,5 @@ $plugin->version   = 2016120500; // The current plugin version (Date: YYYYMMDDXX
 $plugin->requires  = 2016112900; // Requires this Moodle version.
 $plugin->component = 'tool_mobile'; // Full name of the plugin (used for diagnostics).
 $plugin->dependencies = array(
-    'webservice_rest' => 2016052300
+    'webservice_rest' => 2016120500
 );
