@@ -208,6 +208,17 @@ class controller {
         }
         return false;
     }
+
+    /**
+     * Returns the URL where a given language pack can be downloaded
+     *
+     * Alternatively, if the parameter is empty, returns URL of the page with the
+     * list of all available language packs.
+     *
+     * @param string $langcode language code like 'cs' or empty for unknown
+     * @return string URL
+     */
+    public function lang_pack_url($langcode = '') {
+        return $this->installer->lang_pack_url($langcode);
+    }
 }
-
-
