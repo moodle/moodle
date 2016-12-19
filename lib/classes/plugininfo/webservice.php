@@ -79,6 +79,10 @@ class webservice extends base {
     }
 
     public function is_uninstall_allowed() {
-        return false;
+        // The xmlrpc plugin contains webservice_xmlrpc_client (used by core).
+        if ($this->name == 'xmlrpc') {
+            return false;
+        }
+        return true;
     }
 }
