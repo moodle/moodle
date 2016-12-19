@@ -40,4 +40,9 @@
     }
 
 }}
-<img{{#attributes}} {{name}}="{{value}}"{{/attributes}}/>
+{{#fontawesome}}
+<i class="icon fa {{pix}} fa-fw {{extraclasses}}" aria-hidden="true" title="{{title}}"></i><span class="sr-only">{{title}}</span>
+{{/fontawesome}}
+{{^fontawesome}}
+<img class="icon {{extraclasses}}" {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>
+{{/fontawesome}}

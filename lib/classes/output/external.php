@@ -27,6 +27,8 @@ namespace core\output;
 
 use external_api;
 use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
 use external_value;
 use core_component;
 use moodle_exception;
@@ -91,6 +93,55 @@ class external extends external_api {
      */
     public static function load_template_returns() {
         return new external_value(PARAM_RAW, 'template');
+    }
+
+    /**
+     * Returns description of load_fontawesome_iconmap() parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function load_fontawesome_iconmap_parameters() {
+        return new external_function_parameters([]);
+    }
+
+    /**
+     * Return a mapping of icon names to icons.
+     *
+     * @return array the mapping
+     */
+    public static function load_fontawesome_iconmap() {
+        
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $map = theme_get_fontawesome_icon_map();
+
+        $result = [];
+
+        foreach ($map as $from => $to) {
+            list($component, $pix) = explode(':', $from);
+            $one = [];
+            $one['component'] = $component;
+            $one['pix'] = $pix;
+            $one['to'] = $to;
+            $result[] = $one;
+        }
+        return $result;
+    }
+
+    /**
+     * Returns description of load_template() result value.
+     *
+     * @return external_description
+     */
+    public static function load_fontawesome_iconmap_returns() {
+        return new external_multiple_structure(new external_single_structure(
+            array(
+                'component' => new external_value(PARAM_COMPONENT, 'The component for the icon.'),
+                'pix' => new external_value(PARAM_RAW, 'Value to map the icon from.'),
+                'to' => new external_value(PARAM_RAW, 'Value to map the icon to.')
+            )
+        ));
     }
 }
 

@@ -21,4 +21,11 @@
     <version>2.3.2</version>
     <licenseversion>2.0</licenseversion>
   </library>
+  <library>
+    <location>less/fontawesome</location>
+    <name>Font Awesome by Dave Gandy - http://fontawesome.io</name>
+    <license>(MIT)</license>
+    <version>4.7.0</version>
+    <licenseversion></licenseversion>
+  </library>
 </libraries>

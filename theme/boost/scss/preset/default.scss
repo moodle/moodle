@@ -42,7 +42,7 @@ $table-border-color:            #f4f4f4 !default;
 
 // Dropdowns
 $dropdown-border-color:          #e2e2e2 !default;
-$dropdown-link-color:            rgba(0, 0, 0, .535) !default;
+$dropdown-link-color:            $body-color;
 
 // Navbar
 $navbar-light-color:                rgba(0, 0, 0, .535) !default;

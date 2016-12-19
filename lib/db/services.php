@@ -945,6 +945,14 @@ $functions = array(
         'loginrequired' => false,
         'ajax' => true,
     ),
+    'core_output_load_fontawesome_iconmap' => array(
+        'classname' => 'core\output\external',
+        'methodname' => 'load_fontawesome_iconmap',
+        'description' => 'Load the mapping of names to icons',
+        'type' => 'read',
+        'loginrequired' => false,
+        'ajax' => true,
+    ),
     // Question related functions.
     'core_question_update_flag' => array(
         'classname'     => 'core_question_external',

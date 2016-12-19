@@ -554,6 +554,11 @@ class pix_icon implements renderable, templatable {
     var $attributes = array();
 
     /**
+     * @var bool True if this is a font-awesome icon.
+     */
+    protected $fontawesome;
+
+    /**
      * Constructor
      *
      * @param string $pix short icon name
@@ -562,9 +567,16 @@ class pix_icon implements renderable, templatable {
      * @param array $attributes html attributes
      */
     public function __construct($pix, $alt, $component='moodle', array $attributes = null) {
-        $this->pix        = $pix;
+        global $PAGE;
+
+        // Allow the theme to remap the icon.
+        $this->pix = theme_remap_fontawesome_icon($pix, $component);
+        if (empty($this->pix)) {
+            $this->pix = $pix;
+        }
         $this->component  = $component;
         $this->attributes = (array)$attributes;
+        $this->fontawesome = strpos($this->pix, 'fa-') === 0;
 
         if (empty($this->attributes['class'])) {
             $this->attributes['class'] = 'smallicon';
@@ -597,12 +609,29 @@ class pix_icon implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         $attributes = $this->attributes;
+        $extraclasses = '';
+
+        foreach ($attributes as $key => $item) {
+            if ($key == 'class') {
+                $extraclasses = $item;
+                unset($attributes[$key]);
+                break;
+            }
+        }
+
         $attributes['src'] = $output->pix_url($this->pix, $this->component)->out(false);
         $templatecontext = array();
         foreach ($attributes as $name => $value) {
             $templatecontext[] = array('name' => $name, 'value' => $value);
         }
-        $data = array('attributes' => $templatecontext);
+        $title = isset($attributes['title']) ? $attributes['title'] : '';
+        $data = array(
+            'attributes' => $templatecontext,
+            'extraclasses' => $extraclasses,
+            'fontawesome' => $this->fontawesome,
+            'title' => $title,
+            'pix' => $this->pix,
+        );
 
         return $data;
     }

@@ -106,3 +106,4 @@ function theme_boost_get_pre_scss($theme) {
 
     return $scss;
 }
+
