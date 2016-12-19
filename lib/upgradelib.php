@@ -2325,7 +2325,7 @@ function check_unoconv_version(environment_results $result) {
 }
 
 /**
- * Checks for up-to-date TLS libraries.
+ * Checks for up-to-date TLS libraries. NOTE: this is not currently used, see MDL-57262.
  *
  * @param environment_results $result object to update, if relevant.
  * @return environment_results|null updated results or null if unoconv path is not executable.
