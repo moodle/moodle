@@ -349,11 +349,16 @@ class feedback_item_multichoice extends feedback_item_base {
                 }
             } else {
                 // Radio.
+                if (!array_key_exists(0, $options)) {
+                    // Always add '0' as hidden element, otherwise form submit data may not have this element.
+                    $objs[] = ['hidden', $inputname.'[0]'];
+                }
                 foreach ($options as $idx => $label) {
                     $objs[] = ['radio', $inputname.'[0]', '', $label, $idx];
                 }
                 $element = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
                 $form->set_element_default($inputname.'[0]', $tmpvalue);
+                $form->set_element_type($inputname.'[0]', PARAM_INT);
             }
         }
 

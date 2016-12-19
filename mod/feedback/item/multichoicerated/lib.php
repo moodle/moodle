@@ -302,12 +302,17 @@ class feedback_item_multichoicerated extends feedback_item_base {
                     ['select', $inputname, $name, array('' => '') + $options, array('class' => $class)]);
         } else {
             $objs = array();
+            if (!array_key_exists(0, $options)) {
+                // Always add '0' as hidden element, otherwise form submit data may not have this element.
+                $objs[] = ['hidden', $inputname];
+            }
             foreach ($options as $idx => $label) {
                 $objs[] = ['radio', $inputname, '', $label, $idx];
             }
             $separator = $info->horizontal ? ' ' : '<br>';
             $class .= ' multichoicerated-' . ($info->horizontal ? 'horizontal' : 'vertical');
             $el = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);
+            $form->set_element_type($inputname, PARAM_INT);
 
             // Set previously input values.
             $form->set_element_default($inputname, $form->get_item_value($item));
