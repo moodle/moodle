@@ -289,7 +289,7 @@ Y.Moodle.mod_quiz.util.page = {
 
             // Update the URL of the add-section action.
             menumenu.one(this.SELECTORS.ADDASECTION).set('href',
-                menumenu.one(this.SELECTORS.ADDASECTION).get('href').replace(/\baddsectionatpage=\d/, 'addsectionatpage=' + id));
+                menumenu.one(this.SELECTORS.ADDASECTION).get('href').replace(/\baddsectionatpage=\d+\b/, 'addsectionatpage=' + id));
 
         }, this);
     },
