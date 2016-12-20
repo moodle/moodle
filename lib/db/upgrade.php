@@ -2611,5 +2611,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017031400.00);
     }
 
+    if ($oldversion < 2017040300.04) {
+
+        // If the 'Course overview' block is no longer present, replace with the 'My overview' block.
+        if (!file_exists($CFG->dirroot . '/blocks/course_overview/block_course_overview.php')) {
+            $DB->set_field('block_instances', 'blockname', 'myoverview', array('blockname' => 'course_overview'));
+        }
+
+        upgrade_main_savepoint(true, 2017040300.04);
+    }
+
     return true;
 }
