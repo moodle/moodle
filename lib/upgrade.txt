@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 3.3 ===
 
+* The method moodleform::after_definition() has been added and can now be used to add some logic
+  to be performed after the form's definition was set. This is useful for intermediate subclasses.
 * YUI module moodle-core-formautosubmit has been removed, use jquery .change() instead (see lib/templates/url_select.mustache for
   an example)
 * $mform->init_javascript_enhancement() is deprecated and no longer does anything. Existing uses of smartselect enhancement

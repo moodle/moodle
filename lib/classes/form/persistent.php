@@ -135,6 +135,45 @@ abstract class persistent extends moodleform {
     }
 
     /**
+     * After definition hook.
+     *
+     * Automatically try to set the types of simple fields using the persistent properties definition.
+     * This only applies to hidden, text and url types. Groups are also ignored as they are most likely custom.
+     *
+     * @return void
+     */
+    protected function after_definition() {
+        parent::after_definition();
+        $mform = $this->_form;
+
+        $class = static::$persistentclass;
+        $properties = $class::properties_definition();
+
+        foreach ($mform->_elements as $element) {
+            $name = $element->getName();
+
+            if (isset($mform->_types[$name])) {
+                // We already have a PARAM_* type for this field.
+                continue;
+
+            } else if (!isset($properties[$name]) || in_array($name, static::$fieldstoremove)
+                    || in_array($name, static::$foreignfields)) {
+                // Ignoring foreign and unknown fields.
+                continue;
+            }
+
+            // Set the type on the element.
+            switch ($element->getType()) {
+                case 'hidden':
+                case 'text':
+                case 'url':
+                    $mform->setType($name, $properties[$name]['type']);
+                    break;
+            }
+        }
+    }
+
+    /**
      * Define extra validation mechanims.
      *
      * The data here:
