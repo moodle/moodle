@@ -37,6 +37,7 @@ require_once($CFG->dirroot . '/backup/moodle2/backup_default_block_task.class.ph
 require_once($CFG->dirroot . '/backup/moodle2/backup_xml_transformer.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_qtype_plugin.class.php');
+require_once($CFG->dirroot . '/backup/moodle2/backup_qtype_extrafields_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_gradingform_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_format_plugin.class.php');
 require_once($CFG->dirroot . '/backup/moodle2/backup_local_plugin.class.php');

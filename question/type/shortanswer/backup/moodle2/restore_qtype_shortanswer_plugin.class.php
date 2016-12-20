@@ -21,63 +21,23 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/backup/moodle2/restore_qtype_extrafields_plugin.class.php');
 
 /**
- * restore plugin class that provides the necessary information
+ * Restore plugin class that provides the necessary information
  * needed to restore one shortanswer qtype plugin
  *
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class restore_qtype_shortanswer_plugin extends restore_qtype_plugin {
-
-    /**
-     * Returns the paths to be handled by the plugin at question level
-     */
-    protected function define_question_plugin_structure() {
-
-        $paths = array();
-
-        // This qtype uses question_answers, add them.
-        $this->add_question_question_answers($paths);
-
-        // Add own qtype stuff.
-        $elename = 'shortanswer';
-        // We used get_recommended_name() so this works.
-        $elepath = $this->get_pathfor('/shortanswer');
-        $paths[] = new restore_path_element($elename, $elepath);
-
-        return $paths; // And we return the interesting paths.
-    }
-
+class restore_qtype_shortanswer_plugin extends restore_qtype_extrafields_plugin {
     /**
      * Process the qtype/shortanswer element
      */
     public function process_shortanswer($data) {
-        global $DB;
-
-        $data = (object)$data;
-        $oldid = $data->id;
-
-        // Detect if the question is created or mapped.
-        $oldquestionid   = $this->get_old_parentid('question');
-        $newquestionid   = $this->get_new_parentid('question');
-        $questioncreated = $this->get_mappingid('question_created', $oldquestionid) ? true : false;
-
-        // If the question has been created by restore, we need to create its
-        // qtype_shortanswer_options too, if they are defined (the gui should ensure this).
-        if ($questioncreated) {
-            $data->questionid = $newquestionid;
-
-            // It is possible for old backup files to contain unique key violations.
-            // We need to check to avoid that.
-            if (!$DB->record_exists('qtype_shortanswer_options', array('questionid' => $data->questionid))) {
-                $newitemid = $DB->insert_record('qtype_shortanswer_options', $data);
-                $this->set_mapping('qtype_shortanswer_options', $oldid, $newitemid);
-            }
-        }
+        $this->really_process_extra_question_fields($data);
     }
 }

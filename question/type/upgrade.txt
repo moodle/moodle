@@ -1,5 +1,10 @@
 This files describes API changes for question type plugins.
 
+== 3.5 ==
+  + Added new classes backup_qtype_extrafields_plugin and restore_qtype_extrafields_plugin
+   in order to use extra fields method in backup/restore question type. Require and inherit new classes for using it. See
+   backup_qtype_shortanswer_plugin and restore_qtype_shortanswer_plugin for an example of using this.
+
 === 3.1.5, 3.2.2, 3.3 ===
 
 * If you are using check_combined_feedback_file_access in your check_file_access method,
