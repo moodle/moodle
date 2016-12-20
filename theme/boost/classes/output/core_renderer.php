@@ -31,9 +31,7 @@ use preferences_groups;
 use action_menu;
 use help_icon;
 use single_button;
-use single_select;
 use paging_bar;
-use url_select;
 use context_course;
 use pix_icon;
 
@@ -447,16 +445,6 @@ class core_renderer extends \core_renderer {
     }
 
     /**
-     * Renders a single select.
-     *
-     * @param single_select $select The object.
-     * @return string HTML
-     */
-    protected function render_single_select(single_select $select) {
-        return $this->render_from_template('core/single_select', $select->export_for_template($this));
-    }
-
-    /**
      * Renders a paging bar.
      *
      * @param paging_bar $pagingbar The object.
@@ -466,16 +454,6 @@ class core_renderer extends \core_renderer {
         // Any more than 10 is not usable and causes wierd wrapping of the pagination in this theme.
         $pagingbar->maxdisplay = 10;
         return $this->render_from_template('core/paging_bar', $pagingbar->export_for_template($this));
-    }
-
-    /**
-     * Renders a url select.
-     *
-     * @param url_select $select The object.
-     * @return string HTML
-     */
-    protected function render_url_select(url_select $select) {
-        return $this->render_from_template('core/url_select', $select->export_for_template($this));
     }
 
     /**

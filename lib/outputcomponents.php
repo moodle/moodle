@@ -939,11 +939,11 @@ class single_select implements renderable, templatable {
         $data->name = $this->name;
         $data->method = $this->method;
         $data->action = $this->method === 'get' ? $this->url->out_omit_querystring(true) : $this->url->out_omit_querystring();
-        $data->classes = 'autosubmit ' . $this->class;
+        $data->classes = $this->class;
         $data->label = $this->label;
         $data->disabled = $this->disabled;
         $data->title = $this->tooltip;
-        $data->formid = $this->formid;
+        $data->formid = !empty($this->formid) ? $this->formid : html_writer::random_id('single_select_f');
         $data->id = !empty($attributes['id']) ? $attributes['id'] : html_writer::random_id('single_select');
         unset($attributes['id']);
 
@@ -975,8 +975,6 @@ class single_select implements renderable, templatable {
         } else {
             $options = $this->options;
         }
-        $data->hasnothing = $hasnothing;
-        $data->nothingkey = $hasnothing ? key($nothing) : false;
 
         foreach ($options as $value => $name) {
             if (is_array($options[$value])) {
@@ -1247,9 +1245,6 @@ class url_select implements renderable, templatable {
         unset($attributes['title']);
 
         $data->showbutton = $this->showbutton;
-        if (empty($this->showbutton)) {
-            $data->classes .= ' autosubmit';
-        }
 
         // Select options.
         $nothing = false;
@@ -1263,8 +1258,6 @@ class url_select implements renderable, templatable {
                 $nothing = $this->nothing;
             }
         }
-        $data->hasnothing = !empty($nothing);
-        $data->nothingkey = $data->hasnothing ? key($nothing) : false;
         $data->options = $this->flatten_options($this->urls, $nothing);
 
         // Label attributes.

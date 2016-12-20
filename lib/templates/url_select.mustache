@@ -1,3 +1,27 @@
+{{!
+    @template core/url_select
+
+    Example context (json):
+    {
+        "id": "url_select_test",
+        "action": "https://example.com/post",
+        "formid": "url_select_form",
+        "sesskey": "sesskey",
+        "label": "core/url_select",
+        "showbutton": "Go",
+        "options": [{
+            "name": "Group 1", "isgroup": true, "options":
+            [
+                {"name": "Item 1", "isgroup": false, "value": "1"},
+                {"name": "Item 2", "isgroup": false, "value": "2"}
+            ]},
+            {"name": "Group 2", "isgroup": true, "options":
+            [
+                {"name": "Item 3", "isgroup": false, "value": "3"},
+                {"name": "Item 4", "isgroup": false, "value": "4"}
+            ]}]
+    }
+}}
 <div class="{{classes}}">
     <form method="post" action="{{action}}" class="form-inline" id="{{formid}}">
         <input type="hidden" name="sesskey" value="{{sesskey}}">
@@ -37,12 +61,9 @@
 </div>
 {{^showbutton}}
     {{#js}}
-        require(['core/yui'], function(Y) {
-            Y.use('moodle-core-formautosubmit', function() {
-                M.core.init_formautosubmit({
-                    selectid: '{{id}}',
-                    nothing: {{#hasnothing}}'{{nothingkey}}'{{/hasnothing}}{{^hasnothing}}false{{/hasnothing}}
-                });
+        require(['jquery'], function($) {
+            $('#{{id}}').change(function() {
+                $('#{{formid}}').submit();
             });
         });
     {{/js}}
