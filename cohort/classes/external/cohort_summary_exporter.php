@@ -61,7 +61,8 @@ class cohort_summary_exporter extends \core\external\exporter {
     public static function define_other_properties() {
         return array(
             'contextname' => array(
-                'type' => PARAM_TEXT
+                // The method context::get_context_name() already formats the string, and may return HTML.
+                'type' => PARAM_RAW
             ),
         );
     }

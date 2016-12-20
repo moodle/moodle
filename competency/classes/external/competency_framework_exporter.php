@@ -74,6 +74,9 @@ class competency_framework_exporter extends \core\external\persistent_exporter {
             'competenciescount' => array(
                 'type' => PARAM_INT
             ),
+
+            // Both contexts need to be PARAM_RAW because the method context::get_context_name()
+            // already applies the formatting and thus could return HTML content.
             'contextname' => array(
                 'type' => PARAM_RAW
             ),
