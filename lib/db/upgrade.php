@@ -2621,5 +2621,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017040300.04);
     }
 
+    if ($oldversion < 2017040300.05) {
+
+        // If the 'Course overview' block is no longer present, remove it.
+        // Note - we do not need to completely remove the block context etc because we
+        // have replaced all occurrences of the 'Course overview' block with the 'My overview'
+        // block in the upgrade step above.
+        if (!file_exists($CFG->dirroot . '/blocks/course_overview/block_course_overview.php')) {
+            // Delete the block from the block table.
+            $DB->delete_records('block', array('name' => 'course_overview'));
+            // Remove capabilities.
+            capabilities_cleanup('block_course_overview');
+            // Clean config.
+            unset_all_config_for_plugin('block_course_overview');
+        }
+
+        upgrade_main_savepoint(true, 2017040300.05);
+    }
+
     return true;
 }

@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 3.3 ===
 
 * block_manager::get_required_by_theme_block_types() is no longer static.
+* The 'Course overview' block has been removed from core as it is being replaced by the 'My overview' block.
+  The 'Course overview' block will be available in the plugins database.
 
 === 3.1 ===
 
