@@ -4154,3 +4154,12 @@ function glossary_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     return $updates;
 }
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function forum_get_fontawesome_icon_map() {
+    return [
+        'mod_glossary:export' => 'fa-download'
+    ];
+}

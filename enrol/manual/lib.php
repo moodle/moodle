@@ -730,3 +730,4 @@ class enrol_manual_plugin extends enrol_plugin {
     }
 
 }
+

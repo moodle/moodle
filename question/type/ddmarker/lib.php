@@ -41,3 +41,13 @@ function qtype_ddmarker_pluginfile($course, $cm, $context, $filearea, $args, $fo
     require_once($CFG->libdir . '/questionlib.php');
     question_pluginfile($course, $context, 'qtype_ddmarker', $filearea, $args, $forcedownload, $options);
 }
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function qtype_ddmarker_get_fontawesome_icon_map() {
+    return [
+        'qtype_ddmarker:crosshairs' => 'fa-crosshairs',
+        'qtype_ddmarker:grid' => 'fa-th',
+    ];
+}

@@ -587,3 +587,12 @@ function lti_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     return $updates;
 }
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_lti_get_fontawesome_icon_map() {
+    return [
+        'mod_lti:warning' => 'fa-exclamation',
+    ];
+}

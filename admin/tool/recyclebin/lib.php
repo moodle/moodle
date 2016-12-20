@@ -197,3 +197,12 @@ function tool_recyclebin_pre_course_category_delete($category) {
     $categorybin = new \tool_recyclebin\category_bin($category->id);
     $categorybin->delete_all_items();
 }
+
+/**
+ * Map icons for font-awesome themes.
+ */
+function tool_recyclebin_get_fontawesome_icon_map() {
+    return [
+        'tool_recyclebin:trash' => 'fa-trash'
+    ];
+}

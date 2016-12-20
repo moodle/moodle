@@ -1846,3 +1846,15 @@ function workshop_reset_userdata(stdClass $data) {
 
     return $status;
 }
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_workshop_get_fontawesome_icon_map() {
+    return [
+        'mod_workshop:userplan/task-info' => 'fa-info',
+        'mod_workshop:userplan/task-todo' => 'fa-square-o',
+        'mod_workshop:userplan/task-done' => 'fa-check',
+        'mod_workshop:userplan/task-fail' => 'fa-remove',
+    ];
+}

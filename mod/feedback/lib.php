@@ -3316,3 +3316,13 @@ function feedback_can_view_analysis($feedback, $context, $courseid = false) {
 
     return feedback_is_already_submitted($feedback->id, $courseid);
 }
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_feedback_get_fontawesome_icon_map() {
+    return [
+        'mod_feedback:required' => 'fa-exclamation-circle',
+        'mod_feedback:notrequired' => 'fa-spacer',
+    ];
+}

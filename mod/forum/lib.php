@@ -8079,7 +8079,10 @@ function forum_check_updates_since(cm_info $cm, $from, $filter = array()) {
     return $updates;
 }
 
-function forum_get_fontawesome_icon_map() {
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_forum_get_fontawesome_icon_map() {
     return [
         'mod_forum:i/pinned' => 'fa-map-pin',
         'mod_forum:t/selected' => 'fa-check',

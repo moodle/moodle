@@ -43,6 +43,9 @@ function atto_collapse_params_for_js($elementid, $options, $fpoptions) {
     return $params;
 }
 
+/**
+ * Map icons for font-awesome themes.
+ */
 function atto_collapse_get_fontawesome_icon_map() {
     return [
         'atto_collapse:icon' => 'fa-level-down'

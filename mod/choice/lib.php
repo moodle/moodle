@@ -1167,3 +1167,13 @@ function choice_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     return $updates;
 }
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function mod_choice_get_fontawesome_icon_map() {
+    return [
+        'mod_choice:row' => 'fa-info',
+        'mod_choice:column' => 'fa-columns',
+    ];
+}
