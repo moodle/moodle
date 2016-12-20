@@ -625,6 +625,9 @@ class pix_icon implements renderable, templatable {
             $templatecontext[] = array('name' => $name, 'value' => $value);
         }
         $title = isset($attributes['title']) ? $attributes['title'] : '';
+        if (empty($title)) {
+            $title = isset($attributes['alt']) ? $attributes['alt'] : '';
+        }
         $data = array(
             'attributes' => $templatecontext,
             'extraclasses' => $extraclasses,
