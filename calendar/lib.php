@@ -1741,10 +1741,11 @@ function calendar_format_event_time($event, $now, $linkparams = null, $usecommon
                 $url = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php', $linkparams), 0, 0, 0, $endtime);
                 $eventtime = $timestart . ' <strong>&raquo;</strong> ' . html_writer::link($url, $dayend) . $timeend;
             } else {
-                $url = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php', $linkparams), 0, 0, 0, $endtime);
+                // The event is in the future, print start and end  links.
+                $url = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php', $linkparams), 0, 0, 0, $starttime);
                 $eventtime  = html_writer::link($url, $daystart) . $timestart . ' <strong>&raquo;</strong> ';
 
-                $url = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php', $linkparams),  0, 0, 0, $starttime);
+                $url = calendar_get_link_href(new moodle_url(CALENDAR_URL . 'view.php', $linkparams),  0, 0, 0, $endtime);
                 $eventtime .= html_writer::link($url, $dayend) . $timeend;
             }
         }
