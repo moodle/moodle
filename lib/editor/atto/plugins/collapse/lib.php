@@ -42,3 +42,9 @@ function atto_collapse_params_for_js($elementid, $options, $fpoptions) {
     $params = array('showgroups' => get_config('atto_collapse', 'showgroups'));
     return $params;
 }
+
+function atto_collapse_get_fontawesome_icon_map() {
+    return [
+        'atto_collapse:icon' => 'fa-level-down'
+    ];
+}

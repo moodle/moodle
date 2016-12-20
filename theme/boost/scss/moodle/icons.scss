@@ -11,8 +11,14 @@
     margin-right: 0.5rem;
 }
 
+$icon-color: $body-color !default;
+
 a .icon {
-    color: $body-color ! important;
+    color: $icon-color ! important;
+}
+
+.navbar-dark a .icon {
+    color: $navbar-dark-color ! important;
 }
 
 a:first-of-type > .icon,
