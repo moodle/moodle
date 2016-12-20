@@ -1714,7 +1714,7 @@ class core_plugin_manager {
                 'calendar_upcoming', 'comments', 'community',
                 'completionstatus', 'course_list', 'course_overview',
                 'course_summary', 'feedback', 'globalsearch', 'glossary_random', 'html',
-                'login', 'lp', 'mentees', 'messages', 'mnet_hosts', 'myprofile',
+                'login', 'lp', 'mentees', 'messages', 'mnet_hosts', 'myoverview', 'myprofile',
                 'navigation', 'news_items', 'online_users', 'participants',
                 'private_files', 'quiz_results', 'recent_activity',
                 'rss_client', 'search_forums', 'section_links',
