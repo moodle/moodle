@@ -26,8 +26,6 @@ Y.extend(DRAGREORDER, M.core.dragdrop, {
         this.samenodeclass = args.sameNodeClass;
         this.parentnodeclass = args.parentNodeClass;
         this.draghandleinsertclass = args.dragHandleInsertClass;
-        this.draghandle = this.get_drag_handle(args.dragHandleText,
-                CSS.EDITINGMOVE, CSS.ICONCLASS, true);
 
         this.samenodelabel = args.sameNodeLabel;
         this.parentnodelabel = args.parentNodeLabel;
@@ -47,7 +45,8 @@ Y.extend(DRAGREORDER, M.core.dragdrop, {
          .all('.' + args.dragHandleInsertClass)
          .each(
             function(node) {
-                node.insert(this.draghandle.cloneNode(true));
+                var draghandle = this.get_drag_handle(args.dragHandleText, CSS.EDITINGMOVE, CSS.ICONCLASS, true);
+                node.insert(draghandle);
             }, this);
     },
 
