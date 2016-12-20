@@ -1,5 +1,8 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
+=== 3.3 ===
+* Moodle has support for font-awesome icons. Plugins should use the xxx_get_fontawesome_icon_map callback
+  to map their custom icons to one from font-awesome.
 
 === 3.3 ===
 
