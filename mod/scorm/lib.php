@@ -1422,8 +1422,13 @@ function scorm_check_mode($scorm, &$newattempt, &$attempt, $userid, &$mode) {
     }
     // Check if the scorm module is incomplete (used to validate user request to start a new attempt).
     $incomplete = true;
-    $tracks = $DB->get_recordset('scorm_scoes_track', array('scormid' => $scorm->id, 'userid' => $userid,
-        'attempt' => $attempt, 'element' => 'cmi.core.lesson_status'));
+    $sql = "SELECT sc.id, t.value
+              FROM {scorm_scoes} sc
+         LEFT JOIN {scorm_scoes_track} t ON sc.scorm = t.scormid AND sc.id = t.scoid
+                   AND t.element = 'cmi.core.lesson_status' AND t.userid = ? AND t.attempt = ?
+             WHERE sc.scormtype = 'sco' AND sc.scorm = ?";
+    $tracks = $DB->get_recordset_sql($sql, array($userid, $attempt, $scorm->id));
+
     foreach ($tracks as $track) {
         if (($track->value == 'completed') || ($track->value == 'passed') || ($track->value == 'failed')) {
             $incomplete = false;
