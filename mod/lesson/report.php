@@ -448,8 +448,8 @@ if ($action === 'delete') {
     }
     echo html_writer::table($table);
     if (has_capability('mod/lesson:edit', $context)) {
-        $checklinks  = '<a href="javascript: checkall();">'.get_string('selectall').'</a> / ';
-        $checklinks .= '<a href="javascript: checknone();">'.get_string('deselectall').'</a>';
+        $checklinks  = '<a id="checkall" href="#">'.get_string('selectall').'</a> / ';
+        $checklinks .= '<a id="checknone" href="#">'.get_string('deselectall').'</a>';
         $checklinks .= html_writer::label('action', 'menuaction', false, array('class' => 'accesshide'));
         $options = array('delete' => get_string('deleteselected'));
         $attributes = array('id' => 'actionid', 'class' => 'custom-select m-l-1');
@@ -458,6 +458,14 @@ if ($action === 'delete') {
         require(['jquery'], function($) {
             $('#actionid').change(function() {
                 $('#mod-lesson-report-form').submit();
+            });
+            $('#checkall').click(function() {
+                $('#mod-lesson-report-form').find('input:checkbox').prop('checked', true);
+                e.preventDefault();
+            });
+            $('#checknone').click(function() {
+                $('#mod-lesson-report-form').find('input:checkbox').prop('checked', false);
+                e.preventDefault();
             });
         });");
         echo $OUTPUT->box($checklinks, 'center');
