@@ -27,7 +27,7 @@
  * string $sortkey The key to sort the records.
  * string $sortorder The order of the sorting.
  * int $offset The number of records to skip.
- * int $entriesbypage The number of entries per page.
+ * int $pagelimit The number of entries on this page, or 0 if unlimited.
  * string $mode The mode of browsing.
  * string $tab The tab selected.
  */
@@ -43,13 +43,13 @@ switch ($tab) {
         $pivotkey = 'userid';
         $field = ($sortkey == 'LASTNAME' ? 'LASTNAME' : 'FIRSTNAME');
         list($allentries, $count) = glossary_get_entries_by_author($glossary, $context, $hook,
-            $field, $sortorder, $offset, $entriesbypage);
+            $field, $sortorder, $offset, $pagelimit);
         unset($field);
         break;
 
     case GLOSSARY_CATEGORY_VIEW:
         $hook = (int) $hook; // Make sure it's properly casted to int.
-        list($allentries, $count) = glossary_get_entries_by_category($glossary, $context, $hook, $offset, $entriesbypage);
+        list($allentries, $count) = glossary_get_entries_by_category($glossary, $context, $hook, $offset, $pagelimit);
         $pivotkey = 'categoryname';
         if ($hook != GLOSSARY_SHOW_ALL_CATEGORIES) {
             $printpivot = false;
@@ -60,7 +60,7 @@ switch ($tab) {
         $printpivot = false;
         $field = ($sortkey == 'CREATION' ? 'CREATION' : 'UPDATE');
         list($allentries, $count) = glossary_get_entries_by_date($glossary, $context, $field, $sortorder,
-            $offset, $entriesbypage);
+            $offset, $pagelimit);
         unset($field);
         break;
 
@@ -68,7 +68,7 @@ switch ($tab) {
         $fullpivot = false;
         $printpivot = false;
         list($allentries, $count) = glossary_get_entries_to_approve($glossary, $context, $hook, $sortkey, $sortorder,
-            $offset, $entriesbypage);
+            $offset, $pagelimit);
         break;
 
     case GLOSSARY_STANDARD_VIEW:
@@ -77,12 +77,12 @@ switch ($tab) {
         switch ($mode) {
             case 'search':
                 list($allentries, $count) = glossary_get_entries_by_search($glossary, $context, $hook, $fullsearch,
-                    $sortkey, $sortorder, $offset, $entriesbypage);
+                    $sortkey, $sortorder, $offset, $pagelimit);
                 break;
 
             case 'term':
                 $printpivot = false;
-                list($allentries, $count) = glossary_get_entries_by_term($glossary, $context, $hook, $offset, $entriesbypage);
+                list($allentries, $count) = glossary_get_entries_by_term($glossary, $context, $hook, $offset, $pagelimit);
                 break;
 
             case 'entry':
@@ -102,7 +102,7 @@ switch ($tab) {
 
             case 'letter':
             default:
-                list($allentries, $count) = glossary_get_entries_by_letter($glossary, $context, $hook, $offset, $entriesbypage);
+                list($allentries, $count) = glossary_get_entries_by_letter($glossary, $context, $hook, $offset, $pagelimit);
                 break;
         }
         break;
