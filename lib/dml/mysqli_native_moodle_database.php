@@ -449,6 +449,9 @@ class mysqli_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        // Disable logging until we are fully setup.
+        $this->query_log_prevent();
+
         $this->query_start("--set_charset()", null, SQL_QUERY_AUX);
         $this->mysqli->set_charset('utf8');
         $this->query_end(true);
@@ -465,6 +468,9 @@ class mysqli_native_moodle_database extends moodle_database {
             $result = $this->mysqli->query($sql);
             $this->query_end($result);
         }
+
+        // We can enable logging now.
+        $this->query_log_allow();
 
         // Connection stabilised and configured, going to instantiate the temptables controller
         $this->temptables = new mysqli_native_moodle_temptables($this);

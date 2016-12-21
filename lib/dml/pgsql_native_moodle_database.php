@@ -170,6 +170,9 @@ class pgsql_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        // Disable logging until we are fully setup.
+        $this->query_log_prevent();
+
         $this->query_start("--pg_set_client_encoding()", null, SQL_QUERY_AUX);
         pg_set_client_encoding($this->pgsql, 'utf8');
         $this->query_end(true);
@@ -197,6 +200,9 @@ class pgsql_native_moodle_database extends moodle_database {
             $this->pgsql = null;
             throw new dml_connection_exception('Can not read bytea type.');
         }
+
+        // We can enable logging now.
+        $this->query_log_allow();
 
         // Connection stabilised and configured, going to instantiate the temptables controller
         $this->temptables = new pgsql_native_moodle_temptables($this);

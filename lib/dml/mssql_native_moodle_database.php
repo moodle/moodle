@@ -183,6 +183,9 @@ class mssql_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        // Disable logging until we are fully setup.
+        $this->query_log_prevent();
+
         // already connected, select database and set some env. variables
         $this->query_start("--mssql_select_db", null, SQL_QUERY_AUX);
         $result = mssql_select_db($this->dbname, $this->mssql);
@@ -237,6 +240,9 @@ class mssql_native_moodle_database extends moodle_database {
         $serverinfo = $this->get_server_info();
         // Fetch/offset is supported staring from SQL Server 2012.
         $this->supportsoffsetfetch = $serverinfo['version'] > '11';
+
+        // We can enable logging now.
+        $this->query_log_allow();
 
         // Connection stabilised and configured, going to instantiate the temptables controller
         $this->temptables = new mssql_native_moodle_temptables($this);
