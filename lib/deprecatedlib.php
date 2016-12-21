@@ -6385,3 +6385,144 @@ function prevent_form_autofill_password() {
     debugging('prevent_form_autofill_password has been deprecated and is no longer in use.', DEBUG_DEVELOPER);
     return '';
 }
+
+/**
+ * Get the users recent conversations meaning all the people they've recently
+ * sent or received a message from plus the most recent message sent to or received from each other user
+ *
+ * @deprecated since Moodle 3.3 MDL-57370
+ * @param object|int $userorid the current user or user id
+ * @param int $limitfrom can be used for paging
+ * @param int $limitto can be used for paging
+ * @return array
+ */
+function message_get_recent_conversations($userorid, $limitfrom = 0, $limitto = 100) {
+    global $DB;
+
+    debugging('message_get_recent_conversations() is deprecated. Please use \core_message\api::get_conversations() instead.', DEBUG_DEVELOPER);
+
+    if (is_object($userorid)) {
+        $user = $userorid;
+    } else {
+        $userid = $userorid;
+        $user = new stdClass();
+        $user->id = $userid;
+    }
+
+    $userfields = user_picture::fields('otheruser', array('lastaccess'));
+
+    // This query retrieves the most recent message received from or sent to
+    // seach other user.
+    //
+    // If two messages have the same timecreated, we take the one with the
+    // larger id.
+    //
+    // There is a separate query for read and unread messages as they are stored
+    // in different tables. They were originally retrieved in one query but it
+    // was so large that it was difficult to be confident in its correctness.
+    $uniquefield = $DB->sql_concat('message.useridfrom', "'-'", 'message.useridto');
+    $sql = "SELECT $uniquefield, $userfields,
+                   message.id as mid, message.notification, message.useridfrom, message.useridto,
+                   message.smallmessage, message.fullmessage, message.fullmessagehtml,
+                   message.fullmessageformat, message.timecreated,
+                   contact.id as contactlistid, contact.blocked
+              FROM {message_read} message
+              JOIN (
+                        SELECT MAX(id) AS messageid,
+                               matchedmessage.useridto,
+                               matchedmessage.useridfrom
+                         FROM {message_read} matchedmessage
+                   INNER JOIN (
+                               SELECT MAX(recentmessages.timecreated) timecreated,
+                                      recentmessages.useridfrom,
+                                      recentmessages.useridto
+                                 FROM {message_read} recentmessages
+                                WHERE (
+                                      (recentmessages.useridfrom = :userid1 AND recentmessages.timeuserfromdeleted = 0) OR
+                                      (recentmessages.useridto = :userid2   AND recentmessages.timeusertodeleted = 0)
+                                      )
+                             GROUP BY recentmessages.useridfrom, recentmessages.useridto
+                              ) recent ON matchedmessage.useridto     = recent.useridto
+                           AND matchedmessage.useridfrom   = recent.useridfrom
+                           AND matchedmessage.timecreated  = recent.timecreated
+                           WHERE (
+                                 (matchedmessage.useridfrom = :userid6 AND matchedmessage.timeuserfromdeleted = 0) OR
+                                 (matchedmessage.useridto = :userid7   AND matchedmessage.timeusertodeleted = 0)
+                                 )
+                      GROUP BY matchedmessage.useridto, matchedmessage.useridfrom
+                   ) messagesubset ON messagesubset.messageid = message.id
+              JOIN {user} otheruser ON (message.useridfrom = :userid4 AND message.useridto = otheruser.id)
+                OR (message.useridto   = :userid5 AND message.useridfrom   = otheruser.id)
+         LEFT JOIN {message_contacts} contact ON contact.userid  = :userid3 AND contact.contactid = otheruser.id
+             WHERE otheruser.deleted = 0 AND message.notification = 0
+          ORDER BY message.timecreated DESC";
+    $params = array(
+            'userid1' => $user->id,
+            'userid2' => $user->id,
+            'userid3' => $user->id,
+            'userid4' => $user->id,
+            'userid5' => $user->id,
+            'userid6' => $user->id,
+            'userid7' => $user->id
+        );
+    $read = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
+
+    // We want to get the messages that have not been read. These are stored in the 'message' table. It is the
+    // exact same query as the one above, except for the table we are querying. So, simply replace references to
+    // the 'message_read' table with the 'message' table.
+    $sql = str_replace('{message_read}', '{message}', $sql);
+    $unread = $DB->get_records_sql($sql, $params, $limitfrom, $limitto);
+
+    $unreadcountssql = 'SELECT useridfrom, count(*) as count
+                          FROM {message}
+                         WHERE useridto = :userid
+                           AND timeusertodeleted = 0
+                           AND notification = 0
+                      GROUP BY useridfrom';
+    $unreadcounts = $DB->get_records_sql($unreadcountssql, array('userid' => $user->id));
+
+    // Union the 2 result sets together looking for the message with the most
+    // recent timecreated for each other user.
+    // $conversation->id (the array key) is the other user's ID.
+    $conversations = array();
+    $conversation_arrays = array($unread, $read);
+    foreach ($conversation_arrays as $conversation_array) {
+        foreach ($conversation_array as $conversation) {
+            // Only consider it unread if $user has unread messages.
+            if (isset($unreadcounts[$conversation->useridfrom])) {
+                $conversation->isread = 0;
+                $conversation->unreadcount = $unreadcounts[$conversation->useridfrom]->count;
+            } else {
+                $conversation->isread = 1;
+            }
+
+            if (!isset($conversations[$conversation->id])) {
+                $conversations[$conversation->id] = $conversation;
+            } else {
+                $current = $conversations[$conversation->id];
+                // We need to maintain the isread and unreadcount values from existing
+                // parts of the conversation if we're replacing it.
+                $conversation->isread = ($conversation->isread && $current->isread);
+                if (isset($current->unreadcount) && !isset($conversation->unreadcount)) {
+                    $conversation->unreadcount = $current->unreadcount;
+                }
+
+                if ($current->timecreated < $conversation->timecreated) {
+                    $conversations[$conversation->id] = $conversation;
+                } else if ($current->timecreated == $conversation->timecreated) {
+                    if ($current->mid < $conversation->mid) {
+                        $conversations[$conversation->id] = $conversation;
+                    }
+                }
+            }
+        }
+    }
+
+    // Sort the conversations by $conversation->timecreated, newest to oldest
+    // There may be multiple conversations with the same timecreated
+    // The conversations array contains both read and unread messages (different tables) so sorting by ID won't work
+    $result = core_collator::asort_objects_by_property($conversations, 'timecreated', core_collator::SORT_NUMERIC);
+    $conversations = array_reverse($conversations);
+
+    return $conversations;
+}
