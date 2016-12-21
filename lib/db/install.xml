@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20161119" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20170207" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -545,8 +545,9 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
         <INDEX NAME="useridfromtodeleted" UNIQUE="false" FIELDS="useridfrom, useridto, timeuserfromdeleted, timeusertodeleted"/>
+        <INDEX NAME="useridfrom_timeuserfromdeleted_notification" UNIQUE="false" FIELDS="useridfrom, timeuserfromdeleted, notification"/>
+        <INDEX NAME="useridto_timeusertodeleted_notification" UNIQUE="false" FIELDS="useridto, timeusertodeleted, notification"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_read" COMMENT="Stores all messages that have been read">
@@ -573,9 +574,10 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="useridto" UNIQUE="false" FIELDS="useridto"/>
         <INDEX NAME="useridfromtodeleted" UNIQUE="false" FIELDS="useridfrom, useridto, timeuserfromdeleted, timeusertodeleted"/>
         <INDEX NAME="notificationtimeread" UNIQUE="false" FIELDS="notification, timeread"/>
+        <INDEX NAME="useridfrom_timeuserfromdeleted_notification" UNIQUE="false" FIELDS="useridfrom, timeuserfromdeleted, notification"/>
+        <INDEX NAME="useridto_timeusertodeleted_notification" UNIQUE="false" FIELDS="useridto, timeusertodeleted, notification"/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_contacts" COMMENT="Maintains lists of relationships between users">
