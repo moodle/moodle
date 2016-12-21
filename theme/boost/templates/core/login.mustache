@@ -216,20 +216,21 @@
 </div>
 {{/hasinstructions}}
 
-
 {{#js}}
-    require(['jquery', 'core/yui'], function($, Y) {
     {{#error}}
-        $(function() {
-            M.util.focus_login_error(Y);
+        require(['jquery'], function($) {
+            $('#loginerrormessage').focus();
         });
     {{/error}}
     {{^error}}
         {{#autofocusform}}
-            $(function() {
-                M.util.focus_login_form(Y);
+            require(['jquery'], function($) {
+                if ($('#username').val()) {
+                    $('#password').focus();
+                } else {
+                    $('#username').focus();
+                }
             });
         {{/autofocusform}}
     {{/error}}
-    })
 {{/js}}
