@@ -14,10 +14,9 @@ Feature: Highlight non-inherited permissions
   @javascript
   Scenario: Override a permission
     Given I follow "Course fullname"
-    When I expand "Users" node
-    And I follow "Permissions"
-    And I select "1" from the "roleid" singleselect
+    And I navigate to "Users > Permissions" in current page administration
+    And I select "Manager (0)" from the "roleid" singleselect
     And I click on "Prohibit" "radio" in the "View added and updated modules in recent activity block" "table_row"
     And I press "Save changes"
-    And I select "1" from the "roleid" singleselect
+    And I select "Manager (1)" from the "roleid" singleselect
     Then the "class" attribute of "View added and updated modules in recent activity block" "table_row" should contain "overriddenpermission"
