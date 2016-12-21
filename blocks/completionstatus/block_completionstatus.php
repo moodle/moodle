@@ -41,6 +41,10 @@ class block_completionstatus extends block_base {
         return array('course' => true);
     }
 
+    public function has_config() {
+        return true;
+    }
+ 
     public function get_content() {
         global $USER;
 

@@ -15,17 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version info
+ * Completion status block
  *
  * @package    block_completionstatus
- * @copyright  2009 Catalyst IT Ltd
- * @author     Aaron Barnes <aaronb@catalyst.net.nz>
+ * @copyright  2009-2012 Catalyst IT Ltd
+ * @author     Renaat Debleu <info@eWallah.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version      = 2016120501; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2016112900; // Requires this Moodle version.
-$plugin->component    = 'block_completionstatus';
-$plugin->dependencies = array('report_completion' => 2016112900);
+if ($ADMIN->fulltree) {
+    $settings->add(
+        new admin_setting_configcheckbox(
+            'block_completionstatus/revealhidden',
+            new lang_string('revealhidden', 'block_completionstatus'),
+            new lang_string('revealhiddendesc', 'block_completionstatus'), 1));
+}

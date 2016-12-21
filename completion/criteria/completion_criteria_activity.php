@@ -262,11 +262,28 @@ class completion_criteria_activity extends completion_criteria {
 
         $details = array();
         $details['type'] = $this->get_title();
-        if ($cm->has_view()) {
-            $details['criteria'] = html_writer::link($cm->url, $cm->get_formatted_name());
+
+        $dimmed = '';
+        $criteria = $cm->get_formatted_name();
+        if ($cm->uservisible === true) {
+            if ($cm->has_view()) {
+                $criteria = html_writer::link($cm->url, $criteria);
+            }
         } else {
-            $details['criteria'] = $cm->get_formatted_name();
+            $dimmed = 'dimmed_text';
+            $reveal = get_config('block_completionstatus', 'revealhidden');
+            if (!$reveal) {
+                if (!empty($cm->availableinfo)) {
+                    $section = $modinfo->get_section_info($cm->sectionnum, MUST_EXIST);
+                    if (!$section->uservisible) {
+                         $criteria = get_string('notavailable');
+                    }
+                } else {
+                    $criteria = get_string('notavailable');
+                }
+            }
         }
+        $details['criteria'] = html_writer::link($cm->url, $cm->get_formatted_name());
 
         // Build requirements
         $details['requirement'] = array();

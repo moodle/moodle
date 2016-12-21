@@ -29,3 +29,5 @@ $string['firstofsecond'] = '{$a->first} of {$a->second}';
 $string['pluginname'] = 'Course completion status';
 $string['requirement'] = 'Requirement';
 $string['returntocourse'] = 'Return to course';
+$string['revealhidden'] = 'Reveal hidden/unavailable titles';
+$string['revealhiddendesc'] = 'Show titles of hidden and unavailable activities in the detailed view.';
