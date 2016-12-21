@@ -330,7 +330,8 @@ $functions = array(
         'classname' => 'core_course_external',
         'methodname' => 'get_activities_overview',
         'classpath' => 'course/externallib.php',
-        'description' => 'Return activities overview for the given courses.',
+        'description' => '** DEPRECATED ** Please do not call this function any more.
+                          Return activities overview for the given courses.',
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),

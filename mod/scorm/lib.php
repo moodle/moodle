@@ -1088,12 +1088,16 @@ function scorm_debug_log_remove($type, $scoid) {
 /**
  * writes overview info for course_overview block - displays upcoming scorm objects that have a due date
  *
+ * @deprecated since 3.3
+ *
  * @param object $type - type of log(aicc,scorm12,scorm13) used as prefix for filename
  * @param array $htmlarray
  * @return mixed
  */
 function scorm_print_overview($courses, &$htmlarray) {
     global $USER, $CFG;
+
+    debugging('The function scorm_print_overview() is now deprecated.', DEBUG_DEVELOPER);
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();

@@ -2448,6 +2448,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         }
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         // There should be one entry for course1, and no others.
         $this->assertCount(1, $results);
@@ -2499,6 +2500,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer1->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         // There should be one entry for course1.
         $this->assertCount(1, $results);
@@ -2510,6 +2512,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer2->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         // There should be one entry for course1.
         $this->assertCount(0, $results);
@@ -2555,6 +2558,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         if ($hasresult) {
             // There should be one entry for course1.
@@ -2620,6 +2624,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer1->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         if ($hasresult) {
             // There should be one entry for course1.
@@ -2636,6 +2641,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $this->setUser($viewer2->id);
         $results = array();
         forum_print_overview($courses, $results);
+        $this->assertDebuggingCalledCount(2);
 
         // There should be one entry for course1.
         $this->assertCount(0, $results);

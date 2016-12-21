@@ -484,13 +484,16 @@ function assign_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * Print an overview of all assignments
  * for the courses.
  *
+ * @deprecated since 3.3
+ *
  * @param mixed $courses The list of courses to print the overview for
  * @param array $htmlarray The array of html to return
- *
  * @return true
  */
 function assign_print_overview($courses, &$htmlarray) {
     global $CFG, $DB;
+
+    debugging('The function assign_print_overview() is now deprecated.', DEBUG_DEVELOPER);
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return true;
@@ -624,6 +627,8 @@ function assign_print_overview($courses, &$htmlarray) {
  * This api generates html to be displayed to students in print overview section, related to their submission status of the given
  * assignment.
  *
+ * @deprecated since 3.3
+ *
  * @param array $mysubmissions list of submissions of current user indexed by assignment id.
  * @param string $sqlassignmentids sql clause used to filter open assignments.
  * @param array $assignmentidparams sql params used to filter open assignments.
@@ -635,6 +640,8 @@ function assign_print_overview($courses, &$htmlarray) {
 function assign_get_mysubmission_details_for_print_overview(&$mysubmissions, $sqlassignmentids, $assignmentidparams,
                                                             $assignment) {
     global $USER, $DB;
+
+    debugging('The function assign_get_mysubmission_details_for_print_overview() is now deprecated.', DEBUG_DEVELOPER);
 
     if ($assignment->nosubmissions) {
         // Offline assignment. No need to display alerts for offline assignments.
@@ -710,6 +717,8 @@ function assign_get_mysubmission_details_for_print_overview(&$mysubmissions, $sq
  * This api generates html to be displayed to teachers in print overview section, related to the grading status of the given
  * assignment's submissions.
  *
+ * @deprecated since 3.3
+ *
  * @param array $unmarkedsubmissions list of submissions of that are currently unmarked indexed by assignment id.
  * @param string $sqlassignmentids sql clause used to filter open assignments.
  * @param array $assignmentidparams sql params used to filter open assignments.
@@ -722,6 +731,9 @@ function assign_get_mysubmission_details_for_print_overview(&$mysubmissions, $sq
 function assign_get_grade_details_for_print_overview(&$unmarkedsubmissions, $sqlassignmentids, $assignmentidparams,
                                                      $assignment, $context) {
     global $DB;
+
+    debugging('The function assign_get_grade_details_for_print_overview() is now deprecated.', DEBUG_DEVELOPER);
+
     if (!isset($unmarkedsubmissions)) {
         // Build up and array of unmarked submissions indexed by assignment id/ userid
         // for use where the user has grading rights on assignment.

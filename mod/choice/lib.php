@@ -918,12 +918,17 @@ function choice_page_type_list($pagetype, $parentcontext, $currentcontext) {
  * Prints choice name, due date and attempt information on
  * choice activities that have a deadline that has not already passed
  * and it is available for completing.
+ *
+ * @deprecated since 3.3
+ *
  * @uses CONTEXT_MODULE
  * @param array $courses An array of course objects to get choice instances from.
  * @param array $htmlarray Store overview output array( course ID => 'choice' => HTML output )
  */
 function choice_print_overview($courses, &$htmlarray) {
     global $USER, $DB, $OUTPUT;
+
+    debugging('The function choice_print_overview() is now deprecated.', DEBUG_DEVELOPER);
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return;

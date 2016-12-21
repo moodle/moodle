@@ -125,6 +125,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->students[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']); // No valid submission.
         $this->assertNotRegExp('/.*Assignment 1.*/', $overview[$this->course->id]['assign']); // Has valid submission.
@@ -135,11 +136,13 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(0, count($overview));
 
         $this->setUser($this->teachers[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         // Submissions without a grade.
         $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
@@ -148,6 +151,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->editingteachers[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         // Submissions without a grade.
         $this->assertRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
@@ -167,6 +171,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         // Now assignment 4 should not show up.
         $this->assertNotRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
@@ -175,6 +180,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->editingteachers[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(3);
         $this->assertEquals(1, count($overview));
         // Now assignment 4 should not show up.
         $this->assertNotRegExp('/.*Assignment 4.*/', $overview[$this->course->id]['assign']);
@@ -186,6 +192,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $this->setUser($this->students[0]);
         $overview = array();
         assign_print_overview($courses, $overview);
+        $this->assertDebuggingCalledCount(4);
         $this->assertEquals(0, count($overview));
     }
 
