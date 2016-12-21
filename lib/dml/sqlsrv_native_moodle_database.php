@@ -204,6 +204,9 @@ class sqlsrv_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        // Disable logging until we are fully setup.
+        $this->query_log_prevent();
+
         // Allow quoted identifiers
         $sql = "SET QUOTED_IDENTIFIER ON";
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -249,6 +252,9 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $serverinfo = $this->get_server_info();
         // Fetch/offset is supported staring from SQL Server 2012.
         $this->supportsoffsetfetch = $serverinfo['version'] > '11';
+
+        // We can enable logging now.
+        $this->query_log_allow();
 
         // Connection established and configured, going to instantiate the temptables controller
         $this->temptables = new sqlsrv_native_moodle_temptables($this);
