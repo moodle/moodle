@@ -274,11 +274,11 @@ class framework_importer {
             // We are calling from browser, display progress bar.
             if ($this->useprogressbar === true) {
                 $this->progress = new \core\progress\display_if_slow(get_string('processingfile', 'tool_lpimportcsv'));
+                $this->progress->start_html();
             } else {
                 // Avoid html output on CLI scripts.
                 $this->progress = new \core\progress\none();
             }
-            $this->progress->start_html();
             $this->progress->start_progress('', count($this->flat));
             // Build a tree from this flat list.
             raise_memory_limit(MEMORY_EXTRA);
