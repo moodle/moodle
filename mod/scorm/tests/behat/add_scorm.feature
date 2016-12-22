@@ -1,4 +1,4 @@
-@mod @mod_scorm @_file_upload @_switch_frame
+@mod @mod_scorm @_file_upload @_switch_iframe
 Feature: Add scorm activity
   In order to let students access a scorm package
   As a teacher
