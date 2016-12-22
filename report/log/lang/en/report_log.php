@@ -39,6 +39,7 @@ $string['page'] = 'Page {$a}';
 $string['logsformat'] = 'Logs format';
 $string['nologreaderenabled'] = 'No log reader enabled';
 $string['origin'] = 'Source';
+$string['other'] = 'Other';
 $string['page-report-log-x'] = 'Any log report';
 $string['page-report-log-index'] = 'Course log report';
 $string['page-report-log-user'] = 'User course log report';
