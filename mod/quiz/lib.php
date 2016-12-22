@@ -1194,8 +1194,11 @@ function quiz_update_events($quiz, $override = null) {
                    'instance'=>$quiz->id);
     if (!empty($override)) {
         // Only load events for this override.
-        $conds['groupid'] = isset($override->groupid)?  $override->groupid : 0;
-        $conds['userid'] = isset($override->userid)?  $override->userid : 0;
+        if (isset($override->userid)) {
+            $conds['userid'] = $override->userid;
+        } else if (isset($override->groupid)) {
+            $conds['groupid'] = $override->groupid;
+        }
     }
     $oldevents = $DB->get_records('event', $conds);
 
