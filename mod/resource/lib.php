@@ -213,10 +213,14 @@ function resource_get_coursemodule_info($coursemodule) {
         $info->icon ='i/invalid';
         return $info;
     }
+
+    // See if there is at least one file.
     $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'mod_resource', 'content', 0, 'sortorder DESC, id ASC', false); // TODO: this is not very efficient!!
+    $files = $DB->get_records_select('files', 'contextid = ? AND component = ? AND filearea = ? AND itemid = ? AND filename != ?',
+            array($context->id, 'mod_resource', 'content', 0, '.'), 'sortorder DESC, id ASC', '*', 0, 1);
     if (count($files) >= 1) {
-        $mainfile = reset($files);
+        $firstrecord = reset($files);
+        $mainfile = $fs->get_file_instance($firstrecord);
         $info->icon = file_file_icon($mainfile, 24);
         $resource->mainfile = $mainfile->get_filename();
     }
