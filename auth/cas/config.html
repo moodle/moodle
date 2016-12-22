@@ -99,9 +99,31 @@ if (!isset($config->removeuser)) {
 $yesno = array( get_string('no'), get_string('yes') );
 
 $disabled = '';
-if (!ldap_paged_results_supported($config->ldap_version)) {
+$pagedresultssupported = false;
+if ($config->host_url !== '') {
+    /**
+     * We try to connect each and every time we open the config, because we want to set the Page
+     * Size setting as enabled or disabled depending on the configured LDAP server supporting
+     * pagination or not, and to notify the user about it. If the user changed the LDAP server (or
+     * the LDAP protocol version) last time, it might happen that paged results are no longer
+     * available and we want to show that to the user the next time she goes to the settings page.
+     */
+    try {
+        $ldapconn = $this->ldap_connect();
+        $pagedresultssupported = ldap_paged_results_supported($config->ldap_version, $ldapconn);
+    } catch (Exception $e) {
+        // If we couldn't connect and get the supported options, we can only assume we don't support paged results.
+        $pagedresultssupported = false;
+    }
+}
+/* Make sure we only disable the paged result size setting and show the notification about it if
+ * there is a configured server that we tried to contact.  Othersiwe, if someone's LDAP server does
+ * support paged results, they won't be able to turn it on the first time they set it up (because
+ * the field will be disabled).
+ */
+if (($config->host_url !== '') && (!$pagedresultssupported)) {
     $disabled = ' disabled="disabled"';
-    echo $OUTPUT->notification(get_string('pagedresultsnotsupp', 'auth_ldap'));
+    echo $OUTPUT->notification(get_string('pagedresultsnotsupp', 'auth_ldap'), \core\output\notification::NOTIFY_INFO);
 }
 
 ?>
