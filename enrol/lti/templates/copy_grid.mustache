@@ -26,7 +26,7 @@
     * none
 
     Context variables required for this template:
-    * rows An array of objects with label, text and id
+    * rows An array of objects with label, hidelabel, text and id
 
     Example context (json):
     {
@@ -34,19 +34,23 @@
             {
                 "label": "Tool URL",
                 "text": "http://example.com/",
-                "id": "toolurl"
+                "id": "toolurl",
+                "hidelabel": false
             },
             {
                 "label": "Secret",
                 "text": "ABCDEF1234567890",
-                "id": "secret"
+                "id": "secret",
+                "hidelabel": true
             }
         ]
     }
 }}
 {{#rows}}
     <div>
-        <label style="display: inline-block; width: 5em" {{#id}}for={{#quote}}{{{id}}}-{{{uniqid}}}{{/quote}}{{/id}}>{{label}}</label>
+        <label style="display: inline-block; width: 5em"
+            {{#id}}for={{#quote}}{{{id}}}-{{{uniqid}}}{{/quote}}{{/id}} {{#hidelabel}}
+               class="accesshide"{{/hidelabel}}>{{label}}</label>
         <div style="display: inline-block">{{> core/copy_box }}</div>
     </div>
 {{/rows}}
