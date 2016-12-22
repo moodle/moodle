@@ -15,54 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the class for the My overview block.
+ * myoverview block rendrer
  *
  * @package    block_myoverview
- * @copyright  Mark Nelson <markn@moodle.com>
+ * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 /**
- * My overview block class.
+ * myoverview block rendrer
  *
  * @package    block_myoverview
- * @copyright  Mark Nelson <markn@moodle.com>
+ * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_myoverview extends block_base {
+class block_myoverview_renderer extends plugin_renderer_base {
 
     /**
-     * Init.
-     */
-    public function init() {
-        $this->title = get_string('pluginname', 'block_myoverview');
-    }
-
-    /**
-     * Returns the contents.
+     * Return the main content for the block overview.
      *
-     * @return stdClass contents of block
+     * @return {string} HTML string
      */
     public function get_content() {
-        if (isset($this->content)) {
-            return $this->content;
-        }
-
-        $this->content = new stdClass();
-        $this->content->text = $this->page->get_renderer('block_myoverview')->get_content();
-        $this->content->footer = '';
-
-        return $this->content;
-    }
-
-    /**
-     * Locations where block can be displayed.
-     *
-     * @return array
-     */
-    public function applicable_formats() {
-        return array('my' => true);
+        return $this->render_from_template('block_myoverview/main', []);
     }
 }
