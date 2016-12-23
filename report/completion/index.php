@@ -156,9 +156,6 @@ if ($csv) {
 
     echo $OUTPUT->header();
 
-    $PAGE->requires->js('/report/completion/textrotate.js');
-    $PAGE->requires->js_function_call('textrotate_init', null, true);
-
     // Handle groups (if enabled)
     groups_print_course_menu($course, $CFG->wwwroot.'/report/completion/?course='.$course->id);
 }
@@ -417,13 +414,13 @@ if (!$csv) {
             // Get criteria details
             $details = $criterion->get_title_detailed();
             print '<th scope="col" class="colheader criterianame">';
-            print '<span class="completion-criterianame">'.$details.'</span>';
+            print '<div class="rotated-text-container"><span class="rotated-text">'.$details.'</span></div>';
             print '</th>';
         }
 
         // Overall course completion status
         print '<th scope="col" class="colheader criterianame">';
-        print '<span class="completion-criterianame">'.get_string('coursecomplete', 'completion').'</span>';
+        print '<div class="rotated-text-container"><span class="rotated-text">'.get_string('coursecomplete', 'completion').'</span></div>';
         print '</th></tr>';
     }
 
