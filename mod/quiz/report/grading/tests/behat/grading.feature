@@ -64,8 +64,8 @@ Feature: Basic use of the Manual grading report
     And I should see "Manual grading"
     And I follow "Also show questions that have been graded automatically"
     And I should see "Short answer 001"
-    And I should see "0" in the ".cell.c2" "css_element"
-    And I should see "0" in the ".cell.c3" "css_element"
+    And "Short answer 001" row "To grade" column of "questionstograde" table should contain "0"
+    And "Short answer 001" row "Already graded" column of "questionstograde" table should contain "0"
 
     # Adjust the mark for Student1.
     And I click on "update grades" "link" in the "Short answer 001" "table_row"
@@ -73,5 +73,5 @@ Feature: Basic use of the Manual grading report
     And I set the field "Mark" to "0.6"
     And I press "Save and go to next page"
     And I should see "All selected attempts have been graded. Returning to the list of questions."
-    And I should see "0" in the ".cell.c2" "css_element"
-    And I should see "1" in the ".cell.c3" "css_element"
+    And "Short answer 001" row "To grade" column of "questionstograde" table should contain "0"
+    And "Short answer 001" row "Already graded" column of "questionstograde" table should contain "1"

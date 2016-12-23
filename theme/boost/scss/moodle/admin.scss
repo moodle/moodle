@@ -801,3 +801,7 @@
 .modal.modal-in-page {
     z-index: 0;
 }
+
+#overriderolestable .overriddenpermission {
+    @extend .table-warning;
+}

@@ -70,6 +70,9 @@
 
         $user = $DB->get_record('user', array('id'=>$delete, 'mnethostid'=>$CFG->mnet_localhost_id), '*', MUST_EXIST);
 
+        if ($user->deleted) {
+            print_error('usernotdeleteddeleted', 'error');
+        }
         if (is_siteadmin($user->id)) {
             print_error('useradminodelete', 'error');
         }
@@ -86,7 +89,7 @@
             echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$fullname'"), $deletebutton, $returnurl);
             echo $OUTPUT->footer();
             die;
-        } else if (data_submitted() and !$user->deleted) {
+        } else if (data_submitted()) {
             if (delete_user($user)) {
                 \core\session\manager::gc(); // Remove stale sessions.
                 redirect($returnurl);

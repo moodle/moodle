@@ -98,6 +98,7 @@ function quiz_report_get_significant_questions($quiz) {
     $qsbyslot = $DB->get_records_sql("
             SELECT slot.slot,
                    q.id,
+                   q.qtype,
                    q.length,
                    slot.maxmark
 
@@ -113,6 +114,7 @@ function quiz_report_get_significant_questions($quiz) {
     foreach ($qsbyslot as $question) {
         $question->number = $number;
         $number += $question->length;
+        $question->type = $question->qtype;
     }
 
     return $qsbyslot;
