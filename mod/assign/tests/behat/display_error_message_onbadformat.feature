@@ -63,4 +63,3 @@ Feature: Check that the assignment grade can not be input in a wrong format.
     And I set the field "Grade out of 100" to "50..6"
     And I press "Save changes"
     And I should see "The grade provided could not be understood: 50..6"
-

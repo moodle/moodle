@@ -63,4 +63,3 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
     And I wait until the page is ready
     And I should see "You are editing the feedback for a previous attempt. This is attempt 1 out of 2."
     And I should see "Page 1 of 3"
-

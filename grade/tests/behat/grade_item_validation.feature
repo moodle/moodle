@@ -1,5 +1,5 @@
 @core_grades
-Feature: Editing a grade item
+Feature: Grade item validation
   In order to ensure validation is provided to the teacher
   As a teacher
   I need to know why I can not add/edit values on the grade item form

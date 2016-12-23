@@ -78,4 +78,3 @@ Feature: Manage evidence of prior learning
     Then I should see "List of evidence"
     And I should see "Evidence-6"
     And I should not see "Evidence-5"
-

@@ -1,5 +1,5 @@
 @block @block_calendar_upcoming
-Feature: View a site event on the dashboard
+Feature: View a upcoming site event on the dashboard
   In order to view a site event
   As a student
   I can view the event in the upcoming events block

@@ -5,7 +5,7 @@ Feature: Import and export select missing words questions
   I need to be able to import and export them
 
   Background:
-     Given the following "users" exist:
+    Given the following "users" exist:
       | username | firstname | lastname | email               |
       | teacher1 | T1        | Teacher1 | teacher1@moodle.com |
     And the following "courses" exist:

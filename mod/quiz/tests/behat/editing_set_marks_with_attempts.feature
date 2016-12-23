@@ -1,5 +1,6 @@
 @mod @mod_quiz
-Feature: In order to create a quiz that awards marks the way I want
+Feature: Edit quiz marks with attempts
+  In order to create a quiz that awards marks the way I want
   As a teacher
   I must be able to set the marks I want on the Edit quiz page (even after the quiz has been attempted).
 

@@ -27,7 +27,6 @@ Feature: The section links block allows users to quickly navigate around a moodl
       | id_coursedisplay | Show one section per page |
     And I press "Save and display"
 
-
   Scenario: Add the section links block to a course.
     Given I add the "Section links" block
     And I turn editing mode off

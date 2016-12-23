@@ -23,4 +23,4 @@ Feature: Test creating a Description question
       | Question name                      | description-001                                                |
       | Question text                      | Instructions about the following questions.                    |
       | General feedback                   | Why actually the field 'General feedback' used in this qytype? |
-      Then I should see "description-001"
+    Then I should see "description-001"

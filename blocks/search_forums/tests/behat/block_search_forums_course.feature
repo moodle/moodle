@@ -1,5 +1,5 @@
 @block @block_search_forums @mod_forum
-Feature: The search forums block allows users to search for forum posts
+Feature: The search forums block allows users to search for forum posts on course page
   In order to search for a forum post
   As a user
   I can use the search forums block

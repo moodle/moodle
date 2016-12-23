@@ -1,5 +1,5 @@
 @mod @mod_lti
-Feature: Content-Item support
+Feature: Create/edit tool configuration that has Content-Item support
   In order to provide external tools that support the Content-Item Message type for teachers and learners
   As an admin
   I need to be able to configure external tool registrations that support the Content-Item Message type.

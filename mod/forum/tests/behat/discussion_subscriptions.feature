@@ -273,40 +273,40 @@ Feature: A user can control their own subscription preferences for a discussion
     And I follow "Reply"
     And the field "Discussion subscription" matches value "I don't want to be notified of new posts in this discussion"
 
- Scenario: A guest should not be able to subscribe to a discussion
-   Given I am on site homepage
-   And I add a "Forum" to section "1" and I fill the form with:
+  Scenario: A guest should not be able to subscribe to a discussion
+    Given I am on site homepage
+    And I add a "Forum" to section "1" and I fill the form with:
      | Forum name        | Test forum name |
      | Forum type        | Standard forum for general use |
      | Description       | Test forum description |
-   And I add a new discussion to "Test forum name" forum with:
+    And I add a new discussion to "Test forum name" forum with:
      | Subject | Test post subject one |
      | Message | Test post message one |
-   And I log out
-   When I log in as "guest"
-   And I follow "Test forum name"
-   Then "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject one" "table_row"
-   And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject one" "table_row"
-   And I follow "Test post subject one"
-   And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist
-   And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
+    And I log out
+    When I log in as "guest"
+    And I follow "Test forum name"
+    Then "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject one" "table_row"
+    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject one" "table_row"
+    And I follow "Test post subject one"
+    And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist
+    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
 
- Scenario: A user who is not logged in should not be able to subscribe to a discussion
-   Given I am on site homepage
-   And I add a "Forum" to section "1" and I fill the form with:
+  Scenario: A user who is not logged in should not be able to subscribe to a discussion
+    Given I am on site homepage
+    And I add a "Forum" to section "1" and I fill the form with:
      | Forum name        | Test forum name |
      | Forum type        | Standard forum for general use |
      | Description       | Test forum description |
-   And I add a new discussion to "Test forum name" forum with:
+    And I add a new discussion to "Test forum name" forum with:
      | Subject | Test post subject one |
      | Message | Test post message one |
-   And I log out
-   When I follow "Test forum name"
-   Then "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject one" "table_row"
-   And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject one" "table_row"
-   And I follow "Test post subject one"
-   And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist
-   And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
+    And I log out
+    When I follow "Test forum name"
+    Then "You are not subscribed to this discussion. Click to subscribe." "link" should not exist in the "Test post subject one" "table_row"
+    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist in the "Test post subject one" "table_row"
+    And I follow "Test post subject one"
+    And "You are not subscribed to this discussion. Click to subscribe." "link" should not exist
+    And "You are subscribed to this discussion. Click to unsubscribe." "link" should not exist
 
   Scenario: A user can toggle their subscription preferences when viewing a discussion
     Given I add a "Forum" to section "1" and I fill the form with:

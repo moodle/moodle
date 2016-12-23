@@ -1,5 +1,5 @@
 @block @block_activity_results
-Feature: The activity results block displays student scores as scales
+Feature: The activity results block displays student in group high scores as scales
   In order to be display student scores as scales
   As a user
   I need to see the activity results block

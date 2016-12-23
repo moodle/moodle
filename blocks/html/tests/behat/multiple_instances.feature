@@ -1,5 +1,5 @@
 @block @block_html
-Feature: Adding and configuring HTML blocks
+Feature: Adding and configuring multiple HTML blocks
   In order to have one or multiple HTML blocks on a page
   As admin
   I need to be able to create, configure and change HTML blocks

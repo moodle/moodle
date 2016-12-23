@@ -5,12 +5,11 @@ Feature: Courses can be searched for and moved in bulk.
   I need to be able to search courses in bulk and move them around
 
   Background:
-     Given the following "categories" exist:
+    Given the following "categories" exist:
       | name | category | idnumber |
       | Science | 0 | SCI |
       | English | 0 | ENG |
       | Miscellaneous | 0 | MISC |
-
     And the following "courses" exist:
       | fullname | shortname | category |
       | Biology Y1 | BIO1 | MISC |

@@ -91,4 +91,3 @@ Feature: View the quiz being due
     And I should not see "Quiz 1B Past deadline" in the "Course overview" "block"
     And I should not see "Quiz 1D Future deadline" in the "Course overview" "block"
     And I should not see "Quiz 2A Future deadline" in the "Course overview" "block"
-

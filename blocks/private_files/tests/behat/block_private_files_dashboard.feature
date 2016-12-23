@@ -1,5 +1,5 @@
 @block @block_private_files @_file_upload @javascript
-Feature: The private files block allows users to store files privately in moodle
+Feature: The private files block allows users to store files privately in moodle on dashboard
   In order to store a private file in moodle
   As a user
   I can upload the file to my private files area using the private files block on the dashboard
