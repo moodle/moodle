@@ -1163,41 +1163,41 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
 
 /**
- * @deprecated please use calendar_event::create() instead.
+ * @deprecated please use \core_calendar\event::create() instead.
  */
 function add_event($event) {
-    throw new coding_exception('add_event() can not be used any more, please use calendar_event::create() instead.');
+    throw new coding_exception('add_event() can not be used any more, please use \core_calendar\event::create() instead.');
 }
 
 /**
- * @deprecated please calendar_event->update() instead.
+ * @deprecated please \core_calendar\event->update() instead.
  */
 function update_event($event) {
-    throw new coding_exception('update_event() is removed, please use calendar_event->update() instead.');
+    throw new coding_exception('update_event() is removed, please use \core_calendar\event->update() instead.');
 }
 
 /**
- * @deprecated please use calendar_event->delete() instead.
+ * @deprecated please use \core_calendar\event->delete() instead.
  */
 function delete_event($id) {
     throw new coding_exception('delete_event() can not be used any more, please use '.
-        'calendar_event->delete() instead.');
+        '\core_calendar\event->delete() instead.');
 }
 
 /**
- * @deprecated please use calendar_event->toggle_visibility(false) instead.
+ * @deprecated please use \core_calendar\event->toggle_visibility(false) instead.
  */
 function hide_event($event) {
     throw new coding_exception('hide_event() can not be used any more, please use '.
-        'calendar_event->toggle_visibility(false) instead.');
+        '\core_calendar\event->toggle_visibility(false) instead.');
 }
 
 /**
- * @deprecated please use calendar_event->toggle_visibility(true) instead.
+ * @deprecated please use \core_calendar\event->toggle_visibility(true) instead.
  */
 function show_event($event) {
     throw new coding_exception('show_event() can not be used any more, please use '.
-        'calendar_event->toggle_visibility(true) instead.');
+        '\core_calendar\event->toggle_visibility(true) instead.');
 }
 
 /**

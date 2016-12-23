@@ -157,7 +157,7 @@ class core_calendar_lib_testcase extends advanced_testcase {
         ];
 
         foreach ($events as $event) {
-            calendar_event::create($event, false);
+            \core_calendar\event::create($event, false);
         }
 
         $timestart = time() - 60;

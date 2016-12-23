@@ -126,7 +126,7 @@ function chat_add_instance($chat) {
         $event->timestart   = $chat->chattime;
         $event->timeduration = 0;
 
-        calendar_event::create($event);
+        \core_calendar\event::create($event);
     }
     return $returnid;
 }
@@ -157,11 +157,11 @@ function chat_update_instance($chat) {
             $event->description = format_module_intro('chat', $chat, $chat->coursemodule);
             $event->timestart   = $chat->chattime;
 
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Do not publish this event, so delete it.
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->delete();
         }
     } else {
@@ -179,7 +179,7 @@ function chat_update_instance($chat) {
             $event->timestart   = $chat->chattime;
             $event->timeduration = 0;
 
-            calendar_event::create($event);
+            \core_calendar\event::create($event);
         }
     }
 
@@ -446,7 +446,7 @@ function chat_refresh_events($courseid = 0) {
         $event->timestart   = $chat->chattime;
 
         if ($event->id = $DB->get_field('event', 'id', array('modulename' => 'chat', 'instance' => $chat->id))) {
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->update($event);
         } else if ($chat->schedule > 0) {
             // The chat is scheduled and the event should be published.
@@ -459,7 +459,7 @@ function chat_refresh_events($courseid = 0) {
             $event->timeduration = 0;
             $event->visible = $DB->get_field('course_modules', 'visible', array('module' => $moduleid, 'instance' => $chat->id));
 
-            calendar_event::create($event);
+            \core_calendar\event::create($event);
         }
     }
     return true;
@@ -665,7 +665,7 @@ function chat_update_chat_times($chatid=0) {
 
         if ($event->id = $DB->get_field_select('event', 'id', $cond, $params)) {
             $event->timestart   = $chat->chattime;
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->update($event, false);
         }
     }

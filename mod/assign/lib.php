@@ -300,13 +300,13 @@ function assign_update_events($assign, $override = null) {
             $event->name      = $eventname.' ('.get_string('duedate', 'assign').')';
             $event->timestart = $duedate;
             $event->eventtype = 'due';
-            calendar_event::create($event);
+            \core_calendar\event::create($event);
         }
     }
 
     // Delete any leftover events.
     foreach ($oldevents as $badevent) {
-        $badevent = calendar_event::load($badevent);
+        $badevent = \core_calendar\event::load($badevent);
         $badevent->delete();
     }
 }

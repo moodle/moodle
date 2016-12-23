@@ -265,7 +265,7 @@ function workshop_delete_instance($id) {
     // delete the calendar events
     $events = $DB->get_records('event', array('modulename' => 'workshop', 'instance' => $workshop->id));
     foreach ($events as $event) {
-        $event = calendar_event::load($event);
+        $event = \core_calendar\event::load($event);
         $event->delete();
     }
 
@@ -1714,7 +1714,7 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             unset($event->id);
         }
         // update() will reuse a db record if the id field is set
-        $eventobj = new calendar_event($event);
+        $eventobj = new \core_calendar\event($event);
         $eventobj->update($event, false);
     }
 
@@ -1729,7 +1729,7 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             unset($event->id);
         }
         // update() will reuse a db record if the id field is set
-        $eventobj = new calendar_event($event);
+        $eventobj = new \core_calendar\event($event);
         $eventobj->update($event, false);
     }
 
@@ -1744,7 +1744,7 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             unset($event->id);
         }
         // update() will reuse a db record if the id field is set
-        $eventobj = new calendar_event($event);
+        $eventobj = new \core_calendar\event($event);
         $eventobj->update($event, false);
     }
 
@@ -1759,13 +1759,13 @@ function workshop_calendar_update(stdClass $workshop, $cmid) {
             unset($event->id);
         }
         // update() will reuse a db record if the id field is set
-        $eventobj = new calendar_event($event);
+        $eventobj = new \core_calendar\event($event);
         $eventobj->update($event, false);
     }
 
     // delete any leftover events
     foreach ($currentevents as $oldevent) {
-        $oldevent = calendar_event::load($oldevent);
+        $oldevent = \core_calendar\event::load($oldevent);
         $oldevent->delete();
     }
 }

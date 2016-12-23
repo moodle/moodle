@@ -120,7 +120,7 @@ class core_calendar_externallib_testcase extends externallib_advanced_testcase {
             $prop->priority = $priority;
         }
 
-        $event = new calendar_event($prop);
+        $event = new \core_calendar\event($prop);
         return $event->create($prop);
     }
 

@@ -811,7 +811,7 @@ function feedback_set_events($feedback) {
         if ($eventid) {
             // Calendar event exists so update it.
             $event->id = $eventid;
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Event doesn't exist so create one.
@@ -821,11 +821,11 @@ function feedback_set_events($feedback) {
             $event->modulename   = 'feedback';
             $event->instance     = $feedback->id;
             $event->eventtype    = 'open';
-            calendar_event::create($event);
+            \core_calendar\event::create($event);
         }
     } else if ($eventid) {
         // Calendar event is on longer needed.
-        $calendarevent = calendar_event::load($eventid);
+        $calendarevent = \core_calendar\event::load($eventid);
         $calendarevent->delete();
     }
 
@@ -843,7 +843,7 @@ function feedback_set_events($feedback) {
         if ($eventid) {
             // Calendar event exists so update it.
             $event->id = $eventid;
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Event doesn't exist so create one.
@@ -853,11 +853,11 @@ function feedback_set_events($feedback) {
             $event->modulename   = 'feedback';
             $event->instance     = $feedback->id;
             $event->eventtype    = 'close';
-            calendar_event::create($event);
+            \core_calendar\event::create($event);
         }
     } else if ($eventid) {
         // Calendar event is on longer needed.
-        $calendarevent = calendar_event::load($eventid);
+        $calendarevent = \core_calendar\event::load($eventid);
         $calendarevent->delete();
     }
 }

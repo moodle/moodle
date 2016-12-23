@@ -608,11 +608,11 @@ function data_set_events($data) {
             $event->timestart    = $data->timeavailablefrom;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Calendar event is on longer needed.
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->delete();
         }
     } else {
@@ -629,7 +629,7 @@ function data_set_events($data) {
             $event->timestart    = $data->timeavailablefrom;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
-            calendar_event::create($event);
+            \core_calendar\event::create($event);
         }
     }
 
@@ -644,11 +644,11 @@ function data_set_events($data) {
             $event->timestart    = $data->timeavailableto;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->update($event);
         } else {
             // Calendar event is on longer needed.
-            $calendarevent = calendar_event::load($event->id);
+            $calendarevent = \core_calendar\event::load($event->id);
             $calendarevent->delete();
         }
     } else {
@@ -666,7 +666,7 @@ function data_set_events($data) {
             $event->timestart    = $data->timeavailableto;
             $event->visible      = instance_is_visible('data', $data);
             $event->timeduration = 0;
-            calendar_event::create($event);
+            \core_calendar\event::create($event);
         }
     }
 }

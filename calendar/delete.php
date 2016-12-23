@@ -41,7 +41,7 @@ if(!$site = get_site()) {
     redirect(new moodle_url('/admin/index.php'));
 }
 
-$event = calendar_event::load($eventid);
+$event = \core_calendar\event::load($eventid);
 
 /**
  * We are going to be picky here, and require that any event types other than

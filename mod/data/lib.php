@@ -1054,7 +1054,7 @@ function data_delete_instance($id) {    // takes the dataid
     // Remove old calendar events.
     $events = $DB->get_records('event', array('modulename' => 'data', 'instance' => $id));
     foreach ($events as $event) {
-        $event = calendar_event::load($event);
+        $event = \core_calendar\event::load($event);
         $event->delete();
     }
 

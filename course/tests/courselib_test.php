@@ -1212,7 +1212,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Check the events visibility.
         if ($events = $DB->get_records('event', array('instance' => $cm->instance, 'modulename' => $cm->modname))) {
             foreach ($events as $event) {
-                $calevent = new calendar_event($event);
+                $calevent = new \core_calendar\event($event);
                 $this->assertEquals($visibility, $calevent->visible, "$cm->modname calendar_event visibility");
             }
         }

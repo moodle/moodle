@@ -792,7 +792,7 @@ class assign {
         }
         $events = $DB->get_records('event', $conds);
         foreach ($events as $event) {
-            $eventold = calendar_event::load($event);
+            $eventold = \core_calendar\event::load($event);
             $eventold->delete();
         }
 
@@ -1197,7 +1197,7 @@ class assign {
             }
 
             if ($event->id) {
-                $calendarevent = calendar_event::load($event->id);
+                $calendarevent = \core_calendar\event::load($event->id);
                 $calendarevent->update($event);
             } else {
                 unset($event->id);
@@ -1208,7 +1208,7 @@ class assign {
                 $event->instance    = $instance->id;
                 $event->eventtype   = $eventtype;
                 $event->timeduration = 0;
-                calendar_event::create($event);
+                \core_calendar\event::create($event);
             }
         } else {
             $DB->delete_records('event', array('modulename' => 'assign', 'instance' => $instance->id, 'eventtype' => $eventtype));
