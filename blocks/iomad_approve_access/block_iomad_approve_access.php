@@ -24,11 +24,11 @@
 
 class block_iomad_approve_access extends block_base {
     public function init() {
-        $this->title = get_string('approveusers', 'block_iomad_approve_access' );
+        $this->title = get_string('title', 'block_iomad_approve_access' );
     }
 
     public function hide_header() {
-        return true;
+        return false;
     }
 
     public function has_config() {

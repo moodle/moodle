@@ -23,8 +23,10 @@
  */
 
 $string['currentcompany'] = 'Current company is';
+$string['currentcompanyname'] = 'Current company, <b>\'{$a}\'</b>';
 $string['iomad_company_selector:addinstance'] = 'Add a new Iomad company selector block';
 $string['iomad_company_selector:myaddinstance'] = 'Add a new Iomad company selector block to the users dashboard';
 $string['nocurrentcompany'] = 'Please select a company from the drop down list';
 $string['pluginname'] = 'iomad - Company Selector';
 $string['selectacompany'] = 'Select a Company';
+$string['title'] = 'Company select';

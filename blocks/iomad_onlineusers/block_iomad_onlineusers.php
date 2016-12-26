@@ -23,7 +23,7 @@ require_once($CFG->dirroot . "/local/iomad/lib/user.php");
  */
 class block_iomad_onlineusers extends block_base {
     public function init() {
-        $this->title = get_string('pluginname', 'block_iomad_onlineusers');
+        $this->title = get_string('title', 'block_iomad_onlineusers');
     }
 
     public function has_config() {
@@ -31,7 +31,7 @@ class block_iomad_onlineusers extends block_base {
     }
 
     public function hide_header() {
-        return true;
+        return false;
     }
 
     public function get_title() {
@@ -178,7 +178,7 @@ class block_iomad_onlineusers extends block_base {
             $usercount = ": $usercount";
         }
 
-        $this->content->text = "<h3>Recent Online Company Users</h3><div class=\"info\">(".
+        $this->content->text = "<div class=\"info\">(".
                                 get_string("periodnminutes", "block_iomad_onlineusers", $minutes)."$usercount)</div>";
 
         // Now, we have in users, the list of users to show.
