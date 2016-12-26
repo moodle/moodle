@@ -675,7 +675,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         } else {
             // Assemble pollinterval control.
             $html .= html_writer::start_tag('div', array('style' => 'float:left;'));
-            $html .= html_writer::start_tag('select', array('name' => 'pollinterval'));
+            $html .= html_writer::start_tag('select', array('name' => 'pollinterval', 'class' => 'custom-select'));
             foreach (calendar_get_pollinterval_choices() as $k => $v) {
                 $attributes = array();
                 if ($k == $subscription->pollinterval) {
@@ -693,9 +693,11 @@ class core_calendar_renderer extends plugin_renderer_base {
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $subscription->id));
         if (!empty($subscription->url)) {
             $html .= html_writer::tag('button', get_string('update'), array('type'  => 'submit', 'name' => 'action',
+                                                                            'class' => 'btn btn-secondary',
                                                                             'value' => CALENDAR_SUBSCRIPTION_UPDATE));
         }
         $html .= html_writer::tag('button', get_string('remove'), array('type'  => 'submit', 'name' => 'action',
+                                                                        'class' => 'btn btn-secondary',
                                                                         'value' => CALENDAR_SUBSCRIPTION_REMOVE));
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('form');
