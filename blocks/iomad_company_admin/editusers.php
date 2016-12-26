@@ -597,60 +597,106 @@ if (!$users) {
     $table = new html_table();
     $table->id = 'ReportTable';
     if (!$showall) {
-        $table->head = array ($fullnamedisplay, $email, $department, $lastaccess, "User Controls"); //Need to not be lazy and add lang str :P
+        $table->head = array ($fullnamedisplay, $email, $department, $lastaccess, '');
         $table->align = array ("left", "center", "center", "center", "center");
     } else {
-        $table->head = array ($company, $fullnamedisplay, $email, $department, $lastaccess, "User Controls"); //Need to not be lazy and add lang str :P
+        $table->head = array ($company, $fullnamedisplay, $email, $department, $lastaccess, '');
         $table->align = array ("left", 'center', "center", "center", "center", "center");
     }
 
     foreach ($users as $user) {
+
+        // User actions
+        $actions = array();
+
         if ($user->username == 'guest') {
             continue; // Do not dispaly dummy new user and guest here.
         }
-        if ($user->id == $USER->id) {
-            $deletebutton = "";
-            $suspendbutton = "";
-        } else {
-            if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
-                 or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
-                $deletebutton = "<a href=\"editusers.php?delete=$user->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
-                if (!empty($user->suspended)) {
-                    $suspendbutton = "<a href=\"editusers.php?unsuspend=$user->id&amp;sesskey=".sesskey()."\">$strunsuspend</a>";
-                } else {
-                    $suspendbutton = "<a href=\"editusers.php?suspend=$user->id&amp;sesskey=".sesskey()."\">$strsuspend</a>";
-                }
-            } else {
-                $deletebutton = "";
-                $suspendbutton = "";
-            }
-        }
+
         if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id) and !is_mnet_remote_user($user)) {
-            $editbutton = "<a href=\"$securewwwroot/blocks/iomad_company_admin/editadvanced.php?id=$user->id\">$stredit</a>";
-            $passwordbutton = "<a href=\"editusers.php?password=$user->id&amp;sesskey=".sesskey()."\">$strpassword</a>";
-        } else {
-            $editbutton = "";
-            $passwordbutton = "";
+            $url = new moodle_url('/blocks/iomad_company_admin/editadvanced.php', array(
+                'id' => $user->id,   
+            ));
+            $actions['edit'] = new action_menu_link_secondary(
+                $url,
+                null,
+                $stredit
+            );
+            $url = new moodle_url('/blocks/iomad_company_admin/editadusers.php', array(
+                'password' => $user->id,
+                'sesskey' => sesskey(),   
+            ));
+            $actions['password'] = new action_menu_link_secondary(
+                $url,
+                null,
+                $strpassword
+            );
+        }
+
+        if ($user->id != $USER->id) {
+            if ((iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
+                 or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
+                $url = new moodle_url('/blocks/iomad_company_admin/', array(
+                    'delete' => $user->id,
+                    'sesskey' => sesskey(),
+                ));
+                $actions['delete'] = new action_menu_link_secondary(
+                    $url,
+                    null,
+                    $strdelete
+                );
+                if (!empty($user->suspended)) {
+                    $url = new moodle_url('/blocks/iomad_company_admin/', array(
+                        'unsuspend' => $user->id,
+                        'sesskey' => sesskey(),
+                    ));
+                    $actions['unsuspend'] = new action_menu_link_secondary(
+                        $url,
+                        null,
+                        $strunsuspend
+                    );
+                } else {
+                    $url = new moodle_url('/blocks/iomad_company_admin/', array(
+                        'suspend' => $user->id,
+                        'sesskey' => sesskey(),
+                    ));
+                    $actions['suspend'] = new action_menu_link_secondary(
+                        $url,
+                        null,
+                        $strsuspend
+                    );
+                }
+            }
         }
 
         if ((iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id)
              and !is_mnet_remote_user($user)) {
-            $enrolmentbutton = "<a href=\"company_users_course_form.php?userid=$user->id\">$strenrolment</a>";
-        } else {
-            $enrolmentbutton = "";
+            $url = new moodle_url('/blocks/iomad_company_admin/company_users_course_form.php', array(
+                'userid' => $user->id,
+            ));
+            $actions['enrolment'] = new action_menu_link_secondary(
+                $url,
+                null,
+                $strenrolment
+            );
         }
 
         if ((iomad::has_capability('block/iomad_company_admin:company_license_users', $systemcontext)
              or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))
              and ($user->id == $USER->id or $user->id != $mainadmin->id)
              and !is_mnet_remote_user($user)) {
-            $licensebutton = "<a href=\"company_users_licenses_form.php?userid=$user->id\">$struserlicense</a>";
-        } else {
-            $licensebutton = "";
+            $url = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php', array(
+                'userid' => $user->id,
+            ));
+            $actions['userlicense'] = new action_menu_link_secondary(
+                $url,
+                null,
+                $struserlicense
+            );
         }
 
         if ($user->lastaccess) {
@@ -672,17 +718,23 @@ if (!$users) {
                                                AND d.id = du.departmentid");
         $user->department = $userdepartment->name;
 
+        // Edit menu
+        $menu = new action_menu();
+        $menu->set_owner_selector('.iomad_editusers-actionmenu');
+        $menu->set_alignment(action_menu::TL, action_menu::BL);
+        $menu->set_menu_trigger(get_string('usercontrols', 'block_iomad_company_admin'));
+        foreach ($actions as $action) {
+            $menu->add($action);
+        }
+        
+
         if (!$showall) {
-            $table->data[] = array ("$fullname",
+            $table->data[] = array("$fullname",
                                 "$user->email",
                                 "$user->department",
                                 $strlastaccess,
-                                $editbutton .
-                                $suspendbutton .
-                                $deletebutton .
-                                $passwordbutton . '<br />' .
-                                $enrolmentbutton . '</br>' .
-                                $licensebutton);
+                                $OUTPUT->render($menu),
+                                );
         } else {
             $usercompany = $DB->get_record_sql("SELECT c.name FROM {company} c
                                                 JOIN {company_users} cu ON (cu.companyid = c.id)
@@ -690,17 +742,13 @@ if (!$users) {
                                                 array('userid' => $user->id));
             $user->company = $usercompany->name;
 
-            $table->data[] = array ($user->company,
+            $table->data[] = array($user->company,
                                     $fullname,
                                     $user->email,
                                     $user->department,
                                     $strlastaccess,
-                                    $editbutton .
-                                    $suspendbutton .
-                                    $deletebutton .
-                                    $passwordbutton . '<br />' .
-                                    $enrolmentbutton . '</br>' .
-                                    $licensebutton);
+                                    $OUTPUT->render($menu),
+                                    );
         }
     }
 }

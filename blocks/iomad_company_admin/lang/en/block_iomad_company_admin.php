@@ -393,6 +393,7 @@ $string['users_bulk'] = 'Bulk user actions';
 $string['users_download'] = 'User Bulk Download';
 $string['user_upload_title'] = 'Upload Users';
 $string['user'] = 'User';
+$string['usercontrols'] = 'User controls';
 $string['uupreprocessedcount'] = '{$a} user(s)';
 $string['validfor'] = 'Training expires after (days)';
 $string['validfor_help'] = 'For fixed term competencies set the number of days after which the courses expires and must be repeated. If the course competency does not expire then set to zero';
