@@ -252,7 +252,11 @@ if (!empty($companylist)) {
 }
 $companycount = count($companyrecords);
 
-echo $OUTPUT->heading("$companycount ".get_string('companies', 'block_iomad_company_admin'));
+if ($companycount == 1) {
+    echo $OUTPUT->heading(get_string('companycount', 'block_iomad_company_admin', $companycount));
+} else {
+    echo $OUTPUT->heading(get_string('companycountplural', 'block_iomad_company_admin', $companycount));
+}
 
 $alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
 $strall = get_string('all');
