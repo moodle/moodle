@@ -3748,7 +3748,14 @@ class flat_navigation extends navigation_node_collection {
         if ($course->id > 1) {
             // It's a real course.
             $url = new moodle_url('/course/view.php', array('id' => $course->id));
-            $flat = new flat_navigation_node(navigation_node::create($course->shortname, $url), 0);
+
+            $coursecontext = context_course::instance($course->id, MUST_EXIST);
+            // This is the name that will be shown for the course.
+            $coursename = empty($CFG->navshowfullcoursenames) ?
+                format_string($course->shortname, true, array('context' => $coursecontext)) :
+                format_string($course->fullname, true, array('context' => $coursecontext));
+
+            $flat = new flat_navigation_node(navigation_node::create($coursename, $url), 0);
             $flat->key = 'coursehome';
 
             $courseformat = course_get_format($course);
