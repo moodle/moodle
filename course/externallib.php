@@ -2404,6 +2404,16 @@ class core_course_external extends external_api {
                 'timemodified' => new external_value(PARAM_INT, 'Last time  the course was updated', VALUE_OPTIONAL),
                 'requested' => new external_value(PARAM_INT, 'If is a requested course', VALUE_OPTIONAL),
                 'cacherev' => new external_value(PARAM_INT, 'Cache revision number', VALUE_OPTIONAL),
+                'filters' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'filter'  => new external_value(PARAM_PLUGIN, 'Filter plugin name'),
+                            'localstate' => new external_value(PARAM_INT, 'Filter state: 1 for on, -1 for off, 0 if inherit'),
+                            'inheritedstate' => new external_value(PARAM_INT, '1 or 0 to use when localstate is set to inherit'),
+                        )
+                    ),
+                    'Course filters', VALUE_OPTIONAL
+                ),
             );
             $coursestructure = array_merge($coursestructure, $extra);
         }
@@ -2929,6 +2939,7 @@ class core_course_external extends external_api {
     public static function get_courses_by_field($field = '', $value = '') {
         global $DB, $CFG;
         require_once($CFG->libdir . '/coursecatlib.php');
+        require_once($CFG->libdir . '/filterlib.php');
 
         $params = self::validate_parameters(self::get_courses_by_field_parameters(),
             array(
@@ -2990,6 +3001,9 @@ class core_course_external extends external_api {
             $coursefields = array('format', 'showgrades', 'newsitems', 'startdate', 'maxbytes', 'showreports', 'visible',
                 'groupmode', 'groupmodeforce', 'defaultgroupingid', 'enablecompletion', 'completionnotify', 'lang', 'theme',
                 'sortorder', 'marker');
+
+            // Course filters.
+            $coursesdata[$course->id]['filters'] = filter_get_available_in_context($context);
 
             // Information for managers only.
             if ($canupdatecourse) {
