@@ -202,6 +202,10 @@ class api {
             $settings->mygradesurl = user_mygrades_url()->out(false);
         }
 
+        if (empty($section) or $section == 'mobileapp') {
+            $settings->tool_mobile_forcelogout = get_config('tool_mobile', 'forcelogout');
+        }
+
         return $settings;
     }
 
