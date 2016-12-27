@@ -81,5 +81,17 @@ if ($hassiteconfig) {
                     new lang_string('iosappid_desc', 'tool_mobile'), '633359593', PARAM_ALPHANUM));
 
         $ADMIN->add('mobileapp', $temp);
+
+        // Features related settings.
+        $temp = new admin_settingpage('mobilefeatures', new lang_string('mobilefeatures', 'tool_mobile'));
+
+        $temp->add(new admin_setting_heading('tool_mobile/logout',
+                    new lang_string('logout'), ''));
+
+        $temp->add(new admin_setting_configcheckbox('tool_mobile/forcelogout',
+                    new lang_string('forcelogout', 'tool_mobile'),
+                    new lang_string('forcelogout_desc', 'tool_mobile'), 0));
+
+        $ADMIN->add('mobileapp', $temp);
     }
 }
