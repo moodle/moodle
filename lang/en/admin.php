@@ -969,6 +969,7 @@ $string['roleswithexceptions'] = '{$a->roles}, with {$a->exceptions}';
 $string['rssglobaldisabled'] = 'Disabled at server level';
 $string['save'] = 'Save';
 $string['savechanges'] = 'Save changes';
+$string['scssinvalid'] = 'SCSS code is not valid, fails with: {$a}';
 $string['search'] = 'Search';
 $string['searchalldeleted'] = 'All indexed contents have been deleted';
 $string['searchareaenabled'] = 'Search area enabled';
