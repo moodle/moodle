@@ -442,15 +442,13 @@ class report_log_renderable implements renderable {
      * @return array list of origins.
      */
     public function get_origin_options() {
-        global $DB;
-        $origins = $DB->get_records_sql('select distinct origin from {logstore_standard_log} order by origin ASC');
         $ret = array();
         $ret[''] = get_string('allsources', 'report_log');
-        foreach ($origins as $origin) {
-            if (!empty($origin->origin)) {
-                $ret[$origin->origin] = get_string($origin->origin, 'report_log');
-            }
-        }
+        $ret['cli'] = get_string('cli', 'report_log');
+        $ret['restore'] = get_string('restore', 'report_log');
+        $ret['web'] = get_string('web', 'report_log');
+        $ret['ws'] = get_string('ws', 'report_log');
+        $ret['---'] = get_string('other', 'report_log');
         return $ret;
     }
 
