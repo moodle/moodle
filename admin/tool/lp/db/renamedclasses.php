@@ -15,25 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for exporting stored_file data.
+ * This file contains renamed classes mappings.
  *
- * @package    core_competency
- * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @package    tool_lp
+ * @copyright  2016 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_competency\external;
+
 defined('MOODLE_INTERNAL') || die();
 
-debugging('The class \\core_competency\\external\\stored_file_exporter has been deprecated. ' .
-    'Please use \\core_files\\external\\stored_file_exporter instead.', DEBUG_DEVELOPER);
-
-/**
- * Class for exporting stored_file data.
- *
- * @package    core_competency
- * @copyright  2015 Frédéric Massart - FMCorz.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated since Moodle 3.3
- */
-class stored_file_exporter extends \core_files\external\stored_file_exporter {
-}
+$renamedclasses = array(
+    'tool_lp\\external\\cohort_summary_exporter' => 'core_cohort\\external\\cohort_summary_exporter',
+    'tool_lp\\external\\course_module_summary_exporter' => 'core_course\\external\\course_module_summary_exporter',
+    'tool_lp\\external\\course_summary_exporter' => 'core_course\\external\\course_summary_exporter',
+    'tool_lp\\form\\persistent' => 'core\\form\\persistent',
+);
