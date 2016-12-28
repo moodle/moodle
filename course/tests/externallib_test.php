@@ -2139,6 +2139,12 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $result['instances']);
         $this->assertCount(0, $result['warnings']);
 
+        // Test with get_updates_since the same data.
+        $result = core_course_external::get_updates_since($course->id, $since);
+        $result = external_api::clean_returnvalue(core_course_external::get_updates_since_returns(), $result);
+        $this->assertCount(0, $result['instances']);
+        $this->assertCount(0, $result['warnings']);
+
         // Update a module after a second.
         $this->waitForSecond();
         set_coursemodule_name($modules['forum']['cm']->id, 'New forum name');
@@ -2146,6 +2152,23 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $found = false;
         $result = core_course_external::check_updates($course->id, $params);
         $result = external_api::clean_returnvalue(core_course_external::check_updates_returns(), $result);
+        $this->assertCount(1, $result['instances']);
+        $this->assertCount(0, $result['warnings']);
+        foreach ($result['instances'] as $module) {
+            foreach ($module['updates'] as $update) {
+                if ($module['id'] == $modules['forum']['cm']->id and $update['name'] == 'configuration') {
+                    $found = true;
+                }
+            }
+        }
+        $this->assertTrue($found);
+
+        // Test with get_updates_since the same data.
+        $result = core_course_external::get_updates_since($course->id, $since);
+        $result = external_api::clean_returnvalue(core_course_external::get_updates_since_returns(), $result);
+        $this->assertCount(1, $result['instances']);
+        $this->assertCount(0, $result['warnings']);
+        $found = false;
         $this->assertCount(1, $result['instances']);
         $this->assertCount(0, $result['warnings']);
         foreach ($result['instances'] as $module) {
