@@ -207,12 +207,12 @@
 .file-picker .ygtvtn,
 .filemanager .ygtvtn {
     /*rtl:remove*/
-    background: url('[[pix:moodle|y/tn]]') 0 10px no-repeat;
+    background: url('[[pix:moodle|y/tn]]') 0 0 no-repeat;
     /*rtl:raw:
-    background: url('[[pix:moodle|y/tn_rtl]]') 2px 10px no-repeat;
+    background: url('[[pix:moodle|y/tn_rtl]]') 0 0 no-repeat;
     */
-    width: 17px;
-    height: 22px;
+    width: 19px;
+    height: 32px;
 }
 // first or middle sibling, collapsable
 .file-picker .ygtvtm,
@@ -264,11 +264,11 @@
 .file-picker .ygtvln,
 .filemanager .ygtvln {
     /*rtl:remove*/
-    background: url('[[pix:moodle|y/ln]]') 0 10px no-repeat;
+    background: url('[[pix:moodle|y/ln]]') 0 0 no-repeat;
     /*rtl:raw:
-    background: url('[[pix:moodle|y/ln_rtl]]') 2px 10px no-repeat;
+    background: url('[[pix:moodle|y/ln_rtl]]') 0 0 no-repeat;
     */
-    width: 17px;
+    width: 19px;
     height: 22px;
 }
 // Last sibling, collapsable
@@ -327,9 +327,9 @@
 // the style for the empty cells that are used for rendering the depth of the node
 .file-picker .ygtvdepthcell,
 .filemanager .ygtvdepthcell {
-    background: url('[[pix:moodle|y/vline]]') 0 10px no-repeat;
+    background: url('[[pix:moodle|y/vline]]') 0 0 no-repeat;
     /*rtl:raw:
-    background-position: 2px 10px;
+    background-position: 0 0;
     */
     width: 17px;
     height: 32px;
@@ -369,7 +369,7 @@ a.ygtvspacer:hover {
 
 .fp-icon {
     float: left;
-    margin-top: -7px;
+    margin-top: -20px;
     width: 24px;
     height: 24px;
     margin-right: 10px;
@@ -385,6 +385,8 @@ a.ygtvspacer:hover {
 
 .fp-filename {
     padding-right: 10px;
+    margin-top: -18px;
+    position: fixed;
 }
 // Repositories Login on fp-content (File Picker only)
 
@@ -699,6 +701,7 @@ a.ygtvspacer:hover {
     position: absolute;
     top: 8px;
     left: 17px;
+    z-index: 1000;
 }
 
 .filemanager .fp-filename-icon.fp-isreference .fp-reficons2 {
