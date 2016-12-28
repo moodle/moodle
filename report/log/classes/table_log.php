@@ -486,10 +486,20 @@ class report_log_table_log extends table_sql {
             $joins[] = "edulevel ".$edulevelsql;
             $params = array_merge($params, $edulevelparams);
         }
+
         // Origin.
         if (isset($this->filterparams->origin) && ($this->filterparams->origin != '')) {
-            $joins[] = "origin = :origin";
-            $params['origin'] = $this->filterparams->origin;
+            if ($this->filterparams->origin !== '---') {
+                // Filter by a single origin.
+                $joins[] = "origin = :origin";
+                $params['origin'] = $this->filterparams->origin;
+            } else {
+                // Filter by everything else.
+                list($originsql, $originparams) = $DB->get_in_or_equal(array('cli', 'restore', 'ws', 'web'),
+                    SQL_PARAMS_NAMED, 'origin', false);
+                $joins[] = "origin " . $originsql;
+                $params = array_merge($params, $originparams);
+            }
         }
 
         if (!($this->filterparams->logreader instanceof logstore_legacy\log\store)) {
