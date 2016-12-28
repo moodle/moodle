@@ -2866,7 +2866,7 @@ abstract class lesson_page extends lesson_base {
         for ($i = 0; $i < $this->lesson->maxanswers; $i++) {
             $answer = clone($newanswer);
 
-            if (!empty($properties->answer_editor[$i])) {
+            if (isset($properties->answer_editor[$i])) {
                 if (is_array($properties->answer_editor[$i])) {
                     // Multichoice and true/false pages have an HTML editor.
                     $answer->answer = $properties->answer_editor[$i]['text'];
