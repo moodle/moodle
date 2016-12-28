@@ -576,8 +576,6 @@ class core_renderer extends renderer_base {
             'loadinghelp',
         ), 'moodle');
 
-        $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
-
         $focus = $this->page->focuscontrol;
         if (!empty($focus)) {
             if (preg_match("#forms\['([a-zA-Z0-9]+)'\].elements\['([a-zA-Z0-9]+)'\]#", $focus, $matches)) {
