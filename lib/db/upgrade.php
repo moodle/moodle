@@ -2436,7 +2436,7 @@ function xmldb_main_upgrade($oldversion) {
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2016120500.03) {
+    if ($oldversion < 2016120500.04) {
         // Find all roles with the coursecreator archetype.
         $coursecreatorroleids = $DB->get_records('role', array('archetype' => 'coursecreator'), '', 'id');
 
@@ -2460,10 +2460,9 @@ function xmldb_main_upgrade($oldversion) {
                 $DB->insert_record('role_capabilities', $cap);
             }
         }
-        $context->mark_dirty();
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2016120500.03);
+        upgrade_main_savepoint(true, 2016120500.04);
     }
 
     return true;
