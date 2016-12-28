@@ -37,6 +37,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
 
 $form = null;
+echo $OUTPUT->header();
 if (optional_param('needsconfirm', 0, PARAM_BOOL)) {
     $form = new \tool_lpimportcsv\form\import($url->out(false));
 } else if (optional_param('confirm', 0, PARAM_BOOL)) {
@@ -53,7 +54,7 @@ if ($form->is_cancelled()) {
 
     if ($data->confirm) {
         $importid = $data->importid;
-        $importer = new \tool_lpimportcsv\framework_importer(null, null, null, $importid, $data);
+        $importer = new \tool_lpimportcsv\framework_importer(null, null, null, $importid, $data, true);
 
         $error = $importer->get_error();
         if ($error) {
@@ -61,21 +62,23 @@ if ($form->is_cancelled()) {
             $form->set_import_error($error);
         } else {
             $framework = $importer->import();
-            redirect(new moodle_url('continue.php', array('id' => $framework->get_id())));
+            $urlparams = ['competencyframeworkid' => $framework->get_id(), 'pagecontextid' => $context->id];
+            $frameworksurl = new moodle_url('/admin/tool/lp/competencies.php', $urlparams);
+            echo $OUTPUT->notification(get_string('competencyframeworkcreated', 'tool_lp'), 'notifysuccess');
+            echo $OUTPUT->continue_button($frameworksurl);
             die();
         }
     } else {
         $text = $form->get_file_content('importfile');
         $encoding = $data->encoding;
         $delimiter = $data->delimiter_name;
-        $importer = new \tool_lpimportcsv\framework_importer($text, $encoding, $delimiter);
+        $importer = new \tool_lpimportcsv\framework_importer($text, $encoding, $delimiter, 0, null, true);
         $confirmform = new \tool_lpimportcsv\form\import_confirm(null, $importer);
         $form = $confirmform;
         $pagetitle = get_string('confirmcolumnmappings', 'tool_lpimportcsv');
     }
 }
 
-echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 
 $form->display();
