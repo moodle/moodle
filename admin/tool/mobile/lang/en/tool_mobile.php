@@ -26,6 +26,13 @@ $string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked
 $string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed for site admins.';
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
 $string['configmobilecssurl'] = 'A CSS file to customise your mobile app interface.';
+$string['customlangstrings'] = 'Custom language strings';
+$string['customlangstrings_desc'] = 'Words and phrases displayed in the app can be customised here. Enter each custom language string on a new line with format: string identifier, custom language string and language code, separated by pipe characters. For example:
+<pre>
+mm.user.student|Learner|en
+mm.user.student|Aprendiz|es
+</pre>
+For a complete list of string identifiers and more information, see the <a href="{$a}">documentation page</a>.';
 $string['enablesmartappbanners'] = 'Enable Smart App Banners';
 $string['enablesmartappbanners_desc'] = 'This will display a banner promoting the Moodle Mobile app when visiting the site in Mobile Safari.';
 $string['forcedurlscheme'] = 'If you want to allow only your custom branded app to be opened via a browser window, then specify its URL scheme here; otherwise leave the field empty.';
