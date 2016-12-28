@@ -74,10 +74,10 @@ class moodle_phpmailer extends PHPMailer {
      */
     public function addCustomHeader($custom_header, $value = null) {
         if ($value === null and preg_match('/message-id:(.*)/i', $custom_header, $matches)) {
-            $this->MessageID = $matches[1];
+            $this->MessageID = trim($matches[1]);
             return true;
         } else if ($value !== null and strcasecmp($custom_header, 'message-id') === 0) {
-            $this->MessageID = $value;
+            $this->MessageID = trim($value);
             return true;
         } else {
             return parent::addCustomHeader($custom_header, $value);
