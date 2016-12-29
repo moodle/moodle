@@ -269,7 +269,7 @@
     background: url('[[pix:moodle|y/ln_rtl]]') 0 0 no-repeat;
     */
     width: 19px;
-    height: 22px;
+    height: 32px;
 }
 // Last sibling, collapsable
 .file-picker .ygtvlm,
@@ -369,7 +369,7 @@ a.ygtvspacer:hover {
 
 .fp-icon {
     float: left;
-    margin-top: -20px;
+    margin-top: -7px;
     width: 24px;
     height: 24px;
     margin-right: 10px;
@@ -385,8 +385,6 @@ a.ygtvspacer:hover {
 
 .fp-filename {
     padding-right: 10px;
-    margin-top: -18px;
-    position: fixed;
 }
 // Repositories Login on fp-content (File Picker only)
 
@@ -701,7 +699,6 @@ a.ygtvspacer:hover {
     position: absolute;
     top: 8px;
     left: 17px;
-    z-index: 1000;
 }
 
 .filemanager .fp-filename-icon.fp-isreference .fp-reficons2 {
