@@ -46,8 +46,7 @@ M.mod_scormform.init = function(Y) {
         // Onunload is called multiple times in the SCORM window - we only want to handle when it is actually closed.
         setTimeout(function() {
             if (winobj.closed) {
-                // Redirect the parent window to the course homepage.
-                parent.window.location = course_url;
+                window.location = course_url;
             }
         }, 800)
     }
