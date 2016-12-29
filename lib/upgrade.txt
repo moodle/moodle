@@ -7,8 +7,6 @@ information provided here is intended especially for developers.
 * $mform->init_javascript_enhancement() is deprecated and no longer does anything. Existing uses of smartselect enhancement
   should be switched to the searchableselector form element or other solutions.
 
->>>>>>> MDL-57471 forms: deprecate init_javascript_enhancement()
-
 === 3.2 ===
 
 * Custom roles with access to any part of site administration that do not use the manager archetype will need
