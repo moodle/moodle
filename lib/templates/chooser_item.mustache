@@ -15,7 +15,18 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/chooser_item
+
     Chooser item.
+
+    Example context (json):
+    {
+        "id": "1",
+        "paramname": "param",
+        "value": "1",
+        "label": "item one",
+        "description": "description one"
+    }
 }}
 <div class="option">
     <label for="item_{{id}}">
