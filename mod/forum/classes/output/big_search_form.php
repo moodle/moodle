@@ -48,7 +48,6 @@ class big_search_form implements renderable, templatable {
     public $fullwords;
     public $notwords;
     public $phrase;
-    public $scripturl;
     public $showfullwords;
     public $subject;
     public $user;
@@ -65,7 +64,6 @@ class big_search_form implements renderable, templatable {
     public function __construct($course) {
         global $DB;
         $this->course = $course;
-        $this->scripturl = new moodle_url('/mod/forum/forum.js');
         $this->showfullwords = $DB->get_dbfamily() == 'mysql' || $DB->get_dbfamily() == 'postgres';
         $this->actionurl = new moodle_url('/mod/forum/search.php');
 
@@ -153,7 +151,6 @@ class big_search_form implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
 
-        $data->scripturl = $this->scripturl->out(false);
         $data->courseid = $this->course->id;
         $data->words = $this->words;
         $data->phrase = $this->phrase;

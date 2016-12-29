@@ -52,7 +52,6 @@
     {{#str}}searchforumintro, forum{{/str}}
 </div>
 <div class="box generalbox boxaligncenter">
-    <script type="text/javascript" src="{{scripturl}}"></script>
     <form id="searchform" action="{{actionurl}}" method="get">
         <table class="searchbox" id="form" cellpadding="10">
             <tr>
@@ -95,7 +94,7 @@
                     {{#str}}searchdatefrom, forum{{/str}}
                 </td>
                 <td class="c1">
-                    <input type="checkbox" name="timefromrestrict" value="1" onclick="return lockoptions('searchform', 'timefromrestrict', timefromitems)" {{#datefromchecked}}checked{{/datefromchecked}}>
+                    <input type="checkbox" name="timefromrestrict" value="1" {{#datefromchecked}}checked{{/datefromchecked}}>
                     {{{datefromfields}}}
                     <input type="hidden" name="hfromday" value="0">
                     <input type="hidden" name="hfrommonth" value="0">
@@ -109,7 +108,7 @@
                     {{#str}}searchdateto, forum{{/str}}
                 </td>
                 <td class="c1">
-                    <input type="checkbox" name="timetorestrict" value="1" onclick="return lockoptions('searchform', 'timetorestrict', timetoitems)" {{#datetochecked}}checked{{/datetochecked}}>
+                    <input type="checkbox" name="timetorestrict" value="1" {{#datetochecked}}checked{{/datetochecked}}>
                     {{{datetofields}}}
                     <input type="hidden" name="htoday" value="0">
                     <input type="hidden" name="htomonth" value="0">
@@ -153,8 +152,22 @@
             </tr>
         </table>
     </form>
-    {{#js}}
-        lockoptions_timetoitems();
-        lockoptions_timefromitems();
-    {{/js}}
 </div>
+{{#js}}
+    require(['jquery'], function($) {
+        var toggleDateFields = function(prefix, disabled) {
+            $('#searchform select[name^=' + prefix + ']').prop('disabled', disabled);
+            $('#searchform input[name^=h' + prefix + ']').val(disabled ? 1 : 0);
+        };
+
+        toggleDateFields('from', true);
+        $("#searchform input[name='timefromrestrict']").click(function() {
+            toggleDateFields('from', !this.checked);
+        });
+
+        toggleDateFields('to', true);
+        $("#searchform input[name='timetorestrict']").click(function() {
+            toggleDateFields('to', !this.checked);
+        });
+    });
+{{/js}}
