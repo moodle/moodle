@@ -21,7 +21,6 @@
 
     Example context (json):
     {
-        "scripturl": "https://example.com/mod/forum/forum.js",
         "actionurl": "https://example.com/mod/forum/search.php",
         "courseid": "2",
         "words": "apples",
@@ -53,7 +52,7 @@
 </div>
 <div class="box generalbox boxaligncenter">
     <form id="searchform" action="{{actionurl}}" method="get">
-        <table class="searchbox" id="form" cellpadding="10">
+        <table class="searchbox table" id="form">
             <tr>
                 <td class="c0">
                     <label for="words">{{#str}}searchwords, forum{{/str}}</label>
@@ -146,8 +145,10 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2" class="submit" align="center">
-                    <input type="submit" value={{#quote}}{{#str}}searchforums, forum{{/str}}{{/quote}}>
+                <td colspan="2" class="submit">
+                    <div class="text-center">
+                        <input type="submit" value={{#quote}}{{#str}}searchforums, forum{{/str}}{{/quote}}>
+                    </div>
                 </td>
             </tr>
         </table>

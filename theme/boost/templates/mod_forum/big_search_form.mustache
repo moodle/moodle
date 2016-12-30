@@ -21,7 +21,6 @@
 
     Example context (json):
     {
-        "scripturl": "https://example.com/mod/forum/forum.js",
         "actionurl": "https://example.com/mod/forum/search.php",
         "courseid": "2",
         "words": "apples",
@@ -53,7 +52,7 @@
 </div>
 <div class="box generalbox boxaligncenter">
     <form id="searchform" action="{{actionurl}}" method="get">
-        <table class="searchbox table table-striped" id="form" cellpadding="10">
+        <table class="searchbox table table-striped" id="form">
             <tr>
                 <td class="c0 text-xs-right">
                     <label for="words">{{#str}}searchwords, forum{{/str}}</label>
