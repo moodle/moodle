@@ -33,6 +33,8 @@ mm.user.student|Learner|en
 mm.user.student|Aprendiz|es
 </pre>
 For a complete list of string identifiers and more information, see the <a href="{$a}">documentation page</a>.';
+$string['disabledfeatures'] = 'Disabled features';
+$string['disabledfeatures_desc'] = 'Select here the features you want to disable in the Mobile app for your site. Please note that some features listed here could be already disabled via other site settings. You will have to log out and log in again in the app to see the changes.';
 $string['enablesmartappbanners'] = 'Enable Smart App Banners';
 $string['enablesmartappbanners_desc'] = 'This will display a banner promoting the Moodle Mobile app when visiting the site in Mobile Safari.';
 $string['forcedurlscheme'] = 'If you want to allow only your custom branded app to be opened via a browser window, then specify its URL scheme here; otherwise leave the field empty.';
@@ -46,6 +48,7 @@ $string['iosappid_desc'] = 'This setting may be left as default unless you have 
 $string['loginintheapp'] = 'Via the app';
 $string['logininthebrowser'] = 'Via a browser window (for SSO plugins)';
 $string['loginintheembeddedbrowser'] = 'Via an embedded browser (for SSO plugins)';
+$string['mainmenu'] = 'Main menu';
 $string['mobileapp'] = 'Mobile app';
 $string['mobileappearance'] = 'Mobile appearance';
 $string['mobileauthentication'] = 'Mobile authentication';
@@ -55,5 +58,6 @@ $string['mobilesettings'] = 'Mobile settings';
 $string['pluginname'] = 'Moodle Mobile tools';
 $string['smartappbanners'] = 'Smart App Banners (iOS only)';
 $string['pluginnotenabledorconfigured'] = 'Plugin not enabled or configured.';
+$string['remoteaddons'] = 'Remote add-ons';
 $string['typeoflogin'] = 'Type of login';
 $string['typeoflogin_desc'] = 'Choose the type of login.';
