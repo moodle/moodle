@@ -33,14 +33,12 @@ class block_mycourses_renderer extends plugin_renderer_base {
         global $OUTPUT, $CFG; 
 
         //  Block info header.
-        $returntext = '<div class="header" id="mycourses_title"><h2>'.
-              get_string('mycoursesheader', 'block_mycourses').
-              '</h2></div>';
+        $returntext = '';
 
         // Not started courses header block.
         $returntext .= '<div class="header" id="mycourses_notstarted"><h2>'.
               get_string('notstartedheader', 'block_mycourses').
-              '</h2></div>';
+              '</h2>';
 
         // Not started courses listings.
         $returntext .= '<div class="mycourseslisting">';
@@ -50,7 +48,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
                 $coursecontext = context_course::instance($notstarted->courseid);
                 $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
                 $returntext .= '<div class="mycourselisting"><div class="mycourseheading">';
-                $returntext .= '<h2 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h2></div>';
+                $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h4></div>';
                 if ($CFG->mycourses_showsummary) {
                     $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
                 }
@@ -63,20 +61,22 @@ class block_mycourses_renderer extends plugin_renderer_base {
                 $coursecontext = context_course::instance($notstarted->courseid);
                 $summaryinfo = file_rewrite_pluginfile_urls($notstarted->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
                 $returntext .= '<div class="mycourselisting"><div class="mycourseheading">';
-                $returntext .= '<h2 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h2></div>';
+                $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $notstarted->courseid)) . '">' . $notstarted->coursefullname . '</a></h4></div>';
                 if ($CFG->mycourses_showsummary) {
                     $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
                 }
                 $returntext .= '</div>';
             }
+        } else {
+            $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
         }
 
-        $returntext .= '</div>';
+        $returntext .= '</div></div><hr />';
 
         // In progress courses header block.
         $returntext .= '<div class="header" id="mycourses_inprogress"><h2>'.
               get_string('inprogressheader', 'block_mycourses').
-              '</h2></div>';
+              '</h2>';
 
         // In progress courses listings.
         $returntext .= '<div class="mycourseslisting">';
@@ -86,20 +86,22 @@ class block_mycourses_renderer extends plugin_renderer_base {
                 $coursecontext = context_course::instance($inprogress->courseid);
                 $summaryinfo = file_rewrite_pluginfile_urls($inprogress->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
                 $returntext .= '<div class="mycourselisting"><div class="mycourseheading">';
-                $returntext .= '<h2 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $inprogress->courseid)) . '">' . $inprogress->coursefullname . '</a></h2></div>';
+                $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $inprogress->courseid)) . '">' . $inprogress->coursefullname . '</a></h4></div>';
                 if ($CFG->mycourses_showsummary) {
                     $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
                 }
                 $returntext .= '</div>';
             }
+        } else {
+            $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
         }
 
-        $returntext .= '</div>';
+        $returntext .= '</div></div><hr />';
 
         // Completed courses header block.
         $returntext .= '<div class="header" id="mycourses_completed"><h2>'.
               get_string('completedheader', 'block_mycourses').
-              '</h2></div>';
+              '</h2>';
 
         $returntext .= '<div class="mycourseslisting">';
         // Completed courses listings.
@@ -109,7 +111,7 @@ class block_mycourses_renderer extends plugin_renderer_base {
                 $coursecontext = context_course::instance($completed->courseid);
                 $summaryinfo = file_rewrite_pluginfile_urls($completed->coursesummary, 'pluginfile.php',$coursecontext->id,'course','summary',null);
                 $returntext .= '<div class="mycourselisting"><div class="course_title">';
-                $returntext .= '<h2 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $completed->courseid)) . '">' . $completed->coursefullname . '</a></h2></div>';
+                $returntext .= '<h4 class="title"><a href="' . new moodle_url('/course/view.php', array('id' => $completed->courseid)) . '">' . $completed->coursefullname . '</a></h4></div>';
                 if ($CFG->mycourses_showsummary) {
                     $returntext .= '<div class="mycoursesummary">' . $summaryinfo . '</div>';
                 }
@@ -126,9 +128,11 @@ class block_mycourses_renderer extends plugin_renderer_base {
 
                 $returntext .= '</div>';
             }
+        } else {
+            $returntext .= '<div>' . get_string('nocourses', 'block_mycourses') . '</div>';
         }
 
-        $returntext .= '</div>';
+        $returntext .= '</div></div>';
 
         $returntext .= '<a class="btn" href="' . new moodle_url('/blocks/mycourses/archive.php') . '">'
                        . get_string('archive', 'block_mycourses') . '</a>';

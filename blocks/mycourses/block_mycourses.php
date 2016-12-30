@@ -28,7 +28,7 @@ require_once('locallib.php');
 class block_mycourses extends block_base {
 
     function init() {
-        $this->title = '';
+        $this->title = get_string('title', 'block_mycourses');
     }
 
     function get_content() {
