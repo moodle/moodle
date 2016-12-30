@@ -2,8 +2,9 @@ This files describes API changes in /admin/*.
 
 === 3.3 ===
 
-* The admin setting admin_setting_configselect now support the optgroup tag. Grouping of options can be created with this new tag.
-  For using this new option, the option parameters needs the Group names as indexes:
+* The admin settings admin_setting_configselect and admin_setting_configmultiselect now support the optgroup tag.
+  Grouping of options can be created with this new tag.
+  For using it, the option parameters needs the Group names as indexes:
   [
     "Spain" =>  ["madrid" => "Madrid", "barcelona" => "Barcelona"],
     "France" => ["paris" => "Paris", "marseille" => "Marseille"],
