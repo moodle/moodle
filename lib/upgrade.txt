@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * Behat compatibility changes are now being documented at
   https://docs.moodle.org/dev/Acceptance_testing/Compatibility_changes
+* ldap_get_entries_moodle() now always returns lower-cased attribute names in the returned entries.
+  It was suppposed to do so before, but it actually didn't.
 
 === 3.2.2 ===
 
