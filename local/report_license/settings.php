@@ -24,7 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+// Basic navigation settings
+require($CFG->dirroot . '/local/iomad/lib/basicsettings.php');
+
 $url = new moodle_url( '/local/report_license/index.php' );
-$ADMIN->add( 'PerficoReports', new admin_externalpage('repcourselicense',
+$ADMIN->add( 'IomadReports', new admin_externalpage('repcourselicense',
                                                        get_string('repcourselicense',
                                                        'local_report_license'), $url, 'local/report_license:view'));

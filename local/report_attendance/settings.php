@@ -24,8 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+// Basic navigation settings
+require($CFG->dirroot . '/local/iomad/lib/basicsettings.php');
+
 $url = new moodle_url( '/local/report_attendance/index.php' );
-$ADMIN->add( 'PerficoReports', new admin_externalpage('repcourseattendance',
+$ADMIN->add( 'IomadReports', new admin_externalpage('repcourseattendance',
                                get_string('repcourseattendance',
                                'local_report_attendance'),
                                $url,

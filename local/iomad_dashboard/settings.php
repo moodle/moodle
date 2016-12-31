@@ -32,31 +32,11 @@ if (empty($USER->company) && !empty($USER)) {
     iomad::load_company();
 }
 
-$ADMIN->add( 'root', new admin_category( 'iomad', get_string('iomad', 'local_iomad_dashboard')));
+// Basic navigation settings
+require($CFG->dirroot . '/local/iomad/lib/basicsettings.php');
 
 $ADMIN->add( 'iomad', new admin_externalpage( 'Dashboard', get_string('name', 'local_iomad_dashboard'),
     new moodle_url('/local/iomad_dashboard/index.php'), 'local/iomad_dashboard:view'));
-
-$ADMIN->add( 'iomad', new admin_category( 'CompanyAdmin',
-              get_string('companymanagement', 'block_iomad_company_admin')));
-
-$ADMIN->add( 'iomad', new admin_category( 'UserAdmin',
-              get_string('usermanagement', 'block_iomad_company_admin')));
-
-$ADMIN->add( 'iomad', new admin_category( 'CourseAdmin',
-              get_string('coursemanagement', 'block_iomad_company_admin')));
-
-$ADMIN->add( 'iomad', new admin_category( 'PerficoReports',
-              get_string('iomadreports', 'block_iomad_company_admin')));
-
-$ADMIN->add( 'iomad', new admin_category( 'LicenseAdmin',
-             get_string('licensemanagement', 'block_iomad_company_admin')));
-
-$ADMIN->add( 'iomad', new admin_category( 'CompetencyAdmin',
-             get_string('competencymanagement', 'block_iomad_company_admin')));
-
-$ADMIN->add( 'iomad', new admin_category( 'ECommerceAdmin',
-             get_string('blocktitle', 'block_iomad_commerce')));
 
 // Get all the links from the iomad_admin_menu.
 $adminmenu = new iomad_admin_menu();
