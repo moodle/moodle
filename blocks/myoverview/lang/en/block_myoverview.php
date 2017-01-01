@@ -24,4 +24,9 @@
 
 $string['myoverview:addinstance'] = 'Add a new my overview block';
 $string['myoverview:myaddinstance'] = 'Add a new my overview block to Dashboard';
+$string['next7days'] = 'Next 7 days';
+$string['next30days'] = 'Next 30 days';
 $string['pluginname'] = 'My overview';
+$string['sortbycourses'] = 'Sort by courses';
+$string['sortbydates'] = 'Sort by dates';
+$string['timeline'] = 'Timeline';
