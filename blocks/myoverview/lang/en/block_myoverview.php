@@ -22,10 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['future'] = 'Future';
+$string['inprogress'] = 'In progress';
 $string['myoverview:addinstance'] = 'Add a new my overview block';
 $string['myoverview:myaddinstance'] = 'Add a new my overview block to Dashboard';
-$string['next7days'] = 'Next 7 days';
 $string['next30days'] = 'Next 30 days';
+$string['next7days'] = 'Next 7 days';
+$string['past'] = 'Past';
 $string['pluginname'] = 'My overview';
 $string['sortbycourses'] = 'Sort by courses';
 $string['sortbydates'] = 'Sort by dates';
