@@ -124,17 +124,6 @@
         .calendar_event_user {
             border-color: @calendarEventUserColor;
         }
-        .calendar-event-panel {
-            background-color: @grayLighter;
-            border: 2px solid @grayLighter;
-            .yui3-overlay-content {
-                padding: 19px;
-                background-color: lighten(@wellBackground, 3%);
-                border: 1px solid darken(@wellBackground, 7%);
-                .border-radius(@baseBorderRadius);
-                .box-shadow(inset 0 1px 1px rgba(0, 0, 0, .05));
-            }
-        }
         .calendar-controls {
             .current {
                 font-family: @headingsFontFamily;
@@ -274,28 +263,6 @@
             font-weight: inherit;
             line-height: inherit;
             text-align: center;
-        }
-    }
-    .calendar-event-panel {
-        background-color: @grayLighter;
-        border: 1px solid @grayLighter;
-        .yui3-overlay-content {
-            padding: 19px;
-            background-color: lighten(@wellBackground, 3%);
-            border: 1px solid darken(@wellBackground, 7%);
-            .border-radius(@baseBorderRadius);
-            .box-shadow(inset 0 1px 1px rgba(0 ,0 ,0 , .05));
-            h2 {
-                &.eventtitle {
-                    line-height: 1.2;
-                    font-size: 18px;
-                }
-            }
-            .eventcontent {
-                img {
-                    padding-right: 5px;
-                }
-            }
         }
     }
     .calendar-controls {
