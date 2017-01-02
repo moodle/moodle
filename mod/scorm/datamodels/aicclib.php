@@ -83,6 +83,7 @@ function scorm_get_aicc_columns($row, $mastername='system_id') {
     $tok = strtok(strtolower($row), "\",\n\r");
     $result = new stdClass();
     $result->columns = array();
+    $result->mastercol = 0;
     $i = 0;
     while ($tok) {
         if ($tok != '') {
@@ -250,7 +251,9 @@ function scorm_parse_aicc(&$scorm) {
             $regexp = scorm_forge_cols_regexp($columns->columns, '(.+),');
             for ($i = 1; $i < count($rows); $i++) {
                 if (preg_match($regexp, $rows[$i], $matches)) {
-                    $courses[$courseid]->elements[$columns->mastercol + 1]->prerequisites = substr(trim($matches[2 - $columns->mastercol]), 1, -1);
+                    $elementid = substr(trim($matches[$columns->mastercol + 1]), 1, -1);
+                    $prereq = substr(trim($matches[2 - $columns->mastercol]), 1, -1);
+                    $courses[$courseid]->elements[$elementid]->prerequisites = $prereq;
                 }
             }
         }
