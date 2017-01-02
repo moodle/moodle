@@ -14,6 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$plugin->version  = 2011102000;
+$plugin->version  = 2016120600;
 $plugin->requires = 2010090501;
 $plugin->component  = 'local_report_scorm_overview';
