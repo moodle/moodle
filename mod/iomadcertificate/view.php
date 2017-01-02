@@ -71,7 +71,7 @@ $event = \mod_iomadcertificate\event\course_module_viewed::create(array(
     'context' => $context,
 ));
 $event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('certificate', $certificate);
+$event->add_record_snapshot('iomadcertificate', $iomadcertificate);
 $event->trigger();
 
 $completion=new completion_info($course);
