@@ -687,10 +687,10 @@ class core_calendar_renderer extends plugin_renderer_base {
             $html .= html_writer::end_tag('select');
             $html .= html_writer::end_tag('div');
         }
-        $html .= html_writer::start_tag('div', array('style' => 'float:right;'));
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'course', 'value' => $courseid));
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $subscription->id));
+        $html .= html_writer::start_tag('div', array('class' => 'btn-group pull-right'));
         if (!empty($subscription->url)) {
             $html .= html_writer::tag('button', get_string('update'), array('type'  => 'submit', 'name' => 'action',
                                                                             'class' => 'btn btn-secondary',
