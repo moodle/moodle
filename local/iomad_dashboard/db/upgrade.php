@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-function xmldb_local_dashboard_upgrade($oldversion) {
+function xmldb_local_iomad_dashboard_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
     return true;
