@@ -344,6 +344,15 @@ $functions = array(
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_course_get_updates_since' => array(
+        'classname' => 'core_course_external',
+        'methodname' => 'get_updates_since',
+        'classpath' => 'course/externallib.php',
+        'description' => 'Check if there are updates affecting the user for the given course since the given time stamp.',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
     'core_enrol_get_course_enrolment_methods' => array(
         'classname' => 'core_enrol_external',
         'methodname' => 'get_course_enrolment_methods',
