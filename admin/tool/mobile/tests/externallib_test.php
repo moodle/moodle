@@ -83,6 +83,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'maintenanceenabled' => $CFG->maintenance_enabled,
             'maintenancemessage' => $maintenancemessage,
             'typeoflogin' => api::LOGIN_VIA_APP,
+            'mobilecssurl' => '',
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);

@@ -1,0 +1,7 @@
+This files describes changes in tool_mobile code.
+Information provided here is intended especially for developers.
+
+=== 3.3 ===
+
+ * External function tool_mobile::get_public_config now returns the mobilecssurl field (Mobile custom CSS theme).
+
