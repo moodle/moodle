@@ -385,7 +385,7 @@ function folder_dndupload_handle($uploadinfo) {
 function folder_get_coursemodule_info($cm) {
     global $DB;
     if (!($folder = $DB->get_record('folder', array('id' => $cm->instance),
-            'id, name, display, showexpanded, intro, introformat'))) {
+            'id, name, display, showexpanded, showdownloadfolder, intro, introformat'))) {
         return NULL;
     }
     $cminfo = new cached_cm_info();
@@ -394,6 +394,7 @@ function folder_get_coursemodule_info($cm) {
         // prepare folder object to store in customdata
         $fdata = new stdClass();
         $fdata->showexpanded = $folder->showexpanded;
+        $fdata->showdownloadfolder = $folder->showdownloadfolder;
         if ($cm->showdescription && strlen(trim($folder->intro))) {
             $fdata->intro = $folder->intro;
             if ($folder->introformat != FORMAT_MOODLE) {
