@@ -387,28 +387,6 @@ class behat_hooks extends behat_base {
     }
 
     /**
-     * Executed after scenario to go to a page where no JS is executed.
-     * This will ensure there are no unwanted ajax calls from browser and
-     * site can be reset safely.
-     *
-     * @param AfterScenarioScope $scope scope passed by event fired after scenario.
-     * @AfterScenario
-     */
-    public function after_scenario(AfterScenarioScope $scope) {
-        try {
-            $this->wait_for_pending_js();
-            $this->getSession()->reset();
-        } catch (DriverException $e) {
-            // Try restart session, if DriverException caught.
-            try {
-                $this->getSession()->restart();
-            } catch (DriverException $e) {
-                // Do nothing, as this will be caught while starting session in before_scenario.
-            }
-        }
-    }
-
-    /**
      * Wait for JS to complete before beginning interacting with the DOM.
      *
      * Executed only when running against a real browser. We wrap it
