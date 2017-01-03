@@ -5766,7 +5766,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     $tempreplyto = array();
 
     // Make sure that we fall back onto some reasonable no-reply address.
-    $noreplyaddress = empty($CFG->noreplyaddress) ? 'noreply@' . get_host_from_url($CFG->wwwroot) : $CFG->noreplyaddress;
+    $noreplyaddressdefault = 'noreply@' . get_host_from_url($CFG->wwwroot);
+    $noreplyaddress = empty($CFG->noreplyaddress) ? $noreplyaddressdefault : $CFG->noreplyaddress;
+
+    if (!validate_email($noreplyaddress)) {
+        debugging('email_to_user: Invalid noreply-email '.s($noreplyaddress));
+        $noreplyaddress = $noreplyaddressdefault;
+    }
 
     // Make up an email address for handling bounces.
     if (!empty($CFG->handlebounces)) {
@@ -5774,6 +5780,12 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $mail->Sender = generate_email_processing_address(0, $modargs);
     } else {
         $mail->Sender = $noreplyaddress;
+    }
+
+    // Make sure that the explicit replyto is valid, fall back to the implicit one.
+    if (!empty($replyto) && !validate_email($replyto)) {
+        debugging('email_to_user: Invalid replyto-email '.s($replyto));
+        $replyto = $noreplyaddress;
     }
 
     $alloweddomains = null;
@@ -5793,6 +5805,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     // and that the senders email setting is either displayed to everyone, or display to only other users that are enrolled
     // in a course with the sender.
     } else if ($usetrueaddress && can_send_from_real_email_address($from, $user, $alloweddomains)) {
+        if (!validate_email($from->email)) {
+            debugging('email_to_user: Invalid from-email '.s($from->email).' - not sending');
+            // Better not to use $noreplyaddress in this case.
+            return false;
+        }
         $mail->From = $from->email;
         $fromdetails = new stdClass();
         $fromdetails->name = fullname($from);
