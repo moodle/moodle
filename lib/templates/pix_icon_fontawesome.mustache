@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core/pix_icon
+    @template core/pix_icon_fontawesome
 
     Moodle pix_icon template.
 
@@ -28,17 +28,16 @@
     * none
 
     Context variables required for this template:
-    * attributes Array of name / value pairs. Includes title, alt, src.
-    * extraclasses List of extra classes to append.
+    * pix
+    * title
+    * extraclasses
 
     Example context (json):
     {
-        "attributes": [
-            { "name": "src", "value": "https://moodle.org/logo/moodle-logo.svg" },
-            { "name": "class", "value": "iconsmall" },
-            {"name": "alt", "value": "Alt text for icon"}
-        ]
+        "key": "fa-meh-o",
+        "title": "Meh",
+        "extraclasses": "fa-spin"
     }
 
 }}
-<img class="icon {{extraclasses}}" {{#attributes}}{{name}}="{{value}}" {{/attributes}}/>
+<i class="icon fa {{key}} fa-fw {{extraclasses}}" aria-hidden="true" title="{{title}}"></i><span class="sr-only">{{title}}</span>

@@ -528,6 +528,79 @@ class help_icon implements renderable, templatable {
 
 
 /**
+ * Data structure representing an icon font.
+ *
+ * @copyright 2016 Damyon Wiese
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ * @category output
+ */
+class pix_icon_font implements templatable {
+
+    /**
+     * @var pix_icon $pixicon The original icon.
+     */
+    private $pixicon = null;
+
+    /**
+     * @var string $key The mapped key.
+     */
+    private $key;
+
+    /**
+     * Constructor
+     *
+     * @param pix_icon $pixicon The original icon
+     */
+    public function __construct(pix_icon $pixicon) {
+        global $PAGE;
+
+        $this->pixicon = $pixicon;
+        $iconsystem = \core\output\icon_system::instance();
+
+        $this->key = $iconsystem->remap_icon_name($pixicon->pix, $pixicon->component);
+        if (empty($this->key)) {
+            $this->key = $pixicon->pix;
+        }
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output) {
+
+        $pixdata = $this->pixicon->export_for_template($output);
+
+        $title = isset($pixdata['attributes']['title']) ? $pixdata['attributes']['title'] : '';
+        if (empty($title)) {
+            $title = isset($pixdata['attributes']['alt']) ? $pixdata['attributes']['alt'] : '';
+        }
+        $data = array(
+            'extraclasses' => $pixdata['extraclasses'],
+            'title' => $title,
+            'key' => $this->key
+        );
+
+        return $data;
+    }
+}
+
+/**
+ * Data structure representing an icon subtype.
+ *
+ * @copyright 2016 Damyon Wiese
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ * @category output
+ */
+class pix_icon_fontawesome extends pix_icon_font {
+
+}
+
+/**
  * Data structure representing an icon.
  *
  * @copyright 2010 Petr Skoda
@@ -569,17 +642,12 @@ class pix_icon implements renderable, templatable {
     public function __construct($pix, $alt, $component='moodle', array $attributes = null) {
         global $PAGE;
 
-        // Allow the theme to remap the icon.
-        $this->pix = theme_remap_fontawesome_icon($pix, $component);
-        if (empty($this->pix)) {
-            $this->pix = $pix;
-        }
+        $this->pix = $pix;
         $this->component  = $component;
         $this->attributes = (array)$attributes;
-        $this->fontawesome = strpos($this->pix, 'fa-') === 0;
 
         if (empty($this->attributes['class'])) {
-            $this->attributes['class'] = 'smallicon';
+            $this->attributes['class'] = '';
         }
 
         // If the alt is empty, don't place it in the attributes, otherwise it will override parent alt text.
@@ -630,10 +698,7 @@ class pix_icon implements renderable, templatable {
         }
         $data = array(
             'attributes' => $templatecontext,
-            'extraclasses' => $extraclasses,
-            'fontawesome' => $this->fontawesome,
-            'title' => $title,
-            'pix' => $this->pix,
+            'extraclasses' => $extraclasses
         );
 
         return $data;

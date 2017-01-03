@@ -459,16 +459,6 @@ class core_renderer extends \core_renderer {
     }
 
     /**
-     * Renders a url select.
-     *
-     * @param url_select $select The object.
-     * @return string HTML
-     */
-    protected function render_url_select(url_select $select) {
-        return $this->render_from_template('core/url_select', $select->export_for_template($this));
-    }
-
-    /**
      * Renders the login form.
      *
      * @param \core_auth\output\login $form The renderable.

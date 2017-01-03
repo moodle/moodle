@@ -96,25 +96,35 @@ class external extends external_api {
     }
 
     /**
-     * Returns description of load_fontawesome_iconmap() parameters.
+     * Returns description of load_icon_map() parameters.
      *
      * @return external_function_parameters
      */
-    public static function load_fontawesome_iconmap_parameters() {
-        return new external_function_parameters([]);
+    public static function load_icon_map_parameters() {
+        return new external_function_parameters([
+                'system' => new external_value(PARAM_COMPONENT, 'icon system to load the map for')
+        ]);
     }
 
     /**
      * Return a mapping of icon names to icons.
      *
+     * @param string $system
      * @return array the mapping
      */
-    public static function load_fontawesome_iconmap() {
-        
-        $context = context_system::instance();
-        self::validate_context($context);
+    public static function load_icon_map($system) {
+        $params = self::validate_parameters(self::load_icon_map_parameters(),
+                                            array('system' => $system));
 
-        $map = theme_get_fontawesome_icon_map();
+        $system = $params['system'];
+
+        if (!icon_system::is_valid_system($system)) {
+            throw new coding_exception('Invalid icon system.');
+        }
+        
+        $instance = icon_system::instance($system);
+
+        $map = $instance->get_icon_name_map();
 
         $result = [];
 
@@ -130,11 +140,11 @@ class external extends external_api {
     }
 
     /**
-     * Returns description of load_template() result value.
+     * Returns description of load_icon_map() result value.
      *
      * @return external_description
      */
-    public static function load_fontawesome_iconmap_returns() {
+    public static function load_icon_map_returns() {
         return new external_multiple_structure(new external_single_structure(
             array(
                 'component' => new external_value(PARAM_COMPONENT, 'The component for the icon.'),

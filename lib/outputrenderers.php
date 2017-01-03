@@ -253,6 +253,11 @@ class renderer_base {
         return $classes;
     }
 
+    public function pix_url($imagename, $component = 'moodle') {
+        debugging('pix_url is deprecated. Use image_url for images and pix_icon for icons.');
+        return $this->page->theme->image_url($imagename, $component);
+    }
+
     /**
      * Return the moodle_url for an image.
      *
@@ -271,14 +276,14 @@ class renderer_base {
      *                    overridden via theme/mytheme/pix_core/
      * 3/ plugin images - stored in mod/mymodule/pix,
      *                    overridden via theme/mytheme/pix_plugins/mod/mymodule/,
-     *                    example: pix_url('comment', 'mod_glossary')
+     *                    example: image_url('comment', 'mod_glossary')
      *
      * @param string $imagename the pathname of the image
      * @param string $component full plugin name (aka component) or 'theme'
      * @return moodle_url
      */
-    public function pix_url($imagename, $component = 'moodle') {
-        return $this->page->theme->pix_url($imagename, $component);
+    public function image_url($imagename, $component = 'moodle') {
+        return $this->page->theme->image_url($imagename, $component);
     }
 
     /**
@@ -2047,8 +2052,10 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_icon(pix_icon $icon) {
-        $data = $icon->export_for_template($this);
-        return $this->render_from_template('core/pix_icon', $data);
+        global $PAGE;
+
+        $system = \core\output\icon_system::instance();
+        return $system->render_pix_icon($this, $icon);
     }
 
     /**

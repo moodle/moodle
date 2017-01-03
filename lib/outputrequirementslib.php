@@ -320,6 +320,7 @@ class page_requirements_manager {
                 'themerev'            => theme_get_revision(),
                 'slasharguments'      => (int)(!empty($CFG->slasharguments)),
                 'theme'               => $page->theme->name,
+                'iconsystem'          => $page->theme->get_icon_system(),
                 'jsrev'               => $this->get_jsrev(),
                 'admin'               => $CFG->admin,
                 'svgicons'            => $page->theme->use_svg_icons(),
