@@ -18,26 +18,29 @@
     @template block_myoverview/timeline-view-dates
 
     This template renders the timeline view by dates for the myoverview block.
+
+    Example context (json):
+    {}
 }}
 <div id="timeline-view-dates-{{uniqid}}" data-region="timeline-view-dates">
     <div data-region="view-dates">
         <div data-region="next-7-days">
             {{< block_myoverview/event-list }}
-            {{$startday}}0{{/startday}}
-            {{$endday}}7{{/endday}}
-            {{$limit}}10{{/limit}}
-            {{$offset}}0{{/offset}}
-            {{$title}}{{#str}} next7days, block_myoverview {{/str}}{{/title}}
-        {{/ block_myoverview/event-list }}
+                {{$startday}}0{{/startday}}
+                {{$endday}}7{{/endday}}
+                {{$limit}}10{{/limit}}
+                {{$offset}}0{{/offset}}
+                {{$title}}{{#str}} next7days, block_myoverview {{/str}}{{/title}}
+            {{/ block_myoverview/event-list }}
         </div>
         <div class="m-t-2" data-region="next-30-days">
             {{< block_myoverview/event-list }}
-            {{$startday}}8{{/startday}}
-            {{$endday}}30{{/endday}}
-            {{$limit}}10{{/limit}}
-            {{$offset}}0{{/offset}}
-            {{$title}}{{#str}} next30days, block_myoverview {{/str}}{{/title}}
-        {{/ block_myoverview/event-list }}
+                {{$startday}}8{{/startday}}
+                {{$endday}}30{{/endday}}
+                {{$limit}}10{{/limit}}
+                {{$offset}}0{{/offset}}
+                {{$title}}{{#str}} next30days, block_myoverview {{/str}}{{/title}}
+            {{/ block_myoverview/event-list }}
         </div>
         <div class="text-xs-center m-y-2">
             <button type="button" class="btn btn-secondary" data-action="view-more">{{#str}} viewmore {{/str}}</button>

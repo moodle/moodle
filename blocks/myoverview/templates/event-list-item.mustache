@@ -18,6 +18,22 @@
     @template block_myoverview/event-list-item
 
     This template renders an event list item for the myoverview block.
+
+    Example context (json):
+    {
+        "actionname": "Submit assignment",
+        "actionurl": "https://www.google.com",
+        "enddate": "Nov 4th, 10am",
+        "contextname": "Assignment due 1",
+        "contexturl": "https://www.google.com",
+        "coursename": "Course 1",
+        "itemcount": 1,
+        "icon": {
+            "key": "icon",
+            "component": "mod_assign",
+            "alttext": "Assignment icon"
+        }
+    }
 }}
 <li class="list-group-item" data-region="event-list-item">
     <div class="container-fluid">

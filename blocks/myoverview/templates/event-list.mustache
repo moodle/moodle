@@ -18,6 +18,40 @@
     @template block_myoverview/event-list
 
     This template renders a list of events for the myoverview block.
+
+    Example context (json):
+    {
+        "events": [
+            {
+                "actionname": "Submit assignment",
+                "actionurl": "https://www.google.com",
+                "enddate": "Nov 4th, 10am",
+                "contextname": "Assignment due 1",
+                "contexturl": "https://www.google.com",
+                "coursename": "Course 1",
+                "itemcount": 1,
+                "icon": {
+                    "id": "icon",
+                    "component": "mod_assign",
+                    "alttext": "Assignment icon"
+                }
+            },
+            {
+                "actionname": "Submit assignment",
+                "actionurl": "https://www.google.com",
+                "enddate": "Nov 4th, 10am",
+                "contextname": "Assignment due 2",
+                "contexturl": "https://www.google.com",
+                "coursename": "Course 1",
+                "itemcount": 1,
+                "icon": {
+                    "id": "icon",
+                    "component": "mod_assign",
+                    "alttext": "Assignment icon"
+                }
+            }
+        ]
+    }
 }}
 <div data-region="event-list-container"
      data-start-day="{{$startday}}0{{/startday}}"
