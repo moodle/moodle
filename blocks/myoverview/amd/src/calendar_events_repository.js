@@ -33,6 +33,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -42,6 +47,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -51,6 +61,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -60,6 +75,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -69,6 +89,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -78,6 +103,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -87,6 +117,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -96,6 +131,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -105,6 +145,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -114,6 +159,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -123,6 +173,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -132,6 +187,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -141,6 +201,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -150,6 +215,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -159,6 +229,11 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
         {
             actionname: 'Submit assignment',
@@ -168,9 +243,25 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
         },
     ];
 
+    /**
+     * Retrieve a list of calendar events for the logged in user for the
+     * given day range (inclusive).
+     *
+     * @method queryForUserByDays
+     * @param {int}         startDay    The first day in the range
+     * @param {int}         endDay      The last day in the range
+     * @param {int}         limit       Limit the number of results returned
+     * @param {int}         offset      Offset the result set by the given amount
+     * @return {promise}    Resolved with an array of the calendar events
+     */
     var queryForUserByDays = function(startDay, endDay, limit, offset) {
         var deferred = $.Deferred();
 

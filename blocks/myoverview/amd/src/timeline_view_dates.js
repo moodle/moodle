@@ -14,10 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Controller for the timeline dates view in the myoverview block.
+ * Enhance the timeline view dates templates to load the calendar events.
  *
- * @module     block_myoverview/timeline_dates_view_controller
- * @class      controller
+ * @module     block_myoverview/timeline_view_dates
  * @package    block_myoverview
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,6 +28,13 @@ define(['core/custom_interaction_events', 'block_myoverview/event_list'], functi
         EVENT_LIST: '[data-region="event-list"]',
     };
 
+    /**
+     * Trigger the event list loading for the given containers.
+     *
+     * @private
+     * @method loadFromContainers
+     * @param {array} containers A list of container elements
+     */
     var loadForContainers = function(containers) {
         containers.each(function() {
             EventList.load(this);
@@ -36,7 +42,13 @@ define(['core/custom_interaction_events', 'block_myoverview/event_list'], functi
     };
 
     return {
-        registerEventListeners: function(root) {
+        /**
+         * Initialise the javascript on the root element.
+         *
+         * @method init
+         * @param {object} jQuery element
+         */
+        init: function(root) {
             var containers = root.find(SELECTORS.EVENT_LIST);
 
             loadForContainers(containers);

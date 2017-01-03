@@ -46,6 +46,6 @@
 </div>
 {{#js}}
 require(['jquery', 'block_myoverview/timeline_view_dates'], function($, js) {
-    js.registerEventListeners($('#timeline-view-dates-{{uniqid}}'));
+    js.init($('#timeline-view-dates-{{uniqid}}'));
 });
 {{/js}}

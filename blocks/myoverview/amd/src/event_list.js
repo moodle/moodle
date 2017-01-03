@@ -14,11 +14,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Controller for handling loading calendar events and rendering them in a list
- * for the myoverview block.
+ * Javascript to load and render the list of calendar events for a
+ * given day range.
  *
- * @module     block_myoverview/event_list_controller
- * @class      controller
+ * @module     block_myoverview/event_list
  * @package    block_myoverview
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,6 +27,15 @@ define(['jquery', 'core/notification', 'core/templates',
         function($, Notification, Templates, CalendarEventsRepository) {
 
     return {
+        /**
+         * Retrieve a list of calendar events, render and append them to the end of the
+         * existing list. The events will be loaded based on the set of data attributes
+         * on the root element.
+         *
+         * @method load
+         * @param {object} The root element of the event list
+         * @param {promise} A jquery promise
+         */
         load: function(root) {
             root = $(root);
             var start = +root.attr('data-start-day'),
