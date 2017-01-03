@@ -26,6 +26,11 @@ define(['jquery', 'core/notification', 'core/templates',
         'block_myoverview/calendar_events_repository'],
         function($, Notification, Templates, CalendarEventsRepository) {
 
+    var SELECTORS = {
+        EVENT_LIST: '[data-region="event-list"]',
+        LOADING_ICON_CONTAINER: '[data-region="loading-icon-container"]'
+    };
+
     return {
         /**
          * Retrieve a list of calendar events, render and append them to the end of the
@@ -41,7 +46,8 @@ define(['jquery', 'core/notification', 'core/templates',
             var start = +root.attr('data-start-day'),
                 end = +root.attr('data-end-day'),
                 limit = +root.attr('data-limit'),
-                offset = +root.attr('data-offset');
+                offset = +root.attr('data-offset'),
+                loadingIcon = root.find(SELECTORS.LOADING_ICON_CONTAINER);
 
             // Don't load twice.
             if (root.hasClass('loading')) {
@@ -49,6 +55,7 @@ define(['jquery', 'core/notification', 'core/templates',
             }
 
             root.addClass('loading');
+            loadingIcon.removeClass('hidden');
 
             // Request data from the server.
             return CalendarEventsRepository.query_for_user_by_days(
@@ -70,6 +77,7 @@ define(['jquery', 'core/notification', 'core/templates',
                 Notification.exception
             ).always(function() {
                 root.removeClass('loading');
+                loadingIcon.addClass('hidden');
             });
         }
     };

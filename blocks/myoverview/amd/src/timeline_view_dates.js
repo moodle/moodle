@@ -25,7 +25,7 @@ define(['core/custom_interaction_events', 'block_myoverview/event_list'], functi
 
     var SELECTORS = {
         VIEW_MORE_BUTTON: '[data-action="view-more"]',
-        EVENT_LIST: '[data-region="event-list"]',
+        EVENT_LIST_CONTAINER: '[data-region="event-list-container"]',
     };
 
     /**
@@ -49,7 +49,7 @@ define(['core/custom_interaction_events', 'block_myoverview/event_list'], functi
          * @param {object} jQuery element
          */
         init: function(root) {
-            var containers = root.find(SELECTORS.EVENT_LIST);
+            var containers = root.find(SELECTORS.EVENT_LIST_CONTAINER);
 
             loadForContainers(containers);
 

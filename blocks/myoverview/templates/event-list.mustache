@@ -19,16 +19,14 @@
 
     This template renders a list of events for the myoverview block.
 }}
-<div data-region="event-list-container">
-    <h5>{{$title}}{{/title}}</h5>
-    <ul class="list-group event-list"
-        data-region="event-list"
-        data-start-day="{{$startday}}0{{/startday}}"
-        data-end-day="{{$endday}}7{{/endday}}"
-        data-limit="{{$limit}}10{{/limit}}"
-        data-offset="{{$offset}}0{{/offset}}">
+<div data-region="event-list-container"
+     data-start-day="{{$startday}}0{{/startday}}"
+     data-end-day="{{$endday}}7{{/endday}}"
+     data-limit="{{$limit}}10{{/limit}}"
+     data-offset="{{$offset}}0{{/offset}}">
 
+     <h5>{{$title}}{{/title}} <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span></h5>
+    <ul class="list-group" data-region="event-list">
         {{> block_myoverview/event-list-items }}
     </ul>
-    {{> core/loading }}
 </div>
