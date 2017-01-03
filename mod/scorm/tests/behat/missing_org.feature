@@ -33,4 +33,5 @@ Feature: Check a SCORM package with missing Organisational structure.
     And I should see "Normal"
     And I press "Enter"
     And I switch to "scorm_object" iframe
+    And I switch to "contentFrame" iframe
     And I should see "Play of the game"
