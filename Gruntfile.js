@@ -170,6 +170,10 @@ module.exports = function(grunt) {
                 files: ['**/yui/src/**/*.js'],
                 tasks: ['yui']
             },
+            gherkinlint: {
+                files: ['**/tests/behat/*.feature'],
+                tasks: ['gherkinlint']
+            }
         },
         shifter: {
             options: {
@@ -349,6 +353,7 @@ module.exports = function(grunt) {
             // Run them all!.
             grunt.task.run('css');
             grunt.task.run('js');
+            grunt.task.run('gherkinlint');
         }
     };
 
@@ -363,6 +368,7 @@ module.exports = function(grunt) {
           grunt.config('uglify.amd.files', [{expand: true, src: files, rename: uglifyRename}]);
           grunt.config('shifter.options.paths', files);
           grunt.config('stylelint.less.src', files);
+          grunt.config('gherkinlint.options.files', files);
           changedFiles = Object.create(null);
     }, 200);
 
