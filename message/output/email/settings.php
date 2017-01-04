@@ -33,7 +33,8 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('smtpuser', get_string('smtpuser', 'message_email'), get_string('configsmtpuser', 'message_email'), '', PARAM_NOTAGS));
     $settings->add(new admin_setting_configpasswordunmask('smtppass', get_string('smtppass', 'message_email'), get_string('configsmtpuser', 'message_email'), ''));
     $settings->add(new admin_setting_configtext('smtpmaxbulk', get_string('smtpmaxbulk', 'message_email'), get_string('configsmtpmaxbulk', 'message_email'), 1, PARAM_INT));
-    $settings->add(new admin_setting_configtext('noreplyaddress', get_string('noreplyaddress', 'message_email'), get_string('confignoreplyaddress', 'message_email'), 'noreply@' . get_host_from_url($CFG->wwwroot), PARAM_NOTAGS));
+    $settings->add(new admin_setting_configtext('noreplyaddress', get_string('noreplyaddress', 'message_email'),
+            get_string('confignoreplyaddress', 'message_email'), 'noreply@' . get_host_from_url($CFG->wwwroot), PARAM_EMAIL));
     $settings->add(new admin_setting_configcheckbox('emailonlyfromnoreplyaddress',
             get_string('emailonlyfromnoreplyaddress', 'message_email'),
             get_string('configemailonlyfromnoreplyaddress', 'message_email'), 0));
