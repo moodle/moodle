@@ -341,6 +341,50 @@ fieldset.coursesearchbox label {
     }
 }
 
+/* Section and module editing forms contain special JS components for the
+   availability system (if enabled). */
+#id_availabilityconditionsjson[aria-hidden=true],
+.availability-field [aria-hidden=true] {
+    display: none;
+}
+.availability-eye,
+.availability-delete {
+    margin-right: 8px;
+}
+/* Eye icons in front of child lists are aligned specially. */
+.availability-list > .availability-eye img {
+    vertical-align: top;
+    margin-top: 12px;
+}
+.availability-plugincontrols {
+    min-height: 40px;
+    padding: 2px 0 0 4px;
+    background: none repeat scroll 0% 0% @wellBackground;
+    border: 1px solid @grayLighter;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 8px;
+    select {
+        width: auto;
+        max-width: 200px;
+    }
+}
+.availability-field .availability-plugincontrols .availability-group select {
+    max-width: 12rem;
+}
+/* Nested section is grey. */
+.availability-childlist > .availability-inner {
+    display: inline-block;
+    background: @wellBackground;
+    border: 1px solid @grayLighter;
+    border-radius: 4px;
+    padding: 6px;
+    margin-bottom: 6px;
+}
+/* Second (and more) levels of nested sections are white. */
+.availability-childlist .availability-childlist > .availability-inner {
+    background: white;
+}
 /* Default form styling colours all text red. With availability conditions
    this looks excessive as we show 'Invalid' markers in specific places. */
 .mform .error .availability-field {
