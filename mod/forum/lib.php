@@ -4428,6 +4428,7 @@ function forum_update_post($newpost, $mform, $unused = null) {
         'timestart',
         'timeend',
         'pinned',
+        'attachments',
     ];
     foreach ($modifiablefields as $field) {
         if (isset($newpost->{$field})) {
