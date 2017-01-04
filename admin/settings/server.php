@@ -29,9 +29,9 @@ if ($primaryadmin) {
     $primaryadminname  = NULL;
 }
 $temp->add(new admin_setting_configtext('supportname', new lang_string('supportname', 'admin'),
-  new lang_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
+    new lang_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
 $setting = new admin_setting_configtext('supportemail', new lang_string('supportemail', 'admin'),
-  new lang_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_NOTAGS);
+    new lang_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_EMAIL);
 $setting->set_force_ltr(true);
 $temp->add($setting);
 $temp->add(new admin_setting_configtext('supportpage', new lang_string('supportpage', 'admin'), new lang_string('configsupportpage', 'admin'), '', PARAM_URL));
@@ -237,7 +237,7 @@ $temp->add(new admin_setting_configtext('smtpmaxbulk', new lang_string('smtpmaxb
 $temp->add(new admin_setting_heading('noreplydomainheading', new lang_string('noreplydomain', 'admin'),
         new lang_string('noreplydomaindetail', 'admin')));
 $temp->add(new admin_setting_configtext('noreplyaddress', new lang_string('noreplyaddress', 'admin'),
-          new lang_string('confignoreplyaddress', 'admin'), 'noreply@' . get_host_from_url($CFG->wwwroot), PARAM_NOTAGS));
+          new lang_string('confignoreplyaddress', 'admin'), 'noreply@' . get_host_from_url($CFG->wwwroot), PARAM_EMAIL));
 $temp->add(new admin_setting_configtextarea('allowedemaildomains',
         new lang_string('allowedemaildomains', 'admin'),
         new lang_string('configallowedemaildomains', 'admin'),
