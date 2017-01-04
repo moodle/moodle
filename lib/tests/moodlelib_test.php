@@ -3442,10 +3442,10 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $CFG->maildomain = 'example.com';
         $CFG->mailprefix = 'mdl+';
-        $this->assertEquals(1, validate_email(generate_email_processing_address(0, $modargs)));
+        $this->assertTrue(validate_email(generate_email_processing_address(0, $modargs)));
 
         $CFG->maildomain = 'mail.example.com';
         $CFG->mailprefix = 'mdl-';
-        $this->assertEquals(1, validate_email(generate_email_processing_address(23, $modargs)));
+        $this->assertTrue(validate_email(generate_email_processing_address(23, $modargs)));
     }
 }
