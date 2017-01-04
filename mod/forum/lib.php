@@ -4505,6 +4505,7 @@ function forum_update_post($newpost, $mform, &$message) {
         'messagetrust',
         'timestart',
         'timeend',
+        'attachments',
     ];
     foreach ($modifiablefields as $field) {
         if (isset($newpost->{$field})) {
