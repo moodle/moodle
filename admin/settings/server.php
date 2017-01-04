@@ -27,9 +27,12 @@ if ($primaryadmin) {
     $primaryadminemail = NULL;
     $primaryadminname  = NULL;
 }
-$temp->add(new admin_setting_configtext('supportname', new lang_string('supportname', 'admin'), new lang_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
-$temp->add(new admin_setting_configtext('supportemail', new lang_string('supportemail', 'admin'), new lang_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_NOTAGS));
-$temp->add(new admin_setting_configtext('supportpage', new lang_string('supportpage', 'admin'), new lang_string('configsupportpage', 'admin'), '', PARAM_URL));
+$temp->add(new admin_setting_configtext('supportname', new lang_string('supportname', 'admin'),
+    new lang_string('configsupportname', 'admin'), $primaryadminname, PARAM_NOTAGS));
+$temp->add(new admin_setting_configtext('supportemail', new lang_string('supportemail', 'admin'),
+    new lang_string('configsupportemail', 'admin'), $primaryadminemail, PARAM_EMAIL));
+$temp->add(new admin_setting_configtext('supportpage', new lang_string('supportpage', 'admin'),
+    new lang_string('configsupportpage', 'admin'), '', PARAM_URL));
 $ADMIN->add('server', $temp);
 
 
