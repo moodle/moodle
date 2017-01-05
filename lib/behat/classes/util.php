@@ -111,6 +111,9 @@ class behat_util extends testing_util {
         // Disable some settings that are not wanted on test sites.
         set_config('noemailever', 1);
 
+        // Set noreplyaddress to an example domain, as it should be valid email address and test site can be a localhost.
+        set_config('noreplyaddress', 'noreply@example.com');
+
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();
 
