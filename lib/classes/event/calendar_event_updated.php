@@ -35,6 +35,8 @@ defined('MOODLE_INTERNAL') || die();
  *      - int repeatid: id of the parent event if present, else 0.
  *      - int timestart: timestamp for event time start.
  *      - string name: name of the event.
+ *      - bool visible: (optional) Is the calendar event visible?
+ *      - bool visibilitytoggled: (optional) Was the visibility changed?
  * }
  *
  * @package    core

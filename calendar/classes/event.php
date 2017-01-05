@@ -464,10 +464,12 @@ class event {
                 $DB->execute($sql, $params);
 
                 // Trigger an update event for each of the calendar event.
-                $events = $DB->get_records('event', array('repeatid' => $event->repeatid), '', 'id,timestart');
+                $events = $DB->get_records('event', array('repeatid' => $event->repeatid), '', 'id, timestart, visible');
                 foreach ($events as $event) {
                     $eventargs['objectid'] = $event->id;
                     $eventargs['other']['timestart'] = $event->timestart;
+                    $eventargs['other']['visible'] = (bool) $event->visible;
+                    $eventargs['other']['visibilitytoggled'] = false;
                     $event = \core\event\calendar_event_updated::create($eventargs);
                     $event->trigger();
                 }
@@ -477,6 +479,8 @@ class event {
                 $this->properties = $event->properties();
 
                 // Trigger an update event.
+                $eventargs['other']['visible'] = (bool) $this->properties->visible;
+                $eventargs['other']['visibilitytoggled'] = false;
                 $event = \core\event\calendar_event_updated::create($eventargs);
                 $event->trigger();
             }
@@ -530,11 +534,14 @@ class event {
                     array($newparent, $this->properties->id));
                 // Get all records where the repeatid is the same as the event being removed.
                 $events = $DB->get_records('event', array('repeatid' => $newparent));
-                // For each of the returned events trigger the event_update hook and an update event.
+                // For each of the returned events trigger an update event.
                 foreach ($events as $event) {
                     // Trigger an event for the update.
                     $eventargs['objectid'] = $event->id;
                     $eventargs['other']['timestart'] = $event->timestart;
+                    $eventargs['other']['visible'] = (bool) $event->visible;
+                    $eventargs['other']['visibilitytoggled'] = false;
+
                     $event = \core\event\calendar_event_updated::create($eventargs);
                     $event->trigger();
                 }
@@ -684,7 +691,24 @@ class event {
         }
 
         // Update the database to reflect this change.
-        return $DB->set_field('event', 'visible', $this->properties->visible, array('id' => $this->properties->id));
+        $success = $DB->set_field('event', 'visible', $this->properties->visible, array('id' => $this->properties->id));
+
+        // Prepare event data.
+        $eventargs = array(
+            'context' => $this->properties->context,
+            'objectid' => $this->properties->id,
+            'other' => array(
+                'repeatid' => empty($this->properties->repeatid) ? 0 : $this->properties->repeatid,
+                'timestart' => $this->properties->timestart,
+                'name' => $this->properties->name,
+                'visible' => (bool) $this->properties->visible,
+                'visibilitytoggled' => true
+            )
+        );
+        $event = \core\event\calendar_event_updated::create($eventargs);
+        $event->trigger();
+
+        return $success;
     }
 
     /**

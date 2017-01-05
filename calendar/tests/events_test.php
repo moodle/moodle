@@ -192,7 +192,8 @@ class core_calendar_events_testcase extends advanced_testcase {
         $this->assertEquals($calevent->context, $event->get_context());
         $expectedlog = array(0, 'calendar', 'edit', 'event.php?action=edit&amp;id=' . $calevent->id , $calevent->name);
         $this->assertEventLegacyLogData($expectedlog, $event);
-        $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'new event');
+        $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'new event', 'visible' => (bool) $calevent->visible,
+            'visibilitytoggled' => false);
         $this->assertEquals($other, $event->other);
         $this->assertEventContextNotUsed($event);
 
@@ -217,6 +218,39 @@ class core_calendar_events_testcase extends advanced_testcase {
             $this->assertEquals($this->course->id, $event->courseid);
             $this->assertEquals($calevent->context, $event->get_context());
         }
+    }
+
+    /**
+     * Tests for calendar_event_updated event.
+     */
+    public function test_calendar_event_updated_toggle_visibility() {
+        global $SITE;
+
+        $this->resetAfterTest();
+
+        // Create a calendar event.
+        $time = time();
+        $calevent = core_calendar_externallib_testcase::create_calendar_event('Some wickedly awesome event yo!',
+            $this->user->id, 'user', 0, $time);
+
+        // Updated the visibility of the calendar event.
+        $sink = $this->redirectEvents();
+        $calevent->toggle_visibility();
+        $events = $sink->get_events();
+
+        // Validate the calendar_event_updated event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\calendar_event_updated', $event);
+        $this->assertEquals('event', $event->objecttable);
+        $this->assertEquals($SITE->id, $event->courseid);
+        $this->assertEquals($calevent->context, $event->get_context());
+        $expectedlog = array($SITE->id, 'calendar', 'edit', 'event.php?action=edit&amp;id=' . $calevent->id ,
+            $calevent->name);
+        $this->assertEventLegacyLogData($expectedlog, $event);
+        $other = array('repeatid' => 0, 'timestart' => time(), 'name' => 'Some wickedly awesome event yo!',
+            'visible' => (bool) $calevent->visible, 'visibilitytoggled' => true);
+        $this->assertEquals($other, $event->other);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
