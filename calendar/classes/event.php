@@ -413,8 +413,6 @@ class event {
                 }
             }
 
-            // Hook for tracking added events.
-            self::calendar_event_hook('add_event', array($this->properties, $repeatedids));
             return true;
         } else {
 
@@ -483,8 +481,6 @@ class event {
                 $event->trigger();
             }
 
-            // Hook for tracking event updates.
-            self::calendar_event_hook('update_event', array($this->properties, $updaterepeated));
             return true;
         }
     }
@@ -541,8 +537,6 @@ class event {
                     $eventargs['other']['timestart'] = $event->timestart;
                     $event = \core\event\calendar_event_updated::create($eventargs);
                     $event->trigger();
-
-                    self::calendar_event_hook('update_event', array($event, false));
                 }
             }
         }
@@ -560,9 +554,6 @@ class event {
                 $file->delete();
             }
         }
-
-        // Fire the event deleted hook.
-        self::calendar_event_hook('delete_event', array($this->properties->id, $deleterepeated));
 
         // If we need to delete repeated events then we will fetch them all and delete one by one.
         if ($deleterepeated && !empty($this->properties->repeatid) && $this->properties->repeatid > 0) {
@@ -687,53 +678,13 @@ class event {
         if ($force === true || ($force !== false && $this->properties->visible == 0)) {
             // Make this event visible.
             $this->properties->visible = 1;
-            // Fire the hook.
-            self::calendar_event_hook('show_event', array($this->properties));
         } else {
             // Make this event hidden.
             $this->properties->visible = 0;
-            // Fire the hook.
-            self::calendar_event_hook('hide_event', array($this->properties));
         }
 
         // Update the database to reflect this change.
         return $DB->set_field('event', 'visible', $this->properties->visible, array('id' => $this->properties->id));
-    }
-
-    /**
-     * Attempts to call the hook for the specified action should a calendar type
-     * by set $CFG->calendar, and the appopriate function defined
-     *
-     * @param string $action One of `update_event`, `add_event`, `delete_event`, `show_event`, `hide_event`
-     * @param array $args The args to pass to the hook, usually the event is the first element
-     * @return bool attempts to call event hook
-     */
-    public static function calendar_event_hook($action, array $args) {
-        global $CFG;
-        static $extcalendarinc;
-        if ($extcalendarinc === null) {
-            if (!empty($CFG->calendar)) {
-                if (is_readable($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php')) {
-                    include_once($CFG->dirroot .'/calendar/'. $CFG->calendar .'/lib.php');
-                    $extcalendarinc = true;
-                } else {
-                    debugging("Calendar lib file missing or not readable at /calendar/{$CFG->calendar}/lib.php.",
-                        DEBUG_DEVELOPER);
-                    $extcalendarinc = false;
-                }
-            } else {
-                $extcalendarinc = false;
-            }
-        }
-        if ($extcalendarinc === false) {
-            return false;
-        }
-        $hook = $CFG->calendar .'_'.$action;
-        if (function_exists($hook)) {
-            call_user_func_array($hook, $args);
-            return true;
-        }
-        return false;
     }
 
     /**

@@ -1,6 +1,10 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.3 ===
+* calendar_event_hook() has been removed. Developers should be using the Moodle events system to achieve this behaviour,
+  rather than using a hacky calendar specific implementation.
+
 === 3.2 ===
 * calendar_preferences_button() is now depreciated.  Calendar preferences have been moved to the user preferences page.
 
