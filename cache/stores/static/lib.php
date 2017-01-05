@@ -117,11 +117,18 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
      * @var bool
      */
     protected $simpledata = false;
+
     /**
      * The number of items currently being stored.
      * @var int
      */
     protected $storecount = 0;
+
+    /**
+     * igbinary extension available.
+     * @var bool
+     */
+    protected $igbinaryfound = false;
 
     /**
      * Constructs the store instance.
@@ -203,6 +210,7 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
         $this->store = &self::register_store_id($this->storeid);
         $maxsize = $definition->get_maxsize();
         $this->simpledata = $definition->uses_simple_data();
+        $this->igbinaryfound = extension_loaded('igbinary');
         if ($maxsize !== null) {
             // Must be a positive int.
             $this->maxsize = abs((int)$maxsize);
@@ -220,6 +228,41 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
     }
 
     /**
+     * Uses igbinary serializer if igbinary extension is loaded.
+     * Fallback to PHP serializer.
+     *
+     * @param mixed $data
+     * The value to be serialized.
+     * @return string a string containing a byte-stream representation of
+     * value that can be stored anywhere.
+     */
+    protected function serialize($data) {
+        if ($this->igbinaryfound) {
+            return igbinary_serialize($data);
+        } else {
+            return serialize($data);
+        }
+    }
+
+    /**
+     * Uses igbinary unserializer if igbinary extension is loaded.
+     * Fallback to PHP unserializer.
+     *
+     * @param string $str
+     * The serialized string.
+     * @return mixed The converted value is returned, and can be a boolean,
+     * integer, float, string,
+     * array or object.
+     */
+    protected function unserialize($str) {
+        if ($this->igbinaryfound) {
+            return igbinary_unserialize($str);
+        } else {
+            return unserialize($str);
+        }
+    }
+
+    /**
      * Retrieves an item from the cache store given its key.
      *
      * @param string $key The key to retrieve
@@ -233,7 +276,7 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
         $key = $key['key'];
         if (isset($this->store[$key])) {
             if ($this->store[$key]['serialized']) {
-                return unserialize($this->store[$key]['data']);
+                return $this->unserialize($this->store[$key]['data']);
             } else {
                 return $this->store[$key]['data'];
             }
@@ -261,7 +304,7 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
             $return[$key] = false;
             if (isset($this->store[$key])) {
                 if ($this->store[$key]['serialized']) {
-                    $return[$key] = unserialize($this->store[$key]['data']);
+                    $return[$key] = $this->unserialize($this->store[$key]['data']);
                 } else {
                     $return[$key] = $this->store[$key]['data'];
                 }
@@ -292,7 +335,7 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
             $this->store[$key]['data'] = $data;
             $this->store[$key]['serialized'] = false;
         } else {
-            $this->store[$key]['data'] = serialize($data);
+            $this->store[$key]['data'] = $this->serialize($data);
             $this->store[$key]['serialized'] = true;
         }
 
