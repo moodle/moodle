@@ -90,6 +90,14 @@ class quiz_overview_report_testcase extends advanced_testcase {
             $DB->insert_record('quiz_attempts', $data);
         }
 
+        // This line is not really necessary for the test asserts below,
+        // but what it does is add an extra user row returned by
+        // get_enrolled_with_capabilities_join because of a second enrolment.
+        // The extra row returned used to make $table->query_db complain
+        // about duplicate records. So this is really a test that an extra
+        // student enrolment does not cause duplicate records in this query.
+        $generator->enrol_user($student2->id, $course->id, null, 'self');
+
         // Actually getting the SQL to run is quite hard. Do a minimal set up of
         // some objects.
         $context = context_module::instance($quiz->cmid);
