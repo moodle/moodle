@@ -37,7 +37,7 @@ require_capability('mod/assign:view', $context);
 
 $assign = new assign($context, $cm, $course);
 $urlparams = array('id' => $id,
-                  'action' => optional_param('action', '', PARAM_TEXT),
+                  'action' => optional_param('action', '', PARAM_ALPHA),
                   'rownum' => optional_param('rownum', 0, PARAM_INT),
                   'useridlistid' => optional_param('useridlistid', $assign->get_useridlist_key_id(), PARAM_ALPHANUM));
 
@@ -49,4 +49,4 @@ $completion->set_module_viewed($cm);
 
 // Get the assign class to
 // render the page.
-echo $assign->view(optional_param('action', '', PARAM_TEXT));
+echo $assign->view(optional_param('action', '', PARAM_ALPHA));

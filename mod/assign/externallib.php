@@ -825,7 +825,7 @@ class mod_assign_external extends external_api {
                             'locked'           => new external_value(PARAM_INT, 'locked', VALUE_OPTIONAL),
                             'mailed'           => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
                             'extensionduedate' => new external_value(PARAM_INT, 'extension due date', VALUE_OPTIONAL),
-                            'workflowstate'    => new external_value(PARAM_TEXT, 'marking workflow state', VALUE_OPTIONAL),
+                            'workflowstate'    => new external_value(PARAM_ALPHA, 'marking workflow state', VALUE_OPTIONAL),
                             'allocatedmarker'  => new external_value(PARAM_INT, 'allocated marker', VALUE_OPTIONAL)
                         )
                     )
@@ -1081,7 +1081,7 @@ class mod_assign_external extends external_api {
                             'locked'           => new external_value(PARAM_INT, 'locked'),
                             'mailed'           => new external_value(PARAM_INT, 'mailed'),
                             'extensionduedate' => new external_value(PARAM_INT, 'extension due date'),
-                            'workflowstate'    => new external_value(PARAM_TEXT, 'marking workflow state', VALUE_OPTIONAL),
+                            'workflowstate'    => new external_value(PARAM_ALPHA, 'marking workflow state', VALUE_OPTIONAL),
                             'allocatedmarker'  => new external_value(PARAM_INT, 'allocated marker')
                         )
                     )
