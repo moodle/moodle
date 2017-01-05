@@ -179,6 +179,20 @@ class assign_feedback_file extends assign_feedback_plugin {
                     // automatically with current timestamp.
                     continue;
                 }
+
+                $existingfile = $fs->get_file(
+                    $newfilerecord->contextid,
+                    $newfilerecord->component,
+                    $newfilerecord->filearea,
+                    $newfilerecord->itemid,
+                    $file->get_filepath(),
+                    $file->get_filename()
+                );
+                if ($existingfile) {
+                    // If the file already exists, remove it so it can be updated.
+                    $existingfile->delete();
+                }
+
                 $newfile = $fs->create_file_from_storedfile($newfilerecord, $file);
             }
         }
