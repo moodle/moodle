@@ -644,13 +644,17 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $cell2 = new html_table_cell(format_string($group->name, false, $status->context));
             } else if ($status->preventsubmissionnotingroup) {
                 if (count($status->usergroups) == 0) {
+                    $notification = new \core\output\notification(get_string('noteam', 'assign'), 'error');
+                    $notification->set_show_closebutton(false);
                     $cell2 = new html_table_cell(
-                        html_writer::span(get_string('noteam', 'assign'), 'alert alert-error')
+                        $this->output->render($notification)
                     );
                     $warningmsg = $this->output->notification(get_string('noteam_desc', 'assign'), 'error');
                 } else if (count($status->usergroups) > 1) {
+                    $notification = new \core\output\notification(get_string('multipleteams', 'assign'), 'error');
+                    $notification->set_show_closebutton(false);
                     $cell2 = new html_table_cell(
-                        html_writer::span(get_string('multipleteams', 'assign'), 'alert alert-error')
+                        $this->output->render($notification)
                     );
                     $warningmsg = $this->output->notification(get_string('multipleteams_desc', 'assign'), 'error');
                 }
