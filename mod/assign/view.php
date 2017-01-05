@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/mod/assign/locallib.php');
 $id = required_param('id', PARAM_INT);
 
 $urlparams = array('id' => $id,
-                  'action' => optional_param('action', '', PARAM_TEXT),
+                  'action' => optional_param('action', '', PARAM_ALPHA),
                   'rownum' => optional_param('rownum', 0, PARAM_INT),
                   'useridlistid' => optional_param('action', 0, PARAM_INT));
 
@@ -50,4 +50,4 @@ $completion->set_module_viewed($cm);
 
 // Get the assign class to
 // render the page.
-echo $assign->view(optional_param('action', '', PARAM_TEXT));
+echo $assign->view(optional_param('action', '', PARAM_ALPHA));

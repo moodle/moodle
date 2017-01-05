@@ -2212,7 +2212,7 @@ class assign {
         $o = '';
 
         $pluginsubtype = required_param('pluginsubtype', PARAM_ALPHA);
-        $plugintype = required_param('plugin', PARAM_TEXT);
+        $plugintype = required_param('plugin', PARAM_PLUGIN);
         $pluginaction = required_param('pluginaction', PARAM_ALPHA);
 
         $plugin = $this->get_plugin_by_type($pluginsubtype, $plugintype);
@@ -2268,7 +2268,7 @@ class assign {
 
         $submissionid = optional_param('sid', 0, PARAM_INT);
         $gradeid = optional_param('gid', 0, PARAM_INT);
-        $plugintype = required_param('plugin', PARAM_TEXT);
+        $plugintype = required_param('plugin', PARAM_PLUGIN);
         $item = null;
         if ($pluginsubtype == 'assignsubmission') {
             $plugin = $this->get_submission_plugin_by_type($plugintype);
@@ -5119,7 +5119,7 @@ class assign {
             $record->userid = $userid;
             if ($modified >= 0) {
                 $record->grade = unformat_float(optional_param('quickgrade_' . $record->userid, -1, PARAM_TEXT));
-                $record->workflowstate = optional_param('quickgrade_' . $record->userid.'_workflowstate', false, PARAM_TEXT);
+                $record->workflowstate = optional_param('quickgrade_' . $record->userid.'_workflowstate', false, PARAM_ALPHA);
                 $record->allocatedmarker = optional_param('quickgrade_' . $record->userid.'_allocatedmarker', false, PARAM_INT);
             } else {
                 // This user was not in the grading table.
@@ -6213,7 +6213,7 @@ class assign {
         $mform->setType('userid', PARAM_INT);
 
         $mform->addElement('hidden', 'action', 'savesubmission');
-        $mform->setType('action', PARAM_TEXT);
+        $mform->setType('action', PARAM_ALPHA);
     }
 
     /**
