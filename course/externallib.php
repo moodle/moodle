@@ -1644,12 +1644,6 @@ class core_course_external extends external_api {
                 }
             }
 
-            // Check category depth is <= maxdepth (do not check for user who can manage categories).
-            if ((!empty($CFG->maxcategorydepth) && count($parents) > $CFG->maxcategorydepth)
-                    and !has_capability('moodle/category:manage', $context)) {
-                $excludedcats[$category->id] = 'depth';
-            }
-
             // Check the user can use the category context.
             $context = context_coursecat::instance($category->id);
             try {
@@ -3152,5 +3146,79 @@ class core_course_external extends external_api {
                 'warnings' => new external_warnings()
             )
         );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_updates_since_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'Course id to check'),
+                'since' => new external_value(PARAM_INT, 'Check updates since this time stamp'),
+                'filter' => new external_multiple_structure(
+                    new external_value(PARAM_ALPHANUM, 'Area name: configuration, fileareas, completion, ratings, comments,
+                                                        gradeitems, outcomes'),
+                    'Check only for updates in these areas', VALUE_DEFAULT, array()
+                )
+            )
+        );
+    }
+
+    /**
+     * Check if there are updates affecting the user for the given course since the given time stamp.
+     *
+     * This function is a wrapper of self::check_updates for retrieving all the updates since a given time for all the activities.
+     *
+     * @param int $courseid the list of modules to check
+     * @param int $since check updates since this time stamp
+     * @param array $filter check only for updates in these areas
+     * @return array list of updates and warnings
+     * @throws moodle_exception
+     * @since Moodle 3.3
+     */
+    public static function get_updates_since($courseid, $since, $filter = array()) {
+        global $CFG, $DB;
+
+        $params = self::validate_parameters(
+            self::get_updates_since_parameters(),
+            array(
+                'courseid' => $courseid,
+                'since' => $since,
+                'filter' => $filter,
+            )
+        );
+
+        $course = get_course($params['courseid']);
+        $modinfo = get_fast_modinfo($course);
+        $tocheck = array();
+
+        // Retrieve all the visible course modules for the current user.
+        $cms = $modinfo->get_cms();
+        foreach ($cms as $cm) {
+            if (!$cm->uservisible) {
+                continue;
+            }
+            $tocheck[] = array(
+                'id' => $cm->id,
+                'contextlevel' => 'module',
+                'since' => $params['since'],
+            );
+        }
+
+        return self::check_updates($course->id, $tocheck, $params['filter']);
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function get_updates_since_returns() {
+        return self::check_updates_returns();
     }
 }

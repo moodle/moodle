@@ -665,4 +665,19 @@ EXPECTED;
         );
     }
 
+    /**
+     * Tests for validate_email() function.
+     */
+    public function test_validate_email() {
+
+        $this->assertTrue(validate_email('moodle@example.com'));
+        $this->assertTrue(validate_email('moodle@localhost.local'));
+        $this->assertTrue(validate_email('verp_email+is=mighty@moodle.org'));
+        $this->assertTrue(validate_email("but_potentially'dangerous'too@example.org"));
+        $this->assertTrue(validate_email('posts+AAAAAAAAAAIAAAAAAAAGQQAAAAABFSXz1eM/P/lR2bYyljM+@posts.moodle.org'));
+
+        $this->assertFalse(validate_email('moodle@localhost'));
+        $this->assertFalse(validate_email('"attacker\\" -oQ/tmp/ -X/var/www/vhost/moodle/backdoor.php  some"@email.com'));
+        $this->assertFalse(validate_email("moodle@example.com>\r\nRCPT TO:<victim@example.com"));
+    }
 }

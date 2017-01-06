@@ -18,6 +18,26 @@
     @template core/login
 
     Moodle template for the login page.
+
+    Example context (json):
+    {
+        "autofocusform": false,
+        "canloginasguest": true,
+        "canloginbyemail": true,
+        "cansignup": true,
+        "error": "testerror",
+        "errorformatted": "Test error formatted",
+        "forgotpasswordurl": "http://example.com/login/forgot_password.php",
+        "hasidentityproviders": false,
+        "hasinstructions": true,
+        "instructions": "For full access to this site, you first need to create an account.",
+        "loginurl": "http://example.com/stable_master/login/index.php",
+        "rememberusername": true,
+        "passwordautocomplete": false,
+        "signupurl": "http://localhost/stable_master/login/signup.php",
+        "cookieshelpiconformatted": "",
+        "username": ""
+    }
 }}
 {{#hasinstructions}}
 <div class="loginbox clearfix twocolumns">
@@ -155,5 +175,5 @@
             });
         {{/autofocusform}}
     {{/error}}
-    })
+    });
 {{/js}}

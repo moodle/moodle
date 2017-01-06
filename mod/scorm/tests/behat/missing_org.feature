@@ -1,8 +1,5 @@
 @mod @mod_scorm @_file_upload @_switch_iframe
-Feature: Add scorm activity
-  In order to let students access a scorm package
-  As a teacher
-  I need to add scorm activity to a course
+Feature: Check a SCORM package with missing Organisational structure.
 
   @javascript
   Scenario: Add a scorm activity to a course
@@ -22,20 +19,19 @@ Feature: Add scorm activity
     And I turn editing mode on
     And I add a "SCORM package" to section "1"
     And I set the following fields to these values:
-      | Name | Awesome SCORM package |
+      | Name | MissingOrg SCORM package |
       | Description | Description |
-    And I upload "mod/scorm/tests/packages/singlesco_scorm12.zip" file to "Package file" filemanager
+    And I upload "mod/scorm/tests/packages/singlescobasic_missingorg.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
-    Then I should see "Awesome SCORM package"
+    Then I should see "MissingOrg SCORM package"
     And I should see "Normal"
     And I should see "Preview"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I follow "Awesome SCORM package"
+    And I follow "MissingOrg SCORM package"
     And I should see "Normal"
     And I press "Enter"
     And I switch to "scorm_object" iframe
-    And I should see "Not implemented yet"
-    And I switch to the main frame
-    And I follow "Course 1"
+    And I switch to "contentFrame" iframe
+    And I should see "Play of the game"

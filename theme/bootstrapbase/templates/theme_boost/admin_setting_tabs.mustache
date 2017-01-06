@@ -14,7 +14,29 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
-<ul class="nav nav-tabs">
+{{!
+    @template theme_boost/admin_setting_tabs
+
+
+    Example context (json):
+    {
+        "tabs": [
+        {
+            "name": "tab1",
+            "active": 0,
+            "displayname": "Inactive tab1",
+            "html": "<p>Tab 1 content</p>"
+         },
+         {
+            "name": "tab2",
+            "active": 1,
+            "displayname": "Active tab2",
+            "html": "<p>Tab 2 content</p>"
+         }
+        ]
+    }
+}}
+<ul class="nav nav-tabs" role="tablist">
     {{#tabs}}
         <li class="{{#active}}active{{/active}}">
             <a href="#{{name}}" data-toggle="tab" role="tab">{{displayname}}</a>

@@ -73,13 +73,13 @@ if ($ADMIN->fulltree) {
     $page = new admin_settingpage('theme_boost_advanced', get_string('advancedsettings', 'theme_boost'));
 
     // Raw SCSS to include before the content.
-    $setting = new admin_setting_configtextarea('theme_boost/scsspre',
+    $setting = new admin_setting_scsscode('theme_boost/scsspre',
         get_string('rawscsspre', 'theme_boost'), get_string('rawscsspre_desc', 'theme_boost'), '', PARAM_RAW);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
     // Raw SCSS to include after the content.
-    $setting = new admin_setting_configtextarea('theme_boost/scss', get_string('rawscss', 'theme_boost'),
+    $setting = new admin_setting_scsscode('theme_boost/scss', get_string('rawscss', 'theme_boost'),
         get_string('rawscss_desc', 'theme_boost'), '', PARAM_RAW);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);

@@ -53,6 +53,10 @@ class framework_importer {
     protected $importer = null;
     protected $foundheaders = array();
     protected $scalecache = array();
+    /** @var bool $useprogressbar Control whether importing should use progress bars or not. */
+    protected $useprogressbar = false;
+    /** @var \core\progress\display_if_slow|null $progress The progress bar instance. */
+    protected $progress = null;
 
     /**
      * Store an error message for display later
@@ -164,8 +168,11 @@ class framework_importer {
      * @param string delimiter The specified delimiter for the file.
      * @param string importid The id of the csv import.
      * @param array mappingdata The mapping data from the import form.
+     * @param bool $useprogressbar Whether progress bar should be displayed, to avoid html output on CLI.
      */
-    public function __construct($text = null, $encoding = null, $delimiter = null, $importid = 0, $mappingdata = null) {
+    public function __construct($text = null, $encoding = null, $delimiter = null, $importid = 0, $mappingdata = null,
+            $useprogressbar = false) {
+
         global $CFG;
 
         // The format of our records is:
@@ -204,7 +211,7 @@ class framework_importer {
         }
 
         $this->foundheaders = $this->importer->get_columns();
-
+        $this->useprogressbar = $useprogressbar;
         $domainid = 1;
 
         $flat = array();
@@ -264,8 +271,19 @@ class framework_importer {
             $this->fail(get_string('invalidimportfile', 'tool_lpimportcsv'));
             return;
         } else {
+            // We are calling from browser, display progress bar.
+            if ($this->useprogressbar === true) {
+                $this->progress = new \core\progress\display_if_slow(get_string('processingfile', 'tool_lpimportcsv'));
+                $this->progress->start_html();
+            } else {
+                // Avoid html output on CLI scripts.
+                $this->progress = new \core\progress\none();
+            }
+            $this->progress->start_progress('', count($this->flat));
             // Build a tree from this flat list.
+            raise_memory_limit(MEMORY_EXTRA);
             $this->add_children($this->framework, '');
+            $this->progress->end_progress();
         }
     }
 
@@ -278,6 +296,7 @@ class framework_importer {
     public function add_children(& $node, $parentidnumber) {
         foreach ($this->flat as $competency) {
             if ($competency->parentidnumber == $parentidnumber) {
+                $this->progress->increment_progress();
                 $node->children[] = $competency;
                 $this->add_children($competency, $competency->idnumber);
             }
@@ -443,17 +462,28 @@ class framework_importer {
         $record->contextid = context_system::instance()->id;
 
         $framework = api::create_framework($record);
+        if ($this->useprogressbar === true) {
+            $this->progress = new \core\progress\display_if_slow(get_string('importingfile', 'tool_lpimportcsv'));
+            $this->progress->start_html();
+        } else {
+            $this->progress = new \core\progress\none();
+        }
 
+        $this->progress->start_progress('', (count($this->framework->children) * 2));
+        raise_memory_limit(MEMORY_EXTRA);
         // Now all the children.
         foreach ($this->framework->children as $comp) {
+            $this->progress->increment_progress();
             $this->create_competency($comp, null, $framework);
         }
 
         // Now create the rules.
         foreach ($this->framework->children as $record) {
+            $this->progress->increment_progress();
             $this->set_rules($record);
             $this->set_related($record);
         }
+        $this->progress->end_progress();
 
         $this->importer->cleanup();
         return $framework;

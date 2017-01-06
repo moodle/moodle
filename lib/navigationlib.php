@@ -2104,7 +2104,7 @@ class global_navigation extends navigation_node {
                 $onclick = htmlspecialchars_decode($activity->onclick, ENT_QUOTES);
                 // Build the JS function the click event will call
                 $jscode = "function {$functionname}(e) { $propogrationhandler $onclick }";
-                $this->page->requires->js_init_code($jscode);
+                $this->page->requires->js_amd_inline($jscode);
                 // Override the default url with the new action link
                 $action = new action_link($action, $activityname, new component_action('click', $functionname));
             }
@@ -3913,34 +3913,38 @@ class settings_navigation extends navigation_node {
         if (isloggedin() && !isguestuser() && (!isset($SESSION->load_navigation_admin) || $SESSION->load_navigation_admin)) {
             $isadminpage = $this->is_admin_tree_needed();
 
-            if (has_capability('moodle/site:config', context_system::instance())) {
-                // Make sure this works even if config capability changes on the fly
-                // and also make it fast for admin right after login.
-                $SESSION->load_navigation_admin = 1;
-                if ($isadminpage) {
+            if (has_capability('moodle/site:configview', context_system::instance())) {
+                if (has_capability('moodle/site:config', context_system::instance())) {
+                    // Make sure this works even if config capability changes on the fly
+                    // and also make it fast for admin right after login.
+                    $SESSION->load_navigation_admin = 1;
+                    if ($isadminpage) {
+                        $adminsettings = $this->load_administration_settings();
+                    }
+
+                } else if (!isset($SESSION->load_navigation_admin)) {
                     $adminsettings = $this->load_administration_settings();
+                    $SESSION->load_navigation_admin = (int)($adminsettings->children->count() > 0);
+
+                } else if ($SESSION->load_navigation_admin) {
+                    if ($isadminpage) {
+                        $adminsettings = $this->load_administration_settings();
+                    }
                 }
 
-            } else if (!isset($SESSION->load_navigation_admin)) {
-                $adminsettings = $this->load_administration_settings();
-                $SESSION->load_navigation_admin = (int)($adminsettings->children->count() > 0);
-
-            } else if ($SESSION->load_navigation_admin) {
-                if ($isadminpage) {
-                    $adminsettings = $this->load_administration_settings();
+                // Print empty navigation node, if needed.
+                if ($SESSION->load_navigation_admin && !$isadminpage) {
+                    if ($adminsettings) {
+                        // Do not print settings tree on pages that do not need it, this helps with performance.
+                        $adminsettings->remove();
+                        $adminsettings = false;
+                    }
+                    $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin/search.php'),
+                            self::TYPE_SITE_ADMIN, null, 'siteadministration');
+                    $siteadminnode->id = 'expandable_branch_' . $siteadminnode->type . '_' .
+                            clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
+                    $siteadminnode->requiresajaxloading = 'true';
                 }
-            }
-
-            // Print empty navigation node, if needed.
-            if ($SESSION->load_navigation_admin && !$isadminpage) {
-                if ($adminsettings) {
-                    // Do not print settings tree on pages that do not need it, this helps with performance.
-                    $adminsettings->remove();
-                    $adminsettings = false;
-                }
-                $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin/search.php'), self::TYPE_SITE_ADMIN, null, 'siteadministration');
-                $siteadminnode->id = 'expandable_branch_'.$siteadminnode->type.'_'.clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
-                $siteadminnode->requiresajaxloading = 'true';
             }
         }
 

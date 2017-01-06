@@ -15,7 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/action_menu
+
     Action menu.
+
+    Example context (json):
+    {
+        "classes": "",
+        "primary": {
+            "items": [{"rawhtml": "<p>Item in primary menu</p>"}]
+        },
+        "secondary": {
+            "items": [{"rawhtml": "<p>Item in secondary menu</p>"}]
+        }
+    }
 }}
 <div class="{{classes}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>
     {{#primary}}
@@ -37,8 +50,6 @@
             {{#items}}<li role="presentation">{{> core/action_menu_item }}</li>{{/items}}
         </ul>
     {{/secondary}}
-
-    </span>
 </div>
 {{#js}}
 require(['core/yui'], function(Y) {
