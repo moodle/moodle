@@ -8,6 +8,7 @@ information provided here is intended especially for developers.
   of 'scrollable' is true.
 * The `$CFG->behat_retart_browser_after` configuration setting has been removed.
   The browser session is now restarted between all tests.
+* add_to_log() has been through final deprecation, please rewrite your code to the new events API.
 
 === 3.9 ===
 * Following function has been deprecated, please use \core\task\manager::run_from_cli().
