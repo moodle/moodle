@@ -1108,7 +1108,22 @@ function validate_email($address) {
 function get_file_argument() {
     global $SCRIPT;
 
-    $relativepath = optional_param('file', false, PARAM_PATH);
+    $relativepath = false;
+    $hasforcedslashargs = false;
+
+    if (isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) {
+        // Checks whether $_SERVER['REQUEST_URI'] contains '/pluginfile.php/'
+        // instead of '/pluginfile.php?', when serving a file from e.g. mod_imscp or mod_scorm.
+        if ((strpos($_SERVER['REQUEST_URI'], '/pluginfile.php/') !== false)
+                && isset($_SERVER['PATH_INFO']) && !empty($_SERVER['PATH_INFO'])) {
+            // Exclude edge cases like '/pluginfile.php/?file='.
+            $args = explode('/', ltrim($_SERVER['PATH_INFO'], '/'));
+            $hasforcedslashargs = (count($args) > 2); // Always at least: context, component and filearea.
+        }
+    }
+    if (!$hasforcedslashargs) {
+        $relativepath = optional_param('file', false, PARAM_PATH);
+    }
 
     if ($relativepath !== false and $relativepath !== '') {
         return $relativepath;
