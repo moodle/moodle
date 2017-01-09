@@ -35,12 +35,7 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
          * @return {Array}
          */
         processResults: function(selector, data) {
-            var results = [];
-            var i = 0;
-            for (i = 0; i < data.length; i++) {
-                results[i] = {value: data[i].id, label: data[i].label};
-            }
-            return results;
+            return data;
         },
 
         /**
@@ -93,7 +88,7 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
                         });
                         ctx.identity = identity.join(', ');
                         promises.push(templates.render('mod_assign/list_participant_user_summary', ctx).then(function(html) {
-                            return {id: user.id, label: html};
+                            return {value: user.id, label: html};
                         }));
                     }
                 });
