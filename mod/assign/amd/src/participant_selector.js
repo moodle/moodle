@@ -62,12 +62,10 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
                 filterstrings[$(element).attr('name')] = $(element).prop('checked');
             });
 
-            var promise = ajax.call([{
+            ajax.call([{
                 methodname: 'mod_assign_list_participants',
                 args: {assignid: assignmentid, groupid: groupid, filter: query, limit: 30, includeenrolments: false}
-            }]);
-
-            promise[0].then(function(results) {
+            }])[0].then(function(results) {
                 var promises = [];
                 var identityfields = $('[data-showuseridentity]').data('showuseridentity').split(',');
 
@@ -94,23 +92,18 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
                             }
                         });
                         ctx.identity = identity.join(', ');
-                        promises.push(templates.render('mod_assign/list_participant_user_summary', ctx));
+                        promises.push(templates.render('mod_assign/list_participant_user_summary', ctx).then(function(html) {
+                            return {id: user.id, label: html};
+                        }));
                     }
                 });
-
-                // When all the templates have been rendered, call the success handler.
-                $.when.apply($.when, promises).then(function() {
-                    var args = arguments,
-                        i = 0;
-
-                    $.each(results, function(index, user) {
-                        user.label = args[i];
-                        i++;
-                    });
-
-                    success(results);
-                });
-            }, failure);
+                // Do the dance for $.when()
+                return $.when.apply($, promises);
+            }).then(function() {
+                // Undo the $.when() dance from arguments object into an array..
+                var users = Array.prototype.slice.call(arguments);
+                success(users);
+            }).catch(failure);
         }
     };
 });
