@@ -50,5 +50,8 @@ function xmldb_antivirus_clamav_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016102600, 'antivirus', 'clamav');
     }
 
+    // Automatically generated Moodle v3.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

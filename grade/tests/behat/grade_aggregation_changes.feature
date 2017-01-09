@@ -35,7 +35,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I follow "Edit   Cat mean"
     And I set the following fields to these values:
@@ -335,13 +335,13 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
   @javascript
   Scenario: Switching grade items between categories
     # Move to same aggregation (Natural).
-    Given I go to "Setup > Gradebook setup" in the course gradebook
+    Given I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
     When I select "Cat natural" from the "Move selected items to" singleselect
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I follow "Edit   Item a1"
     Then the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"
@@ -361,13 +361,13 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Extra credit" matches value "1"
     And I press "Cancel"
     # Move to Mean of grades (with extra credit).
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
     And I select "Cat ec" from the "Move selected items to" singleselect
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I follow "Edit   Item a1"
     And the field "Extra credit" matches value "0"
     And I press "Cancel"
@@ -381,13 +381,13 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Extra credit" matches value "1"
     And I press "Cancel"
     # Move to Simple weight mean of grades.
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
     And I select "Cat simple" from the "Move selected items to" singleselect
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I follow "Edit   Item a1"
     And the field "Extra credit" matches value "0"
     And I press "Cancel"
@@ -401,13 +401,13 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Extra credit" matches value "1"
     And I press "Cancel"
     # Move to Weighted mean of grades.
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
     And I select "Cat weighted" from the "Move selected items to" singleselect
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I follow "Edit   Item a1"
     And the field "Item weight" matches value "1"
     And I set the field "Item weight" to "2"
@@ -425,14 +425,14 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I set the field "Item weight" to "11"
     And I press "Save changes"
     # Move to same (Weighted mean of grades).
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
     And I select "Cat weighted2" from the "Move selected items to" singleselect
     And I wait "2" seconds
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I follow "Edit   Item a1"
     And the field "Item weight" matches value "2"
     And I press "Save changes"
@@ -446,13 +446,13 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And the field "Item weight" matches value "11"
     And I press "Save changes"
     # Move back to Natural.
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the field "Select Item a1" to "1"
     And I set the field "Select Item a2" to "1"
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
     And I select "Course 1" from the "Move selected items to" singleselect
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     And I follow "Edit   Item a1"
     And the field "Weight adjusted" matches value "0"
     And the field "Extra credit" matches value "0"

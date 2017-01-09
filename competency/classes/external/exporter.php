@@ -158,7 +158,7 @@ abstract class exporter {
             } else if ($definition['type'] === PARAM_TEXT) {
                 if (!empty($definition['multiple'])) {
                     foreach ($data->$property as $key => $value) {
-                        $data->$property[$key] = external_format_string($value, $context->id);
+                        $data->{$property}[$key] = external_format_string($value, $context->id);
                     }
                 } else {
                     $data->$property = external_format_string($data->$property, $context->id);

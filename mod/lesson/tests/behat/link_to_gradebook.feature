@@ -55,7 +55,7 @@ Feature: link to gradebook on the end of lesson page
 
   Scenario: No link to gradebook for non graded lesson
     Given I follow "Test lesson"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
         | Type | None |
     And I press "Save and display"
@@ -70,7 +70,7 @@ Feature: link to gradebook on the end of lesson page
 
   Scenario: No link to gradebook for practice lesson
     Given I follow "Test lesson"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
         | Practice lesson | Yes |
     And I press "Save and display"
@@ -85,7 +85,7 @@ Feature: link to gradebook on the end of lesson page
 
   Scenario: No link if Show gradebook to student disabled
     Given I follow "Course 1"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Show gradebook to students | No |
     And I press "Save and display"

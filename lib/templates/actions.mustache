@@ -15,7 +15,14 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/actions
+
     Actions.
+
+    Example context (json):
+    {
+        "actions": [{"event": "event", "jsfunction": "Y.log", "id": "id"}]
+    }
 }}
 {{#js}}
     require(['core/yui'], function(Y) {

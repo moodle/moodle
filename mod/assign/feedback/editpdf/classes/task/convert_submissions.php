@@ -92,14 +92,18 @@ class convert_submissions extends scheduled_task {
 
             mtrace('Convert ' . count($users) . ' submission attempt(s) for assignment ' . $assignmentid);
             foreach ($users as $userid) {
-                document_services::get_page_images_for_attempt($assignment,
-                                                               $userid,
-                                                               $attemptnumber,
-                                                               true);
-                document_services::get_page_images_for_attempt($assignment,
-                                                               $userid,
-                                                               $attemptnumber,
-                                                               false);
+                try {
+                    document_services::get_page_images_for_attempt($assignment,
+                                                                   $userid,
+                                                                   $attemptnumber,
+                                                                   true);
+                    document_services::get_page_images_for_attempt($assignment,
+                                                                   $userid,
+                                                                   $attemptnumber,
+                                                                   false);
+                } catch (\moodle_exception $e) {
+                    mtrace('Conversion failed with error:' . $e->errorcode);
+                }
             }
 
             $DB->delete_records('assignfeedback_editpdf_queue', array('id' => $record->id));

@@ -4405,25 +4405,41 @@ function forum_add_new_post($post, $mform, $unused = null) {
 /**
  * Update a post.
  *
- * @param   stdClass    $post       The post to update
+ * @param   stdClass    $newpost    The post to update
  * @param   mixed       $mform      The submitted form
  * @param   string      $unused
  * @return  bool
  */
-function forum_update_post($post, $mform, $unused = null) {
-    global $DB;
+function forum_update_post($newpost, $mform, $unused = null) {
+    global $DB, $USER;
 
+    $post       = $DB->get_record('forum_posts', array('id' => $newpost->id));
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
     $cm         = get_coursemodule_from_instance('forum', $forum->id);
     $context    = context_module::instance($cm->id);
 
+    // Allowed modifiable fields.
+    $modifiablefields = [
+        'subject',
+        'message',
+        'messageformat',
+        'messagetrust',
+        'timestart',
+        'timeend',
+        'pinned',
+        'attachments',
+    ];
+    foreach ($modifiablefields as $field) {
+        if (isset($newpost->{$field})) {
+            $post->{$field} = $newpost->{$field};
+        }
+    }
     $post->modified = time();
 
-    $DB->update_record('forum_posts', $post);
-
-    $discussion->timemodified = $post->modified; // last modified tracking
-    $discussion->usermodified = $post->userid;   // last modified tracking
+    // Last post modified tracking.
+    $discussion->timemodified = $post->modified;
+    $discussion->usermodified = $USER->id;
 
     if (!$post->parent) {   // Post is a discussion starter - update discussion title and times too
         $discussion->name      = $post->subject;
@@ -4434,16 +4450,15 @@ function forum_update_post($post, $mform, $unused = null) {
             $discussion->pinned = $post->pinned;
         }
     }
-    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
+    $post->message = file_save_draft_area_files($newpost->itemid, $context->id, 'mod_forum', 'post', $post->id,
             mod_forum_post_form::editor_options($context, $post->id), $post->message);
-    $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
-
+    $DB->update_record('forum_posts', $post);
     $DB->update_record('forum_discussions', $discussion);
 
     forum_add_attachment($post, $forum, $cm, $mform);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
-        forum_tp_mark_post_read($post->userid, $post, $post->forum);
+        forum_tp_mark_post_read($USER->id, $post, $post->forum);
     }
 
     // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
@@ -7489,15 +7504,6 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
             if (!can_access_course($course)) {
                 if ($musthaveaccess) {
                     print_error('errorenrolmentrequired', 'forum');
-                }
-                continue;
-            }
-
-            // Check whether the requested user is enrolled or has access to view the course
-            // if they don't we immediately have a problem.
-            if (!can_access_course($course, $user) && !is_enrolled($coursecontext, $user)) {
-                if ($musthaveaccess) {
-                    print_error('notenrolled', 'forum');
                 }
                 continue;
             }

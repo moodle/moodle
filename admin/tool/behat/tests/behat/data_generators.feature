@@ -59,8 +59,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     Then I should see "Group 1"
     And I should see "Group 2"
     And I follow "Groupings"
@@ -90,8 +89,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Permissions"
+    And I navigate to "Users > Permissions" in current page administration
     And I set the field "Advanced role override" to "Student (1)"
     Then "mod/forum:editanypost" capability has "Allow" permission
     And I press "Cancel"
@@ -134,30 +132,31 @@ Feature: Set up contextual data for tests
     And the following "course enrolments" exist:
       | user | course | role |
       | user4 | C1 | custom1 |
+      | user2 | C1 | student |
+      | user3 | C1 | editingteacher |
     And the following "role assigns" exist:
       | user  | role           | contextlevel | reference |
       | user1 | manager        | System       |           |
       | user2 | editingteacher | Category     | CAT1      |
-      | user3 | editingteacher | Course       | C1        |
       | user5 | custom2        | System       |           |
     When I log in as "user1"
     And I am on site homepage
-    Then I should see "Front page settings"
+    Then "Edit settings" "link" should exist in current page administration
     And I log out
     And I log in as "user2"
     And I am on site homepage
     And I follow "Course 1"
-    And I should see "Turn editing on"
+    And "Turn editing on" "link" should exist in current page administration
     And I log out
     And I log in as "user3"
     And I am on site homepage
     And I follow "Course 1"
-    And I should see "Turn editing on"
+    And "Turn editing on" "link" should exist in current page administration
     And I log out
     And I log in as "user4"
     And I am on site homepage
     And I follow "Course 1"
-    And I should see "Turn editing on"
+    And "Turn editing on" "link" should exist in current page administration
     And I log out
     And I log in as "user5"
     And I should see "You are logged in as"
@@ -264,8 +263,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     Then the "groups" select box should contain "Group 1 (1)"
     And the "groups" select box should contain "Group 2 (1)"
     And I set the field "groups" to "Group 1 (1)"
@@ -302,7 +300,7 @@ Feature: Set up contextual data for tests
       | System cohort A | 1           |
       | System cohort B | 2           |
     And I should not see "Cohort in category"
-    And I follow "Courses"
+    And I am on course index
     And I follow "Cat 1"
     And I follow "Cohorts"
     And I should not see "System cohort"
@@ -322,10 +320,9 @@ Feature: Set up contextual data for tests
       | fullname | course | gradecategory |
       | Grade sub category 2 | C1 | Grade category 1 |
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Courses"
+    And I am on course index
     And I follow "Course 1"
-    And I go to "View > Grader report" in the course gradebook
+    And I navigate to "View > Grader report" in the course gradebook
     Then I should see "Grade category 1"
     And I should see "Grade sub category 2"
 
@@ -349,7 +346,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Grade Item 1"
     And I follow "Edit   Test Grade Item 1"
     And I expand all fieldsets
@@ -378,7 +375,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Scales" in the course gradebook
+    And I navigate to "Scales" in the course gradebook
     Then I should see "Test Scale 1"
     And I should see "Disappointing,  Good,  Very good,  Excellent"
 
@@ -429,7 +426,7 @@ Feature: Set up contextual data for tests
     When I log in as "admin"
     And I am on site homepage
     And I follow "Course 1"
-    And I go to "Setup > Gradebook setup" in the course gradebook
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     Then I should see "Test Outcome Grade Item 1"
     And I follow "Edit   Test Outcome Grade Item 1"
     And the field "Outcome" matches value "Grade outcome 1"

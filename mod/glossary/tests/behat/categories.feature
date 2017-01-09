@@ -25,10 +25,7 @@ Feature: Glossary entries can be organised in categories
       | label    | name       | check autolinking of CategoryAutoLinks and CategoryNoLinks text | C1     | label1    |
 # Log in as admin and enable autolinking filter
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Plugins" node
-    And I expand "Filters" node
-    And I follow "Manage filters"
+    And I navigate to "Plugins > Filters > Manage filters" in site administration
     And I click on "On" "option" in the "Glossary auto-linking" "table_row"
     And I log out
 # Log in as a teacher and make sure nothing is yet autolinked

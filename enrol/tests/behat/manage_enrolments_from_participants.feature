@@ -20,7 +20,7 @@ Feature: Manage enrollments from participants page
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Participants" node in "My courses > C1"
+    And I navigate to course participants
 
   Scenario: Check the participants link when "All partipants" selected
     Given I select "All participants" from the "roleid" singleselect

@@ -33,14 +33,14 @@ Feature: We can bulk insert grades for students in a course
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment one"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
     And I press "Save changes"
     And I press "Ok"
-    And I follow "Edit settings"
-    And I follow "View gradebook"
+    And I follow "Course 1"
+    And I navigate to "View > Grader report" in the course gradebook
     And I follow "Single view for Test assignment one"
     Then the field "Grade for james (Student) 1" matches value "50.00"
     And the field "Override for james (Student) 1" matches value "0"
@@ -74,14 +74,14 @@ Feature: We can bulk insert grades for students in a course
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment two"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
     And I press "Save changes"
     And I press "Ok"
-    And I follow "Edit settings"
-    And I follow "View gradebook"
+    And I follow "Course 1"
+    And I navigate to "View > Grader report" in the course gradebook
     # And I click on "input[title='Dock Navigation block']" "css_element"
     # And I click on "input[title='Dock Administration block']" "css_element"
     And I follow "Single view for Test assignment two"

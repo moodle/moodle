@@ -60,7 +60,7 @@ Feature: Workshop submission removal
     Given I log in as "student1"
     And I follow "Course1"
     And I follow "TestWorkshop"
-    When I follow "My submission"
+    When I follow "Submission1"
     Then I should see "Submission1"
     And "Delete submission" "button" should exist
     And I click on "Delete submission" "button"
@@ -78,7 +78,7 @@ Feature: Workshop submission removal
     And I log in as "student1"
     And I follow "Course1"
     And I follow "TestWorkshop"
-    When I follow "My submission"
+    When I follow "Submission1"
     Then I should see "Submission1"
     And "Delete submission" "button" should not exist
 
@@ -86,7 +86,7 @@ Feature: Workshop submission removal
     Given I log in as "student2"
     And I follow "Course1"
     And I follow "TestWorkshop"
-    When I follow "My submission"
+    When I follow "Submission2"
     Then I should see "Submission2"
     And "Delete submission" "button" should not exist
 

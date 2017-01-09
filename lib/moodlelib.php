@@ -5180,6 +5180,7 @@ function reset_course_userdata($data) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->libdir.'/completionlib.php');
+    require_once($CFG->dirroot.'/completion/criteria/completion_criteria_date.php');
     require_once($CFG->dirroot.'/group/lib.php');
 
     $data->courseid = $data->id;
@@ -5222,6 +5223,27 @@ function reset_course_userdata($data) {
         // Update any date activity restrictions.
         if ($CFG->enableavailability) {
             \availability_date\condition::update_all_dates($data->courseid, $data->timeshift);
+        }
+
+        // Update completion expected dates.
+        if ($CFG->enablecompletion) {
+            $modinfo = get_fast_modinfo($data->courseid);
+            $changed = false;
+            foreach ($modinfo->get_cms() as $cm) {
+                if ($cm->completion && !empty($cm->completionexpected)) {
+                    $DB->set_field('course_modules', 'completionexpected', $cm->completionexpected + $data->timeshift,
+                        array('id' => $cm->id));
+                    $changed = true;
+                }
+            }
+
+            // Clear course cache if changes made.
+            if ($changed) {
+                rebuild_course_cache($data->courseid, true);
+            }
+
+            // Update course date completion criteria.
+            \completion_criteria_date::update_date($data->courseid, $data->timeshift);
         }
 
         $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
@@ -5766,7 +5788,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     $tempreplyto = array();
 
     // Make sure that we fall back onto some reasonable no-reply address.
-    $noreplyaddress = empty($CFG->noreplyaddress) ? 'noreply@' . get_host_from_url($CFG->wwwroot) : $CFG->noreplyaddress;
+    $noreplyaddressdefault = 'noreply@' . get_host_from_url($CFG->wwwroot);
+    $noreplyaddress = empty($CFG->noreplyaddress) ? $noreplyaddressdefault : $CFG->noreplyaddress;
+
+    if (!validate_email($noreplyaddress)) {
+        debugging('email_to_user: Invalid noreply-email '.s($noreplyaddress));
+        $noreplyaddress = $noreplyaddressdefault;
+    }
 
     // Make up an email address for handling bounces.
     if (!empty($CFG->handlebounces)) {
@@ -5774,6 +5802,12 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $mail->Sender = generate_email_processing_address(0, $modargs);
     } else {
         $mail->Sender = $noreplyaddress;
+    }
+
+    // Make sure that the explicit replyto is valid, fall back to the implicit one.
+    if (!empty($replyto) && !validate_email($replyto)) {
+        debugging('email_to_user: Invalid replyto-email '.s($replyto));
+        $replyto = $noreplyaddress;
     }
 
     $alloweddomains = null;
@@ -5793,10 +5827,16 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     // and that the senders email setting is either displayed to everyone, or display to only other users that are enrolled
     // in a course with the sender.
     } else if ($usetrueaddress && can_send_from_real_email_address($from, $user, $alloweddomains)) {
+        if (!validate_email($from->email)) {
+            debugging('email_to_user: Invalid from-email '.s($from->email).' - not sending');
+            // Better not to use $noreplyaddress in this case.
+            return false;
+        }
         $mail->From = $from->email;
         $fromdetails = new stdClass();
         $fromdetails->name = fullname($from);
-        $fromdetails->url = $CFG->wwwroot;
+        $fromdetails->url = preg_replace('#^https?://#', '', $CFG->wwwroot);
+        $fromdetails->siteshortname = format_string($SITE->shortname);
         $fromstring = $fromdetails->name;
         if ($CFG->emailfromvia == EMAIL_VIA_ALWAYS) {
             $fromstring = get_string('emailvia', 'core', $fromdetails);
@@ -5809,7 +5849,8 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $mail->From = $noreplyaddress;
         $fromdetails = new stdClass();
         $fromdetails->name = fullname($from);
-        $fromdetails->url = $CFG->wwwroot;
+        $fromdetails->url = preg_replace('#^https?://#', '', $CFG->wwwroot);
+        $fromdetails->siteshortname = format_string($SITE->shortname);
         $fromstring = $fromdetails->name;
         if ($CFG->emailfromvia != EMAIL_VIA_NEVER) {
             $fromstring = get_string('emailvia', 'core', $fromdetails);
@@ -6161,13 +6202,25 @@ function send_confirmation_email($user, $confirmationurl = null) {
 
     $subject = get_string('emailconfirmationsubject', '', format_string($site->fullname));
 
-    $username = urlencode($user->username);
-    $username = str_replace('.', '%2E', $username); // Prevent problems with trailing dots.
     if (empty($confirmationurl)) {
         $confirmationurl = '/login/confirm.php';
     }
-    $confirmationurl = new moodle_url($confirmationurl, array('data' => $user->secret .'/'. $username));
-    $data->link = $confirmationurl->out(false);
+
+    $confirmationurl = new moodle_url($confirmationurl);
+    // Remove data parameter just in case it was included in the confirmation so we can add it manually later.
+    $confirmationurl->remove_params('data');
+    $confirmationpath = $confirmationurl->out(false);
+
+    // We need to custom encode the username to include trailing dots in the link.
+    // Because of this custom encoding we can't use moodle_url directly.
+    // Determine if a query string is present in the confirmation url.
+    $hasquerystring = strpos($confirmationpath, '?') !== false;
+    // Perform normal url encoding of the username first.
+    $username = urlencode($user->username);
+    // Prevent problems with trailing dots not being included as part of link in some mail clients.
+    $username = str_replace('.', '%2E', $username);
+
+    $data->link = $confirmationpath . ( $hasquerystring ? '&' : '?') . 'data='. $user->secret .'/'. $username;
 
     $message     = get_string('emailconfirmation', '', $data);
     $messagehtml = text_to_html(get_string('emailconfirmation', '', $data), false, false, true);

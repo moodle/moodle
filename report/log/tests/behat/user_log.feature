@@ -38,7 +38,7 @@ Feature: User can view activity log.
   Scenario: View Todays' and all log report for user
     Given I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Participants" node in "My courses > C1"
+    And I navigate to course participants
     And I follow "Student 1"
     When I follow "Today's logs"
     And I should see "Assignment: Test assignment name"
@@ -54,7 +54,7 @@ Feature: User can view activity log.
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Participants" node in "My courses > C1"
+    And I navigate to course participants
     And I follow "Student 1"
     When I follow "Today's logs"
     And I should see "No log reader enabled"

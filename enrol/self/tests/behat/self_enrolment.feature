@@ -74,7 +74,8 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
       | Custom instance name | Test student enrolment |
       | Enrolment key | moodle_rules |
       | Use group enrolment keys | Yes |
-    And I follow "Groups"
+    And I follow "Course 1"
+    And I navigate to "Users > Groups" in current page administration
     And I press "Create group"
     And I set the following fields to these values:
       | Group name | Group 1 |

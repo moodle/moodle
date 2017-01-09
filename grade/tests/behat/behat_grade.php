@@ -247,30 +247,17 @@ class behat_grade extends behat_base {
     }
 
     /**
-     * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
+     * Select the tab in the gradebook. We must be on one of the gradebook pages already.
      *
-     * Examples:
-     * - I go to "Setup > Gradebook setup" in the course gradebook
-     * - I go to "Scales" in the course gradebook
-     * - I go to "Letters > View" in the course gradebook
-     * - I go to "View > User report" in the course gradebook // for teachers
-     * - I go to "User report" in the course gradebook // for students
-     *
-     * @Given /^I go to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
-     * @param string $gradepath
+     * @param string $gradepath examples: "View > User report", "Letters > View", "Scales"
      */
-    public function i_go_to_in_the_course_gradebook($gradepath) {
+    protected function select_in_gradebook_tabs($gradepath) {
         $gradepath = preg_split('/\s*>\s*/', trim($gradepath));
         if (count($gradepath) > 2) {
-            throw new DriverException('Grade path is too long (must have no more than two items separated with ">")');
+            throw new coding_exception('Grade path is too long (must have no more than two items separated with ">")');
         }
 
-        // If we are not on one of the gradebook pages already, follow "Grades" link in the navigation block.
         $xpath = '//div[contains(@class,\'grade-navigation\')]';
-        if (!$this->getSession()->getPage()->findAll('xpath', $xpath)) {
-            $this->execute("behat_general::i_click_on_in_the", array(get_string('grades'), 'link',
-                get_string('pluginname', 'block_navigation'), 'block'));
-        }
 
         // If the first row of the grade-navigation tabs does not have $gradepath[0] as active tab, click on it.
         $link = '\'' . $this->escape($gradepath[0]) . '\'';
@@ -289,5 +276,41 @@ class behat_grade extends behat_base {
                 $this->wait_for_pending_js();
             }
         }
+    }
+
+    /**
+     * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
+     *
+     * Examples:
+     * - I navigate to "Setup > Gradebook setup" in the course gradebook
+     * - I navigate to "Scales" in the course gradebook
+     * - I navigate to "Letters > View" in the course gradebook
+     * - I navigate to "View > User report" in the course gradebook // for teachers
+     * - I navigate to "User report" in the course gradebook // for students
+     *
+     * @Given /^I navigate to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
+     * @param string $gradepath
+     */
+    public function i_navigate_to_in_the_course_gradebook($gradepath) {
+        // If we are not on one of the gradebook pages already, follow "Grades" link in the navigation block.
+        $xpath = '//div[contains(@class,\'grade-navigation\')]';
+        if (!$this->getSession()->getPage()->findAll('xpath', $xpath)) {
+            $this->execute("behat_general::i_click_on_in_the", array(get_string('grades'), 'link',
+                get_string('pluginname', 'block_navigation'), 'block'));
+        }
+
+        $this->select_in_gradebook_tabs($gradepath);
+    }
+
+    /**
+     * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
+     *
+     * @todo MDL-57282 deprecate in Moodle 3.3
+     *
+     * @Given /^I go to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
+     * @param string $gradepath
+     */
+    public function i_go_to_in_the_course_gradebook($gradepath) {
+        $this->execute('behat_grade::i_navigate_to_in_the_course_gradebook', $gradepath);
     }
 }

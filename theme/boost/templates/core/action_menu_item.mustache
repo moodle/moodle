@@ -15,7 +15,14 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/action_menu_item
+
     Action menu item.
+
+    Example context (json):
+    {
+        "rawhtml": "<p>[rawhtml]</p>"
+    }
 }}
 {{#actionmenulink}}{{> core/action_menu_link }}{{/actionmenulink}}
 {{#actionmenufiller}}<span class="filler">&nbsp;</span>{{/actionmenufiller}}

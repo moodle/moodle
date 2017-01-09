@@ -1488,9 +1488,10 @@ class global_navigation extends navigation_node {
      * @return bool
      */
     protected function show_my_categories() {
-        global $CFG, $DB;
+        global $CFG;
         if ($this->showmycategories === null) {
-            $this->showmycategories = !empty($CFG->navshowmycoursecategories) && $DB->count_records('course_categories') > 1;
+            require_once('coursecatlib.php');
+            $this->showmycategories = !empty($CFG->navshowmycoursecategories) && coursecat::count_all() > 1;
         }
         return $this->showmycategories;
     }
@@ -2144,7 +2145,7 @@ class global_navigation extends navigation_node {
                 $onclick = htmlspecialchars_decode($activity->onclick, ENT_QUOTES);
                 // Build the JS function the click event will call
                 $jscode = "function {$functionname}(e) { $propogrationhandler $onclick }";
-                $this->page->requires->js_init_code($jscode);
+                $this->page->requires->js_amd_inline($jscode);
                 // Override the default url with the new action link
                 $action = new action_link($action, $activityname, new component_action('click', $functionname));
             }
@@ -2922,7 +2923,7 @@ class global_navigation extends navigation_node {
      * They've expanded the 'my courses' branch.
      */
     protected function load_courses_enrolled() {
-        global $CFG, $DB;
+        global $CFG;
         $sortorder = 'visible DESC';
         // Prevent undefined $CFG->navsortmycoursessort errors.
         if (empty($CFG->navsortmycoursessort)) {
@@ -2932,34 +2933,60 @@ class global_navigation extends navigation_node {
         $sortorder = $sortorder . ',' . $CFG->navsortmycoursessort . ' ASC';
         $courses = enrol_get_my_courses(null, $sortorder);
         if (count($courses) && $this->show_my_categories()) {
-            // OK Actually we are loading categories. We only want to load categories that have a parent of 0.
-            // In order to make sure we load everything required we must first find the categories that are not
-            // base categories and work out the bottom category in thier path.
+            // Generate an array containing unique values of all the courses' categories.
             $categoryids = array();
             foreach ($courses as $course) {
+                if (in_array($course->category, $categoryids)) {
+                    continue;
+                }
                 $categoryids[] = $course->category;
             }
-            $categoryids = array_unique($categoryids);
-            list($sql, $params) = $DB->get_in_or_equal($categoryids);
-            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent <> 0', $params, 'sortorder, id', 'id, path');
-            foreach ($categories as $category) {
-                $bits = explode('/', trim($category->path,'/'));
-                $categoryids[] = array_shift($bits);
-            }
-            $categoryids = array_unique($categoryids);
-            $categories->close();
 
-            // Now we load the base categories.
-            list($sql, $params) = $DB->get_in_or_equal($categoryids);
-            $categories = $DB->get_recordset_select('course_categories', 'id '.$sql.' AND parent = 0', $params, 'sortorder, id');
-            foreach ($categories as $category) {
-                $this->add_category($category, $this->rootnodes['mycourses'], self::TYPE_MY_CATEGORY);
+            // Array of category IDs that include the categories of the user's courses and the related course categories.
+            $fullpathcategoryids = [];
+            // Get the course categories for the enrolled courses' category IDs.
+            require_once('coursecatlib.php');
+            $mycoursecategories = coursecat::get_many($categoryids);
+            // Loop over each of these categories and build the category tree using each category's path.
+            foreach ($mycoursecategories as $mycoursecat) {
+                $pathcategoryids = explode('/', $mycoursecat->path);
+                // First element of the exploded path is empty since paths begin with '/'.
+                array_shift($pathcategoryids);
+                // Merge the exploded category IDs into the full list of category IDs that we will fetch.
+                $fullpathcategoryids = array_merge($fullpathcategoryids, $pathcategoryids);
             }
-            $categories->close();
-        } else {
-            foreach ($courses as $course) {
-                $this->add_course($course, false, self::COURSE_MY);
+
+            // Fetch all of the categories related to the user's courses.
+            $pathcategories = coursecat::get_many($fullpathcategoryids);
+            // Loop over each of these categories and build the category tree.
+            foreach ($pathcategories as $coursecat) {
+                // No need to process categories that have already been added.
+                if (isset($this->addedcategories[$coursecat->id])) {
+                    continue;
+                }
+
+                // Get this course category's parent node.
+                $parent = null;
+                if ($coursecat->parent && isset($this->addedcategories[$coursecat->parent])) {
+                    $parent = $this->addedcategories[$coursecat->parent];
+                }
+                if (!$parent) {
+                    // If it has no parent, then it should be right under the My courses node.
+                    $parent = $this->rootnodes['mycourses'];
+                }
+
+                // Build the category object based from the coursecat object.
+                $mycategory = new stdClass();
+                $mycategory->id = $coursecat->id;
+                $mycategory->name = $coursecat->name;
+                $mycategory->visible = $coursecat->visible;
+
+                // Add this category to the nav tree.
+                $this->add_category($mycategory, $parent, self::TYPE_MY_CATEGORY);
             }
+        }
+        foreach ($courses as $course) {
+            $this->add_course($course, false, self::COURSE_MY);
         }
     }
 }
@@ -3937,34 +3964,38 @@ class settings_navigation extends navigation_node {
         if (isloggedin() && !isguestuser() && (!isset($SESSION->load_navigation_admin) || $SESSION->load_navigation_admin)) {
             $isadminpage = $this->is_admin_tree_needed();
 
-            if (has_capability('moodle/site:config', context_system::instance())) {
-                // Make sure this works even if config capability changes on the fly
-                // and also make it fast for admin right after login.
-                $SESSION->load_navigation_admin = 1;
-                if ($isadminpage) {
+            if (has_capability('moodle/site:configview', context_system::instance())) {
+                if (has_capability('moodle/site:config', context_system::instance())) {
+                    // Make sure this works even if config capability changes on the fly
+                    // and also make it fast for admin right after login.
+                    $SESSION->load_navigation_admin = 1;
+                    if ($isadminpage) {
+                        $adminsettings = $this->load_administration_settings();
+                    }
+
+                } else if (!isset($SESSION->load_navigation_admin)) {
                     $adminsettings = $this->load_administration_settings();
+                    $SESSION->load_navigation_admin = (int)($adminsettings->children->count() > 0);
+
+                } else if ($SESSION->load_navigation_admin) {
+                    if ($isadminpage) {
+                        $adminsettings = $this->load_administration_settings();
+                    }
                 }
 
-            } else if (!isset($SESSION->load_navigation_admin)) {
-                $adminsettings = $this->load_administration_settings();
-                $SESSION->load_navigation_admin = (int)($adminsettings->children->count() > 0);
-
-            } else if ($SESSION->load_navigation_admin) {
-                if ($isadminpage) {
-                    $adminsettings = $this->load_administration_settings();
+                // Print empty navigation node, if needed.
+                if ($SESSION->load_navigation_admin && !$isadminpage) {
+                    if ($adminsettings) {
+                        // Do not print settings tree on pages that do not need it, this helps with performance.
+                        $adminsettings->remove();
+                        $adminsettings = false;
+                    }
+                    $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin/search.php'),
+                            self::TYPE_SITE_ADMIN, null, 'siteadministration');
+                    $siteadminnode->id = 'expandable_branch_' . $siteadminnode->type . '_' .
+                            clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
+                    $siteadminnode->requiresajaxloading = 'true';
                 }
-            }
-
-            // Print empty navigation node, if needed.
-            if ($SESSION->load_navigation_admin && !$isadminpage) {
-                if ($adminsettings) {
-                    // Do not print settings tree on pages that do not need it, this helps with performance.
-                    $adminsettings->remove();
-                    $adminsettings = false;
-                }
-                $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin/search.php'), self::TYPE_SITE_ADMIN, null, 'siteadministration');
-                $siteadminnode->id = 'expandable_branch_'.$siteadminnode->type.'_'.clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
-                $siteadminnode->requiresajaxloading = 'true';
             }
         }
 

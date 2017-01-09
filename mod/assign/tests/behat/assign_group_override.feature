@@ -42,7 +42,7 @@ Feature: Assign group override
 
   Scenario: Add, modify then delete a group override
     When I follow "Test assignment name"
-    And I navigate to "Group overrides" node in "Assignment administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group     | Group 1 |
@@ -65,7 +65,7 @@ Feature: Assign group override
 
   Scenario: Duplicate a user override
     When I follow "Test assignment name"
-    And I navigate to "Group overrides" node in "Assignment administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group     | Group 1 |
@@ -87,7 +87,7 @@ Feature: Assign group override
 
   Scenario: Allow a group to have a different due date
     When I follow "Test assignment name"
-    And I navigate to "Edit settings" node in "Assignment administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_duedate_enabled | 1 |
       | id_allowsubmissionsfromdate_enabled | 0 |
@@ -98,7 +98,7 @@ Feature: Assign group override
       | duedate[hour]      | 08 |
       | duedate[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Assignment administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group     | Group 1 |
@@ -123,7 +123,7 @@ Feature: Assign group override
 
   Scenario: Allow a group to have a different cut off date
     When I follow "Test assignment name"
-    And I navigate to "Edit settings" node in "Assignment administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_duedate_enabled | 0 |
       | id_allowsubmissionsfromdate_enabled | 0 |
@@ -134,7 +134,7 @@ Feature: Assign group override
       | cutoffdate[hour]      | 08 |
       | cutoffdate[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Assignment administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group     | Group 1 |
@@ -159,7 +159,7 @@ Feature: Assign group override
 
   Scenario: Allow a group to have a different start date
     When I follow "Test assignment name"
-    And I navigate to "Edit settings" node in "Assignment administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_duedate_enabled | 0 |
       | id_allowsubmissionsfromdate_enabled | 1 |
@@ -170,7 +170,7 @@ Feature: Assign group override
       | allowsubmissionsfromdate[hour]      | 08 |
       | allowsubmissionsfromdate[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Assignment administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group       | Group 1 |
@@ -197,7 +197,7 @@ Feature: Assign group override
   @javascript
   Scenario: Add both a user and group override and verify that both are applied correctly
     When I follow "Test assignment name"
-    And I navigate to "Edit settings" node in "Assignment administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_duedate_enabled | 0 |
       | id_allowsubmissionsfromdate_enabled | 1 |
@@ -208,7 +208,7 @@ Feature: Assign group override
       | allowsubmissionsfromdate[hour]      | 08 |
       | allowsubmissionsfromdate[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Assignment administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group       | Group 1 |
@@ -220,7 +220,8 @@ Feature: Assign group override
       | allowsubmissionsfromdate[minute]    | 00 |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
-    And I navigate to "User overrides" node in "Assignment administration"
+    And I follow "Test assignment name"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user        | Student1 |

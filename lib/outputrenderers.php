@@ -576,8 +576,6 @@ class core_renderer extends renderer_base {
             'loadinghelp',
         ), 'moodle');
 
-        $this->page->requires->js_function_call('setTimeout', array('fix_column_widths()', 20));
-
         $focus = $this->page->focuscontrol;
         if (!empty($focus)) {
             if (preg_match("#forms\['([a-zA-Z0-9]+)'\].elements\['([a-zA-Z0-9]+)'\]#", $focus, $matches)) {
@@ -1915,71 +1913,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_single_select(single_select $select) {
-        $select = clone($select);
-        if (empty($select->formid)) {
-            $select->formid = html_writer::random_id('single_select_f');
-        }
-
-        $output = '';
-        $params = $select->url->params();
-        if ($select->method === 'post') {
-            $params['sesskey'] = sesskey();
-        }
-        foreach ($params as $name=>$value) {
-            $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$name, 'value'=>$value));
-        }
-
-        if (empty($select->attributes['id'])) {
-            $select->attributes['id'] = html_writer::random_id('single_select');
-        }
-
-        if ($select->disabled) {
-            $select->attributes['disabled'] = 'disabled';
-        }
-
-        if ($select->tooltip) {
-            $select->attributes['title'] = $select->tooltip;
-        }
-
-        $select->attributes['class'] = 'autosubmit';
-        if ($select->class) {
-            $select->attributes['class'] .= ' ' . $select->class;
-        }
-
-        if ($select->label) {
-            $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
-        }
-
-        if ($select->helpicon instanceof help_icon) {
-            $output .= $this->render($select->helpicon);
-        }
-        $output .= html_writer::select($select->options, $select->name, $select->selected, $select->nothing, $select->attributes);
-
-        $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
-        $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
-
-        $nothing = empty($select->nothing) ? false : key($select->nothing);
-        $this->page->requires->yui_module('moodle-core-formautosubmit',
-            'M.core.init_formautosubmit',
-            array(array('selectid' => $select->attributes['id'], 'nothing' => $nothing))
-        );
-
-        // then div wrapper for xhtml strictness
-        $output = html_writer::tag('div', $output);
-
-        // now the form itself around it
-        if ($select->method === 'get') {
-            $url = $select->url->out_omit_querystring(true); // url without params, the anchor part allowed
-        } else {
-            $url = $select->url->out_omit_querystring();     // url without params, the anchor part not allowed
-        }
-        $formattributes = array('method' => $select->method,
-                                'action' => $url,
-                                'id'     => $select->formid);
-        $output = html_writer::tag('form', $output, $formattributes);
-
-        // and finally one more wrapper with class
-        return html_writer::tag('div', $output, array('class' => $select->class));
+        return $this->render_from_template('core/single_select', $select->export_for_template($this));
     }
 
     /**
@@ -2006,116 +1940,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_url_select(url_select $select) {
-        global $CFG;
-
-        $select = clone($select);
-        if (empty($select->formid)) {
-            $select->formid = html_writer::random_id('url_select_f');
-        }
-
-        if (empty($select->attributes['id'])) {
-            $select->attributes['id'] = html_writer::random_id('url_select');
-        }
-
-        if ($select->disabled) {
-            $select->attributes['disabled'] = 'disabled';
-        }
-
-        if ($select->tooltip) {
-            $select->attributes['title'] = $select->tooltip;
-        }
-
-        $output = '';
-
-        if ($select->label) {
-            $output .= html_writer::label($select->label, $select->attributes['id'], false, $select->labelattributes);
-        }
-
-        $classes = array();
-        if (!$select->showbutton) {
-            $classes[] = 'autosubmit';
-        }
-        if ($select->class) {
-            $classes[] = $select->class;
-        }
-        if (count($classes)) {
-            $select->attributes['class'] = implode(' ', $classes);
-        }
-
-        if ($select->helpicon instanceof help_icon) {
-            $output .= $this->render($select->helpicon);
-        }
-
-        // For security reasons, the script course/jumpto.php requires URL starting with '/'. To keep
-        // backward compatibility, we are removing heading $CFG->wwwroot from URLs here.
-        $urls = array();
-        foreach ($select->urls as $k=>$v) {
-            if (is_array($v)) {
-                // optgroup structure
-                foreach ($v as $optgrouptitle => $optgroupoptions) {
-                    foreach ($optgroupoptions as $optionurl => $optiontitle) {
-                        if (empty($optionurl)) {
-                            $safeoptionurl = '';
-                        } else if (strpos($optionurl, $CFG->wwwroot.'/') === 0) {
-                            // debugging('URLs passed to url_select should be in local relative form - please fix the code.', DEBUG_DEVELOPER);
-                            $safeoptionurl = str_replace($CFG->wwwroot, '', $optionurl);
-                        } else if (strpos($optionurl, '/') !== 0) {
-                            debugging("Invalid url_select urls parameter inside optgroup: url '$optionurl' is not local relative url!");
-                            continue;
-                        } else {
-                            $safeoptionurl = $optionurl;
-                        }
-                        $urls[$k][$optgrouptitle][$safeoptionurl] = $optiontitle;
-                    }
-                }
-            } else {
-                // plain list structure
-                if (empty($k)) {
-                    // nothing selected option
-                } else if (strpos($k, $CFG->wwwroot.'/') === 0) {
-                    $k = str_replace($CFG->wwwroot, '', $k);
-                } else if (strpos($k, '/') !== 0) {
-                    debugging("Invalid url_select urls parameter: url '$k' is not local relative url!");
-                    continue;
-                }
-                $urls[$k] = $v;
-            }
-        }
-        $selected = $select->selected;
-        if (!empty($selected)) {
-            if (strpos($select->selected, $CFG->wwwroot.'/') === 0) {
-                $selected = str_replace($CFG->wwwroot, '', $selected);
-            } else if (strpos($selected, '/') !== 0) {
-                debugging("Invalid value of parameter 'selected': url '$selected' is not local relative url!");
-            }
-        }
-
-        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
-        $output .= html_writer::select($urls, 'jump', $selected, $select->nothing, $select->attributes);
-
-        if (!$select->showbutton) {
-            $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
-            $output .= html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
-            $nothing = empty($select->nothing) ? false : key($select->nothing);
-            $this->page->requires->yui_module('moodle-core-formautosubmit',
-                'M.core.init_formautosubmit',
-                array(array('selectid' => $select->attributes['id'], 'nothing' => $nothing))
-            );
-        } else {
-            $output .= html_writer::empty_tag('input', array('type'=>'submit', 'value'=>$select->showbutton));
-        }
-
-        // then div wrapper for xhtml strictness
-        $output = html_writer::tag('div', $output);
-
-        // now the form itself around it
-        $formattributes = array('method' => 'post',
-                                'action' => new moodle_url('/course/jumpto.php'),
-                                'id'     => $select->formid);
-        $output = html_writer::tag('form', $output, $formattributes);
-
-        // and finally one more wrapper with class
-        return html_writer::tag('div', $output, array('class' => $select->class));
+        return $this->render_from_template('core/url_select', $select->export_for_template($this));
     }
 
     /**

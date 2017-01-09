@@ -562,6 +562,10 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
             }
         }
 
+        // Basic initialization completed, show the elements.
+        Y.one('#scorm_toc').removeClass('loading');
+        Y.one('#scorm_toc_toggle').removeClass('loading');
+
         // TOC Resize handle.
         var layout_width = parseInt(Y.one('#scorm_layout').getComputedStyle('width'), 10);
         var scorm_resize_handle = new Y.Resize({

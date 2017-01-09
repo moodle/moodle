@@ -49,9 +49,10 @@ Feature: Basic recycle bin functionality
     And I should see "Deleting C2"
     And I should see "C2 has been completely deleted"
     And I press "Continue"
-    And I go to the courses management page
-    And I should not see "Course 2" in the "#course-listing" "css_element"
-    When I navigate to "Recycle bin" node in "Category: Miscellaneous"
+    And I am on course index
+    And I should see "Course 1"
+    And I should not see "Course 2"
+    When I navigate to "Recycle bin" in current page administration
     Then I should see "Course 2"
     And I should see "Contents will be permanently deleted after 14 days"
     And I click on "Restore" "link" in the "region-main" "region"

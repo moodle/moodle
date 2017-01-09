@@ -17,4 +17,5 @@ Other test packages
 * invalid.zip - zip file with an single html file, no SCORM config files, used for validation check.
 * validscorm.zip - non functional package with an imsmanifest.xml, used for validation check.
 * validaicc.zip - non functional package with AICC config files, used for validation check.
-* complexscorm.zip - copied from: https://github.com/jleyva/scorm-debugger
+* complexscorm.zip - copied from: https://github.com/jleyva/scorm-debugger.
+* singlescobasic_missingorg.zip - copy of scorm.com package but with missing org definition.

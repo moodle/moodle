@@ -544,7 +544,7 @@ class grade_report_user extends grade_report {
                 }
 
                 if ($this->showgrade) {
-                    $gradeitemdata['graderaw'] = '';
+                    $gradeitemdata['graderaw'] = null;
                     $gradeitemdata['gradehiddenbydate'] = false;
                     $gradeitemdata['gradeneedsupdate'] = $grade_grade->grade_item->needsupdate;
                     $gradeitemdata['gradeishidden'] = $grade_grade->is_hidden();
@@ -1250,7 +1250,7 @@ function gradereport_user_myprofile_navigation(core_user\output\myprofile\tree $
     $anyreport = has_capability('moodle/user:viewuseractivitiesreport', $usercontext);
 
     // Start capability checks.
-    if ($anyreport || ($course->showreports && $user->id == $USER->id)) {
+    if ($anyreport || $iscurrentuser) {
         // Add grade hardcoded grade report if necessary.
         $gradeaccess = false;
         $coursecontext = context_course::instance($course->id);

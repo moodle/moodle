@@ -153,7 +153,6 @@ Feature: View the course overview block on the dashboard and test it's functiona
     And I click on "Enable" "link" in the "Course meta link" "table_row"
     And I am on site homepage
     And I follow "Course 2"
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I add "Course meta link" enrolment method with:
       | Link course | C1 |
     And I log out

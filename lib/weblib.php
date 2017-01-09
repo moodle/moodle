@@ -1088,12 +1088,12 @@ function page_get_doc_link_path(moodle_page $page) {
  */
 function validate_email($address) {
 
-    return (preg_match('#^[-!\#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+'.
+    return (bool)preg_match('#^[-!\#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+'.
                  '(\.[-!\#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+)*'.
                   '@'.
                   '[-!\#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.'.
                   '[-!\#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+$#',
-                  $address));
+                  $address);
 }
 
 /**

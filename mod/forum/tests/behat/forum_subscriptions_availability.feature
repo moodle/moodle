@@ -46,18 +46,19 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Description       | Test forum description |
       | Subscription mode | Forced subscription |
     And I follow "Forced Forum 1"
-    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
+    And I navigate to "Show/edit current subscribers" in current page administration
     Then I should see "Student 1"
     And I should see "Teacher Teacher"
     And I should see "Student 2"
     And I should see "Student 3"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I follow "Forced Forum 1"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Grouping" "button" in the "Add restriction..." "dialogue"
     And I set the field with xpath "//select[@name='id']" to "Grouping 1"
     And I press "Save and display"
-    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
+    And I navigate to "Show/edit current subscribers" in current page administration
     And I should see "Student 1"
     And I should see "Teacher Teacher"
     And I should not see "Student 2"
@@ -71,7 +72,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Subscription mode | Forced subscription |
       | Visible           | Show |
     And I follow "Forced Forum 2"
-    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
+    And I navigate to "Show/edit current subscribers" in current page administration
     Then I should see "Teacher Teacher"
     And I should see "Student 1"
     And I should see "Student 2"
@@ -86,7 +87,7 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Subscription mode | Forced subscription |
       | Visible           | Hide |
     And I follow "Forced Forum 2"
-    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
+    And I navigate to "Show/edit current subscribers" in current page administration
     Then I should see "Teacher Teacher"
     And I should not see "Student 1"
     And I should not see "Student 2"
@@ -100,18 +101,19 @@ Feature: As a teacher I need to see an accurate list of subscribed users
       | Description       | Test forum description |
       | Subscription mode | Auto subscription |
     And I follow "Forced Forum 1"
-    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
+    And I navigate to "Show/edit current subscribers" in current page administration
     Then I should see "Student 1"
     And I should see "Teacher Teacher"
     And I should see "Student 2"
     And I should see "Student 3"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I follow "Forced Forum 1"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
     And I click on "Grouping" "button" in the "Add restriction..." "dialogue"
     And I set the field with xpath "//select[@name='id']" to "Grouping 1"
     And I press "Save and display"
-    And I click on "Show/edit current subscribers" "link" in the "Administration" "block"
+    And I navigate to "Show/edit current subscribers" in current page administration
     And I should see "Student 1"
     And I should see "Teacher Teacher"
     And I should not see "Student 2"

@@ -44,9 +44,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
   Scenario: Time limit expires
     Given I log out
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Security" node
-    And I follow "Site policies"
+    And I navigate to "Security > Site policies" in site administration
     And I set the field "Maximum time to edit posts" to "1 minutes"
     And I press "Save changes"
     And I am on site homepage

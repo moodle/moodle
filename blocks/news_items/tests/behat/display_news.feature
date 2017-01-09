@@ -13,7 +13,7 @@ Feature: Latest announcements block displays the course latest news
     And I create a course with:
       | Course full name | Course 1 |
       | Course short name | C1 |
-      | News items to show | 5 |
+      | Number of announcements | 5 |
     And I enrol "Teacher 1" user as "Teacher"
     And I log out
     And I log in as "teacher1"
@@ -34,15 +34,15 @@ Feature: Latest announcements block displays the course latest news
     Then I should see "Discussion One" in the "Latest announcements" "block"
     And I should see "Discussion Two" in the "Latest announcements" "block"
     And I should see "Discussion Three" in the "Latest announcements" "block"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | News items to show | 2 |
+      | Number of announcements | 2 |
     And I press "Save and display"
     And I should not see "Discussion One" in the "Latest announcements" "block"
     And I should see "Discussion Two" in the "Latest announcements" "block"
     And I should see "Discussion Three" in the "Latest announcements" "block"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
-      | News items to show | 0 |
+      | Number of announcements | 0 |
     And I press "Save and display"
     And "Latest announcements" "block" should not exist

@@ -148,6 +148,7 @@ class external extends external_api {
                 'compactlogourl' => new external_value(PARAM_URL, 'The site compact logo URL', VALUE_OPTIONAL),
                 'typeoflogin' => new external_value(PARAM_INT, 'The type of login. 1 for app, 2 for browser, 3 for embedded.'),
                 'launchurl' => new external_value(PARAM_URL, 'SSO login launch URL. Empty if it won\'t be used.', VALUE_OPTIONAL),
+                'mobilecssurl' => new external_value(PARAM_URL, 'Mobile custom CSS theme', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             )
         );

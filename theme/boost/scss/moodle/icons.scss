@@ -61,3 +61,8 @@ span:first-of-type > .icon {
 [data-action=toggle-drawer] .icon {
     margin: 0;
 }
+
+// Apply in special cases where the default icons styles does not work properly. Eg file picker buttons.
+.icon-no-spacing a > .icon {
+    margin: 0;
+}

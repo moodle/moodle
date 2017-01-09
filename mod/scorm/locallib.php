@@ -538,7 +538,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
 
     // Trigger updating grades based on a given set of SCORM CMI elements.
     $scorm = false;
-    if (strstr($element, '.score.raw') ||
+    if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw')) ||
         (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
          && in_array($track->value, array('completed', 'passed')))) {
         $scorm = $DB->get_record('scorm', array('id' => $scormid));
@@ -547,7 +547,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
     }
 
     // Trigger CMI element events.
-    if (strstr($element, '.score.raw') ||
+    if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw')) ||
         (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
         && in_array($track->value, array('completed', 'failed', 'passed')))) {
         if (!$scorm) {
@@ -560,7 +560,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
             'context' => context_module::instance($cm->id),
             'relateduserid' => $userid
         );
-        if (strstr($element, '.score.raw')) {
+        if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw'))) {
             // Create score submitted event.
             $event = \mod_scorm\event\scoreraw_submitted::create($data);
         } else {
@@ -1872,7 +1872,7 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
 
     if ($tocheader) {
         $result->toc = html_writer::start_div('yui3-g-r', array('id' => 'scorm_layout'));
-        $result->toc .= html_writer::start_div('yui3-u-1-5', array('id' => 'scorm_toc'));
+        $result->toc .= html_writer::start_div('yui3-u-1-5 loading', array('id' => 'scorm_toc'));
         $result->toc .= html_writer::div('', '', array('id' => 'scorm_toc_title'));
         $result->toc .= html_writer::start_div('', array('id' => 'scorm_tree'));
     }
@@ -1932,7 +1932,7 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
 
     if ($tocheader) {
         $result->toc .= html_writer::end_div().html_writer::end_div();
-        $result->toc .= html_writer::start_div('', array('id' => 'scorm_toc_toggle'));
+        $result->toc .= html_writer::start_div('loading', array('id' => 'scorm_toc_toggle'));
         $result->toc .= html_writer::tag('button', '', array('id' => 'scorm_toc_toggle_btn')).html_writer::end_div();
         $result->toc .= html_writer::start_div('', array('id' => 'scorm_content'));
         $result->toc .= html_writer::div('', '', array('id' => 'scorm_navpanel'));
@@ -2238,4 +2238,109 @@ function scorm_launch_sco($scorm, $sco, $cm, $context, $scourl) {
     $event->add_record_snapshot('scorm', $scorm);
     $event->add_record_snapshot('scorm_scoes', $sco);
     $event->trigger();
+}
+
+/**
+ * This is really a little language parser for AICC_SCRIPT
+ * evaluates the expression and returns a boolean answer
+ * see 2.3.2.5.1. Sequencing/Navigation Today  - from the SCORM 1.2 spec (CAM).
+ * Also used by AICC packages.
+ *
+ * @param string $prerequisites the aicc_script prerequisites expression
+ * @param array  $usertracks the tracked user data of each SCO visited
+ * @return boolean
+ */
+function scorm_eval_prerequisites($prerequisites, $usertracks) {
+
+    // This is really a little language parser - AICC_SCRIPT is the reference
+    // see 2.3.2.5.1. Sequencing/Navigation Today  - from the SCORM 1.2 spec.
+    $element = '';
+    $stack = array();
+    $statuses = array(
+        'passed' => 'passed',
+        'completed' => 'completed',
+        'failed' => 'failed',
+        'incomplete' => 'incomplete',
+        'browsed' => 'browsed',
+        'not attempted' => 'notattempted',
+        'p' => 'passed',
+        'c' => 'completed',
+        'f' => 'failed',
+        'i' => 'incomplete',
+        'b' => 'browsed',
+        'n' => 'notattempted'
+    );
+    $i = 0;
+
+    // Expand the amp entities.
+    $prerequisites = preg_replace('/&amp;/', '&', $prerequisites);
+    // Find all my parsable tokens.
+    $prerequisites = preg_replace('/(&|\||\(|\)|\~)/', '\t$1\t', $prerequisites);
+    // Expand operators.
+    $prerequisites = preg_replace('/&/', '&&', $prerequisites);
+    $prerequisites = preg_replace('/\|/', '||', $prerequisites);
+    // Now - grab all the tokens.
+    $elements = explode('\t', trim($prerequisites));
+
+    // Process each token to build an expression to be evaluated.
+    $stack = array();
+    foreach ($elements as $element) {
+        $element = trim($element);
+        if (empty($element)) {
+            continue;
+        }
+        if (!preg_match('/^(&&|\|\||\(|\))$/', $element)) {
+            // Create each individual expression.
+            // Search for ~ = <> X*{} .
+
+            // Sets like 3*{S34, S36, S37, S39}.
+            if (preg_match('/^(\d+)\*\{(.+)\}$/', $element, $matches)) {
+                $repeat = $matches[1];
+                $set = explode(',', $matches[2]);
+                $count = 0;
+                foreach ($set as $setelement) {
+                    if (isset($usertracks[$setelement]) &&
+                        ($usertracks[$setelement]->status == 'completed' || $usertracks[$setelement]->status == 'passed')) {
+                        $count++;
+                    }
+                }
+                if ($count >= $repeat) {
+                    $element = 'true';
+                } else {
+                    $element = 'false';
+                }
+            } else if ($element == '~') {
+                // Not maps ~.
+                $element = '!';
+            } else if (preg_match('/^(.+)(\=|\<\>)(.+)$/', $element, $matches)) {
+                // Other symbols = | <> .
+                $element = trim($matches[1]);
+                if (isset($usertracks[$element])) {
+                    $value = trim(preg_replace('/(\'|\")/', '', $matches[3]));
+                    if (isset($statuses[$value])) {
+                        $value = $statuses[$value];
+                    }
+                    if ($matches[2] == '<>') {
+                        $oper = '!=';
+                    } else {
+                        $oper = '==';
+                    }
+                    $element = '(\''.$usertracks[$element]->status.'\' '.$oper.' \''.$value.'\')';
+                } else {
+                    $element = 'false';
+                }
+            } else {
+                // Everything else must be an element defined like S45 ...
+                if (isset($usertracks[$element]) &&
+                    ($usertracks[$element]->status == 'completed' || $usertracks[$element]->status == 'passed')) {
+                    $element = 'true';
+                } else {
+                    $element = 'false';
+                }
+            }
+
+        }
+        $stack[] = ' '.$element.' ';
+    }
+    return eval('return '.implode($stack).';');
 }

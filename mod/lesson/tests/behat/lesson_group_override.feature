@@ -52,7 +52,7 @@ Feature: Lesson user override
 
   Scenario: Add, modify then delete a group override
     When I follow "Test lesson name"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group      | Group 1 |
@@ -75,7 +75,7 @@ Feature: Lesson user override
 
   Scenario: Duplicate a user override
     When I follow "Test lesson name"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group      | Group 1 |
@@ -97,11 +97,11 @@ Feature: Lesson user override
 
   Scenario: Allow a single group to have re-take the lesson
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group   | Group 1 |
@@ -136,12 +136,12 @@ Feature: Lesson user override
 
   Scenario: Allow a single group to have a different password
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Password protected lesson | Yes |
       | id_password               | moodle_rules |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group            | Group 1 |
@@ -181,7 +181,7 @@ Feature: Lesson user override
 
   Scenario: Allow a group to have a different due date
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_deadline_enabled | 1 |
       | deadline[day]       | 1 |
@@ -190,7 +190,7 @@ Feature: Lesson user override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group      | Group 1 |
@@ -216,7 +216,7 @@ Feature: Lesson user override
 
   Scenario: Allow a group to have a different start date
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_available_enabled | 1 |
       | available[day]       | 1 |
@@ -225,7 +225,7 @@ Feature: Lesson user override
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group       | Group 1 |
@@ -251,11 +251,11 @@ Feature: Lesson user override
 
   Scenario: Allow a single group to have multiple attempts at each question
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Re-takes allowed | 1 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group             | Group 1 |
@@ -291,7 +291,7 @@ Feature: Lesson user override
   @javascript
   Scenario: Add both a user and group override and verify that both are applied correctly
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_available_enabled | 1 |
       | available[day]       | 1 |
@@ -300,7 +300,8 @@ Feature: Lesson user override
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "Group overrides" node in "Lesson administration"
+    And I follow "Test lesson name"
+    And I navigate to "Group overrides" in current page administration
     And I press "Add group override"
     And I set the following fields to these values:
       | Override group       | Group 1 |
@@ -312,7 +313,8 @@ Feature: Lesson user override
       | available[minute]    | 00 |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I follow "Test lesson name"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user        | Student1 |

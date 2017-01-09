@@ -124,6 +124,7 @@ class api {
             'enablemobilewebservice' => $CFG->enablemobilewebservice,
             'maintenanceenabled' => $CFG->maintenance_enabled,
             'maintenancemessage' => $maintenancemessage,
+            'mobilecssurl' => !empty($CFG->mobilecssurl) ? $CFG->mobilecssurl : '',
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');

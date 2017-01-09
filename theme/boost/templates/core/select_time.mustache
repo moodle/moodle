@@ -15,7 +15,20 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/select_time
+
     Select time.
+
+    Example context (json):
+    {
+        "id": "test-id",
+        "name": "test-name",
+        "label": "Test label",
+        "options": [
+            {"name": "Option 1", "value": "1"},
+            {"name": "Option 2", "value": "2"}
+        ]
+    }
 }}
 <label for="{{id}}" class="sr-only">{{label}}</label>
 <select name="{{name}}" id="{{id}}" {{#attributes}} {{name}}="{{value}}"{{/attributes}} class="form-control">

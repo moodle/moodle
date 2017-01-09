@@ -329,7 +329,7 @@ $string['coursehelpforce'] = 'Force the course group mode to every activity in t
 $string['coursehelpformat'] = 'The course main page will be displayed in this format.';
 $string['coursehelphiddensections'] = 'How the hidden sections in the course are displayed to students.';
 $string['coursehelpmaximumupload'] = 'Define the largest size of file that can be uploaded in this course, limited by the site-wide setting.';
-$string['coursehelpnewsitemsnumber'] = 'Number of recent items from the news forum appearing in the latest news block on the course page. If set to zero, the latest news block will not be displayed.';
+$string['coursehelpnewsitemsnumber'] = 'Number of recent announcements appearing in the latest announcements block on the course page. If set to zero, the announcements forum will not be created.';
 $string['coursehelpnumberweeks'] = 'Number of sections in the course (applies to certain course formats only).';
 $string['coursehelpshowgrades'] = 'Enable the display of the gradebook. It does not prevent grades from being displayed within the individual activities.';
 $string['coursehidden'] = 'This course is currently unavailable to students';
@@ -666,20 +666,14 @@ If you need help, please contact the site administrator,
 {$a->admin}';
 $string['emailpasswordchangeinfodisabled'] = 'Hi {$a->firstname},
 
-Someone (probably you) has requested a new password for your
-account on \'{$a->sitename}\'.
+Someone (probably you) has requested a new password for your account on \'{$a->sitename}\'.
 
-Unfortunately your account on this site is disabled and can not be reset,
-please contact the site administrator,
-{$a->admin}';
+Unfortunately your account on this site is disabled, so the password cannot be reset. Please contact the site administrator {$a->admin}.';
 $string['emailpasswordchangeinfofail'] = 'Hi {$a->firstname},
 
-Someone (probably you) has requested a new password for your
-account on \'{$a->sitename}\'.
+Someone (probably you) has requested a new password for your account on \'{$a->sitename}\'.
 
-Unfortunately passwords can not be reset on this site,
-please contact the site administrator,
-{$a->admin}';
+Unfortunately passwords cannot be reset on this site. Please contact the site administrator {$a->admin}.';
 $string['emailpasswordchangeinfosubject'] = '{$a}: Change password information';
 $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
 An email containing your new password has been sent to your address at<br /><b>{$a->email}</b>.<br />
@@ -705,7 +699,7 @@ $string['emailresetconfirmsent'] = 'An email has been sent to your address at <b
 If you continue to have difficulty, contact the site administrator.';
 $string['emailtoprivatefiles'] = 'You can also e-mail files as attachments straight to your private files space. Simply attach your files to an e-mail and send it to {$a}';
 $string['emailtoprivatefilesdenied'] = 'Your administrator has disabled the option to upload your own private files.';
-$string['emailvia'] = '{$a->name} via {$a->url}';
+$string['emailvia'] = '{$a->name} (via {$a->siteshortname})';
 $string['emptydragdropregion'] = 'empty region';
 $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
@@ -842,7 +836,7 @@ $string['frontpagedescription'] = 'Front page summary';
 $string['frontpagedescriptionhelp'] = 'This summary can be displayed on the front page using the course/site summary block.';
 $string['frontpageformat'] = 'Front page format';
 $string['frontpageformatloggedin'] = 'Front page format when logged in';
-$string['frontpagenews'] = 'News items';
+$string['frontpagenews'] = 'Announcements';
 $string['frontpagesettings'] = 'Front page settings';
 $string['fulllistofcourses'] = 'All courses';
 $string['fullname'] = 'Full name'; /* @deprecated - Use fullnamecourse or fullnameuser or some own context specific string. */
@@ -1267,9 +1261,13 @@ $string['newpicture_help'] = 'To add a new picture, browse and select an image (
 $string['newpictureusernotsetup'] = 'A profile picture can only be added once all required profile information has been saved.';
 $string['newsectionname'] = 'New name for section {$a}';
 $string['newsitem'] = 'news item';
-$string['newsitems'] = 'news items';
-$string['newsitemsnumber'] = 'News items to show';
-$string['newsitemsnumber_help'] = 'This setting determines how many recent items appear in the latest news block on the course page. If set to "0 news items" then the latest news block will not be displayed.';
+$string['newsitems'] = 'announcements';
+$string['newsitemsnumber'] = 'Number of announcements';
+$string['newsitemsnumber_help'] = 'The announcements forum is a special forum which is created automatically in the course, has forced subscription set by default, and only users with appropriate permissions (by default teachers) can post in it.
+
+This setting determines how many recent announcements appear in the latest announcements block.
+
+If an announcements forum is not required in the course, this setting should be set to zero.';
 $string['newuser'] = 'New user';
 $string['newusernewpasswordsubj'] = 'New user account';
 $string['newusernewpasswordtext'] = 'Hi {$a->firstname},
@@ -1732,7 +1730,7 @@ $string['sitehome'] = 'Site home';
 $string['sitelegacyfiles'] = 'Legacy site files';
 $string['sitelogs'] = 'Site logs';
 $string['sitemessage'] = 'Message users';
-$string['sitenews'] = 'Site news';
+$string['sitenews'] = 'Site announcements';
 $string['sitepages'] = 'Site pages';
 $string['sitepartlist'] = 'You do not have the required permissions to view the participants list';
 $string['sitepartlist0'] = 'You must be a site teacher to be allowed to see the site participants list';

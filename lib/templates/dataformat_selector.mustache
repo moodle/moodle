@@ -17,8 +17,7 @@
 {{!
     @template core/dataformat_selector
 
-    Template for all html emails. Note that it may wrap content formatted
-    elsewhere in another a module template.
+    Template for dataformat selection and download form.
 
     Context variables required for this template:
     * label
@@ -28,6 +27,16 @@
     * options
     * sesskey
     * submit
+
+    Example context (json):
+    {
+        "base": "http://example.org/",
+        "name": "test",
+        "label": "Download table data as",
+        "params": false,
+        "options": [{"label": "CSV", "name": "csv"}, {"label": "Excel", "name": "excel"}],
+        "submit": "Download"
+    }
 }}
 <form method="get" action="{{base}}" class="dataformatselector">
     <div class="mdl-align">

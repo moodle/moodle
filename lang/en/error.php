@@ -560,6 +560,7 @@ $string['usernotaddederror'] = 'User not added - error';
 $string['usernotaddedregistered'] = 'User not added - already registered';
 $string['usernotavailable'] = 'The details of this user are not available to you';
 $string['usernotdeletedadmin'] = 'User not deleted - can not delete administrator accounts';
+$string['usernotdeleteddeleted'] = 'This user has already been deleted.';
 $string['usernotdeletederror'] = 'User not deleted - error';
 $string['usernotdeletedmissing'] = 'User not deleted - could not find the username';
 $string['usernotdeletedoff'] = 'User not deleted - deleting not allowed';

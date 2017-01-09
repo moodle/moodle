@@ -33,8 +33,6 @@ Feature: Verify that all form fields values can be get and set
       | activity | course | idnumber | name | intro | firstpagetitle | wikimode | visible |
       | wiki | C1 | wiki1 | Test this one | Test this one | Test this one | collaborative | 0 |
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Appearance" node
     And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Reset" node in "Course administration"
@@ -60,9 +58,8 @@ Feature: Verify that all form fields values can be get and set
       | HTML format | Student page contents |
     And I press "Save"
     Then I should see "Student page contents" in the "region-main" "region"
-    And  I click on "Edit" "link" in the "Administration" "block"
     # Select (multi-select) - Checking "I set the field".
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     # Checkbox - Checking "I set the field".
     And I set the field "Display description on course page" to "1"
@@ -75,7 +72,7 @@ Feature: Verify that all form fields values can be get and set
     And I press "Save and return to course"
     And I should see "Test this one"
     And I follow "Test this one"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     # Checkbox - Checking "the field matches value" and "the following fields match these values".
     And the following fields match these values:
       | Display description on course page | 1 |
@@ -91,7 +88,7 @@ Feature: Verify that all form fields values can be get and set
     # Select (simple) - Checking "I set the field".
     And I set the field "Group mode" to "Separate groups"
     And I press "Save and display"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And the following fields match these values:
       | Default format | NWiki |
       | Group mode | Separate groups |
@@ -134,8 +131,7 @@ Feature: Verify that all form fields values can be get and set
   @javascript
   Scenario: with JS enabled all form fields getters and setters works as expected
     Then I follow "Course 1"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     # Select (multi-select & AJAX) - Checking "I set the field" and "select box should contain".
     And I set the field "groups" to "Group 2"
     And the "members" select box should contain "Student 2"
@@ -158,7 +154,7 @@ Feature: Verify that all form fields values can be get and set
     And the "available[day]" "field" should be enabled
     And the field "deadline[enabled]" matches value "1"
     And I press "Save and display"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And the field "available[enabled]" matches value "1"
     And the "available[day]" "field" should be enabled
     And the field "deadline[enabled]" matches value "1"

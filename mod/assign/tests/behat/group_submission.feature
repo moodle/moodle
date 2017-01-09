@@ -35,26 +35,26 @@ Feature: Group assignment submissions
       | Students submit in groups | Yes |
       | Group mode | No groups |
     And I follow "Test assignment name"
-    When I click on "View all submissions" "link" in the "Administration" "block"
+    When I navigate to "View all submissions" in current page administration
     Then "//tr[contains(., 'Student 0')][contains(., 'Default group')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 1')][contains(., 'Default group')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 3')][contains(., 'Default group')]" "xpath_element" should exist
-    And I follow "Edit settings"
+    And I follow "Test assignment name"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and return to course"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and display"
-    And I expand "Users" node
-    And I follow "Groups"
+    And I navigate to "Users > Groups" in current page administration
     And I add "Student 0 (student0@example.com)" user to "Group 1" group members
     And I add "Student 1 (student1@example.com)" user to "Group 1" group members
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exist
     And "//tr[contains(., 'Student 1')][contains(., 'Group 1')]" "xpath_element" should exist
     And I should not see "Student 2"
@@ -113,7 +113,7 @@ Feature: Group assignment submissions
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    When I click on "View all submissions" "link" in the "Administration" "block"
+    When I navigate to "View all submissions" in current page administration
     Then "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 2" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 3" row "Status" column of "generaltable" table should not contain "Submitted for grading"
@@ -130,7 +130,7 @@ Feature: Group assignment submissions
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I click on "View all submissions" "link" in the "Administration" "block"
+    And I navigate to "View all submissions" in current page administration
     And "Student 1" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 2" row "Status" column of "generaltable" table should contain "Submitted for grading"
     And "Student 3" row "Status" column of "generaltable" table should contain "Submitted for grading"

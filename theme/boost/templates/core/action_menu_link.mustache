@@ -15,7 +15,16 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template core/action_menu_link
+
     Action menu link.
+
+    Example context (json):
+    {
+        "text": "Example link text",
+        "showtext": true,
+        "url": "http://example.com/link"
+    }
 }}
 {{^disabled}}
     <a href="{{url}}" class="{{classes}}" {{#attributes}}{{name}}={{#quote}}{{value}}{{/quote}}{{/attributes}} {{#showtext}}aria-labelledby="actionmenuaction-{{instance}}"{{/showtext}}>{{#icon}}{{>core/pix_icon}}{{/icon}}{{#showtext}}<span class="menu-action-text" id="actionmenuaction-{{instance}}">{{{text}}}</span>{{/showtext}}</a>

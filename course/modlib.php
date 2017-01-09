@@ -125,12 +125,11 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     if (!$returnfromfunc or !is_number($returnfromfunc)) {
         // Undo everything we can. This is not necessary for databases which
         // support transactions, but improves consistency for other databases.
-        $modcontext = context_module::instance($moduleinfo->coursemodule);
         context_helper::delete_instance(CONTEXT_MODULE, $moduleinfo->coursemodule);
         $DB->delete_records('course_modules', array('id'=>$moduleinfo->coursemodule));
 
-        if ($e instanceof moodle_exception) {
-            throw $e;
+        if ($returnfromfunc instanceof moodle_exception) {
+            throw $returnfromfunc;
         } else if (!is_number($returnfromfunc)) {
             print_error('invalidfunction', '', course_get_url($course, $moduleinfo->section));
         } else {
@@ -145,6 +144,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     // Update embedded links and save files.
     $modcontext = context_module::instance($moduleinfo->coursemodule);
     if (!empty($introeditor)) {
+        // This will respect a module that has set a value for intro in it's modname_add_instance() function.
+        $introeditor['text'] = $moduleinfo->intro;
+
         $moduleinfo->intro = file_save_draft_area_files($introeditor['itemid'], $modcontext->id,
                                                       'mod_'.$moduleinfo->modulename, 'intro', 0,
                                                       array('subdirs'=>true), $introeditor['text']);

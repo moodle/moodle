@@ -107,7 +107,7 @@ $string['groupmembersselected'] = 'Members of selected group';
 $string['groupmode'] = 'Group mode';
 $string['groupmode_help'] = 'This setting has 3 options:
 
-* No groups - There are no sub groups, everyone is part of one big community
+* No groups
 * Separate groups - Each group member can only see their own group, others are invisible
 * Visible groups - Each group member works in their own group, but can also see other groups
 

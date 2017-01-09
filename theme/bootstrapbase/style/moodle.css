@@ -895,89 +895,6 @@ tr.flagged-tag a {
   border: 0 solid black;
 }
 /**
-* Smart Select Element
-*/
-.smartselect {
-  position: absolute;
-}
-.smartselect .smartselect_mask {
-  background-color: #fff;
-}
-.smartselect ul {
-  padding: 0;
-  margin: 0;
-}
-.smartselect ul li {
-  list-style: none;
-}
-.smartselect .smartselect_menu {
-  margin-right: 5px;
-}
-.safari .smartselect .smartselect_menu {
-  margin-left: 2px;
-}
-.smartselect .smartselect_menu,
-.smartselect .smartselect_submenu {
-  border: 1px solid #000;
-  background-color: #fff;
-  display: none;
-}
-.smartselect .smartselect_menu.visible,
-.smartselect .smartselect_submenu.visible {
-  display: block;
-}
-.smartselect .smartselect_menu_content ul li {
-  position: relative;
-  padding: 2px 5px;
-}
-.smartselect .smartselect_menu_content ul li a {
-  color: #333;
-  text-decoration: none;
-}
-.smartselect .smartselect_menu_content ul li a.selectable {
-  color: inherit;
-}
-.smartselect .smartselect_submenuitem {
-  background-image: url([[pix:moodle|t/collapsed]]);
-  background-repeat: no-repeat;
-  background-position: 100%;
-}
-/** Spanning mode */
-.smartselect.spanningmenu .smartselect_submenu {
-  position: absolute;
-  top: -1px;
-  left: 100%;
-}
-.smartselect.spanningmenu .smartselect_submenu a {
-  white-space: nowrap;
-  padding-right: 16px;
-}
-.smartselect.spanningmenu .smartselect_menu_content ul li a.selectable:hover {
-  text-decoration: underline;
-}
-/** Compact mode */
-.smartselect.compactmenu .smartselect_submenu {
-  position: relative;
-  margin: 2px -3px;
-  margin-left: 10px;
-  display: none;
-  border-width: 0;
-  z-index: 1010;
-}
-.smartselect.compactmenu .smartselect_submenu.visible {
-  display: block;
-}
-.smartselect.compactmenu .smartselect_menu {
-  z-index: 1000;
-  overflow: hidden;
-}
-.smartselect.compactmenu .smartselect_submenu .smartselect_submenu {
-  z-index: 1020;
-}
-.smartselect.compactmenu .smartselect_submenuitem:hover > .smartselect_menuitem_label {
-  font-weight: bold;
-}
-/**
 * Registration
 */
 #page-admin-registration-register .registration_textfield {
@@ -1896,31 +1813,30 @@ table.collection tbody > tr:nth-child(odd) > td,
 table.collection tbody > tr:nth-child(odd) > th {
   background-color: #f9f9f9;
 }
-table.collection .name {
+table.collection td.name {
   text-align: left;
   vertical-align: middle;
 }
-table.collection .awards {
-  width: 10%;
-  text-align: center;
-  vertical-align: middle;
-}
-table.collection .criteria {
-  width: 40%;
-  text-align: left;
-  vertical-align: top;
-}
-table.collection .badgeimage,
-table.collection .status {
+table.collection td.awards {
   width: 15%;
   text-align: center;
   vertical-align: middle;
 }
-table.collection .description {
+table.collection td.criteria {
+  width: 40%;
+  text-align: left;
+  vertical-align: top;
+}
+table.collection td.status {
+  width: 15%;
+  text-align: center;
+  vertical-align: middle;
+}
+table.collection td.description {
   width: 25%;
   text-align: left;
 }
-table.collection .actions {
+table.collection td.actions {
   width: 11em;
   text-align: center;
   vertical-align: middle;
@@ -2487,90 +2403,17 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 .path-admin .admintable .leftalign {
   text-align: left;
 }
-.environmenttable p.warn {
+.environmenttable .warn {
   background-color: #fcf8e3;
   color: #8a6d3b;
 }
-.environmenttable .error,
-.environmenttable span.warn,
-.environmenttable .ok {
-  display: inline-block;
-  padding: 2px 4px;
-  font-size: 11.844px;
-  font-weight: bold;
-  line-height: 14px;
-  color: #fff;
-  vertical-align: baseline;
-  white-space: nowrap;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #999;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-.environmenttable .error:empty,
-.environmenttable span.warn:empty,
-.environmenttable .ok:empty {
-  display: none;
-}
-.environmenttable .error-important,
-.environmenttable span.warn-important,
-.environmenttable .ok-important {
-  background-color: #b94a48;
-}
-.environmenttable .error-important[href],
-.environmenttable span.warn-important[href],
-.environmenttable .ok-important[href] {
-  background-color: #953b39;
-}
-.environmenttable .error-warning,
-.environmenttable span.warn-warning,
-.environmenttable .ok-warning {
-  background-color: #f89406;
-}
-.environmenttable .error-warning[href],
-.environmenttable span.warn-warning[href],
-.environmenttable .ok-warning[href] {
-  background-color: #c67605;
-}
-.environmenttable .error-success,
-.environmenttable span.warn-success,
-.environmenttable .ok-success {
-  background-color: #468847;
-}
-.environmenttable .error-success[href],
-.environmenttable span.warn-success[href],
-.environmenttable .ok-success[href] {
-  background-color: #356635;
-}
-.environmenttable .error-info,
-.environmenttable span.warn-info,
-.environmenttable .ok-info {
-  background-color: #3a87ad;
-}
-.environmenttable .error-info[href],
-.environmenttable span.warn-info[href],
-.environmenttable .ok-info[href] {
-  background-color: #2d6987;
-}
-.environmenttable .error-inverse,
-.environmenttable span.warn-inverse,
-.environmenttable .ok-inverse {
-  background-color: #333;
-}
-.environmenttable .error-inverse[href],
-.environmenttable span.warn-inverse[href],
-.environmenttable .ok-inverse[href] {
-  background-color: #1a1a1a;
-}
 .environmenttable .error {
-  background-color: #b94a48;
-}
-.environmenttable span.warn {
-  background-color: #f89406;
+  background-color: #f2dede;
+  color: #b94a48;
 }
 .environmenttable .ok {
-  background-color: #468847;
+  background-color: #dff0d8;
+  color: #468847;
 }
 .path-admin .admintable.environmenttable .name,
 .path-admin .admintable.environmenttable .info,
@@ -3307,6 +3150,9 @@ img.iconsmall {
 #adminsettings .form-overridden {
   color: #3a87ad;
   background-color: #d9edf7;
+}
+#overriderolestable .overriddenpermission {
+  background-color: #fcf8e3;
 }
 /* calendar.less */
 .calendar_event_course {
@@ -5516,10 +5362,18 @@ a.ygtvspacer:hover {
 }
 .fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {
   background: url('[[pix:theme|fp/link]]') no-repeat;
+  /*rtl:raw:
+    transform: scaleX(-1);
+    */
+  /*rtl:ignore*/
   background-position: bottom right;
 }
 .fp-iconview .fp-file.fp-isreference .fp-reficons2 {
   background: url('[[pix:theme|fp/alias]]') no-repeat;
+  /*rtl:raw:
+    transform: scaleX(-1);
+    */
+  /*rtl:ignore*/
   background-position: bottom left;
 }
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {
@@ -5551,6 +5405,9 @@ a.ygtvspacer:hover {
   background: url('[[pix:theme|fp/link_sm]]') no-repeat 0 0;
   height: 100%;
   width: 100%;
+  /*rtl:raw:
+    transform: scaleX(-1);
+    */
   position: absolute;
   top: 8px;
   left: 17px;
@@ -5560,6 +5417,9 @@ a.ygtvspacer:hover {
   background: url('[[pix:theme|fp/alias_sm]]') no-repeat 0 0;
   height: 100%;
   width: 100%;
+  /*rtl:raw:
+    transform: scaleX(-1);
+    */
   position: absolute;
   top: 9px;
   left: -6px;
@@ -7673,6 +7533,7 @@ body.path-question-type .mform fieldset.hidden {
 #groupeditform .groups select,
 #groupeditform .members select {
   min-width: 175px;
+  max-width: 90%;
 }
 /** Preferences page */
 .preferences-group ul {
@@ -14174,42 +14035,20 @@ fieldset.coursesearchbox label {
 }
 /* Section and module editing forms contain special JS components for the
    availability system (if enabled). */
-#fitem_id_availabilityconditionsjson {
-  /* Eye icon in front of an item and delete icon after it. */
-  /* Hidden eye icon still takes up space. */
-  /* Eye icons in front of child lists are aligned specially. */
-  /* Add button lines up with child elements. */
-  /* Nested section is grey. */
-  /* Second (and more) levels of nested sections are white. */
-  /* Connecting text needs to be indented. */
-}
-#fitem_id_availabilityconditionsjson *[aria-hidden=true] {
+#id_availabilityconditionsjson[aria-hidden=true],
+.availability-field [aria-hidden=true] {
   display: none;
 }
-#fitem_id_availabilityconditionsjson select,
-#fitem_id_availabilityconditionsjson input[type=text] {
-  position: relative;
-  top: 4px;
-}
-#fitem_id_availabilityconditionsjson label {
-  display: inline;
-}
-#fitem_id_availabilityconditionsjson br + .availability-group {
-  display: inline-block;
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-#fitem_id_availabilityconditionsjson .availability-group {
+.availability-eye,
+.availability-delete {
   margin-right: 8px;
 }
-#fitem_id_availabilityconditionsjson .availability-item {
-  margin-bottom: 6px;
+/* Eye icons in front of child lists are aligned specially. */
+.availability-list > .availability-eye img {
+  vertical-align: top;
+  margin-top: 12px;
 }
-#fitem_id_availabilityconditionsjson .availability-none {
-  margin-left: 20px;
-  margin-bottom: 4px;
-}
-#fitem_id_availabilityconditionsjson .availability-plugincontrols {
+.availability-plugincontrols {
   min-height: 40px;
   padding: 2px 0 0 4px;
   background: none repeat scroll 0% 0% #f5f5f5;
@@ -14218,26 +14057,15 @@ fieldset.coursesearchbox label {
   display: inline-block;
   margin-right: 8px;
 }
-#fitem_id_availabilityconditionsjson .availability-plugincontrols select {
+.availability-plugincontrols select {
   width: auto;
   max-width: 200px;
 }
-#fitem_id_availabilityconditionsjson .availability-eye,
-#fitem_id_availabilityconditionsjson .availability-delete {
-  margin-right: 8px;
+.availability-field .availability-plugincontrols .availability-group select {
+  max-width: 12rem;
 }
-#fitem_id_availabilityconditionsjson .availability-eye[aria-hidden=true] {
-  display: inline;
-  visibility: hidden;
-}
-#fitem_id_availabilityconditionsjson .availability-list > .availability-eye img {
-  vertical-align: top;
-  margin-top: 12px;
-}
-#fitem_id_availabilityconditionsjson .availability-button {
-  margin-left: 15px;
-}
-#fitem_id_availabilityconditionsjson .availability-childlist > .availability-inner {
+/* Nested section is grey. */
+.availability-childlist > .availability-inner {
   display: inline-block;
   background: #f5f5f5;
   border: 1px solid #eee;
@@ -14245,12 +14073,9 @@ fieldset.coursesearchbox label {
   padding: 6px;
   margin-bottom: 6px;
 }
-#fitem_id_availabilityconditionsjson .availability-childlist .availability-childlist > .availability-inner {
+/* Second (and more) levels of nested sections are white. */
+.availability-childlist .availability-childlist > .availability-inner {
   background: white;
-}
-#fitem_id_availabilityconditionsjson .availability-connector {
-  margin-left: 20px;
-  margin-bottom: 6px;
 }
 /* Default form styling colours all text red. With availability conditions
    this looks excessive as we show 'Invalid' markers in specific places. */

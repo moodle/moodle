@@ -45,16 +45,12 @@ class behat_theme_boost_behat_admin extends behat_admin {
 
         foreach ($data as $label => $value) {
 
-            // We expect admin block to be visible, otherwise go to homepage.
-            if (!$this->getSession()->getPage()->find('css', '.block_settings')) {
-                $this->getSession()->visit($this->locate_path('/'));
-                $this->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
-            }
+            $this->execute('behat_navigation::i_select_from_flat_navigation_drawer', [get_string('administrationsite')]);
 
             // Search by label.
-            $searchbox = $this->find_field(get_string('searchinsettings', 'admin'));
+            $searchbox = $this->find_field(get_string('query', 'admin'));
             $searchbox->setValue($label);
-            $submitsearch = $this->find('css', 'form.adminsearchform input[type=submit]');
+            $submitsearch = $this->find('css', 'form input[type=submit][name=search]');
             $submitsearch->press();
 
             $this->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);

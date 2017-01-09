@@ -48,7 +48,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
       | id_jumpto_1 | This page |
     And I press "Save page"
     When I follow "Course 1"
-    And I follow "Participants"
+    And I navigate to course participants
     And I follow "Student 1"
     And I follow "Complete report"
     Then I should see "No attempts have been made on this lesson"
@@ -92,7 +92,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I log out
     Then I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Participants"
+    And I navigate to course participants
     And I follow "Student 1"
     And I follow "Complete report"
     And I should see "Lesson has been started, but not yet completed"
@@ -164,7 +164,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I log out
     Then I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Participants"
+    And I navigate to course participants
     And I follow "Student 1"
     And I follow "Complete report"
     And I should see "Grade: 50.00 / 100.00"
@@ -200,7 +200,7 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I log out
     Then I log in as "teacher1"
     And I follow "Course 1"
-    And I follow "Participants"
+    And I navigate to course participants
     And I follow "Student 1"
     And I follow "Complete report"
     And I should see "Completed"

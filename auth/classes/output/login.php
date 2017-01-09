@@ -151,6 +151,7 @@ class login implements renderable, templatable {
         $data->rememberusername = $this->rememberusername;
         $data->passwordautocomplete = $this->passwordautocomplete;
         $data->signupurl = $this->signupurl->out(false);
+        $data->username = $this->username;
 
         return $data;
     }
