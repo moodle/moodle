@@ -2272,8 +2272,13 @@ class global_navigation extends navigation_node {
             return false;
         }
         // Add a branch for the current user.
-        $canseefullname = has_capability('moodle/site:viewfullnames', $coursecontext);
-        $usernode = $usersnode->add(fullname($user, $canseefullname), $userviewurl, self::TYPE_USER, null, 'user' . $user->id);
+        // Only reveal user details if $user is the current user, or a user to which the current user has access.
+        if ($USER->id != $user->id && !has_capability('moodle/user:viewdetails', $coursecontext)) {
+            $usernode = $usersnode->add(get_string('user'));
+        } else {
+            $canseefullname = has_capability('moodle/site:viewfullnames', $coursecontext);
+            $usernode = $usersnode->add(fullname($user, $canseefullname), $userviewurl, self::TYPE_USER, null, 'user' . $user->id);
+        }
         if ($this->page->context->contextlevel == CONTEXT_USER && $user->id == $this->page->context->instanceid) {
             $usernode->make_active();
         }
