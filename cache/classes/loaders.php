@@ -213,7 +213,7 @@ class cache implements cache_loader {
         $this->definition = $definition;
         $this->store = $store;
         $this->storetype = get_class($store);
-        $this->perfdebug = !empty($CFG->perfdebug);
+        $this->perfdebug = (!empty($CFG->perfdebug) and $CFG->perfdebug > 7);
         if ($loader instanceof cache_loader) {
             $this->loader = $loader;
             // Mark the loader as a sub (chained) loader.
