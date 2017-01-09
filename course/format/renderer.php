@@ -413,7 +413,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     }
 
     /**
-     * Generate a summary of a section for display on the 'coruse index page'
+     * Generate a summary of a section for display on the 'course index page'
      *
      * @param stdClass $section The course_section entry from DB
      * @param stdClass $course The course entry from DB
@@ -577,7 +577,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * Show if something is on on the course clipboard (moving around)
      *
      * @param stdClass $course The course entry from DB
-     * @param int $sectionno The section number in the coruse which is being dsiplayed
+     * @param int $sectionno The section number in the course which is being displayed
      * @return string HTML to output.
      */
     protected function course_activity_clipboard($course, $sectionno = null) {
@@ -607,7 +607,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      *
      * @param stdClass $course The course entry from DB
      * @param array $sections The course_sections entries from the DB
-     * @param int $sectionno The section number in the coruse which is being dsiplayed
+     * @param int $sectionno The section number in the course which is being displayed
      * @return array associative array with previous and next section link
      */
     protected function get_nav_links($course, $sections, $sectionno) {
@@ -651,7 +651,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate the header html of a stealth section
      *
-     * @param int $sectionno The section number in the coruse which is being dsiplayed
+     * @param int $sectionno The section number in the course which is being displayed
      * @return string HTML to output.
      */
     protected function stealth_section_header($sectionno) {
@@ -681,7 +681,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
     /**
      * Generate the html for a hidden section
      *
-     * @param int $sectionno The section number in the coruse which is being dsiplayed
+     * @param int $sectionno The section number in the course which is being displayed
      * @param int|stdClass $courseorid The course to get the section name for (object or just course id)
      * @return string HTML to output.
      */
