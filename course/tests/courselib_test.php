@@ -2016,7 +2016,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Create the course with sections.
         $course = $this->getDataGenerator()->create_course(array('numsections' => 10), array('createsections' => true));
-        $sections = $DB->get_records('course_sections', array('course' => $course->id));
+        $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section');
         $coursecontext = context_course::instance($course->id);
         $section = array_pop($sections);
         course_delete_section($course, $section);
