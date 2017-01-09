@@ -2170,4 +2170,57 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertEquals(0, $endstats[$requestid]['stores']['cachestore_static']['sets'] -
             $startstats[$requestid]['stores']['cachestore_static']['sets']);
     }
+
+    public function test_performance_debug_off() {
+        global $CFG;
+        $this->resetAfterTest(true);
+        $CFG->perfdebug = 7;
+
+        $instance = cache_config_testing::instance();
+        $applicationid = 'phpunit/applicationperfoff';
+        $instance->phpunit_add_definition($applicationid, array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'applicationperfoff'
+        ));
+        $sessionid = 'phpunit/sessionperfoff';
+        $instance->phpunit_add_definition($sessionid, array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'sessionperfoff'
+        ));
+        $requestid = 'phpunit/requestperfoff';
+        $instance->phpunit_add_definition($requestid, array(
+            'mode' => cache_store::MODE_REQUEST,
+            'component' => 'phpunit',
+            'area' => 'requestperfoff'
+        ));
+
+        $application = cache::make('phpunit', 'applicationperfoff');
+        $session = cache::make('phpunit', 'sessionperfoff');
+        $request = cache::make('phpunit', 'requestperfoff');
+
+        // Check that no stats are recorded for these definitions yet.
+        $stats = cache_helper::get_stats();
+        $this->assertArrayNotHasKey($applicationid, $stats);
+        $this->assertArrayNotHasKey($sessionid, $stats);
+        $this->assertArrayNotHasKey($requestid, $stats);
+
+        // Trigger cache misses, cache sets and cache hits.
+        $this->assertFalse($application->get('missMe'));
+        $this->assertTrue($application->set('setMe', 1));
+        $this->assertEquals(1, $application->get('setMe'));
+        $this->assertFalse($session->get('missMe'));
+        $this->assertTrue($session->set('setMe', 3));
+        $this->assertEquals(3, $session->get('setMe'));
+        $this->assertFalse($request->get('missMe'));
+        $this->assertTrue($request->set('setMe', 4));
+        $this->assertEquals(4, $request->get('setMe'));
+
+        // Check that no stats are being recorded for these definitions.
+        $endstats = cache_helper::get_stats();
+        $this->assertArrayNotHasKey($applicationid, $endstats);
+        $this->assertArrayNotHasKey($sessionid, $endstats);
+        $this->assertArrayNotHasKey($requestid, $endstats);
+    }
 }
