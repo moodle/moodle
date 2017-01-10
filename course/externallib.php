@@ -1055,6 +1055,7 @@ class core_course_external extends external_api {
                                             "blocks" (int) Include course blocks (default to 1 that is equal to yes),
                                             "filters" (int) Include course filters  (default to 1 that is equal to yes),
                                             "users" (int) Include users (default to 0 that is equal to no),
+                                            "enrolments" (int) Include enrolment methods (default to 1 - restore only with users),
                                             "role_assignments" (int) Include role assignments  (default to 0 that is equal to no),
                                             "comments" (int) Include user comments  (default to 0 that is equal to no),
                                             "userscompletion" (int) Include user course completion information  (default to 0 that is equal to no),
@@ -1119,6 +1120,7 @@ class core_course_external extends external_api {
             'blocks' => 1,
             'filters' => 1,
             'users' => 0,
+            'enrolments' => backup::ENROL_WITHUSERS,
             'role_assignments' => 0,
             'comments' => 0,
             'userscompletion' => 0,
@@ -1174,7 +1176,9 @@ class core_course_external extends external_api {
         backup::INTERACTIVE_NO, backup::MODE_SAMESITE, $USER->id);
 
         foreach ($backupsettings as $name => $value) {
-            $bc->get_plan()->get_setting($name)->set_value($value);
+            if ($setting = $bc->get_plan()->get_setting($name)) {
+                $bc->get_plan()->get_setting($name)->set_value($value);
+            }
         }
 
         $backupid       = $bc->get_backupid();

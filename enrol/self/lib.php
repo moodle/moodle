@@ -561,6 +561,7 @@ class enrol_self_plugin extends enrol_plugin {
             $merge = array(
                 'courseid'   => $data->courseid,
                 'enrol'      => $this->get_name(),
+                'status'     => $data->status,
                 'roleid'     => $data->roleid,
             );
         }

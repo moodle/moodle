@@ -203,6 +203,20 @@ abstract class restore_check {
                 $overwritesetting = $restore_controller->get_plan()->get_setting('overwrite_conf');
                 $overwritesetting->set_status(base_setting::LOCKED_BY_PERMISSION);
             }
+
+            // Ensure the user has the capability to manage enrolment methods. If not we want to unset and lock
+            // the setting so that they cannot change it.
+            $hasmanageenrolcap = has_capability('moodle/course:enrolconfig', $coursectx, $userid);
+            if (!$hasmanageenrolcap) {
+                if ($restore_controller->get_plan()->setting_exists('enrolments')) {
+                    $enrolsetting = $restore_controller->get_plan()->get_setting('enrolments');
+                    if ($enrolsetting->get_value() != backup::ENROL_NEVER) {
+                        $enrolsetting->set_status(base_setting::NOT_LOCKED); // In case it was locked earlier.
+                        $enrolsetting->set_value(backup::ENROL_NEVER);
+                    }
+                    $enrolsetting->set_status(base_setting::LOCKED_BY_PERMISSION);
+                }
+            }
         }
 
         return true;
