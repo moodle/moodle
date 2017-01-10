@@ -24,7 +24,14 @@
  */
 define(['jquery'], function($) {
 
-    var dataCache = [
+    var date = new Date(),
+        currentTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000),
+        todayTime = currentTime + (60 * 60),
+        tomorrowTime = currentTime + (60 * 60 * 26),
+        twoWeeksTime = currentTime + (60 * 60 * 24 * 14),
+        twoMonthsTime = currentTime + (60 * 60 * 24 * 56),
+        twoYearsTime = currentTime + (60 * 60 * 24 * 365 * 2),
+        dataCache = [
         {
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
@@ -33,6 +40,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: todayTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -47,6 +55,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: todayTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -61,6 +70,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: todayTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -75,6 +85,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: todayTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -89,6 +100,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: todayTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -103,6 +115,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: todayTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -117,6 +130,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -131,6 +145,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -145,6 +160,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -159,6 +175,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -173,6 +190,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -187,6 +205,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -201,6 +220,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -215,6 +235,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -229,6 +250,7 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -243,6 +265,337 @@ define(['jquery'], function($) {
             contexturl: 'https://www.google.com',
             coursename: 'Course 1',
             itemcount: 1,
+            orderTime: tomorrowTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 17',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 18',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 19',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 20',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 21',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 22',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 23',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 24',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 25',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 26',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 27',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 28',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 29',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 30',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 31',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 32',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoWeeksTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 33',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoMonthsTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 34',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoMonthsTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 35',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoMonthsTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 36',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoYearsTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 37',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoYearsTime,
+            icon: {
+                key: 'icon',
+                component: 'mod_assign',
+                alttext: 'Assignment icon',
+            },
+        },
+        {
+            actionname: 'Submit assignment',
+            actionurl: 'https://www.google.com',
+            enddate: 'Nov 4th, 10am',
+            contextname: 'Assignment due 38',
+            contexturl: 'https://www.google.com',
+            coursename: 'Course 1',
+            itemcount: 1,
+            orderTime: twoYearsTime,
             icon: {
                 key: 'icon',
                 component: 'mod_assign',
@@ -252,17 +605,16 @@ define(['jquery'], function($) {
     ];
 
     /**
-     * Retrieve a list of calendar events for the logged in user for the
-     * given day range (inclusive).
+     * Retrieve a list of calendar events for the logged in user after the given
+     * time.
      *
-     * @method queryForUserByDays
-     * @param {int}         startDay    The first day in the range
-     * @param {int}         endDay      The last day in the range
+     * @method queryFromTime
+     * @param {int}         startTime   Only get events after this time
      * @param {int}         limit       Limit the number of results returned
      * @param {int}         offset      Offset the result set by the given amount
      * @return {promise}    Resolved with an array of the calendar events
      */
-    var queryForUserByDays = function(startDay, endDay, limit, offset) {
+    var queryFromTime = function(startTime, limit, offset) {
         var deferred = $.Deferred();
 
         setTimeout(function() {
@@ -273,6 +625,6 @@ define(['jquery'], function($) {
     };
 
     return {
-        query_for_user_by_days: queryForUserByDays,
+        queryFromTime: queryFromTime,
     };
 });

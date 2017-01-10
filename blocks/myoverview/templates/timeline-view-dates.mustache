@@ -22,33 +22,9 @@
     Example context (json):
     {}
 }}
-<div id="timeline-view-dates-{{uniqid}}" data-region="timeline-view-dates">
-    <div data-region="view-dates">
-        <div data-region="next-7-days">
-            {{< block_myoverview/event-list }}
-                {{$startday}}0{{/startday}}
-                {{$endday}}7{{/endday}}
-                {{$limit}}10{{/limit}}
-                {{$offset}}0{{/offset}}
-                {{$title}}{{#str}} next7days, block_myoverview {{/str}}{{/title}}
-            {{/ block_myoverview/event-list }}
-        </div>
-        <div class="m-t-2" data-region="next-30-days">
-            {{< block_myoverview/event-list }}
-                {{$startday}}8{{/startday}}
-                {{$endday}}30{{/endday}}
-                {{$limit}}10{{/limit}}
-                {{$offset}}0{{/offset}}
-                {{$title}}{{#str}} next30days, block_myoverview {{/str}}{{/title}}
-            {{/ block_myoverview/event-list }}
-        </div>
-        <div class="text-xs-center text-center m-y-2">
-            <button type="button" class="btn btn-secondary" data-action="view-more">{{#str}} viewmore {{/str}}</button>
-        </div>
-    </div>
+<div data-region="timeline-view-dates">
+    {{< block_myoverview/event-list }}
+        {{$limit}}20{{/limit}}
+        {{$offset}}0{{/offset}}
+    {{/ block_myoverview/event-list }}
 </div>
-{{#js}}
-require(['jquery', 'block_myoverview/timeline_view_dates'], function($, js) {
-    js.init($('#timeline-view-dates-{{uniqid}}'));
-});
-{{/js}}

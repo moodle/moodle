@@ -21,48 +21,46 @@
 
     Example context (json):
     {
-        "events": [
-            {
-                "actionname": "Submit assignment",
-                "actionurl": "https://www.google.com",
-                "enddate": "Nov 4th, 10am",
-                "contextname": "Assignment due 1",
-                "contexturl": "https://www.google.com",
-                "coursename": "Course 1",
-                "itemcount": 1,
-                "icon": {
-                    "id": "icon",
-                    "component": "mod_assign",
-                    "alttext": "Assignment icon"
-                }
-            },
-            {
-                "actionname": "Submit assignment",
-                "actionurl": "https://www.google.com",
-                "enddate": "Nov 4th, 10am",
-                "contextname": "Assignment due 2",
-                "contexturl": "https://www.google.com",
-                "coursename": "Course 1",
-                "itemcount": 1,
-                "icon": {
-                    "id": "icon",
-                    "component": "mod_assign",
-                    "alttext": "Assignment icon"
-                }
-            }
-        ]
     }
 }}
 <div data-region="event-list-container"
-     data-start-day="{{$startday}}0{{/startday}}"
-     data-end-day="{{$endday}}7{{/endday}}"
-     data-limit="{{$limit}}10{{/limit}}"
-     data-offset="{{$offset}}0{{/offset}}">
+     data-limit="{{$limit}}20{{/limit}}"
+     data-offset="{{$offset}}0{{/offset}}"
+     id="event-list-container-{{uniqid}}">
 
-    <h5 id="event-list-title-{{uniqid}}">
-        {{$title}}{{/title}} <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
-    </h5>
-    <ul class="list-group unstyled" data-region="event-list" aria-describedby="event-list-title-{{uniqid}}">
-        {{> block_myoverview/event-list-items }}
-    </ul>
+    {{< block_myoverview/event-list-group }}
+        {{$title}}{{#str}} today {{/str}}{{/title}}
+        {{$startday}}0{{/startday}}
+        {{$endday}}1{{/endday}}
+    {{/ block_myoverview/event-list-group }}
+    {{< block_myoverview/event-list-group }}
+        {{$title}}{{#str}} next7days, block_myoverview {{/str}}{{/title}}
+        {{$startday}}1{{/startday}}
+        {{$endday}}7{{/endday}}
+    {{/ block_myoverview/event-list-group }}
+    {{< block_myoverview/event-list-group }}
+        {{$title}}{{#str}} next30days, block_myoverview {{/str}}{{/title}}
+        {{$startday}}7{{/startday}}
+        {{$endday}}30{{/endday}}
+    {{/ block_myoverview/event-list-group }}
+    {{< block_myoverview/event-list-group }}
+        {{$title}}{{#str}} future, block_myoverview {{/str}}{{/title}}
+        {{$startday}}30{{/startday}}
+        {{$endday}}0{{/endday}}
+    {{/ block_myoverview/event-list-group }}
+
+    <div class="text-xs-center text-center m-y-2">
+        <button type="button" class="btn btn-secondary" data-action="view-more">
+            {{#str}} viewmore {{/str}}
+            <span class="hidden" data-region="loading-icon-container">
+                {{> core/loading }}
+            </span>
+        </button>
+    </div>
 </div>
+{{#js}}
+require(['jquery', 'block_myoverview/event_list'], function($, EventList) {
+    var root = $("#event-list-container-{{uniqid}}");
+    EventList.init(root);
+});
+{{/js}}
