@@ -477,21 +477,19 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/templates', 'mod_lti/t
             state: toolType.constants.state.configured
         });
 
-        promise.done(function(toolTypeData) {
+        promise.then(function(toolTypeData) {
             stopLoading(element);
+            announceSuccess(element);
+            return toolTypeData;
+        }).then(function(toolTypeData) {
+            return templates.render('mod_lti/tool_card', toolTypeData);
+        }).then(function(renderResult) {
+            var html = renderResult[0];
+            var js = renderResult[1];
 
-            var announcePromise = announceSuccess(element);
-            var renderPromise = templates.render('mod_lti/tool_card', toolTypeData);
-
-            $.when(renderPromise, announcePromise).then(function(renderResult) {
-                var html = renderResult[0];
-                var js = renderResult[1];
-
-                templates.replaceNode(element, html, js);
-            });
-        });
-
-        promise.fail(function() {
+            templates.replaceNode(element, html, js);
+            return;
+        }).catch(function() {
             stopLoading(element);
             announceFailure(element);
         });
