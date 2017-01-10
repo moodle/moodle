@@ -151,7 +151,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str',
             this.unreadCount = count;
             this.renderUnreadCount();
             this.updateButtonAriaLabel();
-        }.bind(this));
+        }.bind(this)).catch(Notification.exception);
     };
 
     /**
@@ -165,38 +165,27 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str',
      */
     MessagePopoverController.prototype.renderMessages = function(messages, container) {
         var promises = [];
-        var allhtml = [];
-        var alljs = [];
 
-        if (messages.length) {
-            $.each(messages, function(index, message) {
-                message.contexturl = URL.relativeUrl('/message/index.php', {
-                    user: this.userId,
-                    id: message.userid,
-                });
+        $.each(messages, function(index, message) {
+            message.contexturl = URL.relativeUrl('/message/index.php', {
+                user: this.userId,
+                id: message.userid,
+            });
 
-                message.profileurl = URL.relativeUrl('/user/profile.php', {
-                    id: message.userid,
-                });
+            message.profileurl = URL.relativeUrl('/user/profile.php', {
+                id: message.userid,
+            });
 
-                var promise = Templates.render('message_popup/message_content_item', message);
-                promises.push(promise);
+            var promise = Templates.render('message_popup/message_content_item', message)
+            .then(function(html, js) {
+                container.append(html);
+                Templates.runTemplateJS(js);
+                return;
+            });
+            promises.push(promise);
+        }.bind(this));
 
-                promise.then(function(html, js) {
-                    allhtml[index] = html;
-                    alljs[index] = js;
-                });
-            }.bind(this));
-        }
-
-        return $.when.apply($.when, promises).then(function() {
-            if (messages.length) {
-                $.each(messages, function(index) {
-                    container.append(allhtml[index]);
-                    Templates.runTemplateJS(alljs[index]);
-                });
-            }
-        });
+        return $.when.apply($, promises);
     };
 
     /**
