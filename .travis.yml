@@ -134,11 +134,13 @@ before_script:
           sed -i \
             -e "s%= 'pgsql'%= 'mysqli'%" \
             -e "s%= 'username'%= 'travis'%" \
+            -e "s%=> 'utf8mb4_unicode_ci'%=> 'utf8mb4_bin'%" \
             config.php;
 
           mysql -u root -e 'SET GLOBAL innodb_file_format=barracuda;' ;
           mysql -u root -e 'SET GLOBAL innodb_file_per_table=ON;' ;
-          mysql -e 'CREATE DATABASE travis_ci_test DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_bin;' ;
+          mysql -u root -e 'SET GLOBAL innodb_large_prefix=ON;' ;
+          mysql -e 'CREATE DATABASE travis_ci_test DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_bin;' ;
         fi
       fi
 
