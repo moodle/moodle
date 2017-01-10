@@ -5494,6 +5494,42 @@ class core_dml_testcase extends database_driver_testcase {
             $dbman->drop_table($table);
         }
     }
+
+    /**
+     * Test that the database has full utf8 support (4 bytes).
+     */
+    public function test_four_byte_character_insertion() {
+        $DB = $this->tdb;
+
+        if ($DB->get_dbfamily() === 'mysql' && strpos($DB->get_dbcollation(), 'utf8_') === 0) {
+            $this->markTestSkipped($DB->get_name() .
+                    ' does not support 4 byte characters with only a utf8 collation.
+                    Please change to utf8mb4 for full utf8 support.');
+        }
+
+        $dbman = $this->tdb->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('content', XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $data = array(
+            'name' => 'Name with a four byte character 𠮟る',
+            'content' => 'Content with a four byte emoji 📝 memo.'
+        );
+
+        $insertid = $DB->insert_record($tablename, $data);
+        $result = $DB->get_record($tablename, array('id' => $insertid));
+        $this->assertEquals($data['name'], $result->name);
+        $this->assertEquals($data['content'], $result->content);
+
+        $dbman->drop_table($table);
+    }
 }
 
 /**

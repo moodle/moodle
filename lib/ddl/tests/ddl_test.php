@@ -581,7 +581,7 @@ class core_ddl_testcase extends database_driver_testcase {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 0; $i < 12; $i++) {
             $table->add_field('text'.$i, XMLDB_TYPE_CHAR, '1333', null, null, null, null);
             $data->{'text'.$i} = $text;
         }
