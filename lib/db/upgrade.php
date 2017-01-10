@@ -2601,5 +2601,40 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2017092900.00);
     }
 
+    if ($oldversion < 2017092901.00) {
+        // Add index on time modified to grade_outcomes_history, grade_categories_history,
+        // grade_items_history, and scale_history.
+        $table = new xmldb_table('grade_outcomes_history');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('grade_items_history');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('grade_categories_history');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $table = new xmldb_table('scale_history');
+        $index = new xmldb_index('timemodified', XMLDB_INDEX_NOTUNIQUE, array('timemodified'));
+
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017092901.00);
+    }
+
     return true;
 }
