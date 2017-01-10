@@ -30,7 +30,15 @@ $string['prefix_help'] = 'This prefix is used for all key names on the Redis ser
 * If you only have one Moodle instance using this server, you can leave this value default.
 * Due to key length restrictions, a maximum of 5 characters is permitted.';
 $string['prefixinvalid'] = 'Invalid prefix. You can only use a-z A-Z 0-9-_.';
-$string['test_server'] = 'Test server';
-$string['test_server_desc'] = 'Redis server to use for testing.';
+$string['serializer_igbinary'] = 'The igbinary serializer.';
+$string['serializer_php'] = 'The default PHP serializer.';
 $string['server'] = 'Server';
 $string['server_help'] = 'This sets the hostname or IP address of the Redis server to use.';
+$string['test_server'] = 'Test server';
+$string['test_server_desc'] = 'Redis server to use for testing.';
+$string['test_serializer'] = 'Serializer';
+$string['test_serializer_desc'] = 'Serializer to use for testing.';
+$string['useserializer'] = 'Use serializer';
+$string['useserializer_help'] = 'Specifies the serializer to use for serializing.
+The valid serializers are Redis::SERIALIZER_PHP or Redis::SERIALIZER_IGBINARY.
+The latter is supported only when phpredis is configured with --enable-redis-igbinary option and the igbinary extension is loaded.';
