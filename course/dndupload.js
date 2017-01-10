@@ -774,6 +774,10 @@ M.course_dndupload = {
                                 resel.li.outerHTML = unescape(resel.li.outerHTML);
                             }
                             self.add_editing(result.elementid);
+                            // Fire the content updated event.
+                            require(['core/event', 'jquery'], function(event, $) {
+                                event.notifyFilterContentUpdated($(result.fullcontent));
+                            });
                         } else {
                             // Error - remove the dummy element
                             resel.parent.removeChild(resel.li);
