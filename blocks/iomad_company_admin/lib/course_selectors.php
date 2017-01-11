@@ -719,7 +719,7 @@ class potential_user_course_selector extends course_selector_base {
         if (!$companycourses = $DB->get_records('company_course', array('companyid' => $this->companyid), null, 'courseid')) {
             $companysql = " AND 1=0";
         } else {
-            $companysql = " AND c.id in (".implode(',', array_keys($companycourses)).") ";
+            $companysql = " AND c.id in (".implode(',', array_keys($companycourses)).") AND cc.companyid = :companyid";
         }
         $deptids = company::get_recursive_department_courses($userdepartment->id);
         $departmentcondition = "";
