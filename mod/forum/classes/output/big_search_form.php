@@ -53,6 +53,8 @@ class big_search_form implements renderable, templatable {
     public $subject;
     public $user;
     public $words;
+    /** @var string The URL of the search form. */
+    public $actionurl;
 
     /**
      * Constructor.
@@ -65,6 +67,7 @@ class big_search_form implements renderable, templatable {
         $this->course = $course;
         $this->scripturl = new moodle_url('/mod/forum/forum.js');
         $this->showfullwords = $DB->get_dbfamily() == 'mysql' || $DB->get_dbfamily() == 'postgres';
+        $this->actionurl = new moodle_url('/mod/forum/search.php');
 
         $forumoptions = ['' => get_string('allforums', 'forum')] + forum_menu_list($course);
         $this->forumoptions = array_map(function($option) use ($forumoptions) {
@@ -161,6 +164,7 @@ class big_search_form implements renderable, templatable {
         $data->subject = $this->subject;
         $data->user = $this->user;
         $data->showfullwords = $this->showfullwords;
+        $data->actionurl = $this->actionurl->out(false);
 
         $datefrom = $this->datefrom;
         if (empty($datefrom)) {

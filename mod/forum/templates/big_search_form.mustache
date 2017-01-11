@@ -15,7 +15,38 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template mod_forum/big_search_form
+
     Big search form.
+
+    Example context (json):
+    {
+        "scripturl": "https://example.com/mod/forum/forum.js",
+        "actionurl": "https://example.com/mod/forum/search.php",
+        "courseid": "2",
+        "words": "apples",
+        "phrase": "Lorem ipsum dolor",
+        "notwords": "Not these words",
+        "showfullwords": [
+            {
+                "fullwords": "Exactly"
+            }
+        ],
+        "datefromchecked": 1,
+        "datetochecked": "",
+        "forumoptions": [
+            {
+                "name": "Forum One",
+                "value": "23"
+            },
+            {
+                "name": "Forum Two",
+                "value": "34"
+            }
+        ],
+        "subject": "Help me please",
+        "user": "Helpy McUser"
+    }
 }}
 <div id="intro" class="box searchbox boxaligncenter">
     {{#str}}searchforumintro, forum{{/str}}
@@ -92,7 +123,7 @@
                     <label for="menuforumid">{{#str}}searchwhichforums, forum{{/str}}</label>
                 </td>
                 <td class="c1">
-                    <select name="menuforumid" id="menuforumid">
+                    <select name="forumid" id="menuforumid">
                         {{#forumoptions}}
                             <option value="{{value}}">{{name}}</option>
                         {{/forumoptions}}
