@@ -123,10 +123,9 @@ function lesson_update_events($lesson, $override = null) {
     }
     $oldevents = $DB->get_records('event', $conds);
 
-    // Now make a todo list of all that needs to be updated.
+    // Now make a to-do list of all that needs to be updated.
     if (empty($override)) {
-        // We are updating the primary settings for the lesson, so we
-        // need to add all the overrides.
+        // We are updating the primary settings for the lesson, so we need to add all the overrides.
         $overrides = $DB->get_records('lesson_overrides', array('lessonid' => $lesson->id));
         // As well as the original lesson (empty override).
         $overrides[] = new stdClass();
@@ -134,6 +133,9 @@ function lesson_update_events($lesson, $override = null) {
         // Just do the one override.
         $overrides = array($override);
     }
+
+    // Get group override priorities.
+    $grouppriorities = lesson_get_group_override_priorities($lesson->id);
 
     foreach ($overrides as $current) {
         $groupid   = isset($current->groupid) ? $current->groupid : 0;
@@ -164,8 +166,9 @@ function lesson_update_events($lesson, $override = null) {
         $event->visible     = instance_is_visible('lesson', $lesson);
         $event->eventtype   = 'open';
 
-        // Determine the event name.
+        // Determine the event name and priority.
         if ($groupid) {
+            // Group override event.
             $params = new stdClass();
             $params->lesson = $lesson->name;
             $params->group = groups_get_group_name($groupid);
@@ -174,48 +177,54 @@ function lesson_update_events($lesson, $override = null) {
                 continue;
             }
             $eventname = get_string('overridegroupeventname', 'lesson', $params);
+            // Set group override priority.
+            if ($grouppriorities !== null) {
+                $openpriorities = $grouppriorities['open'];
+                if (isset($openpriorities[$available])) {
+                    $event->priority = $openpriorities[$available];
+                }
+            }
         } else if ($userid) {
+            // User override event.
             $params = new stdClass();
             $params->lesson = $lesson->name;
             $eventname = get_string('overrideusereventname', 'lesson', $params);
+            // Set user override priority.
+            $event->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
         } else {
+            // The parent event.
             $eventname = $lesson->name;
         }
+
         if ($addopen or $addclose) {
-            if ($deadline and $available and $event->timeduration <= LESSON_MAX_EVENT_LENGTH) {
-                // Single event for the whole lesson.
+            // Separate start and end events.
+            $event->timeduration  = 0;
+            if ($available && $addopen) {
                 if ($oldevent = array_shift($oldevents)) {
                     $event->id = $oldevent->id;
                 } else {
                     unset($event->id);
                 }
-                $event->name = $eventname;
+                $event->name = $eventname.' ('.get_string('lessonopens', 'lesson').')';
                 // The method calendar_event::create will reuse a db record if the id field is set.
                 calendar_event::create($event);
-            } else {
-                // Separate start and end events.
-                $event->timeduration  = 0;
-                if ($available && $addopen) {
-                    if ($oldevent = array_shift($oldevents)) {
-                        $event->id = $oldevent->id;
-                    } else {
-                        unset($event->id);
-                    }
-                    $event->name = $eventname.' ('.get_string('lessonopens', 'lesson').')';
-                    // The method calendar_event::create will reuse a db record if the id field is set.
-                    calendar_event::create($event);
+            }
+            if ($deadline && $addclose) {
+                if ($oldevent = array_shift($oldevents)) {
+                    $event->id = $oldevent->id;
+                } else {
+                    unset($event->id);
                 }
-                if ($deadline && $addclose) {
-                    if ($oldevent = array_shift($oldevents)) {
-                        $event->id = $oldevent->id;
-                    } else {
-                        unset($event->id);
+                $event->name      = $eventname.' ('.get_string('lessoncloses', 'lesson').')';
+                $event->timestart = $deadline;
+                $event->eventtype = 'close';
+                if ($groupid && $grouppriorities !== null) {
+                    $closepriorities = $grouppriorities['close'];
+                    if (isset($closepriorities[$deadline])) {
+                        $event->priority = $closepriorities[$deadline];
                     }
-                    $event->name      = $eventname.' ('.get_string('lessoncloses', 'lesson').')';
-                    $event->timestart = $deadline;
-                    $event->eventtype = 'close';
-                    calendar_event::create($event);
                 }
+                calendar_event::create($event);
             }
         }
     }

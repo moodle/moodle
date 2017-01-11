@@ -1160,8 +1160,14 @@ class assign {
         if ($instance->duedate) {
             $event = new stdClass();
 
+            // Fetch the original due date event. It will have a non-zero course ID and a zero group ID.
+            $select = "modulename = :modulename
+                       AND instance = :instance
+                       AND eventtype = :eventtype
+                       AND groupid = 0
+                       AND courseid <> 0";
             $params = array('modulename' => 'assign', 'instance' => $instance->id, 'eventtype' => $eventtype);
-            $event->id = $DB->get_field('event', 'id', $params);
+            $event->id = $DB->get_field_select('event', 'id', $select, $params);
             $event->name = $instance->name;
             $event->timestart = $instance->duedate;
 
@@ -8818,6 +8824,14 @@ function reorder_group_overrides($assignid) {
             $f->id = $override->id;
             $f->sortorder = $i++;
             $DB->update_record('assign_overrides', $f);
+
+            // Update priorities of group overrides.
+            $params = [
+                'modulename' => 'assign',
+                'instance' => $override->assignid,
+                'groupid' => $override->groupid
+            ];
+            $DB->set_field('event', 'priority', $f->sortorder, $params);
         }
     }
 }

@@ -233,5 +233,18 @@ function xmldb_assign_upgrade($oldversion) {
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2017021500) {
+        // Fix event types of assign events.
+        $params = [
+            'modulename' => 'assign',
+            'eventtype' => 'close'
+        ];
+        $select = "modulename = :modulename AND eventtype = :eventtype";
+        $DB->set_field_select('event', 'eventtype', 'due', $select, $params);
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2017021500, 'assign');
+    }
+
     return true;
 }
