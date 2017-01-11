@@ -121,6 +121,11 @@ define('CALENDAR_SUBSCRIPTION_UPDATE', 1);
 define('CALENDAR_SUBSCRIPTION_REMOVE', 2);
 
 /**
+ * CALENDAR_EVENT_USER_OVERRIDE_PRIORITY - Constant for the user override priority.
+ */
+define('CALENDAR_EVENT_USER_OVERRIDE_PRIORITY', 9999999);
+
+/**
  * Return the days of the week
  *
  * @return array array of days
