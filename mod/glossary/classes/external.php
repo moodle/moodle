@@ -169,7 +169,7 @@ class mod_glossary_external extends external_api {
     /**
      * Describes the parameters for get_glossaries_by_courses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_glossaries_by_courses_parameters() {

@@ -43,7 +43,7 @@ class core_auth_external extends external_api {
     /**
      * Describes the parameters for confirm_user.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.2
      */
     public static function confirm_user_parameters() {

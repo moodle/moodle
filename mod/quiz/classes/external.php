@@ -43,7 +43,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_quizzes_by_courses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_quizzes_by_courses_parameters() {
@@ -301,7 +301,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for view_quiz.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function view_quiz_parameters() {
@@ -355,7 +355,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_user_attempts.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_user_attempts_parameters() {
@@ -474,7 +474,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_user_best_grade.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_user_best_grade_parameters() {
@@ -552,7 +552,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_combined_review_options.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_combined_review_options_parameters() {
@@ -653,7 +653,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for start_attempt.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function start_attempt_parameters() {
@@ -944,7 +944,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_attempt_data.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_attempt_data_parameters() {
@@ -1027,7 +1027,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_attempt_summary.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_attempt_summary_parameters() {
@@ -1091,7 +1091,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for save_attempt.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function save_attempt_parameters() {
@@ -1178,7 +1178,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for process_attempt.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function process_attempt_parameters() {
@@ -1300,7 +1300,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_attempt_review.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_attempt_review_parameters() {
@@ -1405,7 +1405,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for view_attempt.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function view_attempt_parameters() {
@@ -1478,7 +1478,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for view_attempt_summary.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function view_attempt_summary_parameters() {
@@ -1543,7 +1543,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for view_attempt_review.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function view_attempt_review_parameters() {
@@ -1598,7 +1598,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for view_quiz.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_quiz_feedback_for_grade_parameters() {
@@ -1671,7 +1671,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_quiz_access_information.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_quiz_access_information_parameters() {
@@ -1753,7 +1753,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_attempt_access_information.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_attempt_access_information_parameters() {
@@ -1860,7 +1860,7 @@ class mod_quiz_external extends external_api {
     /**
      * Describes the parameters for get_quiz_required_qtypes.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.1
      */
     public static function get_quiz_required_qtypes_parameters() {
