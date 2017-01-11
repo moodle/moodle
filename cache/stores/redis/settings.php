@@ -35,17 +35,20 @@ $settings->add(
     )
 );
 
-$options = array(Redis::SERIALIZER_PHP => get_string('serializer_php', 'cachestore_redis'));
+if (class_exists('Redis')) { // Only if Redis is available.
 
-if (defined('Redis::SERIALIZER_IGBINARY')) {
-    $options[Redis::SERIALIZER_IGBINARY] = get_string('serializer_igbinary', 'cachestore_redis');
+    $options = array(Redis::SERIALIZER_PHP => get_string('serializer_php', 'cachestore_redis'));
+
+    if (defined('Redis::SERIALIZER_IGBINARY')) {
+        $options[Redis::SERIALIZER_IGBINARY] = get_string('serializer_igbinary', 'cachestore_redis');
+    }
+
+    $settings->add(new admin_setting_configselect(
+            'cachestore_redis/test_serializer',
+            get_string('test_serializer', 'cachestore_redis'),
+            get_string('test_serializer_desc', 'cachestore_redis'),
+            0,
+            $options
+        )
+    );
 }
-
-$settings->add(new admin_setting_configselect(
-        'cachestore_redis/test_serializer',
-        get_string('test_serializer', 'cachestore_redis'),
-        get_string('test_serializer_desc', 'cachestore_redis'),
-        0,
-        $options
-    )
-);
