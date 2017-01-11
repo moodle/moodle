@@ -59,7 +59,6 @@ flush();
 show_basket_info();
 
 if ($course) {
-
     $strbuynow = get_string('buynow', 'block_iomad_commerce');
     $strmoreinfo = get_string('moreinfo', 'block_iomad_commerce');
 
@@ -96,7 +95,7 @@ if ($course) {
                     foreach ($priceblocks as $priceblock) {
                         $table->data[] = array(get_string('licenseblock_n', 'block_iomad_commerce',
                                                            $priceblock->price_bracket_start),
-                                                $priceblock->currency . number_format($priceblock->price, 2),
+                                                $priceblock->currency . ' ' . number_format($priceblock->price, 2),
                                                 '');
                     }
                 } else {

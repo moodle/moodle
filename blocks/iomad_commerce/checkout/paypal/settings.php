@@ -36,4 +36,3 @@ $settings->add(new admin_setting_configtext('paypal_api_signature',
                                             '',
                                             '',
                                             PARAM_NOTAGS));
-

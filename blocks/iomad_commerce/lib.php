@@ -25,6 +25,13 @@ function require_commerce_enabled() {
 }
 
 function get_lowest_price_text($course_shopsetting_with_lowest_block_price) {
+    global $CFG;
+
+    if (!empty($CFG->commerce_admin_currency)) {
+        $currency = $CFG->commerce_admin_currency;
+    } else {
+        $currency = 'GBP';
+    }
     $prices = array();
     if ($course_shopsetting_with_lowest_block_price->allow_single_purchase) {
         if ($course_shopsetting_with_lowest_block_price->single_purchase_price) {
@@ -40,7 +47,7 @@ function get_lowest_price_text($course_shopsetting_with_lowest_block_price) {
     $lowestprice = number_format(min($prices), 2);
 
     if ($lowestprice) {
-        $price = get_string('pricefrom', 'block_iomad_commerce', "<b>£$lowestprice</b>");
+        $price = get_string('pricefrom', 'block_iomad_commerce', "<b>" . $currency . ' ' . $lowestprice. "</b>");
     } else {
         $price = '';
     }
@@ -93,7 +100,7 @@ function get_basket($fields = '*') {
 
 function enrich_invoice($invoice) {
     global $USER, $DB;
-    foreach (array('id', 'firstname', 'lastname', 'department', 'address', 'city', 'country') as $key) {
+    foreach (array('id', 'firstname', 'lastname', 'department', 'address', 'city', 'state', 'country') as $key) {
         if ($key != 'id') {
             $invoice->$key = $USER->$key;
         } else {
@@ -210,7 +217,7 @@ function get_basket_html($includeremove = 0) {
 }
 
 function get_invoice_html($invoiceid, $includeremove = 0, $links = 1, $showprocessed = 0) {
-    global $DB, $USER;
+    global $DB, $USER, $CFG;
 
     $result = '';
 
@@ -238,7 +245,11 @@ function get_invoice_html($invoiceid, $includeremove = 0, $links = 1, $showproce
 
         $total = 0;
         $count = 0;
-        $currency = '£';
+        if (!empty($CFG->commerce_admin_currency)) {
+            $currency = get_string($CFG->commerce_admin_currency, 'core_currencies');
+        } else {
+            $currency = get_string('GBP', 'core_currencies');
+        }
         foreach ($basketitems as $item) {
             $rowtotal = $item->price * $item->license_allocation;
 
@@ -253,7 +264,7 @@ function get_invoice_html($invoiceid, $includeremove = 0, $links = 1, $showproce
                 get_string('type_quantity_' . ($item->license_allocation > 1 ? 'n' : '1') .
                 '_' . $item->invoiceableitemtype, 'block_iomad_commerce', $item->license_allocation),
                 $unitprice,
-                $item->currency . number_format($rowtotal, 2)
+                $item->currency . ' ' .number_format($rowtotal, 2)
             );
             if ($includeremove) {
                 $row[] = "<a href='basket.php?remove=$item->id'>" . strtolower(get_string('remove')) . "</a>";
@@ -276,7 +287,7 @@ function get_invoice_html($invoiceid, $includeremove = 0, $links = 1, $showproce
             '<b>' . get_string('total', 'block_iomad_commerce') . '</b>',
             '',
             '',
-            '<b>' . $currency . number_format($total, 2) . '</b>'
+            '<b>' . $currency . ' ' . number_format($total, 2) . '</b>'
         );
         if ($includeremove) {
             $totalrow[] = '';

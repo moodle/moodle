@@ -60,6 +60,9 @@ if ($ADMIN->fulltree) {
                                             '',
                                             PARAM_EMAIL));
 
+    $paypalcurrencies = enrol_get_plugin('paypal')->get_currencies();
+    $settings->add(new admin_setting_configselect('commerce_admin_currency', get_string('currency', 'enrol_paypal'), '', 'GBP', $paypalcurrencies));
+
     $pp = get_payment_providers();
     foreach ($pp as $p) {
 

@@ -47,7 +47,7 @@ class paypal extends payment_provider {
     }
 
     public function init() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
 
         parent::init();
 
@@ -71,18 +71,18 @@ class paypal extends payment_provider {
 
         $basket = get_basket();
 
-        $shiptoname = fullname((object)array('firstname' => $basket->firstname, 'lastname' => $basket->lastname));
+        $shiptoname = fullname($USER);
         $shiptostreet = $basket->address;
         $shiptostreet2 = "";
         $shiptocity = $basket->city;
-        $shiptostate = "";
+        $shiptostate = $basket->state;
         $shiptocountrycode = $basket->country;
         $shiptozip = $basket->postcode;
         $phonenum = $basket->phone1;
 
         //  The currencycodetype and paymenttype
         //  are set to the selections made on the Integration Assistant.
-        $currencycodetype = "GBP";
+        $currencycodetype = $CFG->commerce_admin_currency;
         $paymenttype = "Sale";
 
         //  The returnurl is the location where buyers return to when a
@@ -185,7 +185,9 @@ class paypal extends payment_provider {
                     setprop($basket, 'institution',     'BUSINESS',                     $resarray, $USER->company->name);
                 } else {
                     setprop($basket, 'institution',     'BUSINESS',                     $resarray);
-                }setprop($basket, 'city',            'PAYMENTREQUEST_0_SHIPTOCITY',  $resarray);
+                }
+                setprop($basket, 'city',            'PAYMENTREQUEST_0_SHIPTOCITY',  $resarray);
+                setprop($basket, 'state',           'PAYMENTREQUEST_0_SHIPTOSTATE', $resarray);
                 setprop($basket, 'postcode',        'PAYMENTREQUEST_0_SHIPTOZIP',   $resarray);
                 setprop($basket, 'country',         'COUNTRYCODE',                  $resarray);
                 setprop($basket, 'email',           'EMAIL',                        $resarray);

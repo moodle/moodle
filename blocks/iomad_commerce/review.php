@@ -43,6 +43,7 @@ class confirmation_form extends moodleform {
         $mform->addElement('static', 'company', get_string('company', 'block_iomad_company_admin'));
         $mform->addElement('static', 'address', get_string('address'));
         $mform->addElement('static', 'city', get_string('city'));
+        $mform->addElement('static', 'state', get_string('state'));
         $mform->addElement('static', 'postcode', get_string('postcode', 'block_iomad_commerce'));
         $mform->addElement('static', 'country', get_string('country'));
         $mform->addElement('static', 'email', get_string('email'));

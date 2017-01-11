@@ -28,11 +28,12 @@ require_once('lib.php');
 require_commerce_enabled();
 
 class course_edit_form extends moodleform {
+    
     protected $isadding;
     protected $shopsettingsid = 0;
     protected $context = null;
     protected $course = null;
-    protected $currency = '£';
+    protected $currency = '';
     protected $priceblocks = null;
 
     public function __construct($actionurl, $isadding, $shopsettingsid, $course, $priceblocks, $editoroptions) {
@@ -45,6 +46,11 @@ class course_edit_form extends moodleform {
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $this->editoroptions = $editoroptions;
 
+        if (!empty($CFG->commerce_admin_currency)) {
+            $this->currency = get_string($CFG->commerce_admin_currency, 'core_currencies');
+        } else {
+            $this->currency = get_string('GBP', 'core_currencies');
+        }
         if ($isadding) {
             $options = array('context' => $this->context,
                              'multiselect' => false,
@@ -107,7 +113,7 @@ class course_edit_form extends moodleform {
             $mform->addHelpButton('allow_single_purchase', 'allow_single_purchase', 'block_iomad_commerce');
 
             $mform->addElement('text', 'single_purchase_price',
-                                        get_string('single_purchase_price', 'block_iomad_commerce') . ' ' . $this->currency);
+                                        get_string('single_purchase_price', 'block_iomad_commerce') . ' (' . $this->currency . ')');
             $mform->addRule('single_purchase_price',
                              get_string('decimalnumberonly', 'block_iomad_commerce'), 'numeric');
             $mform->setType('single_purchase_price', PARAM_TEXT);
@@ -132,7 +138,7 @@ class course_edit_form extends moodleform {
             $table = new html_table();
             $table->id = "licenseblockstable";
             $table->head = array (get_string('licenseblock_start', 'block_iomad_commerce'),
-                                  get_string('licenseblock_price', 'block_iomad_commerce'),
+                                  get_string('licenseblock_price', 'block_iomad_commerce') . " (" . $this->currency . ")",
                                   get_string('licenseblock_validlength', 'block_iomad_commerce'),
                                   get_string('licenseblock_shelflife', 'block_iomad_commerce'),
                                   "");
@@ -150,7 +156,6 @@ class course_edit_form extends moodleform {
                     $table->data[] = array('<input name="block_start_'.$i.'" type="text" value="' .
                                            $priceblock->price_bracket_start .
                                            '" size="5" />',
-                                           $this->currency .
                                            '<input name="block_price_'.$i.'" type="text" value="' .
                                            $priceblock->price .
                                            '" size="5" />',
@@ -171,7 +176,7 @@ class course_edit_form extends moodleform {
 
             } else {
                 $table->data[] = array('<input name="block_start_1" type="text" value="1" size="5" />',
-                                       $this->currency . '<input name="block_price_1" type="text" value="" size="5" />',
+                                       '<input name="block_price_1" type="text" value="" size="5" />',
                                        '<input name="block_valid_1" type="text" value="" size="5" />',
                                        '<input name="block_shelflife_1" type="text" value="" size="5" />',
                                        '<a href="#" onclick="iomad.removeLicenseBlock(this)">' . $strdelete . '</a>');
@@ -410,9 +415,11 @@ if ($mform->is_cancelled()) {
     $transaction = $DB->start_delegated_transaction();
 
     if ($isadding) {
+        $data->single_purchase_currency = $CFG->commerce_admin_currency;
         $shopsettingsid = $DB->insert_record('course_shopsettings', $data);
     } else {
         $data->id = $shopsettingsid;
+        $data->single_purchase_currency = $CFG->commerce_admin_currency;
         $DB->update_record('course_shopsettings', $data);
     }
 
@@ -423,7 +430,7 @@ if ($mform->is_cancelled()) {
     $DB->delete_records('course_shopblockprice', array('courseid' => $data->courseid));
     foreach ($priceblocks as $priceblock) {
         $priceblock->courseid = $data->courseid;
-        $priceblock->currency = $_POST["currency"];
+        $priceblock->currency = $CFG->commerce_admin_currency;
 
         $DB->insert_record('course_shopblockprice', $priceblock, false, false);
     }

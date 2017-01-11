@@ -40,7 +40,7 @@ $paymentamount = $_SESSION["Payment_Amount"];
 
 //  The currencycodetype and paymenttype
 //  are set to the selections made on the Integration Assistant.
-$currencycodetype = "GBP";
+$currencycodetype = $CFG->commerce_admin_currency;
 $paymenttype = "Sale";
 
 //  The returnurl is the location where buyers return to when a

@@ -61,6 +61,10 @@ class checkout_form extends moodleform {
         $mform->addRule('postcode', $strrequired, 'required', null, 'client');
         $mform->setType('postcode', PARAM_NOTAGS);
 
+        $mform->addElement('text', 'state', get_string('state', 'block_iomad_commerce'), 'maxlength="20" size="20"');
+        $mform->addRule('state', $strrequired, 'required', null, 'client');
+        $mform->setType('state', PARAM_NOTAGS);
+
         $choices = get_string_manager()->get_list_of_countries();
         $choices = array('' => get_string('selectacountry').'...') + $choices;
         $mform->addElement('select', 'country', get_string('selectacountry'), $choices);

@@ -116,5 +116,21 @@ function xmldb_block_iomad_commerce_upgrade($oldversion) {
         // Iomad_commerce savepoint reached.
         upgrade_block_savepoint(true, 2012012802, 'iomad_commerce');
     }
+
+    if ($oldversion < 2017011000) {
+
+        // Define field state to be added to invoice.
+        $table = new xmldb_table('invoice');
+        $field = new xmldb_field('state', XMLDB_TYPE_CHAR, '120', null, null, null, null, 'city');
+
+        // Conditionally launch add field state.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad_commerce savepoint reached.
+        upgrade_block_savepoint(true, 2017011000, 'iomad_commerce');
+    }
+
     return $result;
 }

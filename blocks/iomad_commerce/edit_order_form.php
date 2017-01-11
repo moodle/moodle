@@ -71,6 +71,7 @@ class order_edit_form extends moodleform {
         $mform->addElement('static', 'address', get_string('address'));
         $mform->addElement('static', 'city', get_string('city'));
         $mform->addElement('static', 'postcode', get_string('postcode', 'block_iomad_commerce'));
+        $mform->addElement('static', 'state', get_string('state', 'block_iomad_commerce'));
         $mform->addElement('static', 'country', get_string('selectacountry'));
         $mform->addElement('static', 'email', get_string('email'));
         $mform->addElement('static', 'phone1', get_string('phone'));
