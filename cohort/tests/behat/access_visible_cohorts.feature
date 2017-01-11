@@ -125,4 +125,3 @@ Feature: Access visible and hidden cohorts
     And the "Select members from cohort" select box should not contain "Cohort in category 2"
     And the "Select members from cohort" select box should not contain "Cohort empty in category 1"
     And the "Select members from cohort" select box should not contain "System empty cohort"
-

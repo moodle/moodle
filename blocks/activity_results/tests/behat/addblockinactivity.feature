@@ -60,7 +60,7 @@ Feature: The activity results block displays student scores
     And I press "Save changes"
     And I follow "Course 1"
 
-Scenario: Configure the block on a non-graded activity to show 3 high scores
+  Scenario: Configure the block on a non-graded activity to show 3 high scores
     Given I follow "Test page name"
     And I add the "Activity results" block
     When I configure the "Activity results" block
@@ -78,7 +78,7 @@ Scenario: Configure the block on a non-graded activity to show 3 high scores
     And I should see "Student 3" in the "Activity results" "block"
     And I should see "70.00" in the "Activity results" "block"
 
-Scenario: Block should select current activity by default
+  Scenario: Block should select current activity by default
     Given I follow "Test assignment 1"
     When I add the "Activity results" block
     And I configure the "Activity results" block

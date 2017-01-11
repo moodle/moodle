@@ -255,64 +255,64 @@ Feature: We can change the visibility of categories in the management interface.
     And course in management listing should be dimmed "C2"
     And course in management listing should be visible "C3"
 
-    @javascript @_cross_browser
-    Scenario: Test courses are hidden when selected category parent is hidden.
-      Given the following "categories" exist:
-        | name | category | idnumber |
-        | Cat 1 | 0 | CAT1 |
-        | Cat 2 | CAT1 | CAT2 |
-        | Cat 3 | CAT2 | CAT3 |
-      And the following "courses" exist:
-        | category | fullname | shortname | idnumber |
-        | CAT3 | Course 1 | Course 1 | C1 |
+  @javascript @_cross_browser
+  Scenario: Test courses are hidden when selected category parent is hidden.
+    Given the following "categories" exist:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+      | Cat 2 | CAT1 | CAT2 |
+      | Cat 3 | CAT2 | CAT3 |
+    And the following "courses" exist:
+      | category | fullname | shortname | idnumber |
+      | CAT3 | Course 1 | Course 1 | C1 |
 
-      And I log in as "admin"
-      And I go to the courses management page
-      And I start watching to see if a new page loads
-      And I should see the "Course categories and courses" management page
-      And I click on category "Cat 1" in the management interface
-      And a new page should have loaded since I started watching
-      And I start watching to see if a new page loads
-      And I should see the "Course categories and courses" management page
-      And I click on category "Cat 2" in the management interface
-      And a new page should have loaded since I started watching
-      And I start watching to see if a new page loads
-      And I should see the "Course categories and courses" management page
-      And I click on category "Cat 3" in the management interface
-      And a new page should have loaded since I started watching
-      And I start watching to see if a new page loads
-      And I should see the "Course categories and courses" management page
-      And category in management listing should be visible "CAT1"
-      And category in management listing should be visible "CAT2"
-      And category in management listing should be visible "CAT3"
-      And course in management listing should be visible "C1"
-      And I toggle visibility of category "CAT1" in management listing
-      And a new page should not have loaded since I started watching
-      And category in management listing should be dimmed "CAT1"
-      And category in management listing should be dimmed "CAT2"
-      And category in management listing should be dimmed "CAT3"
-      And course in management listing should be dimmed "C1"
-      And I toggle visibility of category "CAT1" in management listing
-      And a new page should not have loaded since I started watching
-      And category in management listing should be visible "CAT1"
-      And category in management listing should be visible "CAT2"
-      And category in management listing should be visible "CAT3"
-      And course in management listing should be visible "C1"
-      And I toggle visibility of course "C1" in management listing
-      And a new page should not have loaded since I started watching
-      And category in management listing should be visible "CAT1"
-      And category in management listing should be visible "CAT2"
-      And category in management listing should be visible "CAT3"
-      And course in management listing should be dimmed "C1"
-      And I toggle visibility of category "CAT1" in management listing
-      And a new page should not have loaded since I started watching
-      And category in management listing should be dimmed "CAT1"
-      And category in management listing should be dimmed "CAT2"
-      And category in management listing should be dimmed "CAT3"
-      And course in management listing should be dimmed "C1"
-      And I toggle visibility of category "CAT1" in management listing
-      And a new page should not have loaded since I started watching
-      And category in management listing should be visible "CAT1"
-      And category in management listing should be visible "CAT2"
-      And category in management listing should be visible "CAT3"
-      And course in management listing should be dimmed "C1"
+    And I log in as "admin"
+    And I go to the courses management page
+    And I start watching to see if a new page loads
+    And I should see the "Course categories and courses" management page
+    And I click on category "Cat 1" in the management interface
+    And a new page should have loaded since I started watching
+    And I start watching to see if a new page loads
+    And I should see the "Course categories and courses" management page
+    And I click on category "Cat 2" in the management interface
+    And a new page should have loaded since I started watching
+    And I start watching to see if a new page loads
+    And I should see the "Course categories and courses" management page
+    And I click on category "Cat 3" in the management interface
+    And a new page should have loaded since I started watching
+    And I start watching to see if a new page loads
+    And I should see the "Course categories and courses" management page
+    And category in management listing should be visible "CAT1"
+    And category in management listing should be visible "CAT2"
+    And category in management listing should be visible "CAT3"
+    And course in management listing should be visible "C1"
+    And I toggle visibility of category "CAT1" in management listing
+    And a new page should not have loaded since I started watching
+    And category in management listing should be dimmed "CAT1"
+    And category in management listing should be dimmed "CAT2"
+    And category in management listing should be dimmed "CAT3"
+    And course in management listing should be dimmed "C1"
+    And I toggle visibility of category "CAT1" in management listing
+    And a new page should not have loaded since I started watching
+    And category in management listing should be visible "CAT1"
+    And category in management listing should be visible "CAT2"
+    And category in management listing should be visible "CAT3"
+    And course in management listing should be visible "C1"
+    And I toggle visibility of course "C1" in management listing
+    And a new page should not have loaded since I started watching
+    And category in management listing should be visible "CAT1"
+    And category in management listing should be visible "CAT2"
+    And category in management listing should be visible "CAT3"
+    And course in management listing should be dimmed "C1"
+    And I toggle visibility of category "CAT1" in management listing
+    And a new page should not have loaded since I started watching
+    And category in management listing should be dimmed "CAT1"
+    And category in management listing should be dimmed "CAT2"
+    And category in management listing should be dimmed "CAT3"
+    And course in management listing should be dimmed "C1"
+    And I toggle visibility of category "CAT1" in management listing
+    And a new page should not have loaded since I started watching
+    And category in management listing should be visible "CAT1"
+    And category in management listing should be visible "CAT2"
+    And category in management listing should be visible "CAT3"
+    And course in management listing should be dimmed "C1"

@@ -4,7 +4,6 @@ Feature: Add a new custom file type
   As an admin
   I need to add a new custom file type
 
-
   @javascript
   Scenario: Add custom file type
     Given the following "courses" exist:

@@ -48,4 +48,3 @@ Feature: Delete a blog entry
     And I press "Cancel"
     And I should see "Blog post one"
     And I should see "Blog post two"
-

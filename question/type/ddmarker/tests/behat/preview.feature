@@ -1,7 +1,7 @@
 @qtype @qtype_ddmarker @_switch_window
-Feature: Preview a drag-drop onto image question
+Feature: Preview a drag-drop marker question
   As a teacher
-  In order to check my drag-drop onto image questions will work for students
+  In order to check my drag-drop marker questions will work for students
   I need to preview them
 
   Background:

@@ -76,7 +76,7 @@ Feature: Quiz reset
     And I navigate to "User overrides" in current page administration
     Then I should not see "Sam1 Student1"
 
-Scenario: Use course reset to remove group overrides.
+  Scenario: Use course reset to remove group overrides.
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test quiz name"

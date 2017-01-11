@@ -1,5 +1,5 @@
 @block @block_search_forums @mod_forum
-Feature: The search forums block allows users to search for forum posts
+Feature: The search forums block allows users to search for forum posts on frontpage
   In order to search for a forum post
   As an administrator
   I can add the search forums block

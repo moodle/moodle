@@ -106,7 +106,6 @@ module.exports = function(grunt) {
         return libs;
     };
 
-
     // Project configuration.
     grunt.initConfig({
         eslint: {
@@ -171,11 +170,20 @@ module.exports = function(grunt) {
                 files: ['**/yui/src/**/*.js'],
                 tasks: ['yui']
             },
+            gherkinlint: {
+                files: ['**/tests/behat/*.feature'],
+                tasks: ['gherkinlint']
+            }
         },
         shifter: {
             options: {
                 recursive: true,
                 paths: [cwd]
+            }
+        },
+        gherkinlint: {
+            options: {
+                files: ['**/tests/behat/*.feature'],
             }
         },
         stylelint: {
@@ -318,6 +326,22 @@ module.exports = function(grunt) {
         }, done);
     };
 
+    tasks.gherkinlint = function() {
+        var done = this.async(),
+            options = grunt.config('gherkinlint.options');
+
+        var args = grunt.file.expand(options.files);
+        args.unshift(path.normalize(__dirname + '/node_modules/.bin/gherkin-lint'));
+        grunt.util.spawn({
+            cmd: 'node',
+            args: args,
+            opts: {stdio: 'inherit', env: process.env}
+        }, function(error, result, code) {
+            // Propagate the exit code.
+            done(code);
+        });
+    };
+
     tasks.startup = function() {
         // Are we in a YUI directory?
         if (path.basename(path.resolve(cwd, '../../')) == 'yui') {
@@ -329,6 +353,7 @@ module.exports = function(grunt) {
             // Run them all!.
             grunt.task.run('css');
             grunt.task.run('js');
+            grunt.task.run('gherkinlint');
         }
     };
 
@@ -343,6 +368,7 @@ module.exports = function(grunt) {
           grunt.config('uglify.amd.files', [{expand: true, src: files, rename: uglifyRename}]);
           grunt.config('shifter.options.paths', files);
           grunt.config('stylelint.less.src', files);
+          grunt.config('gherkinlint.options.files', files);
           changedFiles = Object.create(null);
     }, 200);
 
@@ -360,6 +386,7 @@ module.exports = function(grunt) {
 
     // Register JS tasks.
     grunt.registerTask('shifter', 'Run Shifter against the current directory', tasks.shifter);
+    grunt.registerTask('gherkinlint', 'Run gherkinlint against the current directory', tasks.gherkinlint);
     grunt.registerTask('ignorefiles', 'Generate ignore files for linters', tasks.ignorefiles);
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
     grunt.registerTask('amd', ['eslint:amd', 'uglify']);

@@ -111,4 +111,3 @@ Feature: Perform basic calendar functionality
       | Description | Wait, this event isn't that great. |
     And I press "Save changes"
     And I should see "Mediocre event"
-

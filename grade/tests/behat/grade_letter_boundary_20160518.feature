@@ -1,5 +1,5 @@
 @core @core_grades
-Feature: We can customise the letter boundary of a course.
+Feature: We can customise the letter boundary of a course in gradebook version 20160518.
   In order to change the letter boundary of a course
   As a teacher
   I need to add assessments to the gradebook.

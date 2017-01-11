@@ -4,7 +4,6 @@ Feature: Manage language packs
   As an administrator
   I need to be able to add, update and remove language packs
 
-
   Background:
     Given remote langimport tests are enabled
 

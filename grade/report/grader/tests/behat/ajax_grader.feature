@@ -4,7 +4,6 @@ Feature: Using the AJAX grading feature of Grader report to update grades and fe
   As a teacher
   I need to be able to update and verify grades
 
-
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category | groupmode |

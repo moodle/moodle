@@ -36,4 +36,3 @@ Feature: In a lesson activity, teacher can import embedded images in questions a
     And "//audio[contains(@title, 'Listen to this greeting:')]/source[contains(@src, 'bonjour.mp3')]" "xpath_element" should exist
     And "//*[contains(@class, 'answeroption')]//img[contains(@src, 'pluginfile.php')]" "xpath_element" should exist
     And "//*[contains(@class, 'answeroption')]//img[contains(@src, 'flag-france.jpg')]" "xpath_element" should exist
-
