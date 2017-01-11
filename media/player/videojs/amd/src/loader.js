@@ -63,11 +63,11 @@ define(['jquery', 'core/event'], function($, Event) {
             .find('audio, video').each(function() {
                 var id = $(this).attr('id'),
                     config = $(this).data('setup'),
-                    modules = ['media_videojs/video'];
+                    modules = ['media_videojs/video-lazy'];
 
                 if (config.techOrder && config.techOrder.indexOf('youtube') !== -1) {
                     // Add YouTube to the list of modules we require.
-                    modules.push('media_videojs/Youtube');
+                    modules.push('media_videojs/Youtube-lazy');
                 }
                 require(modules, function(videojs) {
                     if (onload) {
