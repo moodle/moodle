@@ -228,6 +228,58 @@ function lesson_update_events($lesson, $override = null) {
 }
 
 /**
+ * Calculates the priorities of timeopen and timeclose values for group overrides for a lesson.
+ *
+ * @param int $lessonid The quiz ID.
+ * @return array|null Array of group override priorities for open and close times. Null if there are no group overrides.
+ */
+function lesson_get_group_override_priorities($lessonid) {
+    global $DB;
+
+    // Fetch group overrides.
+    $where = 'lessonid = :lessonid AND groupid IS NOT NULL';
+    $params = ['lessonid' => $lessonid];
+    $overrides = $DB->get_records_select('lesson_overrides', $where, $params, '', 'id, groupid, available, deadline');
+    if (!$overrides) {
+        return null;
+    }
+
+    $grouptimeopen = [];
+    $grouptimeclose = [];
+    foreach ($overrides as $override) {
+        if ($override->available !== null && !in_array($override->available, $grouptimeopen)) {
+            $grouptimeopen[] = $override->available;
+        }
+        if ($override->deadline !== null && !in_array($override->deadline, $grouptimeclose)) {
+            $grouptimeclose[] = $override->deadline;
+        }
+    }
+
+    // Sort open times in descending manner. The earlier open time gets higher priority.
+    rsort($grouptimeopen);
+    // Set priorities.
+    $opengrouppriorities = [];
+    $openpriority = 1;
+    foreach ($grouptimeopen as $timeopen) {
+        $opengrouppriorities[$timeopen] = $openpriority++;
+    }
+
+    // Sort close times in ascending manner. The later close time gets higher priority.
+    sort($grouptimeclose);
+    // Set priorities.
+    $closegrouppriorities = [];
+    $closepriority = 1;
+    foreach ($grouptimeclose as $timeclose) {
+        $closegrouppriorities[$timeclose] = $closepriority++;
+    }
+
+    return [
+        'open' => $opengrouppriorities,
+        'close' => $closegrouppriorities
+    ];
+}
+
+/**
  * This standard function will check all instances of this module
  * and make sure there are up-to-date events created for each of them.
  * If courseid = 0, then every lesson event in the site is checked, else

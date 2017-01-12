@@ -1307,6 +1307,58 @@ function quiz_update_events($quiz, $override = null) {
 }
 
 /**
+ * Calculates the priorities of timeopen and timeclose values for group overrides for a quiz.
+ *
+ * @param int $quizid The quiz ID.
+ * @return array|null Array of group override priorities for open and close times. Null if there are no group overrides.
+ */
+function quiz_get_group_override_priorities($quizid) {
+    global $DB;
+
+    // Fetch group overrides.
+    $where = 'quiz = :quiz AND groupid IS NOT NULL';
+    $params = ['quiz' => $quizid];
+    $overrides = $DB->get_records_select('quiz_overrides', $where, $params, '', 'id, timeopen, timeclose');
+    if (!$overrides) {
+        return null;
+    }
+
+    $grouptimeopen = [];
+    $grouptimeclose = [];
+    foreach ($overrides as $override) {
+        if ($override->timeopen !== null && !in_array($override->timeopen, $grouptimeopen)) {
+            $grouptimeopen[] = $override->timeopen;
+        }
+        if ($override->timeclose !== null && !in_array($override->timeclose, $grouptimeclose)) {
+            $grouptimeclose[] = $override->timeclose;
+        }
+    }
+
+    // Sort open times in descending manner. The earlier open time gets higher priority.
+    rsort($grouptimeopen);
+    // Set priorities.
+    $opengrouppriorities = [];
+    $openpriority = 1;
+    foreach ($grouptimeopen as $timeopen) {
+        $opengrouppriorities[$timeopen] = $openpriority++;
+    }
+
+    // Sort close times in ascending manner. The later close time gets higher priority.
+    sort($grouptimeclose);
+    // Set priorities.
+    $closegrouppriorities = [];
+    $closepriority = 1;
+    foreach ($grouptimeclose as $timeclose) {
+        $closegrouppriorities[$timeclose] = $closepriority++;
+    }
+
+    return [
+        'open' => $opengrouppriorities,
+        'close' => $closegrouppriorities
+    ];
+}
+
+/**
  * List the actions that correspond to a view of this module.
  * This is used by the participation report.
  *
