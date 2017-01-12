@@ -15,16 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Lesson external functions and service definitions.
  *
- * @package mod_lesson
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @package    mod_lesson
+ * @category   external
+ * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.3
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2016120501;     // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016112900;    // Requires this Moodle version
-$plugin->component = 'mod_lesson'; // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+$functions = array(
+    'mod_lesson_get_lessons_by_courses' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_lessons_by_courses',
+        'description'   => 'Returns a list of lessons in a provided list of courses, if no list is provided all lessons that the user can view will be returned.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+);
