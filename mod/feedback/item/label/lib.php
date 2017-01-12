@@ -194,6 +194,7 @@ class feedback_item_label extends feedback_item_base {
                 $context->id, 'mod_feedback', $filearea, $item->id);
         $formatoptions = array('overflowdiv' => true, 'noclean' => true);
         $output = format_text($output, FORMAT_HTML, $formatoptions);
+        $output = html_writer::div($output, '', ['id' => 'feedback_item_' . $item->id]);
 
         $inputname = $item->typ . '_' . $item->id;
 
