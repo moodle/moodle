@@ -34,16 +34,15 @@ $printclose = optional_param('printclose', 0, PARAM_INT);
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST), $cm);
 
 require_login($course, false, $cm);
-
 
 // Apply overrides.
 $lesson->update_effective_access($USER->id);
 
-$context = context_module::instance($cm->id);
-$canmanage = has_capability('mod/lesson:manage', $context);
+$context = $lesson->context;
+$canmanage = $lesson->can_manage();
 
 $url = new moodle_url('/mod/lesson/mediafile.php', array('id'=>$id));
 if ($printclose !== '') {
@@ -67,48 +66,25 @@ if ($printclose) {  // this is for framesets
     exit();
 }
 
-echo $lessonoutput->header($lesson, $cm);
-
-//TODO: this is copied from view.php - the access should be the same!
-/// Check these for students only TODO: Find a better method for doing this!
-///     Check lesson availability
-///     Check for password
-///     Check dependencies
-if (!$canmanage) {
-    if (!$lesson->is_accessible()) {  // Deadline restrictions
-        echo $lessonoutput->header($lesson, $cm);
-        if ($lesson->deadline != 0 && time() > $lesson->deadline) {
-            echo $lessonoutput->lesson_inaccessible(get_string('lessonclosed', 'lesson', userdate($lesson->deadline)));
-        } else {
-            echo $lessonoutput->lesson_inaccessible(get_string('lessonopen', 'lesson', userdate($lesson->available)));
-        }
-        echo $lessonoutput->footer();
-        exit();
-    } else if ($lesson->usepassword && empty($USER->lessonloggedin[$lesson->id])) { // Password protected lesson code
-        $correctpass = false;
-        if (!empty($userpassword) && (($lesson->password == md5(trim($userpassword))) || ($lesson->password == trim($userpassword)))) {
-            require_sesskey();
-            // with or without md5 for backward compatibility (MDL-11090)
-            $USER->lessonloggedin[$lesson->id] = true;
-            $correctpass = true;
-        } else if (isset($lesson->extrapasswords)) {
-            // Group overrides may have additional passwords.
-            foreach ($lesson->extrapasswords as $password) {
-                if (strcmp($password, md5(trim($userpassword))) === 0 || strcmp($password, trim($userpassword)) === 0) {
-                    require_sesskey();
-                    $correctpass = true;
-                    $USER->lessonloggedin[$lesson->id] = true;
-                }
-            }
-        }
-        if (!$correctpass) {
-            echo $lessonoutput->header($lesson, $cm);
-            echo $lessonoutput->login_prompt($lesson, $userpassword !== '');
-            echo $lessonoutput->footer();
-            exit();
-        }
-    }
+// Check access restrictions.
+if ($timerestriction = $lesson->get_time_restriction_status()) {  // Deadline restrictions.
+    echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('notavailable'));
+    echo $lessonoutput->lesson_inaccessible(get_string($timerestriction->reason, 'lesson', userdate($timerestriction->time)));
+    echo $lessonoutput->footer();
+    exit();
+} else if ($passwordrestriction = $lesson->get_password_restriction_status(null)) { // Password protected lesson code.
+    echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)));
+    echo $lessonoutput->login_prompt($lesson, $userpassword !== '');
+    echo $lessonoutput->footer();
+    exit();
+} else if ($dependenciesrestriction = $lesson->get_dependencies_restriction_status()) { // Check for dependencies.
+    echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('completethefollowingconditions', 'lesson', format_string($lesson->name)));
+    echo $lessonoutput->dependancy_errors($dependenciesrestriction->dependentlesson, $dependenciesrestriction->errors);
+    echo $lessonoutput->footer();
+    exit();
 }
+
+echo $lessonoutput->header($lesson, $cm);
 
 // print the embedded media html code
 echo $OUTPUT->box(lesson_get_media_html($lesson, $context));
