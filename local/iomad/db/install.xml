@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/iomad/db" VERSION="20161110" COMMENT="XMLDB file for Moodle local/iomad"
+<XMLDB PATH="local/iomad/db" VERSION="20170111" COMMENT="XMLDB file for Moodle local/iomad"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -28,6 +28,12 @@
         <FIELD NAME="suspended" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="To keep track is a company is suspended."/>
         <FIELD NAME="customcss" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="To hold company specific CSS for the Iomad and Bootstrap themes"/>
         <FIELD NAME="emailprofileid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="This is the profile id field which is to be used for email addresses to be CCd for certain Iomad events"/>
+        <FIELD NAME="supervisorprofileid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="managernotify" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="send emails to manager
+0 = never
+1 = when there is a reminder
+2 = when the user completes a course
+3 - both of the above"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -94,6 +94,36 @@ class company_edit_form extends company_moodleform {
         $mform->addElement('textarea', 'companydomains', get_string('companydomains', 'block_iomad_company_admin'), array('display' => 'noofficial'));
         $mform->setType('companydomains', PARAM_NOTAGS);
 
+        /* === Company email notifications === */
+
+        $emailchoices = array('0' => get_string('none'),
+                              '1' => get_string('reminderemails', 'block_iomad_company_admin'),
+                              '2' => get_string('completionemails', 'block_iomad_company_admin'),
+                              '3' => get_string('allemails', 'block_iomad_company_admin'));
+        // Get the company profile choices.
+        $globalfields = $DB->get_records_sql_menu("SELECT id,name from {user_info_field} WHERE
+                                              categoryid NOT IN (
+                                                SELECT profileid from {company}
+                                              )");
+        if (!$this->isadding) {
+            // Get the company info.
+            $companyfields = $DB->get_records_sql_menu("SELECT id,name from {user_info_field} WHERE
+                                                  categoryid = (
+                                                    SELECT profileid from {company}
+                                                    WHERE id = :companyid
+                                                  )", array('companyid' => $companyid));
+        } else {
+            $companyfields = array();
+        }
+        $profilefields = array('0' => get_string('none')) + $globalfields + $companyfields;
+
+        $mform->addElement('select', 'emailprofileid', get_string('emailprofileid', 'block_iomad_company_admin'), $profilefields);
+        $mform->setDefault('emailprofileid', 0);
+            
+        $mform->addElement('select', 'managernotify', get_string('managernotify', 'block_iomad_company_admin'), $emailchoices);
+        $mform->setDefault('managernotify', 0);
+            
+        /* === end company email notifications === */
 
         /* === User defaults === */
         $mform->addElement('header', 'userdefaults',

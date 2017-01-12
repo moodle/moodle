@@ -1875,6 +1875,7 @@ class company {
         $data = $event->get_data();
         if (!empty($data['companyid'])) {
             self::add_competency_template($data['companyid'], $event->objectid);
+        }
         return true;
     }
 
@@ -1971,64 +1972,69 @@ class company {
         }
 
         // Email the company managers.
-        if ($mymanagers = self::get_my_managers($userid, 1)) {
-            foreach ($mymanagers as $managerid) {
-                // Get the user info.
-                if ($managerinfo = $DB->get_record('user', array('id' => $managerid->userid, 'deleted' => 0, 'suspended' => 0))) {
-                    if ($userinfo = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
-                        if ($courseinfo = $DB->get_record('course', array('id' => $courseid))) {
-                            // We have to do this manually as the normal Moodle functions require a proper registered user.
-                            $params = new stdclass();
-                            $params->fullname = $courseinfo->fullname;
-                            $params->firstname = $userinfo->firstname;
-                            $params->lastname = $userinfo->lastname;
-                            $params->date = date('d-m-Y', time());
-                            $mail = get_mailer();
+        // Get the company details.
+        $company = get_company_byuserid($userid);
+        if ($company->managernotify == 2 || $company->managernotify == 3) {
+            // we are sending an email.
+            if ($mymanagers = self::get_my_managers($userid, 1)) {
+                foreach ($mymanagers as $managerid) {
+                    // Get the user info.
+                    if ($managerinfo = $DB->get_record('user', array('id' => $managerid->userid, 'deleted' => 0, 'suspended' => 0))) {
+                        if ($userinfo = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
+                            if ($courseinfo = $DB->get_record('course', array('id' => $courseid))) {
+                                // We have to do this manually as the normal Moodle functions require a proper registered user.
+                                $params = new stdclass();
+                                $params->fullname = $courseinfo->fullname;
+                                $params->firstname = $userinfo->firstname;
+                                $params->lastname = $userinfo->lastname;
+                                $params->date = date('d-m-Y', time());
+                                $mail = get_mailer();
+        
+                                $supportuser = core_user::get_support_user();
+                                if (!empty($CFG->supportemail)) {
+                                    $supportuser->email = $CFG->supportemail;
+                                }
+                                if ($CFG->supportname) {
+                                    $supportuser->firstname = $CFG->supportname;
+                                }
     
-                            $supportuser = core_user::get_support_user();
-                            if (!empty($CFG->supportemail)) {
-                                $supportuser->email = $CFG->supportemail;
-                            }
-                            if ($CFG->supportname) {
-                                $supportuser->firstname = $CFG->supportname;
-                            }
-
-                            $subject = get_string('completion_course_supervisor_subject', 'block_iomad_company_admin', $params);
-                            $messagetext = get_string('completion_course_supervisor_body', 'block_iomad_company_admin', $params);
-
-                            $mail->Sender = $supportuser->firstname;
-                            $mail->From     = $CFG->noreplyaddress;
-                            $mail->FromName = $supportuser->firstname;
-                            if (empty($CFG->divertallemailsto)) {
-                                $mail->Subject = substr($subject, 0, 900);
-                                $mail->addAddress($managerinfo->email, '');
-                            } else {
-                                $mail->Subject = substr('[DIVERTED ' . $managerinfo->email . '] ' . $subject, 0, 900);
-                                $mail->addAddress($CFG->divertallemailsto, '');
-                            }
-
-
-                            // Add the certificate attachment.
-                            // need to pause to make sure the other events create it.
-                            $trackinfos = $DB->get_records_sql('SELECT * FROM {local_iomad_track}
-                                                                WHERE userid = :userid
-                                                                AND courseid = :courseid
-                                                                ORDER BY id DESC',
-                                                                array('userid' => $userid, 'courseid' => $courseid), 0, 1);
-                            $trackinfo = array_pop($trackinfos);
-                            $trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id));
-                            $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
-                            $filedir1 = substr($fileinfo->contenthash,0,2);
-                            $filedir2 = substr($fileinfo->contenthash,2,2);
-                            $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
-                            $mimetype = mimeinfo('type', $trackfileinfo->filename);
-                            $mail->addAttachment($filepath, $trackfileinfo->filename, 'base64', $mimetype);
-                            // Set word wrap.
-                            $mail->WordWrap = 79;
-
-                            $mail->Body =  "\n$messagetext\n";
-                            if (empty($CFG->noemailever)) {
-                                $mail->send();
+                                $subject = get_string('completion_course_supervisor_subject', 'block_iomad_company_admin', $params);
+                                $messagetext = get_string('completion_course_supervisor_body', 'block_iomad_company_admin', $params);
+    
+                                $mail->Sender = $supportuser->firstname;
+                                $mail->From     = $CFG->noreplyaddress;
+                                $mail->FromName = $supportuser->firstname;
+                                if (empty($CFG->divertallemailsto)) {
+                                    $mail->Subject = substr($subject, 0, 900);
+                                    $mail->addAddress($managerinfo->email, '');
+                                } else {
+                                    $mail->Subject = substr('[DIVERTED ' . $managerinfo->email . '] ' . $subject, 0, 900);
+                                    $mail->addAddress($CFG->divertallemailsto, '');
+                                }
+    
+    
+                                // Add the certificate attachment.
+                                // need to pause to make sure the other events create it.
+                                $trackinfos = $DB->get_records_sql('SELECT * FROM {local_iomad_track}
+                                                                    WHERE userid = :userid
+                                                                    AND courseid = :courseid
+                                                                    ORDER BY id DESC',
+                                                                    array('userid' => $userid, 'courseid' => $courseid), 0, 1);
+                                $trackinfo = array_pop($trackinfos);
+                                $trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id));
+                                $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
+                                $filedir1 = substr($fileinfo->contenthash,0,2);
+                                $filedir2 = substr($fileinfo->contenthash,2,2);
+                                $filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
+                                $mimetype = mimeinfo('type', $trackfileinfo->filename);
+                                $mail->addAttachment($filepath, $trackfileinfo->filename, 'base64', $mimetype);
+                                // Set word wrap.
+                                $mail->WordWrap = 79;
+    
+                                $mail->Body =  "\n$messagetext\n";
+                                if (empty($CFG->noemailever)) {
+                                    $mail->send();
+                                }
                             }
                         }
                     }
