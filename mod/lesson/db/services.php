@@ -30,9 +30,18 @@ $functions = array(
     'mod_lesson_get_lessons_by_courses' => array(
         'classname'     => 'mod_lesson_external',
         'methodname'    => 'get_lessons_by_courses',
-        'description'   => 'Returns a list of lessons in a provided list of courses, if no list is provided all lessons that the user can view will be returned.',
+        'description'   => 'Returns a list of lessons in a provided list of courses,
+                            if no list is provided all lessons that the user can view will be returned.',
         'type'          => 'read',
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'mod_lesson_get_lesson_access_information' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_lesson_access_information',
+        'description'   => 'Return access information for a given lesson.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
 );
