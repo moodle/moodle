@@ -84,8 +84,8 @@ class company_managers_form extends moodleform {
         $company = new company($this->selectedcompany);
         $mform->addElement('hidden', 'showothermanagers', $this->showothermanagers);
         $mform->setType('showothermanagers', PARAM_INT);
-        $mform->addElement('hidden', 'departmentid', $this->departmentid);
-        $mform->setType('departmentid', PARAM_INT);
+        $mform->addElement('hidden', 'deptid', $this->departmentid);
+        $mform->setType('deptid', PARAM_INT);
         $mform->addElement('hidden', 'managertype', $this->roletype);
         $mform->setType('managertype', PARAM_INT);
 
@@ -466,7 +466,7 @@ if ($managersform->is_cancelled()) {
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');
-    }   
+    }
 
     echo html_writer::tag('h3', get_string('company_managers_for', 'block_iomad_company_admin', $company->get_name()));
     echo html_writer::start_tag('div', array('class' => 'iomadclear'));
