@@ -339,4 +339,66 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue($result['canviewreports']);
     }
 
+    /**
+     * Test test_view_lesson invalid id.
+     */
+    public function test_view_lesson_invalid_id() {
+        $this->setExpectedException('moodle_exception');
+        mod_lesson_external::view_lesson(0);
+    }
+
+    /**
+     * Test test_view_lesson user not enrolled.
+     */
+    public function test_view_lesson_user_not_enrolled() {
+        // Test not-enrolled user.
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+        $this->setExpectedException('moodle_exception');
+        mod_lesson_external::view_lesson($this->lesson->id);
+    }
+
+    /**
+     * Test test_view_lesson user student.
+     */
+    public function test_view_lesson_user_student() {
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_lesson_external::view_lesson($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::view_lesson_returns(), $result);
+        $this->assertTrue($result['status']);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_lesson\event\course_module_viewed', $event);
+        $this->assertEquals($this->context, $event->get_context());
+        $moodlelesson = new \moodle_url('/mod/lesson/view.php', array('id' => $this->cm->id));
+        $this->assertEquals($moodlelesson, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
+     * Test test_view_lesson user missing capabilities.
+     */
+    public function test_view_lesson_user_missing_capabilities() {
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
+        assign_capability('mod/lesson:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        // Empty all the caches that may be affected  by this change.
+        accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
+
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_lesson_external::view_lesson($this->lesson->id);
+    }
+
 }

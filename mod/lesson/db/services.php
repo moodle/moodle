@@ -44,4 +44,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'mod_lesson_view_lesson' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'view_lesson',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
