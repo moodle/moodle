@@ -198,6 +198,7 @@ class current_company_course_selector extends company_course_selector_base {
                             $DB->get_records_sql($fields . $sharedsql . $order, $params) +
                             $DB->get_records_sql($fields . $partialsharedsql . $order, $params);
 
+
         if (empty($availablecourses)) {
             return array();
         }

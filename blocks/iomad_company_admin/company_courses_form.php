@@ -39,6 +39,7 @@ class company_courses_form extends moodleform {
                          'subdepartments' => $this->subhierarchieslist,
                          'parentdepartmentid' => $parentlevel,
                          'shared' => false,
+                         'licenses' => true,
                          'partialshared' => true);
         $this->potentialcourses = new potential_company_course_selector('potentialcourses',
                                                                          $options);
