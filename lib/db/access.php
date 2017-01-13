@@ -921,6 +921,18 @@ $capabilities = array(
         )
     ),
 
+    'moodle/course:ignoreavailabilityrestrictions' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+        ),
+        'clonepermissionsfrom' => 'moodle/course:viewhiddenactivities'
+    ),
+
     'moodle/course:ignorefilesizelimits' => array(
 
         'captype' => 'write',

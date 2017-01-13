@@ -492,7 +492,7 @@ class info_testcase extends advanced_testcase {
         // If the students have viewhiddenactivities, they get past the module
         // restriction.
         role_change_permission($studentroleid, context_module::instance($page2->cmid),
-                'moodle/course:viewhiddenactivities', CAP_ALLOW);
+                'moodle/course:ignoreavailabilityrestrictions', CAP_ALLOW);
         $expected = array($u1->id, $u2->id);
         $this->assertEquals($expected, array_keys($info->filter_user_list($allusers)));
         list ($sql, $params) = $info->get_user_list_sql(true);
@@ -503,7 +503,7 @@ class info_testcase extends advanced_testcase {
         // If they have viewhiddensections, they also get past the section
         // restriction.
         role_change_permission($studentroleid, context_course::instance($course->id),
-                'moodle/course:viewhiddensections', CAP_ALLOW);
+                'moodle/course:ignoreavailabilityrestrictions', CAP_ALLOW);
         $expected = array($u1->id, $u2->id, $u3->id);
         $this->assertEquals($expected, array_keys($info->filter_user_list($allusers)));
         list ($sql, $params) = $info->get_user_list_sql(true);
