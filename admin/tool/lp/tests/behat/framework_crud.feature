@@ -68,7 +68,7 @@ Feature: Manage competency frameworks
     Then I should not see "Science Year-4"
     And I should not see "sc-y-4"
 
-Scenario: Edit a framework with competencies in user competency
+  Scenario: Edit a framework with competencies in user competency
     Given the following lp "frameworks" exist:
       | shortname | idnumber |
       | Science Year-5 | sc-y-5 |
@@ -98,7 +98,7 @@ Scenario: Edit a framework with competencies in user competency
     And I should see "Science Year-5 Edited"
     And I should see "sc-y-5"
 
-Scenario: Edit a framework with competencies in user competency plan
+  Scenario: Edit a framework with competencies in user competency plan
     Given the following lp "frameworks" exist:
       | shortname | idnumber |
       | Science Year-6 | sc-y-6 |

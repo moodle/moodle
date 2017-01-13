@@ -32,4 +32,3 @@ Feature: Atto accessibility helper
     # This shows the current HTML tags applied to the selected text.
     # This is required because they are not always read by a screen reader.
     Then I should see "UL, LI"
-

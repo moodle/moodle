@@ -1,5 +1,5 @@
 @mod @mod_choice
-Feature: Add choice activity
+Feature: Editing choice block
   In order to customise choice page
   As a teacher or admin
   I need to add remove block from the choice page

@@ -179,7 +179,7 @@ Feature: Manage plan workflow
     And I should not see "Active"
     And I log out
 
-Scenario: Manager reopen a complete learning plan
+  Scenario: Manager reopen a complete learning plan
     Given  the following lp "plans" exist:
       | name | user | description | status | reviewer |
       | Test-Plan3 | user1 | Description of plan 3 for user 1 | complete | manager1 |

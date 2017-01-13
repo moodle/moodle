@@ -22,8 +22,8 @@ Feature: Test exporting Essay questions
       | Test questions   | essay | essay-001 | editor           |
       | Test questions   | essay | essay-002 | editorfilepicker |
       | Test questions   | essay | essay-003 | plain            |
-   And I log in as "teacher1"
-   And I follow "Course 1"
+    And I log in as "teacher1"
+    And I follow "Course 1"
 
   Scenario: Export 3 Essay questions
     When I navigate to "Export" node in "Course administration > Question bank"

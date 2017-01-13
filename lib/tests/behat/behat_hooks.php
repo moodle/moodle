@@ -581,11 +581,23 @@ class behat_hooks extends behat_base {
         // The scenario title + the failed step text.
         // We want a i-am-the-scenario-title_i-am-the-failed-step.$filetype format.
         $filename = $scope->getFeature()->getTitle() . '_' . $scope->getStep()->getText();
-        $filename = preg_replace('/([^a-zA-Z0-9\_]+)/', '-', $filename);
 
-        // File name limited to 255 characters. Leaving 5 chars for line number and 4 chars for the file.
+        // As file name is limited to 255 characters. Leaving 5 chars for line number and 4 chars for the file.
         // extension as we allow .png for images and .html for DOM contents.
-        $filename = substr($filename, 0, 245) . '_' . $scope->getStep()->getLine() . '.' . $filetype;
+        $filenamelen = 245;
+
+        // Suffix suite name to faildump file, if it's not default suite.
+        $suitename = $scope->getSuite()->getName();
+        if ($suitename != 'default') {
+            $suitename = '_' . $suitename;
+            $filenamelen = $filenamelen - strlen($suitename);
+        } else {
+            // No need to append suite name for default.
+            $suitename = '';
+        }
+
+        $filename = preg_replace('/([^a-zA-Z0-9\_]+)/', '-', $filename);
+        $filename = substr($filename, 0, $filenamelen) . $suitename . '_' . $scope->getStep()->getLine() . '.' . $filetype;
 
         return array($dir, $filename);
     }

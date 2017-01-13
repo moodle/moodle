@@ -301,16 +301,4 @@ class behat_grade extends behat_base {
 
         $this->select_in_gradebook_tabs($gradepath);
     }
-
-    /**
-     * Navigates to the course gradebook and selects a specified item from the grade navigation tabs.
-     *
-     * @todo MDL-57282 deprecate in Moodle 3.3
-     *
-     * @Given /^I go to "(?P<gradepath_string>(?:[^"]|\\")*)" in the course gradebook$/
-     * @param string $gradepath
-     */
-    public function i_go_to_in_the_course_gradebook($gradepath) {
-        $this->execute('behat_grade::i_navigate_to_in_the_course_gradebook', $gradepath);
-    }
 }

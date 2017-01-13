@@ -915,6 +915,16 @@
         }
       }
     },
+    "gherkin": {
+      "version": "4.0.0",
+      "from": "gherkin@4.0.0",
+      "resolved": "https://registry.npmjs.org/gherkin/-/gherkin-4.0.0.tgz"
+    },
+    "gherkin-lint": {
+      "version": "1.1.3",
+      "from": "gherkin-lint@>=1.1.3 <2.0.0",
+      "resolved": "https://registry.npmjs.org/gherkin-lint/-/gherkin-lint-1.1.3.tgz"
+    },
     "glob": {
       "version": "7.0.5",
       "from": "https://registry.npmjs.org/glob/-/glob-7.0.5.tgz",

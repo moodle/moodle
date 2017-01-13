@@ -1,5 +1,5 @@
 @block @block_activity_results
-Feature: The activity results block displays student scores as scales
+Feature: The activity results block displays students in groups low scores as scales
   In order to be display student scores as scales
   As a user
   I need to see the activity results block
@@ -146,4 +146,3 @@ Feature: The activity results block displays student scores as scales
     And I should see "User" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
     And I should see "Average" in the "Activity results" "block"
-

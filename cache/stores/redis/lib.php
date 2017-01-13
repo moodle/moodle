@@ -74,6 +74,13 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
     protected $redis;
 
     /**
+     * Serializer for this store.
+     *
+     * @var int
+     */
+    protected $serializer = Redis::SERIALIZER_PHP;
+
+    /**
      * Determines if the requirements for this type of store are met.
      *
      * @return bool
@@ -124,6 +131,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         if (!array_key_exists('server', $configuration) || empty($configuration['server'])) {
             return;
         }
+        if (array_key_exists('serializer', $configuration)) {
+            $this->serializer = (int)$configuration['serializer'];
+        }
         $prefix = !empty($configuration['prefix']) ? $configuration['prefix'] : '';
         $this->redis = $this->new_redis($configuration['server'], $prefix);
     }
@@ -145,7 +155,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             $port = $serverconf[1];
         }
         if ($redis->connect($server, $port)) {
-            $redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
+            $redis->setOption(Redis::OPT_SERIALIZER, $this->serializer);
             if (!empty($prefix)) {
                 $redis->setOption(Redis::OPT_PREFIX, $prefix);
             }
@@ -426,7 +436,11 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      * @return array
      */
     public static function config_get_configuration_array($data) {
-        return array('server' => $data->server, 'prefix' => $data->prefix);
+        return array(
+            'server' => $data->server,
+            'prefix' => $data->prefix,
+            'serializer' => $data->serializer
+        );
     }
 
     /**
@@ -440,6 +454,9 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         $data = array();
         $data['server'] = $config['server'];
         $data['prefix'] = !empty($config['prefix']) ? $config['prefix'] : '';
+        if (!empty($config['serializer'])) {
+            $data['serializer'] = $config['serializer'];
+        }
         $editform->set_data($data);
     }
 
@@ -458,7 +475,11 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         if (empty($config->test_server)) {
             return false;
         }
-        $cache = new cachestore_redis('Redis test', ['server' => $config->test_server]);
+        $configuration = array('server' => $config->test_server);
+        if (!empty($config->test_serializer)) {
+            $configuration['serializer'] = $config->test_serializer;
+        }
+        $cache = new cachestore_redis('Redis test', $configuration);
         $cache->initialise($definition);
 
         return $cache;
@@ -490,5 +511,20 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
      */
     public static function ready_to_be_used_for_testing() {
         return defined('TEST_CACHESTORE_REDIS_TESTSERVERS');
+    }
+
+    /**
+     * Gets an array of options to use as the serialiser.
+     * @return array
+     */
+    public static function config_get_serializer_options() {
+        $options = array(
+            Redis::SERIALIZER_PHP => get_string('serializer_php', 'cachestore_redis')
+        );
+
+        if (defined('Redis::SERIALIZER_IGBINARY')) {
+            $options[Redis::SERIALIZER_IGBINARY] = get_string('serializer_igbinary', 'cachestore_redis');
+        }
+        return $options;
     }
 }

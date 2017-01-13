@@ -1,5 +1,5 @@
 @mod @mod_quiz
-Feature: Attemp a quiz where some questions require that the previous question has been answered.
+Feature: Attempt a quiz where some questions require that the previous question has been answered.
   In order to complete a quiz where questions require previous ones to be complete
   As a student
   I need later questions to appear once earlier ones have been answered.

@@ -52,7 +52,6 @@ Feature: Enable Block Completion in a course using manual completion by others
     And I follow "More details"
     And I should see "Yes" in the "Marked complete by Teacher" "table_row"
 
-
   Scenario: Add the block to a the course and require multiple roles to mark a student complete.
     Given I log in as "teacher1"
     And I follow "Course 1"

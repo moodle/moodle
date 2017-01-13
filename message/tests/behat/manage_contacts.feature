@@ -1,5 +1,5 @@
 @core @message @javascript
-Feature: Search users
+Feature: Manage contacts
   In order to communicate with fellow users
   As a user
   I need to be able to add and remove them from my contacts

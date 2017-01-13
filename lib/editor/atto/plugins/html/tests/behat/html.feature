@@ -11,4 +11,3 @@ Feature: Atto edit HTML
     And I click on "Show more buttons" "button"
     And I click on "HTML" "button"
     Then the field "Description" matches value "<p style=\"color: blue;\">Smurf</p>"
-

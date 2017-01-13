@@ -1,5 +1,5 @@
 @block @block_activity_results
-Feature: The activity results block displays student scores
+Feature: The activity results block doesn't displays student scores for unconfigured block
   In order to be display student scores
   As a user
   I need to see the activity results block
