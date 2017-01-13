@@ -474,4 +474,100 @@ class mod_lesson_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_questions_attempts.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_questions_attempts_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'attempt' => new external_value(PARAM_INT, 'lesson attempt number'),
+                'correct' => new external_value(PARAM_BOOL, 'only fetch correct attempts', VALUE_DEFAULT, false),
+                'pageid' => new external_value(PARAM_INT, 'only fetch attempts at the given page', VALUE_DEFAULT, null),
+                'userid' => new external_value(PARAM_INT, 'only fetch attempts of the given user', VALUE_DEFAULT, null),
+            )
+        );
+    }
+
+    /**
+     * Return the list of page question attempts in a given lesson.
+     *
+     * @param int $lessonid lesson instance id
+     * @param int $attempt the lesson attempt number
+     * @param bool $correct only fetch correct attempts
+     * @param int $pageid only fetch attempts at the given page
+     * @param int $userid only fetch attempts of the given user
+     * @return array of warnings and page attempts
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_questions_attempts($lessonid, $attempt, $correct = false, $pageid = null, $userid = null) {
+        global $DB, $USER;
+
+        $params = array(
+            'lessonid' => $lessonid,
+            'attempt' => $attempt,
+            'correct' => $correct,
+            'pageid' => $pageid,
+            'userid' => $userid,
+        );
+        $params = self::validate_parameters(self::get_questions_attempts_parameters(), $params);
+        $warnings = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+
+        // Default value for userid.
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        // Extra checks so only users with permissions can view other users attempts.
+        if ($USER->id != $params['userid']) {
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            // Check permissions and that if users share group (if groups enabled).
+            require_capability('mod/lesson:viewreports', $context);
+            if (!groups_user_groups_visible($course, $user->id, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        }
+
+        $result = array();
+        $result['attempts'] = $lesson->get_attempts($params['attempt'], $params['correct'], $params['pageid'], $params['userid']);
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_questions_attempts return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_questions_attempts_returns() {
+        return new external_single_structure(
+            array(
+                'attempts' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'The attempt id'),
+                            'lessonid' => new external_value(PARAM_INT, 'The attempt lessonid'),
+                            'pageid' => new external_value(PARAM_INT, 'The attempt pageid'),
+                            'userid' => new external_value(PARAM_INT, 'The user who did the attempt'),
+                            'answerid' => new external_value(PARAM_INT, 'The attempt answerid'),
+                            'retry' => new external_value(PARAM_INT, 'The lesson attempt number'),
+                            'correct' => new external_value(PARAM_INT, 'If it was the correct answer'),
+                            'useranswer' => new external_value(PARAM_RAW, 'The complete user answer'),
+                            'timeseen' => new external_value(PARAM_INT, 'The time the question was seen'),
+                        ),
+                        'The question page attempts'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
