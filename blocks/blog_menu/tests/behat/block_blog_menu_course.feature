@@ -1,8 +1,8 @@
 @block @block_blog_menu
-Feature: Enable Block blog menu in a course
-  In order to enable the blog menu in a course
-  As a teacher
-  I can add blog menu block to a course
+Feature: Students can use block blog menu in a course
+  In order students to use the blog menu in a course
+  As a student
+  I view blog menu block in a course
 
   Background:
     Given the following "users" exist:

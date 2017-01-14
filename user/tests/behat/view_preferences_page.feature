@@ -21,7 +21,7 @@ Feature: Access to preferences page
       | student1 | C1 | student |
       | student2 | C1 | student |
       | teacher1 | C1 | editingteacher |
-   And the following "system role assigns" exist:
+    And the following "system role assigns" exist:
       | user | course | role |
       | manager1 | Acceptance test site | manager |
 

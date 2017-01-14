@@ -52,7 +52,7 @@ Feature: Calculated grade items can be used in the gradebook
 
   @javascript
   Scenario: Changing max grade for a category item with a calculation that has existing grades will display the same points with the new max grade values immediately.
-  Given I press "Add category"
+    Given I press "Add category"
     And I set the following fields to these values:
       | Category name | Calc cat |
     And I press "Save changes"

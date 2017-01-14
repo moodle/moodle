@@ -1,5 +1,5 @@
 @block @block_online_users
-Feature: The online users block allow you to see who is currently online
+Feature: The online users block allow you to see who is currently online on frontpage
   In order to enable the online users block on the front page page
   As an admin
   I can add the online users block to the front page page

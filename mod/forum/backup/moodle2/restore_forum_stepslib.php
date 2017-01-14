@@ -67,6 +67,11 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
 
         $newitemid = $DB->insert_record('forum', $data);
         $this->apply_activity_instance($newitemid);
+
+        // Add current enrolled user subscriptions if necessary.
+        $data->id = $newitemid;
+        $ctx = context_module::instance($this->task->get_moduleid());
+        forum_instance_created($ctx, $data);
     }
 
     protected function process_forum_discussion($data) {

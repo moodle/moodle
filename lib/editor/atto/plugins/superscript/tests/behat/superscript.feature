@@ -35,4 +35,3 @@ Feature: Atto superscript button
     And I press "Save changes"
     And I click on "Edit profile" "link" in the "region-main" "region"
     Then I should see "<sup>Helicopter</sup>"
-

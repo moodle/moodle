@@ -75,7 +75,7 @@ Feature: In a lesson activity, students can see questions in random order
     And I press "Save page"
     And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][6]" "xpath_element"
     And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][7]" "xpath_element"
-        And I set the following fields to these values:
+    And I set the following fields to these values:
       | Page title | Third page name |
       | Page contents | Content page after cluster 1 |
       | id_answer_editor_0 | Next page |
@@ -114,7 +114,7 @@ Feature: In a lesson activity, students can see questions in random order
     And I press "Save page"
     And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][11]" "xpath_element"
     And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][12]" "xpath_element"
-        And I set the following fields to these values:
+    And I set the following fields to these values:
       | Page title | Fourth page name |
       | Page contents | Content page after cluster 2 |
       | id_answer_editor_0 | Next page |

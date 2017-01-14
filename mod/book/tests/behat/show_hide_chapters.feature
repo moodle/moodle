@@ -74,4 +74,3 @@ Feature: Book activity chapter visibility management
     And I follow "Next"
     And I should see "Fourth chapter" in the ".book_content" "css_element"
     And I follow "Exit book"
-

@@ -1,5 +1,5 @@
 @block @block_online_users
-Feature: The online users block allow you to see who is currently online
+Feature: The online users block allow you to see who is currently online on dashboard
   In order to use the online users block on the dashboard
   As a user
   I can view the online users block on my dashboard

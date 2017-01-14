@@ -125,7 +125,6 @@ Feature: Verify that all form fields values can be get and set
     And I navigate to "Edit settings" node in "Course administration"
     And the field "Course ID number" matches value "Course id number"
 
-
   Scenario: with JS disabled all form fields getters and setters works as expected
 
   @javascript

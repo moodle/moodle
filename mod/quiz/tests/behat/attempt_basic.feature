@@ -1,5 +1,5 @@
 @mod @mod_quiz
-Feature: Attemp a quiz where some questions require that the previous question has been answered.
+Feature: Attempt a quiz
   As a student
   In order to demonstrate what I know
   I need to be able to attempt quizzes

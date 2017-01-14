@@ -48,4 +48,3 @@ Feature: Force group mode in a course
     And I press "Save and display"
     Then "//a/child::img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exist
     And "//img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exist
-
