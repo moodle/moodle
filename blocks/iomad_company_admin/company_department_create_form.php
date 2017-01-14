@@ -195,7 +195,6 @@ $createnew = optional_param('createnew', 0, PARAM_INT);
 
 $context = context_system::instance();
 require_login();
-$PAGE->set_context($context);
 
 iomad::require_capability('block/iomad_company_admin:edit_departments', $context);
 
@@ -209,14 +208,17 @@ $linktext = get_string('editdepartment', 'block_iomad_company_admin');
 
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_department_create_form.php');
+
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block',
-                          'createdepartment_title');
-$blockpage->setup($urlparams);
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -236,7 +238,7 @@ if ($mform->is_cancelled()) {
         }
         $editform = new department_edit_form($PAGE->url, $companyid, $departmentid, $chosenid);
         $editform->set_data(array('deptid' => $chosenid));
-        $blockpage->display_header();
+        echo $OUTPUT->header();
         // Check the department is valid.
         if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
             print_error('invaliddepartment', 'block_iomad_company_admin');
@@ -258,7 +260,7 @@ if ($mform->is_cancelled()) {
         }
         $mform = new department_display_form($PAGE->url, $companyid, $departmentid);
         // Redisplay the form.
-        $blockpage->display_header();
+        echo $OUTPUT->header();
         // Check the department is valid.
         if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
             print_error('invaliddepartment', 'block_iomad_company_admin');
@@ -281,7 +283,7 @@ if ($mform->is_cancelled()) {
                                       'fullname' => $departmentrecord->name,
                                       'shortname' => $departmentrecord->shortname,
                                       'chosenid' => $departmentid));
-            $blockpage->display_header();
+            echo $OUTPUT->header();
 
             // Check the department is valid.
             if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -292,7 +294,7 @@ if ($mform->is_cancelled()) {
 
             echo $OUTPUT->footer();
         } else {
-            $blockpage->display_header();
+            echo $OUTPUT->header();
             // Check the department is valid.
             if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
                 print_error('invaliddepartment', 'block_iomad_company_admin');
@@ -326,7 +328,7 @@ if ($mform->is_cancelled()) {
 
     $mform = new department_display_form($PAGE->url, $companyid, $departmentid);
     // Redisplay the form.
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -339,7 +341,7 @@ if ($mform->is_cancelled()) {
 
 } else {
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {

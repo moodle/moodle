@@ -24,24 +24,29 @@ require_commerce_enabled();
 
 $invoicereference = required_param('u', PARAM_CLEAN);
 
-global $DB;
+require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+
+$context = context_system::instance();
 
 // Correct the navbar .
 // Set the name for the page.
 $linktext = get_string('course_shop_title', 'block_iomad_commerce');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_commerce/shop.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+$PAGE->set_heading(get_string('confirmation', 'block_iomad_commerce'));
+
 // Build the nav bar.
 $PAGE->navbar->add($linktext, $linkurl);
 $PAGE->navbar->add(get_string('confirmation', 'block_iomad_commerce'));
 
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_commerce', 'block', 'confirmation');
-$blockpage->setup();
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-$context = $PAGE->context;
-
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 $invoice = get_invoice_by_reference($invoicereference);
 $pp = get_payment_provider_instance($invoice->checkout_method);

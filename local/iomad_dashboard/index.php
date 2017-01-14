@@ -17,7 +17,6 @@
 // Display iomad_dashboard.
 
 require_once( '../../config.php');
-require_once( '../iomad/lib/blockpage.php');
 
 // We always require users to be logged in for this page.
 require_login();
@@ -54,19 +53,27 @@ if ($companycount == 1) {
      $company = $firstcompany->id;
 }
 
+// Set the url.
+$linkurl = new moodle_url('/local/iomad_dashboard/index.php');
+$linktext = get_string('name', 'local_iomad_dashboard');
 // Page setup stuff.
 // The page layout for my moodle does the job here
 // as it allows blocks in the centre column.
+// Print the page header.
+$PAGE->set_context($systemcontext);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+$PAGE->set_heading($linktext);
 $PAGE->requires->js_init_call( 'M.local_iomad_dashboard.init');
 $PAGE->blocks->add_region('content');
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_dashboard', 'local', 'name');
-$blockpage->setup();
+
 // Set tye pagetype correctly.
 $PAGE->set_pagetype('local-iomad-dashboard-index');
 $PAGE->set_pagelayout('mydashboard');
 
 // Now we can display the page.
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 echo $OUTPUT->blocks_for_region('content');
 echo $OUTPUT->footer();

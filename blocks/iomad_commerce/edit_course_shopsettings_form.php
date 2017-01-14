@@ -385,20 +385,23 @@ if (array_key_exists('blockPrices', $_POST)) {
 $linktext = get_string('course_list_title', 'block_iomad_commerce');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_commerce/courselist.php');
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $title = 'edit_course_shopsettings';
 if ($isadding) {
     $title = 'addnewcourse';
 }
 
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+$PAGE->set_heading(get_string($title, 'block_iomad_commerce'));
+
+// Build the nav bar.
+company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+
 $PAGE->navbar->add(get_string($title, 'block_iomad_commerce'));
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_commerce', 'block', $title);
-$blockpage->setup($urlparams);
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
 /* next line copied from /course/edit.php */
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $CFG->maxbytes, 'trusttext' => false, 'noclean' => true);
@@ -458,7 +461,7 @@ if ($mform->is_cancelled()) {
 
 } else {
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     $mform->display();
 

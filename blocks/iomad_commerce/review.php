@@ -56,23 +56,25 @@ class confirmation_form extends moodleform {
 
 }
 
-
-global $DB;
+$context = context_system::instance();
+require_login();
 
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('course_shop_title', 'block_iomad_commerce');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_commerce/shop.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+$PAGE->set_heading(get_string('review', 'block_iomad_commerce'));
+
 // Build the nav bar.
 $PAGE->navbar->add($linktext, $linkurl);
 $PAGE->navbar->add(get_string('review', 'block_iomad_commerce'));
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_commerce', 'block', 'review');
-$blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-$context = $PAGE->context;
 
 // Don't do the pre_order_review_processing on postback.
 if (array_key_exists('submitbutton', $_POST)) {
@@ -103,7 +105,7 @@ if ($mform->is_cancelled()) {
     }
 }
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 echo $error;
 

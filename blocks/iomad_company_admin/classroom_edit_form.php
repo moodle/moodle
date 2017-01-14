@@ -19,7 +19,6 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot . '/local/iomad/lib/blockpage.php');
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once('lib.php');
@@ -98,8 +97,6 @@ require_login();
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
-$PAGE->set_context($context);
-
 $urlparams = array('id' => $classroomid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
@@ -129,11 +126,17 @@ $linktext = get_string($title, 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/classroom_edit_form.php');
 
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', $title);
-$blockpage->setup();
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 // Get the form data.
@@ -160,7 +163,7 @@ if ($mform->is_cancelled()) {
     redirect($templatelist);
 }
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 $mform->display();
 

@@ -24,26 +24,31 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
 
-global $DB;
+$context = context_system::instance();
+require_login();
 
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('orders', 'block_iomad_commerce');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_commerce/orderlist.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_commerce', 'block', 'orders');
-$blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-$context = $PAGE->context;
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 //  Check we can actually do anything on this page.
 iomad::require_capability('block/iomad_commerce:admin_view', $context);

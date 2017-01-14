@@ -23,8 +23,6 @@ require_once($CFG->libdir.'/csvlib.class.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once('uploaduser_form.php');
 
-require_once(dirname(__FILE__) . '/../../local/iomad/lib/blockpage.php');
-
 $iid         = optional_param('iid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
 $readcount   = optional_param('readcount', 0, PARAM_INT);
@@ -72,12 +70,19 @@ iomad::require_capability('block/iomad_company_admin:user_upload', context_syste
 $linktext = get_string('user_upload_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/uploaduser.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
+$PAGE->requires->jquery();
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'user_upload_title');
-$blockpage->setup();
-$PAGE->requires->jquery();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

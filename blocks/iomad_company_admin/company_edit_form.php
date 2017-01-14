@@ -325,7 +325,6 @@ $new = optional_param('createnew', 0, PARAM_INT);
 $context = context_system::instance();
 require_login();
 
-$PAGE->set_context($context);
 // Correct the navbar.
 // Set the name for the page.
 if (!$new) {
@@ -335,12 +334,19 @@ if (!$new) {
 }
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_edit_form.php');
+
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block',
-                           ($new ? 'addnewcompany' : 'editacompany'));
-$blockpage->setup();
 
 if (!$new) {
     // Set the companyid
@@ -465,7 +471,7 @@ if ($mform->is_cancelled()) {
     redirect($companylist);
 }
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 $mform->display();
 

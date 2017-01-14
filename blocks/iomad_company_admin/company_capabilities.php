@@ -66,22 +66,25 @@ if ($ajaxcap) {
     die;
 }
 
-$PAGE->set_context($context);
-$PAGE->requires->jquery();
-
 // Set the name for the page.
 $linktext = get_string('restrictcapabilities', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php');
 
-// Do mysterious blockpage thingy
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'restrictcapabilities');
-$blockpage->setup();
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
+$PAGE->requires->jquery();
 
 // Correct the navbar.
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');

@@ -155,8 +155,6 @@ $context = context_system::instance();
 require_login();
 iomad::require_capability('block/iomad_company_admin:company_user', $context);
 
-$PAGE->set_context($context);
-
 $urlparams = array();
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
@@ -167,11 +165,17 @@ if ($returnurl) {
 $linktext = get_string('assignusers', 'block_iomad_company_admin');
 // Set the url..
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_users_form.php');
+
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_user_form_title');
-$blockpage->setup();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -187,7 +191,7 @@ if ($usersform->is_cancelled()) {
 } else {
     $usersform->process();
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     echo $usersform->display();
 

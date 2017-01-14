@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once( 'local_lib.php');
-require_once($CFG->dirroot . '/local/iomad/lib/blockpage.php');
 require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib.php');
 require_once( 'config.php');
 require_once( 'lib.php');
@@ -28,6 +27,9 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
 
+$context = context_system::instance();
+require_login();
+
 $email = local_email_get_templates();
 
 $block = 'local_email';
@@ -37,13 +39,18 @@ $block = 'local_email';
 $linktext = get_string('template_list_title', $block);
 // Set the url.
 $linkurl = new moodle_url('/local/email/template_list.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'email', 'local', 'template_list_title');
-$blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
 // Set the companyid to bypass the company select form if possible.
 if (!empty($SESSION->currenteditingcompany)) {
@@ -56,8 +63,6 @@ if (!empty($SESSION->currenteditingcompany)) {
     redirect(new moodle_url('/local/iomad_dashboard/index.php'),
                             'Please select a company from the dropdown first');
 }
-
-$context = $PAGE->context;
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir,
                                                     'perpage' => $perpage));
@@ -96,7 +101,7 @@ if ($delete and confirm_sesskey()) {
     }
 
 }
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 $company = new company($companyid);
 echo '<h3>' . get_string('email_templates_for', $block, $company->get_name()) . '</h3>';

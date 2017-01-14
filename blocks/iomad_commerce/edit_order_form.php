@@ -101,7 +101,6 @@ $invoiceid = required_param('id', PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-$PAGE->set_context($context);
 
 $urlparams = array();
 if ($returnurl) {
@@ -118,13 +117,18 @@ iomad::require_capability('block/iomad_commerce:admin_view', $context);
 $linktext = get_string('orders', 'block_iomad_commerce');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_commerce/orderlist.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+$PAGE->set_heading(get_string('edit_invoice', 'block_iomad_commerce'));
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $PAGE->navbar->add(get_string('edit_invoice', 'block_iomad_commerce'));
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_commerce', 'block', 'edit_invoice');
-$blockpage->setup($urlparams);
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
@@ -157,7 +161,7 @@ if ($mform->is_cancelled()) {
 
 } else {
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     $mform->display();
 

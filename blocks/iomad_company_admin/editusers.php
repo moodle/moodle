@@ -97,17 +97,22 @@ if ($showall) {
     $params['showall'] = $showall;
 }
 
-// Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('edit_users_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 // Print the page header.
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_edit_users_title');
-$blockpage->setup();
+$PAGE->set_context($systemcontext);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
+// Build the nav bar.
+company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
@@ -117,7 +122,7 @@ require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {

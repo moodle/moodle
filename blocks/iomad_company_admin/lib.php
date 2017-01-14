@@ -21,7 +21,6 @@ require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 require_once($CFG->dirroot . '/local/iomad/lib/user.php');
 
-require_once($CFG->dirroot . '/local/iomad/lib/blockpage.php');
 require_once('lib/user_selectors.php');
 require_once('lib/course_selectors.php');
 require_once('lib/template_selectors.php');

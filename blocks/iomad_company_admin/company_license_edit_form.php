@@ -165,11 +165,16 @@ if ($courseid) {
 $linktext = get_string('managelicenses', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_edit_form.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+$PAGE->set_heading(get_string('edit_licenses_title', 'block_iomad_company_admin'));
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'edit_licenses_title');
-$blockpage->setup();
 
 $mform = new company_license_form($PAGE->url, $context, $companyid, $departmentid, $licenseid);
 
@@ -230,7 +235,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
         $mform->set_data($formlicense);
     }
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
         print_error('invaliddepartment', 'block_iomad_company_admin');

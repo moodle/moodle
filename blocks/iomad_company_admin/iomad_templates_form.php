@@ -64,12 +64,18 @@ $PAGE->set_context($systemcontext);
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/iomad_templates_form.php');
 $linktext = get_string('iomad_templates_title', 'block_iomad_company_admin');
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 // Print the page header.
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'iomad_company_templates_title');
-$blockpage->setup();
+$PAGE->set_context($systemcontext);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
+// Build the nav bar.
+company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext, false);
@@ -131,7 +137,7 @@ if (!empty($update)) {
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 // Get the list of companies and display it as a drop down select..
 

@@ -143,16 +143,22 @@ $PAGE->set_context($context);
 
 // Correct the navbar.
 // Set the name for the page.
-$linktext = get_string('createcourse', 'block_iomad_company_admin');
+$linktext = get_string('createcourse_title', 'block_iomad_company_admin');
 
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_course_create_form.php');
 
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'createcourse_title');
-$blockpage->setup();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -265,7 +271,7 @@ if ($mform->is_cancelled()) {
     }
 } else {
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     $mform->display();
 

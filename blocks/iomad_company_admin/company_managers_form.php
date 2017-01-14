@@ -392,11 +392,17 @@ iomad::require_capability('block/iomad_company_admin:company_manager', $context)
 $linktext = get_string('assignmanagers', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_managers_form.php');
+
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_manager_form_title');
-$blockpage->setup();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -461,7 +467,7 @@ if ($managersform->is_cancelled()) {
 } else {
     $managersform->process($departmentid, $roleid);
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {

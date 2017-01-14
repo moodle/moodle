@@ -30,7 +30,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 $showhistoric = optional_param('showhistoric', 1, PARAM_BOOL);
 
 // Check permissions.
-require_login($SITE);
+require_login();
 $context = context_system::instance();
 iomad::require_capability('local/report_completion:view', $context);
 
@@ -40,19 +40,23 @@ $companyid = iomad::get_my_companyid($context);
 $linktext = get_string('user_detail_title', 'local_report_users');
 // Set the url.
 $linkurl = new moodle_url('/local/report_users/index.php');
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 // Print the page header.
-$blockpage = new blockpage($PAGE, $OUTPUT, 'report_users', 'local', 'report_users_title');
-$blockpage->setup();
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+// Set the page heading.
+$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
+
+// Build the nav bar.
+company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $baseurl = new moodle_url(basename(__FILE__));
 $returnurl = $baseurl;
 if (empty($dodownload)) {
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     // Check the userid is valid.
     if (!company::check_valid_user($companyid, $userid)) {

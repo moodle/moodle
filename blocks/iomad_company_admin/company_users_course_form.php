@@ -204,8 +204,6 @@ iomad::require_capability('block/iomad_company_admin:company_course_users', $con
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
-$PAGE->set_context($context);
-
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
@@ -219,14 +217,20 @@ if ($userid) {
 $linktext = get_string('edit_users_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+$PAGE->set_heading(get_string('company_users_course_title', 'block_iomad_company_admin'));
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_users_course_title');
-$blockpage->setup();
-
 $coursesform = new company_users_course_form($PAGE->url, $context, $companyid, $departmentid, $userid);
-$blockpage->display_header();
+
+echo $OUTPUT->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {

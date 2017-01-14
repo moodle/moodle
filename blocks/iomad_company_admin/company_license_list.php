@@ -31,18 +31,23 @@ $context = context_system::instance();
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
-$PAGE->set_context($context);
-
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('company_license_list_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_list.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_license_list_title');
-$blockpage->setup();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -83,7 +88,7 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
     }
 }
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 // Check we can actually do anything on this page.
 iomad::require_capability('block/iomad_company_admin:view_licenses', $context);

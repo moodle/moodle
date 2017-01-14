@@ -29,19 +29,27 @@ $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per
 
 global $DB;
 
+require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+
+$context = context_system::instance();
+
 // Correct the navbar .
 // Set the name for the page.
 $linktext = get_string('course_list_title', 'block_iomad_commerce');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_commerce/courselist.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_commerce', 'block', 'course_list_title');
-$blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-$context = $PAGE->context;
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;
@@ -89,7 +97,8 @@ if ($hide) {
     $DB->update_record('course_shopsettings', $courserecord);
     redirect(new moodle_url($baseurl));
 }
-$blockpage->display_header();
+
+echo $OUTPUT->header();
 
 // Has this been setup properly
 if (!is_commerce_configured()) {

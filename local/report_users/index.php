@@ -82,17 +82,22 @@ $linktext = get_string('report_users_title', 'local_report_users');
 // Set the url.
 $linkurl = new moodle_url('/local/report_users/index.php');
 
+// Print the page header.
+$PAGE->set_context($systemcontext);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-// Print the page header.
-$blockpage = new blockpage($PAGE, $OUTPUT, 'report_users', 'local', 'report_users_title');
-$blockpage->setup();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {

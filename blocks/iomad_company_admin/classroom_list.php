@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 require_once( '../../config.php');
-require_once($CFG->dirroot . '/local/iomad/lib/blockpage.php');
 require_once( 'lib.php');
 require_once($CFG->dirroot . '/local/iomad/lib/user.php');
 
@@ -30,26 +29,30 @@ global $DB, $email;
 
 $block = 'block_iomad_company_admin';
 
+// Get the SYSTEM context.
+$context = context_system::instance();
+
+require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('classrooms', $block);
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/classroom_list.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'classrooms');
-$blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-
-// Get the SYSTEM context.
-$context = context_system::instance();
-
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
-
-$PAGE->set_context($context);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort,
                                                     'dir' => $dir,
@@ -91,7 +94,7 @@ if ($delete and confirm_sesskey()) {
     }
 
 }
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 $company = new company($companyid);
 echo get_string('classrooms_for', $block, $company->get_name() );

@@ -19,7 +19,6 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot . '/local/iomad/lib/blockpage.php');
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib.php');
 require_once($CFG->libdir . '/formslib.php');
@@ -121,25 +120,10 @@ $new = optional_param('createnew', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-$PAGE->set_context($context);
 
 $urlparams = array('templateid' => $templateid, 'templatename' => $templatename);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
-}
-$templatelist = new moodle_url('/local/email/template_list.php', $urlparams);
-
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (!empty($USER->company)) {
-    $companyid = company_user::companyid();
-} else if (!iomad::has_capability('local/email:edit', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    $blockpage->display_header();
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
-             'Please select a company from the dropdown first');
 }
 
 if (!$new) {
@@ -170,15 +154,40 @@ if (!$new) {
 $linktext = get_string('edit_template', 'local_email');
 // Set the url.
 $linkurl = new moodle_url('/local/email/template_edit_form.php');
+
+if ($isadding) {
+    $title = get_string('addnewtemplate', 'local_email');
+} else {
+    $title = get_string('editatemplate', 'local_email');
+}
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $title");
+
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
-$blockpage = new blockpage($PAGE, $OUTPUT, 'email', 'local',
-                           ($isadding ? 'addnewtemplate' : 'editatemplate'));
-$blockpage->setup();
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-// Get the form data.
+$templatelist = new moodle_url('/local/email/template_list.php', $urlparams);
+
+// Set the companyid to bypass the company select form if possible.
+if (!empty($SESSION->currenteditingcompany)) {
+    $companyid = $SESSION->currenteditingcompany;
+} else if (!empty($USER->company)) {
+    $companyid = company_user::companyid();
+} else if (!iomad::has_capability('local/email:edit', context_system::instance())) {
+    print_error('There has been a configuration error, please contact the site administrator');
+} else {
+    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
+             'Please select a company from the dropdown first');
+}
 
 // Set up the form.
 $mform = new template_edit_form($PAGE->url, $isadding, $companyid, $templateid, $templaterecord);
@@ -204,7 +213,7 @@ if ($mform->is_cancelled()) {
     redirect($templatelist);
 }
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 $mform->display();
 

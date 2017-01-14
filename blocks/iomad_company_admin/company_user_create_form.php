@@ -357,10 +357,6 @@ $context = context_system::instance();
 require_login();
 iomad::require_capability('block/iomad_company_admin:user_create', $context);
 
-$PAGE->set_context($context);
-$PAGE->requires->jquery();
-
-
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
@@ -373,11 +369,20 @@ $linktext = get_string('createuser', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_user_create_form.php');
 $dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
+$PAGE->requires->jquery();
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'user_create_title');
-$blockpage->setup();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -504,7 +509,7 @@ if ($data = $mform->get_data()) {
         redirect($linkurl."?createdok=1");
     }
 }
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {

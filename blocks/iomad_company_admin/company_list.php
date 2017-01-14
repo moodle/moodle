@@ -30,18 +30,21 @@ require_login();
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
-$PAGE->set_context($context);
-
 // Correct the navbar .
 // Set the name for the page.
 $linktext = get_string('company_list_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_list.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+$PAGE->set_heading(get_string('company_list_title', 'block_iomad_company_admin'));
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_list_title');
-$blockpage->setup();
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;
@@ -101,7 +104,7 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
     }
 }
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 // Check we can actually do anything on this page.
 iomad::require_capability('block/iomad_company_admin:company_view', $context);
@@ -115,13 +118,13 @@ flush();
 if ($companies = company::get_companies_rs($page, $perpage)) {
     $stredit   = get_string('edit');
     $strdelete = get_string('delete');
-    $strusers = $blockpage->get_string('company_users');
-    $strnewuser = $blockpage->get_string('newuser');
-    $strmanagers = $blockpage->get_string('company_managers');
-    $strcourses = $blockpage->get_string('company_courses');
-    $strcreatecourse = $blockpage->get_string('newcourse');
-    $strcourseusers = $blockpage->get_string('courseusers');
-    $strusersdownload = $blockpage->get_string('users_download');
+    $strusers = get_string('company_users', 'block_iomad_company_admin');
+    $strnewuser = get_string('newuser', 'block_iomad_company_admin');
+    $strmanagers = get_string('company_managers', 'block_iomad_company_admin');
+    $strcourses = get_string('company_courses', 'block_iomad_company_admin');
+    $strcreatecourse = get_string('newcourse', 'block_iomad_company_admin');
+    $strcourseusers = get_string('courseusers', 'block_iomad_company_admin');
+    $strusersdownload = get_string('users_download', 'block_iomad_company_admin');
 
     $table = new html_table();
     $table->head = array ("Name", "Short name", "City", "", "", "", "", "", "", "", "", "");

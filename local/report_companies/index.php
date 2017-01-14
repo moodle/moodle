@@ -31,8 +31,10 @@ $url = new moodle_url('/local/report_companies/index.php');
 $strcompletion = get_string('pluginname', 'local_report_companies');
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
-$PAGE->set_title($strcompletion);
 $PAGE->requires->css("/local/report_companies/styles.css");
+
+// Set the page heading.
+$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
 
 // Set the url.
 company_admin_fix_breadcrumb($PAGE, get_string('pluginname', 'local_report_companies'), $url);

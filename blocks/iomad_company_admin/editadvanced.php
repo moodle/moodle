@@ -40,7 +40,6 @@ $url = new moodle_url('/blocks/iomad_company_admin/editadvanced.php');
 if ($id !== $USER->id) {
     $url->param('id', $id);
 }
-$PAGE->set_url($url);
 
 $systemcontext = context_system::instance();
 
@@ -52,12 +51,18 @@ $companyid = iomad::get_my_companyid($systemcontext);
 $linktext = get_string('company_edit_advanced_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = $url;
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 // Print the page header.
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_edit_advanced_title');
-$blockpage->setup();
+$PAGE->set_context($systemcontext);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
+// Build the nav bar.
+company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 if ($id == -1) {
     // Creating new user.
@@ -88,7 +93,7 @@ if (isguestuser($user->id)) { // The real guest user can not be edited.
 }
 
 if ($user->deleted) {
-    $blockpage->display_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('userdeleted'));
     echo $OUTPUT->footer();
     die;
@@ -264,9 +269,9 @@ if ($usernew = $userform->get_data()) {
 // Display page header.
 if ($user->id == -1 or ($user->id != $USER->id)) {
     if ($user->id == -1) {
-        $blockpage->display_header();
-    } else {
-        $blockpage->display_header();
+        echo $OUTPUT->header();
+        } else {
+        echo $OUTPUT->header();
         $userfullname = fullname($user, true);
         echo $OUTPUT->heading($userfullname);
     }
@@ -279,7 +284,7 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     $PAGE->set_heading($strinstallation);
     $PAGE->set_cacheable(false);
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
     echo $OUTPUT->box(get_string('configintroadmin', 'admin'), 'generalbox boxwidthnormal boxaligncenter');
     echo '<br />';
 } else {
@@ -301,7 +306,7 @@ if ($user->id == -1 or ($user->id != $USER->id)) {
     $PAGE->set_title("$course->shortname: $streditmyprofile");
     $PAGE->set_heading($course->fullname);
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 }
 
 // Finally display THE form.

@@ -139,8 +139,6 @@ $context = context_system::instance();
 require_login();
 iomad::require_capability('block/iomad_company_admin:company_framework', $context);
 
-$PAGE->set_context($context);
-
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
@@ -151,12 +149,18 @@ if ($returnurl) {
 $linktext = get_string('assigncompetencyframeworks', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_competencies_frameworks_form.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block',
-                           'company_competency_framework_form_title');
-$blockpage->setup();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -172,7 +176,7 @@ if ($mform->is_cancelled()) {
 } else {
     $mform->process();
 
-    $blockpage->display_header();
+    echo $OUTPUT->header();
 
     $mform->display();
 

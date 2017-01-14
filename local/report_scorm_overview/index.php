@@ -38,8 +38,10 @@ $strcompletion = get_string('pluginname', 'local_report_scorm_overview');
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
-$PAGE->set_heading($SITE->fullname);
 $PAGE->requires->css("/local/report_scorm_overvew/styles.css");
+
+// Set the page heading.
+$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
 
 // Set the url.
 company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);

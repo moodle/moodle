@@ -83,29 +83,34 @@ if ($companyid) {
     $params['companyid'] = $companyid;
 }
 
-$systemcontext = context_system::instance();
+$context = context_system::instance();
 
 require_login();
-iomad::require_capability('block/iomad_company_admin:company_add', $systemcontext);
+iomad::require_capability('block/iomad_company_admin:company_add', $context);
 
 // Correct the navbar.
 // Set the name for the page.
-$linktext = get_string('edit_companies_title', 'block_iomad_company_admin');
+$linktext = get_string('managecompanies', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/editcompanies.php');
 // Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+company_admin_fix_breadcrumb($PAGE, $linktext, null);
 
 // Print the page header.
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_edit_companies_title');
-$blockpage->setup();
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $linktext");
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 // Set up the filter form.
 $mform = new iomad_company_filter_form();
@@ -133,7 +138,7 @@ if ($confirmcompany and confirm_sesskey()) {
 
 } else if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
 
-    /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $systemcontext)) {
+    /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $context)) {
         print_error('nopermissions', 'error', '', 'delete a user');
     } */
 
@@ -157,7 +162,7 @@ if ($confirmcompany and confirm_sesskey()) {
 } else if ($unsuspend and confirm_sesskey()) {
     // Unsuspends a selected company, after confirmation.
 
-   /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $systemcontext)) {
+   /* if (!iomad::has_capability('block/iomad_company_admin:suspendcompany', $context)) {
         print_error('nopermissions', 'error', '', 'delete a user');
     } */
 
@@ -281,7 +286,7 @@ if (!$companies) {
     $table->align = array ("left", "left", "left", "center");
     $table->width = "95%";
     foreach ($companies as $company) {
-      //  if ((iomad::has_capability('block/iomad_company_admin:suspendcompanies', $systemcontext))) {
+      //  if ((iomad::has_capability('block/iomad_company_admin:suspendcompanies', $context))) {
             if (!empty($company->suspended)) {
                 $suspendbutton = "<a href=\"editcompanies.php?unsuspend=$company->id&amp;sesskey=".sesskey()."\">$strunsuspend</a>";
             } else {

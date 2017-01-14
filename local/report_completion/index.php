@@ -137,10 +137,11 @@ $strcompletion = get_string('pluginname', 'local_report_completion');
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
-$PAGE->set_heading($SITE->fullname);
 $PAGE->requires->css("/local/report_completion/styles.css");
 $PAGE->requires->jquery();
 
+// Set the page heading.
+$PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $strcompletion");
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);

@@ -19,7 +19,6 @@
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->dirroot . '/local/iomad/lib/blockpage.php');
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 require_once($CFG->dirroot . '/blocks/iomad_company_admin/lib.php');
 require_once($CFG->libdir . '/formslib.php');
@@ -117,7 +116,6 @@ $new = optional_param('createnew', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-$PAGE->set_context($context);
 
 $urlparams = array('templateid' => $templateid, 'templatename' => $templatename);
 if ($returnurl) {
@@ -133,7 +131,6 @@ if (!empty($SESSION->currenteditingcompany)) {
 } else if (!iomad::has_capability('local/email:edit', context_system::instance())) {
     print_error('There has been a configuration error, please contact the site administrator');
 } else {
-    $blockpage->display_header();
     redirect(new moodle_url('/local/iomad_dashboard/index.php'),
                             'Please select a company from the dropdown first');
 }
@@ -156,11 +153,18 @@ if ($templateid) {
 $linktext = get_string('send_emails', 'local_email');
 // Set the url.
 $linkurl = new moodle_url('/local/email/template_edit_form.php');
+
+// Print the page header.
+$PAGE->set_context($context);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('admin');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading(get_string('name', 'local_iomad_dashboard') . " - $title");
+
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-$blockpage = new blockpage($PAGE, $OUTPUT, 'email', 'local', 'send_emails');
-$blockpage->setup();
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 // Get the form data.
@@ -199,7 +203,7 @@ if ($mform->is_cancelled()) {
     redirect($templatelist);
 }
 
-$blockpage->display_header();
+echo $OUTPUT->header();
 
 $mform->display();
 
