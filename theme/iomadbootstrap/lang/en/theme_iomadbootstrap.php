@@ -35,7 +35,7 @@ $string['choosereadme'] = '
 <p>
 <h3>Iomad bootstrap theme</h3>
 <p>
-This theme is based on the Bootstrap CSS framework, version 3.0
+This theme is based on the Bootstrap CSS framework, version 3.1
 </p>
 <p>
 <a href="http://getbootstrap.com">http://getbootstrap.com</a>

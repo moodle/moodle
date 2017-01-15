@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['choosereadme'] = 'IOMAD Bootstrap theme';
+$string['choosereadme'] = 'IOMAD legacy theme. No longer supported. Not recommended for new sites or for new child themes.';
 $string['configtitle'] = 'IOMAD';
 
 $string['customcss'] = 'Custom CSS';
