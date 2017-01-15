@@ -81,6 +81,7 @@ define(['jquery', 'core/ajax', 'core/str', 'tool_lp/competencypicker', 'core/tem
             Str.get_string('competencyframeworkroot', 'tool_lp').then(function(rootframework) {
                 $(self.staticElementSelector).html(rootframework);
                 $(self.inputHiddenSelector).val(data.competencyId);
+                return;
             }).fail(Notification.exception);
         }
     };

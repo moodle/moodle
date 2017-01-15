@@ -166,6 +166,7 @@ define(['jquery',
             // We're done, let's trigger a change.
             self._templateLoaded = true;
             self._triggerChange();
+            return;
         });
     };
 

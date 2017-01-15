@@ -430,12 +430,13 @@ define(['jquery',
                 var promises = ajax.call(calls);
 
                 promises[calls.length - 1].then(function(context) {
-                    return templates.render('tool_lp/related_competencies', context).done(function(html, js) {
-                        $('[data-region="relatedcompetencies"]').replaceWith(html);
-                        templates.runTemplateJS(js);
-                        updatedRelatedCompetencies();
-                    });
-                }, notification.exception);
+                    return templates.render('tool_lp/related_competencies', context);
+                }).then(function(html, js) {
+                    $('[data-region="relatedcompetencies"]').replaceWith(html);
+                    templates.runTemplateJS(js);
+                    updatedRelatedCompetencies();
+                    return;
+                }).catch(notification.exception);
             });
         }
 
@@ -472,7 +473,8 @@ define(['jquery',
                 relatedTarget.ruleconfig = config.ruleconfig;
                 renderCompetencySummary(relatedTarget);
             }
-        }, notification.exception);
+            return;
+        }).catch(notification.exception);
     };
 
     /**
@@ -692,28 +694,27 @@ define(['jquery',
                     type: strs[1]
                 };
             }
-        }).then(function() {
-            return templates.render('tool_lp/competency_summary', context).then(function(html) {
-                $('[data-region="competencyinfo"]').html(html);
-                $('[data-action="deleterelation"]').on('click', deleteRelatedHandler);
-            });
-        }).then(function() {
+            return context;
+        }).then(function(context) {
+            return templates.render('tool_lp/competency_summary', context);
+        }).then(function(html) {
+            $('[data-region="competencyinfo"]').html(html);
+            $('[data-action="deleterelation"]').on('click', deleteRelatedHandler);
             return templates.render('tool_lp/loading', {});
         }).then(function(html, js) {
             templates.replaceNodeContents('[data-region="relatedcompetencies"]', html, js);
-        }).done(function() {
-            ajax.call([{
+            return ajax.call([{
                 methodname: 'tool_lp_data_for_related_competencies_section',
-                args: {competencyid: competency.id},
-                done: function(context) {
-                    return templates.render('tool_lp/related_competencies', context).done(function(html, js) {
-                        $('[data-region="relatedcompetencies"]').replaceWith(html);
-                        templates.runTemplateJS(js);
-                        updatedRelatedCompetencies();
-                    });
-                }
-            }]);
-        }).fail(notification.exception);
+                args: {competencyid: competency.id}
+            }])[0];
+        }).then(function(context) {
+            return templates.render('tool_lp/related_competencies', context);
+        }).then(function(html, js) {
+            $('[data-region="relatedcompetencies"]').replaceWith(html);
+            templates.runTemplateJS(js);
+            updatedRelatedCompetencies();
+            return;
+        }).catch(notification.exception);
     };
 
     /**
@@ -776,16 +777,17 @@ define(['jquery',
             // Log Competency viewed event.
             triggerCompetencyViewedEvent(competency);
         }
-
         strSelectedTaxonomy(level).then(function(str) {
             selectedTitle.text(str);
-        });
+            return;
+        }).catch(notification.exception);
 
         strAddTaxonomy(sublevel).then(function(str) {
             btn.show()
                 .find('[data-region="term"]')
                 .text(str);
-        });
+            return;
+        }).catch(notification.exception);
 
         // We handled this event so consume it.
         evt.preventDefault();

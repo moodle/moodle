@@ -54,18 +54,15 @@ define(['jquery', 'core/notification', 'core/str', 'core/ajax', 'core/log', 'cor
         var requests = ajax.call([{
             methodname: 'tool_lp_data_for_user_competency_summary_in_course',
             args: {userid: userId, competencyid: competencyId, courseid: courseId},
-            done: this._contextLoaded.bind(this),
-            fail: notification.exception
+        }, {
+            methodname: 'core_competency_user_competency_viewed_in_course',
+            args: {userid: userId, competencyid: competencyId, courseid: courseId},
         }]);
 
-        // Log the user competency viewed in course event.
-        requests[0].then(function() {
-            ajax.call([{
-                methodname: 'core_competency_user_competency_viewed_in_course',
-                args: {userid: userId, competencyid: competencyId, courseid: courseId},
-                fail: notification.exception
-            }]);
-        });
+        $.when.apply($, requests).then(function() {
+            this._contextLoaded.bind(this);
+            return;
+        }).catch(notification.exception);
     };
 
     /**

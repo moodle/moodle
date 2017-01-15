@@ -51,7 +51,6 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
                     includes: includes
                 }
             }]);
-
             promise[0].then(function(results) {
                 var promises = [],
                     i = 0;
@@ -69,9 +68,10 @@ define(['jquery', 'core/ajax', 'core/templates'], function($, Ajax, Templates) {
                         i++;
                     });
                     success(results.cohorts);
+                    return;
                 });
 
-            }, failure);
+            }).catch(failure);
         }
 
     };
