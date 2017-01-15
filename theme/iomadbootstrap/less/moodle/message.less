@@ -1,0 +1,393 @@
+.box.message {
+    .make-row();
+    .mdl-align {
+        text-align: left;
+    }
+    table {
+        tr {
+            &:nth-child(odd) {
+                > td,
+                > th {
+                  background-color: @table-bg-accent;
+                }
+            }
+            border-bottom: 1px solid @table-border-color;
+        }
+        td.heading{
+            &:extend(.panel-default > .panel-heading);
+            padding: 5px 10px;
+            font-size: @font-size-base;
+        }
+    }
+    tbody {
+        margin: 5px 10px;
+        padding: 5px 10px;
+    }
+    tbody {
+        display: table;
+        margin: 5px 0;
+        padding: 5px 0;
+        width: 100%;
+    }
+    .message_form {
+        width: 100%;
+        tr {
+            border: 0;
+        }
+        td {
+            background-color: inherit !important;
+        }
+        input[type="text"] {
+            .form-control;
+            display: inline-block;
+        }
+    }
+    .contactselector {
+        .singleselect select {
+            width: 100%;
+        }
+        .make-md-column(4);
+        form#usergroupform {
+            padding: 5px 10px;
+            fieldset {
+                .make-row();
+                margin-left: 0;
+                margin-right: 0;
+                .fitem {
+                    margin-left: 0;
+                    margin-right: 0;
+                }
+                label {
+                    .make-md-column(4);
+                    display: block !important;
+                }
+                select {
+                    .make-md-column(7);
+                    float: left;
+                    .form-control;
+                    width: auto;
+                }
+            }
+        }
+        table#message_contacts,
+        table#message_participants {      
+            
+            float: none !important;
+            display: block;
+            margin: 5px 5px;
+
+            td.pix {
+                padding: 10px;
+                width: 30px;
+            }
+            td.contact {
+                width: 100px;
+                padding: 10px;
+                a.messageselecteduser {
+                    
+                }
+            }
+            td.link {
+                padding: 10px;
+                width: 100px;
+                span.removecontact {
+
+                }
+                span.blockcontact{
+
+                }
+                span.history{
+
+                }
+            }
+        }
+        ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .message-contacts {
+            position: relative;
+            border-bottom: 1px solid @table-border-color;
+            margin-bottom: 10px;
+
+            li:nth-child(odd) {
+                background-color: @table-bg-accent;
+            }
+
+            li {
+                padding: 5px 0;
+                line-height: 26px;
+                border-top: 1px solid @table-border-color;
+            }
+            .contact {
+                margin: 0 24% 0 25px;
+                text-align: left;
+            }
+            .link {
+                .pull-right;
+            }
+            .pix {
+                position: absolute;
+                left: 0;
+            }
+        }
+    }
+    .messagearea {
+        .make-md-column(8);
+
+        p.heading {
+            margin: 10px 15px;
+            font-size: @font-size-h2;
+            color: @headings-color;
+        }
+
+        textarea {
+            .form-control;
+            height: 200px;
+        }
+
+        #personsearch {
+            margin: 10px 15px;
+            input[type="text"] {
+                width: 150px;
+                margin-bottom: 10px;
+                margin-right: 10px;
+            }
+            input[type="submit"] {
+                margin-left: 0px;
+            }
+
+        }
+        .mdl-left {
+            .heading {
+                font-size: @font-size-base;
+            }
+            .messagesearchresults {
+                width: 100%;
+                margin: 10px 0;
+                padding: 0px 15px;
+                display: block;
+                td.pix {
+                    padding: 10px;
+                    width: 30px;
+                }
+                td.contact {
+                    width: 30px;
+                    img {
+                       margin: 10px; 
+                    }
+                }
+            }
+
+        }
+        .messagerecent {
+            .singlemessage {
+                margin: 10px 15px;
+                
+                .panel;
+                .panel-default;
+                .otheruser {
+                    &:extend(.panel-default > .panel-heading);
+                    padding: 10px 15px;
+                    display: block;
+                    width: 100%;
+                    .pix {
+                        margin: 5px;
+                    }
+                }
+                .themessage {
+                    border: 2px solid @state-warning-border;
+                    padding: 5px 10px;
+                    margin: 10px 15px;
+                    display: block;
+                }
+                .messagedate {
+                    margin: 10px 15px 0;
+                }
+                .messagecontext {
+                    margin: 0px 15px 10px;
+                }
+            }
+
+        }
+
+        .messagehistory {
+            .messagehistory {
+                border-top: 1px solid @nav-tabs-border-color;
+                clear: both;
+                .mdl-left {
+                    .make-row();
+                }
+                .mdl-left.left .message {
+                    .make-md-column(7);
+                    .text {
+                        border: 2px solid @state-success-border;
+                    }
+
+                }
+                .mdl-left.right .message {
+                    .make-md-column(7);
+                    .make-md-column-push(5);
+                    .text {
+                        border: 2px solid @state-info-border;
+                    }
+                }
+                .message {
+                    display: block;
+                    .text {
+                        border-radius: @border-radius-base;
+                        padding: 5px 10px;
+                        display: block;
+                    }
+                }
+                    
+            }
+
+            #message_user_pictures {
+                .make-row();
+                .box.user {
+                    .make-xs-column(5);
+                    text-align: center;
+                }
+                .box.between {
+                    .make-xs-column(2);
+                    text-align: center;
+                }
+            }
+            .messagehistorytype {
+                color: #fff;
+                //.nav-tabs;
+                border: 0;
+                .hiddenelement {
+                    display: none;
+                }
+                
+                span.visible {
+                    color: @text-color;
+                    &:extend(.nav > li > a);
+                    &:extend(.nav-tabs > li);
+                    &:extend(.nav-tabs > li > a);
+                    &:extend(.nav-tabs > li.active > a);
+                }
+                a.visible {
+                    &:extend(.nav > li > a);
+                    &:extend(.nav-tabs > li);
+                    &:extend(.nav-tabs > li > a);
+                    color: @link-color;
+                    &:hover {
+                        &:extend(.nav-tabs > li > a:hover);
+                    }
+                }
+            }
+        }
+        .messagesend {
+            .mform {
+                fieldset .fitem .felement,
+                fieldset.hidden > div {
+                    padding: 0;
+                    margin: 0;
+                    float: none;
+                    width: 100%;
+                    #id_submitbutton {
+                        margin: 5px 0 0 0;
+                    }
+                }
+                .fitemtitle, .form-label {
+                    .h3;
+                    float: none;
+                    text-align: left;
+                }
+                fieldset .fitem {
+                    margin: 0;
+                }
+                .fitem_ftextarea {
+                    margin: 15px;
+                }
+            }
+        }
+
+    }
+}
+
+#newmessageoverlay {
+    //fix for yui absolute positioning
+    width: @popover-max-width;
+    .popover;
+    position: fixed;
+    top: inherit;
+    left: inherit;
+    bottom: 5px;
+    right: 5px;
+    a {
+        text-decoration: underline;
+    }
+    display: block;
+    #newmessagetext {
+        .popover-title;
+
+    }
+    #usermessage {
+        .popover-content;
+        border: 1px dotted @popover-border-color;
+        border-radius: @border-radius-base;
+        margin-top: 5px;
+        background-color: (lighten(@popover-bg, 10%));
+    }
+    #newmessagelinks {
+        margin: 5px 14px;
+    }
+}
+
+/** Messenger send message dialog */
+.core_message-messenger-sendmessage-hidden {
+    display:none;
+}
+.core_message-messenger-sendmessage {
+    .message-actions {
+        position: relative;
+    }
+    .message-area {
+        height: 240px;
+        max-height: 100%;
+        position: relative;
+        margin-bottom: 10px;
+    }
+    .message-input {
+        width: 100%;
+        height: 100%;
+        .box-sizing(border-box);
+    }
+    .message-send {
+        margin: 0;
+        float: right;
+    }
+    .message-notice-area {
+        display: table;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .message-notice {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+        > div {
+            background: #eee;
+            padding: 5px;
+            font-size: 12px;
+        }
+    }
+    .message-footer {
+        margin-top: 3px;
+        line-height: 20px;
+    }
+    .message-history {
+        position: absolute;
+        bottom: 0;
+    }
+}

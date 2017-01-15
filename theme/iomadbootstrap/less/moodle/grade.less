@@ -1,0 +1,203 @@
+// The class gradetreebox matches the pages displaying the gradebook
+// "Categories and items" > "Simple view" and "Full view".
+.gradetreebox {
+    h4 {
+        // Force back the base font-size to minimise width.
+        font-size: @font-size-base;
+    }
+    th.cell,
+    input[type=text] {
+        // Fallback on the minimum width.
+        width: auto;
+    }
+    input[type=text],
+    select {
+        // Remove the bottom margin to gain height.
+        margin-bottom: 0;
+    }
+}
+
+// Rubrics
+#page-grade-grading-manage {
+    #activemethodselector {
+        label {
+            display: inline-block;
+        }
+        .helptooltip {
+            margin-right: 0.5em;
+        }
+    }
+    .actions {
+        display: block;
+        text-align: center;
+        margin-bottom: 1em;
+        .action {
+            .btn();
+            .btn-lg();
+            display: inline-block;
+            position: relative;
+            vertical-align: top;
+            width: 150px;
+            text-align: center;
+            overflow: hidden;
+            margin: 0.5em;
+            padding: 1em;
+            border: 1px solid #aaa;
+            box-sizing: content-box;
+            white-space: normal;
+            .action-icon {
+                display: inline-block;
+                position: relative;
+                height: 64px;
+                width: 64px;
+            }
+            .action-text {
+                position: relative;
+                top: 0.4em;
+                font-size: 14px;
+            }
+        }
+    }
+}
+
+#page-grade-grading-form-rubric-edit {
+    .gradingform_rubric_editform .status {
+        font-size: 70%;
+    }
+}
+
+.gradingform_rubric.editor {
+    .addlevel, .addcriterion {
+        input {
+            // Fallback for IE8: we use Bootstrap 2's button styles normally, but
+            // IE8 ignores background-image: linear-gradient rules.
+            background: #fff none no-repeat top left;
+        }
+    }
+}
+
+.criteria .remark textarea {
+    height: auto;
+}
+
+.mform.gradingform_rubric_editform .fitem .felement .hiddenelement {display:none;}
+.mform.gradingform_rubric_editform .fitem .felement .pseudotablink {background-color:transparent;border:0 solid;height:1px;width:1px;color:transparent;padding:0;margin:0;position:relative;float:right;}
+#rubric-rubric {
+    &.gradingform_rubric {
+        #rubric-criteria {
+            margin-bottom: 1em;
+            @rubricPadding: 6px;
+            .criterion {
+                .description {
+                    vertical-align: top;
+                    padding: @rubricPadding;
+                    textarea {
+                        margin-bottom: 0px;
+                        height: 115px;
+                    }
+                }
+                .definition {
+                    textarea {
+                        width: 80%;
+                        margin-bottom: 0px;
+                    }
+                }
+                .score {
+                    position: relative;
+                    float: left;
+                    margin-right: 28px;
+                    input {
+                        margin-bottom: 0px;
+                    }
+                }
+                .level {
+                    vertical-align: top;
+                    padding: @rubricPadding;
+                    .delete {
+                        position: relative;
+                        width: 32px;
+                        height: 32px;
+                        margin-top: -32px;
+                        clear: both;
+                        float: right;
+                        input {
+                            display: block;
+                            position: absolute;
+                            right: 0;
+                            bottom: 0;
+                            height: 24px;
+                            width: 24px;
+                            margin: 0px;
+                            &:hover {
+                                background-color: #ddd;
+                            }
+                        }
+                    }
+                }
+                .scorevalue {
+                    input {
+                        // Should handle at least three chars with room to spare.
+                        float: none;
+                        width: 3em;
+                        &.hiddenelement,&.pseudotablink {
+                            // Zero out the width if it's still in the block flow for some reason
+                            // when hidden
+                            width: 0 !important;
+                        }
+                    }
+                }
+                .addlevel {
+                    vertical-align: middle;
+                    input {
+                        .btn();
+                        background-position: 0px 0px;
+                        height: 30px;
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+        .addcriterion {
+            margin-left: 5px;
+            .btn();
+            padding: 0;
+            input {
+                margin: 0;
+                color: inherit;
+                text-shadow: inherit;
+                border: 0px none;
+                line-height: inherit;
+                background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
+                padding-left: 26px;
+            }
+            margin-bottom:1em;
+        }
+        .options {
+            clear: both;
+            .option {
+                label {
+                    margin: 0;
+                    padding: 0;
+                    font-size: inherit;
+                    font-weight: normal;
+                    line-height: 2em;
+                    color: inherit;
+                    text-shadow: none;
+                    background-color: transparent;
+                }
+                input {
+                    margin-left: 5px;
+                    margin-right: 12px;
+                }
+            }
+        }
+    }
+}
+.path-grade-report-grader .grade_icons {
+    display: inline;
+}
+#page-mod-assign-grader {
+    .span4 {
+        .make-md-column(4);
+    }
+}

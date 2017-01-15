@@ -1,0 +1,1374 @@
+/** core.less */
+
+/** Page layout CSS starts **/
+.layout-option-noheader #page-header,
+.layout-option-nonavbar #page-navbar,
+.layout-option-nofooter #page-footer,
+.layout-option-nocourseheader .course-content-header,
+.layout-option-nocoursefooter .course-content-footer {
+    display: none;
+}
+
+.dir-ltr.editing.used-region-side-post.used-region-side-pre {
+    #region-main {
+        .make-sm-column(6);
+        .make-lg-column(8);
+        .make-sm-column-push(3);
+        .make-lg-column-push(2);
+    }
+    #block-region-side-post {
+        .make-sm-column(3);
+        .make-lg-column(2);
+        min-height: 100px;
+    }
+    #block-region-side-pre {
+        .make-sm-column(3);
+        .make-lg-column(2);
+        .make-sm-column-pull(6);
+        .make-lg-column-pull(8);
+        min-height: 100px;
+    }
+}
+
+.dir-rtl.editing.used-region-side-post.used-region-side-pre {
+    #region-main {
+        .make-sm-column(6);
+        .make-lg-column(8);
+        .make-sm-column-push(3);
+        .make-lg-column-push(2);
+    }
+    #block-region-side-pre {
+        .make-sm-column(3);
+        .make-lg-column(2);
+        .make-sm-column-push(3);
+        .make-lg-column-push(2);
+        min-height: 100px;
+    }
+    #block-region-side-post {
+        .make-sm-column(3);
+        .make-lg-column(2);
+        .make-sm-column-pull(9);
+        .make-lg-column-pull(10);
+        min-height: 100px;
+    }
+}
+
+.has_dock {
+    &.empty-region-side-pre #region-main, &.empty-region-side-post #region-main {
+        .make-sm-column(12);
+        .make-lg-column(12);
+        .make-sm-column-push(0);
+        .make-lg-column-push(0);
+    }
+
+    &.empty-region-side-pre.used-region-side-post #region-main,
+    &.empty-region-side-post.used-region-side-pre #region-main {
+        .make-sm-column(9);
+        .make-lg-column(10);
+    }
+
+    &.empty-region-side-pre #block-region-side-pre {
+        display: none;
+    }
+
+    &.empty-region-side-post #block-region-side-post {
+        display: none;
+    }
+}
+
+.has_dock.dir-ltr {
+    &.empty-region-side-pre.used-region-side-post #region-main {
+        .make-sm-column-push(0);
+        .make-lg-column-push(0);
+    }
+
+    &.empty-region-side-post.used-region-side-pre #region-main {
+        .make-sm-column-push(3);
+        .make-lg-column-push(2);
+    }
+
+    &.empty-region-side-post.used-region-side-pre #block-region-side-pre {
+        .make-sm-column-pull(9);
+        .make-lg-column-pull(10);
+    }
+}
+
+.has_dock.dir-rtl {
+    &.empty-region-side-pre.used-region-side-post #region-main {
+        .make-sm-column-push(3);
+        .make-lg-column-push(2);
+    }
+
+    &.empty-region-side-post.used-region-side-pre #region-main {
+        .make-sm-column-push(0);
+        .make-lg-column-push(0);
+    }
+
+    // Negate the push applied when transitioning from three columns.
+    // LTR does not have this vice-versa issue as no 'push' for post.
+    &.empty-region-side-post.used-region-side-pre #block-region-side-pre {
+        .make-sm-column-push(0);
+        .make-lg-column-push(0);
+    }
+
+    &.empty-region-side-pre.used-region-side-post #block-region-side-post {
+        .make-sm-column-pull(9);
+        .make-lg-column-pull(10);
+    }
+}
+
+/** Page layout CSS ends **/
+
+.mdl-left {
+    text-align: left;
+}
+
+.mdl-right {
+    text-align: right;
+}
+
+#add,
+#remove,
+.centerpara,
+.mdl-align {
+    text-align: center;
+}
+a.dimmed,
+a.dimmed:link,
+a.dimmed:visited,
+a.dimmed_text,
+a.dimmed_text:link,
+a.dimmed_text:visited,
+.dimmed_text,
+.dimmed_text a,
+.dimmed_text a:link,
+.dimmed_text a:visited,
+.usersuspended,
+.usersuspended a,
+.usersuspended a:link,
+.usersuspended a:visited,
+.dimmed_category,
+.dimmed_category a {
+    .text-muted
+}
+a.disabled:hover,
+a.disabled {
+    text-decoration: none;
+    cursor: default;
+    font-style: italic;
+    .text-muted;
+}
+.activity.label .dimmed_text {
+    .opacity(.5)
+}
+.unlist,
+.unlist li,
+.inline-list,
+.inline-list li,
+.block .list,
+.block .list li,
+.section li.activity,
+.section li.movehere,
+.tabtree li {
+    &:extend(.list-unstyled);
+}
+.inline,
+.inline-list li {
+    display: inline;
+}
+.notifytiny {
+    font-size: @font-size-small;
+}
+.notifytiny li,
+.notifytiny td {
+    font-size: 100%;
+}
+.highlight { // MDL-41506.
+    background: @state-info-bg;
+}
+.reportlink {
+    text-align: right;
+}
+a.autolink.glossary:hover {
+    cursor: help;
+}
+/* Block which is hidden if javascript enabled, prevents fickering visible when JS from footer used! */
+.collapsibleregioncaption {
+    white-space: nowrap;
+    img {
+        vertical-align: middle;
+    }
+}
+.jsenabled {
+    .hiddenifjs {
+        display: none;
+    }
+    .visibleifjs {
+        display: inline;
+    }
+    .collapsibleregion {
+        overflow: hidden;
+    }
+    .collapsed {
+        .collapsibleregioninner {
+            visibility: hidden;
+        }
+    }
+    .collapsible-actions {
+        display: block;
+    }
+}
+.visibleifjs {
+    display: none;
+}
+.collapsible-actions {
+    display: none;
+}
+
+.collapsible-actions {
+    text-align: right;
+    .collapseexpand {
+        padding-left: 20px;
+        background-image: url([[pix:t/collapsed]]);
+        background-position: left;
+        background-repeat: no-repeat;
+    }
+}
+
+.collapsible-actions .collapse-all {
+    background-image: url([[pix:t/expanded]]);
+}
+
+.yui-overlay {
+    .yui-widget-bd {
+        background-color: #ffee69;
+        border: 1px solid #a6982b;
+        border-top-color: #d4c237;
+        color: #000;
+        left: 0;
+        padding: 2px 5px;
+        position: relative;
+        top: 0;
+        z-index: 1;
+    }
+}
+.clearer {
+    background: transparent;
+    border-width: 0;
+    clear: both;
+    display: block;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+}
+.bold,.errorbox .title,.pagingbar .title,.pagingbar .thispage {
+    font-weight: bold;
+}
+img.resize {
+    height: 1em;
+    width: 1em;
+}
+.block img.resize,.breadcrumb img.resize {
+    height: 0.9em;
+    width: 0.8em;
+}
+/* Icon styles */
+img.icon {
+    height: 16px;
+    vertical-align: text-bottom;
+    width: 16px;
+    margin-right: 6px;
+}
+
+img.iconsmall {
+    height: 12px;
+    margin-right: 3px;
+    vertical-align: middle;
+    width: 12px;
+}
+
+img.iconhelp,
+.helplink img {
+    height: 16px;
+    margin-left: 3px;
+    width: 16px;
+}
+
+h1 img.iconhelp, h1 img.icon,
+h2 img.iconhelp, h2 img.icon,
+h3 img.iconhelp, h3 img.icon,
+h4 img.iconhelp, h4 img.icon,
+h5 img.iconhelp, h5 img.icon,
+h6 img.iconhelp, h6 img.icon {
+  vertical-align: middle;
+  margin: 4px;
+}
+img.iconlarge {
+    height: 24px;
+    width: 24px;
+    vertical-align: middle;
+}
+img.iconsort {
+    vertical-align: text-bottom;
+    padding-left: .3em;
+    margin-bottom: .15em;
+}
+
+img.icontoggle {
+    height: 17px;
+    vertical-align: middle;
+    width: 50px;
+}
+img.iconkbhelp {
+    height: 17px;
+    width: 49px;
+}
+img.icon-pre {
+    padding-right: 3px;
+    padding-left: 0;
+}
+img.icon-post {
+    padding-left: 3px;
+    padding-right: 0;
+}
+.boxaligncenter {
+    margin-left: auto;
+    margin-right: auto;
+}
+.boxalignright {
+    margin-left: auto;
+    margin-right: 0;
+}
+.boxalignleft {
+    margin-left: 0;
+    margin-right: auto;
+}
+.boxwidthnarrow {
+    width: 30%;
+}
+.boxwidthnormal {
+    width: 50%;
+}
+.boxwidthwide {
+    width: 100%;
+}
+.headermain {
+    font-weight: bold;
+}
+#maincontent {
+    display: block;
+    // height: 1px;
+    overflow: hidden;
+}
+img.uihint {
+    cursor: help;
+}
+img.emoticon {
+    vertical-align: middle;
+    width: 15px;
+    height: 15px;
+}
+form.popupform,
+form.popupform div {
+    display: inline;
+}
+.arrow_button input {
+    overflow: hidden;
+}
+.action-icon img.smallicon {
+    vertical-align: text-bottom;
+    margin: 0 0.3em;
+}
+.smallicon {
+    box-sizing: initial;
+}
+
+.no-overflow {
+    margin-bottom: 1px;
+    overflow-y: hidden;
+    overflow-x: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    -webkit-overflow-scrolling: touch;
+}
+// .pagelayout-report .no-overflow {
+//     overflow: visible;
+// }
+.no-overflow > .generaltable {
+    margin-bottom: 0;
+}
+/** Accessibility features **/
+span.hide,
+div.hide {
+    display: none;
+}
+.accesshide,
+a.skip-block,
+a.skip {
+    &:extend(.sr-only); // screen-reader-only
+}
+a.skip-block:focus,
+a.skip-block:active,
+a.skip:focus,
+a.skip:active {
+    position: static;
+    display: block;
+}
+.skip-block-to {
+    display: block;
+    height: 1px;
+    overflow: hidden;
+}
+/** Blogs **/
+.addbloglink {
+    text-align: center;
+}
+.blog_entry .audience {
+    text-align: right;
+    padding-right: 4px;
+}
+.blog_entry .tags {
+    margin-top: 15px;
+}
+.blog_entry .tags .action-icon img.smallicon {
+    height: 16px;
+    width: 16px;
+}
+.blog_entry .content {
+    margin-left: 43px;
+}
+/** Group **/
+#page-group-index #groupeditform {
+    text-align: center;
+}
+#doc-contents h1 {
+    margin: 1em 0 0 0;
+}
+#doc-contents ul {
+    margin: 0;
+    padding: 0;
+    width: 90%;
+}
+#doc-contents ul li {
+    list-style-type: none;
+}
+.groupmanagementtable td {
+    vertical-align: top;
+}
+.groupmanagementtable #existingcell,
+.groupmanagementtable #potentialcell {
+    width: 42%;
+}
+.groupmanagementtable #buttonscell {
+    width: 16%;
+}
+.groupmanagementtable #buttonscell p.arrow_button input {
+    width: auto;
+    min-width: 80%;
+    margin: 0 auto;
+}
+#group-usersummary {
+    width: 14em;
+}
+.groupselector {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    display: inline-block;
+}
+.groupselector label {
+    display: inline-block;
+}
+
+/** Notes **/
+.notepost {
+    margin-bottom: 1em;
+}
+.notepost .userpicture {
+    float: left;
+    margin-right: 5px;
+}
+.notepost .content,
+.notepost .footer {
+    clear: both;
+}
+.notesgroup {
+    margin-left: 20px;
+}
+
+/** My Moodle **/
+.path-my .coursebox .overview {
+    margin: 15px 30px 10px 30px;
+}
+.path-my .coursebox .info {
+    float: none;
+    margin: 0;
+}
+
+/** Modules **/
+.mod_introbox {
+    padding: 10px;
+}
+
+/** Comments **/
+.comment-ctrl {
+    font-size: 12px;
+    display: none;
+    margin: 0;
+    padding: 0;
+}
+.comment-ctrl h5 {
+    margin: 0;
+    padding: 5px;
+}
+.comment-area {
+    max-width: 400px;
+    padding: 5px;
+}
+.comment-area textarea {
+    width: 100%;
+    overflow: auto;
+}
+.comment-area .fd {
+    text-align: right;
+}
+.comment-meta span {
+    color: gray;
+}
+.comment-link img {
+    vertical-align: text-bottom;
+}
+.comment-list {
+    font-size: 11px;
+    overflow: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.comment-list li {
+    margin: 2px;
+    list-style: none;
+    margin-bottom: 5px;
+    clear: both;
+    padding: .3em;
+    position: relative;
+}
+.comment-list li.first {
+    display: none
+}
+.comment-paging{
+    text-align: center;
+}
+.comment-paging .pageno{
+    padding: 2px;
+}
+.comment-paging .curpage{
+    border: 1px solid #ccc;
+}
+.comment-message .picture {
+    width: 20px;
+    float: left;
+}
+.comment-message .text {
+    margin: 0;
+    padding: 0;
+}
+.comment-message .text p {
+    padding: 0;
+    margin: 0 18px 0 0;
+}
+.comment-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: .3em;
+}
+.comment-delete-confirm {
+    background: #eee;
+    padding: 2px;
+    width: 5em;
+    text-align: center;
+}
+.comment-container {
+    float: left;
+    margin: 4px;
+}
+.comment-report-selectall{
+    display: none
+}
+.comment-link {
+    display: none
+}
+.jsenabled .comment-link {
+    display: block
+}
+.jsenabled .showcommentsnonjs{
+    display: none
+}
+.jsenabled .comment-report-selectall{
+    display: inline
+}
+/**
+* Completion progress report
+*/
+.completion-expired {
+    background: @alert-danger-bg;
+}
+.completion-expected {
+    font-size: @font-size-small;
+}
+.completion-sortchoice,
+.completion-identifyfield {
+    font-size: @font-size-small;
+    vertical-align: bottom;
+}
+.completion-progresscell {
+    text-align: right;
+}
+.completion-expired .completion-expected {
+    font-weight: bold;
+}
+
+/**
+* Web Service
+*/
+#webservice-doc-generator td {
+    text-align: left;
+    border: 0 solid black;
+}
+/**
+* Smart Select Element
+*/
+.smartselect {
+    position: absolute;
+}
+.smartselect .smartselect_mask {
+    background-color: #fff;
+}
+.smartselect ul  {
+    padding: 0;
+    margin: 0;
+}
+.smartselect ul li {
+    list-style: none;
+}
+.smartselect .smartselect_menu {
+    margin-right: 5px;
+}
+.safari .smartselect .smartselect_menu {
+    margin-left: 2px;
+}
+.smartselect .smartselect_menu,
+.smartselect .smartselect_submenu {
+    border: 1px solid #000;
+    background-color: #fff;
+    display: none;
+}
+.smartselect .smartselect_menu.visible,
+.smartselect .smartselect_submenu.visible {
+    display: block;
+}
+.smartselect .smartselect_menu_content ul li {
+    position: relative;
+    padding: 2px 5px;
+}
+.smartselect .smartselect_menu_content ul li a {
+    color: #333;
+    text-decoration: none;
+}
+.smartselect .smartselect_menu_content ul li a.selectable {
+    color: inherit;
+}
+.smartselect .smartselect_submenuitem {
+    background-image: url([[pix:t/collapsed]]);
+    background-repeat: no-repeat;
+    background-position: 100%;
+}
+/** Spanning mode */
+.smartselect.spanningmenu .smartselect_submenu {
+    position: absolute;
+    top: -1px;
+    left: 100%;
+}
+.smartselect.spanningmenu .smartselect_submenu a {
+    white-space: nowrap;
+    padding-right: 16px;
+}
+.smartselect.spanningmenu .smartselect_menu_content ul li a.selectable:hover {
+    text-decoration: underline;
+}
+/** Compact mode */
+.smartselect.compactmenu .smartselect_submenu {
+    position: relative;
+    margin: 2px -3px;
+    margin-left: 10px;
+    display: none;
+    border-width: 0;
+    z-index: 1010;
+}
+.smartselect.compactmenu .smartselect_submenu.visible {
+    display: block;
+}
+.smartselect.compactmenu .smartselect_menu {
+    z-index: 1000;
+    overflow: hidden;
+}
+.smartselect.compactmenu .smartselect_submenu .smartselect_submenu {
+    z-index: 1020;
+}
+.smartselect.compactmenu .smartselect_submenuitem:hover > .smartselect_menuitem_label {
+    font-weight: bold;
+}
+
+.corelightbox {
+    background-color: #ccc;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+.corelightbox img {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+}
+
+.mod-indent-outer {
+    display: table;
+}
+.mod-indent {
+    display: table-cell;
+}
+.mod-indent-1 {
+    width: 30px;
+}
+.mod-indent-2 {
+    width: 60px;
+}
+.mod-indent-3 {
+    width: 90px;
+}
+.mod-indent-4 {
+    width: 120px;
+}
+.mod-indent-5 {
+    width: 150px;
+}
+.mod-indent-6 {
+    width: 180px;
+}
+.mod-indent-7 {
+    width: 210px;
+}
+.mod-indent-8 {
+    width: 240px;
+}
+.mod-indent-9 {
+    width: 270px;
+}
+.mod-indent-10 {
+    width: 300px;
+}
+.mod-indent-11 {
+    width: 330px;
+}
+.mod-indent-12 {
+    width: 360px;
+}
+.mod-indent-13 {
+    width: 390px;
+}
+.mod-indent-14 {
+    width: 420px;
+}
+.mod-indent-15,
+.mod-indent-huge {
+    width: 420px;
+}
+
+/* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
+.resourcecontent .mediaplugin_mp3 object {
+    height: 25px;
+    width: 600px
+}
+.resourcecontent audio.mediaplugin_html5audio {
+    width: 600px
+}
+/** Large resource images should avoid hidden overflow **/
+.resourceimage {
+    max-width: 100%;
+}
+/* Audio player size in 'inline' mode (can only change width, as above) */
+.mediaplugin_mp3 object {
+    height: 15px;
+    width: 300px
+}
+audio.mediaplugin_html5audio {
+    width: 300px
+}
+/* TinyMCE moodle media preview frame should not have padding */
+.core_media_preview.pagelayout-embedded #content {
+    padding: 0;
+}
+.core_media_preview.pagelayout-embedded #maincontent {
+    height: 0;
+}
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    background: none;
+}
+
+// Overriding the tinycmce themes/advanced/skins/moodlu/ui.css
+// to cope with box-sizing: border-box set by Bootstrap 3
+.mceEditor.moodleSkin .mceToolbar a span.mceIcon {
+    padding: 7px;
+    img {
+        padding: 0px;
+    }
+}
+
+.initialbar {
+    a, strong {
+        padding-left: 3px;
+        padding-right: 3px;
+    }
+}
+/* Moodle Dialogue Settings (moodle-core-dialogue)  */
+.moodle-dialogue-base .moodle-dialogue-lightbox {
+    background-color: #aaa;
+}
+.moodle-dialogue-base .hidden,
+.moodle-dialogue-base .moodle-dialogue-hidden {
+    display: none;
+}
+.no-scrolling {
+    overflow: hidden;
+}
+.moodle-dialogue-base .moodle-dialogue-fullscreen {
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: -50px;
+    position: fixed;
+}
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
+    overflow: auto;
+}
+.moodle-dialogue-base .moodle-dialogue-fullscreen .closebutton {
+    width: 28px;
+    height: 16px;
+    background-size: 100%;
+}
+.moodle-dialogue-base .moodle-dialogue {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    z-index: 600;
+    outline: #000 dotted 0;
+}
+.moodle-dialogue-base .moodle-dialogue-wrap {
+    margin-top: -3px;
+    margin-left: -3px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 5px 5px 20px 0 #666;
+}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd,
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
+    margin: 0;
+    padding: 2px 5px;
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    color: #333;
+    text-align: center;
+    text-shadow: 1px 1px 1px #fff;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 1px solid #bbb;
+    background: #ccc;
+    #gradient > .vertical(#fff, #ccc);
+    filter: 0;
+}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
+    margin: 0;
+    padding: 0;
+    display: inline;
+    font-size: 100%;
+    font-weight: bold;
+}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd .yui3-widget-buttons {
+    padding: 5px;
+}
+.moodle-dialogue-base .closebutton {
+    width: 25px;
+    height: 15px;
+    float: right;
+    vertical-align: middle;
+    display: inline-block;
+    cursor: pointer;
+    padding: 0;
+    background-image: url([[pix:theme|sprite]]);
+    background-repeat: no-repeat;
+    border-style: none;
+}
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
+    padding: 1em;
+    line-height: 2em;
+    color: #555;
+    font-size: 12px;
+}
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-content {
+    padding: 0;
+    background: #fff;
+}
+
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
+    overflow: auto;
+    position: absolute;
+    top: 0px;
+    bottom: 50px;
+    left: 0px;
+    right: 0px;
+    margin: 0px;
+    border: 0px;
+}
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-hd,
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-wrap {
+    border-radius: 0;
+}
+.moodle-dialogue-confirm .confirmation-dialogue {
+    text-align: center;
+}
+.moodle-dialogue-confirm .confirmation-dialogue input {
+    text-align: center;
+}
+.moodle-dialogue-exception .moodle-exception-message {
+    text-align: center
+}
+.moodle-dialogue-exception .moodle-exception-param label {
+    font-weight: bold;
+}
+.moodle-dialogue-exception .param-stacktrace label {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-bottom-width: 0;
+}
+.moodle-dialogue-exception .param-stacktrace pre {
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-file {
+    color: navy;
+    font-size: @font-size-small;
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-line {
+    color: @alert-danger-text;
+    font-size: @font-size-small;
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-call {
+    color: #333;
+    font-size: 90%;
+    border-bottom: 1px solid #eee;
+}
+.moodle-dialogue-base .moodle-dialogue .moodle-dialogue-content .moodle-dialogue-ft {
+    padding: 0;
+    margin: 0.7em 1em;
+    text-align: right;
+    background-color: #fff;
+    font-size: 12px;
+}
+.moodle-dialogue-confirm .confirmation-message {
+    margin: 0.5em 1em;
+}
+.moodle-dialogue-confirm .confirmation-dialogue input {
+    min-width: 80px
+}
+.moodle-dialogue-exception .moodle-exception-message {
+    margin: 1em;
+}
+.moodle-dialogue-exception .moodle-exception-param {
+    margin-bottom: 0.5em;
+}
+.moodle-dialogue-exception .moodle-exception-param label {
+    width: 150px;
+}
+.moodle-dialogue-exception .param-stacktrace label {
+    display: block;
+    margin: 0;
+    padding: 4px 1em;
+}
+.moodle-dialogue-exception .param-stacktrace pre {
+    display: block;
+    height: 200px;
+    overflow: auto;
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-file {
+    display: inline-block;
+    margin: 4px 0;
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-line {
+    display: inline-block;
+    width: 50px;
+    margin: 4px 1em;
+}
+.moodle-dialogue-exception .param-stacktrace .stacktrace-call {
+    padding-left: 25px;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+}
+.moodle-dialogue .moodle-dialogue-bd .content-lightbox {
+    .opacity(.75);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: white;
+    text-align: center;
+    padding: 10% 0;
+}
+/* Apply a default max-height on tooltip text */
+.moodle-dialogue .tooltiptext {
+    max-height: 300px;
+}
+
+.moodle-dialogue-base .moodle-dialogue.moodle-dialogue-tooltip {
+    z-index: 3001;
+
+    .moodle-dialogue-bd {
+        overflow: auto;
+    }
+}
+
+/**
+* Chooser Dialogues (moodle-core-chooserdialogue)
+*
+* This CSS belong to the chooser dialogue which should work both with, and
+* without javascript enabled
+*/
+/* Hide the dialog and it's title */
+.chooserdialoguebody,
+.choosertitle {
+    display: none;
+}
+.moodle-dialogue.chooserdialogue .moodle-dialogue-content .moodle-dialogue-ft {
+    margin: 0;
+}
+.chooserdialogue .moodle-dialogue-wrap .moodle-dialogue-bd {
+    padding: 0;
+    background: #f2f2f2;
+    .border-bottom-radius(10px);
+}
+/* Center the submit buttons within the area */
+.choosercontainer #chooseform .submitbuttons {
+    padding: 0.7em 0;
+    text-align: center;
+}
+.choosercontainer #chooseform .submitbuttons input {
+    min-width: 100px;
+    margin: 0 0.5em;
+}
+/* Various settings for the options area */
+.choosercontainer #chooseform .options {
+    position: relative;
+    border-bottom: 1px solid #bbb;
+}
+/* Only set these options if we're showing the js container */
+.jsenabled .choosercontainer #chooseform .alloptions {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-width: 20.3em;
+    box-shadow: inset 0 0 30px 0px #ccc;
+}
+/* Settings for option rows and option subtypes */
+.choosercontainer #chooseform .moduletypetitle,
+.choosercontainer #chooseform .option,
+.choosercontainer #chooseform .nonoption {
+    margin-bottom: 0;
+    padding: 0 1.6em 0 1.6em;
+}
+.choosercontainer #chooseform .moduletypetitle {
+    text-transform: uppercase;
+    padding-top: 1.2em;
+    padding-bottom: 0.4em;
+}
+.choosercontainer #chooseform .option .typename,
+.choosercontainer #chooseform .option span.modicon img.icon,
+.choosercontainer #chooseform .nonoption .typename,
+.choosercontainer #chooseform .nonoption span.modicon img.icon {
+    padding: 0 0 0 0.5em;
+}
+.choosercontainer #chooseform .option span.modicon img.icon,
+.choosercontainer #chooseform .nonoption span.modicon img.icon {
+    height: 24px;
+    width: 24px;
+}
+.choosercontainer #chooseform .option input[type=radio],
+.choosercontainer #chooseform .option span.typename,
+.choosercontainer #chooseform .option span.modicon {
+    vertical-align: middle;
+}
+.choosercontainer #chooseform .option label {
+    display: block;
+    padding: 0.3em 0 0.1em 0;
+    border-bottom: 1px solid #fff;
+}
+.choosercontainer #chooseform .nonoption {
+    padding-left: 2.7em;
+    padding-top: 0.3em;
+    padding-bottom: 0.1em;
+}
+.choosercontainer #chooseform .subtype {
+    margin-bottom: 0;
+    padding: 0 1.6em 0 3.2em;
+}
+.choosercontainer #chooseform .subtype .typename {
+    margin: 0 0 0 0.2em;
+}
+/* The instruction/help area */
+.jsenabled .choosercontainer #chooseform .instruction,
+.jsenabled .choosercontainer #chooseform .typesummary {
+   display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 20.3em;
+    margin: 0;
+    padding: 1.6em;
+    background-color: @body-bg;
+    overflow-x: hidden;
+    overflow-y: auto;
+    line-height: 2em;
+}
+
+/* Selected option settings */
+.jsenabled .choosercontainer #chooseform .instruction,
+.choosercontainer #chooseform .selected .typesummary {
+    display: block;
+}
+.choosercontainer #chooseform .selected {
+    background-color: @body-bg;
+    box-shadow: 0px 0 10px 0 #ccc;
+}
+.section-modchooser-link img.smallicon {
+    padding: 3px;
+}
+/* Form element: listing */
+.formlistingradio {
+    padding-bottom: 25px;
+    padding-right: 10px;
+}
+.formlistinginputradio {
+    float: left;
+}
+.formlistingmain {
+    min-height: 225px;
+}
+.formlisting {
+    position: relative;
+    margin: 15px 0;
+    padding: 1px 19px 14px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.formlistingmore {
+    position: absolute;
+    cursor: pointer;
+    bottom: -1px;
+    right: -1px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: whiteSmoke;
+    border: 1px solid #ddd;
+    color: #9da0a4;
+    border-radius: 4px 0 4px 0;
+}
+.formlistingall {
+    margin: 15px 0;
+    padding: 0;
+    border-radius: 4px;
+}
+.formlistingrow {
+    cursor: pointer;
+    border-bottom: 1px solid;
+    border-color: #e1e1e8;
+    border-left: 1px solid #e1e1e8;
+    border-right: 1px solid #e1e1e8;
+    background-color: #f7f7f9;
+    border-radius: 0 0 4px 4px;
+    padding: 6px;
+    top: 50%;
+    left: 50%;
+    min-height: 34px;
+    float: left;
+    width: 150px;
+}
+body.jsenabled .formlistingradio {
+    display: none;
+}
+body.jsenabled .formlisting {
+    display: block;
+}
+
+.breadcrumb-nav {
+    float: left;
+    margin-bottom: 10px;
+}
+.breadcrumb-button .singlebutton div {
+    margin-right: 0;
+}
+.breadcrumb-nav .breadcrumb {
+    margin: 0;
+}
+
+/** Action menu component styles **/
+.moodle-actionmenu,
+.moodle-actionmenu > ul,
+.moodle-actionmenu > ul > li {
+    display: inline-block;
+}
+
+.moodle-actionmenu ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    line-height: 30px;
+}
+
+.moodle-actionmenu .toggle-display,
+.moodle-actionmenu .menu-action-text {
+    display: none; /** Hidden by default, display none so that we don't take up space. **/
+}
+
+.jsenabled {
+    .moodle-actionmenu[data-enhance] {
+        display: block;
+        .menu {
+            display:none;
+        }
+        .toggle-display {
+            display: inline; /** JS is enabled, we'll be using it so return display to normal **/
+            .opacity(.5);
+        }
+        .toggle-display.textmenu {
+            // .btn;
+            // .btn-default;
+            // .btn-sm;
+            // display: block;
+            // margin-left: 4px;
+            // padding-left: 4px;
+            // padding-right: 4px;
+
+            .iconsmall {
+                margin: 4px 4px 4px 0px;
+                padding: 8px 4px 0px 2px;
+                vertical-align: text-bottom;
+            }
+
+            .caret {
+                // margin-top: 8px;
+                // margin-left: 2px;
+                // border-top-color: @navbar-default-link-color;
+                // &:hover,
+                // &:active {
+                //     border-top-color: @navbar-default-link-active-color;
+                // }
+            }
+        }
+    }
+    .moodle-actionmenu[data-enhanced] {
+        .toggle-display {
+            .opacity(1);
+        }
+        .menu-action-text  {
+            display:inline;
+            white-space: normal;
+        }
+    }
+}
+
+.moodle-actionmenu[data-enhanced].show  {
+    position: relative;
+
+    .menu {
+        .dropdown-menu;
+        display: block;
+        text-align: left;
+
+        a {
+            display: block;
+            white-space: nowrap;
+            color: @dropdown-link-color;
+            padding: 3px 20px;
+            line-height: @line-height-base;
+            &:hover {
+                color: @dropdown-link-active-color;
+                background-color: @dropdown-link-active-bg;
+                text-decoration: none;
+            }
+        }
+        a.hidden {
+            display:none;
+        }
+        img {
+            vertical-align: middle;
+        }
+        .iconsmall,
+        .smallicon {
+            margin: 4px 4px 4px -10px;
+        }
+        .smallicon {
+            padding: 4px;
+            .box-sizing(inherit);
+        }
+        > li {
+            display:block;
+        }
+
+        /** bottom left of button **/
+        &.align-tl-bl {top: 100%;left:0;margin-top: 4px;}
+        &.align-tr-bl {top: 100%;right: 100%;}
+        &.align-bl-bl {bottom: 100%;left:0;}
+        &.align-br-bl {bottom: 100%;right: 100%;}
+        /** bottom right of button **/
+        &.align-tl-br {top: 100%;left:100%;}
+        &.align-tr-br {top: 100%;right: 0;left: inherit;margin-top: 4px;}
+        &.align-bl-br {bottom: 100%;left:100%;}
+        &.align-br-br {bottom: 100%;right: 0;}
+        /** top left of button **/
+        &.align-tl-tl {top: 0;left:0;}
+        &.align-tr-tl {top: 0;right: 100%;margin-right: 4px;}
+        &.align-bl-tl {bottom: 100%;left:0;margin-bottom: 4px;}
+        &.align-br-tl {bottom: 100%;right: 100%;}
+        /** top right of button **/
+        &.align-tl-tr {top: 0;left:100%;margin-left: 4px;}
+        &.align-tr-tr {top: 0;right: 0;}
+        &.align-bl-tr {bottom: 100%;left:100%;}
+        &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
+    }
+}
+
+.block .moodle-actionmenu {
+    text-align: right;
+}
+
+ul.dragdrop-keyboard-drag li {
+    list-style-type: none;
+}
+
+.block-control-actions .moodle-core-dragdrop-draghandle img {
+    width: 12px;
+    height: 12px;
+}
+

@@ -1,0 +1,82 @@
+/** Fix YUI 2 Treeview for Right to left languages **/
+
+.dir-rtl .ygtvtn,
+.dir-rtl .ygtvtm,
+.dir-rtl .ygtvtmh,
+.dir-rtl .ygtvtmhh,
+.dir-rtl .ygtvtp,
+.dir-rtl .ygtvtph,
+.dir-rtl .ygtvtphh,
+.dir-rtl .ygtvln,
+.dir-rtl .ygtvlm,
+.dir-rtl .ygtvlmh,
+.dir-rtl .ygtvlmhh,
+.dir-rtl .ygtvlp,
+.dir-rtl .ygtvlph,
+.dir-rtl .ygtvlphh,
+.dir-rtl .ygtvdepthcell,
+.dir-rtl .ygtvok,
+.dir-rtl .ygtvok:hover,
+.dir-rtl .ygtvcancel,
+.dir-rtl .ygtvcancel:hover {
+    width: 18px;
+    height: 22px;
+    background-image: url([[pix:theme|yui2-treeview-sprite-rtl]]);
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.dir-rtl .ygtvtn {
+    background-position: 0 -5600px;
+}
+.dir-rtl .ygtvtm {
+    background-position: 0 -4000px;
+}
+.dir-rtl .ygtvtmh,
+.dir-rtl .ygtvtmhh {
+    background-position: 0 -4800px;
+}
+.dir-rtl .ygtvtp {
+    background-position: 0 -6400px;
+}
+.dir-rtl .ygtvtph,
+.dir-rtl .ygtvtphh {
+    background-position: 0 -7200px;
+}
+.dir-rtl .ygtvln {
+    background-position: 0 -1600px;
+}
+.dir-rtl .ygtvlm {
+    background-position: 0 0;
+}
+.dir-rtl .ygtvlmh,
+.dir-rtl .ygtvlmhh {
+    background-position: 0 -800px;
+}
+.dir-rtl .ygtvlp {
+    background-position: 0 -2400px;
+}
+.dir-rtl .ygtvlph,
+.dir-rtl .ygtvlphh {
+    background-position: 0 -3200px
+}
+.dir-rtl .ygtvdepthcell {
+    background-position: 0 -8000px;
+}
+.dir-rtl .ygtvok {
+    background-position: 0 -8800px;
+}
+.dir-rtl .ygtvok:hover {
+    background-position: 0 -8844px;
+}
+.dir-rtl .ygtvcancel {
+    background-position: 0 -8822px;
+}
+.dir-rtl .ygtvcancel:hover {
+    background-position: 0 -8866px;
+}
+.dir-rtl.yui-skin-sam .yui-panel .hd {
+    text-align: right;
+}
+.dir-rtl .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {
+    text-align: right;
+}

@@ -1,0 +1,75 @@
+.userprofile {
+    .fullprofilelink {
+        text-align: center;
+        margin: 10px;
+    }
+    .description {
+        margin-bottom: 20px;
+    }
+
+    .profile_tree {
+        .content-columns(2);
+    }
+    .profile_tree section {
+        display: inline-block;
+        width: 100%;
+    }
+    .header-button-group {
+        .pull-right;
+        .btn {
+            .btn-default;
+        }
+    }
+
+    a {
+        text-decoration: none;
+    }
+    dl.list {
+        .dl-horizontal;
+    }
+    dd, dt {
+        margin-left: 0px;
+    }
+    ul {
+        margin-left: 10px;
+    }
+    ul > li ul {
+        margin-left: 0;
+    }
+}
+#page-user-profile .node_category, .path-user .node_category {
+    li {
+        list-style-type: none;
+        &.contentnode {
+            list-style-type: none;
+        }
+    }
+}
+.path-user .node_category:first-child li span {
+    margin-bottom: 10px;
+    display: block;
+}
+.page-context-header {
+    overflow: hidden;
+    &:after {
+        clear: both;
+    }
+    .page-header-image {
+        display: table-cell;
+        vertical-align: top;
+        padding-right: 10px;
+    }
+    .page-header-headings {
+        display: table-cell;
+        vertical-align: bottom;
+        h1 {
+            margin: 0;
+        }
+    }
+}
+.core_message-messenger-sendmessage-content {
+    .message-send {
+        margin: 5px 5px 0 0;
+    }
+}
+

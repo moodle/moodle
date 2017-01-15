@@ -1,0 +1,56 @@
+.path-rating .ratingtable,
+table.flexible,
+.generaltable {
+    .table;
+}
+
+& when (@moodle-table-striped) {
+    .path-rating .ratingtable,
+    table#explaincaps,
+    table#defineroletable,
+    table.grading-report,
+    table#listdirectories,
+    table.rolecaps,
+    table.userenrolment,
+    table#form,
+    form#movecourses table,
+    #page-admin-course-index .editcourse,
+    .forumheaderlist,
+    table.flexible,
+    .generaltable {
+        .table-striped;
+    }
+}
+
+& when (@moodle-table-hover) {
+    .user-enroller-panel .uep-search-results .users,
+    table.grading-report,
+    .forumheaderlist,
+    .generaltable,
+    table.flexible,
+    table#permissions {
+        .table-hover;
+    }
+}
+
+#page-report-loglive-index .generaltable,
+#page-admin-report-log-index .generaltable,
+#page-report-log-index .generaltable,
+#page-report-log-user .generaltable,
+#page-admin-user table {
+    .table-condensed;
+}
+
+table.flexible .emptyrow {
+    display: none;
+}
+
+.left_scroller,
+.right_scroller {
+    .generaltable {
+        th, td {
+            line-height: @line-height-computed;
+            box-sizing: content-box;
+        }
+    }
+}

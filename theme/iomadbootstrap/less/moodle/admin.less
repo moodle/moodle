@@ -1,0 +1,556 @@
+/* admin.less  */
+.path-admin .incompatibleblockstable td.c0 {
+    font-weight: bold;
+}
+
+#page-admin-course-category .addcategory {
+    padding: 10px;
+}
+
+#page-admin-course-index .editcourse {
+    margin: 20px auto;
+}
+
+#page-admin-course-index .editcourse th,
+#page-admin-course-index .editcourse td {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.timewarninghidden {
+    display: none;
+}
+
+// These status classes are only used on /report/security/ page
+.statusok,
+.statuswarning,
+.statusserious,
+.statuscritical {
+    &:extend(.label);
+}
+.statusok {
+    &:extend(.label-success);
+}
+.statuswarning {
+    &:extend(.label-warning);
+}
+.statusserious,
+.statuscritical {
+    &:extend(.label-danger);
+}
+
+#page-admin-report-capability-index #capabilitysearch {
+    width: 30em;
+}
+
+#page-admin-report-backups-index .backup-error,
+#page-admin-report-backups-index .backup-unfinished {
+    color: @state-danger-text;
+}
+
+#page-admin-report-backups-index .backup-skipped,
+#page-admin-report-backups-index .backup-ok,
+#page-admin-report-backups-index .backup-notyetrun {
+    color: @state-success-text;
+}
+
+#page-admin-report-backups-index .backup-warning {
+    color: @state-warning-text;
+}
+
+#page-admin-qtypes .disabled,
+#page-admin-qbehaviours .disabled {
+    .text-muted;
+}
+
+#page-admin-qtypes #qtypes div,
+#page-admin-qtypes #qtypes form,
+#page-admin-qbehaviours #qbehaviours div,
+#page-admin-qbehaviours #qbehaviours form {
+    display: inline;
+}
+
+#page-admin-qtypes #qtypes img.spacer,
+#page-admin-qbehaviours #qbehaviours img.spacer {
+    width: 16px;
+}
+
+// Make them more finger friendly.
+img.iconsmall {
+    margin: 0.3em;
+}
+
+
+#page-admin-qbehaviours .cell.c3,
+#page-admin-qtypes .cell.c3 {
+    font-size: @font-size-small;
+}
+
+#page-admin-lang .generalbox,
+#page-admin-course-index .singlebutton,
+#page-admin-course-index .addcategory,
+#page-course-index .buttons,
+#page-course-index-category .buttons,
+#page-admin-course-category .addcategory,
+#page-admin-stickyblocks .generalbox,
+#page-admin-maintenance .buttons,
+#page-admin-course-index .buttons,
+#page-admin-course-category .buttons,
+#page-admin-index .copyright,
+#page-admin-index .copyrightnotice,
+#page-admin-index .adminerror,
+#page-admin-index .availableupdatesinfo,
+#page-admin-index .adminerror .singlebutton,
+#page-admin-index .adminwarning .singlebutton,
+#page-admin-index #layout-table .singlebutton {
+    text-align: center;
+    margin-bottom: 1em !important;
+}
+
+.path-admin-roles .capabilitysearchui {
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#page-admin-roles-define .topfields {
+    margin: 1em 0 2em;
+}
+
+#page-admin-roles-define .capdefault {
+    background-color: @table-bg-accent;
+    border: 1px solid @table-border-color;
+}
+
+#page-filter-manage .backlink,
+.path-admin-roles .backlink {
+    margin-top: 1em;
+}
+
+#page-admin-roles-explain #chooseuser h3,
+#page-admin-roles-usersroles .contextname {
+    margin-top: 0;
+}
+
+#page-admin-roles-explain #chooseusersubmit {
+    margin-top: 0;
+    text-align: center;
+}
+
+#page-admin-roles-usersroles p {
+    margin: 0;
+}
+
+#page-admin-roles-override .cell.c1,
+#page-admin-roles-assign .cell.c3,
+#page-admin-roles-assign .cell.c1 {
+    padding-top: 0.75em;
+}
+
+#page-admin-roles-override .overridenotice,
+#page-admin-roles-define .definenotice {
+    margin: 1em 10% 2em 10%;
+    text-align: left;
+}
+
+#notice {
+    // Would like the use the alert stuff below for this,
+    // but the way buttons are used makes it tricky.
+    width: 60%;
+    min-width: 220px;
+    margin: auto;
+}
+
+#page-admin-index .releasenoteslink,
+#page-admin-index .adminwarning,
+#page-admin-index .maturitywarning,
+#page-admin-index .testsitewarning,
+#page-admin-index .maturityinfo {
+    .alert;
+    width: 60%;
+    min-width: 220px;
+    margin: auto;
+}
+#page-admin-index .maturitywarning,
+#page-admin-index .testsitewarning,
+#page-admin-index .adminwarning.maturityinfo.maturity50 {
+    .alert-danger;
+}
+
+#page-admin-index .adminwarning.availableupdatesinfo,
+#page-admin-index .releasenoteslink {
+    .alert-info;
+}
+
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo span {
+    display: block;
+}
+
+
+#page-admin-index .updateplugin div,
+#page-admin-plugins .updateplugin div {
+    margin-bottom: 0.5em;
+}
+
+#page-admin-index .updateplugin .updatepluginconfirmexternal,
+#page-admin-plugins .updateplugin .updatepluginconfirmexternal {
+    padding: 1em;
+    background-color: @state-danger-bg;
+    border: 1px solid @state-danger-border;
+}
+
+#page-admin-user-user_bulk #users .fgroup {
+    white-space: nowrap;
+}
+
+#page-admin-report-stats-index .graph {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+#page-admin-report-courseoverview-index .graph {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+#page-admin-lang .translator {
+    border-width: 1px;
+    border-style: solid;
+}
+
+// This is the CSS for the role assignment control.
+.path-admin .roleassigntable {
+    width: 100%;
+    input[type="text"] {
+    	.form-control;
+    	margin-bottom: 0.3em;
+    }
+}
+
+.path-admin .roleassigntable td {
+    vertical-align: top;
+    padding: 0.2em 0.3em
+}
+
+.path-admin .roleassigntable p {
+    text-align: left;
+    margin: 0.2em 0;
+}
+
+.path-admin .roleassigntable #existingcell,
+.path-admin .roleassigntable #potentialcell {
+    width: 42%;
+}
+
+// Targetting the label at the top.
+.path-admin .roleassigntable #existingcell p > label:first-child,
+.path-admin .roleassigntable #potentialcell p > label:first-child {
+    font-weight: bold;
+}
+
+.path-admin .roleassigntable #buttonscell {
+    width: 16%;
+}
+
+.path-admin .roleassigntable #buttonscell #assignoptions {
+    font-size: @font-size-small;
+}
+
+.path-admin .roleassigntable #removeselect_wrapper,
+.path-admin .roleassigntable #addselect_wrapper {
+    width: 100%;
+}
+
+.path-admin table.rolecap tr.rolecap th {
+    text-align: left;
+    font-weight: normal;
+}
+
+.path-admin .rolecap .hiddenrow {
+    display: none;
+}
+
+.path-admin #defineroletable {
+    .rolecap {
+        .inherit,
+        .allow,
+        .prevent,
+        .prohibit {
+            text-align: center;
+            padding: 0;
+            min-width: 3.5em;
+        }
+    }
+}
+
+.path-admin .rolecap .cap-name,
+.path-admin .rolecap .note {
+    display: block;
+    font-size: @font-size-small;
+    white-space: nowrap;
+    font-weight: normal;
+}
+
+.path-admin .rolecap label {
+    display: block;
+    text-align: center;
+    padding: 0.5em;
+    margin: 0;
+}
+
+.plugincheckwrapper {
+    width: 100%;
+}
+
+#trustedhosts .standard {
+    width: auto;
+}
+
+#adminsettings fieldset.error {
+    margin: .2em 0 .5em 0;
+}
+
+.adminsettingsflags {
+    float: right;
+}
+
+.adminsettingsflags label {
+    margin-right: 7px;
+}
+
+#admin-emoticons td input {
+    width: 8em;
+}
+
+#admin-emoticons td.c0 input {
+    width: 4em;
+}
+
+#adminthemeselector .selectedtheme > td {
+    background: @state-info-bg;
+}
+
+.admin_colourpicker,
+.admin_colourpicker_preview {
+    display: none;
+}
+
+.jsenabled .admin_colourpicker_preview {
+    display: inline;
+}
+
+.jsenabled .admin_colourpicker {
+    display: block;
+    height: 102px;
+    width: 410px;
+    margin-bottom: 10px;
+}
+
+.admin_colourpicker .loadingicon {
+    vertical-align: middle;
+    margin-left: auto;
+}
+
+.admin_colourpicker .colourdialogue {
+    float: left;
+    border: 1px solid #000;
+}
+
+.admin_colourpicker .previewcolour {
+    border: 1px solid #000;
+    margin-left: 301px;
+}
+
+.admin_colourpicker .currentcolour {
+    border: 1px solid #000;
+    margin-left: 301px;
+    border-top-width: 0;
+}
+
+// Plugins check.
+#page-admin-index .alert .singlebutton {
+    text-align: center;
+}
+
+#plugins-check-info {
+    text-align: center;
+    margin: 1em;
+}
+
+#plugins-check .displayname .pluginicon {
+    width: 16px;
+}
+
+.pluginicon.noicon {
+    display: none;
+}
+
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity200 .info.release {
+    background-color: @state-info-bg;
+}
+
+#plugins-control-panel .extension .source,
+#plugins-check .extension .source {
+    font-weight: bold;
+}
+
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity100 .info.release,
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity150 .info.release,
+.pluginupdateinfo.maturity100,
+.pluginupdateinfo.maturity150 {
+    background-color: @state-warning-bg;
+}
+
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release,
+.pluginupdateinfo.maturity50,
+#plugins-check .requires-failed {
+    background-color: @state-danger-bg;
+}
+
+#plugins-check .standard .source,
+#plugins-check .status-nodb .status,
+#plugins-check .status-uptodate .status,
+#plugins-check .requires-ok {
+    .text-muted;
+}
+
+#plugins-check .requires ul {
+    font-size: @font-size-small;
+    margin: 0;
+}
+
+#plugins-check .status .pluginupdateinfo {
+    padding: 5px 10px;
+    margin: 10px;
+    background-color: @state-info-bg;
+    border-radius: 10px;
+}
+
+#plugins-check .status .pluginupdateinfo span,
+#plugins-check .status .pluginupdateinfo a {
+    padding-right: 1em;
+}
+
+#plugins-control-panel .pluginicon.noicon {
+    display: none;
+}
+
+#plugins-control-panel .status-missing .pluginname {
+    background-color: @state-danger-bg;
+}
+
+#plugins-control-panel .status-new .pluginname {
+    background-color: @state-success-bg;
+}
+
+#plugins-control-panel .statusmsg {
+    &:extend(.label);
+}
+
+#plugins-control-panel .status-missing .statusmsg {
+    &:extend(.label-danger);
+}
+
+#plugins-control-panel .status-new .statusmsg {
+    &:extend(.label-success);
+}
+
+#plugins-control-panel .disabled .availability {
+    background-color: @input-bg-disabled;
+}
+
+
+#plugins-control-panel .requiredby,
+#plugins-control-panel .pluginname .componentname {
+    font-size: @font-size-small;
+    .text-muted;
+}
+
+#plugins-control-panel .msg td {
+    text-align: center;
+}
+
+#plugins-control-panel .notes .pluginupdateinfo {
+    padding: 5px 10px;
+    margin: 10px;
+    background-color: @state-info-bg;
+    border-radius: 10px;
+}
+
+#plugins-control-panel .notes .pluginupdateinfo span,
+#plugins-control-panel .notes .pluginupdateinfo a {
+    padding-right: 1em;
+}
+
+#page-admin-index .upgradepluginsinfo {
+    text-align: center;
+}
+
+#page-admin-plugins .checkforupdates {
+    margin: 0 auto 1em;
+    text-align: center;
+}
+
+#plugins-overview-filter .filter-item,
+#plugins-overview-panel .info {
+    padding: 0 10px;
+}
+
+#page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .separator,
+#plugins-check .status .pluginupdateinfo .separator,
+#page-admin-plugins .separator {
+    border-left: 1px dotted @table-border-color;
+}
+
+#plugins-overview-filter,
+#plugins-overview-panel {
+    margin: 1em auto;
+    text-align: center;
+}
+
+#plugins-overview-panel .info.updatable {
+    margin-left: 10px;
+    background-color: @state-info-bg;
+    font-weight: bold;
+    border-radius: 10px;
+}
+
+#plugins-overview-filter .filter-item.active {
+    font-weight: bold;
+}
+
+
+/** MNet networking */
+#page-admin-mnet-peers .box.deletedhosts {
+    margin-bottom: 1em;
+    font-size: @font-size-small;
+}
+
+#page-admin-mnet-peers .mform .certdetails {
+    background-color: white;
+}
+
+#page-admin-mnet-peers .mform .deletedhostinfo {
+    background-color: @state-danger-bg;
+    border: 2px solid @state-danger-border;
+    padding: 4px;
+    margin-bottom: 5px;
+}
+
+#core-cache-rescan-definitions,
+#core-cache-mode-mappings .edit-link,
+#core-cache-lock-summary .new-instance {
+    text-align: center;
+}
+
+.tinymcesubplugins img.icon {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+// Hacks for badly marked up admin warnings.
+// MDL-44323
+#page-admin-roles-assign div.box.generalbox {
+    .alert;
+    .alert-danger;
+}

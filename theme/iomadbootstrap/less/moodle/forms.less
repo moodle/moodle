@@ -1,0 +1,457 @@
+// Basic mforms layout, used in resources, user profile etc.
+.mform {
+    .fitem {
+        &:extend(.form-group);
+        &:extend(.form-horizontal .form-group);
+        .fitemtitle {
+             .make-md-column(4);
+             .make-lg-column(3);
+            label {
+                margin-top: 0;
+                margin-bottom: 0;
+                padding-top: (@padding-base-vertical + 1); // Default padding plus a border
+            }
+        }
+        .felement {
+            .make-md-column(8);
+            .make-lg-column(9);
+            select,
+            input[type="text"],
+            input[type="password"],
+            textarea {
+                .form-control;
+            }
+            textarea {
+                height: auto;
+            }
+        }
+        select[multiple], select[size] {
+            height: auto;
+        }
+        .felement.fautocomplete input[type="text"] {
+            display: inline-block;
+        }
+        .felement.fduration input[type="text"] {
+            min-width: 0;
+            width: 5em;
+            display: inline-block;
+        }
+        .felement.fduration,
+        .felement.fdate_selector,
+        .felement.fdate_time_selector,
+        .felement.fgroup {
+            select {
+                width: auto;
+                display: inline-block;
+                min-width: 60px;
+            }
+            select[size],
+            select[multiple] {
+                height: auto;
+            }
+            label {
+                display: inline-block;
+            }
+        }
+        .felement.fgroup input[type="text"] {
+            min-width: unset;
+            display: inline;
+        }
+    }
+    
+    .fitem_actionbuttons {
+            .form-group;
+            .form-horizontal .form-group;
+            > div.felement {
+                .make-md-column(8);
+                .make-md-column-offset(4);
+                .make-lg-column(9);
+                .make-lg-column-offset(3);
+            }
+    }
+}
+
+.mform fieldset .advancedbutton {
+    text-align: right;
+}
+
+.jsenabled .mform .containsadvancedelements .advanced {
+    display: none;
+}
+
+.mform .containsadvancedelements .advanced.show {
+    display: block;
+}
+
+.mform fieldset.group {
+    margin-bottom: 0
+}
+
+.mform span.error {
+    background-color: @state-danger-bg;
+    color: @state-danger-text;
+}
+
+.mform fieldset.error {
+    border: 1px solid @state-danger-border;
+}
+
+.mform fieldset.collapsible legend a.fheader {
+    padding: 0 5px 0 20px;
+    margin-left: -20px;
+    background-image: url([[pix:t/expanded]]);
+    background-repeat: no-repeat;
+    background-position: left;
+}
+
+.mform fieldset.collapsed legend a.fheader {
+    background-image: url([[pix:t/collapsed]]);
+}
+
+.jsenabled .mform .collapsed .fcontainer {
+    display: none;
+}
+
+// These are for javascript hide/show, not actual links
+.mform legend a,
+.mform legend a:hover {
+    color: @legend-color;
+    text-decoration: none;
+}
+
+.mform label .req,
+.mform label .adv {
+    cursor: help;
+}
+
+.mform .iconhelp {
+    margin-left: 4px;
+}
+
+// Basic admin forms layout.
+
+.form-item {
+    &:extend(.form-group);
+    &:extend(.form-horizontal .form-group);
+    .form-label {
+        .make-md-column(4);
+        label {
+            margin-top: 0;
+            margin-bottom: 0;
+            padding-top: (@padding-base-vertical + 1); // Default padding plus a border
+        }
+    }
+    .form-setting {
+        .make-md-column(8);
+        select,
+        input[type="text"],
+        input[type="password"] {
+            .form-control;
+        }
+        select[size],
+        select[multiple] {
+            height: auto;
+        }
+        .form-group {
+            margin-bottom: 0;
+            // name clash with Bootstrap form-group
+        }
+    }
+    .form-description {
+        .make-md-column(8);
+        .make-md-column-offset(4);
+        clear: left;
+        margin-bottom: 0;
+    }
+}
+form select,
+form input[type="text"],
+form input[type="password"],
+form.atto_form input[type="url"],
+select.singleselect {
+    .form-control;
+    width: auto;
+    max-width: 300px;
+    display: inline;
+    margin: 0 0 5px 0;
+}
+
+
+.path-admin .buttons,
+.form-buttons {
+    .make-md-column(8);
+    .make-md-column-offset(4);
+    margin-left: -15px; // There's no row container, needs negative margin at small sizes
+    margin-bottom: 15px;
+    .form-submit {
+        margin-left: 0;
+    }
+}
+
+.form-defaultinfo,
+.form-label .form-shortname {
+    .text-muted;
+    font-size: @font-size-small;
+}
+
+#adminsettings h3 {
+    &:extend(legend);
+}
+
+.form-setting .form-checkbox input {
+    margin-top: 12px;
+}
+
+.form-setting .form-multicheckbox ul {
+    &:extend(.list-unstyled);
+}
+
+// Shared styles
+
+.fcheckbox > span > label,
+.form-checkbox + label,
+.form-multicheckbox label,
+.unmask label {
+    &:extend(.checkbox label);
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+}
+
+// At this width and above the form label stacks beside the control
+@media (min-width: @screen-md-min) {
+    .mform .fitemtitle,
+    .form-label {
+        text-align: right;
+        .form-shortname {
+            display: block;
+        }
+    }
+    .form-setting .form-multicheckbox,
+    .fitem_fcheckbox .fcheckbox {
+        padding-top: 8px;
+    }
+    .mform .fitem_actionbuttons > div.felement {
+        padding-left: 10px;
+    }
+    .form-buttons .form-submit {
+        margin-left: -5px;
+    }
+    .form-item .form-setting,
+    .mform .fcontainer .fitem .felement {
+        > input[type="text"],
+        > input[type="password"] {
+            width: auto;
+            // Disabling min with just to try
+            // min-width: 480px;
+            margin-bottom: 5px;
+        }
+        textarea {
+            .form-control;
+            height: auto;
+        }
+    }
+    #page-mod-quiz-mod #id_reviewoptionshdr .fitem.fitem_fgroup {
+        font-size: @font-size-small;
+        .fitemtitle {
+            min-height: 3.5em;
+        }
+    }
+
+}
+
+@media (max-width: @screen-sm-max) {
+
+    // Fake a responsive grid for the quiz review options section.
+    #page-mod-quiz-mod #id_reviewoptionshdr .fitem.fitem_fgroup {
+        float: none;
+        width: 100%;
+    }
+}
+
+
+.mform .felement.fstatic,
+.form-item .form-description {
+    .help-block;
+    margin-bottom: 0;
+    p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+// despite crazy name, roughly equivalent to bootstrap's .form-inline
+.invisiblefieldset {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    margin: 0 4px;
+}
+/* Section and module editing forms contain special JS components for the
+   availability system (if enabled). */
+#fitem_id_availabilityconditionsjson {
+    *[aria-hidden=true] {
+        display: none;
+    }
+    select,
+    input[type=text] {
+        width: auto;
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        padding: 4px 6px;
+    }
+    label {
+        display: inline;
+    }
+    .availability-group {
+        margin: 5px;
+    }
+
+    .availability-item {
+        margin-bottom: 6px;
+    }
+
+    .availability-header {
+        padding: 5px;
+    }
+
+    .availability-plugincontrols {
+        padding: 5px;
+        margin: 0 8px;
+        background: none repeat scroll 0% 0% @well-bg;
+        border: 1px solid @well-border;
+        border-radius: @border-radius-base;
+        display: inline-block;
+    }
+
+    /* Hidden eye icon still takes up space. */
+    .availability-eye[aria-hidden=true] {
+        display: inline;
+        visibility: hidden;
+    }
+    /* Eye icons in front of child lists are aligned specially. */
+    .availability-list > .availability-eye img {
+        vertical-align: top;
+        margin-top: 12px;
+    }
+    /* Add button lines up with child elements. */
+    .availability-button {
+        margin-left: 15px;
+    }
+    /* Nested section is grey. */
+    .availability-childlist > .availability-inner {
+        display: inline-block;
+        background: @well-bg;
+        border: 1px solid @well-border;
+        border-radius: 4px;
+        padding: 6px;
+        margin-bottom: 6px;
+    }
+    /* Second (and more) levels of nested sections are white. */
+    .availability-childlist .availability-childlist > .availability-inner {
+        background: white;
+    }
+    /* Connecting text needs to be indented. */
+    .availability-connector {
+        margin-left: 20px;
+        margin-bottom: 6px;
+    }
+}
+
+/* This dialogue is used to add an availability condition. */
+.availability-dialogue {
+    .moodle-dialogue .moodle-dialogue-bd {
+        padding-left: 0;
+        padding-right: 0;
+        padding-bottom: 2px;
+    }
+    ul {
+        display: block;
+        margin: 0;
+    }
+    li {
+        display: block;
+        list-style-type: none;
+        padding: 0 0 4px;
+        clear: both;
+        border-bottom: 1px solid @gray-lighter;
+        margin-bottom: 4px;
+    }
+    ul button {
+        float: left;
+        margin: 0 10px;
+        min-width: 140px;
+        margin-top: 4px;
+        display: inline;
+    }
+    label {
+        margin-bottom: 0;
+        display: block;
+    }
+    .availability-buttons button {
+        margin-left: 1em;
+        margin-right: 1em;
+        margin-top: 4px;
+    }
+}
+
+/* Custom styles for autocomplete form element */
+.form-autocomplete-selection {
+    margin: 0.2em;
+    min-height: 21px;
+    .label-info {
+        display: inline-block;
+    }
+}
+
+.form-autocomplete-multiple [role=listitem] {
+    cursor: pointer;
+}
+
+.form-autocomplete-suggestions {
+    position: absolute;
+    background-color: white;
+    border: 2px solid @gray-lighter;
+    border-radius: 3px;
+    min-width: 206px;
+    max-height: 20.4em;
+    overflow: auto;
+    margin: 0px;
+    padding: 0px;
+    z-index: 1;
+    li {
+        list-style-type: none;
+        padding: 0.2em;
+        margin: 0;
+        cursor: pointer;
+        color: @text-color;
+        &:hover {
+            background-color: lighten(@dropdown-link-active-bg, 15%);
+            color: @dropdown-link-active-color;
+        }
+    }
+    li[aria-selected=true] {
+        background-color: darken(white, 5%);
+        color: @gray;
+    }
+}
+
+.form-autocomplete-downarrow {
+    color: @text-color;
+    position: relative;
+    left: -1.5em;
+    cursor: pointer;
+    &.dir-rtl {
+        right: -1.5em;
+        left: inherit;
+    }
+}
+
+.form-autocomplete-selection [data-active-selection=true] {
+    padding: 0.5em;
+    font-size: large;
+}

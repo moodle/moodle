@@ -1,0 +1,152 @@
+table.collection {
+    .table;
+    .table-bordered;
+    .table-striped;
+}
+table.collection .name {
+    text-align: left;
+    vertical-align: middle;
+}
+table.collection .awards {
+    width: 10%;
+    text-align: center;
+    vertical-align: middle;
+}
+table.collection .criteria {
+    width: 40%;
+    text-align: left;
+    vertical-align: top;
+}
+table.collection .badgeimage,
+table.collection .status {
+    width: 15%;
+    text-align: center;
+    vertical-align: middle;
+}
+table.collection .description {
+    width: 25%;
+    text-align: left;
+}
+table.collection .actions {
+    width: 11em;
+    text-align: center;
+    vertical-align: middle;
+}
+
+a.criteria-action {
+    padding: 0px 3px;
+    float: right;
+}
+table.issuedbadgebox {
+    width: 750px;
+    background-color: #fff;
+}
+table.badgeissuedimage {
+    width: 150px;
+    text-align: center;
+}
+table.badgeissuedinfo {
+    width: 600px;
+}
+table.badgeissuedinfo .bvalue {
+    text-align: left;
+    vertical-align: middle;
+}
+table.badgeissuedinfo .bfield {
+    width: 125px;
+    text-align: left;
+    font-style: italic;
+}
+
+ul.badges {
+    margin: 0;
+    list-style: none;
+}
+.badges li {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 2em;
+    text-align: center;
+    vertical-align: top;
+    width: 150px;
+}
+.badges li .badge-name {
+    display: block;
+    padding: 5px;
+}
+.badges li > img {
+    position: absolute;
+}
+.badges li .badge-image {
+    width: 90px;
+    height: 90px;
+    left: 10px;
+    top: 0px;
+    z-index: 1;
+}
+.badges li .badge-actions {
+    position: relative;
+}
+div.badge {
+    position: relative;
+    display: block;
+}
+div.badge .expireimage {
+    width: 100px;
+    height: 100px;
+    left: 20px;
+    top: 0px;
+}
+.expireimage {
+    .opacity(.85);
+    width: 90px; height: 90px;
+    left: 30px;
+    top: 0px;
+    position: absolute;
+    z-index:10;
+}
+.badge-profile {
+    vertical-align: top;
+}
+.connected {
+    color: @alert-success-text;
+}
+.notconnected {
+    color: @alert-danger-text;
+}
+.connecting {
+    color: @alert-warning-text;
+}
+#page-badges-award .recipienttable tr td {
+    vertical-align: top;
+}
+#page-badges-award .recipienttable tr td.actions .actionbutton {
+    margin: 0.3em 0;
+    padding: 0.5em 0;
+    width: 100%;
+}
+#page-badges-award .recipienttable tr td.existing,
+#page-badges-award .recipienttable tr td.potential {
+    width: 42%;
+}
+
+.statustable {
+    margin-bottom: 0px;
+}
+.statusbox.active {
+    background-color: @alert-success-bg;
+}
+.statusbox.inactive {
+    background-color: @alert-warning-bg;
+}
+.activatebadge {
+    margin: 0px;
+    text-align: left;
+    vertical-align: middle;
+}
+img#persona_signin {
+    cursor: pointer;
+}
+.addcourse {
+    float: right;
+}

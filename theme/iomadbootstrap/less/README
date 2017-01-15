@@ -1,0 +1,27 @@
+If you want to make changes to the .css generated from these .less files then you
+need to use a LESS Compiler. Details on specific compilers and how to install them
+can be found at http://docs.moodle.org/dev/LESS
+
+Requirements:
+nodejs, npm, grunt-cli.
+
+Installation:
+node and npm: instructions at http://nodejs.org/
+grunt-cli: `[sudo] npm install -g grunt-cli`
+node dependencies: run `npm install` in the root directory.
+
+Usage:
+Default behaviour is to watch all .less files and compile
+into compressed CSS when a change is detected to any and then
+clear the theme's caches. Invoke either `grunt` or `grunt watch`
+in the theme's root directory.
+
+To separately compile only moodle or editor .less files
+run `grunt less:moodle` or `grunt less:editor` respectively.
+
+To only clear the theme caches invoke `grunt exec:decache` in
+the theme's root directory.
+
+Additional information about the Moodle bootstrap base theme can be found at
+http://docs.moodle.org/dev/Bootstrap
+

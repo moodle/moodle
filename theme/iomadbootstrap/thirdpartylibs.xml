@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>less/bootstrap3-3-6</location>
+    <name>Bootstrap</name>
+    <license>MIT</license>
+    <version>3.3.6</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

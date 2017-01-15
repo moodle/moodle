@@ -1,0 +1,104 @@
+/* responsive.less */
+
+@media (max-width: 767px) {
+    .file-picker .fp-repo-area {
+        width: 100%;
+        height: auto;
+        max-height: 220px;
+        overflow-y: auto;
+        float: none;
+        border: 0px;
+    }
+    .file-picker .fp-repo-items {
+        width: 100%;
+        float: none;
+    }
+    .file-picker .fp-login-form .fp-login-input label {
+        text-align: left;
+    }
+    .file-picker .fp-content form td {
+        display: block;
+        width: 100%;
+        text-align: left;
+    }
+    .fp-content .mdl-right {
+        text-align: left;
+    }
+    .fp-repo-items .fp-navbar {
+        border-top: 1px solid rgb(187, 187, 187);
+    }
+}
+
+@media (max-width: @screen-xs) {
+    .fp-content-center {
+        display: block;
+        vertical-align: top;
+    }
+    .course-content ul.topics li.section,
+    .course-content ul.topics li.section .content,
+    .course-content ul.weeks li.section .content,
+    .course-content ul.weeks li.section,
+    .course-content ul.section {
+        margin-right: 0;
+        margin-left: 0;
+        padding: 0;
+    }
+    .activityinstance {
+        display: block;
+    }
+    .editing .course-content .section .activity {
+        margin-bottom: 0.2em;
+        padding-bottom: 0.2em;
+        border-bottom: thin solid @table-border-color;
+    }
+    .course-content .section .activity .commands {
+        text-align: right;
+    }
+    /** Handles display of the activity chooser on small screens **/
+    .jsenabled .choosercontainer #chooseform .alloptions {
+        max-width: 100%;
+    }
+    .jsenabled .choosercontainer #chooseform .instruction,
+    .jsenabled .choosercontainer #chooseform .typesummary {
+        position:static;
+    }
+    .que .info {
+        float: none;
+        width: auto;
+    }
+    .que .content {
+        margin: 0;
+    }
+    .path-mod-choice .horizontal  .choices .option {
+        display: block;
+    }
+    .path-mod-forum .forumsearch #search {
+        width: 120px;
+    }
+    .path-mod-forum .forumheaderlist .picture {
+        width: 0px;
+        a {
+            display: none;
+        }
+    }
+    .panel {
+        .courseimage {
+            img {
+                margin-right: 5px;
+                float: none;
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+
+@media (max-width: @screen-sm) {
+// Resize, reflow file-picker on small devices
+   #filesskin .yui3-panel,
+   #filesskin .file-picker.fp-generallayout {
+        width: 100%;
+        left: 0;
+    }
+
+}

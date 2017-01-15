@@ -1,0 +1,250 @@
+/* modules.less */
+
+// The home for small tweaks to modules that don't require
+// changes drastic enough to pull in the full module css
+// and replace it completely
+// Plus some misc. odds and ends
+
+select {
+    width: auto;
+}
+
+// Forum
+
+.path-mod-forum .forumheaderlist,
+.path-mod-forum .forumheaderlist td {
+    border: none;
+}
+
+.path-mod-forum .forumheaderlist {
+    thead .header {
+        white-space: normal;
+        vertical-align: top;
+    }
+    thead .header.lastpost {
+        text-align: right;
+    }
+    .discussion {
+        .author, .replies, .lastpost {
+            white-space: normal;
+        }
+        .replies {
+            text-align: center;
+        }
+        .topic, .topic.starter, .picture, .author, .replies, .lastpost {
+            vertical-align: top;
+        }
+    }
+}
+
+.path-mod-feedback .feedback_bar_image { // MDL-46063
+    height: 5px; // we should remove the bar height specification in core
+}
+
+.forumpost {
+    &:extend(.panel);
+    &:extend(.panel-default);
+    padding: 6px;
+    .header {
+        margin-bottom: 3px;
+    }
+    .maincontent {
+        .left {
+            padding: 0 10px 0 10px;
+        }
+    }
+}
+
+.forumpost .row .left {
+    width: auto;
+}
+
+.forumpost .options .commands {
+    margin-left: 0;
+}
+
+.forumpost .subject {
+    font-weight: bold;
+}
+
+// Override hardcoded forum modules styling
+.forumsearch input[type=text] {
+     margin-bottom: 0 !important;
+}
+
+#page-mod-forum-discuss .discussioncontrol.displaymode {
+    text-align: left;
+}
+
+#page-mod-forum-discuss .discussioncontrols .discussioncontrol {
+    float: none;
+    width: 100%;
+    .singleselect {
+        width: 100%;
+        select.singleselect {
+            .form-control;
+        }
+    }
+    &.movediscussion {
+        margin-top: 5px;
+        select.urlselect {
+            .form-control;
+            width: auto;
+            float: left;
+        }
+        input[type="submit"] {
+            float: left;
+        }
+        &.movediscussion {
+            float: left;
+        }
+    }
+}
+
+#page-footer {
+    margin-top: 1em;
+    padding: 1em 0;
+    border-top: 2px solid @table-border-color;
+}
+
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th {
+    border: 1px dotted @table-border-color;
+}
+
+.path-grade-report-grader h1 {
+    text-align: inherit;
+}
+
+#page-mod-chat-gui_basic input#message {
+    max-width: 100%;
+}
+
+#page-mod-data-view #singleimage {
+    width: auto;
+}
+
+.path-mod-data form {
+    margin-top: 10px;
+}
+
+.path-mod-data table.mod-data-default-template {
+    th, td {
+        padding: 5px;
+    }
+}
+
+.template_heading {
+    margin-top: 10px;
+}
+
+.breadcrumb-button {
+    float: right;
+    margin-top: 4px;
+}
+
+.navbar-inverse .logininfo a {
+    color: @navbar-inverse-link-color;
+}
+.navbar-inverse .logininfo a:hover {
+    background-color: @navbar-inverse-link-hover-bg; // "transparent" is default to differentiate :hover/:focus from .active
+    color: @navbar-inverse-link-hover-color;
+}
+
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+    z-index: 4030;
+}
+@media (max-width: @grid-float-breakpoint) {
+    .navbar-collapse.collapse,
+    .navbar-collapse.collapsing {
+        margin-top: @navbar-height;
+        .nav {
+            float: none !important;
+        }
+    }
+}
+.langmenu form {
+    margin: 0;
+}
+.container-fluid {
+    max-width: 1680px;
+    margin: 0 auto;
+}
+// contributed by Paul Hibbitts, see http://msdn.microsoft.com/en-us/library/ie/jj583807(v=vs.85).aspx
+canvas {
+    -ms-touch-action: auto;
+}
+
+div#dock {
+    display: none;
+}
+
+// Choice.
+.path-mod-choice {
+    .horizontal  .choices {
+        margin: 0;
+        .option {
+            display: inline-block;
+            padding: 10px;
+        }
+    }
+    .results .data {
+        white-space: normal;
+    }
+}
+
+// Lesson.
+.path-mod-lesson .firstpageoptions {
+    margin: auto;
+    min-width: 280px;
+    width: 60%;
+}
+
+.path-mod-lesson .centerpadded {
+    padding: 5px;
+    text-align: center;
+}
+
+// Wiki
+.path-mod-wiki .wiki_headingtitle,
+.path-mod-wiki .midpad,
+.path-mod-wiki .wiki_headingtime {
+    text-align: inherit;
+}
+
+.path-mod-wiki .wiki_contentbox {
+    width: 100%;
+}
+
+// Quiz.
+.path-mod-quiz {
+    .questioncontainer {
+        input[type="text"] {
+            height: 1.5em;
+        }
+    }
+}
+
+// Survey module
+.path-mod-survey {
+    .surveytable {
+        .r1 {background-color: @table-bg-accent}
+        .rblock label {text-align: center;}
+    }
+    .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
+        text-align:center;
+    }
+}
+
+.path-mod-assign {
+    .assignfeedback_editpdf_widget .pageheader button,
+    .assignfeedback_editpdf_widget .pageheader select {
+        padding: 3px 7px;
+        height: 28px;
+        line-height: 24px;
+    }
+    a.btn {
+        .btn-default;
+    }
+}

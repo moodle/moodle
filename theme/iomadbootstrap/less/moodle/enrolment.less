@@ -1,0 +1,166 @@
+.userenrolment {
+    width: 100%;
+    border-collapse: collapse;
+    tr {
+        vertical-align:top;
+    }
+    td {
+        padding: 0;
+        height: 41px;
+    }
+    .subfield {
+        margin-right: 5px;
+    }
+    .col_userdetails {
+        .subfield_picture {
+            float: left;
+        }
+    }
+    .col_lastseen {
+        width: 150px;
+    }
+    .col_role {
+        width: 262px;
+    }
+    .hasAllRoles {
+        .col_role {
+            .addrole {
+                display: none;
+            }
+        }
+    }
+    .col_enrol {
+        .enrolment {
+            float: left;
+            padding: 3px;
+            margin: 3px;
+            a {
+                float: right;
+                margin-left: 3px;
+            }
+        }
+    }
+}
+.userenrolment .col_role .roles,
+.userenrolment .col_group .groups {
+    margin-right: 30px;
+}
+.userenrolment .col_role .role,
+.userenrolment .col_group .group {
+    float: left;
+    padding: 3px;
+    margin: 3px;
+    white-space: nowrap;
+}
+.userenrolment .col_role .role a,
+.userenrolment .col_group .group a {
+    margin-left: 3px;
+    cursor: pointer;
+}
+.userenrolment .col_role .addrole,
+.userenrolment .col_group .addgroup {
+    float: right;
+    padding: 3px;
+    margin: 3px;
+    > a:hover {
+        border-bottom:1px solid #666;
+    }
+}
+.userenrolment .col_role .addrole img,
+.userenrolment .col_group .addgroup img {
+    vertical-align: baseline;
+}
+
+.enrolpanel.roleassign.visible {
+    .popover;
+    width: @popover-max-width;
+    width: @popover-max-width;
+    display: block;
+    .container {
+        content: inherit;
+        display: block;
+        padding: 0;
+        border: 0;
+    }
+    a {
+        text-decoration: underline;
+    }
+    
+    .header {
+        .popover-title;
+        .close {
+            .glyphicon;
+            color: @link-color;
+            background: inherit;
+            font-size: 20px;
+            margin-bottom: 10px;
+            margin-top: 5px;
+            opacity: 1;
+            width: auto;
+            top: 5px;
+            right: 10px;
+            height: auto;
+            position: absolute;
+
+            &:before { content: "\e014"; } 
+        }
+    }
+    .content {
+        .popover-content;
+        margin-top: 5px;
+        background-color: (lighten(@popover-bg, 10%));
+    }
+}
+
+
+#page-enrol-users {
+    .enrol_user_buttons {
+        float: right;
+        .enrolusersbutton {
+            display: inline;
+            div,
+            form {
+                display: inline;
+                margin-right: 0;
+            }
+        }
+    }
+    #filterform {
+        .well;
+        display: inline-block;
+        .fitem {
+            display: inline-block;
+            
+            margin-right: .3em;
+            white-space: nowrap;
+            label {
+                display: inline;
+                line-height: @line-height-base;
+                padding-right: .3em;
+            }
+            :before,
+            :after {
+                display: inline;
+            }
+        }
+        div,
+        fieldset {
+            display: table;
+            float: none;
+            clear: none;
+            width: auto;
+            margin: 0;
+        }
+        select,
+        .ftext input {
+            width: 7em;
+        }
+        input,
+        select {
+            margin-bottom: 0;
+        }
+    }
+    .user-enroller-panel .uep-search-results .user .details {
+       width: 237px;
+    }
+}
