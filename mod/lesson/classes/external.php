@@ -670,4 +670,80 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_user_attempt_grade.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_user_attempt_grade_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'lessonattempt' => new external_value(PARAM_INT, 'lesson attempt number'),
+                'userid' => new external_value(PARAM_INT, 'the user id (empty for current user)', VALUE_DEFAULT, null),
+            )
+        );
+    }
+
+    /**
+     * Return grade information in the attempt for a given user.
+     *
+     * @param int $lessonid lesson instance id
+     * @param int $lessonattempt lesson attempt number
+     * @param int $userid only fetch attempts of the given user
+     * @return array of warnings and page attempts
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_user_attempt_grade($lessonid, $lessonattempt, $userid = null) {
+        global $CFG, $USER;
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $params = array(
+            'lessonid' => $lessonid,
+            'lessonattempt' => $lessonattempt,
+            'userid' => $userid,
+        );
+        $params = self::validate_parameters(self::get_user_attempt_grade_parameters(), $params);
+        $warnings = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+
+        // Default value for userid.
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        // Extra checks so only users with permissions can view other users attempts.
+        if ($USER->id != $params['userid']) {
+            self::check_can_view_user_data($params['userid'], $course, $cm, $context);
+        }
+
+        $result = (array) lesson_grade($lesson, $params['lessonattempt'], $params['userid']);
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_user_attempt_grade return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_user_attempt_grade_returns() {
+        return new external_single_structure(
+            array(
+                'nquestions' => new external_value(PARAM_INT, 'Number of questions answered'),
+                'attempts' => new external_value(PARAM_INT, 'Number of question attempts'),
+                'total' => new external_value(PARAM_FLOAT, 'Max points possible'),
+                'earned' => new external_value(PARAM_FLOAT, 'Points earned by student'),
+                'grade' => new external_value(PARAM_FLOAT, 'Calculated percentage grade'),
+                'nmanual' => new external_value(PARAM_INT, 'Number of manually graded questions'),
+                'manualpoints' => new external_value(PARAM_FLOAT, 'Point value for manually graded questions'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
