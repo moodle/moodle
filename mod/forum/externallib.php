@@ -678,7 +678,7 @@ class mod_forum_external extends external_api {
      * @throws moodle_exception
      */
     public static function view_forum_discussion($discussionid) {
-        global $DB, $CFG;
+        global $DB, $CFG, $USER;
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
         $params = self::validate_parameters(self::view_forum_discussion_parameters(),
@@ -699,6 +699,11 @@ class mod_forum_external extends external_api {
 
         // Call the forum/lib API.
         forum_discussion_view($modcontext, $forum, $discussion);
+
+        // Mark as read if required.
+        if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forum)) {
+            forum_tp_mark_discussion_read($USER, $discussion->id);
+        }
 
         $result = array();
         $result['status'] = true;
