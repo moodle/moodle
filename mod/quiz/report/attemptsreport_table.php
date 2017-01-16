@@ -389,7 +389,8 @@ abstract class quiz_attempts_report_table extends table_sql {
     public function base_sql(\core\dml\sql_join $allowedstudentsjoins) {
         global $DB;
 
-        $fields = $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid,';
+        // Please note this uniqueid column is not the same as quiza.uniqueid.
+        $fields = 'DISTINCT ' . $DB->sql_concat('u.id', "'#'", 'COALESCE(quiza.attempt, 0)') . ' AS uniqueid,';
 
         if ($this->qmsubselect) {
             $fields .= "\n(CASE WHEN $this->qmsubselect THEN 1 ELSE 0 END) AS gradedattempt,";
