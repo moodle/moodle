@@ -148,6 +148,15 @@ class big_search_form implements renderable, templatable {
         $this->words = $value;
     }
 
+    /**
+     * Forum ID setter search criteria.
+     *
+     * @param int $forumid The forum ID.
+     */
+    public function set_forumid($forumid) {
+        $this->forumid = $forumid;
+    }
+
     public function export_for_template(renderer_base $output) {
         $data = new stdClass();
 
@@ -185,6 +194,15 @@ class big_search_form implements renderable, templatable {
                             . html_writer::select_time('hours', 'tohour', $dateto)
                             . html_writer::select_time('minutes', 'tominute', $dateto);
 
+        if ($this->forumid && !empty($this->forumoptions)) {
+            foreach ($this->forumoptions as $index => $option) {
+                if ($option['value'] == $this->forumid) {
+                    $this->forumoptions[$index]['selected'] = true;
+                } else {
+                    $this->forumoptions[$index]['selected'] = false;
+                }
+            }
+        }
         $data->forumoptions = $this->forumoptions;
 
         return $data;
