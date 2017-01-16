@@ -167,12 +167,20 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                 if (!drop.contains(drag)) {
                     drop.appendChild(drag);
                 }
-                myElements = '';
+                var childElement;
+                var elementId;
+                var elements = [];
                 drop.all(CSS.DRAGITEM).each(function(v) {
-                    myElements = myElements + ',' + this.get_node_id(v.get('id'));
+                    childElement = v.one('.felement').one('[id^="feedback_item_"]');
+                    if (childElement) {
+                        elementId = this.get_node_id(childElement.get('id'));
+                        if (elements.indexOf(elementId) == -1) {
+                            elements.push(elementId);
+                        }
+                    }
                 }, this);
                 var spinner = M.util.add_spinner(Y, dragnode);
-                this.save_item_order(this.cmid, myElements, spinner);
+                this.save_item_order(this.cmid, elements.toString(), spinner);
            }
         },
 

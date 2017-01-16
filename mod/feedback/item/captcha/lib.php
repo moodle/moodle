@@ -120,8 +120,9 @@ class feedback_item_captcha extends feedback_item_base {
         $inputname = $item->typ . '_' . $item->id;
 
         if ($form->get_mode() != mod_feedback_complete_form::MODE_COMPLETE) {
+            // Span to hold the element id. The id is used for drag and drop reordering.
             $form->add_form_element($item,
-                    ['static', $inputname, $name],
+                    ['static', $inputname, $name, html_writer::span('', '', ['id' => 'feedback_item_' . $item->id])],
                     false,
                     false);
         } else {
