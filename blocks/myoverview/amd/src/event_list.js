@@ -129,34 +129,67 @@ define(['jquery', 'core/notification', 'core/templates',
     };
 
     /**
-     * A filter function to check if the given calendar event falls within the
-     * specified time range.
+     * Determine the time (in seconds) from the given timestamp until the calendar
+     * event will need actioning.
      *
-     * @method filterByDay
+     * @method timeUntilEvent
      * @private
-     * @param {int}     seedTime        The start timestamp from which to calculate
-     * @param {int}     startDayOffset  The number of days to offset from the seedTime when
-     *                                  calculating the start of the time range
-     * @param {int}     endDayOffset    The number of days to offset from the seedTime when
-     *                                  calculating the end of the time range
-     * @param {object}  calendarEvent   The list of calendar events
+     * @param {int}     timestamp   The time to compare with
+     * @param {object}  event       The calendar event
+     * @return {int}
+     */
+    var timeUntilEvent = function(timestamp, event) {
+        var orderTime = event.orderTime || 0;
+        return orderTime - timestamp;
+    };
+
+    /**
+     * Check if the given calendar event should be added to the given event
+     * list group container. The event list group container will specify a
+     * day range for the time boundary it is interested in.
+     *
+     * If only a start day is specified for the container then it will be treated
+     * as an open catchment for all events that begin after that time.
+     *
+     * @method eventBelongsInContainer
+     * @private
+     * @param {object} event        The calendar event
+     * @param {object} container    The group event list container
      * @return {bool}
      */
-    var filterByDay = function(seedTime, startDayOffset, endDayOffset, calendarEvent) {
-        var orderTime = calendarEvent.orderTime || 0,
-            startTime = seedTime + (startDayOffset * SECONDS_IN_DAY);
+    var eventBelongsInContainer = function(event, container) {
+        var todayTime = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000),
+            timeUntilContainerStart = +container.attr('data-start-day') * SECONDS_IN_DAY,
+            timeUntilContainerEnd = +container.attr('data-end-day') * SECONDS_IN_DAY,
+            timeUntilEventNeedsAction = timeUntilEvent(todayTime, event);
 
-        if (!endDayOffset) {
-            return (orderTime >= startTime);
+        if (!timeUntilContainerEnd) {
+            return timeUntilContainerStart <= timeUntilEventNeedsAction;
         } else {
-            var endTime = seedTime + (endDayOffset * SECONDS_IN_DAY);
-
-            return (orderTime >= startTime && orderTime < endTime);
+            return timeUntilContainerStart <= timeUntilEventNeedsAction &&
+                   timeUntilEventNeedsAction < timeUntilContainerEnd;
         }
     };
 
     /**
-     * Render the given calendar events in the container element.
+     * Return a function that can be used to filter a list of events based on the day
+     * range specified on the given event list group container.
+     *
+     * @method getFilterCallbackForContainer
+     * @private
+     * @param {object} container Event list group container
+     * @return {function}
+     */
+    var getFilterCallbackForContainer = function(container) {
+        return function(event) {
+            return eventBelongsInContainer(event, $(container));
+        };
+    };
+
+    /**
+     * Render the given calendar events in the container element. The container
+     * elements must have a day range defined using data attributes that will be
+     * used to group the calendar events according to their order time.
      *
      * @method render
      * @private
@@ -165,30 +198,21 @@ define(['jquery', 'core/notification', 'core/templates',
      * @return {promise} Resolved with a count of the number of rendered events
      */
     var render = function(root, calendarEvents) {
-        var promises = [],
-            date = new Date(),
-            todayTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000),
-            eventListGroups = root.find(SELECTORS.EVENT_LIST_GROUP_CONTAINER),
-            renderCount = 0;
+        var renderCount = 0;
 
-        // For each event list group find the events from the calender event
-        // list that fit in the day range they are listening for and render
-        // the events within that group.
-        eventListGroups.each(function() {
-            var group = $(this),
-                startDay = +group.attr('data-start-day'),
-                endDay = +group.attr('data-end-day') || 0,
-                groupCalendarEvents = calendarEvents.filter(function(value) {
-                    return filterByDay(todayTime, startDay, endDay, value);
-                });
+        // Loop over each of the element list groups and find the set of calendar events
+        // that belong to that group (as defined by the group's day range). The matching
+        // list of calendar events are rendered and added to the DOM within that group.
+        return $.when.apply($, $.map(root.find(SELECTORS.EVENT_LIST_GROUP_CONTAINER), function(container) {
+            var events = calendarEvents.filter(getFilterCallbackForContainer(container));
 
-            if (groupCalendarEvents.length) {
-                renderCount += groupCalendarEvents.length;
-                promises.push(renderGroup(group, groupCalendarEvents));
+            if (events.length) {
+                renderCount += events.length;
+                return renderGroup($(container), events);
+            } else {
+                return null;
             }
-        });
-
-        return $.when.apply(null, promises).then(function() {
+        })).then(function() {
             return renderCount;
         });
     };
@@ -266,8 +290,6 @@ define(['jquery', 'core/notification', 'core/templates',
             root = $(root);
             load(root);
             registerEventListeners(root);
-        },
-        load: load,
-        registerEventListeners: registerEventListeners,
+        }
     };
 });
