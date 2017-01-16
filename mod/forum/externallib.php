@@ -97,6 +97,7 @@ class mod_forum_external extends external_api {
                 $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
                 $forum->cmid = $forum->coursemodule;
                 $forum->cancreatediscussions = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+                $forum->istracked = forum_tp_is_tracked($forum);
 
                 // Add the forum to the array to return.
                 $arrforums[$forum->id] = $forum;
@@ -144,6 +145,7 @@ class mod_forum_external extends external_api {
                     'numdiscussions' => new external_value(PARAM_INT, 'Number of discussions in the forum', VALUE_OPTIONAL),
                     'cancreatediscussions' => new external_value(PARAM_BOOL, 'If the user can create discussions', VALUE_OPTIONAL),
                     'lockdiscussionafter' => new external_value(PARAM_INT, 'After what period a discussion is locked', VALUE_OPTIONAL),
+                    'istracked' => new external_value(PARAM_BOOL, 'If the user is tracking the forum', VALUE_OPTIONAL),
                 ), 'forum'
             )
         );
