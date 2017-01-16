@@ -76,4 +76,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_get_content_pages_viewed' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_content_pages_viewed',
+        'description'   => 'Return the list of content pages viewed by a user during a lesson attempt.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
