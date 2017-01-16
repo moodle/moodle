@@ -179,9 +179,7 @@ function lesson_unseen_branch_jump($lesson, $userid) {
         $retakes = 0;
     }
 
-    $params = array ("lessonid" => $lesson->id, "userid" => $userid, "retry" => $retakes);
-    if (!$seenbranches = $DB->get_records_select("lesson_branch", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params,
-                "timeseen DESC")) {
+    if (!$seenbranches = $lesson->get_content_pages_viewed($retakes, $userid, 'timeseen DESC')) {
         print_error('cannotfindrecords', 'lesson');
     }
 
@@ -1351,6 +1349,27 @@ class lesson extends lesson_base {
         return $DB->get_records('lesson_attempts', $params, 'timeseen ASC');
     }
 
+
+    /**
+     * Get a list of content pages (formerly known as branch tables) viewed in the lesson for the given user during an attempt.
+     *
+     * @param  int $lessonattempt the lesson attempt number (also known as retries)
+     * @param  int $userid        the user id to retrieve the data from
+     * @param  string $sort          an order to sort the results in (a valid SQL ORDER BY parameter)
+     * @param  string $fields        a comma separated list of fields to return
+     * @return array of pages
+     * @since  Moodle 3.3
+     */
+    public function get_content_pages_viewed($lessonattempt, $userid = null, $sort = '', $fields = '*') {
+        global $USER, $DB;
+
+        if ($userid === null) {
+            $userid = $USER->id;
+        }
+        $conditions = array("lessonid" => $this->properties->id, "userid" => $userid, "retry" => $lessonattempt);
+        return $DB->get_records('lesson_branch', $conditions, $sort, $fields);
+    }
+
     /**
      * Returns the first page for the lesson or false if there isn't one.
      *
@@ -2339,8 +2358,7 @@ class lesson extends lesson_base {
             }
         }
 
-        if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $this->properties->id, "userid" => $USER->id,
-                "retry" => $retriescount), 'timeseen DESC')) {
+        if ($branchtables = $this->get_content_pages_viewed($retriescount, $USER->id, 'timeseen DESC')) {
             // In here, user has viewed a branch table.
             $lastbranchtable = current($branchtables);
             if (count($allattempts) > 0) {

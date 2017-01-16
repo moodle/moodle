@@ -546,7 +546,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             $viewedbranches = array();
             // collect all of the branch tables viewed
-            if ($branches = $DB->get_records("lesson_branch", array ("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$ntries), 'timeseen ASC', 'id, pageid')) {
+            if ($branches = $lesson->get_content_pages_viewed($ntries, $USER->id, 'timeseen ASC', 'id, pageid')) {
                 foreach($branches as $branch) {
                     $viewedbranches[$branch->pageid] = $branch;
                 }
