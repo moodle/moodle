@@ -832,4 +832,85 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_user_timers.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_user_timers_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'userid' => new external_value(PARAM_INT, 'the user id (empty for current user)', VALUE_DEFAULT, null),
+            )
+        );
+    }
+
+    /**
+     * Return the timers in the current lesson for the given user.
+     *
+     * @param int $lessonid lesson instance id
+     * @param int $userid only fetch timers of the given user
+     * @return array of warnings and timers
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_user_timers($lessonid, $userid = null) {
+        global $USER;
+
+        $params = array(
+            'lessonid' => $lessonid,
+            'userid' => $userid,
+        );
+        $params = self::validate_parameters(self::get_user_timers_parameters(), $params);
+        $warnings = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+
+        // Default value for userid.
+        if (empty($params['userid'])) {
+            $params['userid'] = $USER->id;
+        }
+
+        // Extra checks so only users with permissions can view other users attempts.
+        if ($USER->id != $params['userid']) {
+            self::check_can_view_user_data($params['userid'], $course, $cm, $context);
+        }
+
+        $timers = $lesson->get_user_timers($params['userid']);
+
+        $result = array();
+        $result['timers'] = $timers;
+        $result['warnings'] = $warnings;
+        return $result;
+    }
+
+    /**
+     * Describes the get_user_timers return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_user_timers_returns() {
+        return new external_single_structure(
+            array(
+                'timers' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'The attempt id'),
+                            'lessonid' => new external_value(PARAM_INT, 'The lesson id'),
+                            'userid' => new external_value(PARAM_INT, 'The user id'),
+                            'starttime' => new external_value(PARAM_INT, 'First access time for a new timer session'),
+                            'lessontime' => new external_value(PARAM_INT, 'Last access time to the lesson during the timer session'),
+                            'completed' => new external_value(PARAM_INT, 'If the lesson for this timer was completed'),
+                        ),
+                        'The timers'
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

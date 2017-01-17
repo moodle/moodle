@@ -629,4 +629,41 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(0, $result['pages']);
     }
+
+    /**
+     * Test get_user_timers
+     */
+    public function test_get_user_timers() {
+        global $DB;
+
+        // Create a couple of timers for the current user.
+        $timer1 = new stdClass;
+        $timer1->lessonid = $this->lesson->id;
+        $timer1->userid = $this->student->id;
+        $timer1->completed = 1;
+        $timer1->starttime = time() - WEEKSECS;
+        $timer1->lessontime = time();
+        $timer1->id = $DB->insert_record("lesson_timer", $timer1);
+
+        $timer2 = new stdClass;
+        $timer2->lessonid = $this->lesson->id;
+        $timer2->userid = $this->student->id;
+        $timer2->completed = 0;
+        $timer2->starttime = time() - DAYSECS;
+        $timer2->lessontime = time() + 1;
+        $timer2->id = $DB->insert_record("lesson_timer", $timer2);
+
+        // Test retrieve timers.
+        $result = mod_lesson_external::get_user_timers($this->lesson->id, $this->student->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_user_timers_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['timers']);
+        foreach ($result['timers'] as $timer) {
+            if ($timer['id'] == $timer1->id) {
+                $this->assertEquals($timer1, (object) $timer);
+            } else {
+                $this->assertEquals($timer2, (object) $timer);
+            }
+        }
+    }
 }
