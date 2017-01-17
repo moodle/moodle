@@ -464,11 +464,12 @@ class event {
                 $DB->execute($sql, $params);
 
                 // Trigger an update event for each of the calendar event.
-                $events = $DB->get_records('event', array('repeatid' => $event->repeatid), '', 'id, timestart');
-                foreach ($events as $event) {
-                    $eventargs['objectid'] = $event->id;
-                    $eventargs['other']['timestart'] = $event->timestart;
+                $events = $DB->get_records('event', array('repeatid' => $event->repeatid), '', '*');
+                foreach ($events as $calendarevent) {
+                    $eventargs['objectid'] = $calendarevent->id;
+                    $eventargs['other']['timestart'] = $calendarevent->timestart;
                     $event = \core\event\calendar_event_updated::create($eventargs);
+                    $event->add_record_snapshot('event', $calendarevent);
                     $event->trigger();
                 }
             } else {
@@ -478,6 +479,7 @@ class event {
 
                 // Trigger an update event.
                 $event = \core\event\calendar_event_updated::create($eventargs);
+                $event->add_record_snapshot('event', $this->properties);
                 $event->trigger();
             }
 
@@ -531,11 +533,12 @@ class event {
                 // Get all records where the repeatid is the same as the event being removed.
                 $events = $DB->get_records('event', array('repeatid' => $newparent));
                 // For each of the returned events trigger an update event.
-                foreach ($events as $event) {
+                foreach ($events as $calendarevent) {
                     // Trigger an event for the update.
-                    $eventargs['objectid'] = $event->id;
-                    $eventargs['other']['timestart'] = $event->timestart;
+                    $eventargs['objectid'] = $calendarevent->id;
+                    $eventargs['other']['timestart'] = $calendarevent->timestart;
                     $event = \core\event\calendar_event_updated::create($eventargs);
+                    $event->add_record_snapshot('event', $calendarevent);
                     $event->trigger();
                 }
             }
