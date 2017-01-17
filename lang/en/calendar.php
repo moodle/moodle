@@ -26,6 +26,7 @@ $string['advancedoptions'] = 'Advanced options';
 $string['allday'] = 'All day';
 $string['addevent'] = 'Add events';
 $string['annually'] = 'Annually';
+$string['activityevent'] = 'Activity event';
 $string['calendar'] = 'Calendar';
 $string['calendarheading'] = '{$a} Calendar';
 $string['calendarpreferences'] = 'Calendar preferences';
