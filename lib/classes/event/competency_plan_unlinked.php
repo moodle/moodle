@@ -48,13 +48,13 @@ class competency_plan_unlinked extends base {
      * @return self
      */
     public static final function create_from_plan(plan $plan) {
-        if (!$plan->get_id()) {
+        if (!$plan->get('id')) {
             throw new \coding_exception('The plan ID must be set.');
         }
         $event = static::create(array(
             'contextid'  => $plan->get_context()->id,
-            'objectid' => $plan->get_id(),
-            'relateduserid' => $plan->get_userid(),
+            'objectid' => $plan->get('id'),
+            'relateduserid' => $plan->get('userid'),
         ));
         $event->add_record_snapshot(plan::TABLE, $plan->to_record());
         return $event;

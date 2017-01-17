@@ -59,29 +59,29 @@ class competency_evidence_created extends base {
      */
     public static final function create_from_evidence(evidence $evidence, user_competency $usercompetency, $recommend) {
         // Make sure we have a valid evidence.
-        if (!$evidence->get_id()) {
+        if (!$evidence->get('id')) {
             throw new \coding_exception('The evidence ID must be set.');
         }
 
         // Make sure we have a valid user competency.
-        if (!$usercompetency->get_id()) {
+        if (!$usercompetency->get('id')) {
             throw new \coding_exception('The user competency ID must be set.');
         }
 
         // Make sure that the a proper user competecy is linked to the evidence.
-        if ($evidence->get_usercompetencyid() != $usercompetency->get_id()) {
+        if ($evidence->get('usercompetencyid') != $usercompetency->get('id')) {
             throw new \coding_exception('The user competency linked with this evidence is invalid.');
         }
 
         $event = static::create([
-            'contextid'  => $evidence->get_contextid(),
-            'objectid' => $evidence->get_id(),
-            'userid' => $evidence->get_actionuserid(),
-            'relateduserid' => $usercompetency->get_userid(),
+            'contextid'  => $evidence->get('contextid'),
+            'objectid' => $evidence->get('id'),
+            'userid' => $evidence->get('actionuserid'),
+            'relateduserid' => $usercompetency->get('userid'),
             'other' => [
-                'usercompetencyid' => $usercompetency->get_id(),
-                'competencyid' => $usercompetency->get_competencyid(),
-                'action' => $evidence->get_action(),
+                'usercompetencyid' => $usercompetency->get('id'),
+                'competencyid' => $usercompetency->get('competencyid'),
+                'action' => $evidence->get('action'),
                 'recommend' => $recommend
             ]
         ]);

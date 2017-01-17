@@ -3133,7 +3133,7 @@ class external extends external_api {
 
         $result = api::list_plan_competencies($plan);
 
-        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        if ($plan->get('status') == plan::STATUS_COMPLETE) {
             $ucproperty = 'usercompetencyplan';
         } else {
             $ucproperty = 'usercompetency';
@@ -3292,7 +3292,7 @@ class external extends external_api {
         $userevidence = api::read_user_evidence($params['id']);
         self::validate_context($userevidence->get_context());
 
-        return api::delete_user_evidence($userevidence->get_id());
+        return api::delete_user_evidence($userevidence->get('id'));
     }
 
     /**
@@ -3623,7 +3623,7 @@ class external extends external_api {
         ));
 
         $coursecompetency = new course_competency($params['coursecompetencyid']);
-        self::validate_context(context_course::instance($coursecompetency->get_courseid()));
+        self::validate_context(context_course::instance($coursecompetency->get('courseid')));
 
         return api::set_course_competency_ruleoutcome($coursecompetency, $params['ruleoutcome']);
     }
@@ -3697,8 +3697,8 @@ class external extends external_api {
 
         $output = $PAGE->get_renderer('core');
         $evidence = api::grade_competency(
-                $uc->get_userid(),
-                $uc->get_competencyid(),
+                $uc->get('userid'),
+                $uc->get('competencyid'),
                 $params['grade'],
                 $params['note']
         );
@@ -3784,7 +3784,7 @@ class external extends external_api {
         $output = $PAGE->get_renderer('core');
 
         $evidence = api::grade_competency_in_plan(
-                $plan->get_id(),
+                $plan->get('id'),
                 $params['competencyid'],
                 $params['grade'],
                 $params['note']
@@ -4290,7 +4290,7 @@ class external extends external_api {
         ));
 
         $evidence = api::read_evidence($params['id']);
-        $uc = api::get_user_competency_by_id($evidence->get_usercompetencyid());
+        $uc = api::get_user_competency_by_id($evidence->get('usercompetencyid'));
         self::validate_context($uc->get_context());
 
         return api::delete_evidence($evidence);

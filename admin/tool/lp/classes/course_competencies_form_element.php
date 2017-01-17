@@ -65,7 +65,7 @@ class tool_lp_course_competencies_form_element extends MoodleQuickForm_autocompl
             $current = \core_competency\api::list_course_module_competencies_in_course_module($options['cmid']);
             $ids = array();
             foreach ($current as $coursemodulecompetency) {
-                array_push($ids, $coursemodulecompetency->get_competencyid());
+                array_push($ids, $coursemodulecompetency->get('competencyid'));
             }
             $this->setValue($ids);
         }
@@ -76,10 +76,10 @@ class tool_lp_course_competencies_form_element extends MoodleQuickForm_autocompl
         $context = context_course::instance($courseid);
         foreach ($competencies as $competency) {
             // We don't need to show the description as part of the options, so just set this to null.
-            $competency['competency']->set_description(null);
+            $competency['competency']->set('description', null);
             $exporter = new competency_exporter($competency['competency'], array('context' => $context));
             $templatecontext = array('competency' => $exporter->export($OUTPUT));
-            $id = $competency['competency']->get_id();
+            $id = $competency['competency']->get('id');
             $validoptions[$id] = $OUTPUT->render_from_template('tool_lp/competency_summary', $templatecontext);
         }
         $attributes['tags'] = false;

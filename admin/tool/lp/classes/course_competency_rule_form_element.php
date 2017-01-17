@@ -65,7 +65,7 @@ class tool_lp_course_competency_rule_form_element extends MoodleQuickForm_select
             // forcing them to be all the same for each activity.
             if (!empty($current)) {
                 $one = array_pop($current);
-                $this->setValue($one->get_ruleoutcome());
+                $this->setValue($one->get('ruleoutcome'));
             }
         }
         $validoptions = course_module_competency::get_ruleoutcome_list();

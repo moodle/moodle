@@ -197,7 +197,7 @@ class core_persistent_testcase extends advanced_testcase {
         $this->assertTrue(isset($p->beforevalidate));
         $this->assertTrue($p->is_valid());
         $this->assertEquals(array(), $p->get_errors());
-        $p->set_descriptionformat(-100);
+        $p->set('descriptionformat', -100);
 
         $expected = array(
             'descriptionformat' => new lang_string('invaliddata', 'error'),
@@ -279,11 +279,11 @@ class core_persistent_testcase extends advanced_testcase {
         $this->assertFalse($p->is_valid());
         $this->assertArrayHasKey('idnumber', $p->get_errors());
         $this->assertArrayHasKey('scaleid', $p->get_errors());
-        $p->set_idnumber('abc');
+        $p->set('idnumber', 'abc');
         $this->assertFalse($p->is_valid());
         $this->assertArrayNotHasKey('idnumber', $p->get_errors());
         $this->assertArrayHasKey('scaleid', $p->get_errors());
-        $p->set_scaleid(null);
+        $p->set('scaleid', null);
         $this->assertTrue($p->is_valid());
         $this->assertArrayNotHasKey('scaleid', $p->get_errors());
     }
@@ -294,7 +294,7 @@ class core_persistent_testcase extends advanced_testcase {
         $this->assertFalse(isset($p->beforecreate));
         $this->assertFalse(isset($p->aftercreate));
         $p->create();
-        $record = $DB->get_record(core_testable_persistent::TABLE, array('id' => $p->get_id()), '*', MUST_EXIST);
+        $record = $DB->get_record(core_testable_persistent::TABLE, array('id' => $p->get('id')), '*', MUST_EXIST);
         $expected = $p->to_record();
         $this->assertTrue(isset($p->beforecreate));
         $this->assertTrue(isset($p->aftercreate));
@@ -308,15 +308,15 @@ class core_persistent_testcase extends advanced_testcase {
         global $DB;
         $p = new core_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
         $p->create();
-        $id = $p->get_id();
-        $p->set_sortorder(456);
+        $id = $p->get('id');
+        $p->set('sortorder', 456);
         $p->from_record((object) array('idnumber' => 'def'));
         $this->assertFalse(isset($p->beforeupdate));
         $this->assertFalse(isset($p->afterupdate));
         $p->update();
 
         $expected = $p->to_record();
-        $record = $DB->get_record(core_testable_persistent::TABLE, array('id' => $p->get_id()), '*', MUST_EXIST);
+        $record = $DB->get_record(core_testable_persistent::TABLE, array('id' => $p->get('id')), '*', MUST_EXIST);
         $this->assertTrue(isset($p->beforeupdate));
         $this->assertTrue(isset($p->afterupdate));
         $this->assertEquals($id, $record->id);
@@ -332,11 +332,11 @@ class core_persistent_testcase extends advanced_testcase {
         unset($p->beforecreate);
         unset($p->aftercreate);
 
-        $p2 = new core_testable_persistent($p->get_id());
+        $p2 = new core_testable_persistent($p->get('id'));
         $this->assertEquals($p, $p2);
 
         $p3 = new core_testable_persistent();
-        $p3->set_id($p->get_id());
+        $p3->set('id', $p->get('id'));
         $p3->read();
         $this->assertEquals($p, $p3);
     }
@@ -346,14 +346,14 @@ class core_persistent_testcase extends advanced_testcase {
 
         $p = new core_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
         $p->create();
-        $this->assertNotEquals(0, $p->get_id());
-        $this->assertTrue($DB->record_exists_select(core_testable_persistent::TABLE, 'id = ?', array($p->get_id())));
+        $this->assertNotEquals(0, $p->get('id'));
+        $this->assertTrue($DB->record_exists_select(core_testable_persistent::TABLE, 'id = ?', array($p->get('id'))));
         $this->assertFalse(isset($p->beforedelete));
         $this->assertFalse(isset($p->afterdelete));
 
         $p->delete();
-        $this->assertFalse($DB->record_exists_select(core_testable_persistent::TABLE, 'id = ?', array($p->get_id())));
-        $this->assertEquals(0, $p->get_id());
+        $this->assertFalse($DB->record_exists_select(core_testable_persistent::TABLE, 'id = ?', array($p->get('id'))));
+        $this->assertEquals(0, $p->get('id'));
         $this->assertEquals(true, $p->beforedelete);
         $this->assertEquals(true, $p->afterdelete);
     }
@@ -370,12 +370,12 @@ class core_persistent_testcase extends advanced_testcase {
         $json = json_encode($path);
 
         $p = new core_testable_persistent(0, (object) array('sortorder' => 0, 'idnumber' => 'abc'));
-        $p->set_path($path);
-        $this->assertEquals($path, $p->get_path());
+        $p->set('path', $path);
+        $this->assertEquals($path, $p->get('path'));
         $this->assertEquals($json, $p->to_record()->path);
 
         $p->create();
-        $record = $DB->get_record(core_testable_persistent::TABLE, array('id' => $p->get_id()), 'id, path', MUST_EXIST);
+        $record = $DB->get_record(core_testable_persistent::TABLE, array('id' => $p->get('id')), 'id, path', MUST_EXIST);
         $this->assertEquals($json, $record->path);
     }
 
@@ -384,7 +384,7 @@ class core_persistent_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists(core_testable_persistent::TABLE, array('idnumber' => 'abc')));
         $p = new core_testable_persistent(0, (object) array('sortorder' => 123, 'idnumber' => 'abc'));
         $p->create();
-        $id = $p->get_id();
+        $id = $p->get('id');
         $this->assertTrue(core_testable_persistent::record_exists($id));
         $this->assertTrue($DB->record_exists(core_testable_persistent::TABLE, array('idnumber' => 'abc')));
         $p->delete();
@@ -495,7 +495,7 @@ class core_testable_persistent extends \core\persistent {
     }
 
     public function get_path() {
-        $value = $this->get('path');
+        $value = $this->raw_get('path');
         if (!empty($value)) {
             $value = json_decode($value);
         }
@@ -506,7 +506,7 @@ class core_testable_persistent extends \core\persistent {
         if (!empty($value)) {
             $value = json_encode($value);
         }
-        $this->set('path', $value);
+        $this->raw_set('path', $value);
     }
 
     protected function validate_sortorder($value) {

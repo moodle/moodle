@@ -51,7 +51,7 @@ class competency_framework_exporter extends \core\external\persistent_exporter {
      * @return Array
      */
     protected function get_other_values(renderer_base $output) {
-        $filters = array('competencyframeworkid' => $this->persistent->get_id());
+        $filters = array('competencyframeworkid' => $this->persistent->get('id'));
         $context = $this->persistent->get_context();
         return array(
             'canmanage' => has_capability('moodle/competency:competencymanage', $context),

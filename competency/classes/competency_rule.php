@@ -48,7 +48,7 @@ abstract class competency_rule {
      * @param  competency $competency The competency.
      */
     public function __construct(competency $competency) {
-        $class = $competency->get_ruletype();
+        $class = $competency->get('ruletype');
         if (!$class || !($this instanceof $class)) {
             throw new coding_exception('This competency does not use this rule.');
         }
@@ -62,7 +62,7 @@ abstract class competency_rule {
      * @return mixed
      */
     protected function get_config() {
-        return $this->competency->get_ruleconfig();
+        return $this->competency->get('ruleconfig');
     }
 
     /**

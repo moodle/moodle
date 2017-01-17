@@ -77,7 +77,7 @@ class template_competencies_page implements renderable, templatable {
     public function __construct(template $template, context $pagecontext) {
         $this->pagecontext = $pagecontext;
         $this->template = $template;
-        $this->templatestatistics = new template_statistics($template->get_id());
+        $this->templatestatistics = new template_statistics($template->get('id'));
         $this->competencies = api::list_competencies_in_template($template);
         $this->canmanagecompetencyframeworks = has_capability('moodle/competency:competencymanage', $this->pagecontext);
         $this->canmanagetemplatecompetencies = has_capability('moodle/competency:templatemanage', $this->pagecontext);
@@ -101,8 +101,8 @@ class template_competencies_page implements renderable, templatable {
             $context = $helper->get_context_from_competency($competency);
             $framework = $helper->get_framework_from_competency($competency);
 
-            $courses = api::list_courses_using_competency($competency->get_id());
-            $relatedcompetencies = api::list_related_competencies($competency->get_id());
+            $courses = api::list_courses_using_competency($competency->get('id'));
+            $relatedcompetencies = api::list_related_competencies($competency->get('id'));
 
             $related = array(
                 'competency' => $competency,

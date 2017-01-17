@@ -109,11 +109,11 @@ class framework_autocomplete extends MoodleQuickForm_autocomplete {
             if (!has_any_capability(array('moodle/competency:competencyview', 'moodle/competency:competencymanage'),
                     $framework->get_context())) {
                 continue;
-            } else if ($this->onlyvisible && !$framework->get_visible()) {
+            } else if ($this->onlyvisible && !$framework->get('visible')) {
                 continue;
             }
-            $this->addOption($framework->get_shortname() . ' ' . $framework->get_idnumber(), $framework->get_id());
-            array_push($toselect, $framework->get_id());
+            $this->addOption($framework->get('shortname') . ' ' . $framework->get('idnumber'), $framework->get('id'));
+            array_push($toselect, $framework->get('id'));
         }
 
         return $this->setSelected($toselect);

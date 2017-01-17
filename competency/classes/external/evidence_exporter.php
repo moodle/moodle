@@ -78,26 +78,26 @@ class evidence_exporter extends \core\external\persistent_exporter {
             $other['actionuser'] = $actionuser;
         }
 
-        $other['description'] = $this->persistent->get_description();
+        $other['description'] = $this->persistent->get('description');
 
-        $other['userdate'] = userdate($this->persistent->get_timecreated());
+        $other['userdate'] = userdate($this->persistent->get('timecreated'));
 
-        if ($this->persistent->get_grade() === null) {
+        if ($this->persistent->get('grade') === null) {
             $gradename = '-';
         } else {
-            $gradename = $this->related['scale']->scale_items[$this->persistent->get_grade() - 1];
+            $gradename = $this->related['scale']->scale_items[$this->persistent->get('grade') - 1];
         }
         $other['gradename'] = $gradename;
 
         // Try to guess the user from the user competency.
         $userid = null;
         if ($this->related['usercompetency']) {
-            $userid = $this->related['usercompetency']->get_userid();
+            $userid = $this->related['usercompetency']->get('userid');
         } else if ($this->related['usercompetencyplan']) {
-            $userid = $this->related['usercompetencyplan']->get_userid();
+            $userid = $this->related['usercompetencyplan']->get('userid');
         } else {
-            $uc = user_competency::get_record(['id' => $this->persistent->get_usercompetencyid()]);
-            $userid = $uc->get_userid();
+            $uc = user_competency::get_record(['id' => $this->persistent->get('usercompetencyid')]);
+            $userid = $uc->get('userid');
         }
         $other['candelete'] = evidence::can_delete_user($userid);
 

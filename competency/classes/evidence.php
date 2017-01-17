@@ -107,7 +107,7 @@ class evidence extends persistent {
      * @return competency
      */
     public function get_competency() {
-        return user_competency::get_competency_by_usercompetencyid($this->get_usercompetencyid());
+        return user_competency::get_competency_by_usercompetencyid($this->get('usercompetencyid'));
     }
 
     /**
@@ -125,7 +125,7 @@ class evidence extends persistent {
      * @return mixed
      */
     public function get_desca() {
-        $value = $this->get('desca');
+        $value = $this->raw_get('desca');
         if ($value !== null) {
             $value = json_decode($value);
         }
@@ -154,7 +154,7 @@ class evidence extends persistent {
             }
             $value = json_encode($value);
         }
-        $this->set('desca', $value);
+        $this->raw_set('desca', $value);
     }
 
     /**
@@ -166,7 +166,7 @@ class evidence extends persistent {
         if ($url instanceof \moodle_url) {
             $url = $url->out(false);
         }
-        $this->set('url', $url);
+        $this->raw_set('url', $url);
     }
 
     /**
@@ -229,7 +229,7 @@ class evidence extends persistent {
      * @return true|lang_string
      */
     protected function validate_descidentifier($value) {
-        if (!$this->get_id() && !get_string_manager()->string_exists($value, $this->get('desccomponent'))) {
+        if (!$this->get('id') && !get_string_manager()->string_exists($value, $this->get('desccomponent'))) {
             return new lang_string('invalidevidencedesc', 'core_competency');
         }
 

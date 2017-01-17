@@ -75,18 +75,18 @@ class related_competency extends persistent {
      */
     protected function validate_relatedcompetencyid($data) {
 
-        if ($this->get_competencyid() == $data) {
+        if ($this->get('competencyid') == $data) {
             // A competency cannot be related to itself.
             return new lang_string('invaliddata', 'error');
 
-        } if ($this->get_competencyid() > $data) {
+        } if ($this->get('competencyid') > $data) {
             // The competency ID must be lower than the related competency ID.
             return new lang_string('invaliddata', 'error');
 
         } else if (!competency::record_exists($data)) {
             return new lang_string('invaliddata', 'error');
 
-        } else if (!competency::share_same_framework(array($data, $this->get_competencyid()))) {
+        } else if (!competency::share_same_framework(array($data, $this->get('competencyid')))) {
             // The competencies must belong to the same framework.
             return new lang_string('invaliddata', 'error');
         }
@@ -110,17 +110,17 @@ class related_competency extends persistent {
         // Lower id always as competencyid so we know which one is competencyid and which one relatedcompetencyid.
         $relation = new static();
         if ($competencyid > $relatedcompetencyid) {
-            $relation->set_competencyid($relatedcompetencyid);
-            $relation->set_relatedcompetencyid($competencyid);
+            $relation->set('competencyid', $relatedcompetencyid);
+            $relation->set('relatedcompetencyid', $competencyid);
         } else {
-            $relation->set_competencyid($competencyid);
-            $relation->set_relatedcompetencyid($relatedcompetencyid);
+            $relation->set('competencyid', $competencyid);
+            $relation->set('relatedcompetencyid', $relatedcompetencyid);
         }
 
         // We can do it because we have bidirectional relations in the DB.
         $params = array(
-            'competencyid' => $relation->get_competencyid(),
-            'relatedcompetencyid' => $relation->get_relatedcompetencyid()
+            'competencyid' => $relation->get('competencyid'),
+            'relatedcompetencyid' => $relation->get('relatedcompetencyid')
         );
         if ($record = $DB->get_record(self::TABLE, $params)) {
             $relation->from_record($record);

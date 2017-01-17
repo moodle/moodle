@@ -48,17 +48,17 @@ class user_competency_course_exporter extends \core\external\persistent_exporter
     protected function get_other_values(renderer_base $output) {
         $result = new stdClass();
 
-        if ($this->persistent->get_grade() === null) {
+        if ($this->persistent->get('grade') === null) {
             $gradename = '-';
         } else {
-            $gradename = $this->related['scale']->scale_items[$this->persistent->get_grade() - 1];
+            $gradename = $this->related['scale']->scale_items[$this->persistent->get('grade') - 1];
         }
         $result->gradename = $gradename;
 
-        if ($this->persistent->get_proficiency() === null) {
+        if ($this->persistent->get('proficiency') === null) {
             $proficiencyname = get_string('no');
         } else {
-            $proficiencyname = get_string($this->persistent->get_proficiency() ? 'yes' : 'no');
+            $proficiencyname = get_string($this->persistent->get('proficiency') ? 'yes' : 'no');
         }
         $result->proficiencyname = $proficiencyname;
 

@@ -44,9 +44,9 @@ class template_exporter extends \core\external\persistent_exporter {
     protected function get_other_values(renderer_base $output) {
         $context = $this->persistent->get_context();
         return array(
-            'duedateformatted' => userdate($this->persistent->get_duedate()),
-            'cohortscount' => template_cohort::count_records(array('templateid' => $this->persistent->get_id())),
-            'planscount' => plan::count_records(array('templateid' => $this->persistent->get_id())),
+            'duedateformatted' => userdate($this->persistent->get('duedate')),
+            'cohortscount' => template_cohort::count_records(array('templateid' => $this->persistent->get('id'))),
+            'planscount' => plan::count_records(array('templateid' => $this->persistent->get('id'))),
             'canmanage' => $this->persistent->can_manage(),
             'canread' => $this->persistent->can_read(),
             'contextname' => $context->get_context_name(),

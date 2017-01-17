@@ -199,7 +199,7 @@ class core_competency_generator extends component_generator_base {
         }
 
         $relation = related_competency::get_relation($record->competencyid, $record->relatedcompetencyid);
-        if ($relation->get_id()) {
+        if ($relation->get('id')) {
             throw new coding_exception('Relation already exists');
         }
         $relation->create();

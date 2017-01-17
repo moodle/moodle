@@ -93,8 +93,8 @@ class competency_path_exporter extends \core\external\exporter {
         $i = 1;
         foreach ($this->related['ancestors'] as $competency) {
             $exporter = new path_node_exporter([
-                    'id' => $competency->get_id(),
-                    'name' => $competency->get_idnumber(),
+                    'id' => $competency->get('id'),
+                    'name' => $competency->get('idnumber'),
                     'position' => $i,
                     'first' => $i == 1,
                     'last' => $i == $nodescount
@@ -107,8 +107,8 @@ class competency_path_exporter extends \core\external\exporter {
         }
         $result->ancestors = $ancestors;
         $exporter = new path_node_exporter([
-                'id' => $this->related['framework']->get_id(),
-                'name' => $this->related['framework']->get_shortname(),
+                'id' => $this->related['framework']->get('id'),
+                'name' => $this->related['framework']->get('shortname'),
                 'first' => 0,
                 'last' => 0,
                 'position' => -1

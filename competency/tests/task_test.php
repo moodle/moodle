@@ -65,8 +65,8 @@ class core_competency_task_testcase extends advanced_testcase {
         cohort_add_member($cohort->id, $user2->id);
 
         // Creating plans from template cohort.
-        $templatecohort = api::create_template_cohort($tpl->get_id(), $cohort->id);
-        $created = api::create_plans_from_template_cohort($tpl->get_id(), $cohort->id);
+        $templatecohort = api::create_template_cohort($tpl->get('id'), $cohort->id);
+        $created = api::create_plans_from_template_cohort($tpl->get('id'), $cohort->id);
 
         $this->assertEquals(2, $created);
 
@@ -81,7 +81,7 @@ class core_competency_task_testcase extends advanced_testcase {
         $task->execute();
         $task->set_last_run_time($currenttime);
 
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Test if remove user from cohort will affect plans.
         cohort_remove_member($cohort->id, $user3->id);
@@ -90,49 +90,49 @@ class core_competency_task_testcase extends advanced_testcase {
         $currenttime = $currenttime + 1;
         $task->execute();
         $task->set_last_run_time($currenttime);
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // The template is now hidden, and I've added a user with a missing plan. Nothing should happen.
         $currenttime = $currenttime + 1;
-        $tpl->set_visible(false);
+        $tpl->set('visible', false);
         $tpl->update();
-        $DB->execute($tplsql, array('currenttime' => $currenttime, 'templateid' => $tpl->get_id()));
+        $DB->execute($tplsql, array('currenttime' => $currenttime, 'templateid' => $tpl->get('id')));
         $currenttime = $currenttime + 1;
         cohort_add_member($cohort->id, $user5->id);
         $DB->execute($cmsql, array('currenttime' => $currenttime, 'cohortid' => $cohort->id, 'userid' => $user5->id));
-        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
         $currenttime = $currenttime + 1;
         $task->execute();
         $task->set_last_run_time($currenttime);
-        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Now I set the template as visible again, the plan is created.
         $currenttime = $currenttime + 1;
-        $tpl->set_visible(true);
+        $tpl->set('visible', true);
         $tpl->update();
-        $DB->execute($tplsql, array('currenttime' => $currenttime, 'templateid' => $tpl->get_id()));
+        $DB->execute($tplsql, array('currenttime' => $currenttime, 'templateid' => $tpl->get('id')));
         $currenttime = $currenttime + 1;
         $task->execute();
         $task->set_last_run_time($currenttime);
-        $this->assertTrue(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(5, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertTrue(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(5, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Let's unlink the plan and run the task again, it should not be recreated.
         $currenttime = $currenttime + 1;
-        $plan = plan::get_record(array('userid' => $user5->id, 'templateid' => $tpl->get_id()));
+        $plan = plan::get_record(array('userid' => $user5->id, 'templateid' => $tpl->get('id')));
         \core_competency\api::unlink_plan_from_template($plan);
-        $DB->execute($plansql, array('currenttime' => $currenttime, 'planid' => $plan->get_id()));
+        $DB->execute($plansql, array('currenttime' => $currenttime, 'planid' => $plan->get('id')));
         $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
-        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
         $currenttime = $currenttime + 1;
         $task->execute();
         $task->set_last_run_time($currenttime);
         $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
-        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Adding users to cohort that already exist in plans.
         $currenttime = $currenttime + 1;
@@ -144,16 +144,16 @@ class core_competency_task_testcase extends advanced_testcase {
         $currenttime = $currenttime + 1;
         $task->execute();
         $task->set_last_run_time($currenttime);
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Test a user plan deleted will not be recreated.
         $currenttime = $currenttime + 1;
-        $plan = plan::get_record(array('userid' => $user4->id, 'templateid' => $tpl->get_id()));
-        \core_competency\api::delete_plan($plan->get_id());
+        $plan = plan::get_record(array('userid' => $user4->id, 'templateid' => $tpl->get('id')));
+        \core_competency\api::delete_plan($plan->get('id'));
         $currenttime = $currenttime + 1;
         $task->execute();
         $task->set_last_run_time($currenttime);
-        $this->assertEquals(3, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertEquals(3, plan::count_records(array('templateid' => $tpl->get('id'))));
     }
 
     public function test_sync_plans_from_cohorts_with_templateduedate_task() {
@@ -176,8 +176,8 @@ class core_competency_task_testcase extends advanced_testcase {
         cohort_add_member($cohort->id, $user2->id);
 
         // Creating plans from template cohort.
-        $templatecohort = api::create_template_cohort($tpl->get_id(), $cohort->id);
-        $created = api::create_plans_from_template_cohort($tpl->get_id(), $cohort->id);
+        $templatecohort = api::create_template_cohort($tpl->get('id'), $cohort->id);
+        $created = api::create_plans_from_template_cohort($tpl->get('id'), $cohort->id);
 
         $this->assertEquals(2, $created);
 
@@ -190,49 +190,49 @@ class core_competency_task_testcase extends advanced_testcase {
 
         $task->execute();
 
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Test if remove user from cohort will affect plans.
         cohort_remove_member($cohort->id, $user3->id);
         cohort_remove_member($cohort->id, $user4->id);
 
         $task->execute();
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // The template is now hidden, and I've added a user with a missing plan. Nothing should happen.
-        $tpl->set_visible(false);
+        $tpl->set('visible', false);
         $tpl->update();
         cohort_add_member($cohort->id, $user5->id);
-        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
         $task->execute();
-        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Now I set the template as visible again, the plan is created.
-        $tpl->set_visible(true);
+        $tpl->set('visible', true);
         $tpl->update();
         $task->execute();
-        $this->assertTrue(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(5, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertTrue(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(5, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Let's unlink the plan and run the task again, it should not be recreated.
-        $plan = plan::get_record(array('userid' => $user5->id, 'templateid' => $tpl->get_id()));
+        $plan = plan::get_record(array('userid' => $user5->id, 'templateid' => $tpl->get('id')));
         \core_competency\api::unlink_plan_from_template($plan);
         $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
-        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
         $task->execute();
         $this->assertTrue(plan::record_exists_select('userid = ?', array($user5->id)));
-        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get_id())));
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertFalse(plan::record_exists_select('userid = ? AND templateid = ?', array($user5->id, $tpl->get('id'))));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
 
         // Adding users to cohort that already exist in plans.
         cohort_add_member($cohort->id, $user3->id);
         cohort_add_member($cohort->id, $user4->id);
 
         $task->execute();
-        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get_id())));
+        $this->assertEquals(4, plan::count_records(array('templateid' => $tpl->get('id'))));
     }
 
     public function test_sync_plans_from_cohorts_with_passed_duedate() {
@@ -247,7 +247,7 @@ class core_competency_task_testcase extends advanced_testcase {
         $user2 = $dg->create_user();
         $cohort = $dg->create_cohort();
         $tpl = $lpg->create_template(array('duedate' => time() + 1000));
-        $templatecohort = api::create_template_cohort($tpl->get_id(), $cohort->id);
+        $templatecohort = api::create_template_cohort($tpl->get('id'), $cohort->id);
         $task = \core\task\manager::get_scheduled_task('\\core\\task\\sync_plans_from_template_cohorts_task');
 
         // Add 1 user to the cohort.
@@ -267,7 +267,7 @@ class core_competency_task_testcase extends advanced_testcase {
         $this->assertEquals(1, \core_competency\plan::count_records()); // Still only one plan.
 
         // Pretend it wasn't expired.
-        $tpl->set_duedate(time() + 100);
+        $tpl->set('duedate', time() + 100);
         $tpl->update();
         $task->execute();
         $this->assertEquals(2, \core_competency\plan::count_records()); // Now there is two.
@@ -302,13 +302,13 @@ class core_competency_task_testcase extends advanced_testcase {
         // Test that draft plan can not be completed on running task.
         $task->execute();
 
-        $plandraft = api::read_plan($up1->get_id());
-        $this->assertEquals(\core_competency\plan::STATUS_DRAFT, $plandraft->get_status());
+        $plandraft = api::read_plan($up1->get('id'));
+        $this->assertEquals(\core_competency\plan::STATUS_DRAFT, $plandraft->get('status'));
 
         // Test that active plan can be completed on running task.
         $task->execute();
 
-        $planactive = api::read_plan($up2->get_id());
-        $this->assertEquals(\core_competency\plan::STATUS_COMPLETE, $planactive->get_status());
+        $planactive = api::read_plan($up2->get('id'));
+        $this->assertEquals(\core_competency\plan::STATUS_COMPLETE, $planactive->get('status'));
     }
 }

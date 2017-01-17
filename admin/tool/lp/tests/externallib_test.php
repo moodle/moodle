@@ -423,19 +423,19 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
 
         $f1 = $lpg->create_framework();
 
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
 
         $tpl = $lpg->create_template();
-        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1->get_id()));
+        $lpg->create_template_competency(array('templateid' => $tpl->get('id'), 'competencyid' => $c1->get('id')));
 
-        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id(), 'name' => 'Evil'));
+        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get('id'), 'name' => 'Evil'));
 
-        $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get_id()));
+        $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get('id')));
 
-        $evidence = \core_competency\external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, true);
-        $evidence = \core_competency\external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 2, true);
+        $evidence = \core_competency\external::grade_competency_in_plan($plan->get('id'), $c1->get('id'), 1, true);
+        $evidence = \core_competency\external::grade_competency_in_plan($plan->get('id'), $c1->get('id'), 2, true);
 
-        $summary = external::data_for_user_competency_summary_in_plan($c1->get_id(), $plan->get_id());
+        $summary = external::data_for_user_competency_summary_in_plan($c1->get('id'), $plan->get('id'));
         $this->assertTrue($summary->usercompetencysummary->cangrade);
         $this->assertEquals('Evil', $summary->plan->name);
         $this->assertEquals('B', $summary->usercompetencysummary->usercompetency->gradename);
@@ -449,12 +449,12 @@ class tool_lp_external_testcase extends externallib_advanced_testcase {
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
         $f1 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
 
-        $evidence = \core_competency\external::grade_competency($this->user->id, $c1->get_id(), 1, true);
-        $evidence = \core_competency\external::grade_competency($this->user->id, $c1->get_id(), 2, true);
+        $evidence = \core_competency\external::grade_competency($this->user->id, $c1->get('id'), 1, true);
+        $evidence = \core_competency\external::grade_competency($this->user->id, $c1->get('id'), 2, true);
 
-        $summary = external::data_for_user_competency_summary($this->user->id, $c1->get_id());
+        $summary = external::data_for_user_competency_summary($this->user->id, $c1->get('id'));
         $this->assertTrue($summary->cangrade);
         $this->assertEquals('B', $summary->usercompetency->gradename);
         $this->assertEquals('B', $summary->evidence[0]->gradename);

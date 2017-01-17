@@ -55,16 +55,16 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $f2 = $lpg->create_framework(array('idnumber' => 'BIO2016'));
 
         $f1comps = array();
-        $f1comps['A1'] = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'idnumber' => 'A1'));
-        $f1comps['A2'] = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'idnumber' => 'A2'));
-        $f1comps['A3'] = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'idnumber' => 'A3'));
-        $f1comps['X1'] = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'idnumber' => 'X1'));
+        $f1comps['A1'] = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'idnumber' => 'A1'));
+        $f1comps['A2'] = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'idnumber' => 'A2'));
+        $f1comps['A3'] = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'idnumber' => 'A3'));
+        $f1comps['X1'] = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'idnumber' => 'X1'));
 
         $f2comps = array();
-        $f2comps['A1'] = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id(), 'idnumber' => 'A1'));
-        $f2comps['A2'] = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id(), 'idnumber' => 'A2'));
-        $f2comps['A3'] = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id(), 'idnumber' => 'A3'));
-        $f2comps['Y1'] = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id(), 'idnumber' => 'Y1'));
+        $f2comps['A1'] = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id'), 'idnumber' => 'A1'));
+        $f2comps['A2'] = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id'), 'idnumber' => 'A2'));
+        $f2comps['A3'] = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id'), 'idnumber' => 'A3'));
+        $f2comps['Y1'] = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id'), 'idnumber' => 'Y1'));
 
         $c1 = $dg->create_course(array('startdate' => time() - 72000));
         $c2 = $dg->create_course(array('startdate' => time() + 72000));
@@ -83,47 +83,47 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         // Course CompetencieS.
         $ccs = array(
             $c1->id => array(
-                $f1comps['A1']->get_id() => $lpg->create_course_competency(array('courseid' => $c1->id,
-                    'competencyid' => $f1comps['A1']->get_id())),
-                $f1comps['A3']->get_id() => $lpg->create_course_competency(array('courseid' => $c1->id,
-                    'competencyid' => $f1comps['A3']->get_id())),
-                $f1comps['X1']->get_id() => $lpg->create_course_competency(array('courseid' => $c1->id,
-                    'competencyid' => $f1comps['X1']->get_id())),
+                $f1comps['A1']->get('id') => $lpg->create_course_competency(array('courseid' => $c1->id,
+                    'competencyid' => $f1comps['A1']->get('id'))),
+                $f1comps['A3']->get('id') => $lpg->create_course_competency(array('courseid' => $c1->id,
+                    'competencyid' => $f1comps['A3']->get('id'))),
+                $f1comps['X1']->get('id') => $lpg->create_course_competency(array('courseid' => $c1->id,
+                    'competencyid' => $f1comps['X1']->get('id'))),
             ),
             $c2->id => array(
-                $f1comps['A2']->get_id() => $lpg->create_course_competency(array('courseid' => $c2->id,
-                    'competencyid' => $f1comps['A2']->get_id())),
-                $f1comps['A3']->get_id() => $lpg->create_course_competency(array('courseid' => $c2->id,
-                    'competencyid' => $f1comps['A3']->get_id())),
+                $f1comps['A2']->get('id') => $lpg->create_course_competency(array('courseid' => $c2->id,
+                    'competencyid' => $f1comps['A2']->get('id'))),
+                $f1comps['A3']->get('id') => $lpg->create_course_competency(array('courseid' => $c2->id,
+                    'competencyid' => $f1comps['A3']->get('id'))),
             )
         );
 
         // Course Module CompetencieS.
         $cmcs = array(
             $cms[$c1->id]['F1']->cmid => array(
-                $f1comps['A1']->get_id() => $lpg->create_course_module_competency(array(
+                $f1comps['A1']->get('id') => $lpg->create_course_module_competency(array(
                     'cmid' => $cms[$c1->id]['F1']->cmid,
-                    'competencyid' => $f1comps['A1']->get_id()
+                    'competencyid' => $f1comps['A1']->get('id')
                 )),
-                $f1comps['X1']->get_id() => $lpg->create_course_module_competency(array(
+                $f1comps['X1']->get('id') => $lpg->create_course_module_competency(array(
                     'cmid' => $cms[$c1->id]['F1']->cmid,
-                    'competencyid' => $f1comps['X1']->get_id()
+                    'competencyid' => $f1comps['X1']->get('id')
                 )),
             ),
             $cms[$c1->id]['P1']->cmid => array(
-                $f1comps['A3']->get_id() => $lpg->create_course_module_competency(array(
+                $f1comps['A3']->get('id') => $lpg->create_course_module_competency(array(
                     'cmid' => $cms[$c1->id]['P1']->cmid,
-                    'competencyid' => $f1comps['A3']->get_id()
+                    'competencyid' => $f1comps['A3']->get('id')
                 )),
             ),
             $cms[$c2->id]['F1']->cmid => array(
-                $f1comps['A2']->get_id() => $lpg->create_course_module_competency(array(
+                $f1comps['A2']->get('id') => $lpg->create_course_module_competency(array(
                     'cmid' => $cms[$c2->id]['F1']->cmid,
-                    'competencyid' => $f1comps['A2']->get_id()
+                    'competencyid' => $f1comps['A2']->get('id')
                 )),
-                $f1comps['A3']->get_id() => $lpg->create_course_module_competency(array(
+                $f1comps['A3']->get('id') => $lpg->create_course_module_competency(array(
                     'cmid' => $cms[$c2->id]['F1']->cmid,
-                    'competencyid' => $f1comps['A3']->get_id()
+                    'competencyid' => $f1comps['A3']->get('id')
                 )),
             ),
         );
@@ -153,7 +153,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
     public function test_simple_migration() {
         $this->setAdminUser();
 
-        $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
+        $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
         $mapper->automap();
         $processor = new framework_processor($mapper);
         $processor->proceed();
@@ -170,7 +170,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
 
         $this->assertEquals(array(), $processor->get_warnings());
         $this->assertEquals(array(), $processor->get_errors());
-        $this->assertEquals(array($this->f1comps['X1']->get_id() => true), $processor->get_missing_mappings());
+        $this->assertEquals(array($this->f1comps['X1']->get('id') => true), $processor->get_missing_mappings());
 
         $this->assertCourseCompetencyMigrated($this->c1, $this->f1comps['A1'], $this->f2comps['A1']);
         $this->assertCourseCompetencyMigrated($this->c1, $this->f1comps['A3'], $this->f2comps['A3']);
@@ -189,7 +189,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
     public function test_remove_when_missing() {
         $this->setAdminUser();
 
-        $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
+        $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
         $mapper->automap();
         $processor = new framework_processor($mapper);
         $processor->set_remove_when_mapping_is_missing(true);
@@ -215,7 +215,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
     public function test_allowed_courses() {
         $this->setAdminUser();
 
-        $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
+        $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
         $mapper->automap();
         $processor = new framework_processor($mapper);
         $processor->set_allowedcourses(array($this->c1->id));
@@ -248,7 +248,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
     public function test_disallowed_courses() {
         $this->setAdminUser();
 
-        $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
+        $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
         $mapper->automap();
         $processor = new framework_processor($mapper);
         $processor->set_disallowedcourses(array($this->c2->id));
@@ -281,7 +281,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
     public function test_course_start_date_from() {
         $this->setAdminUser();
 
-        $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
+        $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
         $mapper->automap();
         $processor = new framework_processor($mapper);
         $processor->set_course_start_date_from(time());
@@ -316,15 +316,15 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         // Pre-add the new competency to course 1.
-        $lpg->create_course_competency(array('courseid' => $this->c1->id, 'competencyid' => $this->f2comps['A1']->get_id()));
+        $lpg->create_course_competency(array('courseid' => $this->c1->id, 'competencyid' => $this->f2comps['A1']->get('id')));
 
         // Pre-add the new competency to module in course 2.
         $lpg->create_course_module_competency(array(
             'cmid' => $this->cms[$this->c2->id]['F1']->cmid,
-            'competencyid' => $this->f2comps['A2']->get_id()
+            'competencyid' => $this->f2comps['A2']->get('id')
         ));
 
-        $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
+        $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
         $mapper->automap();
         $processor = new framework_processor($mapper);
         $processor->proceed();
@@ -345,13 +345,13 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
 
         $warning = array_shift($warnings);
         $this->assertEquals($this->c1->id, $warning['courseid']);
-        $this->assertEquals($this->f1comps['A1']->get_id(), $warning['competencyid']);
+        $this->assertEquals($this->f1comps['A1']->get('id'), $warning['competencyid']);
         $this->assertEquals(null, $warning['cmid']);
         $this->assertRegexp('/competency already exists/', $warning['message']);
 
         $warning = array_shift($warnings);
         $this->assertEquals($this->c2->id, $warning['courseid']);
-        $this->assertEquals($this->f1comps['A2']->get_id(), $warning['competencyid']);
+        $this->assertEquals($this->f1comps['A2']->get('id'), $warning['competencyid']);
         $this->assertEquals($this->cms[$this->c2->id]['F1']->cmid, $warning['cmid']);
         $this->assertRegexp('/competency already exists/', $warning['message']);
 
@@ -364,15 +364,15 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         // Pre-add the new competency to course 1.
-        $lpg->create_course_competency(array('courseid' => $this->c1->id, 'competencyid' => $this->f2comps['A1']->get_id()));
+        $lpg->create_course_competency(array('courseid' => $this->c1->id, 'competencyid' => $this->f2comps['A1']->get('id')));
 
         // Pre-add the new competency to module in course 2.
         $lpg->create_course_module_competency(array(
             'cmid' => $this->cms[$this->c2->id]['F1']->cmid,
-            'competencyid' => $this->f2comps['A2']->get_id()
+            'competencyid' => $this->f2comps['A2']->get('id')
         ));
 
-        $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
+        $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
         $mapper->automap();
         $processor = new framework_processor($mapper);
         $processor->set_remove_original_when_destination_already_present(true);
@@ -414,7 +414,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->setUser($u);
 
         // Do C1 first.
-        $mapper = new framework_mapper($this->f1->get_id(), $this->f2->get_id());
+        $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
         $mapper->automap();
         $processor = new framework_processor($mapper);
         $processor->set_allowedcourses(array($this->c1->id));
@@ -434,10 +434,10 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $errors = $processor->get_errors();
         $this->assertCount(2, $errors);
         $this->assertEquals($this->c1->id, $errors[0]['courseid']);
-        $this->assertEquals($this->f1comps['A1']->get_id(), $errors[0]['competencyid']);
+        $this->assertEquals($this->f1comps['A1']->get('id'), $errors[0]['competencyid']);
         $this->assertEquals(null, $errors[0]['cmid']);
         $this->assertRegexp('/Sorry, but you do not currently have permissions to do that/', $errors[0]['message']);
-        $this->assertEquals($this->f1comps['A3']->get_id(), $errors[1]['competencyid']);
+        $this->assertEquals($this->f1comps['A3']->get('id'), $errors[1]['competencyid']);
 
         $this->assertCourseCompetencyNotMigrated($this->c1, $this->f1comps['A1'], $this->f2comps['A1']);
         $this->assertCourseCompetencyNotMigrated($this->c1, $this->f1comps['A3'], $this->f2comps['A3']);
@@ -463,10 +463,10 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $errors = $processor->get_errors();
         $this->assertCount(2, $errors);
         $this->assertEquals($this->c2->id, $errors[0]['courseid']);
-        $this->assertEquals($this->f1comps['A2']->get_id(), $errors[0]['competencyid']);
+        $this->assertEquals($this->f1comps['A2']->get('id'), $errors[0]['competencyid']);
         $this->assertEquals($this->cms[$this->c2->id]['F1']->cmid, $errors[0]['cmid']);
         $this->assertRegexp('/Sorry, but you do not currently have permissions to do that/', $errors[0]['message']);
-        $this->assertEquals($this->f1comps['A3']->get_id(), $errors[1]['competencyid']);
+        $this->assertEquals($this->f1comps['A3']->get('id'), $errors[1]['competencyid']);
 
         // The new competencies were added to the course, but the old ones were not removed because they are still in modules.
         $this->assertCourseCompetencyExists($this->c2, $this->f1comps['A2']);
@@ -487,7 +487,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
      */
     protected function assertCourseCompetencyExists($course, $competency) {
         $this->assertTrue(course_competency::record_exists_select("courseid = :courseid AND competencyid = :competencyid",
-            array('courseid' => $course->id, 'competencyid' => $competency->get_id())));
+            array('courseid' => $course->id, 'competencyid' => $competency->get('id'))));
     }
 
     /**
@@ -498,7 +498,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
      */
     protected function assertCourseCompetencyNotExists($course, $competency) {
         $this->assertFalse(course_competency::record_exists_select("courseid = :courseid AND competencyid = :competencyid",
-            array('courseid' => $course->id, 'competencyid' => $competency->get_id())));
+            array('courseid' => $course->id, 'competencyid' => $competency->get('id'))));
     }
 
     /**
@@ -514,16 +514,16 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertCourseCompetencyNotExists($course, $compfrom);
         $this->assertCourseCompetencyExists($course, $compto);
 
-        $before = $ccs[$compfrom->get_id()];
+        $before = $ccs[$compfrom->get('id')];
         $after = course_competency::get_record(array(
             'courseid' => $course->id,
-            'competencyid' => $compto->get_id()
+            'competencyid' => $compto->get('id')
         ));
 
-        $this->assertNotEquals($before->get_id(), $after->get_id());
-        $this->assertEquals($before->get_courseid(), $after->get_courseid());
-        $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
-        $this->assertEquals($before->get_ruleoutcome(), $after->get_ruleoutcome());
+        $this->assertNotEquals($before->get('id'), $after->get('id'));
+        $this->assertEquals($before->get('courseid'), $after->get('courseid'));
+        $this->assertEquals($before->get('sortorder'), $after->get('sortorder'));
+        $this->assertEquals($before->get('ruleoutcome'), $after->get('ruleoutcome'));
     }
 
     /**
@@ -539,13 +539,13 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertCourseCompetencyExists($course, $compfrom);
         $this->assertCourseCompetencyNotExists($course, $compto);
 
-        $before = $ccs[$compfrom->get_id()];
-        $after = $ccs[$compfrom->get_id()];
+        $before = $ccs[$compfrom->get('id')];
+        $after = $ccs[$compfrom->get('id')];
 
-        $this->assertEquals($before->get_id(), $after->get_id());
-        $this->assertEquals($before->get_courseid(), $after->get_courseid());
-        $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
-        $this->assertEquals($before->get_ruleoutcome(), $after->get_ruleoutcome());
+        $this->assertEquals($before->get('id'), $after->get('id'));
+        $this->assertEquals($before->get('courseid'), $after->get('courseid'));
+        $this->assertEquals($before->get('sortorder'), $after->get('sortorder'));
+        $this->assertEquals($before->get('ruleoutcome'), $after->get('ruleoutcome'));
     }
 
     /**
@@ -556,7 +556,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
      */
     protected function assertModuleCompetencyExists($cm, $competency) {
         $this->assertTrue(course_module_competency::record_exists_select("cmid = :cmid AND competencyid = :competencyid",
-            array('cmid' => $cm->cmid, 'competencyid' => $competency->get_id())));
+            array('cmid' => $cm->cmid, 'competencyid' => $competency->get('id'))));
     }
 
     /**
@@ -567,7 +567,7 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
      */
     protected function assertModuleCompetencyNotExists($cm, $competency) {
         $this->assertFalse(course_module_competency::record_exists_select("cmid = :cmid AND competencyid = :competencyid",
-            array('cmid' => $cm->cmid, 'competencyid' => $competency->get_id())));
+            array('cmid' => $cm->cmid, 'competencyid' => $competency->get('id'))));
     }
 
     /**
@@ -583,16 +583,16 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertModuleCompetencyNotExists($cm, $compfrom);
         $this->assertModuleCompetencyExists($cm, $compto);
 
-        $before = $cmcs[$compfrom->get_id()];
+        $before = $cmcs[$compfrom->get('id')];
         $after = course_module_competency::get_record(array(
             'cmid' => $cm->cmid,
-            'competencyid' => $compto->get_id()
+            'competencyid' => $compto->get('id')
         ));
 
-        $this->assertNotEquals($before->get_id(), $after->get_id());
-        $this->assertEquals($before->get_cmid(), $after->get_cmid());
-        $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
-        $this->assertEquals($before->get_ruleoutcome(), $after->get_ruleoutcome());
+        $this->assertNotEquals($before->get('id'), $after->get('id'));
+        $this->assertEquals($before->get('cmid'), $after->get('cmid'));
+        $this->assertEquals($before->get('sortorder'), $after->get('sortorder'));
+        $this->assertEquals($before->get('ruleoutcome'), $after->get('ruleoutcome'));
     }
 
     /**
@@ -608,13 +608,13 @@ class tool_lpmigrate_framework_processor_testcase extends advanced_testcase {
         $this->assertModuleCompetencyExists($cm, $compfrom);
         $this->assertModuleCompetencyNotExists($cm, $compto);
 
-        $before = $cmcs[$compfrom->get_id()];
-        $after = $cmcs[$compfrom->get_id()];
+        $before = $cmcs[$compfrom->get('id')];
+        $after = $cmcs[$compfrom->get('id')];
 
-        $this->assertEquals($before->get_id(), $after->get_id());
-        $this->assertEquals($before->get_cmid(), $after->get_cmid());
-        $this->assertEquals($before->get_sortorder(), $after->get_sortorder());
-        $this->assertEquals($before->get_ruleoutcome(), $after->get_ruleoutcome());
+        $this->assertEquals($before->get('id'), $after->get('id'));
+        $this->assertEquals($before->get('cmid'), $after->get('cmid'));
+        $this->assertEquals($before->get('sortorder'), $after->get('sortorder'));
+        $this->assertEquals($before->get('ruleoutcome'), $after->get('ruleoutcome'));
     }
 
 }

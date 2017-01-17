@@ -136,9 +136,9 @@ class course_competencies_page implements renderable, templatable {
             $ccexporter = new course_competency_exporter($coursecompetency, array('context' => $context));
 
             $ccoutcomeoptions = (array) (object) $ruleoutcomeoptions;
-            $ccoutcomeoptions[$coursecompetency->get_ruleoutcome()]['selected'] = true;
+            $ccoutcomeoptions[$coursecompetency->get('ruleoutcome')]['selected'] = true;
 
-            $coursemodules = api::list_course_modules_using_competency($competency->get_id(), $this->courseid);
+            $coursemodules = api::list_course_modules_using_competency($competency->get('id'), $this->courseid);
 
             $fastmodinfo = get_fast_modinfo($this->courseid);
             $exportedmodules = array();
@@ -164,7 +164,7 @@ class course_competencies_page implements renderable, templatable {
             if ($gradable) {
                 $foundusercompetencycourse = false;
                 foreach ($usercompetencycourses as $usercompetencycourse) {
-                    if ($usercompetencycourse->get_competencyid() == $competency->get_id()) {
+                    if ($usercompetencycourse->get('competencyid') == $competency->get('id')) {
                         $foundusercompetencycourse = $usercompetencycourse;
                     }
                 }

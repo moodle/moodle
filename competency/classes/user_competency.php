@@ -96,7 +96,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public function can_comment() {
-        return static::can_comment_user($this->get_userid());
+        return static::can_comment_user($this->get('userid'));
     }
 
     /**
@@ -105,7 +105,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public function can_read() {
-        return static::can_read_user($this->get_userid());
+        return static::can_read_user($this->get('userid'));
     }
 
     /**
@@ -114,7 +114,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public function can_read_comments() {
-        return static::can_read_comments_user($this->get_userid());
+        return static::can_read_comments_user($this->get('userid'));
     }
 
     /**
@@ -123,7 +123,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public function can_request_review() {
-        return static::can_request_review_user($this->get_userid());
+        return static::can_request_review_user($this->get('userid'));
     }
 
     /**
@@ -132,7 +132,7 @@ class user_competency extends persistent {
      * @return bool
      */
     public function can_review() {
-        return static::can_review_user($this->get_userid());
+        return static::can_review_user($this->get('userid'));
     }
 
     /**
@@ -189,14 +189,14 @@ class user_competency extends persistent {
         global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
 
-        if (!$this->get_id()) {
+        if (!$this->get('id')) {
             throw new coding_exception('The user competency record must exist.');
         }
 
         $comment = new comment((object) array(
             'context' => $this->get_context(),
             'component' => 'competency',    // This cannot be named 'core_competency'.
-            'itemid' => $this->get_id(),
+            'itemid' => $this->get('id'),
             'area' => 'user_competency',
             'showcount' => true,
         ));
@@ -210,7 +210,7 @@ class user_competency extends persistent {
      * @return competency Competency Object
      */
     public function get_competency() {
-        return new competency($this->get_competencyid());
+        return new competency($this->get('competencyid'));
     }
 
     /**
@@ -219,7 +219,7 @@ class user_competency extends persistent {
      * @return context The context.
      */
     public function get_context() {
-        return context_user::instance($this->get_userid());
+        return context_user::instance($this->get('userid'));
     }
 
     /**
@@ -233,7 +233,7 @@ class user_competency extends persistent {
      * @return plans[]
      */
     public function get_plans() {
-        return plan::get_by_user_and_competency($this->get_userid(), $this->get_competencyid());
+        return plan::get_by_user_and_competency($this->get('userid'), $this->get('competencyid'));
     }
 
     /**
@@ -499,7 +499,7 @@ class user_competency extends persistent {
             } else {
                 $ids = array();
                 foreach ($competenciesorids as $comp) {
-                    $ids[] = $comp->get_id();
+                    $ids[] = $comp->get('id');
                 }
             }
 

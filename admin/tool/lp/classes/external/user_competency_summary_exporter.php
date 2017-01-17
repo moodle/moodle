@@ -133,9 +133,9 @@ class user_competency_summary_exporter extends \core\external\exporter {
         $result->evidence = array();
         if (count($this->related['evidence'])) {
             foreach ($this->related['evidence'] as $evidence) {
-                $actionuserid = $evidence->get_actionuserid();
+                $actionuserid = $evidence->get('actionuserid');
                 if (!empty($actionuserid)) {
-                    $usercache[$evidence->get_actionuserid()] = true;
+                    $usercache[$evidence->get('actionuserid')] = true;
                 }
             }
             $users = array();
@@ -149,7 +149,7 @@ class user_competency_summary_exporter extends \core\external\exporter {
             }
 
             foreach ($this->related['evidence'] as $evidence) {
-                $actionuserid = $evidence->get_actionuserid();
+                $actionuserid = $evidence->get('actionuserid');
                 $related = array(
                     'scale' => $scale,
                     'usercompetency' => ($this->related['usercompetency'] ? $this->related['usercompetency'] : null),

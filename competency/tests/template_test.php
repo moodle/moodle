@@ -43,42 +43,42 @@ class core_competency_template_testcase extends advanced_testcase {
         $tpl = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_template();
 
         // No due date -> pass.
-        $tpl->set_duedate(0);
+        $tpl->set('duedate', 0);
         $this->assertTrue($tpl->is_valid());
 
         // Setting new due date in the past -> fail.
-        $tpl->set_duedate(1);
+        $tpl->set('duedate', 1);
         $errors = $tpl->get_errors();
         $this->assertCount(1, $errors);
         $this->assertArrayHasKey('duedate', $errors);
 
         // Setting new due date in very close past -> pass.
-        $tpl->set_duedate(time() - 10);
+        $tpl->set('duedate', time() - 10);
         $this->assertTrue($tpl->is_valid());
 
         // Setting new due date in future -> pass.
-        $tpl->set_duedate(time() + 600);
+        $tpl->set('duedate', time() + 600);
         $this->assertTrue($tpl->is_valid());
 
         // Save due date in the future.
         $tpl->update();
 
         // Going from future date to past -> fail.
-        $tpl->set_duedate(1);
+        $tpl->set('duedate', 1);
         $errors = $tpl->get_errors();
         $this->assertCount(1, $errors);
         $this->assertArrayHasKey('duedate', $errors);
 
         // Going from future date to none -> pass.
-        $tpl->set_duedate(0);
+        $tpl->set('duedate', 0);
         $this->assertTrue($tpl->is_valid());
 
         // Going from future date to other future -> pass.
-        $tpl->set_duedate(time() + 6000);
+        $tpl->set('duedate', time() + 6000);
         $this->assertTrue($tpl->is_valid());
 
         // Going from future date to close past -> pass.
-        $tpl->set_duedate(time() - 10);
+        $tpl->set('duedate', time() - 10);
         $this->assertTrue($tpl->is_valid());
 
         // Mocking past due date.
@@ -86,30 +86,30 @@ class core_competency_template_testcase extends advanced_testcase {
         $record->duedate = 1;
         $DB->update_record(template::TABLE, $record);
         $tpl->read();
-        $this->assertEquals(1, $tpl->get_duedate());
+        $this->assertEquals(1, $tpl->get('duedate'));
 
         // Not changing the past due date -> pass.
         // Note: changing visibility to force validation.
-        $tpl->set_visible(0);
-        $tpl->set_visible(1);
+        $tpl->set('visible', 0);
+        $tpl->set('visible', 1);
         $this->assertTrue($tpl->is_valid());
 
         // Changing past due date to other past -> fail.
-        $tpl->set_duedate(10);
+        $tpl->set('duedate', 10);
         $errors = $tpl->get_errors();
         $this->assertCount(1, $errors);
         $this->assertArrayHasKey('duedate', $errors);
 
         // Changing past due date close past -> pass.
-        $tpl->set_duedate(time() + 10);
+        $tpl->set('duedate', time() + 10);
         $this->assertTrue($tpl->is_valid());
 
         // Changing past due date to future -> pass.
-        $tpl->set_duedate(time() + 1000);
+        $tpl->set('duedate', time() + 1000);
         $this->assertTrue($tpl->is_valid());
 
         // Changing past due date to none -> pass.
-        $tpl->set_duedate(0);
+        $tpl->set('duedate', 0);
         $this->assertTrue($tpl->is_valid());
     }
 }

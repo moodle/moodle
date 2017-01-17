@@ -47,10 +47,10 @@ class tool_lpimportcsv_import_testcase extends advanced_testcase {
         $framework = $importer->import();
         $this->assertEmpty('', $importer->get_error());
 
-        $this->assertGreaterThan(0, $framework->get_id());
+        $this->assertGreaterThan(0, $framework->get('id'));
 
         $filters = [
-            'competencyframeworkid' => $framework->get_id()
+            'competencyframeworkid' => $framework->get('id')
         ];
         $count = api::count_competencies($filters);
         $this->assertEquals(64, $count);

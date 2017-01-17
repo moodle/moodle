@@ -107,7 +107,7 @@ class plan_page implements renderable, templatable {
             $record->$ucproperty = $exporter->export($output);
 
             $data->competencies[] = $record;
-            if ($usercomp->get_proficiency()) {
+            if ($usercomp->get('proficiency')) {
                 $proficientcount++;
             }
         }

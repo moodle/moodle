@@ -88,7 +88,7 @@ class user_evidence_exporter extends \core\external\persistent_exporter {
         }
 
         $urlshort = '';
-        $url = $this->persistent->get_url();
+        $url = $this->persistent->get('url');
         if (!empty($url)) {
             $murl = new moodle_url($url);
             $shorturl = preg_replace('@^https?://(www\.)?@', '', $murl->out(false));

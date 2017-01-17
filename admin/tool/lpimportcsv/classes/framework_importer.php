@@ -320,7 +320,7 @@ class framework_importer {
      */
     public function create_competency($record, $parent, $framework) {
         $competency = new stdClass();
-        $competency->competencyframeworkid = $framework->get_id();
+        $competency->competencyframeworkid = $framework->get('id');
         $competency->shortname = $record->shortname;
         if (!empty($record->description)) {
             $competency->description = $record->description;
@@ -331,7 +331,7 @@ class framework_importer {
             $competency->scaleconfiguration = $this->get_scale_configuration($competency->scaleid, $record->scaleconfiguration);
         }
         if ($parent) {
-            $competency->parentid = $parent->get_id();
+            $competency->parentid = $parent->get('id');
         } else {
             $competency->parentid = 0;
         }
@@ -414,7 +414,7 @@ class framework_importer {
 
                 if (isset($this->flat[$idnumber])) {
                     $relatedcomp = $this->flat[$idnumber]->createdcomp;
-                    api::add_related_competency($comp->get_id(), $relatedcomp->get_id());
+                    api::add_related_competency($comp->get('id'), $relatedcomp->get('id'));
                 }
             }
         }
@@ -437,9 +437,9 @@ class framework_importer {
                     $oldruleconfig = null;
                 }
                 $newruleconfig = $class::migrate_config($oldruleconfig, $this->mappings);
-                $comp->set_ruleconfig($newruleconfig);
-                $comp->set_ruletype($class);
-                $comp->set_ruleoutcome($record->ruleoutcome);
+                $comp->set('ruleconfig', $newruleconfig);
+                $comp->set('ruletype', $class);
+                $comp->set('ruleoutcome', $record->ruleoutcome);
                 $comp->update();
             }
         }

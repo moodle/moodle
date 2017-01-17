@@ -45,8 +45,8 @@ class core_competency_performance_helper_testcase extends advanced_testcase {
 
         $cat1 = $dg->create_category();
         $framework = $lpg->create_framework();
-        $competency = $lpg->create_competency(['competencyframeworkid' => $framework->get_id()]);
-        $competency2 = $lpg->create_competency(['competencyframeworkid' => $framework->get_id()]);
+        $competency = $lpg->create_competency(['competencyframeworkid' => $framework->get('id')]);
+        $competency2 = $lpg->create_competency(['competencyframeworkid' => $framework->get('id')]);
 
         $context = $competency->get_context();
         $helper = new performance_helper();
@@ -80,10 +80,10 @@ class core_competency_performance_helper_testcase extends advanced_testcase {
 
         $cat1 = $dg->create_category();
         $framework1 = $lpg->create_framework();
-        $comp1a = $lpg->create_competency(['competencyframeworkid' => $framework1->get_id()]);
-        $comp1b = $lpg->create_competency(['competencyframeworkid' => $framework1->get_id()]);
+        $comp1a = $lpg->create_competency(['competencyframeworkid' => $framework1->get('id')]);
+        $comp1b = $lpg->create_competency(['competencyframeworkid' => $framework1->get('id')]);
         $framework2 = $lpg->create_framework();
-        $comp2a = $lpg->create_competency(['competencyframeworkid' => $framework2->get_id()]);
+        $comp2a = $lpg->create_competency(['competencyframeworkid' => $framework2->get('id')]);
 
         $helper = new performance_helper();
         $initdbqueries = $DB->perf_get_queries();
@@ -131,9 +131,9 @@ class core_competency_performance_helper_testcase extends advanced_testcase {
         $cat1 = $dg->create_category();
 
         $framework1 = $lpg->create_framework(['scaleid' => $scale1->id]);
-        $comp1 = $lpg->create_competency(['competencyframeworkid' => $framework1->get_id()]);
-        $comp2 = $lpg->create_competency(['competencyframeworkid' => $framework1->get_id(), 'scaleid' => $scale2->id]);
-        $comp3 = $lpg->create_competency(['competencyframeworkid' => $framework1->get_id()]);
+        $comp1 = $lpg->create_competency(['competencyframeworkid' => $framework1->get('id')]);
+        $comp2 = $lpg->create_competency(['competencyframeworkid' => $framework1->get('id'), 'scaleid' => $scale2->id]);
+        $comp3 = $lpg->create_competency(['competencyframeworkid' => $framework1->get('id')]);
 
         $helper = new performance_helper();
         $initdbqueries = $DB->perf_get_queries();

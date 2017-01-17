@@ -116,16 +116,16 @@ class competency_summary_exporter extends \core\external\exporter {
 
         $exporter = new competency_framework_exporter($this->related['framework']);
         $result->framework = $exporter->export($output);
-        $scaleconfiguration = $this->related['framework']->get_scaleconfiguration();
-        $scaleid = $this->related['framework']->get_scaleid();
-        if ($competency->get_scaleid()) {
-            $scaleconfiguration = $competency->get_scaleconfiguration();
-            $scaleid = $competency->get_scaleid();
+        $scaleconfiguration = $this->related['framework']->get('scaleconfiguration');
+        $scaleid = $this->related['framework']->get('scaleid');
+        if ($competency->get('scaleid')) {
+            $scaleconfiguration = $competency->get('scaleconfiguration');
+            $scaleid = $competency->get('scaleid');
         }
         $result->scaleconfiguration = $scaleconfiguration;
         $result->scaleid = $scaleid;
 
-        $level = $competency->get_level();
+        $level = $competency->get('level');
         $taxonomy = $this->related['framework']->get_taxonomy($level);
         $result->taxonomyterm = (string) (competency_framework::get_taxonomies_list()[$taxonomy]);
 

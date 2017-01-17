@@ -50,7 +50,7 @@ class plan_exporter extends \core\external\persistent_exporter {
 
     protected function get_other_values(renderer_base $output) {
         $classname = static::define_class();
-        $status = $this->persistent->get_status();
+        $status = $this->persistent->get('status');
 
         $values = new stdClass();
 
@@ -87,7 +87,7 @@ class plan_exporter extends \core\external\persistent_exporter {
             $values->isunapproveallowed = $values->canreview && $values->isactive;
         }
 
-        $values->duedateformatted = userdate($this->persistent->get_duedate());
+        $values->duedateformatted = userdate($this->persistent->get('duedate'));
 
         if ($this->persistent->is_based_on_template()) {
             $exporter = new template_exporter($this->related['template']);
@@ -96,13 +96,13 @@ class plan_exporter extends \core\external\persistent_exporter {
 
         if (!empty($values->isinreview)) {
             // TODO Make this more efficient.
-            $userexporter = new user_summary_exporter(core_user::get_user($this->persistent->get_reviewerid(), '*', MUST_EXIST));
+            $userexporter = new user_summary_exporter(core_user::get_user($this->persistent->get('reviewerid'), '*', MUST_EXIST));
             $values->reviewer = $userexporter->export($output);
         }
 
         $commentareaexporter = new comment_area_exporter($this->persistent->get_comment_object());
         $values->commentarea = $commentareaexporter->export($output);
-        $values->url = url::plan($this->persistent->get_id())->out(false);
+        $values->url = url::plan($this->persistent->get('id'))->out(false);
 
         return (array) $values;
     }

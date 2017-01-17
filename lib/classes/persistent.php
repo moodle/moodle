@@ -59,7 +59,7 @@ abstract class persistent {
      */
     public function __construct($id = 0, stdClass $record = null) {
         if ($id > 0) {
-            $this->set('id', $id);
+            $this->raw_set('id', $id);
             $this->read();
         }
         if (!empty($record)) {
@@ -68,23 +68,47 @@ abstract class persistent {
     }
 
     /**
-     * Magic method to capture getters and setters.
+     * Data setter.
      *
-     * @param  string $method Callee.
-     * @param  array $arguments List of arguments.
+     * This is the main setter for all the properties. Developers can implement their own setters (set_propertyname)
+     * and they will be called by this function. Custom setters should call internal_set() to finally set the value.
+     * Internally this is not used {@link self::to_record()} or
+     * {@link self::from_record()} because the data is not expected to be validated or changed when reading/writing
+     * raw records from the DB.
+     *
+     * @param  string $property The property name.
      * @return mixed
      */
-    final public function __call($method, $arguments) {
-        if (strpos($method, 'get_') === 0) {
-            return $this->get(substr($method, 4));
-        } else if (strpos($method, 'set_') === 0) {
-            return $this->set(substr($method, 4), $arguments[0]);
+    final public function set($property, $value) {
+        $methodname = 'set_' . $property;
+        if (method_exists($this, $methodname)) {
+            return $this->$methodname($value);
         }
-        throw new coding_exception('Unexpected method call: ' . $method);
+        return $this->raw_set($property, $value);
     }
 
     /**
      * Data getter.
+     *
+     * This is the main getter for all the properties. Developers can implement their own getters (get_propertyname)
+     * and they will be called by this function. Custom getters can use raw_get to get the raw value.
+     * Internally this is not used by {@link self::to_record()} or
+     * {@link self::from_record()} because the data is not expected to be validated or changed when reading/writing
+     * raw records from the DB.
+     *
+     * @param  string $property The property name.
+     * @return mixed
+     */
+    final public function get($property) {
+        $methodname = 'get_' . $property;
+        if (method_exists($this, $methodname)) {
+            return $this->$methodname();
+        }
+        return $this->raw_get($property);
+    }
+
+    /**
+     * Internal Data getter.
      *
      * This is the main getter for all the properties. Developers can implement their own getters
      * but they should be calling {@link self::get()} in order to retrieve the value. Essentially
@@ -92,18 +116,18 @@ abstract class persistent {
      * be called internally at this stage. In other words, do not expect {@link self::to_record()} or
      * {@link self::from_record()} to use them.
      *
-     * This is protected because we wouldn't want the developers to get into the habit of
-     * using $persistent->get('property_name'), the lengthy getters must be used.
+     * This is protected because it is only for raw low level access to the data fields.
+     * Note this function is named raw_get and not get_raw to avoid naming clashes with a property named raw.
      *
      * @param  string $property The property name.
      * @return mixed
      */
-    final protected function get($property) {
+    final protected function raw_get($property) {
         if (!static::has_property($property)) {
             throw new coding_exception('Unexpected property \'' . s($property) .'\' requested.');
         }
         if (!array_key_exists($property, $this->data) && !static::is_property_required($property)) {
-            $this->set($property, static::get_property_default_value($property));
+            $this->raw_set($property, static::get_property_default_value($property));
         }
         return isset($this->data[$property]) ? $this->data[$property] : null;
     }
@@ -117,14 +141,13 @@ abstract class persistent {
      * at this stage. In other words do not expect {@link self::to_record()} or
      * {@link self::from_record()} to use them.
      *
-     * This is protected because we wouldn't want the developers to get into the habit of
-     * using $persistent->set('property_name', ''), the lengthy setters must be used.
+     * This is protected because it is only for raw low level access to the data fields.
      *
      * @param  string $property The property name.
      * @param  mixed $value The value.
      * @return mixed
      */
-    final protected function set($property, $value) {
+    final protected function raw_set($property, $value) {
         if (!static::has_property($property)) {
             throw new coding_exception('Unexpected property \'' . s($property) .'\' requested.');
         }
@@ -329,7 +352,7 @@ abstract class persistent {
     final public function from_record(stdClass $record) {
         $record = (array) $record;
         foreach ($record as $property => $value) {
-            $this->set($property, $value);
+            $this->raw_set($property, $value);
         }
         return $this;
     }
@@ -346,7 +369,7 @@ abstract class persistent {
         $data = new stdClass();
         $properties = static::properties_definition();
         foreach ($properties as $property => $definition) {
-            $data->$property = $this->get($property);
+            $data->$property = $this->raw_get($property);
         }
         return $data;
     }
@@ -359,10 +382,10 @@ abstract class persistent {
     final public function read() {
         global $DB;
 
-        if ($this->get_id() <= 0) {
+        if ($this->get('id') <= 0) {
             throw new coding_exception('id is required to load');
         }
-        $record = $DB->get_record(static::TABLE, array('id' => $this->get_id()), '*', MUST_EXIST);
+        $record = $DB->get_record(static::TABLE, array('id' => $this->get('id')), '*', MUST_EXIST);
         $this->from_record($record);
 
         // Validate the data as it comes from the database.
@@ -392,7 +415,7 @@ abstract class persistent {
     final public function create() {
         global $DB, $USER;
 
-        if ($this->get_id()) {
+        if ($this->raw_get('id')) {
             // The validation methods rely on the ID to know if we're updating or not, the ID should be
             // falsy whenever we are creating an object.
             throw new coding_exception('Cannot create an object that has an ID defined.');
@@ -407,15 +430,15 @@ abstract class persistent {
 
         // We can safely set those values bypassing the validation because we know what we're doing.
         $now = time();
-        $this->set('timecreated', $now);
-        $this->set('timemodified', $now);
-        $this->set('usermodified', $USER->id);
+        $this->raw_set('timecreated', $now);
+        $this->raw_set('timemodified', $now);
+        $this->raw_set('usermodified', $USER->id);
 
         $record = $this->to_record();
         unset($record->id);
 
         $id = $DB->insert_record(static::TABLE, $record);
-        $this->set('id', $id);
+        $this->raw_set('id', $id);
 
         // We ensure that this is flagged as validated.
         $this->validated = true;
@@ -457,7 +480,7 @@ abstract class persistent {
     final public function update() {
         global $DB, $USER;
 
-        if ($this->get_id() <= 0) {
+        if ($this->raw_get('id') <= 0) {
             throw new coding_exception('id is required to update');
         } else if (!$this->is_valid()) {
             throw new invalid_persistent_exception($this->get_errors());
@@ -467,8 +490,8 @@ abstract class persistent {
         $this->before_update();
 
         // We can safely set those values after the validation because we know what we're doing.
-        $this->set('timemodified', time());
-        $this->set('usermodified', $USER->id);
+        $this->raw_set('timemodified', time());
+        $this->raw_set('usermodified', $USER->id);
 
         $record = $this->to_record();
         unset($record->timecreated);
@@ -515,21 +538,21 @@ abstract class persistent {
     final public function delete() {
         global $DB;
 
-        if ($this->get_id() <= 0) {
+        if ($this->raw_get('id') <= 0) {
             throw new coding_exception('id is required to delete');
         }
 
         // Hook before delete.
         $this->before_delete();
 
-        $result = $DB->delete_records(static::TABLE, array('id' => $this->get_id()));
+        $result = $DB->delete_records(static::TABLE, array('id' => $this->raw_get('id')));
 
         // Hook after delete.
         $this->after_delete($result);
 
         // Reset the ID to avoid any confusion, this also invalidates the model's data.
         if ($result) {
-            $this->set('id', 0);
+            $this->raw_set('id', 0);
         }
 
         return $result;
@@ -602,7 +625,7 @@ abstract class persistent {
             foreach ($properties as $property => $definition) {
 
                 // Get the data, bypassing the potential custom getter which could alter the data.
-                $value = $this->get($property);
+                $value = $this->raw_get($property);
 
                 // Check if the property is required.
                 if ($value === null && static::is_property_required($property)) {

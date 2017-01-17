@@ -60,7 +60,7 @@ class performance_helper {
      * @return \context
      */
     public function get_context_from_competency(competency $competency) {
-        $frameworkid = $competency->get_competencyframeworkid();
+        $frameworkid = $competency->get('competencyframeworkid');
         if (!isset($this->frameworkscontexts[$frameworkid])) {
             $framework = $this->get_framework_from_competency($competency);
             $this->frameworkscontexts[$frameworkid] = $framework->get_context();
@@ -75,7 +75,7 @@ class performance_helper {
      * @return competency_framework
      */
     public function get_framework_from_competency(competency $competency) {
-        $frameworkid = $competency->get_competencyframeworkid();
+        $frameworkid = $competency->get('competencyframeworkid');
         if (!isset($this->frameworks[$frameworkid])) {
             $this->frameworks[$frameworkid] = $competency->get_framework();
         }
@@ -93,13 +93,13 @@ class performance_helper {
      * @return \grade_scale
      */
     public function get_scale_from_competency(competency $competency) {
-        $scaleid = $competency->get_scaleid();
+        $scaleid = $competency->get('scaleid');
         if ($scaleid !== null && !isset($this->scales[$scaleid])) {
             $this->scales[$scaleid] = $competency->get_scale();
 
         } else if ($scaleid === null) {
             $framework = $this->get_framework_from_competency($competency);
-            $scaleid = $framework->get_scaleid();
+            $scaleid = $framework->get('scaleid');
             if (!isset($this->scales[$scaleid])) {
                 $this->scales[$scaleid] = $framework->get_scale();
             }

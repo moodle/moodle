@@ -45,31 +45,31 @@ class core_competency_hooks_testcase extends advanced_testcase {
         $u1 = $dg->create_user();
 
         $framework = $ccg->create_framework();
-        $comp1 = $ccg->create_competency(['competencyframeworkid' => $framework->get_id()]);
-        $comp2 = $ccg->create_competency(['competencyframeworkid' => $framework->get_id()]);
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $framework->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $framework->get('id')]);
 
         $c1 = $dg->create_course();
-        $cc1a = $ccg->create_course_competency(['competencyid' => $comp1->get_id(), 'courseid' => $c1->id]);
-        $cc1b = $ccg->create_course_competency(['competencyid' => $comp2->get_id(), 'courseid' => $c1->id]);
+        $cc1a = $ccg->create_course_competency(['competencyid' => $comp1->get('id'), 'courseid' => $c1->id]);
+        $cc1b = $ccg->create_course_competency(['competencyid' => $comp2->get('id'), 'courseid' => $c1->id]);
         $assign1a = $dg->create_module('assign', ['course' => $c1]);
         $assign1b = $dg->create_module('assign', ['course' => $c1]);
-        $cmc1a = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign1a->cmid]);
-        $cmc1b = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign1b->cmid]);
-        $ucc1a = $ccg->create_user_competency_course(['competencyid' => $comp1->get_id(), 'courseid' => $c1->id,
+        $cmc1a = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign1a->cmid]);
+        $cmc1b = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign1b->cmid]);
+        $ucc1a = $ccg->create_user_competency_course(['competencyid' => $comp1->get('id'), 'courseid' => $c1->id,
             'userid' => $u1->id]);
-        $ucc1b = $ccg->create_user_competency_course(['competencyid' => $comp2->get_id(), 'courseid' => $c1->id,
+        $ucc1b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c1->id,
             'userid' => $u1->id]);
 
         $c2 = $dg->create_course();
-        $cc2a = $ccg->create_course_competency(['competencyid' => $comp1->get_id(), 'courseid' => $c2->id]);
-        $cc2b = $ccg->create_course_competency(['competencyid' => $comp2->get_id(), 'courseid' => $c2->id]);
+        $cc2a = $ccg->create_course_competency(['competencyid' => $comp1->get('id'), 'courseid' => $c2->id]);
+        $cc2b = $ccg->create_course_competency(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id]);
         $assign2a = $dg->create_module('assign', ['course' => $c2]);
         $assign2b = $dg->create_module('assign', ['course' => $c2]);
-        $cmc2a = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign2a->cmid]);
-        $cmc2b = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign2b->cmid]);
-        $ucc2a = $ccg->create_user_competency_course(['competencyid' => $comp1->get_id(), 'courseid' => $c2->id,
+        $cmc2a = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign2a->cmid]);
+        $cmc2b = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign2b->cmid]);
+        $ucc2a = $ccg->create_user_competency_course(['competencyid' => $comp1->get('id'), 'courseid' => $c2->id,
             'userid' => $u1->id]);
-        $ucc2b = $ccg->create_user_competency_course(['competencyid' => $comp2->get_id(), 'courseid' => $c2->id,
+        $ucc2b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id,
             'userid' => $u1->id]);
 
         delete_course($c1, false);
@@ -92,31 +92,31 @@ class core_competency_hooks_testcase extends advanced_testcase {
         $u1 = $dg->create_user();
 
         $framework = $ccg->create_framework();
-        $comp1 = $ccg->create_competency(['competencyframeworkid' => $framework->get_id()]);
-        $comp2 = $ccg->create_competency(['competencyframeworkid' => $framework->get_id()]);
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $framework->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $framework->get('id')]);
 
         $c1 = $dg->create_course();
-        $cc1a = $ccg->create_course_competency(['competencyid' => $comp1->get_id(), 'courseid' => $c1->id]);
-        $cc1b = $ccg->create_course_competency(['competencyid' => $comp2->get_id(), 'courseid' => $c1->id]);
+        $cc1a = $ccg->create_course_competency(['competencyid' => $comp1->get('id'), 'courseid' => $c1->id]);
+        $cc1b = $ccg->create_course_competency(['competencyid' => $comp2->get('id'), 'courseid' => $c1->id]);
         $assign1a = $dg->create_module('assign', ['course' => $c1]);
         $assign1b = $dg->create_module('assign', ['course' => $c1]);
-        $cmc1a = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign1a->cmid]);
-        $cmc1b = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign1b->cmid]);
-        $ucc1a = $ccg->create_user_competency_course(['competencyid' => $comp1->get_id(), 'courseid' => $c1->id,
+        $cmc1a = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign1a->cmid]);
+        $cmc1b = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign1b->cmid]);
+        $ucc1a = $ccg->create_user_competency_course(['competencyid' => $comp1->get('id'), 'courseid' => $c1->id,
             'userid' => $u1->id]);
-        $ucc1b = $ccg->create_user_competency_course(['competencyid' => $comp2->get_id(), 'courseid' => $c1->id,
+        $ucc1b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c1->id,
             'userid' => $u1->id]);
 
         $c2 = $dg->create_course();
-        $cc2a = $ccg->create_course_competency(['competencyid' => $comp1->get_id(), 'courseid' => $c2->id]);
-        $cc2b = $ccg->create_course_competency(['competencyid' => $comp2->get_id(), 'courseid' => $c2->id]);
+        $cc2a = $ccg->create_course_competency(['competencyid' => $comp1->get('id'), 'courseid' => $c2->id]);
+        $cc2b = $ccg->create_course_competency(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id]);
         $assign2a = $dg->create_module('assign', ['course' => $c2]);
         $assign2b = $dg->create_module('assign', ['course' => $c2]);
-        $cmc2a = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign2a->cmid]);
-        $cmc2b = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign2b->cmid]);
-        $ucc2a = $ccg->create_user_competency_course(['competencyid' => $comp1->get_id(), 'courseid' => $c2->id,
+        $cmc2a = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign2a->cmid]);
+        $cmc2b = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign2b->cmid]);
+        $ucc2a = $ccg->create_user_competency_course(['competencyid' => $comp1->get('id'), 'courseid' => $c2->id,
             'userid' => $u1->id]);
-        $ucc2b = $ccg->create_user_competency_course(['competencyid' => $comp2->get_id(), 'courseid' => $c2->id,
+        $ucc2b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id,
             'userid' => $u1->id]);
 
         course_delete_module($assign1b->cmid);
@@ -140,31 +140,31 @@ class core_competency_hooks_testcase extends advanced_testcase {
         $u1 = $dg->create_user();
 
         $framework = $ccg->create_framework();
-        $comp1 = $ccg->create_competency(['competencyframeworkid' => $framework->get_id()]);
-        $comp2 = $ccg->create_competency(['competencyframeworkid' => $framework->get_id()]);
+        $comp1 = $ccg->create_competency(['competencyframeworkid' => $framework->get('id')]);
+        $comp2 = $ccg->create_competency(['competencyframeworkid' => $framework->get('id')]);
 
         $c1 = $dg->create_course();
-        $cc1a = $ccg->create_course_competency(['competencyid' => $comp1->get_id(), 'courseid' => $c1->id]);
-        $cc1b = $ccg->create_course_competency(['competencyid' => $comp2->get_id(), 'courseid' => $c1->id]);
+        $cc1a = $ccg->create_course_competency(['competencyid' => $comp1->get('id'), 'courseid' => $c1->id]);
+        $cc1b = $ccg->create_course_competency(['competencyid' => $comp2->get('id'), 'courseid' => $c1->id]);
         $assign1a = $dg->create_module('assign', ['course' => $c1]);
         $assign1b = $dg->create_module('assign', ['course' => $c1]);
-        $cmc1a = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign1a->cmid]);
-        $cmc1b = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign1b->cmid]);
-        $ucc1a = $ccg->create_user_competency_course(['competencyid' => $comp1->get_id(), 'courseid' => $c1->id,
+        $cmc1a = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign1a->cmid]);
+        $cmc1b = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign1b->cmid]);
+        $ucc1a = $ccg->create_user_competency_course(['competencyid' => $comp1->get('id'), 'courseid' => $c1->id,
             'userid' => $u1->id]);
-        $ucc1b = $ccg->create_user_competency_course(['competencyid' => $comp2->get_id(), 'courseid' => $c1->id,
+        $ucc1b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c1->id,
             'userid' => $u1->id]);
 
         $c2 = $dg->create_course();
-        $cc2a = $ccg->create_course_competency(['competencyid' => $comp1->get_id(), 'courseid' => $c2->id]);
-        $cc2b = $ccg->create_course_competency(['competencyid' => $comp2->get_id(), 'courseid' => $c2->id]);
+        $cc2a = $ccg->create_course_competency(['competencyid' => $comp1->get('id'), 'courseid' => $c2->id]);
+        $cc2b = $ccg->create_course_competency(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id]);
         $assign2a = $dg->create_module('assign', ['course' => $c2]);
         $assign2b = $dg->create_module('assign', ['course' => $c2]);
-        $cmc2a = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign2a->cmid]);
-        $cmc2b = $ccg->create_course_module_competency(['competencyid' => $comp1->get_id(), 'cmid' => $assign2b->cmid]);
-        $ucc2a = $ccg->create_user_competency_course(['competencyid' => $comp1->get_id(), 'courseid' => $c2->id,
+        $cmc2a = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign2a->cmid]);
+        $cmc2b = $ccg->create_course_module_competency(['competencyid' => $comp1->get('id'), 'cmid' => $assign2b->cmid]);
+        $ucc2a = $ccg->create_user_competency_course(['competencyid' => $comp1->get('id'), 'courseid' => $c2->id,
             'userid' => $u1->id]);
-        $ucc2b = $ccg->create_user_competency_course(['competencyid' => $comp2->get_id(), 'courseid' => $c2->id,
+        $ucc2b = $ccg->create_user_competency_course(['competencyid' => $comp2->get('id'), 'courseid' => $c2->id,
             'userid' => $u1->id]);
 
         reset_course_userdata((object) ['id' => $c1->id, 'reset_competency_ratings' => true]);
@@ -192,19 +192,19 @@ class core_competency_hooks_testcase extends advanced_testcase {
         $t2 = $corecompgen->create_template();
 
         // Create the template cohorts.
-        core_competency\api::create_template_cohort($t1->get_id(), $c1->id);
-        core_competency\api::create_template_cohort($t1->get_id(), $c2->id);
-        core_competency\api::create_template_cohort($t2->get_id(), $c1->id);
+        core_competency\api::create_template_cohort($t1->get('id'), $c1->id);
+        core_competency\api::create_template_cohort($t1->get('id'), $c2->id);
+        core_competency\api::create_template_cohort($t2->get('id'), $c1->id);
 
         // Check that the association was made.
-        $this->assertEquals(2, \core_competency\template_cohort::count_records(array('templateid' => $t1->get_id())));
-        $this->assertEquals(1, \core_competency\template_cohort::count_records(array('templateid' => $t2->get_id())));
+        $this->assertEquals(2, \core_competency\template_cohort::count_records(array('templateid' => $t1->get('id'))));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records(array('templateid' => $t2->get('id'))));
 
         // Delete the first cohort.
         cohort_delete_cohort($c1);
 
         // Check that the association was removed.
-        $this->assertEquals(1, \core_competency\template_cohort::count_records(array('templateid' => $t1->get_id())));
-        $this->assertEquals(0, \core_competency\template_cohort::count_records(array('templateid' => $t2->get_id())));
+        $this->assertEquals(1, \core_competency\template_cohort::count_records(array('templateid' => $t1->get('id'))));
+        $this->assertEquals(0, \core_competency\template_cohort::count_records(array('templateid' => $t2->get('id'))));
     }
 }
