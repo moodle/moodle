@@ -64,7 +64,6 @@ Feature: Scorm multi-sco review mode.
       | Name | ADV Multi-sco SCORM package |
       | Description | Description |
       | Completion tracking | Show activity as complete when conditions are met |
-      | Require all scos to return completion status | 1 |
     And I set the field "Completed" to "1"
     And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
