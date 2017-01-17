@@ -190,6 +190,9 @@ class company_courses_form extends moodleform {
                         $DB->delete_records('company_shared_courses',
                                              array('companyid' => $company->id,
                                                    'courseid' => $removecourse->id));
+                        $DB->delete_records('company_course',
+                                             array('companyid' => $company->id,
+                                                   'courseid' => $removecourse->id));
                         company::delete_company_course_group($company->id,
                                                              $removecourse,
                                                              $oktounenroll);
