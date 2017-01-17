@@ -41,6 +41,12 @@ function local_iomad_signup_user_created($user) {
         return true;
     }
 
+    // If the user is already in a company then we do nothing more
+    // as this came from the self sign up pages.
+    if ($DB->get_record('company_users', array('userid' => $user->id))) {
+        return true;
+    }
+
     // Get context
     $context = context_system::instance();
 

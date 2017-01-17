@@ -130,9 +130,6 @@ class auth_plugin_email extends auth_plugin_base {
         // Save any custom profile field information.
         profile_save_data($user);
 
-        // Trigger event.
-        \core\event\user_created::create_from_userid($user->id)->trigger();
-
         // IOMAD.
         if (!empty($user->companyid)) {
             require_once($CFG->dirroot.'/local/iomad/lib/company.php');
@@ -145,6 +142,9 @@ class auth_plugin_email extends auth_plugin_base {
                 $company->autoenrol($user);
             }
         }
+
+        // Trigger event.
+        \core\event\user_created::create_from_userid($user->id)->trigger();
 
         if (! send_confirmation_email($user)) {
             print_error('auth_emailnoemail','auth_email');
