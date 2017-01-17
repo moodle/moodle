@@ -386,6 +386,11 @@ class behat_hooks extends behat_base {
     public function after_step_javascript(AfterStepScope $scope) {
         global $CFG, $DB;
 
+        // If step is undefined then throw exception, to get failed exit code.
+        if ($scope->getTestResult()->getResultCode() === Behat\Behat\Tester\Result\StepResult::UNDEFINED) {
+            throw new coding_exception("Step '" . $scope->getStep()->getText() . "'' is undefined.");
+        }
+
         // Save the page content if the step failed.
         if (!empty($CFG->behat_faildump_path) &&
             $scope->getTestResult()->getResultCode() === Behat\Testwork\Tester\Result\TestResult::FAILED) {

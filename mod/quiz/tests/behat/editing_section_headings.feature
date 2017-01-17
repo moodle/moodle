@@ -423,5 +423,5 @@ Feature: Edit quiz page - section headings
     And I click on "Edit quiz" "link" in the "Administration" "block"
     And I click on the "Remove" page break icon after question "TF10"
     And I open the "Page 10" add to quiz menu
-    And I choose "a new section heading" in the open action menu
+    And I follow "a new section heading" in the open menu
     Then "TF10" "list_item" should exist in the "Section heading ..." "list_item"
