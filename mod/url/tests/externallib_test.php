@@ -110,4 +110,121 @@ class mod_url_external_testcase extends externallib_advanced_testcase {
         }
 
     }
+
+    /**
+     * Test test_mod_url_get_urls_by_courses
+     */
+    public function test_mod_url_get_urls_by_courses() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id);
+
+        // First url.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $url1 = self::getDataGenerator()->create_module('url', $record);
+
+        // Second url.
+        $record = new stdClass();
+        $record->course = $course2->id;
+        $url2 = self::getDataGenerator()->create_module('url', $record);
+
+        // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
+        $enrol = enrol_get_plugin('manual');
+        $enrolinstances = enrol_get_instances($course2->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance2 = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance2, $student->id, $studentrole->id);
+
+        self::setUser($student);
+
+        $returndescription = mod_url_external::get_urls_by_courses_returns();
+
+        // Create what we expect to be returned when querying the two courses.
+        $expectedfields = array('id', 'course', 'name', 'intro', 'introformat', 'introfiles', 'externalurl', 'display',
+                                'displayoptions', 'parameters', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
+
+        // Add expected coursemodule and data.
+        $url1->coursemodule = $url1->cmid;
+        $url1->introformat = 1;
+        $url1->section = 0;
+        $url1->visible = true;
+        $url1->groupmode = 0;
+        $url1->groupingid = 0;
+        $url1->introfiles = [];
+
+        $url2->coursemodule = $url2->cmid;
+        $url2->introformat = 1;
+        $url2->section = 0;
+        $url2->visible = true;
+        $url2->groupmode = 0;
+        $url2->groupingid = 0;
+        $url2->introfiles = [];
+
+        foreach ($expectedfields as $field) {
+            $expected1[$field] = $url1->{$field};
+            $expected2[$field] = $url2->{$field};
+        }
+
+        $expectedurls = array($expected2, $expected1);
+
+        // Call the external function passing course ids.
+        $result = mod_url_external::get_urls_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertEquals($expectedurls, $result['urls']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Call the external function without passing course id.
+        $result = mod_url_external::get_urls_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedurls, $result['urls']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Add a file to the intro.
+        $filename = "file.txt";
+        $filerecordinline = array(
+            'contextid' => context_module::instance($url2->cmid)->id,
+            'component' => 'mod_url',
+            'filearea'  => 'intro',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $timepost = time();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        $result = mod_url_external::get_urls_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertCount(1, $result['urls'][0]['introfiles']);
+        $this->assertEquals($filename, $result['urls'][0]['introfiles'][0]['filename']);
+
+        // Unenrol user from second course and alter expected urls.
+        $enrol->unenrol_user($instance2, $student->id);
+        array_shift($expectedurls);
+
+        // Call the external function without passing course id.
+        $result = mod_url_external::get_urls_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedurls, $result['urls']);
+
+        // Call for the second course we unenrolled the user from, expected warning.
+        $result = mod_url_external::get_urls_by_courses(array($course2->id));
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('1', $result['warnings'][0]['warningcode']);
+        $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
+    }
 }
