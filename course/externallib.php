@@ -2012,7 +2012,7 @@ class core_course_external extends external_api {
     /**
      * Describes the parameters for delete_modules.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.5
      */
     public static function delete_modules_parameters() {

@@ -42,7 +42,7 @@ class mod_choice_external extends external_api {
     /**
      * Describes the parameters for get_choices_by_courses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.0
      */
     public static function get_choice_results_parameters() {
@@ -167,7 +167,7 @@ class mod_choice_external extends external_api {
     /**
      * Describes the parameters for mod_choice_get_choice_options.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.0
      */
     public static function get_choice_options_parameters() {
@@ -288,7 +288,7 @@ class mod_choice_external extends external_api {
     /**
      * Describes the parameters for submit_choice_response.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.0
      */
     public static function submit_choice_response_parameters() {
@@ -449,7 +449,7 @@ class mod_choice_external extends external_api {
     /**
      * Describes the parameters for get_choices_by_courses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.0
      */
     public static function get_choices_by_courses_parameters() {
@@ -587,7 +587,7 @@ class mod_choice_external extends external_api {
     /**
      * Describes the parameters for delete_choice_responses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.0
      */
     public static function delete_choice_responses_parameters() {
