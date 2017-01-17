@@ -73,5 +73,9 @@ if ($hassiteconfig && !empty($USER->id)) {
         $availablecompanies = array('0' => 'none') + $sitecompanies;
         $settings->add(new admin_setting_configselect('local_iomad_signup_company', get_string('company', 'local_iomad_signup'),
                            get_string('configcompany', 'local_iomad_signup'), 0, $availablecompanies));
+    } else {
+        set_config('local_iomad_signup_auth', '');
+        set_config('local_iomad_signup_role', 0);
+        set_config('local_iomad_signup_company', 0);
     }
 }
