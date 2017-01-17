@@ -70,7 +70,10 @@ class singlepurchase extends processor {
             $clc->courseid = $course->id;
             $DB->insert_record('companylicense_courses', $clc);
             //  Assign the license to the user.
-            $DB->insert_record('companylicense_users', array('userid' => $invoice->userid, 'licenseid' => $companylicenseid));
+            $DB->insert_record('companylicense_users', array('userid' => $invoice->userid,
+                                                             'licenseid' => $companylicenseid,
+                                                             'licensecourseid' => $course->id,
+                                                             'issuedate' => time()));
         } else {
             // Enrol user into course.
             $user = new stdClass;
