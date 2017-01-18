@@ -37,6 +37,14 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         global $SITE, $PAGE;
 
         $output = parent::standard_head_html();
+
+        // Setup help icon overlays.
+        $this->page->requires->yui_module('moodle-core-popuphelp', 'M.core.init_popuphelp');
+        $this->page->requires->strings_for_js(array(
+            'morehelp',
+            'loadinghelp',
+        ), 'moodle');
+
         if ($PAGE->pagelayout == 'frontpage') {
             $summary = s(strip_tags(format_text($SITE->summary, FORMAT_HTML)));
             if (!empty($summary)) {
