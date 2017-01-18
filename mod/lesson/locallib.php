@@ -2703,13 +2703,13 @@ class lesson extends lesson_base {
             return $result;
         } else if (isset($USER->modattempts[$this->properties->id])) {
             // Make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time.
-            if ($USER->modattempts[$lesson->id]->pageid == $page->id && $page->nextpageid == 0) {
+            if ($USER->modattempts[$this->properties->id]->pageid == $page->id && $page->nextpageid == 0) {
                 // Remember, this session variable holds the pageid of the last page that the user saw.
                 $result->newpageid = LESSON_EOL;
             } else {
-                $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $lesson->id, "userid" => $USER->id));
+                $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
                 $nretakes--; // Make sure we are looking at the right try.
-                $attempts = $DB->get_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $nretakes), "timeseen", "id, pageid");
+                $attempts = $DB->get_records("lesson_attempts", array("lessonid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes), "timeseen", "id, pageid");
                 $found = false;
                 $temppageid = 0;
                 // Make sure that the newpageid always defaults to something valid.
@@ -2730,7 +2730,7 @@ class lesson extends lesson_base {
             // Going to check to see if the page that the user is going to view next, is a cluster page.
             // If so, dont display, go into the cluster.
             // The $result->newpageid > 0 is used to filter out all of the negative code jumps.
-            $newpage = $lesson->load_page($result->newpageid);
+            $newpage = $this->load_page($result->newpageid);
             if ($newpageid = $newpage->override_next_page($result->newpageid)) {
                 $result->newpageid = $newpageid;
             }
@@ -2742,12 +2742,12 @@ class lesson extends lesson_base {
                     $result->newpageid = $page->nextpageid;
                 }
             } else {
-                $result->newpageid = lesson_unseen_question_jump($lesson, $USER->id, $page->id);
+                $result->newpageid = lesson_unseen_question_jump($this, $USER->id, $page->id);
             }
         } else if ($result->newpageid == LESSON_PREVIOUSPAGE) {
             $result->newpageid = $page->prevpageid;
         } else if ($result->newpageid == LESSON_RANDOMPAGE) {
-            $result->newpageid = lesson_random_question_jump($lesson, $page->id);
+            $result->newpageid = lesson_random_question_jump($this, $page->id);
         } else if ($result->newpageid == LESSON_CLUSTERJUMP) {
             if ($canmanage) {
                 if ($page->nextpageid == 0) {  // If teacher, go to next page.

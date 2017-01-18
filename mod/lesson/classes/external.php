@@ -1395,4 +1395,146 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for process_page.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function process_page_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'pageid' => new external_value(PARAM_INT, 'the page id'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_RAW, 'data name'),
+                            'value' => new external_value(PARAM_RAW, 'data value'),
+                        )
+                    ), 'the data to be saved'
+                ),
+                'password' => new external_value(PARAM_RAW, 'optional password (the lesson may be protected)', VALUE_DEFAULT, ''),
+                'review' => new external_value(PARAM_BOOL, 'if we want to review just after finishing (1 hour margin)',
+                    VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Processes page responses
+     *
+     * @param int $lessonid lesson instance id
+     * @param int $pageid page id
+     * @param array $data the data to be saved
+     * @param str $password optional password (the lesson may be protected)
+     * @param bool $review if we want to review just after finishing (1 hour margin)
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function process_page($lessonid, $pageid,  $data, $password = '', $review = false) {
+        global $USER;
+
+        $params = array('lessonid' => $lessonid, 'pageid' => $pageid, 'data' => $data, 'password' => $password,
+            'review' => $review);
+        $params = self::validate_parameters(self::process_page_parameters(), $params);
+
+        $warnings = array();
+        $pagecontent = $ongoingscore = '';
+        $progress = null;
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+
+        // Update timer so the validation can check the time restrictions.
+        $timer = $lesson->update_timer();
+        self::validate_attempt($lesson, $params);
+
+        // Create the $_POST object required by the lesson question engine.
+        $_POST = array();
+        foreach ($data as $element) {
+            // First check if we are handling editor fields like answer[text].
+            if (preg_match('/(.+)\[(.+)\]$/', $element['name'], $matches)) {
+                $_POST[$matches[1]][$matches[2]] = $element['value'];
+            } else {
+                $_POST[$element['name']] = $element['value'];
+            }
+        }
+
+        // Ignore sesskey (deep in some APIs), the request is already validated.
+        $USER->ignoresesskey = true;
+
+        // Process page.
+        $page = $lesson->load_page($params['pageid']);
+        $result = $lesson->process_page_responses($page);
+
+        // Prepare messages.
+        $reviewmode = $lesson->is_in_review_mode();
+        $lesson->add_messages_on_page_process($page, $result, $reviewmode);
+
+        // Additional lesson information.
+        if (!$lesson->can_manage()) {
+            if ($lesson->ongoing && !$reviewmode) {
+                $ongoingscore = $lesson->get_ongoing_score_message();
+            }
+            if ($lesson->progressbar) {
+                $progress = $lesson->calculate_progress();
+            }
+        }
+
+        // Check conditionally everything coming from result (except newpageid because is always set).
+        $result = array(
+            'newpageid'         => (int) $result->newpageid,
+            'inmediatejump'     => $result->inmediatejump,
+            'nodefaultresponse' => !empty($result->nodefaultresponse),
+            'feedback'          => (isset($result->feedback)) ? $result->feedback : '',
+            'attemptsremaining' => (isset($result->attemptsremaining)) ? $result->attemptsremaining : null,
+            'correctanswer'     => !empty($result->correctanswer),
+            'noanswer'          => !empty($result->noanswer),
+            'isessayquestion'   => !empty($result->isessayquestion),
+            'maxattemptsreached' => !empty($result->maxattemptsreached),
+            'response'          => (isset($result->response)) ? $result->response : '',
+            'studentanswer'     => (isset($result->studentanswer)) ? $result->studentanswer : '',
+            'userresponse'      => (isset($result->userresponse)) ? $result->userresponse : '',
+            'reviewmode'        => $reviewmode,
+            'ongoingscore'      => $ongoingscore,
+            'progress'          => $progress,
+            'displaymenu'       => !empty(lesson_displayleftif($lesson)),
+            'messages'          => self::format_lesson_messages($lesson),
+            'warnings'          => $warnings,
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the process_page return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function process_page_returns() {
+        return new external_single_structure(
+            array(
+                'newpageid' => new external_value(PARAM_INT, 'New page id (if a jump was made).'),
+                'inmediatejump' => new external_value(PARAM_BOOL, 'Whether the page processing redirect directly to anoter page.'),
+                'nodefaultresponse' => new external_value(PARAM_BOOL, 'Whether there is not a default response.'),
+                'feedback' => new external_value(PARAM_RAW, 'The response feedback.'),
+                'attemptsremaining' => new external_value(PARAM_INT, 'Number of attempts remaining.'),
+                'correctanswer' => new external_value(PARAM_BOOL, 'Whether the answer is correct.'),
+                'noanswer' => new external_value(PARAM_BOOL, 'Whether there aren\'t answers.'),
+                'isessayquestion' => new external_value(PARAM_BOOL, 'Whether is a essay question.'),
+                'maxattemptsreached' => new external_value(PARAM_BOOL, 'Whether we reachered the max number of attempts.'),
+                'response' => new external_value(PARAM_RAW, 'The response.'),
+                'studentanswer' => new external_value(PARAM_RAW, 'The student answer.'),
+                'userresponse' => new external_value(PARAM_RAW, 'The user response.'),
+                'reviewmode' => new external_value(PARAM_BOOL, 'Whether the user is reviewing.'),
+                'ongoingscore' => new external_value(PARAM_TEXT, 'The ongoing message.'),
+                'progress' => new external_value(PARAM_INT, 'Progress percentage in the lesson.'),
+                'displaymenu' => new external_value(PARAM_BOOL, 'Whether we should display the menu or not in this page.'),
+                'messages' => self::external_messages(),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
