@@ -2454,6 +2454,77 @@ class lesson extends lesson_base {
         $params = array('lessonid' => $this->properties->id, 'userid' => $userid);
         return $DB->get_records('lesson_timer', $params, $sort, $fields, $limitfrom, $limitnum);
     }
+
+    /**
+     * Check if the user is out of time in a timed lesson.
+     *
+     * @param  stdClass $timer timer object
+     * @return bool True if the user is on time, false is the user ran out of time
+     * @since  Moodle 3.3
+     */
+    public function check_time($timer) {
+        if ($this->properties->timelimit) {
+            $timeleft = $timer->starttime + $this->properties->timelimit - time();
+            if ($timeleft <= 0) {
+                // Out of time.
+                $this->add_message(get_string('eolstudentoutoftime', 'lesson'));
+                return false;
+            } else if ($timeleft < 60) {
+                // One minute warning.
+                $this->add_message(get_string('studentoneminwarning', 'lesson'));
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Add different informative messages to the given page.
+     *
+     * @param lesson_page $page page object
+     * @param reviewmode $bool whether we are in review mode or not
+     * @since  Moodle 3.3
+     */
+    public function add_messages_on_page_view(lesson_page $page, $reviewmode) {
+        global $DB, $USER;
+
+        if (!$this->can_manage()) {
+            if ($page->qtype == LESSON_PAGE_BRANCHTABLE && $this->properties->minquestions) {
+                // Tell student how many questions they have seen, how many are required and their grade.
+                $ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+                $gradeinfo = lesson_grade($this, $ntries);
+                if ($gradeinfo->attempts) {
+                    if ($gradeinfo->nquestions < $this->properties->minquestions) {
+                        $a = new stdClass;
+                        $a->nquestions   = $gradeinfo->nquestions;
+                        $a->minquestions = $this->properties->minquestions;
+                        $this->add_message(get_string('numberofpagesviewednotice', 'lesson', $a));
+                    }
+
+                    if (!$reviewmode && !$this->properties->retake) {
+                        $this->add_message(get_string("numberofcorrectanswers", "lesson", $gradeinfo->earned), 'notify');
+                        if ($this->properties->grade != GRADE_TYPE_NONE) {
+                            $a = new stdClass;
+                            $a->grade = number_format($gradeinfo->grade * $this->properties->grade / 100, 1);
+                            $a->total = $this->properties->grade;
+                            $this->add_message(get_string('yourcurrentgradeisoutof', 'lesson', $a), 'notify');
+                        }
+                    }
+                }
+            }
+        } else {
+            if ($this->properties->timelimit) {
+                $this->add_message(get_string('teachertimerwarning', 'lesson'));
+            }
+            if (lesson_display_teacher_warning($this)) {
+                // This is the warning msg for teachers to inform them that cluster
+                // and unseen does not work while logged in as a teacher.
+                $warningvars = new stdClass();
+                $warningvars->cluster = get_string('clusterjump', 'lesson');
+                $warningvars->unseen = get_string('unseenpageinbranch', 'lesson');
+                $this->add_message(get_string('teacherjumpwarning', 'lesson', $warningvars));
+            }
+        }
+    }
 }
 
 
