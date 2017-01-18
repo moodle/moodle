@@ -3650,6 +3650,20 @@ abstract class lesson_page extends lesson_base {
         $validpages[$this->properties->id] = 1;
         return $this->properties->nextpageid;
     }
+
+    /**
+     * Get files from the page area file.
+     *
+     * @param bool $includedirs whether or not include directories
+     * @param int $updatedsince return files updated since this time
+     * @return array list of stored_file objects
+     * @since  Moodle 3.2
+     */
+    public function get_files($includedirs = true, $updatedsince = 0) {
+        $fs = get_file_storage();
+        return $fs->get_area_files($this->lesson->context->id, 'mod_lesson', 'page_contents', $this->properties->id,
+                                    'itemid, filepath, filename', $includedirs, $updatedsince);
+    }
 }
 
 
@@ -3696,6 +3710,25 @@ class lesson_page_answer extends lesson_base {
      */
     public static function create($properties, lesson_page $page) {
         return $page->create_answers($properties);
+    }
+
+    /**
+     * Get files from the answer area file.
+     *
+     * @param bool $includedirs whether or not include directories
+     * @param int $updatedsince return files updated since this time
+     * @return array list of stored_file objects
+     * @since  Moodle 3.2
+     */
+    public function get_files($includedirs = true, $updatedsince = 0) {
+
+        $lesson = lesson::load($this->properties->lessonid);
+        $fs = get_file_storage();
+        $answerfiles = $fs->get_area_files($lesson->context->id, 'mod_lesson', 'page_answers', $this->properties->id,
+                                            'itemid, filepath, filename', $includedirs, $updatedsince);
+        $responsefiles = $fs->get_area_files($lesson->context->id, 'mod_lesson', 'page_responses', $this->properties->id,
+                                            'itemid, filepath, filename', $includedirs, $updatedsince);
+        return array_merge($answerfiles, $responsefiles);
     }
 
 }

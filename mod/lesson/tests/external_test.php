@@ -666,4 +666,73 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test for get_pages
+     */
+    public function test_get_pages() {
+        global $DB;
+
+        $this->setAdminUser();
+        // Create another content page.
+        $lessongenerator = $this->getDataGenerator()->get_plugin_generator('mod_lesson');
+        $page3 = $lessongenerator->create_content($this->lesson);
+
+        $p2answers = $DB->get_records('lesson_answers', array('lessonid' => $this->lesson->id, 'pageid' => $this->page2->id), 'id');
+
+        // Add files everywhere.
+        $fs = get_file_storage();
+
+        $filerecord = array(
+            'contextid' => $this->context->id,
+            'component' => 'mod_lesson',
+            'filearea'  => 'page_contents',
+            'itemid'    => $this->page1->id,
+            'filepath'  => '/',
+            'filename'  => 'file.txt',
+            'sortorder' => 1
+        );
+        $fs->create_file_from_string($filerecord, 'Test resource file');
+
+        $filerecord['itemid'] = $page3->id;
+        $fs->create_file_from_string($filerecord, 'Test resource file');
+
+        foreach ($p2answers as $answer) {
+            $filerecord['filearea'] = 'page_answers';
+            $filerecord['itemid'] = $answer->id;
+            $fs->create_file_from_string($filerecord, 'Test resource file');
+
+            $filerecord['filearea'] = 'page_responses';
+            $fs->create_file_from_string($filerecord, 'Test resource file');
+        }
+
+        $result = mod_lesson_external::get_pages($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(3, $result['pages']);
+
+        // Check pages and values.
+        foreach ($result['pages'] as $page) {
+            if ($page['id'] == $this->page2->id) {
+                $this->assertEquals(2 * count($page['answerids']), $page['filescount']);
+                $this->assertEquals('Lesson TF question 2', $page['title']);
+            } else {
+                // Content page, no  answers.
+                $this->assertCount(0, $page['answerids']);
+                $this->assertEquals(1, $page['filescount']);
+            }
+        }
+
+        // Now, as student without pages menu.
+        $this->setUser($this->student);
+        $DB->set_field('lesson', 'displayleft', 0, array('id' => $this->lesson->id));
+        $result = mod_lesson_external::get_pages($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(3, $result['pages']);
+
+        foreach ($result['pages'] as $page) {
+            $this->assertArrayNotHasKey('title', $page);
+        }
+    }
 }
