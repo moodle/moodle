@@ -10,14 +10,17 @@ information provided here is intended especially for developers.
 * $mform->init_javascript_enhancement() is deprecated and no longer does anything. Existing uses of smartselect enhancement
   should be switched to the searchableselector form element or other solutions.
 * Return value of the validate_email() is now proper boolean as documented. Previously the function could return 1, 0 or false.
-* M.util.focus_login_form and M.util.focus_login_error no longer do anything. Please use jquery instead. See
-  lib/templates/login.mustache for an example.
-* Some outdated global JS functions have been removed and should be replaced with calls to jquery or alternative approaches:
-    checkall, checknone, select_all_in_element_with_id, select_all_in, deselect_all_in, confirm_if, findParentNode,
-    filterByParent, stripHTML
 * The mcore YUI rollup which included various YUI modules such as moodle-core-notification is no longer included on every
   page. Missing YUI depdencies may be exposed by this change (e.g. missing a requirement on moodle-core-notification when
   using M.core.dialogue).
+* Various legacy javascript functions have been removed:
+    * M.util.focus_login_form and M.util.focus_login_error no longer do anything. Please use jquery instead. See
+      lib/templates/login.mustache for an example.
+    * Some outdated global JS functions have been removed and should be replaced with calls to jquery
+      or alternative approaches:
+        checkall, checknone, select_all_in_element_with_id, select_all_in, deselect_all_in, confirm_if, findParentNode,
+        filterByParent, stripHTML
+    * M.util.init_toggle_class_on_click has been removed.
 
 === 3.2 ===
 
