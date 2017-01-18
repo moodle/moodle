@@ -731,9 +731,9 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
 
         // Check pages and values.
         foreach ($result['pages'] as $page) {
-            if ($page['id'] == $this->page2->id) {
+            if ($page['page']['id'] == $this->page2->id) {
                 $this->assertEquals(2 * count($page['answerids']), $page['filescount']);
-                $this->assertEquals('Lesson TF question 2', $page['title']);
+                $this->assertEquals('Lesson TF question 2', $page['page']['title']);
             } else {
                 // Content page, no  answers.
                 $this->assertCount(0, $page['answerids']);
@@ -750,7 +750,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(3, $result['pages']);
 
         foreach ($result['pages'] as $page) {
-            $this->assertArrayNotHasKey('title', $page);
+            $this->assertArrayNotHasKey('title', $page['page']);
         }
     }
 
@@ -900,5 +900,78 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->student);
         $this->setExpectedException('moodle_exception');
         mod_lesson_external::launch_attempt($this->lesson->id, '', 1, true);
+    }
+
+    /*
+     * Test get_page_data
+     */
+    public function test_get_page_data() {
+        global $DB;
+
+        // Test a content page first (page1).
+        $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page1->id, '', false, true);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(0, $result['answers']);  // No answers, auto-generated content page.
+        $this->assertEmpty($result['ongoingscore']);
+        $this->assertEmpty($result['progress']);
+        $this->assertEquals($this->page1->id, $result['newpageid']);    // No answers, so is pointing to the itself.
+        $this->assertEquals($this->page1->id, $result['page']['id']);
+        $this->assertEquals(0, $result['page']['nextpageid']);  // Is the last page.
+        $this->assertEquals('Content', $result['page']['typestring']);
+        $this->assertEquals($this->page2->id, $result['page']['prevpageid']);    // Previous page.
+        // Check contents.
+        $this->assertTrue(strpos($result['pagecontent'], $this->page1->title) !== false);
+        $this->assertTrue(strpos($result['pagecontent'], $this->page1->contents) !== false);
+        // Check menu availability.
+        $this->assertFalse($result['displaymenu']);
+
+        // Check now a page with answers (true / false) and with menu available.
+        $DB->set_field('lesson', 'displayleft', 1, array('id' => $this->lesson->id));
+        $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page2->id, '', false, true);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['answers']);  // One for true, one for false.
+        // Check menu availability.
+        $this->assertTrue($result['displaymenu']);
+
+        // Check contents.
+        $this->assertTrue(strpos($result['pagecontent'], $this->page2->contents) !== false);
+
+        $this->assertEquals(0, $result['page']['prevpageid']);    // Previous page.
+        $this->assertEquals($this->page1->id, $result['page']['nextpageid']);    // Next page.
+    }
+
+    /**
+     * Test get_page_data as student
+     */
+    public function test_get_page_data_student() {
+        // Now check using a normal student account.
+        $this->setUser($this->student);
+        // First we need to launch the lesson so the timer is on.
+        mod_lesson_external::launch_attempt($this->lesson->id);
+        $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page2->id, '', false, true);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_page_data_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['answers']);  // One for true, one for false.
+        // Check contents.
+        $this->assertTrue(strpos($result['pagecontent'], $this->page2->contents) !== false);
+        // Check we don't see answer information.
+        $this->assertArrayNotHasKey('jumpto', $result['answers'][0]);
+        $this->assertArrayNotHasKey('score', $result['answers'][0]);
+        $this->assertArrayNotHasKey('jumpto', $result['answers'][1]);
+        $this->assertArrayNotHasKey('score', $result['answers'][1]);
+    }
+
+    /**
+     * Test get_page_data without launching attempt.
+     */
+    public function test_get_page_data_without_launch() {
+        // Now check using a normal student account.
+        $this->setUser($this->student);
+
+        $this->setExpectedException('moodle_exception');
+        $result = mod_lesson_external::get_page_data($this->lesson->id, $this->page2->id, '', false, true);
     }
 }
