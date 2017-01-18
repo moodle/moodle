@@ -25,7 +25,6 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot.'/mod/lesson/locallib.php');
-require_once($CFG->dirroot.'/mod/lesson/view_form.php');
 require_once($CFG->libdir . '/grade/constants.php');
 
 $id      = required_param('id', PARAM_INT);             // Course Module ID
@@ -181,24 +180,14 @@ $lessonpageid = null;
 $timer = null;
 
 if ($pageid != LESSON_EOL) {
-    /// This is the code updates the lessontime for a timed test
-    $startlastseen = optional_param('startlastseen', '', PARAM_ALPHA);
-
-    $page = $lesson->load_page($pageid);
-    // Check if the page is of a special type and if so take any nessecary action
-    $newpageid = $page->callback_on_view($canmanage);
-    if (is_numeric($newpageid)) {
-        $page = $lesson->load_page($newpageid);
-    }
 
     $lesson->set_module_viewed();
 
     $timer = null;
+    // This is the code updates the lessontime for a timed test.
+    $startlastseen = optional_param('startlastseen', '', PARAM_ALPHA);
 
-    // This is where several messages (usually warnings) are displayed
-    // all of this is displayed above the actual page
-
-    // check to see if the user can see the left menu
+    // Check to see if the user can see the left menu.
     if (!$canmanage) {
         $lesson->displayleft = lesson_displayleftif($lesson);
 
@@ -213,8 +202,11 @@ if ($pageid != LESSON_EOL) {
         }
     }
 
-    // Add different informative messages to the given page.
-    $lesson->add_messages_on_page_view($page, $reviewmode);
+    list($page, $lessoncontent) = $lesson->prepare_page_and_contents($pageid, $lessonoutput, $reviewmode);
+
+    if (($edit != -1) && $PAGE->user_allowed_editing()) {
+        $USER->editing = $edit;
+    }
 
     $PAGE->set_subpage($page->id);
     $currenttab = 'view';
@@ -222,49 +214,13 @@ if ($pageid != LESSON_EOL) {
     $lessonpageid = $page->id;
     $extrapagetitle = $page->title;
 
-    if (($edit != -1) && $PAGE->user_allowed_editing()) {
-        $USER->editing = $edit;
-    }
-
-    if (is_array($page->answers) && count($page->answers)>0) {
-        // this is for modattempts option.  Find the users previous answer to this page,
-        //   and then display it below in answer processing
-        if (isset($USER->modattempts[$lesson->id])) {
-            $retries = $lesson->count_user_retries($USER->id);
-            if (!$attempts = $lesson->get_attempts($retries-1, false, $page->id)) {
-                print_error('cannotfindpreattempt', 'lesson');
-            }
-            $attempt = end($attempts);
-            $USER->modattempts[$lesson->id] = $attempt;
-        } else {
-            $attempt = false;
-        }
-        $lessoncontent = $lessonoutput->display_page($lesson, $page, $attempt);
-    } else {
-        $data = new stdClass;
-        $data->id = $PAGE->cm->id;
-        $data->pageid = $page->id;
-        $data->newpageid = $lesson->get_next_page($page->nextpageid);
-
-        $customdata = array(
-            'title'     => $page->title,
-            'contents'  => $page->get_contents()
-        );
-        $mform = new lesson_page_without_answers($CFG->wwwroot.'/mod/lesson/continue.php', $customdata);
-        $mform->set_data($data);
-        ob_start();
-        $mform->display();
-        $lessoncontent = ob_get_contents();
-        ob_end_clean();
-    }
-
     lesson_add_fake_blocks($PAGE, $cm, $lesson, $timer);
     echo $lessonoutput->header($lesson, $cm, $currenttab, $extraeditbuttons, $lessonpageid, $extrapagetitle);
     if ($attemptflag) {
         // We are using level 3 header because attempt heading is a sub-heading of lesson title (MDL-30911).
         echo $OUTPUT->heading(get_string('attempt', 'lesson', $retries), 3);
     }
-    /// This calculates and prints the ongoing score
+    // This calculates and prints the ongoing score.
     if ($lesson->ongoing && !empty($pageid) && !$reviewmode) {
         echo $lessonoutput->ongoing_score($lesson);
     }
@@ -278,8 +234,8 @@ if ($pageid != LESSON_EOL) {
 } else {
 
     $lessoncontent = '';
-    // end of lesson reached work out grade
-    // Used to check to see if the student ran out of time
+    // End of lesson reached work out grade.
+    // Used to check to see if the student ran out of time.
     $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
 
     $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));

@@ -2525,6 +2525,156 @@ class lesson extends lesson_base {
             }
         }
     }
+
+    /**
+     * Get the ongoing score message for the user (depending on the user permission and lesson settings).
+     *
+     * @return str the ongoing score message
+     * @since  Moodle 3.3
+     */
+    public function get_ongoing_score_message() {
+        global $USER, $DB;
+
+        $context = $this->get_context();
+
+        if (has_capability('mod/lesson:manage', $context)) {
+            return get_string('teacherongoingwarning', 'lesson');
+        } else {
+            $ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+            if (isset($USER->modattempts[$this->properties->id])) {
+                $ntries--;
+            }
+            $gradeinfo = lesson_grade($this, $ntries);
+            $a = new stdClass;
+            if ($this->properties->custom) {
+                $a->score = $gradeinfo->earned;
+                $a->currenthigh = $gradeinfo->total;
+                return get_string("ongoingcustom", "lesson", $a);
+            } else {
+                $a->correct = $gradeinfo->earned;
+                $a->viewed = $gradeinfo->attempts;
+                return get_string("ongoingnormal", "lesson", $a);
+            }
+        }
+    }
+
+    /**
+     * Calculate the progress of the current user in the lesson.
+     *
+     * @return int the progress (scale 0-100)
+     * @since  Moodle 3.3
+     */
+    public function calculate_progress() {
+        global $USER, $DB;
+
+        // Check if the user is reviewing the attempt.
+        if (isset($USER->modattempts[$this->properties->id])) {
+            return 100;
+        }
+
+        // All of the lesson pages.
+        $pages = $this->load_all_pages();
+        foreach ($pages as $page) {
+            if ($page->prevpageid == 0) {
+                $pageid = $page->id;  // Find the first page id.
+                break;
+            }
+        }
+
+        // Current attempt number.
+        if (!$ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id))) {
+            $ntries = 0;  // May not be necessary.
+        }
+
+        $viewedpageids = array();
+        if ($attempts = $this->get_attempts($ntries, false)) {
+            foreach ($attempts as $attempt) {
+                $viewedpageids[$attempt->pageid] = $attempt;
+            }
+        }
+
+        $viewedbranches = array();
+        // Collect all of the branch tables viewed.
+        if ($branches = $this->get_content_pages_viewed($ntries, $USER->id, 'timeseen ASC', 'id, pageid')) {
+            foreach ($branches as $branch) {
+                $viewedbranches[$branch->pageid] = $branch;
+            }
+            $viewedpageids = array_merge($viewedpageids, $viewedbranches);
+        }
+
+        // Filter out the following pages:
+        // - End of Cluster
+        // - End of Branch
+        // - Pages found inside of Clusters
+        // Do not filter out Cluster Page(s) because we count a cluster as one.
+        // By keeping the cluster page, we get our 1.
+        $validpages = array();
+        while ($pageid != 0) {
+            $pageid = $pages[$pageid]->valid_page_and_view($validpages, $viewedpageids);
+        }
+
+        // Progress calculation as a percent.
+        return round(count($viewedpageids) / count($validpages), 2) * 100;
+    }
+
+    /**
+     * Calculate the correct page and prepare contents for a given page id (could be a page jump id).
+     *
+     * @param  int $pageid the given page id
+     * @param  mod_lesson_renderer $lessonoutput the lesson output rendered
+     * @param  bool $reviewmode whether we are in review mode or not
+     * @return array the page object and contents
+     * @throws moodle_exception
+     * @since  Moodle 3.3
+     */
+    public function prepare_page_and_contents($pageid, $lessonoutput, $reviewmode) {
+        global $USER, $CFG;
+
+        $page = $this->load_page($pageid);
+        // Check if the page is of a special type and if so take any nessecary action.
+        $newpageid = $page->callback_on_view($this->can_manage());
+        if (is_numeric($newpageid)) {
+            $page = $this->load_page($newpageid);
+        }
+
+        // Add different informative messages to the given page.
+        $this->add_messages_on_page_view($page, $reviewmode);
+
+        if (is_array($page->answers) && count($page->answers) > 0) {
+            // This is for modattempts option.  Find the users previous answer to this page,
+            // and then display it below in answer processing.
+            if (isset($USER->modattempts[$this->properties->id])) {
+                $retries = $this->count_user_retries($USER->id);
+                if (!$attempts = $this->get_attempts($retries - 1, false, $page->id)) {
+                    throw new moodle_exception('cannotfindpreattempt', 'lesson');
+                }
+                $attempt = end($attempts);
+                $USER->modattempts[$this->properties->id] = $attempt;
+            } else {
+                $attempt = false;
+            }
+            $lessoncontent = $lessonoutput->display_page($this, $page, $attempt);
+        } else {
+            require_once($CFG->dirroot . '/mod/lesson/view_form.php');
+            $data = new stdClass;
+            $data->id = $this->get_cm()->id;
+            $data->pageid = $page->id;
+            $data->newpageid = $this->get_next_page($page->nextpageid);
+
+            $customdata = array(
+                'title'     => $page->title,
+                'contents'  => $page->get_contents()
+            );
+            $mform = new lesson_page_without_answers($CFG->wwwroot.'/mod/lesson/continue.php', $customdata);
+            $mform->set_data($data);
+            ob_start();
+            $mform->display();
+            $lessoncontent = ob_get_contents();
+            ob_end_clean();
+        }
+
+        return array($page, $lessoncontent);
+    }
 }
 
 
