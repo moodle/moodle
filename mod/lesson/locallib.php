@@ -2790,6 +2790,198 @@ class lesson extends lesson_base {
             $this->add_message(get_string('attemptsremaining', 'lesson', $result->attemptsremaining));
         }
     }
+
+    /**
+     * Process and return all the information for the end of lesson page.
+     *
+     * @param string $outoftime used to check to see if the student ran out of time
+     * @return stdclass an object with all the page data ready for rendering
+     * @since  Moodle 3.3
+     */
+    public function process_eol_page($outoftime) {
+        global $DB, $USER;
+
+        $course = $this->get_courserecord();
+        $cm = $this->get_cm();
+        $canmanage = $this->can_manage();
+
+        // Init all the possible fields and values.
+        $data = (object) array(
+            'gradelesson' => true,
+            'notenoughtimespent' => false,
+            'numberofpagesviewed' => false,
+            'youshouldview' => false,
+            'numberofcorrectanswers' => false,
+            'displayscorewithessays' => false,
+            'displayscorewithoutessays' => false,
+            'yourcurrentgradeisoutof' => false,
+            'eolstudentoutoftimenoanswers' => false,
+            'welldone' => false,
+            'progressbar' => false,
+            'displayofgrade' => false,
+            'reviewlesson' => false,
+            'modattemptsnoteacher' => false,
+            'activitylink' => false,
+        );
+
+        $ntries = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+        if (isset($USER->modattempts[$this->properties->id])) {
+            $ntries--;  // Need to look at the old attempts :).
+        }
+
+        $gradeinfo = lesson_grade($this, $ntries);
+        $data->gradeinfo = $gradeinfo;
+        if ($this->properties->custom && !$canmanage) {
+            // Before we calculate the custom score make sure they answered the minimum
+            // number of questions. We only need to do this for custom scoring as we can
+            // not get the miniumum score the user should achieve. If we are not using
+            // custom scoring (so all questions are valued as 1) then we simply check if
+            // they answered more than the minimum questions, if not, we mark it out of the
+            // number specified in the minimum questions setting - which is done in lesson_grade().
+            // Get the number of answers given.
+            if ($gradeinfo->nquestions < $this->properties->minquestions) {
+                $data->gradelesson = false;
+                $a = new stdClass;
+                $a->nquestions = $gradeinfo->nquestions;
+                $a->minquestions = $this->properties->minquestions;
+                $this->add_message(get_string('numberofpagesviewednotice', 'lesson', $a));
+            }
+        }
+
+        if (!$canmanage) {
+            if ($data->gradelesson) {
+                // Store this now before any modifications to pages viewed.
+                $progresscompleted = $this->calculate_progress();
+
+                // Update the clock / get time information for this user.
+                $this->stop_timer();
+
+                // Update completion state.
+                $completion = new completion_info($course);
+                if ($completion->is_enabled($cm) && $this->properties->completionendreached) {
+                    $completion->update_state($cm, COMPLETION_COMPLETE);
+                }
+
+                if ($this->properties->completiontimespent > 0) {
+                    $duration = $DB->get_field_sql(
+                        "SELECT SUM(lessontime - starttime)
+                                       FROM {lesson_timer}
+                                      WHERE lessonid = :lessonid
+                                        AND userid = :userid",
+                        array('userid' => $USER->id, 'lessonid' => $this->properties->id));
+                    if (!$duration) {
+                        $duration = 0;
+                    }
+
+                    // If student has not spend enough time in the lesson, display a message.
+                    if ($duration < $this->properties->completiontimespent) {
+                        $a = new stdClass;
+                        $a->timespentraw = $duration;
+                        $a->timespent = format_time($duration);
+                        $a->timerequiredraw = $this->properties->completiontimespent;
+                        $a->timerequired = format_time($this->properties->completiontimespent);
+                        $data->notenoughtimespent = $a;
+                    }
+                }
+
+                if ($gradeinfo->attempts) {
+                    if (!$this->properties->custom) {
+                        $data->numberofpagesviewed = $gradeinfo->nquestions;
+                        if ($this->properties->minquestions) {
+                            if ($gradeinfo->nquestions < $this->properties->minquestions) {
+                                $data->youshouldview = $this->properties->minquestions;
+                            }
+                        }
+                        $data->numberofcorrectanswers = $gradeinfo->earned;
+                    }
+                    $a = new stdClass;
+                    $a->score = $gradeinfo->earned;
+                    $a->grade = $gradeinfo->total;
+                    if ($gradeinfo->nmanual) {
+                        $a->tempmaxgrade = $gradeinfo->total - $gradeinfo->manualpoints;
+                        $a->essayquestions = $gradeinfo->nmanual;
+                        $data->displayscorewithessays = $a;
+                    } else {
+                        $data->displayscorewithoutessays = $a;
+                    }
+                    if ($this->properties->grade != GRADE_TYPE_NONE) {
+                        $a = new stdClass;
+                        $a->grade = number_format($gradeinfo->grade * $this->properties->grade / 100, 1);
+                        $a->total = $this->properties->grade;
+                        $data->yourcurrentgradeisoutof = $a;
+                    }
+
+                    $grade = new stdClass();
+                    $grade->lessonid = $this->properties->id;
+                    $grade->userid = $USER->id;
+                    $grade->grade = $gradeinfo->grade;
+                    $grade->completed = time();
+                    if (isset($USER->modattempts[$this->properties->id])) { // If reviewing, make sure update old grade record.
+                        if (!$grades = $DB->get_records("lesson_grades",
+                            array("lessonid" => $this->properties->id, "userid" => $USER->id), "completed DESC", '*', 0, 1)) {
+                            throw new moodle_exception('cannotfindgrade', 'lesson');
+                        }
+                        $oldgrade = array_shift($grades);
+                        $grade->id = $oldgrade->id;
+                        $DB->update_record("lesson_grades", $grade);
+                    } else {
+                        $newgradeid = $DB->insert_record("lesson_grades", $grade);
+                    }
+                } else {
+                    if ($this->properties->timelimit) {
+                        if ($outoftime == 'normal') {
+                            $grade = new stdClass();
+                            $grade->lessonid = $this->properties->id;
+                            $grade->userid = $USER->id;
+                            $grade->grade = 0;
+                            $grade->completed = time();
+                            $newgradeid = $DB->insert_record("lesson_grades", $grade);
+                            $data->eolstudentoutoftimenoanswers = true;
+                        }
+                    } else {
+                        $data->welldone = true;
+                    }
+                }
+
+                // Update central gradebook.
+                lesson_update_grades($this, $USER->id);
+                $data->progresscompleted = $progresscompleted;
+            }
+        } else {
+            // Display for teacher.
+            if ($this->properties->grade != GRADE_TYPE_NONE) {
+                $data->displayofgrade = true;
+            }
+        }
+
+        if ($this->properties->modattempts && !$canmanage) {
+            // Make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time
+            // look at the attempt records to find the first QUESTION page that the user answered, then use that page id
+            // to pass to view again.  This is slick cause it wont call the empty($pageid) code
+            // $ntries is decremented above.
+            if (!$attempts = $this->get_attempts($ntries)) {
+                $attempts = array();
+                $url = new moodle_url('/mod/lesson/view.php', array('id' => $cm->id));
+            } else {
+                $firstattempt = current($attempts);
+                $pageid = $firstattempt->pageid;
+                // If the student wishes to review, need to know the last question page that the student answered.
+                // This will help to make sure that the student can leave the lesson via pushing the continue button.
+                $lastattempt = end($attempts);
+                $USER->modattempts[$this->properties->id] = $lastattempt->pageid;
+
+                $url = new moodle_url('/mod/lesson/view.php', array('id' => $cm->id, 'pageid' => $pageid));
+            }
+            $data->reviewlesson = $url;
+        } else if ($this->properties->modattempts && $canmanage) {
+            $data->modattemptsnoteacher = true;
+        }
+
+        if ($this->properties->activitylink) {
+            $data->activitylink = $this->link_for_activitylink();
+        }
+        return $data;
+    }
 }
 
 
