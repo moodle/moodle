@@ -52,6 +52,8 @@ class document_services {
     const STAMPS_FILEAREA = 'stamps';
     /** Filename for combined pdf */
     const COMBINED_PDF_FILENAME = 'combined.pdf';
+    /** Hash of blank pdf */
+    const BLANK_PDF_HASH = '4c803c92c71f21b423d13de570c8a09e0a31c718';
 
     /** Base64 encoded blank pdf. This is the most reliable/fastest way to generate a blank pdf. */
     const BLANK_PDF_BASE64 = <<<EOD
@@ -243,9 +245,11 @@ EOD;
         $filename = self::COMBINED_PDF_FILENAME;
         $fs = \get_file_storage();
 
-        $combinedpdf = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename);
-        if (!$combinedpdf ||
-                ($submission && ($combinedpdf->get_timemodified() < $submission->timemodified))) {
+        if (!$combinedpdf = $fs->get_file($contextid, $component, $filearea, $itemid, $filepath, $filename)) {
+            return self::generate_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
+        }
+        if ($submission && ($combinedpdf->get_timemodified() < $submission->timemodified ||
+                $combinedpdf->get_contenthash() == self::BLANK_PDF_HASH)) {
             return self::generate_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
         }
         return $combinedpdf;
@@ -478,6 +482,7 @@ EOD;
      * @return array(stored_file)
      */
     public static function get_page_images_for_attempt($assignment, $userid, $attemptnumber, $readonly = false) {
+        global $DB;
 
         $assignment = self::get_assignment_from_param($assignment);
 
@@ -516,7 +521,22 @@ EOD;
         $pages = array();
         if (!empty($files)) {
             $first = reset($files);
-            if (!$readonly && $first->get_timemodified() < $submission->timemodified) {
+            $pagemodified = $first->get_timemodified();
+            // Check that we don't just have a single blank page. The hash of a blank page image can vary with
+            // the version of ghostscript used, so we need to examine the combined pdf it was generated from.
+            $blankpage = false;
+            if (!$readonly && count($files) == 1) {
+                $pdfarea = self::COMBINED_PDF_FILEAREA;
+                $pdfname = self::COMBINED_PDF_FILENAME;
+                if ($pdf = $fs->get_file($contextid, $component, $pdfarea, $itemid, $filepath, $pdfname)) {
+                    // The combined pdf may have a different hash if it has been regenerated since the page
+                    // image was created. However if this is the case the page image will be stale anyway.
+                    if ($pdf->get_contenthash() == self::BLANK_PDF_HASH || $pagemodified < $pdf->get_timemodified()) {
+                        $blankpage = true;
+                    }
+                }
+            }
+            if (!$readonly && ($pagemodified < $submission->timemodified || $blankpage)) {
                 // Image files are stale, we need to regenerate them, except in readonly mode.
                 // We also need to remove the draft annotations and comments associated with this attempt.
                 $fs->delete_area_files($contextid, $component, $filearea, $itemid);
