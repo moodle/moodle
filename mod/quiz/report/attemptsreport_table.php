@@ -569,15 +569,27 @@ abstract class quiz_attempts_report_table extends table_sql {
     }
 
     public function wrap_html_finish() {
+        global $PAGE;
         if ($this->is_downloading() || !$this->includecheckboxes) {
             return;
         }
 
         echo '<div id="commands">';
-        echo '<a href="javascript:select_all_in(\'DIV\', null, \'tablecontainer\');">' .
+        echo '<a id="checkattempts" href="#">' .
                 get_string('selectall', 'quiz') . '</a> / ';
-        echo '<a href="javascript:deselect_all_in(\'DIV\', null, \'tablecontainer\');">' .
+        echo '<a id="uncheckattempts" href="#">' .
                 get_string('selectnone', 'quiz') . '</a> ';
+        $PAGE->requires->js_amd_inline("
+        require(['jquery'], function($) {
+            $('#checkattempts').click(function(e) {
+                $('#attemptsform').find('input:checkbox').prop('checked', true);
+                e.preventDefault();
+            });
+            $('#uncheckattempts').click(function(e) {
+                $('#attemptsform').find('input:checkbox').prop('checked', false);
+                e.preventDefault();
+            });
+        });");
         echo '&nbsp;&nbsp;';
         $this->submit_buttons();
         echo '</div>';
