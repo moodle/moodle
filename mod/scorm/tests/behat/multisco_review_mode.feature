@@ -45,6 +45,8 @@ Feature: Scorm multi-sco review mode.
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "Basic Multi-sco SCORM package"
+    And I am on homepage
+    And I follow "Course 1"
     And I follow "Basic Multi-sco SCORM package"
     And I should see "Normal"
     And I press "Enter"
@@ -165,6 +167,8 @@ Feature: Scorm multi-sco review mode.
     And I follow "Exit activity"
     And I wait until the page is ready
     And I should see "ADV Multi-sco SCORM package"
+    And I am on homepage
+    And I follow "Course 1"
     And I follow "ADV Multi-sco SCORM package"
     And I should see "Normal"
     And I press "Enter"
