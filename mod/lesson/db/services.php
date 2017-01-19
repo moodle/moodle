@@ -124,4 +124,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_finish_attempt' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'finish_attempt',
+        'description'   => 'Finishes the current attempt.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
