@@ -22,7 +22,7 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery'], function($) {
+define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
 
     var date = new Date(),
         currentTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000),
@@ -33,6 +33,7 @@ define(['jquery'], function($) {
         twoYearsTime = currentTime + (60 * 60 * 24 * 365 * 2),
         dataCache = [
         {
+            id: 1,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -52,6 +53,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 2,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -71,6 +73,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 3,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -90,6 +93,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 4,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -109,6 +113,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 5,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -128,6 +133,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 6,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -147,6 +153,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 7,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -166,6 +173,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 8,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -185,6 +193,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 9,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -204,6 +213,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 10,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -223,6 +233,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 11,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -242,6 +253,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 12,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -261,6 +273,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 13,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -280,6 +293,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 14,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -299,6 +313,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 15,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -318,6 +333,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 16,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -337,6 +353,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 17,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -356,6 +373,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 18,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -375,6 +393,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 19,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -394,6 +413,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 20,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -413,6 +433,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 21,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -432,6 +453,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 22,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -451,6 +473,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 23,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -470,6 +493,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 24,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -489,6 +513,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 25,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -508,6 +533,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 26,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -527,6 +553,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 27,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -546,6 +573,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 28,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -565,6 +593,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 29,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -584,6 +613,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 30,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -603,6 +633,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 31,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -622,6 +653,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 32,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -641,6 +673,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 33,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -660,6 +693,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 34,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -678,6 +712,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 35,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -697,6 +732,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 36,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -716,6 +752,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 37,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -735,6 +772,7 @@ define(['jquery'], function($) {
             },
         },
         {
+            id: 38,
             actionname: 'Submit assignment',
             actionurl: 'https://www.google.com',
             enddate: 'Nov 4th, 10am',
@@ -754,6 +792,8 @@ define(['jquery'], function($) {
             },
         },
     ];
+
+    var DEFAULT_LIMIT = 20;
 
     var queryFromTimeByCourse = function(courseId, startTime, limit, offset) {
         var deferred = $.Deferred();
@@ -782,7 +822,9 @@ define(['jquery'], function($) {
             eventsByCourse[value.courseid].calendarEvents.push(value);
         });
 
-        return eventsByCourse[courseId].calendarEvents.slice(offset, offset + limit);
+        return {
+            events: eventsByCourse[courseId].calendarEvents.slice(offset, offset + limit),
+        };
     };
 
     /**
@@ -790,19 +832,33 @@ define(['jquery'], function($) {
      * time.
      *
      * @method queryFromTime
-     * @param {int}         startTime   Only get events after this time
-     * @param {int}         limit       Limit the number of results returned
-     * @param {int}         offset      Offset the result set by the given amount
+     * @param {int}         startTime    Only get events after this time
+     * @param {int}         limit        Limit the number of results returned
+     * @param {int}         afterEventId Offset the result set from the given id
      * @return {promise}    Resolved with an array of the calendar events
      */
-    var queryFromTime = function(startTime, limit, offset) {
-        var deferred = $.Deferred();
+    var queryFromTime = function(startTime, limit, afterEventId) {
+        limit = (typeof limit === 'undefined') ? DEFAULT_LIMIT : limit;
 
-        setTimeout(function() {
-            deferred.resolve(dataCache.slice(offset, offset + limit));
-        }, 1000);
+        var args = {
+            timesortfrom: startTime,
+            limitnum: limit,
+        };
 
-        return deferred.promise();
+        if (typeof afterEventId !== 'undefined') {
+            args.aftereventid = afterEventId;
+        }
+
+        var request = {
+            methodname: 'core_calendar_get_action_events_by_timesort',
+            args: args
+        };
+
+        var promise = Ajax.call([request])[0];
+
+        promise.fail(Notification.exception);
+
+        return promise;
     };
 
     return {

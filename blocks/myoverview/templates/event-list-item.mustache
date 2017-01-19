@@ -21,13 +21,17 @@
 
     Example context (json):
     {
-        "actionname": "Submit assignment",
-        "actionurl": "https://www.google.com",
         "enddate": "Nov 4th, 10am",
-        "contextname": "Assignment due 1",
-        "contexturl": "https://www.google.com",
-        "coursename": "Course 1",
-        "itemcount": 1,
+        "name": "Assignment due 1",
+        "url": "https://www.google.com",
+        "course": {
+            "fullname": "Course 1"
+        },
+        "action": {
+            "name": "Submit assignment",
+            "url": "https://www.google.com",
+            "itemcount": 1
+        },
         "icon": {
             "key": "icon",
             "component": "mod_assign",
@@ -38,12 +42,12 @@
 <li class="list-group-item" data-region="event-list-item">
     <div class="container-fluid">
         <div class="row">
-            {{#itemcount}}
+            {{#action.itemcount}}
                 <div class="pull-xs-right hidden-sm-down m-l-1">
                     <span class="tag tag-pill tag-default">{{.}}</span>
                 </div>
-            {{/itemcount}}
-            <div class="d-inline-block pull-xs-right hidden-sm-down m-l-1"><a href="{{{actionurl}}}">{{actionname}}</a></div>
+            {{/action.itemcount}}
+            <div class="d-inline-block pull-xs-right hidden-sm-down m-l-1"><a href="{{{action.url}}}">{{action.name}}</a></div>
             <div class="d-inline-block pull-xs-right hidden-sm-down">{{enddate}}</div>
             <div class="d-inline-block">
                 {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}
@@ -51,10 +55,10 @@
             <div class="d-inline-block m-l-1">
                 <div class="container">
                     <div class="row">
-                        <a href="{{{contexturl}}}">{{contextname}}</a>
+                        <a href="{{{url}}}">{{name}}</a>
                     </div>
                     <div class="row text-muted">
-                        {{coursename}}
+                        {{course.fullname}}
                     </div>
                 </div>
             </div>

@@ -139,7 +139,7 @@ define(['jquery', 'core/notification', 'core/templates',
      * @return {int}
      */
     var timeUntilEvent = function(timestamp, event) {
-        var orderTime = event.orderTime || 0;
+        var orderTime = event.timesort || 0;
         return orderTime - timestamp;
     };
 
@@ -229,8 +229,8 @@ define(['jquery', 'core/notification', 'core/templates',
     var load = function(root) {
         root = $(root);
         var limit = +root.attr('data-limit'),
-            offset = +root.attr('data-offset'),
             courseId = +root.attr('data-course-id'),
+            lastId = root.attr('data-last-id') ? root.attr('data-last-id') : undefined,
             date = new Date(),
             todayTime = Math.floor(date.setHours(0, 0, 0, 0) / 1000);
 
@@ -243,21 +243,23 @@ define(['jquery', 'core/notification', 'core/templates',
 
         var promise = null;
         if (courseId) {
-            promise = CalendarEventsRepository.queryFromTimeByCourse(courseId, todayTime, limit, offset);
+            promise = CalendarEventsRepository.queryFromTimeByCourse(courseId, todayTime, limit, lastId);
         } else {
-            promise = CalendarEventsRepository.queryFromTime(todayTime, limit, offset);
+            promise = CalendarEventsRepository.queryFromTime(todayTime, limit, lastId);
         }
 
         // Request data from the server.
-        return promise.then(function(calendarEvents) {
+        return promise.then(function(result) {
+            return result.events;
+        }).then(function(calendarEvents) {
             if (!calendarEvents.length || (calendarEvents.length < limit)) {
                 // We have no more events so mark the list as done.
                 setLoadedAll(root);
             }
 
             if (calendarEvents.length) {
-                // Increment the offset by the number of events returned.
-                root.attr('data-offset', offset + calendarEvents.length);
+                // Remember the last id we've seen.
+                root.attr('data-last-id', calendarEvents[calendarEvents.length - 1].id);
 
                 // Render the events.
                 return render(root, calendarEvents).then(function(renderCount) {
