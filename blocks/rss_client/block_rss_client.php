@@ -173,6 +173,11 @@
         global $CFG;
         require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
+        if ($feedrecord->skipuntil) {
+            // Last attempt to gather this feed via cron failed - do not try to fetch it now.
+            return null;
+        }
+
         $simplepiefeed = new moodle_simplepie($feedrecord->url);
 
         if(isset($CFG->block_rss_client_timeout)){
