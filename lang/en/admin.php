@@ -674,8 +674,6 @@ $string['logguests_help'] = 'This setting enables logging of actions by guest ac
 $string['loginhttps'] = 'Use HTTPS for logins';
 $string['loginpageautofocus'] = 'Autofocus login page form';
 $string['loginpageautofocus_help'] = 'Enabling this option improves usability of the login page, but automatically focusing fields may be considered an accessibility issue.';
-$string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
-$string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';
 $string['loglifetime'] = 'Keep logs for';
 $string['logo'] = 'Logo';
 $string['logo_desc'] = 'A full logo to be used as decoration by some themes (such as core themes). This image can be quite high resolution because it will be scaled down for use (and cached for performance). Logos that are wider than they are high usually give better results. Formats accepted: PNG and JPG.';
@@ -1241,3 +1239,6 @@ $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
 // Deprecated since Moodle 3.2.
 $string['mobile'] = 'Mobile';
+// Deprecated since Moodle 3.3.
+$string['loginpasswordautocomplete'] = 'Prevent password autocompletion on login form';
+$string['loginpasswordautocomplete_help'] = 'If enabled, users are not allowed to save their account password in their browser.';

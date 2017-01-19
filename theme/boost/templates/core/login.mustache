@@ -34,7 +34,6 @@
     * instructionsformat - Format of instructions,
     * loginurl - Login url,
     * rememberusername - Remeber username?,
-    * passwordautocomplete - Allow password autocomplete?,
     * signupurl - Signup url,
     * cookieshelpiconformatted - Formatted html of cookies help icon,
     * errorformatted - Formatted error,
@@ -84,7 +83,6 @@
         "instructionsformat": "1",
         "loginurl": "http://localhost/stable_master/login/index.php",
         "rememberusername": true,
-        "passwordautocomplete": false,
         "signupurl": "http://localhost/stable_master/login/signup.php",
         "cookieshelpiconformatted": "",
         "errorformatted": "",
@@ -123,7 +121,7 @@
 
         <div class="row">
             <div class="col-md-4 push-md-1">
-                <form class="m-t-1" action="{{loginurl}}" method="post" id="login" {{^passwordautocomplete}}autocomplete="off"{{/passwordautocomplete}}>
+                <form class="m-t-1" action="{{loginurl}}" method="post" id="login">
                     <input id="anchor" type="hidden" name="anchor" value="">
                     <script>document.getElementById('anchor').value = location.hash;</script>
 
@@ -142,8 +140,7 @@
                     <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
                     <input type="password" name="password" id="password" value=""
                         class="form-control"
-                        placeholder={{#quote}}{{#str}}password{{/str}}{{/quote}}
-                        {{^passwordautocomplete}}autocomplete="off"{{/passwordautocomplete}}>
+                        placeholder={{#quote}}{{#str}}password{{/str}}{{/quote}}>
 
                     {{#rememberusername}}
                         <div class="rememberpass m-t-1">

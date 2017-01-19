@@ -2465,5 +2465,10 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016122800.00);
     }
 
+    if ($oldversion < 2017011900.00) {
+        unset_config('loginpasswordautocomplete');
+        upgrade_main_savepoint(true, 2017011900.00);
+    }
+
     return true;
 }

@@ -64,8 +64,6 @@ class login implements renderable, templatable {
     public $instructions;
     /** @var moodle_url The form action login URL. */
     public $loginurl;
-    /** @var bool Whether the password can be auto completed. */
-    public $passwordautocomplete;
     /** @var bool Whether the username should be remembered. */
     public $rememberusername;
     /** @var moodle_url The sign-up URL. */
@@ -90,7 +88,6 @@ class login implements renderable, templatable {
         $this->cookieshelpicon = new help_icon('cookiesenabled', 'core');
 
         $this->autofocusform = !empty($CFG->loginpageautofocus);
-        $this->passwordautocomplete = !empty($CFG->loginpasswordautocomplete);
         $this->rememberusername = isset($CFG->rememberusername) and $CFG->rememberusername == 2;
 
         $this->forgotpasswordurl = new moodle_url($CFG->httpswwwroot . '/login/forgot_password.php');
@@ -149,7 +146,6 @@ class login implements renderable, templatable {
             context_system::instance()->id);
         $data->loginurl = $this->loginurl->out(false);
         $data->rememberusername = $this->rememberusername;
-        $data->passwordautocomplete = $this->passwordautocomplete;
         $data->signupurl = $this->signupurl->out(false);
         $data->username = $this->username;
 
