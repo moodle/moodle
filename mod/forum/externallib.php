@@ -32,7 +32,7 @@ class mod_forum_external extends external_api {
     /**
      * Describes the parameters for get_forum.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.5
      */
     public static function get_forums_by_courses_parameters() {
@@ -97,6 +97,7 @@ class mod_forum_external extends external_api {
                 $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
                 $forum->cmid = $forum->coursemodule;
                 $forum->cancreatediscussions = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+                $forum->istracked = forum_tp_is_tracked($forum);
 
                 // Add the forum to the array to return.
                 $arrforums[$forum->id] = $forum;
@@ -144,6 +145,7 @@ class mod_forum_external extends external_api {
                     'numdiscussions' => new external_value(PARAM_INT, 'Number of discussions in the forum', VALUE_OPTIONAL),
                     'cancreatediscussions' => new external_value(PARAM_BOOL, 'If the user can create discussions', VALUE_OPTIONAL),
                     'lockdiscussionafter' => new external_value(PARAM_INT, 'After what period a discussion is locked', VALUE_OPTIONAL),
+                    'istracked' => new external_value(PARAM_BOOL, 'If the user is tracking the forum', VALUE_OPTIONAL),
                 ), 'forum'
             )
         );
@@ -152,7 +154,7 @@ class mod_forum_external extends external_api {
     /**
      * Describes the parameters for get_forum_discussion_posts.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.7
      */
     public static function get_forum_discussion_posts_parameters() {
@@ -350,7 +352,7 @@ class mod_forum_external extends external_api {
     /**
      * Describes the parameters for get_forum_discussions_paginated.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.8
      */
     public static function get_forum_discussions_paginated_parameters() {
@@ -678,7 +680,7 @@ class mod_forum_external extends external_api {
      * @throws moodle_exception
      */
     public static function view_forum_discussion($discussionid) {
-        global $DB, $CFG;
+        global $DB, $CFG, $USER;
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
         $params = self::validate_parameters(self::view_forum_discussion_parameters(),
@@ -699,6 +701,11 @@ class mod_forum_external extends external_api {
 
         // Call the forum/lib API.
         forum_discussion_view($modcontext, $forum, $discussion);
+
+        // Mark as read if required.
+        if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forum)) {
+            forum_tp_mark_discussion_read($USER, $discussion->id);
+        }
 
         $result = array();
         $result['status'] = true;

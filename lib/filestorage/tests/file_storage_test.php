@@ -466,6 +466,17 @@ class core_files_file_storage_testcase extends advanced_testcase {
             $this->assertEquals($key, $file->get_pathnamehash());
         }
 
+        // Test the limit feature to retrieve each individual file.
+        $limited = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'filename', false,
+                0, 0, 1);
+        $mapfunc = function($f) {
+            return $f->get_filename();
+        };
+        $this->assertEquals(array('1.txt'), array_values(array_map($mapfunc, $limited)));
+        $limited = $fs->get_area_files($user->ctxid, 'user', 'private', false, 'filename', false,
+                0, 1, 50);
+        $this->assertEquals(array('2.txt', '3.txt'), array_values(array_map($mapfunc, $limited)));
+
         // Test with an itemid with no files.
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', 666, 'sortorder', false);
         // Should be none.

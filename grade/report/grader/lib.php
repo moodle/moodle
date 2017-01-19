@@ -919,6 +919,11 @@ class grade_report_grader extends grade_report {
         // user.
         if (!$this->canviewhidden) {
             $allgradeitems = grade_item::fetch_all(array('courseid' => $this->courseid));
+
+            // But hang on - don't include ones which are set to not show the grade at all.
+            $allgradeitems = array_filter($allgradeitems, function($item) {
+                return $item->gradetype != GRADE_TYPE_NONE;
+            });
         }
 
         foreach ($this->users as $userid => $user) {

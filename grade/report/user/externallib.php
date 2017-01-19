@@ -208,7 +208,7 @@ class gradereport_user_external extends external_api {
     /**
      * Describes the parameters for get_grades_table.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.9
      */
     public static function get_grades_table_parameters() {
@@ -424,7 +424,7 @@ class gradereport_user_external extends external_api {
     /**
      * Describes the parameters for get_grade_items.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.2
      */
     public static function get_grade_items_parameters() {

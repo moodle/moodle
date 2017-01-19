@@ -120,20 +120,25 @@ class feedback_item_captcha extends feedback_item_base {
         $inputname = $item->typ . '_' . $item->id;
 
         if ($form->get_mode() != mod_feedback_complete_form::MODE_COMPLETE) {
+            // Span to hold the element id. The id is used for drag and drop reordering.
             $form->add_form_element($item,
-                    ['static', $inputname, $name],
+                    ['static', $inputname, $name, html_writer::span('', '', ['id' => 'feedback_item_' . $item->id])],
                     false,
                     false);
         } else {
+            // Add recaptcha element that is used during the form validation.
             $form->add_form_element($item,
-                    ['recaptcha', $inputname, $name],
+                    ['recaptcha', $inputname . 'recaptcha', $name],
                     false,
                     false);
+            // Add hidden element with value "1" that will be saved in the values table after completion.
+            $form->add_form_element($item, ['hidden', $inputname, 1], false);
+            $form->set_element_type($inputname, PARAM_INT);
         }
 
         // Add recaptcha validation to the form.
         $form->add_validation_rule(function($values, $files) use ($item, $form) {
-            $elementname = $item->typ . '_' . $item->id;
+            $elementname = $item->typ . '_' . $item->id . 'recaptcha';
             $recaptchaelement = $form->get_form_element($elementname);
             if (empty($values['recaptcha_response_field'])) {
                 return array($elementname => get_string('required'));

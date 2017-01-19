@@ -121,13 +121,14 @@ class behat_completion extends behat_base {
     public function activity_marked_as_complete($activityname, $activitytype, $completiontype) {
         if ($completiontype == "manual") {
             $imgalttext = get_string("completion-alt-manual-y", 'core_completion', $activityname);
+            $xpathtocheck = "//input[@type='image'][contains(@alt, '$imgalttext')]";
         } else {
             $imgalttext = get_string("completion-alt-auto-y", 'core_completion', $activityname);
+            $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
         }
         $activityxpath = "//li[contains(concat(' ', @class, ' '), ' modtype_" . strtolower($activitytype) . " ')]";
         $activityxpath .= "[descendant::*[contains(text(), '" . $activityname . "')]]";
 
-        $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
         $this->execute("behat_general::should_exist_in_the",
             array($xpathtocheck, "xpath_element", $activityxpath, "xpath_element")
         );
@@ -142,13 +143,14 @@ class behat_completion extends behat_base {
     public function activity_marked_as_not_complete($activityname, $activitytype, $completiontype) {
         if ($completiontype == "manual") {
             $imgalttext = get_string("completion-alt-manual-n", 'core_completion', $activityname);
+            $xpathtocheck = "//input[@type='image'][contains(@alt, '$imgalttext')]";
         } else {
             $imgalttext = get_string("completion-alt-auto-n", 'core_completion', $activityname);
+            $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
         }
         $activityxpath = "//li[contains(concat(' ', @class, ' '), ' modtype_" . strtolower($activitytype) . " ')]";
         $activityxpath .= "[descendant::*[contains(text(), '" . $activityname . "')]]";
 
-        $xpathtocheck = "//img[contains(@alt, '$imgalttext')]";
         $this->execute("behat_general::should_exist_in_the",
             array($xpathtocheck, "xpath_element", $activityxpath, "xpath_element")
         );

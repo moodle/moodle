@@ -1,5 +1,5 @@
 @mod @mod_scorm @_file_upload @_switch_iframe
-Feature: Scorm multi-sco completion
+Feature: Scorm multi-sco review mode.
   In order to let students access a scorm package
   As a teacher
   I need to add scorm activity to a course
@@ -17,7 +17,7 @@ Feature: Scorm multi-sco completion
       | student1 | C1 | student |
 
   @javascript
-  Scenario: Test completion with a single sco completion.
+  Scenario: Test review mode with a single sco completion.
     When I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
@@ -29,12 +29,10 @@ Feature: Scorm multi-sco completion
     And I set the following fields to these values:
       | Name | Basic Multi-sco SCORM package |
       | Description | Description |
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require all scos to return completion status | 0 |
     And I set the field "Completed" to "1"
     And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
-    Then I should see "Basic Multi-sco SCORM package"
+    And I should see "Basic Multi-sco SCORM package"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
@@ -46,15 +44,16 @@ Feature: Scorm multi-sco completion
     And I switch to the main frame
     And I follow "Exit activity"
     And I wait until the page is ready
-    Then I should see "Basic Multi-sco SCORM package"
+    And I should see "Basic Multi-sco SCORM package"
     And I am on homepage
-    And I log out
-    And I log in as "teacher1"
     And I follow "Course 1"
-    Then "Student 1" user has completed "Basic Multi-sco SCORM package" activity
+    And I follow "Basic Multi-sco SCORM package"
+    And I should see "Normal"
+    And I press "Enter"
+    Then I should not see "Review mode"
 
   @javascript
-  Scenario: Test completion with all scos
+  Scenario: Test review mode with all scos completed.
     When I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
@@ -71,24 +70,7 @@ Feature: Scorm multi-sco completion
     And I set the field "Completed" to "1"
     And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
-    Then I should see "ADV Multi-sco SCORM package"
-    And I log out
-    And I log in as "student1"
-    And I follow "Course 1"
-    And I follow "ADV Multi-sco SCORM package"
-    And I should see "Normal"
-    And I press "Enter"
-    And I switch to "scorm_object" iframe
-    And I should see "Play of the game"
-    And I switch to the main frame
-    And I follow "Exit activity"
-    And I wait until the page is ready
-    Then I should see "ADV Multi-sco SCORM package"
-    And I am on homepage
-    And I log out
-    And I log in as "teacher1"
-    And I follow "Course 1"
-    Then "Student 1" user has not completed "ADV Multi-sco SCORM package" activity
+    And I should see "ADV Multi-sco SCORM package"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
@@ -185,9 +167,10 @@ Feature: Scorm multi-sco completion
     And I switch to the main frame
     And I follow "Exit activity"
     And I wait until the page is ready
-    Then I should see "ADV Multi-sco SCORM package"
+    And I should see "ADV Multi-sco SCORM package"
     And I am on homepage
-    And I log out
-    And I log in as "teacher1"
     And I follow "Course 1"
-    And "Student 1" user has completed "ADV Multi-sco SCORM package" activity
+    And I follow "ADV Multi-sco SCORM package"
+    And I should see "Normal"
+    And I press "Enter"
+    Then I should see "Review mode"
