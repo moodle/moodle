@@ -736,8 +736,8 @@ class grade_report_grader extends grade_report {
                 if (empty($suspendedstring)) {
                     $suspendedstring = get_string('userenrolmentsuspended', 'grades');
                 }
-                $usercell->text .= html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('i/enrolmentsuspended'), 'title'=>$suspendedstring,
-                        'alt'=>$suspendedstring, 'class'=>'usersuspendedicon'));
+                $icon = $OUTPUT->pix_icon('i/enrolmentsuspended', $suspendedstring);
+                $usercell->text .= html_writer::tag('span', $icon, array('class'=>'usersuspendedicon'));
             }
 
             $userrow->cells[] = $usercell;

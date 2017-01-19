@@ -159,24 +159,24 @@ foreach($cohorts['cohorts'] as $cohort) {
         if ($cohortmanager) {
             if ($cohort->visible) {
                 $showhideurl->param('hide', 1);
-                $visibleimg = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/hide'), 'alt' => get_string('hide'), 'class' => 'iconsmall'));
+                $visibleimg = $OUTPUT->pix_icon('t/hide', get_string('hide'));
                 $buttons[] = html_writer::link($showhideurl, $visibleimg, array('title' => get_string('hide')));
             } else {
                 $showhideurl->param('show', 1);
-                $visibleimg = html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/show'), 'alt' => get_string('show'), 'class' => 'iconsmall'));
+                $visibleimg = $OUTPUT->pix_icon('t/show', get_string('show'));
                 $buttons[] = html_writer::link($showhideurl, $visibleimg, array('title' => get_string('show')));
             }
             $buttons[] = html_writer::link(new moodle_url('/cohort/edit.php', $urlparams + array('delete' => 1)),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'), 'alt' => get_string('delete'), 'class' => 'iconsmall')),
+                $OUTPUT->pix_icon('t/delete', get_string('delete')),
                 array('title' => get_string('delete')));
             $buttons[] = html_writer::link(new moodle_url('/cohort/edit.php', $urlparams),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/edit'), 'alt' => get_string('edit'), 'class' => 'iconsmall')),
+                $OUTPUT->pix_icon('t/edit', get_string('edit')),
                 array('title' => get_string('edit')));
             $editcolumnisempty = false;
         }
         if ($cohortcanassign) {
             $buttons[] = html_writer::link(new moodle_url('/cohort/assign.php', $urlparams),
-                html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('i/users'), 'alt' => get_string('assign', 'core_cohort'), 'class' => 'iconsmall')),
+                $OUTPUT->pix_icon('i/users', get_string('assign', 'core_cohort')),
                 array('title' => get_string('assign', 'core_cohort')));
             $editcolumnisempty = false;
         }

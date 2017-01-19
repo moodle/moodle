@@ -690,11 +690,11 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
 
             if ($file->is_directory()) {
                 $item->filesize = 0;
-                $item->icon = $OUTPUT->pix_url(file_folder_icon(24))->out(false);
+                $item->icon = $OUTPUT->image_url(file_folder_icon(24))->out(false);
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
-                $item->thumbnail = $OUTPUT->pix_url(file_folder_icon(90))->out(false);
+                $item->thumbnail = $OUTPUT->image_url(file_folder_icon(90))->out(false);
             } else {
                 // do NOT use file browser here!
                 $item->mimetype = get_mimetype_description($file);
@@ -705,8 +705,8 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 }
                 $itemurl = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename);
                 $item->url = $itemurl->out();
-                $item->icon = $OUTPUT->pix_url(file_file_icon($file, 24))->out(false);
-                $item->thumbnail = $OUTPUT->pix_url(file_file_icon($file, 90))->out(false);
+                $item->icon = $OUTPUT->image_url(file_file_icon($file, 24))->out(false);
+                $item->thumbnail = $OUTPUT->image_url(file_file_icon($file, 90))->out(false);
                 if ($imageinfo = $file->get_imageinfo()) {
                     $item->realthumbnail = $itemurl->out(false, array('preview' => 'thumb', 'oid' => $file->get_timemodified()));
                     $item->realicon = $itemurl->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
@@ -1450,7 +1450,8 @@ function mimeinfo($element, $filename) {
         foreach ($filenames as $filename) {
             foreach ($iconpostfixes as $size => $postfix) {
                 $fullname = $CFG->dirroot.'/pix/f/'.$filename.$postfix;
-                if ($iconsize >= $size && (file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
+                if ($iconsize >= $size &&
+                        (file_exists($fullname.'.svg') || file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
                     return $filename.$postfix;
                 }
             }
@@ -1508,7 +1509,7 @@ function mimeinfo_from_type($element, $mimetype) {
  * Usage:
  * <code>
  * // $file - instance of stored_file or file_info
- * $icon = $OUTPUT->pix_url(file_file_icon($file))->out();
+ * $icon = $OUTPUT->image_url(file_file_icon($file))->out();
  * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => get_mimetype_description($file)));
  * </code>
  * or
@@ -1557,12 +1558,12 @@ function file_file_icon($file, $size = null) {
  *
  * Usage:
  * <code>
- * $icon = $OUTPUT->pix_url(file_folder_icon())->out();
+ * $icon = $OUTPUT->image_url(file_folder_icon())->out();
  * echo html_writer::empty_tag('img', array('src' => $icon));
  * </code>
  * or
  * <code>
- * echo $OUTPUT->pix_icon(file_folder_icon(32));
+ * echo $OUTPUT->pix_icon(file_folder_icon(32), '');
  * </code>
  *
  * @param int $iconsize The size of the icon. Defaults to 16 can also be 24, 32, 48, 64, 72, 80, 96, 128, 256
@@ -1588,12 +1589,12 @@ function file_folder_icon($iconsize = null) {
 /**
  * Returns the relative icon path for a given mime type
  *
- * This function should be used in conjunction with $OUTPUT->pix_url to produce
+ * This function should be used in conjunction with $OUTPUT->image_url to produce
  * a return the full path to an icon.
  *
  * <code>
  * $mimetype = 'image/jpg';
- * $icon = $OUTPUT->pix_url(file_mimetype_icon($mimetype))->out();
+ * $icon = $OUTPUT->image_url(file_mimetype_icon($mimetype))->out();
  * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => get_mimetype_description($mimetype)));
  * </code>
  *
@@ -1611,12 +1612,12 @@ function file_mimetype_icon($mimetype, $size = NULL) {
 /**
  * Returns the relative icon path for a given file name
  *
- * This function should be used in conjunction with $OUTPUT->pix_url to produce
+ * This function should be used in conjunction with $OUTPUT->image_url to produce
  * a return the full path to an icon.
  *
  * <code>
  * $filename = '.jpg';
- * $icon = $OUTPUT->pix_url(file_extension_icon($filename))->out();
+ * $icon = $OUTPUT->image_url(file_extension_icon($filename))->out();
  * echo html_writer::empty_tag('img', array('src' => $icon, 'alt' => '...'));
  * </code>
  *
@@ -4088,7 +4089,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 // also if login is required for profile images and is not logged in or guest
                 // do not use require_login() because it is expensive and not suitable here anyway
                 $theme = theme_config::load($themename);
-                redirect($theme->pix_url('u/'.$filename, 'moodle')); // intentionally not cached
+                redirect($theme->image_url('u/'.$filename, 'moodle')); // intentionally not cached
             }
 
             if (!$file = $fs->get_file($context->id, 'user', 'icon', 0, '/', $filename.'.png')) {

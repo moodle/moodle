@@ -94,7 +94,7 @@
             $missing = true;
         } else {
             // took out hspace="\10\", because it does not validate. don't know what to replace with.
-            $icon = "<img src=\"" . $OUTPUT->pix_url('icon', $module->name) . "\" class=\"icon\" alt=\"\" />";
+            $icon = "<img src=\"" . $OUTPUT->image_url('icon', $module->name) . "\" class=\"icon\" alt=\"\" />";
             $strmodulename = $icon.' '.get_string('modulename', $module->name);
             $missing = false;
         }
@@ -130,11 +130,11 @@
             $class   = '';
         } else if ($module->visible) {
             $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=".sesskey()."\" title=\"$strhide\">".
-                       "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"$strhide\" /></a>";
+                       $OUTPUT->pix_icon('t/hide', $strhide) . '</a>';
             $class   = '';
         } else {
             $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=".sesskey()."\" title=\"$strshow\">".
-                       "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"$strshow\" /></a>";
+                       $OUTPUT->pix_icon('t/show', $strshow) . '</a>';
             $class =   'dimmed_text';
         }
         if ($module->name == "forum") {

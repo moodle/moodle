@@ -484,8 +484,7 @@ class report extends \mod_scorm\report {
                                 if (!$download) {
                                     $url = new \moodle_url('/mod/scorm/report/userreporttracks.php', array('id' => $cm->id,
                                         'scoid' => $sco->id, 'user' => $scouser->userid, 'attempt' => $scouser->attempt));
-                                    $row[] = \html_writer::img($OUTPUT->pix_url($trackdata->status, 'scorm'), $strstatus,
-                                        array('title' => $strstatus)) . \html_writer::empty_tag('br') .
+                                    $row[] = $OUTPUT->pix_icon($trackdata->status, $strstatus, 'scorm') . '<br>' .
                                         \html_writer::link($url, $score, array('title' => get_string('details', 'scorm')));
                                 } else {
                                     $row[] = $score;
@@ -551,8 +550,7 @@ class report extends \mod_scorm\report {
                                 // If we don't have track data, we haven't attempted yet.
                                 $strstatus = get_string('notattempted', 'scorm');
                                 if (!$download) {
-                                    $row[] = \html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'), $strstatus,
-                                                array('title' => $strstatus)).\html_writer::empty_tag('br').$strstatus;
+                                    $row[] = $OUTPUT->pix_icon('notattempted', $strstatus, 'scorm') . '<br>' . $strstatus;
                                 } else {
                                     $row[] = $strstatus;
                                 }

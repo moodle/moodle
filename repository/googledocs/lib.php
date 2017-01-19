@@ -328,7 +328,7 @@ class repository_googledocs extends repository {
                     'title' => $item['title'],
                     'path' => $this->build_node_path($item['id'], $item['title'], $path),
                     'date' => strtotime($item['modifiedDate']),
-                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(64))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(64))->out(false),
                     'thumbnail_height' => 64,
                     'thumbnail_width' => 64,
                     'children' => array()
@@ -389,7 +389,7 @@ class repository_googledocs extends repository {
                     'source' => $source,
                     'date' => strtotime($item['modifiedDate']),
                     'size' => isset($item['fileSize']) ? $item['fileSize'] : null,
-                    'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 64))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_extension_icon($title, 64))->out(false),
                     'thumbnail_height' => 64,
                     'thumbnail_width' => 64,
                     // Do not use real thumbnails as they wouldn't work if the user disabled 3rd party

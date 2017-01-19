@@ -29,7 +29,6 @@ Y.extend(AUTOLINKER, Y.Base, {
                 // display a progress indicator
                 var title = '',
                     content = Y.Node.create('<div id="glossaryfilteroverlayprogress">' +
-                                            '<img src="' + M.cfg.loadingicon + '" class="spinner" />' +
                                             '</div>'),
                     o = new Y.Overlay({
                         headerContent:  title,
@@ -37,6 +36,13 @@ Y.extend(AUTOLINKER, Y.Base, {
                     }),
                     fullurl,
                     cfg;
+
+                window.require(['core/templates'], function(Templates) {
+                    Templates.renderPix('i/loading', 'core').then(function(html) {
+                        content.append(html);
+                    });
+                });
+
                 self.overlay = o;
                 o.render(Y.one(document.body));
 

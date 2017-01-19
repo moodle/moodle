@@ -69,13 +69,13 @@ foreach ($presets as &$preset) {
         $preset->description = $preset->name;
         if (data_user_can_delete_preset($context, $preset) && $preset->name != 'Image gallery') {
             $delurl = new moodle_url('/mod/data/preset.php', array('d'=> $data->id, 'action'=>'confirmdelete', 'fullname'=>$preset->userid.'/'.$preset->shortname, 'sesskey'=>sesskey()));
-            $delicon = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'class'=>'iconsmall', 'alt'=>$strdelete.' '.$preset->description));
+            $delicon = $OUTPUT->pix_icon('t/delete', $strdelete . ' ' . $preset->description);
             $preset->description .= html_writer::link($delurl, $delicon);
         }
     }
     if ($preset->userid > 0 && data_user_can_delete_preset($context, $preset)) {
         $delurl = new moodle_url('/mod/data/preset.php', array('d'=> $data->id, 'action'=>'confirmdelete', 'fullname'=>$preset->userid.'/'.$preset->shortname, 'sesskey'=>sesskey()));
-        $delicon = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('t/delete'), 'class'=>'iconsmall', 'alt'=>$strdelete.' '.$preset->description));
+        $delicon = $OUTPUT->pix_icon('t/delete', $strdelete . ' ' . $preset->description);
         $preset->description .= html_writer::link($delurl, $delicon);
     }
 }

@@ -56,8 +56,7 @@ class data_field_multimenu extends data_field_base {
         $str .= html_writer::span($this->field->name);
         if ($this->field->required) {
             $str .= '<div class="inline-req">';
-            $str .= html_writer::img($OUTPUT->pix_url('req'), get_string('requiredelement', 'form'),
-                                     array('class' => 'req', 'title' => get_string('requiredelement', 'form')));
+            $str .= $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
             $str .= '</div>';
         }
         $str .= '</label>';

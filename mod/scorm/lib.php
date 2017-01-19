@@ -468,16 +468,12 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                                 $usertrack->status = 'notattempted';
                             }
                             $strstatus = get_string($usertrack->status, 'scorm');
-                            $report .= html_writer::img($OUTPUT->pix_url($usertrack->status, 'scorm'),
-                                                        $strstatus, array('title' => $strstatus));
+                            $report .= $OUTPUT->pix_icon($usertrack->status, $strstatus, 'scorm');
                         } else {
                             if ($sco->scormtype == 'sco') {
-                                $report .= html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'),
-                                                            get_string('notattempted', 'scorm'),
-                                                            array('title' => get_string('notattempted', 'scorm')));
+                                $report .= $OUTPUT->pix_icon('notattempted', get_string('notattempted', 'scorm'), 'scorm');
                             } else {
-                                $report .= html_writer::img($OUTPUT->pix_url('asset', 'scorm'), get_string('asset', 'scorm'),
-                                                            array('title' => get_string('asset', 'scorm')));
+                                $report .= $OUTPUT->pix_icon('asset', get_string('asset', 'scorm'), 'scorm');
                             }
                         }
                         $report .= "&nbsp;$sco->title $score$totaltime".html_writer::end_tag('li');

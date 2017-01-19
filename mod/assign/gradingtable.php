@@ -855,8 +855,7 @@ class assign_grading_table extends table_sql implements renderable {
 
         if (!$this->assignment->is_active_user($row->id)) {
             $suspendedstring = get_string('userenrolmentsuspended', 'grades');
-            $fullname .= ' ' . html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/enrolmentsuspended'),
-                'title' => $suspendedstring, 'alt' => $suspendedstring, 'class' => 'usersuspendedicon'));
+            $fullname .= ' ' . $this->output->pix_icon('i/enrolmentsuspended', $suspendedstring);
             $fullname = html_writer::tag('span', $fullname, array('class' => 'usersuspended'));
         }
         return $fullname;

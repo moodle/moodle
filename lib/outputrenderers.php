@@ -955,13 +955,13 @@ class core_renderer extends renderer_base {
             // Special case for site home page - please do not remove
             return '<div class="sitelink">' .
                    '<a title="Moodle" href="http://moodle.org/">' .
-                   '<img src="' . $this->pix_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
+                   '<img src="' . $this->image_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
 
         } else if (!empty($CFG->target_release) && $CFG->target_release != $CFG->release) {
             // Special case for during install/upgrade.
             return '<div class="sitelink">'.
                    '<a title="Moodle" href="http://docs.moodle.org/en/Administrator_documentation" onclick="this.target=\'_blank\'">' .
-                   '<img src="' . $this->pix_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
+                   '<img src="' . $this->image_url('moodlelogo') . '" alt="'.get_string('moodlelogo').'" /></a></div>';
 
         } else if ($this->page->course->id == $SITE->id || strpos($this->page->pagetype, 'course-view') === 0) {
             return '<div class="homelink"><a href="' . $CFG->wwwroot . '/">' .
@@ -2095,9 +2095,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_pix_emoticon(pix_emoticon $emoticon) {
-        $attributes = $emoticon->attributes;
-        $attributes['src'] = $this->pix_url($emoticon->pix, $emoticon->component);
-        return html_writer::empty_tag('img', $attributes);
+        return $this->render_pix_icon($emoticon);
     }
 
     /**
@@ -3974,7 +3972,7 @@ EOD;
      * @return string The favicon URL
      */
     public function favicon() {
-        return $this->pix_url('favicon', 'theme');
+        return $this->image_url('favicon', 'theme');
     }
 
     /**

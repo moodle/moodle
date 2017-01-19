@@ -109,7 +109,7 @@ class repository_coursefiles extends repository {
                         'datecreated' => $child->get_timecreated(),
                         'path' => $encodedpath,
                         'children'=>array(),
-                        'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false)
+                        'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false)
                     );
                     $list[] = $node;
                 } else {
@@ -123,7 +123,7 @@ class repository_coursefiles extends repository {
                         'datecreated' => $child->get_timecreated(),
                         'source'=> $encodedpath,
                         'isref' => $child->is_external_file(),
-                        'thumbnail' => $OUTPUT->pix_url(file_file_icon($child, 90))->out(false)
+                        'thumbnail' => $OUTPUT->image_url(file_file_icon($child, 90))->out(false)
                     );
                     if ($child->get_status() == 666) {
                         $node['originalmissing'] = true;

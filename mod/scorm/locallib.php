@@ -1546,11 +1546,9 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
                         $strstatus = get_string($usertrack->status, 'scorm');
 
                         if ($sco->scormtype == 'sco') {
-                            $statusicon = html_writer::img($OUTPUT->pix_url($usertrack->status, 'scorm'), $strstatus,
-                                                            array('title' => $strstatus));
+                            $statusicon = $OUTPUT->pix_icon($usertrack->status, $strstatus, 'scorm');
                         } else {
-                            $statusicon = html_writer::img($OUTPUT->pix_url('asset', 'scorm'), get_string('assetlaunched', 'scorm'),
-                                                            array('title' => get_string('assetlaunched', 'scorm')));
+                            $statusicon = $OUTPUT->pix_icon('asset', get_string('assetlaunched', 'scorm'), 'scorm');
                         }
 
                         if (($usertrack->status == 'notattempted') ||
@@ -1571,8 +1569,7 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
                         }
 
                         if ($incomplete && isset($usertrack->{$exitvar}) && ($usertrack->{$exitvar} == 'suspend')) {
-                            $statusicon = html_writer::img($OUTPUT->pix_url('suspend', 'scorm'), $strstatus.' - '.$strsuspended,
-                                                            array('title' => $strstatus.' - '.$strsuspended));
+                            $statusicon = $OUTPUT->pix_icon('suspend', $strstatus.' - '.$strsuspended, 'scorm');
                         }
 
                     } else {
@@ -1583,20 +1580,16 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
                         $incomplete = true;
 
                         if ($sco->scormtype == 'sco') {
-                            $statusicon = html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'),
-                                                            get_string('notattempted', 'scorm'),
-                                                            array('title' => get_string('notattempted', 'scorm')));
+                            $statusicon = $OUTPUT->pix_icon('notattempted', get_string('notattempted', 'scorm'), 'scorm');
                         } else {
-                            $statusicon = html_writer::img($OUTPUT->pix_url('asset', 'scorm'), get_string('asset', 'scorm'),
-                                                            array('title' => get_string('asset', 'scorm')));
+                            $statusicon = $OUTPUT->pix_icon('asset', get_string('asset', 'scorm'), 'scorm');
                         }
                     }
                 }
             }
 
             if (empty($statusicon)) {
-                $sco->statusicon = html_writer::img($OUTPUT->pix_url('notattempted', 'scorm'), get_string('notattempted', 'scorm'),
-                                                    array('title' => get_string('notattempted', 'scorm')));
+                $sco->statusicon = $OUTPUT->pix_icon('notattempted', get_string('notattempted', 'scorm'), 'scorm');
             } else {
                 $sco->statusicon = $statusicon;
             }

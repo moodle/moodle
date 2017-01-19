@@ -359,7 +359,7 @@ class user_picture implements renderable {
             $size = (int)$this->size;
         }
 
-        $defaulturl = $renderer->pix_url('u/'.$filename); // default image
+        $defaulturl = $renderer->image_url('u/'.$filename); // default image
 
         if ((!empty($CFG->forcelogin) and !isloggedin()) ||
             (!empty($CFG->forceloginforprofileimage) && (!isloggedin() || isguestuser()))) {
@@ -682,7 +682,7 @@ class pix_icon implements renderable, templatable {
             }
         }
 
-        $attributes['src'] = $output->pix_url($this->pix, $this->component)->out(false);
+        $attributes['src'] = $output->image_url($this->pix, $this->component)->out(false);
         $templatecontext = array();
         foreach ($attributes as $name => $value) {
             $templatecontext[] = array('name' => $name, 'value' => $value);
@@ -3149,7 +3149,7 @@ class block_contents {
     /**
      * @var array A (possibly empty) array of editing controls. Each element of
      * this array should be an array('url' => $url, 'icon' => $icon, 'caption' => $caption).
-     * $icon is the icon name. Fed to $OUTPUT->pix_url.
+     * $icon is the icon name. Fed to $OUTPUT->image_url.
      */
     public $controls = array();
 

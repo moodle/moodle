@@ -3791,7 +3791,7 @@ function forum_print_discussion_header(&$post, $forum, $group = -1, $datestring 
                     echo '</a>';
                     echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php&amp;sesskey=' . sesskey() . '">' .
-                         '<img src="'.$OUTPUT->pix_url('t/markasread') . '" class="iconsmall" alt="'.$strmarkalldread.'" /></a>';
+                         $OUTPUT->pix_icon('t/markasread', $strmarkalldread) . '</a>';
                     echo '</span>';
                 } else {
                     echo '<span class="read">';
@@ -5473,7 +5473,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions = -1, $
                     echo '<a title="'.get_string('markallread', 'forum').
                          '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;mark=read&amp;returnpage=view.php&amp;sesskey=' . sesskey() . '">'.
-                         '<img src="'.$OUTPUT->pix_url('t/markasread') . '" class="iconsmall" alt="'.get_string('markallread', 'forum').'" /></a>';
+                         $OUTPUT->pix_icon('t/markasread', get_string('markallread', 'forum')) . '</a>';
                 }
                 echo '</th>';
             }
@@ -5997,7 +5997,7 @@ function forum_print_recent_mod_activity($activity, $courseid, $detail, $modname
     $output .= html_writer::start_div($class);
     if ($detail) {
         $aname = s($activity->name);
-        $output .= html_writer::img($OUTPUT->pix_url('icon', $activity->type), $aname, ['class' => 'icon']);
+        $output .= $OUTPUT->activity_icon('icon', $aname, $activity->type);
     }
     $discussionurl = new moodle_url('/mod/forum/discuss.php', ['d' => $content->discussion]);
     $discussionurl->set_anchor('p' . $activity->content->id);

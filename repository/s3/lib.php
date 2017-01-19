@@ -143,7 +143,7 @@ class repository_s3 extends repository {
                 $folder = array(
                     'title' => $bucket,
                     'children' => array(),
-                    'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false),
                     'path' => $bucket
                     );
                 $tree[] = $folder;
@@ -188,7 +188,7 @@ class repository_s3 extends repository {
                     $folders[] = array(
                         'title' => $title,
                         'children' => array(),
-                        'thumbnail'=> $OUTPUT->pix_url(file_folder_icon(90))->out(false),
+                        'thumbnail'=> $OUTPUT->image_url(file_folder_icon(90))->out(false),
                         'path' => $bucket . '/' . $object['prefix']
                     );
                 } else {
@@ -197,7 +197,7 @@ class repository_s3 extends repository {
                         'size' => $object['size'],
                         'datemodified' => $object['time'],
                         'source' => $bucket . '/' . $object['name'],
-                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($title, 90))->out(false)
+                        'thumbnail' => $OUTPUT->image_url(file_extension_icon($title, 90))->out(false)
                     );
                 }
             }

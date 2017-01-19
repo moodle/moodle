@@ -1236,8 +1236,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $return .= '<a class="icon" title="' . get_string('disapprove', 'glossary').
                    '" href="approve.php?newstate=0&amp;eid='.$entry->id.'&amp;mode='.$mode.
                    '&amp;hook='.urlencode($hook).'&amp;sesskey='.sesskey().
-                   '"><img src="'.$OUTPUT->pix_url('t/block').'" class="smallicon" alt="'.
-                   get_string('disapprove','glossary').$altsuffix.'" /></a>';
+                   '">' . $OUTPUT->pix_icon('t/block', get_string('disapprove', 'glossary')) . '</a>';
     }
 
     $iscurrentuser = ($entry->userid == $USER->id);
@@ -1250,15 +1249,15 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
                 $output = true;
                 $return .= '<a class="icon" title="'.get_string('exporttomainglossary','glossary') . '" ' .
                     'href="exportentry.php?id='.$entry->id.'&amp;prevmode='.$mode.'&amp;hook='.urlencode($hook).'">' .
-                    '<img src="'.$OUTPUT->pix_url('export', 'glossary').'" class="smallicon" ' .
-                    'alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
+                    $OUTPUT->pix_icon('export', get_string('exporttomainglossary', 'glossary'), 'glossary') . '</a>';
             }
         }
 
+        $icon = 't/delete';
+        $iconcomponent = 'moodle';
         if ( $entry->sourceglossaryid ) {
-            $icon = $OUTPUT->pix_url('minus', 'glossary');   // graphical metaphor (minus) for deleting an imported entry
-        } else {
-            $icon = $OUTPUT->pix_url('t/delete');
+            $icon = 'minus';   // graphical metaphor (minus) for deleting an imported entry
+            $iconcomponent = 'glossary';
         }
 
         //Decide if an entry is editable:
@@ -1269,14 +1268,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $output = true;
             $url = "deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=".urlencode($hook);
             $return .= "<a class='icon' title=\"" . get_string("delete") . "\" " .
-                       "href=\"$url\"><img src=\"";
-            $return .= $icon;
-            $return .= "\" class=\"smallicon\" alt=\"" . get_string("delete") .$altsuffix."\" /></a>";
+                       "href=\"$url\">" . $OUTPUT->pix_icon($icon, get_string('delete'), $iconcomponent) . '</a>';
 
             $url = "edit.php?cmid=$cm->id&amp;id=$entry->id&amp;mode=$mode&amp;hook=".urlencode($hook);
             $return .= "<a class='icon' title=\"" . get_string("edit") . "\" href=\"$url\">" .
-                       "<img src=\"" . $OUTPUT->pix_url('t/edit') . "\" class=\"smallicon\" " .
-                       "alt=\"" . get_string("edit") .$altsuffix. "\" /></a>";
+                       $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a>';
         } elseif ( $importedentry ) {
             $return .= "<font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }
@@ -2050,7 +2046,7 @@ function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '')
              $neworder = '&amp;sortorder=asc';
              $newordertitle = get_string('changeto', 'glossary', $asc);
          }
-         $icon = " <img src=\"".$OUTPUT->pix_url($sortorder, 'glossary')."\" class=\"icon\" alt=\"$newordertitle\" />";
+         $icon = " " . $OUTPUT->pix_icon($sortorder, $newordertitle, 'glossary');
      } else {
          if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' and
                $sortkey != 'FIRSTNAME' and $sortkey != 'LASTNAME' ) {
@@ -2059,7 +2055,7 @@ function glossary_print_sorting_links($cm, $mode, $sortkey = '',$sortorder = '')
          } else {
              $newordertitle = $desc;
              $neworder = '&amp;sortorder=desc';
-             $icon = ' <img src="'.$OUTPUT->pix_url('asc', 'glossary').'" class="icon" alt="'.$newordertitle.'" />';
+             $icon = " " . $OUTPUT->pix_icon('asc', $newordertitle, 'glossary');
          }
      }
      $ficon     = '';

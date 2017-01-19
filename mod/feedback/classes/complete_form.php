@@ -325,8 +325,7 @@ class mod_feedback_complete_form extends moodleform {
 
         // Add red asterisks on required fields.
         if ($item->required) {
-            $required = '<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
-                    get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />';
+            $required = $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'));
             $element->setLabel($element->getLabel() . $required);
             $this->hasrequired = true;
         }
@@ -549,7 +548,7 @@ class mod_feedback_complete_form extends moodleform {
                ($this->mode == self::MODE_COMPLETE || $this->mode == self::MODE_PRINT || $this->mode == self::MODE_VIEW_TEMPLATE)) {
             $element = $mform->addElement('static', 'requiredfields', '',
                     get_string('somefieldsrequired', 'form',
-                            '<img alt="'.get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />'));
+                            $OUTPUT->pix_icon('req', get_string('requiredelement', 'form'))));
             $element->setAttributes($element->getAttributes() + ['class' => 'requirednote']);
         }
 

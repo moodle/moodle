@@ -1572,7 +1572,7 @@ class theme_config {
                 $replaced[$match[0]] = true;
                 $imagename = $match[2];
                 $component = rtrim($match[1], '|');
-                $imageurl = $this->pix_url($imagename, $component)->out(false);
+                $imageurl = $this->image_url($imagename, $component)->out(false);
                  // we do not need full url because the image.php is always in the same dir
                 $imageurl = preg_replace('|^http.?://[^/]+|', '', $imageurl);
                 $css = str_replace($match[0], $imageurl, $css);

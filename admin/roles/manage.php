@@ -216,9 +216,9 @@ die;
 function get_action_icon($url, $icon, $alt, $tooltip) {
     global $OUTPUT;
     return '<a title="' . $tooltip . '" href="'. $url . '">' .
-            '<img src="' . $OUTPUT->pix_url('t/' . $icon) . '" class="iconsmall" alt="' . $alt . '" /></a> ';
+            $OUTPUT->pix_icon('t/' . $icon, $alt) . '</a> ';
 }
 function get_spacer() {
     global $OUTPUT;
-    return '<img src="' . $OUTPUT->pix_url('spacer') . '" class="iconsmall" alt="" /> ';
+    return $OUTPUT->spacer();
 }

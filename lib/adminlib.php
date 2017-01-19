@@ -5947,13 +5947,13 @@ class admin_setting_manageenrols extends admin_setting {
             if (isset($active_enrols[$enrol])) {
                 $aurl = new moodle_url($url, array('action'=>'disable', 'enrol'=>$enrol));
                 $hideshow = "<a href=\"$aurl\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"$strdisable\" /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/hide', $strdisable) . '</a>';
                 $enabled = true;
                 $displayname = $name;
             } else if (isset($enrols_available[$enrol])) {
                 $aurl = new moodle_url($url, array('action'=>'enable', 'enrol'=>$enrol));
                 $hideshow = "<a href=\"$aurl\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"$strenable\" /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/show', $strenable) . '</a>';
                 $enabled = false;
                 $displayname = $name;
                 $class = 'dimmed_text';
@@ -5974,16 +5974,16 @@ class admin_setting_manageenrols extends admin_setting {
                 if ($updowncount > 1) {
                     $aurl = new moodle_url($url, array('action'=>'up', 'enrol'=>$enrol));
                     $updown .= "<a href=\"$aurl\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"$strup\" class=\"iconsmall\" /></a>&nbsp;";
+                    $updown .= $OUTPUT->pix_icon('t/up', $strup) . '</a>&nbsp;';
                 } else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />&nbsp;";
+                    $updown .= $OUTPUT->spacer() . '&nbsp;';
                 }
                 if ($updowncount < $enrolcount) {
                     $aurl = new moodle_url($url, array('action'=>'down', 'enrol'=>$enrol));
                     $updown .= "<a href=\"$aurl\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"$strdown\" class=\"iconsmall\" /></a>";
+                    $updown .= $OUTPUT->pix_icon('t/down', $strdown) . '</a>&nbsp;';
                 } else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />";
+                    $updown .= $OUTPUT->spacer() . '&nbsp;';
                 }
                 ++$updowncount;
             }
@@ -6508,15 +6508,13 @@ class admin_setting_manageauths extends admin_setting {
             // hide/show link
             if (in_array($auth, $authsenabled)) {
                 $hideshow = "<a href=\"$url&amp;action=disable&amp;auth=$auth\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"disable\" /></a>";
-                // $hideshow = "<a href=\"$url&amp;action=disable&amp;auth=$auth\"><input type=\"checkbox\" checked /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/hide', get_string('disable')) . '</a>';
                 $enabled = true;
                 $displayname = $name;
             }
             else {
                 $hideshow = "<a href=\"$url&amp;action=enable&amp;auth=$auth\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"enable\" /></a>";
-                // $hideshow = "<a href=\"$url&amp;action=enable&amp;auth=$auth\"><input type=\"checkbox\" /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/show', get_string('enable')) . '</a>';
                 $enabled = false;
                 $displayname = $name;
                 $class = 'dimmed_text';
@@ -6529,17 +6527,17 @@ class admin_setting_manageauths extends admin_setting {
             if ($enabled) {
                 if ($updowncount > 1) {
                     $updown .= "<a href=\"$url&amp;action=up&amp;auth=$auth\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" class=\"iconsmall\" /></a>&nbsp;";
+                    $updown .= $OUTPUT->pix_icon('t/up', get_string('moveup')) . '</a>&nbsp;';
                 }
                 else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />&nbsp;";
+                    $updown .= $OUTPUT->spacer() . '&nbsp;';
                 }
                 if ($updowncount < $authcount) {
                     $updown .= "<a href=\"$url&amp;action=down&amp;auth=$auth\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" class=\"iconsmall\" /></a>";
+                    $updown .= $OUTPUT->pix_icon('t/down', get_string('movedown')) . '</a>&nbsp;';
                 }
                 else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />";
+                    $updown .= $OUTPUT->spacer() . '&nbsp;';
                 }
                 ++ $updowncount;
             }
@@ -6696,15 +6694,13 @@ class admin_setting_manageeditors extends admin_setting {
             $class = '';
             if (in_array($editor, $active_editors)) {
                 $hideshow = "<a href=\"$url&amp;action=disable&amp;editor=$editor\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"disable\" /></a>";
-                // $hideshow = "<a href=\"$url&amp;action=disable&amp;editor=$editor\"><input type=\"checkbox\" checked /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/hide', get_string('disable')) . '</a>';
                 $enabled = true;
                 $displayname = $name;
             }
             else {
                 $hideshow = "<a href=\"$url&amp;action=enable&amp;editor=$editor\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"enable\" /></a>";
-                // $hideshow = "<a href=\"$url&amp;action=enable&amp;editor=$editor\"><input type=\"checkbox\" /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/show', get_string('enable')) . '</a>';
                 $enabled = false;
                 $displayname = $name;
                 $class = 'dimmed_text';
@@ -6715,17 +6711,17 @@ class admin_setting_manageeditors extends admin_setting {
             if ($enabled) {
                 if ($updowncount > 1) {
                     $updown .= "<a href=\"$url&amp;action=up&amp;editor=$editor\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" class=\"iconsmall\" /></a>&nbsp;";
+                    $updown .= $OUTPUT->pix_icon('t/up', get_string('moveup')) . '</a>&nbsp;';
                 }
                 else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />&nbsp;";
+                    $updown .= $OUTPUT->spacer() . '&nbsp;';
                 }
                 if ($updowncount < $editorcount) {
                     $updown .= "<a href=\"$url&amp;action=down&amp;editor=$editor\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" class=\"iconsmall\" /></a>";
+                    $updown .= $OUTPUT->pix_icon('t/down', get_string('movedown')) . '</a>&nbsp;';
                 }
                 else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />";
+                    $updown .= $OUTPUT->spacer() . '&nbsp;';
                 }
                 ++ $updowncount;
             }
@@ -6875,14 +6871,14 @@ class admin_setting_manageantiviruses extends admin_setting {
             if (in_array($antivirus, $activeantiviruses)) {
                 $hideshowurl = $baseurl;
                 $hideshowurl->params(array('action' => 'disable', 'antivirus' => $antivirus));
-                $hideshowimg = html_writer::img($OUTPUT->pix_url('t/hide'), 'disable', array('class' => 'iconsmall'));
+                $hideshowimg = $OUTPUT->pix_icon('t/hide', get_string('disable'));
                 $hideshow = html_writer::link($hideshowurl, $hideshowimg);
                 $enabled = true;
                 $displayname = $name;
             } else {
                 $hideshowurl = $baseurl;
                 $hideshowurl->params(array('action' => 'enable', 'antivirus' => $antivirus));
-                $hideshowimg = html_writer::img($OUTPUT->pix_url('t/show'), 'enable', array('class' => 'iconsmall'));
+                $hideshowimg = $OUTPUT->pix_icon('t/show', get_string('enable'));
                 $hideshow = html_writer::link($hideshowurl, $hideshowimg);
                 $enabled = false;
                 $displayname = $name;
@@ -6895,18 +6891,18 @@ class admin_setting_manageantiviruses extends admin_setting {
                 if ($updowncount > 1) {
                     $updownurl = $baseurl;
                     $updownurl->params(array('action' => 'up', 'antivirus' => $antivirus));
-                    $updownimg = html_writer::img($OUTPUT->pix_url('t/up'), 'up', array('class' => 'iconsmall'));
+                    $updownimg = $OUTPUT->pix_icon('t/up', get_string('moveup'));
                     $updown = html_writer::link($updownurl, $updownimg);
                 } else {
-                    $updown .= html_writer::img($OUTPUT->pix_url('spacer'), '', array('class' => 'iconsmall'));
+                    $updownimg = $OUTPUT->spacer();
                 }
                 if ($updowncount < $antiviruscount) {
                     $updownurl = $baseurl;
                     $updownurl->params(array('action' => 'down', 'antivirus' => $antivirus));
-                    $updownimg = html_writer::img($OUTPUT->pix_url('t/down'), 'down', array('class' => 'iconsmall'));
+                    $updownimg = $OUTPUT->pix_icon('t/down', get_string('movedown'));
                     $updown = html_writer::link($updownurl, $updownimg);
                 } else {
-                    $updown .= html_writer::img($OUTPUT->pix_url('spacer'), '', array('class' => 'iconsmall'));
+                    $updownimg = $OUTPUT->spacer();
                 }
                 ++ $updowncount;
             }
@@ -7012,14 +7008,14 @@ class admin_setting_managelicenses extends admin_setting {
 
             if ($value->enabled == 1) {
                 $hideshow = html_writer::link($url.'&action=disable&license='.$value->shortname,
-                    html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('t/hide'), 'class'=>'iconsmall', 'alt'=>'disable')));
+                    $OUTPUT->pix_icon('t/hide', get_string('disable')));
             } else {
                 $hideshow = html_writer::link($url.'&action=enable&license='.$value->shortname,
-                    html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('t/show'), 'class'=>'iconsmall', 'alt'=>'enable')));
+                    $OUTPUT->pix_icon('t/show', get_string('enable')));
             }
 
             if ($value->shortname == $CFG->sitedefaultlicense) {
-                $displayname .= ' '.html_writer::tag('img', '', array('src'=>$OUTPUT->pix_url('t/locked'), 'class'=>'iconsmall', 'alt'=>get_string('default'), 'title'=>get_string('default')));
+                $displayname .= ' '.$OUTPUT->pix_icon('t/locked', get_string('default'));
                 $hideshow = '';
             }
 
@@ -8623,14 +8619,14 @@ class admin_setting_managerepository extends admin_setting {
 
                 if ($updowncount > 1) {
                     $updown .= "<a href=\"$this->baseurl&amp;action=moveup&amp;repos=".$typename."\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"up\" class=\"iconsmall\" /></a>&nbsp;";
+                    $updown .= $OUTPUT->pix_icon('t/up', get_string('moveup')) . '</a>&nbsp;';
                 }
                 else {
                     $updown .= $spacer;
                 }
                 if ($updowncount < $totalrepositorytypes) {
                     $updown .= "<a href=\"$this->baseurl&amp;action=movedown&amp;repos=".$typename."\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"down\" class=\"iconsmall\" /></a>";
+                    $updown .= $OUTPUT->pix_icon('t/down', get_string('movedown')) . '</a>&nbsp;';
                 }
                 else {
                     $updown .= $spacer;
@@ -9424,11 +9420,11 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
             // hide/show link
             if (in_array($protocol, $active_protocols)) {
                 $hideshow = "<a href=\"$url&amp;action=disable&amp;webservice=$protocol\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"$strdisable\" /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/hide', $strdisable) . '</a>';
                 $displayname = "<span>$name</span>";
             } else {
                 $hideshow = "<a href=\"$url&amp;action=enable&amp;webservice=$protocol\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"$strenable\" /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/show', $strenable) . '</a>';
                 $displayname = "<span class=\"dimmed_text\">$name</span>";
             }
 

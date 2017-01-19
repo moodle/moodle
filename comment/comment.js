@@ -200,7 +200,7 @@ M.core_comment = {
                         list[i].content = '<div class="comment-delete">' +
                             '<a href="#" role="button" id ="comment-delete-' + this.client_id + '-' + list[i].id + '"' +
                             '   title="' + deleteStr + '">' +
-                            '<img alt="' + deleteStr + '" src="' + M.util.image_url('t/delete', 'core') + '" />' +
+                            '<span data-replace-icon="t/delete" data-component="core" data-title=""/>' +
                             '</a>' +
                             '</div>' + list[i].content;
                     }
@@ -380,7 +380,9 @@ M.core_comment = {
                     } else {
                         collapsedimage = 't/collapsed';
                     }
-                    img.set('src', M.util.image_url(collapsedimage, 'core'));
+                    if (img) {
+                        img.set('src', M.util.image_url(collapsedimage, 'core'));
+                    }
                     if (ta) {
                         ta.set('value','');
                     }

@@ -169,14 +169,14 @@ class tool_log_setting_managestores extends admin_setting {
             if (isset($enabled[$store])) {
                 $aurl = new moodle_url($url, array('action' => 'disable', 'store' => $store));
                 $hideshow = "<a href=\"$aurl\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"$strdisable\" /></a>";
+                $hideshow .= $OUTPUT->pix_icon('t/hide', $strdisable) . '</a>';
                 $isenabled = true;
                 $displayname = "<span>$name</span>";
             } else {
                 if (isset($available[$store])) {
                     $aurl = new moodle_url($url, array('action' => 'enable', 'store' => $store));
                     $hideshow = "<a href=\"$aurl\">";
-                    $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"$strenable\" /></a>";
+                    $hideshow .= $OUTPUT->pix_icon('t/show', $strenable) . '</a>';
                     $isenabled = false;
                     $displayname = "<span class=\"dimmed_text\">$name</span>";
                 } else {
@@ -188,7 +188,7 @@ class tool_log_setting_managestores extends admin_setting {
             if ($PAGE->theme->resolve_image_location('icon', $store, false)) {
                 $icon = $OUTPUT->pix_icon('icon', '', $store, array('class' => 'icon pluginicon'));
             } else {
-                $icon = $OUTPUT->pix_icon('spacer', '', 'moodle', array('class' => 'icon pluginicon noicon'));
+                $icon = $OUTPUT->spacer();
             }
 
             // Up/down link (only if store is enabled).
@@ -197,16 +197,16 @@ class tool_log_setting_managestores extends admin_setting {
                 if ($updowncount > 1) {
                     $aurl = new moodle_url($url, array('action' => 'up', 'store' => $store));
                     $updown .= "<a href=\"$aurl\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"$strup\" class=\"iconsmall\" /></a>&nbsp;";
+                    $updown .= $OUTPUT->pix_icon('t/up', $strup) . '</a>&nbsp;';
                 } else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />&nbsp;";
+                    $updown .= $OUTPUT->spacer();
                 }
                 if ($updowncount < $storecount) {
                     $aurl = new moodle_url($url, array('action' => 'down', 'store' => $store));
                     $updown .= "<a href=\"$aurl\">";
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"$strdown\" class=\"iconsmall\" /></a>";
+                    $updown .= $OUTPUT->pix_icon('t/down', $strdown) . '</a>&nbsp;';
                 } else {
-                    $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />";
+                    $updown .= $OUTPUT->spacer();
                 }
                 ++$updowncount;
             }

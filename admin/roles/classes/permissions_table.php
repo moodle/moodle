@@ -93,9 +93,10 @@ class core_role_permissions_table extends core_role_capability_table_base {
         foreach ($roles as $id => $name) {
             if (isset($needed[$id])) {
                 $templatecontext = array("rolename" => $name, "roleid" => $id, "action" => "prevent", "spanclass" => "allowed",
-                                  "linkclass" => "preventlink", "adminurl" => $adminurl->out(), "imageurl" => "");
+                                  "linkclass" => "preventlink", "adminurl" => $adminurl->out(), "icon" => "", "iconalt" => "");
                 if (isset($overridableroles[$id]) and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
-                    $templatecontext['imageurl'] = $renderer->pix_url('t/delete');
+                    $templatecontext['icon'] = 't/delete';
+                    $templatecontext['iconalt'] = get_string('delete');
                 }
                 $neededroles[$id] = $renderer->render_from_template('core/permissionmanager_role', $templatecontext);
             }
@@ -105,9 +106,10 @@ class core_role_permissions_table extends core_role_capability_table_base {
             if (isset($forbidden[$id])  and ($allowoverrides or ($allowsafeoverrides and is_safe_capability($capability)))) {
                 $templatecontext = array("rolename" => $name, "roleid" => $id, "action" => "unprohibit",
                                 "spanclass" => "forbidden", "linkclass" => "unprohibitlink", "adminurl" => $adminurl->out(),
-                                "imageurl" => "");
+                                "icon" => "", "iconalt" => "");
                 if (isset($overridableroles[$id]) and prohibit_is_removable($id, $context, $capability->name)) {
-                    $templatecontext['imageurl'] = $renderer->pix_url('t/delete');
+                    $templatecontext['icon'] = 't/delete';
+                    $templatecontext['iconalt'] = get_string('delete');
                 }
                 $forbiddenroles[$id] = $renderer->render_from_template('core/permissionmanager_role', $templatecontext);
             }

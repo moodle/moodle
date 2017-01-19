@@ -1381,18 +1381,18 @@ class cm_info implements IteratorAggregate {
         } else if (!empty($this->icon)) {
             if (substr($this->icon, 0, 4) === 'mod/') {
                 list($modname, $iconname) = explode('/', substr($this->icon, 4), 2);
-                $icon = $output->pix_url($iconname, $modname);
+                $icon = $output->image_url($iconname, $modname);
             } else {
                 if (!empty($this->iconcomponent)) {
                     // Icon  has specified component
-                    $icon = $output->pix_url($this->icon, $this->iconcomponent);
+                    $icon = $output->image_url($this->icon, $this->iconcomponent);
                 } else {
                     // Icon does not have specified component, use default
-                    $icon = $output->pix_url($this->icon);
+                    $icon = $output->image_url($this->icon);
                 }
             }
         } else {
-            $icon = $output->pix_url('icon', $this->modname);
+            $icon = $output->image_url('icon', $this->modname);
         }
         return $icon;
     }
@@ -2356,19 +2356,19 @@ class cached_cm_info {
 
     /**
      * Name of icon for this activity. Normally, this should be used together with $iconcomponent
-     * to define the icon, as per pix_url function.
+     * to define the icon, as per image_url function.
      * For backward compatibility, if this value is of the form 'mod/forum/icon' then an icon
      * within that module will be used.
      * @see cm_info::get_icon_url()
-     * @see renderer_base::pix_url()
+     * @see renderer_base::image_url()
      * @var string
      */
     public $icon;
 
     /**
-     * Component for icon for this activity, as per pix_url; leave blank to use default 'moodle'
+     * Component for icon for this activity, as per image_url; leave blank to use default 'moodle'
      * component
-     * @see renderer_base::pix_url()
+     * @see renderer_base::image_url()
      * @var string
      */
     public $iconcomponent;
