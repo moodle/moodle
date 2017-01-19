@@ -3499,7 +3499,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     // Mark the forum post as read if required
     if ($istracked && !$CFG->forum_usermarksread && !$postisread) {
-        forum_tp_mark_post_read($USER->id, $post, $forum->id);
+        forum_tp_mark_post_read($USER->id, $post);
     }
 
     if ($return) {
@@ -4393,7 +4393,7 @@ function forum_add_new_post($post, $mform, $unused = null) {
     $DB->set_field("forum_discussions", "usermodified", $post->userid, array("id" => $post->discussion));
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
-        forum_tp_mark_post_read($post->userid, $post, $post->forum);
+        forum_tp_mark_post_read($post->userid, $post);
     }
 
     // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
@@ -4458,7 +4458,7 @@ function forum_update_post($newpost, $mform, $unused = null) {
     forum_add_attachment($post, $forum, $cm, $mform);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
-        forum_tp_mark_post_read($USER->id, $post, $post->forum);
+        forum_tp_mark_post_read($USER->id, $post);
     }
 
     // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
@@ -4536,7 +4536,7 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
-        forum_tp_mark_post_read($post->userid, $post, $post->forum);
+        forum_tp_mark_post_read($post->userid, $post);
     }
 
     // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
@@ -6202,9 +6202,12 @@ function forum_tp_add_read_record($userid, $postid) {
 /**
  * If its an old post, do nothing. If the record exists, the maintenance will clear it up later.
  *
+ * @param   int     $userid The ID of the user to mark posts read for.
+ * @param   object  $post   The post record for the post to mark as read.
+ * @param   mixed   $unused
  * @return bool
  */
-function forum_tp_mark_post_read($userid, $post, $forumid) {
+function forum_tp_mark_post_read($userid, $post, $unused = null) {
     if (!forum_tp_is_post_old($post)) {
         return forum_tp_add_read_record($userid, $post->id);
     } else {
