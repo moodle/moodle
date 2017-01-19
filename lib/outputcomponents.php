@@ -706,6 +706,18 @@ class pix_icon implements renderable, templatable {
 }
 
 /**
+ * Data structure representing an activity icon.
+ *
+ * The difference is that activity icons will always render with the standard icon system (no font icons).
+ *
+ * @copyright 2017 Damyon Wiese
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package core
+ */
+class activity_icon extends pix_icon {
+}
+
+/**
  * Data structure representing an emoticon image
  *
  * @copyright 2010 David Mudrak
