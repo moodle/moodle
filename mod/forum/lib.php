@@ -4531,7 +4531,7 @@ function forum_update_post($newpost, $mform, &$message) {
     forum_add_attachment($post, $forum, $cm, $mform, $message);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
-        forum_tp_mark_post_read($USER->id, $post, $post->forum);
+        forum_tp_mark_post_read($USER->id, $post, $forum->id);
     }
 
     // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
