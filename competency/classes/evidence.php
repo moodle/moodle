@@ -124,7 +124,7 @@ class evidence extends persistent {
      *
      * @return mixed
      */
-    public function get_desca() {
+    protected function get_desca() {
         $value = $this->raw_get('desca');
         if ($value !== null) {
             $value = json_decode($value);
@@ -147,7 +147,7 @@ class evidence extends persistent {
      * @param mixed $value
      * @return mixed
      */
-    public function set_desca($value) {
+    protected function set_desca($value) {
         if ($value !== null) {
             if (!is_scalar($value) && !is_array($value) && !($value instanceof stdClass)) {
                 throw new coding_exception('$a format not supported.');
@@ -162,7 +162,7 @@ class evidence extends persistent {
      *
      * @param null|string|moodle_url $url The URL.
      */
-    public function set_url($url) {
+    protected function set_url($url) {
         if ($url instanceof \moodle_url) {
             $url = $url->out(false);
         }

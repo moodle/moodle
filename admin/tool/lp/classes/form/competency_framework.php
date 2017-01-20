@@ -149,7 +149,7 @@ class competency_framework extends persistent {
      */
     protected function get_default_data() {
         $data = parent::get_default_data();
-        $data->taxonomies = $this->get_persistent()->get_taxonomies();
+        $data->taxonomies = $this->get_persistent()->get('taxonomies');
         return $data;
     }
 

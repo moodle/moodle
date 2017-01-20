@@ -178,7 +178,7 @@ class competency_framework extends persistent {
      *
      * @return array Contains the list of taxonomy constants indexed by level.
      */
-    public function get_taxonomies() {
+    protected function get_taxonomies() {
         $taxonomies = explode(',', $this->raw_get('taxonomies'));
 
         // Indexing first level at 1.
@@ -212,7 +212,7 @@ class competency_framework extends persistent {
      *
      * @param string|array $taxonomies A string, or an array where the values are the term constants.
      */
-    public function set_taxonomies($taxonomies) {
+    protected function set_taxonomies($taxonomies) {
         if (is_array($taxonomies)) {
             $taxonomies = implode(',', $taxonomies);
         }

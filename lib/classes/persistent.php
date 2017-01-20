@@ -58,12 +58,44 @@ abstract class persistent {
      * @param stdClass $record If set will be passed to {@link self::from_record()}.
      */
     public function __construct($id = 0, stdClass $record = null) {
+        global $CFG;
+
         if ($id > 0) {
             $this->raw_set('id', $id);
             $this->read();
         }
         if (!empty($record)) {
             $this->from_record($record);
+        }
+        if ($CFG->debugdeveloper) {
+            $this->verify_protected_methods();
+        }
+    }
+
+    /**
+     * This function is used to verify that custom getters and setters are declared as protected.
+     *
+     * Persistent properties should always be accessed via get('property') and set('property', 'value') which
+     * will call the custom getter or setter if it exists. We do not want to allow inconsistent access to the properties.
+     */
+    final protected function verify_protected_methods() {
+        $properties = static::properties_definition();
+
+        foreach ($properties as $property => $definition) {
+            $method = 'get_' . $property;
+            if (method_exists($this, $method)) {
+                $reflection = new ReflectionMethod($this, $method);
+                if (!$reflection->isProtected()) {
+                    throw new coding_exception('The method ' . get_class($this) . '::'. $method . ' should be protected.');
+                }
+            }
+            $method = 'set_' . $property;
+            if (method_exists($this, $method)) {
+                $reflection = new ReflectionMethod($this, $method);
+                if (!$reflection->isProtected()) {
+                    throw new coding_exception('The method ' . get_class($this) . '::'. $method . ' should be protected.');
+                }
+            }
         }
     }
 

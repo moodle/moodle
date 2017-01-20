@@ -83,7 +83,7 @@ class framework_exporter {
             '',
             '',
             true,
-            implode(',', $this->framework->get_taxonomies())
+            implode(',', $this->framework->get('taxonomies'))
         );
         $writer->add_data($row);
 
