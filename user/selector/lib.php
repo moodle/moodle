@@ -82,6 +82,9 @@ abstract class user_selector_base {
     /** @var int this is used to define maximum number of users visible in list */
     public $maxusersperpage = 100;
 
+    /** @var boolean Whether to override fullname() */
+    public $viewfullnames = false;
+
     /**
      * Constructor. Each subclass must have a constructor with this signature.
      *
@@ -571,7 +574,7 @@ abstract class user_selector_base {
      * @return string a string representation of the user.
      */
     public function output_user($user) {
-        $out = fullname($user);
+        $out = fullname($user, $this->viewfullnames);
         if ($this->extrafields) {
             $displayfields = array();
             foreach ($this->extrafields as $field) {
