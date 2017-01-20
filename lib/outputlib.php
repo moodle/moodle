@@ -1643,13 +1643,29 @@ class theme_config {
     }
 
     /**
-     * Return the URL for an image
+     * Return the direct URL for an image from the pix folder.
+     *
+     * Use this function sparingly and never for icons. For icons use pix_icon or the pix helper in a mustache template.
      *
      * @param string $imagename the name of the icon.
      * @param string $component specification of one plugin like in get_string()
      * @return moodle_url
      */
     public function pix_url($imagename, $component) {
+        debugging('pix_url is deprecated. Use image_url for images and pix_icon for icons.');
+        return $this->image_url($imagename, $component);
+    }
+
+    /**
+     * Return the direct URL for an image from the pix folder.
+     *
+     * Use this function sparingly and never for icons. For icons use pix_icon or the pix helper in a mustache template.
+     *
+     * @param string $imagename the name of the icon.
+     * @param string $component specification of one plugin like in get_string()
+     * @return moodle_url
+     */
+    public function image_url($imagename, $component) {
         global $CFG;
 
         $params = array('theme'=>$this->name);
