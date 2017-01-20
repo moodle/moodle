@@ -63,11 +63,13 @@ class mustache_pix_helper {
         // Split the text into an array of variables.
         $key = strtok($text, ",");
         $key = trim($key);
+        $key = $helper->render($key);
         $component = strtok(",");
         $component = trim($component);
         if (!$component) {
             $component = '';
         }
+        $component = $helper->render($component);
         $text = strtok("");
         // Allow mustache tags in the last argument.
         $text = $helper->render($text);

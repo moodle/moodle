@@ -109,7 +109,7 @@ abstract class icon_system {
         if ($this->map === null) {
             $this->map = $this->get_icon_name_map();
         }
-        if ($component == null) {
+        if ($component == null || $component == 'moodle') {
             $component = 'core';
         } else if ($component != 'theme') {
             $component = \core_component::normalize_componentname($component);

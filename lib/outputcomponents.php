@@ -627,11 +627,6 @@ class pix_icon implements renderable, templatable {
     var $attributes = array();
 
     /**
-     * @var bool True if this is a font-awesome icon.
-     */
-    protected $fontawesome;
-
-    /**
      * Constructor
      *
      * @param string $pix short icon name
@@ -702,6 +697,24 @@ class pix_icon implements renderable, templatable {
         );
 
         return $data;
+    }
+
+    /**
+     * Much simpler version of export that will produce the data required to render this pix with the
+     * pix helper in a mustache tag.
+     *
+     * @return array
+     */
+    public function export_for_pix() {
+        $title = isset($this->attributes['title']) ? $this->attributes['title'] : '';
+        if (empty($title)) {
+            $title = isset($this->attributes['alt']) ? $this->attributes['alt'] : '';
+        }
+        return [
+            'key' => $this->pix,
+            'component' => $this->component,
+            'title' => $title
+        ];
     }
 }
 
@@ -1509,7 +1522,7 @@ class action_link implements renderable {
 
         $data->text = $this->text instanceof renderable ? $output->render($this->text) : (string) $this->text;
         $data->url = $this->url ? $this->url->out(false) : '';
-        $data->icon = $this->icon ? $this->icon->export_for_template($output) : null;
+        $data->icon = $this->icon ? $this->icon->export_for_pix() : null;
         $data->classes = isset($attributes['class']) ? $attributes['class'] : '';
         unset($attributes['class']);
 
@@ -4295,7 +4308,7 @@ class action_menu implements renderable, templatable {
         }
 
         if ($actionicon instanceof pix_icon) {
-            $primary->icon = $actionicon->export_for_template($output);
+            $primary->icon = $actionicon->export_for_pix();
             $primary->title = !empty($actionicon->attributes['alt']) ? $this->actionicon->attributes['alt'] : '';
         } else {
             $primary->iconraw = $actionicon ? $output->render($actionicon) : '';
@@ -4451,7 +4464,7 @@ class action_menu_link extends action_link implements renderable {
                     unset($icon->attributes['title']);
                 }
             }
-            $data->icon = $icon ? $icon->export_for_template($output) : null;
+            $data->icon = $icon ? $icon->export_for_pix() : null;
         }
 
         $data->disabled = !empty($attributes['disabled']);
