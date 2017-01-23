@@ -4516,7 +4516,7 @@ function forum_update_post($newpost, $mform, &$message) {
 
     // Last post modified tracking.
     $discussion->timemodified = $post->modified;
-    $discussion->usermodified = $USER->id;
+    $discussion->usermodified = $post->userid;
 
     if (!$post->parent) {   // Post is a discussion starter - update discussion title and times too
         $discussion->name      = $post->subject;
