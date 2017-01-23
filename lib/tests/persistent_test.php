@@ -494,7 +494,7 @@ class core_testable_persistent extends \core\persistent {
         $this->afterdelete = true;
     }
 
-    public function get_path() {
+    protected function get_path() {
         $value = $this->raw_get('path');
         if (!empty($value)) {
             $value = json_decode($value);
@@ -502,7 +502,7 @@ class core_testable_persistent extends \core\persistent {
         return $value;
     }
 
-    public function set_path($value) {
+    protected function set_path($value) {
         if (!empty($value)) {
             $value = json_encode($value);
         }
