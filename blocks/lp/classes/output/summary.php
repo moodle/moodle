@@ -83,7 +83,7 @@ class summary implements renderable, templatable {
             if (count($plans) >= 3) {
                 break;
             }
-            if ($plan->get_status() == plan::STATUS_ACTIVE) {
+            if ($plan->get('status') == plan::STATUS_ACTIVE) {
                 $plans[] = $plan;
             }
         }

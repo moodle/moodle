@@ -46,7 +46,7 @@ if (empty($id)) {
     $userevidence = \core_competency\api::read_user_evidence($id);
 
     // The userid parameter must be the same as the owner of the evidence.
-    if ($userid != $userevidence->get_userid()) {
+    if ($userid != $userevidence->get('userid')) {
         throw new coding_exception('Inconsistency between the userid parameter and the userid of the plan.');
     }
 
@@ -84,7 +84,7 @@ if ($form->is_cancelled()) {
 // Load existing user evidence.
 $itemid = null;
 if ($userevidence) {
-    $itemid = $userevidence->get_id();
+    $itemid = $userevidence->get('id');
 }
 
 // Massaging the file API.
@@ -100,7 +100,7 @@ if ($data = $form->get_data()) {
 
     if (empty($userevidence)) {
         $userevidence = \core_competency\api::create_user_evidence($data, $draftitemid);
-        $returnurl = new moodle_url('/admin/tool/lp/user_evidence.php', ['id' => $userevidence->get_id()]);
+        $returnurl = new moodle_url('/admin/tool/lp/user_evidence.php', ['id' => $userevidence->get('id')]);
         $returnmsg = get_string('userevidencecreated', 'tool_lp');
     } else {
         \core_competency\api::update_user_evidence($data, $draftitemid);

@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use moodle_url;
 use renderer_base;
-use core_competency\performance_helper;
+use core_competency\external\performance_helper;
 use core_files\external\stored_file_exporter;
 
 /**

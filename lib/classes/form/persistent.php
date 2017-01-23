@@ -254,7 +254,7 @@ abstract class persistent extends moodleform {
             $data = static::convert_fields($data);
 
             // Ensure that the ID is set.
-            $data->id = $this->persistent->get_id();
+            $data->id = $this->persistent->get('id');
         }
         return $data;
     }
