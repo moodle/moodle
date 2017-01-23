@@ -39,7 +39,7 @@ use core_files\external\stored_file_exporter;
 class user_evidence_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\user_evidence';
+        return \core_competency\user_evidence::class;
     }
 
     protected static function define_other_properties() {

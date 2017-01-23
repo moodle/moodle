@@ -38,7 +38,7 @@ use core_competency\external\performance_helper;
 class user_evidence_summary_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\user_evidence';
+        return \core_competency\user_evidence::class;
     }
 
     protected static function define_other_properties() {

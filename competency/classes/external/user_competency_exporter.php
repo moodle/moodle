@@ -41,7 +41,7 @@ use core_user\external\user_summary_exporter;
 class user_competency_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\user_competency';
+        return user_competency::class;
     }
 
     protected static function define_related() {

@@ -41,7 +41,7 @@ use core_user\external\user_summary_exporter;
 class plan_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\plan';
+        return \core_competency\plan::class;
     }
 
     protected static function define_related() {

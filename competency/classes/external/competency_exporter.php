@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 class competency_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\competency';
+        return \core_competency\competency::class;
     }
 
     protected static function define_related() {

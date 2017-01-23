@@ -38,7 +38,7 @@ use core_competency\template_cohort;
 class template_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\template';
+        return \core_competency\template::class;
     }
 
     protected function get_other_values(renderer_base $output) {

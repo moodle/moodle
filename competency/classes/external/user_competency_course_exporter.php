@@ -37,7 +37,7 @@ use stdClass;
 class user_competency_course_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\user_competency_course';
+        return \core_competency\user_competency_course::class;
     }
 
     protected static function define_related() {

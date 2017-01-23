@@ -109,12 +109,13 @@ abstract class persistent {
      * raw records from the DB.
      *
      * @param  string $property The property name.
-     * @return mixed
+     * @return $this
      */
     final public function set($property, $value) {
         $methodname = 'set_' . $property;
         if (method_exists($this, $methodname)) {
-            return $this->$methodname($value);
+            $this->$methodname($value);
+            return $this;
         }
         return $this->raw_set($property, $value);
     }
@@ -177,7 +178,7 @@ abstract class persistent {
      *
      * @param  string $property The property name.
      * @param  mixed $value The value.
-     * @return mixed
+     * @return $this
      */
     final protected function raw_set($property, $value) {
         if (!static::has_property($property)) {
@@ -188,6 +189,8 @@ abstract class persistent {
             $this->validated = false;
         }
         $this->data[$property] = $value;
+
+        return $this;
     }
 
     /**

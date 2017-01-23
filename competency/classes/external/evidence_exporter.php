@@ -66,7 +66,7 @@ class evidence_exporter extends \core\external\persistent_exporter {
     }
 
     protected static function define_class() {
-        return 'core_competency\\evidence';
+        return evidence::class;
     }
 
     protected function get_other_values(renderer_base $output) {

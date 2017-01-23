@@ -41,7 +41,7 @@ class competency_framework_exporter extends \core\external\persistent_exporter {
      * @return string
      */
     protected static function define_class() {
-        return 'core_competency\\competency_framework';
+        return \core_competency\competency_framework::class;
     }
 
     /**
