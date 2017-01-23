@@ -1121,7 +1121,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $concept = 'A concept';
-        $definition = 'A definition';
+        $definition = '<p>A definition</p>';
         $return = mod_glossary_external::add_entry($glossary->id, $concept, $definition, FORMAT_HTML);
         $return = external_api::clean_returnvalue(mod_glossary_external::add_entry_returns(), $return);
 
