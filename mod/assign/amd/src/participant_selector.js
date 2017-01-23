@@ -35,12 +35,7 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
          * @return {Array}
          */
         processResults: function(selector, data) {
-            var results = [];
-            var i = 0;
-            for (i = 0; i < data.length; i++) {
-                results[i] = {value: data[i].id, label: data[i].label};
-            }
-            return results;
+            return data;
         },
 
         /**
@@ -62,12 +57,10 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
                 filterstrings[$(element).attr('name')] = $(element).prop('checked');
             });
 
-            var promise = ajax.call([{
+            ajax.call([{
                 methodname: 'mod_assign_list_participants',
                 args: {assignid: assignmentid, groupid: groupid, filter: query, limit: 30, includeenrolments: false}
-            }]);
-
-            promise[0].then(function(results) {
+            }])[0].then(function(results) {
                 var promises = [];
                 var identityfields = $('[data-showuseridentity]').data('showuseridentity').split(',');
 
@@ -94,23 +87,24 @@ define(['core/ajax', 'jquery', 'core/templates'], function(ajax, $, templates) {
                             }
                         });
                         ctx.identity = identity.join(', ');
-                        promises.push(templates.render('mod_assign/list_participant_user_summary', ctx));
+                        promises.push(templates.render('mod_assign/list_participant_user_summary', ctx).then(function(html) {
+                            return {value: user.id, label: html};
+                        }));
                     }
                 });
+                // Do the dance for $.when()
+                return $.when.apply($, promises);
+            }).then(function() {
+                var users = [];
 
-                // When all the templates have been rendered, call the success handler.
-                $.when.apply($.when, promises).then(function() {
-                    var args = arguments,
-                        i = 0;
+                // Determine if we've been passed any arguments..
+                if (arguments[0]) {
+                    // Undo the $.when() dance from arguments object into an array..
+                    users = Array.prototype.slice.call(arguments);
+                }
 
-                    $.each(results, function(index, user) {
-                        user.label = args[i];
-                        i++;
-                    });
-
-                    success(results);
-                });
-            }, failure);
+                success(users);
+            }).catch(failure);
         }
     };
 });
