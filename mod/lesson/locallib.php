@@ -675,6 +675,341 @@ function lesson_process_group_deleted_in_course($courseid, $groupid = null) {
 }
 
 /**
+ * Return the overview report table and data.
+ *
+ * @param  lesson $lesson       lesson instance
+ * @param  mixed $currentgroup  false if not group used, 0 for all groups, group id (int) to filter by that groups
+ * @return mixed false if there is no information otherwise html_table and stdClass with the table and data
+ * @since  Moodle 3.3
+ */
+function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup) {
+    global $DB;
+
+    $context = $lesson->context;
+    $cm = $lesson->cm;
+    // Count the number of branch and question pages in this lesson.
+    $branchcount = $DB->count_records('lesson_pages', array('lessonid' => $lesson->id, 'qtype' => LESSON_PAGE_BRANCHTABLE));
+    $questioncount = ($DB->count_records('lesson_pages', array('lessonid' => $lesson->id)) - $branchcount);
+
+    // Only load students if there attempts for this lesson.
+    $attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id));
+    $branches = $DB->record_exists('lesson_branch', array('lessonid' => $lesson->id));
+    $timer = $DB->record_exists('lesson_timer', array('lessonid' => $lesson->id));
+    if ($attempts or $branches or $timer) {
+        list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
+        list($sort, $sortparams) = users_order_by_sql('u');
+
+        $params['a1lessonid'] = $lesson->id;
+        $params['b1lessonid'] = $lesson->id;
+        $params['c1lessonid'] = $lesson->id;
+        $ufields = user_picture::fields('u');
+        $sql = "SELECT DISTINCT $ufields
+                FROM {user} u
+                JOIN (
+                    SELECT userid, lessonid FROM {lesson_attempts} a1
+                    WHERE a1.lessonid = :a1lessonid
+                        UNION
+                    SELECT userid, lessonid FROM {lesson_branch} b1
+                    WHERE b1.lessonid = :b1lessonid
+                        UNION
+                    SELECT userid, lessonid FROM {lesson_timer} c1
+                    WHERE c1.lessonid = :c1lessonid
+                    ) a ON u.id = a.userid
+                JOIN ($esql) ue ON ue.id = a.userid
+                ORDER BY $sort";
+
+        $students = $DB->get_recordset_sql($sql, $params);
+        if (!$students->valid()) {
+            $students->close();
+            return array(false, false);
+        }
+    } else {
+        return array(false, false);
+    }
+
+    if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
+        $grades = array();
+    }
+
+    if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
+        $times = array();
+    }
+
+    // Build an array for output.
+    $studentdata = array();
+
+    $attempts = $DB->get_recordset('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen');
+    foreach ($attempts as $attempt) {
+        // if the user is not in the array or if the retry number is not in the sub array, add the data for that try.
+        if (empty($studentdata[$attempt->userid]) || empty($studentdata[$attempt->userid][$attempt->retry])) {
+            // restore/setup defaults
+            $n = 0;
+            $timestart = 0;
+            $timeend = 0;
+            $usergrade = null;
+            $eol = false;
+
+            // search for the grade record for this try. if not there, the nulls defined above will be used.
+            foreach($grades as $grade) {
+                // check to see if the grade matches the correct user
+                if ($grade->userid == $attempt->userid) {
+                    // see if n is = to the retry
+                    if ($n == $attempt->retry) {
+                        // get grade info
+                        $usergrade = round($grade->grade, 2); // round it here so we only have to do it once
+                        break;
+                    }
+                    $n++; // if not equal, then increment n
+                }
+            }
+            $n = 0;
+            // search for the time record for this try. if not there, the nulls defined above will be used.
+            foreach($times as $time) {
+                // check to see if the grade matches the correct user
+                if ($time->userid == $attempt->userid) {
+                    // see if n is = to the retry
+                    if ($n == $attempt->retry) {
+                        // get grade info
+                        $timeend = $time->lessontime;
+                        $timestart = $time->starttime;
+                        $eol = $time->completed;
+                        break;
+                    }
+                    $n++; // if not equal, then increment n
+                }
+            }
+
+            // build up the array.
+            // this array represents each student and all of their tries at the lesson
+            $studentdata[$attempt->userid][$attempt->retry] = array( "timestart" => $timestart,
+                                                                    "timeend" => $timeend,
+                                                                    "grade" => $usergrade,
+                                                                    "end" => $eol,
+                                                                    "try" => $attempt->retry,
+                                                                    "userid" => $attempt->userid);
+        }
+    }
+    $attempts->close();
+
+    $branches = $DB->get_recordset('lesson_branch', array('lessonid' => $lesson->id), 'timeseen');
+    foreach ($branches as $branch) {
+        // If the user is not in the array or if the retry number is not in the sub array, add the data for that try.
+        if (empty($studentdata[$branch->userid]) || empty($studentdata[$branch->userid][$branch->retry])) {
+            // Restore/setup defaults.
+            $n = 0;
+            $timestart = 0;
+            $timeend = 0;
+            $usergrade = null;
+            $eol = false;
+            // Search for the time record for this try. if not there, the nulls defined above will be used.
+            foreach ($times as $time) {
+                // Check to see if the grade matches the correct user.
+                if ($time->userid == $branch->userid) {
+                    // See if n is = to the retry.
+                    if ($n == $branch->retry) {
+                        // Get grade info.
+                        $timeend = $time->lessontime;
+                        $timestart = $time->starttime;
+                        $eol = $time->completed;
+                        break;
+                    }
+                    $n++; // If not equal, then increment n.
+                }
+            }
+
+            // Build up the array.
+            // This array represents each student and all of their tries at the lesson.
+            $studentdata[$branch->userid][$branch->retry] = array( "timestart" => $timestart,
+                                                                    "timeend" => $timeend,
+                                                                    "grade" => $usergrade,
+                                                                    "end" => $eol,
+                                                                    "try" => $branch->retry,
+                                                                    "userid" => $branch->userid);
+        }
+    }
+    $branches->close();
+
+    // Need the same thing for timed entries that were not completed.
+    foreach ($times as $time) {
+        $endoflesson = $time->completed;
+        // If the time start is the same with another record then we shouldn't be adding another item to this array.
+        if (isset($studentdata[$time->userid])) {
+            $foundmatch = false;
+            $n = 0;
+            foreach ($studentdata[$time->userid] as $key => $value) {
+                if ($value['timestart'] == $time->starttime) {
+                    // Don't add this to the array.
+                    $foundmatch = true;
+                    break;
+                }
+            }
+            $n = count($studentdata[$time->userid]) + 1;
+            if (!$foundmatch) {
+                // Add a record.
+                $studentdata[$time->userid][] = array(
+                                "timestart" => $time->starttime,
+                                "timeend" => $time->lessontime,
+                                "grade" => null,
+                                "end" => $endoflesson,
+                                "try" => $n,
+                                "userid" => $time->userid
+                            );
+            }
+        } else {
+            $studentdata[$time->userid][] = array(
+                                "timestart" => $time->starttime,
+                                "timeend" => $time->lessontime,
+                                "grade" => null,
+                                "end" => $endoflesson,
+                                "try" => 0,
+                                "userid" => $time->userid
+                            );
+        }
+    }
+
+    // To store all the data to be returned by the function.
+    $data = new stdClass();
+
+    // Determine if lesson should have a score.
+    if ($branchcount > 0 AND $questioncount == 0) {
+        // This lesson only contains content pages and is not graded.
+        $data->lessonscored = false;
+    } else {
+        // This lesson is graded.
+        $data->lessonscored = true;
+    }
+    // set all the stats variables
+    $data->numofattempts = 0;
+    $data->avescore      = 0;
+    $data->avetime       = 0;
+    $data->highscore     = null;
+    $data->lowscore      = null;
+    $data->hightime      = null;
+    $data->lowtime       = null;
+    $data->students      = array();
+
+    $table = new html_table();
+
+    // Set up the table object.
+    if ($data->lessonscored) {
+        $table->head = array(get_string('name'), get_string('attempts', 'lesson'), get_string('highscore', 'lesson'));
+    } else {
+        $table->head = array(get_string('name'), get_string('attempts', 'lesson'));
+    }
+    $table->align = array('center', 'left', 'left');
+    $table->wrap = array('nowrap', 'nowrap', 'nowrap');
+    $table->attributes['class'] = 'standardtable generaltable';
+    $table->size = array(null, '70%', null);
+
+    // print out the $studentdata array
+    // going through each student that has attempted the lesson, so, each student should have something to be displayed
+    foreach ($students as $student) {
+        // check to see if the student has attempts to print out
+        if (array_key_exists($student->id, $studentdata)) {
+            // set/reset some variables
+            $attempts = array();
+            $dataforstudent = new stdClass;
+            $dataforstudent->attempts = array();
+            // gather the data for each user attempt
+            $bestgrade = 0;
+            $bestgradefound = false;
+            // $tries holds all the tries/retries a student has done
+            $tries = $studentdata[$student->id];
+            $studentname = fullname($student, true);
+
+            foreach ($tries as $try) {
+                $dataforstudent->attempts[] = $try;
+
+                // Start to build up the checkbox and link.
+                if (has_capability('mod/lesson:edit', $context)) {
+                    $temp = '<input type="checkbox" id="attempts" name="attempts['.$try['userid'].']['.$try['try'].']" /> ';
+                } else {
+                    $temp = '';
+                }
+
+                $temp .= "<a href=\"report.php?id=$cm->id&amp;action=reportdetail&amp;userid=".$try['userid']
+                        .'&amp;try='.$try['try'].'" class="lesson-attempt-link">';
+                if ($try["grade"] !== null) { // if null then not done yet
+                    // this is what the link does when the user has completed the try
+                    $timetotake = $try["timeend"] - $try["timestart"];
+
+                    $temp .= $try["grade"]."%";
+                    $bestgradefound = true;
+                    if ($try["grade"] > $bestgrade) {
+                        $bestgrade = $try["grade"];
+                    }
+                    $temp .= "&nbsp;".userdate($try["timestart"]);
+                    $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+                } else {
+                    if ($try["end"]) {
+                        // User finished the lesson but has no grade. (Happens when there are only content pages).
+                        $temp .= "&nbsp;".userdate($try["timestart"]);
+                        $timetotake = $try["timeend"] - $try["timestart"];
+                        $temp .= ",&nbsp;(".format_time($timetotake).")</a>";
+                    } else {
+                        // This is what the link does/looks like when the user has not completed the attempt.
+                        $temp .= get_string("notcompleted", "lesson");
+                        if ($try['timestart'] !== 0) {
+                            // Teacher previews do not track time spent.
+                            $temp .= "&nbsp;".userdate($try["timestart"]);
+                        }
+                        $temp .= "</a>";
+                        $timetotake = null;
+                    }
+                }
+                // build up the attempts array
+                $attempts[] = $temp;
+
+                // Run these lines for the stats only if the user finnished the lesson.
+                if ($try["end"]) {
+                    // User has completed the lesson.
+                    $data->numofattempts++;
+                    $data->avetime += $timetotake;
+                    if ($timetotake > $data->hightime || $data->hightime == null) {
+                        $data->hightime = $timetotake;
+                    }
+                    if ($timetotake < $data->lowtime || $data->lowtime == null) {
+                        $data->lowtime = $timetotake;
+                    }
+                    if ($try["grade"] !== null) {
+                        // The lesson was scored.
+                        $data->avescore += $try["grade"];
+                        if ($try["grade"] > $data->highscore || $data->highscore === null) {
+                            $data->highscore = $try["grade"];
+                        }
+                        if ($try["grade"] < $data->lowscore || $data->lowscore === null) {
+                            $data->lowscore = $try["grade"];
+                        }
+
+                    }
+                }
+            }
+            // get line breaks in after each attempt
+            $attempts = implode("<br />\n", $attempts);
+
+            if ($data->lessonscored) {
+                // Add the grade if the lesson is graded.
+                $table->data[] = array($studentname, $attempts, $bestgrade . "%");
+            } else {
+                // This lesson does not have a grade.
+                $table->data[] = array($studentname, $attempts);
+            }
+            // Add the student data.
+            $dataforstudent->id = $student->id;
+            $dataforstudent->fullname = $studentname;
+            $dataforstudent->bestgrade = $bestgrade;
+            $data->students[] = $dataforstudent;
+        }
+    }
+    $students->close();
+    if ($data->numofattempts > 0) {
+        $data->avescore = $data->avescore / $data->numofattempts;
+    }
+
+    return array($table, $data);
+}
+
+/**
  * Abstract class that page type's MUST inherit from.
  *
  * This is the abstract class that ALL add page type forms must extend.
