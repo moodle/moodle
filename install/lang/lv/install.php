@@ -39,6 +39,7 @@ $string['dataroot'] = 'Datu direktorijs';
 $string['dbprefix'] = 'Tabulu prefikss';
 $string['dirroot'] = 'Moodle direktorijs';
 $string['environmenthead'] = 'Vides pārbaude...';
+$string['errorsinenvironment'] = 'Vides pārbaude neizdevās!';
 $string['installation'] = 'Instalēšana';
 $string['langdownloaderror'] = '“{$a}” valodas pakotne diemžēl netika instalēta. Instalēšana tiks turpināta angļu valodā.';
 $string['memorylimithelp'] = '<p>Pašlaik iestatītais PHP atmiņas apjoma ierobežojums jūsu serverī ir {$a}.</p>
