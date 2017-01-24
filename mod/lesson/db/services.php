@@ -140,4 +140,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:viewreports',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_get_user_attempt' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_user_attempt',
+        'description'   => 'Return information about the given user attempt (including answers).',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:viewreports',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
