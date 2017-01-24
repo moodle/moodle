@@ -1650,4 +1650,115 @@ class mod_lesson_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_attempts_overview.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_attempts_overview_parameters() {
+        return new external_function_parameters (
+            array(
+                'lessonid' => new external_value(PARAM_INT, 'lesson instance id'),
+                'groupid' => new external_value(PARAM_INT, 'group id, 0 means that the function will determine the user group',
+                                                VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Get a list of all the attempts made by users in a lesson.
+     *
+     * @param int $lessonid lesson instance id
+     * @param int $groupid group id, 0 means that the function will determine the user group
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_attempts_overview($lessonid, $groupid = 0) {
+
+        $params = array('lessonid' => $lessonid, 'groupid' => $groupid);
+        $params = self::validate_parameters(self::get_attempts_overview_parameters(), $params);
+        $studentsdata = $warnings = array();
+
+        list($lesson, $course, $cm, $context) = self::validate_lesson($params['lessonid']);
+        require_capability('mod/lesson:viewreports', $context);
+
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode = groups_get_activity_groupmode($cm)) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        list($table, $data) = lesson_get_overview_report_table_and_data($lesson, $groupid);
+        if ($data !== false) {
+            $studentsdata = $data;
+        }
+
+        $result = array(
+            'data' => $studentsdata,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the get_attempts_overview return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_attempts_overview_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_single_structure(
+                    array(
+                        'lessonscored' => new external_value(PARAM_BOOL, 'True if the lesson was scored.'),
+                        'numofattempts' => new external_value(PARAM_INT, 'Number of attempts.'),
+                        'avescore' => new external_value(PARAM_FLOAT, 'Average score.'),
+                        'highscore' => new external_value(PARAM_FLOAT, 'High score.'),
+                        'lowscore' => new external_value(PARAM_FLOAT, 'Low score.'),
+                        'avetime' => new external_value(PARAM_INT, 'Average time (spent in taking the lesson).'),
+                        'hightime' => new external_value(PARAM_INT, 'High time.'),
+                        'lowtime' => new external_value(PARAM_INT, 'Low time.'),
+                        'students' => new external_multiple_structure(
+                            new external_single_structure(
+                                array(
+                                    'id' => new external_value(PARAM_INT, 'User id.'),
+                                    'fullname' => new external_value(PARAM_TEXT, 'User full name.'),
+                                    'bestgrade' => new external_value(PARAM_FLOAT, 'Best grade.'),
+                                    'attempts' => new external_multiple_structure(
+                                        new external_single_structure(
+                                            array(
+                                                'try' => new external_value(PARAM_INT, 'Attempt number.'),
+                                                'grade' => new external_value(PARAM_FLOAT, 'Attempt grade.'),
+                                                'timestart' => new external_value(PARAM_INT, 'Attempt time started.'),
+                                                'timeend' => new external_value(PARAM_INT, 'Attempt last time continued.'),
+                                                'end' => new external_value(PARAM_INT, 'Attempt time ended.'),
+                                            )
+                                        )
+                                    )
+                                )
+                            ), 'Students data, including attempts.', VALUE_OPTIONAL
+                        ),
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

@@ -976,26 +976,28 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test process_page
+     * Creates an attempt for the given userwith a correct or incorrect answer and optionally finishes it.
+     *
+     * @param  stdClass $user    Create an attempt for this user
+     * @param  boolean $correct  If the answer should be correct
+     * @param  boolean $finished If we should finish the attempt
+     * @return array the result of the attempt creation or finalisation
      */
-    public function test_process_page() {
+    protected function create_attempt($user, $correct = true, $finished = false) {
         global $DB;
 
-        $this->setUser($this->student);
+        $this->setUser($user);
+
         // First we need to launch the lesson so the timer is on.
         mod_lesson_external::launch_attempt($this->lesson->id);
 
-        // Configure the lesson to return feedback and avoid custom scoring.
         $DB->set_field('lesson', 'feedback', 1, array('id' => $this->lesson->id));
         $DB->set_field('lesson', 'progressbar', 1, array('id' => $this->lesson->id));
         $DB->set_field('lesson', 'custom', 0, array('id' => $this->lesson->id));
         $DB->set_field('lesson', 'maxattempts', 3, array('id' => $this->lesson->id));
 
-        // Now, we can directly launch mocking the data.
-
-        // First incorrect response.
-        $answerincorrect = 0;
         $answercorrect = 0;
+        $answerincorrect = 0;
         $p2answers = $DB->get_records('lesson_answers', array('lessonid' => $this->lesson->id, 'pageid' => $this->page2->id), 'id');
         foreach ($p2answers as $answer) {
             if ($answer->jumpto == 0) {
@@ -1008,7 +1010,7 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $data = array(
             array(
                 'name' => 'answerid',
-                'value' => $answerincorrect,
+                'value' => $correct ? $answercorrect : $answerincorrect,
             ),
             array(
                 'name' => '_qf__lesson_display_answer_form_truefalse',
@@ -1017,25 +1019,29 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         );
         $result = mod_lesson_external::process_page($this->lesson->id, $this->page2->id, $data);
         $result = external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
+
+        if ($finished) {
+            $result = mod_lesson_external::finish_attempt($this->lesson->id);
+            $result = external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
+        }
+        return $result;
+    }
+
+    /**
+     * Test process_page
+     */
+    public function test_process_page() {
+        global $DB;
+
+        // Attempt first with incorrect response.
+        $result = $this->create_attempt($this->student, false, false);
 
         $this->assertEquals($this->page2->id, $result['newpageid']);    // Same page, since the answer was incorrect.
         $this->assertFalse($result['correctanswer']);   // Incorrect answer.
         $this->assertEquals(50, $result['progress']);
 
-        // Correct response.
-        $data = array(
-            array(
-                'name' => 'answerid',
-                'value' => $answercorrect,
-            ),
-            array(
-                'name' => '_qf__lesson_display_answer_form_truefalse',
-                'value' => 1,
-            )
-        );
-
-        $result = mod_lesson_external::process_page($this->lesson->id, $this->page2->id, $data);
-        $result = external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
+        // Attempt with correct response.
+        $result = $this->create_attempt($this->student, true, false);
 
         $this->assertEquals($this->page1->id, $result['newpageid']);    // Next page, the answer was correct.
         $this->assertTrue($result['correctanswer']);    // Correct response.
@@ -1078,39 +1084,8 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
      * Test finish attempt with correct answer.
      */
     public function test_finish_attempt_with_correct_answer() {
-        global $DB;
-
-        $this->setUser($this->student);
-        // First we need to launch the lesson so the timer is on.
-        mod_lesson_external::launch_attempt($this->lesson->id);
-
-        // Attempt a question, correct answer.
-        $DB->set_field('lesson', 'custom', 0, array('id' => $this->lesson->id));
-        $DB->set_field('lesson', 'progressbar', 1, array('id' => $this->lesson->id));
-
-        $answercorrect = 0;
-        $p2answers = $DB->get_records('lesson_answers', array('lessonid' => $this->lesson->id, 'pageid' => $this->page2->id), 'id');
-        foreach ($p2answers as $answer) {
-            if ($answer->jumpto != 0) {
-                $answercorrect = $answer->id;
-            }
-        }
-
-        $data = array(
-            array(
-                'name' => 'answerid',
-                'value' => $answercorrect,
-            ),
-            array(
-                'name' => '_qf__lesson_display_answer_form_truefalse',
-                'value' => 1,
-            )
-        );
-        $result = mod_lesson_external::process_page($this->lesson->id, $this->page2->id, $data);
-        $result = external_api::clean_returnvalue(mod_lesson_external::process_page_returns(), $result);
-
-        $result = mod_lesson_external::finish_attempt($this->lesson->id);
-        $result = external_api::clean_returnvalue(mod_lesson_external::finish_attempt_returns(), $result);
+        // Create a finished attempt.
+        $result = $this->create_attempt($this->student, true, true);
 
         $this->assertCount(0, $result['warnings']);
         $returneddata = [];
@@ -1130,5 +1105,84 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
             'nmanual' => 0,
             'manualpoints' => 0,
         ];
+    }
+
+    /**
+     * Test get_attempts_overview
+     */
+    public function test_get_attempts_overview() {
+        global $DB;
+
+        // Create a finished attempt with incorrect answer.
+        $this->setCurrentTimeStart();
+        $this->create_attempt($this->student, false, true);
+
+        $this->setAdminUser();
+        $result = mod_lesson_external::get_attempts_overview($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
+
+        // One attempt, 0 for grade (incorrect response) in overal statistics.
+        $this->assertEquals(1, $result['data']['numofattempts']);
+        $this->assertEquals(0, $result['data']['avescore']);
+        $this->assertEquals(0, $result['data']['highscore']);
+        $this->assertEquals(0, $result['data']['lowscore']);
+        // Check one student, finished attempt, 0 for grade.
+        $this->assertCount(1, $result['data']['students']);
+        $this->assertEquals($this->student->id, $result['data']['students'][0]['id']);
+        $this->assertEquals(0, $result['data']['students'][0]['bestgrade']);
+        $this->assertCount(1, $result['data']['students'][0]['attempts']);
+        $this->assertEquals(1, $result['data']['students'][0]['attempts'][0]['end']);
+        $this->assertEquals(0, $result['data']['students'][0]['attempts'][0]['grade']);
+        $this->assertTimeCurrent($result['data']['students'][0]['attempts'][0]['timestart']);
+        $this->assertTimeCurrent($result['data']['students'][0]['attempts'][0]['timeend']);
+
+        // Add a new attempt (same user).
+        sleep(1);
+        // Allow first retake.
+        $DB->set_field('lesson', 'retake', 1, array('id' => $this->lesson->id));
+        // Create a finished attempt with correct answer.
+        $this->setCurrentTimeStart();
+        $this->create_attempt($this->student, true, true);
+
+        $this->setAdminUser();
+        $result = mod_lesson_external::get_attempts_overview($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
+
+        // Two attempts with maximum grade.
+        $this->assertEquals(2, $result['data']['numofattempts']);
+        $this->assertEquals(50.00, format_float($result['data']['avescore'], 2));
+        $this->assertEquals(100, $result['data']['highscore']);
+        $this->assertEquals(0, $result['data']['lowscore']);
+        // Check one student, finished two attempts, 100 for final grade.
+        $this->assertCount(1, $result['data']['students']);
+        $this->assertEquals($this->student->id, $result['data']['students'][0]['id']);
+        $this->assertEquals(100, $result['data']['students'][0]['bestgrade']);
+        $this->assertCount(2, $result['data']['students'][0]['attempts']);
+        foreach ($result['data']['students'][0]['attempts'] as $attempt) {
+            if ($attempt['try'] == 0) {
+                // First attempt, 0 for grade.
+                $this->assertEquals(0, $attempt['grade']);
+            } else {
+                $this->assertEquals(100, $attempt['grade']);
+            }
+        }
+
+        // Now, add other user failed attempt.
+        $student2 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student2->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->create_attempt($student2, false, true);
+
+        // Now check we have two students and the statistics changed.
+        $this->setAdminUser();
+        $result = mod_lesson_external::get_attempts_overview($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_attempts_overview_returns(), $result);
+
+        // Total of 3 attempts with maximum grade.
+        $this->assertEquals(3, $result['data']['numofattempts']);
+        $this->assertEquals(33.33, format_float($result['data']['avescore'], 2));
+        $this->assertEquals(100, $result['data']['highscore']);
+        $this->assertEquals(0, $result['data']['lowscore']);
+        // Check students.
+        $this->assertCount(2, $result['data']['students']);
     }
 }
