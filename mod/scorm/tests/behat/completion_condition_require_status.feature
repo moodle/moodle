@@ -54,7 +54,7 @@ Feature: Scorm multi-sco completion
     Then "Student 1" user has completed "Basic Multi-sco SCORM package" activity
 
   @javascript
-  Scenario: Test completion with all scos
+  Scenario: Test completion with all scos and correct sco load on re-entry.
     When I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
@@ -95,11 +95,6 @@ Feature: Scorm multi-sco completion
     And I follow "ADV Multi-sco SCORM package"
     And I should see "Normal"
     And I press "Enter"
-    And I switch to "scorm_object" iframe
-    And I should see "Play of the game"
-
-    And I switch to the main frame
-    And I click on "Par?" "list_item"
     And I switch to "scorm_object" iframe
     And I should see "Par"
 
