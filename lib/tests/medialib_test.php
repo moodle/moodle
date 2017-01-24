@@ -517,4 +517,11 @@ class core_media_manager_test extends core_media_manager {
         }
         return $out;
     }
+
+    /**
+     * Override the constructor to access it.
+     */
+    public function __construct() {
+        parent::__construct();
+    }
 }
