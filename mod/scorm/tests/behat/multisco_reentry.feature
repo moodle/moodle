@@ -30,7 +30,6 @@ Feature: Scorm multi-sco review mode.
       | Name | Multi-sco SCORM package |
       | Description | Description |
       | Completion tracking | Show activity as complete when conditions are met |
-      | Require all scos to return completion status | 1 |
     And I set the field "Completed" to "1"
     And I upload "mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
@@ -50,6 +49,8 @@ Feature: Scorm multi-sco review mode.
     And I switch to the main frame
     And I follow "Exit activity"
     And I wait until the page is ready
+    And I am on homepage
+    And I follow "Course 1"
     And I follow "Multi-sco SCORM package"
     And I should see "Normal"
     And I press "Enter"
