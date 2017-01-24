@@ -389,7 +389,7 @@ class mod_assign_renderer extends plugin_renderer_base {
             $cell1 = new html_table_cell(get_string('gradedby', 'assign'));
             $userdescription = $this->output->user_picture($status->grader) .
                                $this->output->spacer(array('width'=>30)) .
-                               fullname($status->grader);
+                               fullname($status->grader, $status->canviewfullnames);
             $cell2 = new html_table_cell($userdescription);
             $row->cells = array($cell1, $cell2);
             $t->data[] = $row;
