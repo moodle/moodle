@@ -249,6 +249,18 @@ class mod_lesson_mod_form extends moodleform_mod {
                     'completed' => 0, 'gradebetterthan' => 0));
         }
 
+        // Allow to enable offline lessons only if the Mobile services are enabled.
+        if ($CFG->enablemobilewebservice) {
+            $mform->addElement('selectyesno', 'allowofflineattempts', get_string('allowofflineattempts', 'lesson'));
+            $mform->addHelpButton('allowofflineattempts', 'allowofflineattempts', 'lesson');
+            $mform->setDefault('allowofflineattempts', 0);
+            $mform->setAdvanced('allowofflineattempts');
+            $mform->disabledIf('allowofflineattempts', 'timelimit[number]', 'neq', 0);
+        } else {
+            $mform->addElement('hidden', 'allowofflineattempts', 0);
+            $mform->setType('allowofflineattempts', PARAM_INT);
+        }
+
         // Flow control.
         $mform->addElement('header', 'flowcontrol', get_string('flowcontrol', 'lesson'));
 
