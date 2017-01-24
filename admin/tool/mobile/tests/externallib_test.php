@@ -84,6 +84,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             'maintenancemessage' => $maintenancemessage,
             'typeoflogin' => api::LOGIN_VIA_APP,
             'mobilecssurl' => '',
+            'tool_mobile_disabledfeatures' => '',
             'warnings' => array()
         );
         $this->assertEquals($expected, $result);
@@ -146,6 +147,7 @@ class tool_mobile_external_testcase extends externallib_advanced_testcase {
             array('name' => 'mygradesurl', 'value' => user_mygrades_url()->out(false)),
             array('name' => 'tool_mobile_forcelogout', 'value' => 0),
             array('name' => 'tool_mobile_customlangstrings', 'value' => ''),
+            array('name' => 'tool_mobile_disabledfeatures', 'value' => ''),
         );
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
