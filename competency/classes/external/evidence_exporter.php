@@ -78,7 +78,7 @@ class evidence_exporter extends \core\external\persistent_exporter {
             $other['actionuser'] = $actionuser;
         }
 
-        $other['description'] = $this->persistent->get('description');
+        $other['description'] = $this->persistent->get_description();
 
         $other['userdate'] = userdate($this->persistent->get('timecreated'));
 

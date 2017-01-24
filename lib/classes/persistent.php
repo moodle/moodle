@@ -112,6 +112,9 @@ abstract class persistent {
      * @return $this
      */
     final public function set($property, $value) {
+        if (!static::has_property($property)) {
+            throw new coding_exception('Unexpected property \'' . s($property) .'\' requested.');
+        }
         $methodname = 'set_' . $property;
         if (method_exists($this, $methodname)) {
             $this->$methodname($value);
@@ -133,6 +136,9 @@ abstract class persistent {
      * @return mixed
      */
     final public function get($property) {
+        if (!static::has_property($property)) {
+            throw new coding_exception('Unexpected property \'' . s($property) .'\' requested.');
+        }
         $methodname = 'get_' . $property;
         if (method_exists($this, $methodname)) {
             return $this->$methodname();

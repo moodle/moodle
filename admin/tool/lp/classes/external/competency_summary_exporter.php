@@ -125,7 +125,7 @@ class competency_summary_exporter extends \core\external\exporter {
         $result->scaleconfiguration = $scaleconfiguration;
         $result->scaleid = $scaleid;
 
-        $level = $competency->get('level');
+        $level = $competency->get_level();
         $taxonomy = $this->related['framework']->get_taxonomy($level);
         $result->taxonomyterm = (string) (competency_framework::get_taxonomies_list()[$taxonomy]);
 
