@@ -36,5 +36,13 @@ $functions = array(
         'capabilities'  => 'mod/resource:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
-
+    'mod_resource_get_resources_by_courses' => array(
+        'classname'     => 'mod_resource_external',
+        'methodname'    => 'get_resources_by_courses',
+        'description'   => 'Returns a list of files in a provided list of courses, if no list is provided all files that
+                            the user can view will be returned.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/resource:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );
