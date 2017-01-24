@@ -359,6 +359,7 @@ $string['numberofpagesviewed'] = 'Number of questions answered: {$a}';
 $string['numberofpagesviewedheader'] = 'Number of questions answered';
 $string['numberofpagesviewednotice'] = 'Number of questions answered: {$a->nquestions} (You should answer at least {$a->minquestions})';
 $string['numerical'] = 'Numerical';
+$string['offlinedatamessage'] = 'You have worked on this attempt using a mobile device. Data was last saved to this site {$a} ago. Please check that you do not have any unsaved work.';
 $string['ongoing'] = 'Display ongoing score';
 $string['ongoing_help'] = 'If enabled, each page will display the student\'s current points earned out of the total possible thus far.';
 $string['ongoingcustom'] = 'You have earned {$a->score} point(s) out of {$a->currenthigh} point(s) thus far.';

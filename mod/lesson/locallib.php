@@ -1448,6 +1448,7 @@ abstract class lesson_add_page_form_base extends moodleform {
  * @property int $available Timestamp of when this lesson becomes available
  * @property int $deadline Timestamp of when this lesson is no longer available
  * @property int $timemodified Timestamp when lesson was last modified
+ * @property int $allowofflineattempts Whether to allow the lesson to be attempted offline in the mobile app
  *
  * These properties are calculated
  * @property int $firstpageid Id of the first page of this lesson (prevpageid=0)
@@ -2035,11 +2036,16 @@ class lesson extends lesson_base {
         $event->trigger();
 
         $USER->startlesson[$this->properties->id] = true;
+
+        $timenow = time();
         $startlesson = new stdClass;
         $startlesson->lessonid = $this->properties->id;
         $startlesson->userid = $USER->id;
-        $startlesson->starttime = time();
-        $startlesson->lessontime = time();
+        $startlesson->starttime = $timenow;
+        $startlesson->lessontime = $timenow;
+        if (WS_SERVER) {
+            $startlesson->timemodifiedoffline = $timenow;
+        }
         $DB->insert_record('lesson_timer', $startlesson);
         if ($this->properties->timelimit) {
             $this->add_message(get_string('timelimitwarning', 'lesson', format_time($this->properties->timelimit)), 'center');
@@ -2095,7 +2101,11 @@ class lesson extends lesson_base {
             }
         }
 
-        $timer->lessontime = time();
+        $timenow = time();
+        $timer->lessontime = $timenow;
+        if (WS_SERVER) {
+            $timer->timemodifiedoffline = $timenow;
+        }
         $timer->completed = $endreached;
         $DB->update_record('lesson_timer', $timer);
 
