@@ -1,0 +1,5 @@
+This files describes API changes in /media/ plugins,
+information provided here is intended especially for developers.
+
+=== 3.2.2 ===
+* core_media_manager setup() is now no longer needed as it is now called when initialising core_media_manager::instance().

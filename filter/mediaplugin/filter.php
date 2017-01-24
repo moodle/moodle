@@ -57,8 +57,8 @@ class filter_mediaplugin extends moodle_text_filter {
         }
         $jsinitialised = true;
 
-        $mediamanager = core_media_manager::instance();
-        $mediamanager->setup($page);
+        // Set up the media manager so that media plugins requiring JS are initialised.
+        $mediamanager = core_media_manager::instance($page);
     }
 
     public function filter($text, array $options = array()) {
