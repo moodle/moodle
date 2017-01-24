@@ -565,11 +565,16 @@ class grade_report_grader extends grade_report {
                  WHERE g.itemid = gi.id AND gi.courseid = :courseid {$this->userselect}";
 
         $userids = array_keys($this->users);
+        $allgradeitems = $this->get_allgradeitems();
 
         if ($grades = $DB->get_records_sql($sql, $params)) {
             foreach ($grades as $graderec) {
                 $grade = new grade_grade($graderec, false);
-                $this->allgrades[$graderec->userid][$graderec->itemid] = $grade;
+                if (!empty($allgradeitems[$graderec->itemid])) {
+                    // Note: Filter out grades which have a grade type of GRADE_TYPE_NONE.
+                    // Only grades without this type are present in $allgradeitems.
+                    $this->allgrades[$graderec->userid][$graderec->itemid] = $grade;
+                }
                 if (in_array($graderec->userid, $userids) and array_key_exists($graderec->itemid, $this->gtree->get_items())) { // some items may not be present!!
                     $this->grades[$graderec->userid][$graderec->itemid] = $grade;
                     $this->grades[$graderec->userid][$graderec->itemid]->grade_item = $this->gtree->get_item($graderec->itemid); // db caching
@@ -592,7 +597,6 @@ class grade_report_grader extends grade_report {
         }
 
         // Pre fill grades for any remaining items which might be collapsed.
-        $allgradeitems = $this->get_allgradeitems();
         foreach ($userids as $userid) {
             foreach ($allgradeitems as $itemid => $gradeitem) {
                 if (!isset($this->allgrades[$userid][$itemid])) {
