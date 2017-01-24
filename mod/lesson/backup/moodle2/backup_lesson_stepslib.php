@@ -77,7 +77,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
             'mediafile', 'mediaheight', 'mediawidth', 'mediaclose', 'slideshow',
             'width', 'height', 'bgcolor', 'displayleft', 'displayleftif', 'progressbar',
             'available', 'deadline', 'timemodified',
-            'completionendreached', 'completiontimespent'
+            'completionendreached', 'completiontimespent', 'allowofflineattempts'
         ));
 
         // The lesson_pages table
@@ -131,7 +131,7 @@ class backup_lesson_activity_structure_step extends backup_activity_structure_st
         // Grouped by a `timers` element this is relational to the lesson and user.
         $timers = new backup_nested_element('timers');
         $timer = new backup_nested_element('timer', array('id'), array(
-            'userid', 'starttime', 'lessontime', 'completed'
+            'userid', 'starttime', 'lessontime', 'completed', 'timemodifiedoffline'
         ));
 
         $overrides = new backup_nested_element('overrides');

@@ -52,6 +52,10 @@ $string['addnewgroupoverride'] = 'Add group override';
 $string['addnewuseroverride'] = 'Add user override';
 $string['additionalattemptsremaining'] = 'Completed, You can re-attempt this lesson';
 $string['addpage'] = 'Add a page';
+$string['allowofflineattempts'] = 'Allow lesson to be attempted offline using the mobile app';
+$string['allowofflineattempts_help'] = 'If enabled, a mobile app user can download the lesson and attempt it offline.
+All the possible answers and correct responses will be downloaded as well.
+Note: It is not possible for a lesson to be attempted offline if it has a time limit.';
 $string['and'] = 'AND';
 $string['anchortitle'] = 'Start of main content';
 $string['answer'] = 'Answer';
