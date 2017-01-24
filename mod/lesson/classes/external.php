@@ -118,7 +118,7 @@ class mod_lesson_external extends external_api {
                                             'maxanswers', 'maxattempts', 'review', 'nextpagedefault', 'feedback', 'minquestions',
                                             'maxpages', 'timelimit', 'retake', 'mediafile', 'mediaheight', 'mediawidth',
                                             'mediaclose', 'slideshow', 'width', 'height', 'bgcolor', 'displayleft', 'displayleftif',
-                                            'progressbar');
+                                            'progressbar', 'allowofflineattempts');
 
                     // Fields only for managers.
                     if ($lesson->can_manage()) {
@@ -199,6 +199,8 @@ class mod_lesson_external extends external_api {
                                                                             VALUE_OPTIONAL),
                             'completiontimespent' => new external_value(PARAM_INT, 'Student must do this activity at least for',
                                                                         VALUE_OPTIONAL),
+                            'allowofflineattempts' => new external_value(PARAM_INT, 'Whether to allow the lesson to be attempted
+                                                                            offline in the mobile app', VALUE_OPTIONAL),
                             'visible' => new external_value(PARAM_INT, 'Visible?', VALUE_OPTIONAL),
                             'groupmode' => new external_value(PARAM_INT, 'Group mode', VALUE_OPTIONAL),
                             'groupingid' => new external_value(PARAM_INT, 'Grouping id', VALUE_OPTIONAL),
@@ -959,6 +961,7 @@ class mod_lesson_external extends external_api {
                             'starttime' => new external_value(PARAM_INT, 'First access time for a new timer session'),
                             'lessontime' => new external_value(PARAM_INT, 'Last access time to the lesson during the timer session'),
                             'completed' => new external_value(PARAM_INT, 'If the lesson for this timer was completed'),
+                            'timemodifiedoffline' => new external_value(PARAM_INT, 'Last modified time via webservices.'),
                         ),
                         'The timers'
                     )
@@ -1332,8 +1335,9 @@ class mod_lesson_external extends external_api {
                     'answerfiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_answers', $a->id),
                     'responsefiles' => external_util::get_area_files($context->id, 'mod_lesson', 'page_responses', $a->id),
                 );
-                // For managers, return all the information (including scoring, jumps).
-                if ($lesson->can_manage()) {
+                // For managers, return all the information (including correct answers, jumps).
+                // If the teacher enabled offline attempts, this information will be downloaded too.
+                if ($lesson->can_manage() || $lesson->allowofflineattempts) {
                     $extraproperties = array('jumpto', 'grade', 'score', 'flags', 'timecreated', 'timemodified');
                     foreach ($extraproperties as $prop) {
                         $answer[$prop] = $a->{$prop};
