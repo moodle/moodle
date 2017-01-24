@@ -264,103 +264,7 @@ if ($action === 'delete') {
     $userid = optional_param('userid', null, PARAM_INT); // if empty, then will display the general detailed view
     $try    = optional_param('try', null, PARAM_INT);
 
-    if (!empty($userid)) {
-        // Apply overrides.
-        $lesson->update_effective_access($userid);
-    }
-
-    $lessonpages = $lesson->load_all_pages();
-    foreach ($lessonpages as $lessonpage) {
-        if ($lessonpage->prevpageid == 0) {
-            $pageid = $lessonpage->id;
-        }
-    }
-
-    // now gather the stats into an object
-    $firstpageid = $pageid;
-    $pagestats = array();
-    while ($pageid != 0) { // EOL
-        $page = $lessonpages[$pageid];
-        $params = array ("lessonid" => $lesson->id, "pageid" => $page->id);
-        if ($allanswers = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND pageid = :pageid", $params, "timeseen")) {
-            // get them ready for processing
-            $orderedanswers = array();
-            foreach ($allanswers as $singleanswer) {
-                // ordering them like this, will help to find the single attempt record that we want to keep.
-                $orderedanswers[$singleanswer->userid][$singleanswer->retry][] = $singleanswer;
-            }
-            // this is foreach user and for each try for that user, keep one attempt record
-            foreach ($orderedanswers as $orderedanswer) {
-                foreach($orderedanswer as $tries) {
-                    $page->stats($pagestats, $tries);
-                }
-            }
-        } else {
-            // no one answered yet...
-        }
-        //unset($orderedanswers);  initialized above now
-        $pageid = $page->nextpageid;
-    }
-
-    $manager = lesson_page_type_manager::get($lesson);
-    $qtypes = $manager->get_page_type_strings();
-
-    $answerpages = array();
-    $answerpage = "";
-    $pageid = $firstpageid;
-    // cycle through all the pages
-    //  foreach page, add to the $answerpages[] array all the data that is needed
-    //  from the question, the users attempt, and the statistics
-    // grayout pages that the user did not answer and Branch, end of branch, cluster
-    // and end of cluster pages
-    while ($pageid != 0) { // EOL
-        $page = $lessonpages[$pageid];
-        $answerpage = new stdClass;
-        $data ='';
-
-        $answerdata = new stdClass;
-        // Set some defaults for the answer data.
-        $answerdata->score = null;
-        $answerdata->response = null;
-        $answerdata->responseformat = FORMAT_PLAIN;
-
-        $answerpage->title = format_string($page->title);
-
-        $options = new stdClass;
-        $options->noclean = true;
-        $options->overflowdiv = true;
-        $options->context = $context;
-        $answerpage->contents = format_text($page->contents, $page->contentsformat, $options);
-
-        $answerpage->qtype = $qtypes[$page->qtype].$page->option_description_string();
-        $answerpage->grayout = $page->grayout;
-        $answerpage->context = $context;
-
-        if (empty($userid)) {
-            // there is no userid, so set these vars and display stats.
-            $answerpage->grayout = 0;
-            $useranswer = null;
-        } elseif ($useranswers = $DB->get_records("lesson_attempts",array("lessonid"=>$lesson->id, "userid"=>$userid, "retry"=>$try,"pageid"=>$page->id), "timeseen")) {
-            // get the user's answer for this page
-            // need to find the right one
-            $i = 0;
-            foreach ($useranswers as $userattempt) {
-                $useranswer = $userattempt;
-                $i++;
-                if ($lesson->maxattempts == $i) {
-                    break; // reached maxattempts, break out
-                }
-            }
-        } else {
-            // user did not answer this page, gray it out and set some nulls
-            $answerpage->grayout = 1;
-            $useranswer = null;
-        }
-        $i = 0;
-        $n = 0;
-        $answerpages[] = $page->report_answers(clone($answerpage), clone($answerdata), $useranswer, $pagestats, $i, $n);
-        $pageid = $page->nextpageid;
-    }
+    list($answerpages, $userstats) = lesson_get_user_detailed_report_data($lesson, $userid, $try);
 
     /// actually start printing something
     $table = new html_table();
@@ -380,24 +284,7 @@ if ($action === 'delete') {
         $table->align = array('right', 'left');
         $table->attributes['class'] = 'compacttable generaltable form-inline';
 
-        $params = array("lessonid"=>$lesson->id, "userid"=>$userid);
-        if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $try, 1)) {
-            $grade = -1;
-            $completed = -1;
-        } else {
-            $grade = current($grades);
-            $completed = $grade->completed;
-            $grade = round($grade->grade, 2);
-        }
-
-        if (!$times = $lesson->get_user_timers($userid, 'starttime', '*', $try, 1)) {
-            $timetotake = -1;
-        } else {
-            $timetotake = current($times);
-            $timetotake = $timetotake->lessontime - $timetotake->starttime;
-        }
-
-        if ($timetotake == -1 || $completed == -1 || $grade == -1) {
+        if (empty($userstats->gradeinfo)) {
             $table->align = array("center");
 
             $table->data[] = array(get_string("notcompleted", "lesson"));
@@ -407,10 +294,10 @@ if ($action === 'delete') {
             $gradeinfo = lesson_grade($lesson, $try, $user->id);
 
             $table->data[] = array(get_string('name').':', $OUTPUT->user_picture($user, array('courseid'=>$course->id)).fullname($user, true));
-            $table->data[] = array(get_string("timetaken", "lesson").":", format_time($timetotake));
-            $table->data[] = array(get_string("completed", "lesson").":", userdate($completed));
-            $table->data[] = array(get_string('rawgrade', 'lesson').':', $gradeinfo->earned.'/'.$gradeinfo->total);
-            $table->data[] = array(get_string("grade", "lesson").":", $grade."%");
+            $table->data[] = array(get_string("timetaken", "lesson").":", format_time($userstats->timetotake));
+            $table->data[] = array(get_string("completed", "lesson").":", userdate($userstats->completed));
+            $table->data[] = array(get_string('rawgrade', 'lesson').':', $userstats->gradeinfo->earned.'/'.$userstats->gradeinfo->total);
+            $table->data[] = array(get_string("grade", "lesson").":", $userstats->grade."%");
         }
         echo html_writer::table($table);
 
