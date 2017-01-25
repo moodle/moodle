@@ -142,7 +142,7 @@ class template_cohorts_table extends table_sql {
                   FROM {" . \core_competency\template_cohort::TABLE . "} tc
                   JOIN {cohort} c ON c.id = tc.cohortid
                  WHERE tc.templateid = :templateid";
-        $params = array('templateid' => $this->template->get_id());
+        $params = array('templateid' => $this->template->get('id'));
 
         // Add order by if needed.
         if (!$count && $sqlsort = $this->get_sql_sort()) {

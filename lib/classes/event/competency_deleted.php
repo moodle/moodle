@@ -46,12 +46,12 @@ class competency_deleted extends base {
      * @return self
      */
     public static function create_from_competency(competency $competency) {
-        if (!$competency->get_id()) {
+        if (!$competency->get('id')) {
             throw new \coding_exception('The competency ID must be set.');
         }
         $event = static::create(array(
             'contextid' => $competency->get_context()->id,
-            'objectid' => $competency->get_id(),
+            'objectid' => $competency->get('id'),
         ));
         $event->add_record_snapshot(competency::TABLE, $competency->to_record());
         return $event;

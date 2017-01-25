@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 use renderer_base;
 use moodle_url;
 use core_competency\external\competency_exporter;
+use core_competency\external\performance_helper;
 
 /**
  * Class for exporting a cohort summary from an stdClass.
@@ -34,7 +35,7 @@ use core_competency\external\competency_exporter;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class template_statistics_exporter extends \core_competency\external\exporter {
+class template_statistics_exporter extends \core\external\exporter {
 
     public static function define_properties() {
         return array(
@@ -118,12 +119,9 @@ class template_statistics_exporter extends \core_competency\external\exporter {
             $proficientusercompetencyplanpercentageformatted = format_float($proficientusercompetencyplanpercentage);
         }
         $competencies = array();
-        $contextcache = array();
+        $helper = new performance_helper();
         foreach ($this->data->leastproficientcompetencies as $competency) {
-            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
-            }
-            $context = $contextcache[$competency->get_competencyframeworkid()];
+            $context = $helper->get_context_from_competency($competency);
             $exporter = new competency_exporter($competency, array('context' => $context));
             $competencies[] = $exporter->export($output);
         }

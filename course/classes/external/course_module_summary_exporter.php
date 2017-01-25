@@ -17,15 +17,14 @@
 /**
  * Class for exporting a course module summary from an stdClass.
  *
- * @package    tool_lp
+ * @package    core_course
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\external;
+namespace core_course\external;
 defined('MOODLE_INTERNAL') || die();
 
 use renderer_base;
-
 
 /**
  * Class for exporting a course module summary from a cm_info class.
@@ -33,7 +32,7 @@ use renderer_base;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_summary_exporter extends \core_competency\external\exporter {
+class course_module_summary_exporter extends \core\external\exporter {
 
     protected static function define_related() {
         return array('cm' => 'cm_info');

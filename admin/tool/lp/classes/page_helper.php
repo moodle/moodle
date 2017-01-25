@@ -121,7 +121,7 @@ class page_helper {
         $templateurl = null;
         if ($template) {
             $templateurl = new moodle_url('/admin/tool/lp/templatecompetencies.php', [
-                'templateid' => $template->get_id(),
+                'templateid' => $template->get('id'),
                 'pagecontextid' => $pagecontextid
             ]);
         }
@@ -135,7 +135,7 @@ class page_helper {
         $PAGE->set_context($pagecontext);
 
         if (!empty($template)) {
-            $title = format_string($template->get_shortname(), true, array('context' => $context));
+            $title = format_string($template->get('shortname'), true, array('context' => $context));
         } else {
             $title = get_string('templates', 'tool_lp');
         }
@@ -199,7 +199,7 @@ class page_helper {
         $plansurl = new moodle_url('/admin/tool/lp/plans.php', array('userid' => $userid));
         $planurl = null;
         if ($plan) {
-            $planurl = new moodle_url('/admin/tool/lp/plan.php', array('id' => $plan->get_id()));
+            $planurl = new moodle_url('/admin/tool/lp/plan.php', array('id' => $plan->get('id')));
         }
 
         $returnurl = $plansurl;
@@ -218,7 +218,7 @@ class page_helper {
         }
 
         if (!empty($plan)) {
-            $title = format_string($plan->get_name(), true, array('context' => $context));
+            $title = format_string($plan->get('name'), true, array('context' => $context));
         } else {
             $title = get_string('learningplans', 'tool_lp');
         }
@@ -273,7 +273,7 @@ class page_helper {
         $evidencelisturl = new moodle_url('/admin/tool/lp/user_evidence_list.php', array('userid' => $userid));
         $evidenceurl = null;
         if ($evidence) {
-            $evidenceurl = new moodle_url('/admin/tool/lp/user_evidence.php', array('id' => $evidence->get_id()));
+            $evidenceurl = new moodle_url('/admin/tool/lp/user_evidence.php', array('id' => $evidence->get('id')));
         }
 
         $returnurl = $evidencelisturl;
@@ -292,7 +292,7 @@ class page_helper {
         }
 
         if (!empty($evidence)) {
-            $title = format_string($evidence->get_name(), true, array('context' => $context));
+            $title = format_string($evidence->get('name'), true, array('context' => $context));
         } else {
             $title = get_string('userevidence', 'tool_lp');
         }
@@ -352,7 +352,7 @@ class page_helper {
             $url->remove_params(array('id'));
             $PAGE->navbar->add($pagesubtitle, $url);
         } else {
-            $pagetitle = $framework->get_shortname();
+            $pagetitle = $framework->get('shortname');
             $pagesubtitle = get_string('editcompetencyframework', 'tool_lp');
             if ($returntype == 'competencies') {
                 $frameworksurl = new moodle_url('/admin/tool/lp/competencies.php', array(
@@ -417,18 +417,18 @@ class page_helper {
 
         // Set return url.
         $returnurloptions = [
-            'competencyframeworkid' => $framework->get_id(),
+            'competencyframeworkid' => $framework->get('id'),
             'pagecontextid' => $pagecontextid
         ];
         $returnurl = new moodle_url('/admin/tool/lp/competencies.php', $returnurloptions);
-        $PAGE->navbar->add($framework->get_shortname(), $returnurl);
+        $PAGE->navbar->add($framework->get('shortname'), $returnurl);
 
         // Set page layout.
         $PAGE->set_pagelayout('admin');
 
         if (empty($competency)) {
             // Add mode.
-            $title = format_string($framework->get_shortname(), true, ['context' => $pagecontext]);
+            $title = format_string($framework->get('shortname'), true, ['context' => $pagecontext]);
 
             // Set the sub-title for add mode.
             $level = $parent ? $parent->get_level() + 1 : 1;
@@ -436,7 +436,7 @@ class page_helper {
 
         } else {
             // Edit mode.
-            $title = format_string($competency->get_shortname(), true, ['context' => $competency->get_context()]);
+            $title = format_string($competency->get('shortname'), true, ['context' => $competency->get_context()]);
 
             // Add competency name to breadcrumbs, if available.
             $PAGE->navbar->add($title);

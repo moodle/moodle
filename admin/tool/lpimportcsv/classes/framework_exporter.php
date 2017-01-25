@@ -61,7 +61,7 @@ class framework_exporter {
         require_once($CFG->libdir . '/csvlib.class.php');
 
         $writer = new csv_export_writer();
-        $filename = clean_param($this->framework->get_shortname() . '-' . $this->framework->get_idnumber(), PARAM_FILE);
+        $filename = clean_param($this->framework->get('shortname') . '-' . $this->framework->get('idnumber'), PARAM_FILE);
         $writer->set_filename($filename);
 
         $headers = framework_importer::list_required_headers();
@@ -71,44 +71,44 @@ class framework_exporter {
         // Order and number of columns must match framework_importer::list_required_headers().
         $row = array(
             '',
-            $this->framework->get_idnumber(),
-            $this->framework->get_shortname(),
-            $this->framework->get_description(),
-            $this->framework->get_descriptionformat(),
+            $this->framework->get('idnumber'),
+            $this->framework->get('shortname'),
+            $this->framework->get('description'),
+            $this->framework->get('descriptionformat'),
             $this->framework->get_scale()->compact_items(),
-            $this->framework->get_scaleconfiguration(),
+            $this->framework->get('scaleconfiguration'),
             '',
             '',
             '',
             '',
             '',
             true,
-            implode(',', $this->framework->get_taxonomies())
+            implode(',', $this->framework->get('taxonomies'))
         );
         $writer->add_data($row);
 
-        $filters = array('competencyframeworkid' => $this->framework->get_id());
+        $filters = array('competencyframeworkid' => $this->framework->get('id'));
         $competencies = api::list_competencies($filters);
         // Index by id so we can lookup parents.
         $indexed = array();
         foreach ($competencies as $competency) {
-            $indexed[$competency->get_id()] = $competency;
+            $indexed[$competency->get('id')] = $competency;
         }
         foreach ($competencies as $competency) {
             $parentidnumber = '';
-            if ($competency->get_parentid() > 0) {
-                $parent = $indexed[$competency->get_parentid()];
-                $parentidnumber = $parent->get_idnumber();
+            if ($competency->get('parentid') > 0) {
+                $parent = $indexed[$competency->get('parentid')];
+                $parentidnumber = $parent->get('idnumber');
             }
 
             $scalevalues = '';
             $scaleconfig = '';
-            if ($competency->get_scaleid() !== null) {
+            if ($competency->get('scaleid') !== null) {
                 $scalevalues = $competency->get_scale()->compact_items();
-                $scaleconfig = $competency->get_scaleconfiguration();
+                $scaleconfig = $competency->get('scaleconfiguration');
             }
 
-            $ruleconfig = $competency->get_ruleconfig();
+            $ruleconfig = $competency->get('ruleconfig');
             if ($ruleconfig === null) {
                 $ruleconfig = "null";
             }
@@ -117,24 +117,24 @@ class framework_exporter {
 
             $relatedidnumbers = array();
             foreach ($allrelated as $onerelated) {
-                $relatedidnumbers[] = str_replace(',', '%2C', $onerelated->get_idnumber());
+                $relatedidnumbers[] = str_replace(',', '%2C', $onerelated->get('idnumber'));
             }
             $relatedidnumbers = implode(',', $relatedidnumbers);
 
             // Order and number of columns must match framework_importer::list_required_headers().
             $row = array(
                 $parentidnumber,
-                $competency->get_idnumber(),
-                $competency->get_shortname(),
-                $competency->get_description(),
-                $competency->get_descriptionformat(),
+                $competency->get('idnumber'),
+                $competency->get('shortname'),
+                $competency->get('description'),
+                $competency->get('descriptionformat'),
                 $scalevalues,
                 $scaleconfig,
-                $competency->get_ruletype(),
-                $competency->get_ruleoutcome(),
+                $competency->get('ruletype'),
+                $competency->get('ruleoutcome'),
                 $ruleconfig,
                 $relatedidnumbers,
-                $competency->get_id(),
+                $competency->get('id'),
                 false,
                 ''
             );

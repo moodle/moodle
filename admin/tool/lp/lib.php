@@ -183,7 +183,7 @@ function tool_lp_coursemodule_edit_post_actions($data, $course) {
 
     $existingids = array();
     foreach ($existing as $cmc) {
-        array_push($existingids, $cmc->get_competencyid());
+        array_push($existingids, $cmc->get('competencyid'));
     }
 
     $newids = isset($data->competencies) ? $data->competencies : array();

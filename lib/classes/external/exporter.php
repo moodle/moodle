@@ -17,11 +17,11 @@
 /**
  * Generic exporter to take a stdClass and prepare it for return by webservice.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_competency\external;
+namespace core\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
@@ -116,7 +116,6 @@ abstract class exporter {
     final public function export(renderer_base $output) {
         $data = new stdClass();
         $properties = self::read_properties_definition();
-        $context = $this->get_context();
         $values = (array) $this->data;
 
         $othervalues = $this->get_other_values($output);
@@ -150,18 +149,27 @@ abstract class exporter {
                     // Whoops, we got something that wasn't defined.
                     throw new coding_exception('Unexpected property ' . $propertyformat);
                 }
+
+                $formatparams = $this->get_format_parameters($property);
                 $format = $record->$propertyformat;
-                list($text, $format) = external_format_text($data->$property, $format, $context->id, 'core_competency', '', 0);
+
+                list($text, $format) = external_format_text($data->$property, $format, $formatparams['context']->id,
+                    $formatparams['component'], $formatparams['filearea'], $formatparams['itemid'], $formatparams['options']);
+
                 $data->$property = $text;
                 $data->$propertyformat = $format;
 
             } else if ($definition['type'] === PARAM_TEXT) {
+                $formatparams = $this->get_format_parameters($property);
+
                 if (!empty($definition['multiple'])) {
                     foreach ($data->$property as $key => $value) {
-                        $data->{$property}[$key] = external_format_string($value, $context->id);
+                        $data->{$property}[$key] = external_format_string($value, $formatparams['context']->id,
+                            $formatparams['striplinks'], $formatparams['options']);
                     }
                 } else {
-                    $data->$property = external_format_string($data->$property, $context->id);
+                    $data->$property = external_format_string($data->$property, $formatparams['context']->id,
+                            $formatparams['striplinks'], $formatparams['options']);
                 }
             }
         }
@@ -170,18 +178,52 @@ abstract class exporter {
     }
 
     /**
-     * Function to guess the correct context, falling back to system context.
+     * Get the format parameters.
      *
-     * @return context
+     * This method returns the parameters to use with the functions external_format_text(), and
+     * external_format_string(). To override the default parameters, you can define a protected method
+     * called 'get_format_parameters_for_<propertyName>'. For example, 'get_format_parameters_for_description',
+     * if your property is 'description'.
+     *
+     * Your method must return an array containing any of the following keys:
+     * - context: The context to use. Defaults to $this->related['context'] if defined, else throws an exception.
+     * - component: The component to use with external_format_text(). Defaults to null.
+     * - filearea: The filearea to use with external_format_text(). Defaults to null.
+     * - itemid: The itemid to use with external_format_text(). Defaults to null.
+     * - options: An array of options accepted by external_format_text() or external_format_string(). Defaults to [].
+     * - striplinks: Whether to strip the links with external_format_string(). Defaults to true.
+     *
+     * @param string $property The property to get the parameters for.
+     * @return array
      */
-    protected function get_context() {
-        $context = null;
-        if (isset($this->related['context']) && $this->related['context'] instanceof context) {
-            $context = $this->related['context'];
-        } else {
-            $context = context_system::instance();
+    final protected function get_format_parameters($property) {
+        $parameters = [
+            'component' => null,
+            'filearea' => null,
+            'itemid' => null,
+            'options' => [],
+            'striplinks' => true,
+        ];
+
+        $candidate = 'get_format_parameters_for_' . $property;
+        if (method_exists($this, $candidate)) {
+            $parameters = array_merge($parameters, $this->{$candidate}());
         }
-        return $context;
+
+        if (!isset($parameters['context'])) {
+            if (!isset($this->related['context']) || !($this->related['context'] instanceof context)) {
+                throw new coding_exception("Unknown context to use for formatting the property '$property' in the " .
+                    "exporter '" . get_class($this) . "'. You either need to add 'context' to your related objects, " .
+                    "or create the method '$candidate' and return the context from there.");
+            }
+            $parameters['context'] = $this->related['context'];
+
+        } else if (!($parameters['context'] instanceof context)) {
+            throw new coding_exception("The context given to format the property '$property' in the exporter '" .
+                get_class($this) . "' is invalid.");
+        }
+
+        return $parameters;
     }
 
     /**
@@ -249,7 +291,7 @@ abstract class exporter {
      * export of the persistent data.
      *
      * The format of the array returned by this method has to match the structure
-     * defined in {@link \core_competency\persistent::define_properties()}. The display properties
+     * defined in {@link \core\persistent::define_properties()}. The display properties
      * can however do some more fancy things. They can define 'multiple' => true to wrap
      * values in an external_multiple_structure automatically - or they can define the
      * type as a nested array of more properties in order to generate a nested
@@ -289,7 +331,14 @@ abstract class exporter {
      * Return the list of properties.
      *
      * The format of the array returned by this method has to match the structure
-     * defined in {@link \core_competency\persistent::define_properties()}.
+     * defined in {@link \core\persistent::define_properties()}.
+     *
+     * Note that the type PARAM_TEXT should ONLY be used for strings which need to
+     * go through filters (multilang, etc...) and do not have a FORMAT_* associated
+     * to them. Typically strings passed through to format_string().
+     *
+     * Other filtered strings which use a FORMAT_* constant (hear used with format_text)
+     * must be defined as PARAM_RAW.
      *
      * @return array
      */

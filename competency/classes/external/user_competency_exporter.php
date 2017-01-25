@@ -24,11 +24,13 @@
 namespace core_competency\external;
 defined('MOODLE_INTERNAL') || die();
 
+use context_system;
 use core_user;
 use renderer_base;
 use stdClass;
 use core_competency\url;
 use core_competency\user_competency;
+use core_user\external\user_summary_exporter;
 
 /**
  * Class for exporting user competency data.
@@ -36,10 +38,10 @@ use core_competency\user_competency;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_exporter extends persistent_exporter {
+class user_competency_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\user_competency';
+        return user_competency::class;
     }
 
     protected static function define_related() {
@@ -50,32 +52,32 @@ class user_competency_exporter extends persistent_exporter {
     protected function get_other_values(renderer_base $output) {
         $result = new stdClass();
 
-        if ($this->persistent->get_grade() === null) {
+        if ($this->persistent->get('grade') === null) {
             $gradename = '-';
         } else {
-            $gradename = $this->related['scale']->scale_items[$this->persistent->get_grade() - 1];
+            $gradename = $this->related['scale']->scale_items[$this->persistent->get('grade') - 1];
         }
         $result->gradename = $gradename;
 
-        if ($this->persistent->get_proficiency() === null) {
+        if ($this->persistent->get('proficiency') === null) {
             $proficiencyname = get_string('no');
         } else {
-            $proficiencyname = get_string($this->persistent->get_proficiency() ? 'yes' : 'no');
+            $proficiencyname = get_string($this->persistent->get('proficiency') ? 'yes' : 'no');
         }
         $result->proficiencyname = $proficiencyname;
 
         $statusname = '-';
-        if ($this->persistent->get_status() != user_competency::STATUS_IDLE) {
-            $statusname = (string) user_competency::get_status_name($this->persistent->get_status());
+        if ($this->persistent->get('status') != user_competency::STATUS_IDLE) {
+            $statusname = (string) user_competency::get_status_name($this->persistent->get('status'));
         }
         $result->statusname = $statusname;
 
         $result->canrequestreview = $this->persistent->can_request_review();
         $result->canreview = $this->persistent->can_review();
 
-        $result->isstatusidle = $this->persistent->get_status() == user_competency::STATUS_IDLE;
-        $result->isstatusinreview = $this->persistent->get_status() == user_competency::STATUS_IN_REVIEW;
-        $result->isstatuswaitingforreview = $this->persistent->get_status() == user_competency::STATUS_WAITING_FOR_REVIEW;
+        $result->isstatusidle = $this->persistent->get('status') == user_competency::STATUS_IDLE;
+        $result->isstatusinreview = $this->persistent->get('status') == user_competency::STATUS_IN_REVIEW;
+        $result->isstatuswaitingforreview = $this->persistent->get('status') == user_competency::STATUS_WAITING_FOR_REVIEW;
 
         $result->isrequestreviewallowed = $result->canrequestreview && $result->isstatusidle;
         $result->iscancelreviewrequestallowed = $result->canrequestreview && $result->isstatuswaitingforreview;
@@ -84,13 +86,24 @@ class user_competency_exporter extends persistent_exporter {
 
         if (!empty($result->isstatusinreview)) {
             // TODO Make this more efficient.
-            $userexporter = new user_summary_exporter(core_user::get_user($this->persistent->get_reviewerid(), '*', MUST_EXIST));
+            $userexporter = new user_summary_exporter(core_user::get_user($this->persistent->get('reviewerid'), '*', MUST_EXIST));
             $result->reviewer = $userexporter->export($output);
         }
 
-        $result->url = url::user_competency($this->persistent->get_id())->out(false);
+        $result->url = url::user_competency($this->persistent->get('id'))->out(false);
 
         return (array) $result;
+    }
+
+    /**
+     * Get the format parameters for gradename.
+     *
+     * @return array
+     */
+    protected function get_format_parameters_for_gradename() {
+        return [
+            'context' => context_system::instance(), // The system context is cached, so we can get it right away.
+        ];
     }
 
     protected static function define_other_properties() {

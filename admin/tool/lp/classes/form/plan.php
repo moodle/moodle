@@ -25,6 +25,7 @@
 namespace tool_lp\form;
 defined('MOODLE_INTERNAL') || die();
 
+use core\form\persistent;
 use core_competency\plan as planpersistent;
 use required_capability_exception;
 
@@ -68,7 +69,7 @@ class plan extends persistent {
         // When the plan was already saved then the status can not be changed via this form.
         $status = planpersistent::get_status_list($this->_customdata['userid']);
         $plan = $this->get_persistent();
-        if ($plan->get_id()) {
+        if ($plan->get('id')) {
             // The current status is not selectable (workflow status probably), we just display it.
             $mform->addElement('static', 'staticstatus', get_string('status', 'tool_lp'), $plan->get_statusname());
         } else if (!empty($status) && count($status) > 1) {

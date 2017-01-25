@@ -40,5 +40,10 @@ $renamedclasses = array(
     'core\progress\null' => 'core\progress\none',
     'core_search\area\base' => 'core_search\base',
     'core_search\area\base_mod' => 'core_search\base_mod',
-    'core_search\area\base_activity' => 'core_search\base_activity'
+    'core_search\area\base_activity' => 'core_search\base_activity',
+    'core_competency\\external\\exporter' => 'core\\external\\exporter',
+    'core_competency\\external\\persistent_exporter' => 'core\\external\\persistent_exporter',
+    'core_competency\\external\\comment_area_exporter' => 'core_comment\\external\\comment_area_exporter',
+    'core_competency\\external\\stored_file_exporter' => 'core_files\\external\\stored_file_exporter',
+    'core_competency\\external\\user_summary_exporter' => 'core_user\\external\\user_summary_exporter'
 );

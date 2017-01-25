@@ -42,7 +42,7 @@ if (!$template->can_read()) {
 \core_competency\api::template_viewed($template);
 
 // Set up the page.
-$url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $template->get_id(),
+$url = new moodle_url('/admin/tool/lp/templatecompetencies.php', array('templateid' => $template->get('id'),
     'pagecontextid' => $pagecontextid));
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_template($pagecontextid, $url, $template);
 

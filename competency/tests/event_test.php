@@ -63,8 +63,8 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_framework_created', $event);
-        $this->assertEquals($framework->get_id(), $event->objectid);
-        $this->assertEquals($framework->get_contextid(), $event->contextid);
+        $this->assertEquals($framework->get('id'), $event->objectid);
+        $this->assertEquals($framework->get('contextid'), $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -82,7 +82,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::delete_framework($framework->get_id());
+        api::delete_framework($framework->get('id'));
 
         // Get our event event.
         $events = $sink->get_events();
@@ -90,8 +90,8 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_framework_deleted', $event);
-        $this->assertEquals($framework->get_id(), $event->objectid);
-        $this->assertEquals($framework->get_contextid(), $event->contextid);
+        $this->assertEquals($framework->get('id'), $event->objectid);
+        $this->assertEquals($framework->get('contextid'), $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -109,7 +109,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $framework->set_shortname('Shortname modified');
+        $framework->set('shortname', 'Shortname modified');
         api::update_framework($framework->to_record());
 
         // Get our event event.
@@ -118,8 +118,8 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_framework_updated', $event);
-        $this->assertEquals($framework->get_id(), $event->objectid);
-        $this->assertEquals($framework->get_contextid(), $event->contextid);
+        $this->assertEquals($framework->get('id'), $event->objectid);
+        $this->assertEquals($framework->get('contextid'), $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -145,8 +145,8 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_framework_viewed', $event);
-        $this->assertEquals($framework->get_id(), $event->objectid);
-        $this->assertEquals($framework->get_contextid(), $event->contextid);
+        $this->assertEquals($framework->get('id'), $event->objectid);
+        $this->assertEquals($framework->get('contextid'), $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -160,7 +160,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
-        $competency = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -170,7 +170,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_viewed', $event);
-        $this->assertEquals($competency->get_id(), $event->objectid);
+        $this->assertEquals($competency->get('id'), $event->objectid);
         $this->assertEquals($competency->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -193,8 +193,8 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_template_viewed', $event);
-        $this->assertEquals($template->get_id(), $event->objectid);
-        $this->assertEquals($template->get_contextid(), $event->contextid);
+        $this->assertEquals($template->get('id'), $event->objectid);
+        $this->assertEquals($template->get('contextid'), $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -222,8 +222,8 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\competency_template_created', $event);
-        $this->assertEquals($template->get_id(), $event->objectid);
-        $this->assertEquals($template->get_contextid(), $event->contextid);
+        $this->assertEquals($template->get('id'), $event->objectid);
+        $this->assertEquals($template->get('contextid'), $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -241,7 +241,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::delete_template($template->get_id());
+        api::delete_template($template->get('id'));
 
         // Get our event event.
         $events = $sink->get_events();
@@ -249,8 +249,8 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_template_deleted', $event);
-        $this->assertEquals($template->get_id(), $event->objectid);
-        $this->assertEquals($template->get_contextid(), $event->contextid);
+        $this->assertEquals($template->get('id'), $event->objectid);
+        $this->assertEquals($template->get('contextid'), $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -268,7 +268,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $template->set_shortname('Shortname modified');
+        $template->set('shortname', 'Shortname modified');
         api::update_template($template->to_record());
 
         // Get our event event.
@@ -277,8 +277,8 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_template_updated', $event);
-        $this->assertEquals($template->get_id(), $event->objectid);
-        $this->assertEquals($template->get_contextid(), $event->contextid);
+        $this->assertEquals($template->get('id'), $event->objectid);
+        $this->assertEquals($template->get('contextid'), $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -293,15 +293,15 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $f1 = $lpg->create_framework();
-        $competency = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
-        $c13 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $competency = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'parentid' => $c1->get('id')));
+        $c13 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'parentid' => $c1->get('id')));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $competency->set_shortname('Shortname modified');
+        $competency->set('shortname', 'Shortname modified');
         api::update_competency($competency->to_record());
 
         // Get our event event.
@@ -310,7 +310,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_updated', $event);
-        $this->assertEquals($competency->get_id(), $event->objectid);
+        $this->assertEquals($competency->get('id'), $event->objectid);
         $this->assertEquals($competency->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -326,7 +326,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $f1 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
         $record = $c1->to_record();
         $record->id = 0;
         $record->idnumber = 'comp idnumber';
@@ -341,7 +341,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\competency_created', $event);
-        $this->assertEquals($competency->get_id(), $event->objectid);
+        $this->assertEquals($competency->get('id'), $event->objectid);
         $this->assertEquals($competency->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -357,14 +357,14 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $f1 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'parentid' => $c1->get('id')));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         // Create framework should trigger a created event for competencies.
-        api::duplicate_framework($f1->get_id());
+        api::duplicate_framework($f1->get('id'));
 
         // Get our event event.
         $events = $sink->get_events();
@@ -393,8 +393,8 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $f1 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c1id = $c1->get_id();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c1id = $c1->get('id');
         $contextid = $c1->get_context()->id;
 
         // Trigger and capture the event.
@@ -423,14 +423,14 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
         $f1 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'parentid' => $c1->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c12 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'parentid' => $c1->get('id')));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         // Delete framework should trigger a deleted event for competencies.
-        api::delete_framework($f1->get_id());
+        api::delete_framework($f1->get('id'));
 
         // Get our event event.
         $events = $sink->get_events();
@@ -471,7 +471,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_plan_created', $event);
-        $this->assertEquals($plan->get_id(), $event->objectid);
+        $this->assertEquals($plan->get('id'), $event->objectid);
         $this->assertEquals($plan->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -494,14 +494,14 @@ class core_competency_event_testcase extends advanced_testcase {
         cohort_add_member($c1->id, $user2->id);
         $t1 = $lpg->create_template();
         $tc = $lpg->create_template_cohort(array(
-            'templateid' => $t1->get_id(),
+            'templateid' => $t1->get('id'),
             'cohortid' => $c1->id
         ));
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::create_plans_from_template_cohort($t1->get_id(), $c1->id);
+        api::create_plans_from_template_cohort($t1->get('id'), $c1->id);
         // Get our event event.
-        $plans = core_competency\plan::get_records(array('templateid' => $t1->get_id()), 'id');
+        $plans = core_competency\plan::get_records(array('templateid' => $t1->get('id')), 'id');
         $events = $sink->get_events();
         $this->assertCount(2, $events);
         $this->assertCount(2, $plans);
@@ -509,12 +509,12 @@ class core_competency_event_testcase extends advanced_testcase {
         $plan = $plans[0];
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_plan_created', $event);
-        $this->assertEquals($plan->get_id(), $event->objectid);
+        $this->assertEquals($plan->get('id'), $event->objectid);
         $this->assertEquals($plan->get_context()->id, $event->contextid);
         $event = $events[1];
         $plan = $plans[1];
         $this->assertInstanceOf('\core\event\competency_plan_created', $event);
-        $this->assertEquals($plan->get_id(), $event->objectid);
+        $this->assertEquals($plan->get('id'), $event->objectid);
         $this->assertEquals($plan->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -536,13 +536,13 @@ class core_competency_event_testcase extends advanced_testcase {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         $plan = api::update_plan($record);
-        $this->assertEquals('Plan updated', $plan->get_name());
+        $this->assertEquals('Plan updated', $plan->get('name'));
 
         // Get our event event.
         $events = $sink->get_events();
         $event = reset($events);
         $this->assertInstanceOf('\core\event\competency_plan_updated', $event);
-        $this->assertEquals($plan->get_id(), $event->objectid);
+        $this->assertEquals($plan->get('id'), $event->objectid);
         $this->assertEquals($plan->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -559,11 +559,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::delete_plan($plan->get_id());
+        $result = api::delete_plan($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -594,7 +594,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_plan_viewed', $event);
-        $this->assertEquals($plan->get_id(), $event->objectid);
+        $this->assertEquals($plan->get('id'), $event->objectid);
         $this->assertEquals($plan->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -625,7 +625,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $event = reset($events);
 
         $this->assertInstanceOf('\core\event\competency_user_evidence_created', $event);
-        $this->assertEquals($userevidence->get_id(), $event->objectid);
+        $this->assertEquals($userevidence->get('id'), $event->objectid);
         $this->assertEquals($userevidence->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -646,7 +646,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::delete_user_evidence($userevidence->get_id());
+        api::delete_user_evidence($userevidence->get('id'));
 
         // Get our event event.
         $events = $sink->get_events();
@@ -654,7 +654,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_user_evidence_deleted', $event);
-        $this->assertEquals($userevidence->get_id(), $event->objectid);
+        $this->assertEquals($userevidence->get('id'), $event->objectid);
         $this->assertEquals($userevidence->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -675,7 +675,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $userevidence->set_name('Name modified');
+        $userevidence->set('name', 'Name modified');
         api::update_user_evidence($userevidence->to_record());
 
          // Get our event event.
@@ -684,7 +684,7 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_user_evidence_updated', $event);
-        $this->assertEquals($userevidence->get_id(), $event->objectid);
+        $this->assertEquals($userevidence->get('id'), $event->objectid);
         $this->assertEquals($userevidence->get_context()->id, $event->contextid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -702,15 +702,15 @@ class core_competency_event_testcase extends advanced_testcase {
         $user = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user->id));
         $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
-        $pc = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c->get_id()));
-        $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c->get_id()));
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
+        $pc = $lpg->create_plan_competency(array('planid' => $plan->get('id'), 'competencyid' => $c->get('id')));
+        $uc = $lpg->create_user_competency(array('userid' => $user->id, 'competencyid' => $c->get('id')));
 
         // Can not log the event for user competency using completed plan.
         api::complete_plan($plan);
 
         try {
-            api::user_competency_viewed_in_plan($uc, $plan->get_id());
+            api::user_competency_viewed_in_plan($uc, $plan->get('id'));
             $this->fail('To log the user competency in completed plan '
                     . 'use user_competency_plan_viewed method.');
         } catch (coding_exception $e) {
@@ -721,7 +721,7 @@ class core_competency_event_testcase extends advanced_testcase {
         api::reopen_plan($plan);
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::user_competency_viewed_in_plan($uc, $plan->get_id());
+        api::user_competency_viewed_in_plan($uc, $plan->get('id'));
 
         // Get our event event.
         $events = $sink->get_events();
@@ -729,18 +729,18 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_user_competency_viewed_in_plan', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
+        $this->assertEquals($uc->get('id'), $event->objectid);
         $this->assertEquals($uc->get_context()->id, $event->contextid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
-        $this->assertEquals($plan->get_id(), $event->other['planid']);
-        $this->assertEquals($c->get_id(), $event->other['competencyid']);
+        $this->assertEquals($uc->get('userid'), $event->relateduserid);
+        $this->assertEquals($plan->get('id'), $event->other['planid']);
+        $this->assertEquals($c->get('id'), $event->other['competencyid']);
 
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
 
         // Test validation.
         $params = array (
-            'objectid' => $uc->get_id(),
+            'objectid' => $uc->get('id'),
             'contextid' => $uc->get_context()->id,
             'other' => null
         );
@@ -762,7 +762,7 @@ class core_competency_event_testcase extends advanced_testcase {
             $this->assertRegExp("/The 'competencyid' value must be set./", $e->getMessage());
         }
 
-        $params['other']['competencyid'] = $c->get_id();
+        $params['other']['competencyid'] = $c->get('id');
         // Missing planid.
         try {
             \core\event\competency_user_competency_viewed_in_plan::create($params)->trigger();
@@ -784,9 +784,9 @@ class core_competency_event_testcase extends advanced_testcase {
         $user = $dg->create_user();
         $course = $dg->create_course();
         $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
-        $pc = $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $c->get_id()));
-        $params = array('userid' => $user->id, 'competencyid' => $c->get_id(), 'courseid' => $course->id);
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
+        $pc = $lpg->create_course_competency(array('courseid' => $course->id, 'competencyid' => $c->get('id')));
+        $params = array('userid' => $user->id, 'competencyid' => $c->get('id'), 'courseid' => $course->id);
         $ucc = $lpg->create_user_competency_course($params);
 
         // Trigger and capture the event.
@@ -799,18 +799,18 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_user_competency_viewed_in_course', $event);
-        $this->assertEquals($ucc->get_id(), $event->objectid);
+        $this->assertEquals($ucc->get('id'), $event->objectid);
         $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
-        $this->assertEquals($ucc->get_userid(), $event->relateduserid);
+        $this->assertEquals($ucc->get('userid'), $event->relateduserid);
         $this->assertEquals($course->id, $event->courseid);
-        $this->assertEquals($c->get_id(), $event->other['competencyid']);
+        $this->assertEquals($c->get('id'), $event->other['competencyid']);
 
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
 
         // Test validation.
         $params = array (
-            'objectid' => $ucc->get_id(),
+            'objectid' => $ucc->get('id'),
             'contextid' => $ucc->get_context()->id,
             'other' => null
         );
@@ -846,11 +846,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $user = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user->id));
         $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
         $ucp = $lpg->create_user_competency_plan(array(
             'userid' => $user->id,
-            'competencyid' => $c->get_id(),
-            'planid' => $plan->get_id()
+            'competencyid' => $c->get('id'),
+            'planid' => $plan->get('id')
         ));
 
         // Can not log the event for user competency using non completed plan.
@@ -876,18 +876,18 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_user_competency_plan_viewed', $event);
-        $this->assertEquals($ucp->get_id(), $event->objectid);
+        $this->assertEquals($ucp->get('id'), $event->objectid);
         $this->assertEquals($ucp->get_context()->id, $event->contextid);
-        $this->assertEquals($ucp->get_userid(), $event->relateduserid);
-        $this->assertEquals($plan->get_id(), $event->other['planid']);
-        $this->assertEquals($c->get_id(), $event->other['competencyid']);
+        $this->assertEquals($ucp->get('userid'), $event->relateduserid);
+        $this->assertEquals($plan->get('id'), $event->other['planid']);
+        $this->assertEquals($c->get('id'), $event->other['competencyid']);
 
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
 
         // Test validation.
         $params = array (
-            'objectid' => $ucp->get_id(),
+            'objectid' => $ucp->get('id'),
             'contextid' => $ucp->get_context()->id,
             'other' => null
         );
@@ -909,7 +909,7 @@ class core_competency_event_testcase extends advanced_testcase {
             $this->assertRegExp("/The 'competencyid' value must be set./", $e->getMessage());
         }
 
-        $params['other']['competencyid'] = $c->get_id();
+        $params['other']['competencyid'] = $c->get('id');
         // Missing planid.
         try {
             \core\event\competency_user_competency_plan_viewed::create($params)->trigger();
@@ -930,10 +930,10 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
         $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
         $uc = $lpg->create_user_competency(array(
             'userid' => $user->id,
-            'competencyid' => $c->get_id()
+            'competencyid' => $c->get('id')
         ));
 
         // Trigger and capture the event.
@@ -946,17 +946,17 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_user_competency_viewed', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
+        $this->assertEquals($uc->get('id'), $event->objectid);
         $this->assertEquals($uc->get_context()->id, $event->contextid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
-        $this->assertEquals($c->get_id(), $event->other['competencyid']);
+        $this->assertEquals($uc->get('userid'), $event->relateduserid);
+        $this->assertEquals($c->get('id'), $event->other['competencyid']);
 
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
 
         // Test validation.
         $params = array (
-            'objectid' => $uc->get_id(),
+            'objectid' => $uc->get('id'),
             'contextid' => $uc->get_context()->id
         );
 
@@ -980,11 +980,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::approve_plan($plan->get_id());
+        $result = api::approve_plan($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -992,7 +992,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_approved', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1008,11 +1008,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_ACTIVE));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::unapprove_plan($plan->get_id());
+        $result = api::unapprove_plan($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -1020,7 +1020,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_unapproved', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1036,11 +1036,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_COMPLETE));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::reopen_plan($plan->get_id());
+        $result = api::reopen_plan($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -1048,7 +1048,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_reopened', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1064,11 +1064,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_ACTIVE));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::complete_plan($plan->get_id());
+        $result = api::complete_plan($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -1076,7 +1076,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_completed', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1095,13 +1095,13 @@ class core_competency_event_testcase extends advanced_testcase {
         $plan = $lpg->create_plan(array(
             'userid' => $user1->id,
             'status' => \core_competency\plan::STATUS_ACTIVE,
-            'templateid' => $template->get_id()
+            'templateid' => $template->get('id')
         ));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::unlink_plan_from_template($plan->get_id());
+        $result = api::unlink_plan_from_template($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -1109,7 +1109,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_unlinked', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1125,11 +1125,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::plan_request_review($plan->get_id());
+        $result = api::plan_request_review($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -1137,7 +1137,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_review_requested', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1153,11 +1153,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_WAITING_FOR_REVIEW));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::plan_cancel_review_request($plan->get_id());
+        $result = api::plan_cancel_review_request($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -1165,7 +1165,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_review_request_cancelled', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1181,11 +1181,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_WAITING_FOR_REVIEW));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::plan_start_review($plan->get_id());
+        $result = api::plan_start_review($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -1193,7 +1193,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_review_started', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1209,11 +1209,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user1 = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user1->id, 'status' => \core_competency\plan::STATUS_IN_REVIEW));
-        $planid = $plan->get_id();
+        $planid = $plan->get('id');
         $contextid = $plan->get_context()->id;
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $result = api::plan_stop_review($plan->get_id());
+        $result = api::plan_stop_review($plan->get('id'));
         $this->assertTrue($result);
         // Get our event event.
         $events = $sink->get_events();
@@ -1221,7 +1221,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_plan_review_stopped', $event);
         $this->assertEquals($planid, $event->objectid);
         $this->assertEquals($contextid, $event->contextid);
-        $this->assertEquals($plan->get_userid(), $event->relateduserid);
+        $this->assertEquals($plan->get('userid'), $event->relateduserid);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1241,7 +1241,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $cmt = new stdClass();
         $cmt->context = $context;
         $cmt->area = 'plan';
-        $cmt->itemid = $plan->get_id();
+        $cmt->itemid = $plan->get('id');
         $cmt->component = 'competency';
         $cmt->showcount = 1;
         $manager = new comment($cmt);
@@ -1258,7 +1258,7 @@ class core_competency_event_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\core\event\competency_comment_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $this->assertEquals($plan->get_id(), $event->other['itemid']);
+        $this->assertEquals($plan->get('id'), $event->other['itemid']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1279,7 +1279,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $cmt = new stdClass();
         $cmt->context = $context;
         $cmt->area = 'plan';
-        $cmt->itemid = $plan->get_id();
+        $cmt->itemid = $plan->get('id');
         $cmt->component = 'competency';
         $manager = new comment($cmt);
         $newcomment = $manager->add("Comment to be deleted");
@@ -1294,7 +1294,7 @@ class core_competency_event_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\core\event\competency_comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $this->assertEquals($plan->get_id(), $event->other['itemid']);
+        $this->assertEquals($plan->get('id'), $event->other['itemid']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1315,7 +1315,7 @@ class core_competency_event_testcase extends advanced_testcase {
         // Create a competency for the course.
         $lpg = $dg->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
-        $comp = $lpg->create_competency(['competencyframeworkid' => $framework->get_id()]);
+        $comp = $lpg->create_competency(['competencyframeworkid' => $framework->get('id')]);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -1331,24 +1331,24 @@ class core_competency_event_testcase extends advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_evidence_created', $event);
-        $this->assertEquals($evidence->get_contextid(), $event->contextid);
-        $this->assertEquals($evidence->get_id(), $event->objectid);
-        $this->assertEquals($evidence->get_actionuserid(), $event->userid);
+        $this->assertEquals($evidence->get('contextid'), $event->contextid);
+        $this->assertEquals($evidence->get('id'), $event->objectid);
+        $this->assertEquals($evidence->get('actionuserid'), $event->userid);
         $this->assertEquals($student->id, $event->relateduserid);
-        $this->assertEquals($evidence->get_usercompetencyid(), $event->other['usercompetencyid']);
-        $this->assertEquals($comp->get_id(), $event->other['competencyid']);
-        $this->assertEquals($evidence->get_action(), $event->other['action']);
+        $this->assertEquals($evidence->get('usercompetencyid'), $event->other['usercompetencyid']);
+        $this->assertEquals($comp->get('id'), $event->other['competencyid']);
+        $this->assertEquals($evidence->get('action'), $event->other['action']);
         $this->assertEquals($recommend, $event->other['recommend']);
 
         // Test get_name().
         $this->assertEquals(get_string('eventevidencecreated', 'core_competency'), $event->get_name());
 
         // Test get_description().
-        $description = "The user with id '$USER->id' created an evidence with id '{$evidence->get_id()}'.";
+        $description = "The user with id '$USER->id' created an evidence with id '{$evidence->get('id')}'.";
         $this->assertEquals($description, $event->get_description());
 
         // Test get_url().
-        $url = url::user_competency($evidence->get_usercompetencyid());
+        $url = url::user_competency($evidence->get('usercompetencyid'));
         $this->assertEquals($url, $event->get_url());
 
         // Test get_objectid_mapping().
@@ -1376,10 +1376,10 @@ class core_competency_event_testcase extends advanced_testcase {
         // Create a competency for the course.
         $lpg = $dg->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
-        $comp = $lpg->create_competency(['competencyframeworkid' => $framework->get_id()]);
+        $comp = $lpg->create_competency(['competencyframeworkid' => $framework->get('id')]);
 
         // Create a different user competency.
-        $otheruc = \core_competency\user_competency::create_relation($student2->id, $comp->get_id());
+        $otheruc = \core_competency\user_competency::create_relation($student2->id, $comp->get('id'));
         $otheruc->create();
 
         // Add evidence.
@@ -1474,7 +1474,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1);
         $fr = $lpg->create_framework();
         $c = $lpg->create_competency(array(
-            'competencyframeworkid' => $fr->get_id(),
+            'competencyframeworkid' => $fr->get('id'),
             'scaleid' => $scale->id,
             'scaleconfiguration' => $scaleconfig
         ));
@@ -1482,11 +1482,11 @@ class core_competency_event_testcase extends advanced_testcase {
         $user = $dg->create_user();
         $uc = $lpg->create_user_competency(array(
             'userid' => $user->id,
-            'competencyid' => $c->get_id()));
+            'competencyid' => $c->get('id')));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::grade_competency($user->id, $c->get_id(), 2, true);
+        api::grade_competency($user->id, $c->get('id'), 2, true);
 
         // Get our event event.
         $events = $sink->get_events();
@@ -1498,9 +1498,9 @@ class core_competency_event_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_evidence_created', $evidencecreatedevent);
         $this->assertInstanceOf('\core\event\competency_user_competency_rated', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
+        $this->assertEquals($uc->get('id'), $event->objectid);
         $this->assertEquals($uc->get_context()->id, $event->contextid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
+        $this->assertEquals($uc->get('userid'), $event->relateduserid);
         $this->assertEquals(2, $event->other['grade']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -1527,7 +1527,7 @@ class core_competency_event_testcase extends advanced_testcase {
         $scaleconfig[] = array('name' => 'D', 'id' => 4, 'scaledefault' => 0, 'proficient' => 1);
         $fr = $lpg->create_framework();
         $c = $lpg->create_competency(array(
-            'competencyframeworkid' => $fr->get_id(),
+            'competencyframeworkid' => $fr->get('id'),
             'scaleid' => $scale->id,
             'scaleconfiguration' => $scaleconfig
         ));
@@ -1535,14 +1535,14 @@ class core_competency_event_testcase extends advanced_testcase {
         $dg->enrol_user($user->id, $course->id, $studentrole->id);
         $lpg->create_course_competency(array(
             'courseid' => $course->id,
-            'competencyid' => $c->get_id()));
+            'competencyid' => $c->get('id')));
         $uc = $lpg->create_user_competency(array(
             'userid' => $user->id,
-            'competencyid' => $c->get_id()));
+            'competencyid' => $c->get('id')));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::grade_competency_in_course($course->id, $user->id, $c->get_id(), 2, true);
+        api::grade_competency_in_course($course->id, $user->id, $c->get('id'), 2, true);
 
         // Get our event event.
         $events = $sink->get_events();
@@ -1556,8 +1556,8 @@ class core_competency_event_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\competency_user_competency_rated_in_course', $event);
         $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
         $this->assertEquals($course->id, $event->courseid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
-        $this->assertEquals($uc->get_competencyid(), $event->other['competencyid']);
+        $this->assertEquals($uc->get('userid'), $event->relateduserid);
+        $this->assertEquals($uc->get('competencyid'), $event->other['competencyid']);
         $this->assertEquals(2, $event->other['grade']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -1582,18 +1582,18 @@ class core_competency_event_testcase extends advanced_testcase {
         $plan = $lpg->create_plan(array('userid' => $user->id));
         $fr = $lpg->create_framework();
         $c = $lpg->create_competency(array(
-            'competencyframeworkid' => $fr->get_id(),
+            'competencyframeworkid' => $fr->get('id'),
             'scaleid' => $scale->id,
             'scaleconfiguration' => $scaleconfig
         ));
-        $pc = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $c->get_id()));
+        $pc = $lpg->create_plan_competency(array('planid' => $plan->get('id'), 'competencyid' => $c->get('id')));
         $uc = $lpg->create_user_competency(array(
             'userid' => $user->id,
-            'competencyid' => $c->get_id()));
+            'competencyid' => $c->get('id')));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        api::grade_competency_in_plan($plan->get_id(), $c->get_id(), 3, true);
+        api::grade_competency_in_plan($plan->get('id'), $c->get('id'), 3, true);
 
         // Get our event event.
         $events = $sink->get_events();
@@ -1605,10 +1605,10 @@ class core_competency_event_testcase extends advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\competency_evidence_created', $evidencecreatedevent);
         $this->assertInstanceOf('\core\event\competency_user_competency_rated_in_plan', $event);
-        $this->assertEquals($uc->get_id(), $event->objectid);
+        $this->assertEquals($uc->get('id'), $event->objectid);
         $this->assertEquals($uc->get_context()->id, $event->contextid);
-        $this->assertEquals($uc->get_userid(), $event->relateduserid);
-        $this->assertEquals($uc->get_competencyid(), $event->other['competencyid']);
+        $this->assertEquals($uc->get('userid'), $event->relateduserid);
+        $this->assertEquals($uc->get('competencyid'), $event->other['competencyid']);
         $this->assertEquals(3, $event->other['grade']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
@@ -1625,17 +1625,17 @@ class core_competency_event_testcase extends advanced_testcase {
         $user = $dg->create_user();
         $this->setUser($user);
         $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
         $uc = $lpg->create_user_competency(array(
             'userid' => $user->id,
-            'competencyid' => $c->get_id()
+            'competencyid' => $c->get('id')
         ));
 
         $context = context_user::instance($user->id);
         $cmt = new stdClass();
         $cmt->context = $context;
         $cmt->area = 'user_competency';
-        $cmt->itemid = $uc->get_id();
+        $cmt->itemid = $uc->get('id');
         $cmt->component = 'competency';
         $cmt->showcount = 1;
         $manager = new comment($cmt);
@@ -1651,7 +1651,7 @@ class core_competency_event_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\core\event\competency_comment_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $this->assertEquals($uc->get_id(), $event->other['itemid']);
+        $this->assertEquals($uc->get('id'), $event->other['itemid']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }
@@ -1666,17 +1666,17 @@ class core_competency_event_testcase extends advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $user = $dg->create_user();
         $fr = $lpg->create_framework();
-        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get_id()));
+        $c = $lpg->create_competency(array('competencyframeworkid' => $fr->get('id')));
         $uc = $lpg->create_user_competency(array(
             'userid' => $user->id,
-            'competencyid' => $c->get_id()
+            'competencyid' => $c->get('id')
         ));
         $context = context_user::instance($user->id);
 
         $cmt = new stdClass();
         $cmt->context = $context;
         $cmt->area = 'user_competency';
-        $cmt->itemid = $uc->get_id();
+        $cmt->itemid = $uc->get('id');
         $cmt->component = 'competency';
         $manager = new comment($cmt);
         $newcomment = $manager->add("Comment to be deleted");
@@ -1691,7 +1691,7 @@ class core_competency_event_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\core\event\competency_comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $this->assertEquals($uc->get_id(), $event->other['itemid']);
+        $this->assertEquals($uc->get('id'), $event->other['itemid']);
         $this->assertEventContextNotUsed($event);
         $this->assertDebuggingNotCalled();
     }

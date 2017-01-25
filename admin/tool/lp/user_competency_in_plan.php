@@ -54,13 +54,13 @@ echo $output->render($nav);
 $page = new \tool_lp\output\user_competency_summary_in_plan($competencyid, $planid);
 echo $output->render($page);
 // Trigger the viewed event.
-$pc = \core_competency\api::get_plan_competency($plan, $competency->get_id());
-if ($plan->get_status() == \core_competency\plan::STATUS_COMPLETE) {
+$pc = \core_competency\api::get_plan_competency($plan, $competency->get('id'));
+if ($plan->get('status') == \core_competency\plan::STATUS_COMPLETE) {
     $usercompetencyplan = $pc->usercompetencyplan;
     \core_competency\api::user_competency_plan_viewed($usercompetencyplan);
 } else {
     $usercompetency = $pc->usercompetency;
-    \core_competency\api::user_competency_viewed_in_plan($usercompetency, $plan->get_id());
+    \core_competency\api::user_competency_viewed_in_plan($usercompetency, $plan->get('id'));
 }
 
 echo $output->footer();

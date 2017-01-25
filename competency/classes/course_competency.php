@@ -81,8 +81,8 @@ class course_competency extends persistent {
      * @return void
      */
     protected function before_validate() {
-        if (($this->get_id() && $this->get_sortorder() === null) || !$this->get_id()) {
-            $this->set('sortorder', $this->count_records(array('courseid' => $this->get_courseid())));
+        if (($this->get('id') && $this->get('sortorder') === null) || !$this->get('id')) {
+            $this->set('sortorder', $this->count_records(array('courseid' => $this->get('courseid'))));
         }
     }
 
@@ -294,7 +294,7 @@ class course_competency extends persistent {
         $instances = array();
         foreach ($results as $result) {
             $comp = new competency(0, $result);
-            $instances[$comp->get_id()] = $comp;
+            $instances[$comp->get('id')] = $comp;
         }
         $results->close();
 
@@ -340,7 +340,7 @@ class course_competency extends persistent {
 
         $table = '{' . self::TABLE . '}';
         $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE courseid = ? AND sortorder > ?";
-        $DB->execute($sql, array($this->get_courseid(), $this->get_sortorder()));
+        $DB->execute($sql, array($this->get('courseid'), $this->get('sortorder')));
     }
 
     /**

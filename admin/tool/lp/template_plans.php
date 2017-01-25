@@ -51,7 +51,7 @@ $form = new \tool_lp\form\template_plans($url->out(false));
 if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->users)) {
     $i = 0;
     foreach ($data->users as $userid) {
-        $result = \core_competency\api::create_plan_from_template($template->get_id(), $userid);
+        $result = \core_competency\api::create_plan_from_template($template->get('id'), $userid);
         if ($result) {
             $i++;
         }
@@ -74,10 +74,10 @@ echo $output->heading($subtitle, 3);
 
 // Do not display form when the template is hidden.
 if ($canmanagetemplate) {
-    if (!$template->get_visible()) {
+    if (!$template->get('visible')) {
         // Display message that plan can not be created if the template is hidden.
         echo $output->notify_message(get_string('cannotcreateuserplanswhentemplatehidden', 'tool_lp'));
-    } else if ($template->get_duedate() > 0 && $template->get_duedate() < time() + 900) {
+    } else if ($template->get('duedate') > 0 && $template->get('duedate') < time() + 900) {
         // Prevent the user from creating plans when the due date is passed, or in less than 15 minutes.
         echo $output->notify_message(get_string('cannotcreateuserplanswhentemplateduedateispassed', 'tool_lp'));
     } else {

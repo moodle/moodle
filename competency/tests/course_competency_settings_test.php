@@ -60,10 +60,10 @@ class core_competency_course_competency_settings_testcase extends advanced_testc
         $u3 = $dg->create_user();
 
         $framework = $lpg->create_framework();
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $lpg->create_course_competency(array('competencyid' => $comp1->get_id(), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp2->get_id(), 'courseid' => $c1->id));
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $c1->id));
 
         // Enrol the user.
         $dg->enrol_user($u1->id, $c1->id);
@@ -77,47 +77,47 @@ class core_competency_course_competency_settings_testcase extends advanced_testc
         set_config('pushcourseratingstouserplans', true, 'core_competency');
 
         $coursesettings = course_competency_settings::get_by_courseid($c1->id);
-        $this->assertTrue((boolean)$coursesettings->get_pushratingstouserplans());
+        $this->assertTrue((boolean)$coursesettings->get('pushratingstouserplans'));
 
         set_config('pushcourseratingstouserplans', false, 'core_competency');
 
         $coursesettings = course_competency_settings::get_by_courseid($c1->id);
-        $this->assertFalse((boolean)$coursesettings->get_pushratingstouserplans());
+        $this->assertFalse((boolean)$coursesettings->get('pushratingstouserplans'));
 
         api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => true));
         $coursesettings = course_competency_settings::get_by_courseid($c1->id);
-        $this->assertTrue((boolean)$coursesettings->get_pushratingstouserplans());
+        $this->assertTrue((boolean)$coursesettings->get('pushratingstouserplans'));
 
         set_config('pushcourseratingstouserplans', true, 'core_competency');
         api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => false));
         $coursesettings = course_competency_settings::get_by_courseid($c1->id);
-        $this->assertFalse((boolean)$coursesettings->get_pushratingstouserplans());
+        $this->assertFalse((boolean)$coursesettings->get('pushratingstouserplans'));
 
         // Right now the setting is false.
-        api::grade_competency_in_course($c1->id, $u1->id, $comp1->get_id(), 1, 'Note');
+        api::grade_competency_in_course($c1->id, $u1->id, $comp1->get('id'), 1, 'Note');
         $filterparams = array(
             'userid' => $u1->id,
-            'competencyid' => $comp1->get_id(),
+            'competencyid' => $comp1->get('id'),
         );
         $usercompcourse = \core_competency\user_competency_course::get_record($filterparams);
         $usercomp = \core_competency\user_competency::get_record($filterparams);
 
         // No grade in plan - only a grade in the course.
-        $this->assertEmpty($usercomp->get_grade());
-        $this->assertEquals(1, $usercompcourse->get_grade());
+        $this->assertEmpty($usercomp->get('grade'));
+        $this->assertEquals(1, $usercompcourse->get('grade'));
 
         api::update_course_competency_settings($c1->id, (object) array('pushratingstouserplans' => true));
-        api::grade_competency_in_course($c1->id, $u1->id, $comp1->get_id(), 2, 'Note 2');
+        api::grade_competency_in_course($c1->id, $u1->id, $comp1->get('id'), 2, 'Note 2');
         $filterparams = array(
             'userid' => $u1->id,
-            'competencyid' => $comp1->get_id(),
+            'competencyid' => $comp1->get('id'),
         );
         $usercompcourse = \core_competency\user_competency_course::get_record($filterparams);
         $usercomp = \core_competency\user_competency::get_record($filterparams);
 
         // Updated grade in plan - updated grade in the course.
-        $this->assertEquals(2, $usercomp->get_grade());
-        $this->assertEquals(2, $usercompcourse->get_grade());
+        $this->assertEquals(2, $usercomp->get('grade'));
+        $this->assertEquals(2, $usercompcourse->get('grade'));
 
         $this->setUser($u3);
         $this->expectException('required_capability_exception');

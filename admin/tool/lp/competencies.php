@@ -41,10 +41,10 @@ if (!\core_competency\competency_framework::can_read_context($context)) {
 }
 
 $title = get_string('competencies', 'core_competency');
-$pagetitle = get_string('competenciesforframework', 'tool_lp', $framework->get_shortname());
+$pagetitle = get_string('competenciesforframework', 'tool_lp', $framework->get('shortname'));
 
 // Set up the page.
-$url = new moodle_url("/admin/tool/lp/competencies.php", array('competencyframeworkid' => $framework->get_id(),
+$url = new moodle_url("/admin/tool/lp/competencies.php", array('competencyframeworkid' => $framework->get('id'),
     'pagecontextid' => $pagecontextid));
 $frameworksurl = new moodle_url('/admin/tool/lp/competencyframeworks.php', array('pagecontextid' => $pagecontextid));
 
@@ -52,7 +52,7 @@ $PAGE->navigation->override_active_url($frameworksurl);
 $PAGE->set_context($pagecontext);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
-$PAGE->navbar->add($framework->get_shortname(), $url);
+$PAGE->navbar->add($framework->get('shortname'), $url);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $output = $PAGE->get_renderer('tool_lp');

@@ -29,6 +29,7 @@ use templatable;
 use stdClass;
 use moodle_url;
 use core_competency\api;
+use core_competency\external\performance_helper;
 use core_competency\plan;
 use core_competency\external\competency_exporter;
 use core_competency\external\plan_exporter;
@@ -62,9 +63,6 @@ class plan_page implements renderable, templatable {
      * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
-        $frameworks = array();
-        $scales = array();
-
         $planexporter = new plan_exporter($this->plan, array('template' => $this->plan->get_template()));
 
         $data = new stdClass();
@@ -81,40 +79,27 @@ class plan_page implements renderable, templatable {
             $ucexporter = 'core_competency\\external\\user_competency_exporter';
         }
 
+        $helper = new performance_helper();
         $pclist = api::list_plan_competencies($this->plan);
         $proficientcount = 0;
         foreach ($pclist as $pc) {
             $comp = $pc->competency;
             $usercomp = $pc->$ucproperty;
 
-            // Get the framework.
-            if (!isset($frameworks[$comp->get_competencyframeworkid()])) {
-                $frameworks[$comp->get_competencyframeworkid()] = $comp->get_framework();
-            }
-            $framework = $frameworks[$comp->get_competencyframeworkid()];
-
-            // Get the scale.
-            $scaleid = $comp->get_scaleid();
-            $compscale = $comp->get_scale();
-            if ($scaleid === null) {
-                $scaleid = $framework->get_scaleid();
-                $compscale = $framework->get_scale();
-            }
-            if (!isset($scales[$scaleid])) {
-                $scales[$scaleid] = $compscale;
-            }
-            $scale = $scales[$scaleid];
+            $compcontext = $helper->get_context_from_competency($comp);
+            $framework = $helper->get_framework_from_competency($comp);
+            $scale = $helper->get_scale_from_competency($comp);
 
             // Prepare the data.
             $record = new stdClass();
-            $exporter = new competency_exporter($comp, array('context' => $framework->get_context()));
+            $exporter = new competency_exporter($comp, array('context' => $compcontext));
             $record->competency = $exporter->export($output);
 
             // Competency path.
             $exporter = new competency_path_exporter([
                 'ancestors' => $comp->get_ancestors(),
                 'framework' => $framework,
-                'context' => $framework->get_context()
+                'context' => $compcontext
             ]);
             $record->comppath = $exporter->export($output);
 
@@ -122,7 +107,7 @@ class plan_page implements renderable, templatable {
             $record->$ucproperty = $exporter->export($output);
 
             $data->competencies[] = $record;
-            if ($usercomp->get_proficiency()) {
+            if ($usercomp->get('proficiency')) {
                 $proficientcount++;
             }
         }

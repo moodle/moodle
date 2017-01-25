@@ -96,10 +96,10 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
             'cohortid' => $this->cohort->id
         );
         $result = api::create_cohort_role_assignment($params);
-        $this->assertNotEmpty($result->get_id());
-        $this->assertEquals($result->get_userid(), $this->userassignto->id);
-        $this->assertEquals($result->get_roleid(), $this->roleid);
-        $this->assertEquals($result->get_cohortid(), $this->cohort->id);
+        $this->assertNotEmpty($result->get('id'));
+        $this->assertEquals($result->get('userid'), $this->userassignto->id);
+        $this->assertEquals($result->get('roleid'), $this->roleid);
+        $this->assertEquals($result->get('cohortid'), $this->cohort->id);
     }
 
     /**
@@ -114,7 +114,7 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
         );
         $result = api::create_cohort_role_assignment($params);
         $this->setUser($this->userassignto);
-        api::delete_cohort_role_assignment($result->get_id());
+        api::delete_cohort_role_assignment($result->get('id'));
     }
 
     /**
@@ -128,7 +128,7 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
             'cohortid' => $this->cohort->id
         );
         $result = api::create_cohort_role_assignment($params);
-        api::delete_cohort_role_assignment($result->get_id() + 1);
+        api::delete_cohort_role_assignment($result->get('id') + 1);
     }
 
     public function test_delete_cohort_role_assignment() {
@@ -139,7 +139,7 @@ class tool_cohortroles_api_testcase extends advanced_testcase {
             'cohortid' => $this->cohort->id
         );
         $result = api::create_cohort_role_assignment($params);
-        $worked = api::delete_cohort_role_assignment($result->get_id());
+        $worked = api::delete_cohort_role_assignment($result->get('id'));
         $this->assertTrue($worked);
     }
 

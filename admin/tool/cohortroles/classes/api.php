@@ -149,13 +149,13 @@ class api {
         // We build an better structure to loop on.
         $info = array();
         foreach ($all as $cra) {
-            if (!isset($info[$cra->get_userid()])) {
-                $info[$cra->get_userid()] = array();
+            if (!isset($info[$cra->get('userid')])) {
+                $info[$cra->get('userid')] = array();
             }
-            if (!isset($info[$cra->get_userid()][$cra->get_roleid()])) {
-                $info[$cra->get_userid()][$cra->get_roleid()] = array();
+            if (!isset($info[$cra->get('userid')][$cra->get('roleid')])) {
+                $info[$cra->get('userid')][$cra->get('roleid')] = array();
             }
-            array_push($info[$cra->get_userid()][$cra->get_roleid()], $cra->get_cohortid());
+            array_push($info[$cra->get('userid')][$cra->get('roleid')], $cra->get('cohortid'));
         }
         // Then for each user+role combo - find user context in the cohort without a role assigned.
 

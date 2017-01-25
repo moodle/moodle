@@ -165,7 +165,7 @@ class api {
         require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         // Reset the sortorder, use reorder instead.
-        $competency->set_sortorder(null);
+        $competency->set('sortorder', null);
         $competency->create();
 
         \core\event\competency_created::create_from_competency($competency)->trigger();
@@ -197,7 +197,7 @@ class api {
         require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         $events = array();
-        $competencyids = array(intval($competency->get_id()));
+        $competencyids = array(intval($competency->get('id')));
         $contextid = $competency->get_context()->id;
         $competencyids = array_merge(competency::get_descendants_ids($competency), $competencyids);
         if (!competency::can_all_be_deleted($competencyids)) {
@@ -257,25 +257,25 @@ class api {
         // First we do a permissions check.
         require_capability('moodle/competency:competencymanage', $current->get_context());
 
-        $max = self::count_competencies(array('parentid' => $current->get_parentid(),
-                                              'competencyframeworkid' => $current->get_competencyframeworkid()));
+        $max = self::count_competencies(array('parentid' => $current->get('parentid'),
+                                              'competencyframeworkid' => $current->get('competencyframeworkid')));
         if ($max > 0) {
             $max--;
         }
 
-        $sortorder = $current->get_sortorder();
+        $sortorder = $current->get('sortorder');
         if ($sortorder >= $max) {
             return false;
         }
         $sortorder = $sortorder + 1;
-        $current->set_sortorder($sortorder);
+        $current->set('sortorder', $sortorder);
 
-        $filters = array('parentid' => $current->get_parentid(),
-                         'competencyframeworkid' => $current->get_competencyframeworkid(),
+        $filters = array('parentid' => $current->get('parentid'),
+                         'competencyframeworkid' => $current->get('competencyframeworkid'),
                          'sortorder' => $sortorder);
         $children = self::list_competencies($filters, 'id');
         foreach ($children as $needtoswap) {
-            $needtoswap->set_sortorder($sortorder - 1);
+            $needtoswap->set('sortorder', $sortorder - 1);
             $needtoswap->update();
         }
 
@@ -300,20 +300,20 @@ class api {
         // First we do a permissions check.
         require_capability('moodle/competency:competencymanage', $current->get_context());
 
-        $sortorder = $current->get_sortorder();
+        $sortorder = $current->get('sortorder');
         if ($sortorder == 0) {
             return false;
         }
 
         $sortorder = $sortorder - 1;
-        $current->set_sortorder($sortorder);
+        $current->set('sortorder', $sortorder);
 
-        $filters = array('parentid' => $current->get_parentid(),
-                         'competencyframeworkid' => $current->get_competencyframeworkid(),
+        $filters = array('parentid' => $current->get('parentid'),
+                         'competencyframeworkid' => $current->get('competencyframeworkid'),
                          'sortorder' => $sortorder);
         $children = self::list_competencies($filters, 'id');
         foreach ($children as $needtoswap) {
-            $needtoswap->set_sortorder($sortorder + 1);
+            $needtoswap->set('sortorder', $sortorder + 1);
             $needtoswap->update();
         }
 
@@ -341,14 +341,14 @@ class api {
         require_capability('moodle/competency:competencymanage', $current->get_context());
         if ($id == $newparentid) {
             throw new coding_exception('Can not set a competency as a parent of itself.');
-        } if ($newparentid == $current->get_parentid()) {
+        } if ($newparentid == $current->get('parentid')) {
             throw new coding_exception('Can not move a competency to the same location.');
         }
 
         // Some great variable assignment right here.
         $currentparent = $current->get_parent();
         $parent = !empty($newparentid) ? new competency($newparentid) : null;
-        $parentpath = !empty($parent) ? $parent->get_path() : '/0/';
+        $parentpath = !empty($parent) ? $parent->get('path') : '/0/';
 
         // We're going to change quite a few things.
         $transaction = $DB->start_delegated_transaction();
@@ -358,10 +358,10 @@ class api {
         // - remove the rule on self.
         // - re-read the parent.
         $newparents = explode('/', $parentpath);
-        if (in_array($current->get_id(), $newparents)) {
-            $children = competency::get_records(array('parentid' => $current->get_id()), 'id');
+        if (in_array($current->get('id'), $newparents)) {
+            $children = competency::get_records(array('parentid' => $current->get('id')), 'id');
             foreach ($children as $child) {
-                $child->set_parentid($current->get_parentid());
+                $child->set('parentid', $current->get('parentid'));
                 $child->update();
             }
 
@@ -383,7 +383,7 @@ class api {
         }
 
         // Do the actual move.
-        $current->set_parentid($newparentid);
+        $current->set('parentid', $newparentid);
         $result = $current->update();
 
         // All right, let's commit this.
@@ -410,9 +410,9 @@ class api {
         require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         // Some things should not be changed in an update - they should use a more specific method.
-        $record->sortorder = $competency->get_sortorder();
-        $record->parentid = $competency->get_parentid();
-        $record->competencyframeworkid = $competency->get_competencyframeworkid();
+        $record->sortorder = $competency->get('sortorder');
+        $record->parentid = $competency->get('parentid');
+        $record->competencyframeworkid = $competency->get('competencyframeworkid');
 
         $competency->from_record($record);
         require_capability('moodle/competency:competencymanage', $competency->get_context());
@@ -551,7 +551,7 @@ class api {
 
         // Account for different formats of taxonomies.
         if (isset($record->taxonomies)) {
-            $framework->set_taxonomies($record->taxonomies);
+            $framework->set('taxonomies', $record->taxonomies);
         }
 
         $framework = $framework->create();
@@ -581,34 +581,34 @@ class api {
 
         try {
             // Get a uniq idnumber based on the origin framework.
-            $idnumber = competency_framework::get_unused_idnumber($framework->get_idnumber());
-            $framework->set_idnumber($idnumber);
+            $idnumber = competency_framework::get_unused_idnumber($framework->get('idnumber'));
+            $framework->set('idnumber', $idnumber);
             // Adding the suffix copy to the shortname.
-            $framework->set_shortname(get_string('duplicateditemname', 'core_competency', $framework->get_shortname()));
-            $framework->set_id(0);
+            $framework->set('shortname', get_string('duplicateditemname', 'core_competency', $framework->get('shortname')));
+            $framework->set('id', 0);
             $framework = $framework->create();
 
             // Array that match the old competencies ids with the new one to use when copying related competencies.
             $frameworkcompetency = competency::get_framework_tree($id);
-            $matchids = self::duplicate_competency_tree($framework->get_id(), $frameworkcompetency, 0, 0);
+            $matchids = self::duplicate_competency_tree($framework->get('id'), $frameworkcompetency, 0, 0);
 
             // Copy the related competencies.
             $relcomps = related_competency::get_multiple_relations(array_keys($matchids));
 
             foreach ($relcomps as $relcomp) {
-                $compid = $relcomp->get_competencyid();
-                $relcompid = $relcomp->get_relatedcompetencyid();
+                $compid = $relcomp->get('competencyid');
+                $relcompid = $relcomp->get('relatedcompetencyid');
                 if (isset($matchids[$compid]) && isset($matchids[$relcompid])) {
-                    $newcompid = $matchids[$compid]->get_id();
-                    $newrelcompid = $matchids[$relcompid]->get_id();
+                    $newcompid = $matchids[$compid]->get('id');
+                    $newrelcompid = $matchids[$relcompid]->get('id');
                     if ($newcompid < $newrelcompid) {
-                        $relcomp->set_competencyid($newcompid);
-                        $relcomp->set_relatedcompetencyid($newrelcompid);
+                        $relcomp->set('competencyid', $newcompid);
+                        $relcomp->set('relatedcompetencyid', $newrelcompid);
                     } else {
-                        $relcomp->set_competencyid($newrelcompid);
-                        $relcomp->set_relatedcompetencyid($newcompid);
+                        $relcomp->set('competencyid', $newrelcompid);
+                        $relcomp->set('relatedcompetencyid', $newcompid);
                     }
-                    $relcomp->set_id(0);
+                    $relcomp->set('id', 0);
                     $relcomp->create();
                 } else {
                     // Debugging message when there is no match found.
@@ -647,7 +647,7 @@ class api {
 
         $events = array();
         $competenciesid = competency::get_ids_by_frameworkid($id);
-        $contextid = $framework->get_contextid();
+        $contextid = $framework->get('contextid');
         if (!competency::can_all_be_deleted($competenciesid)) {
             return false;
         }
@@ -707,7 +707,7 @@ class api {
         // Account for different formats of taxonomies.
         $framework->from_record($record);
         if (isset($record->taxonomies)) {
-            $framework->set_taxonomies($record->taxonomies);
+            $framework->set('taxonomies', $record->taxonomies);
         }
 
         // Trigger a competency framework updated event.
@@ -1129,7 +1129,7 @@ class api {
         // Build the return values.
         foreach ($coursecompetencies as $key => $coursecompetency) {
             $result[] = array(
-                'competency' => $competencies[$coursecompetency->get_competencyid()],
+                'competency' => $competencies[$coursecompetency->get('competencyid')],
                 'coursecompetency' => $coursecompetency
             );
         }
@@ -1211,7 +1211,7 @@ class api {
         // Build the return values.
         foreach ($coursemodulecompetencies as $key => $coursemodulecompetency) {
             $result[] = array(
-                'competency' => $competencies[$coursemodulecompetency->get_competencyid()],
+                'competency' => $competencies[$coursemodulecompetency->get('competencyid')],
                 'coursemodulecompetency' => $coursemodulecompetency
             );
         }
@@ -1248,7 +1248,7 @@ class api {
         if ($exists) {
             $ucc = $exists;
         } else {
-            $ucc = user_competency_course::create_relation($userid, $competency->get_id(), $courseid);
+            $ucc = user_competency_course::create_relation($userid, $competency->get('id'), $courseid);
             $ucc->create();
         }
 
@@ -1286,16 +1286,16 @@ class api {
         foreach ($competencylist as $coursecompetency) {
             $found = false;
             foreach ($existing as $usercompetencycourse) {
-                if ($usercompetencycourse->get_competencyid() == $coursecompetency->get_id()) {
+                if ($usercompetencycourse->get('competencyid') == $coursecompetency->get('id')) {
                     $found = true;
-                    $orderedusercompetencycourses[$usercompetencycourse->get_id()] = $usercompetencycourse;
+                    $orderedusercompetencycourses[$usercompetencycourse->get('id')] = $usercompetencycourse;
                     break;
                 }
             }
             if (!$found) {
-                $ucc = user_competency_course::create_relation($userid, $coursecompetency->get_id(), $courseid);
+                $ucc = user_competency_course::create_relation($userid, $coursecompetency->get('id'), $courseid);
                 $ucc->create();
-                $orderedusercompetencycourses[$ucc->get_id()] = $ucc;
+                $orderedusercompetencycourses[$ucc->get('id')] = $ucc;
             }
         }
 
@@ -1506,22 +1506,22 @@ class api {
 
         $all = course_module_competency::get_records(array('cmid' => $cm->id), 'sortorder', 'ASC', 0, 0);
 
-        if ($competencyfrom->get_sortorder() > $competencyto->get_sortorder()) {
+        if ($competencyfrom->get('sortorder') > $competencyto->get('sortorder')) {
             // We are moving up, so put it before the "to" item.
             $down = false;
         }
 
         foreach ($all as $id => $coursemodulecompetency) {
-            $sort = $coursemodulecompetency->get_sortorder();
-            if ($down && $sort > $competencyfrom->get_sortorder() && $sort <= $competencyto->get_sortorder()) {
-                $coursemodulecompetency->set_sortorder($coursemodulecompetency->get_sortorder() - 1);
+            $sort = $coursemodulecompetency->get('sortorder');
+            if ($down && $sort > $competencyfrom->get('sortorder') && $sort <= $competencyto->get('sortorder')) {
+                $coursemodulecompetency->set('sortorder', $coursemodulecompetency->get('sortorder') - 1);
                 $coursemodulecompetency->update();
-            } else if (!$down && $sort >= $competencyto->get_sortorder() && $sort < $competencyfrom->get_sortorder()) {
-                $coursemodulecompetency->set_sortorder($coursemodulecompetency->get_sortorder() + 1);
+            } else if (!$down && $sort >= $competencyto->get('sortorder') && $sort < $competencyfrom->get('sortorder')) {
+                $coursemodulecompetency->set('sortorder', $coursemodulecompetency->get('sortorder') + 1);
                 $coursemodulecompetency->update();
             }
         }
-        $competencyfrom->set_sortorder($competencyto->get_sortorder());
+        $competencyfrom->set('sortorder', $competencyto->get('sortorder'));
         return $competencyfrom->update();
     }
 
@@ -1539,14 +1539,14 @@ class api {
             $coursemodulecompetency = new course_module_competency($coursemodulecompetencyorid);
         }
 
-        $cm = get_coursemodule_from_id('', $coursemodulecompetency->get_cmid(), 0, true, MUST_EXIST);
+        $cm = get_coursemodule_from_id('', $coursemodulecompetency->get('cmid'), 0, true, MUST_EXIST);
 
         self::validate_course_module($cm);
         $context = context_module::instance($cm->id);
 
         require_capability('moodle/competency:coursecompetencymanage', $context);
 
-        $coursemodulecompetency->set_ruleoutcome($ruleoutcome);
+        $coursemodulecompetency->set('ruleoutcome', $ruleoutcome);
         return $coursemodulecompetency->update();
     }
 
@@ -1574,7 +1574,7 @@ class api {
         $competency = new competency($competencyid);
 
         // Can not add a competency that belong to a hidden framework.
-        if ($competency->get_framework()->get_visible() == false) {
+        if ($competency->get_framework()->get('visible') == false) {
             throw new coding_exception('A competency belonging to hidden framework can not be linked to course');
         }
 
@@ -1660,22 +1660,22 @@ class api {
 
         $all = $coursecompetency->get_records(array('courseid' => $courseid), 'sortorder', 'ASC', 0, 0);
 
-        if ($competencyfrom->get_sortorder() > $competencyto->get_sortorder()) {
+        if ($competencyfrom->get('sortorder') > $competencyto->get('sortorder')) {
             // We are moving up, so put it before the "to" item.
             $down = false;
         }
 
         foreach ($all as $id => $coursecompetency) {
-            $sort = $coursecompetency->get_sortorder();
-            if ($down && $sort > $competencyfrom->get_sortorder() && $sort <= $competencyto->get_sortorder()) {
-                $coursecompetency->set_sortorder($coursecompetency->get_sortorder() - 1);
+            $sort = $coursecompetency->get('sortorder');
+            if ($down && $sort > $competencyfrom->get('sortorder') && $sort <= $competencyto->get('sortorder')) {
+                $coursecompetency->set('sortorder', $coursecompetency->get('sortorder') - 1);
                 $coursecompetency->update();
-            } else if (!$down && $sort >= $competencyto->get_sortorder() && $sort < $competencyfrom->get_sortorder()) {
-                $coursecompetency->set_sortorder($coursecompetency->get_sortorder() + 1);
+            } else if (!$down && $sort >= $competencyto->get('sortorder') && $sort < $competencyfrom->get('sortorder')) {
+                $coursecompetency->set('sortorder', $coursecompetency->get('sortorder') + 1);
                 $coursecompetency->update();
             }
         }
-        $competencyfrom->set_sortorder($competencyto->get_sortorder());
+        $competencyfrom->set('sortorder', $competencyto->get('sortorder'));
         return $competencyfrom->update();
     }
 
@@ -1693,13 +1693,13 @@ class api {
             $coursecompetency = new course_competency($coursecompetencyorid);
         }
 
-        $courseid = $coursecompetency->get_courseid();
+        $courseid = $coursecompetency->get('courseid');
         self::validate_course($courseid);
         $coursecontext = context_course::instance($courseid);
 
         require_capability('moodle/competency:coursecompetencymanage', $coursecontext);
 
-        $coursecompetency->set_ruleoutcome($ruleoutcome);
+        $coursecompetency->set('ruleoutcome', $ruleoutcome);
         return $coursecompetency->update();
     }
 
@@ -1752,14 +1752,14 @@ class api {
         $competencies = template_competency::list_competencies($id, false);
 
         // Adding the suffix copy.
-        $template->set_shortname(get_string('duplicateditemname', 'core_competency', $template->get_shortname()));
-        $template->set_id(0);
+        $template->set('shortname', get_string('duplicateditemname', 'core_competency', $template->get('shortname')));
+        $template->set('id', 0);
 
         $duplicatedtemplate = $template->create();
 
         // Associate each competency for the duplicated template.
         foreach ($competencies as $competency) {
-            self::add_competency_to_template($duplicatedtemplate->get_id(), $competency->get_id());
+            self::add_competency_to_template($duplicatedtemplate->get('id'), $competency->get('id'));
         }
 
         // Trigger a template created event.
@@ -1793,7 +1793,7 @@ class api {
         $success = true;
 
         // Check if there are cohorts associated.
-        $templatecohorts = template_cohort::get_relations_by_templateid($template->get_id());
+        $templatecohorts = template_cohort::get_relations_by_templateid($template->get('id'));
         foreach ($templatecohorts as $templatecohort) {
             $success = $templatecohort->delete();
             if (!$success) {
@@ -1803,9 +1803,9 @@ class api {
 
         // Still OK, delete or unlink the plans from the template.
         if ($success) {
-            $plans = plan::get_records(array('templateid' => $template->get_id()));
+            $plans = plan::get_records(array('templateid' => $template->get('id')));
             foreach ($plans as $plan) {
-                $success = $deleteplans ? self::delete_plan($plan->get_id()) : self::unlink_plan_from_template($plan);
+                $success = $deleteplans ? self::delete_plan($plan->get('id')) : self::unlink_plan_from_template($plan);
                 if (!$success) {
                     break;
                 }
@@ -1814,7 +1814,7 @@ class api {
 
         // Still OK, delete the template comptencies.
         if ($success) {
-            $success = template_competency::delete_by_templateid($template->get_id());
+            $success = template_competency::delete_by_templateid($template->get('id'));
         }
 
         // OK - all set.
@@ -1856,7 +1856,7 @@ class api {
             throw new required_capability_exception($template->get_context(), 'moodle/competency:templatemanage',
                 'nopermissions', '');
 
-        } else if (isset($record->contextid) && $record->contextid != $template->get_contextid()) {
+        } else if (isset($record->contextid) && $record->contextid != $template->get('contextid')) {
             // We can never change the context of a template.
             throw new coding_exception('Changing the context of an existing tempalte is forbidden.');
 
@@ -2070,7 +2070,7 @@ class api {
         }
 
         // OK - all set.
-        return template_competency::count_competencies($template->get_id());
+        return template_competency::count_competencies($template->get('id'));
     }
 
     /**
@@ -2092,7 +2092,7 @@ class api {
         }
 
         // OK - all set.
-        return template_competency::count_competencies_with_no_courses($template->get_id());
+        return template_competency::count_competencies_with_no_courses($template->get('id'));
     }
 
     /**
@@ -2115,7 +2115,7 @@ class api {
         }
 
         // OK - all set.
-        return template_competency::list_competencies($template->get_id());
+        return template_competency::list_competencies($template->get('id'));
     }
 
     /**
@@ -2141,7 +2141,7 @@ class api {
         $competency = new competency($competencyid);
 
         // Can not add a competency that belong to a hidden framework.
-        if ($competency->get_framework()->get_visible() == false) {
+        if ($competency->get_framework()->get('visible') == false) {
             throw new coding_exception('A competency belonging to hidden framework can not be added');
         }
 
@@ -2220,22 +2220,22 @@ class api {
 
         $all = template_competency::get_records(array('templateid' => $templateid), 'sortorder', 'ASC', 0, 0);
 
-        if ($competencyfrom->get_sortorder() > $competencyto->get_sortorder()) {
+        if ($competencyfrom->get('sortorder') > $competencyto->get('sortorder')) {
             // We are moving up, so put it before the "to" item.
             $down = false;
         }
 
         foreach ($all as $id => $templatecompetency) {
-            $sort = $templatecompetency->get_sortorder();
-            if ($down && $sort > $competencyfrom->get_sortorder() && $sort <= $competencyto->get_sortorder()) {
-                $templatecompetency->set_sortorder($templatecompetency->get_sortorder() - 1);
+            $sort = $templatecompetency->get('sortorder');
+            if ($down && $sort > $competencyfrom->get('sortorder') && $sort <= $competencyto->get('sortorder')) {
+                $templatecompetency->set('sortorder', $templatecompetency->get('sortorder') - 1);
                 $templatecompetency->update();
-            } else if (!$down && $sort >= $competencyto->get_sortorder() && $sort < $competencyfrom->get_sortorder()) {
-                $templatecompetency->set_sortorder($templatecompetency->get_sortorder() + 1);
+            } else if (!$down && $sort >= $competencyto->get('sortorder') && $sort < $competencyfrom->get('sortorder')) {
+                $templatecompetency->set('sortorder', $templatecompetency->get('sortorder') + 1);
                 $templatecompetency->update();
             }
         }
-        $competencyfrom->set_sortorder($competencyto->get_sortorder());
+        $competencyfrom->set('sortorder', $competencyto->get('sortorder'));
         return $competencyfrom->update();
     }
 
@@ -2269,8 +2269,8 @@ class api {
             throw new required_capability_exception($cohortcontext, 'moodle/cohort:view', 'nopermissions', '');
         }
 
-        $tplcohort = template_cohort::get_relation($template->get_id(), $cohort->id);
-        if (!$tplcohort->get_id()) {
+        $tplcohort = template_cohort::get_relation($template->get('id'), $cohort->id);
+        if (!$tplcohort->get('id')) {
             $tplcohort->create();
         }
 
@@ -2299,8 +2299,8 @@ class api {
             $cohort = $DB->get_record('cohort', array('id' => $cohort), '*', MUST_EXIST);
         }
 
-        $tplcohort = template_cohort::get_relation($template->get_id(), $cohort->id);
-        if (!$tplcohort->get_id()) {
+        $tplcohort = template_cohort::get_relation($template->get('id'), $cohort->id);
+        if (!$tplcohort->get('id')) {
             return true;
         }
 
@@ -2452,12 +2452,12 @@ class api {
 
         if ($plan->is_based_on_template()) {
             throw new coding_exception('To create a plan from a template use api::create_plan_from_template().');
-        } else if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        } else if ($plan->get('status') == plan::STATUS_COMPLETE) {
             throw new coding_exception('A plan cannot be created as complete.');
         }
 
         if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
@@ -2488,7 +2488,7 @@ class api {
                 'nopermissions', '');
         }
         // Can not create plan from a hidden template.
-        if ($template->get_visible() == false) {
+        if ($template->get('visible') == false) {
             throw new coding_exception('A plan can not be created from a hidden template');
         }
 
@@ -2521,7 +2521,7 @@ class api {
         // We first apply the permission checks as we wouldn't want to leak information by returning early that
         // the plan already exists.
         if (plan::record_exists_select('templateid = :templateid AND userid = :userid', array(
-                'templateid' => $template->get_id(), 'userid' => $userid))) {
+                'templateid' => $template->get('id'), 'userid' => $userid))) {
             return false;
         }
 
@@ -2557,7 +2557,7 @@ class api {
         }
 
         // Can not create plan from a hidden template.
-        if ($template->get_visible() == false) {
+        if ($template->get('visible') == false) {
             throw new coding_exception('A plan can not be created from a hidden template');
         }
 
@@ -2589,7 +2589,7 @@ class api {
 
         // Create the plans.
         $created = 0;
-        $userids = template_cohort::get_missing_plans($template->get_id(), $cohortid, $recreateunlinked);
+        $userids = template_cohort::get_missing_plans($template->get('id'), $cohortid, $recreateunlinked);
         foreach ($userids as $userid) {
             $record = (object) (array) $recordbase;
             $record->userid = $userid;
@@ -2630,7 +2630,7 @@ class api {
         }
 
         // Only plan with status DRAFT or ACTIVE can be unliked..
-        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        if ($plan->get('status') == plan::STATUS_COMPLETE) {
             throw new coding_exception('Only draft or active plan can be unliked from a template');
         }
 
@@ -2640,23 +2640,23 @@ class api {
         }
 
         // Fetch the template.
-        $template = new template($plan->get_templateid());
+        $template = new template($plan->get('templateid'));
 
         // Now, proceed by copying all competencies to the plan, then update the plan.
         $transaction = $DB->start_delegated_transaction();
-        $competencies = template_competency::list_competencies($template->get_id(), false);
+        $competencies = template_competency::list_competencies($template->get('id'), false);
         $i = 0;
         foreach ($competencies as $competency) {
             $record = (object) array(
-                'planid' => $plan->get_id(),
-                'competencyid' => $competency->get_id(),
+                'planid' => $plan->get('id'),
+                'competencyid' => $competency->get('id'),
                 'sortorder' => $i++
             );
             $pc = new plan_competency(null, $record);
             $pc->create();
         }
-        $plan->set_origtemplateid($template->get_id());
-        $plan->set_templateid(null);
+        $plan->set('origtemplateid', $template->get('id'));
+        $plan->set('templateid', null);
         $success = $plan->update();
         $transaction->allow_commit();
 
@@ -2681,7 +2681,7 @@ class api {
         if (!$plan->can_manage()) {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
 
-        } else if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        } else if ($plan->get('status') == plan::STATUS_COMPLETE) {
             // A completed plan cannot be edited.
             throw new coding_exception('Completed plan cannot be edited.');
 
@@ -2689,15 +2689,15 @@ class api {
             // Prevent a plan based on a template to be edited.
             throw new coding_exception('Cannot update a plan that is based on a template.');
 
-        } else if (isset($record->templateid) && $plan->get_templateid() != $record->templateid) {
+        } else if (isset($record->templateid) && $plan->get('templateid') != $record->templateid) {
             // Prevent a plan to be based on a template.
             throw new coding_exception('Cannot base a plan on a template.');
 
-        } else if (isset($record->userid) && $plan->get_userid() != $record->userid) {
+        } else if (isset($record->userid) && $plan->get('userid') != $record->userid) {
             // Prevent change of ownership as the capabilities are checked against that.
             throw new coding_exception('A plan cannot be transfered to another user');
 
-        } else if (isset($record->status) && $plan->get_status() != $record->status) {
+        } else if (isset($record->status) && $plan->get('status') != $record->status) {
             // Prevent change of status.
             throw new coding_exception('To change the status of a plan use the appropriate methods.');
 
@@ -2723,7 +2723,7 @@ class api {
         $plan = new plan($id);
 
         if (!$plan->can_read()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planview', 'nopermissions', '');
         }
 
@@ -2745,7 +2745,7 @@ class api {
 
         // First we do a permissions check.
         if (!$plan->can_read()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planview', 'nopermissions', '');
         }
 
@@ -2770,7 +2770,7 @@ class api {
         $plan = new plan($id);
 
         if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
@@ -2778,13 +2778,13 @@ class api {
         $transaction = $DB->start_delegated_transaction();
 
         // Delete plan competencies.
-        $plancomps = plan_competency::get_records(array('planid' => $plan->get_id()));
+        $plancomps = plan_competency::get_records(array('planid' => $plan->get('id')));
         foreach ($plancomps as $plancomp) {
             $plancomp->delete();
         }
 
         // Delete archive user competencies if the status of the plan is complete.
-        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        if ($plan->get('status') == plan::STATUS_COMPLETE) {
             self::remove_archived_user_competencies_in_plan($plan);
         }
         $event = \core\event\competency_plan_deleted::create_from_plan($plan);
@@ -2818,13 +2818,13 @@ class api {
 
         if ($plan->is_based_on_template()) {
             throw new coding_exception('Template plans cannot be reviewed.');   // This should never happen.
-        } else if ($plan->get_status() != plan::STATUS_WAITING_FOR_REVIEW) {
+        } else if ($plan->get('status') != plan::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The plan review cannot be cancelled at this stage.');
         } else if (!$plan->can_request_review()) {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
-        $plan->set_status(plan::STATUS_DRAFT);
+        $plan->set('status', plan::STATUS_DRAFT);
         $result = $plan->update();
 
         // Trigger review request cancelled event.
@@ -2853,13 +2853,13 @@ class api {
 
         if ($plan->is_based_on_template()) {
             throw new coding_exception('Template plans cannot be reviewed.');   // This should never happen.
-        } else if ($plan->get_status() != plan::STATUS_DRAFT) {
+        } else if ($plan->get('status') != plan::STATUS_DRAFT) {
             throw new coding_exception('The plan cannot be sent for review at this stage.');
         } else if (!$plan->can_request_review()) {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
-        $plan->set_status(plan::STATUS_WAITING_FOR_REVIEW);
+        $plan->set('status', plan::STATUS_WAITING_FOR_REVIEW);
         $result = $plan->update();
 
         // Trigger review requested event.
@@ -2889,14 +2889,14 @@ class api {
 
         if ($plan->is_based_on_template()) {
             throw new coding_exception('Template plans cannot be reviewed.');   // This should never happen.
-        } else if ($plan->get_status() != plan::STATUS_WAITING_FOR_REVIEW) {
+        } else if ($plan->get('status') != plan::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The plan review cannot be started at this stage.');
         } else if (!$plan->can_review()) {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
-        $plan->set_status(plan::STATUS_IN_REVIEW);
-        $plan->set_reviewerid($USER->id);
+        $plan->set('status', plan::STATUS_IN_REVIEW);
+        $plan->set('reviewerid', $USER->id);
         $result = $plan->update();
 
         // Trigger review started event.
@@ -2925,14 +2925,14 @@ class api {
 
         if ($plan->is_based_on_template()) {
             throw new coding_exception('Template plans cannot be reviewed.');   // This should never happen.
-        } else if ($plan->get_status() != plan::STATUS_IN_REVIEW) {
+        } else if ($plan->get('status') != plan::STATUS_IN_REVIEW) {
             throw new coding_exception('The plan review cannot be stopped at this stage.');
         } else if (!$plan->can_review()) {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
-        $plan->set_status(plan::STATUS_DRAFT);
-        $plan->set_reviewerid(null);
+        $plan->set('status', plan::STATUS_DRAFT);
+        $plan->set('reviewerid', null);
         $result = $plan->update();
 
         // Trigger review stopped event.
@@ -2970,8 +2970,8 @@ class api {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
-        $plan->set_status(plan::STATUS_ACTIVE);
-        $plan->set_reviewerid(null);
+        $plan->set('status', plan::STATUS_ACTIVE);
+        $plan->set('reviewerid', null);
         $result = $plan->update();
 
         // Trigger approved event.
@@ -3002,13 +3002,13 @@ class api {
 
         if ($plan->is_based_on_template()) {
             throw new coding_exception('Template plans are always approved.');   // This should never happen.
-        } else if ($plan->get_status() != plan::STATUS_ACTIVE) {
+        } else if ($plan->get('status') != plan::STATUS_ACTIVE) {
             throw new coding_exception('The plan cannot be sent back to draft at this stage.');
         } else if (!$plan->can_review()) {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
-        $plan->set_status(plan::STATUS_DRAFT);
+        $plan->set('status', plan::STATUS_DRAFT);
         $result = $plan->update();
 
         // Trigger unapproved event.
@@ -3038,12 +3038,12 @@ class api {
         }
 
         // Check if the plan was already completed.
-        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        if ($plan->get('status') == plan::STATUS_COMPLETE) {
             throw new coding_exception('The plan is already completed.');
         }
 
-        $originalstatus = $plan->get_status();
-        $plan->set_status(plan::STATUS_COMPLETE);
+        $originalstatus = $plan->get('status');
+        $plan->set('status', plan::STATUS_COMPLETE);
 
         // The user should also be able to manage the plan when it's completed.
         if (!$plan->can_manage()) {
@@ -3051,12 +3051,12 @@ class api {
         }
 
         // Put back original status because archive needs it to extract competencies from the right table.
-        $plan->set_status($originalstatus);
+        $plan->set('status', $originalstatus);
 
         // Do the things.
         $transaction = $DB->start_delegated_transaction();
         self::archive_user_competencies_in_plan($plan);
-        $plan->set_status(plan::STATUS_COMPLETE);
+        $plan->set('status', plan::STATUS_COMPLETE);
         $success = $plan->update();
 
         if (!$success) {
@@ -3089,16 +3089,16 @@ class api {
 
         // Validate that the plan as it is can be managed.
         if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
-        $beforestatus = $plan->get_status();
-        $plan->set_status(plan::STATUS_ACTIVE);
+        $beforestatus = $plan->get('status');
+        $plan->set('status', plan::STATUS_ACTIVE);
 
         // Validate if status can be changed.
         if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
         }
 
@@ -3106,14 +3106,14 @@ class api {
         $transaction = $DB->start_delegated_transaction();
 
         // Delete archived user competencies if the status of the plan is changed from complete to another status.
-        $mustremovearchivedcompetencies = ($beforestatus == plan::STATUS_COMPLETE && $plan->get_status() != plan::STATUS_COMPLETE);
+        $mustremovearchivedcompetencies = ($beforestatus == plan::STATUS_COMPLETE && $plan->get('status') != plan::STATUS_COMPLETE);
         if ($mustremovearchivedcompetencies) {
             self::remove_archived_user_competencies_in_plan($plan);
         }
 
         // If duedate less than or equal to duedate_threshold unset it.
-        if ($plan->get_duedate() <= time() + plan::DUEDATE_THRESHOLD) {
-            $plan->set_duedate(0);
+        if ($plan->get('duedate') <= time() + plan::DUEDATE_THRESHOLD) {
+            $plan->set('duedate', 0);
         }
 
         $success = $plan->update();
@@ -3150,7 +3150,7 @@ class api {
             $plan = new plan($planorid);
         }
 
-        if (!user_competency::can_read_user($plan->get_userid())) {
+        if (!user_competency::can_read_user($plan->get('userid'))) {
             throw new required_capability_exception($plan->get_context(), 'moodle/competency:usercompetencyview',
                 'nopermissions', '');
         }
@@ -3158,12 +3158,12 @@ class api {
         $competency = $plan->get_competency($competencyid);
 
         // Get user competencies from user_competency_plan if the plan status is set to complete.
-        $iscompletedplan = $plan->get_status() == plan::STATUS_COMPLETE;
+        $iscompletedplan = $plan->get('status') == plan::STATUS_COMPLETE;
         if ($iscompletedplan) {
-            $usercompetencies = user_competency_plan::get_multiple($plan->get_userid(), $plan->get_id(), array($competencyid));
+            $usercompetencies = user_competency_plan::get_multiple($plan->get('userid'), $plan->get('id'), array($competencyid));
             $ucresultkey = 'usercompetencyplan';
         } else {
-            $usercompetencies = user_competency::get_multiple($plan->get_userid(), array($competencyid));
+            $usercompetencies = user_competency::get_multiple($plan->get('userid'), array($competencyid));
             $ucresultkey = 'usercompetency';
         }
 
@@ -3175,7 +3175,7 @@ class api {
             if ($iscompletedplan) {
                 throw new coding_exception('A user competency plan is missing');
             } else {
-                $uc = user_competency::create_relation($plan->get_userid(), $competency->get_id());
+                $uc = user_competency::create_relation($plan->get('userid'), $competency->get('id'));
                 $uc->create();
             }
         }
@@ -3209,7 +3209,7 @@ class api {
         }
 
         if (!$plan->can_read()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planview', 'nopermissions', '');
         }
 
@@ -3217,12 +3217,12 @@ class api {
         $competencies = $plan->get_competencies();
 
         // Get user competencies from user_competency_plan if the plan status is set to complete.
-        $iscompletedplan = $plan->get_status() == plan::STATUS_COMPLETE;
+        $iscompletedplan = $plan->get('status') == plan::STATUS_COMPLETE;
         if ($iscompletedplan) {
-            $usercompetencies = user_competency_plan::get_multiple($plan->get_userid(), $plan->get_id(), $competencies);
+            $usercompetencies = user_competency_plan::get_multiple($plan->get('userid'), $plan->get('id'), $competencies);
             $ucresultkey = 'usercompetencyplan';
         } else {
-            $usercompetencies = user_competency::get_multiple($plan->get_userid(), $competencies);
+            $usercompetencies = user_competency::get_multiple($plan->get('userid'), $competencies);
             $ucresultkey = 'usercompetency';
         }
 
@@ -3231,7 +3231,7 @@ class api {
             $found = false;
 
             foreach ($usercompetencies as $uckey => $uc) {
-                if ($uc->get_competencyid() == $competency->get_id()) {
+                if ($uc->get('competencyid') == $competency->get('id')) {
                     $found = true;
                     unset($usercompetencies[$uckey]);
                     break;
@@ -3242,7 +3242,7 @@ class api {
                 if ($iscompletedplan) {
                     throw new coding_exception('A user competency plan is missing');
                 } else {
-                    $uc = user_competency::create_relation($plan->get_userid(), $competency->get_id());
+                    $uc = user_competency::create_relation($plan->get('userid'), $competency->get('id'));
                 }
             }
 
@@ -3284,7 +3284,7 @@ class api {
         $competency = new competency($competencyid);
 
         // Can not add a competency that belong to a hidden framework.
-        if ($competency->get_framework()->get_visible() == false) {
+        if ($competency->get_framework()->get('visible') == false) {
             throw new coding_exception('A competency belonging to hidden framework can not be added');
         }
 
@@ -3313,7 +3313,7 @@ class api {
 
         // First we do a permissions check.
         if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
 
         } else if ($plan->is_based_on_template()) {
@@ -3347,7 +3347,7 @@ class api {
 
         // First we do a permissions check.
         if (!$plan->can_manage()) {
-            $context = context_user::instance($plan->get_userid());
+            $context = context_user::instance($plan->get('userid'));
             throw new required_capability_exception($context, 'moodle/competency:planmanage', 'nopermissions', '');
 
         } else if ($plan->is_based_on_template()) {
@@ -3374,22 +3374,22 @@ class api {
 
         $all = plan_competency::get_records(array('planid' => $planid), 'sortorder', 'ASC', 0, 0);
 
-        if ($competencyfrom->get_sortorder() > $competencyto->get_sortorder()) {
+        if ($competencyfrom->get('sortorder') > $competencyto->get('sortorder')) {
             // We are moving up, so put it before the "to" item.
             $down = false;
         }
 
         foreach ($all as $id => $plancompetency) {
-            $sort = $plancompetency->get_sortorder();
-            if ($down && $sort > $competencyfrom->get_sortorder() && $sort <= $competencyto->get_sortorder()) {
-                $plancompetency->set_sortorder($plancompetency->get_sortorder() - 1);
+            $sort = $plancompetency->get('sortorder');
+            if ($down && $sort > $competencyfrom->get('sortorder') && $sort <= $competencyto->get('sortorder')) {
+                $plancompetency->set('sortorder', $plancompetency->get('sortorder') - 1);
                 $plancompetency->update();
-            } else if (!$down && $sort >= $competencyto->get_sortorder() && $sort < $competencyfrom->get_sortorder()) {
-                $plancompetency->set_sortorder($plancompetency->get_sortorder() + 1);
+            } else if (!$down && $sort >= $competencyto->get('sortorder') && $sort < $competencyfrom->get('sortorder')) {
+                $plancompetency->set('sortorder', $plancompetency->get('sortorder') + 1);
                 $plancompetency->update();
             }
         }
-        $competencyfrom->set_sortorder($competencyto->get_sortorder());
+        $competencyfrom->set('sortorder', $competencyto->get('sortorder'));
         return $competencyfrom->update();
     }
 
@@ -3406,13 +3406,13 @@ class api {
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
-        } else if ($uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
+        } else if ($uc->get('status') != user_competency::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The competency can not be cancel review request at this stage.');
         } else if (!$uc->can_request_review()) {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyrequestreview', 'nopermissions', '');
         }
 
-        $uc->set_status(user_competency::STATUS_IDLE);
+        $uc->set('status', user_competency::STATUS_IDLE);
         $result = $uc->update();
         if ($result) {
             \core\event\competency_user_competency_review_request_cancelled::create_from_user_competency($uc)->trigger();
@@ -3438,14 +3438,14 @@ class api {
         if (!$uc->can_read()) {
             throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview',
                 'nopermissions', '');
-        } else if ($uc->get_status() != user_competency::STATUS_IDLE) {
+        } else if ($uc->get('status') != user_competency::STATUS_IDLE) {
             throw new coding_exception('The competency can not be sent for review at this stage.');
         } else if (!$uc->can_request_review()) {
             throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyrequestreview',
                 'nopermissions', '');
         }
 
-        $uc->set_status(user_competency::STATUS_WAITING_FOR_REVIEW);
+        $uc->set('status', user_competency::STATUS_WAITING_FOR_REVIEW);
         $result = $uc->update();
         if ($result) {
             \core\event\competency_user_competency_review_requested::create_from_user_competency($uc)->trigger();
@@ -3468,14 +3468,14 @@ class api {
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
-        } else if ($uc->get_status() != user_competency::STATUS_WAITING_FOR_REVIEW) {
+        } else if ($uc->get('status') != user_competency::STATUS_WAITING_FOR_REVIEW) {
             throw new coding_exception('The competency review can not be started at this stage.');
         } else if (!$uc->can_review()) {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyreview', 'nopermissions', '');
         }
 
-        $uc->set_status(user_competency::STATUS_IN_REVIEW);
-        $uc->set_reviewerid($USER->id);
+        $uc->set('status', user_competency::STATUS_IN_REVIEW);
+        $uc->set('reviewerid', $USER->id);
         $result = $uc->update();
         if ($result) {
             \core\event\competency_user_competency_review_started::create_from_user_competency($uc)->trigger();
@@ -3496,13 +3496,13 @@ class api {
         $uc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $competencyid));
         if (!$uc || !$uc->can_read()) {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyview', 'nopermissions', '');
-        } else if ($uc->get_status() != user_competency::STATUS_IN_REVIEW) {
+        } else if ($uc->get('status') != user_competency::STATUS_IN_REVIEW) {
             throw new coding_exception('The competency review can not be stopped at this stage.');
         } else if (!$uc->can_review()) {
             throw new required_capability_exception($context, 'moodle/competency:usercompetencyreview', 'nopermissions', '');
         }
 
-        $uc->set_status(user_competency::STATUS_IDLE);
+        $uc->set('status', user_competency::STATUS_IDLE);
         $result = $uc->update();
         if ($result) {
             \core\event\competency_user_competency_review_stopped::create_from_user_competency($uc)->trigger();
@@ -3551,7 +3551,7 @@ class api {
                 'nopermissions', '');
         }
         $plan = new plan($planid);
-        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        if ($plan->get('status') == plan::STATUS_COMPLETE) {
             throw new coding_exception('To log the user competency in completed plan use user_competency_plan_viewed method.');
         }
 
@@ -3573,13 +3573,13 @@ class api {
             $ucc = new user_competency_course($ucc);
         }
 
-        if (!$ucc || !user_competency::can_read_user_in_course($ucc->get_userid(), $ucc->get_courseid())) {
+        if (!$ucc || !user_competency::can_read_user_in_course($ucc->get('userid'), $ucc->get('courseid'))) {
             throw new required_capability_exception($ucc->get_context(), 'moodle/competency:usercompetencyview',
                 'nopermissions', '');
         }
 
         // Validate the course, this will throw an exception if not valid.
-        self::validate_course($ucc->get_courseid());
+        self::validate_course($ucc->get('courseid'));
 
         \core\event\competency_user_competency_viewed_in_course::create_from_user_competency_viewed_in_course($ucc)->trigger();
         return true;
@@ -3598,12 +3598,12 @@ class api {
             $ucp = new user_competency_plan($ucp);
         }
 
-        if (!$ucp || !user_competency::can_read_user($ucp->get_userid())) {
+        if (!$ucp || !user_competency::can_read_user($ucp->get('userid'))) {
             throw new required_capability_exception($ucp->get_context(), 'moodle/competency:usercompetencyview',
                 'nopermissions', '');
         }
-        $plan = new plan($ucp->get_planid());
-        if ($plan->get_status() != plan::STATUS_COMPLETE) {
+        $plan = new plan($ucp->get('planid'));
+        if ($plan->get('status') != plan::STATUS_COMPLETE) {
             throw new coding_exception('To log the user competency in non-completed plan use '
                 . 'user_competency_viewed_in_plan method.');
         }
@@ -3665,8 +3665,8 @@ class api {
 
         require_capability('moodle/competency:competencymanage', $competency1->get_context());
 
-        $relatedcompetency = related_competency::get_relation($competency1->get_id(), $competency2->get_id());
-        if (!$relatedcompetency->get_id()) {
+        $relatedcompetency = related_competency::get_relation($competency1->get('id'), $competency2->get('id'));
+        if (!$relatedcompetency->get('id')) {
             $relatedcompetency->create();
             return true;
         }
@@ -3690,7 +3690,7 @@ class api {
         require_capability('moodle/competency:competencymanage', $competency->get_context());
 
         $relatedcompetency = related_competency::get_relation($competencyid, $relatedcompetencyid);
-        if ($relatedcompetency->get_id()) {
+        if ($relatedcompetency->get('id')) {
             return $relatedcompetency->delete();
         }
 
@@ -3734,7 +3734,7 @@ class api {
         $userevidence->create();
         if (!empty($draftitemid)) {
             $fileareaoptions = array('subdirs' => true);
-            $itemid = $userevidence->get_id();
+            $itemid = $userevidence->get('id');
             file_save_draft_area_files($draftitemid, $context->id, 'core_competency', 'userevidence', $itemid, $fileareaoptions);
         }
 
@@ -3759,7 +3759,7 @@ class api {
         if (!$userevidence->can_manage()) {
             throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
 
-        } else if (array_key_exists('userid', $data) && $data->userid != $userevidence->get_userid()) {
+        } else if (array_key_exists('userid', $data) && $data->userid != $userevidence->get('userid')) {
             throw new coding_exception('Can not change the userid of a user evidence.');
         }
 
@@ -3768,7 +3768,7 @@ class api {
 
         if (!empty($draftitemid)) {
             $fileareaoptions = array('subdirs' => true);
-            $itemid = $userevidence->get_id();
+            $itemid = $userevidence->get('id');
             file_save_draft_area_files($draftitemid, $context->id, 'core_competency', 'userevidence', $itemid, $fileareaoptions);
         }
 
@@ -3801,16 +3801,16 @@ class api {
         $fs->delete_area_files($context->id, 'core_competency', 'userevidence', $id);
 
         // Delete relation between evidence and competencies.
-        $userevidence->set_id($id);     // Restore the ID to fully mock the object.
+        $userevidence->set('id', $id);     // Restore the ID to fully mock the object.
         $competencies = user_evidence_competency::get_competencies_by_userevidenceid($id);
         foreach ($competencies as $competency) {
-            static::delete_user_evidence_competency($userevidence, $competency->get_id());
+            static::delete_user_evidence_competency($userevidence, $competency->get('id'));
         }
 
         // Trigger an evidence of prior learning deleted event.
         \core\event\competency_user_evidence_deleted::create_from_user_evidence($userevidence)->trigger();
 
-        $userevidence->set_id(0);       // Restore the object.
+        $userevidence->set('id', 0);       // Restore the object.
 
         return true;
     }
@@ -3858,19 +3858,19 @@ class api {
         $competency = self::read_competency($competencyid);
 
         // Get (and create) the relation.
-        $relation = user_evidence_competency::get_relation($userevidence->get_id(), $competency->get_id());
-        if (!$relation->get_id()) {
+        $relation = user_evidence_competency::get_relation($userevidence->get('id'), $competency->get('id'));
+        if (!$relation->get('id')) {
             $relation->create();
 
-            $link = url::user_evidence($userevidence->get_id());
+            $link = url::user_evidence($userevidence->get('id'));
             self::add_evidence(
-                $userevidence->get_userid(),
+                $userevidence->get('userid'),
                 $competency,
                 $userevidence->get_context(),
                 evidence::ACTION_LOG,
                 'evidence_evidenceofpriorlearninglinked',
                 'core_competency',
-                $userevidence->get_name(),
+                $userevidence->get('name'),
                 false,
                 $link->out(false),
                 null,
@@ -3904,21 +3904,21 @@ class api {
         }
 
         // Get (and delete) the relation.
-        $relation = user_evidence_competency::get_relation($userevidence->get_id(), $competencyid);
-        if (!$relation->get_id()) {
+        $relation = user_evidence_competency::get_relation($userevidence->get('id'), $competencyid);
+        if (!$relation->get('id')) {
             return true;
         }
 
         $success = $relation->delete();
         if ($success) {
             self::add_evidence(
-                $userevidence->get_userid(),
+                $userevidence->get('userid'),
                 $competencyid,
                 $userevidence->get_context(),
                 evidence::ACTION_LOG,
                 'evidence_evidenceofpriorlearningunlinked',
                 'core_competency',
-                $userevidence->get_name(),
+                $userevidence->get('name'),
                 false,
                 null,
                 null,
@@ -3938,7 +3938,7 @@ class api {
     public static function request_review_of_user_evidence_linked_competencies($id) {
         $userevidence = new user_evidence($id);
         $context = $userevidence->get_context();
-        $userid = $userevidence->get_userid();
+        $userid = $userevidence->get('userid');
 
         if (!$userevidence->can_manage()) {
             throw new required_capability_exception($context, 'moodle/competency:userevidencemanage', 'nopermissions', '');
@@ -3946,8 +3946,8 @@ class api {
 
         $usercompetencies = user_evidence_competency::get_user_competencies_by_userevidenceid($id);
         foreach ($usercompetencies as $usercompetency) {
-            if ($usercompetency->get_status() == user_competency::STATUS_IDLE) {
-                static::user_competency_request_review($userid, $usercompetency->get_competencyid());
+            if ($usercompetency->get('status') == user_competency::STATUS_IDLE) {
+                static::user_competency_request_review($userid, $usercompetency->get('competencyid'));
             }
         }
 
@@ -3967,15 +3967,15 @@ class api {
     protected static function duplicate_competency_tree($frameworkid, $tree, $oldparent = 0, $newparent = 0) {
         $matchids = array();
         foreach ($tree as $node) {
-            if ($node->competency->get_parentid() == $oldparent) {
-                $parentid = $node->competency->get_id();
+            if ($node->competency->get('parentid') == $oldparent) {
+                $parentid = $node->competency->get('id');
 
                 // Create the competency.
                 $competency = new competency(0, $node->competency->to_record());
-                $competency->set_competencyframeworkid($frameworkid);
-                $competency->set_parentid($newparent);
-                $competency->set_path('');
-                $competency->set_id(0);
+                $competency->set('competencyframeworkid', $frameworkid);
+                $competency->set('parentid', $newparent);
+                $competency->set('path', '');
+                $competency->set('id', 0);
                 $competency->reset_rule();
                 $competency->create();
 
@@ -3987,7 +3987,7 @@ class api {
 
                 if (!empty($node->children)) {
                     // Duplicate children competency.
-                    $childrenids = self::duplicate_competency_tree($frameworkid, $node->children, $parentid, $competency->get_id());
+                    $childrenids = self::duplicate_competency_tree($frameworkid, $node->children, $parentid, $competency->get('id'));
                     // Array_merge does not keep keys when merging so we use the + operator.
                     $matchids = $matchids + $childrenids;
                 }
@@ -4005,19 +4005,19 @@ class api {
     protected static function migrate_competency_tree_rules($tree, $matchids) {
 
         foreach ($tree as $node) {
-            $oldcompid = $node->competency->get_id();
-            if ($node->competency->get_ruletype() && array_key_exists($oldcompid, $matchids)) {
+            $oldcompid = $node->competency->get('id');
+            if ($node->competency->get('ruletype') && array_key_exists($oldcompid, $matchids)) {
                 try {
                     // Get the new competency.
                     $competency = $matchids[$oldcompid];
-                    $class = $node->competency->get_ruletype();
-                    $newruleconfig = $class::migrate_config($node->competency->get_ruleconfig(), $matchids);
-                    $competency->set_ruleconfig($newruleconfig);
-                    $competency->set_ruletype($class);
-                    $competency->set_ruleoutcome($node->competency->get_ruleoutcome());
+                    $class = $node->competency->get('ruletype');
+                    $newruleconfig = $class::migrate_config($node->competency->get('ruleconfig'), $matchids);
+                    $competency->set('ruleconfig', $newruleconfig);
+                    $competency->set('ruletype', $class);
+                    $competency->set('ruleoutcome', $node->competency->get('ruleoutcome'));
                     $competency->update();
                 } catch (\Exception $e) {
-                    debugging('Could not migrate competency rule from: ' . $oldcompid . ' to: ' . $competency->get_id() . '.' .
+                    debugging('Could not migrate competency rule from: ' . $oldcompid . ' to: ' . $competency->get('id') . '.' .
                         ' Exception: ' . $e->getMessage(), DEBUG_DEVELOPER);
                     $competency->reset_rule();
                 }
@@ -4038,23 +4038,23 @@ class api {
     protected static function archive_user_competencies_in_plan($plan) {
 
         // Check if the plan was already completed.
-        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        if ($plan->get('status') == plan::STATUS_COMPLETE) {
             throw new coding_exception('The plan is already completed.');
         }
 
         $competencies = $plan->get_competencies();
-        $usercompetencies = user_competency::get_multiple($plan->get_userid(), $competencies);
+        $usercompetencies = user_competency::get_multiple($plan->get('userid'), $competencies);
 
         $i = 0;
         foreach ($competencies as $competency) {
             $found = false;
 
             foreach ($usercompetencies as $uckey => $uc) {
-                if ($uc->get_competencyid() == $competency->get_id()) {
+                if ($uc->get('competencyid') == $competency->get('id')) {
                     $found = true;
 
                     $ucprecord = $uc->to_record();
-                    $ucprecord->planid = $plan->get_id();
+                    $ucprecord->planid = $plan->get('id');
                     $ucprecord->sortorder = $i;
                     unset($ucprecord->id);
                     unset($ucprecord->status);
@@ -4070,9 +4070,9 @@ class api {
 
             // If the user competency doesn't exist, we create a new relation in user_competency_plan.
             if (!$found) {
-                $usercompetencyplan = user_competency_plan::create_relation($plan->get_userid(), $competency->get_id(),
-                        $plan->get_id());
-                $usercompetencyplan->set_sortorder($i);
+                $usercompetencyplan = user_competency_plan::create_relation($plan->get('userid'), $competency->get('id'),
+                        $plan->get('id'));
+                $usercompetencyplan->set('sortorder', $i);
                 $usercompetencyplan->create();
             }
             $i++;
@@ -4087,7 +4087,7 @@ class api {
      */
     protected static function remove_archived_user_competencies_in_plan($plan) {
         $competencies = $plan->get_competencies();
-        $usercompetenciesplan = user_competency_plan::get_multiple($plan->get_userid(), $plan->get_id(), $competencies);
+        $usercompetenciesplan = user_competency_plan::get_multiple($plan->get('userid'), $plan->get('id'), $competencies);
 
         foreach ($usercompetenciesplan as $ucpkey => $ucp) {
             $ucp->delete();
@@ -4124,16 +4124,16 @@ class api {
         $plancompleted = false;
         if ($planid != 0) {
             $plan = new plan($planid);
-            if ($plan->get_status() == plan::STATUS_COMPLETE) {
+            if ($plan->get('status') == plan::STATUS_COMPLETE) {
                 $plancompleted = true;
             }
         }
 
         $select = 'usercompetencyid = :usercompetencyid';
-        $params = array('usercompetencyid' => $usercompetency->get_id());
+        $params = array('usercompetencyid' => $usercompetency->get('id'));
         if ($plancompleted) {
             $select .= ' AND timecreated <= :timecompleted';
-            $params['timecompleted'] = $plan->get_timemodified();
+            $params['timecompleted'] = $plan->get('timemodified');
         }
 
         $orderby = $sort . ' ' . $order;
@@ -4170,7 +4170,7 @@ class api {
         }
 
         $context = context_course::instance($courseid);
-        return evidence::get_records_for_usercompetency($usercompetency->get_id(), $context, $sort, $order, $skip, $limit);
+        return evidence::get_records_for_usercompetency($usercompetency->get('id'), $context, $sort, $order, $skip, $limit);
     }
 
     /**
@@ -4208,7 +4208,7 @@ class api {
         $competency = null;
         if (is_object($competencyid)) {
             $competency = $competencyid;
-            $competencyid = $competency->get_id();
+            $competencyid = $competency->get('id');
         }
         $contextid = $contextorid;
         $context = $contextorid;
@@ -4271,20 +4271,20 @@ class api {
                         $usercompetencycourse->create();
                     }
                     // Only update the grade and proficiency if there is not already a grade.
-                    if ($usercompetencycourse->get_grade() === null) {
+                    if ($usercompetencycourse->get('grade') === null) {
                         // Set grade.
-                        $usercompetencycourse->set_grade($grade);
+                        $usercompetencycourse->set('grade', $grade);
                         // Set proficiency.
-                        $usercompetencycourse->set_proficiency($proficiency);
+                        $usercompetencycourse->set('proficiency', $proficiency);
                     }
 
                     // Check the course settings to see if we should push to user plans.
                     $coursesettings = course_competency_settings::get_by_courseid($courseid);
-                    $setucgrade = $coursesettings->get_pushratingstouserplans();
+                    $setucgrade = $coursesettings->get('pushratingstouserplans');
 
                     if ($setucgrade) {
                         // Only push to user plans if there is not already a grade.
-                        if ($usercompetency->get_grade() !== null) {
+                        if ($usercompetency->get('grade') !== null) {
                             $setucgrade = false;
                         } else {
                             $ucgrade = $grade;
@@ -4295,7 +4295,7 @@ class api {
 
                     // When completing the competency we fetch the default grade from the competency. But we only mark
                     // the user competency when a grade has not been set yet. Complete is an action to use with automated systems.
-                    if ($usercompetency->get_grade() === null) {
+                    if ($usercompetency->get('grade') === null) {
                         $setucgrade = true;
                         $ucgrade = $grade;
                         $ucproficiency = $proficiency;
@@ -4339,12 +4339,12 @@ class api {
                         $proficiency = $competency->get_proficiency_of_grade($grade);
                     }
                     // Set grade.
-                    $usercompetencycourse->set_grade($grade);
+                    $usercompetencycourse->set('grade', $grade);
                     // Set proficiency.
-                    $usercompetencycourse->set_proficiency($proficiency);
+                    $usercompetencycourse->set('proficiency', $proficiency);
 
                     $coursesettings = course_competency_settings::get_by_courseid($courseid);
-                    if (!$coursesettings->get_pushratingstouserplans()) {
+                    if (!$coursesettings->get('pushratingstouserplans')) {
                         $setucgrade = false;
                     }
                 }
@@ -4365,23 +4365,23 @@ class api {
         }
 
         // Should we recommend?
-        if ($recommend && $usercompetency->get_status() == user_competency::STATUS_IDLE) {
-            $usercompetency->set_status(user_competency::STATUS_WAITING_FOR_REVIEW);
+        if ($recommend && $usercompetency->get('status') == user_competency::STATUS_IDLE) {
+            $usercompetency->set('status', user_competency::STATUS_WAITING_FOR_REVIEW);
         }
 
         // Setting the grade and proficiency for the user competency.
         $wascompleted = false;
         if ($setucgrade == true) {
-            if (!$usercompetency->get_proficiency() && $ucproficiency) {
+            if (!$usercompetency->get('proficiency') && $ucproficiency) {
                 $wascompleted = true;
             }
-            $usercompetency->set_grade($ucgrade);
-            $usercompetency->set_proficiency($ucproficiency);
+            $usercompetency->set('grade', $ucgrade);
+            $usercompetency->set('proficiency', $ucproficiency);
         }
 
         // Prepare the evidence.
         $record = new stdClass();
-        $record->usercompetencyid = $usercompetency->get_id();
+        $record->usercompetencyid = $usercompetency->get('id');
         $record->contextid = $contextid;
         $record->action = $action;
         $record->descidentifier = $descidentifier;
@@ -4390,8 +4390,8 @@ class api {
         $record->actionuserid = $actionuserid;
         $record->note = $note;
         $evidence = new evidence(0, $record);
-        $evidence->set_desca($desca);
-        $evidence->set_url($url);
+        $evidence->set('desca', $desca);
+        $evidence->set('url', $url);
 
         // Validate both models, we should not operate on one if the other will not save.
         if (!$usercompetency->is_valid()) {
@@ -4433,7 +4433,7 @@ class api {
         static::require_enabled();
 
         $evidence = new evidence($evidenceid);
-        $uc = new user_competency($evidence->get_usercompetencyid());
+        $uc = new user_competency($evidence->get('usercompetencyid'));
         if (!$uc->can_read()) {
             throw new required_capability_exception($uc->get_context(), 'moodle/competency:usercompetencyview',
                 'nopermissions', '');
@@ -4454,8 +4454,8 @@ class api {
             $evidence = new evidence($evidenceorid);
         }
 
-        $uc = new user_competency($evidence->get_usercompetencyid());
-        if (!evidence::can_delete_user($uc->get_userid())) {
+        $uc = new user_competency($evidence->get('usercompetencyid'));
+        if (!evidence::can_delete_user($uc->get('userid'))) {
             throw new required_capability_exception($uc->get_context(), 'moodle/competency:evidencedelete', 'nopermissions', '');
         }
 
@@ -4480,13 +4480,13 @@ class api {
                                                                          competency $competency = null) {
 
         // Perform some basic checks.
-        if (!$usercompetency->get_proficiency()) {
+        if (!$usercompetency->get('proficiency')) {
             throw new coding_exception('The user competency passed is not completed.');
         }
         if ($competency === null) {
             $competency = $usercompetency->get_competency();
         }
-        if ($competency->get_id() != $usercompetency->get_competencyid()) {
+        if ($competency->get('id') != $usercompetency->get('competencyid')) {
             throw new coding_exception('Mismatch between user competency and competency.');
         }
 
@@ -4497,7 +4497,7 @@ class api {
         }
 
         // The parent should have a rule, and a meaningful outcome.
-        $ruleoutcome = $parent->get_ruleoutcome();
+        $ruleoutcome = $parent->get('ruleoutcome');
         if ($ruleoutcome == competency::OUTCOME_NONE) {
             return;
         }
@@ -4507,10 +4507,10 @@ class api {
         }
 
         // Fetch or create the user competency for the parent.
-        $userid = $usercompetency->get_userid();
-        $parentuc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $parent->get_id()));
+        $userid = $usercompetency->get('userid');
+        $parentuc = user_competency::get_record(array('userid' => $userid, 'competencyid' => $parent->get('id')));
         if (!$parentuc) {
-            $parentuc = user_competency::create_relation($userid, $parent->get_id());
+            $parentuc = user_competency::create_relation($userid, $parent->get('id'));
             $parentuc->create();
         }
 
@@ -4575,7 +4575,7 @@ class api {
             $url = $fastmodinfo->url;
 
             foreach ($coursemodulecompetencies as $coursemodulecompetency) {
-                $outcome = $coursemodulecompetency->get_ruleoutcome();
+                $outcome = $coursemodulecompetency->get('ruleoutcome');
                 $action = null;
                 $recommend = false;
                 $strdesc = 'evidence_coursemodulecompleted';
@@ -4596,7 +4596,7 @@ class api {
 
                 static::add_evidence(
                     $event->relateduserid,
-                    $coursemodulecompetency->get_competencyid(),
+                    $coursemodulecompetency->get('competencyid'),
                     $event->contextid,
                     $action,
                     $strdesc,
@@ -4635,7 +4635,7 @@ class api {
 
         foreach ($coursecompetencies as $coursecompetency) {
 
-            $outcome = $coursecompetency->get_ruleoutcome();
+            $outcome = $coursecompetency->get('ruleoutcome');
             $action = null;
             $recommend = false;
             $strdesc = 'evidence_coursecompleted';
@@ -4656,7 +4656,7 @@ class api {
 
             static::add_evidence(
                 $event->relateduserid,
-                $coursecompetency->get_competencyid(),
+                $coursecompetency->get('competencyid'),
                 $event->contextid,
                 $action,
                 $strdesc,
@@ -4737,7 +4737,7 @@ class api {
 
         $uc = static::get_user_competency($userid, $competencyid);
         $context = $uc->get_context();
-        if (!user_competency::can_grade_user($uc->get_userid())) {
+        if (!user_competency::can_grade_user($uc->get('userid'))) {
             throw new required_capability_exception($context, 'moodle/competency:competencygrade', 'nopermissions', '');
         }
 
@@ -4752,7 +4752,7 @@ class api {
         $action = evidence::ACTION_OVERRIDE;
         $desckey = 'evidence_manualoverride';
 
-        $result = self::add_evidence($uc->get_userid(),
+        $result = self::add_evidence($uc->get('userid'),
                                   $competency,
                                   $context->id,
                                   $action,
@@ -4791,7 +4791,7 @@ class api {
         }
 
         $context = $plan->get_context();
-        if (!user_competency::can_grade_user($plan->get_userid())) {
+        if (!user_competency::can_grade_user($plan->get('userid'))) {
             throw new required_capability_exception($context, 'moodle/competency:competencygrade', 'nopermissions', '');
         }
 
@@ -4806,21 +4806,21 @@ class api {
         $action = evidence::ACTION_OVERRIDE;
         $desckey = 'evidence_manualoverrideinplan';
 
-        $result = self::add_evidence($plan->get_userid(),
+        $result = self::add_evidence($plan->get('userid'),
                                   $competency,
                                   $context->id,
                                   $action,
                                   $desckey,
                                   'core_competency',
-                                  $plan->get_name(),
+                                  $plan->get('name'),
                                   false,
                                   null,
                                   $grade,
                                   $USER->id,
                                   $note);
         if ($result) {
-            $uc = static::get_user_competency($plan->get_userid(), $competency->get_id());
-            $event = \core\event\competency_user_competency_rated_in_plan::create_from_user_competency($uc, $plan->get_id());
+            $uc = static::get_user_competency($plan->get('userid'), $competency->get('id'));
+            $event = \core\event\competency_user_competency_rated_in_plan::create_from_user_competency($uc, $plan->get('id'));
             $event->trigger();
         }
         return $result;
@@ -4888,7 +4888,7 @@ class api {
                                   $USER->id,
                                   $note);
         if ($result) {
-            $all = user_competency_course::get_multiple($userid, $course->id, array($competency->get_id()));
+            $all = user_competency_course::get_multiple($userid, $course->id, array($competency->get('id')));
             $uc = reset($all);
             $event = \core\event\competency_user_competency_rated_in_course::create_from_user_competency_course($uc);
             $event->trigger();
@@ -4918,7 +4918,7 @@ class api {
                 'nopermissions', '');
         }
 
-        return plan::count_records_for_template($template->get_id(), $status);
+        return plan::count_records_for_template($template->get('id'), $status);
     }
 
     /**
@@ -4943,7 +4943,7 @@ class api {
                 'nopermissions', '');
         }
 
-        return user_competency_plan::count_records_for_template($template->get_id(), $proficiency);
+        return user_competency_plan::count_records_for_template($template->get('id'), $proficiency);
     }
 
     /**
@@ -4969,7 +4969,7 @@ class api {
                 'nopermissions', '');
         }
 
-        return plan::get_records_for_template($template->get_id(), $status, $skip, $limit);
+        return plan::get_records_for_template($template->get('id'), $status, $skip, $limit);
     }
 
     /**
@@ -5016,7 +5016,7 @@ class api {
                 'nopermissions', '');
         }
 
-        return user_competency_plan::get_least_proficient_competencies_for_template($template->get_id(), $skip, $limit);
+        return user_competency_plan::get_least_proficient_competencies_for_template($template->get('id'), $skip, $limit);
     }
 
     /**
@@ -5094,7 +5094,7 @@ class api {
         // Now update or insert.
         if ($exists) {
             $settings = $exists;
-            $settings->set_pushratingstouserplans($pushratingstouserplans);
+            $settings->set('pushratingstouserplans', $pushratingstouserplans);
             return $settings->update();
         } else {
             $data = (object) array('courseid' => $courseid, 'pushratingstouserplans' => $pushratingstouserplans);

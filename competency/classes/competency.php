@@ -129,11 +129,11 @@ class competency extends persistent {
         $this->newparent = null;
 
         // During update.
-        if ($this->get_id()) {
-            $this->beforeupdate = new competency($this->get_id());
+        if ($this->get('id')) {
+            $this->beforeupdate = new competency($this->get('id'));
 
             // The parent ID has changed.
-            if ($this->beforeupdate->get_parentid() != $this->get_parentid()) {
+            if ($this->beforeupdate->get('parentid') != $this->get('parentid')) {
                 $this->newparent = $this->get_parent();
 
                 // Update path and sortorder.
@@ -166,8 +166,8 @@ class competency extends persistent {
         }
 
         // The parent ID has changed, we need to fix all the paths of the children.
-        if ($this->beforeupdate->get_parentid() != $this->get_parentid()) {
-            $beforepath = $this->beforeupdate->get_path() . $this->get_id() . '/';
+        if ($this->beforeupdate->get('parentid') != $this->get('parentid')) {
+            $beforepath = $this->beforeupdate->get('path') . $this->get('id') . '/';
 
             $like = $DB->sql_like('path', '?');
             $likesearch = $DB->sql_like_escape($beforepath) . '%';
@@ -176,7 +176,7 @@ class competency extends persistent {
             $sql = "UPDATE $table SET path = REPLACE(path, ?, ?) WHERE " . $like;
             $DB->execute($sql, array(
                 $beforepath,
-                $this->get_path() . $this->get_id() . '/',
+                $this->get('path') . $this->get('id') . '/',
                 $likesearch
             ));
 
@@ -184,9 +184,9 @@ class competency extends persistent {
             $table = '{' . self::TABLE . '}';
             $sql = "UPDATE $table SET sortorder = sortorder -1 "
                     . " WHERE  competencyframeworkid = ? AND parentid = ? AND sortorder > ?";
-            $DB->execute($sql, array($this->get_competencyframeworkid(),
-                                        $this->beforeupdate->get_parentid(),
-                                        $this->beforeupdate->get_sortorder()
+            $DB->execute($sql, array($this->get('competencyframeworkid'),
+                                        $this->beforeupdate->get('parentid'),
+                                        $this->beforeupdate->get('sortorder')
                                     ));
         }
 
@@ -209,7 +209,7 @@ class competency extends persistent {
         // Resolving sortorder holes left after delete.
         $table = '{' . self::TABLE . '}';
         $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE  competencyframeworkid = ? AND parentid = ? AND sortorder > ?";
-        $DB->execute($sql, array($this->get_competencyframeworkid(), $this->get_parentid(), $this->get_sortorder()));
+        $DB->execute($sql, array($this->get('competencyframeworkid'), $this->get('parentid'), $this->get('sortorder')));
     }
 
     /**
@@ -221,10 +221,10 @@ class competency extends persistent {
      * @return array(int grade, bool proficient)
      */
     public function get_default_grade() {
-        $scaleid = $this->get_scaleid();
-        $scaleconfig = $this->get_scaleconfiguration();
+        $scaleid = $this->get('scaleid');
+        $scaleconfig = $this->get('scaleconfiguration');
         if ($scaleid === null) {
-            $scaleconfig = $this->get_framework()->get_scaleconfiguration();
+            $scaleconfig = $this->get_framework()->get('scaleconfiguration');
         }
         return competency_framework::get_default_grade_from_scale_configuration($scaleconfig);
     }
@@ -235,7 +235,7 @@ class competency extends persistent {
      * @return competency_framework
      */
     public function get_framework() {
-        return new competency_framework($this->get_competencyframeworkid());
+        return new competency_framework($this->get('competencyframeworkid'));
     }
 
     /**
@@ -244,7 +244,7 @@ class competency extends persistent {
      * @return int
      */
     public function get_level() {
-        $path = $this->get_path();
+        $path = $this->get('path');
         $path = trim($path, '/');
         return substr_count($path, '/') + 1;
     }
@@ -255,7 +255,7 @@ class competency extends persistent {
      * @return null|competency
      */
     public function get_parent() {
-        $parentid = $this->get_parentid();
+        $parentid = $this->get('parentid');
         if (!$parentid) {
             return null;
         }
@@ -269,10 +269,10 @@ class competency extends persistent {
      * @return array(int grade, bool proficient)
      */
     public function get_proficiency_of_grade($grade) {
-        $scaleid = $this->get_scaleid();
-        $scaleconfig = $this->get_scaleconfiguration();
+        $scaleid = $this->get('scaleid');
+        $scaleconfig = $this->get('scaleconfiguration');
         if ($scaleid === null) {
-            $scaleconfig = $this->get_framework()->get_scaleconfiguration();
+            $scaleconfig = $this->get_framework()->get('scaleconfiguration');
         }
         return competency_framework::get_proficiency_of_grade_from_scale_configuration($scaleconfig, $grade);
     }
@@ -283,7 +283,7 @@ class competency extends persistent {
      * @return competency[]
      */
     public function get_related_competencies() {
-        return related_competency::get_related_competencies($this->get_id());
+        return related_competency::get_related_competencies($this->get('id'));
     }
 
     /**
@@ -292,7 +292,7 @@ class competency extends persistent {
      * @return null|competency_rule
      */
     public function get_rule_object() {
-        $rule = $this->get_ruletype();
+        $rule = $this->get('ruletype');
 
         if (!$rule || !is_subclass_of($rule, 'core_competency\\competency_rule')) {
             // Double check that the rule is extending the right class to avoid bad surprises.
@@ -308,7 +308,7 @@ class competency extends persistent {
      * @return \grade_scale
      */
     public function get_scale() {
-        $scaleid = $this->get_scaleid();
+        $scaleid = $this->get('scaleid');
         if ($scaleid === null) {
             return $this->get_framework()->get_scale();
         }
@@ -325,8 +325,8 @@ class competency extends persistent {
      * @return boolean
      */
     public function has_user_competencies() {
-        return user_competency::has_records_for_competency($this->get_id()) ||
-            user_competency_plan::has_records_for_competency($this->get_id());
+        return user_competency::has_records_for_competency($this->get('id')) ||
+            user_competency_plan::has_records_for_competency($this->get('id'));
     }
 
     /**
@@ -339,7 +339,7 @@ class competency extends persistent {
         global $DB;
 
         list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
-        $params['parentid'] = $this->get_id();
+        $params['parentid'] = $this->get('id');
 
         return $DB->count_records_select(self::TABLE, "id $insql AND parentid = :parentid", $params) == count($ids);
     }
@@ -350,9 +350,9 @@ class competency extends persistent {
      * @return void
      */
     public function reset_rule() {
-        $this->set_ruleoutcome(static::OUTCOME_NONE);
-        $this->set_ruletype(null);
-        $this->set_ruleconfig(null);
+        $this->raw_set('ruleoutcome', static::OUTCOME_NONE);
+        $this->raw_set('ruletype', null);
+        $this->raw_set('ruleconfig', null);
     }
 
     /**
@@ -363,11 +363,11 @@ class competency extends persistent {
      */
     protected function set_new_path(competency $parent = null) {
         $path = '/0/';
-        if ($this->get_parentid()) {
+        if ($this->get('parentid')) {
             $parent = $parent !== null ? $parent : $this->get_parent();
-            $path = $parent->get_path() . $this->get_parentid() . '/';
+            $path = $parent->get('path') . $this->get('parentid') . '/';
         }
-        $this->set('path', $path);
+        $this->raw_set('path', $path);
     }
 
     /**
@@ -376,8 +376,8 @@ class competency extends persistent {
      * @return void
      */
     protected function set_new_sortorder() {
-        $search = array('parentid' => $this->get_parentid(), 'competencyframeworkid' => $this->get_competencyframeworkid());
-        $this->set('sortorder', $this->count_records($search));
+        $search = array('parentid' => $this->get('parentid'), 'competencyframeworkid' => $this->get('competencyframeworkid'));
+        $this->raw_set('sortorder', $this->count_records($search));
     }
 
     /**
@@ -437,7 +437,7 @@ class competency extends persistent {
         // Convert to instances of this class.
         foreach ($records as $record) {
             $newrecord = new static(0, $record);
-            $instances[$newrecord->get_id()] = $newrecord;
+            $instances[$newrecord->get('id')] = $newrecord;
         }
         return $instances;
     }
@@ -451,10 +451,10 @@ class competency extends persistent {
     protected function validate_competencyframeworkid($value) {
 
         // During update.
-        if ($this->get_id()) {
+        if ($this->get('id')) {
 
             // Ensure that we are not trying to move the competency across frameworks.
-            if ($this->beforeupdate->get_competencyframeworkid() != $value) {
+            if ($this->beforeupdate->get('competencyframeworkid') != $value) {
                 return new lang_string('invaliddata', 'error');
             }
 
@@ -480,9 +480,9 @@ class competency extends persistent {
         global $DB;
         $sql = 'idnumber = :idnumber AND competencyframeworkid = :competencyframeworkid AND id <> :id';
         $params = array(
-            'id' => $this->get_id(),
+            'id' => $this->get('id'),
             'idnumber' => $value,
-            'competencyframeworkid' => $this->get_competencyframeworkid()
+            'competencyframeworkid' => $this->get('competencyframeworkid')
         );
         if ($DB->record_exists_select(self::TABLE, $sql, $params)) {
             return new lang_string('idnumbertaken', 'error');
@@ -499,7 +499,7 @@ class competency extends persistent {
     protected function validate_path($value) {
 
         // The last item should be the parent ID.
-        $id = $this->get_parentid();
+        $id = $this->get('parentid');
         if (substr($value, -(strlen($id) + 2)) != '/' . $id . '/') {
             return new lang_string('invaliddata', 'error');
 
@@ -525,13 +525,13 @@ class competency extends persistent {
         }
 
         // During update.
-        if ($this->get_id()) {
+        if ($this->get('id')) {
 
             // If there is a new parent.
-            if ($this->beforeupdate->get_parentid() != $value && $this->newparent) {
+            if ($this->beforeupdate->get('parentid') != $value && $this->newparent) {
 
                 // Check that the new parent belongs to the same framework.
-                if ($this->newparent->get_competencyframeworkid() != $this->get_competencyframeworkid()) {
+                if ($this->newparent->get('competencyframeworkid') != $this->get('competencyframeworkid')) {
                     return new lang_string('invaliddata', 'error');
                 }
             }
@@ -608,10 +608,10 @@ class competency extends persistent {
         }
 
         // During update.
-        if ($this->get_id()) {
+        if ($this->get('id')) {
 
             // Validate that we can only change the scale when it is not used yet.
-            if ($this->beforeupdate->get_scaleid() != $value) {
+            if ($this->beforeupdate->get('scaleid') != $value) {
                 if ($this->has_user_competencies()) {
                     return new lang_string('errorscalealreadyused', 'core_competency');
                 }
@@ -746,10 +746,10 @@ class competency extends persistent {
     protected static function build_tree($all, $parentid) {
         $tree = array();
         foreach ($all as $one) {
-            if ($one->get_parentid() == $parentid) {
+            if ($one->get('parentid') == $parentid) {
                 $node = new stdClass();
                 $node->competency = $one;
-                $node->children = self::build_tree($all, $one->get_id());
+                $node->children = self::build_tree($all, $one->get('id'));
                 $tree[] = $node;
             }
         }
@@ -819,7 +819,7 @@ class competency extends persistent {
     public static function get_descendants_ids($competency) {
         global $DB;
 
-        $path = $DB->sql_like_escape($competency->get_path() . $competency->get_id() . '/') . '%';
+        $path = $DB->sql_like_escape($competency->get('path') . $competency->get('id') . '/') . '%';
         $like = $DB->sql_like('path', ':likepath');
         return $DB->get_fieldset_select(self::TABLE, 'id', $like, array('likepath' => $path));
     }
@@ -859,7 +859,7 @@ class competency extends persistent {
     public function get_ancestors() {
         global $DB;
         $ancestors = array();
-        $ancestorsids = explode('/', trim($this->get_path(), '/'));
+        $ancestorsids = explode('/', trim($this->get('path'), '/'));
         // Drop the root item from the array /0/.
         array_shift($ancestorsids);
         if (!empty($ancestorsids)) {

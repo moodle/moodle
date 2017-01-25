@@ -42,7 +42,7 @@ if (empty($id)) {
     $plan = \core_competency\api::read_plan($id);
 
     // The userid parameter must be the same as the owner of the plan.
-    if ($userid != $plan->get_userid()) {
+    if ($userid != $plan->get('userid')) {
         throw new coding_exception('Inconsistency between the userid parameter and the userid of the plan');
     }
 
@@ -81,7 +81,7 @@ $data = $form->get_data();
 if ($data) {
     if (empty($data->id)) {
         $plan = \core_competency\api::create_plan($data);
-        $returnurl = new moodle_url('/admin/tool/lp/plan.php', ['id' => $plan->get_id()]);
+        $returnurl = new moodle_url('/admin/tool/lp/plan.php', ['id' => $plan->get('id')]);
         $returnmsg = get_string('plancreated', 'tool_lp');
     } else {
         \core_competency\api::update_plan($data);

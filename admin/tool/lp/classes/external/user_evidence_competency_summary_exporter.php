@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\external;
+defined('MOODLE_INTERNAL') || die();
 
 use moodle_url;
 use renderer_base;
@@ -34,7 +35,7 @@ use core_competency\external\user_competency_exporter;
  * @copyright  2016 Serge Gauthier - <serge.gauthier.2@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_evidence_competency_summary_exporter extends \core_competency\external\exporter {
+class user_evidence_competency_summary_exporter extends \core\external\exporter {
 
     protected static function define_related() {
         return array('competency' => '\\core_competency\\competency',

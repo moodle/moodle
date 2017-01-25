@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace tool_lp\external;
+defined('MOODLE_INTERNAL') || die();
 
 use context_user;
 use renderer_base;
@@ -34,7 +35,7 @@ use core_competency\external\plan_exporter;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_competency_summary_in_plan_exporter extends \core_competency\external\exporter {
+class user_competency_summary_in_plan_exporter extends \core\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the framework every time.

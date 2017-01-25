@@ -65,7 +65,7 @@ class user_competency_summary implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output) {
         if (!isset($related['user'])) {
-            $related['user'] = core_user::get_user($this->usercompetency->get_userid());
+            $related['user'] = core_user::get_user($this->usercompetency->get('userid'));
         }
         if (!isset($related['competency'])) {
             $related['competency'] = $this->usercompetency->get_competency();
@@ -75,8 +75,8 @@ class user_competency_summary implements renderable, templatable {
             'usercompetency' => $this->usercompetency,
             'usercompetencyplan' => null,
             'usercompetencycourse' => null,
-            'evidence' => api::list_evidence($this->usercompetency->get_userid(), $this->usercompetency->get_competencyid()),
-            'relatedcompetencies' => api::list_related_competencies($this->usercompetency->get_competencyid())
+            'evidence' => api::list_evidence($this->usercompetency->get('userid'), $this->usercompetency->get('competencyid')),
+            'relatedcompetencies' => api::list_related_competencies($this->usercompetency->get('competencyid'))
         );
         $exporter = new user_competency_summary_exporter(null, $related);
         $data = $exporter->export($output);

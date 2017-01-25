@@ -48,9 +48,9 @@ function core_competency_comment_add($comment, $params) {
         $uc = new user_competency($params->itemid);
 
         // Message both the user and the reviewer, except when they are the author of the message.
-        $recipients = array($uc->get_userid());
-        if ($uc->get_reviewerid()) {
-            $recipients[] = $uc->get_reviewerid();
+        $recipients = array($uc->get('userid'));
+        if ($uc->get('reviewerid')) {
+            $recipients[] = $uc->get('reviewerid');
         }
         $recipients = array_diff($recipients, array($comment->userid));
         if (empty($recipients)) {
@@ -66,17 +66,17 @@ function core_competency_comment_add($comment, $params) {
 
         // Get the competency.
         $competency = $uc->get_competency();
-        $competencyname = format_string($competency->get_shortname(), true, array('context' => $competency->get_context()));
+        $competencyname = format_string($competency->get('shortname'), true, array('context' => $competency->get_context()));
 
         // We want to send a message for one plan, trying to find an active one first, or the last modified one.
         $plan = null;
         $plans = $uc->get_plans();
         foreach ($plans as $candidate) {
-            if ($candidate->get_status() == plan::STATUS_ACTIVE) {
+            if ($candidate->get('status') == plan::STATUS_ACTIVE) {
                 $plan = $candidate;
                 break;
 
-            } else if (!empty($plan) && $plan->get_timemodified() < $candidate->get_timemodified()) {
+            } else if (!empty($plan) && $plan->get('timemodified') < $candidate->get('timemodified')) {
                 $plan = $candidate;
 
             } else if (empty($plan)) {
@@ -88,10 +88,10 @@ function core_competency_comment_add($comment, $params) {
         // TODO MDL-52749 Replace the link to the plan with the user competency page.
         if (empty($plan)) {
             $urlname = get_string('userplans', 'core_competency');
-            $url = url::plans($uc->get_userid());
+            $url = url::plans($uc->get('userid'));
         } else {
             $urlname = $competencyname;
-            $url = url::user_competency_in_plan($uc->get_userid(), $uc->get_competencyid(), $plan->get_id());
+            $url = url::user_competency_in_plan($uc->get('userid'), $uc->get('competencyid'), $plan->get('id'));
         }
 
         // Construct the message content.
@@ -143,9 +143,9 @@ function core_competency_comment_add($comment, $params) {
         $plan = new plan($params->itemid);
 
         // Message both the user and the reviewer, except when they are the author of the message.
-        $recipients = array($plan->get_userid());
-        if ($plan->get_reviewerid()) {
-            $recipients[] = $plan->get_reviewerid();
+        $recipients = array($plan->get('userid'));
+        if ($plan->get('reviewerid')) {
+            $recipients[] = $plan->get('reviewerid');
         }
         $recipients = array_diff($recipients, array($comment->userid));
         if (empty($recipients)) {
@@ -159,9 +159,9 @@ function core_competency_comment_add($comment, $params) {
         }
 
         $fullname = fullname($user);
-        $planname = format_string($plan->get_name(), true, array('context' => $plan->get_context()));
+        $planname = format_string($plan->get('name'), true, array('context' => $plan->get_context()));
         $urlname = $planname;
-        $url = url::plan($plan->get_id());
+        $url = url::plan($plan->get('id'));
 
         // Construct the message content.
         $fullmessagehtml = get_string('usercommentedonaplanhtml', 'core_competency', array(
