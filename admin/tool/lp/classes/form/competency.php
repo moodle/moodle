@@ -67,7 +67,7 @@ class competency extends persistent {
 
         $mform->setType('parentid', PARAM_INT);
         $mform->setConstant('parentid', ($parent) ? $parent->get('id') : 0);
-        $parentlevel = ($parent) ? $parent->get('level') : 0;
+        $parentlevel = ($parent) ? $parent->get_level() : 0;
         $parentname = ($parent) ? $parent->get('shortname') : get_string('competencyframeworkroot', 'tool_lp');
         $parentlabel = '';
         if (!empty($competency->get('id'))) {
