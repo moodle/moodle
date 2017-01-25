@@ -231,14 +231,8 @@ class assign_grading_table extends table_sql implements renderable {
                 if (!empty($markerfilter)) {
                     if ($markerfilter == ASSIGN_MARKER_FILTER_NO_MARKER) {
                         $where .= ' AND (uf.allocatedmarker IS NULL OR uf.allocatedmarker = 0)';
-                    } else {
-                        $where .= ' AND uf.allocatedmarker = :markerid';
-                        $params['markerid'] = $markerfilter;
                     }
                 }
-            } else { // Only show users allocated to this marker.
-                $where .= ' AND uf.allocatedmarker = :markerid';
-                $params['markerid'] = $USER->id;
             }
         }
 
