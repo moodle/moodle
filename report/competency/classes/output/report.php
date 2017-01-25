@@ -82,7 +82,7 @@ class report implements renderable, templatable {
         $coursecontext = context_course::instance($course->id);
         $exporter = new course_summary_exporter($course, array('context' => $coursecontext));
         $coursecompetencysettings = api::read_course_competency_settings($course->id);
-        $data->pushratingstouserplans = $coursecompetencysettings->get_pushratingstouserplans();
+        $data->pushratingstouserplans = $coursecompetencysettings->get('pushratingstouserplans');
         $data->course = $exporter->export($output);
 
         $data->usercompetencies = array();
@@ -99,7 +99,7 @@ class report implements renderable, templatable {
             $onerow = new stdClass();
             $competency = null;
             foreach ($coursecompetencies as $coursecompetency) {
-                if ($coursecompetency['competency']->get_id() == $usercompetencycourse->get_competencyid()) {
+                if ($coursecompetency['competency']->get('id') == $usercompetencycourse->get('competencyid')) {
                     $competency = $coursecompetency['competency'];
                     break;
                 }
