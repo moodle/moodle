@@ -161,12 +161,12 @@
             $('#searchform input[name^=h' + prefix + ']').val(disabled ? 1 : 0);
         };
 
-        toggleDateFields('from', true);
+        toggleDateFields('from', !$("#searchform input[name='timefromrestrict']").prop('checked'));
         $("#searchform input[name='timefromrestrict']").click(function() {
             toggleDateFields('from', !this.checked);
         });
 
-        toggleDateFields('to', true);
+        toggleDateFields('to', !$("#searchform input[name='timetorestrict']").prop('checked'));
         $("#searchform input[name='timetorestrict']").click(function() {
             toggleDateFields('to', !this.checked);
         });
