@@ -1236,4 +1236,50 @@ class mod_lesson_external_testcase extends externallib_advanced_testcase {
         $this->setExpectedException('moodle_exception');
         $result = mod_lesson_external::get_user_attempt($this->lesson->id, $this->teacher->id, 0);
     }
+
+    /**
+     * Test get_pages_possible_jumps
+     */
+    public function test_get_pages_possible_jumps() {
+        $this->setAdminUser();
+        $result = mod_lesson_external::get_pages_possible_jumps($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
+
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(3, $result['jumps']);    // 3 jumps, 2 from the question page and 1 from the content.
+        foreach ($result['jumps'] as $jump) {
+            if ($jump['answerid'] != 0) {
+                // Check only pages with answers.
+                if ($jump['jumpto'] == 0) {
+                    $this->assertEquals($jump['pageid'], $jump['calculatedjump']);    // 0 means to jump to current page.
+                } else {
+                    // Question is configured to jump to next page if correct.
+                    $this->assertEquals($this->page1->id, $jump['calculatedjump']);
+                }
+            }
+        }
+    }
+
+    /**
+     * Test get_pages_possible_jumps when offline attemps are disabled for a normal user
+     */
+    public function test_get_pages_possible_jumps_with_offlineattemps_disabled() {
+        $this->setUser($this->student->id);
+        $result = mod_lesson_external::get_pages_possible_jumps($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
+        $this->assertCount(0, $result['jumps']);
+    }
+
+    /**
+     * Test get_pages_possible_jumps when offline attemps are enabled for a normal user
+     */
+    public function test_get_pages_possible_jumps_with_offlineattemps_enabled() {
+        global $DB;
+
+        $DB->set_field('lesson', 'allowofflineattempts', 1, array('id' => $this->lesson->id));
+        $this->setUser($this->student->id);
+        $result = mod_lesson_external::get_pages_possible_jumps($this->lesson->id);
+        $result = external_api::clean_returnvalue(mod_lesson_external::get_pages_possible_jumps_returns(), $result);
+        $this->assertCount(3, $result['jumps']);
+    }
 }

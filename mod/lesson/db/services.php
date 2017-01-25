@@ -148,4 +148,12 @@ $functions = array(
         'capabilities'  => 'mod/lesson:viewreports',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_lesson_get_pages_possible_jumps' => array(
+        'classname'     => 'mod_lesson_external',
+        'methodname'    => 'get_pages_possible_jumps',
+        'description'   => 'Return all the possible jumps for the pages in a given lesson.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/lesson:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

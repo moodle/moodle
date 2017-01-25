@@ -3165,15 +3165,91 @@ class lesson extends lesson_base {
     }
 
     /**
+     * This returns a real page id to jump to (or LESSON_EOL) after processing page responses.
+     *
+     * @param  lesson_page $page      lesson page
+     * @param  int         $newpageid the new page id
+     * @return int the real page to jump to (or end of lesson)
+     * @since  Moodle 3.3
+     */
+    public function calculate_new_page_on_jump(lesson_page $page, $newpageid) {
+        global $USER, $DB;
+
+        $canmanage = $this->can_manage();
+
+        if (isset($USER->modattempts[$this->properties->id])) {
+            // Make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time.
+            if ($USER->modattempts[$this->properties->id]->pageid == $page->id && $page->nextpageid == 0) {
+                // Remember, this session variable holds the pageid of the last page that the user saw.
+                $newpageid = LESSON_EOL;
+            } else {
+                $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
+                $nretakes--; // Make sure we are looking at the right try.
+                $attempts = $DB->get_records("lesson_attempts", array("lessonid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes), "timeseen", "id, pageid");
+                $found = false;
+                $temppageid = 0;
+                // Make sure that the newpageid always defaults to something valid.
+                $newpageid = LESSON_EOL;
+                foreach ($attempts as $attempt) {
+                    if ($found && $temppageid != $attempt->pageid) {
+                        // Now try to find the next page, make sure next few attempts do no belong to current page.
+                        $newpageid = $attempt->pageid;
+                        break;
+                    }
+                    if ($attempt->pageid == $page->id) {
+                        $found = true; // If found current page.
+                        $temppageid = $attempt->pageid;
+                    }
+                }
+            }
+        } else if ($newpageid != LESSON_CLUSTERJUMP && $page->id != 0 && $newpageid > 0) {
+            // Going to check to see if the page that the user is going to view next, is a cluster page.
+            // If so, dont display, go into the cluster.
+            // The $newpageid > 0 is used to filter out all of the negative code jumps.
+            $newpage = $this->load_page($newpageid);
+            if ($overridenewpageid = $newpage->override_next_page($newpageid)) {
+                $newpageid = $overridenewpageid;
+            }
+        } else if ($newpageid == LESSON_UNSEENBRANCHPAGE) {
+            if ($canmanage) {
+                if ($page->nextpageid == 0) {
+                    $newpageid = LESSON_EOL;
+                } else {
+                    $newpageid = $page->nextpageid;
+                }
+            } else {
+                $newpageid = lesson_unseen_question_jump($this, $USER->id, $page->id);
+            }
+        } else if ($newpageid == LESSON_PREVIOUSPAGE) {
+            $newpageid = $page->prevpageid;
+        } else if ($newpageid == LESSON_RANDOMPAGE) {
+            $newpageid = lesson_random_question_jump($this, $page->id);
+        } else if ($newpageid == LESSON_CLUSTERJUMP) {
+            if ($canmanage) {
+                if ($page->nextpageid == 0) {  // If teacher, go to next page.
+                    $newpageid = LESSON_EOL;
+                } else {
+                    $newpageid = $page->nextpageid;
+                }
+            } else {
+                $newpageid = $this->cluster_jump($page->id);
+            }
+        } else if ($newpageid == 0) {
+            $newpageid = $page->id;
+        } else if ($newpageid == LESSON_NEXTPAGE) {
+            $newpageid = $this->get_next_page($page->nextpageid);
+        }
+
+        return $newpageid;
+    }
+
+    /**
      * Process page responses.
      *
      * @param lesson_page $page page object
      * @since  Moodle 3.3
      */
     public function process_page_responses(lesson_page $page) {
-        global $USER, $DB;
-
-        $canmanage = $this->can_manage();
         $context = $this->get_context();
 
         // Check the page has answers [MDL-25632].
@@ -3189,64 +3265,10 @@ class lesson extends lesson_base {
 
         if ($result->inmediatejump) {
             return $result;
-        } else if (isset($USER->modattempts[$this->properties->id])) {
-            // Make sure if the student is reviewing, that he/she sees the same pages/page path that he/she saw the first time.
-            if ($USER->modattempts[$this->properties->id]->pageid == $page->id && $page->nextpageid == 0) {
-                // Remember, this session variable holds the pageid of the last page that the user saw.
-                $result->newpageid = LESSON_EOL;
-            } else {
-                $nretakes = $DB->count_records("lesson_grades", array("lessonid" => $this->properties->id, "userid" => $USER->id));
-                $nretakes--; // Make sure we are looking at the right try.
-                $attempts = $DB->get_records("lesson_attempts", array("lessonid" => $this->properties->id, "userid" => $USER->id, "retry" => $nretakes), "timeseen", "id, pageid");
-                $found = false;
-                $temppageid = 0;
-                // Make sure that the newpageid always defaults to something valid.
-                $result->newpageid = LESSON_EOL;
-                foreach ($attempts as $attempt) {
-                    if ($found && $temppageid != $attempt->pageid) {
-                        // Now try to find the next page, make sure next few attempts do no belong to current page.
-                        $result->newpageid = $attempt->pageid;
-                        break;
-                    }
-                    if ($attempt->pageid == $page->id) {
-                        $found = true; // If found current page.
-                        $temppageid = $attempt->pageid;
-                    }
-                }
-            }
-        } else if ($result->newpageid != LESSON_CLUSTERJUMP && $page->id != 0 && $result->newpageid > 0) {
-            // Going to check to see if the page that the user is going to view next, is a cluster page.
-            // If so, dont display, go into the cluster.
-            // The $result->newpageid > 0 is used to filter out all of the negative code jumps.
-            $newpage = $this->load_page($result->newpageid);
-            if ($newpageid = $newpage->override_next_page($result->newpageid)) {
-                $result->newpageid = $newpageid;
-            }
-        } else if ($result->newpageid == LESSON_UNSEENBRANCHPAGE) {
-            if ($canmanage) {
-                if ($page->nextpageid == 0) {
-                    $result->newpageid = LESSON_EOL;
-                } else {
-                    $result->newpageid = $page->nextpageid;
-                }
-            } else {
-                $result->newpageid = lesson_unseen_question_jump($this, $USER->id, $page->id);
-            }
-        } else if ($result->newpageid == LESSON_PREVIOUSPAGE) {
-            $result->newpageid = $page->prevpageid;
-        } else if ($result->newpageid == LESSON_RANDOMPAGE) {
-            $result->newpageid = lesson_random_question_jump($this, $page->id);
-        } else if ($result->newpageid == LESSON_CLUSTERJUMP) {
-            if ($canmanage) {
-                if ($page->nextpageid == 0) {  // If teacher, go to next page.
-                    $result->newpageid = LESSON_EOL;
-                } else {
-                    $result->newpageid = $page->nextpageid;
-                }
-            } else {
-                $result->newpageid = $this->cluster_jump($page->id);
-            }
         }
+
+        $result->newpageid = $this->calculate_new_page_on_jump($page, $result->newpageid);
+
         return $result;
     }
 
@@ -3991,12 +4013,6 @@ abstract class lesson_page extends lesson_base {
                         $result->attemptsremaining = $this->lesson->maxattempts - $nattempts;
                     }
                 }
-            }
-            // TODO: merge this code with the jump code below.  Convert jumpto page into a proper page id
-            if ($result->newpageid == 0) {
-                $result->newpageid = $this->properties->id;
-            } elseif ($result->newpageid == LESSON_NEXTPAGE) {
-                $result->newpageid = $this->lesson->get_next_page($this->properties->nextpageid);
             }
 
             // Determine default feedback if necessary
