@@ -1,5 +1,11 @@
 This files describes API changes for question type plugins.
 
+=== 3.1.5, 3.2.2, 3.3 ===
+
+* If you are using check_combined_feedback_file_access in your check_file_access method,
+  then you must now pass $args as the 4th argument, so the correct permission checks
+  can be performed. If you don't, you will get a developer debug notice.
+
 === 3.1 ===
 
 * The following functions, previously used (exclusively) by upgrade steps are not available
