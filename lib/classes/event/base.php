@@ -85,6 +85,16 @@ abstract class base implements \IteratorAggregate {
      */
     const NOT_FOUND = -31338;
 
+    /**
+     * User id to use when the user is not logged in.
+     */
+    const USER_NOTLOGGEDIN = 0;
+
+    /**
+     * User id to use when actor is not an actual user but system, cli or cron.
+     */
+    const USER_OTHER = -1;
+
     /** @var array event data */
     protected $data;
 
