@@ -16,7 +16,8 @@
 //
 // SCORM 1.2 API Implementation
 //
-function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit, masteryoverride) {
+function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey,
+        scoid, attempt, viewmode, cmid, currentorg, autocommit, masteryoverride, hidetoc) {
 
     var prerequrl = cfgwwwroot + "/mod/scorm/prereqs.php?a=" + scormid + "&scoid=" + scoid + "&attempt=" + attempt + "&mode=" + viewmode + "&currentorg=" + currentorg + "&sesskey=" + sesskey;
     var datamodelurl = cfgwwwroot + "/mod/scorm/datamodel.php";
@@ -413,12 +414,17 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
         if (param == "") {
             if (Initialized) {
                 result = StoreData(cmi,false);
-                // trigger TOC update
-                var callback = M.mod_scorm.connectPrereqCallback;
-                YUI().use('io-base', function(Y) {
-                    Y.on('io:complete', callback.success, Y);
-                    Y.io(prerequrl);
-                });
+                // Trigger TOC update only if TOC is displayed.
+                // Checks against setting Display course structure in player:
+                // 0 = To the side, 1 = Hidden, 2 = In a drop down menu, 3 = Disabled
+                if (hidetoc !== '3') {
+                    Y.log('Refreshing toc');
+                    var callback = M.mod_scorm.connectPrereqCallback;
+                    YUI().use('io-base', function(Y) {
+                        Y.on('io:complete', callback.success, Y);
+                        Y.io(prerequrl);
+                    });
+                }
                 if (scormdebugging) {
                     LogAPICall("Commit", param, "", 0);
                 }
@@ -660,6 +666,8 @@ function SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebu
 
 M.scorm_api = {};
 
-M.scorm_api.init = function(Y, def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit, masteryoverride) {
-    window.API = new SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot, sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit, masteryoverride);
+M.scorm_api.init = function(Y, def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot,
+        sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit, masteryoverride, hidetoc) {
+    window.API = new SCORMapi1_2(def, cmiobj, cmiint, cmistring256, cmistring4096, scormdebugging, scormauto, scormid, cfgwwwroot,
+            sesskey, scoid, attempt, viewmode, cmid, currentorg, autocommit, masteryoverride, hidetoc);
 }
