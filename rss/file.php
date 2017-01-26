@@ -115,7 +115,11 @@ if ($token === "$inttoken") {
 }
 
 // Check the context actually exists.
-list($context, $course, $cm) = get_context_info_array($contextid);
+try {
+    list($context, $course, $cm) = get_context_info_array($contextid);
+} catch (dml_missing_record_exception $e) {
+    rss_error();
+}
 
 $PAGE->set_context($context);
 
