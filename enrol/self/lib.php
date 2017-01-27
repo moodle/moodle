@@ -173,7 +173,7 @@ class enrol_self_plugin extends enrol_plugin {
             }
         }
         // Send welcome message.
-        if ($instance->customint4 !== ENROL_DO_NOT_SEND_EMAIL) {
+        if ($instance->customint4 != ENROL_DO_NOT_SEND_EMAIL) {
             $this->email_welcome_message($instance, $USER);
         }
     }
