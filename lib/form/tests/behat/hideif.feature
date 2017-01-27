@@ -15,38 +15,52 @@ Feature: hideIf functionality in forms
     When I set the field "Select yesno example" to "Yes"
     Then I should see "Test eq hideif"
     And "#id_testeqhideif" "css_element" should be visible
+    And I press "Submit"
+    And I should see "Number of submitted form elements: 6"
+    And I should see "[testeqhideif] =>"
 
   Scenario: When 'eq' hideIf conditions are met, the relevant elements are hidden
     When I set the field "Select yesno example" to "No"
     Then I should not see "Test eq hideif"
     And "#id_testeqhideif" "css_element" should not be visible
+    And I press "Submit"
+    And I should see "Number of submitted form elements: 5"
+    And I should not see "[testeqhideif] =>"
 
   Scenario: When 'checked' hideIf conditions are not met, the relevant elements are shown
     When I set the field "Checkbox example" to "0"
     Then I should see "Test checked hideif"
+    And I should not see "Test not checked hideif"
     And "#id_testcheckedhideif" "css_element" should be visible
+    And "#id_testnotcheckedhideif" "css_element" should not be visible
+    And I press "Submit"
+    And I should see "Number of submitted form elements: 5"
+    And I should see "[testcheckedhideif] =>"
+    And I should not see "[testnotcheckedhideif] =>"
 
   Scenario: When 'checked' hideIf conditions are met, the relevant elements are hidden
     When I set the field "Checkbox example" to "1"
     Then I should not see "Test checked hideif"
+    And I should see "Test not checked hideif"
     And "#id_testcheckedhideif" "css_element" should not be visible
-
-  Scenario: When 'notchecked' hideIf conditions are not met, the relevant elements are shown
-    When I set the field "Checkbox example" to "1"
-    Then I should see "Test not checked hideif"
     And "#id_testnotcheckedhideif" "css_element" should be visible
-
-  Scenario: When 'notchecked' hideIf conditions are met, the relevant elements are hidden
-    When I set the field "Checkbox example" to "0"
-    Then I should not see "Test not checked hideif"
-    And "#id_testnotcheckedhideif" "css_element" should not be visible
+    And I press "Submit"
+    And I should see "Number of submitted form elements: 5"
+    And I should not see "[testcheckedhideif] =>"
+    And I should see "[testnotcheckedhideif] =>"
 
   Scenario: When 'in' hideIf conditions are not met, the relevant elements are shown
     When I set the field "Select example" to "3"
     Then I should see "Test in hideif"
     And "#id_testinhideif" "css_element" should be visible
+    And I press "Submit"
+    And I should see "Number of submitted form elements: 6"
+    And I should see "[testinhideif] =>"
 
   Scenario: When 'in' hideIf conditions are met, the relevant elements are hidden
     When I set the field "Select example" to "2"
     Then I should not see "Test in hideif"
     And "#id_testinhideif" "css_element" should not be visible
+    And I press "Submit"
+    And I should see "Number of submitted form elements: 5"
+    And I should not see "[testinhideif] =>"

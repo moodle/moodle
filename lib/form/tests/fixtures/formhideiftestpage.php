@@ -22,7 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../../../config.php');
+require_once(__DIR__.'/../../../../config.php');
 global $CFG, $PAGE, $OUTPUT;
 require_once($CFG->libdir.'/formslib.php');
 
@@ -71,13 +71,19 @@ class hideif_form extends moodleform {
         $mform->addElement('text', 'testinhideif', 'Test in hideif');
         $mform->setType('testinhideif', PARAM_TEXT);
         $mform->hideIf('testinhideif', 'selectexample', 'in', [1, 2, 5]);
+
+        $mform->addElement('submit', 'submitform', 'Submit');
     }
 }
 
-$PAGE->set_url('/lib/tests/fixtures/form_hideif.php');
+$PAGE->set_url('/lib/form/tests/fixtures/formhideiftestpage.php');
 $PAGE->set_context(context_system::instance());
 $form = new hideif_form();
 
 echo $OUTPUT->header();
+if ($data = $form->get_data()) {
+    echo "<p>Number of submitted form elements: " . count((array)$data) . "</p>";
+    print_object($data);
+}
 $form->display();
 echo $OUTPUT->footer();

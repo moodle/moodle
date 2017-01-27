@@ -2448,7 +2448,7 @@ require(["core/event", "jquery"], function(Event, $) {
                             if ($element == $dependentOn) {
                                 continue;
                             }
-                            $result[$dependentOn][$condition][$value][0][] = $element;
+                            $result[$dependentOn][$condition][$value][self::DEP_DISABLE][] = $element;
                         }
                     }
                 }
@@ -2470,7 +2470,7 @@ require(["core/event", "jquery"], function(Event, $) {
                             if ($element == $dependenton) {
                                 continue;
                             }
-                            $result[$dependenton][$condition][$value][1][] = $element;
+                            $result[$dependenton][$condition][$value][self::DEP_HIDE][] = $element;
                         }
                     }
                 }
