@@ -27,6 +27,7 @@
 
 require_once("HTML/QuickForm/button.php");
 require_once(__DIR__ . '/../outputcomponents.php');
+require_once('templatable_form_element.php');
 
 /**
  * HTML class for a button type element
