@@ -192,14 +192,7 @@ select {
 }
 
 .breadcrumb-button {
-    float: right;
     margin-top: 4px;
-
-    @include media-breakpoint-up('md') {
-        &.nonavbar {
-            margin-top: -3rem;
-        }
-    }
 }
 
 .breadcrumb-button .singlebutton {

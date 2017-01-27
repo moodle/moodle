@@ -26,6 +26,7 @@ namespace tool_lp\form;
 defined('MOODLE_INTERNAL') || die();
 
 use stdClass;
+use core\form\persistent;
 
 /**
  * Competency framework form.
@@ -79,7 +80,7 @@ class competency_framework extends persistent {
             // configuration requires this field so we only disable it. It is fine as setting the value
             // as a constant will ensure that nobody can change it. And it's validated in the persistent anyway.
             $scaleid->updateAttributes(array('readonly' => 'readonly'));
-            $mform->setConstant('scaleid', $framework->get_scaleid());
+            $mform->setConstant('scaleid', $framework->get('scaleid'));
         }
 
         $mform->addElement('button', 'scaleconfigbutton', get_string('configurescale', 'tool_lp'));
@@ -148,7 +149,7 @@ class competency_framework extends persistent {
      */
     protected function get_default_data() {
         $data = parent::get_default_data();
-        $data->taxonomies = $this->get_persistent()->get_taxonomies();
+        $data->taxonomies = $this->get_persistent()->get('taxonomies');
         return $data;
     }
 

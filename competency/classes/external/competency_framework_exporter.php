@@ -33,7 +33,7 @@ use renderer_base;
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class competency_framework_exporter extends persistent_exporter {
+class competency_framework_exporter extends \core\external\persistent_exporter {
 
     /**
      * Define the name of persistent class.
@@ -41,7 +41,7 @@ class competency_framework_exporter extends persistent_exporter {
      * @return string
      */
     protected static function define_class() {
-        return 'core_competency\\competency_framework';
+        return \core_competency\competency_framework::class;
     }
 
     /**
@@ -51,7 +51,7 @@ class competency_framework_exporter extends persistent_exporter {
      * @return Array
      */
     protected function get_other_values(renderer_base $output) {
-        $filters = array('competencyframeworkid' => $this->persistent->get_id());
+        $filters = array('competencyframeworkid' => $this->persistent->get('id'));
         $context = $this->persistent->get_context();
         return array(
             'canmanage' => has_capability('moodle/competency:competencymanage', $context),
@@ -74,11 +74,14 @@ class competency_framework_exporter extends persistent_exporter {
             'competenciescount' => array(
                 'type' => PARAM_INT
             ),
+
+            // Both contexts need to be PARAM_RAW because the method context::get_context_name()
+            // already applies the formatting and thus could return HTML content.
             'contextname' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_RAW
             ),
             'contextnamenoprefix' => array(
-                'type' => PARAM_TEXT
+                'type' => PARAM_RAW
             )
         );
     }

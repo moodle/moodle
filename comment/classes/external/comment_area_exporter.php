@@ -19,15 +19,14 @@
  *
  * A comment area is the set of information about a defined comments area.
  *
- * @package    core_competency
+ * @package    core_comment
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_competency\external;
-require_once($CFG->dirroot . '/comment/lib.php');
-
-// TODO MDL-52243 Move this to core.
+namespace core_comment\external;
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/comment/lib.php');
 
 use comment;
 use renderer_base;
@@ -36,11 +35,11 @@ use stdClass;
 /**
  * Class for exporting a comment area.
  *
- * @package    core_competency
+ * @package    core_comment
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class comment_area_exporter extends exporter {
+class comment_area_exporter extends \core\external\exporter {
 
     /** @var comment The comment instance. */
     protected $comment = null;

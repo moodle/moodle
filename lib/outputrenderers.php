@@ -569,13 +569,6 @@ class core_renderer extends renderer_base {
         // Set up help link popups for all links with the helptooltip class
         $this->page->requires->js_init_call('M.util.help_popups.setup');
 
-        // Setup help icon overlays.
-        $this->page->requires->yui_module('moodle-core-popuphelp', 'M.core.init_popuphelp');
-        $this->page->requires->strings_for_js(array(
-            'morehelp',
-            'loadinghelp',
-        ), 'moodle');
-
         $focus = $this->page->focuscontrol;
         if (!empty($focus)) {
             if (preg_match("#forms\['([a-zA-Z0-9]+)'\].elements\['([a-zA-Z0-9]+)'\]#", $focus, $matches)) {

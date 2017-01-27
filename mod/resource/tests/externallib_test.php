@@ -111,4 +111,146 @@ class mod_resource_external_testcase extends externallib_advanced_testcase {
         }
 
     }
+
+    /**
+     * Test test_mod_resource_get_resources_by_courses
+     */
+    public function test_mod_resource_get_resources_by_courses() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id);
+
+        self::setUser($student);
+
+        // First resource.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $resource1 = self::getDataGenerator()->create_module('resource', $record);
+
+        // Second resource.
+        $record = new stdClass();
+        $record->course = $course2->id;
+        $resource2 = self::getDataGenerator()->create_module('resource', $record);
+
+        // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
+        $enrol = enrol_get_plugin('manual');
+        $enrolinstances = enrol_get_instances($course2->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance2 = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance2, $student->id, $studentrole->id);
+
+        $returndescription = mod_resource_external::get_resources_by_courses_returns();
+
+        // Create what we expect to be returned when querying the two courses.
+        $expectedfields = array('id', 'course', 'name', 'intro', 'introformat', 'introfiles',
+                                'contentfiles', 'tobemigrated', 'legacyfiles', 'legacyfileslast', 'display', 'displayoptions',
+                                'filterfiles', 'revision', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
+
+        // Add expected coursemodule and data.
+        $resource1->coursemodule = $resource1->cmid;
+        $resource1->introformat = 1;
+        $resource1->contentformat = 1;
+        $resource1->section = 0;
+        $resource1->visible = true;
+        $resource1->groupmode = 0;
+        $resource1->groupingid = 0;
+        $resource1->introfiles = [];
+        $resource1->contentfiles = [];
+
+        $resource2->coursemodule = $resource2->cmid;
+        $resource2->introformat = 1;
+        $resource2->contentformat = 1;
+        $resource2->section = 0;
+        $resource2->visible = true;
+        $resource2->groupmode = 0;
+        $resource2->groupingid = 0;
+        $resource2->introfiles = [];
+        $resource2->contentfiles = [];
+
+        foreach ($expectedfields as $field) {
+            $expected1[$field] = $resource1->{$field};
+            $expected2[$field] = $resource2->{$field};
+        }
+
+        $expectedresources = array($expected2, $expected1);
+
+        // Call the external function passing course ids.
+        $result = mod_resource_external::get_resources_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        // Remove the contentfiles (to be checked bellow).
+        $result['resources'][0]['contentfiles'] = [];
+        $result['resources'][1]['contentfiles'] = [];
+
+        // Now, check that we retrieve the same data we created.
+        $this->assertEquals($expectedresources, $result['resources']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Call the external function without passing course id.
+        $result = mod_resource_external::get_resources_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        // Remove the contentfiles (to be checked bellow).
+        $result['resources'][0]['contentfiles'] = [];
+        $result['resources'][1]['contentfiles'] = [];
+
+        // Check that without course ids we still get the correct data.
+        $this->assertEquals($expectedresources, $result['resources']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Add a file to the intro.
+        $fileintroname = "fileintro.txt";
+        $filerecordinline = array(
+            'contextid' => context_module::instance($resource2->cmid)->id,
+            'component' => 'mod_resource',
+            'filearea'  => 'intro',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $fileintroname,
+        );
+        $fs = get_file_storage();
+        $timepost = time();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        $result = mod_resource_external::get_resources_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        // Check that we receive correctly the files.
+        $this->assertCount(1, $result['resources'][0]['introfiles']);
+        $this->assertEquals($fileintroname, $result['resources'][0]['introfiles'][0]['filename']);
+        $this->assertCount(1, $result['resources'][0]['contentfiles']);
+        $this->assertCount(1, $result['resources'][1]['contentfiles']);
+        // Test autogenerated resource.
+        $this->assertEquals('resource2.txt', $result['resources'][0]['contentfiles'][0]['filename']);
+        $this->assertEquals('resource1.txt', $result['resources'][1]['contentfiles'][0]['filename']);
+
+        // Unenrol user from second course.
+        $enrol->unenrol_user($instance2, $student->id);
+        array_shift($expectedresources);
+
+        // Call the external function without passing course id.
+        $result = mod_resource_external::get_resources_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        // Remove the contentfiles (to be checked bellow).
+        $result['resources'][0]['contentfiles'] = [];
+        $this->assertEquals($expectedresources, $result['resources']);
+
+        // Call for the second course we unenrolled the user from, expected warning.
+        $result = mod_resource_external::get_resources_by_courses(array($course2->id));
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('1', $result['warnings'][0]['warningcode']);
+        $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
+    }
 }

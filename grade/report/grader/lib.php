@@ -183,6 +183,7 @@ class grade_report_grader extends grade_report {
                 array_unshift($mygroups, $this->currentgroup);
             }
         }
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
 
         // always initialize all arrays
         $queue = array();
@@ -288,7 +289,7 @@ class grade_report_grader extends grade_report {
                             $userfields = 'id, ' . get_all_user_name_fields(true);
                             $user = $DB->get_record('user', array('id' => $userid), $userfields);
                             $gradestr = new stdClass();
-                            $gradestr->username = fullname($user);
+                            $gradestr->username = fullname($user, $viewfullnames);
                             $gradestr->itemname = $gradeitem->get_name();
                             $warnings[] = get_string($errorstr, 'grades', $gradestr);
                             if ($skip) {
@@ -611,6 +612,7 @@ class grade_report_grader extends grade_report {
             'moodle/grade:edit'), $this->context);
         }
         $hasuserreportcell = $canseeuserreport || $canseesingleview;
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
 
         $strfeedback  = $this->get_lang_string("feedback");
         $strgrade     = $this->get_lang_string('grade');
@@ -682,7 +684,7 @@ class grade_report_grader extends grade_report {
                 $usercell->text = $OUTPUT->user_picture($user, array('visibletoscreenreaders' => false));
             }
 
-            $fullname = fullname($user);
+            $fullname = fullname($user, $viewfullnames);
             $usercell->text .= html_writer::link(new moodle_url('/user/view.php', array('id' => $user->id, 'course' => $this->course->id)), $fullname, array(
                 'class' => 'username',
             ));
@@ -780,6 +782,8 @@ class grade_report_grader extends grade_report {
         $strftimedatetimeshort = get_string('strftimedatetimeshort');
         $strexcludedgrades = get_string('excluded', 'grades');
         $strerror = get_string('error');
+
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
 
         foreach ($this->gtree->get_levels() as $key => $row) {
             $headingrow = new html_table_row();
@@ -942,7 +946,7 @@ class grade_report_grader extends grade_report {
             $itemrow = new html_table_row();
             $itemrow->id = 'user_'.$userid;
 
-            $fullname = fullname($user);
+            $fullname = fullname($user, $viewfullnames);
             $jsarguments['users'][$userid] = $fullname;
 
             foreach ($this->gtree->items as $itemid => $unused) {

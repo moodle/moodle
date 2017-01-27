@@ -49,12 +49,12 @@ class competency_framework_created extends base {
      * @return self
      */
     public static final function create_from_framework(competency_framework $framework) {
-        if (!$framework->get_id()) {
+        if (!$framework->get('id')) {
             throw new \coding_exception('The competency framework ID must be set.');
         }
         $event = static::create(array(
-            'contextid'  => $framework->get_contextid(),
-            'objectid' => $framework->get_id()
+            'contextid'  => $framework->get('contextid'),
+            'objectid' => $framework->get('id')
         ));
         $event->add_record_snapshot(competency_framework::TABLE, $framework->to_record());
         return $event;

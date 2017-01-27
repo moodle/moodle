@@ -114,6 +114,9 @@ class core_competency_generator extends component_generator_base {
         if (!isset($record->descriptionformat)) {
             $record->descriptionformat = FORMAT_HTML;
         }
+        if (!isset($record->scaleconfiguration) && isset($record->scaleid)) {
+            $record->scaleconfiguration = json_encode($this->make_default_scale_configuration($record->scaleid));
+        }
         if (isset($record->scaleconfiguration)
                 && (is_array($record->scaleconfiguration) || is_object($record->scaleconfiguration))) {
             // Conveniently encode the config.
@@ -163,31 +166,7 @@ class core_competency_generator extends component_generator_base {
             $record->scaleid = $this->scale->id;
         }
         if (!isset($record->scaleconfiguration)) {
-            $scale = grade_scale::fetch(array('id' => $record->scaleid));
-            $values = $scale->load_items();
-            foreach ($values as $key => $value) {
-                // Add a key (make the first value 1).
-                $values[$key] = array('id' => $key + 1, 'name' => $value);
-            }
-            if (count($values) < 2) {
-                throw new coding_exception('Please provide the scale configuration for one-item scales.');
-            }
-            $scaleconfig = array();
-            // Last item is proficient.
-            $item = array_pop($values);
-            array_unshift($scaleconfig, array(
-                'id' => $item['id'],
-                'proficient' => 1
-            ));
-            // Second-last item is default and proficient.
-            $item = array_pop($values);
-            array_unshift($scaleconfig, array(
-                'id' => $item['id'],
-                'scaledefault' => 1,
-                'proficient' => 1
-            ));
-            array_unshift($scaleconfig, array('scaleid' => $record->scaleid));
-            $record->scaleconfiguration = json_encode($scaleconfig);
+            $record->scaleconfiguration = json_encode($this->make_default_scale_configuration($record->scaleid));
         }
         if (is_array($record->scaleconfiguration) || is_object($record->scaleconfiguration)) {
             // Conveniently encode the config.
@@ -220,7 +199,7 @@ class core_competency_generator extends component_generator_base {
         }
 
         $relation = related_competency::get_relation($record->competencyid, $record->relatedcompetencyid);
-        if ($relation->get_id()) {
+        if ($relation->get('id')) {
             throw new coding_exception('Relation already exists');
         }
         $relation->create();
@@ -557,6 +536,51 @@ class core_competency_generator extends component_generator_base {
         $uec->create();
 
         return $uec;
+    }
+
+    /**
+     * Make a default scale configuration.
+     *
+     * The last and second-last item will be flagged proficient. The
+     * second-last item will be flagged as default.
+     *
+     * @param int $scaleid The scale ID.
+     * @return array Configuration as array.
+     */
+    protected function make_default_scale_configuration($scaleid) {
+        $scale = grade_scale::fetch(array('id' => $scaleid));
+        $values = $scale->load_items();
+
+        foreach ($values as $key => $value) {
+            // Add a key (make the first value 1).
+            $values[$key] = array('id' => $key + 1, 'name' => $value);
+        }
+
+        if (count($values) < 2) {
+            throw new coding_exception('Please provide the scale configuration for one-item scales.');
+        }
+
+        $scaleconfig = array();
+
+        // Last item is proficient.
+        $item = array_pop($values);
+        array_unshift($scaleconfig, array(
+            'id' => $item['id'],
+            'proficient' => 1
+        ));
+
+        // Second-last item is default and proficient.
+        $item = array_pop($values);
+        array_unshift($scaleconfig, array(
+            'id' => $item['id'],
+            'scaledefault' => 1,
+            'proficient' => 1
+        ));
+
+        // Add the scale ID.
+        array_unshift($scaleconfig, array('scaleid' => $scaleid));
+
+        return $scaleconfig;
     }
 
 }

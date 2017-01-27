@@ -92,6 +92,22 @@ if ($hassiteconfig) {
                     new lang_string('forcelogout', 'tool_mobile'),
                     new lang_string('forcelogout_desc', 'tool_mobile'), 0));
 
+        $temp->add(new admin_setting_heading('tool_mobile/features',
+                    new lang_string('mobilefeatures', 'tool_mobile'), ''));
+
+        $options = tool_mobile\api::get_features_list();
+        $temp->add(new admin_setting_configmultiselect('tool_mobile/disabledfeatures',
+                    new lang_string('disabledfeatures', 'tool_mobile'),
+                    new lang_string('disabledfeatures_desc', 'tool_mobile'), array(), $options));
+
+        $temp->add(new admin_setting_heading('tool_mobile/language',
+                    new lang_string('language'), ''));
+
+        $temp->add(new admin_setting_configtextarea('tool_mobile/customlangstrings',
+                    new lang_string('customlangstrings', 'tool_mobile'),
+                    new lang_string('customlangstrings_desc', 'tool_mobile', tool_mobile\api::CUSTOM_STRINGS_DOC_URL),
+                    '', PARAM_RAW, '50', '10'));
+
         $ADMIN->add('mobileapp', $temp);
     }
 }

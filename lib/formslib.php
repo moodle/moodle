@@ -211,6 +211,9 @@ abstract class moodleform {
         $this->_form->setDefault('_qf__'.$this->_formname, 1);
         $this->_form->_setDefaultRuleMessages();
 
+        // Hook to inject logic after the definition was provided.
+        $this->after_definition();
+
         // we have to know all input types before processing submission ;-)
         $this->_process_submission($method);
     }
@@ -967,6 +970,23 @@ abstract class moodleform {
      * Form definition. Abstract method - always override!
      */
     protected abstract function definition();
+
+    /**
+     * After definition hook.
+     *
+     * This is useful for intermediate classes to inject logic after the definition was
+     * provided without requiring developers to call the parent {{@link self::definition()}}
+     * as it's not obvious by design. The 'intermediate' class is 'MyClass extends
+     * IntermediateClass extends moodleform'.
+     *
+     * Classes overriding this method should always call the parent. We may not add
+     * anything specifically in this instance of the method, but intermediate classes
+     * are likely to do so, and so it is a good practice to always call the parent.
+     *
+     * @return void
+     */
+    protected function after_definition() {
+    }
 
     /**
      * Dummy stub method - override if you need to setup the form depending on current

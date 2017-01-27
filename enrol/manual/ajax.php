@@ -80,9 +80,10 @@ switch ($action) {
         } else {
             $useroptions['link'] = false;
         }
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
         foreach ($outcome->response['users'] as &$user) {
             $user->picture = $OUTPUT->user_picture($user, $useroptions);
-            $user->fullname = fullname($user);
+            $user->fullname = fullname($user, $viewfullnames);
             $fieldvalues = array();
             foreach ($extrafields as $field) {
                 $fieldvalues[] = s($user->{$field});

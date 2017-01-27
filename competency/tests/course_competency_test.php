@@ -56,14 +56,14 @@ class core_competency_course_competency_testcase extends advanced_testcase {
         $flatfileinstanceid = $flatfileplugin->add_instance($c2);
 
         $framework = $lpg->create_framework();
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));   // In C1, and C2.
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));   // In C2.
-        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));   // In None.
-        $comp4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));   // In C4.
-        $lpg->create_course_competency(array('competencyid' => $comp1->get_id(), 'courseid' => $c1->id));
-        $lpg->create_course_competency(array('competencyid' => $comp1->get_id(), 'courseid' => $c2->id));
-        $lpg->create_course_competency(array('competencyid' => $comp2->get_id(), 'courseid' => $c2->id));
-        $lpg->create_course_competency(array('competencyid' => $comp4->get_id(), 'courseid' => $c4->id));
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));   // In C1, and C2.
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));   // In C2.
+        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));   // In None.
+        $comp4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));   // In C4.
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c1->id));
+        $lpg->create_course_competency(array('competencyid' => $comp1->get('id'), 'courseid' => $c2->id));
+        $lpg->create_course_competency(array('competencyid' => $comp2->get('id'), 'courseid' => $c2->id));
+        $lpg->create_course_competency(array('competencyid' => $comp4->get('id'), 'courseid' => $c4->id));
 
         // Enrol the user 1 in C1, C2, and C3.
         $dg->enrol_user($u1->id, $c1->id);
@@ -81,33 +81,33 @@ class core_competency_course_competency_testcase extends advanced_testcase {
         $dg->enrol_user($u4->id, $c2->id, null, 'flatfile');
 
         // Using the competency that is not used anywhere -> no courses.
-        $this->assertCount(0, course_competency::get_courses_with_competency_and_user($comp3->get_id(), $u1->id));
+        $this->assertCount(0, course_competency::get_courses_with_competency_and_user($comp3->get('id'), $u1->id));
 
         // Using the competency that is used in a course where the user is not enrolled -> no courses.
-        $this->assertCount(0, course_competency::get_courses_with_competency_and_user($comp4->get_id(), $u1->id));
+        $this->assertCount(0, course_competency::get_courses_with_competency_and_user($comp4->get('id'), $u1->id));
 
         // Using the competency that is used in a course where the user is enrolled -> one course.
-        $courses = course_competency::get_courses_with_competency_and_user($comp2->get_id(), $u1->id);
+        $courses = course_competency::get_courses_with_competency_and_user($comp2->get('id'), $u1->id);
         $this->assertCount(1, $courses);
         $this->assertArrayHasKey($c2->id, $courses);
 
         // Using the competency used multiple times.
-        $courses = course_competency::get_courses_with_competency_and_user($comp1->get_id(), $u1->id);
+        $courses = course_competency::get_courses_with_competency_and_user($comp1->get('id'), $u1->id);
         $this->assertCount(2, $courses);
         $this->assertArrayHasKey($c1->id, $courses);
         $this->assertArrayHasKey($c2->id, $courses);
 
         // Checking for another user where the competency is used twice, but not for them.
-        $courses = course_competency::get_courses_with_competency_and_user($comp1->get_id(), $u2->id);
+        $courses = course_competency::get_courses_with_competency_and_user($comp1->get('id'), $u2->id);
         $this->assertCount(0, $courses);
 
         // Checking for another user where the competency is used in their course.
-        $courses = course_competency::get_courses_with_competency_and_user($comp4->get_id(), $u2->id);
+        $courses = course_competency::get_courses_with_competency_and_user($comp4->get('id'), $u2->id);
         $this->assertCount(1, $courses);
         $this->assertArrayHasKey($c4->id, $courses);
 
         // Checking for a user who is suspended in a course.
-        $courses = course_competency::get_courses_with_competency_and_user($comp1->get_id(), $u3->id);
+        $courses = course_competency::get_courses_with_competency_and_user($comp1->get('id'), $u3->id);
         $this->assertCount(1, $courses);
         $this->assertArrayHasKey($c1->id, $courses);
 
@@ -115,14 +115,14 @@ class core_competency_course_competency_testcase extends advanced_testcase {
         $enrolplugins = explode(',', $CFG->enrol_plugins_enabled);
         $enrolplugins[] = 'flatfile';
         $CFG->enrol_plugins_enabled = implode(',', array_unique($enrolplugins));
-        $courses = course_competency::get_courses_with_competency_and_user($comp1->get_id(), $u4->id);
+        $courses = course_competency::get_courses_with_competency_and_user($comp1->get('id'), $u4->id);
         $this->assertCount(1, $courses);
         $this->assertArrayHasKey($c2->id, $courses);
 
         // Check for the user with plugin enabled, but enrolment instance disabled.
         $flatfileinstance = $DB->get_record('enrol', array('id' => $flatfileinstanceid));
         $flatfileplugin->update_status($flatfileinstance, ENROL_INSTANCE_DISABLED);
-        $courses = course_competency::get_courses_with_competency_and_user($comp1->get_id(), $u4->id);
+        $courses = course_competency::get_courses_with_competency_and_user($comp1->get('id'), $u4->id);
         $this->assertCount(0, $courses);
         $flatfileplugin->update_status($flatfileinstance, ENROL_INSTANCE_ENABLED);
 
@@ -130,7 +130,7 @@ class core_competency_course_competency_testcase extends advanced_testcase {
         $enrolplugins = array_flip(explode(',', $CFG->enrol_plugins_enabled));
         unset($enrolplugins['flatfile']);
         $CFG->enrol_plugins_enabled = implode(',', array_keys($enrolplugins));
-        $courses = course_competency::get_courses_with_competency_and_user($comp1->get_id(), $u4->id);
+        $courses = course_competency::get_courses_with_competency_and_user($comp1->get('id'), $u4->id);
         $this->assertCount(0, $courses);
     }
 

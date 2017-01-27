@@ -73,7 +73,7 @@ class competency_framework extends persistent {
      * @return context The context
      */
     public function get_context() {
-        return context::instance_by_id($this->get_contextid());
+        return context::instance_by_id($this->get('contextid'));
     }
 
     /**
@@ -127,8 +127,8 @@ class competency_framework extends persistent {
         $this->beforeupdate = null;
 
         // During update.
-        if ($this->get_id()) {
-            $this->beforeupdate = new competency_framework($this->get_id());
+        if ($this->get('id')) {
+            $this->beforeupdate = new competency_framework($this->get('id'));
         }
 
     }
@@ -140,7 +140,7 @@ class competency_framework extends persistent {
      * @return int
      */
     public function get_depth() {
-        return competency::get_framework_depth($this->get_id());
+        return competency::get_framework_depth($this->get('id'));
     }
 
     /**
@@ -149,7 +149,7 @@ class competency_framework extends persistent {
      * @return \grade_scale
      */
     public function get_scale() {
-        $scale = \grade_scale::fetch(array('id' => $this->get_scaleid()));
+        $scale = \grade_scale::fetch(array('id' => $this->get('scaleid')));
         $scale->load_items();
         return $scale;
     }
@@ -178,8 +178,8 @@ class competency_framework extends persistent {
      *
      * @return array Contains the list of taxonomy constants indexed by level.
      */
-    public function get_taxonomies() {
-        $taxonomies = explode(',', $this->get('taxonomies'));
+    protected function get_taxonomies() {
+        $taxonomies = explode(',', $this->raw_get('taxonomies'));
 
         // Indexing first level at 1.
         array_unshift($taxonomies, null);
@@ -203,8 +203,8 @@ class competency_framework extends persistent {
      * @return boolean
      */
     public function has_user_competencies() {
-        return user_competency::has_records_for_framework($this->get_id()) ||
-            user_competency_plan::has_records_for_framework($this->get_id());
+        return user_competency::has_records_for_framework($this->get('id')) ||
+            user_competency_plan::has_records_for_framework($this->get('id'));
     }
 
     /**
@@ -212,11 +212,11 @@ class competency_framework extends persistent {
      *
      * @param string|array $taxonomies A string, or an array where the values are the term constants.
      */
-    public function set_taxonomies($taxonomies) {
+    protected function set_taxonomies($taxonomies) {
         if (is_array($taxonomies)) {
             $taxonomies = implode(',', $taxonomies);
         }
-        $this->set('taxonomies', $taxonomies);
+        $this->raw_set('taxonomies', $taxonomies);
     }
 
     /**
@@ -236,11 +236,11 @@ class competency_framework extends persistent {
         }
 
         // During update.
-        if ($this->get_id()) {
+        if ($this->get('id')) {
 
             // The context must never change.
-            $oldcontextid = $DB->get_field(self::TABLE, 'contextid', array('id' => $this->get_id()), MUST_EXIST);
-            if ($this->get_contextid() != $oldcontextid) {
+            $oldcontextid = $DB->get_field(self::TABLE, 'contextid', array('id' => $this->get('id')), MUST_EXIST);
+            if ($this->get('contextid') != $oldcontextid) {
                 return new lang_string('invalidcontext', 'error');
             }
         }
@@ -284,10 +284,10 @@ class competency_framework extends persistent {
         }
 
         // During update.
-        if ($this->get_id()) {
+        if ($this->get('id')) {
 
             // Validate that we can only change the scale when it is not used yet.
-            if ($this->beforeupdate->get_scaleid() != $value) {
+            if ($this->beforeupdate->get('scaleid') != $value) {
                 if ($this->beforeupdate->has_user_competencies()) {
                     return new lang_string('errorscalealreadyused', 'core_competency');
                 }

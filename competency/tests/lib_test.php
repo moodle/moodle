@@ -57,24 +57,24 @@ class core_competency_lib_testcase extends advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $f1 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id())); // In 1 plan.
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id())); // In 2 plans.
-        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id())); // Orphan.
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'))); // In 1 plan.
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'))); // In 2 plans.
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'))); // Orphan.
 
         $p1 = $lpg->create_plan(array('userid' => $u1->id));
-        $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c1->get_id()));
-        $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c2->get_id()));
+        $lpg->create_plan_competency(array('planid' => $p1->get('id'), 'competencyid' => $c1->get('id')));
+        $lpg->create_plan_competency(array('planid' => $p1->get('id'), 'competencyid' => $c2->get('id')));
         $p2 = $lpg->create_plan(array('userid' => $u1->id));
-        $lpg->create_plan_competency(array('planid' => $p2->get_id(), 'competencyid' => $c2->get_id()));
+        $lpg->create_plan_competency(array('planid' => $p2->get('id'), 'competencyid' => $c2->get('id')));
 
-        $DB->set_field(plan::TABLE, 'timemodified', 1, array('id' => $p1->get_id()));   // Make plan 1 appear as old.
+        $DB->set_field(plan::TABLE, 'timemodified', 1, array('id' => $p1->get('id')));   // Make plan 1 appear as old.
         $p1->read();
 
-        $uc1 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c1->get_id(),
+        $uc1 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c1->get('id'),
             'status' => user_competency::STATUS_IN_REVIEW, 'reviewerid' => $u2->id));
-        $uc2 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c2->get_id(),
+        $uc2 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c2->get('id'),
             'status' => user_competency::STATUS_IN_REVIEW, 'reviewerid' => $u2->id));
-        $uc3 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c3->get_id(),
+        $uc3 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c3->get('id'),
             'status' => user_competency::STATUS_IN_REVIEW, 'reviewerid' => $u2->id));
 
         // Post a comment for the user competency being in one plan. The reviewer is messaged.
@@ -87,8 +87,8 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $messages);
         $message = array_pop($messages);
 
-        $expectedurlname = $c1->get_shortname();
-        $expectedurl = url::user_competency_in_plan($u1->id, $c1->get_id(), $p1->get_id());
+        $expectedurlname = $c1->get('shortname');
+        $expectedurl = url::user_competency_in_plan($u1->id, $c1->get('id'), $p1->get('id'));
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u2->id, $message->useridto);
         $this->assertTrue(strpos($message->fullmessage, 'Hello world!') !== false);
@@ -107,8 +107,8 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $messages);
         $message = array_pop($messages);
 
-        $expectedurlname = $c2->get_shortname();
-        $expectedurl = url::user_competency_in_plan($u1->id, $c2->get_id(), $p2->get_id());
+        $expectedurlname = $c2->get('shortname');
+        $expectedurl = url::user_competency_in_plan($u1->id, $c2->get('id'), $p2->get('id'));
         $this->assertEquals(core_user::get_noreply_user()->id, $message->useridfrom);
         $this->assertEquals($u1->id, $message->useridto);
         $this->assertTrue(strpos($message->fullmessage, 'Hello world!') !== false);
@@ -220,7 +220,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertEquals($u1->id, $message->useridto);
 
         // Post a comment in a plan with reviewer. The reviewer is messaged.
-        $p1->set_reviewerid($u2->id);
+        $p1->set('reviewerid', $u2->id);
         $p1->update();
         $this->setUser($u1);
         $comment = $p1->get_comment_object();
@@ -234,7 +234,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertEquals($u2->id, $message->useridto);
 
         // Post a comment as reviewer in a plan being reviewed. The owner is messaged.
-        $p1->set_reviewerid($u2->id);
+        $p1->set('reviewerid', $u2->id);
         $p1->update();
         $this->setUser($u2);
         $comment = $p1->get_comment_object();
@@ -248,7 +248,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertEquals($u1->id, $message->useridto);
 
         // Post a comment as someone else in a plan being reviewed. The owner and reviewer are messaged.
-        $p1->set_reviewerid($u2->id);
+        $p1->set('reviewerid', $u2->id);
         $p1->update();
         $this->setUser($u3);
         $comment = $p1->get_comment_object();
@@ -264,7 +264,7 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertEquals(core_user::get_noreply_user()->id, $message2->useridfrom);
         $this->assertEquals($u2->id, $message2->useridto);
 
-        $p1->set_reviewerid(null);
+        $p1->set('reviewerid', null);
         $p1->update();
 
         // Test message content.
@@ -277,8 +277,8 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $messages);
         $message = array_pop($messages);
 
-        $expectedurlname = $p1->get_name();
-        $expectedurl = url::plan($p1->get_id());
+        $expectedurlname = $p1->get('name');
+        $expectedurl = url::plan($p1->get('id'));
         $this->assertTrue(strpos($message->fullmessage, 'Hello world!') !== false);
         $this->assertTrue(strpos($message->fullmessagehtml, 'Hello world!') !== false);
         $this->assertEquals(FORMAT_MOODLE, $message->fullmessageformat);
@@ -295,8 +295,8 @@ class core_competency_lib_testcase extends advanced_testcase {
         $this->assertCount(1, $messages);
         $message = array_pop($messages);
 
-        $expectedurlname = $p1->get_name();
-        $expectedurl = url::plan($p1->get_id());
+        $expectedurlname = $p1->get('name');
+        $expectedurl = url::plan($p1->get('id'));
         $this->assertTrue(strpos($message->fullmessage, '<em>Hello world!</em>') !== false);
         $this->assertTrue(strpos($message->fullmessagehtml, '<em>Hello world!</em>') !== false);
         $this->assertEquals(FORMAT_HTML, $message->fullmessageformat);

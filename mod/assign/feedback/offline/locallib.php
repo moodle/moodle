@@ -288,7 +288,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
         } else if ($confirm) {
             $importid = optional_param('importid', 0, PARAM_INT);
             $draftid = optional_param('draftid', 0, PARAM_INT);
-            $encoding = optional_param('encoding', 'utf-8', PARAM_ALPHAEXT);
+            $encoding = optional_param('encoding', 'utf-8', PARAM_ALPHANUMEXT);
             $separator = optional_param('separator', 'comma', PARAM_ALPHA);
             $ignoremodified = optional_param('ignoremodified', 0, PARAM_BOOL);
             $gradeimporter = new assignfeedback_offline_grade_importer($importid, $this->assignment, $encoding, $separator);

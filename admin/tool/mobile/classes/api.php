@@ -29,9 +29,10 @@ use core_plugin_manager;
 use context_system;
 use moodle_url;
 use moodle_exception;
+use lang_string;
 
 /**
- * API exposed by tool_mobile, to be used mostly by external functions.
+ * API exposed by tool_mobile, to be used mostly by external functions and the plugin settings.
  *
  * @copyright  2016 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -47,6 +48,8 @@ class api {
     const LOGIN_VIA_EMBEDDED_BROWSER = 3;
     /** @var int seconds an auto-login key will expire. */
     const LOGIN_KEY_TTL = 60;
+    /** @var str link to the custom strings documentation for the app */
+    const CUSTOM_STRINGS_DOC_URL = 'https://docs.moodle.org/en/Moodle_Mobile_language_strings_customisation';
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -125,6 +128,7 @@ class api {
             'maintenanceenabled' => $CFG->maintenance_enabled,
             'maintenancemessage' => $maintenancemessage,
             'mobilecssurl' => !empty($CFG->mobilecssurl) ? $CFG->mobilecssurl : '',
+            'tool_mobile_disabledfeatures' => get_config('tool_mobile', 'disabledfeatures'),
         );
 
         $typeoflogin = get_config('tool_mobile', 'typeoflogin');
@@ -204,6 +208,8 @@ class api {
 
         if (empty($section) or $section == 'mobileapp') {
             $settings->tool_mobile_forcelogout = get_config('tool_mobile', 'forcelogout');
+            $settings->tool_mobile_customlangstrings = get_config('tool_mobile', 'customlangstrings');
+            $settings->tool_mobile_disabledfeatures = get_config('tool_mobile', 'disabledfeatures');
         }
 
         return $settings;
@@ -247,5 +253,88 @@ class api {
         $iprestriction = getremoteaddr();
         $validuntil = time() + self::LOGIN_KEY_TTL;
         return create_user_key('tool_mobile', $USER->id, null, $iprestriction, $validuntil);
+    }
+
+    /**
+     * Get a list of the Mobile app features.
+     *
+     * @return array array with the features grouped by theirs ubication in the app.
+     * @since Moodle 3.3
+     */
+    public static function get_features_list() {
+        global $CFG;
+
+        $general = new lang_string('general');
+        $mainmenu = new lang_string('mainmenu', 'tool_mobile');
+        $course = new lang_string('course');
+        $modules = new lang_string('managemodules');
+        $user = new lang_string('user');
+        $files = new lang_string('files');
+        $remoteaddons = new lang_string('remoteaddons', 'tool_mobile');
+
+        $availablemods = core_plugin_manager::instance()->get_plugins_of_type('mod');
+        $coursemodules = array();
+        $appsupportedmodules = array('assign', 'book', 'chat', 'choice', 'folder', 'forum', 'glossary', 'imscp', 'label',
+                                        'lti', 'page', 'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki');
+        foreach ($availablemods as $mod) {
+            if (in_array($mod->name, $appsupportedmodules)) {
+                $coursemodules['$mmCourseDelegate_mmaMod' . ucfirst($mod->name)] = $mod->displayname;
+            }
+        }
+
+        $remoteaddonslist = array();
+        $mobileplugins = self::get_plugins_supporting_mobile();
+        foreach ($mobileplugins as $plugin) {
+            $displayname = core_plugin_manager::instance()->plugin_name($plugin['component']) . " - " . $plugin['addon'];
+            $remoteaddonslist['remoteAddOn_' . $plugin['component'] . '_' . $plugin['addon']] = $displayname;
+
+        }
+
+        $features = array(
+            '$mmLoginEmailSignup' => new lang_string('startsignup'),
+            "$mainmenu" => array(
+                '$mmSideMenuDelegate_mmCourses' => new lang_string('mycourses'),
+                '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),
+                '$mmSideMenuDelegate_mmaGrades' => new lang_string('grades', 'grades'),
+                '$mmSideMenuDelegate_mmaCompetency' => new lang_string('myplans', 'tool_lp'),
+                '$mmSideMenuDelegate_mmaNotifications' => new lang_string('notifications', 'message'),
+                '$mmSideMenuDelegate_mmaMessages' => new lang_string('messages', 'message'),
+                '$mmSideMenuDelegate_mmaCalendar' => new lang_string('calendar', 'calendar'),
+                '$mmSideMenuDelegate_mmaFiles' => new lang_string('files'),
+                '$mmSideMenuDelegate_website' => new lang_string('webpage'),
+                '$mmSideMenuDelegate_help' => new lang_string('help'),
+            ),
+            "$course" => array(
+                '$mmCoursesDelegate_search' => new lang_string('search'),
+                '$mmCoursesDelegate_mmaCompetency' => new lang_string('competencies', 'competency'),
+                '$mmCoursesDelegate_mmaParticipants' => new lang_string('participants'),
+                '$mmCoursesDelegate_mmaGrades' => new lang_string('grades', 'grades'),
+                '$mmCoursesDelegate_mmaCourseCompletion' => new lang_string('coursecompletion', 'completion'),
+                '$mmCoursesDelegate_mmaNotes' => new lang_string('notes', 'notes'),
+            ),
+            "$user" => array(
+                '$mmUserDelegate_mmaBadges' => new lang_string('badges', 'badges'),
+                '$mmUserDelegate_mmaCompetency:learningPlan' => new lang_string('competencies', 'competency'),
+                '$mmUserDelegate_mmaCourseCompletion:viewCompletion' => new lang_string('coursecompletion', 'completion'),
+                '$mmUserDelegate_mmaGrades:viewGrades' => new lang_string('grades', 'grades'),
+                '$mmUserDelegate_mmaMessages:sendMessage' => new lang_string('sendmessage', 'message'),
+                '$mmUserDelegate_mmaMessages:addContact' => new lang_string('addcontact', 'message'),
+                '$mmUserDelegate_mmaMessages:blockContact' => new lang_string('blockcontact', 'message'),
+                '$mmUserDelegate_mmaNotes:addNote' => new lang_string('addnewnote', 'notes'),
+                '$mmUserDelegate_picture' => new lang_string('userpic'),
+            ),
+            "$files" => array(
+                'files_privatefiles' => new lang_string('privatefiles'),
+                'files_sitefiles' => new lang_string('sitefiles'),
+                'files_upload' => new lang_string('upload'),
+            ),
+            "$modules" => $coursemodules,
+        );
+
+        if (!empty($remoteaddonslist)) {
+            $features["$remoteaddons"] = $remoteaddonslist;
+        }
+
+        return $features;
     }
 }

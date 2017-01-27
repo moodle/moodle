@@ -35,7 +35,7 @@ if (isguestuser()) {
 $plan = \core_competency\api::read_plan($id);
 $url = new moodle_url('/admin/tool/lp/plan.php', array('id' => $id));
 
-list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($plan->get_userid(), $url, $plan);
+list($title, $subtitle) = \tool_lp\page_helper::setup_for_plan($plan->get('userid'), $url, $plan);
 
 $output = $PAGE->get_renderer('tool_lp');
 echo $output->header();

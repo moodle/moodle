@@ -151,7 +151,7 @@ class template_plans_table extends table_sql {
                   FROM {" . \core_competency\plan::TABLE . "} p
                   JOIN {user} u ON u.id = p.userid
                  WHERE p.templateid = :templateid";
-        $params = array('templateid' => $this->template->get_id());
+        $params = array('templateid' => $this->template->get('id'));
 
         // Add order by if needed.
         if (!$count && $sqlsort = $this->get_sql_sort()) {

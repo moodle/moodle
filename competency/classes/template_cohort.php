@@ -224,8 +224,8 @@ class template_cohort extends persistent {
                 unset($usertemplate->userid);
                 unset($usertemplate->uniqueid);
                 $template = new template(0, $usertemplate);
-                $missingplans[$template->get_id()]['template'] = $template;
-                $missingplans[$template->get_id()]['userids'][] = $userid;
+                $missingplans[$template->get('id')]['template'] = $template;
+                $missingplans[$template->get('id')]['userids'][] = $userid;
             }
         }
         return array_values($missingplans);

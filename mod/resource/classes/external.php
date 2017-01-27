@@ -104,4 +104,111 @@ class mod_resource_external extends external_api {
         );
     }
 
+    /**
+     * Describes the parameters for get_resources_by_courses.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_resources_by_courses_parameters() {
+        return new external_function_parameters (
+            array(
+                'courseids' => new external_multiple_structure(
+                    new external_value(PARAM_INT, 'Course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                ),
+            )
+        );
+    }
+
+    /**
+     * Returns a list of files in a provided list of courses.
+     * If no list is provided all files that the user can view will be returned.
+     *
+     * @param array $courseids course ids
+     * @return array of warnings and files
+     * @since Moodle 3.3
+     */
+    public static function get_resources_by_courses($courseids = array()) {
+
+        $warnings = array();
+        $returnedresources = array();
+
+        $params = array(
+            'courseids' => $courseids,
+        );
+        $params = self::validate_parameters(self::get_resources_by_courses_parameters(), $params);
+
+        $mycourses = array();
+        if (empty($params['courseids'])) {
+            $mycourses = enrol_get_my_courses();
+            $params['courseids'] = array_keys($mycourses);
+        }
+
+        // Ensure there are courseids to loop through.
+        if (!empty($params['courseids'])) {
+
+            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
+
+            // Get the resources in this course, this function checks users visibility permissions.
+            // We can avoid then additional validate_context calls.
+            $resources = get_all_instances_in_courses("resource", $courses);
+            foreach ($resources as $resource) {
+                $context = context_module::instance($resource->coursemodule);
+                // Entry to return.
+                $resource->name = external_format_string($resource->name, $context->id);
+
+                list($resource->intro, $resource->introformat) = external_format_text($resource->intro,
+                                                                $resource->introformat, $context->id, 'mod_resource', 'intro', null);
+                $resource->introfiles = external_util::get_area_files($context->id, 'mod_resource', 'intro', false, false);
+                $resource->contentfiles = external_util::get_area_files($context->id, 'mod_resource', 'content');
+
+                $returnedresources[] = $resource;
+            }
+        }
+
+        $result = array(
+            'resources' => $returnedresources,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the get_resources_by_courses return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_resources_by_courses_returns() {
+        return new external_single_structure(
+            array(
+                'resources' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'id' => new external_value(PARAM_INT, 'Module id'),
+                            'course' => new external_value(PARAM_INT, 'Course id'),
+                            'name' => new external_value(PARAM_RAW, 'Page name'),
+                            'intro' => new external_value(PARAM_RAW, 'Summary'),
+                            'introformat' => new external_format_value('intro', 'Summary format'),
+                            'introfiles' => new external_files('Files in the introduction text'),
+                            'contentfiles' => new external_files('Files in the content'),
+                            'tobemigrated' => new external_value(PARAM_INT, 'Whether this resource was migrated'),
+                            'legacyfiles' => new external_value(PARAM_INT, 'Legacy files flag'),
+                            'legacyfileslast' => new external_value(PARAM_INT, 'Legacy files last control flag'),
+                            'display' => new external_value(PARAM_INT, 'How to display the resource'),
+                            'displayoptions' => new external_value(PARAM_RAW, 'Display options (width, height)'),
+                            'filterfiles' => new external_value(PARAM_INT, 'If filters should be applied to the resource content'),
+                            'revision' => new external_value(PARAM_INT, 'Incremented when after each file changes, to avoid cache'),
+                            'timemodified' => new external_value(PARAM_INT, 'Last time the resource was modified'),
+                            'section' => new external_value(PARAM_INT, 'Course section id'),
+                            'visible' => new external_value(PARAM_INT, 'Module visibility'),
+                            'groupmode' => new external_value(PARAM_INT, 'Group mode'),
+                            'groupingid' => new external_value(PARAM_INT, 'Grouping id'),
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }

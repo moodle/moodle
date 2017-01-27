@@ -22,6 +22,11 @@ if (!defined('ROOTDSE')) {
     define ('ROOTDSE', '');
 }
 
+// Paged results control OID value.
+if (!defined('LDAP_PAGED_RESULTS_CONTROL')) {
+    define ('LDAP_PAGED_RESULTS_CONTROL', '1.2.840.113556.1.4.319');
+}
+
 // Default page size when using LDAP paged results
 if (!defined('LDAP_DEFAULT_PAGESIZE')) {
     define('LDAP_DEFAULT_PAGESIZE', 250);
@@ -452,14 +457,39 @@ function ldap_stripslashes($text) {
 
 
 /**
- * Check if we use LDAP version 3, otherwise the server cannot use them.
+ * Check if we can use paged results (see RFC 2696). We need to use
+ * LDAP version 3 (or later), otherwise the server cannot use them. If
+ * we also pass in a valid LDAP connection handle, we also check
+ * whether the server actually supports them.
  *
  * @param ldapversion integer The LDAP protocol version we use.
+ * @param ldapconnection resource An existing LDAP connection (optional).
  *
  * @return boolean true is paged results can be used, false otherwise.
  */
-function ldap_paged_results_supported($ldapversion) {
-    if ((int)$ldapversion === 3) {
+function ldap_paged_results_supported($ldapversion, $ldapconnection = null) {
+    if ((int)$ldapversion < 3) {
+        // Minimun required version: LDAP v3.
+        return false;
+    }
+
+    if ($ldapconnection === null) {
+        // Can't verify it, so assume it isn't supported.
+        return false;
+    }
+
+    // Connect to the rootDSE and get the supported controls.
+    $sr = ldap_read($ldapconnection, ROOTDSE, '(objectClass=*)', array('supportedControl'));
+    if (!$sr) {
+        return false;
+    }
+
+    $entries = ldap_get_entries_moodle($ldapconnection, $sr);
+    if (empty($entries)) {
+        return false;
+    }
+    $info = array_change_key_case($entries[0], CASE_LOWER);
+    if (isset($info['supportedcontrol']) && in_array(LDAP_PAGED_RESULTS_CONTROL, $info['supportedcontrol'])) {
         return true;
     }
 

@@ -1412,7 +1412,7 @@ class mod_glossary_external extends external_api {
         return new external_function_parameters(array(
             'glossaryid' => new external_value(PARAM_INT, 'Glossary id'),
             'concept' => new external_value(PARAM_TEXT, 'Glossary concept'),
-            'definition' => new external_value(PARAM_TEXT, 'Glossary concept definition'),
+            'definition' => new external_value(PARAM_RAW, 'Glossary concept definition'),
             'definitionformat' => new external_format_value('definition'),
             'options' => new external_multiple_structure (
                 new external_single_structure(

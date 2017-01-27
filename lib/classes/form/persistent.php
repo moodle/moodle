@@ -17,12 +17,12 @@
 /**
  * Persistent form abstract.
  *
- * @package    tool_lp
+ * @package    core
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace tool_lp\form;
+namespace core\form;
 defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
@@ -47,7 +47,7 @@ require_once($CFG->libdir.'/formslib.php');
  * You may exclude some fields from the validation should your form include other
  * properties such as files. To do so use the $foreignfields property.
  *
- * @package    tool_lp
+ * @package    core
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -62,7 +62,7 @@ abstract class persistent extends moodleform {
     /** @var array Fields to remove from the persistent validation. */
     protected static $foreignfields = array();
 
-    /** @var \tool_lp\peristent Reference to the persistent. */
+    /** @var \core\peristent Reference to the persistent. */
     private $persistent = null;
 
     /**
@@ -85,7 +85,7 @@ abstract class persistent extends moodleform {
                                 $attributes = null, $editable = true) {
         if (empty(static::$persistentclass)) {
             throw new coding_exception('Static property $persistentclass must be set.');
-        } else if (!is_subclass_of(static::$persistentclass, 'core_competency\\persistent')) {
+        } else if (!is_subclass_of(static::$persistentclass, 'core\\persistent')) {
             throw new coding_exception('Static property $persistentclass is not valid.');
         } else if (!array_key_exists('persistent', $customdata)) {
             throw new coding_exception('The custom data \'persistent\' key must be set, even if it is null.');
@@ -132,6 +132,45 @@ abstract class persistent extends moodleform {
         }
 
         return $data;
+    }
+
+    /**
+     * After definition hook.
+     *
+     * Automatically try to set the types of simple fields using the persistent properties definition.
+     * This only applies to hidden, text and url types. Groups are also ignored as they are most likely custom.
+     *
+     * @return void
+     */
+    protected function after_definition() {
+        parent::after_definition();
+        $mform = $this->_form;
+
+        $class = static::$persistentclass;
+        $properties = $class::properties_definition();
+
+        foreach ($mform->_elements as $element) {
+            $name = $element->getName();
+
+            if (isset($mform->_types[$name])) {
+                // We already have a PARAM_* type for this field.
+                continue;
+
+            } else if (!isset($properties[$name]) || in_array($name, static::$fieldstoremove)
+                    || in_array($name, static::$foreignfields)) {
+                // Ignoring foreign and unknown fields.
+                continue;
+            }
+
+            // Set the type on the element.
+            switch ($element->getType()) {
+                case 'hidden':
+                case 'text':
+                case 'url':
+                    $mform->setType($name, $properties[$name]['type']);
+                    break;
+            }
+        }
     }
 
     /**
@@ -215,7 +254,7 @@ abstract class persistent extends moodleform {
             $data = static::convert_fields($data);
 
             // Ensure that the ID is set.
-            $data->id = $this->persistent->get_id();
+            $data->id = $this->persistent->get('id');
         }
         return $data;
     }
@@ -223,7 +262,7 @@ abstract class persistent extends moodleform {
     /**
      * Return the persistent object associated with this form instance.
      *
-     * @return tool_lp\persistent
+     * @return core\persistent
      */
     final protected function get_persistent() {
         return $this->persistent;

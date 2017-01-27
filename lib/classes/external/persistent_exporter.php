@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Abstract class for core_competency objects saved to the DB.
+ * Exporter based on persistent.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_competency\external;
+namespace core\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
@@ -29,23 +29,25 @@ require_once($CFG->libdir . '/externallib.php');
 use coding_exception;
 
 /**
- * An extended version of the persistent class with a default implementation of export
+ * Abstract exporter based on the persistent model.
+ *
+ * This automatically fills in the properties of the exporter from those of the persistent.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class persistent_exporter extends exporter {
 
-    /** @var \core_competency\persistent The persistent object we will export. */
+    /** @var \core\persistent The persistent object we will export. */
     protected $persistent = null;
 
     /**
      * Constructor - saves the persistent object, and the related objects.
      *
-     * @param \core_competency\persistent $persistent The persistent object to export.
+     * @param \core\persistent $persistent The persistent object to export.
      * @param array $related - An optional list of pre-loaded objects related to this persistent.
      */
-    public final function __construct(\core_competency\persistent $persistent, $related = array()) {
+    public function __construct(\core\persistent $persistent, $related = array()) {
         $classname = static::define_class();
         if (!$persistent instanceof $classname) {
             throw new coding_exception('Invalid type for persistent. ' .

@@ -53,21 +53,21 @@ class competency_user_competency_rated_in_course extends base {
      * @return self
      */
     public static function create_from_user_competency_course(user_competency_course $usercompetencycourse) {
-        if (!$usercompetencycourse->get_id()) {
+        if (!$usercompetencycourse->get('id')) {
             throw new \coding_exception('The user competency course ID must be set.');
         }
 
         $params = array(
-            'objectid' => $usercompetencycourse->get_id(),
-            'relateduserid' => $usercompetencycourse->get_userid(),
+            'objectid' => $usercompetencycourse->get('id'),
+            'relateduserid' => $usercompetencycourse->get('userid'),
             'other' => array(
-                'competencyid' => $usercompetencycourse->get_competencyid(),
-                'grade' => $usercompetencycourse->get_grade()
+                'competencyid' => $usercompetencycourse->get('competencyid'),
+                'grade' => $usercompetencycourse->get('grade')
             )
         );
-        $coursecontext = context_course::instance($usercompetencycourse->get_courseid());
+        $coursecontext = context_course::instance($usercompetencycourse->get('courseid'));
         $params['contextid'] = $coursecontext->id;
-        $params['courseid'] = $usercompetencycourse->get_courseid();
+        $params['courseid'] = $usercompetencycourse->get('courseid');
 
         $event = static::create($params);
         $event->add_record_snapshot(user_competency_course::TABLE, $usercompetencycourse->to_record());

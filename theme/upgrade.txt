@@ -1,6 +1,13 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 3.3 ===
+
+* As boost-based themes no longer use the moodle-core-popuphelp help popups, the javascript
+  setup for this module have been moved from core standard_head_html to the bootstrapbase
+  renderer. If your theme needs this javascript you will need to ensure the bootstrap renderer
+  is called, or require the JS yourself
+
 === 3.2 ===
 
 * Removed themes: base, canvas
