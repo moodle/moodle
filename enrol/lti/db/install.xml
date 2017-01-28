@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/lti/db" VERSION="20160809" COMMENT="XMLDB file for Moodle enrol/lti"
+<XMLDB PATH="enrol/lti/db" VERSION="20170113" COMMENT="XMLDB file for Moodle enrol/lti"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -116,7 +116,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="consumerid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="value" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="value" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="expires" TYPE="int" LENGTH="10"  NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>

@@ -799,10 +799,12 @@ class file_storage {
      * @param string $sort A fragment of SQL to use for sorting
      * @param bool $includedirs whether or not include directories
      * @param int $updatedsince return files updated since this time
+     * @param int $limitfrom return a subset of records, starting at this point (optional).
+     * @param int $limitnum return a subset comprising this many records in total (optional, required if $limitfrom is set).
      * @return stored_file[] array of stored_files indexed by pathanmehash
      */
     public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "itemid, filepath, filename",
-                                    $includedirs = true, $updatedsince = 0) {
+            $includedirs = true, $updatedsince = 0, $limitfrom = 0, $limitnum = 0) {
         global $DB;
 
         list($areasql, $conditions) = $DB->get_in_or_equal($filearea, SQL_PARAMS_NAMED);
@@ -824,6 +826,16 @@ class file_storage {
             $updatedsincesql = 'AND f.timemodified > :time';
         }
 
+        $includedirssql = '';
+        if (!$includedirs) {
+            $includedirssql = 'AND f.filename != :dot';
+            $conditions['dot'] = '.';
+        }
+
+        if ($limitfrom && !$limitnum) {
+            throw new coding_exception('If specifying $limitfrom you must also specify $limitnum');
+        }
+
         $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
                   FROM {files} f
              LEFT JOIN {files_reference} r
@@ -831,6 +843,7 @@ class file_storage {
                  WHERE f.contextid = :contextid
                        AND f.component = :component
                        AND f.filearea $areasql
+                       $includedirssql
                        $updatedsincesql
                        $itemidsql";
         if (!empty($sort)) {
@@ -838,11 +851,8 @@ class file_storage {
         }
 
         $result = array();
-        $filerecords = $DB->get_records_sql($sql, $conditions);
+        $filerecords = $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
         foreach ($filerecords as $filerecord) {
-            if (!$includedirs and $filerecord->filename === '.') {
-                continue;
-            }
             $result[$filerecord->pathnamehash] = $this->get_file_instance($filerecord);
         }
         return $result;

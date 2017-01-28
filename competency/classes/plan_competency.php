@@ -117,8 +117,8 @@ class plan_competency extends persistent {
      * @return void
      */
     protected function before_validate() {
-        if (($this->get_id() && $this->get_sortorder() === null) || !$this->get_id()) {
-            $this->set_sortorder($this->count_records(array('planid' => $this->get_planid())));
+        if (($this->get('id') && $this->get('sortorder') === null) || !$this->get('id')) {
+            $this->set('sortorder', $this->count_records(array('planid' => $this->get('planid'))));
         }
     }
 
@@ -162,7 +162,7 @@ class plan_competency extends persistent {
 
         $table = '{' . self::TABLE . '}';
         $sql = "UPDATE $table SET sortorder = sortorder -1  WHERE planid = ? AND sortorder > ?";
-        $DB->execute($sql, array($this->get_planid(), $this->get_sortorder()));
+        $DB->execute($sql, array($this->get('planid'), $this->get('sortorder')));
     }
 
     /**

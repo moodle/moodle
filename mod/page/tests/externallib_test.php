@@ -110,4 +110,126 @@ class mod_page_external_testcase extends externallib_advanced_testcase {
         }
 
     }
+
+    /**
+     * Test test_mod_page_get_pages_by_courses
+     */
+    public function test_mod_page_get_pages_by_courses() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id);
+
+        // First page.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $page1 = self::getDataGenerator()->create_module('page', $record);
+
+        // Second page.
+        $record = new stdClass();
+        $record->course = $course2->id;
+        $page2 = self::getDataGenerator()->create_module('page', $record);
+
+        // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
+        $enrol = enrol_get_plugin('manual');
+        $enrolinstances = enrol_get_instances($course2->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance2 = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance2, $student->id, $studentrole->id);
+
+        self::setUser($student);
+
+        $returndescription = mod_page_external::get_pages_by_courses_returns();
+
+        // Create what we expect to be returned when querying the two courses.
+        $expectedfields = array('id', 'course', 'name', 'intro', 'introformat', 'introfiles',
+                                'content', 'contentformat', 'contentfiles', 'legacyfiles', 'legacyfileslast', 'display',
+                                'displayoptions', 'revision', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
+
+        // Add expected coursemodule and data.
+        $page1->coursemodule = $page1->cmid;
+        $page1->introformat = 1;
+        $page1->contentformat = 1;
+        $page1->section = 0;
+        $page1->visible = true;
+        $page1->groupmode = 0;
+        $page1->groupingid = 0;
+        $page1->introfiles = [];
+        $page1->contentfiles = [];
+
+        $page2->coursemodule = $page2->cmid;
+        $page2->introformat = 1;
+        $page2->contentformat = 1;
+        $page2->section = 0;
+        $page2->visible = true;
+        $page2->groupmode = 0;
+        $page2->groupingid = 0;
+        $page2->introfiles = [];
+        $page2->contentfiles = [];
+
+        foreach ($expectedfields as $field) {
+            $expected1[$field] = $page1->{$field};
+            $expected2[$field] = $page2->{$field};
+        }
+
+        $expectedpages = array($expected2, $expected1);
+
+        // Call the external function passing course ids.
+        $result = mod_page_external::get_pages_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertEquals($expectedpages, $result['pages']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Call the external function without passing course id.
+        $result = mod_page_external::get_pages_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Add a file to the intro.
+        $filename = "file.txt";
+        $filerecordinline = array(
+            'contextid' => context_module::instance($page2->cmid)->id,
+            'component' => 'mod_page',
+            'filearea'  => 'intro',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $timepost = time();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        $result = mod_page_external::get_pages_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertCount(1, $result['pages'][0]['introfiles']);
+        $this->assertEquals($filename, $result['pages'][0]['introfiles'][0]['filename']);
+
+        // Unenrol user from second course.
+        $enrol->unenrol_user($instance2, $student->id);
+        array_shift($expectedpages);
+
+        // Call the external function without passing course id.
+        $result = mod_page_external::get_pages_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+        $this->assertEquals($expectedpages, $result['pages']);
+
+        // Call for the second course we unenrolled the user from, expected warning.
+        $result = mod_page_external::get_pages_by_courses(array($course2->id));
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('1', $result['warnings'][0]['warningcode']);
+        $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
+    }
 }

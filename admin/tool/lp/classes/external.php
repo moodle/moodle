@@ -42,12 +42,12 @@ use external_multiple_structure;
 use invalid_parameter_exception;
 use required_capability_exception;
 
-use tool_lp\external\cohort_summary_exporter;
+use core_cohort\external\cohort_summary_exporter;
 use tool_lp\external\competency_path_exporter;
 use tool_lp\external\competency_summary_exporter;
 use tool_lp\external\course_competency_statistics_exporter;
-use tool_lp\external\course_module_summary_exporter;
-use tool_lp\external\course_summary_exporter;
+use core_course\external\course_module_summary_exporter;
+use core_course\external\course_summary_exporter;
 use tool_lp\external\template_statistics_exporter;
 use tool_lp\external\user_competency_summary_exporter;
 use tool_lp\external\user_competency_summary_in_course_exporter;
@@ -66,7 +66,7 @@ use core_competency\external\template_exporter;
 use core_competency\external\user_competency_course_exporter;
 use core_competency\external\user_competency_exporter;
 use core_competency\external\user_competency_plan_exporter;
-use core_competency\external\user_summary_exporter;
+use core_user\external\user_summary_exporter;
 
 /**
  * This is the external API for this tool.

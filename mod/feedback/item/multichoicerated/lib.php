@@ -312,6 +312,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
             foreach ($options as $idx => $label) {
                 $objs[] = ['radio', $inputname, '', $label, $idx];
             }
+            // Span to hold the element id. The id is used for drag and drop reordering.
+            $objs[] = ['static', '', '', html_writer::span('', '', ['id' => 'feedback_item_' . $item->id])];
             $separator = $info->horizontal ? ' ' : '<br>';
             $class .= ' multichoicerated-' . ($info->horizontal ? 'horizontal' : 'vertical');
             $el = $form->add_form_group_element($item, 'group_'.$inputname, $name, $objs, $separator, $class);

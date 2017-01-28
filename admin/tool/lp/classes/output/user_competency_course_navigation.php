@@ -27,8 +27,9 @@ use renderable;
 use renderer_base;
 use templatable;
 use context_course;
-use \core_competency\external\competency_exporter;
-use \core_competency\external\user_summary_exporter;
+use core_competency\external\competency_exporter;
+use core_user\external\user_summary_exporter;
+use core_competency\external\performance_helper;
 use stdClass;
 
 /**
@@ -118,14 +119,9 @@ class user_competency_course_navigation implements renderable, templatable {
 
         $coursecompetencies = \core_competency\api::list_course_competencies($this->courseid);
         $data->competencies = array();
-        $contextcache = array();
+        $helper = new performance_helper();
         foreach ($coursecompetencies as $coursecompetency) {
-            $frameworkid = $coursecompetency['competency']->get_competencyframeworkid();
-            if (!isset($contextcache[$frameworkid])) {
-                $contextcache[$frameworkid] = $coursecompetency['competency']->get_context();
-            }
-            $context = $contextcache[$frameworkid];
-            $coursecompetencycontext = $context;
+            $coursecompetencycontext = $helper->get_context_from_competency($coursecompetency['competency']);
             $exporter = new competency_exporter($coursecompetency['competency'], array('context' => $coursecompetencycontext));
             $competency = $exporter->export($output);
             if ($competency->id == $this->competencyid) {

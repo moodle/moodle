@@ -603,25 +603,25 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $f1 = $lpg->create_framework(array('scaleid' => $s1->id));
         $f2 = $lpg->create_framework(array('scaleid' => $s1->id));
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id')));
 
-        $this->assertEquals($s1->id, $f1->get_scaleid());
+        $this->assertEquals($s1->id, $f1->get('scaleid'));
 
         // Make the scale of f2 being used.
-        $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2->get_id()));
+        $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2->get('id')));
 
         // Changing the framework where the scale is not used.
-        $result = $this->update_competency_framework($f1->get_id(), 3, true);
+        $result = $this->update_competency_framework($f1->get('id'), 3, true);
 
-        $f1 = new \core_competency\competency_framework($f1->get_id());
-        $this->assertEquals($this->scale3->id, $f1->get_scaleid());
+        $f1 = new \core_competency\competency_framework($f1->get('id'));
+        $this->assertEquals($this->scale3->id, $f1->get('scaleid'));
 
         // Changing the framework where the scale is used.
         try {
-            $result = $this->update_competency_framework($f2->get_id(), 4, true);
+            $result = $this->update_competency_framework($f2->get('id'), 4, true);
             $this->fail('The scale cannot be changed once used.');
-        } catch (\core_competency\invalid_persistent_exception $e) {
+        } catch (\core\invalid_persistent_exception $e) {
             $this->assertRegexp('/scaleid/', $e->getMessage());
         }
     }
@@ -699,9 +699,9 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(2, $result);
         $f = (object) array_shift($result);
-        $this->assertEquals($framework1->get_id(), $f->id);
+        $this->assertEquals($framework1->get('id'), $f->id);
         $f = (object) array_shift($result);
-        $this->assertEquals($framework2->get_id(), $f->id);
+        $this->assertEquals($framework2->get('id'), $f->id);
 
         // Search on ID number.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
@@ -709,7 +709,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(1, $result);
         $f = (object) array_shift($result);
-        $this->assertEquals($framework2->get_id(), $f->id);
+        $this->assertEquals($framework2->get('id'), $f->id);
 
         // Search on shortname.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
@@ -717,7 +717,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(external::list_competency_frameworks_returns(), $result);
         $this->assertCount(1, $result);
         $f = (object) array_shift($result);
-        $this->assertEquals($framework1->get_id(), $f->id);
+        $this->assertEquals($framework1->get('id'), $f->id);
 
         // No match.
         $result = external::list_competency_frameworks('shortname', 'ASC', 0, 10,
@@ -768,7 +768,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
     public function test_create_competency_with_read_permissions() {
         $framework = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_framework();
         $this->setUser($this->user);
-        $competency = $this->create_competency(1, $framework->get_id());
+        $competency = $this->create_competency(1, $framework->get('id'));
     }
 
     /**
@@ -1077,17 +1077,17 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $f1 = $lpg->create_framework();
         $f2 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id(), 'shortname' => 'A'));
-        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c4 = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
-        $c5 = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id'), 'shortname' => 'A'));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id')));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id')));
 
-        $result = external::count_competencies(array(array('column' => 'competencyframeworkid', 'value' => $f2->get_id())));
+        $result = external::count_competencies(array(array('column' => 'competencyframeworkid', 'value' => $f2->get('id'))));
         $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
         $this->assertEquals(2, $result);
 
-        $result = external::count_competencies(array(array('column' => 'competencyframeworkid', 'value' => $f1->get_id())));
+        $result = external::count_competencies(array(array('column' => 'competencyframeworkid', 'value' => $f1->get('id'))));
         $result = external_api::clean_returnvalue(external::count_competencies_returns(), $result);
         $this->assertEquals(3, $result);
 
@@ -1206,6 +1206,11 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->user);
 
         $plan2 = $this->create_plan(3, $this->user->id, 0, plan::STATUS_DRAFT, 0);
+
+        // Basic update on the plan.
+        $this->assertNotEquals('Updated plan 2 name', $plan2->name);
+        $plan2 = external::update_plan(['id' => $plan2->id, 'name' => 'Updated plan 2 name']);
+        $this->assertEquals('Updated plan 2 name', $plan2->name);
 
         try {
             $plan3 = $this->create_plan(4, $this->user->id, 0, plan::STATUS_ACTIVE, 0);
@@ -1498,24 +1503,24 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $user = $dg->create_user();
         $plan = $lpg->create_plan(array('userid' => $user->id));
         $framework = $lpg->create_framework();
-        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $pc1 = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $comp1->get_id()));
-        $pc2 = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $comp2->get_id()));
-        $pc3 = $lpg->create_plan_competency(array('planid' => $plan->get_id(), 'competencyid' => $comp3->get_id()));
+        $comp1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $comp2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $comp3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $pc1 = $lpg->create_plan_competency(array('planid' => $plan->get('id'), 'competencyid' => $comp1->get('id')));
+        $pc2 = $lpg->create_plan_competency(array('planid' => $plan->get('id'), 'competencyid' => $comp2->get('id')));
+        $pc3 = $lpg->create_plan_competency(array('planid' => $plan->get('id'), 'competencyid' => $comp3->get('id')));
 
         // Complete the plan to generate user_competency_plan entries.
         api::complete_plan($plan);
 
         // Confirm the data we have.
-        $this->assertEquals(3, plan_competency::count_records(array('planid' => $plan->get_id())));
-        $this->assertEquals(3, user_competency_plan::count_records(array('planid' => $plan->get_id(), 'userid' => $user->id)));
+        $this->assertEquals(3, plan_competency::count_records(array('planid' => $plan->get('id'))));
+        $this->assertEquals(3, user_competency_plan::count_records(array('planid' => $plan->get('id'), 'userid' => $user->id)));
 
         // Delete the plan now.
-        api::delete_plan($plan->get_id());
-        $this->assertEquals(0, plan_competency::count_records(array('planid' => $plan->get_id())));
-        $this->assertEquals(0, user_competency_plan::count_records(array('planid' => $plan->get_id(), 'userid' => $user->id)));
+        api::delete_plan($plan->get('id'));
+        $this->assertEquals(0, plan_competency::count_records(array('planid' => $plan->get('id'))));
+        $this->assertEquals(0, user_competency_plan::count_records(array('planid' => $plan->get('id'), 'userid' => $user->id)));
     }
 
     public function test_list_plan_competencies() {
@@ -1527,37 +1532,37 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $f1 = $lpg->create_framework();
         $f2 = $lpg->create_framework();
 
-        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c1c = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
-        $c2a = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
-        $c2b = $lpg->create_competency(array('competencyframeworkid' => $f2->get_id()));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c1c = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id')));
+        $c2b = $lpg->create_competency(array('competencyframeworkid' => $f2->get('id')));
 
         $tpl = $lpg->create_template();
-        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1a->get_id()));
-        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1c->get_id()));
-        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c2b->get_id()));
+        $lpg->create_template_competency(array('templateid' => $tpl->get('id'), 'competencyid' => $c1a->get('id')));
+        $lpg->create_template_competency(array('templateid' => $tpl->get('id'), 'competencyid' => $c1c->get('id')));
+        $lpg->create_template_competency(array('templateid' => $tpl->get('id'), 'competencyid' => $c2b->get('id')));
 
-        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id()));
+        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get('id')));
 
-        $uc1a = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1a->get_id(),
+        $uc1a = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1a->get('id'),
             'status' => user_competency::STATUS_IN_REVIEW, 'reviewerid' => $this->creator->id));
-        $uc1b = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1b->get_id()));
-        $uc2b = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2b->get_id(),
+        $uc1b = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1b->get('id')));
+        $uc2b = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c2b->get('id'),
             'grade' => 2, 'proficiency' => 1));
-        $ux1a = $lpg->create_user_competency(array('userid' => $this->creator->id, 'competencyid' => $c1a->get_id()));
+        $ux1a = $lpg->create_user_competency(array('userid' => $this->creator->id, 'competencyid' => $c1a->get('id')));
 
-        $result = external::list_plan_competencies($plan->get_id());
+        $result = external::list_plan_competencies($plan->get('id'));
         $result = external::clean_returnvalue(external::list_plan_competencies_returns(), $result);
 
         $this->assertCount(3, $result);
-        $this->assertEquals($c1a->get_id(), $result[0]['competency']['id']);
+        $this->assertEquals($c1a->get('id'), $result[0]['competency']['id']);
         $this->assertEquals($this->user->id, $result[0]['usercompetency']['userid']);
         $this->assertArrayNotHasKey('usercompetencyplan', $result[0]);
-        $this->assertEquals($c1c->get_id(), $result[1]['competency']['id']);
+        $this->assertEquals($c1c->get('id'), $result[1]['competency']['id']);
         $this->assertEquals($this->user->id, $result[1]['usercompetency']['userid']);
         $this->assertArrayNotHasKey('usercompetencyplan', $result[1]);
-        $this->assertEquals($c2b->get_id(), $result[2]['competency']['id']);
+        $this->assertEquals($c2b->get('id'), $result[2]['competency']['id']);
         $this->assertEquals($this->user->id, $result[2]['usercompetency']['userid']);
         $this->assertArrayNotHasKey('usercompetencyplan', $result[2]);
         $this->assertEquals(user_competency::STATUS_IN_REVIEW, $result[0]['usercompetency']['status']);
@@ -1566,29 +1571,29 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, $result[2]['usercompetency']['proficiency']);
 
         // Check the return values when the plan status is complete.
-        $completedplan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id(),
+        $completedplan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get('id'),
                 'status' => plan::STATUS_COMPLETE));
 
-        $uc1a = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c1a->get_id(),
-                'planid' => $completedplan->get_id()));
-        $uc1b = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c1c->get_id(),
-                'planid' => $completedplan->get_id()));
-        $uc2b = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c2b->get_id(),
-                'planid' => $completedplan->get_id(), 'grade' => 2, 'proficiency' => 1));
-        $ux1a = $lpg->create_user_competency_plan(array('userid' => $this->creator->id, 'competencyid' => $c1a->get_id(),
-                'planid' => $completedplan->get_id()));
+        $uc1a = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c1a->get('id'),
+                'planid' => $completedplan->get('id')));
+        $uc1b = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c1c->get('id'),
+                'planid' => $completedplan->get('id')));
+        $uc2b = $lpg->create_user_competency_plan(array('userid' => $this->user->id, 'competencyid' => $c2b->get('id'),
+                'planid' => $completedplan->get('id'), 'grade' => 2, 'proficiency' => 1));
+        $ux1a = $lpg->create_user_competency_plan(array('userid' => $this->creator->id, 'competencyid' => $c1a->get('id'),
+                'planid' => $completedplan->get('id')));
 
-        $result = external::list_plan_competencies($completedplan->get_id());
+        $result = external::list_plan_competencies($completedplan->get('id'));
         $result = external::clean_returnvalue(external::list_plan_competencies_returns(), $result);
 
         $this->assertCount(3, $result);
-        $this->assertEquals($c1a->get_id(), $result[0]['competency']['id']);
+        $this->assertEquals($c1a->get('id'), $result[0]['competency']['id']);
         $this->assertEquals($this->user->id, $result[0]['usercompetencyplan']['userid']);
         $this->assertArrayNotHasKey('usercompetency', $result[0]);
-        $this->assertEquals($c1c->get_id(), $result[1]['competency']['id']);
+        $this->assertEquals($c1c->get('id'), $result[1]['competency']['id']);
         $this->assertEquals($this->user->id, $result[1]['usercompetencyplan']['userid']);
         $this->assertArrayNotHasKey('usercompetency', $result[1]);
-        $this->assertEquals($c2b->get_id(), $result[2]['competency']['id']);
+        $this->assertEquals($c2b->get('id'), $result[2]['competency']['id']);
         $this->assertEquals($this->user->id, $result[2]['usercompetencyplan']['userid']);
         $this->assertArrayNotHasKey('usercompetency', $result[2]);
         $this->assertEquals(null, $result[1]['usercompetencyplan']['grade']);
@@ -1637,16 +1642,16 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         // Create a competency.
         $framework = $lpg->create_framework();
-        $competency = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $competency = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
 
         // Add the competency.
-        external::add_competency_to_template($template->id, $competency->get_id());
+        external::add_competency_to_template($template->id, $competency->get('id'));
 
         // Check that it was added.
         $this->assertEquals(1, external::count_competencies_in_template($template->id));
 
         // Check that we can remove the competency.
-        external::remove_competency_from_template($template->id, $competency->get_id());
+        external::remove_competency_from_template($template->id, $competency->get('id'));
 
         // Check that it was removed.
         $this->assertEquals(0, external::count_competencies_in_template($template->id));
@@ -1657,7 +1662,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         // Check we can not remove the competency now.
         try {
-            external::add_competency_to_template($template->id, $competency->get_id());
+            external::add_competency_to_template($template->id, $competency->get('id'));
             $this->fail('Exception expected due to not permissions to manage template competencies');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -1698,7 +1703,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
             'competencyid' => $competency4->id
         ));
 
-        $this->assertEquals(2, $templcomp4->get_sortorder());
+        $this->assertEquals(2, $templcomp4->get('sortorder'));
 
         // This is a move up.
         external::reorder_template_competency($template->id, $competency4->id, $competency2->id);
@@ -2228,68 +2233,68 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
         $framework2 = $lpg->create_framework();
-        $competency1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $competency2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $competency3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $competency4 = $lpg->create_competency(array('competencyframeworkid' => $framework2->get_id()));
+        $competency1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $competency2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $competency3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $competency4 = $lpg->create_competency(array('competencyframeworkid' => $framework2->get('id')));
 
         // The lower one always as competencyid.
-        $result = external::add_related_competency($competency1->get_id(), $competency2->get_id());
+        $result = external::add_related_competency($competency1->get('id'), $competency2->get('id'));
         $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertTrue($DB->record_exists_select(
             related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
             array(
-                'cid' => $competency1->get_id(),
-                'rid' => $competency2->get_id()
+                'cid' => $competency1->get('id'),
+                'rid' => $competency2->get('id')
             )
         ));
         $this->assertFalse($DB->record_exists_select(
             related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
             array(
-                'cid' => $competency2->get_id(),
-                'rid' => $competency1->get_id()
+                'cid' => $competency2->get('id'),
+                'rid' => $competency1->get('id')
             )
         ));
 
-        $result = external::add_related_competency($competency3->get_id(), $competency1->get_id());
+        $result = external::add_related_competency($competency3->get('id'), $competency1->get('id'));
         $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertTrue($DB->record_exists_select(
             related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
             array(
-                'cid' => $competency1->get_id(),
-                'rid' => $competency3->get_id()
+                'cid' => $competency1->get('id'),
+                'rid' => $competency3->get('id')
             )
         ));
         $this->assertFalse($DB->record_exists_select(
             related_competency::TABLE, 'competencyid = :cid AND relatedcompetencyid = :rid',
             array(
-                'cid' => $competency3->get_id(),
-                'rid' => $competency1->get_id()
+                'cid' => $competency3->get('id'),
+                'rid' => $competency1->get('id')
             )
         ));
 
         // We can not allow a duplicate relation, not even in the other direction.
         $this->assertEquals(1, $DB->count_records_select(related_competency::TABLE,
             'competencyid = :cid AND relatedcompetencyid = :rid',
-            array('cid' => $competency1->get_id(), 'rid' => $competency2->get_id())));
+            array('cid' => $competency1->get('id'), 'rid' => $competency2->get('id'))));
         $this->assertEquals(0, $DB->count_records_select(related_competency::TABLE,
             'competencyid = :cid AND relatedcompetencyid = :rid',
-            array('rid' => $competency1->get_id(), 'cid' => $competency2->get_id())));
-        $result = external::add_related_competency($competency2->get_id(), $competency1->get_id());
+            array('rid' => $competency1->get('id'), 'cid' => $competency2->get('id'))));
+        $result = external::add_related_competency($competency2->get('id'), $competency1->get('id'));
         $result = external_api::clean_returnvalue(external::add_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertEquals(1, $DB->count_records_select(related_competency::TABLE,
             'competencyid = :cid AND relatedcompetencyid = :rid',
-            array('cid' => $competency1->get_id(), 'rid' => $competency2->get_id())));
+            array('cid' => $competency1->get('id'), 'rid' => $competency2->get('id'))));
         $this->assertEquals(0, $DB->count_records_select(related_competency::TABLE,
             'competencyid = :cid AND relatedcompetencyid = :rid',
-            array('rid' => $competency1->get_id(), 'cid' => $competency2->get_id())));
+            array('rid' => $competency1->get('id'), 'cid' => $competency2->get('id'))));
 
         // Check that we cannot create links across frameworks.
         try {
-            external::add_related_competency($competency1->get_id(), $competency4->get_id());
+            external::add_related_competency($competency1->get('id'), $competency4->get('id'));
             $this->fail('Exception expected due mis-use of shared competencies');
         } catch (invalid_persistent_exception $e) {
             // Yay!
@@ -2300,7 +2305,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         // Check we can not add the related competency now.
         try {
-            external::add_related_competency($competency1->get_id(), $competency3->get_id());
+            external::add_related_competency($competency1->get('id'), $competency3->get('id'));
             $this->fail('Exception expected due to not permissions to manage template competencies');
         } catch (moodle_exception $e) {
             $this->assertEquals('nopermissions', $e->errorcode);
@@ -2318,27 +2323,27 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $rc1 = $lpg->create_related_competency(array('competencyid' => $c1->get_id(), 'relatedcompetencyid' => $c2->get_id()));
-        $rc2 = $lpg->create_related_competency(array('competencyid' => $c2->get_id(), 'relatedcompetencyid' => $c3->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $rc1 = $lpg->create_related_competency(array('competencyid' => $c1->get('id'), 'relatedcompetencyid' => $c2->get('id')));
+        $rc2 = $lpg->create_related_competency(array('competencyid' => $c2->get('id'), 'relatedcompetencyid' => $c3->get('id')));
 
         $this->assertEquals(2, related_competency::count_records());
 
         // Returns false when the relation does not exist.
-        $result = external::remove_related_competency($c1->get_id(), $c3->get_id());
+        $result = external::remove_related_competency($c1->get('id'), $c3->get('id'));
         $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
         $this->assertFalse($result);
 
         // Returns true on success.
-        $result = external::remove_related_competency($c2->get_id(), $c3->get_id());
+        $result = external::remove_related_competency($c2->get('id'), $c3->get('id'));
         $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertEquals(1, related_competency::count_records());
 
         // We don't need to specify competencyid and relatedcompetencyid in the right order.
-        $result = external::remove_related_competency($c2->get_id(), $c1->get_id());
+        $result = external::remove_related_competency($c2->get('id'), $c1->get('id'));
         $result = external_api::clean_returnvalue(external::remove_related_competency_returns(), $result);
         $this->assertTrue($result);
         $this->assertEquals(0, related_competency::count_records());
@@ -2354,18 +2359,18 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
 
         // We have 1-2, 1-3, 2-4, and no relation between 2-3 nor 1-4 nor 5.
-        $rc12 = $lpg->create_related_competency(array('competencyid' => $c1->get_id(), 'relatedcompetencyid' => $c2->get_id()));
-        $rc13 = $lpg->create_related_competency(array('competencyid' => $c1->get_id(), 'relatedcompetencyid' => $c3->get_id()));
-        $rc24 = $lpg->create_related_competency(array('competencyid' => $c2->get_id(), 'relatedcompetencyid' => $c4->get_id()));
+        $rc12 = $lpg->create_related_competency(array('competencyid' => $c1->get('id'), 'relatedcompetencyid' => $c2->get('id')));
+        $rc13 = $lpg->create_related_competency(array('competencyid' => $c1->get('id'), 'relatedcompetencyid' => $c3->get('id')));
+        $rc24 = $lpg->create_related_competency(array('competencyid' => $c2->get('id'), 'relatedcompetencyid' => $c4->get('id')));
 
-        $result = external::search_competencies('comp', $framework->get_id(), true);
+        $result = external::search_competencies('comp', $framework->get('id'), true);
         $result = external_api::clean_returnvalue(external::search_competencies_returns(), $result);
 
         $this->assertCount(5, $result);
@@ -2405,20 +2410,20 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $pl1 = $lpg->create_plan($plan);
         $framework = $lpg->create_framework();
         $competency = $lpg->create_competency(
-                array('competencyframeworkid' => $framework->get_id())
+                array('competencyframeworkid' => $framework->get('id'))
                 );
-        $this->assertTrue(external::add_competency_to_plan($pl1->get_id(), $competency->get_id()));
+        $this->assertTrue(external::add_competency_to_plan($pl1->get('id'), $competency->get('id')));
 
         // A competency cannot be added to plan based on template.
         $template = $lpg->create_template();
         $plan = array (
             'userid' => $usermanage->id,
             'status' => \core_competency\plan::STATUS_ACTIVE,
-            'templateid' => $template->get_id()
+            'templateid' => $template->get('id')
         );
         $pl2 = $lpg->create_plan($plan);
         try {
-            external::add_competency_to_plan($pl2->get_id(), $competency->get_id());
+            external::add_competency_to_plan($pl2->get('id'), $competency->get('id'));
             $this->fail('A competency cannot be added to plan based on template');
         } catch (coding_exception $ex) {
             $this->assertTrue(true);
@@ -2427,7 +2432,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         // User without capability cannot add competency to a plan.
         $this->setUser($user);
         try {
-            external::add_competency_to_plan($pl1->get_id(), $competency->get_id());
+            external::add_competency_to_plan($pl1->get('id'), $competency->get('id'));
             $this->fail('User without capability cannot add competency to a plan');
         } catch (required_capability_exception $ex) {
             $this->assertTrue(true);
@@ -2467,15 +2472,15 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $pl1 = $lpg->create_plan($plan);
         $framework = $lpg->create_framework();
         $competency = $lpg->create_competency(
-                array('competencyframeworkid' => $framework->get_id())
+                array('competencyframeworkid' => $framework->get('id'))
                 );
         $lpg->create_plan_competency(
                 array(
-                    'planid' => $pl1->get_id(),
-                    'competencyid' => $competency->get_id()
+                    'planid' => $pl1->get('id'),
+                    'competencyid' => $competency->get('id')
                     )
                 );
-        $this->assertTrue(external::remove_competency_from_plan($pl1->get_id(), $competency->get_id()));
+        $this->assertTrue(external::remove_competency_from_plan($pl1->get('id'), $competency->get('id')));
         $this->assertCount(0, $pl1->get_competencies());
     }
 
@@ -2511,39 +2516,39 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         );
         $pl1 = $lpg->create_plan($plan);
         $framework = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c5 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
 
-        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c1->get_id(), 'sortorder' => 1));
-        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c2->get_id(), 'sortorder' => 2));
-        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c3->get_id(), 'sortorder' => 3));
-        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c4->get_id(), 'sortorder' => 4));
-        $lpg->create_plan_competency(array('planid' => $pl1->get_id(), 'competencyid' => $c5->get_id(), 'sortorder' => 5));
+        $lpg->create_plan_competency(array('planid' => $pl1->get('id'), 'competencyid' => $c1->get('id'), 'sortorder' => 1));
+        $lpg->create_plan_competency(array('planid' => $pl1->get('id'), 'competencyid' => $c2->get('id'), 'sortorder' => 2));
+        $lpg->create_plan_competency(array('planid' => $pl1->get('id'), 'competencyid' => $c3->get('id'), 'sortorder' => 3));
+        $lpg->create_plan_competency(array('planid' => $pl1->get('id'), 'competencyid' => $c4->get('id'), 'sortorder' => 4));
+        $lpg->create_plan_competency(array('planid' => $pl1->get('id'), 'competencyid' => $c5->get('id'), 'sortorder' => 5));
 
         // Test if removing competency from plan don't create sortorder holes.
-        external::remove_competency_from_plan($pl1->get_id(), $c4->get_id());
+        external::remove_competency_from_plan($pl1->get('id'), $c4->get('id'));
         $plancomp5 = plan_competency::get_record(array(
-            'planid' => $pl1->get_id(),
-            'competencyid' => $c5->get_id()
+            'planid' => $pl1->get('id'),
+            'competencyid' => $c5->get('id')
         ));
 
-        $this->assertEquals(3, $plancomp5->get_sortorder());
+        $this->assertEquals(3, $plancomp5->get('sortorder'));
 
-        $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c2->get_id(), $c5->get_id()));
-        $this->assertTrue(external::reorder_plan_competency($pl1->get_id(), $c3->get_id(), $c1->get_id()));
-        $plancompetencies = plan_competency::get_records(array('planid' => $pl1->get_id()), 'sortorder', 'ASC');
+        $this->assertTrue(external::reorder_plan_competency($pl1->get('id'), $c2->get('id'), $c5->get('id')));
+        $this->assertTrue(external::reorder_plan_competency($pl1->get('id'), $c3->get('id'), $c1->get('id')));
+        $plancompetencies = plan_competency::get_records(array('planid' => $pl1->get('id')), 'sortorder', 'ASC');
         $plcmp1 = $plancompetencies[0];
         $plcmp2 = $plancompetencies[1];
         $plcmp3 = $plancompetencies[2];
         $plcmp4 = $plancompetencies[3];
 
-        $this->assertEquals($plcmp1->get_competencyid(), $c3->get_id());
-        $this->assertEquals($plcmp2->get_competencyid(), $c1->get_id());
-        $this->assertEquals($plcmp3->get_competencyid(), $c5->get_id());
-        $this->assertEquals($plcmp4->get_competencyid(), $c2->get_id());
+        $this->assertEquals($plcmp1->get('competencyid'), $c3->get('id'));
+        $this->assertEquals($plcmp2->get('competencyid'), $c1->get('id'));
+        $this->assertEquals($plcmp3->get('competencyid'), $c5->get('id'));
+        $this->assertEquals($plcmp4->get('competencyid'), $c2->get('id'));
     }
 
     /**
@@ -2554,13 +2559,13 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
 
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'sortorder' => 20));
-        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'sortorder' => 1));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'sortorder' => 20));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'sortorder' => 1));
 
-        $this->assertEquals(0, $c1->get_sortorder());
-        $this->assertEquals(1, $c2->get_sortorder());
-        $this->assertEquals(2, $c3->get_sortorder());
+        $this->assertEquals(0, $c1->get('sortorder'));
+        $this->assertEquals(1, $c2->get('sortorder'));
+        $this->assertEquals(2, $c3->get('sortorder'));
     }
 
     /**
@@ -2573,21 +2578,21 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $framework = $lpg->create_framework();
 
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c2a = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
-        $c2b = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
-        $c2c = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
-        $c2d = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c2->get('id')));
+        $c2b = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c2->get('id')));
+        $c2c = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c2->get('id')));
+        $c2d = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c2->get('id')));
 
-        $this->assertEquals(0, $c1->get_sortorder());
-        $this->assertEquals(1, $c2->get_sortorder());
-        $this->assertEquals(0, $c2a->get_sortorder());
-        $this->assertEquals(1, $c2b->get_sortorder());
-        $this->assertEquals(2, $c2c->get_sortorder());
-        $this->assertEquals(3, $c2d->get_sortorder());
+        $this->assertEquals(0, $c1->get('sortorder'));
+        $this->assertEquals(1, $c2->get('sortorder'));
+        $this->assertEquals(0, $c2a->get('sortorder'));
+        $this->assertEquals(1, $c2b->get('sortorder'));
+        $this->assertEquals(2, $c2c->get('sortorder'));
+        $this->assertEquals(3, $c2d->get('sortorder'));
 
-        $result = external::delete_competency($c1->get_id());
+        $result = external::delete_competency($c1->get('id'));
         $result = external_api::clean_returnvalue(external::delete_competency_returns(), $result);
 
         $c2->read();
@@ -2596,13 +2601,13 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $c2c->read();
         $c2d->read();
 
-        $this->assertEquals(0, $c2->get_sortorder());
-        $this->assertEquals(0, $c2a->get_sortorder());
-        $this->assertEquals(1, $c2b->get_sortorder());
-        $this->assertEquals(2, $c2c->get_sortorder());
-        $this->assertEquals(3, $c2d->get_sortorder());
+        $this->assertEquals(0, $c2->get('sortorder'));
+        $this->assertEquals(0, $c2a->get('sortorder'));
+        $this->assertEquals(1, $c2b->get('sortorder'));
+        $this->assertEquals(2, $c2c->get('sortorder'));
+        $this->assertEquals(3, $c2d->get('sortorder'));
 
-        $result = external::delete_competency($c2b->get_id());
+        $result = external::delete_competency($c2b->get('id'));
         $result = external_api::clean_returnvalue(external::delete_competency_returns(), $result);
 
         $c2->read();
@@ -2610,10 +2615,10 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $c2c->read();
         $c2d->read();
 
-        $this->assertEquals(0, $c2->get_sortorder());
-        $this->assertEquals(0, $c2a->get_sortorder());
-        $this->assertEquals(1, $c2c->get_sortorder());
-        $this->assertEquals(2, $c2d->get_sortorder());
+        $this->assertEquals(0, $c2->get('sortorder'));
+        $this->assertEquals(0, $c2a->get('sortorder'));
+        $this->assertEquals(1, $c2c->get('sortorder'));
+        $this->assertEquals(2, $c2d->get('sortorder'));
     }
 
     /**
@@ -2626,21 +2631,21 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $framework = $lpg->create_framework();
 
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c1a = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
-        $c1b = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c2a = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
-        $c2b = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c2->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c1a = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id')));
+        $c1b = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2a = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c2->get('id')));
+        $c2b = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c2->get('id')));
 
-        $this->assertEquals(0, $c1->get_sortorder());
-        $this->assertEquals(0, $c1a->get_sortorder());
-        $this->assertEquals(1, $c1b->get_sortorder());
-        $this->assertEquals(1, $c2->get_sortorder());
-        $this->assertEquals(0, $c2a->get_sortorder());
-        $this->assertEquals(1, $c2b->get_sortorder());
+        $this->assertEquals(0, $c1->get('sortorder'));
+        $this->assertEquals(0, $c1a->get('sortorder'));
+        $this->assertEquals(1, $c1b->get('sortorder'));
+        $this->assertEquals(1, $c2->get('sortorder'));
+        $this->assertEquals(0, $c2a->get('sortorder'));
+        $this->assertEquals(1, $c2b->get('sortorder'));
 
-        $result = external::set_parent_competency($c2a->get_id(), $c1->get_id());
+        $result = external::set_parent_competency($c2a->get('id'), $c1->get('id'));
         $result = external_api::clean_returnvalue(external::set_parent_competency_returns(), $result);
 
         $c1->read();
@@ -2650,15 +2655,15 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $c2a->read();
         $c2b->read();
 
-        $this->assertEquals(0, $c1->get_sortorder());
-        $this->assertEquals(0, $c1a->get_sortorder());
-        $this->assertEquals(1, $c1b->get_sortorder());
-        $this->assertEquals(2, $c2a->get_sortorder());
-        $this->assertEquals(1, $c2->get_sortorder());
-        $this->assertEquals(0, $c2b->get_sortorder());
+        $this->assertEquals(0, $c1->get('sortorder'));
+        $this->assertEquals(0, $c1a->get('sortorder'));
+        $this->assertEquals(1, $c1b->get('sortorder'));
+        $this->assertEquals(2, $c2a->get('sortorder'));
+        $this->assertEquals(1, $c2->get('sortorder'));
+        $this->assertEquals(0, $c2b->get('sortorder'));
 
         // Move a root node.
-        $result = external::set_parent_competency($c2->get_id(), $c1b->get_id());
+        $result = external::set_parent_competency($c2->get('id'), $c1b->get('id'));
         $result = external_api::clean_returnvalue(external::set_parent_competency_returns(), $result);
 
         $c1->read();
@@ -2668,12 +2673,59 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $c2a->read();
         $c2b->read();
 
-        $this->assertEquals(0, $c1->get_sortorder());
-        $this->assertEquals(0, $c1a->get_sortorder());
-        $this->assertEquals(1, $c1b->get_sortorder());
-        $this->assertEquals(0, $c2->get_sortorder());
-        $this->assertEquals(0, $c2b->get_sortorder());
-        $this->assertEquals(2, $c2a->get_sortorder());
+        $this->assertEquals(0, $c1->get('sortorder'));
+        $this->assertEquals(0, $c1a->get('sortorder'));
+        $this->assertEquals(1, $c1b->get('sortorder'));
+        $this->assertEquals(0, $c2->get('sortorder'));
+        $this->assertEquals(0, $c2b->get('sortorder'));
+        $this->assertEquals(2, $c2a->get('sortorder'));
+    }
+
+    public function test_grade_competency() {
+        global $CFG;
+
+        $this->setUser($this->creator);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
+        $evidence = external::grade_competency($this->user->id, $c1->get('id'), 1, 'Evil note');
+
+        $this->assertEquals('The competency rating was manually set.', $evidence->description);
+        $this->assertEquals('A', $evidence->gradename);
+        $this->assertEquals('Evil note', $evidence->note);
+
+        $this->setUser($this->user);
+
+        $this->expectException('required_capability_exception');
+        $evidence = external::grade_competency($this->user->id, $c1->get('id'), 1);
+    }
+
+    public function test_grade_competency_in_course() {
+        global $CFG;
+
+        $this->setUser($this->creator);
+        $dg = $this->getDataGenerator();
+        $lpg = $dg->get_plugin_generator('core_competency');
+
+        $course = $dg->create_course(['fullname' => 'Evil course']);
+        $dg->enrol_user($this->creator->id, $course->id, 'editingteacher');
+        $dg->enrol_user($this->user->id, $course->id, 'student');
+        $f1 = $lpg->create_framework();
+        $c1 = $lpg->create_competency(['competencyframeworkid' => $f1->get('id')]);
+        $lpg->create_course_competency(['courseid' => $course->id, 'competencyid' => $c1->get('id')]);
+
+        $evidence = external::grade_competency_in_course($course->id, $this->user->id, $c1->get('id'), 1, 'Evil note');
+
+        $this->assertEquals('The competency rating was manually set in the course \'Course: Evil course\'.', $evidence->description);
+        $this->assertEquals('A', $evidence->gradename);
+        $this->assertEquals('Evil note', $evidence->note);
+
+        $this->setUser($this->user);
+
+        $this->expectException('required_capability_exception');
+        $evidence = external::grade_competency_in_course($course->id, $this->user->id, $c1->get('id'), 1);
     }
 
     public function test_grade_competency_in_plan() {
@@ -2686,16 +2738,16 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $f1 = $lpg->create_framework();
 
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $f1->get('id')));
 
         $tpl = $lpg->create_template();
-        $lpg->create_template_competency(array('templateid' => $tpl->get_id(), 'competencyid' => $c1->get_id()));
+        $lpg->create_template_competency(array('templateid' => $tpl->get('id'), 'competencyid' => $c1->get('id')));
 
-        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get_id(), 'name' => 'Evil'));
+        $plan = $lpg->create_plan(array('userid' => $this->user->id, 'templateid' => $tpl->get('id'), 'name' => 'Evil'));
 
-        $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get_id()));
+        $uc = $lpg->create_user_competency(array('userid' => $this->user->id, 'competencyid' => $c1->get('id')));
 
-        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1, 'Evil note');
+        $evidence = external::grade_competency_in_plan($plan->get('id'), $c1->get('id'), 1, 'Evil note');
 
         $this->assertEquals('The competency rating was manually set in the learning plan \'Evil\'.', $evidence->description);
         $this->assertEquals('A', $evidence->gradename);
@@ -2704,7 +2756,7 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
         $this->setUser($this->user);
 
         $this->expectException('required_capability_exception');
-        $evidence = external::grade_competency_in_plan($plan->get_id(), $c1->get_id(), 1);
+        $evidence = external::grade_competency_in_plan($plan->get('id'), $c1->get('id'), 1);
     }
 
     /**
@@ -2738,13 +2790,13 @@ class core_competency_external_testcase extends externallib_advanced_testcase {
 
         $settings = course_competency_settings::get_by_courseid($course->id);
 
-        $this->assertTrue((bool)$settings->get_pushratingstouserplans());
+        $this->assertTrue((bool)$settings->get('pushratingstouserplans'));
 
         $result = external::update_course_competency_settings($course->id, array('pushratingstouserplans' => false));
 
         $settings = course_competency_settings::get_by_courseid($course->id);
 
-        $this->assertFalse((bool)$settings->get_pushratingstouserplans());
+        $this->assertFalse((bool)$settings->get('pushratingstouserplans'));
         $this->setUser($compnoob);
 
         $this->expectException('required_capability_exception');

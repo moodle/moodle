@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 class mod_forum_external_testcase extends externallib_advanced_testcase {
 
@@ -59,7 +60,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         // Create a user.
-        $user = self::getDataGenerator()->create_user();
+        $user = self::getDataGenerator()->create_user(array('trackforums' => 1));
 
         // Set to the user.
         self::setUser($user);
@@ -72,12 +73,14 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->introformat = FORMAT_HTML;
         $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_FORCED;
         $forum1 = self::getDataGenerator()->create_module('forum', $record);
 
         // Second forum.
         $record = new stdClass();
         $record->introformat = FORMAT_HTML;
         $record->course = $course2->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
         $forum2 = self::getDataGenerator()->create_module('forum', $record);
         $forum2->introfiles = [];
 
@@ -90,6 +93,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // Expect one discussion.
         $forum1->numdiscussions = 1;
         $forum1->cancreatediscussions = true;
+        $forum1->istracked = true;
         $forum1->introfiles = [];
 
         $record = new stdClass();
@@ -102,6 +106,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $forum2->numdiscussions = 2;
         // Default limited role, no create discussion capability enabled.
         $forum2->cancreatediscussions = false;
+        $forum2->istracked = false;
 
         // Check the forum was correctly created.
         $this->assertEquals(2, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2',
@@ -206,6 +211,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $forum1 = self::getDataGenerator()->create_module('forum', $record);
         $forum1context = context_module::instance($forum1->cmid);
 
+        // Forum with tracking enabled.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $forum2 = self::getDataGenerator()->create_module('forum', $record);
+        $forum2context = context_module::instance($forum2->cmid);
+
         // Add discussions to the forums.
         $record = new stdClass();
         $record->course = $course1->id;
@@ -218,6 +229,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->userid = $user2->id;
         $record->forum = $forum1->id;
         $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user2->id;
+        $record->forum = $forum2->id;
+        $discussion3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
         // Add 2 replies to the discussion 1 from different users.
         $record = new stdClass();
@@ -340,6 +357,31 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
         $this->assertEquals(1, count($posts['posts']));
 
+        // Test discussion tracking on not tracked forum.
+        $result = mod_forum_external::view_forum_discussion($discussion1->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::view_forum_discussion_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test posts have not been marked as read.
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        foreach ($posts['posts'] as $post) {
+            $this->assertFalse($post['postread']);
+        }
+
+        // Test discussion tracking on tracked forum.
+        $result = mod_forum_external::view_forum_discussion($discussion3->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::view_forum_discussion_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test posts have been marked as read.
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion3->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        foreach ($posts['posts'] as $post) {
+            $this->assertTrue($post['postread']);
+        }
     }
 
     /**

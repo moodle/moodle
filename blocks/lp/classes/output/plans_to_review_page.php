@@ -31,7 +31,7 @@ use stdClass;
 use moodle_url;
 use core_competency\api;
 use core_competency\external\plan_exporter;
-use core_competency\external\user_summary_exporter;
+use core_user\external\user_summary_exporter;
 
 /**
  * Plans to review renderable class.

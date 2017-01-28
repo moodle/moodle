@@ -48,7 +48,7 @@ class competency_rule_all extends competency_rule {
         global $DB;
 
         // TODO Improve performance here, perhaps the caller could already provide records.
-        $children = competency::get_records(array('parentid' => $this->competency->get_id()));
+        $children = competency::get_records(array('parentid' => $this->competency->get('id')));
 
         if (empty($children)) {
             // Leaves are not compatible with this rule.
@@ -57,14 +57,14 @@ class competency_rule_all extends competency_rule {
 
         $ids = array();
         foreach ($children as $child) {
-            $ids[] = $child->get_id();
+            $ids[] = $child->get('id');
         }
 
         list($insql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
         $sql = "userid = :userid
             AND proficiency = :proficiency
             AND competencyid $insql";
-        $params['userid'] = $usercompetency->get_userid();
+        $params['userid'] = $usercompetency->get('userid');
         $params['proficiency'] = 1;
 
         // Is the user is marked as proficient in all children?

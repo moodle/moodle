@@ -15,15 +15,44 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
+    @template mod_forum/big_search_form
+
     Big search form.
+
+    Example context (json):
+    {
+        "actionurl": "https://example.com/mod/forum/search.php",
+        "courseid": "2",
+        "words": "apples",
+        "phrase": "Lorem ipsum dolor",
+        "notwords": "Not these words",
+        "showfullwords": [
+            {
+                "fullwords": "Exactly"
+            }
+        ],
+        "datefromchecked": 1,
+        "datetochecked": "",
+        "forumoptions": [
+            {
+                "name": "Forum One",
+                "value": "23"
+            },
+            {
+                "name": "Forum Two",
+                "value": "34"
+            }
+        ],
+        "subject": "Help me please",
+        "user": "Helpy McUser"
+    }
 }}
 <div id="intro" class="box searchbox boxaligncenter">
     {{#str}}searchforumintro, forum{{/str}}
 </div>
 <div class="box generalbox boxaligncenter">
-    <script type="text/javascript" src="{{scripturl}}"></script>
     <form id="searchform" action="{{actionurl}}" method="get">
-        <table class="searchbox table table-striped" id="form" cellpadding="10">
+        <table class="searchbox table table-striped" id="form">
             <tr>
                 <td class="c0 text-xs-right">
                     <label for="words">{{#str}}searchwords, forum{{/str}}</label>
@@ -64,7 +93,7 @@
                     {{#str}}searchdatefrom, forum{{/str}}
                 </td>
                 <td class="c1 text-nowrap form-inline">
-                    <input type="checkbox" name="timefromrestrict" value="1" onclick="return lockoptions('searchform', 'timefromrestrict', timefromitems)" {{#datefromchecked}}checked{{/datefromchecked}}>
+                    <input type="checkbox" name="timefromrestrict" value="1" {{#datefromchecked}}checked{{/datefromchecked}}>
                     {{{datefromfields}}}
                     <input type="hidden" name="hfromday" value="0">
                     <input type="hidden" name="hfrommonth" value="0">
@@ -78,7 +107,7 @@
                     {{#str}}searchdateto, forum{{/str}}
                 </td>
                 <td class="c1 text-nowrap form-inline">
-                    <input type="checkbox" name="timetorestrict" value="1" onclick="return lockoptions('searchform', 'timetorestrict', timetoitems)" {{#datetochecked}}checked{{/datetochecked}}>
+                    <input type="checkbox" name="timetorestrict" value="1" {{#datetochecked}}checked{{/datetochecked}}>
                     {{{datetofields}}}
                     <input type="hidden" name="htoday" value="0">
                     <input type="hidden" name="htomonth" value="0">
@@ -92,7 +121,7 @@
                     <label for="menuforumid">{{#str}}searchwhichforums, forum{{/str}}</label>
                 </td>
                 <td class="c1">
-                    <select name="menuforumid" id="menuforumid" class="form-control">
+                    <select name="forumid" id="menuforumid" class="form-control">
                         {{#forumoptions}}
                             <option value="{{value}}">{{name}}</option>
                         {{/forumoptions}}
@@ -123,8 +152,22 @@
             </tr>
         </table>
     </form>
-    {{#js}}
-        lockoptions_timetoitems();
-        lockoptions_timefromitems();
-    {{/js}}
 </div>
+{{#js}}
+require(['jquery'], function($) {
+    var toggleDateFields = function(prefix, disabled) {
+        $('#searchform select[name^=' + prefix + ']').prop('disabled', disabled);
+        $('#searchform input[name^=h' + prefix + ']').val(disabled ? 1 : 0);
+    };
+
+    toggleDateFields('from', !$("#searchform input[name='timefromrestrict']").prop('checked'));
+    $("#searchform input[name='timefromrestrict']").click(function() {
+        toggleDateFields('from', !this.checked);
+    });
+
+    toggleDateFields('to', !$("#searchform input[name='timetorestrict']").prop('checked'));
+    $("#searchform input[name='timetorestrict']").click(function() {
+        toggleDateFields('to', !this.checked);
+    });
+});
+{{/js}}

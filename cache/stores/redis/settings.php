@@ -47,7 +47,7 @@ if (class_exists('Redis')) { // Only if Redis is available.
             'cachestore_redis/test_serializer',
             get_string('test_serializer', 'cachestore_redis'),
             get_string('test_serializer_desc', 'cachestore_redis'),
-            0,
+            Redis::SERIALIZER_PHP,
             $options
         )
     );

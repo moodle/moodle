@@ -107,7 +107,7 @@ class mod_imscp_external extends external_api {
     /**
      * Describes the parameters for get_imscps_by_courses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.0
      */
     public static function get_imscps_by_courses_parameters() {

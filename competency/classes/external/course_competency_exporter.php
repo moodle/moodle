@@ -30,9 +30,9 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_competency_exporter extends persistent_exporter {
+class course_competency_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\course_competency';
+        return \core_competency\course_competency::class;
     }
 }

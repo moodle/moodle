@@ -29,7 +29,7 @@ use core_competency\api;
 use core_competency\external\competency_exporter;
 use core_competency\external\plan_exporter;
 use core_competency\external\user_competency_exporter;
-use core_competency\external\user_summary_exporter;
+use core_user\external\user_summary_exporter;
 use core_competency\plan;
 use core_competency\url;
 use renderable;
@@ -83,7 +83,7 @@ class summary implements renderable, templatable {
             if (count($plans) >= 3) {
                 break;
             }
-            if ($plan->get_status() == plan::STATUS_ACTIVE) {
+            if ($plan->get('status') == plan::STATUS_ACTIVE) {
                 $plans[] = $plan;
             }
         }

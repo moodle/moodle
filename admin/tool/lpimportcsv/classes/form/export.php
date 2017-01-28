@@ -52,7 +52,7 @@ class export extends moodleform {
         $options = array();
         foreach ($frameworks as $framework) {
 
-            $options[$framework->get_id()] = $framework->get_shortname();
+            $options[$framework->get('id')] = $framework->get('shortname');
         }
         if (empty($options)) {
             $mform->addElement('static', 'frameworkid', '', get_string('noframeworks', 'tool_lpimportcsv'));

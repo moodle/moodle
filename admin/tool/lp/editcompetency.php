@@ -63,7 +63,7 @@ if ($competency) {
 // Get page URL.
 $urloptions = [
     'id' => $id,
-    'competencyframeworkid' => $competencyframework->get_id(),
+    'competencyframeworkid' => $competencyframework->get('id'),
     'parentid' => $parentid,
     'pagecontextid' => $pagecontextid
 ];

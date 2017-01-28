@@ -50,31 +50,31 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
 
         // Set up the framework and competencies.
         $framework = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(),
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'),
             'ruletype' => 'core_competency\competency_rule_all'));
-        $c11 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id(),
+        $c11 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id'),
             'ruletype' => 'core_competency\competency_rule_all'));
-        $c111 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c11->get_id(),
+        $c111 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c11->get('id'),
             'ruletype' => 'core_competency\competency_rule_all'));
-        $c112 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c11->get_id(),
+        $c112 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c11->get('id'),
             'ruletype' => 'core_competency\competency_rule_all'));
-        $c12 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id(),
+        $c12 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id'),
             'ruletype' => 'core_competency\competency_rule_all'));
-        $c13 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id(),
+        $c13 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id'),
             'ruletype' => 'core_competency\competency_rule_all'));
-        $c131 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c13->get_id(),
+        $c131 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c13->get('id'),
             'ruletype' => 'core_competency\competency_rule_all'));
 
         // Create some user competency records.
-        $uc1 = $lpg->create_user_competency(array('competencyid' => $c1->get_id(), 'userid' => $u1->id));
-        $uc11 = $lpg->create_user_competency(array('competencyid' => $c11->get_id(), 'userid' => $u1->id,
+        $uc1 = $lpg->create_user_competency(array('competencyid' => $c1->get('id'), 'userid' => $u1->id));
+        $uc11 = $lpg->create_user_competency(array('competencyid' => $c11->get('id'), 'userid' => $u1->id,
             'grade' => 1, 'proficiency' => 1));
-        $uc111 = $lpg->create_user_competency(array('competencyid' => $c111->get_id(), 'userid' => $u1->id,
+        $uc111 = $lpg->create_user_competency(array('competencyid' => $c111->get('id'), 'userid' => $u1->id,
             'grade' => 1, 'proficiency' => 1));
-        $uc112 = $lpg->create_user_competency(array('competencyid' => $c112->get_id(), 'userid' => $u1->id,
+        $uc112 = $lpg->create_user_competency(array('competencyid' => $c112->get('id'), 'userid' => $u1->id,
             'grade' => 1, 'proficiency' => 1));
-        $uc12 = $lpg->create_user_competency(array('competencyid' => $c12->get_id(), 'userid' => $u1->id));
-        $uc13 = new user_competency(0, (object) array('userid' => $u1->id, 'competencyid' => $c13->get_id()));
+        $uc12 = $lpg->create_user_competency(array('competencyid' => $c12->get('id'), 'userid' => $u1->id));
+        $uc13 = new user_competency(0, (object) array('userid' => $u1->id, 'competencyid' => $c13->get('id')));
 
         // Not all children are met.
         $cr = new competency_rule_all($c1);
@@ -100,13 +100,13 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
         $framework2 = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
-        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
-        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $cx = $lpg->create_competency(array('competencyframeworkid' => $framework2->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id')));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id')));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $cx = $lpg->create_competency(array('competencyframeworkid' => $framework2->get('id')));
 
-        $c1->set_ruletype('core_competency\competency_rule_points');
+        $c1->set('ruletype', 'core_competency\competency_rule_points');
         $rule = new competency_rule_points($c1);
 
         // Invalid config.
@@ -117,8 +117,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array(),
             'competencies' => array(
-                array('id' => $c2->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c3->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c3->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -127,8 +127,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 'abc'),
             'competencies' => array(
-                array('id' => $c2->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c3->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c3->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -137,8 +137,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 0),
             'competencies' => array(
-                array('id' => $c2->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c3->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c3->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -147,8 +147,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 3),
             'competencies' => array(
-                array('id' => $c2->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c3->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c3->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -157,8 +157,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 1),
             'competencies' => array(
-                array('id' => $c2->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c2->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -167,8 +167,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 1),
             'competencies' => array(
-                array('id' => $c1->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c2->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $c1->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -177,8 +177,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 1),
             'competencies' => array(
-                array('id' => $c2->get_id(), 'points' => -1, 'required' => 0),
-                array('id' => $c3->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => -1, 'required' => 0),
+                array('id' => $c3->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -195,9 +195,9 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 1),
             'competencies' => array(
-                array('id' => $c1->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c2->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c3->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $c1->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c2->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c3->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -206,8 +206,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 1),
             'competencies' => array(
-                array('id' => $cx->get_id(), 'points' => 1, 'required' => 0),
-                array('id' => $c3->get_id(), 'points' => 1, 'required' => 0),
+                array('id' => $cx->get('id'), 'points' => 1, 'required' => 0),
+                array('id' => $c3->get('id'), 'points' => 1, 'required' => 0),
             )
         ));
         $this->assertFalse($rule->validate_config($config));
@@ -216,8 +216,8 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
         $config = json_encode(array(
             'base' => array('points' => 4),
             'competencies' => array(
-                array('id' => $c2->get_id(), 'points' => 3, 'required' => 0),
-                array('id' => $c3->get_id(), 'points' => 2, 'required' => 1),
+                array('id' => $c2->get('id'), 'points' => 3, 'required' => 0),
+                array('id' => $c3->get('id'), 'points' => 2, 'required' => 1),
             )
         ));
         $this->assertTrue($rule->validate_config($config));
@@ -232,39 +232,39 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
 
         // Set up the framework and competencies.
         $framework = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id()));
-        $c1->set_ruletype('core_competency\competency_rule_points');
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id')));
+        $c1->set('ruletype', 'core_competency\competency_rule_points');
         $comprule = new competency_rule_points($c1);
-        $c11 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
-        $c12 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
-        $c13 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
-        $c14 = $lpg->create_competency(array('competencyframeworkid' => $framework->get_id(), 'parentid' => $c1->get_id()));
+        $c11 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id')));
+        $c12 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id')));
+        $c13 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id')));
+        $c14 = $lpg->create_competency(array('competencyframeworkid' => $framework->get('id'), 'parentid' => $c1->get('id')));
 
         // Create some user competency records.
-        $uc1 = $lpg->create_user_competency(array('competencyid' => $c1->get_id(), 'userid' => $u1->id));
-        $uc11 = $lpg->create_user_competency(array('competencyid' => $c11->get_id(), 'userid' => $u1->id,
+        $uc1 = $lpg->create_user_competency(array('competencyid' => $c1->get('id'), 'userid' => $u1->id));
+        $uc11 = $lpg->create_user_competency(array('competencyid' => $c11->get('id'), 'userid' => $u1->id,
             'grade' => 1, 'proficiency' => 1));
-        $uc12 = $lpg->create_user_competency(array('competencyid' => $c12->get_id(), 'userid' => $u1->id,
+        $uc12 = $lpg->create_user_competency(array('competencyid' => $c12->get('id'), 'userid' => $u1->id,
             'grade' => 1, 'proficiency' => 1));
-        $uc13 = $lpg->create_user_competency(array('competencyid' => $c13->get_id(), 'userid' => $u1->id));
+        $uc13 = $lpg->create_user_competency(array('competencyid' => $c13->get('id'), 'userid' => $u1->id));
 
         // Enough points.
         $rule = array(
             'base' => array('points' => 8),
             'competencies' => array(
                 array(
-                    'id' => $c11->get_id(),
+                    'id' => $c11->get('id'),
                     'points' => 4,
                     'required' => 0
                 ),
                 array(
-                    'id' => $c12->get_id(),
+                    'id' => $c12->get('id'),
                     'points' => 4,
                     'required' => 0
                 ),
             )
         );
-        $c1->set_ruleconfig(json_encode($rule));
+        $c1->set('ruleconfig', json_encode($rule));
         $c1->update();
         $this->assertTrue($comprule->matches($uc1));
 
@@ -273,18 +273,18 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
             'base' => array('points' => 8),
             'competencies' => array(
                 array(
-                    'id' => $c11->get_id(),
+                    'id' => $c11->get('id'),
                     'points' => 4,
                     'required' => 0
                 ),
                 array(
-                    'id' => $c13->get_id(),
+                    'id' => $c13->get('id'),
                     'points' => 4,
                     'required' => 0
                 ),
             )
         );
-        $c1->set_ruleconfig(json_encode($rule));
+        $c1->set('ruleconfig', json_encode($rule));
         $c1->update();
         $this->assertFalse($comprule->matches($uc1));
 
@@ -293,23 +293,23 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
             'base' => array('points' => 8),
             'competencies' => array(
                 array(
-                    'id' => $c11->get_id(),
+                    'id' => $c11->get('id'),
                     'points' => 4,
                     'required' => 0
                 ),
                 array(
-                    'id' => $c12->get_id(),
+                    'id' => $c12->get('id'),
                     'points' => 4,
                     'required' => 0
                 ),
                 array(
-                    'id' => $c13->get_id(),
+                    'id' => $c13->get('id'),
                     'points' => 4,
                     'required' => 1
                 ),
             )
         );
-        $c1->set_ruleconfig(json_encode($rule));
+        $c1->set('ruleconfig', json_encode($rule));
         $c1->update();
         $this->assertFalse($comprule->matches($uc1));
 
@@ -318,18 +318,18 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
             'base' => array('points' => 8),
             'competencies' => array(
                 array(
-                    'id' => $c11->get_id(),
+                    'id' => $c11->get('id'),
                     'points' => 4,
                     'required' => 0
                 ),
                 array(
-                    'id' => $c12->get_id(),
+                    'id' => $c12->get('id'),
                     'points' => 4,
                     'required' => 1
                 ),
             )
         );
-        $c1->set_ruleconfig(json_encode($rule));
+        $c1->set('ruleconfig', json_encode($rule));
         $c1->update();
         $this->assertTrue($comprule->matches($uc1));
 
@@ -338,18 +338,18 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
             'base' => array('points' => 8),
             'competencies' => array(
                 array(
-                    'id' => $c11->get_id(),
+                    'id' => $c11->get('id'),
                     'points' => 4,
                     'required' => 1
                 ),
                 array(
-                    'id' => $c12->get_id(),
+                    'id' => $c12->get('id'),
                     'points' => 4,
                     'required' => 1
                 ),
             )
         );
-        $c1->set_ruleconfig(json_encode($rule));
+        $c1->set('ruleconfig', json_encode($rule));
         $c1->update();
         $this->assertTrue($comprule->matches($uc1));
 
@@ -358,18 +358,18 @@ class core_competency_competency_rule_testcase extends externallib_advanced_test
             'base' => array('points' => 4),
             'competencies' => array(
                 array(
-                    'id' => $c12->get_id(),
+                    'id' => $c12->get('id'),
                     'points' => 4,
                     'required' => 1
                 ),
                 array(
-                    'id' => $c14->get_id(),
+                    'id' => $c14->get('id'),
                     'points' => 4,
                     'required' => 1
                 ),
             )
         );
-        $c1->set_ruleconfig(json_encode($rule));
+        $c1->set('ruleconfig', json_encode($rule));
         $c1->update();
         $this->assertFalse($comprule->matches($uc1));
     }

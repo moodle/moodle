@@ -80,8 +80,8 @@ class framework_mapper {
         // Find mappings.
         foreach ($collectionfrom as $keyfrom => $compfrom) {
             foreach ($collectionto as $keyto => $compto) {
-                if ($compfrom->get_idnumber() == $compto->get_idnumber()) {
-                    $map[$compfrom->get_id()] = $compto->get_id();
+                if ($compfrom->get('idnumber') == $compto->get('idnumber')) {
+                    $map[$compfrom->get('id')] = $compto->get('id');
                     unset($collectionfrom[$keyfrom]);
                     unset($collectionto[$keyto]);
                     break;

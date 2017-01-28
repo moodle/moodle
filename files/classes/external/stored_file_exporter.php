@@ -17,11 +17,12 @@
 /**
  * Class for exporting stored_file data.
  *
- * @package    core_competency
+ * @package    core_files
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core_competency\external;
+namespace core_files\external;
+defined('MOODLE_INTERNAL') || die();
 
 use coding_exception;
 use core_text;
@@ -33,11 +34,11 @@ use stored_file;
 /**
  * Class for exporting stored_file data.
  *
- * @package    core_competency
+ * @package    core_files
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class stored_file_exporter extends exporter {
+class stored_file_exporter extends \core\external\exporter {
 
     /** @var stored_file */
     protected $file;

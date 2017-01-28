@@ -36,5 +36,13 @@ $functions = array(
         'capabilities'  => 'mod/folder:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
-
+    'mod_folder_get_folders_by_courses' => array(
+        'classname'     => 'mod_folder_external',
+        'methodname'    => 'get_folders_by_courses',
+        'description'   => 'Returns a list of folders in a provided list of courses, if no list is provided all folders that
+                            the user can view will be returned. Please note that this WS is not returning the folder contents.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/folder:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );

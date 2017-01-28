@@ -15,29 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for exporting a cohort summary from an stdClass.
+ * Class for exporting a course summary from an stdClass.
  *
- * @package    tool_lp
+ * @package    core_course
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace tool_lp\external;
+namespace core_course\external;
 defined('MOODLE_INTERNAL') || die();
 
 use renderer_base;
 use moodle_url;
 
 /**
- * Class for exporting a cohort summary from an stdClass.
+ * Class for exporting a course summary from an stdClass.
  *
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cohort_summary_exporter extends \core_competency\external\exporter {
+class course_summary_exporter extends \core\external\exporter {
 
     protected static function define_related() {
-        // Cohorts can exist on a category context.
+        // We cache the context so it does not need to be retrieved from the course.
         return array('context' => '\\context');
+    }
+
+    protected function get_other_values(renderer_base $output) {
+        return array(
+            'viewurl' => (new moodle_url('/course/view.php', array('id' => $this->data->id)))->out(false)
+        );
     }
 
     public static function define_properties() {
@@ -45,31 +51,23 @@ class cohort_summary_exporter extends \core_competency\external\exporter {
             'id' => array(
                 'type' => PARAM_INT,
             ),
-            'name' => array(
+            'fullname' => array(
+                'type' => PARAM_TEXT,
+            ),
+            'shortname' => array(
                 'type' => PARAM_TEXT,
             ),
             'idnumber' => array(
-                'type' => PARAM_RAW,        // ID numbers are plain text.
-                'default' => '',
-                'null' => NULL_ALLOWED
-            ),
-            'visible' => array(
-                'type' => PARAM_BOOL,
+                'type' => PARAM_RAW,
             )
         );
     }
 
     public static function define_other_properties() {
         return array(
-            'contextname' => array(
-                'type' => PARAM_TEXT
-            ),
-        );
-    }
-
-    protected function get_other_values(renderer_base $output) {
-        return array(
-            'contextname' => $this->related['context']->get_context_name()
+            'viewurl' => array(
+                'type' => PARAM_URL,
+            )
         );
     }
 }

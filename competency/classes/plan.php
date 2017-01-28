@@ -119,8 +119,8 @@ class plan extends persistent {
         $this->beforeupdate = null;
 
         // During update.
-        if ($this->get_id()) {
-            $this->beforeupdate = new self($this->get_id());
+        if ($this->get('id')) {
+            $this->beforeupdate = new self($this->get('id'));
         }
     }
 
@@ -130,7 +130,7 @@ class plan extends persistent {
      * @return bool
      */
     public function can_comment() {
-        return static::can_comment_user($this->get_userid());
+        return static::can_comment_user($this->get('userid'));
     }
 
     /**
@@ -140,9 +140,9 @@ class plan extends persistent {
      */
     public function can_manage() {
         if ($this->is_draft()) {
-            return self::can_manage_user_draft($this->get_userid());
+            return self::can_manage_user_draft($this->get('userid'));
         }
-        return self::can_manage_user($this->get_userid());
+        return self::can_manage_user($this->get('userid'));
     }
 
     /**
@@ -152,9 +152,9 @@ class plan extends persistent {
      */
     public function can_read() {
         if ($this->is_draft()) {
-            return self::can_read_user_draft($this->get_userid());
+            return self::can_read_user_draft($this->get('userid'));
         }
-        return self::can_read_user($this->get_userid());
+        return self::can_read_user($this->get('userid'));
     }
 
     /**
@@ -172,7 +172,7 @@ class plan extends persistent {
      * @return bool
      */
     public function can_request_review() {
-        return self::can_request_review_user($this->get_userid());
+        return self::can_request_review_user($this->get('userid'));
     }
 
     /**
@@ -181,7 +181,7 @@ class plan extends persistent {
      * @return bool
      */
     public function can_review() {
-        return self::can_review_user($this->get_userid());
+        return self::can_review_user($this->get('userid'));
     }
 
     /**
@@ -193,15 +193,15 @@ class plan extends persistent {
         global $CFG;
         require_once($CFG->dirroot . '/comment/lib.php');
 
-        if (!$this->get_id()) {
+        if (!$this->get('id')) {
             throw new \coding_exception('The plan must exist.');
         }
 
         $comment = new comment((object) array(
-            'client_id' => 'plancommentarea' . $this->get_id(),
+            'client_id' => 'plancommentarea' . $this->get('id'),
             'context' => $this->get_context(),
             'component' => 'competency',    // This cannot be named 'core_competency'.
-            'itemid' => $this->get_id(),
+            'itemid' => $this->get('id'),
             'area' => 'plan',
             'showcount' => true,
         ));
@@ -217,15 +217,15 @@ class plan extends persistent {
     public function get_competencies() {
         $competencies = array();
 
-        if ($this->get_status() == self::STATUS_COMPLETE) {
+        if ($this->get('status') == self::STATUS_COMPLETE) {
             // Get the competencies from the archive of the plan.
-            $competencies = user_competency_plan::list_competencies($this->get_id(), $this->get_userid());
+            $competencies = user_competency_plan::list_competencies($this->get('id'), $this->get('userid'));
         } else if ($this->is_based_on_template()) {
             // Get the competencies from the template.
-            $competencies = template_competency::list_competencies($this->get_templateid());
+            $competencies = template_competency::list_competencies($this->get('templateid'));
         } else {
             // Get the competencies from the plan.
-            $competencies = plan_competency::list_competencies($this->get_id());
+            $competencies = plan_competency::list_competencies($this->get('id'));
         }
 
         return $competencies;
@@ -242,15 +242,15 @@ class plan extends persistent {
     public function get_competency($competencyid) {
         $competency = null;
 
-        if ($this->get_status() == self::STATUS_COMPLETE) {
+        if ($this->get('status') == self::STATUS_COMPLETE) {
             // Get the competency from the archive of the plan.
-            $competency = user_competency_plan::get_competency_by_planid($this->get_id(), $competencyid);
+            $competency = user_competency_plan::get_competency_by_planid($this->get('id'), $competencyid);
         } else if ($this->is_based_on_template()) {
             // Get the competency from the template.
-            $competency = template_competency::get_competency($this->get_templateid(), $competencyid);
+            $competency = template_competency::get_competency($this->get('templateid'), $competencyid);
         } else {
             // Get the competency from the plan.
-            $competency = plan_competency::get_competency($this->get_id(), $competencyid);
+            $competency = plan_competency::get_competency($this->get('id'), $competencyid);
         }
         return $competency;
     }
@@ -261,7 +261,7 @@ class plan extends persistent {
      * @return context_user
      */
     public function get_context() {
-        return context_user::instance($this->get_userid());
+        return context_user::instance($this->get('userid'));
     }
 
     /**
@@ -271,7 +271,7 @@ class plan extends persistent {
      */
     public function get_statusname() {
 
-        $status = $this->get_status();
+        $status = $this->get('status');
 
         switch ($status) {
             case self::STATUS_DRAFT:
@@ -303,7 +303,7 @@ class plan extends persistent {
      * @return template|null
      */
     public function get_template() {
-        $templateid = $this->get_templateid();
+        $templateid = $this->get('templateid');
         if ($templateid === null) {
             return null;
         }
@@ -319,7 +319,7 @@ class plan extends persistent {
      * @return boolean
      */
     public function is_draft() {
-        return in_array($this->get_status(), static::get_draft_statuses());
+        return in_array($this->get('status'), static::get_draft_statuses());
     }
 
     /**
@@ -348,7 +348,7 @@ class plan extends persistent {
         global $DB;
 
         // During create.
-        if (!$this->get_id()) {
+        if (!$this->get('id')) {
 
             // Check that the user exists. We do not need to do that on update because
             // the userid of a plan should never change.
@@ -590,13 +590,13 @@ class plan extends persistent {
         }
 
         $params = array(
-            'templateid' => $template->get_id(),
+            'templateid' => $template->get('id'),
             'status' => self::STATUS_COMPLETE,
 
-            'name' => $template->get_shortname(),
-            'description' => $template->get_description(),
-            'descriptionformat' => $template->get_descriptionformat(),
-            'duedate' => $template->get_duedate(),
+            'name' => $template->get('shortname'),
+            'description' => $template->get('description'),
+            'descriptionformat' => $template->get('descriptionformat'),
+            'duedate' => $template->get('duedate'),
         );
 
         $sql = "UPDATE {" . self::TABLE . "}
@@ -616,7 +616,7 @@ class plan extends persistent {
      * @return bool
      */
     public function is_based_on_template() {
-        return $this->get_templateid() !== null;
+        return $this->get('templateid') !== null;
     }
 
     /**
@@ -625,7 +625,7 @@ class plan extends persistent {
      * @return bool
      */
     public function can_be_edited() {
-        return !$this->is_based_on_template() && $this->get_status() != self::STATUS_COMPLETE && $this->can_manage();
+        return !$this->is_based_on_template() && $this->get('status') != self::STATUS_COMPLETE && $this->can_manage();
     }
 
     /**
@@ -640,15 +640,15 @@ class plan extends persistent {
         // We do not check duedate when plan is draft, complete, unset, or based on a template.
         if ($this->is_based_on_template()
                 || $this->is_draft()
-                || $this->get_status() == self::STATUS_COMPLETE
+                || $this->get('status') == self::STATUS_COMPLETE
                 || empty($value)) {
             return true;
         }
 
         // During update.
-        if ($this->get_id()) {
-            $before = $this->beforeupdate->get_duedate();
-            $beforestatus = $this->beforeupdate->get_status();
+        if ($this->get('id')) {
+            $before = $this->beforeupdate->get('duedate');
+            $beforestatus = $this->beforeupdate->get('status');
 
             // The value has not changed, then it's always OK. Though if we're going
             // from draft to active it has to has to be validated.

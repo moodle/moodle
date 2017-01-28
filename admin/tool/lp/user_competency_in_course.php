@@ -66,7 +66,7 @@ $competency = new \core_competency\competency($competencyid);
 if ($userid > 0) {
     $usercompetencycourses = \core_competency\api::list_user_competencies_in_course($courseid, $userid);
 }
-$subtitle = $competency->get_shortname() . ' <em>' . $competency->get_idnumber() . '</em>';
+$subtitle = $competency->get('shortname') . ' <em>' . $competency->get('idnumber') . '</em>';
 
 list($title, $subtitle) = \tool_lp\page_helper::setup_for_course($url, $course, $subtitle);
 

@@ -34,6 +34,7 @@ use moodle_url;
 use core_competency\external\template_exporter;
 use core_competency\template;
 use core_competency\api;
+use core_competency\external\performance_helper;
 use tool_lp\external\competency_summary_exporter;
 use tool_lp\external\template_statistics_exporter;
 use tool_lp\template_statistics;
@@ -76,7 +77,7 @@ class template_competencies_page implements renderable, templatable {
     public function __construct(template $template, context $pagecontext) {
         $this->pagecontext = $pagecontext;
         $this->template = $template;
-        $this->templatestatistics = new template_statistics($template->get_id());
+        $this->templatestatistics = new template_statistics($template->get('id'));
         $this->competencies = api::list_competencies_in_template($template);
         $this->canmanagecompetencyframeworks = has_capability('moodle/competency:competencymanage', $this->pagecontext);
         $this->canmanagetemplatecompetencies = has_capability('moodle/competency:templatemanage', $this->pagecontext);
@@ -95,20 +96,13 @@ class template_competencies_page implements renderable, templatable {
         $data->template = (new template_exporter($this->template))->export($output);
         $data->pagecontextid = $this->pagecontext->id;
         $data->competencies = array();
-        $contextcache = array();
-        $frameworkcache = array();
+        $helper = new performance_helper();
         foreach ($this->competencies as $competency) {
-            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
-            }
-            $context = $contextcache[$competency->get_competencyframeworkid()];
-            if (!isset($frameworkcache[$competency->get_competencyframeworkid()])) {
-                $frameworkcache[$competency->get_competencyframeworkid()] = $competency->get_framework();
-            }
-            $framework = $frameworkcache[$competency->get_competencyframeworkid()];
+            $context = $helper->get_context_from_competency($competency);
+            $framework = $helper->get_framework_from_competency($competency);
 
-            $courses = api::list_courses_using_competency($competency->get_id());
-            $relatedcompetencies = api::list_related_competencies($competency->get_id());
+            $courses = api::list_courses_using_competency($competency->get('id'));
+            $relatedcompetencies = api::list_related_competencies($competency->get('id'));
 
             $related = array(
                 'competency' => $competency,

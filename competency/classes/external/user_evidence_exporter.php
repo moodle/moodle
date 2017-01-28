@@ -22,9 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace core_competency\external;
+defined('MOODLE_INTERNAL') || die();
 
 use moodle_url;
 use renderer_base;
+use core_competency\external\performance_helper;
+use core_files\external\stored_file_exporter;
 
 /**
  * Class for exporting user_evidence data.
@@ -33,10 +36,10 @@ use renderer_base;
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_evidence_exporter extends persistent_exporter {
+class user_evidence_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\user_evidence';
+        return \core_competency\user_evidence::class;
     }
 
     protected static function define_other_properties() {
@@ -75,21 +78,17 @@ class user_evidence_exporter extends persistent_exporter {
     }
 
     protected function get_other_values(renderer_base $output) {
-        $contextcache = array();
+        $helper = new performance_helper();
 
         $competencies = array();
         foreach ($this->related['competencies'] as $competency) {
-            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
-            }
-            $context = $contextcache[$competency->get_competencyframeworkid()];
-
+            $context = $helper->get_context_from_competency($competency);
             $compexporter = new competency_exporter($competency, array('context' => $context));
             $competencies[] = $compexporter->export($output);
         }
 
         $urlshort = '';
-        $url = $this->persistent->get_url();
+        $url = $this->persistent->get('url');
         if (!empty($url)) {
             $murl = new moodle_url($url);
             $shorturl = preg_replace('@^https?://(www\.)?@', '', $murl->out(false));

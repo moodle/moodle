@@ -876,7 +876,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
      * Tes get_message_processor api.
      */
     public function test_get_message_processor() {
-        $processors = get_message_processors();
+        $processors = get_message_processors(true);
         if (empty($processors)) {
             $this->markTestSkipped("No message processors found");
         }

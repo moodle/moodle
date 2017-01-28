@@ -71,7 +71,7 @@ if ($data) {
     if (empty($data->id)) {
         $template = \core_competency\api::create_template($data);
         $returnurl = new moodle_url('/admin/tool/lp/templatecompetencies.php', [
-            'templateid' => $template->get_id(),
+            'templateid' => $template->get('id'),
             'pagecontextid' => $pagecontextid
         ]);
         $returnmsg = get_string('templatecreated', 'tool_lp');

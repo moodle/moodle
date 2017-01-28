@@ -26,6 +26,7 @@ namespace tool_lp\form;
 defined('MOODLE_INTERNAL') || die();
 
 use stdClass;
+use core\form\persistent;
 
 /**
  * Competency framework form.
@@ -53,26 +54,29 @@ class competency extends persistent {
 
         $mform->addElement('hidden', 'competencyframeworkid');
         $mform->setType('competencyframeworkid', PARAM_INT);
-        $mform->setConstant('competencyframeworkid', $framework->get_id());
+        $mform->setConstant('competencyframeworkid', $framework->get('id'));
 
         $mform->addElement('header', 'generalhdr', get_string('general'));
 
         $mform->addElement('static',
                            'frameworkdesc',
                            get_string('competencyframework', 'tool_lp'),
-                           s($framework->get_shortname()));
+                           s($framework->get('shortname')));
 
         $mform->addElement('hidden', 'parentid', '', array('id' => 'tool_lp_parentcompetency'));
 
         $mform->setType('parentid', PARAM_INT);
-        $mform->setConstant('parentid', ($parent) ? $parent->get_id() : 0);
+        $mform->setConstant('parentid', ($parent) ? $parent->get('id') : 0);
         $parentlevel = ($parent) ? $parent->get_level() : 0;
-        $parentname = ($parent) ? $parent->get_shortname() : get_string('competencyframeworkroot', 'tool_lp');
-        $parentlabel = ($competency->get_id()) ?
-            get_string('taxonomy_parent_' . $framework->get_taxonomy($parentlevel), 'tool_lp') :
-            get_string('parentcompetency', 'tool_lp');
+        $parentname = ($parent) ? $parent->get('shortname') : get_string('competencyframeworkroot', 'tool_lp');
+        $parentlabel = '';
+        if (!empty($competency->get('id'))) {
+            $parentlabel = get_string('taxonomy_parent_' . $framework->get_taxonomy($parentlevel), 'tool_lp');
+        } else {
+            $parentlabel = get_string('parentcompetency', 'tool_lp');
+        }
         $editaction = '';
-        if (!$competency->get_id()) {
+        if (!$competency->get('id')) {
             $icon = $OUTPUT->pix_icon('t/editinline', get_string('parentcompetency_edit', 'tool_lp'));
             $editaction = $OUTPUT->action_link('#', $icon, null, array('id' => 'id_parentcompetencybutton'));
         }
@@ -82,12 +86,12 @@ class competency extends persistent {
                            $parentlabel,
                            "<span id='id_parentdesc'>$parentname</span>&nbsp;".$editaction);
         // Set the picker competency when adding new competency.
-        if (!$competency->get_id()) {
+        if (!$competency->get('id')) {
             // Call the parentcompetency_form init to initialize the competency picker for parent competency.
             $PAGE->requires->js_call_amd('tool_lp/parentcompetency_form', 'init', array('#id_parentcompetencybutton',
                 '#tool_lp_parentcompetency',
                 '#id_parentdesc',
-                $framework->get_id(),
+                $framework->get('id'),
                 $pagecontextid));
         }
 
@@ -123,7 +127,7 @@ class competency extends persistent {
             // configuration requires this field so we only disable it. It is fine as setting the value
             // as a constant will ensure that nobody can change it. And it's validated in the persistent anyway.
             $scaleid->updateAttributes(array('disabled' => 'disabled'));
-            $mform->setConstant('scaleid', $competency->get_scaleid());
+            $mform->setConstant('scaleid', $competency->get('scaleid'));
         }
 
         // Disable short forms.

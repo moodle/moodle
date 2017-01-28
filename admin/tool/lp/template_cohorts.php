@@ -34,7 +34,7 @@ $template = \core_competency\api::read_template($id);
 $context = $template->get_context();
 $canreadtemplate = $template->can_read();
 $canmanagetemplate = $template->can_manage();
-$duedatereached = $template->get_duedate() > 0 && $template->get_duedate() < time();
+$duedatereached = $template->get('duedate') > 0 && $template->get('duedate') < time();
 
 if (!$canreadtemplate) {
     throw new required_capability_exception($context, 'moodle/competency:templateview', 'nopermissions', '');
@@ -65,10 +65,10 @@ if ($canmanagetemplate && ($data = $form->get_data()) && !empty($data->cohorts))
         $relation = \core_competency\api::create_template_cohort($template, $cohortid);
 
         // Create a plan for each member if template visible, and the due date is not reached, and we didn't reach our limit yet.
-        if ($template->get_visible() && $i < $maxtocreate && !$duedatereached) {
+        if ($template->get('visible') && $i < $maxtocreate && !$duedatereached) {
 
             // Only create a few plans right now.
-            $tocreate = \core_competency\template_cohort::get_missing_plans($template->get_id(), $cohortid);
+            $tocreate = \core_competency\template_cohort::get_missing_plans($template->get('id'), $cohortid);
             if ($i + count($tocreate) <= $maxtocreate) {
                 $i += \core_competency\api::create_plans_from_template_cohort($template, $cohortid);
             } else {
@@ -94,7 +94,7 @@ echo $output->header();
 echo $output->heading($title);
 echo $output->heading($subtitle, 3);
 if ($canmanagetemplate) {
-    if ($template->get_visible() == false) {
+    if ($template->get('visible') == false) {
         // Display message to prevent that cohort will not be synchronzed if the template is hidden.
         echo $output->notify_message(get_string('templatecohortnotsyncedwhilehidden', 'tool_lp'));
     } else if ($duedatereached) {

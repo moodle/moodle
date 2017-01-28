@@ -49,13 +49,13 @@ use core_competency\external\competency_framework_exporter;
 use core_competency\external\course_competency_exporter;
 use core_competency\external\course_competency_settings_exporter;
 use core_competency\external\evidence_exporter;
+use core_competency\external\performance_helper;
 use core_competency\external\plan_exporter;
 use core_competency\external\template_exporter;
 use core_competency\external\user_competency_exporter;
 use core_competency\external\user_competency_plan_exporter;
 use core_competency\external\user_evidence_competency_exporter;
 use core_competency\external\user_evidence_exporter;
-use core_competency\external\user_summary_exporter;
 
 /**
  * External API class.
@@ -1338,14 +1338,12 @@ class external extends external_api {
         $result = array();
 
         $contextcache = array();
+        $helper = new performance_helper();
         foreach ($competencies as $competency) {
-            if (!isset($contextcache[$competency['competency']->get_competencyframeworkid()])) {
-                $contextcache[$competency['competency']->get_competencyframeworkid()] = $competency['competency']->get_context();
-            }
-            $context = $contextcache[$competency['competency']->get_competencyframeworkid()];
+            $context = $helper->get_context_from_competency($competency['competency']);
             $exporter = new competency_exporter($competency['competency'], array('context' => $context));
             $competencyrecord = $exporter->export($output);
-            $exporter = new course_competency_exporter($competency['coursecompetency'], array('context' => $context));
+            $exporter = new course_competency_exporter($competency['coursecompetency']);
             $coursecompetencyrecord = $exporter->export($output);
 
             $result[] = array(
@@ -2149,13 +2147,10 @@ class external extends external_api {
 
         $competencies = api::list_competencies_in_template($params['id']);
         $results = array();
-        $contextcache = array();
 
+        $helper = new performance_helper();
         foreach ($competencies as $competency) {
-            if (!isset($contextcache[$competency->get_competencyframeworkid()])) {
-                $contextcache[$competency->get_competencyframeworkid()] = $competency->get_context();
-            }
-            $context = $contextcache[$competency->get_competencyframeworkid()];
+            $context = $helper->get_context_from_competency($competency);
             $exporter = new competency_exporter($competency, array('context' => $context));
             $record = $exporter->export($output);
             array_push($results, $record);
@@ -2710,9 +2705,8 @@ class external extends external_api {
 
         $params = (object) $params;
         $result = api::update_plan($params);
-        $exporter = plan_exporter($result);
-        $record = $exporter->export($output);
-        return external_api::clean_returnvalue(self::update_plan_returns(), $record);
+        $exporter = new plan_exporter($result, ['template' => $plan->get_template()]);
+        return $exporter->export($output);
     }
 
     /**
@@ -3139,25 +3133,16 @@ class external extends external_api {
 
         $result = api::list_plan_competencies($plan);
 
-        if ($plan->get_status() == plan::STATUS_COMPLETE) {
+        if ($plan->get('status') == plan::STATUS_COMPLETE) {
             $ucproperty = 'usercompetencyplan';
         } else {
             $ucproperty = 'usercompetency';
         }
 
-        $contextcache = array();
-        $scalecache = array();
-
+        $helper = new performance_helper();
         foreach ($result as $key => $r) {
-            if (!isset($scalecache[$r->competency->get_competencyframeworkid()])) {
-                $scalecache[$r->competency->get_competencyframeworkid()] = $r->competency->get_framework()->get_scale();
-            }
-            $scale = $scalecache[$r->competency->get_competencyframeworkid()];
-
-            if (!isset($contextcache[$r->competency->get_competencyframeworkid()])) {
-                $contextcache[$r->competency->get_competencyframeworkid()] = $r->competency->get_context();
-            }
-            $context = $contextcache[$r->competency->get_competencyframeworkid()];
+            $context = $helper->get_context_from_competency($r->competency);
+            $scale = $helper->get_scale_from_competency($r->competency);
 
             $exporter = new competency_exporter($r->competency, array('context' => $context));
             $r->competency = $exporter->export($output);
@@ -3307,7 +3292,7 @@ class external extends external_api {
         $userevidence = api::read_user_evidence($params['id']);
         self::validate_context($userevidence->get_context());
 
-        return api::delete_user_evidence($userevidence->get_id());
+        return api::delete_user_evidence($userevidence->get('id'));
     }
 
     /**
@@ -3638,7 +3623,7 @@ class external extends external_api {
         ));
 
         $coursecompetency = new course_competency($params['coursecompetencyid']);
-        self::validate_context(context_course::instance($coursecompetency->get_courseid()));
+        self::validate_context(context_course::instance($coursecompetency->get('courseid')));
 
         return api::set_course_competency_ruleoutcome($coursecompetency, $params['ruleoutcome']);
     }
@@ -3712,8 +3697,8 @@ class external extends external_api {
 
         $output = $PAGE->get_renderer('core');
         $evidence = api::grade_competency(
-                $uc->get_userid(),
-                $uc->get_competencyid(),
+                $uc->get('userid'),
+                $uc->get('competencyid'),
                 $params['grade'],
                 $params['note']
         );
@@ -3724,6 +3709,7 @@ class external extends external_api {
             'scale' => $scale,
             'usercompetency' => $uc,
             'usercompetencyplan' => null,
+            'context' => $evidence->get_context()
         ]);
         return $exporter->export($output);
     }
@@ -3798,7 +3784,7 @@ class external extends external_api {
         $output = $PAGE->get_renderer('core');
 
         $evidence = api::grade_competency_in_plan(
-                $plan->get_id(),
+                $plan->get('id'),
                 $params['competencyid'],
                 $params['grade'],
                 $params['note']
@@ -3810,6 +3796,7 @@ class external extends external_api {
             'scale' => $scale,
             'usercompetency' => null,
             'usercompetencyplan' => null,
+            'context' => $evidence->get_context()
         ]);
         return $exporter->export($output);
     }
@@ -4122,6 +4109,7 @@ class external extends external_api {
             'scale' => $scale,
             'usercompetency' => null,
             'usercompetencyplan' => null,
+            'context' => $evidence->get_context(),
         ));
         return $exporter->export($output);
     }
@@ -4302,7 +4290,7 @@ class external extends external_api {
         ));
 
         $evidence = api::read_evidence($params['id']);
-        $uc = api::get_user_competency_by_id($evidence->get_usercompetencyid());
+        $uc = api::get_user_competency_by_id($evidence->get('usercompetencyid'));
         self::validate_context($uc->get_context());
 
         return api::delete_evidence($evidence);

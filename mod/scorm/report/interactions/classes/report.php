@@ -582,10 +582,20 @@ class report extends \mod_scorm\report {
                     if ($candelete) {
                         echo \html_writer::start_tag('table', array('id' => 'commands'));
                         echo \html_writer::start_tag('tr').\html_writer::start_tag('td');
-                        echo \html_writer::link('javascript:select_all_in(\'DIV\', null, \'scormtablecontainer\');',
-                                                    get_string('selectall', 'scorm')).' / ';
-                        echo \html_writer::link('javascript:deselect_all_in(\'DIV\', null, \'scormtablecontainer\');',
-                                                    get_string('selectnone', 'scorm'));
+                        echo \html_writer::link('#', get_string('selectall', 'scorm'), array('id' => 'checkattempts'));
+                        echo ' / ';
+                        echo \html_writer::link('#', get_string('selectnone', 'scorm'), array('id' => 'uncheckattempts'));
+                        $PAGE->requires->js_amd_inline("
+                        require(['jquery'], function($) {
+                            $('#checkattempts').click(function(e) {
+                                $('#attemptsform').find('input:checkbox').prop('checked', true);
+                                e.preventDefault();
+                            });
+                            $('#uncheckattempts').click(function(e) {
+                                $('#attemptsform').find('input:checkbox').prop('checked', false);
+                                e.preventDefault();
+                            });
+                        });");
                         echo '&nbsp;&nbsp;';
                         echo \html_writer::empty_tag('input', array('type' => 'submit',
                                                                     'value' => get_string('deleteselected', 'scorm'),

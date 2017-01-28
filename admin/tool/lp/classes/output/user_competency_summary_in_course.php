@@ -76,7 +76,7 @@ class user_competency_summary_in_course implements renderable, templatable {
             throw new \invalid_parameter_exception('Invalid params. The competency does not belong to the course.');
         }
 
-        $relatedcompetencies = api::list_related_competencies($competency->get_id());
+        $relatedcompetencies = api::list_related_competencies($competency->get('id'));
         $user = $DB->get_record('user', array('id' => $this->userid));
         $evidence = api::list_evidence_in_course($this->userid, $this->courseid, $this->competencyid);
         $course = $DB->get_record('course', array('id' => $this->courseid));

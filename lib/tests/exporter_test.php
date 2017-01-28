@@ -17,7 +17,7 @@
 /**
  * Exporter class tests.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,11 +28,11 @@ global $CFG;
 /**
  * Exporter testcase.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_competency_exporter_testcase extends advanced_testcase {
+class core_exporter_testcase extends advanced_testcase {
 
     protected $validrelated = null;
     protected $invalidrelated = null;
@@ -41,8 +41,8 @@ class core_competency_exporter_testcase extends advanced_testcase {
 
     public function setUp() {
         $s = new stdClass();
-        $this->validrelated = array('simplestdClass' => $s, 'arrayofstdClass' => array($s, $s));
-        $this->invalidrelated = array('simplestdClass' => 'a string', 'arrayofstdClass' => 5);
+        $this->validrelated = array('simplestdClass' => $s, 'arrayofstdClass' => array($s, $s), 'context' => null);
+        $this->invalidrelated = array('simplestdClass' => 'a string', 'arrayofstdClass' => 5, 'context' => null);
 
         $this->validdata = array('stringA' => 'A string', 'stringAformat' => FORMAT_HTML, 'intB' => 4);
 
@@ -50,7 +50,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_read_structure() {
-        $structure = core_competency_testable_exporter::get_read_structure();
+        $structure = core_testable_exporter::get_read_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -61,7 +61,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_create_structure() {
-        $structure = core_competency_testable_exporter::get_create_structure();
+        $structure = core_testable_exporter::get_create_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -72,7 +72,7 @@ class core_competency_exporter_testcase extends advanced_testcase {
     }
 
     public function test_get_update_structure() {
-        $structure = core_competency_testable_exporter::get_update_structure();
+        $structure = core_testable_exporter::get_update_structure();
 
         $this->assertInstanceOf('external_single_structure', $structure);
         $this->assertInstanceOf('external_value', $structure->keys['stringA']);
@@ -87,8 +87,8 @@ class core_competency_exporter_testcase extends advanced_testcase {
      */
     public function test_invalid_data() {
         global $PAGE;
-        $exporter = new core_competency_testable_exporter($this->invaliddata, $this->validrelated);
-        $output = $PAGE->get_renderer('tool_lp');
+        $exporter = new core_testable_exporter($this->invaliddata, $this->validrelated);
+        $output = $PAGE->get_renderer('core');
 
         $result = $exporter->export($output);
     }
@@ -98,43 +98,81 @@ class core_competency_exporter_testcase extends advanced_testcase {
      */
     public function test_invalid_related() {
         global $PAGE;
-        $exporter = new core_competency_testable_exporter($this->validdata, $this->invalidrelated);
-        $output = $PAGE->get_renderer('tool_lp');
+        $exporter = new core_testable_exporter($this->validdata, $this->invalidrelated);
+        $output = $PAGE->get_renderer('core');
 
         $result = $exporter->export($output);
     }
 
     public function test_valid_data_and_related() {
         global $PAGE;
-        $exporter = new core_competency_testable_exporter($this->validdata, $this->validrelated);
+        $output = $PAGE->get_renderer('core');
+        $exporter = new core_testable_exporter($this->validdata, $this->validrelated);
+        $result = $exporter->export($output);
+        $this->assertSame('>Another string', $result->otherstring);
+        $this->assertSame(array('String &gt;a', 'String b'), $result->otherstrings);
+    }
 
-        $output = $PAGE->get_renderer('tool_lp');
+    public function test_format_text() {
+        global $PAGE;
 
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $syscontext = context_system::instance();
+        $coursecontext = context_course::instance($course->id);
+
+        external_settings::get_instance()->set_filter(true);
+        filter_set_global_state('urltolink', TEXTFILTER_OFF);
+        filter_set_local_state('urltolink', $coursecontext->id, TEXTFILTER_ON);
+        set_config('formats', FORMAT_MARKDOWN, 'filter_urltolink');
+        filter_manager::reset_caches();
+
+        $data = [
+            'stringA' => '__Watch out:__ https://moodle.org @@PLUGINFILE@@/test.pdf',
+            'stringAformat' => FORMAT_MARKDOWN,
+            'intB' => 1
+        ];
+
+        // Export simulated in the system context.
+        $output = $PAGE->get_renderer('core');
+        $exporter = new core_testable_exporter($data, ['context' => $syscontext] + $this->validrelated);
         $result = $exporter->export($output);
 
-        $this->assertSame('Another string', $result->otherstring);
-        $this->assertSame(array('String a', 'String b'), $result->otherstrings);
+        $youtube = 'https://moodle.org';
+        $fileurl = (new moodle_url('/webservice/pluginfile.php/' . $syscontext->id . '/test/area/9/test.pdf'))->out(false);
+        $expected = "<p><strong>Watch out:</strong> $youtube $fileurl</p>\n";
+        $this->assertEquals($expected, $result->stringA);
+        $this->assertEquals(FORMAT_HTML, $result->stringAformat);
+
+        // Export simulated in the course context where the filter is enabled.
+        $exporter = new core_testable_exporter($data, ['context' => $coursecontext] + $this->validrelated);
+        $result = $exporter->export($output);
+        $youtube = '<a href="https://moodle.org" class="_blanktarget">https://moodle.org</a>';
+        $fileurl = (new moodle_url('/webservice/pluginfile.php/' . $coursecontext->id . '/test/area/9/test.pdf'))->out(false);
+        $expected = "<p><strong>Watch out:</strong> $youtube <a href=\"$fileurl\" class=\"_blanktarget\">$fileurl</a></p>\n";
+        $this->assertEquals($expected, $result->stringA);
+        $this->assertEquals(FORMAT_HTML, $result->stringAformat);
     }
 }
 
 /**
  * Example persistent class.
  *
- * @package    core_competency
+ * @package    core
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_competency_testable_exporter extends \core_competency\external\exporter {
+class core_testable_exporter extends \core\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the course.
-        return array('simplestdClass' => 'stdClass', 'arrayofstdClass' => 'stdClass[]');
+        return array('simplestdClass' => 'stdClass', 'arrayofstdClass' => 'stdClass[]', 'context' => 'context?');
     }
 
     protected function get_other_values(renderer_base $output) {
         return array(
-            'otherstring' => 'Another <strong>string</strong>',
-            'otherstrings' => array('String a', 'String <strong>b</strong>')
+            'otherstring' => '>Another <strong>string</strong>',
+            'otherstrings' => array('String >a', 'String <strong>b</strong>')
         );
     }
 
@@ -164,5 +202,26 @@ class core_competency_testable_exporter extends \core_competency\external\export
         );
     }
 
+    protected function get_format_parameters_for_stringA() {
+        return [
+            // For testing use the passed context if any.
+            'context' => isset($this->related['context']) ? $this->related['context'] : context_system::instance(),
+            'component' => 'test',
+            'filearea' => 'area',
+            'itemid' => 9,
+        ];
+    }
 
+    protected function get_format_parameters_for_otherstring() {
+        return [
+            'context' => context_system::instance(),
+            'options' => ['escape' => false]
+        ];
+    }
+
+    protected function get_format_parameters_for_otherstrings() {
+        return [
+            'context' => context_system::instance(),
+        ];
+    }
 }

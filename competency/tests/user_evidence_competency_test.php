@@ -47,46 +47,46 @@ class core_competency_user_evidence_competency_testcase extends advanced_testcas
 
         // Create framework with competencies.
         $fw = $lpg->create_framework();
-        $c1 = $lpg->create_competency(array('competencyframeworkid' => $fw->get_id()));
-        $c2 = $lpg->create_competency(array('competencyframeworkid' => $fw->get_id()));
-        $c3 = $lpg->create_competency(array('competencyframeworkid' => $fw->get_id()));
-        $c4 = $lpg->create_competency(array('competencyframeworkid' => $fw->get_id()));
+        $c1 = $lpg->create_competency(array('competencyframeworkid' => $fw->get('id')));
+        $c2 = $lpg->create_competency(array('competencyframeworkid' => $fw->get('id')));
+        $c3 = $lpg->create_competency(array('competencyframeworkid' => $fw->get('id')));
+        $c4 = $lpg->create_competency(array('competencyframeworkid' => $fw->get('id')));
 
         // Create a plan with competencies.
         $p1 = $lpg->create_plan(array('userid' => $u1->id));
-        $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c1->get_id()));
-        $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c2->get_id()));
-        $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c3->get_id()));
-        $lpg->create_plan_competency(array('planid' => $p1->get_id(), 'competencyid' => $c4->get_id()));
+        $lpg->create_plan_competency(array('planid' => $p1->get('id'), 'competencyid' => $c1->get('id')));
+        $lpg->create_plan_competency(array('planid' => $p1->get('id'), 'competencyid' => $c2->get('id')));
+        $lpg->create_plan_competency(array('planid' => $p1->get('id'), 'competencyid' => $c3->get('id')));
+        $lpg->create_plan_competency(array('planid' => $p1->get('id'), 'competencyid' => $c4->get('id')));
 
         // Create a prior learning evidence and link competencies.
         $ue1 = $lpg->create_user_evidence(array('userid' => $u1->id));
-        $uec11 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue1->get_id(), 'competencyid' => $c1->get_id()));
-        $uec12 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue1->get_id(), 'competencyid' => $c2->get_id()));
-        $uec13 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue1->get_id(), 'competencyid' => $c3->get_id()));
-        $uc11 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c1->get_id()));
-        $uc12 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c2->get_id()));
-        $uc13 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c3->get_id()));
+        $uec11 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue1->get('id'), 'competencyid' => $c1->get('id')));
+        $uec12 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue1->get('id'), 'competencyid' => $c2->get('id')));
+        $uec13 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue1->get('id'), 'competencyid' => $c3->get('id')));
+        $uc11 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c1->get('id')));
+        $uc12 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c2->get('id')));
+        $uc13 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c3->get('id')));
 
         // Create an other prior learning evidence and link competencies.
         $ue2 = $lpg->create_user_evidence(array('userid' => $u1->id));
-        $uec22 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue2->get_id(), 'competencyid' => $c4->get_id()));
-        $uc22 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c4->get_id()));
+        $uec22 = $lpg->create_user_evidence_competency(array('userevidenceid' => $ue2->get('id'), 'competencyid' => $c4->get('id')));
+        $uc22 = $lpg->create_user_competency(array('userid' => $u1->id, 'competencyid' => $c4->get('id')));
 
         // Check the user competencies associated to the first prior learning evidence.
-        $ucs = user_evidence_competency::get_user_competencies_by_userevidenceid($ue1->get_id());
+        $ucs = user_evidence_competency::get_user_competencies_by_userevidenceid($ue1->get('id'));
         $this->assertCount(3, $ucs);
         $uc = array_shift($ucs);
-        $this->assertEquals($uc->get_id(), $uc11->get_id());
+        $this->assertEquals($uc->get('id'), $uc11->get('id'));
         $uc = array_shift($ucs);
-        $this->assertEquals($uc->get_id(), $uc12->get_id());
+        $this->assertEquals($uc->get('id'), $uc12->get('id'));
         $uc = array_shift($ucs);
-        $this->assertEquals($uc->get_id(), $uc13->get_id());
+        $this->assertEquals($uc->get('id'), $uc13->get('id'));
 
         // Check the user competencies associated to the second prior learning evidence.
-        $ucs = user_evidence_competency::get_user_competencies_by_userevidenceid($ue2->get_id());
+        $ucs = user_evidence_competency::get_user_competencies_by_userevidenceid($ue2->get('id'));
         $this->assertCount(1, $ucs);
         $uc = array_shift($ucs);
-        $this->assertEquals($uc->get_id(), $uc22->get_id());
+        $this->assertEquals($uc->get('id'), $uc22->get('id'));
     }
 }

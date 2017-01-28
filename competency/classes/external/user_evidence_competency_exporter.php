@@ -32,10 +32,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_evidence_competency_exporter extends persistent_exporter {
+class user_evidence_competency_exporter extends \core\external\persistent_exporter {
 
     protected static function define_class() {
-        return 'core_competency\\user_evidence_competency';
+        return \core_competency\user_evidence_competency::class;
     }
 
 }

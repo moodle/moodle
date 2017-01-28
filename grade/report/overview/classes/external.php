@@ -42,7 +42,7 @@ class gradereport_overview_external extends external_api {
     /**
      * Describes the parameters for get_course_grades.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.2
      */
     public static function get_course_grades_parameters() {
