@@ -19,6 +19,7 @@ $string['establishment_code'] = 'Establishment Code';
 $string['establishment_code_help'] = 'What should the admin see in the course list block?';
 $string['customtext2'] = 'Custom Text 2';
 $string['customtext3'] = 'Custom Text 3';
+$string['dateformat'] = 'Date format';
 $string['iomad_settings:addinstance'] = 'Add a new Iomad Settings';
 $string['iomad_use_email_as_username'] = 'Use email address as user name';
 $string['iomad_use_email_as_username_help'] = 'Selecting this will change the way a user name is automatically created for a new user account in Iomad so that it simply uses the email address.';
