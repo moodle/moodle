@@ -605,7 +605,7 @@ class iomad {
         if ($allcourse) {
             $sqlsort = " GROUP BY cc.id, co.id, u.id, d.name";
         } else {
-            $sqlsort = " GROUP BY cc.id, u.id, cc.timeenrolled, cc.timestarted, cc.timecompleted, d.name";
+            $sqlsort = " GROUP BY cc.id, u.id, ue.timestart, cc.timestarted, cc.timecompleted, d.name";
         }
         if (!$nogrades) {
             $sqlsort .= ', cc.finalscore';
