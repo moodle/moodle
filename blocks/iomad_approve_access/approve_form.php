@@ -27,7 +27,7 @@ require_once('lib.php');
 
 class approve_form extends moodleform {
     public function definition() {
-        global $CFG, $DB, $USER;
+        global $DB, $USER, $CFG;
 
         $mform = $this->_form; // Don't forget the underscore!
 
@@ -46,7 +46,7 @@ class approve_form extends moodleform {
             if (!$department) {
                 $mform->addElement('html', '* '.get_string('managernotyetapproved', 'block_iomad_approve_access'));
             }
-            $dateformat = "d F Y, g:ia";
+            $dateformat = $CFG->iomad_date_format . ", g:ia";
             foreach ($results as $result) {
 
                 // Get the user info.

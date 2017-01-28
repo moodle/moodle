@@ -34,12 +34,12 @@ class licenseblock extends processor {
         }
     }
     function onordercomplete($invoiceitem, $invoice) {
-        global $DB;
+        global $DB, $CFG;
         $transaction = $DB->start_delegated_transaction();
         // Get name for company license.
         $company = company::get_company_byuserid($invoice->userid);
         $course = $DB->get_record('course', array('id' => $invoiceitem->invoiceableitemid), 'id, shortname', MUST_EXIST);
-        $licensename = $company->shortname . " [" . $course->shortname . "] " . date("Y-m-d");
+        $licensename = $company->shortname . " [" . $course->shortname . "] " . date($CFG->iomad_date_format);
         $count = $DB->count_records_sql("SELECT COUNT(*) FROM {companylicense} WHERE name LIKE '" .
                                         (str_replace("'", "\'", $licensename)) . "%'");
         if ($count) {

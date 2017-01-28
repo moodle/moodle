@@ -202,7 +202,7 @@ class company_users_course_form extends moodleform {
                             // Create an email event.
                             $license = new stdclass();
                             $license->length = $licenserecord['validlength'];
-                            $license->valid = date('d M Y', $licenserecord['expirydate']);
+                            $license->valid = date($CFG->iomad_date_format, $licenserecord['expirydate']);
                             EmailTemplate::send('license_allocated', array('course' => $addcourse,
                                                                            'user' => $this->user,
                                                                            'due' => $duedate,

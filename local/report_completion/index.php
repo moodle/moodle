@@ -695,23 +695,23 @@ if (empty($charttype)) {
 
                 // Get the completion date information.
                 if (!empty($user->timestarted)) {
-                    $starttime = date('d-m-y', $user->timestarted);
+                    $starttime = date($CFG->iomad_date_format, $user->timestarted);
                 } else {
                     $starttime = "-";
                 }
                 if (!empty($user->timeenrolled)) {
-                    $enrolledtime = date('d-m-y', $user->timeenrolled);
+                    $enrolledtime = date($CFG->iomad_date_format, $user->timeenrolled);
                 } else {
                     $enrolledtime = "-";
                 }
                 if (!empty($user->timecompleted)) {
-                    $completetime = date('d-m-y', $user->timecompleted);
+                    $completetime = date($CFG->iomad_date_format, $user->timecompleted);
                 } else {
                     $completetime = "-";
                 }
     
                 if ($showexpiry && !empty($user->timecompleted)) {
-                    $expirytime = date('Y-m-d', $user->timecompleted + ($iomadcourseinfo->validlength * 24 * 60 * 60) );
+                    $expirytime = date($CFG->iomad_date_format, $user->timecompleted + ($iomadcourseinfo->validlength * 24 * 60 * 60) );
                 } else {
                     $expirytime = "-";
                 }

@@ -122,7 +122,7 @@ if ($data = $callform->get_data()) {
                             $mymanagers = $company->get_my_managers($result->userid, 1);
                             $eventuser = $DB->get_record('user', array('id' => $result->userid));
                             $location = $DB->get_record('classroom', array('id' => $event->classroomid));
-                            $location->time = date('jS \of F Y \a\t h:i', $event->startdatetime);
+                            $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
 
                             // Send the emails.
                             foreach ($mymanagers as $mymanager) {
@@ -199,7 +199,7 @@ if ($data = $callform->get_data()) {
                             if (!empty($mymanagers)) {
                                 $eventuser = $DB->get_record('user', array('id' => $result->userid));
                                 $location = $DB->get_record('classroom', array('id' => $event->classroomid));
-                                $location->time = date('jS \of F Y \a\t h:i', $event->startdatetime);
+                                $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
 
                                 // Send the emails.
                                 foreach ($mymanagers as $mymanager) {
@@ -238,7 +238,7 @@ if ($data = $callform->get_data()) {
                 $DB->update_record('block_iomad_approve_access', $result, $bulk = false);
                 if ($sendemail || $senddenied) {
                     $location = $DB->get_record('classroom', array('id' => $event->classroomid));
-                    $location->time = date('jS \of F Y \a\t h:i', $event->startdatetime);
+                    $location->time = date($CFG->iomad_date_format . ' \a\t h:i', $event->startdatetime);
                     $approveuser = $DB->get_record('user', array('id' => $result->userid));
                     $approvecourse = $DB->get_record('course', array('id' => $result->courseid));
                     if ($sendemail) {

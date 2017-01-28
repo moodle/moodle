@@ -34,4 +34,22 @@ if ($hassiteconfig) {
                                                 get_string('iomad_use_email_as_username', 'local_iomad_settings'),
                                                 get_string('iomad_use_email_as_username_help', 'local_iomad_settings'),
                                                 0));
+
+    $dateformats = array('Y-m-d' => 'YYYY-MM-DD',
+                         'Y/m/d' => 'YYYY/MM/DD',
+                         'Y.m.d' => 'YYYY.MM.DD',
+                         'Y-d-m' => 'YYYY-DD-MM',
+                         'Y/d/m' => 'YYYY/DD/MM',
+                         'Y.d.m' => 'YYYY.DD.MM',
+                         'd-m-Y' => 'DD-MM-YYYY',
+                         'd/m/Y' => 'DD/MM/YYYY',
+                         'd.m.Y' => 'DD.MM.YYYY',
+                         'm-d-Y' => 'MM-DD-YYYY',
+                         'm/d/Y' => 'MM/DD/YYYY',
+                         'm.d.Y' => 'MM.DD.YYYY',
+                         'jS \of F Y' => 'nth of Month YYYY',
+                         'F d, y, ' => 'Month n, YYYY',
+                         'jS \of F Y' => 'nth of Mon YYYY',
+                         'M d, y, ' => 'Mon n, YYYY');
+    $settings->add(new admin_setting_configselect('iomad_date_format', get_string('dateformat', 'local_iomad_settings'), '', 'Y-m-d', $dateformats));
 }

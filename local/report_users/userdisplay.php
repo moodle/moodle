@@ -214,17 +214,17 @@ foreach ($usercourses as $usercourse) {
             }
             // Set the strings.
             if (!empty($usercompcourse->timestarted)) {
-                $starttime = date('d-m-Y', $usercompcourse->timestarted);
+                $starttime = date($CFG->iomad_date_format, $usercompcourse->timestarted);
             } else {
                 $starttime = "";
             }
             if (!empty($usercompcourse->timeenrolled)) {
-                $enrolledtime = date('d-m-Y', $usercompcourse->timeenrolled);
+                $enrolledtime = date($CFG->iomad_date_format, $usercompcourse->timeenrolled);
             } else {
                 $enrolledtime = "";
             }
             if (!empty($usercompcourse->timecompleted)) {
-                $completetime = date('d-m-Y', $usercompcourse->timecompleted);
+                $completetime = date($CFG->iomad_date_format, $usercompcourse->timecompleted);
             } else {
                 $completetime = "";
             }
@@ -424,7 +424,7 @@ if (!empty($courseid) && !empty($usercompletion[$courseid])) {
                 echo "<h3>".$scorminfo->name."</h3>";
                 if (!empty($scormdata->starttime)) {
                     echo get_string('scormtimestarted', 'local_report_users')." " .
-                         date('jS \of F Y h:i:s A', $scormdata->starttime)."</br>";
+                         date($CFG->iomad_date_format .' h:i:s A', $scormdata->starttime)."</br>";
                     echo get_string('scormattempts', 'local_report_users')." ".$numattempts."</br>";
                     if (!empty($scormdata->score)&&!empty($scormdata->maxscore)) {
                         echo get_string('scormscore', 'local_report_users')." ".
@@ -445,7 +445,7 @@ if (!empty($courseid) && !empty($usercompletion[$courseid])) {
                 echo '"'.$scorminfo->name.'",';
                 if (!empty($scormdata->starttime)) {
                     echo '"'.get_string('scormtimestarted', 'local_report_users')." " .
-                             date('jS \of F Y h:i:s A', $scormdata->starttime).'",';
+                             date($CFG->iomad_date_format . ' h:i:s A', $scormdata->starttime).'",';
                     echo '"'.get_string('scormattempts', 'local_report_users')." ".
                           $numattempts.'",';
                     if (!empty($scormdata->score)&& !empty($scormdata->maxscore)) {

@@ -18,7 +18,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->dirroot.'/local/email/lib.php');
 
 function email_reports_cron() {
-    global $DB;
+    global $DB, $CFG;
 
     // Set some defaults.
     $runtime = time();
@@ -160,7 +160,7 @@ function email_reports_cron() {
                             $manageruser->email . "," .
                             $manageruser->departmentname . "," .
                             $manageruser->coursename . "," .
-                            date('d-m-y', $manageruser->timeenrolled) . "\n";
+                            date($CFG->iomad_date_format, $manageruser->timeenrolled) . "\n";
             }
             if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                 $course = new stdclass();
@@ -311,7 +311,7 @@ function email_reports_cron() {
                             $manageruser->email . "," .
                             $manageruser->departmentname . "," .
                             $manageruser->coursename . "," .
-                            date('d-m-y', $manageruser->timecompleted) . "\n";
+                            date($CFG->iomad_date_format, $manageruser->timecompleted) . "\n";
             }
             if ($foundusers && $user = $DB->get_record('user', array('id' => $manager->userid))) {
                 $course = new stdclass();

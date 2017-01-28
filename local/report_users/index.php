@@ -613,7 +613,7 @@ if (!$users) {
 
 
         if ($user->timecreated) {
-            $strtimecreated = date('Y-m-d', $user->timecreated);
+            $strtimecreated = date($CFG->iomad_date_format, $user->timecreated);
         } else {
             $strtimecreated = get_string('never');
         }

@@ -154,7 +154,7 @@ if ($departmentid == $companydepartment->id) {
         // Create the table data.
         $table->data[] = array ("$license->name",
                            $coursestring,
-                           date('d M Y', $license->expirydate),
+                           date($CFG->iomad_date_format, $license->expirydate),
                            "$license->validlength",
                            "$license->allocation",
                            "$license->used",

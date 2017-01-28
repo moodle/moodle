@@ -183,7 +183,7 @@ function trainingevent_get_coursemodule_info($coursemodule) {
                 $extra .= get_string('location', 'trainingevent') . ": " . $classroom->name . "</br>";
             }
         }
-        $dateformat = "d F Y, g:ia";
+        $dateformat = "$CFG->iomad_date_format, g:ia";
 
         $extra .= get_string('startdatetime', 'trainingevent') . ": " . date($dateformat, $trainingevent->startdatetime);
         $extra .= "</br><a href='$CFG->wwwroot/mod/trainingevent/view.php?id=$coursemodule->id'>".
