@@ -2155,6 +2155,7 @@ function file_safe_save_content($content, $destination) {
  *                        and should not be reopened.
  * @param array $options An array of options, currently accepts:
  *                       - (string) cacheability: public, or private.
+ *                       - (string|null) immutable
  * @return null script execution stopped unless $dontdie is true
  */
 function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='',
@@ -2195,6 +2196,14 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
     }
 
     if ($lifetime > 0) {
+        $immutable = '';
+        if (!empty($options['immutable'])) {
+            $immutable = ', immutable';
+            // Overwrite lifetime accordingly:
+            // 90 days only - based on Moodle point release cadence being every 3 months.
+            $lifetimemin = 60*60*24*90;
+            $lifetime = max($lifetime, $lifetimemin);
+        }
         $cacheability = ' public,';
         if (!empty($options['cacheability']) && ($options['cacheability'] === 'public')) {
             // This file must be cache-able by both browsers and proxies.
@@ -2207,7 +2216,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
             $cacheability = ' private,';
         }
         $nobyteserving = false;
-        header('Cache-Control:'.$cacheability.' max-age='.$lifetime.', no-transform');
+        header('Cache-Control:'.$cacheability.' max-age='.$lifetime.', no-transform'.$immutable);
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
@@ -2294,6 +2303,8 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
  *  (string|null) cacheability - force the cacheability setting of the HTTP response, "private" or "public",
  *      when $lifetime is greater than 0. Cacheability defaults to "private" when logged in as other than guest; otherwise,
  *      defaults to "public".
+ *  (string|null) immutable - set the immutable cache setting in the HTTP response, when served under HTTPS.
+ *      Note: it's up to the consumer to set it properly i.e. when serving a "versioned" URL.
  *
  * @category files
  * @param stored_file $stored_file local file object

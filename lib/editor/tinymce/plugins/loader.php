@@ -62,7 +62,7 @@ if ($allowcache) {
     // Set it to expire a year later. Note that this means we should never get
     // If-Modified-Since requests so there is no need to handle them specially.
     header('Expires: ' . date('r', time() + 365 * 24 * 3600));
-    header('Cache-Control: max-age=' . 365 * 24 * 3600);
+    header('Cache-Control: max-age=' . 365 * 24 * 3600 . ', immutable');
     // Pragma is set to no-cache by default so must be overridden.
     header('Pragma:');
 }
