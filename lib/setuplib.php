@@ -1381,6 +1381,10 @@ function disable_output_buffering() {
     ini_set('output_handler', '');
 
     error_reporting($olddebug);
+
+    // Disable buffering in nginx.
+    header('X-Accel-Buffering: no');
+
 }
 
 /**
