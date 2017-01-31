@@ -385,7 +385,7 @@ class helper {
      * Returns the url to launch the lti tool.
      *
      * @param int $toolid the id of the shared tool
-     * @return moodle_url the url to launch the tool
+     * @return \moodle_url the url to launch the tool
      * @since Moodle 3.2
      */
     public static function get_launch_url($toolid) {
@@ -395,7 +395,7 @@ class helper {
     /**
      * Returns the name of the lti enrolment instance, or the name of the course/module being shared.
      *
-     * @param stdClass $tool The lti tool
+     * @param \stdClass $tool The lti tool
      * @return string The name of the tool
      * @since Moodle 3.2
      */
@@ -415,7 +415,7 @@ class helper {
     /**
      * Returns a description of the course or module that this lti instance points to.
      *
-     * @param stdClass $tool The lti tool
+     * @param \stdClass $tool The lti tool
      * @return string A description of the tool
      * @since Moodle 3.2
      */
@@ -438,8 +438,8 @@ class helper {
     /**
      * Returns the icon of the tool.
      *
-     * @param stdClass $tool The lti tool
-     * @return moodle_url A url to the icon of the tool
+     * @param \stdClass $tool The lti tool
+     * @return \moodle_url A url to the icon of the tool
      * @since Moodle 3.2
      */
     public static function get_icon($tool) {
@@ -453,7 +453,7 @@ class helper {
      * If you have slash arguments enabled, this will be a nice url ending in cartridge.xml.
      * If not it will be a php page with some parameters passed.
      *
-     * @param stdClass $tool The lti tool
+     * @param \stdClass $tool The lti tool
      * @return string The url to the cartridge representing the tool
      * @since Moodle 3.2
      */
@@ -482,7 +482,7 @@ class helper {
      * If you have slash arguments enabled, this will be a nice url ending in cartridge.xml.
      * If not it will be a php page with some parameters passed.
      *
-     * @param stdClass $tool The lti tool
+     * @param \stdClass $tool The lti tool
      * @return string The url to the cartridge representing the tool
      */
     public static function get_proxy_url($tool) {
@@ -616,7 +616,7 @@ class helper {
      * Traverses a recursive associative array, setting the properties of the corresponding
      * xpath element.
      *
-     * @param DOMXPath $xpath The xpath with the xml to modify
+     * @param \DOMXPath $xpath The xpath with the xml to modify
      * @param array $parameters The array of xpaths to search through
      * @param string $prefix The current xpath prefix (gets longer the deeper into the array you go)
      * @return void
