@@ -421,7 +421,7 @@ class external_api {
                     try {
                         $result[$key] = static::clean_returnvalue($subdesc, $response[$key]);
                     } catch (invalid_response_exception $e) {
-                        //build the path to the faulty attribut
+                        //build the path to the faulty attribute
                         throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
                     }
                 }
@@ -441,6 +441,30 @@ class external_api {
             }
             return $result;
 
+        } else if ($description instanceof external_file) {
+            if (!is_array($response)) {
+                throw new invalid_response_exception('Only array accepted. The bad value is: \'' .
+                       print_r($response, true) . '\'');
+            }
+            if (!isset($response['path'])) {
+                throw new invalid_response_exception('Array must contains \'path\'');
+            }
+            if (!isset($response['filename'])) {
+                throw new invalid_response_exception('Array must contains \'filename\' object');
+            }
+            
+            $result = array();
+            $result['filename'] = $response['filename'];
+            $result['path'] = $response['path'];
+            
+            if (isset($response['tempfile'])) {
+                $result['tempfile'] = $response['tempfile'];
+            } else {
+                $result['tempfile'] = false;
+            }
+            
+            return $result;
+            
         } else {
             throw new invalid_response_exception('Invalid external api response description');
         }
@@ -633,6 +657,22 @@ class external_multiple_structure extends external_description {
             $required=VALUE_REQUIRED, $default=null) {
         parent::__construct($desc, $required, $default);
         $this->content = $content;
+    }
+}
+
+/**
+ * File description class.
+ */
+class external_file extends external_description {
+    
+    /**
+     * Constructor
+     * @param string $desc
+     * @param bool $required
+     * @param array $default
+     */
+    public function __construct($desc='', $required=VALUE_REQUIRED, $default=null) {
+        parent::__construct($desc, $required, $default);
     }
 }
 
