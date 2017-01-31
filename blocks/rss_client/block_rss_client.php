@@ -33,6 +33,9 @@
     /** The maximum time in seconds that cron will wait between attempts to retry failing RSS feeds. */
     const CLIENT_MAX_SKIPTIME = 43200; // 60 * 60 * 12 seconds.
 
+    /** @var bool track whether any of the output feeds have recorded failures */
+    private $hasfailedfeeds = false;
+
     function init() {
         $this->title = get_string('pluginname', 'block_rss_client');
     }
@@ -59,6 +62,7 @@
      * @return block_rss_client\output\footer|null The renderable footer or null if none should be displayed.
      */
     protected function get_footer($feedrecords) {
+        global $PAGE;
         $footer = null;
 
         if ($this->config->block_rss_client_show_channel_link) {
@@ -71,6 +75,16 @@
 
             if (!empty($channellink)) {
                 $footer = new block_rss_client\output\footer($channellink);
+            }
+        }
+
+        if ($this->hasfailedfeeds) {
+            if (has_any_capability(['block/rss_client:manageownfeeds', 'block/rss_client:manageanyfeeds'], $this->context)) {
+                if ($footer === null) {
+                    $footer = new block_rss_client\output\footer();
+                }
+                $manageurl = new moodle_url('/blocks/rss_client/managefeeds.php', ['courseid' => $PAGE->course->id]);
+                $footer->set_failed($manageurl);
             }
         }
 
@@ -172,6 +186,12 @@
     public function get_feed($feedrecord, $maxentries, $showtitle) {
         global $CFG;
         require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
+
+        if ($feedrecord->skipuntil) {
+            // Last attempt to gather this feed via cron failed - do not try to fetch it now.
+            $this->hasfailedfeeds = true;
+            return null;
+        }
 
         $simplepiefeed = new moodle_simplepie($feedrecord->url);
 
