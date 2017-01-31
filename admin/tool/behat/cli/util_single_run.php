@@ -143,7 +143,7 @@ if ($options['run']) {
     $run = $options['run'];
     // If parallel option is not passed, then try get it form config.
     if (!$options['parallel']) {
-        $parallel = behat_config_manager::get_parallel_test_runs();
+        $parallel = behat_config_manager::get_behat_run_config_value('parallel');
     } else {
         $parallel = $options['parallel'];
     }
@@ -176,10 +176,7 @@ if ($options['install']) {
 } else if ($options['enable']) {
     if (!empty($parallel)) {
         // Save parallel site info for enable and install options.
-        $filepath = behat_config_manager::get_parallel_test_file_path();
-        if (!file_put_contents($filepath, $parallel)) {
-            behat_error(BEHAT_EXITCODE_PERMISSIONS, 'File ' . $filepath . ' can not be created');
-        }
+        behat_config_manager::set_behat_run_config_value('behatsiteenabled', 1);
     }
 
     // Enable test mode.
@@ -200,7 +197,7 @@ if ($options['install']) {
     }
 
 } else if ($options['disable']) {
-    behat_util::stop_test_mode();
+    behat_util::stop_test_mode($run);
     // This is only displayed once for parallel install.
     if (empty($run)) {
         mtrace("Acceptance tests environment disabled");

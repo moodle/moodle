@@ -147,7 +147,7 @@ class behat_config_util {
     public function get_number_of_parallel_run() {
         // Get number of parallel runs if not passed.
         if (empty($this->parallelruns) && ($this->parallelruns !== false)) {
-            $this->parallelruns = behat_config_manager::get_parallel_test_runs();
+            $this->parallelruns = behat_config_manager::get_behat_run_config_value('parallel');
         }
 
         return $this->parallelruns;

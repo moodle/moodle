@@ -139,8 +139,23 @@ class behat_util extends testing_util {
         }
 
         self::reset_dataroot();
-        self::drop_dataroot();
         self::drop_database(true);
+        self::drop_dataroot();
+    }
+
+    /**
+     * Delete files and directories under dataroot.
+     */
+    public static function drop_dataroot() {
+        global $CFG;
+
+        // As behat directory is now created under default $CFG->behat_dataroot_parent, so remove the whole dir.
+        if ($CFG->behat_dataroot !== $CFG->behat_dataroot_parent) {
+            remove_dir($CFG->behat_dataroot, false);
+        } else {
+            // It should never come here.
+            throw new moodle_exception("Behat dataroot should not be same as parent behat data root.");
+        }
     }
 
     /**
@@ -290,6 +305,7 @@ class behat_util extends testing_util {
         }
 
         $testenvfile = self::get_test_file_path();
+        behat_config_manager::set_behat_run_config_value('behatsiteenabled', 0);
 
         if (!self::is_test_mode_enabled()) {
             echo "Test environment was already disabled\n";
@@ -322,8 +338,8 @@ class behat_util extends testing_util {
      * Returns the path to the file which specifies if test environment is enabled
      * @return string
      */
-    protected final static function get_test_file_path() {
-        return behat_command::get_behat_dir() . '/test_environment_enabled.txt';
+    public final static function get_test_file_path() {
+        return behat_command::get_parent_behat_dir() . '/test_environment_enabled.txt';
     }
 
     /**
