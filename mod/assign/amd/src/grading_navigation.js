@@ -212,6 +212,10 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
                     if (user.requiregrading == "0") {
                         show = false;
                     }
+                } else if (filter == "grantedextension") {
+                    if (user.grantedextension == "0") {
+                        show = false;
+                    }
                 }
             });
 

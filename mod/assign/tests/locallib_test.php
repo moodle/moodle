@@ -799,6 +799,20 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals($student->id, $participant->id);
         $this->assertFalse($participant->submitted);
         $this->assertFalse($participant->requiregrading);
+        $this->assertFalse($participant->grantedextension);
+    }
+
+    public function test_get_participant_granted_extension() {
+        $assign = $this->create_instance(array('grade' => 100));
+        $student = $this->students[0];
+        $this->setUser($this->editingteachers[0]);
+        $assign->save_user_extension($student->id, time());
+        $participant = $assign->get_participant($student->id);
+
+        $this->assertEquals($student->id, $participant->id);
+        $this->assertFalse($participant->submitted);
+        $this->assertFalse($participant->requiregrading);
+        $this->assertTrue($participant->grantedextension);
     }
 
     public function test_get_participant_with_ungraded_submission() {
@@ -828,6 +842,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals($student->id, $participant->id);
         $this->assertTrue($participant->submitted);
         $this->assertTrue($participant->requiregrading);
+        $this->assertFalse($participant->grantedextension);
     }
 
     public function test_get_participant_with_graded_submission() {
@@ -867,6 +882,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals($student->id, $participant->id);
         $this->assertTrue($participant->submitted);
         $this->assertFalse($participant->requiregrading);
+        $this->assertFalse($participant->grantedextension);
     }
 
     public function test_count_teams() {

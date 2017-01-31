@@ -1669,7 +1669,7 @@ class assign {
      * Get the submission status/grading status for all submissions in this assignment for the
      * given paticipants.
      *
-     * These statuses match the available filters (requiregrading, submitted, notsubmitted).
+     * These statuses match the available filters (requiregrading, submitted, notsubmitted, grantedextension).
      * If this is a group assignment, group info is also returned.
      *
      * @param array $participants an associative array where the key is the participant id and
@@ -1689,8 +1689,9 @@ class assign {
         $assignid = $this->get_instance()->id;
         $params['assignmentid1'] = $assignid;
         $params['assignmentid2'] = $assignid;
+        $params['assignmentid3'] = $assignid;
 
-        $fields = 'SELECT u.id, s.status, s.timemodified AS stime, g.timemodified AS gtime, g.grade';
+        $fields = 'SELECT u.id, s.status, s.timemodified AS stime, g.timemodified AS gtime, g.grade, uf.extensionduedate';
         $from = ' FROM {user} u
                          LEFT JOIN {assign_submission} s
                                 ON u.id = s.userid
@@ -1700,14 +1701,17 @@ class assign {
                                 ON u.id = g.userid
                                AND g.assignment = :assignmentid2
                                AND g.attemptnumber = s.attemptnumber
+                         LEFT JOIN {assign_user_flags} uf
+                                ON u.id = uf.userid
+                               AND uf.assignment = :assignmentid3
             ';
         $where = ' WHERE u.id ' . $insql;
 
         if (!empty($this->get_instance()->blindmarking)) {
             $from .= 'LEFT JOIN {assign_user_mapping} um
                              ON u.id = um.userid
-                            AND um.assignment = :assignmentid3 ';
-            $params['assignmentid3'] = $assignid;
+                            AND um.assignment = :assignmentid4 ';
+            $params['assignmentid4'] = $assignid;
             $fields .= ', um.id as recordid ';
         }
 
@@ -1727,12 +1731,14 @@ class assign {
             $participants[$userid]->fullname = $this->fullname($participant);
             $participants[$userid]->submitted = false;
             $participants[$userid]->requiregrading = false;
+            $participants[$userid]->grantedextension = false;
         }
 
         foreach ($records as $userid => $submissioninfo) {
             // These filters are 100% the same as the ones in the grading table SQL.
             $submitted = false;
             $requiregrading = false;
+            $grantedextension = false;
 
             if (!empty($submissioninfo->stime) && $submissioninfo->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
                 $submitted = true;
@@ -1744,8 +1750,13 @@ class assign {
                 $requiregrading = true;
             }
 
+            if (!empty($submissioninfo->extensionduedate)) {
+                $grantedextension = true;
+            }
+
             $participants[$userid]->submitted = $submitted;
             $participants[$userid]->requiregrading = $requiregrading;
+            $participants[$userid]->grantedextension = $grantedextension;
             if ($this->get_instance()->teamsubmission) {
                 $group = $this->get_submission_group($userid);
                 if ($group) {
@@ -1759,11 +1770,12 @@ class assign {
 
     /**
      * Get the submission status/grading status for all submissions in this assignment.
-     * These statuses match the available filters (requiregrading, submitted, notsubmitted).
+     * These statuses match the available filters (requiregrading, submitted, notsubmitted, grantedextension).
      * If this is a group assignment, group info is also returned.
      *
      * @param int $currentgroup
-     * @return array List of user records with extra fields 'submitted', 'notsubmitted', 'requiregrading', 'groupid', 'groupname'
+     * @return array List of user records with extra fields 'submitted', 'notsubmitted', 'requiregrading', 'grantedextension',
+     *               'groupid', 'groupname'
      */
     public function list_participants_with_filter_status_and_group($currentgroup) {
         $participants = $this->list_participants($currentgroup, false);
