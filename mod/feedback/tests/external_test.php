@@ -181,4 +181,46 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedfeedbacks, $result['feedbacks']);
     }
+
+    /**
+     * Test get_feedback_access_information function with basic defaults for student.
+     */
+    public function test_get_feedback_access_information_student() {
+
+        self::setUser($this->student);
+        $result = mod_feedback_external::get_feedback_access_information($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+
+        $this->assertFalse($result['canviewanalysis']);
+        $this->assertFalse($result['candeletesubmissions']);
+        $this->assertFalse($result['canviewreports']);
+        $this->assertFalse($result['canedititems']);
+        $this->assertTrue($result['cancomplete']);
+        $this->assertTrue($result['cansubmit']);
+        $this->assertTrue($result['isempty']);
+        $this->assertTrue($result['isopen']);
+        $this->assertTrue($result['isanonymous']);
+        $this->assertFalse($result['isalreadysubmitted']);
+    }
+
+    /**
+     * Test get_feedback_access_information function with basic defaults for teacher.
+     */
+    public function test_get_feedback_access_information_teacher() {
+
+        self::setUser($this->teacher);
+        $result = mod_feedback_external::get_feedback_access_information($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+
+        $this->assertTrue($result['canviewanalysis']);
+        $this->assertTrue($result['canviewreports']);
+        $this->assertTrue($result['canedititems']);
+        $this->assertTrue($result['candeletesubmissions']);
+        $this->assertFalse($result['cancomplete']);
+        $this->assertTrue($result['cansubmit']);
+        $this->assertTrue($result['isempty']);
+        $this->assertTrue($result['isopen']);
+        $this->assertTrue($result['isanonymous']);
+        $this->assertFalse($result['isalreadysubmitted']);
+    }
 }

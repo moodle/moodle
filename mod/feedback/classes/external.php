@@ -137,4 +137,101 @@ class mod_feedback_external extends external_api {
             )
         );
     }
+
+    /**
+     * Utility function for validating a feedback.
+     *
+     * @param int $feedbackid feedback instance id
+     * @return array array containing the feedback persistent, course, context and course module objects
+     * @since  Moodle 3.3
+     */
+    protected static function validate_feedback($feedbackid) {
+        global $DB, $USER;
+
+        // Request and permission validation.
+        $feedback = $DB->get_record('feedback', array('id' => $feedbackid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($feedback, 'feedback');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+
+        return array($feedback, $course, $cm, $context);
+    }
+
+    /**
+     * Describes the parameters for get_feedback_access_information.
+     *
+     * @return external_external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_feedback_access_information_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id.')
+            )
+        );
+    }
+
+    /**
+     * Return access information for a given feedback.
+     *
+     * @param int $feedbackid feedback instance id
+     * @return array of warnings and the access information
+     * @since Moodle 3.3
+     * @throws  moodle_exception
+     */
+    public static function get_feedback_access_information($feedbackid) {
+        global $PAGE;
+
+        $params = array(
+            'feedbackid' => $feedbackid
+        );
+        $params = self::validate_parameters(self::get_feedback_access_information_parameters(), $params);
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
+
+        $result = array();
+        // Capabilities first.
+        $result['canviewanalysis'] = $feedbackcompletion->can_view_analysis();
+        $result['cancomplete'] = $feedbackcompletion->can_complete();
+        $result['cansubmit'] = $feedbackcompletion->can_submit();
+        $result['candeletesubmissions'] = has_capability('mod/feedback:deletesubmissions', $context);
+        $result['canviewreports'] = has_capability('mod/feedback:viewreports', $context);
+        $result['canedititems'] = has_capability('mod/feedback:edititems', $context);
+
+        // Status information.
+        $result['isempty'] = $feedbackcompletion->is_empty();
+        $result['isopen'] = $feedbackcompletion->is_open();
+        $anycourse = ($course->id == SITEID);
+        $result['isalreadysubmitted'] = $feedbackcompletion->is_already_submitted($anycourse);
+        $result['isanonymous'] = $feedbackcompletion->is_anonymous();
+
+        $result['warnings'] = [];
+        return $result;
+    }
+
+    /**
+     * Describes the get_feedback_access_information return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_feedback_access_information_returns() {
+        return new external_single_structure(
+            array(
+                'canviewanalysis' => new external_value(PARAM_BOOL, 'Whether the user can view the analysis or not.'),
+                'cancomplete' => new external_value(PARAM_BOOL, 'Whether the user can complete the feedback or not.'),
+                'cansubmit' => new external_value(PARAM_BOOL, 'Whether the user can submit the feedback or not.'),
+                'candeletesubmissions' => new external_value(PARAM_BOOL, 'Whether the user can delete submissions or not.'),
+                'canviewreports' => new external_value(PARAM_BOOL, 'Whether the user can view the feedback reports or not.'),
+                'canedititems' => new external_value(PARAM_BOOL, 'Whether the user can edit feedback items or not.'),
+                'isempty' => new external_value(PARAM_BOOL, 'Whether the feedback has questions or not.'),
+                'isopen' => new external_value(PARAM_BOOL, 'Whether the feedback has active access time restrictions or not.'),
+                'isalreadysubmitted' => new external_value(PARAM_BOOL, 'Whether the feedback is already submitted or not.'),
+                'isanonymous' => new external_value(PARAM_BOOL, 'Whether the feedback is anonymous or not.'),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
