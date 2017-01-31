@@ -12,6 +12,7 @@ Feature: We can change what we are viewing on the grader report
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
+      | student2 | Student | 1 | student2@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -95,6 +96,9 @@ Feature: We can change what we are viewing on the grader report
       | capability | permission |
       | moodle/grade:viewhidden | Prevent |
     And I log out
+    And the following "course enrolments" exist:
+      | user | course | role |
+      | student2 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
     And I navigate to "Grades" node in "Course administration"
