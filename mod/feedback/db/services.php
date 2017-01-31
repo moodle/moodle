@@ -15,18 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Feedback version information
+ * Feedback external functions and service definitions.
  *
- * @package mod_feedback
- * @author     Andreas Grabs
+ * @package    mod_feedback
+ * @category   external
+ * @copyright  2017 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.3
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2016120501;       // The current module version (Date: YYYYMMDDXX)
-$plugin->requires  = 2016112900;    // Requires this Moodle version
-$plugin->component = 'mod_feedback';   // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+$functions = array(
 
-$feedback_version_intern = 1; //this version is used for restore older backups
+    'mod_feedback_get_feedbacks_by_courses' => array(
+        'classname'     => 'mod_feedback_external',
+        'methodname'    => 'get_feedbacks_by_courses',
+        'description'   => 'Returns a list of feedbacks in a provided list of courses, if no list is provided all feedbacks that
+                            the user can view will be returned.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/feedback:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+);
