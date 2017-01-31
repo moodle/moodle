@@ -629,7 +629,7 @@ if (!$users) {
                 null,
                 $stredit
             );
-            $url = new moodle_url('/blocks/iomad_company_admin/editadusers.php', array(
+            $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
                 'password' => $user->id,
                 'sesskey' => sesskey(),   
             ));
