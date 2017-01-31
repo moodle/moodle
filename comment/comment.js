@@ -358,7 +358,9 @@ M.core_comment = {
                     if (img) {
                         img.set('src', M.util.image_url('t/expanded', 'core'));
                     }
-                    commenttoggler.setAttribute('aria-expanded', 'true');
+                    if (commenttoggler) {
+                        commenttoggler.setAttribute('aria-expanded', 'true');
+                    }
                 } else {
                     // hide
                     container.setStyle('display', 'none');
@@ -372,7 +374,9 @@ M.core_comment = {
                     if (ta) {
                         ta.set('value','');
                     }
-                    commenttoggler.setAttribute('aria-expanded', 'false');
+                    if (commenttoggler) {
+                        commenttoggler.setAttribute('aria-expanded', 'false');
+                    }
                 }
                 if (ta) {
                     //toggle_textarea.apply(ta, [false]);
