@@ -19,6 +19,7 @@
 .context-header-settings-menu .dropdown-toggle > .icon,
 #region-main-settings-menu .dropdown-toggle > .icon {
     height: 24px;
+    font-size: 24px;
     width: auto;
 }
 /** Prevent user notifications overlapping with region main settings menu */
@@ -1459,6 +1460,7 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 .chooserdialogue-course-modchooser .modicon .icon {
     width: 24px;
     height: 24px;
+    font-size: 24px;
 }
 
 @include media-breakpoint-down(xs) {

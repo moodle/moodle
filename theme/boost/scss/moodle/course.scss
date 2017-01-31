@@ -594,10 +594,15 @@ span.editinstructions {
 
 .coursebox > .info > .coursename a {
     display: block;
-    background-image: url([[pix:moodle|i/course]]);
-    background-repeat: no-repeat;
-    padding-left: 21px;
-    background-position: left 0.2em;
+    padding-left: 32px;
+    position: relative;
+}
+.coursebox > .info > .coursename a:before {
+    position: absolute;
+    font-family: 'FontAwesome';
+    top: 0;
+    left: 0;
+    content: "\f0ac";
 }
 
 .coursebox > .info > .coursename,
@@ -1193,4 +1198,5 @@ span.editinstructions {
 .page-settings-menu .menubar > a > .icon {
     width: auto;
     height: 32px;
+    font-size: 32px;
 }
