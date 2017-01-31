@@ -46,6 +46,13 @@ class grade_report_grader extends grade_report {
     private $allgrades;
 
     /**
+     * Contains all grade items expect GRADE_TYPE_NONE.
+     *
+     * @var array $allgradeitems
+     */
+    private $allgradeitems;
+
+    /**
      * Array of errors for bulk grades updating.
      * @var array $gradeserror
      */
@@ -521,6 +528,22 @@ class grade_report_grader extends grade_report {
     }
 
     /**
+     * Load all grade items.
+     */
+    protected function get_allgradeitems() {
+        if (!empty($this->allgradeitems)) {
+            return $this->allgradeitems;
+        }
+        $allgradeitems = grade_item::fetch_all(array('courseid' => $this->courseid));
+        // But hang on - don't include ones which are set to not show the grade at all.
+        $this->allgradeitems = array_filter($allgradeitems, function($item) {
+            return $item->gradetype != GRADE_TYPE_NONE;
+        });
+
+        return $this->allgradeitems;
+    }
+
+    /**
      * we supply the userids in this query, and get all the grades
      * pulls out all the grades, this does not need to worry about paging
      */
@@ -543,11 +566,16 @@ class grade_report_grader extends grade_report {
                  WHERE g.itemid = gi.id AND gi.courseid = :courseid {$this->userselect}";
 
         $userids = array_keys($this->users);
+        $allgradeitems = $this->get_allgradeitems();
 
         if ($grades = $DB->get_records_sql($sql, $params)) {
             foreach ($grades as $graderec) {
                 $grade = new grade_grade($graderec, false);
-                $this->allgrades[$graderec->userid][$graderec->itemid] = $grade;
+                if (!empty($allgradeitems[$graderec->itemid])) {
+                    // Note: Filter out grades which have a grade type of GRADE_TYPE_NONE.
+                    // Only grades without this type are present in $allgradeitems.
+                    $this->allgrades[$graderec->userid][$graderec->itemid] = $grade;
+                }
                 if (in_array($graderec->userid, $userids) and array_key_exists($graderec->itemid, $this->gtree->get_items())) { // some items may not be present!!
                     $this->grades[$graderec->userid][$graderec->itemid] = $grade;
                     $this->grades[$graderec->userid][$graderec->itemid]->grade_item = $this->gtree->get_item($graderec->itemid); // db caching
@@ -565,6 +593,18 @@ class grade_report_grader extends grade_report {
                     $this->grades[$userid][$itemid]->grade_item = $this->gtree->get_item($itemid); // db caching
 
                     $this->allgrades[$userid][$itemid] = $this->grades[$userid][$itemid];
+                }
+            }
+        }
+
+        // Pre fill grades for any remaining items which might be collapsed.
+        foreach ($userids as $userid) {
+            foreach ($allgradeitems as $itemid => $gradeitem) {
+                if (!isset($this->allgrades[$userid][$itemid])) {
+                    $this->allgrades[$userid][$itemid] = new grade_grade();
+                    $this->allgrades[$userid][$itemid]->itemid = $itemid;
+                    $this->allgrades[$userid][$itemid]->userid = $userid;
+                    $this->allgrades[$userid][$itemid]->grade_item = $gradeitem;
                 }
             }
         }
@@ -922,12 +962,7 @@ class grade_report_grader extends grade_report {
         // grade items (in case one has been hidden) as the course total shown needs to be adjusted for this particular
         // user.
         if (!$this->canviewhidden) {
-            $allgradeitems = grade_item::fetch_all(array('courseid' => $this->courseid));
-
-            // But hang on - don't include ones which are set to not show the grade at all.
-            $allgradeitems = array_filter($allgradeitems, function($item) {
-                return $item->gradetype != GRADE_TYPE_NONE;
-            });
+            $allgradeitems = $this->get_allgradeitems();
         }
 
         foreach ($this->users as $userid => $user) {
