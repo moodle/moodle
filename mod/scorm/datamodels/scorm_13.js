@@ -252,7 +252,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
 
         for (element in datamodel[scoid]) {
             if (element.match(/\.n\./) == null) {
-                if ((typeof eval('datamodel["' + scoid + '"]["' + element + '"].defaultvalue')) != 'undefined') {
+                if (typeof datamodel[scoid][element].defaultvalue != 'undefined') {
                     eval(element + ' = datamodel["' + scoid + '"]["' + element + '"].defaultvalue;');
                 } else {
                     eval(element + ' = "";');
@@ -380,8 +380,8 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
             if (element != "") {
                 var expression = new RegExp(CMIIndex,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
-                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'w') {
+                if (typeof datamodel[scoid][elementmodel] != "undefined") {
+                    if (datamodel[scoid][elementmodel].mod != 'w') {
 
                         element = String(element).replace(/\.(\d+)\./, ".N$1.");
                         element = element.replace(/\.(\d+)\./, ".N$1.");
@@ -417,7 +417,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                     var parentmodel = '';
                     if (elementmodel.substr(elementmodel.length - childrenstr.length,elementmodel.length) == childrenstr) {
                         parentmodel = elementmodel.substr(0,elementmodel.length - childrenstr.length);
-                        if ((typeof eval('datamodel["' + scoid + '"]["' + parentmodel + '"]')) != "undefined") {
+                        if (datamodel[scoid][parentmodel] != "undefined") {
                             errorCode = "301";
                             diagnostic = "Data Model Element Does Not Have Children";
                         } else {
@@ -425,7 +425,7 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                         }
                     } else if (elementmodel.substr(elementmodel.length - countstr.length,elementmodel.length) == countstr) {
                         parentmodel = elementmodel.substr(0,elementmodel.length - countstr.length);
-                        if ((typeof eval('datamodel["' + scoid + '"]["' + parentmodel + '"]')) != "undefined") {
+                        if (typeof datamodel[scoid][parentmodel] != "undefined") {
                             errorCode = "301";
                             diagnostic = "Data Model Element Cannot Have Count";
                         } else {
@@ -473,10 +473,10 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
             if (element != "") {
                 var expression = new RegExp(CMIIndex,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
-                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'r') {
-                        if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].format') != 'CMIFeedback') {
-                            expression = new RegExp(eval('datamodel["' + scoid + '"]["' + elementmodel + '"].format'));
+                if (typeof datamodel[scoid][elementmodel] != "undefined") {
+                    if (datamodel[scoid][elementmodel].mod != 'r') {
+                        if (datamodel[scoid][elementmodel].format != 'CMIFeedback') {
+                            expression = new RegExp(datamodel[scoid][elementmodel].format);
                         } else {
                             // cmi.interactions.n.type depending format accept everything at this stage
                             expression = new RegExp(CMIFeedback);
@@ -749,8 +749,8 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                                     SCORMapi1_3.timeout = Y.later(60000, API_1484_11, 'Commit', [""], false);
                                 }
 
-                                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"].range')) != "undefined") {
-                                    range = eval('datamodel["' + scoid + '"]["' + elementmodel + '"].range');
+                                if (typeof datamodel[scoid][elementmodel].range != "undefined") {
+                                    range = datamodel[scoid][elementmodel].range;
                                     ranges = range.split('#');
                                     value = value * 1.0;
                                     if (value >= ranges[0]) {
@@ -1180,11 +1180,12 @@ function SCORMapi1_3(def, cmiobj, cmiint, cmicommentsuser, cmicommentslms, scorm
                 var element = parent + '.' + property;
                 var expression = new RegExp(CMIIndexStore,'g');
                 var elementmodel = String(element).replace(expression,'.n.');
-                if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"]')) != "undefined") {
-                    if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].mod') != 'r') {
+                if (typeof datamodel[scoid][elementmodel] != "undefined") {
+                    if (datamodel[scoid][elementmodel].mod != 'r') {
                         var elementstring = '&' + underscore(element) + '=' + encodeURIComponent(data[property]);
-                        if ((typeof eval('datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue')) != "undefined") {
-                            if (eval('datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue') != data[property] || eval('typeof(datamodel["' + scoid + '"]["' + elementmodel + '"].defaultvalue)') != typeof(data[property])) {
+                        if (typeof datamodel[scoid][elementmodel].defaultvalue != "undefined") {
+                            if (datamodel[scoid][elementmodel].defaultvalue != data[property] ||
+                                typeof datamodel[scoid][elementmodel].defaultvalue != typeof data[property]) {
                                 datastring += elementstring;
                             }
                         } else {
