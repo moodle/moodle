@@ -54,7 +54,8 @@ class core_filter_manager_testcase extends advanced_testcase {
     public function test_filter_normal() {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
-        $this->assertRegExp('~^<p><img class="emoticon" alt="smile" ([^>]+)></p>$~',
+        $this->assertRegExp('~^<p><i class="icon fa s/smiley fa-fw emoticon" aria-hidden="true" title=""></i>' .                    
+                  '<span class="sr-only"></span></p>$~',
                 $this->filter_text('<p>:-)</p>', array()));
     }
 
@@ -68,7 +69,8 @@ class core_filter_manager_testcase extends advanced_testcase {
     public function test_disabling_other_filter_does_not_break_it() {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
-        $this->assertRegExp('~^<p><img class="emoticon" alt="smile" ([^>]+)></p>$~',
+        $this->assertRegExp('~^<p><i class="icon fa s/smiley fa-fw emoticon" aria-hidden="true" title=""></i>' .                    
+                  '<span class="sr-only"></span></p>$~',
                 $this->filter_text('<p>:-)</p>', array('urltolink')));
     }
 
@@ -76,7 +78,8 @@ class core_filter_manager_testcase extends advanced_testcase {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         filter_set_global_state('urltolink', TEXTFILTER_ON);
-        $this->assertRegExp('~^<p><img class="emoticon" alt="smile" ([^>]+)> http://google.com/</p>$~',
+        $this->assertRegExp('~^<p><i class="icon fa s/smiley fa-fw emoticon" aria-hidden="true" title=""></i>' .                    
+                  '<span class="sr-only"></span> http://google.com/</p>$~',
                 $this->filter_text('<p>:-) http://google.com/</p>', array('glossary', 'urltolink')));
     }
 }

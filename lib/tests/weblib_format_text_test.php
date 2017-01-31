@@ -37,7 +37,8 @@ class core_weblib_format_text_testcase extends advanced_testcase {
     public function test_format_text_format_html() {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
-        $this->assertRegExp('~^<p><img class="emoticon" alt="smile" ([^>]+)></p>$~',
+        $this->assertRegExp('~^<p><i class="icon fa s/smiley fa-fw emoticon" aria-hidden="true" title=""></i>' .
+                '<span class="sr-only"></span></p>$~',
                 format_text('<p>:-)</p>', FORMAT_HTML));
     }
 
@@ -66,7 +67,8 @@ class core_weblib_format_text_testcase extends advanced_testcase {
     public function test_format_text_format_markdown() {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
-        $this->assertRegExp('~^<p><em><img class="emoticon" alt="smile" ([^>]+)></em></p>\n$~',
+        $this->assertRegExp('~^<p><em><i class="icon fa s/smiley fa-fw emoticon" aria-hidden="true" title=""></i>' .
+                '<span class="sr-only"></span></em></p>\n$~',
                 format_text('*:-)*', FORMAT_MARKDOWN));
     }
 
@@ -80,7 +82,9 @@ class core_weblib_format_text_testcase extends advanced_testcase {
     public function test_format_text_format_moodle() {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
-        $this->assertRegExp('~^<div class="text_to_html"><p><img class="emoticon" alt="smile" ([^>]+)></p></div>$~',
+        $this->assertRegExp('~^<div class="text_to_html"><p>' .
+                '<i class="icon fa s/smiley fa-fw emoticon" aria-hidden="true" title=""></i>' .
+                '<span class="sr-only"></span></p></div>$~',
                 format_text('<p>:-)</p>', FORMAT_MOODLE));
     }
 
