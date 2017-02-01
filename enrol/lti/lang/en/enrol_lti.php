@@ -56,7 +56,7 @@ $string['membersyncmodeenrolnew'] = 'Enrol new users';
 $string['membersyncmodeunenrolmissing'] = 'Unenrol missing users';
 $string['notoolsprovided'] = 'No tools provided';
 $string['launchdetails'] = 'Launch details';
-$string['launchdetails_help'] = 'A tool URL (also called launch URL, cartridge URL or configuration URL) plus secret are required for configuring the tool.';
+$string['launchdetails_help'] = 'A cartridge URL (also called configuration URL) plus secret are required for configuring the tool.';
 $string['lti:config'] = 'Configure \'Publish as LTI tool\' instances';
 $string['lti:unenrol'] = 'Unenrol users from the course';
 $string['opentool'] = 'Open tool';
@@ -83,5 +83,4 @@ $string['toolsprovided_help'] = 'A tool may be shared with another site by provi
 $string['tooltobeprovided'] = 'Tool to be published';
 $string['toolurl'] = 'Tool URL';
 $string['userdefaultvalues'] = 'User default values';
-// Deprecated since Moodle 3.2.
 $string['cartridgeurl'] = 'Cartridge URL';

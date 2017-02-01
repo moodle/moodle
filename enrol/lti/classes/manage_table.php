@@ -117,14 +117,14 @@ class manage_table extends \table_sql {
 
         $url = helper::get_cartridge_url($tool);
 
-        $toolurllabel = get_string('toolurl', 'enrol_lti');
-        $toolurl = $url;
+        $cartridgeurllabel = get_string('cartridgeurl', 'enrol_lti');
+        $cartridgeurl = $url;
         $secretlabel = get_string('secret', 'enrol_lti');
         $secret = $tool->secret;
 
         $data = [
                 "rows" => [
-                    [ "label" => $toolurllabel, "text" => $toolurl, "id" => "toolurl", "hidelabel" => false ],
+                    [ "label" => $cartridgeurllabel, "text" => $cartridgeurl, "id" => "cartridgeurl", "hidelabel" => false ],
                     [ "label" => $secretlabel, "text" => $secret, "id" => "secret", "hidelabel" => false ],
                 ]
             ];
