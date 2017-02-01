@@ -303,6 +303,9 @@ if ($verbose || $status) {
         unset($extraopts['fromrun']);
         unset($extraopts['torun']);
         $extraopts['rerun'] = '--rerun';
+        if (!empty($options['replace'])) {
+            $extraopts['replace'] =  '--replace="' . $options['replace'] . '"';
+        }
         $extraoptstr = implode(' ', $extraopts);
         echo behat_command::get_behat_command(true, true, true) . " " . $extraoptstr . PHP_EOL;
     }
