@@ -96,7 +96,11 @@ abstract class exporter {
                 }
 
             } else {
-                if (array_key_exists($key, $related) && $related[$key] instanceof $classname) {
+                $scalartypes = ['string', 'int', 'bool', 'float'];
+                $scalarcheck = 'is_' . $classname;
+                if (array_key_exists($key, $related) &&
+                        ((in_array($classname, $scalartypes) && $scalarcheck($related[$key])) ||
+                        ($related[$key] instanceof $classname))) {
                     $this->related[$key] = $related[$key];
                 } else {
                     throw new coding_exception($missingdataerr . $key . ' => ' . $classname);
