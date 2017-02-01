@@ -18,6 +18,7 @@
 
 function xmldb_local_iomad_dashboard_install() {
     global $SITE;
+    global $DB;
 
     // Add some default blocks to the dashboard
     // yes, I know this isn't really what this is for!!
@@ -34,6 +35,32 @@ function xmldb_local_iomad_dashboard_install() {
         'side_post' => array('news_items')
         );
     $page->blocks->add_blocks($defaultblocks);
+
+    // Add Iomad link block to the Admin's dashboard
+    // There's probably a nicer way to do this.
+    if ($admin = get_admin()) {
+        if ($defaultsubpage = $DB->get_record('my_pages', array('userid' => $admin->id, 'name' => '__default', 'private' => 1))) {
+            $subpagepattern = $defaultmypage->id;
+        } else {
+            $subpagepattern = null;
+        }
+        $context = context_user::instance($admin->id);
+        $bi = new stdClass;
+        $bi->blockname = 'iomad_link';
+        $bi->parentcontextid = $context->id;
+        $bi->showinsubcontexts = 0;
+        $bi->pagetypepattern = 'my-index';
+        $bi->subpagepattern = $subpagepattern;
+        $bi->defaultregion = 'side_pre';
+        $bi->defaultweight = 0;
+        $DB->insert_record('block_instances', $bi);
+
+        // And for welcome block
+        $bi->blockname = 'iomad_welcome';
+        $bi->defaultregion = 'content';
+        $DB->insert_record('block_instances', $bi);
+    }
+
 
     return true;
 }
