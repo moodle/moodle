@@ -554,6 +554,15 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $userdetails['preferences'] = $preferences;
     }
 
+    if ($currentuser or has_capability('moodle/user:viewalldetails', $context)) {
+        $extrafields = ['auth', 'confirmed', 'lang', 'theme', 'timezone', 'mailformat'];
+        foreach ($extrafields as $extrafield) {
+            if (in_array($extrafield, $userfields) && isset($user->$extrafield)) {
+                $userdetails[$extrafield] = $user->$extrafield;
+            }
+        }
+    }
+
     return $userdetails;
 }
 
