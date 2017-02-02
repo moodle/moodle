@@ -59,25 +59,23 @@ class edit_renderer extends \plugin_renderer_base {
 
         // Information at the top.
         $output .= $this->quiz_state_warnings($structure);
+
+        $output .= html_writer::start_div('mod_quiz-edit-top-controls');
         $output .= $this->quiz_information($structure);
         $output .= $this->maximum_grade_input($structure, $pageurl);
+
+        $output .= html_writer::start_div('mod_quiz-edit-action-buttons btn-group edit-toolbar', ['role' => 'group']);
         $output .= $this->repaginate_button($structure, $pageurl);
-        $output .= $this->bulkaction_button($structure);
+        $output .= $this->selectmultiple_button($structure);
+        $output .= html_writer::end_tag('div');
+
         $output .= $this->total_marks($quizobj->get_quiz());
+
+        $output .= $this->selectmultiple_controls($structure);
+        $output .= html_writer::end_tag('div');
 
         // Show the questions organised into sections and pages.
         $output .= $this->start_section_list($structure);
-
-        // Bulk action button delete and bulk action button cancel.
-        $output .= html_writer::tag('div', html_writer::empty_tag('input', array('type' => 'button',
-                'id' => 'bulkactionsdeletecommand', 'value' => get_string('delete', 'moodle'))) . " " .
-                html_writer::empty_tag('input', array('type' => 'button', 'id' => 'bulkactionscancelcommand',
-                'value' => get_string('cancel', 'moodle'))), array('class' => 'bulkactioncommand actions'));
-
-        // Select all/deselect all questions.
-        $output .= html_writer::tag('div', html_writer::link('#', get_string('selectall', 'quiz'),
-                array('id' => 'questionselectall')) . " / " . html_writer::link('#', get_string('selectnone', 'quiz'),
-                array('id' => 'questiondeselectall')), array('class' => 'bulkactioncommandbuttons'));
 
         foreach ($structure->get_sections() as $section) {
             $output .= $this->start_section($structure, $section);
@@ -199,12 +197,6 @@ class edit_renderer extends \plugin_renderer_base {
 
         $header = html_writer::tag('span', get_string('repaginatecommand', 'quiz'), array('class' => 'repaginatecommand'));
         $form = $this->repaginate_form($structure, $pageurl);
-        $containeroptions = array(
-                'class'  => 'rpcontainerclass',
-                'cmid'   => $structure->get_cmid(),
-                'header' => $header,
-                'form'   => $form,
-        );
 
         $buttonoptions = array(
             'type'  => 'submit',
@@ -212,6 +204,8 @@ class edit_renderer extends \plugin_renderer_base {
             'id'    => 'repaginatecommand',
             'value' => get_string('repaginatecommand', 'quiz'),
             'class' => 'btn btn-secondary m-b-1',
+            'data-header' => $header,
+            'data-form'   => $form,
         );
         if (!$structure->can_be_repaginated()) {
             $buttonoptions['disabled'] = 'disabled';
@@ -219,26 +213,89 @@ class edit_renderer extends \plugin_renderer_base {
             $this->page->requires->yui_module('moodle-mod_quiz-repaginate', 'M.mod_quiz.repaginate.init');
         }
 
-        return html_writer::start_tag('div', $containeroptions) .
-                html_writer::empty_tag('input', $buttonoptions);
+        return html_writer::empty_tag('input', $buttonoptions);
     }
 
     /**
-     * Generate the bulk action button
+     * Generate the bulk action button.
+     *
      * @param structure $structure the structure of the quiz being edited.
      * @return string HTML to output.
      */
-    protected function bulkaction_button(structure $structure) {
+    protected function selectmultiple_button(structure $structure) {
         $buttonoptions = array(
             'type'  => 'button',
-            'name'  => 'repaginate',
-            'id'    => 'bulkactionscommand',
-            'value' => get_string('bulkactions', 'quiz'),
+            'name'  => 'selectmultiple',
+            'id'    => 'selectmultiplecommand',
+            'value' => get_string('selectmultipleitems', 'quiz'),
+            'class' => 'btn btn-secondary m-b-1'
         );
-        if (!$structure->can_be_repaginated()) {
+        if (!$structure->can_be_edited()) {
             $buttonoptions['disabled'] = 'disabled';
         }
-        return html_writer::empty_tag('input', $buttonoptions) . html_writer::end_tag('div');
+
+        return html_writer::tag('button', get_string('selectmultipleitems', 'quiz'), $buttonoptions);
+    }
+
+    /**
+     * Generate the controls that appear when the bulk action button is pressed.
+     *
+     * @param structure $structure the structure of the quiz being edited.
+     * @return string HTML to output.
+     */
+    protected function selectmultiple_controls(structure $structure) {
+        $output = '';
+
+        // Bulk action button delete and bulk action button cancel.
+        $buttondeleteoptions = array(
+            'type' => 'button',
+            'id' => 'selectmultipledeletecommand',
+            'value' => get_string('deleteselected', 'mod_quiz'),
+            'class' => 'btn btn-secondary'
+        );
+        $buttoncanceloptions = array(
+            'type' => 'button',
+            'id' => 'selectmultiplecancelcommand',
+            'value' => get_string('cancel', 'moodle'),
+            'class' => 'btn btn-secondary'
+        );
+
+        $groupoptions = array(
+            'class' => 'btn-group selectmultiplecommand actions',
+            'role' => 'group'
+        );
+
+        $output .= html_writer::tag('div',
+                        html_writer::tag('button', get_string('deleteselected', 'mod_quiz'), $buttondeleteoptions) .
+                        " " .
+                        html_writer::tag('button', get_string('cancel', 'moodle'),
+                $buttoncanceloptions), $groupoptions);
+
+        $toolbaroptions = array(
+            'class' => 'btn-toolbar',
+            'role' => 'toolbar',
+            'aria-label' => get_string('selectmultipletoolbar', 'quiz'),
+        );
+
+        // Select all/deselect all questions.
+        $buttonselectalloptions = array(
+            'role' => 'button',
+            'id' => 'questionselectall',
+            'class' => 'btn btn-link'
+        );
+        $buttondeselectalloptions = array(
+            'role' => 'button',
+            'id' => 'questiondeselectall',
+            'class' => 'btn btn-link'
+        );
+        $output .= html_writer::tag('div',
+                html_writer::tag('div',
+                        html_writer::link('#', get_string('selectall', 'quiz'), $buttonselectalloptions) .
+                        html_writer::tag('span', "/", ['class' => 'separator']) .
+                        html_writer::link('#', get_string('selectnone', 'quiz'), $buttondeselectalloptions),
+                        array('class' => 'btn-group selectmultiplecommandbuttons')),
+                $toolbaroptions);
+        return $output;
     }
 
     /**
@@ -672,7 +729,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= html_writer::start_div('mod-indent-outer');
         $output .= html_writer::tag('input', '', array('id' => 'selectquestion-' .
                 $structure->get_displayed_number_for_slot($slot), 'name' => 'selectquestion[]',
-               'type' => 'checkbox', 'class' => 'quiz-question-bulk-selector',
+               'type' => 'checkbox', 'class' => 'select-multiple-checkbox',
                'value' => $structure->get_displayed_number_for_slot($slot)));
         $output .= $this->question_number($structure->get_displayed_number_for_slot($slot));
 
