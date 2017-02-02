@@ -211,6 +211,22 @@ div.iomadlink {
     font-family: FontAwesome;
     content: "\f14a  ";
 }
+.block_mycourses h2:before {
+    font-family: FontAwesome;
+    content: "\f0eb  ";
+}
+.block_iomad_welcome h2:before {
+    font-family: FontAwesome;
+    content: "\f2b5  ";
+}
+.block_lp h2:before {
+    font-family: FontAwesome;
+    content: "\f0ea  ";
+}
+.block_adminblock h2:before {
+    font-family: FontAwesome;
+    content: "\f0fe  ";
+}
 .block_iomad_reports h3:before {
     font-family: FontAwesome;
     content: "\f200  ";
