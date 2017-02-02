@@ -42,6 +42,12 @@ class mod_feedback_completion extends mod_feedback_structure {
     protected $values = null;
     /** @var bool */
     protected $iscompleted = false;
+    /** @var mod_feedback_complete_form the form used for completing the feedback */
+    protected $form = null;
+    /** @var bool true when the feedback has been completed during the request */
+    protected $justcompleted = false;
+    /** @var int the next page the user should jump after processing the form */
+    protected $jumpto = null;
 
 
     /**
@@ -94,6 +100,26 @@ class mod_feedback_completion extends mod_feedback_structure {
      */
     public function get_completed() {
         return $this->completed;
+    }
+
+    /**
+     * Check if the feedback was just completed.
+     *
+     * @return bool true if the feedback was just completed.
+     * @since  Moodle 3.3
+     */
+    public function just_completed() {
+        return $this->justcompleted;
+    }
+
+    /**
+     * Return the jumpto property.
+     *
+     * @return int the next page to jump.
+     * @since  Moodle 3.3
+     */
+    public function get_jumpto() {
+        return $this->jumpto;
     }
 
     /**
@@ -609,5 +635,73 @@ class mod_feedback_completion extends mod_feedback_structure {
         }
         $completion = new completion_info($course);
         $completion->set_module_viewed($this->cm);
+    }
+
+    /**
+     * Process a page jump via the mod_feedback_complete_form.
+     *
+     * This function initializes the form and process the submission.
+     *
+     * @param  int $gopage         the current page
+     * @param  int $gopreviouspage if the user chose to go to the previous page
+     * @return string the url to redirect the user (if any)
+     * @since  Moodle 3.3
+     */
+    public function process_page($gopage, $gopreviouspage = false) {
+        global $CFG, $PAGE, $SESSION;
+
+        $urltogo = null;
+
+        // Save the form for later during the request.
+        $this->form = new mod_feedback_complete_form(mod_feedback_complete_form::MODE_COMPLETE,
+            $this, 'feedback_complete_form', array('gopage' => $gopage));
+
+        if ($this->form->is_cancelled()) {
+            // Form was cancelled - return to the course page.
+            $urltogo = course_get_url($this->courseid);
+        } else if ($this->form->is_submitted() &&
+                ($this->form->is_validated() || $gopreviouspage)) {
+            // Form was submitted (skip validation for "Previous page" button).
+            $data = $this->form->get_submitted_data();
+            if (!isset($SESSION->feedback->is_started) OR !$SESSION->feedback->is_started == true) {
+                print_error('error', '', $CFG->wwwroot.'/course/view.php?id='.$this->courseid);
+            }
+            $this->save_response_tmp($data);
+            if (!empty($data->savevalues) || !empty($data->gonextpage)) {
+                if (($nextpage = $this->get_next_page($gopage)) !== null) {
+                    if ($PAGE->has_set_url()) {
+                        $urltogo = new moodle_url($PAGE->url, array('gopage' => $nextpage));
+                    }
+                    $this->jumpto = $nextpage;
+                } else {
+                    $this->save_response();
+                    if (!$this->feedback->page_after_submit) {
+                        \core\notification::success(get_string('entries_saved', 'feedback'));
+                    }
+                    $this->justcompleted = true;
+                }
+            } else if (!empty($gopreviouspage)) {
+                $prevpage = intval($this->get_previous_page($gopage));
+                if ($PAGE->has_set_url()) {
+                    $urltogo = new moodle_url($PAGE->url, array('gopage' => $prevpage));
+                }
+                $this->jumpto = $prevpage;
+            }
+        }
+        return $urltogo;
+    }
+
+    /**
+     * Render the form with the questions.
+     *
+     * @return string the form rendered
+     * @since Moodle 3.3
+     */
+    public function render_items() {
+        global $SESSION;
+
+        // Print the items.
+        $SESSION->feedback->is_started = true;
+        return $this->form->render();
     }
 }
