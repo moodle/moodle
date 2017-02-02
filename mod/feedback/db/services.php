@@ -45,4 +45,12 @@ $functions = array(
         'capabilities'  => 'mod/feedback:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'mod_feedback_view_feedback' => array(
+        'classname'     => 'mod_feedback_external',
+        'methodname'    => 'view_feedback',
+        'description'   => 'Trigger the course module viewed event and update the module completion status.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/feedback:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

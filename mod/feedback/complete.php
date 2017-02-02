@@ -24,7 +24,6 @@
 
 require_once("../../config.php");
 require_once("lib.php");
-require_once($CFG->libdir . '/completionlib.php');
 
 feedback_init_feedback_session();
 
@@ -82,9 +81,8 @@ if (!$feedbackcompletion->is_open()) {
 }
 
 // Mark activity viewed for completion-tracking.
-$completion = new completion_info($course);
 if (isloggedin() && !isguestuser()) {
-    $completion->set_module_viewed($cm);
+    $feedbackcompletion->set_module_viewed($course);
 }
 
 // Check if user is prevented from re-submission.

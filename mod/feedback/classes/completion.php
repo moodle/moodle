@@ -579,4 +579,35 @@ class mod_feedback_completion extends mod_feedback_structure {
         }
         return true;
     }
+
+    /**
+     * Trigger module viewed event.
+     *
+     * @param  stdClass $course optional, course object from DB
+     * @since Moodle 3.3
+     */
+    public function trigger_module_viewed($course = null) {
+        if ($course == null) {
+            $course = get_course($this->courseid);
+        }
+        $event = \mod_feedback\event\course_module_viewed::create_from_record($this->feedback, $this->cm, $course);
+        $event->trigger();
+    }
+
+    /**
+     * Mark activity viewed for completion-tracking.
+     *
+     * @param stdClass $course optional, course object from DB
+     * @since Moodle 3.3
+     */
+    public function set_module_viewed($course = null) {
+        global $CFG;
+        require_once($CFG->libdir . '/completionlib.php');
+
+        if ($course == null) {
+            $course = get_course($this->courseid);
+        }
+        $completion = new completion_info($course);
+        $completion->set_module_viewed($this->cm);
+    }
 }
