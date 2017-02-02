@@ -15,16 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Upgrade scripts for course format "Weeks"
  *
- * @package    format
- * @subpackage weeks
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    format_weeks
+ * @copyright  2017 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2017020200;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2016112900;        // Requires this Moodle version.
-$plugin->component = 'format_weeks';    // Full name of the plugin (used for diagnostics).
+/**
+ * Upgrade script for format_weeks
+ *
+ * @param int $oldversion the version we are upgrading from
+ * @return bool result
+ */
+function xmldb_format_weeks_upgrade($oldversion) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/course/format/weeks/db/upgradelib.php');
+
+    if ($oldversion < 2017020200) {
+
+        // Remove 'numsections' option and hide or delete orphaned sections.
+        format_weeks_upgrade_remove_numsections();
+
+        upgrade_plugin_savepoint(true, 2017020200, 'format', 'weeks');
+    }
+
+    return true;
+}
