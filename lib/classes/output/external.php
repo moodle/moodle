@@ -100,10 +100,8 @@ class external extends external_api {
      *
      * @return external_function_parameters
      */
-    public static function load_icon_map_parameters() {
-        return new external_function_parameters([
-                'system' => new external_value(PARAM_COMPONENT, 'icon system to load the map for')
-        ]);
+    public static function load_fontawesome_icon_map_parameters() {
+        return new external_function_parameters([]);
     }
 
     /**
@@ -112,17 +110,9 @@ class external extends external_api {
      * @param string $system
      * @return array the mapping
      */
-    public static function load_icon_map($system) {
-        $params = self::validate_parameters(self::load_icon_map_parameters(),
-                                            array('system' => $system));
-
-        $system = $params['system'];
-
-        if (!icon_system::is_valid_system($system)) {
-            throw new coding_exception('Invalid icon system.');
-        }
+    public static function load_fontawesome_icon_map() {
         
-        $instance = icon_system::instance($system);
+        $instance = icon_system::instance(icon_system::FONTAWESOME);
 
         $map = $instance->get_icon_name_map();
 
@@ -144,7 +134,7 @@ class external extends external_api {
      *
      * @return external_description
      */
-    public static function load_icon_map_returns() {
+    public static function load_fontawesome_icon_map_returns() {
         return new external_multiple_structure(new external_single_structure(
             array(
                 'component' => new external_value(PARAM_COMPONENT, 'The component for the icon.'),

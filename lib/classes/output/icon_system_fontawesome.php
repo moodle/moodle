@@ -25,6 +25,9 @@
 
 namespace core\output;
 
+use renderer_base;
+use pix_icon;
+
 /**
  * Class allowing different systems for mapping and rendering icons.
  *
@@ -414,5 +417,43 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/viewdetails' => 'fa-list',
         ];
     }
+
+    private $map = [];
+
+    /**
+     * Overridable function to get a mapping of all icons.
+     * Default is to do no mapping.
+     */
+    public function get_icon_name_map() {
+        if ($this->map === []) {
+            $this->map = $this->get_core_icon_map();
+            $callback = 'get_fontawesome_icon_map';
+
+            if ($pluginsfunction = get_plugins_with_function($callback)) {
+                foreach ($pluginsfunction as $plugintype => $plugins) {
+                    foreach ($plugins as $pluginfunction) {
+                        $pluginmap = $pluginfunction();
+                        $this->map += $pluginmap;
+                    }
+                }
+            }
+
+        }
+        return $this->map;
+    }
+
+
+    public function get_amd_name() {
+        return 'core/icon_system_fontawesome';
+    }
+
+    public function render_pix_icon(renderer_base $output, pix_icon $icon) {
+        $subtype = 'pix_icon_fontawesome';
+        $subpix = new $subtype($icon);
+        $data = $subpix->export_for_template($output);
+
+        return $output->render_from_template('core/pix_icon_fontawesome', $data);
+    }
+
 }
 

@@ -313,13 +313,15 @@ class page_requirements_manager {
             // Otherwise, in some situations, users will get warnings about insecure content
             // on secure pages from their web browser.
 
+            $iconsystem = \core\output\icon_system::instance();
+
             $this->M_cfg = array(
                 'wwwroot'             => $CFG->httpswwwroot, // Yes, really. See above.
                 'sesskey'             => sesskey(),
                 'themerev'            => theme_get_revision(),
                 'slasharguments'      => (int)(!empty($CFG->slasharguments)),
                 'theme'               => $page->theme->name,
-                'iconsystem'          => $page->theme->get_icon_system(),
+                'iconsystemmodule'    => $iconsystem->get_amd_name(),
                 'jsrev'               => $this->get_jsrev(),
                 'admin'               => $CFG->admin,
                 'svgicons'            => $page->theme->use_svg_icons(),

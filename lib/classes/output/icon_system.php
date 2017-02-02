@@ -42,17 +42,13 @@ use pix_icon;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class icon_system {
-    const STANDARD = 'standard';
-    const FONTAWESOME = 'fontawesome';
-    const INLINE = 'inline';
-    const SYSTEMS = [ self::STANDARD, self::FONTAWESOME, self::INLINE ];
+    const STANDARD = '\\core\\output\\icon_system_standard';
+    const FONTAWESOME = '\\core\\output\\icon_system_fontawesome';
 
     private static $instance = null;
     private $map = null;
-    protected $system = '';
 
-    private function __construct($system) {
-        $this->system = $system;
+    private function __construct() {
     }
 
     public final static function instance($type = null) {
@@ -63,14 +59,12 @@ abstract class icon_system {
                 return self::$instance;
             }
             $type = $PAGE->theme->get_icon_system();
-            $system = '\\core\\output\\icon_system_' . $type;
-            self::$instance = new $system($type);
+            self::$instance = new $type();
             // Default one is a singleton.
             return self::$instance;
         } else {
-            $system = '\\core\\output\\icon_system_' . $type;
             // Not a singleton.
-            return new $system($type);
+            return new $type();
         }
     }
 
@@ -81,8 +75,15 @@ abstract class icon_system {
      * @return boolean
      */
     public final static function is_valid_system($system) {
-        return in_array($system, self::SYSTEMS);
+        return class_exists($system) && is_subclass_of($system, self::class);
     }
+
+    /**
+     * The name of an AMD module extending core/icon_system
+     *
+     * @return string
+     */
+    public abstract function get_amd_name();
 
     /**
      * Render the pix icon according to the icon system.

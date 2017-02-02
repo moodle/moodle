@@ -945,9 +945,9 @@ $functions = array(
         'loginrequired' => false,
         'ajax' => true,
     ),
-    'core_output_load_icon_map' => array(
+    'core_output_load_fontawesome_icon_map' => array(
         'classname' => 'core\output\external',
-        'methodname' => 'load_icon_map',
+        'methodname' => 'load_fontawesome_icon_map',
         'description' => 'Load the mapping of names to icons',
         'type' => 'read',
         'loginrequired' => false,

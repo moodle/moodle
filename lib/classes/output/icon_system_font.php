@@ -25,9 +25,6 @@
 
 namespace core\output;
 
-use renderer_base;
-use pix_icon;
-
 /**
  * Class allowing different systems for mapping and rendering icons.
  *
@@ -42,42 +39,6 @@ use pix_icon;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class icon_system_font extends icon_system {
-
-    private $map = [];
-
-    public function get_core_icon_map() {
-        return [];
-    }
-
-    public function render_pix_icon(renderer_base $output, pix_icon $icon) {
-        $subtype = 'pix_icon_' . $this->system;
-        $subpix = new $subtype($icon);
-        $data = $subpix->export_for_template($output);
-
-        return $output->render_from_template('core/pix_icon_' . $this->system, $data);
-    }
-
-    /**
-     * Overridable function to get a mapping of all icons.
-     * Default is to do no mapping.
-     */
-    public function get_icon_name_map() {
-        if ($this->map === []) {
-            $this->map = $this->get_core_icon_map();
-            $callback = 'get_' . $this->system . '_icon_map';
-
-            if ($pluginsfunction = get_plugins_with_function($callback)) {
-                foreach ($pluginsfunction as $plugintype => $plugins) {
-                    foreach ($plugins as $pluginfunction) {
-                        $pluginmap = $pluginfunction();
-                        $this->map += $pluginmap;
-                    }
-                }
-            }
-
-        }
-        return $this->map;
-    }
 
 }
 

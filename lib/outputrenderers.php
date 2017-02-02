@@ -2054,7 +2054,7 @@ class core_renderer extends renderer_base {
     protected function render_activity_icon(activity_icon $icon) {
         global $PAGE;
 
-        $system = \core\output\icon_system::instance('standard');
+        $system = \core\output\icon_system::instance(\core\output\icon_system::STANDARD);
         return $system->render_pix_icon($this, $icon);
     }
 
