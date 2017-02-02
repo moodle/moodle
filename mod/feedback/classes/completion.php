@@ -101,7 +101,7 @@ class mod_feedback_completion extends mod_feedback_structure {
      *
      * @return stdClass|false record from feedback_completedtmp or false if not found
      */
-    protected function get_current_completed_tmp() {
+    public function get_current_completed_tmp() {
         global $USER, $DB;
         if ($this->completedtmp === null) {
             $params = array('feedback' => $this->get_feedback()->id);
