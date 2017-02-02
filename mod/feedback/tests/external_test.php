@@ -446,4 +446,89 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertFalse($result['hasnextpage']);
         $this->assertTrue($result['hasprevpage']);
     }
+
+    /**
+     * Test process_page.
+     */
+    public function test_process_page() {
+        global $DB;
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+        $pagecontents = 'You finished it!';
+        $DB->set_field('feedback', 'page_after_submit', $pagecontents, array('id' => $this->feedback->id));
+
+        // Add questions to the feedback, we are adding 2 pages of questions.
+        $itemscreated = self::populate_feedback($this->feedback, 2);
+
+        $data = [];
+        foreach ($itemscreated as $item) {
+
+            if (empty($item->hasvalue)) {
+                continue;
+            }
+
+            switch ($item->typ) {
+                case 'textarea':
+                case 'textfield':
+                    $value = 'Lorem ipsum';
+                    break;
+                case 'numeric':
+                    $value = 5;
+                    break;
+                case 'multichoice':
+                    $value = '1';
+                    break;
+                case 'multichoicerated':
+                    $value = '1';
+                    break;
+                case 'info':
+                    $value = format_string($this->course->shortname, true, array('context' => $this->context));
+                    break;
+                default:
+                    $value = '';
+            }
+            $data[] = ['name' => $item->typ . '_' . $item->id, 'value' => $value];
+        }
+
+        // Process first page.
+        $firstpagedata = [$data[0], $data[1]];
+        $result = mod_feedback_external::process_page($this->feedback->id, 0, $firstpagedata);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertEquals(1, $result['jumpto']);
+        $this->assertFalse($result['completed']);
+
+        // Now, process the second page. But first we are going back to the first page.
+        $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
+        $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata, true);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertFalse($result['completed']);
+        $this->assertEquals(0, $result['jumpto']);  // We jumped to the first page.
+        // Check the values were correctly saved.
+        $tmpitems = $DB->get_records('feedback_valuetmp');
+        $this->assertCount(7, $tmpitems);   // 2 from the first page + 5 from the second page.
+
+        // Go forward again (sending the same data).
+        $result = mod_feedback_external::process_page($this->feedback->id, 0, $firstpagedata);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertEquals(1, $result['jumpto']);
+        $this->assertFalse($result['completed']);
+        $tmpitems = $DB->get_records('feedback_valuetmp');
+        $this->assertCount(7, $tmpitems);   // 2 from the first page + 5 from the second page.
+
+        // And finally, save everything! We are going to modify one previous recorded value.
+        $data[2]['value'] = 'b';
+        $secondpagedata = [$data[2], $data[3], $data[4], $data[5], $data[6]];
+        $result = mod_feedback_external::process_page($this->feedback->id, 1, $secondpagedata);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertTrue($result['completed']);
+        $this->assertTrue(strpos($result['completionpagecontents'], $pagecontents) !== false);
+        // Check all the items were saved.
+        $items = $DB->get_records('feedback_value');
+        $this->assertCount(7, $items);
+        // Check if the one we modified was correctly saved.
+        $itemid = $itemscreated[4]->id;
+        $itemsaved = $DB->get_field('feedback_value', 'value', array('item' => $itemid));
+        $this->assertEquals('b', $itemsaved);
+    }
 }

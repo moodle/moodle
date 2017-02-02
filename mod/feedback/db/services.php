@@ -85,4 +85,12 @@ $functions = array(
         'capabilities'  => 'mod/feedback:complete',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_feedback_process_page' => array(
+        'classname'     => 'mod_feedback_external',
+        'methodname'    => 'process_page',
+        'description'   => 'Process a jump between pages.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/feedback:complete',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
