@@ -1852,9 +1852,9 @@ function workshop_reset_userdata(stdClass $data) {
  */
 function mod_workshop_get_fontawesome_icon_map() {
     return [
-        'mod_workshop:userplan/task-info' => 'fa-info',
+        'mod_workshop:userplan/task-info' => 'fa-info text-info',
         'mod_workshop:userplan/task-todo' => 'fa-square-o',
-        'mod_workshop:userplan/task-done' => 'fa-check',
-        'mod_workshop:userplan/task-fail' => 'fa-remove',
+        'mod_workshop:userplan/task-done' => 'fa-check text-success',
+        'mod_workshop:userplan/task-fail' => 'fa-remove text-danger',
     ];
 }
