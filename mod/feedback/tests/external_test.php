@@ -68,6 +68,34 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
     }
 
+    /**
+     * Helper method to add items to an existing feedback.
+     *
+     * @param stdClass  $feedback feedback instance
+     * @param integer $pagescount the number of pages we want in the feedback
+     * @return array list of items created
+     */
+    public function populate_feedback($feedback, $pagescount = 1) {
+        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+        $itemscreated = [];
+
+        // Create at least one page.
+        $itemscreated[] = $feedbackgenerator->create_item_label($feedback);
+        $itemscreated[] = $feedbackgenerator->create_item_info($feedback);
+        $itemscreated[] = $feedbackgenerator->create_item_numeric($feedback);
+
+        // Check if we want more pages.
+        for ($i = 1; $i < $pagescount; $i++) {
+            $itemscreated[] = $feedbackgenerator->create_item_pagebreak($feedback);
+            $itemscreated[] = $feedbackgenerator->create_item_multichoice($feedback);
+            $itemscreated[] = $feedbackgenerator->create_item_multichoicerated($feedback);
+            $itemscreated[] = $feedbackgenerator->create_item_textarea($feedback);
+            $itemscreated[] = $feedbackgenerator->create_item_textfield($feedback);
+            $itemscreated[] = $feedbackgenerator->create_item_numeric($feedback);
+        }
+        return $itemscreated;
+    }
+
 
     /**
      * Test test_mod_feedback_get_feedbacks_by_courses
@@ -222,6 +250,12 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $this->assertTrue($result['isopen']);
         $this->assertTrue($result['isanonymous']);
         $this->assertFalse($result['isalreadysubmitted']);
+
+        // Add some items to the feedback and check is not empty any more.
+        self::populate_feedback($this->feedback);
+        $result = mod_feedback_external::get_feedback_access_information($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_feedback_access_information_returns(), $result);
+        $this->assertFalse($result['isempty']);
     }
 
     /**
@@ -300,5 +334,36 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $result = mod_feedback_external::get_current_completed_tmp($this->feedback->id);
         $result = external_api::clean_returnvalue(mod_feedback_external::get_current_completed_tmp_returns(), $result);
         $this->assertEquals($record['id'], $result['feedback']['id']);
+    }
+
+    /**
+     * Test get_items.
+     */
+    public function test_get_items() {
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Add questions to the feedback, we are adding 2 pages of questions.
+        $itemscreated = self::populate_feedback($this->feedback, 2);
+
+        $result = mod_feedback_external::get_items($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_items_returns(), $result);
+        $this->assertCount(count($itemscreated), $result['items']);
+        $index = 1;
+        foreach ($result['items'] as $key => $item) {
+            if (is_numeric($itemscreated[$key])) {
+                continue; // Page break.
+            }
+            // Cannot compare directly the exporter and the db object (exporter have more fields).
+            $this->assertEquals($itemscreated[$key]->id, $item['id']);
+            $this->assertEquals($itemscreated[$key]->typ, $item['typ']);
+            $this->assertEquals($itemscreated[$key]->name, $item['name']);
+            $this->assertEquals($itemscreated[$key]->label, $item['label']);
+
+            if ($item['hasvalue']) {
+                $this->assertEquals($index, $item['itemnumber']);
+                $index++;
+            }
+        }
     }
 }

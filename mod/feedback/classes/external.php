@@ -30,6 +30,7 @@ require_once("$CFG->libdir/externallib.php");
 
 use mod_feedback\external\feedback_summary_exporter;
 use mod_feedback\external\feedback_completedtmp_exporter;
+use mod_feedback\external\feedback_item_exporter;
 
 /**
  * Feedback external functions
@@ -157,6 +158,28 @@ class mod_feedback_external extends external_api {
         self::validate_context($context);
 
         return array($feedback, $course, $cm, $context);
+    }
+
+    /**
+     * Utility function for validating access to feedback.
+     *
+     * @param  stdClass   $feedback feedback object
+     * @param  stdClass   $course   course object
+     * @param  stdClass   $cm       course module
+     * @param  stdClass   $context  context object
+     * @throws moodle_exception
+     * @since  Moodle 3.3
+     */
+    protected static function validate_feedback_access($feedback,  $course, $cm, $context) {
+        $feedbackcompletion = new mod_feedback_completion($feedback, $cm, $course->id);
+
+        if (!$feedbackcompletion->can_complete()) {
+            throw new required_capability_exception($context, 'mod/feedback:complete', 'nopermission', '');
+        }
+
+        if (!$feedbackcompletion->is_open()) {
+            throw new moodle_exception('feedback_is_not_open', 'feedback');
+        }
     }
 
     /**
@@ -354,6 +377,72 @@ class mod_feedback_external extends external_api {
         return new external_single_structure(
             array(
                 'feedback' => feedback_completedtmp_exporter::get_read_structure(),
+                'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+    /**
+     * Describes the parameters for get_items.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_items_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id'),
+            )
+        );
+    }
+
+    /**
+     * Returns the items (questions) in the given feedback.
+     *
+     * @param int $feedbackid feedback instance id
+     * @return array of warnings and feedbacks
+     * @since Moodle 3.3
+     */
+    public static function get_items($feedbackid) {
+        global $PAGE;
+
+        $params = array('feedbackid' => $feedbackid);
+        $params = self::validate_parameters(self::get_items_parameters(), $params);
+        $warnings = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+        self::validate_feedback_access($feedback,  $course, $cm, $context);
+
+        $feedbackstructure = new mod_feedback_structure($feedback, $cm, $course->id);
+        $returneditems = array();
+        if ($items = $feedbackstructure->get_items()) {
+            foreach ($items as $item) {
+                $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
+                unset($item->itemnr);   // Added by the function, not part of the record.
+                $exporter = new feedback_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
+                $returneditems[] = $exporter->export($PAGE->get_renderer('core'));
+            }
+        }
+
+        $result = array(
+            'items' => $returneditems,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the get_items return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_items_returns() {
+        return new external_single_structure(
+            array(
+                'items' => new external_multiple_structure(
+                    feedback_item_exporter::get_read_structure()
+                ),
                 'warnings' => new external_warnings(),
             )
         );
