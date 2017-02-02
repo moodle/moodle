@@ -563,7 +563,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $course->summaryformat = FORMAT_PLAIN;
         $course->format = 'topics';
         $course->newsitems = 0;
-        $course->numsections = 5;
         $course->category = $defaultcategory;
         $original = (array) $course;
 
@@ -609,25 +608,26 @@ class core_course_courselib_testcase extends advanced_testcase {
         global $DB;
         $this->resetAfterTest(true);
 
+        $numsections = 5;
         $course = $this->getDataGenerator()->create_course(
                 array('shortname' => 'GrowingCourse',
                     'fullname' => 'Growing Course',
-                    'numsections' => 5),
+                    'numsections' => $numsections),
                 array('createsections' => true));
 
         // Ensure all 6 (0-5) sections were created and course content cache works properly
         $sectionscreated = array_keys(get_fast_modinfo($course)->get_section_info_all());
-        $this->assertEquals(range(0, $course->numsections), $sectionscreated);
+        $this->assertEquals(range(0, $numsections), $sectionscreated);
 
         // this will do nothing, section already exists
-        $this->assertFalse(course_create_sections_if_missing($course, $course->numsections));
+        $this->assertFalse(course_create_sections_if_missing($course, $numsections));
 
         // this will create new section
-        $this->assertTrue(course_create_sections_if_missing($course, $course->numsections + 1));
+        $this->assertTrue(course_create_sections_if_missing($course, $numsections + 1));
 
         // Ensure all 7 (0-6) sections were created and modinfo/sectioninfo cache works properly
         $sectionscreated = array_keys(get_fast_modinfo($course)->get_section_info_all());
-        $this->assertEquals(range(0, $course->numsections + 1), $sectionscreated);
+        $this->assertEquals(range(0, $numsections + 1), $sectionscreated);
     }
 
     public function test_update_course() {
@@ -957,30 +957,22 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Delete last section.
         $this->assertTrue(course_delete_section($course, 6, true));
         $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign6->cmid)));
-        $this->assertEquals(5, course_get_format($course)->get_course()->numsections);
+        $this->assertEquals(5, course_get_format($course)->get_last_section_number());
 
         // Delete empty section.
         $this->assertTrue(course_delete_section($course, 4, false));
-        $this->assertEquals(4, course_get_format($course)->get_course()->numsections);
+        $this->assertEquals(4, course_get_format($course)->get_last_section_number());
 
         // Delete section in the middle (2).
         $this->assertFalse(course_delete_section($course, 2, false));
         $this->assertTrue(course_delete_section($course, 2, true));
         $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign21->cmid)));
         $this->assertFalse($DB->record_exists('course_modules', array('id' => $assign22->cmid)));
-        $this->assertEquals(3, course_get_format($course)->get_course()->numsections);
+        $this->assertEquals(3, course_get_format($course)->get_last_section_number());
         $this->assertEquals(array(0 => array($assign0->cmid),
             1 => array($assign1->cmid),
             2 => array($assign3->cmid),
             3 => array($assign5->cmid)), get_fast_modinfo($course)->sections);
-
-        // Make last section orphaned.
-        update_course((object)array('id' => $course->id, 'numsections' => 2));
-        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
-
-        // Remove orphaned section.
-        $this->assertTrue(course_delete_section($course, 3, true));
-        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
 
         // Remove marked section.
         course_set_marker($course->id, 1);
@@ -3549,7 +3541,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Delete empty section. No difference from normal, synchronous behaviour.
         $this->assertTrue(course_delete_section($course, 4, false, true));
-        $this->assertEquals(3, course_get_format($course)->get_course()->numsections);
+        $this->assertEquals(3, course_get_format($course)->get_last_section_number());
 
         // Delete a module in section 2 (using async). Need to verify this doesn't generate two tasks when we delete
         // the section in the next step.
@@ -3577,7 +3569,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(3, $DB->count_records('course_modules', ['section' => $sectionid, 'deletioninprogress' => 1]));
 
         // Confirm the section has been deleted.
-        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
+        $this->assertEquals(2, course_get_format($course)->get_last_section_number());
 
         // Check event fired.
         $events = $sink->get_events();
@@ -3646,7 +3638,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Delete empty section. No difference from normal, synchronous behaviour.
         $this->assertTrue(course_delete_section($course, 4, false, true));
-        $this->assertEquals(3, course_get_format($course)->get_course()->numsections);
+        $this->assertEquals(3, course_get_format($course)->get_last_section_number());
 
         // Delete section in the middle (2).
         $section = $DB->get_record('course_sections', ['course' => $course->id, 'section' => '2']); // For event comparison.
@@ -3667,7 +3659,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEmpty($cmcount);
 
         // Confirm the section has been deleted.
-        $this->assertEquals(2, course_get_format($course)->get_course()->numsections);
+        $this->assertEquals(2, course_get_format($course)->get_last_section_number());
 
         // Confirm the course_section_deleted event has been generated.
         $events = $sink->get_events();

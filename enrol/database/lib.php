@@ -777,6 +777,9 @@ class enrol_database_plugin extends enrol_plugin {
             if ($templatecourse) {
                 if ($template = $DB->get_record('course', array('shortname'=>$templatecourse))) {
                     $template = fullclone(course_get_format($template)->get_course());
+                    if (!isset($template->numsections)) {
+                        $template->numsections = course_get_format($template)->get_last_section_number();
+                    }
                     unset($template->id);
                     unset($template->fullname);
                     unset($template->shortname);

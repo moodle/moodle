@@ -6,8 +6,8 @@ Feature: The section links block allows users to quickly navigate around a moodl
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | category | numsections | coursedisplay |
+      | Course 1 | C1        | 0        | 20          | 1             |
     And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
@@ -21,11 +21,6 @@ Feature: The section links block allows users to quickly navigate around a moodl
       | Assignment name | Test assignment 1 |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-    And I navigate to "Edit settings" node in "Course administration"
-    And I set the following fields to these values:
-      | id_numsections   | 20 |
-      | id_coursedisplay | Show one section per page |
-    And I press "Save and display"
 
   Scenario: Add the section links block to a course.
     Given I add the "Section links" block

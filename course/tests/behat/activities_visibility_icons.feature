@@ -123,39 +123,6 @@ Feature: Toggle activities visibility from the course page
     And I log out
 
   @javascript
-  Scenario: Activities can be shown and hidden inside an orphaned section
-    Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | format | numsections |
-      | Course 1 | C1 | topics | 2 |
-    And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-    And I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Forum" to section "2" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
-      | Visible | Show |
-    When I click on ".reduce-sections" "css_element"
-    Then "Test forum name" activity should be visible
-    And I open "Test forum name" actions menu
-    And "Test forum name" actions menu should not have "Show" item
-    And "Test forum name" actions menu should not have "Make available" item
-    And "Test forum name" actions menu should not have "Make unavailable" item
-    And I click on "Hide" "link" in the "Test forum name" activity
-    And "Test forum name" activity should be hidden
-    And I open "Test forum name" actions menu
-    And "Test forum name" actions menu should not have "Hide" item
-    And "Test forum name" actions menu should not have "Make available" item
-    And "Test forum name" actions menu should not have "Make unavailable" item
-    And I click on "Show" "link" in the "Test forum name" activity
-    And "Test forum name" activity should be visible
-
-  @javascript
   Scenario: Activities can be made available but not visible on a course page
     Given the following "users" exist:
       | username | firstname | lastname | email |
