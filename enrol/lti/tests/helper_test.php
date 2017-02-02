@@ -516,7 +516,7 @@ class enrol_lti_helper_testcase extends advanced_testcase {
         $document->load(realpath(__DIR__ . '/fixtures/input.xml'));
         $xpath = new \DOMXpath($document);
 
-        $this->setExpectedException("coding_exception");
+        $this->expectException('coding_exception');
         $function->invokeArgs(null, [$xpath, $parameters]);
     }
 
