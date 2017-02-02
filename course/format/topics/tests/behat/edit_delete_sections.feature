@@ -71,9 +71,7 @@ Feature: Sections can be edited and deleted in topics format
     Then I should see "Are you absolutely sure you want to completely delete \"Topic 5\" and all the activities it contains?"
     And I press "Delete"
     And I should not see "Topic 5"
-    And I navigate to "Edit settings" node in "Course administration"
-    And I expand all fieldsets
-    And the field "Number of sections" matches value "4"
+    And I should see "Topic 4"
 
   Scenario: Deleting the middle section in topics format
     When I delete section "4"
@@ -81,31 +79,4 @@ Feature: Sections can be edited and deleted in topics format
     Then I should not see "Topic 5"
     And I should not see "Test chat name"
     And I should see "Test choice name" in the "li#section-4" "css_element"
-    And I navigate to "Edit settings" node in "Course administration"
-    And I expand all fieldsets
-    And the field "Number of sections" matches value "4"
-
-  Scenario: Deleting the orphaned section in topics format
-    When I follow "Reduce the number of sections"
-    Then I should see "Orphaned activities (section 5)" in the "li#section-5" "css_element"
-    And I delete section "5"
-    And I press "Delete"
-    And I should not see "Topic 5"
-    And I should not see "Orphaned activities"
-    And "li#section-5" "css_element" should not exist
-    And I navigate to "Edit settings" node in "Course administration"
-    And I expand all fieldsets
-    And the field "Number of sections" matches value "4"
-
-  Scenario: Deleting a section when orphaned section is present in topics format
-    When I follow "Reduce the number of sections"
-    Then I should see "Orphaned activities (section 5)" in the "li#section-5" "css_element"
-    And "li#section-5.orphaned" "css_element" should exist
-    And "li#section-4.orphaned" "css_element" should not exist
-    And I delete section "1"
-    And I press "Delete"
-    And I should not see "Test book name"
-    And I should see "Orphaned activities (section 4)" in the "li#section-4" "css_element"
-    And "li#section-5" "css_element" should not exist
-    And "li#section-4.orphaned" "css_element" should exist
-    And "li#section-3.orphaned" "css_element" should not exist
+    And I should see "Topic 4"

@@ -41,11 +41,11 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Course 1 restored in a new course"
     And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
+    And I should see "Topic 15"
+    And I should not see "Topic 16"
     And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     And the field "id_format" matches value "Topics format"
-    And the field "Number of sections" matches value "15"
-    And the field "Course layout" matches value "Show one section per page"
     And I press "Cancel"
 
   @javascript
@@ -122,11 +122,12 @@ Feature: Restore Moodle 2 course backups
     And I navigate to "Edit settings" node in "Course administration"
     And I expand all fieldsets
     Then the field "id_format" matches value "Topics format"
-    And the field "Number of sections" matches value "15"
     And the field "Course layout" matches value "Show one section per page"
     And I press "Cancel"
     And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
+    And I should see "Topic 15"
+    And I should not see "Topic 16"
     And I should see "Test URL name" in the "Topic 3" "section"
     And I should see "Test forum name" in the "Topic 1" "section"
