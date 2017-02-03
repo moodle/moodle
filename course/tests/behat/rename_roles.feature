@@ -21,27 +21,28 @@ Feature: Rename roles within a course
       | student1 | C1 | student |
     And I log in as "teacher1"
     And I follow "Course 1"
-    When I click on "Edit settings" "link" in the "Administration" "block"
+    When I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
     And I press "Save and display"
-    And I expand "Switch role to..." node
-    Then I should see "Tutor"
-    And I should see "Learner"
-    And I follow "Participants"
+    And I follow "Switch role to..." in the user menu
+    Then "Tutor" "button" should exist
+    And "Learner" "button" should exist
+    And I navigate to course participants
     And the "roleid" select box should contain "Tutor"
     And the "roleid" select box should contain "Learner"
     And the "roleid" select box should not contain "Student"
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I follow "Course 1"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
     And I press "Save and display"
-    And I expand "Switch role to..." node
+    And I follow "Switch role to..." in the user menu
     And I should see "Teacher"
-    And I should see "Student"
-    And I should not see "Learner"
-    And I follow "Participants"
+    And "Student" "button" should exist
+    And "Learner" "button" should not exist
+    And I navigate to course participants
     And the "roleid" select box should contain "Non-editing teacher"
     And the "roleid" select box should contain "Student"

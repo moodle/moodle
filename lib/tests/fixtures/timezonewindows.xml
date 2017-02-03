@@ -116,7 +116,7 @@ For terms of use, see http://www.unicode.org/copyright.html
 			<mapZone other="US Eastern Standard Time" territory="001" type="America/Indianapolis"/>
 			<mapZone other="US Eastern Standard Time" territory="US" type="America/Indianapolis America/Indiana/Marengo America/Indiana/Vevay"/>
 
-			<!-- (UTC-04:30) Caracas -->
+			<!-- (UTC-04:00) Caracas -->
 			<mapZone other="Venezuela Standard Time" territory="001" type="America/Caracas"/>
 			<mapZone other="Venezuela Standard Time" territory="VE" type="America/Caracas"/>
 

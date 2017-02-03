@@ -105,7 +105,8 @@ class role_assigned extends base {
      */
     protected function get_legacy_logdata() {
         $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $this->get_context(), ROLENAME_ORIGINAL, true);
+        $neededrole = array($this->objectid => $roles[$this->objectid]);
+        $rolenames = role_fix_names($neededrole, $this->get_context(), ROLENAME_ORIGINAL, true);
         return array($this->courseid, 'role', 'assign', 'admin/roles/assign.php?contextid='.$this->contextid.'&roleid='.$this->objectid,
                 $rolenames[$this->objectid], '', $this->userid);
     }

@@ -1,0 +1,6 @@
+This files describes API changes for code that uses the plagiarism API.
+
+=== 3.1 ===
+
+1) The plagiarism_plugin::plagiarism_cron() and plagiarism_plugin::cron() methods have been deprecated.
+   Plugins should now use scheduled tasks.

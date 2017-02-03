@@ -25,8 +25,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
       | assign   | C1     | a5       | Test assignment five (extra) | x     | 10    |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I set the field "Grade report" to "Gradebook setup"
+    And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Test assignment four (extra)":
       | Extra credit | 1 |
     And I set the following settings for grade item "Test assignment five (extra)":
@@ -34,7 +33,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
 
   @javascript
   Scenario: No weights are overridden and student has all grades present
-    When I navigate to "Grades" node in "Course administration"
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
@@ -42,7 +41,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade  | Range | Percentage | Contribution to course total |
@@ -56,14 +55,14 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
 
   @javascript
   Scenario: No weights are overridden, student has some grades present
-    When I navigate to "Grades" node in "Course administration"
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -77,12 +76,12 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
 
   @javascript
   Scenario: No weights are overridden, student has none grades present except for extra credit
-    When I navigate to "Grades" node in "Course administration"
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -102,14 +101,14 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
       | Extra credit | 1 |
     And I set the following settings for grade item "Test assignment three":
       | Extra credit | 1 |
-    When I navigate to "Grades" node in "Course administration"
+    When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -126,7 +125,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     When I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "50"
     And I press "Save changes"
-    When I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
@@ -134,7 +133,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade  | Range | Percentage | Contribution to course total |
@@ -151,14 +150,14 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     When I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "50"
     And I press "Save changes"
-    When I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -175,12 +174,12 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     When I set the field "Override weight of Test assignment one" to "1"
     And I set the field "Weight of Test assignment one" to "50"
     And I press "Save changes"
-    When I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |
@@ -199,7 +198,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I set the field "Override weight of Test assignment four (extra)" to "1"
     And I set the field "Weight of Test assignment four (extra)" to "10"
     And I press "Save changes"
-    When I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
@@ -207,7 +206,7 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -226,14 +225,14 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I set the field "Override weight of Test assignment four (extra)" to "1"
     And I set the field "Weight of Test assignment four (extra)" to "10"
     And I press "Save changes"
-    When I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "30.00" to the user "Student 1" for the grade item "Test assignment two"
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight       | Grade  | Range | Percentage | Contribution to course total |
@@ -252,12 +251,12 @@ Feature: Weights in natural aggregation are adjusted if the items are excluded f
     And I set the field "Override weight of Test assignment four (extra)" to "1"
     And I set the field "Weight of Test assignment four (extra)" to "10"
     And I press "Save changes"
-    When I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment four (extra)"
     And I give the grade "8.00" to the user "Student 1" for the grade item "Test assignment five (extra)"
     And I press "Save changes"
-    And I set the field "Grade report" to "User report"
+    And I navigate to "View > User report" in the course gradebook
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item                   | Calculated weight      | Grade | Range | Percentage | Contribution to course total |

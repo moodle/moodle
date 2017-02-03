@@ -212,4 +212,177 @@ class message_airnotifier_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @since Moodle 3.2
+     */
+    public static function get_user_devices_parameters() {
+        return new external_function_parameters(
+            array(
+                'appid' => new external_value(PARAM_NOTAGS, 'App unique id (usually a reversed domain)'),
+                'userid' => new external_value(PARAM_INT, 'User id, 0 for current user', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Return the list of mobile devices that are registered in Moodle for the given user.
+     *
+     * @param  string  $appid  app unique id (usually a reversed domain)
+     * @param  integer $userid the user id, 0 for current user
+     * @return array warnings and devices
+     * @throws moodle_exception
+     * @since Moodle 3.2
+     */
+    public static function get_user_devices($appid, $userid = 0) {
+        global $USER;
+
+        $params = self::validate_parameters(
+            self::get_user_devices_parameters(),
+            array(
+                'appid' => $appid,
+                'userid' => $userid,
+            )
+        );
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        if (empty($params['userid'])) {
+            $user = $USER;
+        } else {
+            $user = core_user::get_user($params['userid'], '*', MUST_EXIST);
+            core_user::require_active_user($user);
+            // Allow only admins to retrieve other users devices.
+            if ($user->id != $USER->id) {
+                require_capability('moodle/site:config', $context);
+            }
+        }
+
+        $warnings = array();
+        $devices = array();
+        // Check if mobile notifications are enabled.
+        if (!self::is_system_configured()) {
+            $warnings[] = array(
+                'item' => 'user',
+                'itemid' => $user->id,
+                'warningcode' => 'systemnotconfigured',
+                'message' => 'Mobile notifications are not configured'
+            );
+        } else {
+            // We catch exceptions here because get_user_devices may try to connect to Airnotifier.
+            try {
+                $manager = new message_airnotifier_manager();
+                $devices = $manager->get_user_devices($appid, $user->id);
+            } catch (Exception $e) {
+                $warnings[] = array(
+                    'item' => 'user',
+                    'itemid' => $user->id,
+                    'warningcode' => 'errorgettingdevices',
+                    'message' => $e->getMessage()
+                );
+            }
+        }
+
+        return array(
+            'devices' => $devices,
+            'warnings' => $warnings
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_single_structure
+     * @since Moodle 3.2
+     */
+    public static function get_user_devices_returns() {
+        return new external_single_structure(
+            array(
+                'devices' => new external_multiple_structure(
+                    new external_single_structure(
+                        array (
+                            'id' => new external_value(PARAM_INT, 'Device id (in the message_airnotifier table)'),
+                            'appid' => new external_value(PARAM_NOTAGS, 'The app id, something like com.moodle.moodlemobile'),
+                            'name' => new external_value(PARAM_NOTAGS, 'The device name, \'occam\' or \'iPhone\' etc.'),
+                            'model' => new external_value(PARAM_NOTAGS, 'The device model \'Nexus4\' or \'iPad1,1\' etc.'),
+                            'platform' => new external_value(PARAM_NOTAGS, 'The device platform \'iOS\' or \'Android\' etc.'),
+                            'version' => new external_value(PARAM_NOTAGS, 'The device version \'6.1.2\' or \'4.2.2\' etc.'),
+                            'pushid' => new external_value(PARAM_RAW, 'The device PUSH token/key/identifier/registration id'),
+                            'uuid' => new external_value(PARAM_RAW, 'The device UUID'),
+                            'enable' => new external_value(PARAM_INT, 'Whether the device is enabled or not'),
+                            'timecreated' => new external_value(PARAM_INT, 'Time created'),
+                            'timemodified' => new external_value(PARAM_INT, 'Time modified'),
+                        )
+                    ),
+                    'List of devices'
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @since Moodle 3.2
+     */
+    public static function enable_device_parameters() {
+        return new external_function_parameters(
+            array(
+                'deviceid' => new external_value(PARAM_INT, 'The device id'),
+                'enable' => new external_value(PARAM_BOOL, 'True for enable the device, false otherwise')
+            )
+        );
+    }
+
+    /**
+     * Enables or disables a registered user device so it can receive Push notifications
+     *
+     * @param  integer $deviceid the device id
+     * @param  bool $enable whether to enable the device
+     * @return array warnings and success status
+     * @throws moodle_exception
+     * @since Moodle 3.2
+     */
+    public static function enable_device($deviceid, $enable) {
+        global $USER;
+
+        $params = self::validate_parameters(
+            self::enable_device_parameters(),
+            array(
+                'deviceid' => $deviceid,
+                'enable' => $enable,
+            )
+        );
+
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('message/airnotifier:managedevice', $context);
+
+        if (!message_airnotifier_manager::enable_device($params['deviceid'], $params['enable'])) {
+            throw new moodle_exception('unknowndevice', 'message_airnotifier');
+        }
+
+        return array(
+            'success' => true,
+            'warnings' => array()
+        );
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_single_structure
+     * @since Moodle 3.2
+     */
+    public static function enable_device_returns() {
+        return new external_single_structure(
+            array(
+                'success' => new external_value(PARAM_BOOL, 'True if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

@@ -1,0 +1,17 @@
+This files describes changes in /admin/tool/lp/* - plugins,
+information provided here is intended especially for developers.
+
+=== 3.3 ===
+
+* Deprecated classes and their new equivalent:
+  - tool_lp\external\cohort_summary_exporter        -> core_cohort\external\cohort_summary_exporter
+  - tool_lp\external\course_summary_exporter        -> core_course\external\course_summary_exporter
+  - tool_lp\external\course_module_summary_exporter -> core_course\external\course_module_summary_exporter
+
+=== 3.2 ===
+
+* The icon 'competency.png/svg' has been removed, please use i/competencies instead.
+
+=== 3.1.1 ===
+
+* The plugin icon 'competency.png/svg' will be removed in the future use i/competencies instead.

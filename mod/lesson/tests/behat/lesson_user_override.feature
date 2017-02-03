@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @javascript
 Feature: Lesson user override
   In order to grant a student special access to a lesson
   As a teacher
@@ -43,9 +43,10 @@ Feature: Lesson user override
       | id_jumpto_1          | This page |
     And I press "Save page"
 
+  @javascript
   Scenario: Add, modify then delete a user override
     When I follow "Test lesson name"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
@@ -57,7 +58,7 @@ Feature: Lesson user override
       | deadline[minute]    | 00 |
     And I press "Save"
     And I should see "Wednesday, 1 January 2020, 8:00"
-    Then I click on "Edit" "link"
+    Then I click on "Edit" "link" in the "Sam1 Student1" "table_row"
     And I set the following fields to these values:
       | deadline[year] | 2030 |
     And I press "Save"
@@ -68,7 +69,7 @@ Feature: Lesson user override
 
   Scenario: Duplicate a user override
     When I follow "Test lesson name"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
@@ -90,11 +91,11 @@ Feature: Lesson user override
 
   Scenario: Allow a single user to have re-take the lesson
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Re-takes allowed | 0 |
     And I press "Save and display"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user    | Student1  |
@@ -129,12 +130,12 @@ Feature: Lesson user override
 
   Scenario: Allow a single user to have a different password
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Password protected lesson | Yes |
       | id_password               | moodle_rules |
     And I press "Save and display"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user             | Student1  |
@@ -174,7 +175,7 @@ Feature: Lesson user override
 
   Scenario: Allow a user to have a different due date
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_deadline_enabled | 1 |
       | deadline[day]       | 1 |
@@ -183,7 +184,7 @@ Feature: Lesson user override
       | deadline[hour]      | 08 |
       | deadline[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user       | Student1 |
@@ -209,7 +210,7 @@ Feature: Lesson user override
 
   Scenario: Allow a user to have a different start date
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | id_available_enabled | 1 |
       | available[day]       | 1 |
@@ -218,7 +219,7 @@ Feature: Lesson user override
       | available[hour]      | 08 |
       | available[minute]    | 00 |
     And I press "Save and display"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user        | Student1 |
@@ -244,11 +245,11 @@ Feature: Lesson user override
 
   Scenario: Allow a single user to have multiple attempts at each question
     When I follow "Test lesson name"
-    And I navigate to "Edit settings" node in "Lesson administration"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Re-takes allowed | 1 |
     And I press "Save and display"
-    And I navigate to "User overrides" node in "Lesson administration"
+    And I navigate to "User overrides" in current page administration
     And I press "Add user override"
     And I set the following fields to these values:
       | Override user              | Student1  |

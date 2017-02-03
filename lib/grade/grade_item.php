@@ -355,6 +355,34 @@ class grade_item extends grade_object {
     }
 
     /**
+     * Check to see if there are any existing grades for this grade_item.
+     *
+     * @return boolean - true if there are valid grades for this grade_item.
+     */
+    public function has_grades() {
+        global $DB;
+
+        $count = $DB->count_records_select('grade_grades',
+                                           'itemid = :gradeitemid AND finalgrade IS NOT NULL',
+                                           array('gradeitemid' => $this->id));
+        return $count > 0;
+    }
+
+    /**
+     * Check to see if there are existing overridden grades for this grade_item.
+     *
+     * @return boolean - true if there are overridden grades for this grade_item.
+     */
+    public function has_overridden_grades() {
+        global $DB;
+
+        $count = $DB->count_records_select('grade_grades',
+                                           'itemid = :gradeitemid AND finalgrade IS NOT NULL AND overridden > 0',
+                                           array('gradeitemid' => $this->id));
+        return $count > 0;
+    }
+
+    /**
      * Finds and returns all grade_item instances based on params.
      *
      * @static
@@ -496,6 +524,14 @@ class grade_item extends grade_object {
      * @return bool Locked state
      */
     public function is_locked($userid=NULL) {
+        global $CFG;
+
+        // Override for any grade items belonging to activities which are in the process of being deleted.
+        require_once($CFG->dirroot . '/course/lib.php');
+        if (course_module_instance_pending_deletion($this->courseid, $this->itemmodule, $this->iteminstance)) {
+            return true;
+        }
+
         if (!empty($this->locked)) {
             return true;
         }
@@ -652,7 +688,8 @@ class grade_item extends grade_object {
     }
 
     /**
-     * Mark regrading as finished successfully.
+     * Mark regrading as finished successfully. This will also be called when subsequent regrading will not change any grades.
+     * Situations such as an error being found will still result in the regrading being finished.
      */
     public function regrading_finished() {
         global $DB;
@@ -775,9 +812,9 @@ class grade_item extends grade_object {
             }
 
             // Standardise score to the new grade range
-            // NOTE: this is not compatible with current assignment grading
-            $isassignmentmodule = ($this->itemmodule == 'assignment') || ($this->itemmodule == 'assign');
-            if (!$isassignmentmodule && ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
+            // NOTE: skip if the activity provides a manual rescaling option.
+            $manuallyrescale = (component_callback_exists('mod_' . $this->itemmodule, 'rescale_activity_grades') !== false);
+            if (!$manuallyrescale && ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
                 $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
@@ -801,8 +838,10 @@ class grade_item extends grade_object {
             }
 
             // Convert scale if needed
-            // NOTE: this is not compatible with current assignment grading
-            if ($this->itemmodule != 'assignment' and ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
+            // NOTE: skip if the activity provides a manual rescaling option.
+            $manuallyrescale = (component_callback_exists('mod_' . $this->itemmodule, 'rescale_activity_grades') !== false);
+            if (!$manuallyrescale && ($rawmin != $this->grademin or $rawmax != $this->grademax)) {
+                // This should never happen because scales are locked if they are in use.
                 $rawgrade = grade_grade::standardise_score($rawgrade, $rawmin, $rawmax, $this->grademin, $this->grademax);
             }
 
@@ -817,6 +856,62 @@ class grade_item extends grade_object {
             debugging("Unknown grade type");
             return null;
         }
+    }
+
+    /**
+     * Update the rawgrademax and rawgrademin for all grade_grades records for this item.
+     * Scale every rawgrade to maintain the percentage. This function should be called
+     * after the gradeitem has been updated to the new min and max values.
+     *
+     * @param float $oldgrademin The previous grade min value
+     * @param float $oldgrademax The previous grade max value
+     * @param float $newgrademin The new grade min value
+     * @param float $newgrademax The new grade max value
+     * @param string $source from where was the object inserted (mod/forum, manual, etc.)
+     * @return bool True on success
+     */
+    public function rescale_grades_keep_percentage($oldgrademin, $oldgrademax, $newgrademin, $newgrademax, $source = null) {
+        global $DB;
+
+        if (empty($this->id)) {
+            return false;
+        }
+
+        if ($oldgrademax <= $oldgrademin) {
+            // Grades cannot be scaled.
+            return false;
+        }
+        $scale = ($newgrademax - $newgrademin) / ($oldgrademax - $oldgrademin);
+        if (($newgrademax - $newgrademin) <= 1) {
+            // We would lose too much precision, lets bail.
+            return false;
+        }
+
+        $rs = $DB->get_recordset('grade_grades', array('itemid' => $this->id));
+
+        foreach ($rs as $graderecord) {
+            // For each record, create an object to work on.
+            $grade = new grade_grade($graderecord, false);
+            // Set this object in the item so it doesn't re-fetch it.
+            $grade->grade_item = $this;
+
+            if (!$this->is_category_item() || ($this->is_category_item() && $grade->is_overridden())) {
+                // Updating the raw grade automatically updates the min/max.
+                if ($this->is_raw_used()) {
+                    $rawgrade = (($grade->rawgrade - $oldgrademin) * $scale) + $newgrademin;
+                    $this->update_raw_grade(false, $rawgrade, $source, false, FORMAT_MOODLE, null, null, null, $grade);
+                } else {
+                    $finalgrade = (($grade->finalgrade - $oldgrademin) * $scale) + $newgrademin;
+                    $this->update_final_grade($grade->userid, $finalgrade, $source);
+                }
+            }
+        }
+        $rs->close();
+
+        // Mark this item for regrading.
+        $this->force_regrading();
+
+        return true;
     }
 
     /**
@@ -1304,9 +1399,16 @@ class grade_item extends grade_object {
      * @return string name
      */
     public function get_name($fulltotal=false) {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
         if (strval($this->itemname) !== '') {
             // MDL-10557
-            return format_string($this->itemname);
+
+            // Make it obvious to users if the course module to which this grade item relates, is currently being removed.
+            $deletionpending = course_module_instance_pending_deletion($this->courseid, $this->itemmodule, $this->iteminstance);
+            $deletionnotice = get_string('gradesmoduledeletionprefix', 'grades');
+
+            return $deletionpending ? format_string($deletionnotice . ' ' . $this->itemname) : format_string($this->itemname);
 
         } else if ($this->is_course_item()) {
             return get_string('coursetotal', 'grades');
@@ -1649,6 +1751,8 @@ class grade_item extends grade_object {
         $oldgrade->overridden     = $grade->overridden;
         $oldgrade->feedback       = $grade->feedback;
         $oldgrade->feedbackformat = $grade->feedbackformat;
+        $oldgrade->rawgrademin    = $grade->rawgrademin;
+        $oldgrade->rawgrademax    = $grade->rawgrademax;
 
         // MDL-31713 rawgramemin and max must be up to date so conditional access %'s works properly.
         $grade->rawgrademin = $this->grademin;
@@ -1675,6 +1779,7 @@ class grade_item extends grade_object {
             $grade->feedbackformat = $feedbackformat;
         }
 
+        $gradechanged = false;
         if (empty($grade->id)) {
             $grade->timecreated  = null;   // hack alert - date submitted - no submission yet
             $grade->timemodified = time(); // hack alert - date graded
@@ -1684,10 +1789,23 @@ class grade_item extends grade_object {
             if ($result && !is_null($grade->finalgrade)) {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
-        } else if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
-                or $grade->feedback       !== $oldgrade->feedback
-                or $grade->feedbackformat != $oldgrade->feedbackformat
-                or ($oldgrade->overridden == 0 and $grade->overridden > 0)) {
+            $gradechanged = true;
+        } else {
+            // Existing grade_grades.
+
+            if (grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)
+                    or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
+                    or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
+                    or ($oldgrade->overridden == 0 and $grade->overridden > 0)) {
+                $gradechanged = true;
+            }
+
+            if ($grade->feedback === $oldgrade->feedback and $grade->feedbackformat == $oldgrade->feedbackformat and
+                    $gradechanged === false) {
+                // No grade nor feedback changed.
+                return $result;
+            }
+
             $grade->timemodified = time(); // hack alert - date graded
             $result = $grade->update($source);
 
@@ -1695,21 +1813,26 @@ class grade_item extends grade_object {
             if ($result && grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)) {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
-        } else {
-            // no grade change
-            return $result;
         }
 
         if (!$result) {
-            // something went wrong - better force final grade recalculation
+            // Something went wrong - better force final grade recalculation.
             $this->force_regrading();
+            return $result;
+        }
 
-        } else if ($this->is_course_item() and !$this->needsupdate) {
+        // If we are not updating grades we don't need to recalculate the whole course.
+        if (!$gradechanged) {
+            return $result;
+        }
+
+        if ($this->is_course_item() and !$this->needsupdate) {
             if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {
                 $this->force_regrading();
             }
 
         } else if (!$this->needsupdate) {
+
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
                 if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {
@@ -1837,6 +1960,7 @@ class grade_item extends grade_object {
         }
         // end of hack alert
 
+        $gradechanged = false;
         if (empty($grade->id)) {
             $result = (bool)$grade->insert($source);
 
@@ -1844,31 +1968,47 @@ class grade_item extends grade_object {
             if ($result && !is_null($grade->finalgrade)) {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
-        } else if (grade_floats_different($grade->finalgrade,  $oldgrade->finalgrade)
-                or grade_floats_different($grade->rawgrade,    $oldgrade->rawgrade)
-                or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
-                or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
-                or $grade->rawscaleid     != $oldgrade->rawscaleid
-                or $grade->feedback       !== $oldgrade->feedback
-                or $grade->feedbackformat != $oldgrade->feedbackformat
-                or $grade->timecreated    != $oldgrade->timecreated  // part of hack above
-                or $grade->timemodified   != $oldgrade->timemodified // part of hack above
-                ) {
+            $gradechanged = true;
+        } else {
+            // Existing grade_grades.
+
+            if (grade_floats_different($grade->finalgrade,  $oldgrade->finalgrade)
+                    or grade_floats_different($grade->rawgrade,    $oldgrade->rawgrade)
+                    or grade_floats_different($grade->rawgrademin, $oldgrade->rawgrademin)
+                    or grade_floats_different($grade->rawgrademax, $oldgrade->rawgrademax)
+                    or $grade->rawscaleid != $oldgrade->rawscaleid) {
+                $gradechanged = true;
+            }
+
+            // The timecreated and timemodified checking is part of the hack above.
+            if ($gradechanged === false and
+                    $grade->feedback === $oldgrade->feedback and
+                    $grade->feedbackformat == $oldgrade->feedbackformat and
+                    $grade->timecreated == $oldgrade->timecreated and
+                    $grade->timemodified == $oldgrade->timemodified) {
+                // No changes.
+                return $result;
+            }
             $result = $grade->update($source);
 
             // If the grade update was successful and the actual grade has changed then trigger a user_graded event.
             if ($result && grade_floats_different($grade->finalgrade, $oldgrade->finalgrade)) {
                 \core\event\user_graded::create_from_grade($grade)->trigger();
             }
-        } else {
-            return $result;
         }
 
         if (!$result) {
-            // something went wrong - better force final grade recalculation
+            // Something went wrong - better force final grade recalculation.
             $this->force_regrading();
+            return $result;
+        }
 
-        } else if (!$this->needsupdate) {
+        // If we are not updating grades we don't need to recalculate the whole course.
+        if (!$gradechanged) {
+            return $result;
+        }
+
+        if (!$this->needsupdate) {
             $course_item = grade_item::fetch_course_item($this->courseid);
             if (!$course_item->needsupdate) {
                 if (grade_regrade_final_grades($this->courseid, $userid, $this) !== true) {

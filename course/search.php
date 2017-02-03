@@ -92,6 +92,11 @@ if (empty($searchcriteria)) {
         $searchform = $courserenderer->course_search_form($search, 'navbar');
     }
     $PAGE->set_button($searchform);
+
+    // Trigger event, courses searched.
+    $eventparams = array('context' => $PAGE->context, 'other' => array('query' => $search));
+    $event = \core\event\courses_searched::create($eventparams);
+    $event->trigger();
 }
 
 $PAGE->set_heading($site->fullname);

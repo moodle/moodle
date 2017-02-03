@@ -77,22 +77,25 @@ class dropdown_attribute extends element {
      * @return string
      */
     public function html() {
-        $old = array(
-            'type' => 'hidden',
-            'name' => 'old' . $this->name,
-            'value' => $this->selected
+        global $OUTPUT;
+
+        $options = $this->options;
+        $selected = $this->selected;
+
+        $context = array(
+            'name' => $this->name,
+            'value' => $this->selected,
+            'tabindex' => 1,
+            'disabled' => !empty($this->isdisabled),
+            'options' => array_map(function($option) use ($options, $selected) {
+                return [
+                    'name' => $options[$option],
+                    'value' => $option,
+                    'selected' => $selected == $option
+                ];
+            }, array_keys($options))
         );
 
-        $attributes = array('tabindex' => '1');
-
-        if (!empty($this->isdisabled)) {
-            $attributes['disabled'] = 'DISABLED';
-        }
-
-        $select = html_writer::select(
-            $this->options, $this->name, $this->selected, false, $attributes
-        );
-
-        return ($select . html_writer::empty_tag('input', $old));
+        return $OUTPUT->render_from_template('gradereport_singleview/dropdown_attribute', $context);
     }
 }

@@ -56,6 +56,11 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 $action       = optional_param('action', null, PARAM_ALPHANUMEXT);
 $id           = optional_param('id', null, PARAM_INT);
 $tab          = optional_param('tab', '', PARAM_ALPHAEXT);
+$returnto     = optional_param('returnto', '', PARAM_ALPHA);
+
+if ($returnto == 'toolconfigure') {
+    $returnurl = new moodle_url($CFG->wwwroot . '/mod/lti/toolconfigure.php');
+}
 
 // No guest autologin.
 require_login(0, false);
@@ -67,8 +72,11 @@ if (!empty($id)) {
     $type = lti_get_type_type_config($id);
     if (!empty($type->toolproxyid)) {
         $sesskey = required_param('sesskey', PARAM_RAW);
-        $redirect = new moodle_url('/mod/lti/toolssettings.php',
-            array('action' => $action, 'id' => $id, 'sesskey' => $sesskey, 'tab' => $tab));
+        $params = array('action' => $action, 'id' => $id, 'sesskey' => $sesskey, 'tab' => $tab);
+        if (!empty($returnto)) {
+            $params['returnto'] = $returnto;
+        }
+        $redirect = new moodle_url('/mod/lti/toolssettings.php', $params);
         redirect($redirect);
     }
 } else {
@@ -82,11 +90,17 @@ $pageurl = new moodle_url('/mod/lti/typessettings.php');
 if (!empty($id)) {
     $pageurl->param('id', $id);
 }
+if (!empty($returnto)) {
+    $pageurl->param('returnto', $returnto);
+}
 $PAGE->set_url($pageurl);
 
 admin_externalpage_setup('managemodules'); // Hacky solution for printing the admin page.
 
 $redirect = "$CFG->wwwroot/$CFG->admin/settings.php?section=modsettinglti&tab={$tab}";
+if (!empty($returnurl)) {
+    $redirect = $returnurl;
+}
 
 if ($action == 'accept') {
     lti_set_state_for_type($id, LTI_TOOL_STATE_CONFIGURED);
@@ -111,11 +125,13 @@ if ($data = $form->get_data()) {
     $type = new stdClass();
     if (!empty($id)) {
         $type->id = $id;
+        lti_load_type_if_cartridge($data);
         lti_update_type($type, $data);
 
         redirect($redirect);
     } else {
         $type->state = LTI_TOOL_STATE_CONFIGURED;
+        lti_load_type_if_cartridge($data);
         lti_add_type($type, $data);
 
         redirect($redirect);

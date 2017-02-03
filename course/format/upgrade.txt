@@ -2,6 +2,19 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 3.2 ===
+* Callback delete_course is deprecated and should be replaced with observer for event \core\event\course_content_deleted
+* Course formats can overwrite get_default_course_enddate function to set the default course end date for new courses.
+  format_base::get_default_course_enddate uses the new "Course duration" site setting to calculate the default course end date
+  from the default course start date.
+* New method format_base::supports_news() which is used to determine whether an Announcements forum will be automatically created on
+  course creation. For course format plugin developers, please override format_base::supports_news() to return true if you want the
+  Announcements forum to be created upon course creation and remove the block names defined in format_base::get_default_blocks().
+
+=== 3.1 ===
+* Course format may use the inplace_editable template to allow quick editing of section names, see
+  https://docs.moodle.org/dev/Inplace_editable and MDL-51802 for example implementation.
+
 === 3.0 ===
 * Course formats should now use section_edit_control_items and use the returned array of controls items and their attributes to create a
   renderable menu or array of links.  Plugin calls to section_edit_controls will now include the section edit control in the returned array.

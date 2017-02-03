@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__).'/lib.php');     // we extend this library here
+require_once(__DIR__.'/lib.php');     // we extend this library here
 require_once($CFG->libdir . '/gradelib.php');   // we use some rounding and comparing routines here
 require_once($CFG->libdir . '/filelib.php');
 
@@ -124,6 +123,9 @@ class workshop {
     /** @var int number of allowed submission attachments and the files embedded into submission */
     public $nattachments;
 
+     /** @var string list of allowed file types that are allowed to be embedded into submission */
+    public $submissionfiletypes = null;
+
     /** @var bool allow submitting the work after the deadline */
     public $latesubmissions;
 
@@ -159,6 +161,9 @@ class workshop {
 
     /** @var int maximum number of overall feedback attachments */
     public $overallfeedbackfiles;
+
+    /** @var string list of allowed file types that can be attached to the overall feedback */
+    public $overallfeedbackfiletypes = null;
 
     /** @var int maximum size of one file attached to the overall feedback */
     public $overallfeedbackmaxbytes;
@@ -410,6 +415,119 @@ class workshop {
             $a->distanceday = get_string('daysleft', 'workshop', $distance);
         }
         return $a;
+    }
+
+    /**
+     * Converts the argument into an array (list) of file extensions.
+     *
+     * The list can be separated by whitespace, end of lines, commas colons and semicolons.
+     * Empty values are not returned. Values are converted to lowercase.
+     * Duplicates are removed. Glob evaluation is not supported.
+     *
+     * @param string|array $extensions list of file extensions
+     * @return array of strings
+     */
+    public static function normalize_file_extensions($extensions) {
+
+        if ($extensions === '') {
+            return array();
+        }
+
+        if (!is_array($extensions)) {
+            $extensions = preg_split('/[\s,;:"\']+/', $extensions, null, PREG_SPLIT_NO_EMPTY);
+        }
+
+        foreach ($extensions as $i => $extension) {
+            $extension = str_replace('*.', '', $extension);
+            $extension = strtolower($extension);
+            $extension = ltrim($extension, '.');
+            $extension = trim($extension);
+            $extensions[$i] = $extension;
+        }
+
+        foreach ($extensions as $i => $extension) {
+            if (strpos($extension, '*') !== false or strpos($extension, '?') !== false) {
+                unset($extensions[$i]);
+            }
+        }
+
+        $extensions = array_filter($extensions, 'strlen');
+        $extensions = array_keys(array_flip($extensions));
+
+        foreach ($extensions as $i => $extension) {
+            $extensions[$i] = '.'.$extension;
+        }
+
+        return $extensions;
+    }
+
+    /**
+     * Cleans the user provided list of file extensions.
+     *
+     * @param string $extensions
+     * @return string
+     */
+    public static function clean_file_extensions($extensions) {
+
+        $extensions = self::normalize_file_extensions($extensions);
+
+        foreach ($extensions as $i => $extension) {
+            $extensions[$i] = ltrim($extension, '.');
+        }
+
+        return implode(', ', $extensions);
+    }
+
+    /**
+     * Check given file types and return invalid/unknown ones.
+     *
+     * Empty whitelist is interpretted as "any extension is valid".
+     *
+     * @param string|array $extensions list of file extensions
+     * @param string|array $whitelist list of valid extensions
+     * @return array list of invalid extensions not found in the whitelist
+     */
+    public static function invalid_file_extensions($extensions, $whitelist) {
+
+        $extensions = self::normalize_file_extensions($extensions);
+        $whitelist = self::normalize_file_extensions($whitelist);
+
+        if (empty($extensions) or empty($whitelist)) {
+            return array();
+        }
+
+        // Return those items from $extensions that are not present in $whitelist.
+        return array_keys(array_diff_key(array_flip($extensions), array_flip($whitelist)));
+    }
+
+    /**
+     * Is the file have allowed to be uploaded to the workshop?
+     *
+     * Empty whitelist is interpretted as "any file type is allowed" rather
+     * than "no file can be uploaded".
+     *
+     * @param string $filename the file name
+     * @param string|array $whitelist list of allowed file extensions
+     * @return false
+     */
+    public static function is_allowed_file_type($filename, $whitelist) {
+
+        $whitelist = self::normalize_file_extensions($whitelist);
+
+        if (empty($whitelist)) {
+            return true;
+        }
+
+        $haystack = strrev(trim(strtolower($filename)));
+
+        foreach ($whitelist as $extension) {
+            if (strpos($haystack, strrev($extension)) === 0) {
+                // The file name ends with the extension.
+                return true;
+            }
+        }
+
+        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1312,7 +1430,7 @@ class workshop {
         global $CFG;    // because we require other libs here
 
         if (is_null($this->strategyinstance)) {
-            $strategylib = dirname(__FILE__) . '/form/' . $this->strategy . '/lib.php';
+            $strategylib = __DIR__ . '/form/' . $this->strategy . '/lib.php';
             if (is_readable($strategylib)) {
                 require_once($strategylib);
             } else {
@@ -1337,7 +1455,7 @@ class workshop {
     public function set_grading_evaluation_method($method) {
         global $DB;
 
-        $evaluationlib = dirname(__FILE__) . '/eval/' . $method . '/lib.php';
+        $evaluationlib = __DIR__ . '/eval/' . $method . '/lib.php';
 
         if (is_readable($evaluationlib)) {
             $this->evaluationinstance = null;
@@ -1361,13 +1479,13 @@ class workshop {
             if (empty($this->evaluation)) {
                 $this->evaluation = 'best';
             }
-            $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
+            $evaluationlib = __DIR__ . '/eval/' . $this->evaluation . '/lib.php';
             if (is_readable($evaluationlib)) {
                 require_once($evaluationlib);
             } else {
                 // Fall back in case the subplugin is not available.
                 $this->evaluation = 'best';
-                $evaluationlib = dirname(__FILE__) . '/eval/' . $this->evaluation . '/lib.php';
+                $evaluationlib = __DIR__ . '/eval/' . $this->evaluation . '/lib.php';
                 if (is_readable($evaluationlib)) {
                     require_once($evaluationlib);
                 } else {
@@ -1393,7 +1511,7 @@ class workshop {
     public function allocator_instance($method) {
         global $CFG;    // because we require other libs here
 
-        $allocationlib = dirname(__FILE__) . '/allocation/' . $method . '/lib.php';
+        $allocationlib = __DIR__ . '/allocation/' . $method . '/lib.php';
         if (is_readable($allocationlib)) {
             require_once($allocationlib);
         } else {
@@ -2247,7 +2365,7 @@ class workshop {
      */
     public function get_feedbackreviewer_form(moodle_url $actionurl, stdclass $assessment, $options=array()) {
         global $CFG;
-        require_once(dirname(__FILE__) . '/feedbackreviewer_form.php');
+        require_once(__DIR__ . '/feedbackreviewer_form.php');
 
         $current = new stdclass();
         $current->asid                      = $assessment->id;
@@ -2283,7 +2401,7 @@ class workshop {
      */
     public function get_feedbackauthor_form(moodle_url $actionurl, stdclass $submission, $options=array()) {
         global $CFG;
-        require_once(dirname(__FILE__) . '/feedbackauthor_form.php');
+        require_once(__DIR__ . '/feedbackauthor_form.php');
 
         $current = new stdclass();
         $current->submissionid          = $submission->id;
@@ -2363,17 +2481,63 @@ class workshop {
     }
 
     /**
+     * Return the editor options for the submission content field.
+     *
+     * @return array
+     */
+    public function submission_content_options() {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
+        return array(
+            'trusttext' => true,
+            'subdirs' => false,
+            'maxfiles' => $this->nattachments,
+            'maxbytes' => $this->maxbytes,
+            'context' => $this->context,
+            'return_types' => FILE_INTERNAL | FILE_EXTERNAL,
+          );
+    }
+
+    /**
+     * Return the filemanager options for the submission attachments field.
+     *
+     * @return array
+     */
+    public function submission_attachment_options() {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
+        $options = array(
+            'subdirs' => true,
+            'maxfiles' => $this->nattachments,
+            'maxbytes' => $this->maxbytes,
+            'return_types' => FILE_INTERNAL,
+        );
+
+        if ($acceptedtypes = self::normalize_file_extensions($this->submissionfiletypes)) {
+            $options['accepted_types'] = $acceptedtypes;
+        }
+
+        return $options;
+    }
+
+    /**
      * Return the editor options for the overall feedback for the author.
      *
      * @return array
      */
     public function overall_feedback_content_options() {
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
         return array(
             'subdirs' => 0,
             'maxbytes' => $this->overallfeedbackmaxbytes,
             'maxfiles' => $this->overallfeedbackfiles,
             'changeformat' => 1,
             'context' => $this->context,
+            'return_types' => FILE_INTERNAL,
         );
     }
 
@@ -2383,12 +2547,21 @@ class workshop {
      * @return array
      */
     public function overall_feedback_attachment_options() {
-        return array(
+        global $CFG;
+        require_once($CFG->dirroot.'/repository/lib.php');
+
+        $options = array(
             'subdirs' => 1,
             'maxbytes' => $this->overallfeedbackmaxbytes,
             'maxfiles' => $this->overallfeedbackfiles,
             'return_types' => FILE_INTERNAL,
         );
+
+        if ($acceptedtypes = self::normalize_file_extensions($this->overallfeedbackfiletypes)) {
+            $options['accepted_types'] = $acceptedtypes;
+        }
+
+        return $options;
     }
 
     /**
@@ -2453,6 +2626,50 @@ class workshop {
         return $status;
     }
 
+    /**
+     * Check if the current user can access the other user's group.
+     *
+     * This is typically used for teacher roles that have permissions like
+     * 'view all submissions'. Even with such a permission granted, we have to
+     * check the workshop activity group mode.
+     *
+     * If the workshop is not in a group mode, or if it is in the visible group
+     * mode, this method returns true. This is consistent with how the
+     * {@link groups_get_activity_allowed_groups()} behaves.
+     *
+     * If the workshop is in a separate group mode, the current user has to
+     * have the 'access all groups' permission, or share at least one
+     * accessible group with the other user.
+     *
+     * @param int $otheruserid The ID of the other user, e.g. the author of a submission.
+     * @return bool False if the current user cannot access the other user's group.
+     */
+    public function check_group_membership($otheruserid) {
+        global $USER;
+
+        if (groups_get_activity_groupmode($this->cm) != SEPARATEGROUPS) {
+            // The workshop is not in a group mode, or it is in a visible group mode.
+            return true;
+
+        } else if (has_capability('moodle/site:accessallgroups', $this->context)) {
+            // The current user can access all groups.
+            return true;
+
+        } else {
+            $thisusersgroups = groups_get_all_groups($this->course->id, $USER->id, $this->cm->groupingid, 'g.id');
+            $otherusersgroups = groups_get_all_groups($this->course->id, $otheruserid, $this->cm->groupingid, 'g.id');
+            $commongroups = array_intersect_key($thisusersgroups, $otherusersgroups);
+
+            if (empty($commongroups)) {
+                // The current user has no group common with the other user.
+                return false;
+
+            } else {
+                // The current user has a group common with the other user.
+                return true;
+            }
+        }
+    }
 
     ////////////////////////////////////////////////////////////////////////////////
     // Internal methods (implementation details)                                  //
@@ -3188,10 +3405,26 @@ class workshop_user_plan implements renderable {
             }
         }
 
-        // Add phase switching actions
+        // Add phase switching actions.
         if (has_capability('mod/workshop:switchphase', $workshop->context, $userid)) {
+            $nextphases = array(
+                workshop::PHASE_SETUP => workshop::PHASE_SUBMISSION,
+                workshop::PHASE_SUBMISSION => workshop::PHASE_ASSESSMENT,
+                workshop::PHASE_ASSESSMENT => workshop::PHASE_EVALUATION,
+                workshop::PHASE_EVALUATION => workshop::PHASE_CLOSED,
+            );
             foreach ($this->phases as $phasecode => $phase) {
-                if (! $phase->active) {
+                if ($phase->active) {
+                    if (isset($nextphases[$workshop->phase])) {
+                        $task = new stdClass();
+                        $task->title = get_string('switchphasenext', 'mod_workshop');
+                        $task->link = $workshop->switchphase_url($nextphases[$workshop->phase]);
+                        $task->details = '';
+                        $task->completed = null;
+                        $phase->tasks['switchtonextphase'] = $task;
+                    }
+
+                } else {
                     $action = new stdclass();
                     $action->type = 'switchphase';
                     $action->url  = $workshop->switchphase_url($phasecode);
@@ -3469,7 +3702,7 @@ abstract class workshop_assessment_base {
     protected $fields = array();
 
     /** @var workshop */
-    protected $workshop;
+    public $workshop;
 
     /**
      * Copies the properties of the given database record into properties of $this instance

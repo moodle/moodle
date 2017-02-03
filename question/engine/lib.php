@@ -27,19 +27,19 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/filelib.php');
-require_once(dirname(__FILE__) . '/questionusage.php');
-require_once(dirname(__FILE__) . '/questionattempt.php');
-require_once(dirname(__FILE__) . '/questionattemptstep.php');
-require_once(dirname(__FILE__) . '/states.php');
-require_once(dirname(__FILE__) . '/datalib.php');
-require_once(dirname(__FILE__) . '/renderer.php');
-require_once(dirname(__FILE__) . '/bank.php');
-require_once(dirname(__FILE__) . '/../type/questiontypebase.php');
-require_once(dirname(__FILE__) . '/../type/questionbase.php');
-require_once(dirname(__FILE__) . '/../type/rendererbase.php');
-require_once(dirname(__FILE__) . '/../behaviour/behaviourtypebase.php');
-require_once(dirname(__FILE__) . '/../behaviour/behaviourbase.php');
-require_once(dirname(__FILE__) . '/../behaviour/rendererbase.php');
+require_once(__DIR__ . '/questionusage.php');
+require_once(__DIR__ . '/questionattempt.php');
+require_once(__DIR__ . '/questionattemptstep.php');
+require_once(__DIR__ . '/states.php');
+require_once(__DIR__ . '/datalib.php');
+require_once(__DIR__ . '/renderer.php');
+require_once(__DIR__ . '/bank.php');
+require_once(__DIR__ . '/../type/questiontypebase.php');
+require_once(__DIR__ . '/../type/questionbase.php');
+require_once(__DIR__ . '/../type/rendererbase.php');
+require_once(__DIR__ . '/../behaviour/behaviourtypebase.php');
+require_once(__DIR__ . '/../behaviour/behaviourbase.php');
+require_once(__DIR__ . '/../behaviour/rendererbase.php');
 require_once($CFG->libdir . '/questionlib.php');
 
 
@@ -595,9 +595,11 @@ class question_display_options {
 
     /**
      * @since 2.9
-     * @var string extra HTML to include in the info box of the question display.
-     * This is normally shown after the information about the question, and before
-     * any controls like the flag or the edit icon.
+     * @var string extra HTML to include at the end of the outcome (feedback) box
+     * of the question display.
+     *
+     * This field is now badly named. The place it included is was changed
+     * (for the better) but the name was left unchanged for backwards compatibility.
      */
     public $extrainfocontent = '';
 

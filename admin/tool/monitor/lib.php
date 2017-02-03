@@ -103,10 +103,12 @@ function tool_monitor_get_user_courses() {
     if (has_capability('tool/monitor:subscribe', context_system::instance())) {
         $options[0] = get_string('site');
     }
-    if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname', $orderby)) {
+    if ($courses = get_user_capability_course('tool/monitor:subscribe', null, true, 'fullname, visible', $orderby)) {
         foreach ($courses as $course) {
-            $options[$course->id] = format_string($course->fullname, true,
-                array('context' => context_course::instance($course->id)));
+            $coursectx = context_course::instance($course->id);
+            if ($course->visible || has_capability('moodle/course:viewhiddencourses', $coursectx)) {
+                $options[$course->id] = format_string($course->fullname, true, array('context' => $coursectx));
+            }
         }
     }
     // If there are no courses and there is no site permission then return false.

@@ -1,6 +1,15 @@
 This files describes API changes in /mod/choice/*,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+
+* Events mod_choice\event\answer_submitted and mod_choice\event\answer_updated
+  are no longer triggered. Observers listening to these events must instead listen
+  to mod_choice\event\answer_created and mod_choice\event\answer_deleted that are
+  triggered for each option that is selected or unselected. User whose choice was
+  modified can be found in $event->relateduserid (this does not have to be the
+  user who performs the action).
+
 === 3.0 ===
 
 * External function mod_choice_external::get_choices_by_courses returned parameter "name" and

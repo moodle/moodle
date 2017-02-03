@@ -517,7 +517,10 @@ abstract class oauth2_client extends curl {
         // Store the token an expiry time.
         $accesstoken = new stdClass;
         $accesstoken->token = $r->access_token;
-        $accesstoken->expires = (time() + ($r->expires_in - 10)); // Expires 10 seconds before actual expiry.
+        if (isset($r->expires_in)) {
+            // Expires 10 seconds before actual expiry.
+            $accesstoken->expires = (time() + ($r->expires_in - 10));
+        }
         $this->store_token($accesstoken);
 
         return true;

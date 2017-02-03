@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2015 Justin Hileman
+ * (c) 2010-2016 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -27,8 +27,8 @@ class Mustache_Cache_FilesystemCache extends Mustache_Cache_AbstractCache
     /**
      * Filesystem cache constructor.
      *
-     * @param string $baseDir  Directory for compiled templates.
-     * @param int    $fileMode Override default permissions for cache files. Defaults to using the system-defined umask.
+     * @param string $baseDir  Directory for compiled templates
+     * @param int    $fileMode Override default permissions for cache files. Defaults to using the system-defined umask
      */
     public function __construct($baseDir, $fileMode = null)
     {

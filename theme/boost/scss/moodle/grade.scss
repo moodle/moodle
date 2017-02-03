@@ -1,0 +1,410 @@
+// The class gradetreebox matches the pages displaying the gradebook
+// "Gradebook setup" > "Simple view" and "Full view".
+.gradetreebox {
+    h4 {
+        // Force back the base font-size to minimise width.
+        font-size: $font-size-base;
+    }
+
+    th.cell,
+    input[type=text] {
+        // Fallback on the minimum width.
+        width: auto;
+    }
+
+    input[type=text],
+    select {
+        // Remove the bottom margin to gain height.
+        margin-bottom: 0;
+    }
+}
+
+// Grade upgrade notice.
+.core_grades_notices {
+    .singlebutton {
+        display: inline-block;
+    }
+}
+
+.path-grade-report #maincontent + .urlselect {
+    position: absolute;
+    left: 40vw;
+}
+
+.path-grade-report-grader {
+    #region-main {
+        width: auto;
+        & > .card {
+            width: auto;
+            overflow-x: initial;
+        }
+    }
+    [data-region="blocks-column"] {
+        width: 100%;
+        clear: both;
+    }
+}
+
+// Rubrics
+#page-grade-grading-manage {
+    #activemethodselector {
+        label {
+            display: inline-block;
+        }
+
+        .helptooltip {
+            margin-right: 0.5em;
+        }
+    }
+
+    .actions {
+        display: block;
+        text-align: center;
+        margin-bottom: 1em;
+
+        .action {
+            @extend .btn;
+            @extend .btn-lg;
+            display: inline-block;
+            position: relative;
+            vertical-align: top;
+            width: 150px;
+            text-align: center;
+            overflow: hidden;
+            margin: 0.5em;
+            padding: 1em;
+            border: 1px solid #aaa;
+
+            .action-text {
+                position: relative;
+                top: 0.4em;
+                font-size: 14px;
+                white-space: normal;
+            }
+        }
+    }
+}
+
+#page-grade-grading-form-rubric-edit {
+    .gradingform_rubric_editform .status {
+        font-size: 70%;
+    }
+}
+
+.gradingform_rubric.editor {
+    .addlevel,
+    .addcriterion {
+        input {
+            // Fallback for IE8: we use Bootstrap 2's button styles normally, but
+            // IE8 ignores background-image: linear-gradient rules.
+            background: #fff none no-repeat top left;
+        }
+    }
+}
+
+#rubric-rubric {
+    &.gradingform_rubric {
+        #rubric-criteria {
+            margin-bottom: 1em;
+            $rubricPadding: 6px;
+
+            .criterion {
+                .description {
+                    vertical-align: top;
+                    padding: $rubricPadding;
+
+                    textarea {
+                        margin-bottom: 0;
+                        height: 115px;
+                    }
+                }
+
+                .definition {
+                    textarea {
+                        width: 80%;
+                        margin-bottom: 0;
+                    }
+                }
+
+                .score {
+                    position: relative;
+                    float: left;
+                    margin-right: 28px;
+
+                    input {
+                        margin-bottom: 0;
+                    }
+                }
+
+                .level {
+                    vertical-align: top;
+                    padding: $rubricPadding;
+
+                    .delete {
+                        position: relative;
+                        width: 32px;
+                        height: 32px;
+                        margin-top: -32px;
+                        clear: both;
+                        float: right;
+
+                        input {
+                            display: block;
+                            position: absolute;
+                            right: 0;
+                            bottom: 0;
+                            height: 24px;
+                            width: 24px;
+                            margin: 0;
+
+                            &:hover {
+                                background-color: #ddd;
+                            }
+                        }
+                    }
+                }
+
+                .scorevalue {
+                    input {
+                        // Should handle at least three chars with room to spare.
+                        float: none;
+                        width: 2em;
+
+                        &.hiddenelement,
+                        &.pseudotablink {
+                            // Zero out the width if it's still in the block flow for some reason
+                            // when hidden
+                            width: 0;
+                        }
+                    }
+                }
+
+                .addlevel {
+                    vertical-align: middle;
+
+                    input {
+                        @extend .btn;
+                        background-position: 0 0;
+                        height: 30px;
+                        margin-right: 5px;
+                    }
+                }
+            }
+        }
+
+        .addcriterion {
+            margin-left: 5px;
+            @extend .btn;
+            padding: 0;
+
+            input {
+                margin: 0;
+                color: inherit;
+                text-shadow: inherit;
+                border: 0 none;
+                line-height: inherit;
+                background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
+                padding-left: 26px;
+            }
+            margin-bottom: 1em;
+        }
+
+        .options {
+            clear: both;
+
+            .option {
+                label {
+                    margin: 0;
+                    padding: 0;
+                    font-size: inherit;
+                    font-weight: normal;
+                    line-height: 2em;
+                    color: inherit;
+                    text-shadow: none;
+                    background-color: transparent;
+                }
+
+                input {
+                    margin-left: 5px;
+                    margin-right: 12px;
+                }
+            }
+        }
+    }
+}
+
+// Set up grades layout.
+.path-grade-edit-tree .setup-grades {
+    h4 {
+        margin: 0;
+    }
+
+    .column-rowspan {
+        padding: 0;
+        width: 24px;
+        min-width: 24px;
+        max-width: 24px;
+    }
+
+    .category td.column-name {
+        padding-left: 0;
+    }
+
+    td.column-name {
+        padding-left: 24px;
+    }
+
+    .category input[type="text"],
+    .category .column-range,
+    .categoryitem,
+    .courseitem {
+        font-weight: bold;
+    }
+
+    .emptyrow {
+        display: none;
+    }
+
+    .gradeitemdescription {
+        font-weight: normal;
+        padding-left: 24px;
+    }
+
+    .column-weight {
+        white-space: nowrap;
+
+        &.level3 {
+            padding-left: 37px;
+        }
+
+        &.level4 {
+            padding-left: 66px;
+        }
+
+        &.level5 {
+            padding-left: 95px;
+        }
+
+        &.level6 {
+            padding-left: 124px;
+        }
+
+        &.level7 {
+            padding-left: 153px;
+        }
+
+        &.level8 {
+            padding-left: 182px;
+        }
+
+        &.level9 {
+            padding-left: 211px;
+        }
+
+        &.level10 {
+            padding-left: 240px;
+        }
+    }
+
+    .column-range {
+        &.level2 {
+            padding-left: 37px;
+        }
+
+        &.level3 {
+            padding-left: 66px;
+        }
+
+        &.level4 {
+            padding-left: 95px;
+        }
+
+        &.level5 {
+            padding-left: 124px;
+        }
+
+        &.level6 {
+            padding-left: 153px;
+        }
+
+        &.level7 {
+            padding-left: 182px;
+        }
+
+        &.level8 {
+            padding-left: 211px;
+        }
+
+        &.level9 {
+            padding-left: 240px;
+        }
+
+        &.level10 {
+            padding-left: 269px;
+        }
+    }
+
+    &.generaltable {
+        .levelodd {
+            background-color: $table-bg-accent;
+        }
+
+        .leveleven {
+            background-color: $table-bg;
+        }
+    }
+}
+
+/**
+ * Grader report.
+ */
+.path-grade-report {
+    .gradeparent {
+        table {
+            @include border-radius($border-radius);
+        }
+
+        tr .cell {
+            background-color: $pagination-bg;
+        }
+
+        table,
+        .cell {
+            border-color: $table-border-color;
+        }
+
+        tr:nth-of-type(even) .cell,
+        .floater .cell,
+        .avg {
+            background-color: $gray-lightest;
+        }
+
+        table .clickable {
+            cursor: pointer;
+        }
+    }
+}
+
+/**
+ * User report.
+ */
+.path-grade-report-user .user-grade {
+    border: none;
+
+    &.generaltable {
+        .levelodd {
+            background-color: $table-bg-accent;
+        }
+
+        .leveleven {
+            background-color: $table-bg;
+        }
+    }
+}
+
+/**
+ * Single view.
+ */
+.path-grade-report-singleview input[name^="finalgrade"] {
+    width: 80px;
+}

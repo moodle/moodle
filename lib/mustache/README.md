@@ -5,6 +5,7 @@ A [Mustache](http://mustache.github.com/) implementation in PHP.
 
 [![Package version](http://img.shields.io/packagist/v/mustache/mustache.svg?style=flat-square)](https://packagist.org/packages/mustache/mustache)
 [![Build status](http://img.shields.io/travis/bobthecow/mustache.php/dev.svg?style=flat-square)](http://travis-ci.org/bobthecow/mustache.php)
+[![StyleCI](https://styleci.io/repos/569670/shield)](https://styleci.io/repos/569670)
 [![Monthly downloads](http://img.shields.io/packagist/dm/mustache/mustache.svg?style=flat-square)](https://packagist.org/packages/mustache/mustache)
 
 

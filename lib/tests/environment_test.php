@@ -40,6 +40,8 @@ class core_environment_testcase extends advanced_testcase {
         require_once($CFG->libdir.'/environmentlib.php');
         list($envstatus, $environment_results) = check_moodle_environment(normalize_version($CFG->release), ENV_SELECT_RELEASE);
 
+        $sslmessages = ['ssl/tls configuration not supported', 'invalid ssl/tls configuration'];
+
         $this->assertNotEmpty($envstatus);
         foreach ($environment_results as $environment_result) {
             if ($environment_result->part === 'php_setting'
@@ -48,6 +50,14 @@ class core_environment_testcase extends advanced_testcase {
                 and $environment_result->getStatus() === false
             ) {
                 $this->markTestSkipped('OPCache extension is not necessary for unit testing.');
+                continue;
+            }
+            if ($environment_result->part === 'custom_check'
+                and in_array($environment_result->info, $sslmessages)
+                and $environment_result->getLevel() === 'optional'
+                and $environment_result->getStatus() === false
+            ) {
+                $this->markTestSkipped('Up-to-date TLS libraries are not necessary for unit testing.');
                 continue;
             }
             $this->assertTrue($environment_result->getStatus(), "Problem detected in environment ($environment_result->part:$environment_result->info), fix all warnings and errors!");

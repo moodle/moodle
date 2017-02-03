@@ -21,23 +21,23 @@ Feature: Allow students to manually mark an activity as complete
     And I am on site homepage
     And I follow "Course 1"
     And I turn editing mode on
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
-    When I add a "Forum" to section "1" and I fill the form with:
+    And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
-    Then "Student First" user has not completed "Test forum name" activity
+    And "Student First" user has not completed "Test forum name" activity
     And I log out
     And I log in as "student1"
     And I am on site homepage
     And I follow "Course 1"
-    And I press "Mark as complete: Test forum name"
+    When I press "Mark as complete: Test forum name"
+    Then the "Test forum name" "forum" activity with "manual" completion should be marked as complete
     And I log out
     And I log in as "teacher1"
     And I am on site homepage
     And I follow "Course 1"
-    And I expand "Reports" node
-    And I follow "Activity completion"
+    And I navigate to "Reports > Activity completion" in current page administration
     And "Student First" user has completed "Test forum name" activity

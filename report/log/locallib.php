@@ -30,20 +30,26 @@ if (!defined('REPORT_LOG_MAX_DISPLAY')) {
     define('REPORT_LOG_MAX_DISPLAY', 150); // days
 }
 
-require_once(dirname(__FILE__).'/lib.php');
+require_once(__DIR__.'/lib.php');
 
 /**
  * This function is used to generate and display the log activity graph
  *
  * @global stdClass $CFG
  * @param  stdClass $course course instance
- * @param  int    $userid id of the user whose logs are needed
- * @param  string $type type of logs graph needed (usercourse.png/userday.png)
- * @param  int    $date timestamp in GMT (seconds since epoch)
+ * @param  int|stdClass    $user id/object of the user whose logs are needed
+ * @param  string $typeormode type of logs graph needed (usercourse.png/userday.png) or the mode (today, all).
+ * @param  int $date timestamp in GMT (seconds since epoch)
  * @param  string $logreader Log reader.
  * @return void
  */
-function report_log_print_graph($course, $userid, $type, $date=0, $logreader='') {
+function report_log_print_graph($course, $user, $typeormode, $date=0, $logreader='') {
+    global $CFG, $OUTPUT;
+
+    if (!is_object($user)) {
+        $user = core_user::get_user($user);
+    }
+
     $logmanager = get_log_manager();
     $readers = $logmanager->get_readers();
 
@@ -56,10 +62,35 @@ function report_log_print_graph($course, $userid, $type, $date=0, $logreader='')
     if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
+    $coursecontext = context_course::instance($course->id);
 
-    $url = new moodle_url('/report/log/graph.php', array('id' => $course->id, 'user' => $userid, 'type' => $type,
-        'date' => $date, 'logreader' => $logreader));
-    echo html_writer::empty_tag('img', array('src' => $url, 'alt' => ''));
+    $a = new stdClass();
+    $a->coursename = format_string($course->shortname, true, array('context' => $coursecontext));
+    $a->username = fullname($user, true);
+
+    if ($typeormode == 'today' || $typeormode == 'userday.png') {
+        $logs = report_log_usertoday_data($course, $user, $date, $logreader);
+        $title = get_string("hitsoncoursetoday", "", $a);
+    } else if ($typeormode == 'all' || $typeormode == 'usercourse.png') {
+        $logs = report_log_userall_data($course, $user, $logreader);
+        $title = get_string("hitsoncourse", "", $a);
+    }
+
+    if (!empty($CFG->preferlinegraphs)) {
+        $chart = new \core\chart_line();
+    } else {
+        $chart = new \core\chart_bar();
+    }
+
+    $series = new \core\chart_series(get_string("hits"), $logs['series']);
+    $chart->add_series($series);
+    $chart->set_title($title);
+    $chart->set_labels($logs['labels']);
+    $yaxis = $chart->get_yaxis(0, true);
+    $yaxis->set_label(get_string("hits"));
+    $yaxis->set_stepsize(max(1, round(max($logs['series']) / 10)));
+
+    echo $OUTPUT->render($chart);
 }
 
 /**
@@ -499,4 +530,100 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
     echo '<input type="submit" value="'.get_string('gettheselogs').'" />';
     echo '</div>';
     echo '</form>';
+}
+
+/**
+ * Fetch logs since the start of the courses and structure in series and labels to be sent to Chart API.
+ *
+ * @param stdClass $course the course object
+ * @param stdClass $user user object
+ * @param string $logreader the log reader where the logs are.
+ * @return array structured array to be sent to chart API, split in two indexes (series and labels).
+ */
+function report_log_userall_data($course, $user, $logreader) {
+    global $CFG;
+    $site = get_site();
+    $timenow = time();
+    $logs = [];
+    if ($course->id == $site->id) {
+        $courseselect = 0;
+    } else {
+        $courseselect = $course->id;
+    }
+
+    $maxseconds = REPORT_LOG_MAX_DISPLAY * 3600 * 24;  // Seconds.
+    if ($timenow - $course->startdate > $maxseconds) {
+        $course->startdate = $timenow - $maxseconds;
+    }
+
+    if (!empty($CFG->loglifetime)) {
+        $maxseconds = $CFG->loglifetime * 3600 * 24;  // Seconds.
+        if ($timenow - $course->startdate > $maxseconds) {
+            $course->startdate = $timenow - $maxseconds;
+        }
+    }
+
+    $timestart = $coursestart = usergetmidnight($course->startdate);
+
+    $i = 0;
+    $logs['series'][$i] = 0;
+    $logs['labels'][$i] = 0;
+    while ($timestart < $timenow) {
+        $timefinish = $timestart + 86400;
+        $logs['labels'][$i] = userdate($timestart, "%a %d %b");
+        $logs['series'][$i] = 0;
+        $i++;
+        $timestart = $timefinish;
+    }
+    $rawlogs = report_log_usercourse($user->id, $courseselect, $coursestart, $logreader);
+
+    foreach ($rawlogs as $rawlog) {
+        if (isset($logs['labels'][$rawlog->day])) {
+            $logs['series'][$rawlog->day] = $rawlog->num;
+        }
+    }
+
+    return $logs;
+}
+
+/**
+ * Fetch logs of the current day and structure in series and labels to be sent to Chart API.
+ *
+ * @param stdClass $course the course object
+ * @param stdClass $user user object
+ * @param int $date A time of a day (in GMT).
+ * @param string $logreader the log reader where the logs are.
+ * @return array $logs structured array to be sent to chart API, split in two indexes (series and labels).
+ */
+function report_log_usertoday_data($course, $user, $date, $logreader) {
+    $site = get_site();
+    $logs = [];
+
+    if ($course->id == $site->id) {
+        $courseselect = 0;
+    } else {
+        $courseselect = $course->id;
+    }
+
+    if ($date) {
+        $daystart = usergetmidnight($date);
+    } else {
+        $daystart = usergetmidnight(time());
+    }
+
+    for ($i = 0; $i <= 23; $i++) {
+        $hour = $daystart + $i * 3600;
+        $logs['series'][$i] = 0;
+        $logs['labels'][$i] = userdate($hour, "%H:00");
+    }
+
+    $rawlogs = report_log_userday($user->id, $courseselect, $daystart, $logreader);
+
+    foreach ($rawlogs as $rawlog) {
+        if (isset($logs['labels'][$rawlog->hour])) {
+            $logs['series'][$rawlog->hour] = $rawlog->num;
+        }
+    }
+
+    return $logs;
 }

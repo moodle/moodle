@@ -1,0 +1,13 @@
+This files describes API changes in /competency/*. The information provided
+here is intended especially for developers.
+
+=== 3.3 ===
+
+* Deprecated classes and their new equivalent:
+  - core_competency\persistent                     -> core\persistent
+  - core_competency\invalid_persistent_exception   -> core\invalid_persistent_exception
+  - core_competency\external\exporter              -> core\external\exporter
+  - core_competency\external\persistent_exporter   -> core\external\persistent_exporter
+  - core_competency\external\comment_area_exporter -> core_cohort\external\comment_area_exporter
+  - core_competency\external\stored_file_exporter  -> core_files\external\stored_file_exporter
+  - core_competency\external\user_summary_exporter -> core_user\external\user_summary_exporter

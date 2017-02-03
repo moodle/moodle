@@ -25,7 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-use \Behat\Behat\Context\BehatContext;
+use Behat\Testwork\Environment\Environment;
 
 /**
  * Helper to get behat contexts.
@@ -38,18 +38,44 @@ use \Behat\Behat\Context\BehatContext;
 class behat_context_helper {
 
     /**
-     * @var BehatContext main behat context.
+     * Behat environment.
+     *
+     * @var Environment
      */
-    protected static $maincontext = false;
+    protected static $environment = null;
 
     /**
-     * Save main behat context reference to be used for finding sub-contexts.
+     * @var Escaper::escapeLiteral
+     */
+    protected static $escaper;
+
+    /**
+     * @var array keep track of nonexisting contexts, to avoid exception tracking.
+     */
+    protected static $nonexistingcontexts = array();
+
+    /**
+     * Sets the browser session.
      *
-     * @param BehatContext $maincontext
+     * @param Environment $environment
+     * @return void
+     * @deprecated since 3.2 MDL-55072 - please use behat_context_helper::set_environment()
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
+     */
+    public static function set_session(Environment $environment) {
+        debugging('set_session is deprecated. Please use set_environment instead.', DEBUG_DEVELOPER);
+
+        self::set_environment($environment);
+    }
+
+    /**
+     * Sets behat environment.
+     *
+     * @param Environment $environment
      * @return void
      */
-    public static function set_main_context(BehatContext $maincontext) {
-        self::$maincontext = $maincontext;
+    public static function set_environment(Environment $environment) {
+        self::$environment = $environment;
     }
 
     /**
@@ -59,16 +85,45 @@ class behat_context_helper {
      * that uses direct API calls; steps returning step chains
      * can not be executed like this.
      *
-     * @throws coding_exception
+     * @throws Behat\Behat\Context\Exception\ContextNotFoundException
      * @param string $classname Context identifier (the class name).
      * @return behat_base
      */
     public static function get($classname) {
 
-        if (!$subcontext = self::$maincontext->getSubcontextByClassName($classname)) {
-            throw coding_exception('The required "' . $classname . '" class does not exist');
+        $suitename = self::$environment->getSuite()->getName();
+        // If default suite, then get the default theme name.
+        if ($suitename == 'default') {
+            $suitename = theme_config::DEFAULT_THEME;
+        }
+        $overridencontextname = 'behat_theme_'.$suitename.'_'.$classname;
+
+        // If contexts has not been checked before and doesn't exist then just use core one.
+        if (!isset(self::$nonexistingcontexts[$overridencontextname])) {
+            try {
+                $subcontext = self::$environment->getContext($overridencontextname);
+
+                return $subcontext;
+            } catch (Behat\Behat\Context\Exception\ContextNotFoundException $e) {
+                // If context not found then it's not overridden.
+                self::$nonexistingcontexts[$overridencontextname] = 1;
+            }
         }
 
-        return $subcontext;
+        // Get the actual context.
+        return self::$environment->getContext($classname);
+    }
+
+    /**
+     * Translates string to XPath literal.
+     *
+     * @param string $label label to escape
+     * @return string escaped string.
+     */
+    public static function escape($label) {
+        if (empty(self::$escaper)) {
+            self::$escaper = new \Behat\Mink\Selector\Xpath\Escaper();
+        }
+        return self::$escaper->escapeLiteral($label);
     }
 }

@@ -40,7 +40,7 @@ $context = context_course::instance($course->id);
 require_capability('gradereport/outcomes:view', $context);
 
 // First make sure we have proper final grades.
-grade_regrade_final_grades($courseid);
+grade_regrade_final_grades_if_required($course);
 
 // Grab all outcomes used in course.
 $report_info = array();

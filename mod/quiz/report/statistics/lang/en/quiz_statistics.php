@@ -47,7 +47,7 @@ $string['detailedanalysis'] = 'More detailed analysis of the responses to this q
 $string['detailedanalysisforvariant'] = 'More detailed analysis of the responses to variant {$a} of this question';
 $string['discrimination_index'] = 'Discrimination index';
 $string['discriminative_efficiency'] = 'Discriminative efficiency';
-$string['downloadeverything'] = 'Download full report as {$a->formatsmenu} {$a->downloadbutton}';
+$string['downloadeverything'] = 'Download full report as';
 $string['duration'] = 'Open for';
 $string['effective_weight'] = 'Effective weight';
 $string['errordeleting'] = 'Error deleting old {$a} records.';
@@ -81,6 +81,7 @@ $string['negcovar_help'] = 'This question\'s grade for this set of attempts on t
 Our equation for effective question weight cannot be calculated in this case. The calculations for effective question weight for other questions in this quiz are the effective question weight for these questions if the highlighted questions with a negative covariance are given a maximum grade of zero.
 
 If you edit a quiz and give these question(s) with negative covariance a max grade of zero then the effective question weight of these questions will be zero and the real effective question weight of other questions will be as calculated now.';
+$string['nogradedattempts'] = 'No attempts have been made at this quiz, or all attempts have questions that need manual grading.';
 $string['nostudentsingroup'] = 'There are no students in this group yet';
 $string['optiongrade'] = 'Partial credit';
 $string['partofquestion'] = 'Part of question';

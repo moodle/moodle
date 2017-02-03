@@ -20,7 +20,6 @@ Feature: In a lesson activity, students can see questions in random order and a 
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Lesson with subcluster
     Given I add a "Lesson" to section "1" and I fill the form with:
       | Name | Lesson with subcluster |
@@ -66,7 +65,7 @@ Feature: In a lesson activity, students can see questions in random order and a 
       | id_score_1 | 0 |
     And I press "Save page"
     And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][5]" "xpath_element"
-        And I set the following fields to these values:
+    And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | This page mark the the beginning of the subcluster it should not be seen by students |
       | id_answer_editor_0 | Next page |
@@ -135,7 +134,7 @@ Feature: In a lesson activity, students can see questions in random order and a 
     And I press "Save page"
     And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][11]" "xpath_element"
     And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][12]" "xpath_element"
-        And I set the following fields to these values:
+    And I set the following fields to these values:
       | Page title | Third page name |
       | Page contents | Content page after cluster |
       | id_answer_editor_0 | Next page |

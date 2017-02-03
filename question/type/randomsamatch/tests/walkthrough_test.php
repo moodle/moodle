@@ -193,7 +193,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[16], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[16], false),
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[13], false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
@@ -245,7 +245,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[16], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[13], false),
                 $this->get_contains_select_expectation('sub3', $choices, null, false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_partcorrect_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
@@ -312,7 +312,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
                 $this->get_contains_select_expectation('sub1', $choices, $orderforchoice[16], false),
                 $this->get_contains_select_expectation('sub2', $choices, $orderforchoice[16], false),
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[13], false),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_correct_expectation(),
                 $this->get_no_hint_visible_expectation());
     }
@@ -369,7 +369,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
                         $this->quba->get_field_prefix($this->slot) . 'sub2', '0'),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub3', '0'),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_hint_expectation('This is the first hint.'));
 
         // Try again.
@@ -411,7 +411,7 @@ class qtype_randomsamatch_walkthrough_test extends qbehaviour_walkthrough_test_b
                         $this->quba->get_field_prefix($this->slot) . 'sub2', $orderforchoice[16]),
                 $this->get_contains_hidden_expectation(
                         $this->quba->get_field_prefix($this->slot) . 'sub3', $orderforchoice[13]),
-                $this->get_contains_submit_button_expectation(false),
+                $this->get_does_not_contain_submit_button_expectation(),
                 $this->get_contains_hint_expectation('This is the second hint.'));
 
         // Try again.

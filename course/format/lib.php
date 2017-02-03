@@ -96,6 +96,9 @@ abstract class format_base {
      * @return string
      */
     protected static final function get_format_or_default($format) {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
         if (array_key_exists($format, self::$classesforformat)) {
             return self::$classesforformat[$format];
         }
@@ -477,12 +480,12 @@ abstract class format_base {
      */
     public function get_default_blocks() {
         global $CFG;
-        if (!empty($CFG->defaultblocks)){
+        if (isset($CFG->defaultblocks)) {
             return blocks_parse_default_blocks_list($CFG->defaultblocks);
         }
         $blocknames = array(
             BLOCK_POS_LEFT => array(),
-            BLOCK_POS_RIGHT => array('search_forums', 'news_items', 'calendar_upcoming', 'recent_activity')
+            BLOCK_POS_RIGHT => array()
         );
         return $blocknames;
     }
@@ -679,6 +682,13 @@ abstract class format_base {
                 $mform->setDefault($optionname, $option['default']);
             }
         }
+
+        if (!$forsection && empty($this->courseid)) {
+            // At this stage (this is called from definition_after_data) course data is already set as default.
+            // We can not overwrite what is in the database.
+            $mform->setDefault('enddate', $this->get_default_course_enddate($mform));
+        }
+
         return $elements;
     }
 
@@ -984,14 +994,14 @@ abstract class format_base {
         }
         if (!is_object($section)) {
             $section = $DB->get_record('course_sections', array('course' => $this->get_courseid(), 'section' => $section),
-                'id,section,sequence');
+                'id,section,sequence,summary');
         }
         if (!$section || !$section->section) {
             // Not possible to delete 0-section.
             return false;
         }
 
-        if (!$forcedeleteifnotempty && !empty($section->sequence)) {
+        if (!$forcedeleteifnotempty && (!empty($section->sequence) || !empty($section->summary))) {
             return false;
         }
 
@@ -1029,6 +1039,136 @@ abstract class format_base {
         }
 
         return true;
+    }
+
+    /**
+     * Prepares the templateable object to display section name
+     *
+     * @param \section_info|\stdClass $section
+     * @param bool $linkifneeded
+     * @param bool $editable
+     * @param null|lang_string|string $edithint
+     * @param null|lang_string|string $editlabel
+     * @return \core\output\inplace_editable
+     */
+    public function inplace_editable_render_section_name($section, $linkifneeded = true,
+                                                         $editable = null, $edithint = null, $editlabel = null) {
+        global $USER, $CFG;
+        require_once($CFG->dirroot.'/course/lib.php');
+
+        if ($editable === null) {
+            $editable = !empty($USER->editing) && has_capability('moodle/course:update',
+                    context_course::instance($section->course));
+        }
+
+        $displayvalue = $title = get_section_name($section->course, $section);
+        if ($linkifneeded) {
+            // Display link under the section name if the course format setting is to display one section per page.
+            $url = course_get_url($section->course, $section->section, array('navigation' => true));
+            if ($url) {
+                $displayvalue = html_writer::link($url, $title);
+            }
+            $itemtype = 'sectionname';
+        } else {
+            // If $linkifneeded==false, we never display the link (this is used when rendering the section header).
+            // Itemtype 'sectionnamenl' (nl=no link) will tell the callback that link should not be rendered -
+            // there is no other way callback can know where we display the section name.
+            $itemtype = 'sectionnamenl';
+        }
+        if (empty($edithint)) {
+            $edithint = new lang_string('editsectionname');
+        }
+        if (empty($editlabel)) {
+            $editlabel = new lang_string('newsectionname', '', $title);
+        }
+
+        return new \core\output\inplace_editable('format_' . $this->format, $itemtype, $section->id, $editable,
+            $displayvalue, $section->name, $edithint, $editlabel);
+    }
+
+    /**
+     * Updates the value in the database and modifies this object respectively.
+     *
+     * ALWAYS check user permissions before performing an update! Throw exceptions if permissions are not sufficient
+     * or value is not legit.
+     *
+     * @param stdClass $section
+     * @param string $itemtype
+     * @param mixed $newvalue
+     * @return \core\output\inplace_editable
+     */
+    public function inplace_editable_update_section_name($section, $itemtype, $newvalue) {
+        if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
+            $context = context_course::instance($section->course);
+            external_api::validate_context($context);
+            require_capability('moodle/course:update', $context);
+
+            $newtitle = clean_param($newvalue, PARAM_TEXT);
+            if (strval($section->name) !== strval($newtitle)) {
+                course_update_section($section->course, $section, array('name' => $newtitle));
+            }
+            return $this->inplace_editable_render_section_name($section, ($itemtype === 'sectionname'), true);
+        }
+    }
+
+
+    /**
+     * Returns the default end date value based on the start date.
+     *
+     * This is the default implementation for course formats, it is based on
+     * moodlecourse/courseduration setting. Course formats like format_weeks for
+     * example can overwrite this method and return a value based on their internal options.
+     *
+     * @param moodleform $mform
+     * @param array $fieldnames The form - field names mapping.
+     * @return int
+     */
+    public function get_default_course_enddate($mform, $fieldnames = array()) {
+
+        if (empty($fieldnames)) {
+            $fieldnames = array('startdate' => 'startdate');
+        }
+
+        $startdate = $this->get_form_start_date($mform, $fieldnames);
+        $courseduration = intval(get_config('moodlecourse', 'courseduration'));
+        if (!$courseduration) {
+            // Default, it should be already set during upgrade though.
+            $courseduration = YEARSECS;
+        }
+
+        return $startdate + $courseduration;
+    }
+
+    /**
+     * Indicates whether the course format supports the creation of the Announcements forum.
+     *
+     * For course format plugin developers, please override this to return true if you want the Announcements forum
+     * to be created upon course creation.
+     *
+     * @return bool
+     */
+    public function supports_news() {
+        // For backwards compatibility, check if default blocks include the news_items block.
+        $defaultblocks = $this->get_default_blocks();
+        foreach ($defaultblocks as $blocks) {
+            if (in_array('news_items', $blocks)) {
+                return true;
+            }
+        }
+        // Return false by default.
+        return false;
+    }
+
+    /**
+     * Get the start date value from the course settings page form.
+     *
+     * @param moodleform $mform
+     * @param array $fieldnames The form - field names mapping.
+     * @return int
+     */
+    protected function get_form_start_date($mform, $fieldnames) {
+        $startdate = $mform->getElementValue($fieldnames['startdate']);
+        return $mform->getElement($fieldnames['startdate'])->exportValue($startdate);
     }
 }
 

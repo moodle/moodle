@@ -63,7 +63,7 @@ Y.extend(FetchLogs, Y.Base, {
 
     /**
      * Initializer.
-     * Basic setup and delegations.
+     * Basic setup and event listeners.
      *
      * @method initializer
      */
@@ -76,7 +76,7 @@ Y.extend(FetchLogs, Y.Base, {
         this.spinner = Y.one(SELECTORS.SPINNER);
         this.pauseButton = Y.one(SELECTORS.PAUSEBUTTON);
         this.spinner.hide();
-        Y.delegate('click', this.toggleUpdate, 'button', SELECTORS.PAUSEBUTTON, this);
+        Y.one(SELECTORS.PAUSEBUTTON).on('click', this.toggleUpdate, this);
     },
 
     /**
@@ -128,7 +128,7 @@ Y.extend(FetchLogs, Y.Base, {
             });
             return this;
         }
-        this.set('since' , responseobject.until);
+        this.set('since', responseobject.until);
         var logs = responseobject.logs;
         var tbody = Y.one(SELECTORS.TBODY);
         var firstTr = null;

@@ -338,14 +338,20 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
             return false;
         }
 
-        // remove @@PLUGINFILE@@/
-        $content = str_replace('@@PLUGINFILE@@/', '', $page->content);
-
+        // We need to rewrite the pluginfile URLs so the media filters can work.
+        $content = file_rewrite_pluginfile_urls($page->content, 'webservice/pluginfile.php', $context->id, 'mod_page', 'content',
+                                                $page->revision);
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->overflowdiv = true;
         $formatoptions->context = $context;
         $content = format_text($content, $page->contentformat, $formatoptions);
+
+        // Remove @@PLUGINFILE@@/.
+        $options = array('reverse' => true);
+        $content = file_rewrite_pluginfile_urls($content, 'webservice/pluginfile.php', $context->id, 'mod_page', 'content',
+                                                $page->revision, $options);
+        $content = str_replace('@@PLUGINFILE@@/', '', $content);
 
         send_file($content, $filename, 0, 0, true, true);
     } else {
@@ -501,4 +507,18 @@ function page_view($page, $course, $cm, $context) {
     // Completion.
     $completion = new completion_info($course);
     $completion->set_module_viewed($cm);
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function page_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
+    return $updates;
 }

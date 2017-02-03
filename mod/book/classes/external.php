@@ -152,7 +152,7 @@ class mod_book_external extends external_api {
     /**
      * Describes the parameters for get_books_by_courses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.0
      */
     public static function get_books_by_courses_parameters() {
@@ -207,6 +207,7 @@ class mod_book_external extends external_api {
                 // Format intro.
                 list($bookdetails['intro'], $bookdetails['introformat']) =
                     external_format_text($book->intro, $book->introformat, $context->id, 'mod_book', 'intro', null);
+                $bookdetails['introfiles'] = external_util::get_area_files($context->id, 'mod_book', 'intro', false, false);
                 $bookdetails['numbering']         = $book->numbering;
                 $bookdetails['navstyle']          = $book->navstyle;
                 $bookdetails['customtitles']      = $book->customtitles;
@@ -247,6 +248,7 @@ class mod_book_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Book name'),
                             'intro' => new external_value(PARAM_RAW, 'The Book intro'),
                             'introformat' => new external_format_value('intro'),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'numbering' => new external_value(PARAM_INT, 'Book numbering configuration'),
                             'navstyle' => new external_value(PARAM_INT, 'Book navigation style configuration'),
                             'customtitles' => new external_value(PARAM_INT, 'Book custom titles type'),

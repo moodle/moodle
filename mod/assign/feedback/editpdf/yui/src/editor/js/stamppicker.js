@@ -27,7 +27,7 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
      * @method initializer
      * @return void
      */
-    initializer : function(config) {
+    initializer: function(config) {
         var stamplist = Y.Node.create('<ul role="menu" class="assignfeedback_editpdf_menu"/>');
 
         // Build a list of stamped buttons.
@@ -56,7 +56,7 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
 
         STAMPPICKER.superclass.initializer.call(this, config);
     },
-    callback_handler : function(e) {
+    callback_handler: function(e) {
         e.preventDefault();
         var callback = this.get('callback'),
             callbackcontext = this.get('context'),
@@ -70,8 +70,8 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
         bind();
     }
 }, {
-    NAME : STAMPPICKER_NAME,
-    ATTRS : {
+    NAME: STAMPPICKER_NAME,
+    ATTRS: {
         /**
          * The list of stamps this stamp picker supports.
          *
@@ -79,8 +79,8 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type String[] - the stamp filenames.
          * @default {}
          */
-        stamps : {
-            value : []
+        stamps: {
+            value: []
         },
 
         /**
@@ -90,8 +90,8 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type function
          * @default null
          */
-        callback : {
-            value : null
+        callback: {
+            value: null
         },
 
         /**
@@ -101,8 +101,8 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
          * @type Y.Node
          * @default null
          */
-        context : {
-            value : null
+        context: {
+            value: null
         }
     }
 });

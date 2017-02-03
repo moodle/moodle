@@ -49,7 +49,7 @@ admin_externalpage_setup('testclient');
 $allfunctions = $DB->get_records('external_functions', array(), 'name ASC');
 $functions = array();
 foreach ($allfunctions as $f) {
-    $finfo = external_function_info($f);
+    $finfo = external_api::external_function_info($f);
     if (!empty($finfo->testclientpath) and file_exists($CFG->dirroot.'/'.$finfo->testclientpath)) {
         //some plugins may want to have own test client forms
         include_once($CFG->dirroot.'/'.$finfo->testclientpath);
@@ -113,7 +113,7 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
 
-    $functioninfo = external_function_info($function);
+    $functioninfo = external_api::external_function_info($function);
 
     // first load lib of selected protocol
     require_once("$CFG->dirroot/webservice/$protocol/locallib.php");

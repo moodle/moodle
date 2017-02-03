@@ -1,4 +1,4 @@
-@core @core_grades @gradereport_singleview
+@core @core_grades @gradereport_singleview @javascript
 Feature: We can bulk insert grades for students in a course
   As a teacher
   In order to quickly grade items
@@ -29,22 +29,22 @@ Feature: We can bulk insert grades for students in a course
       | assign | C1 | a3 | Test assignment three | Submit something! |
       | assign | C1 | a4 | Test assignment four | Submit nothing!    |
 
-  @javascript
   Scenario: I can bulk insert grades and check their override flags for grade view.
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment one"
-    And I follow "View/grade all submissions"
-    And I follow "Grade Student 1"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
     And I press "Save changes"
-    And I press "Continue"
-    And I follow "View gradebook"
+    And I press "Ok"
+    And I follow "Course 1"
+    And I navigate to "View > Grader report" in the course gradebook
     And I follow "Single view for Test assignment one"
     Then the field "Grade for james (Student) 1" matches value "50.00"
     And the field "Override for james (Student) 1" matches value "0"
-    And I click on "Perform bulk insert" "checkbox"
+    And I set the field "Perform bulk insert" to "1"
     And I set the field "Insert value" to "1.0"
     And I press "Save"
     And I press "Continue"
@@ -56,8 +56,8 @@ Feature: We can bulk insert grades for students in a course
     And the field "Override for anna (Student) 3" matches value "1"
     And the field "Grade for zac (Student) 4" matches value "1.00"
     And the field "Override for zac (Student) 4" matches value "1"
-    And I click on "All grades" "option"
-    And I click on "Perform bulk insert" "checkbox"
+    And I set the field "For" to "All grades"
+    And I set the field "Perform bulk insert" to "1"
     And I set the field "Insert value" to "2.0"
     And I press "Save"
     And I press "Continue"
@@ -70,24 +70,26 @@ Feature: We can bulk insert grades for students in a course
     And the field "Grade for zac (Student) 4" matches value "2.00"
     And the field "Override for zac (Student) 4" matches value "1"
 
-  @javascript
   Scenario: I can bulk insert grades and check their override flags for user view.
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment two"
-    And I follow "View/grade all submissions"
-    And I follow "Grade Student 1"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the following fields to these values:
       | Grade out of 100 | 50 |
     And I press "Save changes"
-    And I press "Continue"
-    And I follow "View gradebook"
+    And I press "Ok"
+    And I follow "Course 1"
+    And I navigate to "View > Grader report" in the course gradebook
+    # And I click on "input[title='Dock Navigation block']" "css_element"
+    # And I click on "input[title='Dock Administration block']" "css_element"
     And I follow "Single view for Test assignment two"
-    And I click on "Student 1" "option"
+    And I select "Student 1" from the "Select user..." singleselect
     Then the field "Grade for Test assignment two" matches value "50.00"
     And the field "Override for Test assignment two" matches value "0"
-    And I click on "Perform bulk insert" "checkbox"
-    And I click on "Empty grades" "option"
+    And I set the field "For" to "Empty grades"
+    And I set the field "Perform bulk insert" to "1"
     And I set the field "Insert value" to "1.0"
     And I press "Save"
     And I press "Continue"

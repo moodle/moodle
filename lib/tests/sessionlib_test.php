@@ -154,6 +154,110 @@ class core_sessionlib_testcase extends advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
     }
 
+    /**
+     * Test provided for secure cookie
+     *
+     * @return array of config and secure result
+     */
+    public function moodle_cookie_secure_provider() {
+        return array(
+            array(
+                // Non ssl, not set.
+                'config' => array(
+                    'wwwroot'       => 'http://example.com',
+                    'httpswwwroot'  => 'http://example.com',
+                    'sslproxy'      => null,
+                    'loginhttps'    => null,
+                    'cookiesecure'  => null,
+                ),
+                'secure' => false,
+            ),
+            array(
+                // Non ssl, off and ignored.
+                'config' => array(
+                    'wwwroot'       => 'http://example.com',
+                    'httpswwwroot'  => 'http://example.com',
+                    'sslproxy'      => null,
+                    'loginhttps'    => null,
+                    'cookiesecure'  => false,
+                ),
+                'secure' => false,
+            ),
+            array(
+                // Non ssl, on and ignored.
+                'config' => array(
+                    'wwwroot'       => 'http://example.com',
+                    'httpswwwroot'  => 'http://example.com',
+                    'sslproxy'      => null,
+                    'loginhttps'    => null,
+                    'cookiesecure'  => true,
+                ),
+                'secure' => false,
+            ),
+            array(
+                // SSL via proxy, off.
+                'config' => array(
+                    'wwwroot'       => 'http://example.com',
+                    'httpswwwroot'  => 'http://example.com',
+                    'sslproxy'      => true,
+                    'loginhttps'    => null,
+                    'cookiesecure'  => false,
+                ),
+                'secure' => false,
+            ),
+            array(
+                // SSL via proxy, on.
+                'config' => array(
+                    'wwwroot'       => 'http://example.com',
+                    'httpswwwroot'  => 'http://example.com',
+                    'sslproxy'      => true,
+                    'loginhttps'    => null,
+                    'cookiesecure'  => true,
+                ),
+                'secure' => true,
+            ),
+            array(
+                // SSL and off.
+                'config' => array(
+                    'wwwroot'       => 'https://example.com',
+                    'httpswwwroot'  => 'https://example.com',
+                    'sslproxy'      => null,
+                    'loginhttps'    => null,
+                    'cookiesecure'  => false,
+                ),
+                'secure' => false,
+            ),
+            array(
+                // SSL and on.
+                'config' => array(
+                    'wwwroot'       => 'https://example.com',
+                    'httpswwwroot'  => 'https://example.com',
+                    'sslproxy'      => null,
+                    'loginhttps'    => null,
+                    'cookiesecure'  => true,
+                ),
+                'secure' => true,
+            ),
+        );
+    }
+
+    /**
+     * Test for secure cookie
+     *
+     * @dataProvider moodle_cookie_secure_provider
+     *
+     * @param array $config Array of key value config settings
+     * @param bool $secure Wether cookies should be secure or not
+     */
+    public function test_is_moodle_cookie_secure($config, $secure) {
+
+        $this->resetAfterTest();
+        foreach ($config as $key => $value) {
+            set_config($key, $value);
+        }
+        $this->assertEquals($secure, is_moodle_cookie_secure());
+    }
+
     public function test_sesskey() {
         global $USER;
         $this->resetAfterTest();

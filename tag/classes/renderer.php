@@ -46,7 +46,7 @@ class core_tag_renderer extends plugin_renderer_base {
         $searchbox = $this->search_form($query, $tagcollid);
         $rv .= html_writer::div($searchbox, '', array('id' => 'tag-search-box'));
 
-        $tagcloud = core_tag_collection::get_tag_cloud($tagcollid, '', 150, 'name', $query);
+        $tagcloud = core_tag_collection::get_tag_cloud($tagcollid, false, 150, 'name', $query);
         $searchresults = '';
         if ($tagcloud->get_count()) {
             $searchresults = $this->output->render_from_template('core_tag/tagcloud',
@@ -76,7 +76,7 @@ class core_tag_renderer extends plugin_renderer_base {
      */
     public function tag_index_page($tag, $entities, $tagareaid, $exclusivemode, $fromctx, $ctx, $rec, $page) {
         global $CFG, $OUTPUT;
-        $this->page->requires->js_call_amd('core/tag', 'init_tagindex_page');
+        $this->page->requires->js_call_amd('core/tag', 'initTagindexPage');
 
         $tagname = $tag->get_display_name();
         $systemcontext = context_system::instance();

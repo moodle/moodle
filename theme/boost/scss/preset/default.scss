@@ -1,0 +1,189 @@
+/* stylelint-disable color-hex-length */
+/**
+ * Default preset file.
+ *
+ * Use this space to customise variables, create mixins and override SCSS.
+ */
+
+// Colors
+$gray-dark:                 #373a3c !default;
+$gray:                      #55595c !default;
+$gray-light:                #818a91 !default;
+$gray-lighter:              #eceeef !default;
+$gray-lightest:             #f7f7f9 !default;
+
+$brand-primary:             #00acdf !default;
+$brand-success:             #77b300 !default;
+$brand-warning:             #ff8800 !default;
+$brand-danger:              #ff4136 !default;
+$brand-inverse:             $gray-dark !default;
+$navbar-height:             50px !default;
+
+// Spacing
+$spacer:   1rem !default;
+$spacer-x: $spacer !default;
+$spacer-y: $spacer !default;
+$border-width: 1px !default;
+
+// Body
+$body-bg:    #f4f4f4 !default;
+$body-color: #3a3a3a !default;
+
+// Typography
+$font-family-sans-serif: "Open Sans", "Helvetica Neue", Arial, sans-serif !default;
+$font-size-root: 14px !default;
+
+// Tables
+$table-bg:                      transparent !default;
+$table-bg-accent:               #fafafa !default;
+$table-bg-hover:                lighten($brand-primary, 55%) !default;
+$table-bg-active:               $table-bg-hover !default;
+$table-border-color:            #f4f4f4 !default;
+
+// Dropdowns
+$dropdown-border-color:          #e2e2e2 !default;
+$dropdown-link-color:            rgba(0, 0, 0, .535) !default;
+
+// Navbar
+$navbar-light-color:                rgba(0, 0, 0, .535) !default;
+$navbar-light-hover-color:          $brand-primary !default;
+$navbar-light-active-color:         $brand-primary !default;
+
+// Cards
+$card-border-radius:       0 !default;
+$card-border-color:        rgba(238, 238, 238, 1) !default;
+
+// Breadcrumbs
+$breadcrumb-bg:                 transparent !default;
+$breadcrumb-padding-x:          0 !default;
+$breadcrumb-divider: "/" !default;
+$breadcrumb-divider-rtl: "/" !default;
+
+// Import everything.
+@import "moodle";
+
+/**
+ * Navigation bar identity.
+ */
+.navbar-light {
+    background-color: #fff;
+    border-bottom: $border-width solid #e5e5e5;
+
+    .container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .navbar-brand {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        margin-right: $spacer * 2;
+        color: #fff;
+        background-color: $brand-primary;
+        @include hover-focus {
+            color: #fff;
+        }
+        &.has-logo {
+            color: $brand-primary;
+            background-color: transparent;
+            @include hover-focus {
+                color: $brand-primary;
+            }
+        }
+    }
+
+    .navbar-nav {
+        .nav-item + .nav-item {
+            margin-left: $spacer * 2;
+        }
+        .nav-link {
+            font-size: $font-size-sm;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    }
+}
+
+/**
+ * Styling the dropdown menus.
+ */
+.dropdown-menu {
+    font-size: 14px;
+    border-radius: 0;
+    .dropdown-item {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        border-bottom: $border-width solid $dropdown-border-color;
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+    .dropdown-divider {
+        display: none;
+    }
+}
+
+/**
+ * User picture.
+ */
+.userpicture {
+    border-radius: 50%;
+}
+
+/**
+ * For background in content areas.
+ */
+#page.container-fluid {
+    padding: 0 (2 * $spacer);
+}
+
+#block-region-side-pre {
+    padding-left: 0;
+}
+
+/**
+ * Dashboard styling.
+ */
+#page-my-index {
+    #region-main {
+        background-color: transparent;
+        border: 0;
+        padding: 0;
+    }
+}
+
+/**
+ * Blocks.
+ */
+.block-region .card-block {
+    .card-title {
+        padding-bottom: ($spacer/2);
+        font-size: 1.143rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+}
+
+/**
+ * Navigation.
+ */
+.block_navigation,
+.block_settings {
+    .block_tree .tree_item {
+        margin: ($spacer/2) 0;
+    }
+}
+
+/**
+ * Form styles.
+ */
+
+.form-group {
+    margin-top: ($spacer/2);
+}
+
+.form-inline .form-group {
+    margin-top: 0;
+}
+
+

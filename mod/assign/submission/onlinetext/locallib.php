@@ -573,6 +573,22 @@ class assign_submission_onlinetext extends assign_submission_plugin {
     }
 
     /**
+     * Determine if a submission is empty
+     *
+     * This is distinct from is_empty in that it is intended to be used to
+     * determine if a submission made before saving is empty.
+     *
+     * @param stdClass $data The submission data
+     * @return bool
+     */
+    public function submission_is_empty(stdClass $data) {
+        if (!isset($data->onlinetext_editor)) {
+            return true;
+        }
+        return !strlen((string)$data->onlinetext_editor['text']);
+    }
+
+    /**
      * Get file areas returns a list of areas this plugin stores files
      * @return array - An array of fileareas (keys) and descriptions (values)
      */
@@ -615,10 +631,10 @@ class assign_submission_onlinetext extends assign_submission_plugin {
      * @return external_description|null
      */
     public function get_external_parameters() {
-        $editorparams = array('text' => new external_value(PARAM_TEXT, 'The text for this submission.'),
+        $editorparams = array('text' => new external_value(PARAM_RAW, 'The text for this submission.'),
                               'format' => new external_value(PARAM_INT, 'The format for this submission'),
                               'itemid' => new external_value(PARAM_INT, 'The draft area id for files attached to the submission'));
-        $editorstructure = new external_single_structure($editorparams);
+        $editorstructure = new external_single_structure($editorparams, 'Editor structure', VALUE_OPTIONAL);
         return array('onlinetext_editor' => $editorstructure);
     }
 
@@ -649,6 +665,15 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         }
     }
 
+    /**
+     * Return the plugin configs for external functions.
+     *
+     * @return array the list of settings
+     * @since Moodle 3.2
+     */
+    public function get_config_for_external() {
+        return (array) $this->get_config();
+    }
 }
 
 

@@ -1,42 +1,40 @@
 /******  List View CSS ******/
 
 #pictures {
-  width: 750px;
+    width: 750px;
 }
 
 .picture {
-  padding: 5px;
-  border-style: solid;
-  border-width: thin;
-  border-color: #779;
-  background-color: white;
-
-  display:table-cell;display:inline-table;display:inline-block;
+    padding: 5px;
+    border-style: solid;
+    border-width: thin;
+    border-color: #779;
+    background-color: white;
+    display: inline-block;
 }
 
 .pictureframe {
-  padding: 5px;
-
-  display:table-cell;display:inline-table;display:inline-block;
+    padding: 5px;
+    display: inline-block;
 }
 
 .picturediv {
-  display: inline;
-  width: 150px;
-  height: 200px;
+    display: inline-block;
+    max-width: 150px;
+    max-height: 200px;
 }
 
 .inline {
-  display: inline;
+    display: inline;
 }
 
 /*****  Single View CSS *****/
 
 .caption {
-  font-style: italic;
+    font-style: italic;
 }
 
 #singleimage img {
-  width: 700px;
-  height: auto;
+    width: 700px;
+    height: auto;
 }

@@ -101,7 +101,7 @@ class phpunit_util extends testing_util {
      * @return void
      */
     public static function reset_all_data($detectchanges = false) {
-        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION;
+        global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $FULLME;
 
         // Stop any message redirection.
         self::stop_message_redirection();
@@ -164,6 +164,10 @@ class phpunit_util extends testing_util {
                 $warnings[] = 'Warning: unexpected change of $COURSE';
             }
 
+            if ($FULLME !== self::get_global_backup('FULLME')) {
+                $warnings[] = 'Warning: unexpected change of $FULLME';
+            }
+
             if (setlocale(LC_TIME, 0) !== $localename) {
                 $warnings[] = 'Warning: unexpected change of locale';
             }
@@ -184,6 +188,7 @@ class phpunit_util extends testing_util {
         $_SERVER = self::get_global_backup('_SERVER');
         $CFG = self::get_global_backup('CFG');
         $SITE = self::get_global_backup('SITE');
+        $FULLME = self::get_global_backup('FULLME');
         $_GET = array();
         $_POST = array();
         $_FILES = array();
@@ -210,6 +215,11 @@ class phpunit_util extends testing_util {
         get_message_processors(false, true, true);
         filter_manager::reset_caches();
         core_filetypes::reset_caches();
+        \core_search\manager::clear_static();
+        core_user::reset_caches();
+        if (class_exists('core_media_manager', false)) {
+            core_media_manager::reset_caches();
+        }
 
         // Reset static unit test options.
         if (class_exists('\availability_date\condition', false)) {
@@ -259,6 +269,9 @@ class phpunit_util extends testing_util {
         // Make sure the time locale is consistent - that is Australian English.
         setlocale(LC_TIME, $localename);
 
+        // Reset the log manager cache.
+        get_log_manager(true);
+
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
             error_log('Unexpected DB writes in phpunit_util::reset_all_data()');
@@ -299,13 +312,14 @@ class phpunit_util extends testing_util {
      * @return void
      */
     public static function bootstrap_init() {
-        global $CFG, $SITE, $DB;
+        global $CFG, $SITE, $DB, $FULLME;
 
         // backup the globals
         self::$globals['_SERVER'] = $_SERVER;
         self::$globals['CFG'] = clone($CFG);
         self::$globals['SITE'] = clone($SITE);
         self::$globals['DB'] = $DB;
+        self::$globals['FULLME'] = $FULLME;
 
         // refresh data in all tables, clear caches, etc.
         self::reset_all_data();
@@ -398,10 +412,12 @@ class phpunit_util extends testing_util {
 
         self::reset_dataroot();
         testing_initdataroot($CFG->dataroot, 'phpunit');
-        self::drop_dataroot();
 
-        // drop all tables
+        // Drop all tables.
         self::drop_database($displayprogress);
+
+        // Drop dataroot.
+        self::drop_dataroot();
     }
 
     /**
@@ -587,28 +603,19 @@ class phpunit_util extends testing_util {
         $backtrace = debug_backtrace();
 
         foreach ($backtrace as $bt) {
-            $intest = false;
-            if (isset($bt['object']) and is_object($bt['object'])) {
-                if ($bt['object'] instanceof PHPUnit_Framework_TestCase) {
-                    if (strpos($bt['function'], 'test') === 0) {
-                        $intest = true;
-                        break;
-                    }
-                }
+            if (isset($bt['object']) and is_object($bt['object'])
+                    && $bt['object'] instanceof PHPUnit_Framework_TestCase) {
+                $debug = new stdClass();
+                $debug->message = $message;
+                $debug->level   = $level;
+                $debug->from    = $from;
+
+                self::$debuggings[] = $debug;
+
+                return true;
             }
         }
-        if (!$intest) {
-            return false;
-        }
-
-        $debug = new stdClass();
-        $debug->message = $message;
-        $debug->level   = $level;
-        $debug->from    = $from;
-
-        self::$debuggings[] = $debug;
-
-        return true;
+        return false;
     }
 
     /**
@@ -629,16 +636,24 @@ class phpunit_util extends testing_util {
 
     /**
      * Prints out any debug messages accumulated during test execution.
-     * @return bool false if no debug messages, true if debug triggered
+     *
+     * @param bool $return true to return the messages or false to print them directly. Default false.
+     * @return bool|string false if no debug messages, true if debug triggered or string of messages
      */
-    public static function display_debugging_messages() {
+    public static function display_debugging_messages($return = false) {
         if (empty(self::$debuggings)) {
             return false;
         }
+
+        $debugstring = '';
         foreach(self::$debuggings as $debug) {
-            echo 'Debugging: ' . $debug->message . "\n" . trim($debug->from) . "\n";
+            $debugstring .= 'Debugging: ' . $debug->message . "\n" . trim($debug->from) . "\n";
         }
 
+        if ($return) {
+            return $debugstring;
+        }
+        echo $debugstring;
         return true;
     }
 
@@ -808,5 +823,45 @@ class phpunit_util extends testing_util {
         } else {
             return 'en_AU.UTF-8';
         }
+    }
+
+    /**
+     * Executes all adhoc tasks in the queue. Useful for testing asynchronous behaviour.
+     *
+     * @return void
+     */
+    public static function run_all_adhoc_tasks() {
+        $now = time();
+        while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
+            try {
+                $task->execute();
+                \core\task\manager::adhoc_task_complete($task);
+            } catch (Exception $e) {
+                \core\task\manager::adhoc_task_failed($task);
+            }
+        }
+    }
+
+    /**
+     * Helper function to call a protected/private method of an object using reflection.
+     *
+     * Example 1. Calling a protected object method:
+     *   $result = call_internal_method($myobject, 'method_name', [$param1, $param2], '\my\namespace\myobjectclassname');
+     *
+     * Example 2. Calling a protected static method:
+     *   $result = call_internal_method(null, 'method_name', [$param1, $param2], '\my\namespace\myclassname');
+     *
+     * @param object|null $object the object on which to call the method, or null if calling a static method.
+     * @param string $methodname the name of the protected/private method.
+     * @param array $params the array of function params to pass to the method.
+     * @param string $classname the fully namespaced name of the class the object was created from (base in the case of mocks),
+     *        or the name of the static class when calling a static method.
+     * @return mixed the respective return value of the method.
+     */
+    public static function call_internal_method($object, $methodname, array $params = array(), $classname) {
+        $reflection = new \ReflectionClass($classname);
+        $method = $reflection->getMethod($methodname);
+        $method->setAccessible(true);
+        return $method->invokeArgs($object, $params);
     }
 }

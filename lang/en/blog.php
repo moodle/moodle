@@ -87,6 +87,10 @@ $string['entrysaved'] = 'Your entry has been saved';
 $string['entrytitle'] = 'Entry title';
 $string['eventblogentriesviewed'] = 'Blog entries viewed';
 $string['eventblogassociationadded'] = 'Blog association created';
+$string['eventblogassociationdeleted'] = 'Blog association deleted';
+$string['eventblogexternaladded'] = 'External blog registered';
+$string['eventblogexternalremoved'] = 'External blog unregistered';
+$string['eventblogexternalupdated'] = 'External blog updated';
 $string['evententryadded'] = 'Blog entry added';
 $string['evententrydeleted'] = 'Blog entry deleted';
 $string['evententryupdated'] = 'Blog entry updated';
@@ -94,6 +98,7 @@ $string['externalblogcrontime'] = 'External blog cron schedule';
 $string['externalblogdeleteconfirm'] = 'Unregister this external blog?';
 $string['externalblogdeleted'] = 'External blog unregistered';
 $string['externalblogs'] = 'External blogs';
+$string['eventexternalblogsviewed'] = 'External registered blogs viewed';
 $string['feedisinvalid'] = 'This feed is invalid';
 $string['feedisvalid'] = 'This feed is valid';
 $string['filterblogsby'] = 'Filter entries by...';
@@ -184,6 +189,3 @@ $string['wrongpostid'] = 'Wrong blog post id';
 $string['page-blog-edit'] = 'Blog editing pages';
 $string['page-blog-index'] = 'Blog listing pages';
 $string['page-blog-x'] = 'All blog pages';
-
-// Deprecated since Moodle 2.9.
-$string['siteblog'] = 'Site blog: {$a}';

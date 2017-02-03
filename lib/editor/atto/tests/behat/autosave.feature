@@ -55,14 +55,14 @@ Feature: Atto Autosave
     And I follow "Manage private files..."
     And I upload "lib/editor/atto/tests/fixtures/moodle-logo.png" file to "Files" filemanager
     And I click on "Save changes" "button"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And I am on homepage
     And I follow "Course 1"
     And I navigate to "Edit settings" node in "Course administration"
     And I set the field "Course summary" to "<p>Image test</p>"
     And I select the text in the "Course summary" Atto editor
     And I click on "Image" "button"
     And I click on "Browse repositories..." "button"
-    And I click on "Private files" "link"
+    And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle-logo.png" "link"
     And I click on "Select this file" "button"
     And I set the field "Describe this image" to "It's the Moodle"

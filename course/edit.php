@@ -55,6 +55,9 @@ if ($returnto === 'url' && confirm_sesskey() && $returnurl) {
             case 'topcat':
                 $returnurl = new moodle_url($CFG->wwwroot . '/course/');
                 break;
+            case 'pending':
+                $returnurl = new moodle_url($CFG->wwwroot . '/course/pending.php');
+                break;
         }
     }
 }

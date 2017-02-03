@@ -316,7 +316,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
                 }
             } else if (isset($expectations['exception'])) {
                 $exception = $expectations['exception'];
-                $this->setExpectedException($exception['type'], $exception['message']);
+                $this->expectException($exception['type']);
+                $this->expectExceptionMessage($exception['message']);
             } else {
                 // Failed, only canview and exception are supported.
                 $this->markTestIncomplete('Incomplete, only canview and exception are supported');
@@ -363,6 +364,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         $coursedata1 = array(
+            'fullname'         => '<b>Course 1</b>',                // Adding tags here to check that external_format_string works.
+            'shortname'         => '<b>Course 1</b>',               // Adding tags here to check that external_format_string works.
             'summary'          => 'Lightwork Course 1 description',
             'summaryformat'    => FORMAT_MOODLE,
             'lang'             => 'en',
@@ -401,6 +404,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         // Check there are no differences between $course1 properties and course values returned by the webservice
         // only for those fields listed in the $coursedata1 array.
+        $course1->fullname = external_format_string($course1->fullname, $contexts[$course1->id]->id);
+        $course1->shortname = external_format_string($course1->shortname, $contexts[$course1->id]->id);
         foreach ($enrolledincourses as $courseenrol) {
             if ($courseenrol['id'] == $course1->id) {
                 foreach ($coursedata1 as $fieldname => $value) {
@@ -561,6 +566,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Test get_enrolled_users from core_enrol_external with capability to
      * viewparticipants removed.
+     *
+     * @expectedException moodle_exception
      */
     public function test_get_enrolled_users_without_capability() {
         $capability = 'moodle/course:viewparticipants';
@@ -568,7 +575,6 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         // Call without required capability.
         $this->unassignUserCapability($capability, $data->context->id, $data->roleid);
-        $this->setExpectedException('moodle_exception');
         $categories = core_enrol_external::get_enrolled_users($data->course->id);
     }
 

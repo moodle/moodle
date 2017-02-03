@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/group.php");
+require_once('templatable_form_element.php');
 
 /**
  * HTML class for a form element group
@@ -37,9 +38,18 @@ require_once("HTML/QuickForm/group.php");
  * @copyright 2007 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_group extends HTML_QuickForm_group{
+class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
+
+    /** @var MoodleQuickForm */
+    protected $_mform = null;
+
+    protected $_renderedfromtemplate = false;
 
     /**
      * constructor
@@ -106,5 +116,144 @@ class MoodleQuickForm_group extends HTML_QuickForm_group{
                 $element->setHiddenLabel(true);
             }
         }
+    }
+
+    /**
+     * Stores the form this element was added to
+     * This object is later used by {@link MoodleQuickForm_group::createElement()}
+     * @param null|MoodleQuickForm $mform
+     */
+    public function setMoodleForm($mform) {
+        if ($mform && $mform instanceof MoodleQuickForm) {
+            $this->_mform = $mform;
+        }
+    }
+
+    /**
+     * Called by HTML_QuickForm whenever form event is made on this element
+     *
+     * If this function is overridden and parent is not called the element must be responsible for
+     * storing the MoodleQuickForm object, see {@link MoodleQuickForm_group::setMoodleForm()}
+     *
+     * @param     string $event Name of event
+     * @param     mixed $arg event arguments
+     * @param     mixed $caller calling object
+     */
+    public function onQuickFormEvent($event, $arg, &$caller) {
+        $this->setMoodleForm($caller);
+        return parent::onQuickFormEvent($event, $arg, $caller);
+    }
+
+    /**
+     * Creates an element to add to the group
+     * Expects the same arguments as MoodleQuickForm::createElement()
+     */
+    public function createFormElement() {
+        if (!$this->_mform) {
+            throw new coding_exception('You can not call createFormElement() on the group element that was not yet added to a form.');
+        }
+        return call_user_func_array([$this->_mform, 'createElement'], func_get_args());
+    }
+
+    public function export_for_template(renderer_base $output) {
+        global $OUTPUT;
+
+        $context = $this->export_for_template_base($output);
+
+        $this->_renderedfromtemplate = true;
+
+        include_once('HTML/QuickForm/Renderer/Default.php');
+
+        $elements = [];
+        $name = $this->getName();
+        $i = 0;
+        foreach ($this->_elements as $key => $element) {
+            $elementname = '';
+            if ($this->_appendName) {
+                $elementname = $element->getName();
+                if (isset($elementname)) {
+                    $element->setName($name . '['. (strlen($elementname) ? $elementname : $key) .']');
+                } else {
+                    $element->setName($name);
+                }
+            }
+            $element->_generateId();
+
+            $out = $OUTPUT->mform_element($element, false, false, '', true);
+
+            if (empty($out)) {
+                $renderer = new HTML_QuickForm_Renderer_Default();
+                $renderer->setElementTemplate('{element}');
+                $element->accept($renderer);
+                $out = $renderer->toHtml();
+            }
+
+            // Replicates the separator logic from 'pear/HTML/QuickForm/Renderer/Default.php'.
+            $separator = '';
+            if ($i > 0) {
+                if (is_array($this->_separator)) {
+                    $separator = $this->_separator[($i - 1) % count($this->_separator)];
+                } else if ($this->_separator === null) {
+                    $separator = '&nbsp;';
+                } else {
+                    $separator = (string) $this->_separator;
+                }
+            }
+
+            $elements[] = [
+                'separator' => $separator,
+                'html' => $out
+            ];
+
+            // Restore the element's name.
+            if ($this->_appendName) {
+                $element->setName($elementname);
+            }
+
+            $i++;
+        }
+
+        $context['elements'] = $elements;
+        return $context;
+    }
+
+    /**
+     * Accepts a renderer
+     *
+     * @param object     An HTML_QuickForm_Renderer object
+     * @param bool       Whether a group is required
+     * @param string     An error message associated with a group
+     * @access public
+     * @return void
+     */
+    public function accept(&$renderer, $required = false, $error = null) {
+        $this->_createElementsIfNotExist();
+        $renderer->startGroup($this, $required, $error);
+        if (!$this->_renderedfromtemplate) {
+            // Backwards compatible path - only do this if we didn't render the sub-elements already.
+            $name = $this->getName();
+            foreach (array_keys($this->_elements) as $key) {
+                $element =& $this->_elements[$key];
+                $elementname = '';
+                if ($this->_appendName) {
+                    $elementname = $element->getName();
+                    if (isset($elementname)) {
+                        $element->setName($name . '['. (strlen($elementname) ? $elementname : $key) .']');
+                    } else {
+                        $element->setName($name);
+                    }
+                }
+
+                $required = !$element->isFrozen() && in_array($element->getName(), $this->_required);
+
+                $element->accept($renderer, $required);
+
+                // Restore the element's name.
+                if ($this->_appendName) {
+                    $element->setName($elementname);
+                }
+            }
+        }
+        $renderer->finishGroup($this);
     }
 }

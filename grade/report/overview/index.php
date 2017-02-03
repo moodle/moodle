@@ -71,27 +71,7 @@ if ($userid == $USER->id) {
     $PAGE->navigation->extend_for_user($user);
 }
 
-$access = false;
-if (has_capability('moodle/grade:viewall', $systemcontext)) {
-    // Ok - can view all course grades.
-    $access = true;
-
-} else if (has_capability('moodle/grade:viewall', $context)) {
-    // Ok - can view any grades in context.
-    $access = true;
-
-} else if ($userid == $USER->id and ((has_capability('moodle/grade:view', $context) and $course->showgrades)
-        || $courseid == SITEID)) {
-    // Ok - can view own course grades.
-    $access = true;
-
-} else if (has_capability('moodle/grade:viewall', $personalcontext) and $course->showgrades) {
-    // Ok - can view grades of this user - parent most probably.
-    $access = true;
-} else if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and $course->showgrades) {
-    // Ok - can view grades of this user - parent most probably.
-    $access = true;
-}
+$access = grade_report_overview::check_access($systemcontext, $context, $personalcontext, $course, $userid);
 
 if (!$access) {
     // no access to grades!
@@ -107,8 +87,8 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'overview';
 
-//first make sure we have proper final grades - this must be done before constructing of the grade tree
-grade_regrade_final_grades($courseid);
+// First make sure we have proper final grades.
+grade_regrade_final_grades_if_required($course);
 
 if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     // Please note this would be extremely slow if we wanted to implement this properly for all teachers.
@@ -214,15 +194,6 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
     }
 }
 
-$event = \gradereport_overview\event\grade_report_viewed::create(
-    array(
-        'context' => $context,
-        'courseid' => $courseid,
-        'relateduserid' => $userid,
-    )
-);
-$event->trigger();
+grade_report_overview::viewed($context, $courseid, $userid);
 
 echo $OUTPUT->footer();
-
-

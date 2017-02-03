@@ -55,5 +55,7 @@ if (!empty($CFG->gradepublishing) && !empty($key)) {
     echo $export->get_grade_publishing_url();
     echo $OUTPUT->footer();
 } else {
+    $event = \gradeexport_ods\event\grade_exported::create(array('context' => $context));
+    $event->trigger();
     $export->print_grades();
 }

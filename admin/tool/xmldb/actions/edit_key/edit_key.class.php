@@ -113,7 +113,7 @@ class edit_key extends XMLDBAction {
         if ($structure->getKeyUses($table->getName(), $key->getName())) {
             $disabled = ' disabled="disabled " ';
         }
-        $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="30" id="name"' . $disabled . ' value="' . s($key->getName()) . '" /></td></tr>';
+        $o.= '      <tr valign="top"><td><label for="name" accesskey="n">Name:</label></td><td colspan="2"><input name="name" type="text" size="'.xmldb_field::NAME_MAX_LENGTH.'" id="name"' . $disabled . ' value="' . s($key->getName()) . '" /></td></tr>';
         // XMLDB key comment
         $o.= '      <tr valign="top"><td><label for="comment" accesskey="c">Comment:</label></td><td colspan="2"><textarea name="comment" rows="3" cols="80" id="comment">' . s($key->getComment()) . '</textarea></td></tr>';
         // xmldb_key Type

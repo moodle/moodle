@@ -60,24 +60,26 @@ class user_editadvanced_form extends moodleform {
 
         // Add some extra hidden fields.
         $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
+        $mform->setType('id', core_user::get_property_type('id'));
         $mform->addElement('hidden', 'course', $COURSE->id);
         $mform->setType('course', PARAM_INT);
 
         // Print the required moodle fields first.
         $mform->addElement('header', 'moodle', $strgeneral);
 
-        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
-        $mform->addRule('username', $strrequired, 'required', null, 'client');
-        $mform->setType('username', PARAM_RAW);
-
         $auths = core_component::get_plugin_list('auth');
         $enabled = get_string('pluginenabled', 'core_plugin');
         $disabled = get_string('plugindisabled', 'core_plugin');
         $authoptions = array($enabled => array(), $disabled => array());
         $cannotchangepass = array();
+        $cannotchangeusername = array();
         foreach ($auths as $auth => $unused) {
             $authinst = get_auth_plugin($auth);
+
+            if (!$authinst->is_internal()) {
+                $cannotchangeusername[] = $auth;
+            }
+
             $passwordurl = $authinst->change_password_url();
             if (!($authinst->can_change_password() && empty($passwordurl))) {
                 if ($userid < 1 and $authinst->is_internal()) {
@@ -93,6 +95,15 @@ class user_editadvanced_form extends moodleform {
                 $authoptions[$disabled][$auth] = get_string('pluginname', "auth_{$auth}");
             }
         }
+
+        $mform->addElement('text', 'username', get_string('username'), 'size="20"');
+        $mform->addHelpButton('username', 'username', 'auth');
+        $mform->setType('username', PARAM_RAW);
+
+        if ($userid !== -1) {
+            $mform->disabledIf('username', 'auth', 'in', $cannotchangeusername);
+        }
+
         $mform->addElement('selectgroups', 'auth', get_string('chooseauthmethod', 'auth'), $authoptions);
         $mform->addHelpButton('auth', 'chooseauthmethod', 'auth');
 
@@ -107,10 +118,25 @@ class user_editadvanced_form extends moodleform {
         }
         $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"');
         $mform->addHelpButton('newpassword', 'newpassword');
-        $mform->setType('newpassword', PARAM_RAW);
+        $mform->setType('newpassword', core_user::get_property_type('password'));
         $mform->disabledIf('newpassword', 'createpassword', 'checked');
 
         $mform->disabledIf('newpassword', 'auth', 'in', $cannotchangepass);
+
+        // Check if the user has active external tokens.
+        if ($userid and empty($CFG->passwordchangetokendeletion)) {
+            if ($tokens = webservice::get_active_tokens($userid)) {
+                $services = '';
+                foreach ($tokens as $token) {
+                    $services .= format_string($token->servicename) . ',';
+                }
+                $services = get_string('userservices', 'webservice', rtrim($services, ','));
+                $mform->addElement('advcheckbox', 'signoutofotherservices', get_string('signoutofotherservices'), $services);
+                $mform->addHelpButton('signoutofotherservices', 'signoutofotherservices');
+                $mform->disabledIf('signoutofotherservices', 'newpassword', 'eq', '');
+                $mform->setDefault('signoutofotherservices', 1);
+            }
+        }
 
         $mform->addElement('advcheckbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
         $mform->addHelpButton('preference_auth_forcepasswordchange', 'forcepasswordchange');
@@ -140,6 +166,12 @@ class user_editadvanced_form extends moodleform {
         global $USER, $CFG, $DB, $OUTPUT;
 
         $mform = $this->_form;
+
+        // Trim required name fields.
+        foreach (useredit_get_required_name_fields() as $field) {
+            $mform->applyFilter($field, 'trim');
+        }
+
         if ($userid = $mform->getElementValue('id')) {
             $user = $DB->get_record('user', array('id' => $userid));
         } else {
@@ -253,7 +285,7 @@ class user_editadvanced_form extends moodleform {
             if ($usernew->username !== core_text::strtolower($usernew->username)) {
                 $err['username'] = get_string('usernamelowercase');
             } else {
-                if ($usernew->username !== clean_param($usernew->username, PARAM_USERNAME)) {
+                if ($usernew->username !== core_user::clean_field($usernew->username, 'username')) {
                     $err['username'] = get_string('invalidusername');
                 }
             }

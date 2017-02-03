@@ -403,11 +403,29 @@ class blog_entry implements renderable {
 
     /**
      * remove all associations for a blog entry
-     * @return voic
+     *
+     * @return void
      */
     public function remove_associations() {
         global $DB;
-        $DB->delete_records('blog_association', array('blogid' => $this->id));
+
+        $associations = $DB->get_records('blog_association', array('blogid' => $this->id));
+        foreach ($associations as $association) {
+
+            // Trigger an association deleted event.
+            $context = context::instance_by_id($association->contextid);
+            $eventparam = array(
+                'objectid' => $this->id,
+                'other' => array('subject' => $this->subject, 'blogid' => $this->id),
+                'relateduserid' => $this->userid
+            );
+            $event = \core\event\blog_association_deleted::create($eventparam);
+            $event->add_record_snapshot('blog_association', $association);
+            $event->trigger();
+
+            // Now remove the association.
+            $DB->delete_records('blog_association', array('id' => $association->id));
+        }
     }
 
     /**

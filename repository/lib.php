@@ -888,7 +888,9 @@ abstract class repository implements cacheable_object {
         // the file needs to copied to draft area
         $stored_file = self::get_moodle_file($source);
         if ($maxbytes != -1 && $stored_file->get_filesize() > $maxbytes) {
-            throw new file_exception('maxbytes');
+            $maxbytesdisplay = display_size($maxbytes);
+            throw new file_exception('maxbytesfile', (object) array('file' => $filerecord['filename'],
+                                                                    'size' => $maxbytesdisplay));
         }
         // Validate the size of the draft area.
         if (file_is_draft_area_limit_reached($draftitemid, $areamaxbytes, $stored_file->get_filesize())) {
@@ -1185,72 +1187,14 @@ abstract class repository implements cacheable_object {
      * permissions of the file are not modified here!
      *
      * @static
+     * @deprecated since Moodle 3.0
      * @param string $thefile
      * @param string $filename name of the file
      * @param bool $deleteinfected
      */
     public static function antivir_scan_file($thefile, $filename, $deleteinfected) {
-        global $CFG;
-
-        if (!is_readable($thefile)) {
-            // this should not happen
-            return;
-        }
-
-        if (empty($CFG->runclamonupload) or empty($CFG->pathtoclam)) {
-            // clam not enabled
-            return;
-        }
-
-        $CFG->pathtoclam = trim($CFG->pathtoclam);
-
-        if (!file_exists($CFG->pathtoclam) or !is_executable($CFG->pathtoclam)) {
-            // misconfigured clam - use the old notification for now
-            require("$CFG->libdir/uploadlib.php");
-            $notice = get_string('clamlost', 'moodle', $CFG->pathtoclam);
-            clam_message_admins($notice);
-            return;
-        }
-
-        $clamparam = ' --stdout ';
-        // If we are dealing with clamdscan, clamd is likely run as a different user
-        // that might not have permissions to access your file.
-        // To make clamdscan work, we use --fdpass parameter that passes the file
-        // descriptor permissions to clamd, which allows it to scan given file
-        // irrespective of directory and file permissions.
-        if (basename($CFG->pathtoclam) == 'clamdscan') {
-            $clamparam .= '--fdpass ';
-        }
-        // execute test
-        $cmd = escapeshellcmd($CFG->pathtoclam).$clamparam.escapeshellarg($thefile);
-        exec($cmd, $output, $return);
-
-        if ($return == 0) {
-            // perfect, no problem found
-            return;
-
-        } else if ($return == 1) {
-            // infection found
-            if ($deleteinfected) {
-                unlink($thefile);
-            }
-            throw new moodle_exception('virusfounduser', 'moodle', '', array('filename'=>$filename));
-
-        } else {
-            //unknown problem
-            require("$CFG->libdir/uploadlib.php");
-            $notice = get_string('clamfailed', 'moodle', get_clam_error_code($return));
-            $notice .= "\n\n". implode("\n", $output);
-            clam_message_admins($notice);
-            if ($CFG->clamfailureonupload === 'actlikevirus') {
-                if ($deleteinfected) {
-                    unlink($thefile);
-                }
-                throw new moodle_exception('virusfounduser', 'moodle', '', array('filename'=>$filename));
-            } else {
-                return;
-            }
-        }
+        debugging('Please upgrade your code to use \core\antivirus\manager::scan_file instead', DEBUG_DEVELOPER);
+        \core\antivirus\manager::scan_file($thefile, $filename, $deleteinfected);
     }
 
     /**
@@ -1377,7 +1321,8 @@ abstract class repository implements cacheable_object {
         global $DB, $CFG, $USER, $OUTPUT;
 
         // scan for viruses if possible, throws exception if problem found
-        self::antivir_scan_file($thefile, $record->filename, empty($CFG->repository_no_delete)); //TODO: MDL-28637 this repository_no_delete is a bloody hack!
+        // TODO: MDL-28637 this repository_no_delete is a bloody hack!
+        \core\antivirus\manager::scan_file($thefile, $record->filename, empty($CFG->repository_no_delete));
 
         $fs = get_file_storage();
         // If file name being used.
@@ -1663,18 +1608,19 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Decide where to save the file, can be overwriten by subclass
+     * Get a unique file path in which to save the file.
+     *
+     * The filename returned will be removed at the end of the request and
+     * should not be relied upon to exist in subsequent requests.
      *
      * @param string $filename file name
      * @return file path
      */
     public function prepare_file($filename) {
-        global $CFG;
-        $dir = make_temp_directory('download/'.get_class($this).'/');
-        while (empty($filename) || file_exists($dir.$filename)) {
-            $filename = uniqid('', true).'_'.time().'.tmp';
+        if (empty($filename)) {
+            $filename = 'file';
         }
-        return $dir.$filename;
+        return sprintf('%s/%s', make_request_directory(), $filename);
     }
 
     /**
@@ -1758,13 +1704,17 @@ abstract class repository implements cacheable_object {
             // files that are references to local files are already in moodle filepool
             // just validate the size
             if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
-                throw new file_exception('maxbytes');
+                $maxbytesdisplay = display_size($maxbytes);
+                throw new file_exception('maxbytesfile', (object) array('file' => $file->get_filename(),
+                                                                        'size' => $maxbytesdisplay));
             }
             return;
         } else {
             if ($maxbytes > 0 && $file->get_filesize() > $maxbytes) {
                 // note that stored_file::get_filesize() also calls synchronisation
-                throw new file_exception('maxbytes');
+                $maxbytesdisplay = display_size($maxbytes);
+                throw new file_exception('maxbytesfile', (object) array('file' => $file->get_filename(),
+                                                                        'size' => $maxbytesdisplay));
             }
             $fs = get_file_storage();
             $contentexists = $fs->content_exists($file->get_contenthash());
@@ -2826,6 +2776,17 @@ abstract class repository implements cacheable_object {
      * @return true|false
      */
     public function supports_relative_file() {
+        return false;
+    }
+
+    /**
+     * Helper function to indicate if this repository uses post requests for uploading files.
+     *
+     * @deprecated since Moodle 3.2, 3.1.1, 3.0.5
+     * @return bool
+     */
+    public function uses_post_requests() {
+        debugging('The method repository::uses_post_requests() is deprecated and must not be used anymore.', DEBUG_DEVELOPER);
         return false;
     }
 }

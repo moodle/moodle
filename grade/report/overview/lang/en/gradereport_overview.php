@@ -23,5 +23,6 @@
  */
 
 $string['eventgradereportviewed'] = 'Grade overview report viewed';
+$string['gradesoverview'] = 'Grades overview';
 $string['pluginname'] = 'Overview report';
 $string['overview:view'] = 'View the overview report';

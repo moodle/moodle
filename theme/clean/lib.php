@@ -38,9 +38,10 @@
  * @return string The parsed CSS The parsed CSS.
  */
 function theme_clean_process_css($css, $theme) {
+    global $OUTPUT;
 
     // Set the background image for the logo.
-    $logo = $theme->setting_file_url('logo', 'logo');
+    $logo = $OUTPUT->get_logo_url(null, 75);
     $css = theme_clean_set_logo($css, $logo);
 
     // Set custom CSS.

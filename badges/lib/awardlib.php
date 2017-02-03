@@ -236,6 +236,47 @@ function process_manual_award($recipientid, $issuerid, $issuerrole, $badgeid) {
             return true;
         }
     }
+    return false;
+}
 
+/**
+ * Manually revoke awarded badges.
+ *
+ * @param int $recipientid
+ * @param int $issuerid
+ * @param int $issuerrole
+ * @param int $badgeid
+ * @return bool
+ */
+function process_manual_revoke($recipientid, $issuerid, $issuerrole, $badgeid) {
+    global $DB;
+    $params = array(
+                'badgeid' => $badgeid,
+                'issuerid' => $issuerid,
+                'issuerrole' => $issuerrole,
+                'recipientid' => $recipientid
+            );
+    if ($DB->record_exists('badge_manual_award', $params)) {
+        if ($DB->delete_records('badge_manual_award', array('badgeid' => $badgeid,
+                                                            'issuerid' => $issuerid,
+                                                            'recipientid' => $recipientid))
+            && $DB->delete_records('badge_issued', array('badgeid' => $badgeid,
+                                                      'userid' => $recipientid))) {
+
+            // Trigger event, badge revoked.
+            $badge = new \badge($badgeid);
+            $eventparams = array(
+                'objectid' => $badgeid,
+                'relateduserid' => $recipientid,
+                'context' => $badge->get_context()
+            );
+            $event = \core\event\badge_revoked::create($eventparams);
+            $event->trigger();
+
+            return true;
+        }
+    } else {
+        throw new moodle_exception('error:badgenotfound', 'badges');
+    }
     return false;
 }

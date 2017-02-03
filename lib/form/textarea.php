@@ -26,6 +26,7 @@
  */
 
 require_once('HTML/QuickForm/textarea.php');
+require_once('templatable_form_element.php');
 
 /**
  * Textarea type form element
@@ -37,7 +38,11 @@ require_once('HTML/QuickForm/textarea.php');
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
+class MoodleQuickForm_textarea extends HTML_QuickForm_textarea implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
     /** @var string Need to store id of form as we may need it for helpbutton */
     var $_formid = '';
 
@@ -46,6 +51,9 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
 
     /** @var bool if true label will be hidden */
     var $_hiddenLabel=false;
+
+    /** @var bool Whether to force the display of this element to flow LTR. */
+    protected $forceltr = false;
 
     /**
      * constructor
@@ -92,6 +100,16 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
      * @return string
      */
     function toHtml(){
+
+        // Add the class at the last minute.
+        if ($this->get_force_ltr()) {
+            if (!isset($this->_attributes['class'])) {
+                $this->_attributes['class'] = 'text-ltr';
+            } else {
+                $this->_attributes['class'] .= ' text-ltr';
+            }
+        }
+
         if ($this->_hiddenLabel){
             $this->_generateId();
             return '<label class="accesshide" for="' . $this->getAttribute('id') . '" >' .
@@ -129,5 +147,32 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
         } else {
             return 'default';
         }
+    }
+
+    /**
+     * Get force LTR option.
+     *
+     * @return bool
+     */
+    public function get_force_ltr() {
+        return $this->forceltr;
+    }
+
+    /**
+     * Force the field to flow left-to-right.
+     *
+     * This is useful for fields such as code or configuration snippets.
+     *
+     * @param bool $value The value to set the option to.
+     */
+    public function set_force_ltr($value) {
+        $this->forceltr = (bool) $value;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['value'] = $this->getValue();
+
+        return $context;
     }
 }

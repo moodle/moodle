@@ -32,14 +32,14 @@ class mod_forum_external extends external_api {
     /**
      * Describes the parameters for get_forum.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.5
      */
     public static function get_forums_by_courses_parameters() {
         return new external_function_parameters (
             array(
                 'courseids' => new external_multiple_structure(new external_value(PARAM_INT, 'course ID',
-                        '', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of Course IDs', VALUE_DEFAULT, array()),
+                        VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of Course IDs', VALUE_DEFAULT, array()),
             )
         );
     }
@@ -91,11 +91,13 @@ class mod_forum_external extends external_api {
                 $forum->name = external_format_string($forum->name, $context->id);
                 // Format the intro before being returning using the format setting.
                 list($forum->intro, $forum->introformat) = external_format_text($forum->intro, $forum->introformat,
-                                                                                $context->id, 'mod_forum', 'intro', 0);
+                                                                                $context->id, 'mod_forum', 'intro', null);
+                $forum->introfiles = external_util::get_area_files($context->id, 'mod_forum', 'intro', false, false);
                 // Discussions count. This function does static request cache.
                 $forum->numdiscussions = forum_count_discussions($forum, $cm, $course);
                 $forum->cmid = $forum->coursemodule;
                 $forum->cancreatediscussions = forum_user_can_post_discussion($forum, null, -1, $cm, $context);
+                $forum->istracked = forum_tp_is_tracked($forum);
 
                 // Add the forum to the array to return.
                 $arrforums[$forum->id] = $forum;
@@ -111,7 +113,7 @@ class mod_forum_external extends external_api {
      * @return external_single_structure
      * @since Moodle 2.5
      */
-     public static function get_forums_by_courses_returns() {
+    public static function get_forums_by_courses_returns() {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
@@ -121,6 +123,7 @@ class mod_forum_external extends external_api {
                     'name' => new external_value(PARAM_RAW, 'Forum name'),
                     'intro' => new external_value(PARAM_RAW, 'The forum intro'),
                     'introformat' => new external_format_value('intro'),
+                    'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                     'assessed' => new external_value(PARAM_INT, 'Aggregate type'),
                     'assesstimestart' => new external_value(PARAM_INT, 'Assess start time'),
                     'assesstimefinish' => new external_value(PARAM_INT, 'Assess finish time'),
@@ -141,220 +144,9 @@ class mod_forum_external extends external_api {
                     'cmid' => new external_value(PARAM_INT, 'Course module id'),
                     'numdiscussions' => new external_value(PARAM_INT, 'Number of discussions in the forum', VALUE_OPTIONAL),
                     'cancreatediscussions' => new external_value(PARAM_BOOL, 'If the user can create discussions', VALUE_OPTIONAL),
+                    'lockdiscussionafter' => new external_value(PARAM_INT, 'After what period a discussion is locked', VALUE_OPTIONAL),
+                    'istracked' => new external_value(PARAM_BOOL, 'If the user is tracking the forum', VALUE_OPTIONAL),
                 ), 'forum'
-            )
-        );
-    }
-
-    /**
-     * Describes the parameters for get_forum_discussions.
-     *
-     * @return external_external_function_parameters
-     * @since Moodle 2.5
-     * @deprecated Moodle 2.8 MDL-46458 - Please do not call this function any more.
-     * @see get_forum_discussions_paginated
-     */
-    public static function get_forum_discussions_parameters() {
-        return new external_function_parameters (
-            array(
-                'forumids' => new external_multiple_structure(new external_value(PARAM_INT, 'forum ID',
-                        '', VALUE_REQUIRED, '', NULL_NOT_ALLOWED), 'Array of Forum IDs', VALUE_REQUIRED),
-                'limitfrom' => new external_value(PARAM_INT, 'limit from', VALUE_DEFAULT, 0),
-                'limitnum' => new external_value(PARAM_INT, 'limit number', VALUE_DEFAULT, 0)
-            )
-        );
-    }
-
-    /**
-     * Returns a list of forum discussions as well as a summary of the discussion
-     * in a provided list of forums.
-     *
-     * @param array $forumids the forum ids
-     * @param int $limitfrom limit from SQL data
-     * @param int $limitnum limit number SQL data
-     *
-     * @return array the forum discussion details
-     * @since Moodle 2.5
-     * @deprecated Moodle 2.8 MDL-46458 - Please do not call this function any more.
-     * @see get_forum_discussions_paginated
-     */
-    public static function get_forum_discussions($forumids, $limitfrom = 0, $limitnum = 0) {
-        global $CFG, $DB, $USER;
-
-        require_once($CFG->dirroot . "/mod/forum/lib.php");
-
-        // Validate the parameter.
-        $params = self::validate_parameters(self::get_forum_discussions_parameters(),
-            array(
-                'forumids'  => $forumids,
-                'limitfrom' => $limitfrom,
-                'limitnum'  => $limitnum,
-            ));
-        $forumids  = $params['forumids'];
-        $limitfrom = $params['limitfrom'];
-        $limitnum  = $params['limitnum'];
-
-        // Array to store the forum discussions to return.
-        $arrdiscussions = array();
-        // Keep track of the users we have looked up in the DB.
-        $arrusers = array();
-
-        // Loop through them.
-        foreach ($forumids as $id) {
-            // Get the forum object.
-            $forum = $DB->get_record('forum', array('id' => $id), '*', MUST_EXIST);
-            $course = get_course($forum->course);
-
-            $modinfo = get_fast_modinfo($course);
-            $forums  = $modinfo->get_instances_of('forum');
-            $cm = $forums[$forum->id];
-
-            // Get the module context.
-            $modcontext = context_module::instance($cm->id);
-
-            // Validate the context.
-            self::validate_context($modcontext);
-
-            require_capability('mod/forum:viewdiscussion', $modcontext);
-
-            // Get the discussions for this forum.
-            $params = array();
-
-            $groupselect = "";
-            $groupmode = groups_get_activity_groupmode($cm, $course);
-
-            if ($groupmode and $groupmode != VISIBLEGROUPS and !has_capability('moodle/site:accessallgroups', $modcontext)) {
-                // Get all the discussions from all the groups this user belongs to.
-                $usergroups = groups_get_user_groups($course->id);
-                if (!empty($usergroups['0'])) {
-                    list($sql, $params) = $DB->get_in_or_equal($usergroups['0']);
-                    $groupselect = "AND (groupid $sql OR groupid = -1)";
-                }
-            }
-            array_unshift($params, $id);
-            $select = "forum = ? $groupselect";
-
-            if ($discussions = $DB->get_records_select('forum_discussions', $select, $params, 'timemodified DESC', '*',
-                                                            $limitfrom, $limitnum)) {
-
-                // Check if they can view full names.
-                $canviewfullname = has_capability('moodle/site:viewfullnames', $modcontext);
-                // Get the unreads array, this takes a forum id and returns data for all discussions.
-                $unreads = array();
-                if ($cantrack = forum_tp_can_track_forums($forum)) {
-                    if ($forumtracked = forum_tp_is_tracked($forum)) {
-                        $unreads = forum_get_discussions_unread($cm);
-                    }
-                }
-                // The forum function returns the replies for all the discussions in a given forum.
-                $replies = forum_count_discussion_replies($id);
-
-                foreach ($discussions as $discussion) {
-                    // This function checks capabilities, timed discussions, groups and qanda forums posting.
-                    if (!forum_user_can_see_discussion($forum, $discussion, $modcontext)) {
-                        continue;
-                    }
-
-                    $usernamefields = user_picture::fields();
-                    // If we don't have the users details then perform DB call.
-                    if (empty($arrusers[$discussion->userid])) {
-                        $arrusers[$discussion->userid] = $DB->get_record('user', array('id' => $discussion->userid),
-                                $usernamefields, MUST_EXIST);
-                    }
-                    // Get the subject.
-                    $subject = $DB->get_field('forum_posts', 'subject', array('id' => $discussion->firstpost), MUST_EXIST);
-                    // Create object to return.
-                    $return = new stdClass();
-                    $return->id = (int) $discussion->id;
-                    $return->course = $discussion->course;
-                    $return->forum = $discussion->forum;
-                    $return->name = $discussion->name;
-                    $return->userid = $discussion->userid;
-                    $return->groupid = $discussion->groupid;
-                    $return->assessed = $discussion->assessed;
-                    $return->timemodified = (int) $discussion->timemodified;
-                    $return->usermodified = $discussion->usermodified;
-                    $return->timestart = $discussion->timestart;
-                    $return->timeend = $discussion->timeend;
-                    $return->firstpost = (int) $discussion->firstpost;
-                    $return->firstuserfullname = fullname($arrusers[$discussion->userid], $canviewfullname);
-                    $return->firstuserimagealt = $arrusers[$discussion->userid]->imagealt;
-                    $return->firstuserpicture = $arrusers[$discussion->userid]->picture;
-                    $return->firstuseremail = $arrusers[$discussion->userid]->email;
-                    $return->subject = $subject;
-                    $return->numunread = '';
-                    if ($cantrack && $forumtracked) {
-                        if (isset($unreads[$discussion->id])) {
-                            $return->numunread = (int) $unreads[$discussion->id];
-                        }
-                    }
-                    // Check if there are any replies to this discussion.
-                    if (!empty($replies[$discussion->id])) {
-                         $return->numreplies = (int) $replies[$discussion->id]->replies;
-                         $return->lastpost = (int) $replies[$discussion->id]->lastpostid;
-                    } else { // No replies, so the last post will be the first post.
-                        $return->numreplies = 0;
-                        $return->lastpost = (int) $discussion->firstpost;
-                    }
-                    // Get the last post as well as the user who made it.
-                    $lastpost = $DB->get_record('forum_posts', array('id' => $return->lastpost), '*', MUST_EXIST);
-                    if (empty($arrusers[$lastpost->userid])) {
-                        $arrusers[$lastpost->userid] = $DB->get_record('user', array('id' => $lastpost->userid),
-                                $usernamefields, MUST_EXIST);
-                    }
-                    $return->lastuserid = $lastpost->userid;
-                    $return->lastuserfullname = fullname($arrusers[$lastpost->userid], $canviewfullname);
-                    $return->lastuserimagealt = $arrusers[$lastpost->userid]->imagealt;
-                    $return->lastuserpicture = $arrusers[$lastpost->userid]->picture;
-                    $return->lastuseremail = $arrusers[$lastpost->userid]->email;
-                    // Add the discussion statistics to the array to return.
-                    $arrdiscussions[$return->id] = (array) $return;
-                }
-            }
-        }
-
-        return $arrdiscussions;
-    }
-
-    /**
-     * Describes the get_forum_discussions return value.
-     *
-     * @return external_single_structure
-     * @since Moodle 2.5
-     * @deprecated Moodle 2.8 MDL-46458 - Please do not call this function any more.
-     * @see get_forum_discussions_paginated
-     */
-     public static function get_forum_discussions_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'id' => new external_value(PARAM_INT, 'Forum id'),
-                    'course' => new external_value(PARAM_INT, 'Course id'),
-                    'forum' => new external_value(PARAM_INT, 'The forum id'),
-                    'name' => new external_value(PARAM_TEXT, 'Discussion name'),
-                    'userid' => new external_value(PARAM_INT, 'User id'),
-                    'groupid' => new external_value(PARAM_INT, 'Group id'),
-                    'assessed' => new external_value(PARAM_INT, 'Is this assessed?'),
-                    'timemodified' => new external_value(PARAM_INT, 'Time modified'),
-                    'usermodified' => new external_value(PARAM_INT, 'The id of the user who last modified'),
-                    'timestart' => new external_value(PARAM_INT, 'Time discussion can start'),
-                    'timeend' => new external_value(PARAM_INT, 'Time discussion ends'),
-                    'firstpost' => new external_value(PARAM_INT, 'The first post in the discussion'),
-                    'firstuserfullname' => new external_value(PARAM_TEXT, 'The discussion creators fullname'),
-                    'firstuserimagealt' => new external_value(PARAM_TEXT, 'The discussion creators image alt'),
-                    'firstuserpicture' => new external_value(PARAM_INT, 'The discussion creators profile picture'),
-                    'firstuseremail' => new external_value(PARAM_TEXT, 'The discussion creators email'),
-                    'subject' => new external_value(PARAM_TEXT, 'The discussion subject'),
-                    'numreplies' => new external_value(PARAM_TEXT, 'The number of replies in the discussion'),
-                    'numunread' => new external_value(PARAM_TEXT, 'The number of unread posts, blank if this value is
-                        not available due to forum settings.'),
-                    'lastpost' => new external_value(PARAM_INT, 'The id of the last post in the discussion'),
-                    'lastuserid' => new external_value(PARAM_INT, 'The id of the user who made the last post'),
-                    'lastuserfullname' => new external_value(PARAM_TEXT, 'The last person to posts fullname'),
-                    'lastuserimagealt' => new external_value(PARAM_TEXT, 'The last person to posts image alt'),
-                    'lastuserpicture' => new external_value(PARAM_INT, 'The last person to posts profile picture'),
-                    'lastuseremail' => new external_value(PARAM_TEXT, 'The last person to posts email'),
-                ), 'discussion'
             )
         );
     }
@@ -362,7 +154,7 @@ class mod_forum_external extends external_api {
     /**
      * Describes the parameters for get_forum_discussion_posts.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.7
      */
     public static function get_forum_discussion_posts_parameters() {
@@ -478,37 +270,33 @@ class mod_forum_external extends external_api {
                 $post->children = array();
             }
 
-            $user = new stdclass();
-            $user->id = $post->userid;
-            $user = username_load_fields_from_object($user, $post, null, array('picture', 'imagealt', 'email'));
-            $post->userfullname = fullname($user, $canviewfullname);
+            if (forum_is_author_hidden($post, $forum)) {
+                $post->userid = null;
+                $post->userfullname = null;
+                $post->userpictureurl = null;
+            } else {
+                $user = new stdclass();
+                $user->id = $post->userid;
+                $user = username_load_fields_from_object($user, $post, null, array('picture', 'imagealt', 'email'));
+                $post->userfullname = fullname($user, $canviewfullname);
 
-            $userpicture = new user_picture($user);
-            $userpicture->size = 1; // Size f1.
-            $post->userpictureurl = $userpicture->get_url($PAGE)->out(false);
+                $userpicture = new user_picture($user);
+                $userpicture->size = 1; // Size f1.
+                $post->userpictureurl = $userpicture->get_url($PAGE)->out(false);
+            }
 
+            $post->subject = external_format_string($post->subject, $modcontext->id);
             // Rewrite embedded images URLs.
             list($post->message, $post->messageformat) =
                 external_format_text($post->message, $post->messageformat, $modcontext->id, 'mod_forum', 'post', $post->id);
 
             // List attachments.
             if (!empty($post->attachment)) {
-                $post->attachments = array();
-
-                $fs = get_file_storage();
-                if ($files = $fs->get_area_files($modcontext->id, 'mod_forum', 'attachment', $post->id, "filename", false)) {
-                    foreach ($files as $file) {
-                        $filename = $file->get_filename();
-                        $fileurl = moodle_url::make_webservice_pluginfile_url(
-                                        $modcontext->id, 'mod_forum', 'attachment', $post->id, '/', $filename);
-
-                        $post->attachments[] = array(
-                            'filename' => $filename,
-                            'mimetype' => $file->get_mimetype(),
-                            'fileurl'  => $fileurl->out(false)
-                        );
-                    }
-                }
+                $post->attachments = external_util::get_area_files($modcontext->id, 'mod_forum', 'attachment', $post->id);
+            }
+            $messageinlinefiles = external_util::get_area_files($modcontext->id, 'mod_forum', 'post', $post->id);
+            if (!empty($messageinlinefiles)) {
+                $post->messageinlinefiles = $messageinlinefiles;
             }
 
             $posts[] = $post;
@@ -543,16 +331,9 @@ class mod_forum_external extends external_api {
                                 'message' => new external_value(PARAM_RAW, 'The post message'),
                                 'messageformat' => new external_format_value('message'),
                                 'messagetrust' => new external_value(PARAM_INT, 'Can we trust?'),
+                                'messageinlinefiles' => new external_files('post message inline files', VALUE_OPTIONAL),
                                 'attachment' => new external_value(PARAM_RAW, 'Has attachments?'),
-                                'attachments' => new external_multiple_structure(
-                                    new external_single_structure(
-                                        array (
-                                            'filename' => new external_value(PARAM_FILE, 'file name'),
-                                            'mimetype' => new external_value(PARAM_RAW, 'mime type'),
-                                            'fileurl'  => new external_value(PARAM_URL, 'file download url')
-                                        )
-                                    ), 'attachments', VALUE_OPTIONAL
-                                ),
+                                'attachments' => new external_files('attachments', VALUE_OPTIONAL),
                                 'totalscore' => new external_value(PARAM_INT, 'The post message total score'),
                                 'mailnow' => new external_value(PARAM_INT, 'Mail now?'),
                                 'children' => new external_multiple_structure(new external_value(PARAM_INT, 'children post id')),
@@ -571,7 +352,7 @@ class mod_forum_external extends external_api {
     /**
      * Describes the parameters for get_forum_discussions_paginated.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.8
      */
     public static function get_forum_discussions_paginated_parameters() {
@@ -694,31 +475,8 @@ class mod_forum_external extends external_api {
                     $discussion->numreplies = (int) $replies[$discussion->discussion]->replies;
                 }
 
-                $picturefields = explode(',', user_picture::fields());
-
-                // Load user objects from the results of the query.
-                $user = new stdclass();
-                $user->id = $discussion->userid;
-                $user = username_load_fields_from_object($user, $discussion, null, $picturefields);
-                // Preserve the id, it can be modified by username_load_fields_from_object.
-                $user->id = $discussion->userid;
-                $discussion->userfullname = fullname($user, $canviewfullname);
-
-                $userpicture = new user_picture($user);
-                $userpicture->size = 1; // Size f1.
-                $discussion->userpictureurl = $userpicture->get_url($PAGE)->out(false);
-
-                $usermodified = new stdclass();
-                $usermodified->id = $discussion->usermodified;
-                $usermodified = username_load_fields_from_object($usermodified, $discussion, 'um', $picturefields);
-                // Preserve the id (it can be overwritten due to the prefixed $picturefields).
-                $usermodified->id = $discussion->usermodified;
-                $discussion->usermodifiedfullname = fullname($usermodified, $canviewfullname);
-
-                $userpicture = new user_picture($usermodified);
-                $userpicture->size = 1; // Size f1.
-                $discussion->usermodifiedpictureurl = $userpicture->get_url($PAGE)->out(false);
-
+                $discussion->name = external_format_string($discussion->name, $modcontext->id);
+                $discussion->subject = external_format_string($discussion->subject, $modcontext->id);
                 // Rewrite embedded images URLs.
                 list($discussion->message, $discussion->messageformat) =
                     external_format_text($discussion->message, $discussion->messageformat,
@@ -726,22 +484,50 @@ class mod_forum_external extends external_api {
 
                 // List attachments.
                 if (!empty($discussion->attachment)) {
-                    $discussion->attachments = array();
+                    $discussion->attachments = external_util::get_area_files($modcontext->id, 'mod_forum', 'attachment',
+                                                                                $discussion->id);
+                }
+                $messageinlinefiles = external_util::get_area_files($modcontext->id, 'mod_forum', 'post', $discussion->id);
+                if (!empty($messageinlinefiles)) {
+                    $discussion->messageinlinefiles = $messageinlinefiles;
+                }
 
-                    $fs = get_file_storage();
-                    if ($files = $fs->get_area_files($modcontext->id, 'mod_forum', 'attachment',
-                                                        $discussion->id, "filename", false)) {
-                        foreach ($files as $file) {
-                            $filename = $file->get_filename();
+                $discussion->locked = forum_discussion_is_locked($forum, $discussion);
+                $discussion->canreply = forum_user_can_post($forum, $discussion, $USER, $cm, $course, $modcontext);
 
-                            $discussion->attachments[] = array(
-                                'filename' => $filename,
-                                'mimetype' => $file->get_mimetype(),
-                                'fileurl'  => file_encode_url($CFG->wwwroot.'/webservice/pluginfile.php',
-                                                '/'.$modcontext->id.'/mod_forum/attachment/'.$discussion->id.'/'.$filename)
-                            );
-                        }
-                    }
+                if (forum_is_author_hidden($discussion, $forum)) {
+                    $discussion->userid = null;
+                    $discussion->userfullname = null;
+                    $discussion->userpictureurl = null;
+
+                    $discussion->usermodified = null;
+                    $discussion->usermodifiedfullname = null;
+                    $discussion->usermodifiedpictureurl = null;
+                } else {
+                    $picturefields = explode(',', user_picture::fields());
+
+                    // Load user objects from the results of the query.
+                    $user = new stdclass();
+                    $user->id = $discussion->userid;
+                    $user = username_load_fields_from_object($user, $discussion, null, $picturefields);
+                    // Preserve the id, it can be modified by username_load_fields_from_object.
+                    $user->id = $discussion->userid;
+                    $discussion->userfullname = fullname($user, $canviewfullname);
+
+                    $userpicture = new user_picture($user);
+                    $userpicture->size = 1; // Size f1.
+                    $discussion->userpictureurl = $userpicture->get_url($PAGE)->out(false);
+
+                    $usermodified = new stdclass();
+                    $usermodified->id = $discussion->usermodified;
+                    $usermodified = username_load_fields_from_object($usermodified, $discussion, 'um', $picturefields);
+                    // Preserve the id (it can be overwritten due to the prefixed $picturefields).
+                    $usermodified->id = $discussion->usermodified;
+                    $discussion->usermodifiedfullname = fullname($usermodified, $canviewfullname);
+
+                    $userpicture = new user_picture($usermodified);
+                    $userpicture->size = 1; // Size f1.
+                    $discussion->usermodifiedpictureurl = $userpicture->get_url($PAGE)->out(false);
                 }
 
                 $discussions[] = $discussion;
@@ -784,16 +570,9 @@ class mod_forum_external extends external_api {
                                 'message' => new external_value(PARAM_RAW, 'The post message'),
                                 'messageformat' => new external_format_value('message'),
                                 'messagetrust' => new external_value(PARAM_INT, 'Can we trust?'),
+                                'messageinlinefiles' => new external_files('post message inline files', VALUE_OPTIONAL),
                                 'attachment' => new external_value(PARAM_RAW, 'Has attachments?'),
-                                'attachments' => new external_multiple_structure(
-                                    new external_single_structure(
-                                        array (
-                                            'filename' => new external_value(PARAM_FILE, 'file name'),
-                                            'mimetype' => new external_value(PARAM_RAW, 'mime type'),
-                                            'fileurl'  => new external_value(PARAM_URL, 'file download url')
-                                        )
-                                    ), 'attachments', VALUE_OPTIONAL
-                                ),
+                                'attachments' => new external_files('attachments', VALUE_OPTIONAL),
                                 'totalscore' => new external_value(PARAM_INT, 'The post message total score'),
                                 'mailnow' => new external_value(PARAM_INT, 'Mail now?'),
                                 'userfullname' => new external_value(PARAM_TEXT, 'Post author full name'),
@@ -802,7 +581,9 @@ class mod_forum_external extends external_api {
                                 'usermodifiedpictureurl' => new external_value(PARAM_URL, 'Post modifier picture.'),
                                 'numreplies' => new external_value(PARAM_TEXT, 'The number of replies in the discussion'),
                                 'numunread' => new external_value(PARAM_INT, 'The number of unread discussions.'),
-                                'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned')
+                                'pinned' => new external_value(PARAM_BOOL, 'Is the discussion pinned'),
+                                'locked' => new external_value(PARAM_BOOL, 'Is the discussion locked'),
+                                'canreply' => new external_value(PARAM_BOOL, 'Can the user reply to the discussion'),
                             ), 'post'
                         )
                     ),
@@ -844,7 +625,7 @@ class mod_forum_external extends external_api {
         $warnings = array();
 
         // Request and permission validation.
-        $forum = $DB->get_record('forum', array('id' => $params['forumid']), 'id', MUST_EXIST);
+        $forum = $DB->get_record('forum', array('id' => $params['forumid']), '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($forum, 'forum');
 
         $context = context_module::instance($cm->id);
@@ -899,7 +680,7 @@ class mod_forum_external extends external_api {
      * @throws moodle_exception
      */
     public static function view_forum_discussion($discussionid) {
-        global $DB, $CFG;
+        global $DB, $CFG, $USER;
         require_once($CFG->dirroot . "/mod/forum/lib.php");
 
         $params = self::validate_parameters(self::view_forum_discussion_parameters(),
@@ -920,6 +701,11 @@ class mod_forum_external extends external_api {
 
         // Call the forum/lib API.
         forum_discussion_view($modcontext, $forum, $discussion);
+
+        // Mark as read if required.
+        if (!$CFG->forum_usermarksread && forum_tp_is_tracked($forum)) {
+            forum_tp_mark_discussion_read($USER, $discussion->id);
+        }
 
         $result = array();
         $result['status'] = true;
@@ -961,6 +747,8 @@ class mod_forum_external extends external_api {
                             'name' => new external_value(PARAM_ALPHANUM,
                                         'The allowed keys (value format) are:
                                         discussionsubscribe (bool); subscribe to the discussion?, default to true
+                                        inlineattachmentsid              (int); the draft file area id for inline attachments
+                                        attachmentsid       (int); the draft file area id for attachments
                             '),
                             'value' => new external_value(PARAM_RAW, 'the value of the option,
                                                             this param is validated in the external function.'
@@ -995,13 +783,21 @@ class mod_forum_external extends external_api {
                                             ));
         // Validate options.
         $options = array(
-            'discussionsubscribe' => true
+            'discussionsubscribe' => true,
+            'inlineattachmentsid' => 0,
+            'attachmentsid' => null
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
             switch ($name) {
                 case 'discussionsubscribe':
                     $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
+                case 'inlineattachmentsid':
+                    $value = clean_param($option['value'], PARAM_INT);
+                    break;
+                case 'attachmentsid':
+                    $value = clean_param($option['value'], PARAM_INT);
                     break;
                 default:
                     throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
@@ -1041,9 +837,10 @@ class mod_forum_external extends external_api {
         $post->message = $params['message'];
         $post->messageformat = FORMAT_HTML;   // Force formatting for now.
         $post->messagetrust = trusttext_trusted($context);
-        $post->itemid = 0;
-
-        if ($postid = forum_add_new_post($post, null)) {
+        $post->itemid = $options['inlineattachmentsid'];
+        $post->attachments   = $options['attachmentsid'];
+        $fakemform = $post->attachments;
+        if ($postid = forum_add_new_post($post, $fakemform)) {
 
             $post->id = $postid;
 
@@ -1117,6 +914,8 @@ class mod_forum_external extends external_api {
                                         'The allowed keys (value format) are:
                                         discussionsubscribe (bool); subscribe to the discussion?, default to true
                                         discussionpinned    (bool); is the discussion pinned, default to false
+                                        inlineattachmentsid              (int); the draft file area id for inline attachments
+                                        attachmentsid       (int); the draft file area id for attachments
                             '),
                             'value' => new external_value(PARAM_RAW, 'The value of the option,
                                                             This param is validated in the external function.'
@@ -1154,7 +953,9 @@ class mod_forum_external extends external_api {
         // Validate options.
         $options = array(
             'discussionsubscribe' => true,
-            'discussionpinned' => false
+            'discussionpinned' => false,
+            'inlineattachmentsid' => 0,
+            'attachmentsid' => null
         );
         foreach ($params['options'] as $option) {
             $name = trim($option['name']);
@@ -1164,6 +965,12 @@ class mod_forum_external extends external_api {
                     break;
                 case 'discussionpinned':
                     $value = clean_param($option['value'], PARAM_BOOL);
+                    break;
+                case 'inlineattachmentsid':
+                    $value = clean_param($option['value'], PARAM_INT);
+                    break;
+                case 'attachmentsid':
+                    $value = clean_param($option['value'], PARAM_INT);
                     break;
                 default:
                     throw new moodle_exception('errorinvalidparam', 'webservice', '', $name);
@@ -1209,20 +1016,22 @@ class mod_forum_external extends external_api {
         $discussion->message = $params['message'];
         $discussion->messageformat = FORMAT_HTML;   // Force formatting for now.
         $discussion->messagetrust = trusttext_trusted($context);
-        $discussion->itemid = 0;
+        $discussion->itemid = $options['inlineattachmentsid'];
         $discussion->groupid = $groupid;
         $discussion->mailnow = 0;
         $discussion->subject = $params['subject'];
         $discussion->name = $discussion->subject;
         $discussion->timestart = 0;
         $discussion->timeend = 0;
+        $discussion->attachments = $options['attachmentsid'];
+
         if (has_capability('mod/forum:pindiscussions', $context) && $options['discussionpinned']) {
             $discussion->pinned = FORUM_DISCUSSION_PINNED;
         } else {
             $discussion->pinned = FORUM_DISCUSSION_UNPINNED;
         }
-
-        if ($discussionid = forum_add_discussion($discussion)) {
+        $fakemform = $options['attachmentsid'];
+        if ($discussionid = forum_add_discussion($discussion, $fakemform)) {
 
             $discussion->id = $discussionid;
 

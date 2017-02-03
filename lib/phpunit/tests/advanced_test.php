@@ -71,6 +71,16 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         set_debugging(DEBUG_DEVELOPER);
     }
 
+    /**
+     * @test
+     *
+     * Annotations are a valid PHPUnit method for running tests.  Debugging needs to support them.
+     */
+    public function debugging_called_with_annotation() {
+        debugging('pokus', DEBUG_MINIMAL);
+        $this->assertDebuggingCalled('pokus', DEBUG_MINIMAL);
+    }
+
     public function test_set_user() {
         global $USER, $DB, $SESSION;
 
@@ -296,7 +306,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
-        $DB = $this->getMock(get_class($DB));
+        $DB = $this->createMock(get_class($DB));
         $this->assertNull($DB->get_record('pokus', array()));
         // Rest continues after reset.
     }
@@ -358,7 +368,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $this->setCurrentTimeStart();
         $this->assertTimeCurrent(time());
-        sleep(2);
+        $this->waitForSecond();
         $this->assertTimeCurrent(time());
         $this->assertTimeCurrent(time()-1);
 
@@ -414,7 +424,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $user2 = $this->getDataGenerator()->create_user();
 
         // Any core message will do here.
-        $message1 = new stdClass();
+        $message1 = new \core\message\message();
+        $message1->courseid          = 1;
         $message1->component         = 'moodle';
         $message1->name              = 'instantmessage';
         $message1->userfrom          = $user1;
@@ -426,7 +437,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $message1->smallmessage      = 'small message';
         $message1->notification      = 0;
 
-        $message2 = new stdClass();
+        $message2 = new \core\message\message();
+        $message2->courseid          = 1;
         $message2->component         = 'moodle';
         $message2->name              = 'instantmessage';
         $message2->userfrom          = $user2;
@@ -491,7 +503,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $sink = $this->redirectMessages();
 
-        $message3 = new stdClass();
+        $message3 = new \core\message\message();
+        $message3->courseid          = 1;
         $message3->component         = 'xxxx_yyyyy';
         $message3->name              = 'instantmessage';
         $message3->userfrom          = $user2;
@@ -537,7 +550,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertTrue(phpunit_util::is_redirecting_messages());
         $this->assertEquals(1, $sink->count());
 
-        $message = new stdClass();
+        $message = new \core\message\message();
+        $message->courseid          = 1;
         $message->component         = 'moodle';
         $message->name              = 'instantmessage';
         $message->userfrom          = get_admin();

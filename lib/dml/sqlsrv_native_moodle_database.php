@@ -69,11 +69,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         // the name used by 'extension_loaded()' is case specific! The extension
         // therefore *could be* mixed case and hence not found.
         if (!function_exists('sqlsrv_num_rows')) {
-            if (stripos(PHP_OS, 'win') === 0) {
-                return get_string('nativesqlsrvnodriver', 'install');
-            } else {
-                return get_string('nativesqlsrvnonwindows', 'install');
-            }
+            return get_string('nativesqlsrvnodriver', 'install');
         }
         return true;
     }
@@ -204,6 +200,9 @@ class sqlsrv_native_moodle_database extends moodle_database {
             throw new dml_connection_exception($dberr);
         }
 
+        // Disable logging until we are fully setup.
+        $this->query_log_prevent();
+
         // Allow quoted identifiers
         $sql = "SET QUOTED_IDENTIFIER ON";
         $this->query_start($sql, null, SQL_QUERY_AUX);
@@ -249,6 +248,9 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $serverinfo = $this->get_server_info();
         // Fetch/offset is supported staring from SQL Server 2012.
         $this->supportsoffsetfetch = $serverinfo['version'] > '11';
+
+        // We can enable logging now.
+        $this->query_log_allow();
 
         // Connection established and configured, going to instantiate the temptables controller
         $this->temptables = new sqlsrv_native_moodle_temptables($this);
@@ -508,10 +510,14 @@ class sqlsrv_native_moodle_database extends moodle_database {
      */
     public function get_columns($table, $usecache = true) {
         if ($usecache) {
-            $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-            $cache = cache::make('core', 'databasemeta', $properties);
-            if ($data = $cache->get($table)) {
-                return $data;
+            if ($this->temptables->is_temptable($table)) {
+                if ($data = $this->get_temp_tables_cache()->get($table)) {
+                    return $data;
+                }
+            } else {
+                if ($data = $this->get_metacache()->get($table)) {
+                    return $data;
+                }
             }
         }
 
@@ -606,7 +612,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $this->free_result($result);
 
         if ($usecache) {
-            $cache->set($table, $structure);
+            if ($this->temptables->is_temptable($table)) {
+                $this->get_temp_tables_cache()->set($table, $structure);
+            } else {
+                $this->get_metacache()->set($table, $structure);
+            }
         }
 
         return $structure;
@@ -716,10 +726,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
     /**
      * Do NOT use in code, to be used by database_manager only!
      * @param string|array $sql query
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return bool true
      * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
-    public function change_database_structure($sql) {
+    public function change_database_structure($sql, $tablenames = null) {
         $this->get_manager(); // Includes DDL exceptions classes ;-)
         $sqls = (array)$sql;
 
@@ -730,11 +741,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
                 $this->query_end($result);
             }
         } catch (ddl_change_structure_exception $e) {
-            $this->reset_caches();
+            $this->reset_caches($tablenames);
             throw $e;
         }
 
-        $this->reset_caches();
+        $this->reset_caches($tablenames);
         return true;
     }
 
@@ -1277,6 +1288,24 @@ class sqlsrv_native_moodle_database extends moodle_database {
         }
 
         return $this->collation;
+    }
+
+    public function sql_equal($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notequal = false) {
+        $equalop = $notequal ? '<>' : '=';
+        $collation = $this->get_collation();
+
+        if ($casesensitive) {
+            $collation = str_replace('_CI', '_CS', $collation);
+        } else {
+            $collation = str_replace('_CS', '_CI', $collation);
+        }
+        if ($accentsensitive) {
+            $collation = str_replace('_AI', '_AS', $collation);
+        } else {
+            $collation = str_replace('_AS', '_AI', $collation);
+        }
+
+        return "$fieldname COLLATE $collation $equalop $param";
     }
 
     /**

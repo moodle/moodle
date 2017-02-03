@@ -184,7 +184,6 @@ if (!empty($instanceid) && !empty($roleid)) {
     }
     $table->define_baseurl($baseurl);
 
-    $table->set_attribute('cellpadding','5');
     $table->set_attribute('class', 'generaltable generalbox reporttable');
 
     $table->sortable(true,'lastname','ASC');
@@ -336,11 +335,13 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     echo '<h2>'.get_string('counteditems', '', $a).'</h2>'."\n";
 
-    echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform">'."\n";
-    echo '<div>'."\n";
-    echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
-    echo '<input type="hidden" name="returnto" value="'. s($PAGE->url) .'" />'."\n";
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
+    if (!empty($CFG->messaging)) {
+        echo '<form action="'.$CFG->wwwroot.'/user/action_redir.php" method="post" id="studentsform">'."\n";
+        echo '<div>'."\n";
+        echo '<input type="hidden" name="id" value="'.$id.'" />'."\n";
+        echo '<input type="hidden" name="returnto" value="'. s($PAGE->url) .'" />'."\n";
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />'."\n";
+    }
 
     foreach ($users as $u) {
         $data = array();
@@ -369,26 +370,27 @@ if (!empty($instanceid) && !empty($roleid)) {
     }
 
     if (!empty($CFG->messaging)) {
-        echo '<div class="selectbuttons">';
-        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> '."\n";
-        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> '."\n";
+        $buttonclasses = 'btn btn-secondary';
+        echo '<div class="selectbuttons btn-group">';
+        echo '<input type="button" id="checkall" value="'.get_string('selectall').'" class="'. $buttonclasses .'"> '."\n";
+        echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" class="'. $buttonclasses .'"> '."\n";
         if ($perpage >= $matchcount) {
-            echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" />'."\n";
+            echo '<input type="button" id="checknos" value="'.get_string('selectnos').'" class="'. $buttonclasses .'">'."\n";
         }
         echo '</div>';
-        echo '<div>';
+        echo '<div class="p-y-1">';
         echo html_writer::label(get_string('withselectedusers'), 'formactionselect');
         $displaylist['messageselect.php'] = get_string('messageselectadd');
         echo html_writer::select($displaylist, 'formaction', '', array('' => 'choosedots'), array('id' => 'formactionselect'));
         echo $OUTPUT->help_icon('withselectedusers');
-        echo '<input type="submit" value="' . get_string('ok') . '" />'."\n";
+        echo '<input type="submit" value="' . get_string('ok') . '" class="'. $buttonclasses .'"/>'."\n";
         echo '</div>';
         echo '</div>'."\n";
         echo '</form>'."\n";
-        echo '</div>'."\n";
 
         $PAGE->requires->js_init_call('M.report_participation.init');
     }
+    echo '</div>'."\n";
 }
 
 echo $OUTPUT->footer();

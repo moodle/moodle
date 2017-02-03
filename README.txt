@@ -1,29 +1,28 @@
-QUICK INSTALL
-=============
+                                 .-..-.
+   _____                         | || |
+  /____/-.---_  .---.  .---.  .-.| || | .---.
+  | |  _   _  |/  _  \/  _  \/  _  || |/  __ \
+  * | | | | | || |_| || |_| || |_| || || |___/
+    |_| |_| |_|\_____/\_____/\_____||_|\_____)
 
-For the impatient, here is a basic outline of the
-installation process, which normally takes me only
-a few minutes:
+Moodle - the world's open source learning platform
 
-1) Move the Moodle files into your web directory.
+Moodle <https://moodle.org> is a learning platform designed to provide
+educators, administrators and learners with a single robust, secure and
+integrated system to create personalised learning environments.
 
-2) Create a single database for Moodle to store all
-   its tables in (or choose an existing database).
+You can download Moodle <https://download.moodle.org> and run it on your own
+web server, ask one of our Moodle Partners <https://moodle.com/partners/> to
+assist you, or have a MoodleCloud site <https://moodle.com/cloud/> set up for
+you.
 
-3) Visit your Moodle site with a browser, you should
-   be taken to the install.php script, which will lead
-   you through creating a config.php file and then
-   setting up Moodle, creating an admin account etc.
+Moodle is widely used around the world by universities, schools, companies and
+all manner of organisations and individuals.
 
-4) Set up a cron task to call the file admin/cron.php
-   every five minutes or so.
+Moodle is provided freely as open source software, under the GNU General Public
+License <https://docs.moodle.org/dev/License>.
 
+Moodle is written in PHP and JavaScript and uses an SQL database for storing
+the data.
 
-For more information, see the INSTALL DOCUMENTATION:
-
-   http://docs.moodle.org/en/Installing_Moodle
-
-
-Good luck and have fun!
-Martin Dougiamas, Lead Developer
-
+See <https://docs.moodle.org> for details of Moodle's many features.

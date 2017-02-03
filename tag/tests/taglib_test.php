@@ -326,11 +326,11 @@ class core_tag_taglib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for function tag_compute_correlations() that is part of tag cron
+     * Prepares environment for testing tag correlations
+     * @return core_tag_tag[] list of used tags
      */
-    public function test_correlations() {
+    protected function prepare_correlated() {
         global $DB;
-        $task = new \core\task\tag_cron_task();
 
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
@@ -353,13 +353,24 @@ class core_tag_taglib_testcase extends advanced_testcase {
         core_tag_tag::set_item_tags('core', 'user', $user6->id, context_user::instance($user6->id), array('dog', 'dogs', 'puppy'));
 
         $tags = core_tag_tag::get_by_name_bulk(core_tag_collection::get_default(),
-            array('cat', 'cats', 'dog', 'dogs', 'kitten', 'puppy'));
-        $tags = array_map(function ($t) {
-            return $t->id;
-        }, $tags);
+            array('cat', 'cats', 'dog', 'dogs', 'kitten', 'puppy'), '*');
 
         // Add manual relation between tags 'cat' and 'kitten'.
-        core_tag_tag::get($tags['cat'])->set_related_tags(array('kitten'));
+        core_tag_tag::get($tags['cat']->id)->set_related_tags(array('kitten'));
+
+        return $tags;
+    }
+
+    /**
+     * Test for function tag_compute_correlations() that is part of tag cron
+     */
+    public function test_correlations() {
+        global $DB;
+        $task = new \core\task\tag_cron_task();
+
+        $tags = array_map(function ($t) {
+            return $t->id;
+        }, $this->prepare_correlated());
 
         $task->compute_correlations();
 
@@ -471,17 +482,17 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $defaultcoll = core_tag_collection::get_default();
 
-        // Setting tags will create non-official tags 'cat', 'dog' and 'fish'.
+        // Setting tags will create non-standard tags 'cat', 'dog' and 'fish'.
         core_tag_tag::set_item_tags('core', 'user', $user->id, context_user::instance($user->id), array('cat', 'dog', 'fish'));
 
         $this->assertTrue($DB->record_exists('tag', array('name' => 'cat')));
         $this->assertTrue($DB->record_exists('tag', array('name' => 'dog')));
         $this->assertTrue($DB->record_exists('tag', array('name' => 'fish')));
 
-        // Make tag 'dog' official.
+        // Make tag 'dog' standard.
         $dogtag = core_tag_tag::get_by_name($defaultcoll, 'dog', '*');
         $fishtag = core_tag_tag::get_by_name($defaultcoll, 'fish');
-        $dogtag->update(array('tagtype' => 'official'));
+        $dogtag->update(array('isstandard' => 1));
 
         // Manually remove the instances pointing on tags 'dog' and 'fish'.
         $DB->execute('DELETE FROM {tag_instance} WHERE tagid in (?,?)', array($dogtag->id, $fishtag->id));
@@ -489,8 +500,8 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Call tag_cleanup().
         $task->cleanup();
 
-        // Tag 'cat' is still present because it's used. Tag 'dog' is present because it's official.
-        // Tag 'fish' was removed because it is not official and it is no longer used by anybody.
+        // Tag 'cat' is still present because it's used. Tag 'dog' is present because it's standard.
+        // Tag 'fish' was removed because it is not standard and it is no longer used by anybody.
         $this->assertTrue($DB->record_exists('tag', array('name' => 'cat')));
         $this->assertTrue($DB->record_exists('tag', array('name' => 'dog')));
         $this->assertFalse($DB->record_exists('tag', array('name' => 'fish')));
@@ -705,9 +716,9 @@ class core_tag_taglib_testcase extends advanced_testcase {
         core_tag_tag::set_item_tags('core', 'user', $user2->id, context_user::instance($user2->id),
                 array('Tag2', 'Tag3'));
         $this->getDataGenerator()->create_tag(array('rawname' => 'Tag4',
-            'tagcollid' => $collid1, 'tagtype' => 'official'));
+            'tagcollid' => $collid1, 'isstandard' => 1));
         $this->getDataGenerator()->create_tag(array('rawname' => 'Tag5',
-            'tagcollid' => $collid2, 'tagtype' => 'official'));
+            'tagcollid' => $collid2, 'isstandard' => 1));
 
         return array($collid1, $collid2, $user1, $user2, $blogpost);
     }
@@ -719,6 +730,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Move 'user' area from collection 1 to collection 2, make sure tags were moved completely.
         $tagarea = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagarea, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         $this->assertEquals(array('Tag4'),
                 $DB->get_fieldset_select('tag', 'rawname', 'tagcollid = ? ORDER BY name', array($collid1)));
@@ -738,6 +755,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Move 'user' area from collection 1 to collection 2, make sure tag Tag2 was moved and tags Tag1 and Tag3 were duplicated.
         $tagareauser = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagareauser, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         $this->assertEquals(array('Tag1', 'Tag3', 'Tag4'),
                 $DB->get_fieldset_select('tag', 'rawname', 'tagcollid = ? ORDER BY name', array($collid1)));
@@ -763,6 +786,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // make sure tag Tag2 was moved and tags Tag1 and Tag3 were merged into existing.
         $tagareauser = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagareauser, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         $this->assertEquals(array('Tag4'),
                 $DB->get_fieldset_select('tag', 'rawname', 'tagcollid = ? ORDER BY name', array($collid1)));
@@ -790,6 +819,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Move 'user' area from collection 1 to collection 2, make sure tags were moved completely.
         $tagarea = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagarea, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         $this->assertEquals(array('Tag1', 'Tag2', 'Tag4'),
                 $DB->get_fieldset_select('tag', 'rawname', 'tagcollid = ? ORDER BY name', array($collid1)));
@@ -820,7 +855,7 @@ class core_tag_taglib_testcase extends advanced_testcase {
 
         // We already have Tag1 in coll1, now let's create it in coll3.
         $extratag1 = $this->getDataGenerator()->create_tag(array('rawname' => 'Tag1',
-            'tagcollid' => $collid3, 'tagtype' => 'official'));
+            'tagcollid' => $collid3, 'isstandard' => 1));
 
         // Artificially add 'Tag1' from coll3 to user2.
         $DB->insert_record('tag_instance', array('tagid' => $extratag1->id, 'itemtype' => 'user',
@@ -836,6 +871,12 @@ class core_tag_taglib_testcase extends advanced_testcase {
         // Move user interests tag area into coll2.
         $tagarea = $DB->get_record('tag_area', array('itemtype' => 'user', 'component' => 'core'));
         core_tag_area::update($tagarea, array('tagcollid' => $collid2));
+
+        $tagsaftermove = $DB->get_records('tag');
+        foreach ($tagsaftermove as $tag) {
+            // Confirm that the time modified has not been unset.
+            $this->assertNotEmpty($tag->timemodified);
+        }
 
         // Now all tags are correctly moved to the new collection and both tags 'Tag1' were merged.
         $user1tags = array_values(core_tag_tag::get_item_tags('core', 'user', $user1->id));
@@ -887,5 +928,141 @@ class core_tag_taglib_testcase extends advanced_testcase {
         $this->assertEquals('Dog', $tags3['dog']->rawname);
         $this->assertEquals('mouse', $tags3['mouse']->rawname);
 
+    }
+
+    /**
+     * Testing function core_tag_tag::combine_tags()
+     */
+    public function test_combine_tags() {
+        $initialtags = array(
+            array('Cat', 'Dog'),
+            array('Dog', 'Cat'),
+            array('Cats', 'Hippo'),
+            array('Hippo', 'Cats'),
+            array('Cat', 'Mouse', 'Kitten'),
+            array('Cats', 'Mouse', 'Kitten'),
+            array('Kitten', 'Mouse', 'Cat'),
+            array('Kitten', 'Mouse', 'Cats'),
+            array('Cats', 'Mouse', 'Kitten'),
+            array('Mouse', 'Hippo')
+        );
+
+        $finaltags = array(
+            array('Cat', 'Dog'),
+            array('Dog', 'Cat'),
+            array('Cat', 'Hippo'),
+            array('Hippo', 'Cat'),
+            array('Cat', 'Mouse'),
+            array('Cat', 'Mouse'),
+            array('Mouse', 'Cat'),
+            array('Mouse', 'Cat'),
+            array('Cat', 'Mouse'),
+            array('Mouse', 'Hippo')
+        );
+
+        $collid = core_tag_collection::get_default();
+        $context = context_system::instance();
+        foreach ($initialtags as $id => $taglist) {
+            core_tag_tag::set_item_tags('core', 'course', $id + 10, $context, $initialtags[$id]);
+        }
+
+        core_tag_tag::get_by_name($collid, 'Cats', '*')->update(array('isstandard' => 1));
+
+        // Combine tags 'Cats' and 'Kitten' into 'Cat'.
+        $cat = core_tag_tag::get_by_name($collid, 'Cat', '*');
+        $cats = core_tag_tag::get_by_name($collid, 'Cats', '*');
+        $kitten = core_tag_tag::get_by_name($collid, 'Kitten', '*');
+        $cat->combine_tags(array($cats, $kitten));
+
+        foreach ($finaltags as $id => $taglist) {
+            $this->assertEquals($taglist,
+                array_values(core_tag_tag::get_item_tags_array('core', 'course', $id + 10)),
+                    'Original array ('.join(', ', $initialtags[$id]).')');
+        }
+
+        // Ensure combined tags are deleted and 'Cat' is now official (because 'Cats' was official).
+        $this->assertEmpty(core_tag_tag::get_by_name($collid, 'Cats'));
+        $this->assertEmpty(core_tag_tag::get_by_name($collid, 'Kitten'));
+        $cattag = core_tag_tag::get_by_name($collid, 'Cat', '*');
+        $this->assertEquals(1, $cattag->isstandard);
+    }
+
+    /**
+     * Testing function core_tag_tag::combine_tags() when related tags are present.
+     */
+    public function test_combine_tags_with_related() {
+        $collid = core_tag_collection::get_default();
+        $context = context_system::instance();
+        core_tag_tag::set_item_tags('core', 'course', 10, $context, array('Cat', 'Cats', 'Dog'));
+        core_tag_tag::get_by_name($collid, 'Cat', '*')->set_related_tags(array('Kitty'));
+        core_tag_tag::get_by_name($collid, 'Cats', '*')->set_related_tags(array('Cat', 'Kitten', 'Kitty'));
+
+        // Combine tags 'Cats' into 'Cat'.
+        $cat = core_tag_tag::get_by_name($collid, 'Cat', '*');
+        $cats = core_tag_tag::get_by_name($collid, 'Cats', '*');
+        $cat->combine_tags(array($cats));
+
+        // Ensure 'Cat' is now related to 'Kitten' and 'Kitty' (order of related tags may be random).
+        $relatedtags = array_map(function($t) {return $t->rawname;}, $cat->get_manual_related_tags());
+        sort($relatedtags);
+        $this->assertEquals(array('Kitten', 'Kitty'), array_values($relatedtags));
+    }
+
+    /**
+     * Testing function core_tag_tag::combine_tags() when correlated tags are present.
+     */
+    public function test_combine_tags_with_correlated() {
+        $task = new \core\task\tag_cron_task();
+
+        $tags = $this->prepare_correlated();
+
+        $task->compute_correlations();
+        // Now 'cat' is correlated with 'cats'.
+        // Also 'dog', 'dogs' and 'puppy' are correlated.
+        // There is a manual relation between 'cat' and 'kitten'.
+        // See function test_correlations() for assertions.
+
+        // Combine tags 'dog' and 'kitten' into 'cat' and make sure that cat is now correlated with dogs and puppy.
+        $tags['cat']->combine_tags(array($tags['dog'], $tags['kitten']));
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['cat']);
+        $this->assertEquals(['cats', 'dogs', 'puppy'], $correlatedtags);
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['dogs']);
+        $this->assertEquals(['cat', 'puppy'], $correlatedtags);
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['puppy']);
+        $this->assertEquals(['cat', 'dogs'], $correlatedtags);
+
+        // Add tag that does not have any correlations.
+        $user7 = $this->getDataGenerator()->create_user();
+        core_tag_tag::set_item_tags('core', 'user', $user7->id, context_user::instance($user7->id), array('hippo'));
+        $tags['hippo'] = core_tag_tag::get_by_name(core_tag_collection::get_default(), 'hippo', '*');
+
+        // Combine tag 'cat' into 'hippo'. Now 'hippo' should have the same correlations 'cat' used to have and also
+        // tags 'dogs' and 'puppy' should have 'hippo' in correlations.
+        $tags['hippo']->combine_tags(array($tags['cat']));
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['hippo']);
+        $this->assertEquals(['cats', 'dogs', 'puppy'], $correlatedtags);
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['dogs']);
+        $this->assertEquals(['hippo', 'puppy'], $correlatedtags);
+
+        $correlatedtags = $this->get_correlated_tags_names($tags['puppy']);
+        $this->assertEquals(['dogs', 'hippo'], $correlatedtags);
+    }
+
+    /**
+     * Help method to return sorted array of names of correlated tags to use for assertions
+     * @param core_tag $tag
+     * @return string
+     */
+    protected function get_correlated_tags_names($tag) {
+        $rv = array_map(function($t) {
+            return $t->rawname;
+        }, $tag->get_correlated_tags());
+        sort($rv);
+        return array_values($rv);
     }
 }

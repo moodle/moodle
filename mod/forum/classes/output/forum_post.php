@@ -34,76 +34,76 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @property boolean $viewfullnames Whether to override fullname()
  */
-class forum_post implements \renderable {
+class forum_post implements \renderable, \templatable {
 
     /**
      * The course that the forum post is in.
      *
      * @var object $course
      */
-    private $course = null;
+    protected $course = null;
 
     /**
      * The course module for the forum.
      *
      * @var object $cm
      */
-    private $cm = null;
+    protected $cm = null;
 
     /**
      * The forum that the post is in.
      *
      * @var object $forum
      */
-    private $forum = null;
+    protected $forum = null;
 
     /**
      * The discussion that the forum post is in.
      *
      * @var object $discussion
      */
-    private $discussion = null;
+    protected $discussion = null;
 
     /**
      * The forum post being displayed.
      *
      * @var object $post
      */
-    private $post = null;
+    protected $post = null;
 
     /**
      * Whether the user can reply to this post.
      *
      * @var boolean $canreply
      */
-    private $canreply = false;
+    protected $canreply = false;
 
     /**
      * Whether to override forum display when displaying usernames.
      * @var boolean $viewfullnames
      */
-    private $viewfullnames = false;
+    protected $viewfullnames = false;
 
     /**
      * The user that is reading the post.
      *
      * @var object $userto
      */
-    private $userto = null;
+    protected $userto = null;
 
     /**
      * The user that wrote the post.
      *
      * @var object $author
      */
-    private $author = null;
+    protected $author = null;
 
     /**
      * An associative array indicating which keys on this object should be writeable.
      *
      * @var array $writablekeys
      */
-    private $writablekeys = array(
+    protected $writablekeys = array(
         'viewfullnames'    => true,
     );
 
@@ -134,9 +134,65 @@ class forum_post implements \renderable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param \mod_forum_renderer $renderer The render to be used for formatting the message and attachments
+     * @param bool $plaintext Whethe the target is a plaintext target
      * @return stdClass Data ready for use in a mustache template
      */
-    public function export_for_template(\mod_forum_renderer $renderer) {
+    public function export_for_template(\renderer_base $renderer, $plaintext = false) {
+        if ($plaintext) {
+            return $this->export_for_template_text($renderer);
+        } else {
+            return $this->export_for_template_html($renderer);
+        }
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param \mod_forum_renderer $renderer The render to be used for formatting the message and attachments
+     * @return stdClass Data ready for use in a mustache template
+     */
+    protected function export_for_template_text(\mod_forum_renderer $renderer) {
+        return array(
+            'id'                            => html_entity_decode($this->post->id),
+            'coursename'                    => html_entity_decode($this->get_coursename()),
+            'courselink'                    => html_entity_decode($this->get_courselink()),
+            'forumname'                     => html_entity_decode($this->get_forumname()),
+            'showdiscussionname'            => html_entity_decode($this->get_showdiscussionname()),
+            'discussionname'                => html_entity_decode($this->get_discussionname()),
+            'subject'                       => html_entity_decode($this->get_subject()),
+            'authorfullname'                => html_entity_decode($this->get_author_fullname()),
+            'postdate'                      => html_entity_decode($this->get_postdate()),
+
+            // Format some components according to the renderer.
+            'message'                       => html_entity_decode($renderer->format_message_text($this->cm, $this->post)),
+            'attachments'                   => html_entity_decode($renderer->format_message_attachments($this->cm, $this->post)),
+
+            'canreply'                      => $this->canreply,
+            'permalink'                     => $this->get_permalink(),
+            'firstpost'                     => $this->get_is_firstpost(),
+            'replylink'                     => $this->get_replylink(),
+            'unsubscribediscussionlink'     => $this->get_unsubscribediscussionlink(),
+            'unsubscribeforumlink'          => $this->get_unsubscribeforumlink(),
+            'parentpostlink'                => $this->get_parentpostlink(),
+
+            'forumindexlink'                => $this->get_forumindexlink(),
+            'forumviewlink'                 => $this->get_forumviewlink(),
+            'discussionlink'                => $this->get_discussionlink(),
+
+            'authorlink'                    => $this->get_authorlink(),
+            'authorpicture'                 => $this->get_author_picture(),
+
+            'grouppicture'                  => $this->get_group_picture(),
+        );
+    }
+
+    /**
+     * Export this data so it can be used as the context for a mustache template.
+     *
+     * @param \mod_forum_renderer $renderer The render to be used for formatting the message and attachments
+     * @return stdClass Data ready for use in a mustache template
+     */
+    protected function export_for_template_html(\mod_forum_renderer $renderer) {
         return array(
             'id'                            => $this->post->id,
             'coursename'                    => $this->get_coursename(),
@@ -322,6 +378,9 @@ class forum_post implements \renderable {
      * @return string
      */
     public function get_unsubscribeforumlink() {
+        if (!\mod_forum\subscriptions::is_subscribable($this->forum)) {
+            return null;
+        }
         $link = new \moodle_url(
             '/mod/forum/subscribe.php', array(
                 'id' => $this->forum->id,
@@ -337,6 +396,9 @@ class forum_post implements \renderable {
      * @return string
      */
     public function get_unsubscribediscussionlink() {
+        if (!\mod_forum\subscriptions::is_subscribable($this->forum)) {
+            return null;
+        }
         $link = new \moodle_url(
             '/mod/forum/subscribe.php', array(
                 'id'  => $this->forum->id,
@@ -376,6 +438,26 @@ class forum_post implements \renderable {
      */
     public function get_postanchor() {
         return 'p' . $this->post->id;
+    }
+
+    /**
+     * ID number of the course that the forum is in.
+     *
+     * @return string
+     */
+    public function get_courseidnumber() {
+        return s($this->course->idnumber);
+    }
+
+    /**
+     * The full name of the course that the forum is in.
+     *
+     * @return string
+     */
+    public function get_coursefullname() {
+        return format_string($this->course->fullname, true, array(
+            'context' => \context_course::instance($this->course->id),
+        ));
     }
 
     /**
@@ -448,7 +530,14 @@ class forum_post implements \renderable {
      * @return string.
      */
     public function get_postdate() {
-        return userdate($this->post->modified, "", \core_date::get_user_timezone($this->get_postto()));
+        global $CFG;
+
+        $postmodified = $this->post->modified;
+        if (!empty($CFG->forum_enabletimedposts) && ($this->discussion->timestart > $postmodified)) {
+            $postmodified = $this->discussion->timestart;
+        }
+
+        return userdate($postmodified, "", \core_date::get_user_timezone($this->get_postto()));
     }
 
     /**

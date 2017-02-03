@@ -145,10 +145,11 @@ class file_info_context_system extends file_info {
      * @return array of file_info instances
      */
     public function get_children() {
-        global $DB, $USER;
+        global $DB;
 
         $children = array();
 
+        // Add course categories on the top level that are either visible or user is able to view hidden categories.
         $course_cats = $DB->get_records('course_categories', array('parent'=>0), 'sortorder', 'id,visible');
         foreach ($course_cats as $category) {
             $context = context_coursecat::instance($category->id);
@@ -160,18 +161,47 @@ class file_info_context_system extends file_info {
             }
         }
 
-        $courses = $DB->get_records('course', array('category'=>0), 'sortorder', 'id,visible');
-        foreach ($courses as $course) {
-            if (!$course->visible and !has_capability('moodle/course:viewhiddencourses', $context)) {
-                continue;
-            }
-            $context = context_course::instance($course->id);
-            if ($child = $this->browser->get_file_info($context)) {
-                $children[] = $child;
+        // Add courses where user is enrolled that are located in hidden course categories because they would not
+        // be present in the above tree but user may still be able to access files in them.
+        if ($hiddencontexts = $this->get_inaccessible_coursecat_contexts()) {
+            $courses = enrol_get_my_courses();
+            foreach ($courses as $course) {
+                $context = context_course::instance($course->id);
+                $parents = $context->get_parent_context_ids();
+                if (array_intersect($hiddencontexts, $parents)) {
+                    // This course has hidden parent category.
+                    if ($child = $this->browser->get_file_info($context)) {
+                        $children[] = $child;
+                    }
+                }
             }
         }
 
         return $children;
+    }
+
+    /**
+     * Returns list of course categories contexts that current user can not see
+     *
+     * @return array array of course categories contexts ids
+     */
+    protected function get_inaccessible_coursecat_contexts() {
+        global $DB;
+
+        $sql = context_helper::get_preload_record_columns_sql('ctx');
+        $records = $DB->get_records_sql("SELECT ctx.id, $sql
+            FROM {course_categories} c
+            JOIN {context} ctx ON c.id = ctx.instanceid AND ctx.contextlevel = ?
+            WHERE c.visible = ?", [CONTEXT_COURSECAT, 0]);
+        $hiddencontexts = [];
+        foreach ($records as $record) {
+            context_helper::preload_from_record($record);
+            $context = context::instance_by_id($record->id);
+            if (!has_capability('moodle/category:viewhiddencategories', $context)) {
+                $hiddencontexts[] = $record->id;
+            }
+        }
+        return $hiddencontexts;
     }
 
     /**

@@ -218,6 +218,47 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame(0, $curl->get_errno());
     }
 
+    /**
+     * Test a curl basic request with security enabled.
+     */
+    public function test_curl_basics_with_security_helper() {
+        $this->resetAfterTest();
+
+        // Test a request with a basic hostname filter applied.
+        $testhtml = $this->getExternalTestFileUrl('/test.html');
+        $url = new moodle_url($testhtml);
+        $host = $url->get_host();
+        set_config('curlsecurityblockedhosts', $host); // Blocks $host.
+
+        // Create curl with the default security enabled. We expect this to be blocked.
+        $curl = new curl();
+        $contents = $curl->get($testhtml);
+        $expected = $curl->get_security()->get_blocked_url_string();
+        $this->assertSame($expected, $contents);
+        $this->assertSame(0, $curl->get_errno());
+
+        // Now, create a curl using the 'ignoresecurity' override.
+        // We expect this request to pass, despite the admin setting having been set earlier.
+        $curl = new curl(['ignoresecurity' => true]);
+        $contents = $curl->get($testhtml);
+        $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+        $this->assertSame(0, $curl->get_errno());
+
+        // Now, try injecting a mock security helper into curl. This will override the default helper.
+        $mockhelper = $this->getMockBuilder('\core\files\curl_security_helper')->getMock();
+
+        // Make the mock return a different string.
+        $mockhelper->expects($this->any())->method('get_blocked_url_string')->will($this->returnValue('You shall not pass'));
+
+        // And make the mock security helper block all URLs. This helper instance doesn't care about config.
+        $mockhelper->expects($this->any())->method('url_is_blocked')->will($this->returnValue(true));
+
+        $curl = new curl(['securityhelper' => $mockhelper]);
+        $contents = $curl->get($testhtml);
+        $this->assertSame('You shall not pass', $curl->get_security()->get_blocked_url_string());
+        $this->assertSame($curl->get_security()->get_blocked_url_string(), $contents);
+    }
+
     public function test_curl_redirects() {
         global $CFG;
 
@@ -851,6 +892,7 @@ EOF;
                 get_mimetype_description(array('filename' => 'test.frog')));
 
         // Test custom description using multilang filter.
+        filter_manager::reset_caches();
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', true);
         core_filetypes::update_type('frog', 'frog', 'application/x-frog', 'document',
@@ -950,6 +992,242 @@ EOF;
         $this->assertSame('200 OK', reset($response));
         $this->assertSame(0, $extcurl->get_errno());
         $this->assertSame('', $contents);
+    }
+
+    /**
+     * Test file_rewrite_pluginfile_urls.
+     */
+    public function test_file_rewrite_pluginfile_urls() {
+
+        $syscontext = context_system::instance();
+        $originaltext = 'Fake test with an image <img src="@@PLUGINFILE@@/image.png">';
+
+        // Do the rewrite.
+        $finaltext = file_rewrite_pluginfile_urls($originaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0);
+        $this->assertContains("pluginfile.php", $finaltext);
+
+        // Now undo.
+        $options = array('reverse' => true);
+        $finaltext = file_rewrite_pluginfile_urls($finaltext, 'pluginfile.php', $syscontext->id, 'user', 'private', 0, $options);
+
+        // Compare the final text is the same that the original.
+        $this->assertEquals($originaltext, $finaltext);
+    }
+
+    /**
+     * Helpter function to create draft files
+     *
+     * @param  array  $filedata data for the file record (to not use defaults)
+     * @return stored_file the stored file instance
+     */
+    public static function create_draft_file($filedata = array()) {
+        global $USER;
+
+        self::setAdminUser();
+        $fs = get_file_storage();
+
+        $filerecord = array(
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => isset($filedata['itemid']) ? $filedata['itemid'] : file_get_unused_draft_itemid(),
+            'author'    => isset($filedata['author']) ? $filedata['author'] : fullname($USER),
+            'filepath'  => isset($filedata['filepath']) ? $filedata['filepath'] : '/',
+            'filename'  => isset($filedata['filename']) ? $filedata['filename'] : 'file.txt',
+        );
+
+        if (isset($filedata['contextid'])) {
+            $filerecord['contextid'] = $filedata['contextid'];
+        } else {
+            $usercontext = context_user::instance($USER->id);
+            $filerecord['contextid'] = $usercontext->id;
+        }
+        $source = isset($filedata['source']) ? $filedata['source'] : serialize((object)array('source' => 'From string'));
+        $content = isset($filedata['content']) ? $filedata['content'] : 'some content here';
+
+        $file = $fs->create_file_from_string($filerecord, $content);
+        $file->set_source($source);
+
+        return $file;
+    }
+
+    /**
+     * Test file_merge_files_from_draft_area_into_filearea
+     */
+    public function test_file_merge_files_from_draft_area_into_filearea() {
+        global $USER, $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+        $usercontext = context_user::instance($USER->id);
+
+        // Create a draft file.
+        $filename = 'data.txt';
+        $filerecord = array(
+            'filename'  => $filename,
+        );
+        $file = self::create_draft_file($filerecord);
+        $draftitemid = $file->get_itemid();
+
+        $maxbytes = $CFG->userquota;
+        $maxareabytes = $CFG->userquota;
+        $options = array('subdirs' => 1,
+                         'maxbytes' => $maxbytes,
+                         'maxfiles' => -1,
+                         'areamaxbytes' => $maxareabytes);
+
+        // Add new file.
+        file_merge_files_from_draft_area_into_filearea($draftitemid, $usercontext->id, 'user', 'private', 0, $options);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        // Directory and file.
+        $this->assertCount(2, $files);
+        $found = false;
+        foreach ($files as $file) {
+            if (!$file->is_directory()) {
+                $found = true;
+                $this->assertEquals($filename, $file->get_filename());
+                $this->assertEquals('some content here', $file->get_content());
+            }
+        }
+        $this->assertTrue($found);
+
+        // Add two more files.
+        $filerecord = array(
+            'itemid'  => $draftitemid,
+            'filename'  => 'second.txt',
+        );
+        self::create_draft_file($filerecord);
+        $filerecord = array(
+            'itemid'  => $draftitemid,
+            'filename'  => 'third.txt',
+        );
+        $file = self::create_draft_file($filerecord);
+
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $usercontext->id, 'user', 'private', 0, $options);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(4, $files);
+
+        // Update contents of one file.
+        $filerecord = array(
+            'filename'  => 'second.txt',
+            'content'  => 'new content',
+        );
+        $file = self::create_draft_file($filerecord);
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $usercontext->id, 'user', 'private', 0, $options);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(4, $files);
+        $found = false;
+        foreach ($files as $file) {
+            if ($file->get_filename() == 'second.txt') {
+                $found = true;
+                $this->assertEquals('new content', $file->get_content());
+            }
+        }
+        $this->assertTrue($found);
+
+        // Update author.
+        // Set different author in the current file.
+        foreach ($files as $file) {
+            if ($file->get_filename() == 'second.txt') {
+                $file->set_author('Nobody');
+            }
+        }
+        $filerecord = array(
+            'filename'  => 'second.txt',
+        );
+        $file = self::create_draft_file($filerecord);
+
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $usercontext->id, 'user', 'private', 0, $options);
+
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(4, $files);
+        $found = false;
+        foreach ($files as $file) {
+            if ($file->get_filename() == 'second.txt') {
+                $found = true;
+                $this->assertEquals(fullname($USER), $file->get_author());
+            }
+        }
+        $this->assertTrue($found);
+
+    }
+
+    /**
+     * Test max area bytes for file_merge_files_from_draft_area_into_filearea
+     */
+    public function test_file_merge_files_from_draft_area_into_filearea_max_area_bytes() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $file = self::create_draft_file();
+        $options = array('subdirs' => 1,
+                         'maxbytes' => 5,
+                         'maxfiles' => -1,
+                         'areamaxbytes' => 10);
+
+        // Add new file.
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $file->get_contextid(), 'user', 'private', 0, $options);
+        $usercontext = context_user::instance($USER->id);
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(0, $files);
+    }
+
+    /**
+     * Test max file bytes for file_merge_files_from_draft_area_into_filearea
+     */
+    public function test_file_merge_files_from_draft_area_into_filearea_max_file_bytes() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $file = self::create_draft_file();
+        $options = array('subdirs' => 1,
+                         'maxbytes' => 1,
+                         'maxfiles' => -1,
+                         'areamaxbytes' => 100);
+
+        // Add new file.
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $file->get_contextid(), 'user', 'private', 0, $options);
+        $usercontext = context_user::instance($USER->id);
+        // Check we only get the base directory, not a new file.
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(1, $files);
+        $file = array_shift($files);
+        $this->assertTrue($file->is_directory());
+    }
+
+    /**
+     * Test max file number for file_merge_files_from_draft_area_into_filearea
+     */
+    public function test_file_merge_files_from_draft_area_into_filearea_max_files() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $fs = get_file_storage();
+
+        $file = self::create_draft_file();
+        $options = array('subdirs' => 1,
+                         'maxbytes' => 1000,
+                         'maxfiles' => 0,
+                         'areamaxbytes' => 1000);
+
+        // Add new file.
+        file_merge_files_from_draft_area_into_filearea($file->get_itemid(), $file->get_contextid(), 'user', 'private', 0, $options);
+        $usercontext = context_user::instance($USER->id);
+        // Check we only get the base directory, not a new file.
+        $files = $fs->get_area_files($usercontext->id, 'user', 'private', 0);
+        $this->assertCount(1, $files);
+        $file = array_shift($files);
+        $this->assertTrue($file->is_directory());
     }
 }
 

@@ -99,13 +99,15 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
         assign_capability('mod/imscp:view', CAP_PROHIBIT, $studentrole->id, $context->id);
+        // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
 
         try {
             mod_imscp_external::view_imscp($imscp->id);
             $this->fail('Exception expected due to missing capability.');
         } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
+            $this->assertEquals('requireloginerror', $e->errorcode);
         }
 
     }
@@ -168,10 +170,12 @@ class mod_imscp_external_testcase extends externallib_advanced_testcase {
         $contextcourse1 = context_course::instance($course1->id);
         // Prohibit capability = mod:imscp:view on Course1 for students.
         assign_capability('mod/imscp:view', CAP_PROHIBIT, $studentrole->id, $contextcourse1->id);
+        // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
 
         $imscps = mod_imscp_external::get_imscps_by_courses(array($course1->id));
         $imscps = external_api::clean_returnvalue(mod_imscp_external::get_imscps_by_courses_returns(), $imscps);
-        $this->assertFalse(isset($imscps['imscps'][0]['intro']));
+        $this->assertCount(0, $imscps['imscps']);
     }
 }

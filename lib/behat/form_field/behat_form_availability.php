@@ -74,7 +74,7 @@ class behat_form_availability extends behat_form_textarea {
                     // Set a grouping condition.
                     $driver->click('//div[@class="availability-button"]/button');
                     $driver->click('//button[@id="availability_addrestriction_grouping"]');
-                    $escparam = $this->session->getSelectorsHandler()->xpathLiteral($param);
+                    $escparam = behat_context_helper::escape($param);
                     $nodes = $driver->find(
                             '//span[contains(concat(" " , @class, " "), " availability_grouping ")]//' .
                             'option[normalize-space(.) = ' . $escparam . ']');

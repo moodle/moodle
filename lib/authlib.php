@@ -465,6 +465,18 @@ class auth_plugin_base {
     }
 
     /**
+     * Pre user_login hook.
+     * This method is called from authenticate_user_login() right after the user
+     * object is generated. This gives the auth plugins an option to make adjustments
+     * before the verification process starts.
+     *
+     * @param object $user user object, later used for $USER
+     */
+    public function pre_user_login_hook(&$user) {
+        // Override if needed.
+    }
+
+    /**
      * Post authentication hook.
      * This method is called from authenticate_user_login() for all enabled auth plugins.
      *
@@ -783,4 +795,142 @@ function login_unlock_account($user) {
     unset_user_preference('login_failed_last', $user);
 
     // Note: do not clear the lockout secret because user might click on the link repeatedly.
+}
+
+/**
+ * Returns whether or not the captcha element is enabled, and the admin settings fulfil its requirements.
+ * @return bool
+ */
+function signup_captcha_enabled() {
+    global $CFG;
+    $authplugin = get_auth_plugin($CFG->registerauth);
+    return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && $authplugin->is_captcha_enabled();
+}
+
+/**
+ * Validates the standard sign-up data (except recaptcha that is validated by the form element).
+ *
+ * @param  array $data  the sign-up data
+ * @param  array $files files among the data
+ * @return array list of errors, being the key the data element name and the value the error itself
+ * @since Moodle 3.2
+ */
+function signup_validate_data($data, $files) {
+    global $CFG, $DB;
+
+    $errors = array();
+    $authplugin = get_auth_plugin($CFG->registerauth);
+
+    if ($DB->record_exists('user', array('username' => $data['username'], 'mnethostid' => $CFG->mnet_localhost_id))) {
+        $errors['username'] = get_string('usernameexists');
+    } else {
+        // Check allowed characters.
+        if ($data['username'] !== core_text::strtolower($data['username'])) {
+            $errors['username'] = get_string('usernamelowercase');
+        } else {
+            if ($data['username'] !== core_user::clean_field($data['username'], 'username')) {
+                $errors['username'] = get_string('invalidusername');
+            }
+
+        }
+    }
+
+    // Check if user exists in external db.
+    // TODO: maybe we should check all enabled plugins instead.
+    if ($authplugin->user_exists($data['username'])) {
+        $errors['username'] = get_string('usernameexists');
+    }
+
+    if (! validate_email($data['email'])) {
+        $errors['email'] = get_string('invalidemail');
+
+    } else if ($DB->record_exists('user', array('email' => $data['email']))) {
+        $errors['email'] = get_string('emailexists').' <a href="forgot_password.php">'.get_string('newpassword').'?</a>';
+    }
+    if (empty($data['email2'])) {
+        $errors['email2'] = get_string('missingemail');
+
+    } else if ($data['email2'] != $data['email']) {
+        $errors['email2'] = get_string('invalidemail');
+    }
+    if (!isset($errors['email'])) {
+        if ($err = email_is_not_allowed($data['email'])) {
+            $errors['email'] = $err;
+        }
+    }
+
+    $errmsg = '';
+    if (!check_password_policy($data['password'], $errmsg)) {
+        $errors['password'] = $errmsg;
+    }
+
+    // Validate customisable profile fields. (profile_validation expects an object as the parameter with userid set).
+    $dataobject = (object)$data;
+    $dataobject->id = 0;
+    $errors += profile_validation($dataobject, $files);
+
+    return $errors;
+}
+
+/**
+ * Add the missing fields to a user that is going to be created
+ *
+ * @param  stdClass $user the new user object
+ * @return stdClass the user filled
+ * @since Moodle 3.2
+ */
+function signup_setup_new_user($user) {
+    global $CFG;
+
+    $user->confirmed   = 0;
+    $user->lang        = current_language();
+    $user->firstaccess = 0;
+    $user->timecreated = time();
+    $user->mnethostid  = $CFG->mnet_localhost_id;
+    $user->secret      = random_string(15);
+    $user->auth        = $CFG->registerauth;
+    // Initialize alternate name fields to empty strings.
+    $namefields = array_diff(get_all_user_name_fields(), useredit_get_required_name_fields());
+    foreach ($namefields as $namefield) {
+        $user->$namefield = '';
+    }
+    return $user;
+}
+
+/**
+ * Check if user confirmation is enabled on this site and return the auth plugin handling registration if enabled.
+ *
+ * @return stdClass the current auth plugin handling user registration or false if registration not enabled
+ * @since Moodle 3.2
+ */
+function signup_get_user_confirmation_authplugin() {
+    global $CFG;
+
+    if (empty($CFG->registerauth)) {
+        return false;
+    }
+    $authplugin = get_auth_plugin($CFG->registerauth);
+
+    if (!$authplugin->can_confirm()) {
+        return false;
+    }
+    return $authplugin;
+}
+
+/**
+ * Check if sign-up is enabled in the site. If is enabled, the function will return the authplugin instance.
+ *
+ * @return mixed false if sign-up is not enabled, the authplugin instance otherwise.
+ * @since  Moodle 3.2
+ */
+function signup_is_enabled() {
+    global $CFG;
+
+    if (!empty($CFG->registerauth)) {
+        $authplugin = get_auth_plugin($CFG->registerauth);
+        if ($authplugin->can_signup()) {
+            return $authplugin;
+        }
+    }
+    return false;
 }

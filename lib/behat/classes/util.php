@@ -114,6 +114,12 @@ class behat_util extends testing_util {
         // Enable web cron.
         set_config('cronclionly', 0);
 
+        // Set editor autosave to high value, so as to avoid unwanted ajax.
+        set_config('autosavefrequency', '604800', 'editor_atto');
+
+        // Set noreplyaddress to an example domain, as it should be valid email address and test site can be a localhost.
+        set_config('noreplyaddress', 'noreply@example.com');
+
         // Keeps the current version of database and dataroot.
         self::store_versions_hash();
 
@@ -133,25 +139,63 @@ class behat_util extends testing_util {
         }
 
         self::reset_dataroot();
-        self::drop_dataroot();
         self::drop_database(true);
+        self::drop_dataroot();
     }
 
     /**
-     * Checks if $CFG->behat_wwwroot is available
-     *
-     * @return bool
+     * Delete files and directories under dataroot.
      */
-    public static function is_server_running() {
+    public static function drop_dataroot() {
         global $CFG;
 
-        $request = new curl();
-        $request->get($CFG->behat_wwwroot);
-
-        if ($request->get_errno() === 0) {
-            return true;
+        // As behat directory is now created under default $CFG->behat_dataroot_parent, so remove the whole dir.
+        if ($CFG->behat_dataroot !== $CFG->behat_dataroot_parent) {
+            remove_dir($CFG->behat_dataroot, false);
+        } else {
+            // It should never come here.
+            throw new moodle_exception("Behat dataroot should not be same as parent behat data root.");
         }
-        return false;
+    }
+
+    /**
+     * Checks if $CFG->behat_wwwroot is available and using same versions for cli and web.
+     *
+     * @return void
+     */
+    public static function check_server_status() {
+        global $CFG;
+
+        $url = $CFG->behat_wwwroot . '/admin/tool/behat/tests/behat/fixtures/environment.php';
+
+        // Get web versions used by behat site.
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        $statuscode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($statuscode !== 200 || empty($result) || (!$result = json_decode($result, true))) {
+
+            behat_error (BEHAT_EXITCODE_REQUIREMENT, $CFG->behat_wwwroot . ' is not available, ensure you specified ' .
+                'correct url and that the server is set up and started.' . PHP_EOL . ' More info in ' .
+                behat_command::DOCS_URL . '#Running_tests' . PHP_EOL);
+        }
+
+        // Check if cli version is same as web version.
+        $clienv = self::get_environment();
+        if ($result != $clienv) {
+            $output = 'Differences detected between cli and webserver...'.PHP_EOL;
+            foreach ($result as $key => $version) {
+                if ($clienv[$key] != $version) {
+                    $output .= ' ' . $key . ': ' . PHP_EOL;
+                    $output .= ' - web server: ' . $version . PHP_EOL;
+                    $output .= ' - cli: ' . $clienv[$key] . PHP_EOL;
+                }
+            }
+            echo $output;
+            ob_flush();
+        }
     }
 
     /**
@@ -192,10 +236,14 @@ class behat_util extends testing_util {
      *
      * Stores a file in dataroot/behat to allow Moodle to switch
      * to the test environment when using cli-server.
+     * @param bool $themesuitewithallfeatures List themes to include core features.
+     * @param string $tags comma separated tag, which will be given preference while distributing features in parallel run.
+     * @param int $parallelruns number of parallel runs.
+     * @param int $run current run.
      * @throws coding_exception
      * @return void
      */
-    public static function start_test_mode() {
+    public static function start_test_mode($themesuitewithallfeatures = false, $tags = '', $parallelruns = 0, $run = 0) {
         global $CFG;
 
         if (!defined('BEHAT_UTIL')) {
@@ -211,7 +259,7 @@ class behat_util extends testing_util {
         self::test_environment_problem();
 
         // Updates all the Moodle features and steps definitions.
-        behat_config_manager::update_config_file();
+        behat_config_manager::update_config_file('', true, $tags, $themesuitewithallfeatures, $parallelruns, $run);
 
         if (self::is_test_mode_enabled()) {
             return;
@@ -257,6 +305,7 @@ class behat_util extends testing_util {
         }
 
         $testenvfile = self::get_test_file_path();
+        behat_config_manager::set_behat_run_config_value('behatsiteenabled', 0);
 
         if (!self::is_test_mode_enabled()) {
             echo "Test environment was already disabled\n";
@@ -289,8 +338,8 @@ class behat_util extends testing_util {
      * Returns the path to the file which specifies if test environment is enabled
      * @return string
      */
-    protected final static function get_test_file_path() {
-        return behat_command::get_behat_dir() . '/test_environment_enabled.txt';
+    public final static function get_test_file_path() {
+        return behat_command::get_parent_behat_dir() . '/test_environment_enabled.txt';
     }
 
     /**
@@ -319,5 +368,9 @@ class behat_util extends testing_util {
 
         // Inform data generator.
         self::get_data_generator()->reset();
+
+        // Initialise $CFG with default values. This is needed for behat cli process, so we don't have modified
+        // $CFG values from the old run. @see set_config.
+        initialise_cfg();
     }
 }

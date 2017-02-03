@@ -332,7 +332,7 @@ abstract class award_criteria {
      *
      */
     public function delete() {
-        global $DB;
+        global $DB, $PAGE;
 
         // Remove any records if it has already been met.
         $DB->delete_records('badge_criteria_met', array('critid' => $this->id));
@@ -342,6 +342,13 @@ abstract class award_criteria {
 
         // Finally remove criterion itself.
         $DB->delete_records('badge_criteria', array('id' => $this->id));
+
+        // Trigger event, badge criteria deleted.
+        $eventparams = array('objectid' => $this->id,
+            'context' => $PAGE->context,
+            'other' => array('badgeid' => $this->badgeid));
+        $event = \core\event\badge_criteria_deleted::create($eventparams);
+        $event->trigger();
     }
 
     /**
@@ -350,7 +357,7 @@ abstract class award_criteria {
      * @param array $params Values from the form or any other array.
      */
     public function save($params = array()) {
-        global $DB;
+        global $DB, $PAGE;
 
         // Figure out criteria description.
         // If it is coming from the form editor, it is an array(text, format).
@@ -385,6 +392,13 @@ abstract class award_criteria {
             // Update criteria before doing anything with parameters.
             $fordb->id = $cid;
             $DB->update_record('badge_criteria', $fordb, true);
+
+            // Trigger event: badge_criteria_updated.
+            $eventparams = array('objectid' => $this->id,
+                'context' => $PAGE->context,
+                'other' => array('badgeid' => $this->badgeid));
+            $event = \core\event\badge_criteria_updated::create($eventparams);
+            $event->trigger();
 
             $existing = $DB->get_fieldset_select('badge_criteria_param', 'name', 'critid = ?', array($cid));
             $todelete = array_diff($existing, $requiredkeys);
@@ -429,6 +443,12 @@ abstract class award_criteria {
                     $DB->insert_record('badge_criteria_param', $newp, false, true);
                 }
             }
+            // Trigger event: badge_criteria_created.
+            $eventparams = array('objectid' => $this->id,
+                'context' => $PAGE->context,
+                'other' => array('badgeid' => $this->badgeid));
+            $event = \core\event\badge_criteria_created::create($eventparams);
+            $event->trigger();
         }
         $t->allow_commit();
     }

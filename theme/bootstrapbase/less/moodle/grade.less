@@ -72,56 +72,12 @@
 }
 
 .gradingform_rubric.editor {
-    .addlevel, .addcriterion {
+    .addlevel,
+    .addcriterion {
         input {
             // Fallback for IE8: we use Bootstrap 2's button styles normally, but
             // IE8 ignores background-image: linear-gradient rules.
             background: #fff none no-repeat top left;
-        }
-    }
-}
-
-.dir-rtl {
-    #rubric-rubric.gradingform_rubric {
-        #rubric-criteria .criterion {
-            .level {
-                .score {
-                    text-align: right;
-                    float: right;
-                    margin-left: 28px;
-                    margin-right: 0px;
-                }
-                .delete {
-                    float: left;
-                    input {
-                        left: 0;
-                        right: auto;
-                    }
-                }
-            }
-        }
-        .addcriterion {
-            margin-right: 5px;
-            margin-left: 0px;
-
-            input {
-                padding-right: 26px;
-                padding-left: 10px;
-                background-position: right 8px top 8px;
-            }
-        }
-        .options {
-            .option {
-                .value {
-                    margin-left: 0px;
-                    margin-right: 5px;
-                }
-                input {
-                    // margins flipped for RTL.
-                    margin-left: 12px;
-                    margin-right: 5px;
-                }
-            }
         }
     }
 }
@@ -136,14 +92,14 @@
                     vertical-align: top;
                     padding: @rubricPadding;
                     textarea {
-                        margin-bottom: 0px;
+                        margin-bottom: 0;
                         height: 115px;
                     }
                 }
                 .definition {
                     textarea {
                         width: 80%;
-                        margin-bottom: 0px;
+                        margin-bottom: 0;
                     }
                 }
                 .score {
@@ -151,7 +107,7 @@
                     float: left;
                     margin-right: 28px;
                     input {
-                        margin-bottom: 0px;
+                        margin-bottom: 0;
                     }
                 }
                 .level {
@@ -171,7 +127,7 @@
                             bottom: 0;
                             height: 24px;
                             width: 24px;
-                            margin: 0px;
+                            margin: 0;
                             &:hover {
                                 background-color: #ddd;
                             }
@@ -183,7 +139,8 @@
                         // Should handle at least three chars with room to spare.
                         float: none;
                         width: 2em;
-                        &.hiddenelement,&.pseudotablink {
+                        &.hiddenelement,
+                        &.pseudotablink {
                             // Zero out the width if it's still in the block flow for some reason
                             // when hidden
                             width: 0;
@@ -194,7 +151,7 @@
                     vertical-align: middle;
                     input {
                         .btn();
-                        background-position: 0px 0px;
+                        background-position: 0 0;
                         height: 30px;
                         margin-right: 5px;
                     }
@@ -209,12 +166,12 @@
                 margin: 0;
                 color: inherit;
                 text-shadow: inherit;
-                border: 0px none;
+                border: 0 none;
                 line-height: inherit;
                 background: transparent url([[pix:t/add]]) no-repeat 7px 8px;
                 padding-left: 26px;
             }
-            margin-bottom:1em;
+            margin-bottom: 1em;
         }
         .options {
             clear: both;
@@ -337,96 +294,6 @@
     }
 }
 
-.dir-rtl {
-    &.path-grade-edit-tree .setup-grades {
-        .category td.column-name {
-            padding-right: 0;
-        }
-        td.column-name {
-            padding-right: 24px;
-        }
-        .column-name h4 img.icon {
-            padding-left: 4px;
-        }
-        .gradeitemdescription {
-            padding-left: 0;
-            padding-right: 24px;
-        }
-        .column-weight {
-            &.level3 {
-                padding-left: 0;
-                padding-right: 37px;
-            }
-            &.level4 {
-                padding-left: 0;
-                padding-right: 66px;
-            }
-            &.level5 {
-                padding-left: 0;
-                padding-right: 95px;
-            }
-            &.level6 {
-                padding-left: 0;
-                padding-right: 124px;
-            }
-            &.level7 {
-                padding-left: 0;
-                padding-right: 153px;
-            }
-            &.level8 {
-                padding-left: 0;
-                padding-right: 182px;
-            }
-            &.level9 {
-                padding-left: 0;
-                padding-right: 211px;
-            }
-            &.level10 {
-                padding-left: 0;
-                padding-right: 240px;
-            }
-        }
-        .column-range {
-            &.level2 {
-                padding-left: 0;
-                padding-right: 37px;
-            }
-            &.level3 {
-                padding-left: 0;
-                padding-right: 66px;
-            }
-            &.level4 {
-                padding-left: 0;
-                padding-right: 95px;
-            }
-            &.level5 {
-                padding-left: 0;
-                padding-right: 124px;
-            }
-            &.level6 {
-                padding-left: 0;
-                padding-right: 153px;
-            }
-            &.level7 {
-                padding-left: 0;
-                padding-right: 182px;
-            }
-            &.level8 {
-                padding-left: 0;
-                padding-right: 211px;
-            }
-            &.level9 {
-                padding-left: 0;
-                padding-right: 240px;
-            }
-            &.level10 {
-                padding-left: 0;
-                padding-right: 269px;
-            }
-        }
-    }
-}
-
 /**
  * Grader report.
  */
@@ -451,7 +318,7 @@
             cursor: pointer;
         }
     }
- }
+}
 
 /**
  * User report.
@@ -474,26 +341,10 @@
     .gradeparent .sideonly.floating > .cell {
         padding-left: 5 + (@dockWidth + (@dockTitleMargin * 2));
     }
-
-    &.dir-rtl {
-        .gradeparent .sideonly.floating > .cell,
-        .gradeparent .sideonly.floating > .cell,
-        .gradeparent .sideonly.floating > .cell {
-            padding-left: 5px;
-            padding-right: 5 + (@dockWidth + (@dockTitleMargin * 2));
-        }
-    }
 }
 
 .content-only.path-grade-report-grader {
     .gradeparent table {
         margin-left: (@dockWidth + (@dockTitleMargin * 2));
-    }
-
-    &.dir-rtl {
-        .gradeparent table {
-            margin-left: 0;
-            margin-right: (@dockWidth + (@dockTitleMargin * 2));
-        }
     }
 }

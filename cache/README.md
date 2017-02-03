@@ -31,6 +31,7 @@ A definition:
             'invalidationevents' => array(            // Optional
                 'contextmarkeddirty'
             ),
+            'canuselocalstore' => false               // Optional
             'sharingoptions' => null                  // Optional
             'defaultsharing' => null                  // Optional
         )
@@ -151,7 +152,7 @@ The following optional settings can also be defined:
 * invalidationevents - An array of events that should trigger this cache to invalidate.
 * sharingoptions - The sum of the possible sharing options that are applicable to the definition. An advanced setting.
 * defaultsharing - The default sharing option to use. It's highly recommended that you don't set this unless there is a very specific reason not to use the system default.
-
+* canuselocalstore - The default is to required a shared cache location for all nodes in a multi webserver environment.  If the cache uses revisions and never updates key data, administrators can use a local storage cache for this cache.
 It's important to note that internally the definition is also aware of the component. This is picked up when the definition is read, based upon the location of the caches.php file.
 
 The staticacceleration option.

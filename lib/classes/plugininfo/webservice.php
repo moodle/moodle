@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 class webservice extends base {
     /**
      * Finds all enabled plugins, the result may include missing plugins.
-     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     * @return array of enabled plugins $pluginname => $pluginname
      */
     public static function get_enabled_plugins() {
         global $CFG;
@@ -79,6 +79,10 @@ class webservice extends base {
     }
 
     public function is_uninstall_allowed() {
-        return false;
+        // The xmlrpc plugin contains webservice_xmlrpc_client (used by core).
+        if ($this->name == 'xmlrpc') {
+            return false;
+        }
+        return true;
     }
 }

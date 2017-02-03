@@ -347,22 +347,38 @@ class qtype_multianswer_edit_form extends question_edit_form {
 
                         if ($subquestion->qtype == 'multichoice') {
                             $defaultvalues[$prefix.'layout'] = $subquestion->layout;
-                            switch ($subquestion->layout) {
-                                case '0':
-                                    $defaultvalues[$prefix.'layout'] =
+                            if ($subquestion->single == 1) {
+                                switch ($subquestion->layout) {
+                                    case '0':
+                                        $defaultvalues[$prefix.'layout'] =
                                             get_string('layoutselectinline', 'qtype_multianswer');
-                                    break;
-                                case '1':
-                                    $defaultvalues[$prefix.'layout'] =
+                                        break;
+                                    case '1':
+                                        $defaultvalues[$prefix.'layout'] =
                                             get_string('layoutvertical', 'qtype_multianswer');
-                                    break;
-                                case '2':
-                                    $defaultvalues[$prefix.'layout'] =
+                                        break;
+                                    case '2':
+                                        $defaultvalues[$prefix.'layout'] =
                                             get_string('layouthorizontal', 'qtype_multianswer');
-                                    break;
-                                default:
-                                    $defaultvalues[$prefix.'layout'] =
+                                        break;
+                                    default:
+                                        $defaultvalues[$prefix.'layout'] =
                                             get_string('layoutundefined', 'qtype_multianswer');
+                                }
+                            } else {
+                                switch ($subquestion->layout) {
+                                    case '1':
+                                        $defaultvalues[$prefix.'layout'] =
+                                            get_string('layoutmultiple_vertical', 'qtype_multianswer');
+                                        break;
+                                    case '2':
+                                        $defaultvalues[$prefix.'layout'] =
+                                            get_string('layoutmultiple_horizontal', 'qtype_multianswer');
+                                        break;
+                                    default:
+                                        $defaultvalues[$prefix.'layout'] =
+                                            get_string('layoutundefined', 'qtype_multianswer');
+                                }
                             }
                             if ($subquestion->shuffleanswers ) {
                                 $defaultvalues[$prefix.'shuffleanswers'] = get_string('yes', 'moodle');
@@ -392,6 +408,11 @@ class qtype_multianswer_edit_form extends question_edit_form {
                                 }
                                 if ($subquestion->fraction[$key] > $maxfraction) {
                                     $maxfraction = $subquestion->fraction[$key];
+                                }
+                                // For 'multiresponse' we are OK if there is at least one fraction > 0.
+                                if ($subquestion->qtype == 'multichoice' && $subquestion->single == 0 &&
+                                    $subquestion->fraction[$key] > 0) {
+                                    $maxgrade = true;
                                 }
                             }
 
@@ -483,6 +504,11 @@ class qtype_multianswer_edit_form extends question_edit_form {
                             }
                             if ($subquestion->fraction[$key] > $maxfraction) {
                                 $maxfraction = $subquestion->fraction[$key];
+                            }
+                            // For 'multiresponse' we are OK if there is at least one fraction > 0.
+                            if ($subquestion->qtype == 'multichoice' && $subquestion->single == 0 &&
+                                $subquestion->fraction[$key] > 0) {
+                                $maxgrade = true;
                             }
                         }
                     }

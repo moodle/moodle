@@ -23,8 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
-require_once(dirname(dirname(__DIR__)) . '/moodleblock.class.php');
-require_once(dirname(__DIR__) . '/block_rss_client.php');
+require_once(__DIR__ . '/../../moodleblock.class.php');
+require_once(__DIR__ . '/../block_rss_client.php');
 
 /**
  * Class for the PHPunit tests for rss client cron.

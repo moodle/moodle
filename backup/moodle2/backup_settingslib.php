@@ -130,6 +130,27 @@ class backup_calendarevents_setting extends backup_anonymize_setting {}
  */
 class backup_userscompletion_setting extends backup_anonymize_setting {}
 
+/**
+ * root setting to control if backup will include competencies or not.
+ */
+class backup_competencies_setting extends backup_generic_setting {
+
+    /**
+     * backup_competencies_setting constructor.
+     */
+    public function __construct() {
+        $defaultvalue = false;
+        $visibility = base_setting::HIDDEN;
+        $status = base_setting::LOCKED_BY_CONFIG;
+        if (\core_competency\api::is_enabled()) {
+            $defaultvalue = true;
+            $visibility = base_setting::VISIBLE;
+            $status = base_setting::NOT_LOCKED;
+        }
+        parent::__construct('competencies', base_setting::IS_BOOLEAN, $defaultvalue, $visibility, $status);
+    }
+}
+
 // Section backup settings
 
 /**

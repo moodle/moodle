@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Moodle SOAP library
  *
@@ -22,8 +21,6 @@
  * @copyright  2009 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once 'Zend/Soap/Client.php';
 
 /**
  * Moodle SOAP client
@@ -34,10 +31,16 @@ require_once 'Zend/Soap/Client.php';
  * @copyright  2010 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class webservice_soap_client extends Zend_Soap_Client {
+class webservice_soap_client {
 
-    /** @var string server url e.g. https://yyyyy.com/server.php */
+    /** @var moodle_url The server url. */
     private $serverurl;
+
+    /** @var  string The WS token. */
+    private $token;
+
+    /** @var array|null SOAP options. */
+    private $options;
 
     /**
      * Constructor
@@ -46,10 +49,10 @@ class webservice_soap_client extends Zend_Soap_Client {
      * @param string $token the token used to do the web service call
      * @param array $options PHP SOAP client options - see php.net
      */
-    public function __construct($serverurl, $token, $options = null) {
-        $this->serverurl = $serverurl;
-        $wsdl = $serverurl . "?wstoken=" . $token . '&wsdl=1';
-        parent::__construct($wsdl, $options);
+    public function __construct($serverurl, $token = null, array $options = null) {
+        $this->serverurl = new moodle_url($serverurl);
+        $this->token = $token ?: $this->serverurl->get_param('wstoken');
+        $this->options = $options ?: array();
     }
 
     /**
@@ -58,8 +61,7 @@ class webservice_soap_client extends Zend_Soap_Client {
      * @param string $token the token used to do the web service call
      */
     public function set_token($token) {
-        $wsdl = $this->serverurl . "?wstoken=" . $token . '&wsdl=1';
-        $this->setWsdl($wsdl);
+        $this->token = $token;
     }
 
     /**
@@ -70,15 +72,22 @@ class webservice_soap_client extends Zend_Soap_Client {
      * @return mixed
      */
     public function call($functionname, $params) {
-        global $DB, $CFG;
+        if ($this->token) {
+            $this->serverurl->param('wstoken', $this->token);
+        }
+        $this->serverurl->param('wsdl', 1);
 
-        //zend expects 0 based array with numeric indexes
-        $params = array_values($params);
+        $opts = array(
+            'http' => array(
+                'user_agent' => 'Moodle SOAP Client'
+            )
+        );
+        $context = stream_context_create($opts);
+        $this->options['stream_context'] = $context;
+        $this->options['cache_wsdl'] = WSDL_CACHE_NONE;
 
-        //traditional Zend soap client call (integrating the token into the URL)
-        $result = $this->__call($functionname, $params);
+        $client = new SoapClient($this->serverurl->out(false), $this->options);
 
-        return $result;
+        return $client->__soapCall($functionname, $params);
     }
-
 }

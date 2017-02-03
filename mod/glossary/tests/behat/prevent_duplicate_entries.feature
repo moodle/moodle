@@ -33,4 +33,3 @@ Feature: A teacher can choose whether to allow duplicate entries in a glossary
     And I press "Save changes"
     Then I should see "This concept already exists. No duplicates allowed in this glossary."
     And I press "Cancel"
-

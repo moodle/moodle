@@ -32,6 +32,7 @@ $functions = array(
         'description' => 'Returns a list of database instances in a provided set of courses, if
             no courses are provided then all the database instances the user has access to will be returned.',
         'type' => 'read',
-        'capabilities' => 'mod/data:viewentry'
+        'capabilities' => 'mod/data:viewentry',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );

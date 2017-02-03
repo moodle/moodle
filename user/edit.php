@@ -72,9 +72,11 @@ if (isguestuser($user)) {
 // User interests separated by commas.
 $user->interests = core_tag_tag::get_item_tags_array('core', 'user', $user->id);
 
-// Remote users cannot be edited.
+// Remote users cannot be edited. Note we have to perform the strict user_not_fully_set_up() check.
+// Otherwise the remote user could end up in endless loop between user/view.php and here.
+// Required custom fields are not supported in MNet environment anyway.
 if (is_mnet_remote_user($user)) {
-    if (user_not_fully_set_up($user)) {
+    if (user_not_fully_set_up($user, true)) {
         $hostwwwroot = $DB->get_field('mnet_host', 'wwwroot', array('id' => $user->mnethostid));
         print_error('usernotfullysetup', 'mnet', '', $hostwwwroot);
     }
@@ -236,7 +238,7 @@ if ($usernew = $userform->get_data()) {
 
     // Update user picture.
     if (empty($CFG->disableuserimages)) {
-        useredit_update_picture($usernew, $userform, $filemanageroptions);
+        core_user::update_picture($usernew, $filemanageroptions);
     }
 
     // Update mail bounces.
@@ -256,17 +258,20 @@ if ($usernew = $userform->get_data()) {
         $tempuser = $DB->get_record('user', array('id' => $user->id), '*', MUST_EXIST);
         $tempuser->email = $usernew->preference_newemail;
 
+        $supportuser = core_user::get_support_user();
+
         $a = new stdClass();
         $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;
         $a->site = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
         $a->fullname = fullname($tempuser, true);
+        $a->supportemail = $supportuser->email;
 
         $emailupdatemessage = get_string('emailupdatemessage', 'auth', $a);
         $emailupdatetitle = get_string('emailupdatetitle', 'auth', $a);
 
         // Email confirmation directly rather than using messaging so they will definitely get an email.
-        $supportuser = core_user::get_support_user();
-        if (!$mailresults = email_to_user($tempuser, $supportuser, $emailupdatetitle, $emailupdatemessage)) {
+        $noreplyuser = core_user::get_noreply_user();
+        if (!$mailresults = email_to_user($tempuser, $noreplyuser, $emailupdatetitle, $emailupdatemessage)) {
             die("could not send email!");
         }
     }

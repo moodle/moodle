@@ -4,7 +4,6 @@ Feature: Import course's contents into another course
   As a teacher
   I need to import a course contents into another course selecting what I want to import
 
-  @javascript
   Scenario: Import course's contents to another course
     Given the following "courses" exist:
       | fullname | shortname | category |
@@ -28,6 +27,7 @@ Feature: Import course's contents into another course
       | Description | Test forum description |
     And I add the "Comments" block
     And I add the "Recent blog entries" block
+    And I turn editing mode off
     When I import "Course 1" course into "Course 2" course using this options:
     Then I should see "Test database name"
     And I should see "Test forum name"

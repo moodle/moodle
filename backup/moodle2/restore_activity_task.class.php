@@ -179,6 +179,9 @@ abstract class restore_activity_task extends restore_task {
             $this->add_step(new restore_activity_logstores_structure_step('activity_logstores', 'logstores.xml'));
         }
 
+        // Activity competencies.
+        $this->add_step(new restore_activity_competencies_structure_step('activity_competencies', 'competencies.xml'));
+
         // At the end, mark it as built
         $this->built = true;
     }

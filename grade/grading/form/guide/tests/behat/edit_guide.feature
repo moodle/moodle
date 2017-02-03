@@ -29,10 +29,10 @@ Feature: Marking guides can be created and edited
       | Name        | Assignment 1 marking guide     |
       | Description | Marking guide test description |
     And I define the following marking guide:
-      | Criterion name    | Description for students         | Description for markers         | Maximum mark |
-      | Guide criterion A | Guide A description for students | Guide A description for markers | 30           |
-      | Guide criterion B | Guide B description for students | Guide B description for markers | 30           |
-      | Guide criterion C | Guide C description for students | Guide C description for markers | 40           |
+      | Criterion name    | Description for students         | Description for markers         | Maximum score |
+      | Guide criterion A | Guide A description for students | Guide A description for markers | 30            |
+      | Guide criterion B | Guide B description for students | Guide B description for markers | 30            |
+      | Guide criterion C | Guide C description for students | Guide C description for markers | 40            |
     And I define the following frequently used comments:
       | Comment 1 |
       | Comment 2 |
@@ -84,9 +84,11 @@ Feature: Marking guides can be created and edited
     And I wait "1" seconds
     Then the field "Guide criterion B criterion remark" matches value "Comment 4"
     When I press "Save changes"
-    Then I should see "The grade changes were saved"
+    And I press "Ok"
+    And I follow "Edit settings"
+    And I follow "Test assignment 1 name"
+    And I navigate to "View all submissions" in current page administration
     # Checking that the user grade is correct.
-    When I press "Continue"
     Then I should see "80" in the "Student 1" "table_row"
     And I log out
     # Viewing it as a student.

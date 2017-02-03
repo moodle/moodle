@@ -137,6 +137,11 @@ abstract class moodle_database {
     private $inorequaluniqueindex = 1;
 
     /**
+     * @var boolean variable use to temporarily disable logging.
+     */
+    protected $skiplogging = false;
+
+    /**
      * Constructor - Instantiates the database, specifying if it's external (connect to other systems) or not (Moodle DB).
      *              Note that this affects the decision of whether prefix checks must be performed or not.
      * @param bool $external True means that an external database is used.
@@ -325,6 +330,29 @@ abstract class moodle_database {
     }
 
     /**
+     * Handle the creation and caching of the databasemeta information for all databases.
+     *
+     * TODO MDL-53267 impelement caching of cache::make() results when it's safe to do so.
+     *
+     * @return cache_application The databasemeta cachestore to complete operations on.
+     */
+    protected function get_metacache() {
+        $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+        return cache::make('core', 'databasemeta', $properties);
+    }
+
+    /**
+     * Handle the creation and caching of the temporary tables.
+     *
+     * @return cache_application The temp_tables cachestore to complete operations on.
+     */
+    protected function get_temp_tables_cache() {
+        // Using connection data to prevent collisions when using the same temp table name with different db connections.
+        $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+        return cache::make('core', 'temp_tables', $properties);
+    }
+
+    /**
      * Attempt to create the database
      * @param string $dbhost The database host.
      * @param string $dbuser The database user to connect as.
@@ -464,6 +492,11 @@ abstract class moodle_database {
      * @return void
      */
     public function query_log($error=false) {
+        // Logging disabled by the driver.
+        if ($this->skiplogging) {
+            return;
+        }
+
         $logall    = !empty($this->dboptions['logall']);
         $logslow   = !empty($this->dboptions['logslow']) ? $this->dboptions['logslow'] : false;
         $logerrors = !empty($this->dboptions['logerrors']);
@@ -500,6 +533,20 @@ abstract class moodle_database {
             }
             $this->loggingquery = false;
         }
+    }
+
+    /**
+     * Disable logging temporarily.
+     */
+    protected function query_log_prevent() {
+        $this->skiplogging = true;
+    }
+
+    /**
+     * Restore old logging behavior.
+     */
+    protected function query_log_allow() {
+        $this->skiplogging = false;
     }
 
     /**
@@ -1028,13 +1075,30 @@ abstract class moodle_database {
 
     /**
      * Resets the internal column details cache
+     *
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return void
      */
-    public function reset_caches() {
-        $this->tables = null;
-        // Purge MUC as well
-        $identifiers = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-        cache_helper::purge_by_definition('core', 'databasemeta', $identifiers);
+    public function reset_caches($tablenames = null) {
+        if (!empty($tablenames)) {
+            $dbmetapurged = false;
+            foreach ($tablenames as $tablename) {
+                if ($this->temptables->is_temptable($tablename)) {
+                    $this->get_temp_tables_cache()->delete($tablename);
+                } else if ($dbmetapurged === false) {
+                    $this->tables = null;
+                    $this->get_metacache()->purge();
+                    $this->metacache = null;
+                    $dbmetapurged = true;
+                }
+            }
+        } else {
+            $this->get_temp_tables_cache()->purge();
+            $this->tables = null;
+            // Purge MUC as well.
+            $this->get_metacache()->purge();
+            $this->metacache = null;
+        }
     }
 
     /**
@@ -1103,10 +1167,11 @@ abstract class moodle_database {
     /**
      * Do NOT use in code, this is for use by database_manager only!
      * @param string|array $sql query or array of queries
+     * @param array|null $tablenames an array of xmldb table names affected by this request.
      * @return bool true
      * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
-    public abstract function change_database_structure($sql);
+    public abstract function change_database_structure($sql, $tablenames = null);
 
     /**
      * Executes a general sql query. Should be used only when no other method suitable.
@@ -2007,6 +2072,33 @@ abstract class moodle_database {
      */
     public function sql_compare_text($fieldname, $numchars=32) {
         return $this->sql_order_by_text($fieldname, $numchars);
+    }
+
+    /**
+     * Returns an equal (=) or not equal (<>) part of a query.
+     *
+     * Note the use of this method may lead to slower queries (full scans) so
+     * use it only when needed and against already reduced data sets.
+     *
+     * @since Moodle 3.2
+     *
+     * @param string $fieldname Usually the name of the table column.
+     * @param string $param Usually the bound query parameter (?, :named).
+     * @param bool $casesensitive Use case sensitive search when set to true (default).
+     * @param bool $accentsensitive Use accent sensitive search when set to true (default). (not all databases support accent insensitive)
+     * @param bool $notequal True means not equal (<>)
+     * @return string The SQL code fragment.
+     */
+    public function sql_equal($fieldname, $param, $casesensitive = true, $accentsensitive = true, $notequal = false) {
+        // Note that, by default, it's assumed that the correct sql equal operations are
+        // case sensitive. Only databases not observing this behavior must override the method.
+        // Also, accent sensitiveness only will be handled by databases supporting it.
+        $equalop = $notequal ? '<>' : '=';
+        if ($casesensitive) {
+            return "$fieldname $equalop $param";
+        } else {
+            return "LOWER($fieldname) $equalop LOWER($param)";
+        }
     }
 
     /**

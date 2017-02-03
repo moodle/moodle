@@ -130,5 +130,13 @@ abstract class content_viewed extends base {
     public static function get_other_mapping() {
         return false;
     }
-}
 
+    /**
+     * This event has been deprected.
+     *
+     * @return boolean
+     */
+    public static function is_deprecated() {
+        return true;
+    }
+}

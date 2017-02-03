@@ -76,10 +76,10 @@ switch($requestmethod) {
         switch ($class) {
             case 'section':
                 $table = 'quiz_sections';
+                $section = $structure->get_section_by_id($id);
                 switch ($field) {
                     case 'getsectiontitle':
                         require_capability('mod/quiz:manage', $modcontext);
-                        $section = $structure->get_section_by_id($id);
                         echo json_encode(array('instancesection' => $section->heading));
                         break;
                     case 'updatesectiontitle':

@@ -81,7 +81,6 @@ class block_news_items extends block_base {
             $groupmode    = groups_get_activity_groupmode($cm);
             $currentgroup = groups_get_activity_group($cm, true);
 
-
             if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode, $cm, $context)) {
                 $text .= '<div class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.
                           get_string('addanewtopic', 'forum').'</a>...</div>';
@@ -96,7 +95,8 @@ class block_news_items extends block_base {
             // This sort will ignore pinned posts as we want the most recent.
             $sort = forum_get_default_sort_order(true, 'p.modified', 'd', false);
             if (! $discussions = forum_get_discussions($cm, $sort, false,
-                                                       $currentgroup, $this->page->course->newsitems) ) {
+                                                        -1, $this->page->course->newsitems,
+                                                        false, -1, 0, FORUM_POSTS_ALL_USER_GROUPS) ) {
                 $text .= '('.get_string('nonews', 'forum').')';
                 $this->content->text = $text;
                 return $this->content;

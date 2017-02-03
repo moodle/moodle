@@ -97,61 +97,54 @@ class enrol_paypal_plugin extends enrol_plugin {
     }
 
     /**
-     * Sets up navigation entries.
-     *
-     * @param object $instance
-     * @return void
-     */
-    public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'paypal') {
-             throw new coding_exception('Invalid enrol instance type!');
-        }
-
-        $context = context_course::instance($instance->courseid);
-        if (has_capability('enrol/paypal:config', $context)) {
-            $managelink = new moodle_url('/enrol/paypal/edit.php', array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
-        }
-    }
-
-    /**
-     * Returns edit icons for the page with list of instances
-     * @param stdClass $instance
-     * @return array
-     */
-    public function get_action_icons(stdClass $instance) {
-        global $OUTPUT;
-
-        if ($instance->enrol !== 'paypal') {
-            throw new coding_exception('invalid enrol instance!');
-        }
-        $context = context_course::instance($instance->courseid);
-
-        $icons = array();
-
-        if (has_capability('enrol/paypal:config', $context)) {
-            $editlink = new moodle_url("/enrol/paypal/edit.php", array('courseid'=>$instance->courseid, 'id'=>$instance->id));
-            $icons[] = $OUTPUT->action_icon($editlink, new pix_icon('t/edit', get_string('edit'), 'core',
-                    array('class' => 'iconsmall')));
-        }
-
-        return $icons;
-    }
-
-    /**
-     * Returns link to page which may be used to add new instance of enrolment plugin in course.
+     * Returns true if the user can add a new instance in this course.
      * @param int $courseid
-     * @return moodle_url page url
+     * @return boolean
      */
-    public function get_newinstance_link($courseid) {
+    public function can_add_instance($courseid) {
         $context = context_course::instance($courseid, MUST_EXIST);
 
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/paypal:config', $context)) {
-            return NULL;
+            return false;
         }
 
         // multiple instances supported - different cost for different roles
-        return new moodle_url('/enrol/paypal/edit.php', array('courseid'=>$courseid));
+        return true;
+    }
+
+    /**
+     * We are a good plugin and don't invent our own UI/validation code path.
+     *
+     * @return boolean
+     */
+    public function use_standard_editing_ui() {
+        return true;
+    }
+
+    /**
+     * Add new instance of enrol plugin.
+     * @param object $course
+     * @param array $fields instance fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = null) {
+        if ($fields && !empty($fields['cost'])) {
+            $fields['cost'] = unformat_float($fields['cost']);
+        }
+        return parent::add_instance($course, $fields);
+    }
+
+    /**
+     * Update instance of enrol plugin.
+     * @param stdClass $instance
+     * @param stdClass $data modified instance fields
+     * @return boolean
+     */
+    public function update_instance($instance, $data) {
+        if ($data) {
+            $data->cost = unformat_float($data->cost);
+        }
+        return parent::update_instance($instance, $data);
     }
 
     /**
@@ -310,6 +303,126 @@ class enrol_paypal_plugin extends enrol_plugin {
     public function cron() {
         $trace = new text_progress_trace();
         $this->process_expirations($trace);
+    }
+
+    /**
+     * Return an array of valid options for the status.
+     *
+     * @return array
+     */
+    protected function get_status_options() {
+        $options = array(ENROL_INSTANCE_ENABLED  => get_string('yes'),
+                         ENROL_INSTANCE_DISABLED => get_string('no'));
+        return $options;
+    }
+
+    /**
+     * Return an array of valid options for the roleid.
+     *
+     * @param stdClass $instance
+     * @param context $context
+     * @return array
+     */
+    protected function get_roleid_options($instance, $context) {
+        if ($instance->id) {
+            $roles = get_default_enrol_roles($context, $instance->roleid);
+        } else {
+            $roles = get_default_enrol_roles($context, $this->get_config('roleid'));
+        }
+        return $roles;
+    }
+
+
+    /**
+     * Add elements to the edit instance form.
+     *
+     * @param stdClass $instance
+     * @param MoodleQuickForm $mform
+     * @param context $context
+     * @return bool
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
+
+        $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
+        $mform->setType('name', PARAM_TEXT);
+
+        $options = $this->get_status_options();
+        $mform->addElement('select', 'status', get_string('status', 'enrol_paypal'), $options);
+        $mform->setDefault('status', $this->get_config('status'));
+
+        $mform->addElement('text', 'cost', get_string('cost', 'enrol_paypal'), array('size' => 4));
+        $mform->setType('cost', PARAM_RAW);
+        $mform->setDefault('cost', format_float($this->get_config('cost'), 2, true));
+
+        $paypalcurrencies = $this->get_currencies();
+        $mform->addElement('select', 'currency', get_string('currency', 'enrol_paypal'), $paypalcurrencies);
+        $mform->setDefault('currency', $this->get_config('currency'));
+
+        $roles = $this->get_roleid_options($instance, $context);
+        $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_paypal'), $roles);
+        $mform->setDefault('roleid', $this->get_config('roleid'));
+
+        $options = array('optional' => true, 'defaultunit' => 86400);
+        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_paypal'), $options);
+        $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
+        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_paypal');
+
+        $options = array('optional' => true);
+        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_paypal'), $options);
+        $mform->setDefault('enrolstartdate', 0);
+        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_paypal');
+
+        $options = array('optional' => true);
+        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_paypal'), $options);
+        $mform->setDefault('enrolenddate', 0);
+        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
+
+        if (enrol_accessing_via_instance($instance)) {
+            $warningtext = get_string('instanceeditselfwarningtext', 'core_enrol');
+            $mform->addElement('static', 'selfwarn', get_string('instanceeditselfwarning', 'core_enrol'), $warningtext);
+        }
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param object $instance The instance loaded from the DB
+     * @param context $context The context of the instance we are editing
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     * @return void
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+        $errors = array();
+
+        if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
+            $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
+        }
+
+        $cost = str_replace(get_string('decsep', 'langconfig'), '.', $data['cost']);
+        if (!is_numeric($cost)) {
+            $errors['cost'] = get_string('costerror', 'enrol_paypal');
+        }
+
+        $validstatus = array_keys($this->get_status_options());
+        $validcurrency = array_keys($this->get_currencies());
+        $validroles = array_keys($this->get_roleid_options($instance, $context));
+        $tovalidate = array(
+            'name' => PARAM_TEXT,
+            'status' => $validstatus,
+            'currency' => $validcurrency,
+            'roleid' => $validroles,
+            'enrolperiod' => PARAM_INT,
+            'enrolstartdate' => PARAM_INT,
+            'enrolenddate' => PARAM_INT
+        );
+
+        $typeerrors = $this->validate_param_types($data, $tovalidate);
+        $errors = array_merge($errors, $typeerrors);
+
+        return $errors;
     }
 
     /**

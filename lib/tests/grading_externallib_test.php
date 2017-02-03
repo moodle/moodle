@@ -536,7 +536,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, $DB->count_records('gradingform_rubric_levels', array('criterionid' => $criterion1->id)));
 
         $gradingarea['activemethod'] = 'invalid';
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $results = core_grading_external::save_definitions(array($gradingarea));
     }
 
@@ -637,7 +637,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         // Test an invalid method in the definition.
         $guidedefinition['method'] = 'invalid';
         $gradingarea['definitions'] = array($guidedefinition);
-        $this->setExpectedException('invalid_parameter_exception');
+        $this->expectException('invalid_parameter_exception');
         $results = core_grading_external::save_definitions(array($gradingarea));
     }
 }

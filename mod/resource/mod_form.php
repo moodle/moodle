@@ -56,11 +56,10 @@ class mod_resource_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $this->standard_intro_elements();
-
-        //-------------------------------------------------------
-        $mform->addElement('header', 'contentsection', get_string('contentheader', 'resource'));
-        $mform->setExpanded('contentsection');
-
+        $element = $mform->getElement('introeditor');
+        $attributes = $element->getAttributes();
+        $attributes['rows'] = 5;
+        $element->setAttributes($attributes);
         $filemanager_options = array();
         $filemanager_options['accepted_types'] = '*';
         $filemanager_options['maxbytes'] = 0;

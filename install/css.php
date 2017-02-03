@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if (file_exists(dirname(dirname(__FILE__)).'/config.php')) {
+if (file_exists(__DIR__.'/../config.php')) {
     // already installed
     die;
 }
@@ -38,13 +38,17 @@ $files = array();
 $content = '';
 
 foreach($files as $file) {
-    $content .= file_get_contents(dirname(dirname(__FILE__)).'/theme/'.$file) . "\n";
+    $content .= file_get_contents(__DIR__.'/../theme/'.$file) . "\n";
 }
 
 $content .= <<<EOF
 
 body {
     padding: 4px;
+}
+
+.text-ltr {
+    direction: ltr !important;
 }
 
 .headermain {
@@ -103,6 +107,7 @@ fieldset {
 fieldset .configphp,
 fieldset .alert {
     text-align: left;
+    direction: ltr;
 }
 
 .sitelink {

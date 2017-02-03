@@ -192,7 +192,7 @@ function label_supports($feature) {
 function label_dndupload_register() {
     $strdnd = get_string('dnduploadlabel', 'mod_label');
     if (get_config('label', 'dndmedia')) {
-        $mediaextensions = file_get_typegroup('extension', 'web_image');
+        $mediaextensions = file_get_typegroup('extension', ['web_image', 'web_video', 'web_audio']);
         $files = array();
         foreach ($mediaextensions as $extn) {
             $extn = trim($extn, '.');
@@ -323,4 +323,18 @@ function label_generate_resized_image(stored_file $file, $maxwidth, $maxheight) 
     } else {
         return $img;
     }
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function label_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    $updates = course_check_module_updates_since($cm, $from, array(), $filter);
+    return $updates;
 }

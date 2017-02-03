@@ -56,7 +56,8 @@ class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
 
         // Only render the logo if we're on the front page or login page
         // and the theme has a logo.
-        if ($headinglevel == 1 && !empty($this->page->theme->settings->logo)) {
+        $logo = $this->get_logo_url();
+        if ($headinglevel == 1 && !empty($logo)) {
             if ($PAGE->pagelayout == 'frontpage' || $PAGE->pagelayout == 'login') {
                 return true;
             }
@@ -76,16 +77,16 @@ class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
     public function navbar_home($returnlink = true) {
         global $CFG;
 
-        if ($this->should_render_logo() || empty($this->page->theme->settings->smalllogo)) {
+        $imageurl = $this->get_compact_logo_url(null, 35);
+        if ($this->should_render_logo() || empty($imageurl)) {
             // If there is no small logo we always show the site name.
             return $this->get_home_ref($returnlink);
         }
-        $imageurl = $this->page->theme->setting_file_url('smalllogo', 'smalllogo');
         $image = html_writer::img($imageurl, get_string('sitelogo', 'theme_' . $this->page->theme->name),
             array('class' => 'small-logo'));
 
         if ($returnlink) {
-            $logocontainer = html_writer::link($CFG->wwwroot, $image,
+            $logocontainer = html_writer::link(new moodle_url('/'), $image,
                 array('class' => 'small-logo-container', 'title' => get_string('home')));
         } else {
             $logocontainer = html_writer::tag('span', $image, array('class' => 'small-logo-container'));
@@ -113,9 +114,42 @@ class theme_clean_core_renderer extends theme_bootstrapbase_core_renderer {
         $sitename = format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID)));
 
         if ($returnlink) {
-            return html_writer::link($CFG->wwwroot, $sitename, array('class' => 'brand', 'title' => get_string('home')));
+            return html_writer::link(new moodle_url('/'), $sitename, array('class' => 'brand', 'title' => get_string('home')));
         }
 
         return html_writer::tag('span', $sitename, array('class' => 'brand'));
     }
+
+    /**
+     * Return the theme logo URL, else the site's logo URL, if any.
+     *
+     * Note that maximum sizes are not applied to the theme logo.
+     *
+     * @param int $maxwidth The maximum width, or null when the maximum width does not matter.
+     * @param int $maxheight The maximum height, or null when the maximum height does not matter.
+     * @return moodle_url|false
+     */
+    public function get_logo_url($maxwidth = null, $maxheight = 100) {
+        if (!empty($this->page->theme->settings->logo)) {
+            return $this->page->theme->setting_file_url('logo', 'logo');
+        }
+        return parent::get_logo_url($maxwidth, $maxheight);
+    }
+
+    /**
+     * Return the theme's compact logo URL, else the site's compact logo URL, if any.
+     *
+     * Note that maximum sizes are not applied to the theme logo.
+     *
+     * @param int $maxwidth The maximum width, or null when the maximum width does not matter.
+     * @param int $maxheight The maximum height, or null when the maximum height does not matter.
+     * @return moodle_url|false
+     */
+    public function get_compact_logo_url($maxwidth = 100, $maxheight = 100) {
+        if (!empty($this->page->theme->settings->smalllogo)) {
+            return $this->page->theme->setting_file_url('smalllogo', 'smalllogo');
+        }
+        return parent::get_compact_logo_url($maxwidth, $maxheight);
+    }
+
 }

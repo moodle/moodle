@@ -4,7 +4,7 @@ Feature: A user with access to multiple groups should be able to post a copy of 
   As a user
   I need to have the option to post a copy of a message to all groups
 
-Background:
+  Background:
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |

@@ -1443,6 +1443,28 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertArrayHasKey($user1->id, $users);
         $this->assertArrayHasKey($user3->id, $users);
 
+        $users = get_role_users($teacherrole->id, $coursecontext, false, 'u.id, u.email');
+        $this->assertDebuggingCalled('get_role_users() adding u.lastname, u.firstname to the query result because they were required by $sort but missing in $fields');
+        $this->assertCount(2, $users);
+        $this->assertArrayHasKey($user1->id, $users);
+        $this->assertObjectHasAttribute('lastname', $users[$user1->id]);
+        $this->assertObjectHasAttribute('firstname', $users[$user1->id]);
+        $this->assertArrayHasKey($user3->id, $users);
+        $this->assertObjectHasAttribute('lastname', $users[$user3->id]);
+        $this->assertObjectHasAttribute('firstname', $users[$user3->id]);
+
+        $users = get_role_users($teacherrole->id, $coursecontext, false, 'u.id AS id_alias');
+        $this->assertDebuggingCalled('get_role_users() adding u.lastname, u.firstname to the query result because they were required by $sort but missing in $fields');
+        $this->assertCount(2, $users);
+        $this->assertArrayHasKey($user1->id, $users);
+        $this->assertObjectHasAttribute('id_alias', $users[$user1->id]);
+        $this->assertObjectHasAttribute('lastname', $users[$user1->id]);
+        $this->assertObjectHasAttribute('firstname', $users[$user1->id]);
+        $this->assertArrayHasKey($user3->id, $users);
+        $this->assertObjectHasAttribute('id_alias', $users[$user3->id]);
+        $this->assertObjectHasAttribute('lastname', $users[$user3->id]);
+        $this->assertObjectHasAttribute('firstname', $users[$user3->id]);
+
         $users = get_role_users($teacherrole->id, $coursecontext, false, 'u.id, u.email, u.idnumber', 'u.idnumber', null, $group->id);
         $this->assertCount(1, $users);
         $this->assertArrayHasKey($user3->id, $users);
@@ -2332,7 +2354,6 @@ class core_accesslib_testcase extends advanced_testcase {
 
         $context = context_course::instance($testcourses[2]);
         $children = $context->get_child_contexts();
-        $this->assertCount(7, $children); // Depends on number of default blocks.
 
         $context = context_module::instance($testpages[3]);
         $children = $context->get_child_contexts();
@@ -2379,7 +2400,7 @@ class core_accesslib_testcase extends advanced_testcase {
         context_helper::reset_caches();
         context_helper::preload_course($SITE->id);
         $numfrontpagemodules = $DB->count_records('course_modules', array('course' => $SITE->id));
-        $this->assertEquals(6 + $numfrontpagemodules, context_inspection::test_context_cache_size()); // Depends on number of default blocks.
+        $this->assertEquals(3 + $numfrontpagemodules, context_inspection::test_context_cache_size()); // Depends on number of default blocks.
 
         // Test assign_capability(), unassign_capability() functions.
 
@@ -2483,6 +2504,12 @@ class core_accesslib_testcase extends advanced_testcase {
 
         assign_capability('mod/page:view', CAP_PREVENT, $allroles['guest'], $systemcontext, true);
 
+        // Prepare for prohibit test.
+        role_assign($allroles['editingteacher'], $testusers[19], context_system::instance());
+        role_assign($allroles['teacher'], $testusers[19], context_course::instance($testcourses[17]));
+        role_assign($allroles['editingteacher'], $testusers[19], context_course::instance($testcourses[17]));
+        assign_capability('moodle/course:update', CAP_PROHIBIT, $allroles['teacher'], context_course::instance($testcourses[17]), true);
+
         accesslib_clear_all_caches_for_unit_testing(); /// Must be done after assign_capability().
 
         // Extra tests for guests and not-logged-in users because they can not be verified by cross checking
@@ -2505,6 +2532,14 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse(has_capability('moodle/course:update', context_course::instance($testcourses[1]), $testusers[9]));
         $this->assertFalse(has_capability('moodle/course:update', context_course::instance($testcourses[19]), $testusers[9]));
         $this->assertFalse(has_capability('moodle/course:update', $systemcontext, $testusers[9]));
+
+        // Test prohibits.
+        $this->assertTrue(has_capability('moodle/course:update', context_system::instance(), $testusers[19]));
+        $ids = get_users_by_capability(context_system::instance(), 'moodle/course:update', 'u.id');
+        $this->assertArrayHasKey($testusers[19], $ids);
+        $this->assertFalse(has_capability('moodle/course:update', context_course::instance($testcourses[17]), $testusers[19]));
+        $ids = get_users_by_capability(context_course::instance($testcourses[17]), 'moodle/course:update', 'u.id');
+        $this->assertArrayNotHasKey($testusers[19], $ids);
 
         // Test the list of enrolled users.
         $coursecontext = context_course::instance($course1->id);
@@ -3043,6 +3078,61 @@ class core_accesslib_testcase extends advanced_testcase {
         // The course level checks should remain the same.
         $this->assertEquals(2, count_role_users($roleid1, context_course::instance($course->id), false));
         $this->assertEquals(3, count_role_users($roleid1, context_course::instance($course->id), true));
+    }
+
+    /**
+     * Test updating of role capabilities during upgrade
+     * @return void
+     */
+    public function test_get_with_capability_sql() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'), '*', MUST_EXIST);
+        $teacher = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $student = $this->getDataGenerator()->create_user();
+        $guest = $DB->get_record('user', array('username' => 'guest'));
+
+        role_assign($teacherrole->id, $teacher->id, $coursecontext);
+        role_assign($studentrole->id, $student->id, $coursecontext);
+        $admin = $DB->get_record('user', array('username' => 'admin'));
+
+        // Note: Here are used default capabilities, the full test is in permission evaluation below,
+        // use two capabilities that teacher has and one does not, none of them should be allowed for not-logged-in user.
+        $this->assertTrue($DB->record_exists('capabilities', array('name' => 'moodle/backup:backupcourse')));
+        $this->assertTrue($DB->record_exists('capabilities', array('name' => 'moodle/site:approvecourse')));
+
+        list($sql, $params) = get_with_capability_sql($coursecontext, 'moodle/backup:backupcourse');
+        $users = $DB->get_records_sql($sql, $params);
+
+        $this->assertTrue(array_key_exists($teacher->id, $users));
+        $this->assertFalse(array_key_exists($admin->id, $users));
+        $this->assertFalse(array_key_exists($student->id, $users));
+        $this->assertFalse(array_key_exists($guest->id, $users));
+
+        list($sql, $params) = get_with_capability_sql($coursecontext, 'moodle/site:approvecourse');
+        $users = $DB->get_records_sql($sql, $params);
+
+        $this->assertFalse(array_key_exists($teacher->id, $users));
+        $this->assertFalse(array_key_exists($admin->id, $users));
+        $this->assertFalse(array_key_exists($student->id, $users));
+        $this->assertFalse(array_key_exists($guest->id, $users));
+
+        // Test role override.
+        assign_capability('moodle/site:backupcourse', CAP_PROHIBIT, $teacherrole->id, $coursecontext, true);
+        assign_capability('moodle/site:backupcourse', CAP_ALLOW, $studentrole->id, $coursecontext, true);
+
+        list($sql, $params) = get_with_capability_sql($coursecontext, 'moodle/site:backupcourse');
+        $users = $DB->get_records_sql($sql, $params);
+
+        $this->assertFalse(array_key_exists($teacher->id, $users));
+        $this->assertFalse(array_key_exists($admin->id, $users));
+        $this->assertTrue(array_key_exists($student->id, $users));
+        $this->assertFalse(array_key_exists($guest->id, $users));
     }
 }
 

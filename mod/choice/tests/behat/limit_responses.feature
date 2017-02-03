@@ -4,7 +4,6 @@ Feature: Limit choice responses
   As a teacher
   I need to limit the choice responses
 
-  @javascript
   Scenario: Limit the number of responses allowed for a choice activity and verify the result as students
     Given the following "users" exist:
       | username | firstname | lastname | email |

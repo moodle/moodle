@@ -1,0 +1,136 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    User evidence list page.
+
+    Data attributes required for JS:
+    * data-action = user-evidence-delete
+    * data-region = user-evidence-list
+    * data-region = user-evidence-node
+    * data-id = user evidence ID
+    * data-userid = user evidence user ID
+
+    Context variables required for this template:
+    * userid - The ID of the user whose page we're viewing
+    * canmanage - Whether the current user can manage the evidence
+    * evidence - The list of evidence
+    * navigation - Buttons to add to the page
+    * pluginbaseurl - The plugin base URL
+}}
+
+<div data-region="user-evidence-list">
+<div class="pull-left">
+    {{#navigation}}
+        {{{.}}}
+    {{/navigation}}
+</div>
+<table class="generaltable fullwidth">
+    <caption>{{#str}}listofevidence, tool_lp{{/str}}</caption>
+    <thead>
+        <tr>
+            <th scope="col" width="20%">{{#str}}userevidencename, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}userevidencesummary, tool_lp{{/str}}</th>
+            <th scope="col">{{#str}}linkedcompetencies, tool_lp{{/str}} ({{#str}}status, tool_lp{{/str}} / {{#str}}reviewer, tool_lp{{/str}})</th>
+            {{#canmanage}}
+                <th scope="col">{{#str}}actions, tool_lp{{/str}}</th>
+            {{/canmanage}}
+        </tr>
+    </thead>
+    <tbody>
+        {{#evidence}}
+        <tr data-region='user-evidence-node' data-id="{{id}}" data-userid="{{userid}}">
+            <td><a href="{{pluginbaseurl}}/user_evidence.php?id={{id}}">{{{name}}}</a></td>
+            <td>
+                {{^hasurlorfiles}}
+                    -
+                {{/hasurlorfiles}}
+                {{#hasurlorfiles}}
+                    <ul class="user-evidence-documents">
+                        {{#url}}
+                            <li>{{#pix}}url, tool_lp{{/pix}} <a href="{{url}}" title="{{url}}">{{urlshort}}</a></li>
+                        {{/url}}
+                        {{#files}}
+                            <li><img src="{{iconurl}}" alt=""> <a href="{{url}}" title="{{filename}}">{{filenameshort}}</a></li>
+                        {{/files}}
+                    </ul>
+                {{/hasurlorfiles}}
+            </td>
+            <td>
+                {{^competencycount}}
+                -
+                {{/competencycount}}
+                {{#competencycount}}
+                    <ul class="user-evidence-competencies">
+                    {{#usercompetencies}}
+                        <li>
+                            {{{competency.shortname}}} <small><em>{{competency.idnumber}}</em></small> ({{usercompetency.statusname}}{{#usercompetency.reviewer.fullname}} / {{usercompetency.reviewer.fullname}}{{/usercompetency.reviewer.fullname}})
+                        </li>
+                    {{/usercompetencies}}
+                    </ul>
+                {{/competencycount}}
+            </td>
+            {{#canmanage}}
+            <td>
+                <div style="display: inline-block;">
+                <ul title="{{#str}}edit{{/str}}" class="user-evidence-actions">
+                <li>
+                    <a href="#">{{#str}}edit{{/str}}</a><b class="caret"></b>
+                    <ul class="dropdown dropdown-menu">
+                        <li class="dropdown-item">
+                            <a href="{{pluginbaseurl}}/user_evidence_edit.php?id={{id}}&amp;userid={{userid}}&amp;return=list">
+                                {{#pix}}t/edit{{/pix}} {{#str}}editthisuserevidence, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        {{#userhasplan}}
+                        <li class="dropdown-item">
+                            <a href="#" data-action="link-competency">
+                                {{#pix}}t/add{{/pix}} {{#str}}linkcompetencies, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        {{/userhasplan}}
+                        <li class="dropdown-item">
+                            <a data-action="send-competencies-review" href="#">
+                                {{#pix}}t/edit{{/pix}} {{#str}}sendcompetenciestoreview, tool_lp{{/str}}
+                            </a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a data-action="user-evidence-delete" href="#">
+                                {{#pix}}t/delete{{/pix}} {{#str}}deletethisuserevidence, tool_lp{{/str}}
+                            </a>
+                        </li>
+                    </ul>
+                </ul>
+            </div>
+            {{/canmanage}}
+            </td>
+        </tr>
+        {{/evidence}}
+    </tbody>
+</table>
+
+{{^evidence}}
+    <p class="alert alert-info">{{#str}}nouserevidence, tool_lp{{/str}}</p>
+{{/evidence}}
+
+</div>
+
+{{#js}}
+require(['tool_lp/user_evidence_actions'], function(UserEvidenceActions) {
+    var uea = new UserEvidenceActions('list');
+    uea.enhanceMenubar('.user-evidence-actions');
+});
+{{/js}}

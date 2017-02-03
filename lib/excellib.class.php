@@ -163,6 +163,8 @@ class MoodleExcelWorksheet {
         $name = strtr(trim($name, "'"), '[]*/\?:', '       ');
         // Shorten the title if necessary.
         $name = core_text::substr($name, 0, 31);
+        // After the substr, we might now have a single quote on the end.
+        $name = trim($name, "'");
 
         if ($name === '') {
             // Name is required!

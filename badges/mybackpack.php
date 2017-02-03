@@ -24,7 +24,7 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->dirroot . '/badges/backpack_form.php');
 require_once($CFG->dirroot . '/badges/lib/backpacklib.php');
@@ -50,7 +50,7 @@ $PAGE->set_context($context);
 $title = get_string('backpackdetails', 'badges');
 $PAGE->set_title($title);
 $PAGE->set_heading(fullname($USER));
-$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_pagelayout('standard');
 
 $backpack = $DB->get_record('badge_backpack', array('userid' => $USER->id));
 $badgescache = cache::make('core', 'externalbadges');

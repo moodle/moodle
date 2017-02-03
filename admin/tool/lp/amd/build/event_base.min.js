@@ -1,0 +1,1 @@
+define(["jquery"],function(a){var b=function(){this._eventNode=a("<div></div>")};return b.prototype._eventNode=null,b.prototype.on=function(a,b){this._eventNode.on(a,b)},b.prototype._trigger=function(a,b){this._eventNode.trigger(a,[b])},b});

@@ -29,12 +29,13 @@
     * multiple True if this field allows multiple selections
     * selectionId The dom id of the current selection list.
     * items List of items with label and value fields.
+    * noSelectionString String to use when no items are selected
 
     Example context (json):
     { "multiple": true, "selectionId": 1, "items": [
         { "label": "Item label with <strong>tags</strong>", "value": "5" },
         { "label": "Another item label with <strong>tags</strong>", "value": "4" }
-    ]}
+    ], "noSelectionString": "No selection" }
 }}
 <div class="form-autocomplete-selection {{#multiple}}form-autocomplete-multiple{{/multiple}}" id="{{selectionId}}" role="list" aria-atomic="true" {{#multiple}}tabindex="0" aria-multiselectable="true"{{/multiple}}>
 <span class="accesshide">{{#str}}selecteditems, form{{/str}}</span>
@@ -44,7 +45,7 @@
         </span>
     {{/items}}
     {{^items}}
-        <span>{{#str}}noselection,form{{/str}}</span>
+        <span>{{noSelectionString}}</span>
     {{/items}}
 </div>
 </div>

@@ -1,0 +1,127 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/columns2
+
+    Admin time setting template.
+
+    Boost 2 column layout template.
+
+    Context variables required for this template:
+    * sitename - The name of the site
+    * output - The core renderer for the page
+    * bodyattributes - attributes for the body tag as a string of html attributes
+    * sidepreblocks - HTML for the blocks
+    * hasblocks - true if there are blocks on this page
+    * navdraweropen - true if the nav drawer should be open on page load
+    * regionmainsettingsmenu - HTML for the region main settings menu
+    * hasregionmainsettingsmenu - There is a region main settings menu on this page.
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+         },
+        "bodyattributes":"",
+        "sidepreblocks": "<h2>Blocks html goes here</h2>",
+        "hasblocks":true,
+        "navdraweropen":true,
+        "regionmainsettingsmenu": "",
+        "hasregionmainsettingsmenu": false
+    }
+}}
+{{{ output.doctype }}}
+<html {{{ output.htmlattributes }}}>
+<head>
+    <title>{{{ output.page_title }}}</title>
+    <link rel="shortcut icon" href="{{{ output.favicon }}}" />
+    {{{ output.standard_head_html }}}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body {{{ bodyattributes }}}>
+
+<div id="page-wrapper">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    {{>theme_boost/header}}
+
+    <div id="page" class="container-fluid">
+        {{{ output.full_header }}}
+
+        <div id="page-content" class="row">
+            <div id="region-main-box" class="col-xs-12">
+                {{#hasregionmainsettingsmenu}}
+                <div id="region-main-settings-menu" class="hidden-print {{#hasblocks}}has-blocks{{/hasblocks}}">
+                    <div> {{{ output.region_main_settings_menu }}} </div>
+                </div>
+                {{/hasregionmainsettingsmenu}}
+                <section id="region-main" {{#hasblocks}}class="has-blocks"{{/hasblocks}}>
+                    <div class="card card-block">
+                    {{#hasregionmainsettingsmenu}}
+                        <div class="region_main_settings_menu_proxy"></div>
+                    {{/hasregionmainsettingsmenu}}
+                    {{{ output.course_content_header }}}
+                    {{{ output.main_content }}}
+                    {{{ output.course_content_footer }}}
+                    </div>
+                </section>
+                {{#hasblocks}}
+                <section data-region="blocks-column" class="hidden-print">
+                    {{{ sidepreblocks }}}
+                </section>
+                {{/hasblocks}}
+            </div>
+        </div>
+    </div>
+    {{> theme_boost/nav-drawer }}
+</div>
+<footer id="page-footer" class="p-y-1 bg-inverse">
+    <div class="container">
+        <div id="course-footer">{{{ output.course_footer }}}</div>
+
+        {{# output.page_doc_link }}
+            <p class="helplink">{{{ output.page_doc_link }}}</p>
+        {{/ output.page_doc_link }}
+
+        {{{ output.login_info }}}
+        {{{ output.home_link }}}
+        <nav class="nav navbar-nav hidden-lg-up">
+            {{# output.custom_menu_flat }}
+                <ul class="list-unstyled p-t-1">
+                    {{> theme_boost/custom_menu_footer }}
+                </ul>
+            {{/ output.custom_menu_flat }}
+        </nav>
+        {{{ output.standard_footer_html }}}
+        {{{ output.standard_end_of_body_html }}}
+    </div>
+</footer>
+
+</body>
+</html>
+{{#js}}
+require(['theme_boost/loader']);
+require(['theme_boost/drawer'], function(mod) {
+    mod.init();
+});
+{{/js}}

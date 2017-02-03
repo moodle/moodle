@@ -56,6 +56,24 @@ class core_role_override_permissions_table_advanced extends core_role_capability
         }
     }
 
+    /**
+     * This method adds an additional class to a row if capability is other than inherited.
+     *
+     * @param stdClass $capability
+     * @return array
+     */
+    protected function get_row_attributes($capability) {
+        $rowattributes = parent::get_row_attributes($capability);
+        if ($this->permissions[$capability->name] !== 0) {
+            if (empty($rowattributes['class'])) {
+                $rowattributes['class'] = "overriddenpermission";
+            } else {
+                $rowattributes['class'] .= " overriddenpermission";
+            }
+        }
+        return $rowattributes;
+    }
+
     protected function load_parent_permissions() {
         // Get the capabilities from the parent context, so that can be shown in the interface.
         $parentcontext = $this->context->get_parent_context();

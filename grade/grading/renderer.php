@@ -78,7 +78,8 @@ class core_grading_renderer extends plugin_renderer_base {
     public function management_message($message) {
         $this->page->requires->strings_for_js(array('clicktoclose'), 'core_grading');
         $this->page->requires->yui_module('moodle-core_grading-manage', 'M.core_grading.init_manage');
-        return $this->output->box(format_string($message).html_writer::tag('span', ''), 'message', 'actionresultmessagebox');
+        return $this->output->box(format_string($message) . ' - ' . html_writer::tag('span', ''), 'message',
+                'actionresultmessagebox');
     }
 
     /**

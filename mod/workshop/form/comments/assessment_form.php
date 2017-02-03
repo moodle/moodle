@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)).'/assessment_form.php');    // parent class definition
+require_once(__DIR__ . '/../assessment_form.php');    // Parent class definition.
 
 /**
  * Class representing a form for assessing submissions by comments grading strategy
@@ -69,7 +69,7 @@ class workshop_comments_assessment_form extends workshop_assessment_form {
             $mform->addElement('html', $desc);
 
             // comment
-            $label = get_string('dimensioncomment', 'workshopform_comments');
+            $label = get_string('dimensioncommentfor', 'workshopform_comments', $dimtitle);
             //$mform->addElement('editor', 'peercomment__idx_' . $i, $label, null, array('maxfiles' => 0));
             $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 10));
             $mform->addRule('peercomment__idx_' . $i, null, 'required', null, 'client');

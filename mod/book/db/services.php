@@ -33,7 +33,8 @@ $functions = array(
         'methodname'    => 'view_book',
         'description'   => 'Simulate the view.php web interface book: trigger events, completion, etc...',
         'type'          => 'write',
-        'capabilities'  => 'mod/book:read'
+        'capabilities'  => 'mod/book:read',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
     'mod_book_get_books_by_courses' => array(
@@ -42,6 +43,7 @@ $functions = array(
         'description'   => 'Returns a list of book instances in a provided set of courses,
                             if no courses are provided then all the book instances the user has access to will be returned.',
         'type'          => 'read',
-        'capabilities'  => ''
+        'capabilities'  => '',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     )
 );

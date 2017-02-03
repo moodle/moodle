@@ -113,6 +113,19 @@ abstract class assign_feedback_plugin extends assign_plugin {
     }
 
     /**
+     * Has the plugin form element been modified in the current submission?
+     *
+     * @param stdClass $grade The grade.
+     * @param stdClass $data Form data from the feedback form.
+     * @return boolean - True if the form element has been modified.
+     */
+    public function is_feedback_modified(stdClass $grade, stdClass $data) {
+        debugging('This plugin (' . $this->get_name() . ') has not overwritten the is_feedback_modified() method.
+                Please add this method to your plugin', DEBUG_DEVELOPER);
+        return true;
+    }
+
+    /**
      * Save quickgrading changes.
      *
      * @param int $userid The user id in the table this quickgrading element relates to
@@ -152,6 +165,15 @@ abstract class assign_feedback_plugin extends assign_plugin {
      */
     public function grading_action($gradingaction) {
         return '';
+    }
+
+    /**
+     * Supports injecting content into the review panel of the grading app.
+     *
+     * @return bool True if this plugin will add content to the review panel of the grading app.
+     */
+    public function supports_review_panel() {
+        return false;
     }
 
     /**

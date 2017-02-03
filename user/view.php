@@ -110,12 +110,12 @@ $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $coursec
 if ($currentuser) {
     if (!is_viewing($coursecontext) && !is_enrolled($coursecontext)) {
         // Need to have full access to a course to see the rest of own info.
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
         $referer = get_local_referer(false);
         if (!empty($referer)) {
-            echo $OUTPUT->continue_button($referer);
+            redirect($referer, get_string('notenrolled', '', $fullname));
         }
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
         echo $OUTPUT->footer();
         die;
     }
@@ -136,17 +136,17 @@ if ($currentuser) {
         //       or test for course:inspect capability.
         if (has_capability('moodle/role:assign', $coursecontext)) {
             $PAGE->navbar->add($fullname);
-            echo $OUTPUT->header();
-            echo $OUTPUT->heading(get_string('notenrolled', '', $fullname));
+            $notice = get_string('notenrolled', '', $fullname);
         } else {
-            echo $OUTPUT->header();
             $PAGE->navbar->add($struser);
-            echo $OUTPUT->heading(get_string('notenrolledprofile'));
+            $notice = get_string('notenrolledprofile', '', $fullname);
         }
         $referer = get_local_referer(false);
         if (!empty($referer)) {
-            echo $OUTPUT->continue_button($referer);
+            redirect($referer, $notice);
         }
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading($notice);
         echo $OUTPUT->footer();
         exit;
     }

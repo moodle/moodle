@@ -107,8 +107,14 @@ class behat_form_field {
         // dealing with a fgroup element.
         $instance = $this->guess_type();
         $instance->field->keyDown($char, $modifier);
-        $instance->field->keyPress($char, $modifier);
-        $instance->field->keyUp($char, $modifier);
+        try {
+            $instance->field->keyPress($char, $modifier);
+            $instance->field->keyUp($char, $modifier);
+        } catch (WebDriver\Exception $e) {
+            // If the JS handler attached to keydown or keypress destroys the element
+            // the later events may trigger errors because form element no longer exist
+            // or is not visible. Ignore such exceptions here.
+        }
     }
 
     /**

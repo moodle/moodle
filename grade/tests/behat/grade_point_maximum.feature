@@ -25,28 +25,28 @@ Feature: We can change the grading type and maximum grade point values
   @javascript
   Scenario: Validate that switching the type of grading used correctly disables input form elements
     When I follow "Test Assignment 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Point"
     Then the "Scale" "select" should be disabled
-    And the "Maximum points" "field" should be enabled
+    And the "Maximum grade" "field" should be enabled
     And I set the field "grade[modgrade_type]" to "Scale"
-    And the "Maximum points" "field" should be disabled
+    And the "Maximum grade" "field" should be disabled
     Then the "Scale" "select" should be enabled
     And I set the field "grade[modgrade_type]" to "None"
     Then the "Scale" "select" should be disabled
-    And the "Maximum points" "field" should be disabled
+    And the "Maximum grade" "field" should be disabled
     And I press "Save and return to course"
 
   @javascript
   Scenario: Create an activity with a maximum grade point value less than the system maximum
     When I follow "Test Assignment 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "point"
     And I set the field "grade[modgrade_point]" to "600"
     And I press "Save and display"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     Then the field "grade[modgrade_point]" matches value "600"
     And the "Scale" "select" should be disabled
     And I press "Save and return to course"
@@ -54,43 +54,41 @@ Feature: We can change the grading type and maximum grade point values
   @javascript
   Scenario: Create an activity with a scale as the grade type
     When I follow "Test Assignment 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Scale"
     And I set the field "grade[modgrade_scale]" to "Separate and Connected ways of knowing"
     And I press "Save and display"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     Then the field "grade[modgrade_scale]" matches value "Separate and Connected ways of knowing"
-    And the "Maximum points" "field" should be disabled
+    And the "Maximum grade" "field" should be disabled
     And I press "Save and return to course"
 
   @javascript
   Scenario: Create an activity with no grade as the grade type
     When I follow "Test Assignment 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "None"
     And I press "Save and display"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And the "Scale" "select" should be disabled
-    And the "Maximum points" "field" should be disabled
+    And the "Maximum grade" "field" should be disabled
     And I press "Save and return to course"
 
-  @javascript
   Scenario: Create an activity with a maximum grade point value higher than the system maximum
     When I follow "Test Assignment 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "Point"
     And I set the field "grade[modgrade_point]" to "20000"
     And I press "Save and display"
-    Then I should see "Invalid Grade Value. This must be an integer between 1 and 900"
+    Then I should see "Invalid grade value. This must be an integer between 1 and 900"
     And I press "Cancel"
 
-  @javascript
   Scenario: Create an activity with a valid maximum grade point and then change the system maximum to be lower
     When I follow "Test Assignment 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I expand all fieldsets
     And I set the field "grade[modgrade_type]" to "point"
     And I set the field "grade[modgrade_point]" to "600"
@@ -102,7 +100,7 @@ Feature: We can change the grading type and maximum grade point values
     And I am on site homepage
     And I follow "Course 1"
     And I follow "Test Assignment 1"
-    And I follow "Edit settings"
+    And I navigate to "Edit settings" in current page administration
     And I press "Save and display"
-    Then I should see "Invalid Grade Value. This must be an integer between 1 and 100"
+    Then I should see "Invalid grade value. This must be an integer between 1 and 100"
     And I press "Cancel"

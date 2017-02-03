@@ -27,7 +27,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../adaptive/renderer.php');
+require_once(__DIR__ . '/../adaptive/renderer.php');
 
 
 /**

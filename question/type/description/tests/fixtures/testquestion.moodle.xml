@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 0  -->
+  <question type="category">
+    <category>
+        <text>$course$/Default for C1</text>
+
+    </category>
+  </question>
+
+<!-- question: 115000  -->
+  <question type="description">
+    <name>
+      <text>description-001</text>
+    </name>
+    <questiontext format="html">
+      <text>Instructions about the following questions.</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text>Why actually the field 'General feedback' used in this qytype?</text>
+    </generalfeedback>
+    <defaultgrade>0.0000000</defaultgrade>
+    <penalty>0.0000000</penalty>
+    <hidden>0</hidden>
+  </question>
+
+</quiz>

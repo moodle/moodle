@@ -125,6 +125,9 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('startdate', 'startdate');
         $mform->setDefault('startdate', time() + 3600 * 24);
 
+        $mform->addElement('date_selector', 'enddate', get_string('enddate'), array('optional' => true));
+        $mform->addHelpButton('enddate', 'enddate');
+
         $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
         $mform->addHelpButton('idnumber', 'idnumbercourse');
         $mform->setType('idnumber', PARAM_RAW);
@@ -213,11 +216,6 @@ class course_edit_form extends moodleform {
             $calendars += $calendartypes;
             $mform->addElement('select', 'calendartype', get_string('forcecalendartype', 'calendar'), $calendars);
         }
-
-        $options = range(0, 10);
-        $mform->addElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
-        $mform->addHelpButton('newsitems', 'newsitemsnumber');
-        $mform->setDefault('newsitems', $courseconfig->newsitems);
 
         $mform->addElement('selectyesno', 'showgrades', get_string('showgrades'));
         $mform->addHelpButton('showgrades', 'showgrades');
@@ -339,7 +337,8 @@ class course_edit_form extends moodleform {
         $mform = $this->_form;
 
         // add available groupings
-        if ($courseid = $mform->getElementValue('id') and $mform->elementExists('defaultgroupingid')) {
+        $courseid = $mform->getElementValue('id');
+        if ($courseid and $mform->elementExists('defaultgroupingid')) {
             $options = array();
             if ($groupings = $DB->get_records('groupings', array('courseid'=>$courseid))) {
                 foreach ($groupings as $grouping) {
@@ -354,12 +353,34 @@ class course_edit_form extends moodleform {
         // add course format options
         $formatvalue = $mform->getElementValue('format');
         if (is_array($formatvalue) && !empty($formatvalue)) {
-            $courseformat = course_get_format((object)array('format' => $formatvalue[0]));
+
+            $params = array('format' => $formatvalue[0]);
+            // Load the course as well if it is available, course formats may need it to work out
+            // they preferred course end date.
+            if ($courseid) {
+                $params['id'] = $courseid;
+            }
+            $courseformat = course_get_format((object)$params);
 
             $elements = $courseformat->create_edit_form_elements($mform);
             for ($i = 0; $i < count($elements); $i++) {
                 $mform->insertElementBefore($mform->removeElement($elements[$i]->getName(), false),
                         'addcourseformatoptionshere');
+            }
+
+            if ($courseformat->supports_news()) {
+                // Show the news items select field if the course format supports news.
+                $options = range(0, 10);
+                $newsitems = $mform->createElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
+                $mform->insertElementBefore($newsitems, 'showgrades');
+                $courseconfig = get_config('moodlecourse');
+                $mform->setDefault('newsitems', $courseconfig->newsitems);
+                $mform->addHelpButton('newsitems', 'newsitemsnumber');
+            } else {
+                // Otherwise, create a hidden newsitems element and set its value to 0.
+                $newsitems = $mform->addElement('hidden', 'newsitems', 0);
+                $mform->setType('newsitems', PARAM_INT);
+                $newsitems->setValue(0);
             }
         }
     }
@@ -390,6 +411,10 @@ class course_edit_form extends moodleform {
                     $errors['idnumber'] = get_string('courseidnumbertaken', 'error', $course->fullname);
                 }
             }
+        }
+
+        if ($errorcode = course_validate_dates($data)) {
+            $errors['enddate'] = get_string($errorcode, 'error');
         }
 
         $errors = array_merge($errors, enrol_course_edit_validation($data, $this->context));

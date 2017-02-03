@@ -932,6 +932,42 @@ function groups_group_visible($groupid, $course, $cm = null, $userid = null) {
 }
 
 /**
+ * Get sql and parameters that will return user ids for a group
+ *
+ * @param int $groupid
+ * @return array($sql, $params)
+ */
+function groups_get_members_ids_sql($groupid) {
+    $groupjoin = groups_get_members_join($groupid, 'u.id');
+
+    $sql = "SELECT DISTINCT u.id
+              FROM {user} u
+            $groupjoin->joins
+             WHERE u.deleted = 0";
+
+    return array($sql, $groupjoin->params);
+}
+
+/**
+ * Get sql join to return users in a group
+ *
+ * @param int $groupid
+ * @param string $useridcolumn The column of the user id from the calling SQL, e.g. u.id
+ * @return \core\dml\sql_join Contains joins, wheres, params
+ */
+function groups_get_members_join($groupid, $useridcolumn) {
+    // Use unique prefix just in case somebody makes some SQL magic with the result.
+    static $i = 0;
+    $i++;
+    $prefix = 'gm' . $i . '_';
+
+    $join = "JOIN {groups_members} {$prefix}gm ON ({$prefix}gm.userid = $useridcolumn AND {$prefix}gm.groupid = :{$prefix}gmid)";
+    $param = array("{$prefix}gmid" => $groupid);
+
+    return new \core\dml\sql_join($join, '', $param);
+}
+
+/**
  * Internal method, sets up $SESSION->activegroup and verifies previous value
  *
  * @param int $courseid

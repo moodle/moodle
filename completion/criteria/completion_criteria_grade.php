@@ -65,11 +65,13 @@ class completion_criteria_grade extends completion_criteria {
         $mform->addElement('text', 'criteria_grade_value', get_string('graderequired', 'completion'));
         $mform->disabledIf('criteria_grade_value', 'criteria_grade');
         $mform->setType('criteria_grade_value', PARAM_RAW); // Uses unformat_float.
-        $mform->setDefault('criteria_grade_value', format_float($data));
+        // Grades are stored in Moodle with 5 decimal points, make sure we do not accidentally round them
+        // when setting the form value.
+        $mform->setDefault('criteria_grade_value', format_float($data, 5));
 
         if ($this->id) {
             $mform->setDefault('criteria_grade', 1);
-            $mform->setDefault('criteria_grade_value', format_float($this->gradepass));
+            $mform->setDefault('criteria_grade_value', format_float($this->gradepass, 5));
         }
     }
 
@@ -141,7 +143,10 @@ class completion_criteria_grade extends completion_criteria {
      * @return string
      */
     public function get_title_detailed() {
-        $graderequired = round($this->gradepass, 2).'%';
+        global $CFG;
+        require_once($CFG->libdir . '/gradelib.php');
+        $decimalpoints = grade_get_setting($this->course, 'decimalpoints', $CFG->grade_decimalpoints);
+        $graderequired = format_float($this->gradepass, $decimalpoints);
         return get_string('gradexrequired', 'completion', $graderequired);
     }
 
@@ -161,11 +166,15 @@ class completion_criteria_grade extends completion_criteria {
      * @return string
      */
     public function get_status($completion) {
+        global $CFG;
+        require_once($CFG->libdir . '/gradelib.php');
+        $decimalpoints = grade_get_setting($this->course, 'decimalpoints', $CFG->grade_decimalpoints);
+
         $grade = $this->get_grade($completion);
         $graderequired = $this->get_title_detailed();
 
         if ($grade) {
-            $grade = round($grade, 2).'%';
+            $grade = format_float($grade, $decimalpoints);
         } else {
             $grade = get_string('nograde');
         }
@@ -235,15 +244,19 @@ class completion_criteria_grade extends completion_criteria {
      *     type, criteria, requirement, status
      */
     public function get_details($completion) {
+        global $CFG;
+        require_once($CFG->libdir . '/gradelib.php');
+        $decimalpoints = grade_get_setting($this->course, 'decimalpoints', $CFG->grade_decimalpoints);
+
         $details = array();
         $details['type'] = get_string('coursegrade', 'completion');
         $details['criteria'] = get_string('graderequired', 'completion');
-        $details['requirement'] = round($this->gradepass, 2).'%';
+        $details['requirement'] = format_float($this->gradepass, $decimalpoints);
         $details['status'] = '';
 
-        $grade = round($this->get_grade($completion), 2);
+        $grade = format_float($this->get_grade($completion), $decimalpoints);
         if ($grade) {
-            $details['status'] = $grade.'%';
+            $details['status'] = $grade;
         }
 
         return $details;

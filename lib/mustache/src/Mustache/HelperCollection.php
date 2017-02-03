@@ -3,7 +3,7 @@
 /*
  * This file is part of Mustache.php.
  *
- * (c) 2010-2015 Justin Hileman
+ * (c) 2010-2016 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -81,7 +81,7 @@ class Mustache_HelperCollection
     /**
      * Get a helper by name.
      *
-     * @throws Mustache_Exception_UnknownHelperException If helper does not exist.
+     * @throws Mustache_Exception_UnknownHelperException If helper does not exist
      *
      * @param string $name
      *
@@ -137,7 +137,7 @@ class Mustache_HelperCollection
     /**
      * Check whether a given helper is present in the collection.
      *
-     * @throws Mustache_Exception_UnknownHelperException if the requested helper is not present.
+     * @throws Mustache_Exception_UnknownHelperException if the requested helper is not present
      *
      * @param string $name
      */

@@ -47,4 +47,3 @@ Feature: A teacher can duplicate questions in the question bank
     And I press "Cancel"
     Then I should see "Test question to be copied"
     And the field "Select a category" matches value "Test questions (1)"
-

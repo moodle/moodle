@@ -25,7 +25,7 @@
 
 define('NO_OUTPUT_BUFFERING', true); // progress bar is used here
 
-require(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 

@@ -22,7 +22,7 @@
  * @package core_user
  */
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
 $config = optional_param('config', 0, PARAM_INT);

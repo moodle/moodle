@@ -51,6 +51,29 @@ class course_module_viewed extends \core\event\course_module_viewed {
     }
 
     /**
+     * Creates an instance from feedback record
+     *
+     * @param stdClass $feedback
+     * @param cm_info|stdClass $cm
+     * @param stdClass $course
+     * @return course_module_viewed
+     */
+    public static function create_from_record($feedback, $cm, $course) {
+        $event = self::create(array(
+            'objectid' => $feedback->id,
+            'context' => \context_module::instance($cm->id),
+            'anonymous' => ($feedback->anonymous == FEEDBACK_ANONYMOUS_YES),
+            'other' => array(
+                'anonymous' => $feedback->anonymous // Deprecated.
+            )
+        ));
+        $event->add_record_snapshot('course_modules', $cm);
+        $event->add_record_snapshot('course', $course);
+        $event->add_record_snapshot('feedback', $feedback);
+        return $event;
+    }
+
+    /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
      * @deprecated since 2.7

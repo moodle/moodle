@@ -26,8 +26,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-require_once(dirname(__FILE__).'/locallib.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/locallib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
 $id         = optional_param('id', 0, PARAM_INT); // course_module ID, or
@@ -84,7 +84,15 @@ if (!is_null($editmode) && $PAGE->user_allowed_editing()) {
     $USER->editing = $editmode;
 }
 
-$PAGE->set_title($workshop->name);
+$userplan = new workshop_user_plan($workshop, $USER->id);
+
+foreach ($userplan->phases as $phase) {
+    if ($phase->active) {
+        $currentphasetitle = $phase->title;
+    }
+}
+
+$PAGE->set_title($workshop->name . " (" . $currentphasetitle . ")");
 $PAGE->set_heading($course->fullname);
 
 if ($perpage and $perpage > 0 and $perpage <= 1000) {
@@ -101,12 +109,12 @@ if ($eval) {
 }
 
 $output = $PAGE->get_renderer('mod_workshop');
-$userplan = new workshop_user_plan($workshop, $USER->id);
 
 /// Output starts here
 
 echo $output->header();
 echo $output->heading_with_help(format_string($workshop->name), 'userplan', 'workshop');
+echo $output->heading(format_string($currentphasetitle), 3, null, 'mod_workshop-userplanheading');
 echo $output->render($userplan);
 
 switch ($workshop->phase) {
@@ -140,7 +148,7 @@ case workshop::PHASE_SETUP:
 case workshop::PHASE_SUBMISSION:
     if (trim($workshop->instructauthors)) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructauthors, 'pluginfile.php', $PAGE->context->id,
-            'mod_workshop', 'instructauthors', 0, workshop::instruction_editors_options($PAGE->context));
+            'mod_workshop', 'instructauthors', null, workshop::instruction_editors_options($PAGE->context));
         print_collapsible_region_start('', 'workshop-viewlet-instructauthors', get_string('instructauthors', 'workshop'));
         echo $output->box(format_text($instructions, $workshop->instructauthorsformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
         print_collapsible_region_end();
@@ -325,7 +333,7 @@ case workshop::PHASE_ASSESSMENT:
     }
     if (trim($workshop->instructreviewers)) {
         $instructions = file_rewrite_pluginfile_urls($workshop->instructreviewers, 'pluginfile.php', $PAGE->context->id,
-            'mod_workshop', 'instructreviewers', 0, workshop::instruction_editors_options($PAGE->context));
+            'mod_workshop', 'instructreviewers', null, workshop::instruction_editors_options($PAGE->context));
         print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
         echo $output->box(format_text($instructions, $workshop->instructreviewersformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
         print_collapsible_region_end();
@@ -546,7 +554,7 @@ case workshop::PHASE_EVALUATION:
 case workshop::PHASE_CLOSED:
     if (trim($workshop->conclusion)) {
         $conclusion = file_rewrite_pluginfile_urls($workshop->conclusion, 'pluginfile.php', $workshop->context->id,
-            'mod_workshop', 'conclusion', 0, workshop::instruction_editors_options($workshop->context));
+            'mod_workshop', 'conclusion', null, workshop::instruction_editors_options($workshop->context));
         print_collapsible_region_start('', 'workshop-viewlet-conclusion', get_string('conclusion', 'workshop'));
         echo $output->box(format_text($conclusion, $workshop->conclusionformat, array('overflowdiv'=>true)), array('generalbox', 'conclusion'));
         print_collapsible_region_end();
@@ -657,5 +665,5 @@ case workshop::PHASE_CLOSED:
     break;
 default:
 }
-
+$PAGE->requires->js_call_amd('mod_workshop/workshopview', 'init');
 echo $output->footer();

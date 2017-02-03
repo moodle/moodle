@@ -26,110 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Returns detailed function information
- *
- * @param string|object $function name of external function or record from external_function
- * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
- *                        MUST_EXIST means throw exception if no record or multiple records found
- * @return stdClass description or false if not found or exception thrown
- * @since Moodle 2.0
- */
-function external_function_info($function, $strictness=MUST_EXIST) {
-    global $DB, $CFG;
-
-    if (!is_object($function)) {
-        if (!$function = $DB->get_record('external_functions', array('name'=>$function), '*', $strictness)) {
-            return false;
-        }
-    }
-
-    // First try class autoloading.
-    if (!class_exists($function->classname)) {
-        // Fallback to explicit include of externallib.php.
-        $function->classpath = empty($function->classpath) ? core_component::get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
-        if (!file_exists($function->classpath)) {
-            throw new coding_exception('Cannot find file with external function implementation: ' . $function->classname);
-        }
-        require_once($function->classpath);
-        if (!class_exists($function->classname)) {
-            throw new coding_exception('Cannot find external class');
-        }
-    }
-
-    $function->ajax_method = $function->methodname.'_is_allowed_from_ajax';
-    $function->parameters_method = $function->methodname.'_parameters';
-    $function->returns_method    = $function->methodname.'_returns';
-    $function->deprecated_method = $function->methodname.'_is_deprecated';
-
-    // make sure the implementaion class is ok
-    if (!method_exists($function->classname, $function->methodname)) {
-        throw new coding_exception('Missing implementation method of '.$function->classname.'::'.$function->methodname);
-    }
-    if (!method_exists($function->classname, $function->parameters_method)) {
-        throw new coding_exception('Missing parameters description');
-    }
-    if (!method_exists($function->classname, $function->returns_method)) {
-        throw new coding_exception('Missing returned values description');
-    }
-    if (method_exists($function->classname, $function->deprecated_method)) {
-        if (call_user_func(array($function->classname, $function->deprecated_method)) === true) {
-            $function->deprecated = true;
-        }
-    }
-    $function->allowed_from_ajax = false;
-
-    // fetch the parameters description
-    $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
-    if (!($function->parameters_desc instanceof external_function_parameters)) {
-        throw new coding_exception('Invalid parameters description');
-    }
-
-    // fetch the return values description
-    $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
-    // null means void result or result is ignored
-    if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
-        throw new coding_exception('Invalid return description');
-    }
-
-    //now get the function description
-    //TODO MDL-31115 use localised lang pack descriptions, it would be nice to have
-    //      easy to understand descriptions in admin UI,
-    //      on the other hand this is still a bit in a flux and we need to find some new naming
-    //      conventions for these descriptions in lang packs
-    $function->description = null;
-    $servicesfile = core_component::get_component_directory($function->component).'/db/services.php';
-    if (file_exists($servicesfile)) {
-        $functions = null;
-        include($servicesfile);
-        if (isset($functions[$function->name]['description'])) {
-            $function->description = $functions[$function->name]['description'];
-        }
-        if (isset($functions[$function->name]['testclientpath'])) {
-            $function->testclientpath = $functions[$function->name]['testclientpath'];
-        }
-        if (isset($functions[$function->name]['type'])) {
-            $function->type = $functions[$function->name]['type'];
-        }
-        if (isset($functions[$function->name]['ajax'])) {
-            $function->allowed_from_ajax = $functions[$function->name]['ajax'];
-        } else if (method_exists($function->classname, $function->ajax_method)) {
-            if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
-                debugging('External function ' . $function->ajax_method . '() function is deprecated.' .
-                          'Set ajax=>true in db/service.php instead.', DEBUG_DEVELOPER);
-                $function->allowed_from_ajax = true;
-            }
-        }
-        if (isset($functions[$function->name]['loginrequired'])) {
-            $function->loginrequired = $functions[$function->name]['loginrequired'];
-        } else {
-            $function->loginrequired = true;
-        }
-    }
-
-    return $function;
-}
-
-/**
  * Exception indicating user is not allowed to use external function in the current context.
  *
  * @package    core_webservice
@@ -160,6 +56,204 @@ class external_api {
 
     /** @var stdClass context where the function calls will be restricted */
     private static $contextrestriction;
+
+    /**
+     * Returns detailed function information
+     *
+     * @param string|object $function name of external function or record from external_function
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
+     *                        MUST_EXIST means throw exception if no record or multiple records found
+     * @return stdClass description or false if not found or exception thrown
+     * @since Moodle 2.0
+     */
+    public static function external_function_info($function, $strictness=MUST_EXIST) {
+        global $DB, $CFG;
+
+        if (!is_object($function)) {
+            if (!$function = $DB->get_record('external_functions', array('name' => $function), '*', $strictness)) {
+                return false;
+            }
+        }
+
+        // First try class autoloading.
+        if (!class_exists($function->classname)) {
+            // Fallback to explicit include of externallib.php.
+            if (empty($function->classpath)) {
+                $function->classpath = core_component::get_component_directory($function->component).'/externallib.php';
+            } else {
+                $function->classpath = $CFG->dirroot.'/'.$function->classpath;
+            }
+            if (!file_exists($function->classpath)) {
+                throw new coding_exception('Cannot find file with external function implementation');
+            }
+            require_once($function->classpath);
+            if (!class_exists($function->classname)) {
+                throw new coding_exception('Cannot find external class');
+            }
+        }
+
+        $function->ajax_method = $function->methodname.'_is_allowed_from_ajax';
+        $function->parameters_method = $function->methodname.'_parameters';
+        $function->returns_method    = $function->methodname.'_returns';
+        $function->deprecated_method = $function->methodname.'_is_deprecated';
+
+        // Make sure the implementaion class is ok.
+        if (!method_exists($function->classname, $function->methodname)) {
+            throw new coding_exception('Missing implementation method of '.$function->classname.'::'.$function->methodname);
+        }
+        if (!method_exists($function->classname, $function->parameters_method)) {
+            throw new coding_exception('Missing parameters description');
+        }
+        if (!method_exists($function->classname, $function->returns_method)) {
+            throw new coding_exception('Missing returned values description');
+        }
+        if (method_exists($function->classname, $function->deprecated_method)) {
+            if (call_user_func(array($function->classname, $function->deprecated_method)) === true) {
+                $function->deprecated = true;
+            }
+        }
+        $function->allowed_from_ajax = false;
+
+        // Fetch the parameters description.
+        $function->parameters_desc = call_user_func(array($function->classname, $function->parameters_method));
+        if (!($function->parameters_desc instanceof external_function_parameters)) {
+            throw new coding_exception('Invalid parameters description');
+        }
+
+        // Fetch the return values description.
+        $function->returns_desc = call_user_func(array($function->classname, $function->returns_method));
+        // Null means void result or result is ignored.
+        if (!is_null($function->returns_desc) and !($function->returns_desc instanceof external_description)) {
+            throw new coding_exception('Invalid return description');
+        }
+
+        // Now get the function description.
+
+        // TODO MDL-31115 use localised lang pack descriptions, it would be nice to have
+        // easy to understand descriptions in admin UI,
+        // on the other hand this is still a bit in a flux and we need to find some new naming
+        // conventions for these descriptions in lang packs.
+        $function->description = null;
+        $servicesfile = core_component::get_component_directory($function->component).'/db/services.php';
+        if (file_exists($servicesfile)) {
+            $functions = null;
+            include($servicesfile);
+            if (isset($functions[$function->name]['description'])) {
+                $function->description = $functions[$function->name]['description'];
+            }
+            if (isset($functions[$function->name]['testclientpath'])) {
+                $function->testclientpath = $functions[$function->name]['testclientpath'];
+            }
+            if (isset($functions[$function->name]['type'])) {
+                $function->type = $functions[$function->name]['type'];
+            }
+            if (isset($functions[$function->name]['ajax'])) {
+                $function->allowed_from_ajax = $functions[$function->name]['ajax'];
+            } else if (method_exists($function->classname, $function->ajax_method)) {
+                if (call_user_func(array($function->classname, $function->ajax_method)) === true) {
+                    debugging('External function ' . $function->ajax_method . '() function is deprecated.' .
+                              'Set ajax=>true in db/service.php instead.', DEBUG_DEVELOPER);
+                    $function->allowed_from_ajax = true;
+                }
+            }
+            if (isset($functions[$function->name]['loginrequired'])) {
+                $function->loginrequired = $functions[$function->name]['loginrequired'];
+            } else {
+                $function->loginrequired = true;
+            }
+        }
+
+        return $function;
+    }
+
+    /**
+     * Call an external function validating all params/returns correctly.
+     *
+     * Note that an external function may modify the state of the current page, so this wrapper
+     * saves and restores tha PAGE and COURSE global variables before/after calling the external function.
+     *
+     * @param string $function A webservice function name.
+     * @param array $args Params array (named params)
+     * @param boolean $ajaxonly If true, an extra check will be peformed to see if ajax is required.
+     * @return array containing keys for error (bool), exception and data.
+     */
+    public static function call_external_function($function, $args, $ajaxonly=false) {
+        global $PAGE, $COURSE, $CFG, $SITE;
+
+        require_once($CFG->libdir . "/pagelib.php");
+
+        $externalfunctioninfo = self::external_function_info($function);
+
+        $currentpage = $PAGE;
+        $currentcourse = $COURSE;
+        $response = array();
+
+        try {
+            // Taken straight from from setup.php.
+            if (!empty($CFG->moodlepageclass)) {
+                if (!empty($CFG->moodlepageclassfile)) {
+                    require_once($CFG->moodlepageclassfile);
+                }
+                $classname = $CFG->moodlepageclass;
+            } else {
+                $classname = 'moodle_page';
+            }
+            $PAGE = new $classname();
+            $COURSE = clone($SITE);
+
+            if ($ajaxonly && !$externalfunctioninfo->allowed_from_ajax) {
+                throw new moodle_exception('servicenotavailable', 'webservice');
+            }
+
+            // Do not allow access to write or delete webservices as a public user.
+            if ($externalfunctioninfo->loginrequired) {
+                if (defined('NO_MOODLE_COOKIES') && NO_MOODLE_COOKIES && !PHPUNIT_TEST) {
+                    throw new moodle_exception('servicenotavailable', 'webservice');
+                }
+                if (!isloggedin()) {
+                    throw new moodle_exception('servicenotavailable', 'webservice');
+                } else {
+                    require_sesskey();
+                }
+            }
+
+            // Validate params, this also sorts the params properly, we need the correct order in the next part.
+            $callable = array($externalfunctioninfo->classname, 'validate_parameters');
+            $params = call_user_func($callable,
+                                     $externalfunctioninfo->parameters_desc,
+                                     $args);
+
+            // Execute - gulp!
+            $callable = array($externalfunctioninfo->classname, $externalfunctioninfo->methodname);
+            $result = call_user_func_array($callable,
+                                           array_values($params));
+
+            // Validate the return parameters.
+            if ($externalfunctioninfo->returns_desc !== null) {
+                $callable = array($externalfunctioninfo->classname, 'clean_returnvalue');
+                $result = call_user_func($callable, $externalfunctioninfo->returns_desc, $result);
+            }
+
+            $response['error'] = false;
+            $response['data'] = $result;
+        } catch (Exception $e) {
+            $exception = get_exception_info($e);
+            unset($exception->a);
+            $exception->backtrace = format_backtrace($exception->backtrace, true);
+            if (!debugging('', DEBUG_DEVELOPER)) {
+                unset($exception->debuginfo);
+                unset($exception->backtrace);
+            }
+            $response['error'] = true;
+            $response['exception'] = $exception;
+            // Do not process the remaining requests.
+        }
+
+        $PAGE = $currentpage;
+        $COURSE = $currentcourse;
+
+        return $response;
+    }
 
     /**
      * Set context restriction for all following subsequent function calls.
@@ -223,7 +317,7 @@ class external_api {
                     }
                     if ($subdesc->required == VALUE_DEFAULT) {
                         try {
-                            $result[$key] = self::validate_parameters($subdesc, $subdesc->default);
+                            $result[$key] = static::validate_parameters($subdesc, $subdesc->default);
                         } catch (invalid_parameter_exception $e) {
                             //we are only interested by exceptions returned by validate_param() and validate_parameters()
                             //(in order to build the path to the faulty attribut)
@@ -232,7 +326,7 @@ class external_api {
                     }
                 } else {
                     try {
-                        $result[$key] = self::validate_parameters($subdesc, $params[$key]);
+                        $result[$key] = static::validate_parameters($subdesc, $params[$key]);
                     } catch (invalid_parameter_exception $e) {
                         //we are only interested by exceptions returned by validate_param() and validate_parameters()
                         //(in order to build the path to the faulty attribut)
@@ -253,7 +347,7 @@ class external_api {
             }
             $result = array();
             foreach ($params as $param) {
-                $result[] = self::validate_parameters($description->content, $param);
+                $result[] = static::validate_parameters($description->content, $param);
             }
             return $result;
 
@@ -316,7 +410,7 @@ class external_api {
                     if ($subdesc instanceof external_value) {
                         if ($subdesc->required == VALUE_DEFAULT) {
                             try {
-                                    $result[$key] = self::clean_returnvalue($subdesc, $subdesc->default);
+                                    $result[$key] = static::clean_returnvalue($subdesc, $subdesc->default);
                             } catch (invalid_response_exception $e) {
                                 //build the path to the faulty attribut
                                 throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
@@ -325,7 +419,7 @@ class external_api {
                     }
                 } else {
                     try {
-                        $result[$key] = self::clean_returnvalue($subdesc, $response[$key]);
+                        $result[$key] = static::clean_returnvalue($subdesc, $response[$key]);
                     } catch (invalid_response_exception $e) {
                         //build the path to the faulty attribut
                         throw new invalid_response_exception($key." => ".$e->getMessage() . ': ' . $e->debuginfo);
@@ -343,7 +437,7 @@ class external_api {
             }
             $result = array();
             foreach ($response as $param) {
-                $result[] = self::clean_returnvalue($description->content, $param);
+                $result[] = static::clean_returnvalue($description->content, $param);
             }
             return $result;
 
@@ -359,7 +453,7 @@ class external_api {
      * @since Moodle 2.0
      */
     public static function validate_context($context) {
-        global $CFG;
+        global $CFG, $PAGE;
 
         if (empty($context)) {
             throw new invalid_parameter_exception('Context does not exist');
@@ -382,10 +476,10 @@ class external_api {
             }
         }
 
-        if ($context->contextlevel >= CONTEXT_COURSE) {
-            list($context, $course, $cm) = get_context_info_array($context->id);
-            require_login($course, false, $cm, false, true);
-        }
+        $PAGE->reset_theme_and_output();
+        list($unused, $course, $cm) = get_context_info_array($context->id);
+        require_login($course, false, $cm, false, true);
+        $PAGE->set_context($context);
     }
 
     /**
@@ -631,6 +725,7 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
     if (!empty($iprestriction)) {
         $newtoken->iprestriction = $iprestriction;
     }
+    $newtoken->privatetoken = null;
     $DB->insert_record('external_tokens', $newtoken);
     return $newtoken->token;
 }
@@ -722,11 +817,14 @@ class external_format_value extends external_value {
      *
      * @param string $textfieldname Name of the text field
      * @param int $required if VALUE_REQUIRED then set standard default FORMAT_HTML
+     * @param int $default Default value.
      * @since Moodle 2.3
      */
-    public function __construct($textfieldname, $required = VALUE_REQUIRED) {
+    public function __construct($textfieldname, $required = VALUE_REQUIRED, $default = null) {
 
-        $default = ($required == VALUE_DEFAULT) ? FORMAT_HTML : null;
+        if ($default == null && $required == VALUE_DEFAULT) {
+            $default = FORMAT_HTML;
+        }
 
         $desc = $textfieldname . ' format (' . FORMAT_HTML . ' = HTML, '
                 . FORMAT_MOODLE . ' = MOODLE, '
@@ -760,6 +858,11 @@ function external_validate_format($format) {
  * The caller can change the format (raw) with the external_settings singleton
  * All web service servers must set this singleton when parsing the $_GET and $_POST.
  *
+ * <pre>
+ * Options are the same that in {@link format_string()} with some changes:
+ *      filter      : Can be set to false to force filters off, else observes {@link external_settings}.
+ * </pre>
+ *
  * @param string $str The string to be filtered. Should be plain text, expect
  * possibly for multilang tags.
  * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
@@ -779,7 +882,7 @@ function external_format_string($str, $contextid, $striplinks = true, $options =
     if (!$settings->get_raw()) {
         $context = context::instance_by_id($contextid);
         $options['context'] = $context;
-        $options['filter'] = $settings->get_filter();
+        $options['filter'] = isset($options['filter']) && !$options['filter'] ? false : $settings->get_filter();
         $str = format_string($str, $striplinks, $options);
     }
 
@@ -792,33 +895,215 @@ function external_format_string($str, $contextid, $striplinks = true, $options =
  * The caller can change the format (raw, filter, file, fileurl) with the external_settings singleton
  * All web service servers must set this singleton when parsing the $_GET and $_POST.
  *
+ * <pre>
+ * Options are the same that in {@link format_text()} with some changes in defaults to provide backwards compatibility:
+ *      trusted     :   If true the string won't be cleaned. Default false.
+ *      noclean     :   If true the string won't be cleaned only if trusted is also true. Default false.
+ *      nocache     :   If true the string will not be cached and will be formatted every call. Default false.
+ *      filter      :   Can be set to false to force filters off, else observes {@link external_settings}.
+ *      para        :   If true then the returned string will be wrapped in div tags. Default (different from format_text) false.
+ *                      Default changed because div tags are not commonly needed.
+ *      newlines    :   If true then lines newline breaks will be converted to HTML newline breaks. Default true.
+ *      context     :   Not used! Using contextid parameter instead.
+ *      overflowdiv :   If set to true the formatted text will be encased in a div with the class no-overflow before being
+ *                      returned. Default false.
+ *      allowid     :   If true then id attributes will not be removed, even when using htmlpurifier. Default (different from
+ *                      format_text) true. Default changed id attributes are commonly needed.
+ *      blanktarget :   If true all <a> tags will have target="_blank" added unless target is explicitly specified.
+ * </pre>
+ *
  * @param string $text The content that may contain ULRs in need of rewriting.
  * @param int $textformat The text format.
  * @param int $contextid This parameter and the next two identify the file area to use.
  * @param string $component
  * @param string $filearea helps identify the file area.
  * @param int $itemid helps identify the file area.
+ * @param object/array $options text formatting options
  * @return array text + textformat
  * @since Moodle 2.3
+ * @since Moodle 3.2 component, filearea and itemid are optional parameters
  */
-function external_format_text($text, $textformat, $contextid, $component, $filearea, $itemid) {
+function external_format_text($text, $textformat, $contextid, $component = null, $filearea = null, $itemid = null,
+                                $options = null) {
     global $CFG;
 
     // Get settings (singleton).
     $settings = external_settings::get_instance();
 
-    if ($settings->get_fileurl()) {
+    if ($component and $filearea and $settings->get_fileurl()) {
         require_once($CFG->libdir . "/filelib.php");
         $text = file_rewrite_pluginfile_urls($text, $settings->get_file(), $contextid, $component, $filearea, $itemid);
     }
 
     if (!$settings->get_raw()) {
-        $context = context::instance_by_id($contextid);
-        $text = format_text($text, $textformat, array('para' => false, 'filter' => $settings->get_filter(), 'context' => $context));
+        $options = (array)$options;
+
+        // If context is passed in options, check that is the same to show a debug message.
+        if (isset($options['context'])) {
+            if ((is_object($options['context']) && $options['context']->id != $contextid)
+                    || (!is_object($options['context']) && $options['context'] != $contextid)) {
+                debugging('Different contexts found in external_format_text parameters. $options[\'context\'] not allowed.
+                    Using $contextid parameter...', DEBUG_DEVELOPER);
+            }
+        }
+
+        $options['filter'] = isset($options['filter']) && !$options['filter'] ? false : $settings->get_filter();
+        $options['para'] = isset($options['para']) ? $options['para'] : false;
+        $options['context'] = context::instance_by_id($contextid);
+        $options['allowid'] = isset($options['allowid']) ? $options['allowid'] : true;
+
+        $text = format_text($text, $textformat, $options);
         $textformat = FORMAT_HTML; // Once converted to html (from markdown, plain... lets inform consumer this is already HTML).
     }
 
     return array($text, $textformat);
+}
+
+/**
+ * Generate or return an existing token for the current authenticated user.
+ * This function is used for creating a valid token for users authenticathing via login/token.php or admin/tool/mobile/launch.php.
+ *
+ * @param stdClass $service external service object
+ * @return stdClass token object
+ * @since Moodle 3.2
+ * @throws moodle_exception
+ */
+function external_generate_token_for_current_user($service) {
+    global $DB, $USER;
+
+    core_user::require_active_user($USER, true, true);
+
+    // Check if there is any required system capability.
+    if ($service->requiredcapability and !has_capability($service->requiredcapability, context_system::instance())) {
+        throw new moodle_exception('missingrequiredcapability', 'webservice', '', $service->requiredcapability);
+    }
+
+    // Specific checks related to user restricted service.
+    if ($service->restrictedusers) {
+        $authoriseduser = $DB->get_record('external_services_users',
+            array('externalserviceid' => $service->id, 'userid' => $USER->id));
+
+        if (empty($authoriseduser)) {
+            throw new moodle_exception('usernotallowed', 'webservice', '', $service->shortname);
+        }
+
+        if (!empty($authoriseduser->validuntil) and $authoriseduser->validuntil < time()) {
+            throw new moodle_exception('invalidtimedtoken', 'webservice');
+        }
+
+        if (!empty($authoriseduser->iprestriction) and !address_in_subnet(getremoteaddr(), $authoriseduser->iprestriction)) {
+            throw new moodle_exception('invalidiptoken', 'webservice');
+        }
+    }
+
+    // Check if a token has already been created for this user and this service.
+    $conditions = array(
+        'userid' => $USER->id,
+        'externalserviceid' => $service->id,
+        'tokentype' => EXTERNAL_TOKEN_PERMANENT
+    );
+    $tokens = $DB->get_records('external_tokens', $conditions, 'timecreated ASC');
+
+    // A bit of sanity checks.
+    foreach ($tokens as $key => $token) {
+
+        // Checks related to a specific token. (script execution continue).
+        $unsettoken = false;
+        // If sid is set then there must be a valid associated session no matter the token type.
+        if (!empty($token->sid)) {
+            if (!\core\session\manager::session_exists($token->sid)) {
+                // This token will never be valid anymore, delete it.
+                $DB->delete_records('external_tokens', array('sid' => $token->sid));
+                $unsettoken = true;
+            }
+        }
+
+        // Remove token is not valid anymore.
+        if (!empty($token->validuntil) and $token->validuntil < time()) {
+            $DB->delete_records('external_tokens', array('token' => $token->token, 'tokentype' => EXTERNAL_TOKEN_PERMANENT));
+            $unsettoken = true;
+        }
+
+        // Remove token if its ip not in whitelist.
+        if (isset($token->iprestriction) and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
+            $unsettoken = true;
+        }
+
+        if ($unsettoken) {
+            unset($tokens[$key]);
+        }
+    }
+
+    // If some valid tokens exist then use the most recent.
+    if (count($tokens) > 0) {
+        $token = array_pop($tokens);
+    } else {
+        $context = context_system::instance();
+        $isofficialservice = $service->shortname == MOODLE_OFFICIAL_MOBILE_SERVICE;
+
+        if (($isofficialservice and has_capability('moodle/webservice:createmobiletoken', $context)) or
+                (!is_siteadmin($USER) && has_capability('moodle/webservice:createtoken', $context))) {
+
+            // Create a new token.
+            $token = new stdClass;
+            $token->token = md5(uniqid(rand(), 1));
+            $token->userid = $USER->id;
+            $token->tokentype = EXTERNAL_TOKEN_PERMANENT;
+            $token->contextid = context_system::instance()->id;
+            $token->creatorid = $USER->id;
+            $token->timecreated = time();
+            $token->externalserviceid = $service->id;
+            // MDL-43119 Token valid for 3 months (12 weeks).
+            $token->validuntil = $token->timecreated + 12 * WEEKSECS;
+            $token->iprestriction = null;
+            $token->sid = null;
+            $token->lastaccess = null;
+            // Generate the private token, it must be transmitted only via https.
+            $token->privatetoken = random_string(64);
+            $token->id = $DB->insert_record('external_tokens', $token);
+
+            $eventtoken = clone $token;
+            $eventtoken->privatetoken = null;
+            $params = array(
+                'objectid' => $eventtoken->id,
+                'relateduserid' => $USER->id,
+                'other' => array(
+                    'auto' => true
+                )
+            );
+            $event = \core\event\webservice_token_created::create($params);
+            $event->add_record_snapshot('external_tokens', $eventtoken);
+            $event->trigger();
+        } else {
+            throw new moodle_exception('cannotcreatetoken', 'webservice', '', $service->shortname);
+        }
+    }
+    return $token;
+}
+
+/**
+ * Set the last time a token was sent and trigger the \core\event\webservice_token_sent event.
+ *
+ * This function is used when a token is generated by the user via login/token.php or admin/tool/mobile/launch.php.
+ * In order to protect the privatetoken, we remove it from the event params.
+ *
+ * @param  stdClass $token token object
+ * @since  Moodle 3.2
+ */
+function external_log_token_request($token) {
+    global $DB;
+
+    $token->privatetoken = null;
+
+    // Log token access.
+    $DB->set_field('external_tokens', 'lastaccess', time(), array('id' => $token->id));
+
+    $params = array(
+        'objectid' => $token->id,
+    );
+    $event = \core\event\webservice_token_sent::create($params);
+    $event->add_record_snapshot('external_tokens', $token);
+    $event->trigger();
 }
 
 /**
@@ -965,9 +1250,10 @@ class external_util {
      *
      * @param  array $courseids A list of course ids
      * @param  array $courses   An array of courses already pre-fetched, indexed by course id.
+     * @param  bool $addcontext True if the returned course object should include the full context object.
      * @return array            An array of courses and the validation warnings
      */
-    public static function validate_courses($courseids, $courses = array()) {
+    public static function validate_courses($courseids, $courses = array(), $addcontext = false) {
         // Delete duplicates.
         $courseids = array_unique($courseids);
         $warnings = array();
@@ -984,6 +1270,9 @@ class external_util {
                 if (!isset($courses[$cid])) {
                     $courses[$cid] = get_course($cid);
                 }
+                if ($addcontext) {
+                    $courses[$cid]->context = $context;
+                }
             } catch (Exception $e) {
                 unset($courses[$cid]);
                 $warnings[] = array(
@@ -998,4 +1287,70 @@ class external_util {
         return array($courses, $warnings);
     }
 
+    /**
+     * Returns all area files (optionally limited by itemid).
+     *
+     * @param int $contextid context ID
+     * @param string $component component
+     * @param string $filearea file area
+     * @param int $itemid item ID or all files if not specified
+     * @param bool $useitemidinurl wether to use the item id in the file URL (modules intro don't use it)
+     * @return array of files, compatible with the external_files structure.
+     * @since Moodle 3.2
+     */
+    public static function get_area_files($contextid, $component, $filearea, $itemid = false, $useitemidinurl = true) {
+        $files = array();
+        $fs = get_file_storage();
+
+        if ($areafiles = $fs->get_area_files($contextid, $component, $filearea, $itemid, 'itemid, filepath, filename', false)) {
+            foreach ($areafiles as $areafile) {
+                $file = array();
+                $file['filename'] = $areafile->get_filename();
+                $file['filepath'] = $areafile->get_filepath();
+                $file['mimetype'] = $areafile->get_mimetype();
+                $file['filesize'] = $areafile->get_filesize();
+                $file['timemodified'] = $areafile->get_timemodified();
+                $fileitemid = $useitemidinurl ? $areafile->get_itemid() : null;
+                $file['fileurl'] = moodle_url::make_webservice_pluginfile_url($contextid, $component, $filearea,
+                                    $fileitemid, $areafile->get_filepath(), $areafile->get_filename())->out(false);
+                $files[] = $file;
+            }
+        }
+        return $files;
+    }
+}
+
+/**
+ * External structure representing a set of files.
+ *
+ * @package    core_webservice
+ * @copyright  2016 Juan Leyva
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.2
+ */
+class external_files extends external_multiple_structure {
+
+    /**
+     * Constructor
+     * @param string $desc Description for the multiple structure.
+     * @param int $required The type of value (VALUE_REQUIRED OR VALUE_OPTIONAL).
+     */
+    public function __construct($desc = 'List of files.', $required = VALUE_REQUIRED) {
+
+        parent::__construct(
+            new external_single_structure(
+                array(
+                    'filename' => new external_value(PARAM_FILE, 'File name.', VALUE_OPTIONAL),
+                    'filepath' => new external_value(PARAM_PATH, 'File path.', VALUE_OPTIONAL),
+                    'filesize' => new external_value(PARAM_INT, 'File size.', VALUE_OPTIONAL),
+                    'fileurl' => new external_value(PARAM_URL, 'Downloadable file url.', VALUE_OPTIONAL),
+                    'timemodified' => new external_value(PARAM_INT, 'Time modified.', VALUE_OPTIONAL),
+                    'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
+                ),
+                'File.'
+            ),
+            $desc,
+            $required
+        );
+    }
 }

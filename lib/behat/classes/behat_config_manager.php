@@ -25,9 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__ . '/../lib.php');
-require_once(__DIR__ . '/behat_command.php');
-require_once(__DIR__ . '/../../testing/classes/tests_finder.php');
+require_once(__DIR__ . '/behat_config_util.php');
 
 /**
  * Behat configuration manager
@@ -43,6 +41,29 @@ require_once(__DIR__ . '/../../testing/classes/tests_finder.php');
 class behat_config_manager {
 
     /**
+     * @var bool Keep track of the automatic profile conversion. So we can notify user.
+     */
+    public static $autoprofileconversion = false;
+
+    /**
+     * @var behat_config_util keep object of behat_config_util for use.
+     */
+    public static $behatconfigutil = null;
+
+    /**
+     * Returns behat_config_util.
+     *
+     * @return behat_config_util
+     */
+    private static function get_behat_config_util() {
+        if (!self::$behatconfigutil) {
+            self::$behatconfigutil = new behat_config_util();
+        }
+
+        return self::$behatconfigutil;
+    }
+
+    /**
      * Updates a config file
      *
      * The tests runner and the steps definitions list uses different
@@ -54,62 +75,54 @@ class behat_config_manager {
      * @param  string $component Restricts the obtained steps definitions to the specified component
      * @param  string $testsrunner If the config file will be used to run tests
      * @param  string $tags features files including tags.
+     * @param  bool   $themesuitewithallfeatures if only theme specific features need to be included in the suite.
+     * @param  int    $parallelruns number of parallel runs.
+     * @param  int    $run current run for which config needs to be updated.
      * @return void
      */
-    public static function update_config_file($component = '', $testsrunner = true, $tags = '') {
+    public static function update_config_file($component = '', $testsrunner = true, $tags = '',
+        $themesuitewithallfeatures = false, $parallelruns = 0, $run = 0) {
+
         global $CFG;
 
         // Behat must have a separate behat.yml to have access to the whole set of features and steps definitions.
         if ($testsrunner === true) {
-            $configfilepath = behat_command::get_behat_dir() . '/behat.yml';
+            $configfilepath = behat_command::get_behat_dir($run) . '/behat.yml';
         } else {
             // Alternative for steps definitions filtering, one for each user.
             $configfilepath = self::get_steps_list_config_filepath();
         }
 
-        // Gets all the components with features.
+        $behatconfigutil = self::get_behat_config_util();
+        $behatconfigutil->set_theme_suite_to_include_core_features($themesuitewithallfeatures);
+        $behatconfigutil->set_tag_for_feature_filter($tags);
+
+        // Gets all the components with features, if running the tests otherwise not required.
         $features = array();
-        $components = tests_finder::get_components_with_tests('features');
-        if ($components) {
-            foreach ($components as $componentname => $path) {
-                $path = self::clean_path($path) . self::get_behat_tests_path();
-                if (empty($featurespaths[$path]) && file_exists($path)) {
-
-                    // Standarizes separator (some dirs. comes with OS-dependant separator).
-                    $uniquekey = str_replace('\\', '/', $path);
-                    $featurespaths[$uniquekey] = $path;
-                }
-            }
-            foreach ($featurespaths as $path) {
-                $additional = glob("$path/*.feature");
-                $features = array_merge($features, $additional);
-            }
-        }
-
-        // Optionally include features from additional directories.
-        if (!empty($CFG->behat_additionalfeatures)) {
-            $features = array_merge($features, array_map("realpath", $CFG->behat_additionalfeatures));
+        if ($testsrunner) {
+            $features = $behatconfigutil->get_components_features();
         }
 
         // Gets all the components with steps definitions.
-        $stepsdefinitions = array();
-        $steps = self::get_components_steps_definitions();
-        if ($steps) {
-            foreach ($steps as $key => $filepath) {
-                if ($component == '' || $component === $key) {
-                    $stepsdefinitions[$key] = $filepath;
-                }
-            }
-        }
-
+        $stepsdefinitions = $behatconfigutil->get_components_contexts($component);
         // We don't want the deprecated steps definitions here.
         if (!$testsrunner) {
             unset($stepsdefinitions['behat_deprecated']);
         }
 
+        // Get current run.
+        if (empty($run) && ($run !== false) && !empty($CFG->behatrunprocess)) {
+            $run = $CFG->behatrunprocess;
+        }
+
+        // Get number of parallel runs if not passed.
+        if (empty($parallelruns) && ($parallelruns !== false)) {
+            $parallelruns = self::get_behat_run_config_value('parallel');
+        }
+
         // Behat config file specifing the main context class,
         // the required Behat extensions and Moodle test wwwroot.
-        $contents = self::get_config_file_contents(self::get_features_with_tags($features, $tags), $stepsdefinitions);
+        $contents = $behatconfigutil->get_config_file_contents($features, $stepsdefinitions, $tags, $parallelruns, $run);
 
         // Stores the file.
         if (!file_put_contents($configfilepath, $contents)) {
@@ -124,55 +137,13 @@ class behat_config_manager {
      * @param array $features set of feature files.
      * @param string $tags list of tags (currently support && only.)
      * @return array filtered list of feature files with tags.
+     * @deprecated since 3.2 MDL-55072 - please use behat_config_util.php
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
      */
     public static function get_features_with_tags($features, $tags) {
-        if (empty($tags)) {
-            return $features;
-        }
-        $newfeaturelist = array();
-        // Split tags in and and or.
-        $tags = explode('&&', $tags);
-        $andtags = array();
-        $ortags = array();
-        foreach ($tags as $tag) {
-            // Explode all tags seperated by , and add it to ortags.
-            $ortags = array_merge($ortags, explode(',', $tag));
-            // And tags will be the first one before comma(,).
-            $andtags[] = preg_replace('/,.*/', '', $tag);
-        }
 
-        foreach ($features as $featurefile) {
-            $contents = file_get_contents($featurefile);
-            $includefeature = true;
-            foreach ($andtags as $tag) {
-                // If negitive tag, then ensure it don't exist.
-                if (strpos($tag, '~') !== false) {
-                    $tag = substr($tag, 1);
-                    if ($contents && strpos($contents, $tag) !== false) {
-                        $includefeature = false;
-                        break;
-                    }
-                } else if ($contents && strpos($contents, $tag) === false) {
-                    $includefeature = false;
-                    break;
-                }
-            }
-
-            // If feature not included then check or tags.
-            if (!$includefeature && !empty($ortags)) {
-                foreach ($ortags as $tag) {
-                    if ($contents && (strpos($tag, '~') === false) && (strpos($contents, $tag) !== false)) {
-                        $includefeature = true;
-                        break;
-                    }
-                }
-            }
-
-            if ($includefeature) {
-                $newfeaturelist[] = $featurefile;
-            }
-        }
-        return $newfeaturelist;
+        debugging('Use of get_features_with_tags is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
+        return self::get_behat_config_util()->filtered_features_with_tags($features, $tags);
     }
 
     /**
@@ -184,32 +155,14 @@ class behat_config_manager {
      * it from the steps definitions web interface
      *
      * @return array
+     * @deprecated since 3.2 MDL-55072 - please use behat_config_util.php
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
      */
     public static function get_components_steps_definitions() {
 
-        $components = tests_finder::get_components_with_tests('stepsdefinitions');
-        if (!$components) {
-            return false;
-        }
-
-        $stepsdefinitions = array();
-        foreach ($components as $componentname => $componentpath) {
-            $componentpath = self::clean_path($componentpath);
-
-            if (!file_exists($componentpath . self::get_behat_tests_path())) {
-                continue;
-            }
-            $diriterator = new DirectoryIterator($componentpath . self::get_behat_tests_path());
-            $regite = new RegexIterator($diriterator, '|behat_.*\.php$|');
-
-            // All behat_*.php inside behat_config_manager::get_behat_tests_path() are added as steps definitions files.
-            foreach ($regite as $file) {
-                $key = $file->getBasename('.php');
-                $stepsdefinitions[$key] = $file->getPathname();
-            }
-        }
-
-        return $stepsdefinitions;
+        debugging('Use of get_components_steps_definitions is deprecated, please see behat_config_util::get_components_contexts',
+            DEBUG_DEVELOPER);
+        return self::get_behat_config_util()->get_components_contexts();
     }
 
     /**
@@ -259,31 +212,49 @@ class behat_config_manager {
      * Returns the path to the parallel run file which specifies if parallel test environment is enabled
      * and how many parallel runs to execute.
      *
-     * @param int $runprocess run process for which behat dir is returned.
      * @return string
      */
-    public final static function get_parallel_test_file_path($runprocess = 0) {
-        return behat_command::get_behat_dir($runprocess) . '/parallel_environment_enabled.txt';
+    public final static function get_behat_run_config_file_path() {
+        return behat_command::get_parent_behat_dir() . '/run_environment.json';
     }
 
     /**
-     * Returns number of parallel runs for which site is initialised.
+     * Get config for parallel run.
      *
-     * @param int $runprocess run process for which behat dir is returned.
-     * @return int
+     * @param string $key Key to store
+     * @return string|int|array value which is stored.
      */
-    public final static function get_parallel_test_runs($runprocess = 0) {
+    public final static function get_behat_run_config_value($key) {
+        $parallelrunconfigfile = self::get_behat_run_config_file_path();
 
-        $parallelrun = 0;
-        // Get parallel run info from first file and last file.
-        $parallelrunconfigfile = self::get_parallel_test_file_path($runprocess);
         if (file_exists($parallelrunconfigfile)) {
-            if ($parallel = file_get_contents($parallelrunconfigfile)) {
-                $parallelrun = (int) $parallel;
+            if ($parallelrunconfigs = @json_decode(file_get_contents($parallelrunconfigfile), true)) {
+                if (isset($parallelrunconfigs[$key])) {
+                    return $parallelrunconfigs[$key];
+                }
             }
         }
 
-        return $parallelrun;
+        return false;
+    }
+
+    /**
+     * Save/update config for parallel run.
+     *
+     * @param string $key Key to store
+     * @param string|int|array $value to store.
+     */
+    public final static function set_behat_run_config_value($key, $value) {
+        $parallelrunconfigs = array();
+        $parallelrunconfigfile = self::get_behat_run_config_file_path();
+
+        // Get any existing config first.
+        if (file_exists($parallelrunconfigfile)) {
+            $parallelrunconfigs = @json_decode(file_get_contents($parallelrunconfigfile), true);
+        }
+        $parallelrunconfigs[$key] = $value;
+
+        @file_put_contents($parallelrunconfigfile, json_encode($parallelrunconfigs, JSON_PRETTY_PRINT));
     }
 
     /**
@@ -294,8 +265,8 @@ class behat_config_manager {
     public final static function drop_parallel_site_links() {
         global $CFG;
 
-        // Get parallel test runs from first run.
-        $parallelrun = self::get_parallel_test_runs(1);
+        // Get parallel test runs.
+        $parallelrun = self::get_behat_run_config_value('parallel');
 
         if (empty($parallelrun)) {
             return false;
@@ -356,86 +327,93 @@ class behat_config_manager {
      * @param array $features The system feature files
      * @param array $stepsdefinitions The system steps definitions
      * @return string
+     * @deprecated since 3.2 MDL-55072 - please use behat_config_util.php
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
      */
     protected static function get_config_file_contents($features, $stepsdefinitions) {
-        global $CFG;
 
-        // We require here when we are sure behat dependencies are available.
-        require_once($CFG->dirroot . '/vendor/autoload.php');
+        debugging('Use of get_config_file_contents is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
+        return self::get_behat_config_util()->get_config_file_contents($features, $stepsdefinitions);
+    }
 
-        $selenium2wdhost = array('wd_host' => 'http://localhost:4444/wd/hub');
+    /**
+     * Parse $CFG->behat_config and return the array with required config structure for behat.yml
+     *
+     * @param string $profile profile name
+     * @param array $values values for profile
+     * @return array
+     * @deprecated since 3.2 MDL-55072 - please use behat_config_util.php
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
+     */
+    protected static function merge_behat_config($profile, $values) {
 
-        $parallelruns = self::get_parallel_test_runs();
-        // If parallel run, then only divide features.
-        if (!empty($CFG->behatrunprocess) && !empty($parallelruns)) {
-            // Attempt to split into weighted buckets using timing information, if available.
-            if ($alloc = self::profile_guided_allocate($features, max(1, $parallelruns), $CFG->behatrunprocess)) {
-                $features = $alloc;
-            } else {
-                // Divide the list of feature files amongst the parallel runners.
-                srand(crc32(floor(time() / 3600 / 24) . var_export($features, true)));
-                shuffle($features);
-                // Pull out the features for just this worker.
-                if (count($features)) {
-                    $features = array_chunk($features, ceil(count($features) / max(1, $parallelruns)));
-                    // Check if there is any feature file for this process.
-                    if (!empty($features[$CFG->behatrunprocess - 1])) {
-                        $features = $features[$CFG->behatrunprocess - 1];
-                    } else {
-                        $features = null;
-                    }
-                }
-            }
-            // Set proper selenium2 wd_host if defined.
-            if (!empty($CFG->behat_parallel_run[$CFG->behatrunprocess - 1]['wd_host'])) {
-                $selenium2wdhost = array('wd_host' => $CFG->behat_parallel_run[$CFG->behatrunprocess - 1]['wd_host']);
-            }
+        debugging('Use of merge_behat_config is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
+        self::get_behat_config_util()->get_behat_config_for_profile($profile, $values);
+    }
+
+    /**
+     * Parse $CFG->behat_profile and return the array with required config structure for behat.yml.
+     *
+     * $CFG->behat_profiles = array(
+     *     'profile' = array(
+     *         'browser' => 'firefox',
+     *         'tags' => '@javascript',
+     *         'wd_host' => 'http://127.0.0.1:4444/wd/hub',
+     *         'capabilities' => array(
+     *             'platform' => 'Linux',
+     *             'version' => 44
+     *         )
+     *     )
+     * );
+     *
+     * @param string $profile profile name
+     * @param array $values values for profile.
+     * @return array
+     */
+    protected static function get_behat_profile($profile, $values) {
+        // Values should be an array.
+        if (!is_array($values)) {
+            return array();
         }
 
-        // It is possible that it has no value as we don't require a full behat setup to list the step definitions.
-        if (empty($CFG->behat_wwwroot)) {
-            $CFG->behat_wwwroot = 'http://itwillnotbeused.com';
-        }
-
-        $basedir = $CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat';
-
-        $config = array(
-            'default' => array(
-                'paths' => array(
-                    'features' => $basedir . DIRECTORY_SEPARATOR . 'features',
-                    'bootstrap' => $basedir . DIRECTORY_SEPARATOR . 'features' . DIRECTORY_SEPARATOR . 'bootstrap',
-                ),
-                'context' => array(
-                    'class' => 'behat_init_context'
-                ),
-                'extensions' => array(
-                    'Behat\MinkExtension\Extension' => array(
-                        'base_url' => $CFG->behat_wwwroot,
-                        'goutte' => null,
-                        'selenium2' => $selenium2wdhost
-                    ),
-                    'Moodle\BehatExtension\Extension' => array(
-                        'formatters' => array(
-                            'moodle_progress' => 'Moodle\BehatExtension\Formatter\MoodleProgressFormatter',
-                            'moodle_list' => 'Moodle\BehatExtension\Formatter\MoodleListFormatter',
-                            'moodle_step_count' => 'Moodle\BehatExtension\Formatter\MoodleStepCountFormatter'
-                        ),
-                        'features' => $features,
-                        'steps_definitions' => $stepsdefinitions
+        // Check suite values.
+        $behatprofilesuites = array();
+        // Fill tags information.
+        if (isset($values['tags'])) {
+            $behatprofilesuites = array(
+                'suites' => array(
+                    'default' => array(
+                        'filters' => array(
+                            'tags' => $values['tags'],
+                        )
                     )
-                ),
-                'formatter' => array(
-                    'name' => 'moodle_progress'
                 )
-            )
-        );
-
-        // In case user defined overrides respect them over our default ones.
-        if (!empty($CFG->behat_config)) {
-            $config = self::merge_config($config, $CFG->behat_config);
+            );
         }
 
-        return Symfony\Component\Yaml\Yaml::dump($config, 10, 2);
+        // Selenium2 config values.
+        $behatprofileextension = array();
+        $seleniumconfig = array();
+        if (isset($values['browser'])) {
+            $seleniumconfig['browser'] = $values['browser'];
+        }
+        if (isset($values['wd_host'])) {
+            $seleniumconfig['wd_host'] = $values['wd_host'];
+        }
+        if (isset($values['capabilities'])) {
+            $seleniumconfig['capabilities'] = $values['capabilities'];
+        }
+        if (!empty($seleniumconfig)) {
+            $behatprofileextension = array(
+                'extensions' => array(
+                    'Behat\MinkExtension' => array(
+                        'selenium2' => $seleniumconfig,
+                    )
+                )
+            );
+        }
+
+        return array($profile => array_merge($behatprofilesuites, $behatprofileextension));
     }
 
     /**
@@ -451,64 +429,8 @@ class behat_config_manager {
      */
     protected static function profile_guided_allocate($features, $nbuckets, $instance) {
 
-        $behattimingfile = defined('BEHAT_FEATURE_TIMING_FILE') &&
-            @filesize(BEHAT_FEATURE_TIMING_FILE) ? BEHAT_FEATURE_TIMING_FILE : false;
-
-        if (!$behattimingfile || !$behattimingdata = @json_decode(file_get_contents($behattimingfile), true)) {
-            // No data available, fall back to relying on steps data.
-            $stepfile = "";
-            if (defined('BEHAT_FEATURE_STEP_FILE') && BEHAT_FEATURE_STEP_FILE) {
-                $stepfile = BEHAT_FEATURE_STEP_FILE;
-            }
-            // We should never get this. But in case we can't do this then fall back on simple splitting.
-            if (empty($stepfile) || !$behattimingdata = @json_decode(file_get_contents($stepfile), true)) {
-                return false;
-            }
-        }
-
-        arsort($behattimingdata); // Ensure most expensive is first.
-
-        $realroot = realpath(__DIR__.'/../../../').'/';
-        $defaultweight = array_sum($behattimingdata) / count($behattimingdata);
-        $weights = array_fill(0, $nbuckets, 0);
-        $buckets = array_fill(0, $nbuckets, array());
-        $totalweight = 0;
-
-        // Re-key the features list to match timing data.
-        foreach ($features as $k => $file) {
-            $key = str_replace($realroot, '', $file);
-            $features[$key] = $file;
-            unset($features[$k]);
-            if (!isset($behattimingdata[$key])) {
-                $behattimingdata[$key] = $defaultweight;
-            }
-        }
-
-        // Sort features by known weights; largest ones should be allocated first.
-        $behattimingorder = array();
-        foreach ($features as $key => $file) {
-            $behattimingorder[$key] = $behattimingdata[$key];
-        }
-        arsort($behattimingorder);
-
-        // Finally, add each feature one by one to the lightest bucket.
-        foreach ($behattimingorder as $key => $weight) {
-            $file = $features[$key];
-            $lightbucket = array_search(min($weights), $weights);
-            $weights[$lightbucket] += $weight;
-            $buckets[$lightbucket][] = $file;
-            $totalweight += $weight;
-        }
-
-        if ($totalweight && !defined('BEHAT_DISABLE_HISTOGRAM') && $instance == $nbuckets) {
-            echo "Bucket weightings:\n";
-            foreach ($weights as $k => $weight) {
-                echo $k + 1 . ": " . str_repeat('*', 70 * $nbuckets * $weight / $totalweight) . PHP_EOL;
-            }
-        }
-
-        // Return the features for this worker.
-        return $buckets[$instance - 1];
+        debugging('Use of profile_guided_allocate is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
+        return self::get_behat_config_util()->profile_guided_allocate($features, $nbuckets, $instance);
     }
 
     /**
@@ -519,34 +441,13 @@ class behat_config_manager {
      * @param mixed $config The node of the default config
      * @param mixed $localconfig The node of the local config
      * @return mixed The merge result
+     * @deprecated since 3.2 MDL-55072 - please use behat_config_util.php
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
      */
     protected static function merge_config($config, $localconfig) {
 
-        if (!is_array($config) && !is_array($localconfig)) {
-            return $localconfig;
-        }
-
-        // Local overrides also deeper default values.
-        if (is_array($config) && !is_array($localconfig)) {
-            return $localconfig;
-        }
-
-        foreach ($localconfig as $key => $value) {
-
-            // If defaults are not as deep as local values let locals override.
-            if (!is_array($config)) {
-                unset($config);
-            }
-
-            // Add the param if it doesn't exists or merge branches.
-            if (empty($config[$key])) {
-                $config[$key] = $value;
-            } else {
-                $config[$key] = self::merge_config($config[$key], $localconfig[$key]);
-            }
-        }
-
-        return $config;
+        debugging('Use of merge_config is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
+        return self::get_behat_config_util()->merge_config($config, $localconfig);
     }
 
     /**
@@ -555,28 +456,25 @@ class behat_config_manager {
      * @see tests_finder::get_all_directories_with_tests() it returns the path including /tests/
      * @param string $path
      * @return string The string without the last /tests part
+     * @deprecated since 3.2 MDL-55072 - please use behat_config_util.php
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
      */
     protected final static function clean_path($path) {
 
-        $path = rtrim($path, DIRECTORY_SEPARATOR);
-
-        $parttoremove = DIRECTORY_SEPARATOR . 'tests';
-
-        $substr = substr($path, strlen($path) - strlen($parttoremove));
-        if ($substr == $parttoremove) {
-            $path = substr($path, 0, strlen($path) - strlen($parttoremove));
-        }
-
-        return rtrim($path, DIRECTORY_SEPARATOR);
+        debugging('Use of clean_path is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
+        return self::get_behat_config_util()->clean_path($path);
     }
 
     /**
      * The relative path where components stores their behat tests
      *
      * @return string
+     * @deprecated since 3.2 MDL-55072 - please use behat_config_util.php
+     * @todo MDL-55365 This will be deleted in Moodle 3.6.
      */
     protected final static function get_behat_tests_path() {
-        return DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'behat';
+        debugging('Use of get_behat_tests_path is deprecated, please see behat_config_util', DEBUG_DEVELOPER);
+        return self::get_behat_config_util()->get_behat_tests_path();
     }
 
 }

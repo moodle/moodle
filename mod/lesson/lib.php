@@ -107,6 +107,7 @@ function lesson_update_instance($data, $mform) {
 function lesson_update_events($lesson, $override = null) {
     global $CFG, $DB;
 
+    require_once($CFG->dirroot . '/mod/lesson/locallib.php');
     require_once($CFG->dirroot . '/calendar/lib.php');
 
     // Load the old events relating to this lesson.
@@ -275,19 +276,6 @@ function lesson_delete_instance($id) {
 }
 
 /**
- * Given a course object, this function will clean up anything that
- * would be leftover after all the instances were deleted
- *
- * @global object
- * @param object $course an object representing the course that is being deleted
- * @param boolean $feedback to specify if the process must output a summary of its work
- * @return boolean
- */
-function lesson_delete_course($course, $feedback=true) {
-    return true;
-}
-
-/**
  * Return a small object with summary information about what a
  * user has done with a given particular instance of this module
  * Used for user activity reports.
@@ -302,25 +290,48 @@ function lesson_delete_course($course, $feedback=true) {
  * @return object
  */
 function lesson_user_outline($course, $user, $mod, $lesson) {
-    global $CFG;
+    global $CFG, $DB;
 
     require_once("$CFG->libdir/gradelib.php");
     $grades = grade_get_grades($course->id, 'mod', 'lesson', $lesson->id, $user->id);
-
     $return = new stdClass();
+
     if (empty($grades->items[0]->grades)) {
-        $return->info = get_string("no")." ".get_string("attempts", "lesson");
+        $return->info = get_string("nolessonattempts", "lesson");
     } else {
         $grade = reset($grades->items[0]->grades);
-        $return->info = get_string("grade") . ': ' . $grade->str_long_grade;
+        if (empty($grade->grade)) {
 
-        //datesubmitted == time created. dategraded == time modified or time overridden
-        //if grade was last modified by the user themselves use date graded. Otherwise use date submitted
-        //TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704
-        if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
-            $return->time = $grade->dategraded;
+            // Check to see if it an ungraded / incomplete attempt.
+            $sql = "SELECT *
+                      FROM {lesson_timer}
+                     WHERE lessonid = :lessonid
+                       AND userid = :userid
+                  ORDER BY starttime DESC";
+            $params = array('lessonid' => $lesson->id, 'userid' => $user->id);
+
+            if ($attempts = $DB->get_records_sql($sql, $params, 0, 1)) {
+                $attempt = reset($attempts);
+                if ($attempt->completed) {
+                    $return->info = get_string("completed", "lesson");
+                } else {
+                    $return->info = get_string("notyetcompleted", "lesson");
+                }
+                $return->time = $attempt->lessontime;
+            } else {
+                $return->info = get_string("nolessonattempts", "lesson");
+            }
         } else {
-            $return->time = $grade->datesubmitted;
+            $return->info = get_string("grade") . ': ' . $grade->str_long_grade;
+
+            // Datesubmitted == time created. dategraded == time modified or time overridden.
+            // If grade was last modified by the user themselves use date graded. Otherwise use date submitted.
+            // TODO: move this copied & pasted code somewhere in the grades API. See MDL-26704.
+            if ($grade->usermodified == $user->id || empty($grade->datesubmitted)) {
+                $return->time = $grade->dategraded;
+            } else {
+                $return->time = $grade->datesubmitted;
+            }
         }
     }
     return $return;

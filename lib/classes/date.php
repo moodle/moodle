@@ -72,8 +72,12 @@ class core_date {
 
         if (is_numeric($currentvalue)) {
             // UTC offset.
-            $modifier = ($currentvalue > 0) ? '+' : '';
-            $a = 'UTC' . $modifier . number_format($currentvalue, 1);
+            if ($currentvalue == 0) {
+                $a = 'UTC';
+            } else {
+                $modifier = ($currentvalue > 0) ? '+' : '';
+                $a = 'UTC' . $modifier . number_format($currentvalue, 1);
+            }
             $timezones[$currentvalue] = get_string('timezoneinvalid', 'core_admin', $a);
         } else {
             // Some string we don't recognise.
@@ -134,7 +138,7 @@ class core_date {
             // Convert to known zone.
             $tz = self::$badzones[$tz];
             $fixed = true;
-        } else if (is_number($tz)) {
+        } else if (is_numeric($tz)) {
             // Half hour numeric offsets were already tested, try rounding to integers here.
             $roundedtz = (string)(int)$tz;
             if (isset(self::$badzones[$roundedtz])) {
@@ -508,7 +512,7 @@ class core_date {
         );
 
         // Legacy GMT fallback.
-        for ($i = -14; $i <= 13; $i++) {
+        for ($i = -12; $i <= 14; $i++) {
             $off = abs($i);
             if ($i < 0) {
                 $mapto = 'Etc/GMT+' . $off;
@@ -532,7 +536,6 @@ class core_date {
         }
 
         // Legacy Moodle half an hour offsets - pick any city nearby, ideally without DST.
-        self::$badzones['-4.5'] = 'America/Caracas';
         self::$badzones['4.5'] = 'Asia/Kabul';
         self::$badzones['5.5'] = 'Asia/Kolkata';
         self::$badzones['6.5'] = 'Asia/Rangoon';

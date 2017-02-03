@@ -46,7 +46,7 @@
 
 define('CLI_SCRIPT', true);
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php'); // global moodle config file.
+require(__DIR__.'/../../../config.php'); // global moodle config file.
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/clilib.php');
 

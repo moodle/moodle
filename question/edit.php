@@ -24,7 +24,7 @@
  */
 
 
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =

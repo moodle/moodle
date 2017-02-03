@@ -1,0 +1,20 @@
+{
+  "indentation": ["on",{
+    "Feature": 0,
+    "Background": 2,
+    "Scenario": 2,
+    "Step": 4,
+    "given": 4,
+    "and": 4
+  }],
+  "no-dupe-feature-names": "on",
+  "no-dupe-scenario-names": "off",
+  "no-empty-file": "on",
+  "no-files-without-scenarios": "on",
+  "no-multiple-empty-lines": "on",
+  "no-partially-commented-tag-lines": "on",
+  "no-trailing-spaces": "on",
+  "no-unamed-features": "on",
+  "no-unamed-scenarios": "on",
+  "no-scenario-outlines-without-examples": "on"
+}

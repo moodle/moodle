@@ -52,7 +52,7 @@ class tagcloud implements templatable {
      * @param array $tagset array of core_tag or stdClass elements, each of them must have attributes:
      *              name, rawname, tagcollid
      *              preferrably also have attributes:
-     *              tagtype, count, flag
+     *              isstandard, count, flag
      * @param int $totalcount total count of tags (for example to indicate that there are more tags than the count of tagset)
      *            leave 0 if count of tagset is the actual count of tags
      * @param int $fromctx context id where this tag cloud is displayed
@@ -82,8 +82,8 @@ class tagcloud implements templatable {
             $viewurl = core_tag_tag::make_url($tag->tagcollid, $tag->rawname, 0, $fromctx, $ctx, $rec);
             $this->tagset[$idx]->viewurl = $viewurl->out(false);
 
-            if (!empty($tag->tagtype)) {
-                $this->tagset[$idx]->tagtype = $tag->tagtype;
+            if (isset($tag->isstandard)) {
+                $this->tagset[$idx]->isstandard = $tag->isstandard ? 1 : 0;
             }
 
             if (!empty($tag->count)) {

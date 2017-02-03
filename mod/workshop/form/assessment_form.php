@@ -120,4 +120,40 @@ class workshop_assessment_form extends moodleform {
     public function is_editable() {
         return !$this->_form->isFrozen();
     }
+
+    /**
+     * Validate assessment form data.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
+    public function validation($data, $files) {
+
+        $errors = parent::validation($data, $files);
+
+        if (isset($data['feedbackauthorattachment_filemanager']) and isset($this->workshop->overallfeedbackfiletypes)) {
+            $whitelist = workshop::normalize_file_extensions($this->workshop->overallfeedbackfiletypes);
+            if ($whitelist) {
+                $draftfiles = file_get_drafarea_files($data['feedbackauthorattachment_filemanager']);
+                if ($draftfiles) {
+                    $wrongfiles = array();
+                    foreach ($draftfiles->list as $file) {
+                        if (!workshop::is_allowed_file_type($file->filename, $whitelist)) {
+                            $wrongfiles[] = $file->filename;
+                        }
+                    }
+                    if ($wrongfiles) {
+                        $a = array(
+                            'whitelist' => workshop::clean_file_extensions($whitelist),
+                            'wrongfiles' => implode(', ', $wrongfiles),
+                        );
+                        $errors['feedbackauthorattachment_filemanager'] = get_string('err_wrongfileextension', 'mod_workshop', $a);
+                    }
+                }
+            }
+        }
+
+        return $errors;
+    }
 }

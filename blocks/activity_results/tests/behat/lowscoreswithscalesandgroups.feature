@@ -1,5 +1,5 @@
 @block @block_activity_results
-Feature: The activity results block displays student scores as scales
+Feature: The activity results block displays students in groups low scores as scales
   In order to be display student scores as scales
   As a user
   I need to see the activity results block
@@ -43,8 +43,7 @@ Feature: The activity results block displays student scores as scales
       | student6 | G3 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
-    And I navigate to "Scales" node in "Grade administration"
+    And I navigate to "Scales" in the course gradebook
     And I press "Add a new scale"
     And I set the following fields to these values:
       | Name | My Scale |
@@ -56,11 +55,11 @@ Feature: The activity results block displays student scores as scales
       | Assignment name | Test assignment |
       | Description | Offline text |
       | assignsubmission_file_enabled | 0 |
-      | id_modgrade_type | Scale |
-      | id_modgrade_scale | My Scale |
+      | id_grade_modgrade_type | Scale |
+      | id_grade_modgrade_scale | My Scale |
       | Group mode | Separate groups |
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "Very good" to the user "Student 2" for the grade item "Test assignment"
@@ -147,4 +146,3 @@ Feature: The activity results block displays student scores as scales
     And I should see "User" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
     And I should see "Average" in the "Activity results" "block"
-

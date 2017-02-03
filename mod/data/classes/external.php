@@ -42,7 +42,7 @@ class mod_data_external extends external_api {
     /**
      * Describes the parameters for get_databases_by_courses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 2.9
      */
     public static function get_databases_by_courses_parameters() {
@@ -70,44 +70,19 @@ class mod_data_external extends external_api {
         $params = self::validate_parameters(self::get_databases_by_courses_parameters(), array('courseids' => $courseids));
         $warnings = array();
 
-        if (!empty($params['courseids'])) {
-            $courses = array();
-            $courseids = $params['courseids'];
-        } else {
-            $courses = enrol_get_my_courses();
-            $courseids = array_keys($courses);
+        $mycourses = array();
+        if (empty($params['courseids'])) {
+            $mycourses = enrol_get_my_courses();
+            $params['courseids'] = array_keys($mycourses);
         }
 
         // Array to store the databases to return.
         $arrdatabases = array();
 
         // Ensure there are courseids to loop through.
-        if (!empty($courseids)) {
-            // Array of the courses we are going to retrieve the databases from.
-            $dbcourses = array();
+        if (!empty($params['courseids'])) {
 
-            // Go through the courseids.
-            foreach ($courseids as $cid) {
-                // Check the user can function in this context.
-                try {
-                    $context = context_course::instance($cid);
-                    self::validate_context($context);
-
-                    // Check if this course was already loaded (by enrol_get_my_courses).
-                    if (!isset($courses[$cid])) {
-                        $courses[$cid] = get_course($cid);
-                    }
-                    $dbcourses[$cid] = $courses[$cid];
-
-                } catch (Exception $e) {
-                    $warnings[] = array(
-                        'item' => 'course',
-                        'itemid' => $cid,
-                        'warningcode' => '1',
-                        'message' => 'No access rights in course context '.$e->getMessage()
-                    );
-                }
-            }
+            list($dbcourses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
 
             // Get the databases in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -129,6 +104,7 @@ class mod_data_external extends external_api {
                 list($newdb['intro'], $newdb['introformat']) =
                     external_format_text($database->intro, $database->introformat,
                                             $datacontext->id, 'mod_data', 'intro', null);
+                $newdb['introfiles'] = external_util::get_area_files($datacontext->id, 'mod_data', 'intro', false, false);
 
                 // This information should be only available if the user can see the database entries.
                 if (has_capability('mod/data:viewentry', $datacontext)) {
@@ -148,12 +124,12 @@ class mod_data_external extends external_api {
 
                 // Check additional permissions for returning optional private settings.
                 // I avoid intentionally to use can_[add|update]_moduleinfo.
-                if (has_capability('moodle/course:manageactivities', $context)) {
+                if (has_capability('moodle/course:manageactivities', $datacontext)) {
 
                     $additionalfields = array('maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
                         'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
                         'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'manageapproved', 'scale', 'assessed', 'assesstimestart',
-                        'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification');
+                        'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification', 'timemodified');
 
                     // This is for avoid a long repetitive list.
                     foreach ($additionalfields as $field) {
@@ -192,6 +168,7 @@ class mod_data_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Database name'),
                             'intro' => new external_value(PARAM_RAW, 'The Database intro'),
                             'introformat' => new external_format_value('intro'),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'comments' => new external_value(PARAM_BOOL, 'comments enabled', VALUE_OPTIONAL),
                             'timeavailablefrom' => new external_value(PARAM_INT, 'timeavailablefrom field', VALUE_OPTIONAL),
                             'timeavailableto' => new external_value(PARAM_INT, 'timeavailableto field', VALUE_OPTIONAL),
@@ -220,7 +197,8 @@ class mod_data_external extends external_api {
                             'defaultsort' => new external_value(PARAM_INT, 'defaultsort field', VALUE_OPTIONAL),
                             'defaultsortdir' => new external_value(PARAM_INT, 'defaultsortdir field', VALUE_OPTIONAL),
                             'editany' => new external_value(PARAM_BOOL, 'editany field', VALUE_OPTIONAL),
-                            'notification' => new external_value(PARAM_INT, 'notification field', VALUE_OPTIONAL)
+                            'notification' => new external_value(PARAM_INT, 'notification field', VALUE_OPTIONAL),
+                            'timemodified' => new external_value(PARAM_INT, 'Time modified', VALUE_OPTIONAL)
                         ), 'Database'
                     )
                 ),

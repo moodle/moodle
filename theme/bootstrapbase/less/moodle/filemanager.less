@@ -1,4 +1,5 @@
- // File Picker and File Manager
+/* stylelint-disable declaration-no-important */
+// File Picker and File Manager
 .filemanager,
 .filepicker,
 .file-picker {
@@ -8,7 +9,7 @@
 .file-picker a,
 .filemanager a:hover,
 .file-picker a:hover {
-    color: #555555;
+    color: #555;
     text-decoration: none;
 }
 .filemanager input[type="text"],
@@ -39,7 +40,7 @@
 }
 #filesskin .yui3-panel-content {
     padding-bottom: 20px;
-    background: #F2F2F2;
+    background: #f2f2f2;
     .border-radius(8px);
     border: 1px solid #fff;
     display: inline-block;
@@ -48,14 +49,14 @@
 }
 #filesskin .yui3-widget-hd {
     .border-radius(10px 10px 0 0);
-    border-bottom: 1px solid #BBBBBB;
+    border-bottom: 1px solid #bbb;
     padding: 5px;
     text-align: center;
     font-size: 12px;
     color: #333;
     letter-spacing: 1px;
     text-shadow: 1px 1px 1px #fff;
-    filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+    filter: dropshadow(color=#fff, offx=1, offy=1);
     #gradient > .vertical (#fff, #ccc);
 }
 .fp-panel-button {
@@ -75,16 +76,16 @@
     line-height: 20px;
 }
 
- .moodle-dialogue-base .filepicker .moodle-dialogue-wrap .moodle-dialogue-bd {
-    padding: 0px;
+.moodle-dialogue-base .filepicker .moodle-dialogue-wrap .moodle-dialogue-bd {
+    padding: 0;
 }
 
 // File Picker layout
 #filesskin .file-picker.fp-generallayout {
     width: 859px;
-    background: #FFFFFF;
+    background: #fff;
     .border-radius(10px);
-    border: 1px solid #CCCCCC;
+    border: 1px solid #ccc;
     position: relative;
 }
 .file-picker .fp-repo-area {
@@ -94,35 +95,21 @@
     .ie7-inline-block();
     float: left;
     height: 525px;
-    border-right: 1px solid #BBBBBB;
-}
-.dir-rtl .file-picker .fp-repo-area {
-    border-left: 1px solid #BBBBBB;
-    border-right: none;
-    float: right;
+    border-right: 1px solid #bbb;
 }
 .file-picker .fp-repo-items {
     float: none;
     width: auto;
-    margin-left:181px;
+    margin-left: 181px;
 }
 .moodle-dialogue-fullscreen .file-picker .fp-repo-items {
-    margin-left: 0px;
-    margin-right:0px;
+    margin-left: 0;
+    margin-right: 0;
     float: left;
 }
-.dir-rtl .file-picker .fp-repo-items {
-    margin-left: 0px;
-    margin-right:181px;
-}
-.dir-rtl .moodle-dialogue-fullscreen .file-picker .fp-repo-items {
-    margin-left: 0px;
-    margin-right:0px;
-    float: right;
-}
 .file-picker .fp-navbar {
-    background: #F2F2F2;
-    border-bottom: 1px solid #BBBBBB;
+    background: #f2f2f2;
+    border-bottom: 1px solid #bbb;
     min-height: 40px;
     overflow: hidden;
 }
@@ -131,7 +118,7 @@
 }
 
 .file-picker .fp-content {
-    background: #FFFFFF;
+    background: #fff;
     clear: none;
     overflow: auto;
     height: 452px;
@@ -149,39 +136,7 @@
     width: 98%;
     height: 98%;
 }
-.dir-rtl .file-picker .fp-list {
-    text-align: right;
-}
-.dir-rtl .file-picker .fp-toolbar {
-    padding: 4px;
-}
-.dir-rtl .file-picker .fp-list {
-    text-align: right;
-}
-.dir-rtl .file-picker .fp-repo-name {
-    display: inline;
-}
-.dir-rtl .file-picker .fp-pathbar {
-    text-align: right;
-    display: block;
-    border-top: none;
-}
-.dir-rtl .file-picker div.bd {
-    text-align: right;
-}
-.dir-rtl #filemenu .yuimenuitemlabel {
-    text-align: right;
-}
-.dir-rtl .filepicker .yui-layout-unit-left {
-    left: 500px;
-}
-.dir-rtl .filepicker .yui-layout-unit-center {
-    left: 0;
-}
-// File Manager
-.dir-rtl .filemanager-toolbar a {
-    padding: 0;
-}
+
 // Repositories on fp-repo-area (File Picker only)
 .file-picker .fp-list {
     list-style-type: none;
@@ -190,16 +145,12 @@
     width: 100%;
     margin: 0;
 }
-.dir-rtl .file-picker .fp-list {
-    text-align: right;
-    float: left;
-}
 .file-picker .fp-list .fp-repo a {
     display: block;
     padding: .5em .7em;
 }
 .file-picker .fp-list .fp-repo.active {
-    background: #F2F2F2;
+    background: #f2f2f2;
 }
 .file-picker .fp-list .fp-repo-icon {
     padding: 0 7px 0 5px;
@@ -210,13 +161,9 @@
 .fp-toolbar {
     float: left;
 }
-.dir-rtl .fp-toolbar {
-    float: right;
-}
 .fp-toolbar.empty {
     display: none;
 }
-.dir-rtl .fp-toolbar div.disabled,
 .fp-toolbar .disabled {
     display: none;
 }
@@ -224,12 +171,6 @@
     display: block;
     float: left;
     margin-right: 4px;
-}
-.dir-rtl .fp-toolbar div {
-    display: block;
-    float: right;
-    margin-left: 4px;
-    margin-right: 0px;
 }
 .fp-toolbar img {
     vertical-align: -15%;
@@ -240,46 +181,40 @@
     height: 27px;
 }
 .fp-toolbar .fp-tb-search input {
-    background: #FFFFFF url('[[pix:a/search]]') no-repeat 7px 7px;
+    background: #fff url('[[pix:a/search]]') no-repeat 7px 7px;
     padding: 2px 6px 1px 27px;
     width: 200px;
     height: 27px;
-    border: 1px solid #BBBBBB;
+    border: 1px solid #bbb;
 }
 .fp-viewbar {
     float: right;
     height: 30px;
-    border: 1px solid #CCC;
-    border-bottom: 1px solid #B3B3B3;
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #b3b3b3;
     border-radius: 4px;
     background: white;
 }
-.fp-repo-items fp-viewbar {
+.fp-repo-items .fp-viewbar {
     margin: 4px;
-}
-.dir-rtl .fp-toolbar img {
-    vertical-align: -35%;
-}
-.dir-rtl .fp-viewbar {
-    float: left;
 }
 
 .fp-viewbar a {
     width: 30px;
     height: 30px;
-    border-right: 1px solid #CCC;
+    border-right: 1px solid #ccc;
     display: block;
-    float:left;
+    float: left;
 }
 .fp-viewbar a.checked:hover,
 .fp-viewbar a:hover {
-    background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
     background-color: #ebebeb;
 }
 
 .fp-viewbar a.checked,
 .fp-viewbar a:active {
-    background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 40%, #dfdfdf 100%);
     background-color: #dfdfdf;
 }
 
@@ -303,23 +238,7 @@
 .file-picker .fp-clear-left {
     clear: left;
 }
-// over ride hover rule from core.css
-.dir-rtl .fp-vb-details a:hover {
-    background: none;
-    border: 20px solid black;
-}
-.dir-rtl .fp-vb-details.checked a:hover {
-    background: none;
-    border: 40px solid black;
-}
-.dir-rtl .fp-vb-tree a:hover {
-    background: none;
-    border: 30px solid black;
-}
-.dir-rtl .fp-vb-tree.checked a:hover {
-    background: none;
-    border: 50px solid black;
-}
+
 .file-picker .fp-pathbar {
     display: table-row;
 }
@@ -327,31 +246,18 @@
     display: none;
 }
 .fp-pathbar .fp-path-folder {
-    background: url('[[pix:theme|fp/path_folder]]') no-repeat 0 0;
-    width: 27px;
+    background: url('[[pix:theme|fp/path_folder]]') 0 0 no-repeat;
+    /*rtl:raw:
+    background-image: url('[[pix:theme|fp/path_folder_rtl]]');
+    */
     height: 12px;
     margin-left: 4px;
-}
-.dir-rtl .fp-pathbar .fp-path-folder {
-    background: url('[[pix:theme|fp/path_folder_rtl]]') no-repeat right top;
-    width: auto;
-    height: 12px;
-    margin-left: 4px;
-}
-.dir-rtl .fp-pathbar span {
-    display: inline-block;
-    .ie7-inline-block();
-    float: right;
-    margin-left: 32px;
 }
 .fp-pathbar .fp-path-folder-name {
     margin-left: 32px;
     line-height: 20px;
 }
-.dir-rtl .fp-pathbar .fp-path-folder-name {
-    margin-right: 32px;
-    line-height: 20px;
-}
+
 // Icon view (File Picker and File Manager)
 .fp-iconview .fp-file {
     float: left;
@@ -364,7 +270,7 @@
     min-height: 110px;
     line-height: 110px;
     text-align: center;
-    border: 1px solid #FFFFFF;
+    border: 1px solid #fff;
     display: block;
 }
 .fp-iconview .fp-thumbnail img {
@@ -376,7 +282,7 @@
 .fp-iconview .fp-thumbnail:hover {
     background: #fff;
     border: 1px solid #ddd;
-    .box-shadow(inset 0 0 10px 0px #ccc);
+    .box-shadow(inset 0 0 10px 0 #ccc);
 }
 .fp-iconview .fp-filename-field {
     height: 33px;
@@ -389,48 +295,41 @@
     z-index: 1000;
 }
 .fp-iconview .fp-filename-field .fp-filename {
-    background: #FFFFFF;
+    background: #fff;
     padding-top: 5px;
     padding-bottom: 12px;
     min-width: 112px;
 }
-.dir-rtl .fp-iconview .fp-file {
-    float: right;
-}
+
 // Table view (File Picker only)
 .file-picker .yui3-datatable table {
-    border: 0 solid #BBBBBB;
+    border: 0 solid #bbb;
     width: 100%;
 }
 #filesskin .file-picker .yui3-datatable-header {
-    background: #FFFFFF;
-    border-bottom: 1px solid #CCCCCC;
-    border-left: 0 solid #FFFFFF;
-    color: #555555;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    border-left: 0 solid #fff;
+    color: #555;
 }
 #filesskin .file-picker .yui3-datatable-odd .yui3-datatable-cell {
-    background-color: #F6F6F6;
-    border-left: 0 solid #F6F6F6;
+    background-color: #f6f6f6;
+    border-left: 0 solid #f6f6f6;
 }
 #filesskin .file-picker .yui3-datatable-even .yui3-datatable-cell {
-    background-color: #FFFFFF;
-    border-left: 0 solid #FFFFFF;
-}
-.dir-rtl .file-picker .yui3-datatable-header {
-    text-align: right;
+    background-color: #fff;
+    border-left: 0 solid #fff;
 }
 // Tree view (File Manager only)
 
 // first or middle sibling, no children
 .file-picker .ygtvtn,
 .filemanager .ygtvtn {
+    /*rtl:remove*/
     background: url('[[pix:moodle|y/tn]]') 0 0 no-repeat;
-    width: 17px;
-    height: 22px;
-}
-.dir-rtl .filemanager .ygtvtn,
-.dir-rtl .file-picker .ygtvtn {
+    /*rtl:raw:
     background: url('[[pix:moodle|y/tn_rtl]]') 0 0 no-repeat;
+    */
     width: 17px;
     height: 22px;
 }
@@ -438,6 +337,9 @@
 .file-picker .ygtvtm,
 .filemanager .ygtvtm {
     background: url('[[pix:moodle|y/tm]]') 0 10px no-repeat;
+    /*rtl:raw:
+        background-position: 2px 10px;
+    */
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -446,6 +348,9 @@
 .file-picker .ygtvtmh,
 .filemanager .ygtvtmh {
     background: url('[[pix:moodle|y/tm]]') 0 10px no-repeat;
+    /*rtl:raw:
+        background-position: 2px 10px;
+    */
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -453,42 +358,45 @@
 // first or middle sibling, expandable
 .file-picker .ygtvtp,
 .filemanager .ygtvtp {
+    /*rtl:remove*/
     background: url('[[pix:moodle|y/tp]]') 0 10px no-repeat;
+    /*rtl:raw:
+    background: url('[[pix:moodle|y/tp_rtl]]') 2px 10px no-repeat;
+    */
     width: 13px;
     height: 12px;
     cursor: pointer;
 }
-.dir-rtl .file-picker .ygtvtp,
-.dir-rtl .filemanager .ygtvtp {
-    background: url('[[pix:moodle|y/tp_rtl]]') 0 10px no-repeat;
-}
 // first or middle sibling, expandable, hover
 .file-picker .ygtvtph,
 .filemanager .ygtvtph {
+    /*rtl:remove*/
     background: url('[[pix:moodle|y/tp]]') 0 10px no-repeat;
+    /*rtl:raw:
+    background: url('[[pix:moodle|y/tp_rtl]]') 2px 10px no-repeat;
+    */
     width: 13px;
     height: 22px;
     cursor: pointer;
 }
-.dir-rtl .file-picker .ygtvtph,
-.dir-rtl .filemanager .ygtvtph {
-    background: url('[[pix:moodle|y/tp_rtl]]') 0 10px no-repeat;
-}
 // last sibling, no children
 .file-picker .ygtvln,
 .filemanager .ygtvln {
+    /*rtl:remove*/
     background: url('[[pix:moodle|y/ln]]') 0 0 no-repeat;
+    /*rtl:raw:
+    background: url('[[pix:moodle|y/ln_rtl]]') 0 0 no-repeat;
+    */
     width: 17px;
     height: 22px;
-}
-.dir-rtl .file-picker .ygtvln,
-.dir-rtl .filemanager .ygtvln {
-    background: url('[[pix:moodle|y/ln_rtl]]') 0 0 no-repeat;
 }
 // Last sibling, collapsable
 .file-picker .ygtvlm,
 .filemanager .ygtvlm {
     background: url('[[pix:moodle|y/lm]]') 0 10px no-repeat;
+    /*rtl:raw:
+        background-position: 2px 10px;
+    */
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -497,6 +405,9 @@
 .file-picker .ygtvlmh,
 .filemanager .ygtvlmh {
     background: url('[[pix:moodle|y/lm]]') 0 10px no-repeat;
+    /*rtl:raw:
+        background-position: 2px 10px;
+    */
     width: 13px;
     height: 12px;
     cursor: pointer;
@@ -504,26 +415,26 @@
 // Last sibling, expandable
 .file-picker .ygtvlp,
 .filemanager .ygtvlp {
+    /*rtl:remove*/
     background: url('[[pix:moodle|y/lp]]') 0 10px no-repeat;
+    /*rtl:raw:
+    background: url('[[pix:moodle|y/lp_rtl]]') 2px 10px no-repeat;
+    */
     width: 13px;
     height: 12px;
     cursor: pointer;
-}
-.dir-rtl .file-picker .ygtvlp,
-.dir-rtl .filemanager .ygtvlp {
-    background: url('[[pix:moodle|y/lp_rtl]]') 0 10px no-repeat;
 }
 // Last sibling, expandable, hover
 .file-picker .ygtvlph,
 .filemanager .ygtvlph {
+    /*rtl:remove*/
     background: url('[[pix:moodle|y/lp]]') 0 10px no-repeat;
+    /*rtl:raw:
+    background: url('[[pix:moodle|y/lp_rtl]]') 2px 10px no-repeat;
+    */
     width: 13px;
     height: 12px;
     cursor: pointer;
-}
-.dir-rtl .file-picker .ygtvlph,
-.dir-rtl .filemanager .ygtvlph {
-    background: url('[[pix:moodle|y/lp_rtl]]') 0 10px no-repeat;
 }
 // Loading icon
 .file-picker .ygtvloading,
@@ -536,6 +447,9 @@
 .file-picker .ygtvdepthcell,
 .filemanager .ygtvdepthcell {
     background: url('[[pix:moodle|y/vline]]') 0 0 no-repeat;
+    /*rtl:raw:
+    background-position: 1px 0;
+    */
     width: 17px;
     height: 32px;
 }
@@ -559,7 +473,7 @@ a.ygtvspacer:hover {
 }
 .file-picker .ygtvfocus,
 .filemanager .ygtvfocus {
-    background-color: #EEEEEE;
+    background-color: #eee;
 }
 .fp-filename-icon {
     margin-top: 10px;
@@ -575,22 +489,8 @@ a.ygtvspacer:hover {
     text-align: center;
     line-height: 24px;
 }
-.dir-rtl .fp-icon {
-    float: right;
-    margin-left: 10px;
-    margin-right: 0;
-}
-.fp-icon img {
-    max-height: 24px;
-    max-width: 24px;
-    vertical-align: middle;
-}
 .fp-filename {
     padding-right: 10px;
-}
-.dir-rtl .fp-filename {
-    padding-left: 10px;
-    padding-right: 0;
 }
 // Repositories Login on fp-content (File Picker only)
 
@@ -613,7 +513,7 @@ a.ygtvspacer:hover {
 .file-picker .fp-login-form .fp-login-input .input {
     text-align: left;
 }
-.file-picker .fp-login-form input[type="checkbox"]{
+.file-picker .fp-login-form input[type="checkbox"] {
     width: 15px;
     height: 15px;
 }
@@ -695,8 +595,8 @@ a.ygtvspacer:hover {
 .fp-select .fp-hr {
     clear: both;
     height: 1px;
-    background-color: #FFFFFF;
-    border-bottom: 1px solid #BBBBBB;
+    background-color: #fff;
+    border-bottom: 1px solid #bbb;
     width: auto;
     margin: 10px 0;
 }
@@ -729,7 +629,7 @@ a.ygtvspacer:hover {
     .box-shadow(inset 0 0 10px 0 #ccc);
 }
 .fp-select .fp-thumbnail img {
-    border: 1px solid #DDDDDD;
+    border: 1px solid #ddd;
     padding: 3px;
     vertical-align: middle;
     margin: 10px;
@@ -764,10 +664,10 @@ a.ygtvspacer:hover {
     display: none;
 }
 // File Manager
-.filemanager-loading{
+.filemanager-loading {
     display: none;
 }
-.jsenabled .filemanager-loading{
+.jsenabled .filemanager-loading {
     display: block;
     margin-top: 100px;
 }
@@ -804,21 +704,21 @@ a.ygtvspacer:hover {
 }
 // File Manager layout
 .filemanager {
-    .fp-restrictions{
+    .fp-restrictions {
         text-align: right;
     }
 }
 .filemanager .fp-navbar {
-    background: #F2F2F2;
-    border: 1px solid #BBBBBB;
+    background: #f2f2f2;
+    border: 1px solid #bbb;
     border-bottom: none;
 }
-.filemanager-toolbar{
+.filemanager-toolbar {
     padding: 4px;
     overflow: hidden;
 }
 .fp-pathbar {
-    border-top: 1px solid #BBBBBB;
+    border-top: 1px solid #bbb;
     padding: 5px 8px 1px;
     min-height: 20px;
 }
@@ -833,10 +733,9 @@ a.ygtvspacer:hover {
 .fp-toolbar .fp-tb-help,
 .fp-toolbar .fp-tb-manage,
 .fp-toolbar .fp-tb-logout,
-.fp-toolbar .fp-tb-refresh
- {
-    border: 1px solid #CCC;
-    border-bottom: 1px solid #B3B3B3;
+.fp-toolbar .fp-tb-refresh {
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #b3b3b3;
     border-radius: 4px;
     background: white;
     width: 30px;
@@ -844,12 +743,12 @@ a.ygtvspacer:hover {
 }
 
 .fp-toolbar a:hover {
-    background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
     background-color: #ebebeb;
 }
 
 .fp-toolbar a:active {
-    background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
+    background-image: radial-gradient(ellipse at center, #fff 40%, #dfdfdf 100%);
     background-color: #dfdfdf;
 }
 
@@ -859,8 +758,7 @@ a.ygtvspacer:hover {
 .fp-tb-help a,
 .fp-tb-manage a,
 .fp-tb-logout a,
-.fp-tb-refresh a
-{
+.fp-tb-refresh a {
     display: block;
     width: 30px;
     height: 30px;
@@ -882,14 +780,14 @@ a.ygtvspacer:hover {
 }
 .filepicker-filelist,
 .filemanager-container {
-    background: #FFFFFF;
+    background: #fff;
     clear: both;
     overflow: auto;
-    border: 1px solid #BBBBBB;
+    border: 1px solid #bbb;
     min-height: 140px;
     position: relative;
 }
-.filemanager .fp-content{
+.filemanager .fp-content {
     overflow: auto;
     max-height: 472px;
     min-height: 157px;
@@ -900,7 +798,7 @@ a.ygtvspacer:hover {
 }
 .fitem.disabled .filepicker-filelist,
 .fitem.disabled .filemanager-container {
-    background-color: #EBEBE4;
+    background-color: #ebebe4;
 }
 .fitem.disabled .fp-btn-choose {
     .muted
@@ -925,10 +823,18 @@ a.ygtvspacer:hover {
 }
 .fp-iconview .fp-file.fp-hasreferences .fp-reficons1 {
     background: url('[[pix:theme|fp/link]]') no-repeat;
+    /*rtl:raw:
+    transform: scaleX(-1);
+    */
+    /*rtl:ignore*/
     background-position: bottom right;
 }
 .fp-iconview .fp-file.fp-isreference .fp-reficons2 {
     background: url('[[pix:theme|fp/alias]]') no-repeat;
+    /*rtl:raw:
+    transform: scaleX(-1);
+    */
+    /*rtl:ignore*/
     background-position: bottom left;
 }
 .filemanager .fp-iconview .fp-file.fp-originalmissing .fp-thumbnail img {
@@ -940,27 +846,30 @@ a.ygtvspacer:hover {
 }
 // Table view (File Manager only)
 .filemanager .yui3-datatable table {
-    border: 0 solid #BBBBBB;
+    border: 0 solid #bbb;
     width: 100%;
 }
 .filemanager .yui3-datatable-header {
-    background: #FFFFFF!important;
-    border-bottom: 1px solid #CCCCCC!important;
-    border-left: 0 solid #FFFFFF!important;
-    color: #555555!important;
+    background: #fff !important;
+    border-bottom: 1px solid #ccc !important;
+    border-left: 0 solid #fff !important;
+    color: #555 !important;
 }
 .filemanager .yui3-datatable-odd .yui3-datatable-cell {
-    background-color: #F6F6F6!important;
-    border-left: 0 solid #F6F6F6;
+    background-color: #f6f6f6 !important;
+    border-left: 0 solid #f6f6f6;
 }
 .filemanager .yui3-datatable-even .yui3-datatable-cell {
-    background-color: #FFFFFF!important;
-    border-left: 0 solid #FFFFFF;
+    background-color: #fff !important;
+    border-left: 0 solid #fff;
 }
-.filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1{
+.filemanager .fp-filename-icon.fp-hasreferences .fp-reficons1 {
     background: url('[[pix:theme|fp/link_sm]]') no-repeat 0 0;
     height: 100%;
     width: 100%;
+    /*rtl:raw:
+    transform: scaleX(-1);
+    */
     position: absolute;
     top: 8px;
     left: 17px;
@@ -970,6 +879,9 @@ a.ygtvspacer:hover {
     background: url('[[pix:theme|fp/alias_sm]]') no-repeat 0 0;
     height: 100%;
     width: 100%;
+    /*rtl:raw:
+    transform: scaleX(-1);
+    */
     position: absolute;
     top: 9px;
     left: -6px;
@@ -993,16 +905,6 @@ a.ygtvspacer:hover {
     margin-right: -20px;
     top: 6px;
 }
-.dir-rtl .filemanager .fp-iconview .fp-folder.fp-hascontextmenu .fp-contextmenu {
-    left: 7px;
-    right: inherit;
-}
-.dir-rtl .filemanager .fp-treeview .fp-folder.fp-hascontextmenu .fp-contextmenu,
-.dir-rtl .filemanager .fp-tableview .fp-folder.fp-hascontextmenu .fp-contextmenu {
-    left: inherit;
-    right: 16px;
-    margin-right: 0;
-}
 
 // Drag and drop support (filemanager and filepicker form elements)
 .filepicker-filelist .filepicker-container,
@@ -1013,13 +915,13 @@ a.ygtvspacer:hover {
     bottom: 10px;
     left: 10px;
     right: 10px;
-    border: 2px dashed #BBBBBB;
+    border: 2px dashed #bbb;
     padding-top: 85px;
     text-align: center;
 }
 .filepicker-filelist .dndupload-target,
 .filemanager-container .dndupload-target {
-    background: #FFFFFF;
+    background: #fff;
     position: absolute;
     top: 10px;
     bottom: 10px;
@@ -1032,7 +934,7 @@ a.ygtvspacer:hover {
 }
 .filepicker-filelist.dndupload-over .dndupload-target,
 .filemanager-container.dndupload-over .dndupload-target {
-    background: #FFFFFF;
+    background: #fff;
     position: absolute;
     top: 10px;
     bottom: 10px;
@@ -1152,8 +1054,8 @@ a.ygtvspacer:hover {
     display: inline;
 }
 .filemanager.fp-select .fp-reflist .fp-value {
-    background: #F9F9F9;
-    border: 1px solid #BBBBBB;
+    background: #f9f9f9;
+    border: 1px solid #bbb;
     padding: 8px 7px;
     margin: 0;
     max-width: 265px;
@@ -1170,9 +1072,6 @@ a.ygtvspacer:hover {
 .filemanager.fp-mkdir-dlg .fp-mkdir-dlg-text {
     text-align: left;
     margin: 20px;
-}
-.dir-rtl .filemanager .fp-mkdir-dlg p {
-    text-align: right;
 }
 // Confirm dialogue for delete (File Manager only)
 .filemanager.fp-dlg {
@@ -1193,39 +1092,6 @@ a.ygtvspacer:hover {
     text-align: left;
 }
 
-// RTL Overrides
-.dir-rtl {
-    .filemanager {
-        .fp-restrictions{
-            text-align: left;
-        }
-    }
-    .file-picker div.bd,
-    .file-picker .fp-pathbar,
-    .file-picker .fp-list,
-    #filemenu .yuimenuitemlabel,
-    .filemanager-container .yui3-skin-sam .yui3-datatable-header {
-        text-align: right;
-    }
-    .filepicker {
-        .yui-layout-unit-left {
-            left: 500px;
-        }
-        .yui-layout-unit-center {
-            left: 0;
-        }
-    }
-    .file-picker .fp-toolbar {
-        .fp-tb-search input {
-            background-position: 208px 7px;
-            padding: 2px 30px 1px 3px;
-        }
-        div {
-            float: right;
-            margin-left:4px;
-        }
-    }
-}
 // Upload form for file picker.
 .fp-formset {
     max-width: 500px;
@@ -1234,7 +1100,7 @@ a.ygtvspacer:hover {
         line-height: inherit;
     }
 }
- .fp-forminset {
+.fp-forminset {
     max-width: 400px;
     padding: 0 10px;
     .control-group.control-radio {
@@ -1242,7 +1108,7 @@ a.ygtvspacer:hover {
     }
     .control-group {
         label.control-label {
-           width: 105px;
+            width: 105px;
         }
         label.control-radio {
             float: right;
@@ -1256,7 +1122,7 @@ a.ygtvspacer:hover {
             }
         }
         .controls.control-radio input {
-                margin-top: 3px;
+            margin-top: 3px;
         }
     }
     .fp-select-buttons {
@@ -1270,48 +1136,4 @@ a.ygtvspacer:hover {
 .fp-fileinfo .fp-value {
     display: inline-block;
     padding-left: 5px;
-}
-
-.dir-rtl .fp-forminset {
-    max-width: 400px;
-    .control-group {
-        label.control-label {
-            float: right;
-            text-align: left;
-        }
-        label.control-radio {
-            float: left;
-            text-align: right;
-            width: 215px;
-        }
-        .controls {
-            margin-left: 0;
-            margin-right: 125px;
-        }
-    }
-    .fp-select-buttons {
-        float: left;
-    }
-    input[type="text"] {
-        width: 228px;
-    }
-}
-
-.dir-rtl .fp-fileinfo .fp-value {
-    display: inline-block;
-    padding-right: 5px;
-}
-.dir-rtl .fp-select .fp-thumbnail {
-    margin: 10px 0 0 0px;
-}
-
-.dir-rtl .filepicker .fp-formset {
-    label {
-        float: right;
-        text-align: left;
-    }
-    .controls {
-        margin-left: 0;
-        text-align: right;
-    }
 }

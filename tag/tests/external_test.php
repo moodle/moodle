@@ -40,7 +40,7 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $context = context_system::instance();
 
         $originaltag = array(
-            'tagtype' => 'default',
+            'isstandard' => 0,
             'flag' => 1,
             'rawname' => 'test',
             'description' => 'desc'
@@ -52,7 +52,7 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
             'description' => 'Trying to change tag description',
             'rawname' => 'Trying to change tag name',
             'flag' => 0,
-            'official' => 1,
+            'isstandard' => 1,
         );
         $gettag = array(
             'id' => $tag->id,
@@ -78,6 +78,7 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $this->assertArrayNotHasKey('changeflagurl', $result['tags'][0]);
         $this->assertArrayNotHasKey('flag', $result['tags'][0]);
         $this->assertArrayNotHasKey('official', $result['tags'][0]);
+        $this->assertArrayNotHasKey('isstandard', $result['tags'][0]);
 
         // User with editing only capability can change description but not the tag name.
         $roleid = $this->assignUserCapability('moodle/tag:edit', $context->id);
@@ -92,13 +93,14 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($originaltag['rawname'], $result['tags'][0]['rawname']);
         $this->assertArrayNotHasKey('flag', $result['tags'][0]); // 'Flag' is not available unless 'moodle/tag:manage' cap exists.
         $this->assertEquals(0, $result['tags'][0]['official']);
+        $this->assertEquals(0, $result['tags'][0]['isstandard']);
         $this->assertEquals($originaltag['rawname'], $DB->get_field('tag', 'rawname',
                 array('id' => $tag->id)));
         $this->assertEquals($updatetag['description'], $DB->get_field('tag', 'description',
                 array('id' => $tag->id)));
 
         // User with editing and manage cap can also change the tag name,
-        // make it official and reset flag.
+        // make it standard and reset flag.
         assign_capability('moodle/tag:manage', CAP_ALLOW, $roleid, $context->id);
         $context->mark_dirty();
         $this->assertTrue(has_capability('moodle/tag:manage', $context));
@@ -112,11 +114,11 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($updatetag['rawname'], $result['tags'][0]['rawname']);
         $this->assertEquals(core_text::strtolower($updatetag['rawname']), $result['tags'][0]['name']);
         $this->assertEquals($updatetag['flag'], $result['tags'][0]['flag']);
-        $this->assertEquals($updatetag['official'], $result['tags'][0]['official']);
+        $this->assertEquals($updatetag['isstandard'], $result['tags'][0]['official']);
+        $this->assertEquals($updatetag['isstandard'], $result['tags'][0]['isstandard']);
         $this->assertEquals($updatetag['rawname'], $DB->get_field('tag', 'rawname',
                 array('id' => $tag->id)));
-        $this->assertEquals('official', $DB->get_field('tag', 'tagtype',
-                array('id' => $tag->id)));
+        $this->assertEquals(1, $DB->get_field('tag', 'isstandard', array('id' => $tag->id)));
 
         // Updating and getting non-existing tag.
         $nonexistingtag = array(
@@ -144,5 +146,40 @@ class core_tag_external_testcase extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_tag_external::update_tags_returns(), $result);
         $this->assertEquals($tag->id, $result['warnings'][0]['item']);
         $this->assertEquals('namesalreadybeeingused', $result['warnings'][0]['warningcode']);
+    }
+
+    /**
+     * Test update_inplace_editable()
+     */
+    public function test_update_inplace_editable() {
+        global $CFG, $DB, $PAGE;
+        require_once($CFG->dirroot . '/lib/external/externallib.php');
+
+        $this->resetAfterTest(true);
+        $tag = $this->getDataGenerator()->create_tag();
+        $this->setUser($this->getDataGenerator()->create_user());
+
+        // Call service for core_tag component without necessary permissions.
+        try {
+            core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'new tag name');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('Sorry, but you do not currently have permissions to do that (Manage all tags)',
+                    $e->getMessage());
+        }
+
+        // Change to admin user and make sure that tag name can be updated using web service update_inplace_editable().
+        $this->setAdminUser();
+        $res = core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'New tag name');
+        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+        $this->assertEquals('New tag name', $res['value']);
+        $this->assertEquals('New tag name', $DB->get_field('tag', 'rawname', array('id' => $tag->id)));
+
+        // Call callback core_tag_inplace_editable() directly.
+        $tmpl = component_callback('core_tag', 'inplace_editable', array('tagname', $tag->id, 'Rename me again'));
+        $this->assertInstanceOf('core\output\inplace_editable', $tmpl);
+        $res = $tmpl->export_for_template($PAGE->get_renderer('core'));
+        $this->assertEquals('Rename me again', $res['value']);
+        $this->assertEquals('Rename me again', $DB->get_field('tag', 'rawname', array('id' => $tag->id)));
     }
 }

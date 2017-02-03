@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die;
 function book_get_numbering_types() {
     global $CFG; // required for the include
 
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(__DIR__.'/locallib.php');
 
     return array (
         BOOK_NUM_NONE       => get_string('numbering0', 'mod_book'),
@@ -46,7 +46,7 @@ function book_get_numbering_types() {
  * @return array
  */
 function book_get_nav_types() {
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(__DIR__.'/locallib.php');
 
     return array (
         BOOK_LINK_TOCONLY   => get_string('navtoc', 'mod_book'),
@@ -291,7 +291,7 @@ function book_supports($feature) {
  * @return void
  */
 function book_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $booknode) {
-    global $USER, $PAGE;
+    global $USER, $PAGE, $OUTPUT;
 
     $plugins = core_component::get_plugin_list('booktool');
     foreach ($plugins as $plugin => $dir) {
@@ -306,7 +306,8 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
 
     $params = $PAGE->url->params();
 
-    if (!empty($params['id']) and !empty($params['chapterid']) and has_capability('mod/book:edit', $PAGE->cm->context)) {
+    if ($PAGE->cm->modname === 'book' and !empty($params['id']) and !empty($params['chapterid'])
+            and has_capability('mod/book:edit', $PAGE->cm->context)) {
         if (!empty($USER->editing)) {
             $string = get_string("turneditingoff");
             $edit = '0';
@@ -316,6 +317,7 @@ function book_extend_settings_navigation(settings_navigation $settingsnav, navig
         }
         $url = new moodle_url('/mod/book/view.php', array('id'=>$params['id'], 'chapterid'=>$params['chapterid'], 'edit'=>$edit, 'sesskey'=>sesskey()));
         $booknode->add($string, $url, navigation_node::TYPE_SETTING);
+        $PAGE->set_button($OUTPUT->single_button($url, $string));
     }
 }
 
@@ -359,7 +361,7 @@ function book_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
         return null;
     }
 
-    require_once(dirname(__FILE__).'/locallib.php');
+    require_once(__DIR__.'/locallib.php');
 
     if (is_null($itemid)) {
         return new book_file_info($browser, $course, $cm, $context, $areas, $filearea);
@@ -429,13 +431,26 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
     if ($args[0] == 'index.html') {
         $filename = "index.html";
 
+        // We need to rewrite the pluginfile URLs so the media filters can work.
+        $content = file_rewrite_pluginfile_urls($chapter->content, 'webservice/pluginfile.php', $context->id, 'mod_book', 'chapter',
+                                                $chapter->id);
+        $formatoptions = new stdClass;
+        $formatoptions->noclean = true;
+        $formatoptions->overflowdiv = true;
+        $formatoptions->context = $context;
+
+        $content = format_text($content, $chapter->contentformat, $formatoptions);
+
         // Remove @@PLUGINFILE@@/.
-        $content = str_replace('@@PLUGINFILE@@/', '', $chapter->content);
+        $options = array('reverse' => true);
+        $content = file_rewrite_pluginfile_urls($content, 'webservice/pluginfile.php', $context->id, 'mod_book', 'chapter',
+                                                $chapter->id, $options);
+        $content = str_replace('@@PLUGINFILE@@/', '', $content);
 
         $titles = "";
         // Format the chapter titles.
         if (!$book->customtitles) {
-            require_once(dirname(__FILE__).'/locallib.php');
+            require_once(__DIR__.'/locallib.php');
             $chapters = book_preload_chapters($book);
 
             if (!$chapter->subchapter) {
@@ -451,12 +466,7 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
             }
         }
 
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        $formatoptions->overflowdiv = true;
-        $formatoptions->context = $context;
-
-        $content = $titles . format_text($content, $chapter->contentformat, $formatoptions);
+        $content = $titles . $content;
 
         send_file($content, $filename, 0, 0, true, true);
     } else {
@@ -563,7 +573,7 @@ function book_export_contents($cm, $baseurl) {
             $file = array();
             $file['type']         = 'file';
             $file['filename']     = $fileinfo->get_filename();
-            $file['filepath']     = "/{$chapter->id}/";
+            $file['filepath']     = "/{$chapter->id}" . $fileinfo->get_filepath();
             $file['filesize']     = $fileinfo->get_filesize();
             $file['fileurl']      = moodle_url::make_webservice_pluginfile_url(
                                         $context->id, 'mod_book', 'chapter', $chapter->id,
@@ -625,4 +635,38 @@ function book_view($book, $chapter, $islastchapter, $course, $cm, $context) {
             $completion->set_module_viewed($cm);
         }
     }
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function book_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB;
+
+    $context = $cm->context;
+    $updates = new stdClass();
+    if (!has_capability('mod/book:read', $context)) {
+        return $updates;
+    }
+    $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
+
+    $select = 'bookid = :id AND (timecreated > :since1 OR timemodified > :since2)';
+    $params = array('id' => $cm->instance, 'since1' => $from, 'since2' => $from);
+    if (!has_capability('mod/book:viewhiddenchapters', $context)) {
+        $select .= ' AND hidden = 0';
+    }
+    $updates->entries = (object) array('updated' => false);
+    $entries = $DB->get_records_select('book_chapters', $select, $params, '', 'id');
+    if (!empty($entries)) {
+        $updates->entries->updated = true;
+        $updates->entries->itemids = array_keys($entries);
+    }
+
+    return $updates;
 }

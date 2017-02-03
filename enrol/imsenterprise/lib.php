@@ -29,7 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/group/lib.php');
-
+require_once($CFG->dirroot.'/lib/coursecatlib.php');
 
 /**
  * IMS Enterprise file enrolment plugin.
@@ -38,6 +38,21 @@ require_once($CFG->dirroot.'/group/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_imsenterprise_plugin extends enrol_plugin {
+
+    /**
+     * @var IMSENTERPRISE_ADD imsenterprise add action.
+     */
+    const IMSENTERPRISE_ADD = 1;
+
+    /**
+     * @var IMSENTERPRISE_UPDATE imsenterprise update action.
+     */
+    const IMSENTERPRISE_UPDATE = 2;
+
+    /**
+     * @var IMSENTERPRISE_DELETE imsenterprise delete action.
+     */
+    const IMSENTERPRISE_DELETE = 3;
 
     /**
      * @var $logfp resource file pointer for writing log data to.
@@ -63,6 +78,11 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
      * @var $rolemappings array of mappings between IMS roles and moodle roles.
      */
     protected $rolemappings;
+
+    /**
+     * @var $defaultcategoryid id of default category.
+     */
+    protected $defaultcategoryid;
 
     /**
      * Read in an IMS Enterprise file.
@@ -93,6 +113,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             $this->logfp = fopen($logtolocation, 'a');
         }
 
+        $this->defaultcategoryid = null;
+
         $fileisnew = false;
         if ( file_exists($filename) ) {
             core_php_time_limit::raise();
@@ -102,6 +124,9 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             $this->log_line("IMS Enterprise enrol cron process launched at " . userdate(time()));
             $this->log_line('Found file '.$filename);
             $this->xmlcache = '';
+
+            $categoryseparator = trim($this->get_config('categoryseparator'));
+            $categoryidnumber = $this->get_config('categoryidnumber');
 
             // Make sure we understand how to map the IMS-E roles to Moodle roles.
             $this->load_role_mappings();
@@ -113,7 +138,9 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
 
             // Decide if we want to process the file (based on filepath, modification time, and MD5 hash)
             // This is so we avoid wasting the server's efforts processing a file unnecessarily.
-            if (empty($prevpath)  || ($filename != $prevpath)) {
+            if ($categoryidnumber && empty($categoryseparator)) {
+                $this->log_line('Category idnumber is enabled but category separator is not defined - skipping processing.');
+            } else if (empty($prevpath)  || ($filename != $prevpath)) {
                 $fileisnew = true;
             } else if (isset($prevtime) && ($filemtime <= $prevtime)) {
                 $this->log_line('File modification time is not more recent than last update - skipping processing.');
@@ -195,7 +222,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                 $msg .= "Logging is currently not active.";
             }
 
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
+            $eventdata->courseid          = SITEID;
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_imsenterprise';
             $eventdata->name              = 'imsenterprise_enrolment';
@@ -276,7 +304,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         // Get configs.
         $truncatecoursecodes    = $this->get_config('truncatecoursecodes');
         $createnewcourses       = $this->get_config('createnewcourses');
-        $createnewcategories    = $this->get_config('createnewcategories');
+        $updatecourses          = $this->get_config('updatecourses');
 
         if ($createnewcourses) {
             require_once("$CFG->dirroot/course/lib.php");
@@ -288,18 +316,25 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             $group->coursecode = trim($matches[1]);
         }
 
+        $matches = array();
         if (preg_match('{<description>.*?<long>(.*?)</long>.*?</description>}is', $tagcontents, $matches)) {
             $group->long = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<description>.*?<short>(.*?)</short>.*?</description>}is', $tagcontents, $matches)) {
             $group->short = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<description>.*?<full>(.*?)</full>.*?</description>}is', $tagcontents, $matches)) {
             $group->full = trim($matches[1]);
         }
 
-        if (preg_match('{<org>.*?<orgunit>(.*?)</orgunit>.*?</org>}is', $tagcontents, $matches)) {
-            $group->category = trim($matches[1]);
+        if (preg_match('{<org>(.*?)</org>}is', $tagcontents, $matchesorg)) {
+            if (preg_match_all('{<orgunit>(.*?)</orgunit>}is', $matchesorg[1], $matchesorgunit)) {
+                $group->categories = array_map('trim', $matchesorgunit[1]);
+            }
         }
 
         $recstatus = ($this->get_recstatus($tagcontents, 'group'));
@@ -320,12 +355,13 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             // Third, check if the course(s) exist.
             foreach ($group->coursecode as $coursecode) {
                 $coursecode = trim($coursecode);
-                if (!$DB->get_field('course', 'id', array('idnumber' => $coursecode))) {
+                $dbcourse = $DB->get_record('course', array('idnumber' => $coursecode));
+                if (!$dbcourse) {
                     if (!$createnewcourses) {
                         $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
                     } else {
 
-                        // Create the (hidden) course(s) if not found
+                        // Create the (hidden) course(s) if not found.
                         $courseconfig = get_config('moodlecourse'); // Load Moodle Course shell defaults.
 
                         // New course.
@@ -360,28 +396,9 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                         $course->enablecompletion = $courseconfig->enablecompletion;
                         // Insert default names for teachers/students, from the current language.
 
-                        // Handle course categorisation (taken from the group.org.orgunit field if present).
-                        if (!empty($group->category)) {
-                            // If the category is defined and exists in Moodle, we want to store it in that one.
-                            if ($catid = $DB->get_field('course_categories', 'id', array('name' => $group->category))) {
-                                $course->category = $catid;
-                            } else if ($createnewcategories) {
-                                // Else if we're allowed to create new categories, let's create this one.
-                                $newcat = new stdClass();
-                                $newcat->name = $group->category;
-                                $newcat->visible = 0;
-                                $catid = $DB->insert_record('course_categories', $newcat);
-                                $course->category = $catid;
-                                $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
-                            } else {
-                                // If not found and not allowed to create, stick with default.
-                                $this->log_line('Category '.$group->category.' not found in Moodle database, so using '.
-                                    'default category instead.');
-                                $course->category = $this->get_default_category_id();
-                            }
-                        } else {
-                            $course->category = $this->get_default_category_id();
-                        }
+                        // Handle course categorisation (taken from the group.org.orgunit or group.org.id fields if present).
+                        $course->category = $this->get_category_from_group($group->categories);
+
                         $course->startdate = time();
                         // Choose a sort order that puts us at the start of the list!
                         $course->sortorder = 0;
@@ -390,9 +407,38 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
 
                         $this->log_line("Created course $coursecode in Moodle (Moodle ID is $course->id)");
                     }
-                } else if ($recstatus == 3 && ($courseid = $DB->get_field('course', 'id', array('idnumber' => $coursecode)))) {
+                } else if (($recstatus == self::IMSENTERPRISE_UPDATE) && $dbcourse) {
+                    if ($updatecourses) {
+                        // Update course. Allowed fields to be updated are:
+                        // Short Name, and Full Name.
+                        $hasupdates = false;
+                        if (!empty($group->short)) {
+                            if ($group->short != $dbcourse->shortname) {
+                                $dbcourse->shortname = $group->short;
+                                $hasupdates = true;
+                            }
+                        }
+                        if (!empty($group->full)) {
+                            if ($group->full != $dbcourse->fullname) {
+                                $dbcourse->fullname = $group->full;
+                                $hasupdates = true;
+                            }
+                        }
+                        if ($hasupdates) {
+                            update_course($dbcourse);
+                            $courseid = $dbcourse->id;
+                            $this->log_line("Updated course $coursecode in Moodle (Moodle ID is $courseid)");
+                        }
+                    } else {
+                        // Update courses option is not enabled. Ignore.
+                        $this->log_line("Ignoring update to course $coursecode");
+                    }
+                } else if (($recstatus == self::IMSENTERPRISE_DELETE) && $dbcourse) {
                     // If course does exist, but recstatus==3 (delete), then set the course as hidden.
-                    $DB->set_field('course', 'visible', '0', array('id' => $courseid));
+                    $courseid = $dbcourse->id;
+                    $show = false;
+                    course_change_visibility($courseid, $show);
+                    $this->log_line("Updated (set to hidden) course $coursecode in Moodle (Moodle ID is $courseid)");
                 }
             }
         }
@@ -412,34 +458,55 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         $fixcasepersonalnames   = $this->get_config('fixcasepersonalnames');
         $imsdeleteusers         = $this->get_config('imsdeleteusers');
         $createnewusers         = $this->get_config('createnewusers');
+        $imsupdateusers         = $this->get_config('imsupdateusers');
 
         $person = new stdClass();
         if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
             $person->idnumber = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<name>.*?<n>.*?<given>(.+?)</given>.*?</n>.*?</name>}is', $tagcontents, $matches)) {
             $person->firstname = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<name>.*?<n>.*?<family>(.+?)</family>.*?</n>.*?</name>}is', $tagcontents, $matches)) {
             $person->lastname = trim($matches[1]);
         }
-        if (preg_match('{<userid>(.*?)</userid>}is', $tagcontents, $matches)) {
+
+        $matches = array();
+        if (preg_match('{<userid.*?>(.*?)</userid>}is', $tagcontents, $matches)) {
             $person->username = trim($matches[1]);
         }
+
+        $matches = array();
+        if (preg_match('{<userid\s+authenticationtype\s*=\s*"*(.+?)"*>.*?</userid>}is', $tagcontents, $matches)) {
+            $person->auth = trim($matches[1]);
+        }
+
         if ($imssourcedidfallback && trim($person->username) == '') {
-            // This is the point where we can fall back to useing the "sourcedid" if "userid" is not supplied
+            // This is the point where we can fall back to useing the "sourcedid" if "userid" is not supplied.
             // NB We don't use an "elseif" because the tag may be supplied-but-empty.
             $person->username = $person->idnumber;
         }
+
+        $matches = array();
         if (preg_match('{<email>(.*?)</email>}is', $tagcontents, $matches)) {
             $person->email = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<url>(.*?)</url>}is', $tagcontents, $matches)) {
             $person->url = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<adr>.*?<locality>(.+?)</locality>.*?</adr>}is', $tagcontents, $matches)) {
             $person->city = trim($matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<adr>.*?<country>(.+?)</country>.*?</adr>}is', $tagcontents, $matches)) {
             $person->country = trim($matches[1]);
         }
@@ -460,7 +527,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         $recstatus = ($this->get_recstatus($tagcontents, 'person'));
 
         // Now if the recstatus is 3, we should delete the user if-and-only-if the setting for delete users is turned on.
-        if ($recstatus == 3) {
+        if ($recstatus == self::IMSENTERPRISE_DELETE) {
 
             if ($imsdeleteusers) { // If we're allowed to delete user records.
                 // Do not dare to hack the user.deleted field directly in database!!!
@@ -476,6 +543,18 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                 }
             } else {
                 $this->log_line("Ignoring deletion request for user '$person->username' (ID number $person->idnumber).");
+            }
+        } else if ($recstatus == self::IMSENTERPRISE_UPDATE) { // Update user.
+            if ($imsupdateusers) {
+                if ($id = $DB->get_field('user', 'id', array('idnumber' => $person->idnumber))) {
+                    $person->id = $id;
+                    $DB->update_record('user', $person);
+                    $this->log_line("Updated user $person->username");
+                } else {
+                    $this->log_line("Ignoring update request for non-existent user $person->username");
+                }
+            } else {
+                $this->log_line("Ignoring update request for user $person->username");
             }
 
         } else { // Add or update record.
@@ -494,9 +573,11 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                     // If they don't exist and they have a defined username, and $createnewusers == true, we create them.
                     $person->lang = $CFG->lang;
                     // TODO: MDL-15863 this needs more work due to multiauth changes, use first auth for now.
-                    $auth = explode(',', $CFG->auth);
-                    $auth = reset($auth);
-                    $person->auth = $auth;
+                    if (empty($person->auth)) {
+                        $auth = explode(',', $CFG->auth);
+                        $auth = reset($auth);
+                        $person->auth = $auth;
+                    }
                     $person->confirmed = 1;
                     $person->timemodified = time();
                     $person->mnethostid = $CFG->mnet_localhost_id;
@@ -550,9 +631,12 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
             foreach ($membermatches as $mmatch) {
                 $member = new stdClass();
                 $memberstoreobj = new stdClass();
+                $matches = array();
                 if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $mmatch[1], $matches)) {
                     $member->idnumber = trim($matches[1]);
                 }
+
+                $matches = array();
                 if (preg_match('{<role\s+roletype=["\'](.+?)["\'].*?>}is', $mmatch[1], $matches)) {
                     // 01 means Student, 02 means Instructor, 3 means ContentDeveloper, and there are more besides.
                     $member->roletype = trim($matches[1]);
@@ -562,13 +646,15 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                     // and there are more besides.
                     $member->roletype = trim($matches[1]);
                 }
+
+                $matches = array();
                 if (preg_match('{<role\b.*?<status>(.+?)</status>.*?</role>}is', $mmatch[1], $matches)) {
                     // 1 means active, 0 means inactive - treat this as enrol vs unenrol.
                     $member->status = trim($matches[1]);
                 }
 
                 $recstatus = ($this->get_recstatus($mmatch[1], 'role'));
-                if ($recstatus == 3) {
+                if ($recstatus == self::IMSENTERPRISE_DELETE) {
                     // See above - recstatus of 3 (==delete) is treated the same as status of 0.
                     $member->status = 0;
                 }
@@ -576,9 +662,12 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
                 $timeframe = new stdClass();
                 $timeframe->begin = 0;
                 $timeframe->end = 0;
+                $matches = array();
                 if (preg_match('{<role\b.*?<timeframe>(.+?)</timeframe>.*?</role>}is', $mmatch[1], $matches)) {
                     $timeframe = $this->decode_timeframe($matches[1]);
                 }
+
+                $matches = array();
                 if (preg_match('{<role\b.*?<extension>.*?<cohort>(.+?)</cohort>.*?</extension>.*?</role>}is',
                         $mmatch[1], $matches)) {
                     $member->groupname = trim($matches[1]);
@@ -722,6 +811,8 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         if (preg_match('{<begin\s+restrict="1">(\d\d\d\d)-(\d\d)-(\d\d)</begin>}is', $string, $matches)) {
             $ret->begin = mktime(0, 0, 0, $matches[2], $matches[3], $matches[1]);
         }
+
+        $matches = array();
         if (preg_match('{<end\s+restrict="1">(\d\d\d\d)-(\d\d)-(\d\d)</end>}is', $string, $matches)) {
             $ret->end = mktime(0, 0, 0, $matches[2], $matches[3], $matches[1]);
         }
@@ -784,14 +875,101 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
         global $CFG;
         require_once($CFG->libdir.'/coursecatlib.php');
 
-        static $defaultcategoryid = null;
-
-        if ($defaultcategoryid === null) {
+        if ($this->defaultcategoryid === null) {
             $category = coursecat::get_default();
-            $defaultcategoryid = $category->id;
+            $this->defaultcategoryid = $category->id;
         }
 
-        return $defaultcategoryid;
+        return $this->defaultcategoryid;
+    }
+
+    /**
+     * Find the category using idnumber or name.
+     *
+     * @param array $categories List of categories
+     *
+     * @return int id of category found.
+     */
+    private function get_category_from_group($categories) {
+        global $DB;
+
+        if (empty($categories)) {
+            $catid = $this->get_default_category_id();
+        } else {
+            $createnewcategories = $this->get_config('createnewcategories');
+            $categoryseparator = trim($this->get_config('categoryseparator'));
+            $nestedcategories = trim($this->get_config('nestedcategories'));
+            $searchbyidnumber = trim($this->get_config('categoryidnumber'));
+
+            if (!empty($categoryseparator)) {
+                $sep = '{\\'.$categoryseparator.'}';
+            }
+
+            $catid = 0;
+            $fullnestedcatname = '';
+
+            foreach ($categories as $categoryinfo) {
+                if ($searchbyidnumber) {
+                    $values = preg_split($sep, $categoryinfo, -1, PREG_SPLIT_NO_EMPTY);
+                    if (count($values) < 2) {
+                        $this->log_line('Category ' . $categoryinfo . ' missing name or idnumber. Using default category instead.');
+                        $catid = $this->get_default_category_id();
+                        break;
+                    }
+                    $categoryname = $values[0];
+                    $categoryidnumber = $values[1];
+                } else {
+                    $categoryname = $categoryinfo;
+                    $categoryidnumber = null;
+                    if (empty($categoryname)) {
+                        $this->log_line('Category ' . $categoryinfo . ' missing name. Using default category instead.');
+                        $catid = $this->get_default_category_id();
+                        break;
+                    }
+                }
+
+                if (!empty($fullnestedcatname)) {
+                    $fullnestedcatname .= ' / ';
+                }
+
+                $fullnestedcatname .= $categoryname;
+                $parentid = $catid;
+
+                // Check if category exist.
+                $params = array();
+                if ($searchbyidnumber) {
+                    $params['idnumber'] = $categoryidnumber;
+                } else {
+                    $params['name'] = $categoryname;
+                }
+                if ($nestedcategories) {
+                    $params['parent'] = $parentid;
+                }
+
+                if ($catid = $DB->get_field('course_categories', 'id', $params)) {
+                    continue; // This category already exists.
+                }
+
+                // If we're allowed to create new categories, let's create this one.
+                if ($createnewcategories) {
+                    $newcat = new stdClass();
+                    $newcat->name = $categoryname;
+                    $newcat->visible = 0;
+                    $newcat->parent = $parentid;
+                    $newcat->idnumber = $categoryidnumber;
+                    $newcat = coursecat::create($newcat);
+                    $catid = $newcat->id;
+                    $this->log_line("Created new (hidden) category '$fullnestedcatname'");
+                } else {
+                    // If not found and not allowed to create, stick with default.
+                    $this->log_line('Category ' . $categoryinfo . ' not found in Moodle database. Using default category instead.');
+                    $catid = $this->get_default_category_id();
+                    break;
+                }
+            }
+        }
+
+        return $catid;
     }
 
     /**

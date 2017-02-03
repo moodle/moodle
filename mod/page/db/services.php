@@ -33,7 +33,17 @@ $functions = array(
         'methodname'    => 'view_page',
         'description'   => 'Simulate the view.php web interface page: trigger events, completion, etc...',
         'type'          => 'write',
-        'capabilities'  => 'mod/page:view'
+        'capabilities'  => 'mod/page:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
 
+    'mod_page_get_pages_by_courses' => array(
+        'classname'     => 'mod_page_external',
+        'methodname'    => 'get_pages_by_courses',
+        'description'   => 'Returns a list of pages in a provided list of courses, if no list is provided all pages that the user
+                            can view will be returned.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/page:view',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
 );

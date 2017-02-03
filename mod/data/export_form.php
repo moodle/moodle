@@ -41,7 +41,8 @@ class mod_data_export_form extends moodleform {
             unset($choices[$key]);
         }
         $typesarray = array();
-        $typesarray[] = $mform->createElement('radio', 'exporttype', null, get_string('csvwithselecteddelimiter', 'data') . '&nbsp;', 'csv');
+        $str = get_string('csvwithselecteddelimiter', 'data');
+        $typesarray[] = $mform->createElement('radio', 'exporttype', null, $str . '&nbsp;', 'csv');
         $typesarray[] = $mform->createElement('select', 'delimiter_name', null, $choices);
         //temporarily commenting out Excel export option. See MDL-19864
         //$typesarray[] = $mform->createElement('radio', 'exporttype', null, get_string('excel', 'data'), 'xls');
@@ -59,12 +60,16 @@ class mod_data_export_form extends moodleform {
         $mform->addElement('header', 'notice', get_string('chooseexportfields', 'data'));
         foreach($this->_datafields as $field) {
             if($field->text_export_supported()) {
-                $mform->addElement('advcheckbox', 'field_'.$field->field->id, '<div title="' . s($field->field->description) . '">' . $field->field->name . '</div>', ' (' . $field->name() . ')', array('group'=>1));
-                $mform->setDefault('field_'.$field->field->id, 1);
+                $html = '<div title="' . s($field->field->description) . '" ' .
+                        'class="d-inline-block">' . $field->field->name . '</div>';
+                $name = ' (' . $field->name() . ')';
+                $mform->addElement('advcheckbox', 'field_' . $field->field->id, $html, $name, array('group' => 1));
+                $mform->setDefault('field_' . $field->field->id, 1);
             } else {
                 $a = new stdClass();
                 $a->fieldtype = $field->name();
-                $mform->addElement('static', 'unsupported'.$field->field->id, $field->field->name, get_string('unsupportedexport', 'data', $a));
+                $str = get_string('unsupportedexport', 'data', $a);
+                $mform->addElement('static', 'unsupported' . $field->field->id, $field->field->name, $str);
             }
         }
         $this->add_checkbox_controller(1, null, null, 1);
