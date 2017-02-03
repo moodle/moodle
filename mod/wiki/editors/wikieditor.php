@@ -28,8 +28,12 @@
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 require_once($CFG->dirroot.'/lib/form/textarea.php');
+require_once($CFG->dirroot.'/lib/form/templatable_form_element.php');
 
 class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
 
     private $files;
 
@@ -49,8 +53,8 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
             $this->files = $attributes['files'];
             unset($attributes['files']);
         }
-
         parent::__construct($elementName, $elementLabel, $attributes);
+        $this->_type = 'wikieditor';
     }
 
     /**
@@ -138,7 +142,8 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
             $html .= "</a>";
         }
         $html .= "<label class='accesshide' for='addtags'>" . get_string('insertimage', 'wiki')  . "</label>";
-        $html .= "<select id='addtags' onchange=\"insertTags('{$imagetag[0]}', '{$imagetag[1]}', this.value)\">";
+        $html .= "<select id='addtags' class='custom-select m-x-1' " .
+                 "onchange=\"insertTags('{$imagetag[0]}', '{$imagetag[1]}', this.value)\">";
         $html .= "<option value='" . s(get_string('wikiimage', 'wiki')) . "'>" . get_string('insertimage', 'wiki') . '</option>';
         foreach ($this->files as $filename) {
             $html .= "<option value='".s($filename)."'>";
@@ -168,6 +173,21 @@ class MoodleQuickForm_wikieditor extends MoodleQuickForm_textarea {
 
     private function escapeToken(&$token) {
         $token = urlencode(str_replace("'", "\'", $token));
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+
+        // We do want the form-control class on the output from toHTML - but we dont' want it when calling export_for_template.
+        // This is because in this type of form element the export_for_template calls toHTML to get the html for the context.
+        // If we did both we would be duplicating the form-control which messes up the styles.
+        $saved = $this->getAttribute('class');
+        $this->updateAttributes(['class' => $saved . ' form-control']);
+
+        $context['html'] = $this->toHtml();
+        $this->updateAttributes(['class' => $saved]);
+
+        return $context;
     }
 }
 

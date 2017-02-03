@@ -1,6 +1,16 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+
+* New auth hook - pre_user_login_hook() - available, triggered right after the user object is created.
+  This can be used to modify the user object before any authentication errors are raised.
+* The block_login now displays the loginpage_idp_list() links as well as main login page.
+* The authentication plugin auth_radius has been moved to https://github.com/moodlehq/moodle-auth_radius
+* New auth_email::user_signup_with_confirmation() method has a new optional parameter $confirmationurl to provide a different
+  confirmation URL.
+* New signup_is_enabled() function available in lib/authlib.php to safely check if sign-up is enabled in the site.
+
 === 3.0 ===
 
 * login_signup_form::signup_captcha_enabled() now calls is_captcha_enabled() from the current auth plugin instead of from auth_email

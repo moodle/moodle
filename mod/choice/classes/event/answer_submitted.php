@@ -29,6 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The mod_choice answer submitted event class.
  *
+ * This event is deprecated in Moodle 3.2, it can no longer be triggered, do not
+ * write event observers for it. This event can only be initiated during
+ * restore from previous Moodle versions and appear in the logs.
+ *
+ * Event observers should listen to mod_choice\event\answer_created instead that
+ * will be triggered once for each option selected
+ *
  * @property-read array $other {
  *      Extra information about event.
  *
@@ -36,6 +43,7 @@ defined('MOODLE_INTERNAL') || die();
  *      - int optionid: (optional) id of option.
  * }
  *
+ * @deprecated since 3.2
  * @package    mod_choice
  * @since      Moodle 2.6
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
@@ -75,7 +83,7 @@ class answer_submitted extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventanswercreated', 'mod_choice');
+        return get_string('eventanswersubmitted', 'mod_choice');
     }
 
     /**
@@ -111,6 +119,10 @@ class answer_submitted extends \core\event\base {
     protected function validate_data() {
         parent::validate_data();
 
+        debugging('Event \\mod_choice\event\\answer_submitted should not be used '
+                . 'any more for triggering new events and can only be initiated during restore. '
+                . 'For new events please use \\mod_choice\\event\\answer_created', DEBUG_DEVELOPER);
+
         if (!isset($this->other['choiceid'])) {
             throw new \coding_exception('The \'choiceid\' value must be set in other.');
         }
@@ -132,5 +144,9 @@ class answer_submitted extends \core\event\base {
         $othermapped['optionid'] = \core\event\base::NOT_MAPPED;
 
         return $othermapped;
+    }
+
+    public static function is_deprecated() {
+        return true;
     }
 }

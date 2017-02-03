@@ -8,12 +8,12 @@ YUI.add('moodle-message_airnotifier-toolboxes', function (Y, NAME) {
 
 // The CSS selectors we use.
 var CSS = {
-    AIRNOTIFIERCONTENT : 'fieldset#messageprocessor_airnotifier',
-    HIDEDEVICE : 'a.hidedevice',
-    DEVICELI : 'li.airnotifierdevice',
-    DIMCLASS : 'dimmed',
-    DIMMEDTEXT : 'dimmed_text',
-    DEVICEIDPREFIX : 'deviceid-'
+    AIRNOTIFIERCONTENT: 'div[data-processor-name="airnotifier"]',
+    HIDEDEVICE: 'a.hidedevice',
+    DEVICELI: 'li.airnotifierdevice',
+    DIMCLASS: 'dimmed',
+    DIMMEDTEXT: 'dimmed_text',
+    DEVICEIDPREFIX: 'deviceid-'
 };
 
 /**
@@ -36,7 +36,7 @@ Y.extend(TOOLBOX, Y.Base, {
      * @param callback The callback to apply
      * @param cursor An optional cursor style to apply
      */
-    replace_button : function(toolboxtarget, selector, callback, cursor) {
+    replace_button: function(toolboxtarget, selector, callback, cursor) {
         if (!cursor) {
             // Set the default cursor type to pointer to match the anchor.
             cursor = 'pointer';
@@ -53,7 +53,7 @@ Y.extend(TOOLBOX, Y.Base, {
      * Toggle the visibility and availability for the specified
      * device show/hide button
      */
-    toggle_hide_device_ui : function(button) {
+    toggle_hide_device_ui: function(button) {
 
         var element = button.ancestor(CSS.DEVICELI);
         var hideicon = button.one('img');
@@ -72,9 +72,9 @@ Y.extend(TOOLBOX, Y.Base, {
         // We need to toggle dimming on the description too element.all(CSS.CONTENTAFTERLINK).toggleClass(CSS.DIMMEDTEXT);.
         var newstring = M.util.get_string(status, 'moodle');
         hideicon.setAttrs({
-            'alt' : newstring,
-            'title' : newstring,
-            'src'   : M.util.image_url('t/' + status)
+            'alt': newstring,
+            'title': newstring,
+            'src': M.util.image_url('t/' + status)
         });
         button.set('title', newstring);
         button.set('className', 'editing_' + status);
@@ -87,7 +87,7 @@ Y.extend(TOOLBOX, Y.Base, {
      * @param callbacksuccess Call back on success
      * @return response responseText field from responce
      */
-    send_request : function(data, statusspinner, callbacksuccess) {
+    send_request: function(data, statusspinner, callbacksuccess) {
         // Default data structure
         if (!data) {
             data = {};
@@ -123,12 +123,14 @@ Y.extend(TOOLBOX, Y.Base, {
                         } else if (responsetext.success) {
                             callbacksuccess();
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
                     if (statusspinner) {
                         statusspinner.hide();
                     }
                 },
-                failure : function(tid, response) {
+                failure: function(tid, response) {
                     if (statusspinner) {
                         statusspinner.hide();
                     }
@@ -151,18 +153,18 @@ Y.extend(TOOLBOX, Y.Base, {
      * @param element The <li> element to determine a module-id number for
      * @return string The module ID
      */
-    get_element_id : function(element) {
+    get_element_id: function(element) {
         return element.get('id').replace(CSS.DEVICEIDPREFIX, '');
     }
 },
 {
-    NAME : 'device-toolbox',
-    ATTRS : {
-        ajaxurl : {
-            'value' : 0
+    NAME: 'device-toolbox',
+    ATTRS: {
+        ajaxurl: {
+            'value': 0
         },
-        config : {
-            'value' : 0
+        config: {
+            'value': 0
         }
     }
 }
@@ -179,7 +181,7 @@ Y.extend(DEVICETOOLBOX, TOOLBOX, {
      *
      * Updates all span.commands with relevant handlers and other required changes
      */
-    initializer : function() {
+    initializer: function() {
         this.setup_for_device();
     },
     /**
@@ -189,19 +191,19 @@ Y.extend(DEVICETOOLBOX, TOOLBOX, {
      * @param baseselector The selector to limit scope to
      * @return void
      */
-    setup_for_device : function(baseselector) {
+    setup_for_device: function(baseselector) {
         if (!baseselector) {
             baseselector = CSS.AIRNOTIFIERCONTENT;
         }
 
         Y.all(baseselector).each(this._setup_for_device, this);
     },
-    _setup_for_device : function(toolboxtarget) {
+    _setup_for_device: function(toolboxtarget) {
 
         // Show/Hide.
         this.replace_button(toolboxtarget, CSS.HIDEDEVICE, this.toggle_hide_device);
     },
-    toggle_hide_device : function(e) {
+    toggle_hide_device: function(e) {
         // Prevent the default button action.
         e.preventDefault();
 
@@ -220,9 +222,9 @@ Y.extend(DEVICETOOLBOX, TOOLBOX, {
 
         // Send the request.
         var data = {
-            'field' : 'enable',
-            'enable' : value,
-            'id'    : this.get_element_id(element)
+            'field': 'enable',
+            'enable': value,
+            'id': this.get_element_id(element)
         };
         var spinner = M.util.add_spinner(Y, element);
 
@@ -233,8 +235,8 @@ Y.extend(DEVICETOOLBOX, TOOLBOX, {
         this.send_request(data, spinner, callback);
     }
 }, {
-    NAME : 'message-device-toolbox',
-    ATTRS : {
+    NAME: 'message-device-toolbox',
+    ATTRS: {
 }
 });
 

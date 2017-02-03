@@ -281,7 +281,7 @@ class qtype_calculated extends question_type {
                 if ($sharedatasetdefs = $DB->get_records_select(
                     'question_dataset_definitions',
                     "type = '1'
-                    AND name = ?
+                    AND " . $DB->sql_equal('name', '?') . "
                     AND category = ?
                     ORDER BY id DESC ", array($dataset->name, $question->category)
                 )) { // So there is at least one.
@@ -760,19 +760,19 @@ class qtype_calculated extends question_type {
             }
             $menu1 = html_writer::label(get_string('lengthoption', 'qtype_calculated'),
                 'menucalclength', false, array('class' => 'accesshide'));
-            $menu1 .= html_writer::select($lengthoptions, 'calclength[]', $regs[4], null);
+            $menu1 .= html_writer::select($lengthoptions, 'calclength[]', $regs[4], null, array('class' => 'custom-select'));
 
             $options = array('uniform' => get_string('uniformbit', 'qtype_calculated'),
                 'loguniform' => get_string('loguniformbit', 'qtype_calculated'));
             $menu2 = html_writer::label(get_string('distributionoption', 'qtype_calculated'),
                 'menucalcdistribution', false, array('class' => 'accesshide'));
-            $menu2 .= html_writer::select($options, 'calcdistribution[]', $regs[1], null);
-            return '<input type="submit" onclick="'
+            $menu2 .= html_writer::select($options, 'calcdistribution[]', $regs[1], null, array('class' => 'custom-select'));
+            return '<input type="submit" class="btn btn-secondary" onclick="'
                 . "getElementById('addform').regenerateddefid.value='{$defid}'; return true;"
                 .'" value="'. get_string('generatevalue', 'qtype_calculated') . '"/><br/>'
-                . '<input type="text" size="3" name="calcmin[]" '
+                . '<input type="text" class="form-control" size="3" name="calcmin[]" '
                 . " value=\"{$regs[2]}\"/> &amp; <input name=\"calcmax[]\" "
-                . ' type="text" size="3" value="' . $regs[3] .'"/> '
+                . ' type="text" class="form-control" size="3" value="' . $regs[3] .'"/> '
                 . $menu1 . '<br/>'
                 . $menu2;
         } else {
@@ -1400,7 +1400,7 @@ class qtype_calculated extends question_type {
                 // can manage to automatically take care of
                 // some possible realtime concurrence.
                 if ($olderdatasetdefs = $DB->get_records_select('question_dataset_definitions',
-                        "type = ? AND name = ? AND category = ? AND id < ?
+                        "type = ? AND " . $DB->sql_equal('name', '?') . " AND category = ? AND id < ?
                         ORDER BY id DESC",
                         array($datasetdef->type, $datasetdef->name,
                                 $datasetdef->category, $datasetdef->id))) {
@@ -1484,7 +1484,7 @@ class qtype_calculated extends question_type {
             // Construct question local options.
             $sql = "SELECT a.*
                 FROM {question_dataset_definitions} a, {question_datasets} b
-               WHERE a.id = b.datasetdefinition AND a.type = '1' AND b.question = ? AND a.name = ?";
+               WHERE a.id = b.datasetdefinition AND a.type = '1' AND b.question = ? AND " . $DB->sql_equal('a.name', '?');
             $currentdatasetdef = $DB->get_record_sql($sql, array($form->id, $name));
             if (!$currentdatasetdef) {
                 $currentdatasetdef = new stdClass();
@@ -1506,7 +1506,7 @@ class qtype_calculated extends question_type {
             WHERE a.id = b.datasetdefinition
             AND a.type = '1'
             AND a.category = ?
-            AND a.name = ?", array($form->category, $name));
+            AND " . $DB->sql_equal('a.name', '?'), array($form->category, $name));
         $type = 1;
         $key = "{$type}-{$form->category}-{$name}";
         if (!empty($categorydatasetdefs)) {

@@ -1,0 +1,614 @@
+/* Question */
+.questionbank h2 {
+    margin-top: 0;
+}
+
+.questioncategories h3 {
+    margin-top: 0;
+}
+
+#chooseqtypebox {
+    margin-top: 1em;
+}
+
+#chooseqtype h3 {
+    margin: 0 0 0.3em;
+}
+
+#chooseqtype .instruction {
+    display: none;
+}
+
+#chooseqtype .fakeqtypes {
+    border-top: 1px solid silver;
+}
+
+#chooseqtype .qtypeoption {
+    margin-bottom: 0.5em;
+}
+
+#chooseqtype label {
+    display: block;
+}
+
+#chooseqtype .qtypename img {
+    padding: 0 0.3em;
+}
+
+#chooseqtype .qtypename {
+    display: inline-table;
+    width: 16em;
+}
+
+#chooseqtype .qtypesummary {
+    display: block;
+    margin: 0 2em;
+}
+
+#chooseqtype .submitbuttons {
+    margin: 0.7em 0;
+    text-align: center;
+}
+
+#qtypechoicecontainer {
+    display: none;
+}
+
+#qtypechoicecontainer_c.yui-panel-container.shadow .underlay {
+    background: none;
+}
+
+#qtypechoicecontainer.yui-panel .hd {
+    color: #333;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 1px #fff;
+
+    @include border-top-radius(10px);
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #bbb;
+
+    @include gradient-y(#fff, #ccc);
+}
+
+#qtypechoicecontainer {
+    font-size: 12px;
+    color: #333;
+    background: #f2f2f2;
+
+    @include border-radius(10px);
+    border: 1px solid #ccc;
+    border-top: 0 none;
+
+    @include box-shadow(5px 5px 20px 0 #666);
+}
+
+#qtypechoicecontainer #chooseqtype {
+    width: 40em;
+}
+
+#chooseqtypehead h3 {
+    margin: 0;
+    font-weight: normal;
+}
+
+#chooseqtype .qtypes {
+    position: relative;
+    border-bottom: 1px solid #bbb;
+    padding: 0.24em 0;
+}
+
+#chooseqtype .alloptions {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: calc(100vh - 15em);
+    width: 60%;
+}
+
+#chooseqtype .qtypeoption {
+    margin-bottom: 0;
+    padding: 0.3em 0.3em 0.3em 1.6em;
+}
+
+#chooseqtype .qtypeoption img {
+    vertical-align: text-bottom;
+    padding-left: 1em;
+    padding-right: 0.5em;
+}
+
+#chooseqtype .selected {
+    background-color: #fff;
+
+    @include box-shadow(0 0 10px 0 #ccc);
+}
+
+#chooseqtype .instruction,
+#chooseqtype .qtypesummary {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 60%;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 1.5em 1.6em;
+    background-color: #fff;
+}
+
+#chooseqtype .instruction,
+#chooseqtype .selected .qtypesummary {
+    display: block;
+}
+
+#categoryquestions {
+    margin: 0;
+
+    td,
+    th {
+        padding: 0 0.2em;
+    }
+
+    th {
+        text-align: left;
+        font-weight: normal;
+    }
+
+    .checkbox {
+        padding-left: 5px;
+    }
+
+    .checkbox input[type="checkbox"] {
+        margin-left: 0;
+        float: none;
+    }
+
+    .iconcol {
+        padding: 3px;
+        box-sizing: content-box;
+
+        .icon {
+            margin: 0;
+            width: 12px;
+            height: 12px;
+        }
+    }
+
+    label {
+        margin: 0;
+    }
+}
+
+#page-mod-quiz-edit {
+    div.questionbankwindow div.header {
+        margin: 0;
+    }
+
+    div.questionbankwindow.block {
+        padding: 0;
+    }
+}
+
+.questionbank .singleselect {
+    margin: 0;
+}
+/* Question editing form */
+#combinedfeedbackhdr div.fhtmleditor {
+    padding: 0;
+}
+
+#combinedfeedbackhdr div.fcheckbox {
+    margin-bottom: 1em;
+}
+
+#multitriesheader div.fitem_feditor {
+    margin-top: 1em;
+}
+
+#multitriesheader div.fitem_fgroup {
+    margin-bottom: 1em;
+}
+
+#multitriesheader div.fitem_fgroup fieldset.felement label {
+    margin-left: 0.3em;
+    margin-right: 0.3em;
+}
+
+body.path-question-type {
+    /* Hacks to display the labels within a form group. */
+    .fitem_fgroup .accesshide {
+        font: inherit;
+        position: static;
+        padding-right: .3em;
+    }
+    .form-group .sr-only {
+        position: static;
+        width: auto;
+        height: auto;
+        padding: 0;
+        margin: 0;
+        overflow: visible;
+        clip: auto;
+        border: 0;
+    }
+}
+
+.que {
+    clear: left;
+    text-align: left;
+    margin: 0 auto 1.8em auto;
+}
+
+.que .info {
+    float: left;
+    width: 7em;
+    padding: 0.5em;
+    margin-bottom: 1.8em;
+    background-color: $gray-lighter;
+    border: 1px solid darken($gray-lighter, 7%);
+
+    @include border-radius(2px);
+}
+
+.que h3.no {
+    margin: 0;
+    font-size: 0.8em;
+    line-height: 1;
+}
+
+.que span.qno {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.que .info > div {
+    font-size: 0.8em;
+    margin-top: 0.7em;
+}
+
+.que .info .questionflag.editable {
+    cursor: pointer;
+}
+
+.que .info .editquestion img,
+.que .info .questionflag img,
+.que .info .questionflag input {
+    vertical-align: bottom;
+}
+
+.que .content {
+    margin: 0 0 0 8.5em;
+}
+
+.que .formulation,
+.que .outcome,
+.que .comment {
+    @extend .alert;
+}
+.que .outcome,
+.que .comment {
+    @extend .alert-warning;
+}
+
+.que .formulation {
+    @extend .alert-info;
+}
+
+.formulation input[type="text"],
+.formulation select {
+    width: auto;
+    vertical-align: baseline;
+}
+
+.path-mod-quiz input[size] {
+    width: auto;
+    max-width: 100%;
+}
+
+.que .comment {
+    @extend .alert-success;
+}
+
+.que .history {
+    @extend .card;
+}
+
+.que .ablock {
+    margin: 0.7em 0 0.3em 0;
+}
+
+.que .im-controls {
+    margin-top: 0.5em;
+    text-align: left;
+}
+
+.que .specificfeedback,
+.que .generalfeedback,
+.que .rightanswer,
+.que .im-feedback,
+.que .feedback,
+.que p {
+    margin: 0 0 0.5em;
+}
+
+.que .qtext {
+    margin-bottom: 1.5em;
+}
+
+.que .validationerror {
+    @extend .text-danger;
+}
+// copied from .formFieldState in mixin.less
+// and made more specific
+
+.que .grading,
+.que .comment,
+.que .commentlink,
+.que .history {
+    margin-top: 0.5em;
+}
+
+.que .history h3 {
+    margin: 0 0 0.2em;
+    font-size: 1em;
+}
+
+.que .history table {
+    width: 100%;
+    margin: 0;
+}
+
+.que .history .current {
+    font-weight: bold;
+}
+
+.que .questioncorrectnessicon {
+    vertical-align: text-bottom;
+}
+
+.que input.questionflagimage {
+    padding-right: 3px;
+}
+
+.importerror {
+    margin-top: 10px;
+    border-bottom: 1px solid #555;
+}
+
+.mform .que.comment .fitemtitle {
+    width: 20%;
+}
+
+#page-question-preview #techinfo {
+    margin: 1em 0;
+}
+
+// imported from quiz.css
+
+#page-mod-quiz-edit ul.slots .activityinstance {
+    > a {
+        display: inline;
+        text-indent: 0;
+        padding-left: 0;
+    }
+    img.activityicon {
+        margin-left: 0;
+    }
+}
+
+#page-mod-quiz-edit .box.generalbox.questionbank {
+    padding: 0.5em;
+}
+
+#page-mod-quiz-edit .questionbank .categorypagingbarcontainer,
+#page-mod-quiz-edit .questionbank .categoryquestionscontainer,
+#page-mod-quiz-edit .questionbank .choosecategory {
+    padding: 0;
+}
+
+#page-mod-quiz-edit .questionbank .choosecategory select {
+    width: 100%;
+}
+
+#page-mod-quiz-edit div.questionbank .categoryquestionscontainer {
+    background: transparent;
+}
+
+#page-mod-quiz-edit #categoryquestions > thead {
+    background: #fff;
+}
+
+#page-mod-quiz-edit #categoryquestions > tbody > tr:nth-of-type(even) {
+    background: #e4e4e4;
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header {
+    color: #444;
+    text-shadow: none;
+
+    @include border-top-radius(4px);
+    margin: 0 -10px 0 -10px;
+    padding: 2px 10px 2px 10px;
+    background: transparent; /* Old browsers */
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header a:link,
+#page-mod-quiz-edit .questionbankwindow div.header a:visited {
+    color: $link-color;
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header a:hover {
+    color: $link-hover-color;
+}
+
+#page-mod-quiz-edit .createnewquestion {
+    padding: 0.3em 0;
+
+    div,
+    input {
+        margin: 0;
+    }
+}
+
+#page-mod-quiz-edit .questionbankwindow div.header .title {
+    color: $body-color;
+}
+
+#page-mod-quiz-edit div.container div.generalbox {
+    background-color: transparent;
+    padding: 1.5em;
+}
+
+#page-mod-quiz-edit .categoryinfo {
+    background-color: transparent;
+    border-bottom: none;
+}
+
+#page-mod-quiz-edit .createnewquestion .singlebutton input {
+    margin-bottom: 0;
+}
+
+#page-mod-quiz-edit div.questionbank .categorysortopotionscontainer,
+#page-mod-quiz-edit div.questionbank .categoryselectallcontainer {
+    padding: 0 0 1.5em 0;
+}
+
+#page-mod-quiz-edit div.questionbank .categorypagingbarcontainer {
+    background-color: transparent;
+    margin: 0;
+    border-top: 0;
+    border-bottom: 0;
+
+    .paging {
+        padding: 0 0.3em;
+    }
+}
+
+#page-mod-quiz-edit div.question div.content div.questioncontrols {
+    background-color: $body-bg;
+}
+
+#page-mod-quiz-edit div.question div.content div.points {
+    margin-top: -0.5em;
+    padding-bottom: 0;
+    border: none;
+    background-color: $body-bg;
+    position: static;
+    width: 12.1em;
+    float: right;
+    margin-right: 60px;
+}
+
+#page-mod-quiz-edit div.question div.content div.points br {
+    display: none;
+}
+
+#page-mod-quiz-edit div.question div.content div.points label {
+    display: inline-block;
+}
+
+#page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {
+    background-color: $body-bg;
+}
+
+#page-mod-quiz-edit .quizpagedelete,
+#page-mod-quiz-edit .quizpagedelete img {
+    background-color: transparent;
+}
+
+#page-mod-quiz-edit div.quizpage .pagecontent {
+    border: 1px solid #ddd;
+
+    @include border-radius(2px);
+    overflow: hidden;
+}
+
+#page-mod-quiz-edit div.questionbank .categoryinfo {
+    padding: 0.3em 0;
+}
+
+#page-mod-quiz-edit div.questionbank .modulespecificbuttonscontainer {
+    padding: 0;
+
+    strong {
+        display: block;
+    }
+
+    hr,
+    br {
+        display: none;
+    }
+
+    strong {
+        margin-left: -0.3em;
+    }
+
+    strong label {
+        margin-left: 0.3em;
+    }
+
+    input {
+        margin-left: 0;
+    }
+
+    input + input {
+        margin-left: 5px;
+    }
+}
+
+.questionbankwindow .module {
+    width: auto;
+}
+
+#page-mod-quiz-edit div.editq div.question div.content {
+    background-color: $body-bg;
+    border: 1px solid #ddd;
+
+    @include border-radius(2px);
+    overflow: hidden;
+}
+
+#page-mod-quiz-edit ul.slots .activityinstance img.activityicon {
+    margin-top: 0;
+}
+
+.path-mod-quiz .statedetails {
+    display: block;
+    font-size: 0.9em;
+}
+
+a#hidebankcmd {
+    color: $link-color;
+}
+
+// override question plugins
+
+// qtype_shortanswer
+
+.que.shortanswer .answer {
+    padding: 0;
+}
+
+.que label {
+    display: inline;
+}
+
+body.path-question-type .mform fieldset.hidden {
+    padding: 0;
+    margin: 0.7em 0 0;
+}
+
+// Fix for accurate positioning of ddwtos drag and drop question types.
+.que.ddwtos {
+    box-sizing: content-box;
+}
+
+@include media-breakpoint-down(sm) {
+    .que .info {
+        float: none;
+        width: auto;
+    }
+    .que .content {
+        margin: 0;
+    }
+}

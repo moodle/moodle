@@ -29,7 +29,7 @@ Feature: The student can navigate to their grades page and user grade report.
       | assign | C2 | a4 | Test assignment four | Submit something! | 150 |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "150.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "67.00" to the user "Student 1" for the grade item "Test assignment two"
@@ -38,12 +38,12 @@ Feature: The student can navigate to their grades page and user grade report.
 
   Scenario: Navigation to Grades and the user grade report.
     When I log in as "student1"
-    And I follow "Grades"
+    And I follow "Grades" in the user menu
     Then the following should exist in the "overview-grade" table:
     | Course name | Grade |
     | Course 2 | - |
     | Course 1 | 217.00 |
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And the following should exist in the "user-grade" table:
     | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
     | Test assignment one | 75.00 % | 150.00 | 0–300 | 50.00 % | 37.50 % |
@@ -58,13 +58,13 @@ Feature: The student can navigate to their grades page and user grade report.
     And I log out
     And I log in as "student1"
     And I follow "Student 1"
-    And I follow "Grades"
+    And I follow "Grades" in the user menu
     Then I should see "My badges from Acceptance test site web site"
 
   Scenario: Log in as a parent and view a childs grades.
     When I log in as "admin"
     And I am on site homepage
-    And I follow "Turn editing on"
+    And I turn editing mode on
     And I add the "Mentees" block
     And I navigate to "Define roles" node in "Site administration > Users > Permissions"
     And I click on "Add a new role" "button"
@@ -84,17 +84,17 @@ Feature: The student can navigate to their grades page and user grade report.
     And I follow "Assign roles relative to this user"
     And I follow "Parent"
     And I set the field "Potential users" to "Parent 1 (parent1@example.com)"
-    And I click on "Add" "button"
+    And I click on "Add" "button" in the "#page-content" "css_element"
     And I log out
     And I log in as "parent1"
     And I am on site homepage
     And I follow "Student 1"
-    And I navigate to "Grades" node in "Users > Student 1"
+    And I follow "Grades overview"
     Then the following should exist in the "overview-grade" table:
     | Course name | Grade |
     | Course 2 | - |
     | Course 1 | 217.00 |
-    And I follow "Course 1"
+    And I click on "Course 1" "link" in the "region-main" "region"
     And the following should exist in the "user-grade" table:
     | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
     | Test assignment one | 75.00 % | 150.00 | 0–300 | 50.00 % | 37.50 % |

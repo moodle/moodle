@@ -38,6 +38,7 @@ class mod_quiz_preflight_check_form extends moodleform {
 
     protected function definition() {
         $mform = $this->_form;
+        $this->_form->updateAttributes(array('id' => 'mod_quiz_preflight_form'));
 
         foreach ($this->_customdata['hidden'] as $name => $value) {
             if ($name === 'sesskey') {
@@ -54,18 +55,16 @@ class mod_quiz_preflight_check_form extends moodleform {
             }
         }
 
-        $this->add_action_buttons(true, get_string('continue'));
+        $this->add_action_buttons(true, get_string('startattempt', 'quiz'));
+        $mform->setDisableShortforms();
     }
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        foreach ($this->_customdata['rules'] as $rule) {
-            if ($rule->is_preflight_check_required($this->_customdata['attemptid'])) {
-                $errors = $rule->validate_preflight_check($data, $files, $errors,
-                        $this->_customdata['attemptid']);
-            }
-        }
+        $timenow = time();
+        $accessmanager = $this->_customdata['quizobj']->get_access_manager($timenow);
+        $errors = array_merge($errors, $accessmanager->validate_preflight_check($data, $files, $this->_customdata['attemptid']));
 
         return $errors;
     }

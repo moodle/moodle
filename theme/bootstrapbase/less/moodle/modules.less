@@ -9,7 +9,106 @@ select {
     width: auto;
 }
 
-// Forum
+// Assign
+.path-mod-assign #page-content [data-region="grade-panel"] .mform:not(.unresponsive) #id_attemptsettings .fitem {
+    .fitemtitle,
+    .felement {
+        display: table-cell;
+        float: none;
+        border-top: 1px solid #ddd;
+        padding: 8px 0;
+    }
+}
+
+// Feedback module
+.path-mod-feedback .mform.feedback_form .fitem .fitemtitle {
+    display: block;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    text-align: left;
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .felement {
+    margin-left: 0;
+    width: 100%;
+    float: left;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .fstatic:empty {
+    display: none;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem .fcheckbox > span,
+.path-mod-feedback .mform.feedback_form .fitem .fradio > span,
+.path-mod-feedback .mform.feedback_form .fitem .fgroup > span {
+    margin-top: 4px;
+}
+
+body.path-mod-feedback #region-main .mform.feedback_form .femptylabel .fitemtitle {
+    display: inline-block;
+    width: auto;
+    margin-right: 0;
+}
+
+.path-mod-feedback .mform.feedback_form .femptylabel .felement {
+    display: inline-block;
+    margin-top: 4px;
+    padding-top: 5px;
+    width: auto;
+}
+
+body.path-mod-feedback #region-main .mform.feedback_form .feedback-item-pagebreak .felement {
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .fitemtitle,
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
+    display: inline-block;
+    width: auto;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem_fcheckbox .felement {
+    padding: 6px;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_viewresponse_form .fitem.feedback_hasvalue:not(.feedback-item-captcha) .felement {
+    background: #fbfbf1;
+    min-height: 1em;
+    box-sizing: border-box;
+    padding: 3px;
+    border: 1px solid #ddd;
+}
+
+.path-mod-feedback .mform.feedback_form .fitem.feedback_hasvalue .fstatic:empty {
+    display: inherit;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem:hover {
+    background: #f5f5f5;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle label {
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle {
+    position: relative;
+    width: 100%;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemdd,
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemname {
+    float: left;
+}
+
+.path-mod-feedback .mform.feedback_form#feedback_edit_form .fitem .fitemtitle .itemtitle .itemactions {
+    float: right;
+}
+
+// Forum module
 
 .path-mod-forum .forumsearch {
     input,
@@ -45,7 +144,7 @@ select {
             text-align: right;
         }
         thead .header th,
-        tbody .discussion td{
+        tbody .discussion td {
             &.discussionsubscription {
                 width: 16px;
                 padding-left: 0.5em;
@@ -53,7 +152,9 @@ select {
             }
         }
         .discussion {
-            .author, .replies, .lastpost {
+            .author,
+            .replies,
+            .lastpost {
                 white-space: normal;
             }
             .discussionsubscription,
@@ -71,10 +172,6 @@ select {
             }
         }
     }
-}
-
-.path-mod-feedback .feedback_bar_image {
-    height: 5px; // we should remove the bar height specification in core
 }
 
 .forumpost {
@@ -107,23 +204,6 @@ select {
     }
 }
 
-.dir-rtl .forumpost {
-    .picture img {
-        &.userpicture {
-            margin-left: 10px;
-            margin-right: 3px;
-        }
-    }
-    .row {
-        .topic,
-        .content-mask,
-        .options {
-            margin-left: 0;
-            margin-right: 48px;
-        }
-    }
-}
-
 .forumpost .row .left {
     width: 48px;
 }
@@ -138,7 +218,7 @@ select {
 
 // Override hardcoded forum modules styling
 .forumsearch input[type=text] {
-     margin-bottom: 0 !important;
+    margin-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
 }
 
 #page-mod-forum-discuss .discussioncontrols {
@@ -152,7 +232,8 @@ select {
     border-top: 2px solid @tableBorder;
 }
 
-.maincalendar .calendarmonth td,.maincalendar .calendarmonth th {
+.maincalendar .calendarmonth td,
+.maincalendar .calendarmonth th {
     border: 1px dotted @tableBorder;
 }
 
@@ -186,17 +267,6 @@ select {
     margin-left: 4px;
 }
 
-.dir-rtl {
-    .nav-tabs > li,
-    .nav-pills > li {
-        float: right;
-    }
-}
-.dir-rtl .navbar .brand {
-    padding: 10px 0 10px 20px;
-    float: right;
-}
-
 .navbar-inverse .logininfo a {
     color: @navbarInverseLinkColor;
 }
@@ -208,22 +278,6 @@ select {
 .navbar-fixed-top,
 .navbar-fixed-bottom {
     z-index: 4030;
-}
-
-.dir-rtl .breadcrumb-button,
-.dir-rtl .navbar .btn-navbar {
-    float: left;
-}
-
-.dir-rtl .breadcrumb-button .singlebutton {
-    float: right;
-    margin-right: 4px;
-    margin-left: 0;
-}
-.dir-rtl .breadcrumb-button .singlebutton div,
-.dir-rtl .breadcrumb-button .singlebutton div input[type="submit"] {
-    margin-right: 5px;
-    margin-left: 0;
 }
 
 .ie .row-fluid .desktop-first-column {
@@ -245,18 +299,16 @@ div#dock {
     display: none;
 }
 
+// Choice module
+
 .path-mod-choice {
-    .horizontal  .choices {
-        margin: 0;
-        .option {
-            display: inline-block;
-            padding: 10px;
-        }
-    }
-    .results .data {
-        white-space: normal;
+    .media-left {
+        float: left;
+        padding-right: 1em;
     }
 }
+
+// Lesson module
 
 .path-mod-lesson .firstpageoptions {
     margin: auto;
@@ -267,6 +319,151 @@ div#dock {
 .path-mod-lesson .centerpadded {
     padding: 5px;
     text-align: center;
+}
+
+/** General styles (scope: all of lesson) **/
+.path-mod-lesson .contents,
+.path-mod-lesson .standardtable,
+.path-mod-lesson .mform .box.contents,
+.path-mod-lesson .invisiblefieldset.fieldsetfix tr {
+    text-align: left;
+}
+
+.path-mod-lesson #layout-table {
+    width: 100%;
+}
+
+.path-mod-lesson .edit_buttons form,
+.path-mod-lesson .edit_buttons input {
+    display: inline;
+}
+
+.path-mod-lesson .userinfotable .cell,
+.path-mod-lesson .userinfotable .userpicture {
+    vertical-align: middle;
+}
+
+.path-mod-lesson .invisiblefieldset.fieldsetfix {
+    display: block;
+}
+
+.path-mod-lesson .slideshow {
+    overflow: auto;
+    padding: 15px;
+}
+
+.path-mod-lesson .menu .menuwrapper {
+    max-height: 400px;
+    overflow: auto;
+    vertical-align: top;
+    margin-bottom: 10px;
+}
+
+.path-mod-lesson .menu ul {
+    list-style: none;
+    padding: 5px 0 0 5px;
+    margin: 0;
+}
+.path-mod-lesson .menu ul li {
+    padding-bottom: 5px;
+}
+.path-mod-lesson .skip {
+    position: absolute;
+    top: -1000em;
+    width: 20em;
+}
+.path-mod-lesson .branchbuttoncontainer.horizontal div,
+.path-mod-lesson .branchbuttoncontainer.horizontal form {
+    display: inline;
+}
+.path-mod-lesson .firstpageoptions {
+    width: 30%;
+    margin-left: 35%;
+    margin-top: 1em;
+}
+.path-mod-lesson .progress_bar_table,
+.path-mod-lesson .progress_bar_completed,
+.path-mod-lesson .progress_bar_todo {
+    padding: 0;
+    margin: 0;
+}
+.path-mod-lesson .progress_bar_token {
+    height: 20px;
+    width: 5px;
+    padding: 0;
+    margin: 0;
+}
+.path-mod-lesson .edit_pages_box .addlinks {
+    margin: 0;
+    margin-bottom: 1em;
+}
+.path-mod-lesson .progress_bar_completed {
+    background-color: green;
+    text-align: right;
+    vertical-align: middle;
+    color: #fff;
+}
+
+.path-mod-lesson .resourcecontent {
+    text-align: center;
+}
+
+.path-mod-lesson .answeroption .fcheckbox > span {
+    position: relative;
+    float: left;
+}
+
+.path-mod-lesson .answeroptiongroup .fgroup > span {
+    position: relative;
+    width: 100%;
+}
+
+.path-mod-lesson .answeroption .fcheckbox input,
+.path-mod-lesson .answeroptiongroup input {
+    position: absolute;
+    top: 2px;
+    margin-top: 0;
+    left: 0;
+}
+
+.path-mod-lesson .answeroption .fcheckbox label,
+.path-mod-lesson .mform .fitem.answeroptiongroup fieldset.fgroup label {
+    padding-left: 20px;
+    float: left;
+}
+
+.path-mod-lesson .answeroption .felement label p:last-child,
+.path-mod-lesson .answeroptiongroup .felement label p:last-child {
+    margin-bottom: 0;
+}
+
+/**
+ * Style for view.php
+ **/
+#page-mod-lesson-view .password-form .submitbutton {
+    display: inline;
+}
+.path-mod-lesson .reviewessay {
+    width: 40%;
+    border: 1px solid #ddd;
+    background-color: #eee;
+}
+
+/* Countdown timer. */
+#lesson-timer {
+    text-align: center;
+}
+
+.path-mod-lesson .essayungraded {
+    background-color: #efcfcf;
+}
+
+.path-mod-lesson .essaygraded {
+    background-color: #efefcf;
+}
+
+.path-mod-lesson .essaysent {
+    background-color: #cfefcf;
 }
 
 .path-mod-wiki .wiki_headingtitle,
@@ -285,47 +482,32 @@ div#dock {
         padding: 3px 20px 3px 8px;
     }
 }
-.dir-rtl .dropdown-menu {
-    > li > a {
-        padding: 3px 8px 3px 20px;
-    }
-}
-.dir-rtl .dropdown-submenu > .dropdown-menu {
-  .border-radius(6px 0px 6px 6px);
-}
-
 
 // Survey module
 
 .path-mod-survey {
     .surveytable {
-      > tbody > tr:nth-of-type(odd) {background-color: @tableBackground;}
-      > tbody > tr:nth-of-type(even) {background-color: @tableBackgroundAccent;}
-        .rblock label {text-align: center;}
-    }
-    .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
-        text-align:center;
-    }
-}
-// rtl overrides
-.dir-rtl {
-    &.path-mod-forum .forumheaderlist {
-        thead .header.lastpost {
-            text-align: left;
+        > tbody > tr:nth-of-type(odd) {
+            background-color: @tableBackground;
         }
-        .discussion {
-            .lastpost {
-                text-align: left;
-            }
+        > tbody > tr:nth-of-type(even) {
+            background-color: @tableBackgroundAccent;
         }
+        .rblock label {
+            text-align: center;
+        }
+    }
+    .resultgraph,
+    .reportsummary,
+    .studentreport,
+    .reportbuttons,
+    .centerpara {
+        text-align: center;
     }
 }
 
 .nav .caret {
     margin-left: 4px;
-}
-.dir-rtl .nav .caret {
-    margin-right: 4px;
 }
 
 // Dividers
@@ -384,7 +566,7 @@ div#dock {
             .userbutton {
                 height: 40px;
                 line-height: 40px;
-                .avatars{
+                .avatars {
                     display: inline-block;
                     height: 36px;
                     width: 36px;
@@ -434,7 +616,7 @@ div#dock {
                 &:hover img {
                     background: #fff;
                     border-radius: 4px;
-                    box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.125);
+                    box-shadow: 0 0 16px rgba(0, 0, 0, 0.125);
                 }
             }
         }
@@ -505,7 +687,7 @@ div#dock {
                     &:hover img {
                         background: #333;
                         border-radius: 4px;
-                        box-shadow: 0px 0px 16px rgba(255, 255, 255, 1);
+                        box-shadow: 0 0 16px rgba(255, 255, 255, 1);
                     }
                 }
             }
@@ -544,7 +726,7 @@ div#dock {
 
             > .menubar {
                 display: block;
-                margin: 0px 0px 2px 0px;
+                margin: 0;
             }
             > .menu {
                 min-width: 160px;
@@ -563,8 +745,8 @@ div#dock {
                     &:before {
                         content: '';
                         display: inline-block;
-                        border-left:   7px solid transparent;
-                        border-right:  7px solid transparent;
+                        border-left: 7px solid transparent;
+                        border-right: 7px solid transparent;
                         border-bottom: 7px solid #ccc;
                         border-bottom-color: @dropdownBorder;
                         position: absolute;
@@ -573,8 +755,8 @@ div#dock {
                     &:after {
                         content: '';
                         display: inline-block;
-                        border-left:   6px solid transparent;
-                        border-right:  6px solid transparent;
+                        border-left: 6px solid transparent;
+                        border-right: 6px solid transparent;
                         border-bottom: 6px solid @dropdownBackground;
                         position: absolute;
                         top: -6px;
@@ -596,7 +778,6 @@ div#dock {
                     }
                     .box-shadow (0 5px 10px rgba(0, 0, 0, 0.2));
                 }
-                &:hover .toggle-display {}
             }
         }
     }
@@ -612,59 +793,30 @@ div#dock {
     }
 }
 
-.dir-ltr {
-    .usermenu {
-        float: right;
-        > .moodle-actionmenu {
-            > .menu {
-                &:before {
-                    right: 9px;
-                }
-                &:after {
-                    right: 10px;
-                }
+
+.usermenu {
+    float: right;
+    > .moodle-actionmenu {
+        > .menu {
+            &:before {
+                right: 9px;
             }
-            > .menubar li a {
-                text-align: right;
+            &:after {
+                right: 10px;
             }
         }
-    }
-    &.userloggedinas .usermenu .userbutton .avatars {
-        .avatar {
-            &.current {
-                left: 16px;
-            }
+        > .menubar li a {
+            text-align: right;
         }
     }
 }
-
-.dir-rtl {
-    .usermenu {
-        float: left;
-        > .moodle-actionmenu {
-            > .menu {
-                margin-right: 0px;
-                &:before {
-                    left: 9px;
-                }
-                &:after {
-                    left: 10px;
-                }
-            }
-            > .menubar li a {
-                text-align: left;
-            }
-        }
-    }
-    &.userloggedinas .usermenu .userbutton .avatars {
-        .avatar {
-            &.current {
-                left: -14px;
-            }
+&.userloggedinas .usermenu .userbutton .avatars {
+    .avatar {
+        &.current {
+            left: 16px;
         }
     }
 }
-
 
 .userloggedinas .usermenu .userbutton .avatars {
     .avatar {
@@ -678,7 +830,7 @@ div#dock {
             margin-bottom: -34px;
             border: 1px solid #fff;
             border-radius: 50%;
-            box-shadow: -2px -2px 16px rgba(0,0,0,0.25);
+            box-shadow: -2px -2px 16px rgba(0, 0, 0, 0.25);
         }
         img {
             width: inherit;
@@ -687,3 +839,100 @@ div#dock {
         overflow: hidden;
     }
 }
+
+// Quiz module
+
+// Question navigation block.
+.path-mod-quiz #mod_quiz_navblock {
+    .qnbutton {
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: normal;
+        background-color: @white;
+        background-image: none;
+        height: 40px;
+        width: 30px;
+        border-radius: 3px;
+        border: 0;
+        overflow: visible;
+        margin: 0 6px 6px 0;
+    }
+    span.qnbutton {
+        cursor: default;
+        background-color: @inputDisabledBackground;
+        color: @gray;
+    }
+    a.qnbutton:hover,
+    a.qnbutton:active,
+    a.qnbutton:focus {
+        text-decoration: underline;
+    }
+
+    .qnbutton .thispageholder {
+        border: 1px solid;
+        border-radius: 3px;
+        z-index: 1;
+    }
+    .qnbutton.thispage .thispageholder {
+        border-width: 3px;
+    }
+    .allquestionsononepage .qnbutton.thispage .thispageholder {
+        border-width: 1px;
+    }
+
+    .qnbutton.flagged .thispageholder {
+        background: transparent url([[pix:theme|mod/quiz/flag-on]]) 15px 0 no-repeat;
+    }
+
+    .qnbutton .trafficlight {
+        border: 0;
+        background: @white none center/10px no-repeat scroll;
+        height: 20px;
+        margin-top: 20px;
+        border-radius: 0 0 3px 3px;
+    }
+
+    .qnbutton.notyetanswered .trafficlight,
+    .qnbutton.invalidanswer .trafficlight {
+        background-color: @white;
+    }
+    .qnbutton.invalidanswer .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/warningtriangle]]);
+    }
+    .qnbutton.correct .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/checkmark]]);
+        background-color: @successText;
+    }
+    .qnbutton.blocked .trafficlight {
+        background-image: url([[pix:core|t/locked]]);
+        background-color: @inputDisabledBackground;
+    }
+    .qnbutton.notanswered .trafficlight,
+    .qnbutton.incorrect .trafficlight {
+        background-color: @errorText;
+    }
+    .qnbutton.partiallycorrect .trafficlight {
+        background-image: url([[pix:theme|mod/quiz/whitecircle]]);
+        background-color: @orange;
+    }
+    .qnbutton.complete .trafficlight,
+    .qnbutton.answersaved .trafficlight,
+    .qnbutton.requiresgrading .trafficlight {
+        background-color: @grayLight;
+    }
+}
+
+// Scorm.
+.path-mod-scorm .scorm-center {
+    text-align: center;
+}
+
+.path-mod-scorm.forcejavascript .scorm-center {
+    display: none;
+}
+
+.path-mod-scorm.jsenabled .scorm-center {
+    display: block;
+}
+

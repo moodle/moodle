@@ -1088,7 +1088,10 @@ class core_course_management_helper_test extends advanced_testcase {
      * Tests the fetching of actions for a category.
      */
     public function test_get_category_listitem_actions() {
+        global $PAGE;
         $this->resetAfterTest(true);
+
+        $PAGE->set_url(new moodle_url('/course/management.php'));
 
         $generator = $this->getDataGenerator();
         $category = $generator->create_category();

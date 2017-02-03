@@ -1,7 +1,7 @@
 /* Custom CSS
 -------------------------*/
 div.logo {
-    background: url([[setting:logo]]) no-repeat 0 0;
+    background: url([[setting:logo]]) 0 0 no-repeat;
     display: block;
     float: left;
     height: 75px;
@@ -10,25 +10,13 @@ div.logo {
     width: 100%;
 }
 
-.dir-rtl div.logo {
-    background: url([[setting:logo]]) no-repeat 100% 0;
-    display: block;
-    float: right;
-}
-
 img.small-logo {
     float: left;
     height: 35px;
     margin: 3px 10px 3px 0;
 }
 
-.dir-rtl img.small-logo {
-    float: right;
-    margin: 3px 0 3px 10px;
-}
-
 @media (max-width: 767px) {
-    .dir-rtl img.small-logo,
     img.small-logo {
         margin: 3px;
     }

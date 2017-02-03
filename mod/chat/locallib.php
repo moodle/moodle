@@ -18,6 +18,8 @@
  * Library of functions for chat outside of the core api
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/chat/lib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 

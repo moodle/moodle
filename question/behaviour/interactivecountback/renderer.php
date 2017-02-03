@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../interactive/renderer.php');
+require_once(__DIR__ . '/../interactive/renderer.php');
 
 
 /**

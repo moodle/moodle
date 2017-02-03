@@ -35,17 +35,20 @@ require_once(__DIR__ . '/fixtures/testable.php');
  */
 class mod_workshop_internal_api_testcase extends advanced_testcase {
 
-    /** workshop instance emulation */
+    /** @var object */
+    protected $course;
+
+    /** @var workshop */
     protected $workshop;
 
     /** setup testing environment */
     protected function setUp() {
         parent::setUp();
         $this->setAdminUser();
-        $course = $this->getDataGenerator()->create_course();
-        $workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $course));
-        $cm = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
-        $this->workshop = new testable_workshop($workshop, $cm, $course);
+        $this->course = $this->getDataGenerator()->create_course();
+        $workshop = $this->getDataGenerator()->create_module('workshop', array('course' => $this->course));
+        $cm = get_coursemodule_from_instance('workshop', $workshop->id, $this->course->id, false, MUST_EXIST);
+        $this->workshop = new testable_workshop($workshop, $cm, $this->course);
     }
 
     protected function tearDown() {
@@ -317,24 +320,28 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         $this->assertEquals($part, $total * $percent / 100);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_percent_to_value_negative() {
         $this->resetAfterTest(true);
         // fixture setup
         $total = 185;
         $percent = -7.098;
-        // set expectation
-        $this->setExpectedException('coding_exception');
+
         // exercise SUT
         $part = workshop::percent_to_value($percent, $total);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_percent_to_value_over_hundred() {
         $this->resetAfterTest(true);
         // fixture setup
         $total = 185;
         $percent = 121.08;
-        // set expectation
-        $this->setExpectedException('coding_exception');
+
         // exercise SUT
         $part = workshop::percent_to_value($percent, $total);
     }
@@ -383,7 +390,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
 
         // modify setup
         $fakerawrecord->weight = 1;
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         // excersise SUT
         $a = $this->workshop->prepare_example_assessment($fakerawrecord);
     }
@@ -412,7 +419,7 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
 
         // modify setup
         $fakerawrecord->weight = 0;
-        $this->setExpectedException('coding_exception');
+        $this->expectException('coding_exception');
         // excersise SUT
         $a = $this->workshop->prepare_example_reference_assessment($fakerawrecord);
     }
@@ -621,5 +628,208 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records('workshop_submissions', array('workshopid' => $this->workshop->id)));
         $this->assertEquals(0, $DB->count_records('workshop_assessments'));
+    }
+
+    /**
+     * Test normalizing list of extensions.
+     */
+    public function test_normalize_file_extensions() {
+        $this->resetAfterTest(true);
+
+        $this->assertSame(['.odt'], workshop::normalize_file_extensions('odt'));
+        $this->assertSame(['.odt'], workshop::normalize_file_extensions('.odt'));
+        $this->assertSame(['.odt'], workshop::normalize_file_extensions('.ODT'));
+        $this->assertSame(['.doc', '.jpg', '.mp3'], workshop::normalize_file_extensions('doc, jpg, mp3'));
+        $this->assertSame(['.doc', '.jpg', '.mp3'], workshop::normalize_file_extensions(['.doc', '.jpg', '.mp3']));
+        $this->assertSame(['.doc', '.jpg', '.mp3'], workshop::normalize_file_extensions('doc, *.jpg, mp3'));
+        $this->assertSame(['.doc', '.jpg', '.mp3'], workshop::normalize_file_extensions(['doc ', ' JPG ', '.mp3']));
+        $this->assertSame(['.rtf', '.pdf', '.docx'], workshop::normalize_file_extensions("RTF,.pdf\n...DocX,,,;\rPDF\trtf ...Rtf"));
+        $this->assertSame(['.tgz', '.tar.gz'], workshop::normalize_file_extensions('tgz,TAR.GZ tar.gz .tar.gz tgz TGZ'));
+        $this->assertSame(['.notebook'], workshop::normalize_file_extensions('"Notebook":notebook;NOTEBOOK;,\'NoTeBook\''));
+        $this->assertSame([], workshop::normalize_file_extensions(''));
+        $this->assertSame([], workshop::normalize_file_extensions([]));
+        $this->assertSame(['.0'], workshop::normalize_file_extensions(0));
+        $this->assertSame(['.0'], workshop::normalize_file_extensions('0'));
+        $this->assertSame(['.odt'], workshop::normalize_file_extensions('*.odt'));
+        $this->assertSame([], workshop::normalize_file_extensions('.'));
+        $this->assertSame(['.foo'], workshop::normalize_file_extensions('. foo'));
+        $this->assertSame([], workshop::normalize_file_extensions('*'));
+        $this->assertSame([], workshop::normalize_file_extensions('*~'));
+        $this->assertSame(['.pdf', '.ps'], workshop::normalize_file_extensions('* pdf *.ps foo* *bar .r??'));
+    }
+
+    /**
+     * Test cleaning list of extensions.
+     */
+    public function test_clean_file_extensions() {
+        $this->resetAfterTest(true);
+
+        $this->assertSame('', workshop::clean_file_extensions(''));
+        $this->assertSame('', workshop::clean_file_extensions(null));
+        $this->assertSame('', workshop::clean_file_extensions(' '));
+        $this->assertSame('0', workshop::clean_file_extensions(0));
+        $this->assertSame('0', workshop::clean_file_extensions('0'));
+        $this->assertSame('doc, rtf, pdf', workshop::clean_file_extensions('*.Doc, RTF, PDF, .rtf'.PHP_EOL.'PDF '));
+        $this->assertSame('doc, rtf, pdf', 'doc, rtf, pdf');
+    }
+
+    /**
+     * Test validation of the list of file extensions.
+     */
+    public function test_invalid_file_extensions() {
+        $this->resetAfterTest(true);
+
+        $this->assertSame([], workshop::invalid_file_extensions('', ''));
+        $this->assertSame([], workshop::invalid_file_extensions('', '.doc'));
+        $this->assertSame([], workshop::invalid_file_extensions('odt', ''));
+        $this->assertSame([], workshop::invalid_file_extensions('odt', '*'));
+        $this->assertSame([], workshop::invalid_file_extensions('odt', 'odt'));
+        $this->assertSame([], workshop::invalid_file_extensions('doc, odt, pdf', ['pdf', 'doc', 'odt']));
+        $this->assertSame([], workshop::invalid_file_extensions(['doc', 'odt', 'PDF'], ['.doc', '.pdf', '.odt']));
+        $this->assertSame([], workshop::invalid_file_extensions('*~ .docx, Odt PDF :doc .pdf', '*.docx *.odt *.pdf *.doc'));
+        $this->assertSame(['.00001-wtf-is-this'], workshop::invalid_file_extensions('docx tgz .00001-wtf-is-this', 'tgz docx'));
+        $this->assertSame(['.foobar', '.wtfisthis'], workshop::invalid_file_extensions(['.pdf', '.foobar', 'wtfisthis'], 'pdf'));
+        $this->assertSame([], workshop::invalid_file_extensions('', ''));
+        $this->assertSame(['.odt'], workshop::invalid_file_extensions(['.PDF', 'PDF', '.ODT'], 'jpg pdf png gif'));
+        $this->assertSame(['.odt'], workshop::invalid_file_extensions(['.PDF', 'PDF', '.ODT'], '.jpg,.pdf,  .png .gif'));
+        $this->assertSame(['.exe', '.bat'], workshop::invalid_file_extensions(['.exe', '.odt', '.bat', ''], 'odt'));
+    }
+
+    /**
+     * Test checking file name against the list of allowed extensions.
+     */
+    public function test_is_allowed_file_type() {
+        $this->resetAfterTest(true);
+
+        $this->assertTrue(workshop::is_allowed_file_type('README.txt', ''));
+        $this->assertTrue(workshop::is_allowed_file_type('README.txt', ['']));
+        $this->assertFalse(workshop::is_allowed_file_type('README.txt', '0'));
+
+        $this->assertFalse(workshop::is_allowed_file_type('README.txt', 'xt'));
+        $this->assertFalse(workshop::is_allowed_file_type('README.txt', 'old.txt'));
+
+        $this->assertTrue(workshop::is_allowed_file_type('README.txt', 'txt'));
+        $this->assertTrue(workshop::is_allowed_file_type('README.txt', '.TXT'));
+        $this->assertTrue(workshop::is_allowed_file_type('README.TXT', 'txt'));
+        $this->assertTrue(workshop::is_allowed_file_type('README.txt', '.txt .md'));
+        $this->assertTrue(workshop::is_allowed_file_type('README.txt', 'HTML TXT DOC RTF'));
+        $this->assertTrue(workshop::is_allowed_file_type('README.txt', ['HTML', '...TXT', 'DOC', 'RTF']));
+
+        $this->assertTrue(workshop::is_allowed_file_type('C:\Moodle\course-data.tar.gz', 'gzip zip 7z tar.gz'));
+        $this->assertFalse(workshop::is_allowed_file_type('C:\Moodle\course-data.tar.gz', 'gzip zip 7z tar'));
+        $this->assertTrue(workshop::is_allowed_file_type('~/course-data.tar.gz', 'gzip zip 7z gz'));
+        $this->assertFalse(workshop::is_allowed_file_type('~/course-data.tar.gz', 'gzip zip 7z'));
+
+        $this->assertFalse(workshop::is_allowed_file_type('Alice on the beach.jpg.exe', 'png gif jpg bmp'));
+        $this->assertFalse(workshop::is_allowed_file_type('xfiles.exe.jpg', 'exe com bat sh'));
+        $this->assertFalse(workshop::is_allowed_file_type('solution.odt~', 'odt, xls'));
+        $this->assertTrue(workshop::is_allowed_file_type('solution.odt~', 'odt, odt~'));
+    }
+
+    /**
+     * Test workshop::check_group_membership() functionality.
+     */
+    public function test_check_group_membership() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        $courseid = $this->course->id;
+        $generator = $this->getDataGenerator();
+
+        // Make test groups.
+        $group1 = $generator->create_group(array('courseid' => $courseid));
+        $group2 = $generator->create_group(array('courseid' => $courseid));
+        $group3 = $generator->create_group(array('courseid' => $courseid));
+
+        // Revoke the accessallgroups from non-editing teachers (tutors).
+        $roleids = $DB->get_records_menu('role', null, '', 'shortname, id');
+        unassign_capability('moodle/site:accessallgroups', $roleids['teacher']);
+
+        // Create test use accounts.
+        $teacher1 = $generator->create_user();
+        $tutor1 = $generator->create_user();
+        $tutor2 = $generator->create_user();
+        $student1 = $generator->create_user();
+        $student2 = $generator->create_user();
+        $student3 = $generator->create_user();
+
+        // Enrol the teacher (has the access all groups permission).
+        $generator->enrol_user($teacher1->id, $courseid, $roleids['editingteacher']);
+
+        // Enrol tutors (can not access all groups).
+        $generator->enrol_user($tutor1->id, $courseid, $roleids['teacher']);
+        $generator->enrol_user($tutor2->id, $courseid, $roleids['teacher']);
+
+        // Enrol students.
+        $generator->enrol_user($student1->id, $courseid, $roleids['student']);
+        $generator->enrol_user($student2->id, $courseid, $roleids['student']);
+        $generator->enrol_user($student3->id, $courseid, $roleids['student']);
+
+        // Add users in groups.
+        groups_add_member($group1, $tutor1);
+        groups_add_member($group2, $tutor2);
+        groups_add_member($group1, $student1);
+        groups_add_member($group2, $student2);
+        groups_add_member($group3, $student3);
+
+        // Workshop with no groups.
+        $workshopitem1 = $this->getDataGenerator()->create_module('workshop', [
+            'course' => $courseid,
+            'groupmode' => NOGROUPS,
+        ]);
+        $cm = get_coursemodule_from_instance('workshop', $workshopitem1->id, $courseid, false, MUST_EXIST);
+        $workshop1 = new testable_workshop($workshopitem1, $cm, $this->course);
+
+        $this->setUser($teacher1);
+        $this->assertTrue($workshop1->check_group_membership($student1->id));
+        $this->assertTrue($workshop1->check_group_membership($student2->id));
+        $this->assertTrue($workshop1->check_group_membership($student3->id));
+
+        $this->setUser($tutor1);
+        $this->assertTrue($workshop1->check_group_membership($student1->id));
+        $this->assertTrue($workshop1->check_group_membership($student2->id));
+        $this->assertTrue($workshop1->check_group_membership($student3->id));
+
+        // Workshop in visible groups mode.
+        $workshopitem2 = $this->getDataGenerator()->create_module('workshop', [
+            'course' => $courseid,
+            'groupmode' => VISIBLEGROUPS,
+        ]);
+        $cm = get_coursemodule_from_instance('workshop', $workshopitem2->id, $courseid, false, MUST_EXIST);
+        $workshop2 = new testable_workshop($workshopitem2, $cm, $this->course);
+
+        $this->setUser($teacher1);
+        $this->assertTrue($workshop2->check_group_membership($student1->id));
+        $this->assertTrue($workshop2->check_group_membership($student2->id));
+        $this->assertTrue($workshop2->check_group_membership($student3->id));
+
+        $this->setUser($tutor1);
+        $this->assertTrue($workshop2->check_group_membership($student1->id));
+        $this->assertTrue($workshop2->check_group_membership($student2->id));
+        $this->assertTrue($workshop2->check_group_membership($student3->id));
+
+        // Workshop in separate groups mode.
+        $workshopitem3 = $this->getDataGenerator()->create_module('workshop', [
+            'course' => $courseid,
+            'groupmode' => SEPARATEGROUPS,
+        ]);
+        $cm = get_coursemodule_from_instance('workshop', $workshopitem3->id, $courseid, false, MUST_EXIST);
+        $workshop3 = new testable_workshop($workshopitem3, $cm, $this->course);
+
+        $this->setUser($teacher1);
+        $this->assertTrue($workshop3->check_group_membership($student1->id));
+        $this->assertTrue($workshop3->check_group_membership($student2->id));
+        $this->assertTrue($workshop3->check_group_membership($student3->id));
+
+        $this->setUser($tutor1);
+        $this->assertTrue($workshop3->check_group_membership($student1->id));
+        $this->assertFalse($workshop3->check_group_membership($student2->id));
+        $this->assertFalse($workshop3->check_group_membership($student3->id));
+
+        $this->setUser($tutor2);
+        $this->assertFalse($workshop3->check_group_membership($student1->id));
+        $this->assertTrue($workshop3->check_group_membership($student2->id));
+        $this->assertFalse($workshop3->check_group_membership($student3->id));
     }
 }

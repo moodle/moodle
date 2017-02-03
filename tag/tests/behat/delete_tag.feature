@@ -13,8 +13,8 @@ Feature: Manager is able to delete tags
       | user     | course               | role      |
       | manager1 | Acceptance test site | manager   |
     And the following "tags" exist:
-      | name         | tagtype  |
-      | Neverusedtag | official |
+      | name         | isstandard |
+      | Neverusedtag | 1          |
 
   Scenario: Deleting a tag with javascript disabled
     When I log in as "manager1"
@@ -23,7 +23,7 @@ Feature: Manager is able to delete tags
     And I click on "Delete" "link" in the "Dog" "table_row"
     And I should see "Tag(s) deleted"
     Then I should not see "Dog"
-    And I navigate to "Participants" node in "Site pages"
+    And I follow "Cat"
     And I follow "User 1"
     And I should see "Cat"
     And I should not see "Dog"
@@ -40,7 +40,7 @@ Feature: Manager is able to delete tags
     Then I should see "Tag(s) deleted"
     And I should not see "Dog"
     And I should not see "Neverusedtag"
-    And I navigate to "Participants" node in "Site pages"
+    And I follow "Cat"
     And I follow "User 1"
     And I should see "Cat"
     And I should not see "Dog"
@@ -63,7 +63,7 @@ Feature: Manager is able to delete tags
     And I should not see "Dog"
     And I follow "Default collection"
     And I should not see "Dog"
-    And I navigate to "Participants" node in "Site pages"
+    And I follow "Cat"
     And I follow "User 1"
     And I should see "Cat"
     And I should not see "Dog"
@@ -97,7 +97,7 @@ Feature: Manager is able to delete tags
     And I follow "Default collection"
     And I should not see "Dog"
     And I should not see "Neverusedtag"
-    And I navigate to "Participants" node in "Site pages"
+    And I follow "Cat"
     And I follow "User 1"
     And I should see "Cat"
     And I should not see "Dog"

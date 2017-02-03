@@ -32,7 +32,7 @@ class edit_category_form extends moodleform {
     private $aggregation_options = array();
 
     function definition() {
-        global $CFG, $COURSE, $DB;
+        global $CFG, $COURSE, $DB, $OUTPUT;
         $mform =& $this->_form;
 
         $category = $this->_customdata['current'];
@@ -104,6 +104,25 @@ class edit_category_form extends moodleform {
         $mform->addHelpButton('grade_item_idnumber', 'idnumbermod');
         $mform->setType('grade_item_idnumber', PARAM_RAW);
 
+        if (!empty($category->id)) {
+            $gradecategory = grade_category::fetch(array('id' => $category->id));
+            $gradeitem = $gradecategory->load_grade_item();
+
+            // If grades exist set a message so the user knows why they can not alter the grade type or scale.
+            // We could never change the grade type for external items, so only need to show this for manual grade items.
+            if ($gradeitem->has_overridden_grades()) {
+                // Set a message so the user knows why the can not alter the grade type or scale.
+                if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                    $gradesexistmsg = get_string('modgradecategorycantchangegradetyporscalemsg', 'grades');
+                } else {
+                    $gradesexistmsg = get_string('modgradecategorycantchangegradetypemsg', 'grades');
+                }
+                $notification = new \core\output\notification($gradesexistmsg, \core\output\notification::NOTIFY_INFO);
+                $notification->set_show_closebutton(false);
+                $mform->addElement('static', 'gradesexistmsg', '', $OUTPUT->render($notification));
+            }
+        }
+
         $options = array(GRADE_TYPE_NONE=>get_string('typenone', 'grades'),
                          GRADE_TYPE_VALUE=>get_string('typevalue', 'grades'),
                          GRADE_TYPE_SCALE=>get_string('typescale', 'grades'),
@@ -139,6 +158,14 @@ class edit_category_form extends moodleform {
         $mform->addHelpButton('grade_item_scaleid', 'typescale', 'grades');
         $mform->disabledIf('grade_item_scaleid', 'grade_item_gradetype', 'noteq', GRADE_TYPE_SCALE);
         $mform->disabledIf('grade_item_scaleid', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+
+        $choices = array();
+        $choices[''] = get_string('choose');
+        $choices['no'] = get_string('no');
+        $choices['yes'] = get_string('yes');
+        $mform->addElement('select', 'grade_item_rescalegrades', get_string('modgradecategoryrescalegrades', 'grades'), $choices);
+        $mform->addHelpButton('grade_item_rescalegrades', 'modgradecategoryrescalegrades', 'grades');
+        $mform->disabledIf('grade_item_rescalegrades', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
 
         $mform->addElement('text', 'grade_item_grademax', get_string('grademax', 'grades'));
         $mform->setType('grade_item_grademax', PARAM_RAW);
@@ -398,6 +425,8 @@ class edit_category_form extends moodleform {
                     }
                 }
             }
+
+            $mform->removeElement('grade_item_rescalegrades');
         }
 
 
@@ -423,6 +452,25 @@ class edit_category_form extends moodleform {
                 $mform->removeElement('grade_item_display');
                 $mform->removeElement('grade_item_decimals');
                 $mform->hardFreeze('grade_item_scaleid');
+            // Only show the option to rescale grades on a category if its corresponding grade_item has overridden grade_grades.
+            } else if ($grade_item->has_overridden_grades()) {
+                // Can't change the grade type or the scale if there are grades.
+                $mform->hardFreeze('grade_item_gradetype, grade_item_scaleid');
+
+                // If we are using scles then remove the unnecessary rescale and grade fields.
+                if ($grade_item->gradetype == GRADE_TYPE_SCALE) {
+                    $mform->removeElement('grade_item_rescalegrades');
+                    $mform->removeElement('grade_item_grademax');
+                    if ($mform->elementExists('grade_item_grademin')) {
+                        $mform->removeElement('grade_item_grademin');
+                    }
+                } else { // Not using scale, so remove it.
+                    $mform->removeElement('grade_item_scaleid');
+                    $mform->disabledIf('grade_item_grademax', 'grade_item_rescalegrades', 'eq', '');
+                    $mform->disabledIf('grade_item_grademin', 'grade_item_rescalegrades', 'eq', '');
+                }
+            } else { // Remove the rescale element if there are no grades.
+                $mform->removeElement('grade_item_rescalegrades');
             }
 
             //remove the aggregation coef element if not needed
@@ -484,6 +532,11 @@ class edit_category_form extends moodleform {
 /// perform extra validation before submission
     function validation($data, $files) {
         global $COURSE;
+        $gradeitem = false;
+        if ($data['id']) {
+            $gradecategory = grade_category::fetch(array('id' => $data['id']));
+            $gradeitem = $gradecategory->load_grade_item();
+        }
 
         $errors = parent::validation($data, $files);
 
@@ -501,6 +554,16 @@ class edit_category_form extends moodleform {
              }
         }
 
+        if ($data['id'] && $gradeitem->has_overridden_grades()) {
+            if ($gradeitem->gradetype == GRADE_TYPE_VALUE) {
+                if (grade_floats_different($data['grade_item_grademin'], $gradeitem->grademin) ||
+                    grade_floats_different($data['grade_item_grademax'], $gradeitem->grademax)) {
+                    if (empty($data['grade_item_rescalegrades'])) {
+                        $errors['grade_item_rescalegrades'] = get_string('mustchooserescaleyesorno', 'grades');
+                    }
+                }
+            }
+        }
         return $errors;
     }
 }

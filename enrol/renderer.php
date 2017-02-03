@@ -56,7 +56,9 @@ class core_enrol_renderer extends plugin_renderer_base {
         if (!empty($buttonhtml)) {
             $content .= $buttonhtml;
         }
+        $content .= html_writer::start_tag('div', array('class' => 'form-inline'));
         $content .= $mform->render();
+        $content .= html_writer::end_tag('div');
 
         $content .= $this->output->render($table->get_paging_bar());
 
@@ -104,7 +106,8 @@ class core_enrol_renderer extends plugin_renderer_base {
         $attributes = array('type'     => 'submit',
                             'value'    => $button->label,
                             'disabled' => $button->disabled ? 'disabled' : null,
-                            'title'    => $button->tooltip);
+                            'title'    => $button->tooltip,
+                            'class'    => 'btn btn-secondary m-y-1');
 
         if ($button->actions) {
             $id = html_writer::random_id('single_button');

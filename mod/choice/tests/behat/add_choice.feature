@@ -4,7 +4,6 @@ Feature: Add choice activity
   As a teacher
   I need to add choice activities to courses
 
-  @javascript
   Scenario: Add a choice activity and complete the activity as a student
     Given the following "users" exist:
       | username | firstname | lastname | email |

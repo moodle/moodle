@@ -103,14 +103,16 @@ $string['completionendreached_desc'] = 'Student must reach the end of lesson pag
 $string['completiontimespent'] = 'Student must do this activity at least for';
 $string['completiontimespentgroup'] = 'Require time spent';
 $string['conditionsfordependency'] = 'Condition(s) for the dependency';
-$string['configactionaftercorrectanswer'] = 'The default action to take after a correct answer';
+$string['configintro'] = 'The values set here define the default values that are used in the settings form when creating a new lesson activity. Settings specified as advanced are only shown when the \'Show more...\' link is clicked.';
 $string['configmaxanswers'] = 'Default maximum number of answers per page';
 $string['configmediaclose'] = 'Displays a close button as part of the popup generated for a linked media file';
 $string['configmediaheight'] = 'Sets the height of the popup displayed for a linked media file';
 $string['configmediawidth'] = 'Sets the width of the popup displayed for a linked media file';
+$string['configpassword_desc'] = 'Whether a password is required in order to access the lesson.';
 $string['configslideshowbgcolor'] = 'Background colour to for the slideshow if it is enabled';
 $string['configslideshowheight'] = 'Sets the height of the slideshow if it is enabled';
 $string['configslideshowwidth'] = 'Sets the width of the slideshow if it is enabled';
+$string['configtimelimit_desc'] = 'If a time limit is set, a warning is displayed at the beginning of the lesson and there is a countdown timer. If set to zero, then there is no time limit.';
 $string['confirmdelete'] = 'Delete page';
 $string['confirmdeletionofthispage'] = 'Confirm deletion of this page';
 $string['congratulations'] = 'Congratulations - end of lesson reached';
@@ -153,6 +155,7 @@ $string['displayscorewithessays'] = '<p>You earned {$a->score} out of {$a->tempm
 <p>Your {$a->essayquestions} essay question(s) will be graded and added into your final score at a later date.</p>
 <p>Your current grade without the essay question(s) is {$a->score} out of {$a->grade}.</p>';
 $string['displayscorewithoutessays'] = 'Your score is {$a->score} (out of {$a->grade}).';
+$string['duplicatepagenamed'] = 'Duplicate page: {$a}';
 $string['edit'] = 'Edit';
 $string['editingquestionpage'] = 'Editing {$a} question page';
 $string['editlessonsettings'] = 'Edit lesson settings';
@@ -251,6 +254,7 @@ $string['lesson:edit'] = 'Edit a lesson activity';
 $string['lessonformating'] = 'Lesson formatting';
 $string['lesson:manage'] = 'Manage a lesson activity';
 $string['lesson:manageoverrides'] = 'Manage lesson overrides';
+$string['lesson:view'] = 'View lesson activity';
 $string['lesson:viewreports'] = 'View lesson reports';
 $string['lessonname'] = 'Lesson: {$a}';
 $string['lessonmenu'] = 'Lesson menu';
@@ -276,8 +280,8 @@ $string['maximumnumberofattempts'] = 'Maximum number of attempts';
 $string['maximumnumberofattempts_help'] = 'This setting specifies the maximum number of attempts allowed for each question. If answered incorrectly repeatedly, when the maximum is reached, the next page of the lesson is displayed.';
 $string['maximumnumberofattemptsreached'] = 'Maximum number of attempts reached - Moving to next page';
 $string['mediaclose'] = 'Show close button';
-$string['mediafile'] = 'File pop-up';
-$string['mediafile_help'] = 'To include a pop-up window at the beginning of a lesson, choose the appropriate file to display. Every lesson page will include a link to re-open the pop-up if necessary.';
+$string['mediafile'] = 'Linked media';
+$string['mediafile_help'] = 'A media file may be uploaded for use in the lesson. A \'Click here to view\' link will then be displayed in a block called \'Linked media\' on each page of the lesson.';
 $string['mediafilepopup'] = 'Click here to view';
 $string['mediaheight'] = 'Popup window height';
 $string['mediawidth'] = 'Popup window width';
@@ -439,6 +443,7 @@ $string['savepage'] = 'Save page';
 $string['score'] = 'Score';
 $string['score_help'] = 'Score is only used when custom scoring is enabled. Each answer can then be given a numerical point value (positive or negative).';
 $string['scores'] = 'Scores';
+$string['search:activity'] = 'Lesson - activity information';
 $string['secondpluswrong'] = 'Not quite.  Would you like to try again?';
 $string['selectaqtype'] = 'Select a question type';
 $string['shortanswer'] = 'Short answer';
@@ -467,7 +472,7 @@ $string['thefollowingpagesjumptothispage'] = 'The following pages jump to this p
 $string['thispage'] = 'This page';
 $string['timeisup'] = 'Time is up';
 $string['timelimit'] = 'Time limit';
-$string['timelimit_help'] = 'If enabled, a warning about the time limit is displayed at the beginning of the lesson and a countdown timer is displayed. Answer given after time is elapsed aren\'t graded';
+$string['timelimit_help'] = 'If enabled, a warning about the time limit is displayed at the beginning of the lesson and a countdown timer is displayed. Any answers given after the time has elapsed are not graded.';
 $string['timelimitwarning'] = 'You have {$a} to finish the lesson.';
 $string['timeremaining'] = 'Time remaining';
 $string['timespenterror'] = 'Spend at least {$a} minutes in the lesson';
@@ -506,11 +511,6 @@ $string['yourcurrentgradeis'] = 'Your current grade is {$a}';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is {$a->grade} out of {$a->total}';
 $string['youshouldview'] = 'You should answer at least: {$a}';
 
-// Deprecated since Moodle 2.9.
-
-$string['essayemailmessage'] = '<p>Essay prompt:<blockquote>{$a->question}</blockquote></p><p>Your response:<blockquote><em>{$a->response}</em></blockquote></p><p>{$a->teacher}\'s comments:<blockquote><em>{$a->comment}</em></blockquote></p><p>You have received {$a->earned} out of {$a->outof} for this essay question.</p><p>Your grade for the lesson has been changed to {$a->newgrade}&#37;.</p>';
-$string['lessonattempted'] = 'Lesson attempted';
-
 // Deprecated since Moodle 3.0.
 $string['clicktopost'] = 'Click here to post your grade on the High Scores list.';
 $string['configmaxhighscores'] = 'Number of high scores displayed';
@@ -525,3 +525,5 @@ $string['topscorestitle'] = 'Top {$a} high scores';
 $string['viewhighscores'] = 'View high scores list';
 $string['youmadehighscore'] = 'You made it on the top {$a} high scores list.';
 
+// Deprecated since Moodle 3.1.
+$string['configactionaftercorrectanswer'] = 'The default action to take after a correct answer';

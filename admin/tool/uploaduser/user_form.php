@@ -211,11 +211,13 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addRule('username', get_string('requiredtemplate', 'tool_uploaduser'), 'required', null, 'client');
         $mform->disabledIf('username', 'uutype', 'eq', UU_USER_ADD_UPDATE);
         $mform->disabledIf('username', 'uutype', 'eq', UU_USER_UPDATE);
+        $mform->setForceLtr('username');
 
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
         $mform->setType('email', PARAM_RAW); // No cleaning here. The process verifies it later.
         $mform->disabledIf('email', 'uutype', 'eq', UU_USER_ADD_UPDATE);
         $mform->disabledIf('email', 'uutype', 'eq', UU_USER_UPDATE);
+        $mform->setForceLtr('email');
 
         // only enabled and known to work plugins
         $choices = uu_supported_auths();
@@ -226,28 +228,28 @@ class admin_uploaduser_form2 extends moodleform {
 
         $choices = array(0 => get_string('emaildisplayno'), 1 => get_string('emaildisplayyes'), 2 => get_string('emaildisplaycourse'));
         $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-        $mform->setDefault('maildisplay', $CFG->defaultpreference_maildisplay);
+        $mform->setDefault('maildisplay', core_user::get_property_default('maildisplay'));
 
         $choices = array(0 => get_string('textformat'), 1 => get_string('htmlformat'));
         $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-        $mform->setDefault('mailformat', $CFG->defaultpreference_mailformat);
+        $mform->setDefault('mailformat', core_user::get_property_default('mailformat'));
         $mform->setAdvanced('mailformat');
 
         $choices = array(0 => get_string('emaildigestoff'), 1 => get_string('emaildigestcomplete'), 2 => get_string('emaildigestsubjects'));
         $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-        $mform->setDefault('maildigest', $CFG->defaultpreference_maildigest);
+        $mform->setDefault('maildigest', core_user::get_property_default('maildigest'));
         $mform->setAdvanced('maildigest');
 
         $choices = array(1 => get_string('autosubscribeyes'), 0 => get_string('autosubscribeno'));
         $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-        $mform->setDefault('autosubscribe', $CFG->defaultpreference_autosubscribe);
+        $mform->setDefault('autosubscribe', core_user::get_property_default('autosubscribe'));
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="25"');
         $mform->setType('city', PARAM_TEXT);
         if (empty($CFG->defaultcity)) {
             $mform->setDefault('city', $templateuser->city);
         } else {
-            $mform->setDefault('city', $CFG->defaultcity);
+            $mform->setDefault('city', core_user::get_property_default('city'));
         }
 
         $choices = get_string_manager()->get_list_of_countries();
@@ -256,7 +258,7 @@ class admin_uploaduser_form2 extends moodleform {
         if (empty($CFG->country)) {
             $mform->setDefault('country', $templateuser->country);
         } else {
-            $mform->setDefault('country', $CFG->country);
+            $mform->setDefault('country', core_user::get_property_default('country'));
         }
         $mform->setAdvanced('country');
 
@@ -281,6 +283,7 @@ class admin_uploaduser_form2 extends moodleform {
 
         $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
         $mform->setType('idnumber', PARAM_NOTAGS);
+        $mform->setForceLtr('idnumber');
 
         $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="255" size="25"');
         $mform->setType('institution', PARAM_TEXT);
@@ -293,10 +296,12 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->addElement('text', 'phone1', get_string('phone1'), 'maxlength="20" size="25"');
         $mform->setType('phone1', PARAM_NOTAGS);
         $mform->setAdvanced('phone1');
+        $mform->setForceLtr('phone1');
 
         $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
         $mform->setType('phone2', PARAM_NOTAGS);
         $mform->setAdvanced('phone2');
+        $mform->setForceLtr('phone2');
 
         $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
         $mform->setType('address', PARAM_TEXT);
@@ -345,6 +350,7 @@ class admin_uploaduser_form2 extends moodleform {
         $errors = parent::validation($data, $files);
         $columns = $this->_customdata['columns'];
         $optype  = $data['uutype'];
+        $updatetype = $data['uuupdatetype'];
 
         // detect if password column needed in file
         if (!in_array('password', $columns)) {
@@ -375,6 +381,12 @@ class admin_uploaduser_form2 extends moodleform {
                     }
                     break;
              }
+        }
+
+        // If the 'Existing user details' value is set we need to ensure that the
+        // 'Upload type' is not set to something invalid.
+        if (!empty($updatetype) && ($optype == UU_USER_ADDNEW || $optype == UU_USER_ADDINC)) {
+            $errors['uuupdatetype'] = get_string('invalidupdatetype', 'tool_uploaduser');
         }
 
         // look for other required data

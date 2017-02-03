@@ -1,0 +1,65 @@
+<div class="filemanager fp-select">
+    <div class="fp-select-loading">
+        {{#pix}}i/loading_small{{/pix}}
+    </div>
+    <form class="form clearfix">
+        <div class="form-group">
+            <button class="fp-file-download btn btn-secondary">{{#str}}download{{/str}}</button>
+            <button class="fp-file-delete btn btn-secondary">{{#str}}delete{{/str}}</button>
+            <button class="fp-file-setmain btn btn-secondary">{{#str}}setmainfile, repository{{/str}}</button>
+            <span class="fp-file-setmain-help">{{{helpicon}}}</span>
+            <button class="fp-file-zip btn btn-secondary">{{#str}}zip, editor{{/str}}</button>
+            <button class="fp-file-unzip btn btn-secondary">{{#str}}unzip{{/str}}</button>
+        </div>
+
+                <div class="fp-saveas form-group row">
+                    <label class="form-control-label col-xs-4">{{#str}}name, repository{{/str}}</label>
+                    <div class="col-xs-8"><input class="form-control" type="text"/></div>
+                </div>
+                <div class="fp-author form-group row">
+                    <label class="form-control-label col-xs-4">{{#str}}author, repository{{/str}}</label>
+                    <div class="col-xs-8"><input class="form-control" type="text"/></div>
+
+                </div>
+                <div class="fp-license form-group row">
+                    <label class="form-control-label col-xs-4">{{#str}}chooselicense, repository{{/str}}</label>
+                    <div class="col-xs-8">
+                        <select class="form-control"></select>
+                    </div>
+                </div>
+                <div class="fp-path form-group row">
+                    <label class="form-control-label col-xs-4">{{#str}}path, repository{{/str}}</label>
+                    <div class="col-xs-8">
+                        <select class="form-control"></select>
+                    </div>
+                </div>
+                <div class="fp-original form-group row">
+                    <label class="form-control-label col-xs-4">{{#str}}original, repository{{/str}}</label>
+                    <div class="col-xs-8">
+                        <span class="fp-originloading">{{#pix}}i/loading_small{{/pix}} {{#str}}loading, repository{{/str}}</span><span class="fp-value"></span>
+                    </div>
+                </div>
+                <div class="fp-reflist form-group row">
+                    <label class="form-control-label col-xs-4">{{#str}}referenceslist, repository{{/str}}</label>
+                    <div class="col-xs-8">
+                        <p class="fp-refcount"></p>
+                        <span class="fp-reflistloading">{{#pix}}i/loading_small{{/pix}} {{#str}}loading, repository{{/str}}</span>
+                        <ul class="fp-value"></ul>
+                    </div>
+                </div>
+        <div class="fp-select-buttons form-group">
+            <button class="fp-file-update btn-primary btn">{{#str}}update{{/str}}</button>
+            <button class="fp-file-cancel btn-secondary btn">{{#str}}cancel{{/str}}</button>
+        </div>
+    </form>
+    <div class="fp-info clearfix">
+        <hr>
+        <p class="fp-thumbnail"></p>
+        <div class="fp-fileinfo">
+            <div class="fp-datemodified">{{#str}}lastmodified, repository{{/str}} <span class="fp-value"></span></div>
+            <div class="fp-datecreated">{{#str}}datecreated, repository{{/str}} <span class="fp-value"></span></div>
+            <div class="fp-size">{{#str}}size, repository{{/str}} <span class="fp-value"></span></div>
+            <div class="fp-dimensions">{{#str}}dimensions, repository{{/str}} <span class="fp-value"></span></div>
+        </div>
+    </div>
+</div>

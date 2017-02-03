@@ -542,6 +542,86 @@ class core_blocklib_testcase extends advanced_testcase {
         context_block::instance($tokeep);   // Would throw an exception if it was deleted.
     }
 
+    public function test_create_all_block_instances() {
+        global $CFG, $PAGE, $DB;
+
+        $this->setAdminUser();
+        $this->resetAfterTest();
+        $regionname = 'side-pre';
+        $context = context_system::instance();
+
+        $PAGE->reset_theme_and_output();
+        $CFG->theme = 'boost';
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        // Assert that we no auto created blocks in boost by default.
+        $this->assertEmpty($blocks);
+        // There should be no blocks in the DB.
+
+        $PAGE->reset_theme_and_output();
+        // Change to a theme with undeletable blocks.
+        $CFG->theme = 'clean';
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->show_only_fake_blocks(true);
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        // Assert that we no auto created blocks when viewing a fake blocks only page.
+        $this->assertEmpty($blocks);
+
+        $PAGE->reset_theme_and_output();
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->show_only_fake_blocks(false);
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        // Assert that we get the required block for this theme auto-created.
+        $this->assertCount(2, $blocks);
+
+        $PAGE->reset_theme_and_output();
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+
+        $blockmanager->protect_block('html');
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        // Assert that protecting a block does not make it auto-created.
+        $this->assertCount(2, $blocks);
+
+        $requiredbytheme = block_manager::get_required_by_theme_block_types();
+        foreach ($requiredbytheme as $blockname) {
+            $instance = $DB->get_record('block_instances', array('blockname' => $blockname));
+            $this->assertEquals(1, $instance->requiredbytheme);
+        }
+
+        // Switch back and those auto blocks should not be returned.
+        $PAGE->reset_theme_and_output();
+        $CFG->theme = 'boost';
+
+        list($page, $blockmanager) = $this->get_a_page_and_block_manager(array($regionname),
+            $context, 'page-type');
+        $blockmanager->load_blocks();
+        $blockmanager->create_all_block_instances();
+        $blocks = $blockmanager->get_blocks_for_region($regionname);
+        // Assert that we do not return requiredbytheme blocks when they are not required.
+        $this->assertEmpty($blocks);
+        // But they should exist in the DB.
+        foreach ($requiredbytheme as $blockname) {
+            $count = $DB->count_records('block_instances', array('blockname' => $blockname));
+            $this->assertEquals(1, $count);
+        }
+    }
+
 }
 
 /**

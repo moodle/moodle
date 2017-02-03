@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once(dirname(__FILE__) . '/../lib.php');
+require_once(__DIR__ . '/../lib.php');
 
 
 /**
@@ -45,9 +45,10 @@ class question_engine_test extends advanced_testcase {
         $this->assertTrue(class_exists('qbehaviour_deferredfeedback'));
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_load_behaviour_class_missing() {
-        // Set expectation.
-        $this->setExpectedException('moodle_exception');
         // Exercise SUT
         question_engine::load_behaviour_class('nonexistantbehaviour');
     }

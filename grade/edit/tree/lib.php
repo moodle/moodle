@@ -128,7 +128,6 @@ class grade_edit_tree {
 
         $moveaction = '';
         $actionsmenu = new action_menu();
-        $actionsmenu->initialise_js($PAGE);
         $actionsmenu->set_menu_trigger(get_string('edit'));
         $actionsmenu->set_owner_selector('grade-item-' . $eid);
         $actionsmenu->set_alignment(action_menu::TL, action_menu::BL);
@@ -295,6 +294,8 @@ class grade_edit_tree {
             $row = new html_table_row();
             $row->id = 'grade-item-' . $eid;
             $row->attributes['class'] = $courseclass . ' category ' . $dimmed;
+            $row->attributes['data-category'] = $eid;
+            $row->attributes['data-itemid'] = $category->get_grade_item()->id;
             foreach ($rowclasses as $class) {
                 $row->attributes['class'] .= ' ' . $class;
             }
@@ -309,9 +310,14 @@ class grade_edit_tree {
 
             foreach ($this->columns as $column) {
                 if (!($this->moving && $column->hide_when_moving)) {
-                    $row->cells[] = $column->get_category_cell($category, $levelclass, array('id' => $id,
-                        'name' => $object->name, 'level' => $level, 'actions' => $actions,
-                        'moveaction' => $moveaction, 'eid' => $eid));
+                    $row->cells[] = $column->get_category_cell($category, $levelclass, [
+                        'id' => $id,
+                        'name' => $object->name,
+                        'level' => $level,
+                        'actions' => $actions,
+                        'moveaction' => $moveaction,
+                        'eid' => $eid,
+                    ]);
                 }
             }
 
@@ -344,6 +350,7 @@ class grade_edit_tree {
             $gradeitemrow = new html_table_row();
             $gradeitemrow->id = 'grade-item-' . $eid;
             $gradeitemrow->attributes['class'] = $categoryitemclass . ' item ' . $dimmed;
+            $gradeitemrow->attributes['data-itemid'] = $object->id;
             foreach ($rowclasses as $class) {
                 $gradeitemrow->attributes['class'] .= ' ' . $class;
             }
@@ -392,44 +399,24 @@ class grade_edit_tree {
         $str = '';
 
         if ($aggcoef == 'aggregationcoefweight' || $aggcoef == 'aggregationcoef' || $aggcoef == 'aggregationcoefextraweight') {
-            return '<label class="accesshide" for="weight_'.$item->id.'">'.
-                get_string('extracreditvalue', 'grades', $itemname).'</label>'.
-                '<input type="text" size="6" id="weight_'.$item->id.'" name="weight_'.$item->id.'"
-                value="'.grade_edit_tree::format_number($item->aggregationcoef).'" />';
+
+            return $OUTPUT->render_from_template('core_grades/weight_field', [
+                'id' => $item->id,
+                'itemname' => $itemname,
+                'value' => self::format_number($item->aggregationcoef)
+            ]);
+
         } else if ($aggcoef == 'aggregationcoefextraweightsum') {
 
-            $checkboxname = 'weightoverride_' . $item->id;
-            $checkboxlbl = html_writer::tag('label', get_string('overrideweightofa', 'grades', $itemname),
-                array('for' => $checkboxname, 'class' => 'accesshide'));
-            $checkbox = html_writer::empty_tag('input', array('name' => $checkboxname,
-                'type' => 'hidden', 'value' => 0));
-            $checkbox .= html_writer::empty_tag('input', array('name' => $checkboxname,
-                'type' => 'checkbox', 'value' => 1, 'id' => $checkboxname, 'class' => 'weightoverride',
-                'checked' => ($item->weightoverride ? 'checked' : null)));
+            $tpldata = [
+                'id' => $item->id,
+                'itemname' => $itemname,
+                'value' => self::format_number($item->aggregationcoef2 * 100.0),
+                'checked' => $item->weightoverride,
+                'disabled' => !$item->weightoverride
+            ];
+            $str .= $OUTPUT->render_from_template('core_grades/weight_override_field', $tpldata);
 
-            $name = 'weight_' . $item->id;
-            $hiddenlabel = html_writer::tag(
-                'label',
-                get_string('weightofa', 'grades', $itemname),
-                array(
-                    'class' => 'accesshide',
-                    'for' => $name
-                )
-            );
-
-            $input = html_writer::empty_tag(
-                'input',
-                array(
-                    'type' =>   'text',
-                    'size' =>   6,
-                    'id' =>     $name,
-                    'name' =>   $name,
-                    'value' =>  grade_edit_tree::format_number($item->aggregationcoef2 * 100.0),
-                    'disabled' => ($item->weightoverride ? null : 'disabled')
-                )
-            );
-
-            $str .= $checkboxlbl . $checkbox . $hiddenlabel . $input;
         }
 
         return $str;
@@ -537,6 +524,13 @@ class grade_edit_tree {
                     $deepest_level = $level;
                 }
                 $deepest_level = $this->get_deepest_level($child_el, $level, $deepest_level);
+            }
+
+            $category = grade_category::fetch(array('id' => $object->id));
+            $item = $category->get_grade_item();
+            if ($item->gradetype == GRADE_TYPE_NONE) {
+                // Add 1 more level for grade category that has no total.
+                $deepest_level++;
             }
         }
 
@@ -847,15 +841,20 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
     }
 
     public function get_category_cell($category, $levelclass, $params) {
-        global $OUTPUT;
         if (empty($params['eid'])) {
             throw new Exception('Array key (eid) missing from 3rd param of grade_edit_tree_column_select::get_category_cell($category, $levelclass, $params)');
         }
-        $selectall  = new action_link(new moodle_url('#'), get_string('all'), new component_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => true)));
-        $selectnone = new action_link(new moodle_url('#'), get_string('none'), new component_action('click', 'togglecheckboxes', array('eid' => $params['eid'], 'check' => false)));
+        $selectall = html_writer::link('#', get_string('all'), [
+            'data-action' => 'grade_edittree-index-bulkselect',
+            'data-checked' => true,
+        ]);
+        $selectnone = html_writer::link('#', get_string('none'), [
+            'data-action' => 'grade_edittree-index-bulkselect',
+            'data-checked' => false,
+        ]);
 
         $categorycell = parent::get_category_cell($category, $levelclass, $params);
-        $categorycell->text = $OUTPUT->render($selectall) . ' / ' . $OUTPUT->render($selectnone);
+        $categorycell->text = $selectall . ' / ' . $selectnone;
         return $categorycell;
     }
 
@@ -869,7 +868,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
             $itemcell->text = '<label class="accesshide" for="select_'.$params['eid'].'">'.
                 get_string('select', 'grades', $item->itemname).'</label>
                 <input class="itemselect ignoredirty" type="checkbox" name="select_'.$params['eid'].'" id="select_'.$params['eid'].
-                '" onchange="toggleCategorySelector();"/>'; // TODO: convert to YUI handler
+                '"/>';
         }
         return $itemcell;
     }

@@ -77,7 +77,7 @@ class renderer extends \plugin_renderer_base {
     protected function render_add_button($courseid) {
         global $CFG;
 
-        $button = \html_writer::tag('button', get_string('addrule', 'tool_monitor'));
+        $button = \html_writer::tag('button', get_string('addrule', 'tool_monitor'), ['class' => 'btn btn-primary']);
         $addurl = new \moodle_url($CFG->wwwroot. '/admin/tool/monitor/edit.php', array('courseid' => $courseid));
         return \html_writer::link($addurl, $button);
     }

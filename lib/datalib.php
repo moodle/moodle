@@ -741,9 +741,11 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
  * @param int $page The page number to get
  * @param int $recordsperpage The number of records per page
  * @param int $totalcount Passed in by reference.
+ * @param array $requiredcapabilities Extra list of capabilities used to filter courses
  * @return object {@link $COURSE} records
  */
-function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$totalcount) {
+function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$totalcount,
+                            $requiredcapabilities = array()) {
     global $CFG, $DB;
 
     if ($DB->sql_regex_supported()) {
@@ -798,8 +800,7 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
     }
 
     if (empty($searchcond)) {
-        $totalcount = 0;
-        return array();
+        $searchcond = array('1 = 1');
     }
 
     $searchcond = implode(" AND ", $searchcond);
@@ -823,11 +824,14 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $course) {
-        if (!$course->visible) {
-            // preload contexts only for hidden courses or courses we need to return
-            context_helper::preload_from_record($course);
-            $coursecontext = context_course::instance($course->id);
-            if (!has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+        // Preload contexts only for hidden courses or courses we need to return.
+        context_helper::preload_from_record($course);
+        $coursecontext = context_course::instance($course->id);
+        if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+            continue;
+        }
+        if (!empty($requiredcapabilities)) {
+            if (!has_all_capabilities($requiredcapabilities, $coursecontext)) {
                 continue;
             }
         }
@@ -1157,35 +1161,6 @@ function get_my_remotehosts() {
     return false;
 }
 
-/**
- * This function creates a default separated/connected scale
- *
- * This function creates a default separated/connected scale
- * so there's something in the database.  The locations of
- * strings and files is a bit odd, but this is because we
- * need to maintain backward compatibility with many different
- * existing language translations and older sites.
- *
- * @global object
- * @return void
- */
-function make_default_scale() {
-    global $DB;
-
-    $defaultscale = new stdClass();
-    $defaultscale->courseid = 0;
-    $defaultscale->userid = 0;
-    $defaultscale->name  = get_string('separateandconnected');
-    $defaultscale->description = get_string('separateandconnectedinfo');
-    $defaultscale->scale = get_string('postrating1', 'forum').','.
-                           get_string('postrating2', 'forum').','.
-                           get_string('postrating3', 'forum');
-    $defaultscale->timemodified = time();
-
-    $defaultscale->id = $DB->insert_record('scale', $defaultscale);
-    $DB->execute("UPDATE {forum} SET scale = ?", array($defaultscale->id));
-}
-
 
 /**
  * Returns a menu of all available scales from the site as well as the given course
@@ -1203,13 +1178,7 @@ function get_scales_menu($courseid=0) {
           ORDER BY courseid ASC, name ASC";
     $params = array($courseid);
 
-    if ($scales = $DB->get_records_sql_menu($sql, $params)) {
-        return $scales;
-    }
-
-    make_default_scale();
-
-    return $DB->get_records_sql_menu($sql, $params);
+    return $scales = $DB->get_records_sql_menu($sql, $params);
 }
 
 /**
@@ -1700,116 +1669,6 @@ function user_accesstime_log($courseid=0) {
             $DB->set_field('user_lastaccess', 'timeaccess', $timenow, array('userid'=>$USER->id, 'courseid'=>$courseid));
         }
     }
-}
-
-/**
- * Select all log records based on SQL criteria
- *
- * @package core
- * @category log
- * @global moodle_database $DB
- * @param string $select SQL select criteria
- * @param array $params named sql type params
- * @param string $order SQL order by clause to sort the records returned
- * @param string $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set)
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set)
- * @param int $totalcount Passed in by reference.
- * @return array
- */
-function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
-    global $DB;
-
-    if ($order) {
-        $order = "ORDER BY $order";
-    }
-
-    $selectsql = "";
-    $countsql  = "";
-
-    if ($select) {
-        $select = "WHERE $select";
-    }
-
-    $sql = "SELECT COUNT(*)
-              FROM {log} l
-           $select";
-
-    $totalcount = $DB->count_records_sql($sql, $params);
-    $allnames = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT l.*, $allnames, u.picture
-              FROM {log} l
-              LEFT JOIN {user} u ON l.userid = u.id
-           $select
-            $order";
-
-    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum) ;
-}
-
-
-/**
- * Select all log records for a given course and user
- *
- * @package core
- * @category log
- * @global moodle_database $DB
- * @uses DAYSECS
- * @param int $userid The id of the user as found in the 'user' table.
- * @param int $courseid The id of the course as found in the 'course' table.
- * @param string $coursestart unix timestamp representing course start date and time.
- * @return array
- */
-function get_logs_usercourse($userid, $courseid, $coursestart) {
-    global $DB;
-
-    $params = array();
-
-    $courseselect = '';
-    if ($courseid) {
-        $courseselect = "AND course = :courseid";
-        $params['courseid'] = $courseid;
-    }
-    $params['userid'] = $userid;
-    // We have to sanitize this param ourselves here instead of relying on DB.
-    // Postgres complains if you use name parameter or column alias in GROUP BY.
-    // See MDL-27696 and 51c3e85 for details.
-    $coursestart = (int)$coursestart;
-
-    return $DB->get_records_sql("SELECT FLOOR((time - $coursestart)/". DAYSECS .") AS day, COUNT(*) AS num
-                                   FROM {log}
-                                  WHERE userid = :userid
-                                        AND time > $coursestart $courseselect
-                               GROUP BY FLOOR((time - $coursestart)/". DAYSECS .")", $params);
-}
-
-/**
- * Select all log records for a given course, user, and day
- *
- * @package core
- * @category log
- * @global moodle_database $DB
- * @uses HOURSECS
- * @param int $userid The id of the user as found in the 'user' table.
- * @param int $courseid The id of the course as found in the 'course' table.
- * @param string $daystart unix timestamp of the start of the day for which the logs needs to be retrived
- * @return array
- */
-function get_logs_userday($userid, $courseid, $daystart) {
-    global $DB;
-
-    $params = array('userid'=>$userid);
-
-    $courseselect = '';
-    if ($courseid) {
-        $courseselect = "AND course = :courseid";
-        $params['courseid'] = $courseid;
-    }
-    $daystart = (int)$daystart; // note: unfortunately pg complains if you use name parameter or column alias in GROUP BY
-
-    return $DB->get_records_sql("SELECT FLOOR((time - $daystart)/". HOURSECS .") AS hour, COUNT(*) AS num
-                                   FROM {log}
-                                  WHERE userid = :userid
-                                        AND time > $daystart $courseselect
-                               GROUP BY FLOOR((time - $daystart)/". HOURSECS .") ", $params);
 }
 
 /// GENERAL HELPFUL THINGS  ///////////////////////////////////

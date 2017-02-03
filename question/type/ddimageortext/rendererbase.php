@@ -117,6 +117,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                         'topnode' => $topnode,
                         'readonly' => $options->readonly);
 
+        $PAGE->requires->string_for_js('blank', 'qtype_ddimageortext');
         $PAGE->requires->yui_module('moodle-qtype_ddimageortext-dd',
                                         'M.qtype_ddimageortext.init_question',
                                         array($params));

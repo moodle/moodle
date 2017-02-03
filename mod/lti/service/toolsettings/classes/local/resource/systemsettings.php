@@ -49,7 +49,7 @@ class systemsettings extends \mod_lti\local\ltiservice\resource_base {
 
         parent::__construct($service);
         $this->id = 'ToolProxySettings';
-        $this->template = '/toolproxy/{tool_proxy_id}/custom';
+        $this->template = '/toolproxy/{tool_proxy_id}';
         $this->variables[] = 'ToolProxy.custom.url';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings+json';
         $this->formats[] = 'application/vnd.ims.lti.v2.toolsettings.simple+json';
@@ -113,6 +113,7 @@ class systemsettings extends \mod_lti\local\ltiservice\resource_base {
                     }
                     if ($ok) {
                         $settings = $json->{"@graph"}[0]->custom;
+                        unset($settings->{'@id'});
                     }
                 } else {  // Simple JSON.
                     $json = json_decode($response->get_request_data(), true);

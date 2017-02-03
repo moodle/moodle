@@ -70,6 +70,7 @@ if ($id) {
         $outcome_rec->courseid = $courseid;
         require_login();
         require_capability('moodle/grade:manage', $systemcontext);
+        $PAGE->set_context($systemcontext);
     }
 
 } else if ($courseid){
@@ -87,6 +88,7 @@ if ($id) {
 } else {
     require_login();
     require_capability('moodle/grade:manage', $systemcontext);
+    $PAGE->set_context($systemcontext);
 
     /// adding new outcome from admin section
     $outcome_rec = new stdClass();

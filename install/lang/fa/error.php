@@ -30,4 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotfindcomponent'] = 'کامپوننت پیدا نشد';
+$string['cannotsavemd5file'] = 'نمی‌توانم فایل md5 را ذخیره کنم';
+$string['cannotsavezipfile'] = 'نمی‌توانم فایل ZIP را ذخیره کنم';
 $string['missingrequiredfield'] = 'بعضی از فیلدهای ضروری خالی است';

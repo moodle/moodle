@@ -111,7 +111,7 @@ $string['error'] = 'An unknown error occurred!';
 $string['errordoublereference'] = 'Unable to overwrite file with a shortcut/alias because shortcuts to this file already exist.';
 $string['errornotyourfile'] = 'You cannot pick file which is not added by your';
 $string['erroruniquename'] = 'Repository instance name should be unique';
-$string['errorpostmaxsize'] = 'The uploaded file may exceed the post_max_size directive in php.ini.';
+$string['errorpostmaxsize'] = 'The file you tried to upload is too large for the server to process.';
 $string['errorwhilecommunicatingwith'] = 'Error while communicating with the repository \'{$a}\'.';
 $string['errorwhiledownload'] = 'An error occurred while downloading the file: {$a}';
 $string['existingrepository'] = 'This repository already exists';
@@ -242,6 +242,3 @@ $string['unzipped'] = 'Unzipped successfully';
 $string['wrongcontext'] = 'You cannot access to this context';
 $string['xhtmlerror'] = 'You are probably using an XHTML strict header. Certain YUI components don\'t work in this mode; please turn it off.';
 $string['ziped'] = 'Compress folder successfully';
-
-// Deprecated since Moodle 2.9.
-$string['personalrepositories'] = 'Available repository instances';

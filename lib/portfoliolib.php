@@ -346,7 +346,7 @@ class portfolio_add_button {
         switch ($format) {
             case PORTFOLIO_ADD_FULL_FORM:
                 $formoutput .= $selectoutput;
-                $formoutput .= "\n" . '<input type="submit" value="' . $addstr .'" />';
+                $formoutput .= "\n" . '<input type="submit" class="btn btn-secondary" value="' . $addstr .'" />';
                 $formoutput .= "\n" . '</form>';
             break;
             case PORTFOLIO_ADD_ICON_FORM:
@@ -453,7 +453,7 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
 
     $count = 0;
     $selectoutput = "\n" . '<label class="accesshide" for="instanceid">' . get_string('plugin', 'portfolio') . '</label>';
-    $selectoutput .= "\n" . '<select id="instanceid" name="' . $selectname . '">' . "\n";
+    $selectoutput .= "\n" . '<select id="instanceid" name="' . $selectname . '" class="custom-select">' . "\n";
     $existingexports = portfolio_existing_exports_by_plugin($USER->id);
     foreach ($instances as $instance) {
         $formats = portfolio_supported_formats_intersect($callerformats, $instance->supported_formats());
@@ -1109,7 +1109,8 @@ function portfolio_insane_notify_admins($insane, $instances=false) {
     $smallbody = get_string('insanebodysmall', 'portfolio', $a);
 
     foreach ($admins as $admin) {
-        $eventdata = new stdClass();
+        $eventdata = new \core\message\message();
+        $eventdata->courseid = SITEID;
         $eventdata->modulename = 'portfolio';
         $eventdata->component = 'portfolio';
         $eventdata->name = 'notices';

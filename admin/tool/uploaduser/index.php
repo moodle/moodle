@@ -212,7 +212,7 @@ if ($formdata = $mform2->is_cancelled()) {
     // init upload progress tracker
     $upt = new uu_progress_tracker();
     $upt->start(); // start table
-
+    $validation = array();
     while ($line = $cir->next()) {
         $upt->flush();
         $linenum++;
@@ -280,7 +280,7 @@ if ($formdata = $mform2->is_cancelled()) {
         // normalize username
         $originalusername = $user->username;
         if ($standardusernames) {
-            $user->username = clean_param($user->username, PARAM_USERNAME);
+            $user->username = core_user::clean_field($user->username, 'username');
         }
 
         // make sure we really have username
@@ -295,7 +295,7 @@ if ($formdata = $mform2->is_cancelled()) {
             continue;
         }
 
-        if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
+        if ($user->username !== core_user::clean_field($user->username, 'username')) {
             $upt->track('status', get_string('invalidusername', 'error', 'username'), 'error');
             $upt->track('username', $errorstr, 'error');
             $userserrors++;
@@ -358,38 +358,40 @@ if ($formdata = $mform2->is_cancelled()) {
 
         // add default values for remaining fields
         $formdefaults = array();
-        foreach ($STD_FIELDS as $field) {
-            if (isset($user->$field)) {
-                continue;
-            }
-            // all validation moved to form2
-            if (isset($formdata->$field)) {
-                // process templates
-                $user->$field = uu_process_template($formdata->$field, $user);
-                $formdefaults[$field] = true;
-                if (in_array($field, $upt->columns)) {
-                    $upt->track($field, s($user->$field), 'normal');
+        if ($updatetype != UU_UPDATE_FILEOVERRIDE && $updatetype != UU_UPDATE_NOCHANGES) {
+            foreach ($STD_FIELDS as $field) {
+                if (isset($user->$field)) {
+                    continue;
+                }
+                // all validation moved to form2
+                if (isset($formdata->$field)) {
+                    // process templates
+                    $user->$field = uu_process_template($formdata->$field, $user);
+                    $formdefaults[$field] = true;
+                    if (in_array($field, $upt->columns)) {
+                        $upt->track($field, s($user->$field), 'normal');
+                    }
                 }
             }
-        }
-        foreach ($PRF_FIELDS as $field) {
-            if (isset($user->$field)) {
-                continue;
-            }
-            if (isset($formdata->$field)) {
-                // process templates
-                $user->$field = uu_process_template($formdata->$field, $user);
-
-                // Form contains key and later code expects value.
-                // Convert key to value for required profile fields.
-                require_once($CFG->dirroot.'/user/profile/field/'.$proffields[$field]->datatype.'/field.class.php');
-                $profilefieldclass = 'profile_field_'.$proffields[$field]->datatype;
-                $profilefield = new $profilefieldclass($proffields[$field]->id);
-                if (method_exists($profilefield, 'convert_external_data')) {
-                    $user->$field = $profilefield->edit_save_data_preprocess($user->$field, null);
+            foreach ($PRF_FIELDS as $field) {
+                if (isset($user->$field)) {
+                    continue;
                 }
+                if (isset($formdata->$field)) {
+                    // process templates
+                    $user->$field = uu_process_template($formdata->$field, $user);
 
-                $formdefaults[$field] = true;
+                    // Form contains key and later code expects value.
+                    // Convert key to value for required profile fields.
+                    require_once($CFG->dirroot.'/user/profile/field/'.$proffields[$field]->datatype.'/field.class.php');
+                    $profilefieldclass = 'profile_field_'.$proffields[$field]->datatype;
+                    $profilefield = new $profilefieldclass($proffields[$field]->id);
+                    if (method_exists($profilefield, 'convert_external_data')) {
+                        $user->$field = $profilefield->edit_save_data_preprocess($user->$field, null);
+                    }
+
+                    $formdefaults[$field] = true;
+                }
             }
         }
 
@@ -443,7 +445,7 @@ if ($formdata = $mform2->is_cancelled()) {
             }
 
             if ($standardusernames) {
-                $oldusername = clean_param($user->oldusername, PARAM_USERNAME);
+                $oldusername = core_user::clean_field($user->oldusername, 'username');
             } else {
                 $oldusername = $user->oldusername;
             }
@@ -568,8 +570,18 @@ if ($formdata = $mform2->is_cancelled()) {
                     }
                     if ($existinguser->$column !== $user->$column) {
                         if ($column === 'email') {
-                            if ($DB->record_exists('user', array('email'=>$user->email))) {
-                                if ($noemailduplicates) {
+                            $select = $DB->sql_like('email', ':email', false, true, false, '|');
+                            $params = array('email' => $DB->sql_like_escape($user->email, '|'));
+                            if ($DB->record_exists_select('user', $select , $params)) {
+
+                                $changeincase = core_text::strtolower($existinguser->$column) === core_text::strtolower(
+                                                $user->$column);
+
+                                if ($changeincase) {
+                                    // If only case is different then switch to lower case and carry on.
+                                    $user->$column = core_text::strtolower($user->$column);
+                                    continue;
+                                } else if ($noemailduplicates) {
                                     $upt->track('email', $stremailduplicate, 'error');
                                     $upt->track('status', $strusernotupdated, 'error');
                                     $userserrors++;
@@ -587,7 +599,7 @@ if ($formdata = $mform2->is_cancelled()) {
                             if (empty($user->lang)) {
                                 // Do not change to not-set value.
                                 continue;
-                            } else if (clean_param($user->lang, PARAM_LANG) === '') {
+                            } else if (core_user::clean_field($user->lang, 'lang') === '') {
                                 $upt->track('status', get_string('cannotfindlang', 'error', $user->lang), 'warning');
                                 continue;
                             }
@@ -764,7 +776,7 @@ if ($formdata = $mform2->is_cancelled()) {
 
             if (empty($user->lang)) {
                 $user->lang = '';
-            } else if (clean_param($user->lang, PARAM_LANG) === '') {
+            } else if (core_user::clean_field($user->lang, 'lang') === '') {
                 $upt->track('status', get_string('cannotfindlang', 'error', $user->lang), 'warning');
                 $user->lang = '';
             }
@@ -1105,9 +1117,16 @@ if ($formdata = $mform2->is_cancelled()) {
                 }
             }
         }
+        $validation[$user->username] = core_user::validate($user);
     }
     $upt->close(); // close table
-
+    if (!empty($validation)) {
+        foreach ($validation as $username => $result) {
+            if ($result !== true) {
+                \core\notification::warning(get_string('invaliduserdata', 'tool_uploaduser', s($username)));
+            }
+        }
+    }
     $cir->close();
     $cir->cleanup(true);
 
@@ -1167,7 +1186,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     $rowcols['status'] = array();
 
     if (isset($rowcols['username'])) {
-        $stdusername = clean_param($rowcols['username'], PARAM_USERNAME);
+        $stdusername = core_user::clean_field($rowcols['username'], 'username');
         if ($rowcols['username'] !== $stdusername) {
             $rowcols['status'][] = get_string('invalidusernameupload');
         }
@@ -1182,7 +1201,10 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
         if (!validate_email($rowcols['email'])) {
             $rowcols['status'][] = get_string('invalidemail');
         }
-        if ($DB->record_exists('user', array('email'=>$rowcols['email']))) {
+
+        $select = $DB->sql_like('email', ':email', false, true, false, '|');
+        $params = array('email' => $DB->sql_like_escape($rowcols['email'], '|'));
+        if ($DB->record_exists_select('user', $select , $params)) {
             $rowcols['status'][] = $stremailduplicate;
         }
     }

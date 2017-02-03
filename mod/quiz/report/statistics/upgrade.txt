@@ -1,0 +1,9 @@
+This files describes API changes in /mod/quiz/report/statistics/*,
+information provided here is intended especially for developers.
+
+=== 3.2 ===
+
+* The function quiz_statistics_graph_get_new_colour() is deprecated in favour of the
+  funtionality present in the new charting library.
+* The function quiz_statistics_renumber_placeholders() is removed as the changes
+  in MDL-31243 and MDL-27072 make this redundant.

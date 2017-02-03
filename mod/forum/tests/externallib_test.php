@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/mod/forum/lib.php');
 
 class mod_forum_external_testcase extends externallib_advanced_testcase {
 
@@ -59,7 +60,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->resetAfterTest(true);
 
         // Create a user.
-        $user = self::getDataGenerator()->create_user();
+        $user = self::getDataGenerator()->create_user(array('trackforums' => 1));
 
         // Set to the user.
         self::setUser($user);
@@ -72,13 +73,16 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->introformat = FORMAT_HTML;
         $record->course = $course1->id;
+        $record->trackingtype = FORUM_TRACKING_FORCED;
         $forum1 = self::getDataGenerator()->create_module('forum', $record);
 
         // Second forum.
         $record = new stdClass();
         $record->introformat = FORMAT_HTML;
         $record->course = $course2->id;
+        $record->trackingtype = FORUM_TRACKING_OFF;
         $forum2 = self::getDataGenerator()->create_module('forum', $record);
+        $forum2->introfiles = [];
 
         // Add discussions to the forums.
         $record = new stdClass();
@@ -89,6 +93,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         // Expect one discussion.
         $forum1->numdiscussions = 1;
         $forum1->cancreatediscussions = true;
+        $forum1->istracked = true;
+        $forum1->introfiles = [];
 
         $record = new stdClass();
         $record->course = $course2->id;
@@ -100,6 +106,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $forum2->numdiscussions = 2;
         // Default limited role, no create discussion capability enabled.
         $forum2->cancreatediscussions = false;
+        $forum2->istracked = false;
 
         // Check the forum was correctly created.
         $this->assertEquals(2, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2',
@@ -173,213 +180,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
-     * Test get forum discussions
-     */
-    public function test_mod_forum_get_forum_discussions() {
-        global $USER, $CFG, $DB;
-
-        $this->resetAfterTest(true);
-
-        // Set the CFG variable to allow track forums.
-        $CFG->forum_trackreadposts = true;
-
-        // Create a user who can track forums.
-        $record = new stdClass();
-        $record->trackforums = true;
-        $user1 = self::getDataGenerator()->create_user($record);
-        // Create a bunch of other users to post.
-        $user2 = self::getDataGenerator()->create_user();
-        $user3 = self::getDataGenerator()->create_user();
-        $user4 = self::getDataGenerator()->create_user();
-
-        // Set the first created user to the test user.
-        self::setUser($user1);
-
-        // Create courses to add the modules.
-        $course1 = self::getDataGenerator()->create_course();
-        $course2 = self::getDataGenerator()->create_course();
-
-        // First forum with tracking off.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $record->trackingtype = FORUM_TRACKING_OFF;
-        $forum1 = self::getDataGenerator()->create_module('forum', $record);
-
-        // Second forum of type 'qanda' with tracking enabled.
-        $record = new stdClass();
-        $record->course = $course2->id;
-        $record->type = 'qanda';
-        $record->trackingtype = FORUM_TRACKING_FORCED;
-        $forum2 = self::getDataGenerator()->create_module('forum', $record);
-
-        // Add discussions to the forums.
-        $record = new stdClass();
-        $record->course = $course1->id;
-        $record->userid = $user1->id;
-        $record->forum = $forum1->id;
-        $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
-
-        $record = new stdClass();
-        $record->course = $course2->id;
-        $record->userid = $user2->id;
-        $record->forum = $forum2->id;
-        $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
-
-        // Add three replies to the discussion 1 from different users.
-        $record = new stdClass();
-        $record->discussion = $discussion1->id;
-        $record->parent = $discussion1->firstpost;
-        $record->userid = $user2->id;
-        $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-
-        $record->parent = $discussion1reply1->id;
-        $record->userid = $user3->id;
-        $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-
-        $record->userid = $user4->id;
-        $discussion1reply3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-
-        // Add two replies to discussion 2 from different users.
-        $record = new stdClass();
-        $record->discussion = $discussion2->id;
-        $record->parent = $discussion2->firstpost;
-        $record->userid = $user1->id;
-        $discussion2reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-
-        $record->parent = $discussion2reply1->id;
-        $record->userid = $user3->id;
-        $discussion2reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-
-        // Check the forums were correctly created.
-        $this->assertEquals(2, $DB->count_records_select('forum', 'id = :forum1 OR id = :forum2',
-                array('forum1' => $forum1->id, 'forum2' => $forum2->id)));
-
-        // Check the discussions were correctly created.
-        $this->assertEquals(2, $DB->count_records_select('forum_discussions', 'forum = :forum1 OR forum = :forum2',
-                                                            array('forum1' => $forum1->id, 'forum2' => $forum2->id)));
-
-        // Check the posts were correctly created, don't forget each discussion created also creates a post.
-        $this->assertEquals(7, $DB->count_records_select('forum_posts', 'discussion = :discussion1 OR discussion = :discussion2',
-                array('discussion1' => $discussion1->id, 'discussion2' => $discussion2->id)));
-
-        // Enrol the user in the first course.
-        $enrol = enrol_get_plugin('manual');
-        // Following line enrol and assign default role id to the user.
-        // So the user automatically gets mod/forum:viewdiscussion on all forums of the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
-
-        // Now enrol into the second course.
-        // We don't use the dataGenerator as we need to get the $instance2 to unenrol later.
-        $enrolinstances = enrol_get_instances($course2->id, true);
-        foreach ($enrolinstances as $courseenrolinstance) {
-            if ($courseenrolinstance->enrol == "manual") {
-                $instance2 = $courseenrolinstance;
-                break;
-            }
-        }
-        $enrol->enrol_user($instance2, $user1->id);
-
-        // Assign capabilities to view discussions for forum 2.
-        $cm = get_coursemodule_from_id('forum', $forum2->cmid, 0, false, MUST_EXIST);
-        $context = context_module::instance($cm->id);
-        $newrole = create_role('Role 2', 'role2', 'Role 2 description');
-        $this->assignUserCapability('mod/forum:viewdiscussion', $context->id, $newrole);
-
-        // Create what we expect to be returned when querying the forums.
-        $expecteddiscussions = array();
-        $expecteddiscussions[] = array(
-                'id' => $discussion1->id,
-                'course' => $discussion1->course,
-                'forum' => $discussion1->forum,
-                'name' => $discussion1->name,
-                'firstpost' => $discussion1->firstpost,
-                'userid' => $discussion1->userid,
-                'groupid' => $discussion1->groupid,
-                'assessed' => $discussion1->assessed,
-                'timemodified' => $discussion1reply3->created,
-                'usermodified' => $discussion1reply3->userid,
-                'timestart' => $discussion1->timestart,
-                'timeend' => $discussion1->timeend,
-                'firstuserfullname' => fullname($user1),
-                'firstuserimagealt' => $user1->imagealt,
-                'firstuserpicture' => $user1->picture,
-                'firstuseremail' => $user1->email,
-                'subject' => $discussion1->name,
-                'numreplies' => 3,
-                'numunread' => '',
-                'lastpost' => $discussion1reply3->id,
-                'lastuserid' => $user4->id,
-                'lastuserfullname' => fullname($user4),
-                'lastuserimagealt' => $user4->imagealt,
-                'lastuserpicture' => $user4->picture,
-                'lastuseremail' => $user4->email
-            );
-        $expecteddiscussions[] = array(
-                'id' => $discussion2->id,
-                'course' => $discussion2->course,
-                'forum' => $discussion2->forum,
-                'name' => $discussion2->name,
-                'firstpost' => $discussion2->firstpost,
-                'userid' => $discussion2->userid,
-                'groupid' => $discussion2->groupid,
-                'assessed' => $discussion2->assessed,
-                'timemodified' => $discussion2reply2->created,
-                'usermodified' => $discussion2reply2->userid,
-                'timestart' => $discussion2->timestart,
-                'timeend' => $discussion2->timeend,
-                'firstuserfullname' => fullname($user2),
-                'firstuserimagealt' => $user2->imagealt,
-                'firstuserpicture' => $user2->picture,
-                'firstuseremail' => $user2->email,
-                'subject' => $discussion2->name,
-                'numreplies' => 2,
-                'numunread' => 3,
-                'lastpost' => $discussion2reply2->id,
-                'lastuserid' => $user3->id,
-                'lastuserfullname' => fullname($user3),
-                'lastuserimagealt' => $user3->imagealt,
-                'lastuserpicture' => $user3->picture,
-                'lastuseremail' => $user3->email
-            );
-
-        // Call the external function passing forum ids.
-        $discussions = mod_forum_external::get_forum_discussions(array($forum1->id, $forum2->id));
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
-        $this->assertEquals($expecteddiscussions, $discussions);
-        // Some debugging is going to be produced, this is because we switch PAGE contexts in the get_forum_discussions function,
-        // the switch happens when the validate_context function is called inside a foreach loop.
-        // See MDL-41746 for more information.
-        $this->assertDebuggingCalled();
-
-        // Remove the users post from the qanda forum and ensure they can still see the discussion.
-        $DB->delete_records('forum_posts', array('id' => $discussion2reply1->id));
-        $discussions = mod_forum_external::get_forum_discussions(array($forum2->id));
-        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_returns(), $discussions);
-        $this->assertEquals(1, count($discussions));
-
-        // Call without required view discussion capability.
-        $this->unassignUserCapability('mod/forum:viewdiscussion', null, null, $course1->id);
-        try {
-            mod_forum_external::get_forum_discussions(array($forum1->id));
-            $this->fail('Exception expected due to missing capability.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
-        }
-        $this->assertDebuggingCalled();
-
-        // Unenrol user from second course.
-        $enrol->unenrol_user($instance2, $user1->id);
-
-        // Call for the second course we unenrolled the user from, make sure exception thrown.
-        try {
-            mod_forum_external::get_forum_discussions(array($forum2->id));
-            $this->fail('Exception expected due to being unenrolled from the course.');
-        } catch (moodle_exception $e) {
-            $this->assertEquals('requireloginerror', $e->errorcode);
-        }
-    }
-
-    /**
      * Test get forum posts
      */
     public function test_mod_forum_get_forum_discussion_posts() {
@@ -411,6 +211,12 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $forum1 = self::getDataGenerator()->create_module('forum', $record);
         $forum1context = context_module::instance($forum1->cmid);
 
+        // Forum with tracking enabled.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $forum2 = self::getDataGenerator()->create_module('forum', $record);
+        $forum2context = context_module::instance($forum2->cmid);
+
         // Add discussions to the forums.
         $record = new stdClass();
         $record->course = $course1->id;
@@ -424,12 +230,31 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record->forum = $forum1->id;
         $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user2->id;
+        $record->forum = $forum2->id;
+        $discussion3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
         // Add 2 replies to the discussion 1 from different users.
         $record = new stdClass();
         $record->discussion = $discussion1->id;
         $record->parent = $discussion1->firstpost;
         $record->userid = $user2->id;
         $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
+        $filename = 'shouldbeanimage.jpg';
+        // Add a fake inline image to the post.
+        $filerecordinline = array(
+            'contextid' => $forum1context->id,
+            'component' => 'mod_forum',
+            'filearea'  => 'post',
+            'itemid'    => $discussion1reply1->id,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $timepost = time();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
 
         $record->parent = $discussion1reply1->id;
         $record->userid = $user3->id;
@@ -489,6 +314,17 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             'messageformat' => 1,   // This value is usually changed by external_format_text() function.
             'messagetrust' => $discussion1reply1->messagetrust,
             'attachment' => $discussion1reply1->attachment,
+            'messageinlinefiles' => array(
+                array(
+                    'filename' => $filename,
+                    'filepath' => '/',
+                    'filesize' => '27',
+                    'fileurl' => moodle_url::make_webservice_pluginfile_url($forum1context->id, 'mod_forum', 'post',
+                                    $discussion1reply1->id, '/', $filename),
+                    'timemodified' => $timepost,
+                    'mimetype' => 'image/jpeg',
+                )
+            ),
             'totalscore' => $discussion1reply1->totalscore,
             'mailnow' => $discussion1reply1->mailnow,
             'children' => array($discussion1reply2->id),
@@ -521,6 +357,31 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
         $this->assertEquals(1, count($posts['posts']));
 
+        // Test discussion tracking on not tracked forum.
+        $result = mod_forum_external::view_forum_discussion($discussion1->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::view_forum_discussion_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test posts have not been marked as read.
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion1->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        foreach ($posts['posts'] as $post) {
+            $this->assertFalse($post['postread']);
+        }
+
+        // Test discussion tracking on tracked forum.
+        $result = mod_forum_external::view_forum_discussion($discussion3->id);
+        $result = external_api::clean_returnvalue(mod_forum_external::view_forum_discussion_returns(), $result);
+        $this->assertTrue($result['status']);
+        $this->assertEmpty($result['warnings']);
+
+        // Test posts have been marked as read.
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion3->id, 'modified', 'DESC');
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        foreach ($posts['posts'] as $post) {
+            $this->assertTrue($post['postread']);
+        }
     }
 
     /**
@@ -696,7 +557,9 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
                 'usermodifiedpictureurl' => '',
                 'numreplies' => 3,
                 'numunread' => 0,
-                'pinned' => FORUM_DISCUSSION_UNPINNED
+                'pinned' => FORUM_DISCUSSION_UNPINNED,
+                'locked' => false,
+                'canreply' => false,
             );
 
         // Call the external function passing forum id.
@@ -825,8 +688,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
         $this->getDataGenerator()->enrol_user($otheruser->id, $course->id);
 
-        $post = mod_forum_external::add_discussion_post($discussion->firstpost, 'some subject', 'some text here...');
-        $post = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $post);
+        $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost, 'some subject', 'some text here...');
+        $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
 
         $posts = mod_forum_external::get_forum_discussion_posts($discussion->id);
         $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
@@ -834,14 +697,70 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(2, count($posts['posts']));
 
         $tested = false;
-        foreach ($posts['posts'] as $postel) {
-            if ($post['postid'] == $postel['id']) {
-                $this->assertEquals('some subject', $postel['subject']);
-                $this->assertEquals('some text here...', $postel['message']);
+        foreach ($posts['posts'] as $thispost) {
+            if ($createdpost['postid'] == $thispost['id']) {
+                $this->assertEquals('some subject', $thispost['subject']);
+                $this->assertEquals('some text here...', $thispost['message']);
                 $tested = true;
             }
         }
         $this->assertTrue($tested);
+
+        // Test inline and regular attachment in post
+        // Create a file in a draft area for inline attachments.
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $draftidattach = file_get_unused_draft_itemid();
+        self::setUser($user);
+        $usercontext = context_user::instance($user->id);
+        $filepath = '/';
+        $filearea = 'draft';
+        $component = 'user';
+        $filenameimg = 'shouldbeanimage.txt';
+        $filerecordinline = array(
+            'contextid' => $usercontext->id,
+            'component' => $component,
+            'filearea'  => $filearea,
+            'itemid'    => $draftidinlineattach,
+            'filepath'  => $filepath,
+            'filename'  => $filenameimg,
+        );
+        $fs = get_file_storage();
+
+        // Create a file in a draft area for regular attachments.
+        $filerecordattach = $filerecordinline;
+        $attachfilename = 'attachment.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        $options = array(array('name' => 'inlineattachmentsid', 'value' => $draftidinlineattach),
+                         array('name' => 'attachmentsid', 'value' => $draftidattach));
+        $dummytext = 'Here is an inline image: <img src="' . $CFG->wwwroot
+                     . "/draftfile.php/{$usercontext->id}/user/draft/{$draftidinlineattach}/{$filenameimg}"
+                     . '" alt="inlineimage">.';
+        $createdpost = mod_forum_external::add_discussion_post($discussion->firstpost, 'new post inline attachment',
+                                                               $dummytext, $options);
+        $createdpost = external_api::clean_returnvalue(mod_forum_external::add_discussion_post_returns(), $createdpost);
+
+        $posts = mod_forum_external::get_forum_discussion_posts($discussion->id);
+        $posts = external_api::clean_returnvalue(mod_forum_external::get_forum_discussion_posts_returns(), $posts);
+        // We receive the discussion and the post.
+        // Can't guarantee order of posts during tests.
+        $postfound = false;
+        foreach ($posts['posts'] as $thispost) {
+            if ($createdpost['postid'] == $thispost['id']) {
+                $this->assertEquals($createdpost['postid'], $thispost['id']);
+                $this->assertEquals($thispost['attachment'], 1, "There should be a non-inline attachment");
+                $this->assertCount(1, $thispost['attachments'], "There should be 1 attachment");
+                $this->assertEquals($thispost['attachments'][0]['filename'], $attachfilename, "There should be 1 attachment");
+                $this->assertContains('pluginfile.php', $thispost['message']);
+                $postfound = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($postfound);
 
         // Check not posting in groups the user is not member of.
         $group = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
@@ -857,8 +776,6 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
             mod_forum_external::add_discussion_post($discussion->firstpost, 'some subject', 'some text here...');
             $this->fail('Exception expected due to invalid permissions for posting.');
         } catch (moodle_exception $e) {
-            // Expect debugging since we are switching context, and this is something WS_SERVER mode don't like.
-            $this->assertDebuggingCalled();
             $this->assertEquals('nopostforum', $e->errorcode);
         }
 
@@ -868,7 +785,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
      * Test add_discussion. A basic test since all the API functions are already covered by unit tests.
      */
     public function test_add_discussion() {
-
+        global $CFG, $USER;
         $this->resetAfterTest(true);
 
         // Create courses to add the modules.
@@ -894,8 +811,8 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         }
 
         self::setAdminUser();
-        $discussion = mod_forum_external::add_discussion($forum->id, 'the subject', 'some text here...');
-        $discussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $discussion);
+        $createddiscussion = mod_forum_external::add_discussion($forum->id, 'the subject', 'some text here...');
+        $createddiscussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $createddiscussion);
 
         $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
         $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
@@ -903,7 +820,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(1, $discussions['discussions']);
         $this->assertCount(0, $discussions['warnings']);
 
-        $this->assertEquals($discussion['discussionid'], $discussions['discussions'][0]['discussion']);
+        $this->assertEquals($createddiscussion['discussionid'], $discussions['discussions'][0]['discussion']);
         $this->assertEquals(-1, $discussions['discussions'][0]['groupid']);
         $this->assertEquals('the subject', $discussions['discussions'][0]['subject']);
         $this->assertEquals('some text here...', $discussions['discussions'][0]['message']);
@@ -916,6 +833,67 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
         $this->assertCount(3, $discussions['discussions']);
         $this->assertEquals($discussion2pinned['discussionid'], $discussions['discussions'][0]['discussion']);
+
+        // Test inline and regular attachment in new discussion
+        // Create a file in a draft area for inline attachments.
+
+        $fs = get_file_storage();
+
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $draftidattach = file_get_unused_draft_itemid();
+
+        $usercontext = context_user::instance($USER->id);
+        $filepath = '/';
+        $filearea = 'draft';
+        $component = 'user';
+        $filenameimg = 'shouldbeanimage.txt';
+        $filerecord = array(
+            'contextid' => $usercontext->id,
+            'component' => $component,
+            'filearea'  => $filearea,
+            'itemid'    => $draftidinlineattach,
+            'filepath'  => $filepath,
+            'filename'  => $filenameimg,
+        );
+
+        // Create a file in a draft area for regular attachments.
+        $filerecordattach = $filerecord;
+        $attachfilename = 'attachment.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
+        $fs->create_file_from_string($filerecord, 'image contents (not really)');
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        $dummytext = 'Here is an inline image: <img src="' . $CFG->wwwroot .
+                    "/draftfile.php/{$usercontext->id}/user/draft/{$draftidinlineattach}/{$filenameimg}" .
+                    '" alt="inlineimage">.';
+
+        $options = array(array('name' => 'inlineattachmentsid', 'value' => $draftidinlineattach),
+                         array('name' => 'attachmentsid', 'value' => $draftidattach));
+        $createddiscussion = mod_forum_external::add_discussion($forum->id, 'the inline attachment subject',
+                                                                $dummytext, -1, $options);
+        $createddiscussion = external_api::clean_returnvalue(mod_forum_external::add_discussion_returns(), $createddiscussion);
+
+        $discussions = mod_forum_external::get_forum_discussions_paginated($forum->id);
+        $discussions = external_api::clean_returnvalue(mod_forum_external::get_forum_discussions_paginated_returns(), $discussions);
+
+        $this->assertCount(4, $discussions['discussions']);
+        $this->assertCount(0, $createddiscussion['warnings']);
+        // Can't guarantee order of posts during tests.
+        $postfound = false;
+        foreach ($discussions['discussions'] as $thisdiscussion) {
+            if ($createddiscussion['discussionid'] == $thisdiscussion['discussion']) {
+                $this->assertEquals($thisdiscussion['attachment'], 1, "There should be a non-inline attachment");
+                $this->assertCount(1, $thisdiscussion['attachments'], "There should be 1 attachment");
+                $this->assertEquals($thisdiscussion['attachments'][0]['filename'], $attachfilename, "There should be 1 attachment");
+                $this->assertNotContains('draftfile.php', $thisdiscussion['message']);
+                $this->assertContains('pluginfile.php', $thisdiscussion['message']);
+                $postfound = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($postfound);
     }
 
     /**

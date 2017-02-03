@@ -46,29 +46,29 @@ Feature: Add and configure blocks throughout the site
     And I press "Save changes"
     And I follow "Course 1"
     # The first block matching the pattern should be top-left block
-    And I should see "Comments" in the "//*[@id='region-pre' or @id='block-region-side-pre']/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' block ')]" "xpath_element"
+    And I should see "Comments" in the "//*[@id='region-pre' or @id='block-region-side-pre']/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' block ')]" "xpath_element"
 
-  Scenario: Blocks on the dashboard page cannot have roles assigned to them
+  Scenario: Blocks on the dashboard page can have roles assigned to them
     Given I log in as "manager1"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
     When I press "Customise this page"
-    Then I should not see "Assign roles in Navigation block"
+    Then I should see "Assign roles in Private files block"
 
   Scenario: Blocks on courses can have roles assigned to them
     Given I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Turn editing on"
+    And I add the "Search forums" block
     Then I should see "Assign roles in Search forums block"
 
   @javascript
   Scenario: Blocks can safely be customised
     Given I log in as "admin"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
+    And I am on homepage
     And I press "Customise this page"
     And I add the "HTML" block
     And I configure the "(new HTML block)" block
     And I set the following fields to these values:
-      | Block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt="
-      | Content     | Example
+      | Block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt=" |
+      | Content     | Example |
     When I press "Save changes"
     Then I should see "Course overview"

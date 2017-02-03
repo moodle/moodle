@@ -28,6 +28,7 @@ require('../config.php');
 require_once($CFG->dirroot.'/user/lib.php');
 require_once('change_password_form.php');
 require_once($CFG->libdir.'/authlib.php');
+require_once($CFG->dirroot.'/webservice/lib.php');
 
 $id     = optional_param('id', SITEID, PARAM_INT); // current course
 $return = optional_param('return', 0, PARAM_BOOL); // redirect after password change
@@ -120,6 +121,10 @@ if ($mform->is_cancelled()) {
 
     if (!empty($CFG->passwordchangelogout)) {
         \core\session\manager::kill_user_sessions($USER->id, session_id());
+    }
+
+    if (!empty($data->signoutofotherservices)) {
+        webservice::delete_user_ws_tokens($USER->id);
     }
 
     // Reset login lockout - we want to prevent any accidental confusion here.

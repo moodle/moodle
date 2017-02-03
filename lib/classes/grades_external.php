@@ -38,6 +38,8 @@ class core_grades_external extends external_api {
      *
      * @return external_function_parameters
      * @since Moodle 2.7
+     * @deprecated Moodle 3.2 MDL-51373 - Please do not call this function any more.
+     * @see gradereport_user_external::get_grade_items for a similar function
      */
     public static function get_grades_parameters() {
         return new external_function_parameters(
@@ -65,6 +67,8 @@ class core_grades_external extends external_api {
      * @param  array  $userids      Array of user ids
      * @return array                Array of grades
      * @since Moodle 2.7
+     * @deprecated Moodle 3.2 MDL-51373 - Please do not call this function any more.
+     * @see gradereport_user_external::get_grade_items for a similar function
      */
     public static function get_grades($courseid, $component = null, $activityid = null, $userids = array()) {
         global $CFG, $USER, $DB;
@@ -293,6 +297,8 @@ class core_grades_external extends external_api {
      * @param  int $iteminstance    Item instance
      * @param  int $itemnumber      Item number
      * @return grade_item           A grade_item instance
+     * @deprecated Moodle 3.2 MDL-51373 - Please do not call this function any more.
+     * @see gradereport_user_external::get_grade_items for a similar function
      */
     private static function get_grade_item($courseid, $itemtype, $itemmodule = null, $iteminstance = null, $itemnumber = null) {
         $gradeiteminstance = null;
@@ -311,6 +317,8 @@ class core_grades_external extends external_api {
      *
      * @return external_description
      * @since Moodle 2.7
+     * @deprecated Moodle 3.2 MDL-51373 - Please do not call this function any more.
+     * @see gradereport_user_external::get_grade_items for a similar function
      */
     public static function get_grades_returns() {
         return new external_single_structure(
@@ -403,6 +411,15 @@ class core_grades_external extends external_api {
             )
         );
 
+    }
+
+    /**
+     * Marking the method as deprecated.
+     *
+     * @return bool
+     */
+    public static function get_grades_is_deprecated() {
+        return true;
     }
 
     /**

@@ -34,7 +34,7 @@ define('AJAX_SCRIPT', true);
 define('NO_MOODLE_COOKIES', true);
 
 
-require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/webservice/lib.php');
 

@@ -72,10 +72,30 @@ class core_external_testcase extends externallib_advanced_testcase {
         $this->assertSame($corestring, $returnedstring);
 
         // String with two parameter but one is invalid (not named).
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $returnedstring = core_external::get_string('addservice', 'webservice', null,
                 array(array('value' => $service->name),
                       array('name' => 'id', 'value' => $service->id)));
+    }
+
+    /**
+     * Test get_string with HTML.
+     */
+    public function test_get_string_containing_html() {
+        $result = core_external::get_string('registrationinfo');
+        $actual = external_api::clean_returnvalue(core_external::get_string_returns(), $result);
+        $expected = get_string('registrationinfo', 'moodle');
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * Test get_string with arguments containing HTML.
+     */
+    public function test_get_string_with_args_containing_html() {
+        $result = core_external::get_string('added', 'moodle', null, [['value' => '<strong>Test</strong>']]);
+        $actual = external_api::clean_returnvalue(core_external::get_string_returns(), $result);
+        $expected = get_string('added', 'moodle', '<strong>Test</strong>');
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -115,6 +135,29 @@ class core_external_testcase extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_strings with HTML.
+     */
+    public function test_get_strings_containing_html() {
+        $result = core_external::get_strings([['stringid' => 'registrationinfo'], ['stringid' => 'loginaspasswordexplain']]);
+        $actual = external_api::clean_returnvalue(core_external::get_strings_returns(), $result);
+        $this->assertSame(get_string('registrationinfo', 'moodle'), $actual[0]['string']);
+        $this->assertSame(get_string('loginaspasswordexplain', 'moodle'), $actual[1]['string']);
+    }
+
+    /**
+     * Test get_strings with arguments containing HTML.
+     */
+    public function test_get_strings_with_args_containing_html() {
+        $result = core_external::get_strings([
+            ['stringid' => 'added', 'stringparams' => [['value' => '<strong>Test</strong>']]],
+            ['stringid' => 'loggedinas', 'stringparams' => [['value' => '<strong>Test</strong>']]]]
+        );
+        $actual = external_api::clean_returnvalue(core_external::get_strings_returns(), $result);
+        $this->assertSame(get_string('added', 'moodle', '<strong>Test</strong>'), $actual[0]['string']);
+        $this->assertSame(get_string('loggedinas', 'moodle', '<strong>Test</strong>'), $actual[1]['string']);
+    }
+
+    /**
      * Test get_component_strings
      */
     public function test_get_component_strings() {
@@ -134,5 +177,28 @@ class core_external_testcase extends externallib_advanced_testcase {
         foreach($componentstrings as $string) {
             $this->assertSame($string['string'], $wsstrings[$string['stringid']]);
         }
+    }
+
+    /**
+     * Test update_inplace_editable()
+     */
+    public function test_update_inplace_editable() {
+        $this->resetAfterTest(true);
+
+        // Call service for component that does not have inplace_editable callback.
+        try {
+            core_external::update_inplace_editable('tool_log', 'itemtype', 1, 'newvalue');
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertEquals('Error calling update processor', $e->getMessage());
+        }
+
+        // This is a very basic test for the return value of the external function.
+        // More detailed test for tag updating can be found in core_tag component.
+        $this->setAdminUser();
+        $tag = $this->getDataGenerator()->create_tag();
+        $res = core_external::update_inplace_editable('core_tag', 'tagname', $tag->id, 'new tag name');
+        $res = external_api::clean_returnvalue(core_external::update_inplace_editable_returns(), $res);
+        $this->assertEquals('new tag name', $res['value']);
     }
 }

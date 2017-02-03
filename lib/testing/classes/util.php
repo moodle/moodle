@@ -186,7 +186,7 @@ abstract class testing_util {
      * @return bool
      */
     public static function is_test_data_updated() {
-        global $CFG;
+        global $DB;
 
         $framework = self::get_framework();
 
@@ -206,7 +206,8 @@ abstract class testing_util {
             return false;
         }
 
-        $dbhash = get_config('core', $framework . 'test');
+        // A direct database request must be used to avoid any possible caching of an older value.
+        $dbhash = $DB->get_field('config', 'value', array('name' => $framework . 'test'));
         if ($hash !== $dbhash) {
             return false;
         }
@@ -685,7 +686,11 @@ abstract class testing_util {
             }
 
             if ($borkedmysql) {
-                if (empty($records) and isset($empties[$table])) {
+                if (empty($records)) {
+                    if (!isset($empties[$table])) {
+                        // Table has been modified and is not empty.
+                        $DB->delete_records($table, null);
+                    }
                     continue;
                 }
 
@@ -707,9 +712,8 @@ abstract class testing_util {
             }
 
             if (empty($records)) {
-                if (isset($empties[$table])) {
-                    // table was not modified and is empty
-                } else {
+                if (!isset($empties[$table])) {
+                    // Table has been modified and is not empty.
                     $DB->delete_records($table, array());
                 }
                 continue;
@@ -795,7 +799,7 @@ abstract class testing_util {
         if (file_exists(self::get_dataroot() . '/filedir')) {
             $handle = opendir(self::get_dataroot() . '/filedir');
             while (false !== ($item = readdir($handle))) {
-                if (in_array('filedir/' . $item, $childclassname::$datarootskiponreset)) {
+                if (in_array('filedir' . DIRECTORY_SEPARATOR . $item, $childclassname::$datarootskiponreset)) {
                     continue;
                 }
                 if (is_dir(self::get_dataroot()."/filedir/$item")) {
@@ -810,12 +814,13 @@ abstract class testing_util {
         make_temp_directory('');
         make_cache_directory('');
         make_localcache_directory('');
+        // Purge all data from the caches. This is required for consistency between tests.
+        // Any file caches that happened to be within the data root will have already been clearer (because we just deleted cache)
+        // and now we will purge any other caches as well.  This must be done before the cache_factory::reset() as that
+        // removes all definitions of caches and purge does not have valid caches to operate on.
+        cache_helper::purge_all();
         // Reset the cache API so that it recreates it's required directories as well.
         cache_factory::reset();
-        // Purge all data from the caches. This is required for consistency.
-        // Any file caches that happened to be within the data root will have already been clearer (because we just deleted cache)
-        // and now we will purge any other caches as well.
-        cache_helper::purge_all();
     }
 
     /**
@@ -829,15 +834,23 @@ abstract class testing_util {
         $output = '';
 
         // All developers have to understand English, do not localise!
+        $env = self::get_environment();
 
-        $release = null;
-        require("$CFG->dirroot/version.php");
-
-        $output .= "Moodle $release, $CFG->dbtype";
+        $output .= "Moodle ".$env['moodleversion'];
         if ($hash = self::get_git_hash()) {
             $output .= ", $hash";
         }
         $output .= "\n";
+
+        // Add php version.
+        require_once($CFG->libdir.'/environmentlib.php');
+        $output .= "Php: ". normalize_version($env['phpversion']);
+
+        // Add database type and version.
+        $output .= ", " . $env['dbtype'] . ": " . $env['dbversion'];
+
+        // OS details.
+        $output .= ", OS: " . $env['os'] . "\n";
 
         return $output;
     }
@@ -929,11 +942,25 @@ abstract class testing_util {
     }
 
     /**
+     * Delete tablesupdatedbyscenario file. This should be called before suite,
+     * to ensure full db reset.
+     */
+    public static function clean_tables_updated_by_scenario_list() {
+        $tablesupdatedfile = self::get_tables_updated_by_scenario_list_path();
+        if (file_exists($tablesupdatedfile)) {
+            unlink($tablesupdatedfile);
+        }
+
+        // Reset static cache of cli process.
+        self::reset_updated_table_list();
+    }
+
+    /**
      * Returns the path to the file which holds list of tables updated in scenario.
      * @return string
      */
     protected final static function get_tables_updated_by_scenario_list_path() {
-        return self::get_dataroot() . '/tablesupdatedbyscenario.txt';
+        return self::get_dataroot() . '/tablesupdatedbyscenario.json';
     }
 
     /**
@@ -1043,8 +1070,10 @@ abstract class testing_util {
         if (!file_exists($jsonfilepath)) {
 
             $listfiles = array();
-            $listfiles['filedir/.'] = 'filedir/.';
-            $listfiles['filedir/..'] = 'filedir/..';
+            $currentdir = 'filedir' . DIRECTORY_SEPARATOR . '.';
+            $parentdir = 'filedir' . DIRECTORY_SEPARATOR . '..';
+            $listfiles[$currentdir] = $currentdir;
+            $listfiles[$parentdir] = $parentdir;
 
             $filedir = self::get_dataroot() . '/filedir';
             if (file_exists($filedir)) {
@@ -1064,5 +1093,44 @@ abstract class testing_util {
             fwrite($fp, json_encode(array_values($listfiles)));
             fclose($fp);
         }
+    }
+
+    /**
+     * Return list of environment versions on which tests will run.
+     * Environment includes:
+     * - moodleversion
+     * - phpversion
+     * - dbtype
+     * - dbversion
+     * - os
+     *
+     * @return array
+     */
+    public static function get_environment() {
+        global $CFG, $DB;
+
+        $env = array();
+
+        // Add moodle version.
+        $release = null;
+        require("$CFG->dirroot/version.php");
+        $env['moodleversion'] = $release;
+
+        // Add php version.
+        $phpversion = phpversion();
+        $env['phpversion'] = $phpversion;
+
+        // Add database type and version.
+        $dbtype = $CFG->dbtype;
+        $dbinfo = $DB->get_server_info();
+        $dbversion = $dbinfo['version'];
+        $env['dbtype'] = $dbtype;
+        $env['dbversion'] = $dbversion;
+
+        // OS details.
+        $osdetails = php_uname('s') . " " . php_uname('r') . " " . php_uname('m');
+        $env['os'] = $osdetails;
+
+        return $env;
     }
 }

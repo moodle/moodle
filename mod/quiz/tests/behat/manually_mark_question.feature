@@ -53,8 +53,7 @@ Feature: Teachers can override the grade for any question
     And I press "Save"
     And I should see "That is not a valid number."
     And I set the field "Mark" to "10.0"
-    And I press "Save"
-    And I switch to the main window
+    And I press "Save" and switch to main window
     And I should see "Complete" in the "Manually graded 10 with comment: " "table_row"
     # This time is same as time the window is open. So wait for it to close before proceeding.
     And I wait "2" seconds

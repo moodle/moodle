@@ -322,7 +322,7 @@ function profile_delete_field($id) {
     // but show the field as missing until manually corrected to something else.
 
     // Need to rebuild course cache to update the info.
-    rebuild_course_cache();
+    rebuild_course_cache(0, true);
 
     // Try to remove the record from the database.
     $DB->delete_records('user_info_field', array('id' => $id));
@@ -437,10 +437,8 @@ function profile_list_datatypes() {
  */
 function profile_list_categories() {
     global $DB;
-    if (!$categories = $DB->get_records_menu('user_info_category', null, 'sortorder ASC', 'id, name')) {
-        $categories = array();
-    }
-    return $categories;
+    $categories = $DB->get_records_menu('user_info_category', null, 'sortorder ASC', 'id, name');
+    return array_map('format_string', $categories);
 }
 
 
@@ -572,7 +570,7 @@ function profile_edit_field($id, $datatype, $redirect) {
         if (empty($id)) {
             $strheading = get_string('profilecreatenewfield', 'admin', $datatypes[$datatype]);
         } else {
-            $strheading = get_string('profileeditfield', 'admin', $field->name);
+            $strheading = get_string('profileeditfield', 'admin', format_string($field->name));
         }
 
         // Print the page.

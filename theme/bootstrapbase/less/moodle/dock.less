@@ -51,7 +51,7 @@ body.has_dock {
         display: block;
         width: @dockWidth;
         margin: @dockTitleMargin;
-        padding:0;
+        padding: 0;
         cursor: pointer;
         h2 {
             .transform-test-heading;
@@ -108,8 +108,10 @@ body.has_dock {
         h2 {
             .nav-header;
             font-size: 1.1em;
-            padding:0;
+            padding: 0;
             margin: 0;
+            float: left;
+            max-width: 85%;
         }
         .commands {
             display: block;
@@ -134,26 +136,8 @@ body.has_dock {
     }
 }
 
-.dir-rtl {
-    &.has_dock #page {
-        padding-left: @gridGutterWidth;
-        padding-right: (@dockWidth + (@dockTitleMargin * 3));
-    }
-    #dock {
-        left: auto;
-        right: 0%;
-        .dockedtitle {
-            h2 {
-                line-height: @dockWidth - @dockTitleFontSize;
-            }
-        }
-    }
-    #dockeditempanel {
-        right: 100%;
-        .dockeditempanel_hd {
-            .commands {
-                text-align: left;
-            }
-        }
+@media (min-width: 768px) {
+    body.has_dock #page {
+        padding-left: 65px;
     }
 }

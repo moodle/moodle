@@ -7,7 +7,7 @@
     require_once($CFG->libdir.'/completionlib.php');
 
     $id          = optional_param('id', 0, PARAM_INT);
-    $name        = optional_param('name', '', PARAM_RAW);
+    $name        = optional_param('name', '', PARAM_TEXT);
     $edit        = optional_param('edit', -1, PARAM_BOOL);
     $hide        = optional_param('hide', 0, PARAM_INT);
     $show        = optional_param('show', 0, PARAM_INT);
@@ -17,7 +17,6 @@
     $move        = optional_param('move', 0, PARAM_INT);
     $marker      = optional_param('marker',-1 , PARAM_INT);
     $switchrole  = optional_param('switchrole',-1, PARAM_INT); // Deprecated, use course/switchrole.php instead.
-    $modchooser  = optional_param('modchooser', -1, PARAM_BOOL);
     $return      = optional_param('return', 0, PARAM_LOCALURL);
 
     $params = array();
@@ -104,10 +103,18 @@
 
         // Check user is allowed to see it.
         if (!$coursesections->uservisible) {
-            // Note: We actually already know they don't have this capability
-            // or uservisible would have been true; this is just to get the
-            // correct error message shown.
-            require_capability('moodle/course:viewhiddensections', $context);
+            // Check if coursesection has conditions affecting availability and if
+            // so, output availability info.
+            if ($coursesections->visible && $coursesections->availableinfo) {
+                $sectionname     = get_section_name($course, $coursesections);
+                $message = get_string('notavailablecourse', '', $sectionname);
+                redirect(course_get_url($course), $message, null, \core\output\notification::NOTIFY_ERROR);
+            } else {
+                // Note: We actually already know they don't have this capability
+                // or uservisible would have been true; this is just to get the
+                // correct error message shown.
+                require_capability('moodle/course:viewhiddensections', $context);
+            }
         }
     }
 
@@ -169,11 +176,6 @@
             } else {
                 redirect($PAGE->url);
             }
-        }
-        if (($modchooser == 1) && confirm_sesskey()) {
-            set_user_preference('usemodchooser', $modchooser);
-        } else if (($modchooser == 0) && confirm_sesskey()) {
-            set_user_preference('usemodchooser', $modchooser);
         }
 
         if (has_capability('moodle/course:sectionvisibility', $context)) {

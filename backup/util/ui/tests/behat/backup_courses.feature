@@ -15,7 +15,6 @@ Feature: Backup Moodle courses
       | data | C2 | data1 | Test data | Database description | 2 |
     And I log in as "admin"
 
-  @javascript
   Scenario: Backup a course providing options
     When I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
@@ -24,7 +23,6 @@ Feature: Backup Moodle courses
     And I should see "URL of backup"
     And I should see "Anonymize user information"
 
-  @javascript
   Scenario: Backup a course with default options
     When I backup "Course 1" course using this options:
       | Initial | Include calendar events | 0 |
@@ -40,13 +38,11 @@ Feature: Backup Moodle courses
     And "Include course logs" "checkbox" should exist
     And I press "Next"
 
-  @javascript
   Scenario: Backup a course without blocks
     When I backup "Course 1" course using this options:
       | 1 | setting_root_blocks | 0 |
     Then I should see "Course backup area"
 
-  @javascript
   Scenario: Backup selecting just one section
     When I backup "Course 2" course using this options:
       | Schema | Test data | 0 |
@@ -61,7 +57,6 @@ Feature: Backup Moodle courses
     And I should see "Test assign"
     And I should not see "Test data"
 
-  @javascript
   Scenario: Backup a course using the one click backup button
     When I perform a quick backup of course "Course 2"
     Then I should see "Restore course"

@@ -49,10 +49,11 @@ require_once($CFG->dirroot . '/mod/quiz/report/responses/first_or_all_responses_
 class quiz_responses_report extends quiz_attempts_report {
 
     public function display($quiz, $cm, $course) {
-        global $OUTPUT;
+        global $OUTPUT, $DB;
 
-        list($currentgroup, $students, $groupstudents, $allowed) =
-                $this->init('responses', 'quiz_responses_settings_form', $quiz, $cm, $course);
+        list($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins) = $this->init(
+                'responses', 'quiz_responses_settings_form', $quiz, $cm, $course);
+
         $options = new quiz_responses_options('responses', $quiz, $cm, $course);
 
         if ($fromform = $this->form->get_data()) {
@@ -63,13 +64,6 @@ class quiz_responses_report extends quiz_attempts_report {
         }
 
         $this->form->set_data($options->get_initial_form_data());
-
-        if ($options->attempts == self::ALL_WITH) {
-            // This option is only available to users who can access all groups in
-            // groups mode, so setting allowed to empty (which means all quiz attempts
-            // are accessible, is not a security porblem.
-            $allowed = array();
-        }
 
         // Load the required questions.
         $questions = quiz_report_get_significant_questions($quiz);
@@ -83,7 +77,7 @@ class quiz_responses_report extends quiz_attempts_report {
             $tableclassname = 'quiz_first_or_all_responses_table';
         }
         $table = new $tableclassname($quiz, $this->context, $this->qmsubselect,
-                $options, $groupstudents, $students, $questions, $options->get_url());
+                $options, $groupstudentsjoins, $studentsjoins, $questions, $options->get_url());
         $filename = quiz_report_download_filename(get_string('responsesfilename', 'quiz_responses'),
                 $courseshortname, $quiz->name);
         $table->is_downloading($options->download, $filename,
@@ -92,7 +86,30 @@ class quiz_responses_report extends quiz_attempts_report {
             raise_memory_limit(MEMORY_EXTRA);
         }
 
-        $this->process_actions($quiz, $cm, $currentgroup, $groupstudents, $allowed, $options->get_url());
+        $this->hasgroupstudents = false;
+        if (!empty($groupstudentsjoins->joins)) {
+            $sql = "SELECT DISTINCT u.id
+                      FROM {user} u
+                    $groupstudentsjoins->joins
+                     WHERE $groupstudentsjoins->wheres";
+            $this->hasgroupstudents = $DB->record_exists_sql($sql, $groupstudentsjoins->params);
+        }
+        $hasstudents = false;
+        if (!empty($studentsjoins->joins)) {
+            $sql = "SELECT DISTINCT u.id
+                    FROM {user} u
+                    $studentsjoins->joins
+                    WHERE $studentsjoins->wheres";
+            $hasstudents = $DB->record_exists_sql($sql, $studentsjoins->params);
+        }
+        if ($options->attempts == self::ALL_WITH) {
+            // This option is only available to users who can access all groups in
+            // groups mode, so setting allowed to empty (which means all quiz attempts
+            // are accessible, is not a security problem.
+            $allowedjoins = new \core\dml\sql_join();
+        }
+
+        $this->process_actions($quiz, $cm, $currentgroup, $groupstudentsjoins, $allowedjoins, $options->get_url());
 
         // Start output.
         if (!$table->is_downloading()) {
@@ -119,9 +136,9 @@ class quiz_responses_report extends quiz_attempts_report {
         if (!$table->is_downloading()) {
             if (!$hasquestions) {
                 echo quiz_no_questions_message($quiz, $cm, $this->context);
-            } else if (!$students) {
+            } else if (!$hasstudents) {
                 echo $OUTPUT->notification(get_string('nostudentsyet'));
-            } else if ($currentgroup && !$groupstudents) {
+            } else if ($currentgroup && !$this->hasgroupstudents) {
                 echo $OUTPUT->notification(get_string('nostudentsingroup'));
             }
 
@@ -129,10 +146,10 @@ class quiz_responses_report extends quiz_attempts_report {
             $this->form->display();
         }
 
-        $hasstudents = $students && (!$currentgroup || $groupstudents);
+        $hasstudents = $hasstudents && (!$currentgroup || $this->hasgroupstudents);
         if ($hasquestions && ($hasstudents || $options->attempts == self::ALL_WITH)) {
 
-            list($fields, $from, $where, $params) = $table->base_sql($allowed);
+            list($fields, $from, $where, $params) = $table->base_sql($allowedjoins);
 
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 

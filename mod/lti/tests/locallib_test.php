@@ -185,7 +185,8 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('http://moodle.org/this/is/moodle'));
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('https://moodle.org/this/is/moodle'));
         $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle'));
-        $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar'));
+        $this->assertEquals('moodle.org//this/is/moodle', lti_get_url_thumbprint('moodle.org/this/is/moodle?'));
+        $this->assertEquals('moodle.org//this/is/moodle?foo=bar', lti_get_url_thumbprint('moodle.org/this/is/moodle?foo=bar'));
     }
 
     /*
@@ -263,5 +264,334 @@ class mod_lti_locallib_testcase extends advanced_testcase {
         $this->assertGreaterThan(0, $rncount);
 
         $this->assertEquals($ncount, $rncount, 'All newline characters should be a combination of \r\n');
+    }
+
+    /**
+     * Tests lti_prepare_type_for_save's handling of the "Force SSL" configuration.
+     */
+    public function test_lti_prepare_type_for_save_forcessl() {
+        $type = new stdClass();
+        $config = new stdClass();
+
+        // Try when the forcessl config property is not set.
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(0, $config->lti_forcessl);
+        $this->assertEquals(0, $type->forcessl);
+
+        // Try when forcessl config property is set.
+        $config->lti_forcessl = 1;
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(1, $config->lti_forcessl);
+        $this->assertEquals(1, $type->forcessl);
+
+        // Try when forcessl config property is set to 0.
+        $config->lti_forcessl = 0;
+        lti_prepare_type_for_save($type, $config);
+        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertEquals(0, $config->lti_forcessl);
+        $this->assertEquals(0, $type->forcessl);
+    }
+
+    /**
+     * Tests lti_load_type_from_cartridge and lti_load_type_if_cartridge
+     */
+    public function test_lti_load_type_from_cartridge() {
+        $type = new stdClass();
+        $type->lti_toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
+
+        lti_load_type_if_cartridge($type);
+
+        $this->assertEquals('Example tool', $type->lti_typename);
+        $this->assertEquals('Example tool description', $type->lti_description);
+        $this->assertEquals('http://www.example.com/lti/provider.php', $type->lti_toolurl);
+        $this->assertEquals('http://download.moodle.org/unittest/test.jpg', $type->lti_icon);
+        $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $type->lti_secureicon);
+    }
+
+    /**
+     * Tests lti_load_tool_from_cartridge and lti_load_tool_if_cartridge
+     */
+    public function test_lti_load_tool_from_cartridge() {
+        $lti = new stdClass();
+        $lti->toolurl = $this->getExternalTestFileUrl('/ims_cartridge_basic_lti_link.xml');
+
+        lti_load_tool_if_cartridge($lti);
+
+        $this->assertEquals('Example tool', $lti->name);
+        $this->assertEquals('Example tool description', $lti->intro);
+        $this->assertEquals('http://www.example.com/lti/provider.php', $lti->toolurl);
+        $this->assertEquals('https://www.example.com/lti/provider.php', $lti->securetoolurl);
+        $this->assertEquals('http://download.moodle.org/unittest/test.jpg', $lti->icon);
+        $this->assertEquals('https://download.moodle.org/unittest/test.jpg', $lti->secureicon);
+    }
+
+    /**
+     * Tests for lti_build_content_item_selection_request().
+     */
+    public function test_lti_build_content_item_selection_request() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        // Create a tool proxy.
+        $proxy = mod_lti_external::create_tool_proxy('Test proxy', $this->getExternalTestFileUrl('/test.html'), array(), array());
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $data = new stdClass();
+        $data->lti_contentitem = true;
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->toolproxyid = $proxy->id;
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $typeid = lti_add_type($type, $data);
+
+        $typeconfig = lti_get_type_config($typeid);
+
+        $course = $this->getDataGenerator()->create_course();
+        $returnurl = new moodle_url('/');
+
+        // Default parameters.
+        $result = lti_build_content_item_selection_request($typeid, $course, $returnurl);
+        $this->assertNotEmpty($result);
+        $this->assertNotEmpty($result->params);
+        $this->assertNotEmpty($result->url);
+        $params = $result->params;
+        $url = $result->url;
+        $this->assertEquals($typeconfig['toolurl'], $url);
+        $this->assertEquals('ContentItemSelectionRequest', $params['lti_message_type']);
+        $this->assertEquals(LTI_VERSION_2, $params['lti_version']);
+        $this->assertEquals('application/vnd.ims.lti.v1.ltilink', $params['accept_media_types']);
+        $this->assertEquals('frame,iframe,window', $params['accept_presentation_document_targets']);
+        $this->assertEquals($returnurl->out(false), $params['content_item_return_url']);
+        $this->assertEquals('false', $params['accept_unsigned']);
+        $this->assertEquals('false', $params['accept_multiple']);
+        $this->assertEquals('false', $params['accept_copy_advice']);
+        $this->assertEquals('false', $params['auto_create']);
+        $this->assertEquals($type->name, $params['title']);
+        $this->assertFalse(isset($params['resource_link_id']));
+        $this->assertFalse(isset($params['resource_link_title']));
+        $this->assertFalse(isset($params['resource_link_description']));
+        $this->assertFalse(isset($params['launch_presentation_return_url']));
+        $this->assertFalse(isset($params['lis_result_sourcedid']));
+
+        // Custom parameters.
+        $title = 'My custom title';
+        $text = 'This is the tool description';
+        $mediatypes = ['image/*', 'video/*'];
+        $targets = ['embed', 'iframe'];
+        $result = lti_build_content_item_selection_request($typeid, $course, $returnurl, $title, $text, $mediatypes, $targets,
+            true, true, true, true, true);
+        $this->assertNotEmpty($result);
+        $this->assertNotEmpty($result->params);
+        $this->assertNotEmpty($result->url);
+        $params = $result->params;
+        $this->assertEquals(implode(',', $mediatypes), $params['accept_media_types']);
+        $this->assertEquals(implode(',', $targets), $params['accept_presentation_document_targets']);
+        $this->assertEquals('true', $params['accept_unsigned']);
+        $this->assertEquals('true', $params['accept_multiple']);
+        $this->assertEquals('true', $params['accept_copy_advice']);
+        $this->assertEquals('true', $params['auto_create']);
+        $this->assertEquals($title, $params['title']);
+        $this->assertEquals($text, $params['text']);
+
+        // Invalid flag values.
+        $result = lti_build_content_item_selection_request($typeid, $course, $returnurl, $title, $text, $mediatypes, $targets,
+            'aa', -1, 0, 1, 0xabc);
+        $this->assertNotEmpty($result);
+        $this->assertNotEmpty($result->params);
+        $this->assertNotEmpty($result->url);
+        $params = $result->params;
+        $this->assertEquals(implode(',', $mediatypes), $params['accept_media_types']);
+        $this->assertEquals(implode(',', $targets), $params['accept_presentation_document_targets']);
+        $this->assertEquals('false', $params['accept_unsigned']);
+        $this->assertEquals('false', $params['accept_multiple']);
+        $this->assertEquals('false', $params['accept_copy_advice']);
+        $this->assertEquals('false', $params['auto_create']);
+        $this->assertEquals($title, $params['title']);
+        $this->assertEquals($text, $params['text']);
+    }
+
+    /**
+     * Test for lti_build_content_item_selection_request() with nonexistent tool type ID parameter.
+     */
+    public function test_lti_build_content_item_selection_request_invalid_tooltype() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $returnurl = new moodle_url('/');
+
+        // Should throw Exception on non-existent tool type.
+        $this->expectException('moodle_exception');
+        lti_build_content_item_selection_request(1, $course, $returnurl);
+    }
+
+    /**
+     * Test for lti_build_content_item_selection_request() with invalid media types parameter.
+     */
+    public function test_lti_build_content_item_selection_request_invalid_mediatypes() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $data = new stdClass();
+        $data->lti_contentitem = true;
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $typeid = lti_add_type($type, $data);
+        $course = $this->getDataGenerator()->create_course();
+        $returnurl = new moodle_url('/');
+
+        // Should throw coding_exception on non-array media types.
+        $mediatypes = 'image/*,video/*';
+        $this->expectException('coding_exception');
+        lti_build_content_item_selection_request($typeid, $course, $returnurl, '', '', $mediatypes);
+    }
+
+    /**
+     * Test for lti_build_content_item_selection_request() with invalid presentation targets parameter.
+     */
+    public function test_lti_build_content_item_selection_request_invalid_presentationtargets() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type, associated with that proxy.
+        $type = new stdClass();
+        $data = new stdClass();
+        $data->lti_contentitem = true;
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool";
+        $type->description = "Example description";
+        $type->baseurl = $this->getExternalTestFileUrl('/test.html');
+
+        $typeid = lti_add_type($type, $data);
+        $course = $this->getDataGenerator()->create_course();
+        $returnurl = new moodle_url('/');
+
+        // Should throw coding_exception on non-array presentation targets.
+        $targets = 'frame,iframe';
+        $this->expectException('coding_exception');
+        lti_build_content_item_selection_request($typeid, $course, $returnurl, '', '', [], $targets);
+    }
+
+    /**
+     * Provider for test_lti_get_best_tool_by_url.
+     *
+     * @return array of [urlToTest, expectedTool, allTools]
+     */
+    public function lti_get_best_tool_by_url_provider() {
+        $tools = [
+            (object) [
+                'name' => 'Here',
+                'baseurl' => 'https://example.com/i/am/?where=here',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'There',
+                'baseurl' => 'https://example.com/i/am/?where=there',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'Not here',
+                'baseurl' => 'https://example.com/i/am/?where=not/here',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'Here',
+                'baseurl' => 'https://example.com/i/am/',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'Here',
+                'baseurl' => 'https://example.com/i/was',
+                'tooldomain' => 'example.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+            (object) [
+                'name' => 'Here',
+                'baseurl' => 'https://badexample.com/i/am/?where=here',
+                'tooldomain' => 'badexample.com',
+                'state' => LTI_TOOL_STATE_CONFIGURED,
+                'course' => SITEID
+            ],
+        ];
+
+        $data = [
+            [
+                'url' => $tools[0]->baseurl,
+                'expected' => $tools[0],
+            ],
+            [
+                'url' => $tools[1]->baseurl,
+                'expected' => $tools[1],
+            ],
+            [
+                'url' => $tools[2]->baseurl,
+                'expected' => $tools[2],
+            ],
+            [
+                'url' => $tools[3]->baseurl,
+                'expected' => $tools[3],
+            ],
+            [
+                'url' => $tools[4]->baseurl,
+                'expected' => $tools[4],
+            ],
+            [
+                'url' => $tools[5]->baseurl,
+                'expected' => $tools[5],
+            ],
+            [
+                'url' => 'https://nomatch.com/i/am/',
+                'expected' => null
+            ],
+            [
+                'url' => 'https://example.com',
+                'expected' => null
+            ],
+            [
+                'url' => 'https://example.com/i/am/?where=unknown',
+                'expected' => $tools[3]
+            ]
+        ];
+
+        // Construct the final array as required by the provider API. Each row
+        // of the array contains the URL to test, the expected tool, and
+        // the complete list of tools.
+        return array_map(function($data) use ($tools) {
+            return [$data['url'], $data['expected'], $tools];
+        }, $data);
+    }
+
+    /**
+     * Test lti_get_best_tool_by_url.
+     *
+     * @dataProvider lti_get_best_tool_by_url_provider
+     * @param string $url The URL to test.
+     * @param object $expected The expected tool matching the URL.
+     * @param array $tools The pool of tools to match the URL with.
+     */
+    public function test_lti_get_best_tool_by_url($url, $expected, $tools) {
+        $actual = lti_get_best_tool_by_url($url, $tools, null);
+        $this->assertSame($expected, $actual);
     }
 }

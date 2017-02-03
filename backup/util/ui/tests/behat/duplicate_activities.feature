@@ -4,7 +4,6 @@ Feature: Duplicate activities
   As a teacher
   I need to duplicate activities inside the same course
 
-  @javascript
   Scenario: Duplicate an activity
     Given the following "courses" exist:
       | fullname | shortname | category |
@@ -23,12 +22,10 @@ Feature: Duplicate activities
       | Description | Test database description |
     And I duplicate "Test database name" activity
     And I wait until section "1" is available
-    And I open "Test database name" actions menu
     And I click on "Edit settings" "link" in the "Test database name" activity
     And I set the following fields to these values:
       | Name | Original database name |
     And I press "Save and return to course"
-    And I open "Test database name" actions menu
     And I click on "Edit settings" "link" in the "Test database name" activity
     And I set the following fields to these values:
       | Name | Duplicated database name |

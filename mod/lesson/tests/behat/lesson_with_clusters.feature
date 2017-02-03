@@ -20,7 +20,6 @@ Feature: In a lesson activity, students can see questions in random order
     And I follow "Course 1"
     And I turn editing mode on
 
-  @javascript
   Scenario: Lesson with two clusters
     Given I add a "Lesson" to section "1" and I fill the form with:
       | Name | Lesson with clusters |
@@ -33,7 +32,7 @@ Feature: In a lesson activity, students can see questions in random order
       | id_answer_editor_0 | Next page |
       | id_jumpto_0 | Next page |
     And I press "Save page"
-    And I set the field "qtype" to "Add a content page"
+    And I select "Add a content page" from the "qtype" singleselect
     And I set the following fields to these values:
       | Page title | Second page name |
       | Page contents | Second page contents |
@@ -76,7 +75,7 @@ Feature: In a lesson activity, students can see questions in random order
     And I press "Save page"
     And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][6]" "xpath_element"
     And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][7]" "xpath_element"
-        And I set the following fields to these values:
+    And I set the following fields to these values:
       | Page title | Third page name |
       | Page contents | Content page after cluster 1 |
       | id_answer_editor_0 | Next page |
@@ -115,7 +114,7 @@ Feature: In a lesson activity, students can see questions in random order
     And I press "Save page"
     And I click on "Add an end of cluster" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][11]" "xpath_element"
     And I click on "Add a content page" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][12]" "xpath_element"
-        And I set the following fields to these values:
+    And I set the following fields to these values:
       | Page title | Fourth page name |
       | Page contents | Content page after cluster 2 |
       | id_answer_editor_0 | Next page |

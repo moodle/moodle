@@ -250,8 +250,8 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
         $chats = external_api::clean_returnvalue(mod_chat_external::get_chats_by_courses_returns(), $chats);
         $this->assertCount(1, $chats['chats']);
         $this->assertEquals('First Chat', $chats['chats'][0]['name']);
-        // We see 11 fields.
-        $this->assertCount(11, $chats['chats'][0]);
+        // We see 12 fields.
+        $this->assertCount(12, $chats['chats'][0]);
 
         // As Student you cannot see some chat properties like 'section'.
         $this->assertFalse(isset($chats['chats'][0]['section']));
@@ -272,8 +272,8 @@ class mod_chat_external_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(1, $chats['chats']);
         $this->assertEquals('Second Chat', $chats['chats'][0]['name']);
-        // We see 16 fields.
-        $this->assertCount(16, $chats['chats'][0]);
+        // We see 17 fields.
+        $this->assertCount(17, $chats['chats'][0]);
         // As an Admin you can see some chat properties like 'section'.
         $this->assertEquals(0, $chats['chats'][0]['section']);
 

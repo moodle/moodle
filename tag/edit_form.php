@@ -65,7 +65,7 @@ class tag_edit_form extends moodleform {
         $mform->addElement('editor', 'description_editor', get_string('description', 'tag'), null, $this->_customdata['editoroptions']);
 
         if (has_capability('moodle/tag:manage', $systemcontext)) {
-           $mform->addElement('checkbox', 'tagtype', get_string('officialtag', 'tag'));
+            $mform->addElement('checkbox', 'isstandard', get_string('standardtag', 'tag'));
         }
 
         $mform->addElement('tags', 'relatedtags', get_string('relatedtags', 'tag'),

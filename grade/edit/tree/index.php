@@ -30,8 +30,7 @@ require_once $CFG->dirroot.'/grade/edit/tree/lib.php';
 $courseid        = required_param('id', PARAM_INT);
 $action          = optional_param('action', 0, PARAM_ALPHA);
 $eid             = optional_param('eid', 0, PARAM_ALPHANUM);
-$category        = optional_param('category', null, PARAM_INT);
-$aggregationtype = optional_param('aggregationtype', null, PARAM_INT);
+$weightsadjusted = optional_param('weightsadjusted', 0, PARAM_INT);
 
 $url = new moodle_url('/grade/edit/tree/index.php', array('id' => $courseid));
 $PAGE->set_url($url);
@@ -46,39 +45,11 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/grade:manage', $context);
 
-// todo $PAGE->requires->js_module() should be used here instead
-$PAGE->requires->js('/grade/edit/tree/functions.js');
+$PAGE->requires->js_call_amd('core_grades/edittree_index', 'enhance');
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
 $returnurl = $gpr->get_return_url(null);
-
-// Change category aggregation if requested
-if (!is_null($category) && !is_null($aggregationtype) && confirm_sesskey()) {
-    if (!$grade_category = grade_category::fetch(array('id'=>$category, 'courseid'=>$courseid))) {
-        print_error('invalidcategoryid');
-    }
-
-    $data = new stdClass();
-    $data->aggregation = $aggregationtype;
-    grade_category::set_properties($grade_category, $data);
-    $grade_category->update();
-
-    grade_regrade_final_grades($courseid);
-}
-
-//first make sure we have proper final grades - we need it for locking changes
-$normalisationmessage = null;
-
-$originalweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
-
-grade_regrade_final_grades($courseid);
-
-$alteredweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
-
-if (array_diff($originalweights, $alteredweights)) {
-    $normalisationmessage = get_string('weightsadjusted', 'grades');
-}
 
 // get the grading tree object
 // note: total must be first for moving to work correctly, if you want it last moving code must be rewritten!
@@ -233,15 +204,32 @@ if ($data = data_submitted() and confirm_sesskey()) {
             $recreatetree = true;
         }
     }
+}
 
-    $originalweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
+$originalweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
 
-    grade_regrade_final_grades($courseid);
+/**
+ * Callback function to adjust the URL if weights changed after the
+ * regrade.
+ *
+ * @param int $courseid The course ID
+ * @param array $originalweights The weights before the regrade
+ * @param int $weightsadjusted Whether weights have been adjusted
+ * @return moodle_url A URL to redirect to after regrading when a progress bar is displayed.
+ */
+$grade_edit_tree_index_checkweights = function() use ($courseid, $originalweights, &$weightsadjusted) {
+    global $PAGE;
 
     $alteredweights = grade_helper::fetch_all_natural_weights_for_course($courseid);
     if (array_diff($originalweights, $alteredweights)) {
-        $normalisationmessage = get_string('weightsadjusted', 'grades');
+        $weightsadjusted = 1;
+        return new moodle_url($PAGE->url, array('weightsadjusted' => $weightsadjusted));
     }
+    return $PAGE->url;
+};
+
+if (grade_regrade_final_grades_if_required($course, $grade_edit_tree_index_checkweights)) {
+    $recreatetree = true;
 }
 
 print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup', 'grades'));
@@ -249,42 +237,34 @@ print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');
 
-echo '<form id="gradetreeform" method="post" action="'.$returnurl.'">';
-echo '<div>';
-echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-
 //did we update something in the db and thus invalidate $grade_edit_tree?
 if ($recreatetree) {
     $grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
 }
+
+$bulkmoveoptions = ['' => get_string('choosedots')] + $grade_edit_tree->categories;
+$tpldata = (object) [
+    'actionurl' => $returnurl,
+    'sesskey' => sesskey(),
+    'showsave' => !$moving,
+    'showbulkmove' => !$moving && count($grade_edit_tree->categories) > 1,
+    'bulkmoveoptions' => array_map(function($option) use ($bulkmoveoptions) {
+        return [
+            'name' => $bulkmoveoptions[$option],
+            'value' => $option
+        ];
+    }, array_keys($bulkmoveoptions))
+];
+
 // Check to see if we have a normalisation message to send.
-if (!empty($normalisationmessage)) {
-    echo $OUTPUT->notification($normalisationmessage, 'notifymessage');
+if ($weightsadjusted) {
+    $notification = new \core\output\notification(get_string('weightsadjusted', 'grades'), \core\output\notification::NOTIFY_INFO);
+    $tpldata->notification = $notification->export_for_template($OUTPUT);
 }
 
-echo html_writer::table($grade_edit_tree->table);
+$tpldata->table = html_writer::table($grade_edit_tree->table);
 
-echo '<div id="gradetreesubmit">';
-if (!$moving) {
-    echo '<input class="advanced" type="submit" value="'.get_string('savechanges').'" />';
-}
-
-// We don't print a bulk move menu if there are no other categories than course category
-if (!$moving && count($grade_edit_tree->categories) > 1) {
-    echo '<br /><br />';
-    echo '<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput" />';
-    $attributes = array('id'=>'menumoveafter', 'class' => 'ignoredirty');
-    echo html_writer::label(get_string('moveselectedto', 'grades'), 'menumoveafter');
-    echo html_writer::select($grade_edit_tree->categories, 'moveafter', '', array(''=>'choosedots'), $attributes);
-    $OUTPUT->add_action_handler(new component_action('change', 'submit_bulk_move'), 'menumoveafter');
-    echo '<div id="noscriptgradetreeform" class="hiddenifjs">
-            <input type="submit" value="'.get_string('go').'" />
-          </div>';
-}
-
-echo '</div>';
-
-echo '</div></form>';
+echo $OUTPUT->render_from_template('core_grades/edit_tree', $tpldata);
 
 echo $OUTPUT->box_end();
 

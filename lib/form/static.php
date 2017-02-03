@@ -26,6 +26,7 @@
  */
 
 require_once("HTML/QuickForm/static.php");
+require_once('templatable_form_element.php');
 
 /**
  * Text type element
@@ -37,7 +38,11 @@ require_once("HTML/QuickForm/static.php");
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_static extends HTML_QuickForm_static{
+class MoodleQuickForm_static extends HTML_QuickForm_static implements templatable {
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
+
     /** @var string Form element type */
     var $_elementTemplateType='static';
 
@@ -81,5 +86,12 @@ class MoodleQuickForm_static extends HTML_QuickForm_static{
      */
     function getElementTemplateType(){
         return $this->_elementTemplateType;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+        $context['html'] = $this->toHtml();
+        $context['staticlabel'] = true;
+        return $context;
     }
 }

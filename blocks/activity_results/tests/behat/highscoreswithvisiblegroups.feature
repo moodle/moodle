@@ -1,5 +1,5 @@
 @block @block_activity_results
-Feature: The activity results block displays student scores
+Feature: The activity results block displays student in visible groups scores
   In order to be display student scores
   As a user
   I need to see the activity results block
@@ -50,7 +50,7 @@ Feature: The activity results block displays student scores
       | assignsubmission_file_enabled | 0 |
       | Group mode | Visible groups |
     And I follow "Course 1"
-    And I navigate to "Grades" node in "Course administration"
+    And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"

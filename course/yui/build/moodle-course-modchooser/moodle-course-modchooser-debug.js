@@ -7,11 +7,11 @@ YUI.add('moodle-course-modchooser', function (Y, NAME) {
  */
 
 var CSS = {
-    PAGECONTENT : 'body',
+    PAGECONTENT: 'body',
     SECTION: null,
-    SECTIONMODCHOOSER : 'span.section-modchooser-link',
-    SITEMENU : 'div.block_site_main_menu',
-    SITETOPIC : 'div.sitetopic'
+    SECTIONMODCHOOSER: 'span.section-modchooser-link',
+    SITEMENU: '.block_site_main_menu',
+    SITETOPIC: 'div.sitetopic'
 };
 
 var MODCHOOSERNAME = 'course-modchooser';
@@ -36,14 +36,14 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @type Number
      * @default null
      */
-    sectionid : null,
+    sectionid: null,
 
     /**
      * Set up the activity chooser.
      *
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         var sectionclass = M.course.format.get_sectionwrapperclass();
         if (sectionclass) {
             CSS.SECTION = '.' + sectionclass;
@@ -56,9 +56,6 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
         // Initialize existing sections and register for dynamically created sections
         this.setup_for_section();
         M.course.coursebase.register_module(this);
-
-        // Catch the page toggle
-        Y.all('.block_settings #settingsnav .type_course .modchoosertoggle a').on('click', this.toggle_mod_chooser, this);
     },
 
     /**
@@ -68,7 +65,7 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @method setup_for_section
      * @param baseselector The selector to limit scope to
      */
-    setup_for_section : function(baseselector) {
+    setup_for_section: function(baseselector) {
         if (!baseselector) {
             baseselector = CSS.PAGECONTENT;
         }
@@ -99,7 +96,7 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @private
      * @param baseselector The selector to limit scope to
      */
-    _setup_for_section : function(section) {
+    _setup_for_section: function(section) {
         var chooserspan = section.one(CSS.SECTIONMODCHOOSER);
         if (!chooserspan) {
             return;
@@ -117,7 +114,7 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @method display_mod_chooser
      * @param {EventFacade} e Triggering Event
      */
-    display_mod_chooser : function (e) {
+    display_mod_chooser: function(e) {
         // Set the section for this version of the dialogue
         if (e.target.ancestor(CSS.SITETOPIC)) {
             // The site topic has a sectionid of 1
@@ -133,62 +130,6 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
     },
 
     /**
-     * Toggle availability of the activity chooser.
-     *
-     * @method toggle_mod_chooser
-     * @param {EventFacade} e
-     */
-    toggle_mod_chooser : function(e) {
-        // Get the add section link
-        var modchooserlinks = Y.all('div.addresourcemodchooser');
-
-        // Get the dropdowns
-        var dropdowns = Y.all('div.addresourcedropdown');
-
-        if (modchooserlinks.size() === 0) {
-            // Continue with non-js action if there are no modchoosers to add
-            return;
-        }
-
-        // We need to update the text and link
-        var togglelink = Y.one('.block_settings #settingsnav .type_course .modchoosertoggle a');
-
-        // The actual text is in the last child
-        var toggletext = togglelink.get('lastChild');
-
-        var usemodchooser;
-        // Determine whether they're currently hidden
-        if (modchooserlinks.item(0).hasClass('visibleifjs')) {
-            // The modchooser is currently visible, hide it
-            usemodchooser = 0;
-            modchooserlinks
-                .removeClass('visibleifjs')
-                .addClass('hiddenifjs');
-            dropdowns
-                .addClass('visibleifjs')
-                .removeClass('hiddenifjs');
-            toggletext.set('data', M.util.get_string('modchooserenable', 'moodle'));
-            togglelink.set('href', togglelink.get('href').replace('off', 'on'));
-        } else {
-            // The modchooser is currently not visible, show it
-            usemodchooser = 1;
-            modchooserlinks
-                .addClass('visibleifjs')
-                .removeClass('hiddenifjs');
-            dropdowns
-                .removeClass('visibleifjs')
-                .addClass('hiddenifjs');
-            toggletext.set('data', M.util.get_string('modchooserdisable', 'moodle'));
-            togglelink.set('href', togglelink.get('href').replace('on', 'off'));
-        }
-
-        M.util.set_user_preference('usemodchooser', usemodchooser);
-
-        // Prevent the page from reloading
-        e.preventDefault();
-    },
-
-    /**
      * Helper function to set the value of a hidden radio button when a
      * selection is made.
      *
@@ -196,7 +137,7 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @param {String} thisoption The selected option value
      * @private
      */
-    option_selected : function(thisoption) {
+    option_selected: function(thisoption) {
         // Add the sectionid to the URL.
         this.hiddenRadioValue.setAttrs({
             name: 'jump',
@@ -205,8 +146,8 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
     }
 },
 {
-    NAME : MODCHOOSERNAME,
-    ATTRS : {
+    NAME: MODCHOOSERNAME,
+    ATTRS: {
         /**
          * The maximum height (in pixels) of the activity chooser.
          *
@@ -214,8 +155,8 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
          * @type Number
          * @default 800
          */
-        maxheight : {
-            value : 800
+        maxheight: {
+            value: 800
         }
     }
 });

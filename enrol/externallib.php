@@ -300,7 +300,7 @@ class core_enrol_external extends external_api {
         $params = self::validate_parameters(self::get_users_courses_parameters(), array('userid'=>$userid));
 
         $courses = enrol_get_users_courses($params['userid'], true, 'id, shortname, fullname, idnumber, visible,
-                   summary, summaryformat, format, showgrades, lang, enablecompletion');
+                   summary, summaryformat, format, showgrades, lang, enablecompletion, category');
         $result = array();
 
         foreach ($courses as $course) {
@@ -323,12 +323,24 @@ class core_enrol_external extends external_api {
 
             list($course->summary, $course->summaryformat) =
                 external_format_text($course->summary, $course->summaryformat, $context->id, 'course', 'summary', null);
+            $course->fullname = external_format_string($course->fullname, $context->id);
+            $course->shortname = external_format_string($course->shortname, $context->id);
 
-            $result[] = array('id' => $course->id, 'shortname' => $course->shortname, 'fullname' => $course->fullname,
-                'idnumber' => $course->idnumber, 'visible' => $course->visible, 'enrolledusercount' => $enrolledusercount,
-                'summary' => $course->summary, 'summaryformat' => $course->summaryformat, 'format' => $course->format,
-                'showgrades' => $course->showgrades, 'lang' => $course->lang, 'enablecompletion' => $course->enablecompletion
-                );
+            $result[] = array(
+                'id' => $course->id,
+                'shortname' => $course->shortname,
+                'fullname' => $course->fullname,
+                'idnumber' => $course->idnumber,
+                'visible' => $course->visible,
+                'enrolledusercount' => $enrolledusercount,
+                'summary' => $course->summary,
+                'summaryformat' => $course->summaryformat,
+                'format' => $course->format,
+                'showgrades' => $course->showgrades,
+                'lang' => $course->lang,
+                'enablecompletion' => $course->enablecompletion,
+                'category' => $course->category
+            );
         }
 
         return $result;
@@ -355,7 +367,8 @@ class core_enrol_external extends external_api {
                     'showgrades' => new external_value(PARAM_BOOL, 'true if grades are shown, otherwise false', VALUE_OPTIONAL),
                     'lang'      => new external_value(PARAM_LANG, 'forced course language', VALUE_OPTIONAL),
                     'enablecompletion' => new external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
-                                                                VALUE_OPTIONAL)
+                                                                VALUE_OPTIONAL),
+                    'category' => new external_value(PARAM_INT, 'course category id', VALUE_OPTIONAL),
                 )
             )
         );
@@ -651,9 +664,7 @@ class core_enrol_external extends external_api {
         global $DB;
 
         $params = self::validate_parameters(self::get_course_enrolment_methods_parameters(), array('courseid' => $courseid));
-
-        // Note that we can't use validate_context because the user is not enrolled in the course.
-        require_login(null, false, null, false, true);
+        self::validate_context(context_system::instance());
 
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
         $context = context_course::instance($course->id);
@@ -837,305 +848,5 @@ class core_role_external extends external_api {
      */
     public static function unassign_roles_returns() {
         return null;
-    }
-}
-
-
-/**
- * Deprecated enrol and role external functions
- *
- * @package    core_enrol
- * @copyright  2010 Jerome Mouneyrac
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since Moodle 2.0
- * @deprecated Moodle 2.2 MDL-29106 - Please do not use this class any more.
- * @see core_enrol_external
- * @see core_role_external
- */
-class moodle_enrol_external extends external_api {
-
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users_parameters()
-     */
-    public static function get_enrolled_users_parameters() {
-        return new external_function_parameters(
-            array(
-                'courseid'       => new external_value(PARAM_INT, 'Course id'),
-                'withcapability' => new external_value(PARAM_CAPABILITY, 'User should have this capability', VALUE_DEFAULT, null),
-                'groupid'        => new external_value(PARAM_INT, 'Group id, null means all groups', VALUE_DEFAULT, null),
-                'onlyactive'     => new external_value(PARAM_INT, 'True means only active, false means all participants', VALUE_DEFAULT, 0),
-            )
-        );
-    }
-
-    /**
-     * Get list of course participants.
-     *
-     * @param int $courseid
-     * @param text $withcapability
-     * @param int $groupid
-     * @param bool $onlyactive
-     * @return array of course participants
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users()
-     */
-    public static function get_enrolled_users($courseid, $withcapability = null, $groupid = null, $onlyactive = false) {
-        global $DB, $CFG, $USER;
-
-        // Do basic automatic PARAM checks on incoming data, using params description
-        // If any problems are found then exceptions are thrown with helpful error messages
-        $params = self::validate_parameters(self::get_enrolled_users_parameters(), array(
-            'courseid'=>$courseid,
-            'withcapability'=>$withcapability,
-            'groupid'=>$groupid,
-            'onlyactive'=>$onlyactive)
-        );
-
-        $coursecontext = context_course::instance($params['courseid'], IGNORE_MISSING);
-        if ($courseid == SITEID) {
-            $context = context_system::instance();
-        } else {
-            $context = $coursecontext;
-        }
-
-        try {
-            self::validate_context($context);
-        } catch (Exception $e) {
-            $exceptionparam = new stdClass();
-            $exceptionparam->message = $e->getMessage();
-            $exceptionparam->courseid = $params['courseid'];
-            throw new moodle_exception('errorcoursecontextnotvalid' , 'webservice', '', $exceptionparam);
-        }
-
-        if ($courseid == SITEID) {
-            require_capability('moodle/site:viewparticipants', $context);
-        } else {
-            require_capability('moodle/course:viewparticipants', $context);
-        }
-
-        if ($withcapability) {
-            require_capability('moodle/role:review', $coursecontext);
-        }
-        if ($groupid && groups_is_member($groupid)) {
-            require_capability('moodle/site:accessallgroups', $coursecontext);
-        }
-        if ($onlyactive) {
-            require_capability('moodle/course:enrolreview', $coursecontext);
-        }
-
-        list($sqlparams, $params) =  get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive);
-        $sql = "SELECT ue.userid, e.courseid, u.firstname, u.lastname, u.username, c.id as usercontextid
-                  FROM {user_enrolments} ue
-                  JOIN {enrol} e ON (e.id = ue.enrolid)
-                  JOIN {user} u ON (ue.userid = u.id)
-                  JOIN {context} c ON (u.id = c.instanceid AND contextlevel = " . CONTEXT_USER . ")
-                  WHERE e.courseid = :courseid AND ue.userid IN ($sqlparams)
-                  GROUP BY ue.userid, e.courseid, u.firstname, u.lastname, u.username, c.id";
-        $params['courseid'] = $courseid;
-        $enrolledusers = $DB->get_records_sql($sql, $params);
-        $result = array();
-        $isadmin = is_siteadmin($USER);
-        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
-        foreach ($enrolledusers as $enrolleduser) {
-            $profilimgurl = moodle_url::make_pluginfile_url($enrolleduser->usercontextid, 'user', 'icon', NULL, '/', 'f1');
-            $profilimgurlsmall = moodle_url::make_pluginfile_url($enrolleduser->usercontextid, 'user', 'icon', NULL, '/', 'f2');
-            $resultuser = array(
-                'courseid' => $enrolleduser->courseid,
-                'userid' => $enrolleduser->userid,
-                'fullname' => fullname($enrolleduser),
-                'profileimgurl' => $profilimgurl->out(false),
-                'profileimgurlsmall' => $profilimgurlsmall->out(false)
-            );
-            // check if we can return username
-            if ($isadmin) {
-                $resultuser['username'] = $enrolleduser->username;
-            }
-            // check if we can return first and last name
-            if ($isadmin or $canviewfullnames) {
-                $resultuser['firstname'] = $enrolleduser->firstname;
-                $resultuser['lastname'] = $enrolleduser->lastname;
-            }
-            $result[] = $resultuser;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_enrolled_users_returns()
-     */
-    public static function get_enrolled_users_returns() {
-        return new external_multiple_structure(
-            new external_single_structure(
-                array(
-                    'courseid' => new external_value(PARAM_INT, 'id of course'),
-                    'userid' => new external_value(PARAM_INT, 'id of user'),
-                    'firstname' => new external_value(PARAM_RAW, 'first name of user', VALUE_OPTIONAL),
-                    'lastname' => new external_value(PARAM_RAW, 'last name of user', VALUE_OPTIONAL),
-                    'fullname' => new external_value(PARAM_RAW, 'fullname of user'),
-                    'username' => new external_value(PARAM_RAW, 'username of user', VALUE_OPTIONAL),
-                    'profileimgurl' => new external_value(PARAM_URL, 'url of the profile image'),
-                    'profileimgurlsmall' => new external_value(PARAM_URL, 'url of the profile image (small version)')
-                )
-            )
-        );
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function get_enrolled_users_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_users_courses_parameters()
-     */
-    public static function get_users_courses_parameters() {
-        return core_enrol_external::get_users_courses_parameters();
-    }
-
-    /**
-     * Get list of courses user is enrolled in (only active enrolments are returned).
-     * Please note the current user must be able to access the course, otherwise the course is not included.
-     *
-     * @param int $userid
-     * @return array of courses
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see use core_enrol_external::get_users_courses()
-     */
-    public static function get_users_courses($userid) {
-        return core_enrol_external::get_users_courses($userid);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.1
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_enrol_external::get_users_courses_returns()
-     */
-    public static function get_users_courses_returns() {
-        return core_enrol_external::get_users_courses_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function get_users_courses_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::assign_roles_parameters()
-     */
-    public static function role_assign_parameters() {
-        return core_role_external::assign_roles_parameters();
-    }
-
-    /**
-     * Manual role assignments to users
-     *
-     * @param array $assignments An array of manual role assignment
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::assign_roles()
-     */
-    public static function role_assign($assignments) {
-        return core_role_external::assign_roles($assignments);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return null
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::assign_roles_returns()
-     */
-    public static function role_assign_returns() {
-        return core_role_external::assign_roles_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function role_assign_is_deprecated() {
-        return true;
-    }
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::unassign_roles_parameters()
-     */
-    public static function role_unassign_parameters() {
-        return core_role_external::unassign_roles_parameters();
-    }
-
-     /**
-     * Unassign roles from users
-     *
-     * @param array $unassignments An array of unassignment
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::unassign_roles()
-     */
-    public static function role_unassign($unassignments) {
-         return core_role_external::unassign_roles($unassignments);
-    }
-
-   /**
-     * Returns description of method result value
-     *
-     * @return null
-     * @since Moodle 2.0
-     * @deprecated Moodle 2.2 MDL-29106 - Please do not call this function any more.
-     * @see core_role_external::unassign_roles_returns()
-     */
-    public static function role_unassign_returns() {
-        return core_role_external::unassign_roles_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function role_unassign_is_deprecated() {
-        return true;
     }
 }

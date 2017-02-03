@@ -69,8 +69,12 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->addRule('lti_typename', null, 'required', null, 'client');
 
         $mform->addElement('text', 'lti_toolurl', get_string('toolurl', 'lti'), array('size' => '64'));
-        $mform->setType('lti_toolurl', PARAM_TEXT);
+        $mform->setType('lti_toolurl', PARAM_URL);
         $mform->addHelpButton('lti_toolurl', 'toolurl', 'lti');
+
+        $mform->addElement('textarea', 'lti_description', get_string('tooldescription', 'lti'), array('rows' => 4, 'cols' => 60));
+        $mform->setType('lti_description', PARAM_TEXT);
+        $mform->addHelpButton('lti_description', 'tooldescription', 'lti');
         if (!$istool) {
             $mform->addRule('lti_toolurl', null, 'required', null, 'client');
         } else {
@@ -81,6 +85,7 @@ class mod_lti_edit_types_form extends moodleform{
             $mform->addElement('text', 'lti_resourcekey', get_string('resourcekey_admin', 'lti'));
             $mform->setType('lti_resourcekey', PARAM_TEXT);
             $mform->addHelpButton('lti_resourcekey', 'resourcekey_admin', 'lti');
+            $mform->setForceLtr('lti_resourcekey');
 
             $mform->addElement('passwordunmask', 'lti_password', get_string('password_admin', 'lti'));
             $mform->setType('lti_password', PARAM_TEXT);
@@ -92,19 +97,34 @@ class mod_lti_edit_types_form extends moodleform{
             $mform->setType('lti_parameters', PARAM_TEXT);
             $mform->addHelpButton('lti_parameters', 'parameter', 'lti');
             $mform->disabledIf('lti_parameters', null);
+            $mform->setForceLtr('lti_parameters');
         }
 
         $mform->addElement('textarea', 'lti_customparameters', get_string('custom', 'lti'), array('rows' => 4, 'cols' => 60));
         $mform->setType('lti_customparameters', PARAM_TEXT);
         $mform->addHelpButton('lti_customparameters', 'custom', 'lti');
+        $mform->setForceLtr('lti_customparameters');
 
-        if (!$istool && !empty($this->_customdata->isadmin)) {
-            $mform->addElement('checkbox', 'lti_coursevisible', '&nbsp;', ' ' . get_string('show_in_course', 'lti'));
-            $mform->addHelpButton('lti_coursevisible', 'show_in_course', 'lti');
+        if (!empty($this->_customdata->isadmin)) {
+            $options = array(
+                LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
+                LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
+                LTI_COURSEVISIBLE_ACTIVITYCHOOSER => get_string('show_in_course_activity_chooser', 'lti'),
+            );
+            if ($istool) {
+                // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
+                unset($options[LTI_COURSEVISIBLE_NO]);
+                $stringname = 'show_in_course_lti2';
+            } else {
+                $stringname = 'show_in_course_lti1';
+            }
+            $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'lti'), $options);
+            $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
+            $mform->setDefault('lti_coursevisible', '1');
         } else {
-            $mform->addElement('hidden', 'lti_coursevisible', '1');
+            $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_PRECONFIGURED);
         }
-        $mform->setType('lti_coursevisible', PARAM_BOOL);
+        $mform->setType('lti_coursevisible', PARAM_INT);
 
         $mform->addElement('hidden', 'typeid');
         $mform->setType('typeid', PARAM_INT);
@@ -119,6 +139,13 @@ class mod_lti_edit_types_form extends moodleform{
         $mform->setDefault('lti_launchcontainer', LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS);
         $mform->addHelpButton('lti_launchcontainer', 'default_launch_container', 'lti');
         $mform->setType('lti_launchcontainer', PARAM_INT);
+
+        $mform->addElement('advcheckbox', 'lti_contentitem', get_string('contentitem', 'lti'));
+        $mform->addHelpButton('lti_contentitem', 'contentitem', 'lti');
+        $mform->setAdvanced('lti_contentitem');
+        if ($istool) {
+            $mform->disabledIf('lti_contentitem', null);
+        }
 
         $mform->addElement('hidden', 'oldicon');
         $mform->setType('oldicon', PARAM_URL);
@@ -184,7 +211,7 @@ class mod_lti_edit_types_form extends moodleform{
                 $mform->addHelpButton('lti_organizationid', 'organizationid', 'lti');
 
                 $mform->addElement('text', 'lti_organizationurl', get_string('organizationurl', 'lti'));
-                $mform->setType('lti_organizationurl', PARAM_TEXT);
+                $mform->setType('lti_organizationurl', PARAM_URL);
                 $mform->addHelpButton('lti_organizationurl', 'organizationurl', 'lti');
             }
         }
@@ -211,5 +238,19 @@ class mod_lti_edit_types_form extends moodleform{
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
 
+    }
+
+    /**
+     * Retrieves the data of the submitted form.
+     *
+     * @return stdClass
+     */
+    public function get_data() {
+        $data = parent::get_data();
+        if ($data && !empty($this->_customdata->istool)) {
+            // Content item checkbox is disabled in tool settings, so this cannot be edited. Just unset it.
+            unset($data->lti_contentitem);
+        }
+        return $data;
     }
 }

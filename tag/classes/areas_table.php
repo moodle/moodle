@@ -49,6 +49,8 @@ class core_tag_areas_table extends html_table {
             get_string('component', 'tag'),
             get_string('tagareaenabled', 'core_tag'),
             get_string('tagcollection', 'tag'),
+            get_string('showstandard', 'tag') .
+                $OUTPUT->help_icon('showstandard', 'tag')
         );
 
         $this->data = array();
@@ -58,33 +60,32 @@ class core_tag_areas_table extends html_table {
         $tagcollections = core_tag_collection::get_collections_menu(true);
         $tagcollectionsall = core_tag_collection::get_collections_menu();
 
+        $standardchoices = array(
+            core_tag_tag::BOTH_STANDARD_AND_NOT => get_string('standardsuggest', 'tag'),
+            core_tag_tag::STANDARD_ONLY => get_string('standardforce', 'tag'),
+            core_tag_tag::HIDE_STANDARD => get_string('standardhide', 'tag')
+        );
+
         foreach ($tagareas as $itemtype => $it) {
             foreach ($it as $component => $record) {
                 $areaname = core_tag_area::display_name($record->component, $record->itemtype);
-                $baseurl = new moodle_url($pageurl, array('ta' => $record->id, 'sesskey' => sesskey()));
-                if ($record->enabled) {
-                    $enableurl = new moodle_url($baseurl, array('action' => 'areadisable'));
-                    $enabled = html_writer::link($enableurl, $OUTPUT->pix_icon('i/hide', get_string('disable')));
-                } else {
-                    $enableurl = new moodle_url($baseurl, array('action' => 'areaenable'));
-                    $enabled = html_writer::link($enableurl, $OUTPUT->pix_icon('i/show', get_string('enable')));
-                }
 
-                if ($record->enabled && empty($record->locked) && count($tagcollections) > 1) {
-                    $changecollurl = new moodle_url($baseurl, array('action' => 'areasetcoll'));
+                $tmpl = new \core_tag\output\tagareaenabled($record);
+                $enabled = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
 
-                    $select = new single_select($changecollurl, 'areacollid', $tagcollections, $record->tagcollid, null);
-                    $select->set_label(get_string('changetagcoll', 'core_tag', $areaname), array('class' => 'accesshide'));
-                    $collectionselect = $OUTPUT->render($select);
-                } else {
-                    $collectionselect = $tagcollectionsall[$record->tagcollid];
-                }
+                $tmpl = new \core_tag\output\tagareacollection($record);
+                $collectionselect = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
+
+                $tmpl = new \core_tag\output\tagareashowstandard($record);
+                $showstandardselect = $OUTPUT->render_from_template('core/inplace_editable', $tmpl->export_for_template($OUTPUT));
+
                 $this->data[] = array(
                     $areaname,
                     ($record->component === 'core' || preg_match('/^core_/', $record->component)) ?
                         get_string('coresystem') : get_string('pluginname', $record->component),
                     $enabled,
-                    $collectionselect
+                    $collectionselect,
+                    $showstandardselect
                 );
                 $this->rowclasses[] = $record->enabled ? '' : 'dimmed_text';
             }

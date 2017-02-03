@@ -51,19 +51,8 @@ class behat_field_manager {
 
         // There are moodle form elements that are not directly related with
         // a basic HTML form field, we should also take care of them.
-        try {
-            // The DOM node.
-            $fieldnode = $context->find_field($label);
-        } catch (ElementNotFoundException $fieldexception) {
-
-            // Looking for labels that points to filemanagers.
-            try {
-                $fieldnode = $context->find_filemanager($label);
-            } catch (ElementNotFoundException $filemanagerexception) {
-                // We want the generic 'field' exception.
-                throw $fieldexception;
-            }
-        }
+        // The DOM node.
+        $fieldnode = $context->find_field($label);
 
         // The behat field manager.
         return self::get_form_field($fieldnode, $context->getSession());
@@ -204,7 +193,6 @@ class behat_field_manager {
 
         // We already waited when getting the NodeElement and we don't want an exception if it's not part of a moodleform.
         $parentformfound = $fieldnode->find('xpath',
-            "/ancestor::fieldset" .
             "/ancestor::form[contains(concat(' ', normalize-space(@class), ' '), ' mform ')]"
         );
 
@@ -226,6 +214,22 @@ class behat_field_manager {
         // Special handling for availability field which requires custom JavaScript.
         if ($fieldnode->getAttribute('name') === 'availabilityconditionsjson') {
             return 'availability';
+        }
+
+        if ($fieldnode->getTagName() == 'html') {
+            return false;
+        }
+
+        // If the type is explictly set on the element pointed to by the label - use it.
+        if ($type = $fieldnode->getParent()->getAttribute('data-fieldtype')) {
+            if ($type == 'tags') {
+                return 'autocomplete';
+            }
+            return $type;
+        }
+
+        if (!empty($fieldnode->find('xpath', '/ancestor::*[@data-passwordunmaskid]'))) {
+            return 'passwordunmask';
         }
 
         // We look for a parent node with 'felement' class.

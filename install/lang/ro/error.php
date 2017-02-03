@@ -42,6 +42,7 @@ $string['cannotsavemd5file'] = 'Fişierul md5 nu poate fi salvat';
 $string['cannotsavezipfile'] = 'Arhiva ZIP nu poate fi salvată';
 $string['cannotunzipfile'] = 'Arhiva nu poate fi deschisă';
 $string['componentisuptodate'] = 'Componenta este actualizată';
+$string['dmlexceptiononinstall'] = '<p>A apărut o problemă la baza de date [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Verificarea fişierului descărcat a eşuat';
 $string['invalidmd5'] = 'md5 incorect';
 $string['missingrequiredfield'] = 'Lipseşte un câmp obligatoriu';

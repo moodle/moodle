@@ -106,13 +106,14 @@ class wikimedia {
      * @param int $orig_width
      * @param int $orig_height
      * @param int $thumb_width
+     * @param bool $force When true, forces the generation of a thumb URL.
      * @global object OUTPUT
      * @return string
      */
-    public function get_thumb_url($image_url, $orig_width, $orig_height, $thumb_width=75) {
+    public function get_thumb_url($image_url, $orig_width, $orig_height, $thumb_width = 75, $force = false) {
         global $OUTPUT;
 
-        if ($orig_width <= $thumb_width AND $orig_height <= $thumb_width) {
+        if (!$force && $orig_width <= $thumb_width && $orig_height <= $thumb_width) {
             return $image_url;
         } else {
             $thumb_url = '';
@@ -169,9 +170,14 @@ class wikimedia {
                 $image_types = array('image/jpeg', 'image/png', 'image/gif', 'image/svg+xml');
                 if (in_array($file_type, $image_types)) {  //is image
                     $extension = pathinfo($title, PATHINFO_EXTENSION);
-                    if (strcmp($extension, 'svg') == 0) {               //upload png version of svg-s
+                    $issvg = strcmp($extension, 'svg') == 0;
+
+                    // Get PNG equivalent to SVG files.
+                    if ($issvg) {
                         $title .= '.png';
                     }
+
+                    // The thumbnail (max size requested) is smaller than the original size, we will use the thumbnail.
                     if ($page['imageinfo'][0]['thumbwidth'] < $page['imageinfo'][0]['width']) {
                         $attrs = array(
                             //upload scaled down image
@@ -185,14 +191,24 @@ class wikimedia {
                         if ($attrs['image_width'] <= 24 && $attrs['image_height'] <= 24) {
                             $attrs['realicon'] = $attrs['source'];
                         }
+
+                    // We use the original file.
                     } else {
                         $attrs = array(
                             //upload full size image
-                            'source' => $page['imageinfo'][0]['url'],
                             'image_width' => $page['imageinfo'][0]['width'],
                             'image_height' => $page['imageinfo'][0]['height'],
                             'size' => $page['imageinfo'][0]['size']
                         );
+
+                        // We cannot use the source when the file is SVG.
+                        if ($issvg) {
+                            // So we generate a PNG thumbnail of the file at its original size.
+                            $attrs['source'] = $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'],
+                                $page['imageinfo'][0]['height'], $page['imageinfo'][0]['width'], true);
+                        } else {
+                            $attrs['source'] = $page['imageinfo'][0]['url'];
+                        }
                     }
                     $attrs += array(
                         'realthumbnail' => $this->get_thumb_url($page['imageinfo'][0]['url'], $page['imageinfo'][0]['width'], $page['imageinfo'][0]['height'], WIKIMEDIA_THUMB_SIZE),

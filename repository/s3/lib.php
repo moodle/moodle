@@ -26,6 +26,11 @@
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->dirroot . '/repository/s3/S3.php');
 
+// This constant is not defined in php 5.4. Set it to avoid errors.
+if (!defined('CURL_SSLVERSION_TLSv1')) {
+    define('CURL_SSLVERSION_TLSv1', 1);
+}
+
 /**
  * This is a repository class used to browse Amazon S3 content.
  *

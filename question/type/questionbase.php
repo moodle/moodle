@@ -413,11 +413,11 @@ abstract class question_definition {
      */
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'question' && $filearea == 'questiontext') {
-            // Question text always visible.
-            return true;
+            // Question text always visible, but check it is the right question id.
+            return $args[0] == $this->id;
 
         } else if ($component == 'question' && $filearea == 'generalfeedback') {
-            return $options->generalfeedback;
+            return $options->generalfeedback && $args[0] == $this->id;
 
         } else {
             // Unrecognised component or filearea.
@@ -681,7 +681,8 @@ abstract class question_graded_automatically extends question_with_responses
             list($notused, $state) = $this->grade_response($response);
         }
 
-        return $options->feedback && $state->get_feedback_class() . 'feedback' == $filearea;
+        return $options->feedback && $state->get_feedback_class() . 'feedback' == $filearea &&
+                $args[0] == $this->id;
     }
 
     /**

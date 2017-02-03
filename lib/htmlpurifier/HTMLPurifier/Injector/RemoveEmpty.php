@@ -46,6 +46,12 @@ class HTMLPurifier_Injector_RemoveEmpty extends HTMLPurifier_Injector
         $this->removeNbsp = $config->get('AutoFormat.RemoveEmpty.RemoveNbsp');
         $this->removeNbspExceptions = $config->get('AutoFormat.RemoveEmpty.RemoveNbsp.Exceptions');
         $this->exclude = $config->get('AutoFormat.RemoveEmpty.Predicate');
+        foreach ($this->exclude as $key => $attrs) {
+            if (!is_array($attrs)) {
+                // HACK, see HTMLPurifier/Printer/ConfigForm.php
+                $this->exclude[$key] = explode(';', $attrs);
+            }
+        }
         $this->attrValidator = new HTMLPurifier_AttrValidator();
     }
 

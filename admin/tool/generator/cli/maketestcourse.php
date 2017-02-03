@@ -25,7 +25,7 @@
 define('CLI_SCRIPT', true);
 define('NO_OUTPUT_BUFFERING', true);
 
-require(dirname(__FILE__) . '/../../../../config.php');
+require(__DIR__ . '/../../../../config.php');
 require_once($CFG->libdir. '/clilib.php');
 
 // CLI options.

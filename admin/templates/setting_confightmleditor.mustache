@@ -1,0 +1,39 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_admin/setting_confightmleditor
+
+    Admin htmleditor setting template.
+
+    Context variables required for this template:
+    * rows - number of rows
+    * cols - number of cols
+    * id - element id
+    * name - element name
+    * value - default text
+    * forceltr - always ltr
+
+    Example context (json):
+    {
+        "name": "test",
+        "id": "test0",
+        "value": "Your aims are high, and you are capable of much.",
+        "rows": 5,
+        "cols": 30
+    }
+}}
+{{>core_admin/setting_configtextarea}}

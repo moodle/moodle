@@ -78,6 +78,25 @@ input[type="reset"] {
     .btn-lineup;
 }
 
+// The above buttons rules are really dumb and muck things up for simple pages using bootstrap correctly.
+// e.g. cohort search form.
+// Undo the above silly rules one by one for pages we know to be broken by them.
+form.search-cohort input[type="text"],
+form.search-cohort input[type="submit"],
+form.search-cohort label {
+    .m-t-1
+}
+
+form.search-cohort label {
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+form.search-cohort input[type="submit"] {
+    margin-bottom: 0;
+    margin-left: 0;
+}
+
 button {
     &.yui3-button {
         &.closebutton {
@@ -94,21 +113,3 @@ button {
     }
 }
 
-input {
-    &.fp-btn-choose {
-        .btn-small
-    }
-}
-
-.user-enroller-panel {
-    .uep-search-results {
-        .user,
-        .cohort {
-            .options {
-                .enrol {
-                    .btn-mini
-                }
-            }
-        }
-    }
-}

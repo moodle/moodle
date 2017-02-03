@@ -42,3 +42,4 @@ $string['cliunknowoption'] = 'Нераспознанные параметры:
 $string['cliyesnoprompt'] = 'Введите y (обозначает Да) или n (обозначает Нет)';
 $string['environmentrequireinstall'] = 'необходимо установить и включить';
 $string['environmentrequireversion'] = 'требуется версия {$a->needed}, у Вас используется версия {$a->current}';
+$string['upgradekeyset'] = 'Ключ обновления (оставьте пустым, если не хотите его задавать)';

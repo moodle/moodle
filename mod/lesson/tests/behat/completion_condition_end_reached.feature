@@ -19,7 +19,7 @@ Feature: Set end of lesson reached as a completion condition for a lesson
     And I log in as "teacher1"
     And I follow "Course 1"
     And I turn editing mode on
-    And I click on "Edit settings" "link" in the "Administration" "block"
+    And I navigate to "Edit settings" in current page administration
     And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save and display"
@@ -57,7 +57,7 @@ Feature: Set end of lesson reached as a completion condition for a lesson
     And I follow "Test lesson"
     And I should see "You have seen more than one page of this lesson already."
     And I should see "Do you want to start at the last page you saw?"
-    And I follow "No"
+    And I click on "No" "link" in the "#page-content" "css_element"
     And I press "Next page"
     And I press "Next page"
     And I follow "Course 1"

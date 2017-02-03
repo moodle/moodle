@@ -28,6 +28,10 @@ MDL-20876 - replaced split() with explode() or preg_split() where appropriate
 MDL-40267 - Moodle core_text strlen functions used for range rule rule to be utf8 safe.
 MDL-46467 - $mform->hardfreeze causes labels to loose their for HTML attribute
 MDL-52081 - made all constructors PHP7 compatible
+MDL-52826 - Remove onsubmit events pointing to the global validation functions and script
+            tag moved after the HTML
+MDL-50484 - _getPersistantData() returns id with _persistant prefixed to element id.
+MDL-55123 - corrected call to non-static functions in HTML_QuickForm to be PHP7.1-compliant
 
 
 Pear

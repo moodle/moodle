@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>ims-blti</location>
+        <name>IMS-BLTI</name>
+        <license>MIT</license>
+        <version></version>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

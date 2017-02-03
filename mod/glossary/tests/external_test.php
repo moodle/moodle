@@ -62,6 +62,8 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(2, $glossaries['glossaries']);
         $this->assertEquals('First Glossary', $glossaries['glossaries'][0]['name']);
         $this->assertEquals('Second Glossary', $glossaries['glossaries'][1]['name']);
+        $this->assertEquals(1, $glossaries['glossaries'][0]['canaddentry']);
+        $this->assertEquals(1, $glossaries['glossaries'][1]['canaddentry']);
 
         // Check results with specific course IDs.
         $glossaries = mod_glossary_external::get_glossaries_by_courses(array($c1->id, $c2->id));
@@ -74,6 +76,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals('course', $glossaries['warnings'][0]['item']);
         $this->assertEquals($c2->id, $glossaries['warnings'][0]['itemid']);
         $this->assertEquals('1', $glossaries['warnings'][0]['warningcode']);
+        $this->assertEquals(1, $glossaries['glossaries'][0]['canaddentry']);
 
         // Now as admin.
         $this->setAdminUser();
@@ -83,6 +86,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(1, $glossaries['glossaries']);
         $this->assertEquals('Third Glossary', $glossaries['glossaries'][0]['name']);
+        $this->assertEquals(1, $glossaries['glossaries'][0]['canaddentry']);
     }
 
     public function test_view_glossary() {
@@ -108,6 +112,10 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $sink->close();
     }
 
+    /**
+     * @expectedException        require_login_exception
+     * @expectedExceptionMessage Activity is hidden
+     */
     public function test_view_glossary_without_permission() {
         $this->resetAfterTest(true);
 
@@ -126,10 +134,13 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         // Assertion.
         $this->setUser($u1);
-        $this->setExpectedException('require_login_exception', 'Activity is hidden');
         mod_glossary_external::view_glossary($g1->id, 'letter');
     }
 
+    /**
+     * @expectedException        require_login_exception
+     * @expectedExceptionMessage Activity is hidden
+     */
     public function test_view_entry() {
         $this->resetAfterTest(true);
 
@@ -177,7 +188,6 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         }
 
         // Test non-readable entry.
-        $this->setExpectedException('require_login_exception', 'Activity is hidden');
         mod_glossary_external::view_entry($e4->id);
     }
 
@@ -1034,7 +1044,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
 
         // Permissions are checked.
         $this->setUser($u1);
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         mod_glossary_external::get_entries_to_approve($g1->id, 'ALL', 'CONCEPT', 'ASC', 0, 1);
         $this->fail('Do not test anything else after this.');
     }
@@ -1054,6 +1064,19 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($u1->id, $c1->id);
 
         $e1 = $gg->create_content($g1, array('approved' => 1, 'userid' => $u1->id));
+        // Add a fake inline image to the entry.
+        $filename = 'shouldbeanimage.jpg';
+        $filerecordinline = array(
+            'contextid' => $ctx->id,
+            'component' => 'mod_glossary',
+            'filearea'  => 'entry',
+            'itemid'    => $e1->id,
+            'filepath'  => '/',
+            'filename'  => $filename,
+        );
+        $fs = get_file_storage();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
         $e2 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u1->id));
         $e3 = $gg->create_content($g1, array('approved' => 0, 'userid' => $u2->id));
         $e4 = $gg->create_content($g2, array('approved' => 1));
@@ -1062,6 +1085,7 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $return = mod_glossary_external::get_entry_by_id($e1->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
         $this->assertEquals($e1->id, $return['entry']['id']);
+        $this->assertEquals($filename, $return['entry']['definitioninlinefiles'][0]['filename']);
 
         $return = mod_glossary_external::get_entry_by_id($e2->id);
         $return = external_api::clean_returnvalue(mod_glossary_external::get_entry_by_id_returns(), $return);
@@ -1088,4 +1112,142 @@ class mod_glossary_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($e3->id, $return['entry']['id']);
     }
 
+    public function test_add_entry_without_optional_settings() {
+        global $CFG, $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id));
+
+        $this->setAdminUser();
+        $concept = 'A concept';
+        $definition = '<p>A definition</p>';
+        $return = mod_glossary_external::add_entry($glossary->id, $concept, $definition, FORMAT_HTML);
+        $return = external_api::clean_returnvalue(mod_glossary_external::add_entry_returns(), $return);
+
+        // Get entry from DB.
+        $entry = $DB->get_record('glossary_entries', array('id' => $return['entryid']));
+
+        $this->assertEquals($concept, $entry->concept);
+        $this->assertEquals($definition, $entry->definition);
+        $this->assertEquals($CFG->glossary_linkentries, $entry->usedynalink);
+        $this->assertEquals($CFG->glossary_casesensitive, $entry->casesensitive);
+        $this->assertEquals($CFG->glossary_fullmatch, $entry->fullmatch);
+        $this->assertEmpty($DB->get_records('glossary_alias', array('entryid' => $return['entryid'])));
+        $this->assertEmpty($DB->get_records('glossary_entries_categories', array('entryid' => $return['entryid'])));
+    }
+
+    public function test_add_entry_with_aliases() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id));
+
+        $this->setAdminUser();
+        $concept = 'A concept';
+        $definition = 'A definition';
+        $paramaliases = 'abc, def, gez';
+        $options = array(
+            array(
+                'name' => 'aliases',
+                'value' => $paramaliases,
+            )
+        );
+        $return = mod_glossary_external::add_entry($glossary->id, $concept, $definition, FORMAT_HTML, $options);
+        $return = external_api::clean_returnvalue(mod_glossary_external::add_entry_returns(), $return);
+
+        $aliases = $DB->get_records('glossary_alias', array('entryid' => $return['entryid']));
+        $this->assertCount(3, $aliases);
+        foreach ($aliases as $alias) {
+            $this->assertContains($alias->alias, $paramaliases);
+        }
+    }
+
+    public function test_add_entry_in_categories() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id));
+        $gg = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
+        $cat1 = $gg->create_category($glossary);
+        $cat2 = $gg->create_category($glossary);
+
+        $this->setAdminUser();
+        $concept = 'A concept';
+        $definition = 'A definition';
+        $paramcategories = "$cat1->id, $cat2->id";
+        $options = array(
+            array(
+                'name' => 'categories',
+                'value' => $paramcategories,
+            )
+        );
+        $return = mod_glossary_external::add_entry($glossary->id, $concept, $definition, FORMAT_HTML, $options);
+        $return = external_api::clean_returnvalue(mod_glossary_external::add_entry_returns(), $return);
+
+        $categories = $DB->get_records('glossary_entries_categories', array('entryid' => $return['entryid']));
+        $this->assertCount(2, $categories);
+        foreach ($categories as $category) {
+            $this->assertContains($category->categoryid, $paramcategories);
+        }
+    }
+
+    public function test_add_entry_with_attachments() {
+        global $DB, $USER;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $glossary = $this->getDataGenerator()->create_module('glossary', array('course' => $course->id));
+        $context = context_module::instance($glossary->cmid);
+
+        $this->setAdminUser();
+        $concept = 'A concept';
+        $definition = 'A definition';
+
+        // Draft files.
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $draftidattach = file_get_unused_draft_itemid();
+        $usercontext = context_user::instance($USER->id);
+        $filerecordinline = array(
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidinlineattach,
+            'filepath'  => '/',
+            'filename'  => 'shouldbeanimage.txt',
+        );
+        $fs = get_file_storage();
+
+        // Create a file in a draft area for regular attachments.
+        $filerecordattach = $filerecordinline;
+        $attachfilename = 'attachment.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        $options = array(
+            array(
+                'name' => 'inlineattachmentsid',
+                'value' => $draftidinlineattach,
+            ),
+            array(
+                'name' => 'attachmentsid',
+                'value' => $draftidattach,
+            )
+        );
+        $return = mod_glossary_external::add_entry($glossary->id, $concept, $definition, FORMAT_HTML, $options);
+        $return = external_api::clean_returnvalue(mod_glossary_external::add_entry_returns(), $return);
+
+        $editorfiles = external_util::get_area_files($context->id, 'mod_glossary', 'entry', $return['entryid']);
+        $attachmentfiles = external_util::get_area_files($context->id, 'mod_glossary', 'attachment', $return['entryid']);
+
+        $this->assertCount(1, $editorfiles);
+        $this->assertCount(1, $attachmentfiles);
+
+        $this->assertEquals('shouldbeanimage.txt', $editorfiles[0]['filename']);
+        $this->assertEquals('attachment.txt', $attachmentfiles[0]['filename']);
+    }
 }

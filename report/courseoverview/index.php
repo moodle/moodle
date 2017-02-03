@@ -26,13 +26,15 @@
 require_once('../../config.php');
 require_once($CFG->dirroot.'/lib/statslib.php');
 require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->dirroot.'/report/courseoverview/locallib.php');
 
 $report     = optional_param('report', STATS_REPORT_ACTIVE_COURSES, PARAM_INT);
 $time       = optional_param('time', 0, PARAM_INT);
 $numcourses = optional_param('numcourses', 20, PARAM_INT);
+$systemcontext = context_system::instance();
 
 if (empty($CFG->enablestats)) {
-    if (has_capability('moodle/site:config', context_system::instance())) {
+    if (has_capability('moodle/site:config', $systemcontext)) {
         redirect("$CFG->wwwroot/$CFG->admin/search.php?query=enablestats", get_string('mustenablestats', 'admin'), 3);
     } else {
         print_error('statsdisable');
@@ -68,7 +70,7 @@ if (empty($timeoptions)) {
     print_error('nostatstodisplay', 'error', $CFG->wwwroot.'/course/view.php?id='.$course->id);
 }
 
-echo html_writer::start_tag('form', array('action' => 'index.php', 'method' => 'post'));
+echo html_writer::start_tag('form', array('action' => 'index.php', 'method' => 'post', 'class' => 'form-inline'));
 echo html_writer::start_tag('div');
 
 $table = new html_table();
@@ -83,8 +85,11 @@ $timeoptionsmenu .= html_writer::select($timeoptions,'time',$time, false);
 $table->data[] = array(get_string('statsreporttype'),$reporttypemenu,
                        get_string('statstimeperiod'),$timeoptionsmenu,
                        html_writer::label(get_string('numberofcourses'), 'numcourses', false, array('class' => 'accesshide')) .
-                       html_writer::empty_tag('input', array('type' => 'text', 'id' => 'numcourses', 'name' => 'numcourses', 'size' => '3', 'maxlength' => '2', 'value' => $numcourses)),
-                       html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('view'))));
+                       html_writer::empty_tag('input', array('type' => 'text', 'class' => 'form-control',
+                           'id' => 'numcourses', 'name' => 'numcourses', 'size' => '3', 'maxlength' => '2',
+                           'value' => $numcourses)),
+                       html_writer::empty_tag('input', array('type' => 'submit', 'class' => 'btn btn-secondary',
+                           'value' => get_string('view'))));
 
 echo html_writer::table($table);
 echo html_writer::end_tag('div');
@@ -113,7 +118,10 @@ if (!empty($report) && !empty($time)) {
         echo '</td></tr></table>';
 
     } else {
-        echo '<div class="graph"><img alt="'.get_string('courseoverviewgraph').'" src="'.$CFG->wwwroot.'/report/courseoverview/reportsgraph.php?time='.$time.'&report='.$report.'&numcourses='.$numcourses.'" /></div>';
+        require_capability('report/courseoverview:view', $systemcontext);
+        echo html_writer::start_div();
+        report_courseoverview_print_chart($report, $time, $numcourses);
+        echo html_writer::end_div();
 
         $table = new html_table();
         $table->align = array('left','center','center','center');

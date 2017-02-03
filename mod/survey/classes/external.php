@@ -43,7 +43,7 @@ class mod_survey_external extends external_api {
     /**
      * Describes the parameters for get_surveys_by_courses.
      *
-     * @return external_external_function_parameters
+     * @return external_function_parameters
      * @since Moodle 3.0
      */
     public static function get_surveys_by_courses_parameters() {
@@ -72,14 +72,16 @@ class mod_survey_external extends external_api {
 
         $params = self::validate_parameters(self::get_surveys_by_courses_parameters(), array('courseids' => $courseids));
 
+        $mycourses = array();
         if (empty($params['courseids'])) {
-            $params['courseids'] = array_keys(enrol_get_my_courses());
+            $mycourses = enrol_get_my_courses();
+            $params['courseids'] = array_keys($mycourses);
         }
 
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = external_util::validate_courses($params['courseids']);
+            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
 
             // Get the surveys in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -104,6 +106,8 @@ class mod_survey_external extends external_api {
                     // Format intro.
                     list($surveydetails['intro'], $surveydetails['introformat']) =
                         external_format_text($survey->intro, $survey->introformat, $context->id, 'mod_survey', 'intro', null);
+                    $surveydetails['introfiles'] = external_util::get_area_files($context->id, 'mod_survey', 'intro', false,
+                                                                                    false);
 
                     $surveydetails['template']  = $survey->template;
                     $surveydetails['days']      = $survey->days;
@@ -147,6 +151,7 @@ class mod_survey_external extends external_api {
                             'name' => new external_value(PARAM_RAW, 'Survey name'),
                             'intro' => new external_value(PARAM_RAW, 'The Survey intro', VALUE_OPTIONAL),
                             'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
+                            'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
                             'template' => new external_value(PARAM_INT, 'Survey type', VALUE_OPTIONAL),
                             'days' => new external_value(PARAM_INT, 'Days', VALUE_OPTIONAL),
                             'questions' => new external_value(PARAM_RAW, 'Question ids', VALUE_OPTIONAL),

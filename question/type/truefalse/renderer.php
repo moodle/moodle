@@ -90,10 +90,10 @@ class qtype_truefalse_renderer extends qtype_renderer {
 
         $radiotrue = html_writer::empty_tag('input', $trueattributes) .
                 html_writer::tag('label', get_string('true', 'qtype_truefalse'),
-                array('for' => $trueattributes['id']));
+                array('for' => $trueattributes['id'], 'class' => 'm-l-1'));
         $radiofalse = html_writer::empty_tag('input', $falseattributes) .
                 html_writer::tag('label', get_string('false', 'qtype_truefalse'),
-                array('for' => $falseattributes['id']));
+                array('for' => $falseattributes['id'], 'class' => 'm-l-1'));
 
         $result = '';
         $result .= html_writer::tag('div', $question->format_questiontext($qa),

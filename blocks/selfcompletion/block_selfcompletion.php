@@ -39,7 +39,7 @@ class block_selfcompletion extends block_base {
     }
 
     function applicable_formats() {
-        return array('all' => true, 'mod' => false, 'tag' => false, 'my' => false);
+        return array('course' => true);
     }
 
     public function get_content() {

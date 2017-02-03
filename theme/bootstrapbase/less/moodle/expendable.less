@@ -1,3 +1,4 @@
+/* stylelint-disable declaration-no-important */
 table#explaincaps,
 table#defineroletable,
 table.grading-report,
@@ -18,36 +19,6 @@ table {
         font-weight: bold;
         line-height: 42px;
         text-align: left;
-    }
-}
-
-.dir-rtl {
-    table#explaincaps,
-    table#defineroletable,
-    table.grading-report,
-    table#listdirectories,
-    table.rolecaps,
-    table.userenrolment,
-    table#form,
-    form#movecourses table,
-    .forumheaderlist,
-    table.flexible,
-    .generaltable,
-    .generaltable thead:first-child tr:first-child {
-        td , th {
-            text-align:right;
-        }
-    }
-    table {
-        caption {
-            text-align: right;
-        }
-    }
-}
-
-#page-admin-course-index.dir-rtl .editcourse {
-    td , th {
-        text-align:right;
     }
 }
 
@@ -75,27 +46,27 @@ table#permissions {
 // language editing progress bar
 // copied in because the styles are set on the HTML
 div[id^="bar_pbar_"] {
-  overflow: hidden !important;
-  height: @baseLineHeight !important;
-  margin-bottom: @baseLineHeight !important;
-  #gradient > .vertical(#f5f5f5, #f9f9f9) !important;
-  .box-shadow(inset 0 1px 2px rgba(0,0,0,.1)) !important;
-  .border-radius(@baseBorderRadius) !important;
-  border: none !important;
+    overflow: hidden !important;
+    height: @baseLineHeight !important;
+    margin-bottom: @baseLineHeight !important;
+    #gradient > .vertical(#f5f5f5, #f9f9f9) !important;
+    .box-shadow(inset 0 1px 2px rgba(0,0,0,.1)) !important;
+    .border-radius(@baseBorderRadius) !important;
+    border: none !important;
 }
 div[id^="progress_pbar_"] {
-  height: 100% !important;
-  color: @white !important;
-  float: left !important;
-  font-size: 12px !important;
-  text-align: center !important;
-  text-shadow: 0 -1px 0 rgba(0,0,0,.25) !important;
-  #gradient > .vertical(#149bdf, #0480be) !important;
-  .box-shadow(inset 0 -1px 0 rgba(0,0,0,.15)) !important;
-  .box-sizing(border-box) !important;
-  .transition(width .6s ease) !important;
-  padding-top: 0 !important;
-  border: none !important;
+    height: 100% !important;
+    color: @white !important;
+    float: left !important;
+    font-size: 12px !important;
+    text-align: center !important;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, .25) !important;
+    #gradient > .vertical(#149bdf, #0480be) !important;
+    .box-shadow(inset 0 -1px 0 rgba(0,0,0,.15)) !important;
+    .box-sizing(border-box) !important;
+    .transition(width .6s ease) !important;
+    padding-top: 0 !important;
+    border: none !important;
 }
 // colored buttons
 input.form-submit,
@@ -117,4 +88,8 @@ td.submit input {
 input[id$="_clearbutton"],
 input[type="reset"] {
     .btn-warning
+}
+// Used in page listing all admin settings.
+ul.indented-list {
+    margin-left: 20px;
 }

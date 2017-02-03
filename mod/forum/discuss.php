@@ -294,7 +294,7 @@ $neighbourlinks = $renderer->neighbouring_discussion_navigation($neighbours['pre
 echo $neighbourlinks;
 
 /// Print the controls across the top
-echo '<div class="discussioncontrols clearfix"><div class="controlscontainer">';
+echo '<div class="discussioncontrols clearfix"><div class="controlscontainer m-b-1">';
 
 if (!empty($CFG->enableportfolios) && has_capability('mod/forum:exportdiscussion', $modcontext)) {
     require_once($CFG->libdir.'/portfoliolib.php');
@@ -371,6 +371,10 @@ if (has_capability('mod/forum:pindiscussions', $modcontext)) {
 
 
 echo "</div></div>";
+
+if (forum_discussion_is_locked($forum, $discussion)) {
+    echo html_writer::div(get_string('discussionlocked', 'forum'), 'discussionlocked');
+}
 
 if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
     $a = new stdClass();

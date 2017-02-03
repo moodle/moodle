@@ -92,7 +92,8 @@ class core_webservice_external extends external_api {
             'fullname' => fullname($USER),
             'lang' => current_language(),
             'userid' => $USER->id,
-            'userpictureurl' => $profileimageurl->out(false)
+            'userpictureurl' => $profileimageurl->out(false),
+            'siteid' => SITEID
         );
 
         // Retrieve the service and functions from the web service linked to the token
@@ -162,7 +163,7 @@ class core_webservice_external extends external_api {
         $siteinfo['functions'] = $availablefunctions;
 
         // Mobile CSS theme and alternative login url.
-        $siteinfo['mobilecssurl'] = $CFG->mobilecssurl;
+        $siteinfo['mobilecssurl'] = !empty($CFG->mobilecssurl) ? $CFG->mobilecssurl : '';
 
         // Retrieve some advanced features. Only enable/disable ones (bool).
         $advancedfeatures = array("usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
@@ -257,70 +258,9 @@ class core_webservice_external extends external_api {
                                             VALUE_OPTIONAL),
                 'userhomepage' => new external_value(PARAM_INT,
                                                         'the default home page for the user: 0 for the site home, 1 for dashboard',
-                                                        VALUE_OPTIONAL)
+                                                        VALUE_OPTIONAL),
+                'siteid'  => new external_value(PARAM_INT, 'Site course ID', VALUE_OPTIONAL)
             )
         );
-    }
-}
-
-/**
- * Deprecated web service related functions
- *
- * @package    core_webservice
- * @category   external
- * @copyright  2011 Jerome Mouneyrac <jerome@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated Moodle 2.2 MDL-29106 - please do not use this class any more.
- * @see core_webservice_external
- * @since Moodle 2.1
- */
-class moodle_webservice_external extends external_api {
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @see core_webservice_external::get_site_info_parameters
-     * @since Moodle 2.1
-     */
-    public static function get_siteinfo_parameters() {
-        return core_webservice_external::get_site_info_parameters();
-    }
-
-    /**
-     * Return user information including profile picture + basic site information
-     * Note:
-     * - no capability checking because we return just known information by logged user
-     *
-     * @param array $serviceshortnames of service shortnames - the functions of these services will be returned
-     * @return array
-     * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @see core_webservice_external::get_site_info
-     * @since Moodle 2.1
-     */
-    public function get_siteinfo($serviceshortnames = array()) {
-        return core_webservice_external::get_site_info($serviceshortnames);
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_single_structure
-     * @deprecated Moodle 2.2 - please do not use this function any more.
-     * @see core_webservice_external::get_site_info_returns
-     * @since Moodle 2.1
-     */
-    public static function get_siteinfo_returns() {
-        return core_webservice_external::get_site_info_returns();
-    }
-
-    /**
-     * Marking the method as deprecated.
-     *
-     * @return bool
-     */
-    public static function get_siteinfo_is_deprecated() {
-        return true;
     }
 }

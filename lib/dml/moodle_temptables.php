@@ -90,7 +90,7 @@ class moodle_temptables {
      * @return array containing all the tablenames in the store (tablename both key and value)
      */
     public function get_temptables() {
-        return array_keys($this->temptables);
+        return $this->temptables;
     }
 
     /**

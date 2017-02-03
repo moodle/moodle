@@ -26,7 +26,7 @@
  */
 
 require_once('HTML/QuickForm/radio.php');
-
+require_once('templatable_form_element.php');
 /**
  * radio type form element
  *
@@ -37,7 +37,9 @@ require_once('HTML/QuickForm/radio.php');
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class MoodleQuickForm_radio extends HTML_QuickForm_radio{
+class MoodleQuickForm_radio extends HTML_QuickForm_radio implements templatable {
+    use templatable_form_element;
+
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
 

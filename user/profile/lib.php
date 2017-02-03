@@ -208,7 +208,7 @@ class profile_field_base {
      * @param  moodleform $mform instance of the moodleform class
      */
     public function edit_field_set_default($mform) {
-        if (!empty($default)) {
+        if (!empty($this->field->defaultdata)) {
             $mform->setDefault($this->inputname, $this->field->defaultdata);
         }
     }
@@ -387,6 +387,28 @@ class profile_field_base {
     public function is_signup_field() {
         return (boolean)$this->field->signup;
     }
+
+    /**
+     * Return the field settings suitable to be exported via an external function.
+     * By default it return all the field settings.
+     *
+     * @return array all the settings
+     * @since Moodle 3.2
+     */
+    public function get_field_config_for_external() {
+        return (array) $this->field;
+    }
+
+    /**
+     * Return the field type and null properties.
+     * This will be used for validating the data submitted by a user.
+     *
+     * @return array the param type and null property
+     * @since Moodle 3.2
+     */
+    public function get_field_properties() {
+        return array(PARAM_RAW, NULL_NOT_ALLOWED);
+    }
 }
 
 /**
@@ -528,13 +550,15 @@ function profile_display_fields($userid) {
 }
 
 /**
- * Adds code snippet to a moodle form object for custom profile fields that
- * should appear on the signup page
- * @param moodleform $mform moodle form object
+ * Retrieves a list of profile fields that must be displayed in the sign-up form.
+ *
+ * @return array list of profile fields info
+ * @since Moodle 3.2
  */
-function profile_signup_fields($mform) {
+function profile_get_signup_fields() {
     global $CFG, $DB;
 
+    $profilefields = array();
     // Only retrieve required custom fields (with category information)
     // results are sort by categories, then by fields.
     $sql = "SELECT uf.id as fieldid, ic.id as categoryid, ic.name as categoryname, uf.datatype
@@ -543,17 +567,39 @@ function profile_signup_fields($mform) {
                 ON uf.categoryid = ic.id AND uf.signup = 1 AND uf.visible<>0
                 ORDER BY ic.sortorder ASC, uf.sortorder ASC";
 
-    if ( $fields = $DB->get_records_sql($sql)) {
+    if ($fields = $DB->get_records_sql($sql)) {
+        foreach ($fields as $field) {
+            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+            $newfield = 'profile_field_'.$field->datatype;
+            $fieldobject = new $newfield($field->fieldid);
+
+            $profilefields[] = (object) array(
+                'categoryid' => $field->categoryid,
+                'categoryname' => $field->categoryname,
+                'fieldid' => $field->fieldid,
+                'datatype' => $field->datatype,
+                'object' => $fieldobject
+            );
+        }
+    }
+    return $profilefields;
+}
+
+/**
+ * Adds code snippet to a moodle form object for custom profile fields that
+ * should appear on the signup page
+ * @param moodleform $mform moodle form object
+ */
+function profile_signup_fields($mform) {
+
+    if ($fields = profile_get_signup_fields()) {
         foreach ($fields as $field) {
             // Check if we change the categories.
             if (!isset($currentcat) || $currentcat != $field->categoryid) {
                  $currentcat = $field->categoryid;
                  $mform->addElement('header', 'category_'.$field->categoryid, format_string($field->categoryname));
-            }
-            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
-            $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->fieldid);
-            $formfield->edit_field($mform);
+            };
+            $field->object->edit_field($mform);
         }
     }
 }
@@ -561,9 +607,10 @@ function profile_signup_fields($mform) {
 /**
  * Returns an object with the custom profile fields set for the given user
  * @param integer $userid
+ * @param bool $onlyinuserobject True if you only want the ones in $USER.
  * @return stdClass
  */
-function profile_user_record($userid) {
+function profile_user_record($userid, $onlyinuserobject = true) {
     global $CFG, $DB;
 
     $usercustomfields = new stdClass();
@@ -573,7 +620,7 @@ function profile_user_record($userid) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
             $formfield = new $newfield($field->id, $userid);
-            if ($formfield->is_user_object_data()) {
+            if (!$onlyinuserobject || $formfield->is_user_object_data()) {
                 $usercustomfields->{$field->shortname} = $formfield->data;
             }
         }
@@ -661,3 +708,30 @@ function profile_view($user, $context, $course = null) {
     $event->trigger();
 }
 
+/**
+ * Does the user have all required custom fields set?
+ *
+ * Internal, to be exclusively used by {@link user_not_fully_set_up()} only.
+ *
+ * Note that if users have no way to fill a required field via editing their
+ * profiles (e.g. the field is not visible or it is locked), we still return true.
+ * So this is actually checking if we should redirect the user to edit their
+ * profile, rather than whether there is a value in the database.
+ *
+ * @param int $userid
+ * @return bool
+ */
+function profile_has_required_custom_fields_set($userid) {
+    global $DB;
+
+    $sql = "SELECT f.id
+              FROM {user_info_field} f
+         LEFT JOIN {user_info_data} d ON (d.fieldid = f.id AND d.userid = ?)
+             WHERE f.required = 1 AND f.visible > 0 AND f.locked = 0 AND d.id IS NULL";
+
+    if ($DB->record_exists_sql($sql, [$userid])) {
+        return false;
+    }
+
+    return true;
+}

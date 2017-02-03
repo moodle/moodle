@@ -28,6 +28,11 @@ require_once(__DIR__ . '/fixtures/event.php');
 require_once(__DIR__ . '/fixtures/restore_hack.php');
 
 class logstore_standard_store_testcase extends advanced_testcase {
+    /**
+     * @var bool Determine if we disabled the GC, so it can be re-enabled in tearDown.
+     */
+    private $wedisabledgc = false;
+
     public function test_log_writing() {
         global $DB;
         $this->resetAfterTest();
@@ -220,11 +225,26 @@ class logstore_standard_store_testcase extends advanced_testcase {
     }
 
     /**
+     * Verify that gc disabling works
+     */
+    public function test_gc_enabled_as_expected() {
+        if (!gc_enabled()) {
+            $this->markTestSkipped('Garbage collector (gc) is globally disabled.');
+        }
+
+        $this->disable_gc();
+        $this->assertTrue($this->wedisabledgc);
+        $this->assertFalse(gc_enabled());
+    }
+
+    /**
      * Test sql_reader::get_events_select_iterator.
      * @return void
      */
     public function test_events_traversable() {
         global $DB;
+
+        $this->disable_gc();
 
         $this->resetAfterTest();
         $this->preventResetByRollback();
@@ -271,7 +291,6 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $this->assertInstanceOf('\Traversable', $eventsit);
 
         $this->assertLessThan($arraymemusage / 10, $itmemusage);
-
         set_config('enabled_stores', '', 'tool_log');
         get_log_manager(true);
     }
@@ -311,5 +330,25 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $clean->execute();
 
         $this->assertEquals(1, $DB->count_records('logstore_standard_log'));
+    }
+
+    /**
+     * Disable the garbage collector if it's enabled to ensure we don't adjust memory statistics.
+     */
+    private function disable_gc() {
+        if (gc_enabled()) {
+            $this->wedisabledgc = true;
+            gc_disable();
+        }
+    }
+
+    /**
+     * Reset any garbage collector changes to the previous state at the end of the test.
+     */
+    public function tearDown() {
+        if ($this->wedisabledgc) {
+            gc_enable();
+        }
+        $this->wedisabledgc = false;
     }
 }

@@ -329,6 +329,13 @@ abstract class screen {
                 continue;
             }
 
+            // If the user submits Exclude grade elements without the proper.
+            // permissions then we should refuse to update.
+            if ($matches[1] === 'exclude' && !has_capability('moodle/grade:manage', $this->context)){
+                $warnings[] = get_string('nopermissions', 'error', get_string('grade:manage', 'role'));
+                continue;
+            }
+
             $msg = $element->set($posted);
 
             // Optional type.

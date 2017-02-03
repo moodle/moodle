@@ -101,8 +101,8 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
 
         // Create what we expect to be returned when querying the two courses.
         // First for the student user.
-        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'template', 'days', 'questions',
-                                    'surveydone');
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'template', 'days',
+                                'questions', 'surveydone');
 
         // Add expected coursemodule and data.
         $survey1 = $this->survey;
@@ -113,6 +113,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         $survey1->visible = true;
         $survey1->groupmode = 0;
         $survey1->groupingid = 0;
+        $survey1->introfiles = [];
 
         $survey2->coursemodule = $survey2->cmid;
         $survey2->introformat = 1;
@@ -123,6 +124,7 @@ class mod_survey_external_testcase extends externallib_advanced_testcase {
         $survey2->groupingid = 0;
         $tempo = $DB->get_field("survey", "intro", array("id" => $survey2->template));
         $survey2->intro = nl2br(get_string($tempo, "survey"));
+        $survey2->introfiles = [];
 
         foreach ($expectedfields as $field) {
             $expected1[$field] = $survey1->{$field};

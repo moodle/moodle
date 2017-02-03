@@ -79,6 +79,8 @@ class webservice_xmlrpc_client {
         );
 
         // Encode the request.
+        // See MDL-53962 - needed for backwards compatibility on <= 3.0
+        $params = array_values($params);
         $request = xmlrpc_encode_request($functionname, $params, $outputoptions);
 
         // Set the headers.

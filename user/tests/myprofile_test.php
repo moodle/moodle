@@ -88,6 +88,9 @@ class core_user_myprofile_testcase extends advanced_testcase {
         $this->assertSame('class1 class2', $category->classes);
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_validate_after_order1() {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
 
@@ -100,11 +103,13 @@ class core_user_myprofile_testcase extends advanced_testcase {
         $category->add_node($node2);
         $category->add_node($node1);
 
-        $this->setExpectedException('coding_exception');
         $category->validate_after_order();
 
     }
 
+    /**
+     * @expectedException coding_exception
+     */
     public function test_validate_after_order2() {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
 
@@ -117,7 +122,6 @@ class core_user_myprofile_testcase extends advanced_testcase {
         $category->add_node($node2);
         $category->add_node($node1);
 
-        $this->setExpectedException('coding_exception');
         $category->validate_after_order();
 
     }
@@ -167,6 +171,8 @@ class core_user_myprofile_testcase extends advanced_testcase {
 
     /**
      * Test category::sort_nodes().
+     *
+     * @expectedException coding_exception
      */
     public function test_sort_nodes1() {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
@@ -213,7 +219,6 @@ class core_user_myprofile_testcase extends advanced_testcase {
         // Add a node with invalid 'after' and make sure an exception is thrown.
         $node7 = new \core_user\output\myprofile\node('category', 'node7', 'nodetitle', 'noderandom');
         $category->add_node($node7);
-        $this->setExpectedException('coding_exception');
         $category->sort_nodes();
     }
 
@@ -259,6 +264,8 @@ class core_user_myprofile_testcase extends advanced_testcase {
 
     /**
      * Test tree::add_node().
+     *
+     * @expectedException coding_exception
      */
     public function test_tree_add_node() {
         $tree = new \phpunit_fixture_myprofile_tree();
@@ -269,12 +276,13 @@ class core_user_myprofile_testcase extends advanced_testcase {
         $this->assertEquals($node1, $node);
 
         // Can't add node with same name.
-        $this->setExpectedException('coding_exception');
         $tree->add_node($node1);
     }
 
     /**
      * Test tree::add_category().
+     *
+     * @expectedException coding_exception
      */
     public function test_tree_add_category() {
         $tree = new \phpunit_fixture_myprofile_tree();
@@ -285,7 +293,6 @@ class core_user_myprofile_testcase extends advanced_testcase {
         $this->assertEquals($category1, $category);
 
         // Can't add node with same name.
-        $this->setExpectedException('coding_exception');
         $tree->add_category($category1);
     }
 
@@ -334,6 +341,8 @@ class core_user_myprofile_testcase extends advanced_testcase {
 
     /**
      * Test tree::sort_categories().
+     *
+     * @expectedException coding_exception
      */
     public function test_sort_categories() {
         $tree = new \phpunit_fixture_myprofile_tree('category', 'title', null);
@@ -372,7 +381,6 @@ class core_user_myprofile_testcase extends advanced_testcase {
         $this->assertEquals($category6, $category);
 
         // Can't add category with same name.
-        $this->setExpectedException('coding_exception');
         $tree->add_category($category1);
     }
 }

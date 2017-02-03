@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<basic_lti_link xmlns="http://www.imsglobal.org/xsd/imsbasiclti_v1p0"
+    xmlns:lticm ="http://www.imsglobal.org/xsd/imslticm_v1p0"
+    xmlns:lticp ="http://www.imsglobal.org/xsd/imslticp_v1p0"
+    xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation = "http://www.imsglobal.org/xsd/imsbasiclti_v1p0 imsbasiclti_v1p0p1.xsd
+                          http://www.imsglobal.org/xsd/imslticm_v1p0 imslticm_v1p0.xsd
+                          http://www.imsglobal.org/xsd/imslticp_v1p0 imslticp_v1p0.xsd">
+    <title>Example tool</title>
+    <description>Example tool description</description>
+    <extensions platform="my.lms.com">
+        <lticm:property name="icon_url">http://download.moodle.org/unittest/test.jpg</lticm:property>
+        <lticm:property name="secure_icon_url">https://download.moodle.org/unittest/test.jpg</lticm:property>
+    </extensions>
+    <launch_url>http://www.example.com/lti/provider.php</launch_url>
+    <secure_launch_url>https://www.example.com/lti/provider.php</secure_launch_url>
+    <icon>http://download.moodle.org/unittest/test.jpg</icon>
+    <secure_icon>https://download.moodle.org/unittest/test.jpg</secure_icon>
+    <vendor>
+        <lticp:code>moodle.org</lticp:code>
+        <lticp:name>Moodle</lticp:name>
+        <lticp:description>Moodle Learning Management System Example Cartridge</lticp:description>
+        <lticp:url>http://www.moodle.org/</lticp:url>
+        <lticp:contact>
+            <lticp:email>moodle@example.com</lticp:email>
+        </lticp:contact>
+    </vendor>
+</basic_lti_link>

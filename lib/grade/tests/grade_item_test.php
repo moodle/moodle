@@ -50,6 +50,7 @@ class core_grade_item_testcase extends grade_base_testcase {
         $this->sub_test_grade_item_load_item_category();
         $this->sub_test_grade_item_regrade_final_grades();
         $this->sub_test_grade_item_adjust_raw_grade();
+        $this->sub_test_grade_item_rescale_grades_keep_percentage();
         $this->sub_test_grade_item_set_locked();
         $this->sub_test_grade_item_is_locked();
         $this->sub_test_grade_item_set_hidden();
@@ -371,6 +372,46 @@ class core_grade_item_testcase extends grade_base_testcase {
         $this->assertEquals(round(1.6), round($grade_item->adjust_raw_grade($grade_raw->rawgrade, $grade_raw->grademin, $grade_raw->grademax)));
     }
 
+    protected function sub_test_grade_item_rescale_grades_keep_percentage() {
+        global $DB;
+        $gradeitem = new grade_item($this->grade_items[10], false); // 10 is the manual grade item.
+
+        // Create some grades to go with the grade item.
+        $gradeids = array();
+        $grade = new stdClass();
+        $grade->itemid = $gradeitem->id;
+        $grade->userid = $this->user[2]->id;
+        $grade->finalgrade = 10;
+        $grade->rawgrademax = $gradeitem->grademax;
+        $grade->rawgrademin = $gradeitem->grademin;
+        $grade->timecreated = time();
+        $grade->timemodified = time();
+        $gradeids[] = $DB->insert_record('grade_grades', $grade);
+
+        $grade->userid = $this->user[3]->id;
+        $grade->finalgrade = 50;
+        $grade->rawgrademax = $gradeitem->grademax;
+        $grade->rawgrademin = $gradeitem->grademin;
+        $gradeids[] = $DB->insert_record('grade_grades', $grade);
+
+        // Run the function.
+        $gradeitem->grademax = 33;
+        $gradeitem->grademin = 3;
+        $gradeitem->update();
+        $gradeitem->rescale_grades_keep_percentage(0, 100, 3, 33, 'test');
+
+        // Check that the grades were updated to match the grade item.
+        $grade = $DB->get_record('grade_grades', array('id' => $gradeids[0]));
+        $this->assertEquals($gradeitem->grademax, $grade->rawgrademax, 'Max grade mismatch', 0.0001);
+        $this->assertEquals($gradeitem->grademin, $grade->rawgrademin, 'Min grade mismatch', 0.0001);
+        $this->assertEquals(6, $grade->finalgrade, 'Min grade mismatch', 0.0001);
+
+        $grade = $DB->get_record('grade_grades', array('id' => $gradeids[1]));
+        $this->assertEquals($gradeitem->grademax, $grade->rawgrademax, 'Max grade mismatch', 0.0001);
+        $this->assertEquals($gradeitem->grademin, $grade->rawgrademin, 'Min grade mismatch', 0.0001);
+        $this->assertEquals(18, $grade->finalgrade, 'Min grade mismatch', 0.0001);
+    }
+
     protected function sub_test_grade_item_set_locked() {
         // Getting a grade_item from the DB as set_locked() will fail if the grade items needs to be updated
         // also needs to have at least one grade_grade or $grade_item->get_final(1) returns null.
@@ -610,6 +651,7 @@ class core_grade_item_testcase extends grade_base_testcase {
         $grade_item->itemtype = 'mod';
         $grade_item->itemmodule = 'quiz';
         $grade_item->iteminfo = 'Grade item used for unit testing';
+        $grade_item->iteminstance = $this->activities[7]->id;
         $grade_item->grademin = $min;
         $grade_item->grademax = $max;
         $grade_item->insert();

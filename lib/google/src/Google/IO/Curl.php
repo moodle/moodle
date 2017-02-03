@@ -32,6 +32,9 @@ class Google_IO_Curl extends Google_IO_Abstract
 
   private $options = array();
 
+  /** @var bool $disableProxyWorkaround */
+  private $disableProxyWorkaround;
+
   public function __construct(Google_Client $client)
   {
     if (!extension_loaded('curl')) {
@@ -41,6 +44,11 @@ class Google_IO_Curl extends Google_IO_Abstract
     }
 
     parent::__construct($client);
+
+    $this->disableProxyWorkaround = $this->client->getClassConfig(
+        'Google_IO_Curl',
+        'disable_proxy_workaround'
+    );
   }
 
   /**
@@ -73,8 +81,11 @@ class Google_IO_Curl extends Google_IO_Abstract
 
     curl_setopt($curl, CURLOPT_FOLLOWLOCATION, false);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-    // 1 is CURL_SSLVERSION_TLSv1, which is not always defined in PHP.
-    curl_setopt($curl, CURLOPT_SSLVERSION, 1);
+
+    // The SSL version will be determined by the underlying library
+    // @see https://github.com/google/google-api-php-client/pull/644
+    //curl_setopt($curl, CURLOPT_SSLVERSION, 1);
+
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HEADER, true);
 
@@ -172,6 +183,10 @@ class Google_IO_Curl extends Google_IO_Abstract
    */
   protected function needsQuirk()
   {
+    if ($this->disableProxyWorkaround) {
+      return false;
+    }
+
     $ver = curl_version();
     $versionNum = $ver['version_number'];
     return $versionNum < Google_IO_Curl::NO_QUIRK_VERSION;

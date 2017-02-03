@@ -300,4 +300,124 @@ class assignfeedback_editpdf_testcase extends mod_assign_base_testcase {
 
         $this->assertEmpty($file3);
     }
+
+    /**
+     * Test that modifying the annotated pdf form return true when modified
+     * and false when not modified.
+     */
+    public function test_is_feedback_modified() {
+        global $DB;
+        $assign = $this->create_assign_and_submit_pdf();
+        $this->setUser($this->teachers[0]);
+
+        $grade = $assign->get_user_grade($this->students[0]->id, true);
+
+        $notempty = page_editor::has_annotations_or_comments($grade->id, false);
+        $this->assertFalse($notempty);
+
+        $comment = new comment();
+
+        $comment->rawtext = 'Comment text';
+        $comment->width = 100;
+        $comment->x = 100;
+        $comment->y = 100;
+        $comment->colour = 'red';
+
+        page_editor::set_comments($grade->id, 0, array($comment));
+
+        $annotations = array();
+
+        $annotation = new annotation();
+        $annotation->path = '';
+        $annotation->x = 100;
+        $annotation->y = 100;
+        $annotation->endx = 200;
+        $annotation->endy = 200;
+        $annotation->type = 'line';
+        $annotation->colour = 'red';
+        array_push($annotations, $annotation);
+
+        page_editor::set_annotations($grade->id, 0, $annotations);
+
+        $plugin = $assign->get_feedback_plugin_by_type('editpdf');
+        $data = new stdClass();
+        $data->editpdf_source_userid = $this->students[0]->id;
+        $this->assertTrue($plugin->is_feedback_modified($grade, $data));
+        $plugin->save($grade, $data);
+
+        $annotation = new annotation();
+        $annotation->gradeid = $grade->id;
+        $annotation->pageno = 0;
+        $annotation->path = '';
+        $annotation->x = 100;
+        $annotation->y = 100;
+        $annotation->endx = 200;
+        $annotation->endy = 200;
+        $annotation->type = 'rectangle';
+        $annotation->colour = 'yellow';
+
+        $yellowannotationid = page_editor::add_annotation($annotation);
+
+        // Add a comment as well.
+        $comment = new comment();
+        $comment->gradeid = $grade->id;
+        $comment->pageno = 0;
+        $comment->rawtext = 'Second Comment text';
+        $comment->width = 100;
+        $comment->x = 100;
+        $comment->y = 100;
+        $comment->colour = 'red';
+        page_editor::add_comment($comment);
+
+        $this->assertTrue($plugin->is_feedback_modified($grade, $data));
+        $plugin->save($grade, $data);
+
+        // We should have two annotations.
+        $this->assertCount(2, page_editor::get_annotations($grade->id, 0, false));
+        // And two comments.
+        $this->assertCount(2, page_editor::get_comments($grade->id, 0, false));
+
+        // Add one annotation and delete another.
+        $annotation = new annotation();
+        $annotation->gradeid = $grade->id;
+        $annotation->pageno = 0;
+        $annotation->path = '100,100:105,105:110,100';
+        $annotation->x = 100;
+        $annotation->y = 100;
+        $annotation->endx = 110;
+        $annotation->endy = 105;
+        $annotation->type = 'pen';
+        $annotation->colour = 'black';
+        page_editor::add_annotation($annotation);
+
+        $annotations = page_editor::get_annotations($grade->id, 0, true);
+        page_editor::remove_annotation($yellowannotationid);
+        $this->assertTrue($plugin->is_feedback_modified($grade, $data));
+        $plugin->save($grade, $data);
+
+        // We should have two annotations.
+        $this->assertCount(2, page_editor::get_annotations($grade->id, 0, false));
+        // And two comments.
+        $this->assertCount(2, page_editor::get_comments($grade->id, 0, false));
+
+        // Add a comment and then remove it. Should not be considered as modified.
+        $comment = new comment();
+        $comment->gradeid = $grade->id;
+        $comment->pageno = 0;
+        $comment->rawtext = 'Third Comment text';
+        $comment->width = 400;
+        $comment->x = 57;
+        $comment->y = 205;
+        $comment->colour = 'black';
+        $comment->id = page_editor::add_comment($comment);
+
+        // We should now have three comments.
+        $this->assertCount(3, page_editor::get_comments($grade->id, 0, true));
+        // Now delete the newest record.
+        page_editor::remove_comment($comment->id);
+        // Back to two comments.
+        $this->assertCount(2, page_editor::get_comments($grade->id, 0, true));
+        // No modification.
+        $this->assertFalse($plugin->is_feedback_modified($grade, $data));
+    }
 }

@@ -99,14 +99,134 @@ class mod_folder_external_testcase extends externallib_advanced_testcase {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is only defined in authenticated user and guest roles.
         assign_capability('mod/folder:view', CAP_PROHIBIT, $studentrole->id, $context->id);
+        // Empty all the caches that may be affected by this change.
         accesslib_clear_all_caches_for_unit_testing();
+        course_modinfo::clear_instance_cache();
 
         try {
             mod_folder_external::view_folder($folder->id);
             $this->fail('Exception expected due to missing capability.');
         } catch (moodle_exception $e) {
-            $this->assertEquals('nopermissions', $e->errorcode);
+            $this->assertEquals('requireloginerror', $e->errorcode);
+        }
+    }
+
+    /**
+     * Test test_mod_folder_get_folders_by_courses
+     */
+    public function test_mod_folder_get_folders_by_courses() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        $student = self::getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id);
+
+        self::setUser($student);
+
+        // First folder.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $folder1 = self::getDataGenerator()->create_module('folder', $record);
+
+        // Second folder.
+        $record = new stdClass();
+        $record->course = $course2->id;
+        $folder2 = self::getDataGenerator()->create_module('folder', $record);
+
+        // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
+        $enrol = enrol_get_plugin('manual');
+        $enrolinstances = enrol_get_instances($course2->id, true);
+        foreach ($enrolinstances as $courseenrolinstance) {
+            if ($courseenrolinstance->enrol == "manual") {
+                $instance2 = $courseenrolinstance;
+                break;
+            }
+        }
+        $enrol->enrol_user($instance2, $student->id, $studentrole->id);
+
+        $returndescription = mod_folder_external::get_folders_by_courses_returns();
+
+        // Create what we expect to be returned when querying the two courses.
+        $expectedfields = array('id', 'course', 'name', 'intro', 'introformat', 'introfiles', 'revision', 'timemodified',
+                                'display', 'showexpanded', 'showdownloadfolder', 'section', 'visible', 'groupmode', 'groupingid');
+
+        // Add expected coursemodule and data.
+        $folder1->coursemodule = $folder1->cmid;
+        $folder1->introformat = 1;
+        $folder1->section = 0;
+        $folder1->visible = true;
+        $folder1->groupmode = 0;
+        $folder1->groupingid = 0;
+        $folder1->introfiles = [];
+
+        $folder2->coursemodule = $folder2->cmid;
+        $folder2->introformat = 1;
+        $folder2->section = 0;
+        $folder2->visible = true;
+        $folder2->groupmode = 0;
+        $folder2->groupingid = 0;
+        $folder2->introfiles = [];
+
+        foreach ($expectedfields as $field) {
+            $expected1[$field] = $folder1->{$field};
+            $expected2[$field] = $folder2->{$field};
         }
 
+        $expectedfolders = array($expected2, $expected1);
+
+        // Call the external function passing course ids.
+        $result = mod_folder_external::get_folders_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertEquals($expectedfolders, $result['folders']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Call the external function without passing course id.
+        $result = mod_folder_external::get_folders_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertEquals($expectedfolders, $result['folders']);
+        $this->assertCount(0, $result['warnings']);
+
+        // Add a file to the intro.
+        $fileintroname = "fileintro.txt";
+        $filerecordinline = array(
+            'contextid' => context_module::instance($folder2->cmid)->id,
+            'component' => 'mod_folder',
+            'filearea'  => 'intro',
+            'itemid'    => 0,
+            'filepath'  => '/',
+            'filename'  => $fileintroname,
+        );
+        $fs = get_file_storage();
+        $timepost = time();
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+
+        $result = mod_folder_external::get_folders_by_courses(array($course2->id, $course1->id));
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertCount(1, $result['folders'][0]['introfiles']);
+        $this->assertEquals($fileintroname, $result['folders'][0]['introfiles'][0]['filename']);
+
+        // Unenrol user from second course.
+        $enrol->unenrol_user($instance2, $student->id);
+        array_shift($expectedfolders);
+
+        // Call the external function without passing course id.
+        $result = mod_folder_external::get_folders_by_courses();
+        $result = external_api::clean_returnvalue($returndescription, $result);
+
+        $this->assertEquals($expectedfolders, $result['folders']);
+
+        // Call for the second course we unenrolled the user from, expected warning.
+        $result = mod_folder_external::get_folders_by_courses(array($course2->id));
+        $this->assertCount(1, $result['warnings']);
+        $this->assertEquals('1', $result['warnings'][0]['warningcode']);
+        $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
     }
 }

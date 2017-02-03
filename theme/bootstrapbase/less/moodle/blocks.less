@@ -14,7 +14,7 @@
             padding: 3px 15px;
             float: right;
             > * {
-                margin-left:3px;
+                margin-left: 3px;
             }
             .block-hider-show,
             .block-hider-hide {
@@ -105,17 +105,6 @@
         }
     }
 }
-.dir-rtl {
-    &.editing {
-        .block {
-            .header {
-                .commands {
-                    text-align: left;
-                }
-            }
-        }
-    }
-}
 
 // Hide the block content when the block has been minimised.
 .jsenabled .block.hidden .content {
@@ -169,7 +158,7 @@
         .footer {
             margin-top: .5em;
             padding-top: 10px;
-            padding-left: 0px;
+            padding-left: 0;
         }
     }
 }
@@ -196,7 +185,7 @@
         padding-bottom: 10px;
     }
     ul li {
-        border-top: 1px rgba(0,0,0,0.05) solid;
+        border-top: 1px rgba(0, 0, 0, 0.05) solid;
         padding: 2px;
         display: table;
         width: 100%;
@@ -215,7 +204,7 @@
     }
     .footer {
         padding-top: 10px;
-        padding-left: 0px;
+        padding-left: 0;
     }
 }
 
@@ -239,54 +228,15 @@
 .block_adminblock {
     .content {
         display: block;
+        margin: 0 10px;
         padding: 3px 5px;
+        width: auto;
     }
-    select {
-        max-width: 92%;
-    }
-}
-
-// RTL styles for blocks.
-.dir-rtl {
-
-    // RTL styles for blocks in general.
-    .block {
-        .header {
-            text-align: right;
-            h2 {
-                text-align: right;
-            }
-            .block_action {
-                float: left;
-                > * {
-                    margin-left: 0;
-                    margin-right: 3px;
-                }
-            }
-        }
-    }
-
-    // LTR styles for the calendar upcoming block.
-    .block_calendar_upcoming {
-        .content {
-            .date {
-                padding-right: 22px;
-            }
-            .footer {
-                padding-right: 0px;
-            }
-        }
-    }
-
-    // RTL styles for the news items block.
-    .block_news_items .content {
-        ul li {
-            .name {
-                padding-right: 1ex;
-            }
-        }
-        .footer {
-            padding-left: 0px;
+    .singleselect {
+        display: block;
+        select.singleselect {
+            display: block;
+            width: 100%;
         }
     }
 }

@@ -63,13 +63,11 @@ echo '<form action="upgradesettings.php" method="post" id="adminsettings">';
 echo '<div>';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '<input type="hidden" name="return" value="'.$return.'" />';
-// HACK to prevent browsers from automatically inserting the user's password into the wrong fields.
-echo prevent_form_autofill_password();
 echo '<fieldset>';
 echo '<div class="clearer"><!-- --></div>';
 echo $newsettingshtml;
 echo '</fieldset>';
-echo '<div class="form-buttons"><input class="form-submit" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
+echo '<div class="form-buttons"><input class="form-submit btn btn-primary" type="submit" value="'.get_string('savechanges','admin').'" /></div>';
 echo '</div>';
 echo '</form>';
 

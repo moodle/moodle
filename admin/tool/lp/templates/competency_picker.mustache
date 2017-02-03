@@ -1,0 +1,86 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_lp/competency_picker
+
+    Show a competency tree and allow picking a competency.
+
+    Context variables required for this template:
+    * frameworks - array of competency framework
+      * id
+      * shortname
+      * idnumber
+      * selected
+
+    * framework - competency framework
+      * id
+      * name
+      * shortname
+      * idnumber
+
+    * competencies - array of nodes
+      * id - competency id
+      * name - competency idnumber
+      * children - array of children
+      * haschildren - boolean
+
+    Example context (json):
+    {
+        "frameworks": [
+            {
+                "id": "1",
+                "shortname": "Framework",
+                "idnumber": "F1"
+            }
+        ],
+        "competencies": [
+        ]
+    }
+}}
+<div data-region="competencylinktree">
+{{^singleFramework}}
+<h3>{{#str}}competencyframeworks, tool_lp{{/str}}</h3>
+<select data-action="chooseframework" class="custom-select">
+{{#frameworks}}
+<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{{shortname}}} <em>{{idnumber}}</em></option>
+{{/frameworks}}
+</select>
+{{/singleFramework}}
+<h3 class="m-t-1">{{#str}}locatecompetency, tool_lp{{/str}}</h3>
+
+<form data-region="filtercompetencies" class="form-inline" data-frameworkid="{{framework.id}}">
+    <div class="form-group">
+        <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
+        <input type="text" class="form-control" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
+        <button class="btn btn-secondary">{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>
+    </div>
+</form>
+<ul data-enhance="linktree" style="display: none;" class="m-t-1 competency-tree">
+    <li><span>{{{framework.shortname}}}</span>
+        <ul>
+            {{#competencies}}
+                {{> tool_lp/competencies_tree }}
+            {{/competencies}}
+        </ul>
+    </li>
+</ul>
+<div data-region="link-buttons" class="m-t-1 pull-xs-right">
+    <input type="button" class="btn btn-primary" data-action="add" value="{{#str}}add{{/str}}"/>
+    <input type="button" class="btn btn-secondary" data-action="cancel" value="{{#str}}cancel{{/str}}"/>
+</div>
+<div class="clearfix"></div>
+</div>

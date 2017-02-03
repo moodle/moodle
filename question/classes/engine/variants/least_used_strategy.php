@@ -90,6 +90,15 @@ class least_used_strategy implements \question_variant_selection_strategy {
             return $this->selectedvariant[$seed];
         }
 
+        // Catch a possible programming error, and make the problem clear.
+        if (!isset($this->variantsusecounts[$seed])) {
+            debugging('Variant requested for unknown seed ' . $seed . '. ' .
+                    'You must add all questions to the usage before creating the least_used_strategy. ' .
+                    'Continuing, but the variant choses may not actually be least used.',
+                    DEBUG_DEVELOPER);
+            $this->variantsusecounts[$seed] = array();
+        }
+
         if ($maxvariants > 2 * count($this->variantsusecounts[$seed])) {
             // Many many more variants exist than have been used so far.
             // It will be quicker to just pick until we miss a collision.

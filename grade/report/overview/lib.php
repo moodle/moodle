@@ -165,6 +165,97 @@ class grade_report_overview extends grade_report {
     }
 
     /**
+     * Set up the courses grades data for the report.
+     *
+     * @param bool $studentcoursesonly Only show courses that the user is a student of.
+     * @return array of course grades information
+     */
+    public function setup_courses_data($studentcoursesonly) {
+        global $USER, $DB;
+
+        $coursesdata = array();
+        $numusers = $this->get_numusers(false);
+
+        foreach ($this->courses as $course) {
+            if (!$course->showgrades) {
+                continue;
+            }
+
+            // If we are only showing student courses and this course isn't part of the group, then move on.
+            if ($studentcoursesonly && !isset($this->studentcourseids[$course->id])) {
+                continue;
+            }
+
+            $coursecontext = context_course::instance($course->id);
+
+            if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
+                // The course is hidden and the user isn't allowed to see it.
+                continue;
+            }
+
+            if (!has_capability('moodle/user:viewuseractivitiesreport', context_user::instance($this->user->id)) &&
+                    ((!has_capability('moodle/grade:view', $coursecontext) || $this->user->id != $USER->id) &&
+                    !has_capability('moodle/grade:viewall', $coursecontext))) {
+                continue;
+            }
+
+            $coursesdata[$course->id]['course'] = $course;
+            $coursesdata[$course->id]['context'] = $coursecontext;
+
+            $canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);
+
+            // Get course grade_item.
+            $courseitem = grade_item::fetch_course_item($course->id);
+
+            // Get the stored grade.
+            $coursegrade = new grade_grade(array('itemid' => $courseitem->id, 'userid' => $this->user->id));
+            $coursegrade->grade_item =& $courseitem;
+            $finalgrade = $coursegrade->finalgrade;
+
+            if (!$canviewhidden and !is_null($finalgrade)) {
+                if ($coursegrade->is_hidden()) {
+                    $finalgrade = null;
+                } else {
+                    $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($course->id,
+                                                                                 $courseitem,
+                                                                                 $finalgrade);
+
+                    // We temporarily adjust the view of this grade item - because the min and
+                    // max are affected by the hidden values in the aggregation.
+                    $finalgrade = $adjustedgrade['grade'];
+                    $courseitem->grademax = $adjustedgrade['grademax'];
+                    $courseitem->grademin = $adjustedgrade['grademin'];
+                }
+            } else {
+                // We must use the specific max/min because it can be different for
+                // each grade_grade when items are excluded from sum of grades.
+                if (!is_null($finalgrade)) {
+                    $courseitem->grademin = $coursegrade->get_grade_min();
+                    $courseitem->grademax = $coursegrade->get_grade_max();
+                }
+            }
+
+            $coursesdata[$course->id]['finalgrade'] = $finalgrade;
+            $coursesdata[$course->id]['courseitem'] = $courseitem;
+
+            if ($this->showrank['any'] && $this->showrank[$course->id] && !is_null($finalgrade)) {
+                // Find the number of users with a higher grade.
+                // Please note this can not work if hidden grades involved :-( to be fixed in 2.0.
+                $params = array($finalgrade, $courseitem->id);
+                $sql = "SELECT COUNT(DISTINCT(userid))
+                          FROM {grade_grades}
+                         WHERE finalgrade IS NOT NULL AND finalgrade > ?
+                               AND itemid = ?";
+                $rank = $DB->count_records_sql($sql, $params) + 1;
+
+                $coursesdata[$course->id]['rank'] = $rank;
+                $coursesdata[$course->id]['numusers'] = $numusers;
+            }
+        }
+        return $coursesdata;
+    }
+
+    /**
      * Fill the table for displaying.
      *
      * @param bool $activitylink If this report link to the activity report or the user report.
@@ -179,30 +270,14 @@ class grade_report_overview extends grade_report {
 
         // Only show user's courses instead of all courses.
         if ($this->courses) {
-            $numusers = $this->get_numusers(false);
+            $coursesdata = $this->setup_courses_data($studentcoursesonly);
 
-            foreach ($this->courses as $course) {
-                if (!$course->showgrades) {
-                    continue;
-                }
+            foreach ($coursesdata as $coursedata) {
 
-                // If we are only showing student courses and this course isn't part of the group, then move on.
-                if ($studentcoursesonly && !isset($this->studentcourseids[$course->id])) {
-                    continue;
-                }
-
-                $coursecontext = context_course::instance($course->id);
-
-                if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
-                    // The course is hidden and the user isn't allowed to see it
-                    continue;
-                }
-
-                if (!has_capability('moodle/user:viewuseractivitiesreport', context_user::instance($this->user->id)) &&
-                        ((!has_capability('moodle/grade:view', $coursecontext) || $this->user->id != $USER->id) &&
-                        !has_capability('moodle/grade:viewall', $coursecontext))) {
-                    continue;
-                }
+                $course = $coursedata['course'];
+                $coursecontext = $coursedata['context'];
+                $finalgrade = $coursedata['finalgrade'];
+                $courseitem = $coursedata['courseitem'];
 
                 $coursename = format_string(get_course_display_name_for_list($course), true, array('context' => $coursecontext));
                 // Link to the activity report version of the user grade report.
@@ -213,66 +288,25 @@ class grade_report_overview extends grade_report {
                     $courselink = html_writer::link(new moodle_url('/grade/report/user/index.php', array('id' => $course->id,
                         'userid' => $this->user->id)), $coursename);
                 }
-                $canviewhidden = has_capability('moodle/grade:viewhidden', $coursecontext);
 
-                // Get course grade_item
-                $course_item = grade_item::fetch_course_item($course->id);
+                $data = array($courselink, grade_format_gradevalue($finalgrade, $courseitem, true));
 
-                // Get the stored grade
-                $course_grade = new grade_grade(array('itemid'=>$course_item->id, 'userid'=>$this->user->id));
-                $course_grade->grade_item =& $course_item;
-                $finalgrade = $course_grade->finalgrade;
-
-                if (!$canviewhidden and !is_null($finalgrade)) {
-                    if ($course_grade->is_hidden()) {
-                        $finalgrade = null;
+                if ($this->showrank['any']) {
+                    if ($this->showrank[$course->id] && !is_null($finalgrade)) {
+                        $rank = $coursedata['rank'];
+                        $numusers = $coursedata['numusers'];
+                        $data[] = "$rank/$numusers";
                     } else {
-                        $adjustedgrade = $this->blank_hidden_total_and_adjust_bounds($course->id,
-                                                                                     $course_item,
-                                                                                     $finalgrade);
-
-                        // We temporarily adjust the view of this grade item - because the min and
-                        // max are affected by the hidden values in the aggregation.
-                        $finalgrade = $adjustedgrade['grade'];
-                        $course_item->grademax = $adjustedgrade['grademax'];
-                        $course_item->grademin = $adjustedgrade['grademin'];
+                        // No grade, no rank.
+                        // Or this course wants rank hidden.
+                        $data[] = '-';
                     }
-                } else {
-                    // We must use the specific max/min because it can be different for
-                    // each grade_grade when items are excluded from sum of grades.
-                    if (!is_null($finalgrade)) {
-                        $course_item->grademin = $course_grade->get_grade_min();
-                        $course_item->grademax = $course_grade->get_grade_max();
-                    }
-                }
-
-                $data = array($courselink, grade_format_gradevalue($finalgrade, $course_item, true));
-
-                if (!$this->showrank['any']) {
-                    //nothing to do
-
-                } else if ($this->showrank[$course->id] && !is_null($finalgrade)) {
-                    /// find the number of users with a higher grade
-                    /// please note this can not work if hidden grades involved :-( to be fixed in 2.0
-                    $params = array($finalgrade, $course_item->id);
-                    $sql = "SELECT COUNT(DISTINCT(userid))
-                              FROM {grade_grades}
-                             WHERE finalgrade IS NOT NULL AND finalgrade > ?
-                                   AND itemid = ?";
-                    $rank = $DB->count_records_sql($sql, $params) + 1;
-
-                    $data[] = "$rank/$numusers";
-
-                } else {
-                    // No grade, no rank.
-                    // Or this course wants rank hidden.
-                    $data[] = '-';
                 }
 
                 $this->table->add_data($data);
             }
-            return true;
 
+            return true;
         } else {
             echo $OUTPUT->notification(get_string('notenrolled', 'grades'), 'notifymessage');
             return false;
@@ -325,6 +359,63 @@ class grade_report_overview extends grade_report {
     public static function supports_mygrades() {
         return true;
     }
+
+    /**
+     * Check if the user can access the report.
+     *
+     * @param  stdClass $systemcontext   system context
+     * @param  stdClass $context         course context
+     * @param  stdClass $personalcontext personal context
+     * @param  stdClass $course          course object
+     * @param  int $userid               userid
+     * @return bool true if the user can access the report
+     * @since  Moodle 3.2
+     */
+    public static function check_access($systemcontext, $context, $personalcontext, $course, $userid) {
+        global $USER;
+
+        $access = false;
+        if (has_capability('moodle/grade:viewall', $systemcontext)) {
+            // Ok - can view all course grades.
+            $access = true;
+
+        } else if (has_capability('moodle/grade:viewall', $context)) {
+            // Ok - can view any grades in context.
+            $access = true;
+
+        } else if ($userid == $USER->id and ((has_capability('moodle/grade:view', $context) and $course->showgrades)
+                || $course->id == SITEID)) {
+            // Ok - can view own course grades.
+            $access = true;
+
+        } else if (has_capability('moodle/grade:viewall', $personalcontext) and $course->showgrades) {
+            // Ok - can view grades of this user - parent most probably.
+            $access = true;
+        } else if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and $course->showgrades) {
+            // Ok - can view grades of this user - parent most probably.
+            $access = true;
+        }
+        return $access;
+    }
+
+    /**
+     * Trigger the grade_report_viewed event
+     *
+     * @param  stdClass $context  course context
+     * @param  int $courseid      course id
+     * @param  int $userid        user id
+     * @since Moodle 3.2
+     */
+    public static function viewed($context, $courseid, $userid) {
+        $event = \gradereport_overview\event\grade_report_viewed::create(
+            array(
+                'context' => $context,
+                'courseid' => $courseid,
+                'relateduserid' => $userid,
+            )
+        );
+        $event->trigger();
+    }
 }
 
 function grade_report_overview_settings_definition(&$mform) {
@@ -360,4 +451,26 @@ function grade_report_overview_settings_definition(&$mform) {
     $mform->addHelpButton('report_overview_showtotalsifcontainhidden', 'hidetotalifhiddenitems', 'grades');
 }
 
-
+/**
+ * Add nodes to myprofile page.
+ *
+ * @param \core_user\output\myprofile\tree $tree Tree object
+ * @param stdClass $user user object
+ * @param bool $iscurrentuser
+ * @param stdClass $course Course object
+ */
+function gradereport_overview_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+    if (empty($course)) {
+        // We want to display these reports under the site context.
+        $course = get_fast_modinfo(SITEID)->get_course();
+    }
+    $systemcontext = context_system::instance();
+    $usercontext = context_user::instance($user->id);
+    $coursecontext = context_course::instance($course->id);
+    if (grade_report_overview::check_access($systemcontext, $coursecontext, $usercontext, $course, $user->id)) {
+        $url = new moodle_url('/grade/report/overview/index.php', array('userid' => $user->id));
+        $node = new core_user\output\myprofile\node('reports', 'grades', get_string('gradesoverview', 'gradereport_overview'),
+                null, $url);
+        $tree->add_node($node);
+    }
+}

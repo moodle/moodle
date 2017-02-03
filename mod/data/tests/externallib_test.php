@@ -94,11 +94,13 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         // First for the student user.
         $expectedfields = array('id', 'coursemodule', 'course', 'name', 'comments', 'timeavailablefrom',
                             'timeavailableto', 'timeviewfrom', 'timeviewto', 'requiredentries', 'requiredentriestoview',
-                            'intro', 'introformat');
+                            'intro', 'introformat', 'introfiles');
 
         // Add expected coursemodule.
         $database1->coursemodule = $database1->cmid;
+        $database1->introfiles = [];
         $database2->coursemodule = $database2->cmid;
+        $database2->introfiles = [];
 
         $expected1 = array();
         $expected2 = array();
@@ -141,7 +143,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         // Now, try as a teacher for getting all the additional fields.
         self::setUser($teacher);
 
-        $additionalfields = array('maxentries', 'rssarticles', 'singletemplate', 'listtemplate',
+        $additionalfields = array('maxentries', 'rssarticles', 'singletemplate', 'listtemplate', 'timemodified',
                                 'listtemplateheader', 'listtemplatefooter', 'addtemplate', 'rsstemplate', 'rsstitletemplate',
                                 'csstemplate', 'jstemplate', 'asearchtemplate', 'approval', 'scale', 'assessed', 'assesstimestart',
                                 'assesstimefinish', 'defaultsort', 'defaultsortdir', 'editany', 'notification', 'manageapproved');

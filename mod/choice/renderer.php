@@ -44,7 +44,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $disabled = empty($options['previewonly']) ? array() : array('disabled' => 'disabled');
 
         $html = html_writer::start_tag('form', $attributes);
-        $html .= html_writer::start_tag('ul', array('class'=>'choices' ));
+        $html .= html_writer::start_tag('ul', array('class' => 'choices list-unstyled unstyled'));
 
         $availableoption = count($options['options']);
         $choicecount = 0;
@@ -59,6 +59,7 @@ class mod_choice_renderer extends plugin_renderer_base {
                 $option->attributes->type = 'radio';
             }
             $option->attributes->id = 'choice_'.$choicecount;
+            $option->attributes->class = 'm-x-1';
 
             $labeltext = $option->text;
             if (!empty($option->attributes->disabled)) {
@@ -82,8 +83,11 @@ class mod_choice_renderer extends plugin_renderer_base {
                 if ($availableoption < 1) {
                     $html .= html_writer::tag('label', get_string('choicefull', 'choice'));
                 } else {
-                    $html .= html_writer::empty_tag('input',
-                            array('type' => 'submit', 'value' => get_string('savemychoice', 'choice'), 'class' => 'button'));
+                    $html .= html_writer::empty_tag('input', array(
+                        'type' => 'submit',
+                        'value' => get_string('savemychoice', 'choice'),
+                        'class' => 'btn btn-primary'
+                    ));
                 }
 
                 if (!empty($options['allowupdate']) && ($options['allowupdate'])) {
@@ -117,11 +121,8 @@ class mod_choice_renderer extends plugin_renderer_base {
 
         if ($forcepublish) {  //CHOICE_PUBLISH_NAMES
             return $this->display_publish_name_vertical($choices);
-        } else { //CHOICE_PUBLISH_ANONYMOUS';
-            if ($displaylayout == DISPLAY_HORIZONTAL_LAYOUT) {
-                return $this->display_publish_anonymous_horizontal($choices);
-            }
-            return $this->display_publish_anonymous_vertical($choices);
+        } else {
+            return $this->display_publish_anonymous($choices, $displaylayout);
         }
     }
 
@@ -150,7 +151,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table = new html_table();
         $table->cellpadding = 0;
         $table->cellspacing = 0;
-        $table->attributes['class'] = 'results names ';
+        $table->attributes['class'] = 'results names table table-bordered';
         $table->tablealign = 'center';
         $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
         $table->data = array();
@@ -174,7 +175,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $usernumberheader->text = get_string('numberofuser', 'choice');
         $columns['usernumber'][] = $usernumberheader;
 
-
+        $optionsnames = [];
         foreach ($choices->options as $optionid => $options) {
             $celloption = clone($celldefault);
             $cellusernumber = clone($celldefault);
@@ -182,7 +183,7 @@ class mod_choice_renderer extends plugin_renderer_base {
 
             $celltext = '';
             if ($choices->showunanswered && $optionid == 0) {
-                $celltext = format_string(get_string('notanswered', 'choice'));
+                $celltext = get_string('notanswered', 'choice');
             } else if ($optionid > 0) {
                 $celltext = format_string($choices->options[$optionid]->text);
             }
@@ -192,6 +193,7 @@ class mod_choice_renderer extends plugin_renderer_base {
             }
 
             $celloption->text = $celltext;
+            $optionsnames[$optionid] = $celltext;
             $cellusernumber->text = $numberofuser;
 
             $columns['options'][] = $celloption;
@@ -225,20 +227,29 @@ class mod_choice_renderer extends plugin_renderer_base {
                         }
 
                         $userfullname = fullname($user, $choices->fullnamecapability);
-                        if ($choices->viewresponsecapability && $choices->deleterepsonsecapability  && $optionid > 0) {
-                            $attemptaction = html_writer::label($userfullname, 'attempt-user'.$user->id, false, array('class' => 'accesshide'));
-                            $attemptaction .= html_writer::checkbox('attemptid[]', $user->answerid, '', null,
-                                    array('id' => 'attempt-user'.$user->id));
-                            $data .= html_writer::tag('div', $attemptaction, array('class'=>'attemptaction'));
+                        $mediabody = '';
+                        if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
+                            $checkboxid = 'attempt-user'.$user->id.'-option'.$optionid;
+                            $attemptaction = html_writer::label($userfullname . ' ' . $optionsnames[$optionid],
+                                    $checkboxid, false, array('class' => 'accesshide'));
+                            if ($optionid > 0) {
+                                $attemptaction .= html_writer::checkbox('attemptid[]', $user->answerid, '', null,
+                                    array('id' => $checkboxid));
+                            } else {
+                                $attemptaction .= html_writer::checkbox('userid[]', $user->id, '', null,
+                                    array('id' => $checkboxid));
+                            }
+                            $mediabody .= html_writer::tag('div', $attemptaction, array('class'=>'media-left media-middle p-t-1'));
                         }
-                        $userimage = $this->output->user_picture($user, array('courseid'=>$choices->courseid));
-                        $data .= html_writer::tag('div', $userimage, array('class'=>'image'));
+                        $userimage = $this->output->user_picture($user, array('courseid' => $choices->courseid));
+                        $mediabody .= html_writer::tag('div', $userimage, array('class' => 'media-left media-middle'));
 
-                        $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course'=>$choices->courseid));
-                        $name = html_writer::tag('a', $userfullname, array('href'=>$userlink, 'class'=>'username'));
-                        $data .= html_writer::tag('div', $name, array('class'=>'fullname'));
-                        $data .= html_writer::tag('div','', array('class'=>'clearfloat'));
-                        $optionusers .= html_writer::tag('div', $data, array('class'=>'user'));
+                        $userlink = new moodle_url('/user/view.php', array('id'=>$user->id,'course' => $choices->courseid));
+                        $name = html_writer::tag('a', $userfullname, array('href' => $userlink));
+                        $mediabody .= html_writer::tag('div', $name, array('class' => 'media-body media-middle'));
+                        $data .= html_writer::tag('div', $mediabody, array('class' => 'media m-b-1'));
+
+                        $optionusers .= $data;
                     }
                     $cell->text = $optionusers;
                 }
@@ -255,6 +266,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         if ($choices->viewresponsecapability && $choices->deleterepsonsecapability) {
             $selecturl = new moodle_url('#');
 
+            $actiondata .= html_writer::start_div('selectallnone');
             $selectallactions = new component_action('click',"checkall");
             $selectall = new action_link($selecturl, get_string('selectall'), $selectallactions);
             $actiondata .= $this->output->render($selectall) . ' / ';
@@ -263,11 +275,18 @@ class mod_choice_renderer extends plugin_renderer_base {
             $deselectall = new action_link($selecturl, get_string('deselectall'), $deselectallactions);
             $actiondata .= $this->output->render($deselectall);
 
-            $actiondata .= html_writer::tag('label', ' ' . get_string('withselected', 'choice') . ' ', array('for'=>'menuaction'));
+            $actiondata .= html_writer::end_div();
 
             $actionurl = new moodle_url($PAGE->url, array('sesskey'=>sesskey(), 'action'=>'delete_confirmation()'));
-            $select = new single_select($actionurl, 'action', array('delete'=>get_string('delete')), null, array(''=>get_string('chooseaction', 'choice')), 'attemptsform');
-
+            $actionoptions = array('delete' => get_string('delete'));
+            foreach ($choices->options as $optionid => $option) {
+                if ($optionid > 0) {
+                    $actionoptions['choose_'.$optionid] = get_string('chooseoption', 'choice', $option->text);
+                }
+            }
+            $select = new single_select($actionurl, 'action', $actionoptions, null,
+                    array('' => get_string('chooseaction', 'choice')), 'attemptsform');
+            $select->set_label(get_string('withselected', 'choice'));
             $actiondata .= $this->output->render($select);
         }
         $html .= html_writer::tag('div', $actiondata, array('class'=>'responseaction'));
@@ -282,200 +301,70 @@ class mod_choice_renderer extends plugin_renderer_base {
 
     /**
      * Returns HTML to display choices result
-     * @param object $choices
-     * @return string
-     */
-    public function display_publish_anonymous_vertical($choices) {
-        global $CHOICE_COLUMN_HEIGHT;
-
-        $html = '';
-        $table = new html_table();
-        $table->cellpadding = 5;
-        $table->cellspacing = 0;
-        $table->attributes['class'] = 'results anonymous ';
-        $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
-        $table->data = array();
-
-        $count = 0;
-        ksort($choices->options);
-        $columns = array();
-        $rows = array();
-
-        $headercelldefault = new html_table_cell();
-        $headercelldefault->scope = 'row';
-        $headercelldefault->header = true;
-        $headercelldefault->attributes = array('class'=>'header data');
-
-        // column header
-        $tableheader = clone($headercelldefault);
-        $tableheader->text = html_writer::tag('div', get_string('choiceoptions', 'choice'), array('class' => 'accesshide'));
-        $rows['header'][] = $tableheader;
-
-        // graph row header
-        $graphheader = clone($headercelldefault);
-        $graphheader->text = html_writer::tag('div', get_string('responsesresultgraphheader', 'choice'), array('class' => 'accesshide'));
-        $rows['graph'][] = $graphheader;
-
-        // user number row header
-        $usernumberheader = clone($headercelldefault);
-        $usernumberheader->text = get_string('numberofuser', 'choice');
-        $rows['usernumber'][] = $usernumberheader;
-
-        // user percentage row header
-        $userpercentageheader = clone($headercelldefault);
-        $userpercentageheader->text = get_string('numberofuserinpercentage', 'choice');
-        $rows['userpercentage'][] = $userpercentageheader;
-
-        $contentcelldefault = new html_table_cell();
-        $contentcelldefault->attributes = array('class'=>'data');
-
-        foreach ($choices->options as $optionid => $option) {
-            // calculate display length
-            $height = $percentageamount = $numberofuser = 0;
-            $usernumber = $userpercentage = '';
-
-            if (!empty($option->user)) {
-               $numberofuser = count($option->user);
-            }
-
-            if($choices->numberofuser > 0) {
-               $height = ($CHOICE_COLUMN_HEIGHT * ((float)$numberofuser / (float)$choices->numberofuser));
-               $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
-            }
-
-            $displaygraph = html_writer::tag('img','', array('style'=>'height:'.$height.'px;width:49px;', 'alt'=>'', 'src'=>$this->output->pix_url('column', 'choice')));
-
-            // header
-            $headercell = clone($contentcelldefault);
-            $headercell->text = $option->text;
-            $rows['header'][] = $headercell;
-
-            // Graph
-            $graphcell = clone($contentcelldefault);
-            $graphcell->attributes = array('class'=>'graph vertical data');
-            $graphcell->text = $displaygraph;
-            $rows['graph'][] = $graphcell;
-
-            $usernumber .= html_writer::tag('div', ' '.$numberofuser.'', array('class'=>'numberofuser', 'title'=> get_string('numberofuser', 'choice')));
-            $userpercentage .= html_writer::tag('div', format_float($percentageamount,1). '%', array('class'=>'percentage'));
-
-            // number of user
-            $usernumbercell = clone($contentcelldefault);
-            $usernumbercell->text = $usernumber;
-            $rows['usernumber'][] = $usernumbercell;
-
-            // percentage of user
-            $numbercell = clone($contentcelldefault);
-            $numbercell->text = $userpercentage;
-            $rows['userpercentage'][] = $numbercell;
-        }
-
-        $table->head = $rows['header'];
-        $trgraph = new html_table_row($rows['graph']);
-        $trusernumber = new html_table_row($rows['usernumber']);
-        $truserpercentage = new html_table_row($rows['userpercentage']);
-        $table->data = array($trgraph, $trusernumber, $truserpercentage);
-
-        $header = html_writer::tag('h3',format_string(get_string("responses", "choice")));
-        $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
-        $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
-
-        return $html;
-    }
-
-    /**
-     * Returns HTML to display choices result
+     * @deprecated since 3.2
      * @param object $choices
      * @return string
      */
     public function display_publish_anonymous_horizontal($choices) {
+        global $CHOICE_COLUMN_HEIGHT;
+        debugging(__FUNCTION__.'() is deprecated. Please use mod_choice_renderer::display_publish_anonymous() instead.',
+                DEBUG_DEVELOPER);
+        return $this->display_publish_anonymous($choices, CHOICE_DISPLAY_VERTICAL);
+    }
+
+    /**
+     * Returns HTML to display choices result
+     * @deprecated since 3.2
+     * @param object $choices
+     * @return string
+     */
+    public function display_publish_anonymous_vertical($choices) {
         global $CHOICE_COLUMN_WIDTH;
+        debugging(__FUNCTION__.'() is deprecated. Please use mod_choice_renderer::display_publish_anonymous() instead.',
+                DEBUG_DEVELOPER);
+        return $this->display_publish_anonymous($choices, CHOICE_DISPLAY_HORIZONTAL);
+    }
 
-        $table = new html_table();
-        $table->cellpadding = 5;
-        $table->cellspacing = 0;
-        $table->attributes['class'] = 'results anonymous ';
-        $table->summary = get_string('responsesto', 'choice', format_string($choices->name));
-        $table->data = array();
-
-        $columnheaderdefault = new html_table_cell();
-        $columnheaderdefault->scope = 'col';
-
-        $tableheadertext = clone($columnheaderdefault);
-        $tableheadertext->text = get_string('choiceoptions', 'choice');
-
-        $tableheadernumber = clone($columnheaderdefault);
-        $tableheadernumber->text = get_string('numberofuser', 'choice');
-
-        $tableheaderpercentage = clone($columnheaderdefault);
-        $tableheaderpercentage->text = get_string('numberofuserinpercentage', 'choice');
-
-        $tableheadergraph = clone($columnheaderdefault);
-        $tableheadergraph->text = get_string('responsesresultgraphheader', 'choice');
-
-        $table->head = array($tableheadertext, $tableheadernumber, $tableheaderpercentage, $tableheadergraph);
-
+    /**
+     * Generate the choice result chart.
+     *
+     * Can be displayed either in the vertical or horizontal position.
+     *
+     * @param stdClass $choices Choices responses object.
+     * @param int $displaylayout The constants DISPLAY_HORIZONTAL_LAYOUT or DISPLAY_VERTICAL_LAYOUT.
+     * @return string the rendered chart.
+     */
+    public function display_publish_anonymous($choices, $displaylayout) {
+        global $OUTPUT;
         $count = 0;
-        ksort($choices->options);
-
-        $columndefault = new html_table_cell();
-        $columndefault->attributes['class'] = 'data';
-
-        $colheaderdefault = new html_table_cell();
-        $colheaderdefault->scope = 'row';
-        $colheaderdefault->header = true;
-        $colheaderdefault->attributes['class'] = 'header data';
-
-        $rows = array();
-        foreach ($choices->options as $optionid => $options) {
-            $colheader = clone($colheaderdefault);
-            $colheader->text = $options->text;
-
-            $graphcell = clone($columndefault);
-            $datacellnumber = clone($columndefault);
-            $datacellpercentage = clone($columndefault);
-
-            $numberofuser = $width = $percentageamount = 0;
-
-            if (!empty($options->user)) {
-               $numberofuser = count($options->user);
+        $data = [];
+        $numberofuser = 0;
+        $percentageamount = 0;
+        foreach ($choices->options as $optionid => $option) {
+            if (!empty($option->user)) {
+                $numberofuser = count($option->user);
             }
-
             if($choices->numberofuser > 0) {
-               $width = ($CHOICE_COLUMN_WIDTH * ((float)$numberofuser / (float)$choices->numberofuser));
-               $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
+                $percentageamount = ((float)$numberofuser / (float)$choices->numberofuser) * 100.0;
             }
-
-            $attributes = array();
-            $attributes['style'] = 'height:50px; width:'.$width.'px';
-            $attributes['alt'] = '';
-            $attributes['src'] = $this->output->pix_url('row', 'choice');
-            $displaydiagram = html_writer::tag('img','', $attributes);
-
-            $graphcell->text = $displaydiagram;
-            $graphcell->attributes = array('class'=>'graph horizontal');
-
-            if($choices->numberofuser > 0) {
-               $percentageamount = ((float)$numberofuser/(float)$choices->numberofuser)*100.0;
-            }
-
-            $datacellnumber->text = $numberofuser;
-            $datacellpercentage->text = format_float($percentageamount,1). '%';
-
-
-            $row = new html_table_row();
-            $row->cells = array($colheader, $datacellnumber, $datacellpercentage, $graphcell);
-            $rows[] = $row;
+            $data['labels'][$count] = $option->text;
+            $data['series'][$count] = $numberofuser;
+            $data['series_labels'][$count] = $numberofuser . ' (' . format_float($percentageamount, 1) . '%)';
+            $count++;
+            $numberofuser = 0;
         }
 
-        $table->data = $rows;
-
-        $html = '';
-        $header = html_writer::tag('h3',format_string(get_string("responses", "choice")));
-        $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
-        $html .= html_writer::table($table);
-
-        return $html;
+        $chart = new \core\chart_bar();
+        if ($displaylayout == DISPLAY_HORIZONTAL_LAYOUT) {
+            $chart->set_horizontal(true);
+        }
+        $series = new \core\chart_series(format_string(get_string("responses", "choice")), $data['series']);
+        $series->set_labels($data['series_labels']);
+        $chart->add_series($series);
+        $chart->set_labels($data['labels']);
+        $yaxis = $chart->get_yaxis(0, true);
+        $yaxis->set_stepsize(max(1, round(max($data['series']) / 10)));
+        return $OUTPUT->render($chart);
     }
 }
 

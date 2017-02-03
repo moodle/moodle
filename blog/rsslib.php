@@ -22,6 +22,8 @@
  * @copyright  2010 Andrew Davis
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot.'/lib/rsslib.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 
@@ -81,7 +83,7 @@ function blog_rss_print_link($context, $filtertype, $filterselect = 0, $tagid = 
 
     $url = blog_rss_get_url($context->id, $userid, $filtertype, $filterselect, $tagid);
     $rsspix = $OUTPUT->pix_url('i/rss');
-    print '<div class="mdl-right"><a href="'. $url .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a></div>';
+    print '<div class="pull-xs-right"><a href="'. $url .'"><img src="'. $rsspix .'" title="'. strip_tags($tooltiptext) .'" alt="'.get_string('rss').'" /></a></div>';
 }
 
 /**
@@ -209,7 +211,7 @@ function blog_rss_get_feed($context, $args) {
     if ($blogentries) {
         $items = array();
         foreach ($blogentries as $blogentry) {
-            $item = null;
+            $item = new stdClass();
             $item->author = fullname($DB->get_record('user', array('id' => $blogentry->userid))); // TODO: this is slow.
             $item->title = $blogentry->subject;
             $item->pubdate = $blogentry->lastmodified;
@@ -232,7 +234,7 @@ function blog_rss_get_feed($context, $args) {
 
     switch ($type) {
         case 'user':
-            $info = fullname($DB->get_record('user', array('id' => $id), 'firstname,lastname'));
+            $info = fullname($DB->get_record('user', array('id' => $id), get_all_user_name_fields(true)));
             break;
         case 'course':
             $info = $DB->get_field('course', 'fullname', array('id' => $id));

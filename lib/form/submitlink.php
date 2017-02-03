@@ -20,6 +20,7 @@
  *
  * Contains HTML class for a submitting to link
  *
+ * @deprecated since 3.2
  * @package   core_form
  * @copyright 2006 Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -52,6 +53,7 @@ class MoodleQuickForm_submitlink extends MoodleQuickForm_submit {
      * @param string $attributes (optional) Either a typical HTML attribute string or an associative array
      */
     public function __construct($elementName=null, $value=null, $attributes=null) {
+        debugging('Element type submitlink is deprecated.', DEBUG_DEVELOPER);
         parent::__construct($elementName, $value, $attributes);
     }
 

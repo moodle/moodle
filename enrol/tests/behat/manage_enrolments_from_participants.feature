@@ -20,16 +20,16 @@ Feature: Manage enrollments from participants page
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    And I navigate to "Participants" node in "Current course > C1"
+    And I navigate to course participants
 
   Scenario: Check the participants link when "All partipants" selected
     Given I select "All participants" from the "roleid" singleselect
-    When I follow "Edit"
+    When I click on "Edit" "link" in the "region-main" "region"
     Then I should see "Enrolled users" in the "h2" "css_element"
     And the field "Role" matches value "All"
 
   Scenario: Check the participants link when "Student" selected
     Given I select "Student" from the "roleid" singleselect
-    When I follow "Edit"
+    When I click on "Edit" "link" in the "region-main" "region"
     Then I should see "Enrolled users" in the "h2" "css_element"
     And the field "Role" matches value "Student"

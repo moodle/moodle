@@ -112,10 +112,14 @@ if ($lti->showdescriptionlaunch && $lti->intro) {
 
 if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
     echo "<script language=\"javascript\">//<![CDATA[\n";
-    echo "window.open('launch.php?id=".$cm->id."','lti');";
+    echo "window.open('launch.php?id=".$cm->id."','lti-".$cm->id."');";
     echo "//]]\n";
     echo "</script>\n";
     echo "<p>".get_string("basiclti_in_new_window", "lti")."</p>\n";
+    $url = new moodle_url('/mod/lti/launch.php', array('id' => $cm->id));
+    echo html_writer::start_tag('p');
+    echo html_writer::link($url, get_string("basiclti_in_new_window_open", "lti"), array('target' => '_blank'));
+    echo html_writer::end_tag('p');
 } else {
     // Request the launch content with an iframe tag.
     echo '<iframe id="contentframe" height="600px" width="100%" src="launch.php?id='.$cm->id.'"></iframe>';
@@ -125,10 +129,7 @@ if ( $launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW ) {
         <script type="text/javascript">
         //<![CDATA[
             YUI().use("node", "event", function(Y) {
-                //Take scrollbars off the outer document to prevent double scroll bar effect
                 var doc = Y.one("body");
-                doc.setStyle("overflow", "hidden");
-
                 var frame = Y.one("#contentframe");
                 var padding = 15; //The bottom of the iframe wasn\'t visible on some themes. Probably because of border widths, etc.
                 var lastHeight;

@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(dirname(__FILE__)).'/edit_form.php');    // parent class definition
+require_once(__DIR__ . '/../edit_form.php');    // parent class definition
 
 /**
  * Class for editing rubric grading strategy forms.

@@ -1,6 +1,9 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 3.2 ===
+* calendar_preferences_button() is now depreciated.  Calendar preferences have been moved to the user preferences page.
+
 === 2.9 ===
 default values changes in code:
 * core_calendar_external::get_calendar_events_parameters() 'timeend' default option changed; now, by default,

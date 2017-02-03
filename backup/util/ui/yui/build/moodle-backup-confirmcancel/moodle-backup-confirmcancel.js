@@ -64,7 +64,7 @@ M.core_backup.confirmcancel = {
         var confirm = new M.core.confirm(this.config);
 
         // If the user clicks yes.
-        confirm.on('complete-yes', function(){
+        confirm.on('complete-yes', function() {
             // Detach the listeners for the confirm box so they don't fire again.
             new Y.EventHandle(M.core_backup.confirmcancel.listeners).detach();
 

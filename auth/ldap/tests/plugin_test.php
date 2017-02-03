@@ -365,7 +365,7 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
             'email' => 'usersignuptest1@example.com',
             'description' => 'This is a description for user 1',
             'city' => 'Perth',
-            'country' => 'au',
+            'country' => 'AU',
             'mnethostid' => $CFG->mnet_localhost_id,
             'auth' => 'ldap'
             );

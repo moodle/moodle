@@ -23,7 +23,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-require_once dirname(dirname(dirname(__FILE__))) . '/config.php';
+require_once __DIR__ . '/../../config.php';
 
 // grab the GET params - wantsurl could be anything - take it
 // with PARAM_RAW

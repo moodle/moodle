@@ -51,10 +51,14 @@ $string['nomethodforaddinghelpbutton'] = 'There is no method for adding a help b
 $string['nonexistentformelements'] = 'Trying to add help buttons to non-existent form elements : {$a}';
 $string['noselection'] = 'No selection';
 $string['nosuggestions'] = 'No suggestions';
+$string['novalue'] = 'Nothing entered';
+$string['novalueclicktoset'] = 'Click to enter text';
 $string['optional'] = 'Optional';
 $string['othersettings'] = 'Other settings';
+$string['passwordunmaskedithint'] = 'Edit password';
+$string['passwordunmaskrevealhint'] = 'Reveal';
+$string['passwordunmaskinstructions'] = 'Press enter to save changes';
 $string['requiredelement'] = 'Required field';
-$string['revealpassword'] = 'Reveal';
 $string['security'] = 'Security';
 $string['selectallornone'] = 'Select all/none';
 $string['selected'] = 'Selected';
@@ -68,3 +72,6 @@ $string['timeunit'] = 'Time unit';
 $string['timing'] = 'Timing';
 $string['unmaskpassword'] = 'Unmask';
 $string['year'] = 'Year';
+
+// Deprecated since 3.2.
+$string['revealpassword'] = 'Reveal';

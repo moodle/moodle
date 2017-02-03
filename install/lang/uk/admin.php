@@ -40,3 +40,4 @@ $string['cliunknowoption'] = 'Невизначені опції: {$a}. Будь 
 $string['cliyesnoprompt'] = 'натисніть y (означає так) або n (означає ні)';
 $string['environmentrequireinstall'] = 'повинен бути встановлений і включений';
 $string['environmentrequireversion'] = 'потрібна версія {$a->needed}, ви запускаєте {$a->current}';
+$string['upgradekeyset'] = 'Оновлення ключа (залишіть порожнім, якщо не встановлено)';

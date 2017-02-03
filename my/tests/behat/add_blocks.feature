@@ -17,12 +17,11 @@ Feature: Add blocks to dashboard page
       | student1 | C1 | student |
       | student2 | C1 | student |
     And I log in as "student1"
-    And I click on "Dashboard" "link" in the "Navigation" "block"
 
   Scenario: Add blocks to page
     When I press "Customise this page"
-    And I add the "Latest news" block
-    Then I should see "Latest news" in the "Latest news" "block"
+    And I add the "Latest announcements" block
+    Then I should see "Latest announcements" in the "Latest announcements" "block"
     And I should see "Latest badges" in the "Latest badges" "block"
     And I should see "Calendar" in the "Calendar" "block"
     And I should see "Upcoming events" in the "Upcoming events" "block"

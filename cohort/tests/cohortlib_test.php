@@ -64,6 +64,10 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertSame($newcohort->timecreated, $newcohort->timemodified);
     }
 
+    /**
+     * @expectedException        coding_exception
+     * @expectedExceptionMessage Missing cohort name in cohort_add_cohort().
+     */
     public function test_cohort_add_cohort_missing_name() {
         $cohort = new stdClass();
         $cohort->contextid = context_system::instance()->id;
@@ -72,7 +76,6 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $cohort->description = 'test cohort desc';
         $cohort->descriptionformat = FORMAT_HTML;
 
-        $this->setExpectedException('coding_exception', 'Missing cohort name in cohort_add_cohort().');
         cohort_add_cohort($cohort);
     }
 

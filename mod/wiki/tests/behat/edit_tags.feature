@@ -44,14 +44,14 @@ Feature: Edited wiki pages handle tags correctly
     Then I should see "Cool" in the ".form-autocomplete-selection" "css_element"
     And I press "Cancel"
 
-  Scenario: Wiki page edition of official tags works as expected
+  @javascript
+  Scenario: Wiki page edition of standard tags works as expected
     Given I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Appearance" node
-    And I follow "Manage tags"
+    And I navigate to "Appearance > Manage tags" in site administration
     And I follow "Default collection"
-    And I set the field "otagsadd" to "OT1, OT2, OT3"
-    And I press "Add official tags"
+    And I follow "Add standard tags"
+    And I set the field "Enter comma-separated list of new tags" to "OT1, OT2, OT3"
+    And I press "Continue"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"

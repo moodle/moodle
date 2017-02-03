@@ -41,20 +41,28 @@ Feature: Sections can be edited and deleted in topics format
     Then I should see "Use default section name [Topic 2]"
 
   Scenario: Edit section summary in topics format
-    When I edit the section "2"
-    And I set the following fields to these values:
+    When I edit the section "2" and I fill the form with:
       | Summary | Welcome to section 2 |
-    And I press "Save changes"
     Then I should see "Welcome to section 2" in the "li#section-2" "css_element"
 
   Scenario: Edit section default name in topics format
-    When I edit the section "2"
-    And I set the following fields to these values:
+    When I edit the section "2" and I fill the form with:
       | Use default section name | 0                        |
       | name                     | This is the second topic |
-    And I press "Save changes"
     Then I should see "This is the second topic" in the "li#section-2" "css_element"
     And I should not see "Topic 2" in the "li#section-2" "css_element"
+
+  @javascript
+  Scenario: Inline edit section name in topics format
+    When I click on "Edit topic name" "link" in the "li#section-1" "css_element"
+    And I set the field "New name for topic Topic 1" to "Midterm evaluation"
+    And I press key "13" in the field "New name for topic Topic 1"
+    Then I should not see "Topic 1" in the "region-main" "region"
+    And "New name for topic" "field" should not exist
+    And I should see "Midterm evaluation" in the "li#section-1" "css_element"
+    And I follow "Course 1"
+    And I should not see "Topic 1" in the "region-main" "region"
+    And I should see "Midterm evaluation" in the "li#section-1" "css_element"
 
   Scenario: Deleting the last section in topics format
     When I delete section "5"

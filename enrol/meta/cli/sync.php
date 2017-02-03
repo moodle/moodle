@@ -30,7 +30,7 @@
 
 define('CLI_SCRIPT', true);
 
-require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
+require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir.'/clilib.php');
 require_once("$CFG->dirroot/enrol/meta/locallib.php");
 

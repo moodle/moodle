@@ -25,7 +25,7 @@
  * @package filter_mediaplugin
  */
 
-require(dirname(__FILE__) . '/../../../config.php');
+require(__DIR__ . '/../../../config.php');
 require_once($CFG->dirroot . '/filter/mediaplugin/filter.php');
 
 // Only available to site admins.
@@ -36,32 +36,13 @@ if (!is_siteadmin()) {
 
 // Set up page.
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url(new moodle_url('/filter/mediaplugin/perftest.php'));
+$PAGE->set_url(new moodle_url('/filter/mediaplugin/dev/perftest.php'));
 $PAGE->set_heading($SITE->fullname);
 print $OUTPUT->header();
 
-// Hack setup to enable all players.
-$CFG->core_media_enable_youtube    = 1;
-$CFG->core_media_enable_vimeo      = 1;
-$CFG->core_media_enable_mp3        = 1;
-$CFG->core_media_enable_flv        = 1;
-$CFG->core_media_enable_swf        = 1;
-$CFG->core_media_enable_html5audio = 1;
-$CFG->core_media_enable_html5video = 1;
-$CFG->core_media_enable_qt         = 1;
-$CFG->core_media_enable_wmp        = 1;
-$CFG->core_media_enable_rm         = 1;
-
-$CFG->filter_mediaplugin_enable_youtube    = 1;
-$CFG->filter_mediaplugin_enable_vimeo      = 1;
-$CFG->filter_mediaplugin_enable_mp3        = 1;
-$CFG->filter_mediaplugin_enable_flv        = 1;
-$CFG->filter_mediaplugin_enable_swf        = 1;
-$CFG->filter_mediaplugin_enable_html5audio = 1;
-$CFG->filter_mediaplugin_enable_html5video = 1;
-$CFG->filter_mediaplugin_enable_qt         = 1;
-$CFG->filter_mediaplugin_enable_wmp        = 1;
-$CFG->filter_mediaplugin_enable_rm         = 1;
+// Enable all players.
+$enabledmediaplugins = \core\plugininfo\media::get_enabled_plugins();
+\core\plugininfo\media::set_enabled_plugins('vimeo,youtube,videojs,html5audio,html5video,swf');
 
 // Create plugin.
 $filterplugin = new filter_mediaplugin(null, array());
@@ -167,6 +148,8 @@ foreach ($linksamples as $sample) {
     $filterplugin->filter($sample);
 }
 filter_mediaplugin_perf_stop('One link (mp3)');
+
+\core\plugininfo\media::set_enabled_plugins($enabledmediaplugins);
 
 // End page.
 echo html_writer::end_tag('ul');

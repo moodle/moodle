@@ -161,6 +161,7 @@ class cache_factory {
         $factory->reset_cache_instances();
         $factory->configs = array();
         $factory->definitions = array();
+        $factory->definitionstores = array();
         $factory->lockplugins = array(); // MUST be null in order to force its regeneration.
         // Reset the state to uninitialised.
         $factory->state = self::STATE_UNINITIALISED;
@@ -198,7 +199,7 @@ class cache_factory {
         }
         $definition = $this->create_definition($component, $area);
         $definition->set_identifiers($identifiers);
-        $cache = $this->create_cache($definition, $identifiers);
+        $cache = $this->create_cache($definition);
         // Loaders are always held onto to speed up subsequent requests.
         $this->cachesfromdefinitions[$definitionname] = $cache;
         return $cache;
@@ -227,7 +228,7 @@ class cache_factory {
         }
         $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
         $definition->set_identifiers($identifiers);
-        $cache = $this->create_cache($definition, $identifiers);
+        $cache = $this->create_cache($definition);
         $this->cachesfromparams[$key] = $cache;
         return $cache;
     }
@@ -277,6 +278,9 @@ class cache_factory {
         if (!array_key_exists($name, $this->stores)) {
             // Properties: name, plugin, configuration, class.
             $class = $details['class'];
+            if (!$class::are_requirements_met()) {
+                return false;
+            }
             $store = new $class($details['name'], $details['configuration']);
             $this->stores[$name] = $store;
         }

@@ -141,4 +141,4 @@ foreach ($jsfiles as $modulename => $jsfile) {
     $js = implode($replace, explode($search, $js, 2));
     $content .= $js;
 }
-js_send_uncached($content, $etag, 'requirejs.php');
+js_send_uncached($content, 'requirejs.php');

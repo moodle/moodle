@@ -1,0 +1,66 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/modal
+
+    Moodle modal template.
+
+    The purpose of this template is to render a modal
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * title A cleaned string (use clean_text()) to display.
+    * body HTML content for the boday
+    * footer HTML content for the footer
+
+    Example context (json):
+    {
+        "title": "Example modal",
+        "body": "Some example content for the body",
+        "footer": "Footer text, right here!"
+    }
+}}
+
+<div class="modal moodle-has-zindex" data-region="modal-container" aria-hidden="true" role="dialog">
+    <div class="modal-dialog {{$classes}}{{/classes}}" role="document" data-region="modal" aria-labelledby="{{uniqid}}-modal-title">
+        <div class="modal-content">
+            <div class="modal-header" data-region="header">
+                <button type="button" class="close" data-action="hide" aria-label={{#quote}}{{#str}}closebuttontitle{{/str}}{{/quote}}>
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                {{$header}}
+                    <h4 id="{{uniqid}}-modal-title" data-region="title" tabindex="0">{{title}}</h4>
+                {{/header}}
+            </div>
+            <div class="modal-body" data-region="body">
+                {{$body}}
+                    {{{body}}}
+                {{/body}}
+            </div>
+            <div class="modal-footer" data-region="footer">
+                {{$footer}}
+                    {{{footer}}}
+                {{/footer}}
+            </div>
+        </div>
+    </div>
+</div>

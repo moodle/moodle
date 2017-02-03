@@ -48,10 +48,10 @@ class block_tags_edit_form extends block_edit_form {
         $mform->setDefault('config_numberoftags', 80);
 
         $defaults = array(
-            'official' => get_string('officialonly', 'block_tags'),
-            '' => get_string('anytype', 'block_tags'));
-        $mform->addElement('select', 'config_tagtype', get_string('defaultdisplay', 'block_tags'), $defaults);
-        $mform->setDefault('config_tagtype', '');
+            core_tag_tag::STANDARD_ONLY => get_string('standardonly', 'block_tags'),
+            core_tag_tag::BOTH_STANDARD_AND_NOT => get_string('anytype', 'block_tags'));
+        $mform->addElement('select', 'config_showstandard', get_string('defaultdisplay', 'block_tags'), $defaults);
+        $mform->setDefault('config_showstandard', core_tag_tag::BOTH_STANDARD_AND_NOT);
 
         $defaults = array(0 => context_system::instance()->get_context_name());
         $parentcontext = context::instance_by_id($this->block->instance->parentcontextid);

@@ -37,6 +37,14 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         global $SITE, $PAGE;
 
         $output = parent::standard_head_html();
+
+        // Setup help icon overlays.
+        $this->page->requires->yui_module('moodle-core-popuphelp', 'M.core.init_popuphelp');
+        $this->page->requires->strings_for_js(array(
+            'morehelp',
+            'loadinghelp',
+        ), 'moodle');
+
         if ($PAGE->pagelayout == 'frontpage') {
             $summary = s(strip_tags(format_text($SITE->summary, FORMAT_HTML)));
             if (!empty($summary)) {
@@ -64,8 +72,9 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         }
         $divider = '<span class="divider">'.get_separator().'</span>';
         $list_items = '<li>'.join(" $divider</li><li>", $breadcrumbs).'</li>';
-        $title = '<span class="accesshide">'.get_string('pagepath').'</span>';
-        return $title . "<ul class=\"breadcrumb\">$list_items</ul>";
+        $title = '<span class="accesshide" id="navbar-label">'.get_string('pagepath').'</span>';
+        return $title . '<nav aria-labelledby="navbar-label"><ul class="breadcrumb">' .
+                $list_items . '</ul></nav>';
     }
 
     /*
@@ -106,7 +115,7 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
             } else {
                 $currentlang = $strlang;
             }
-            $this->language = $menu->add($currentlang, new moodle_url('#'), $strlang, 10000);
+            $this->language = $menu->add($currentlang, new moodle_url(''), $strlang, 10000);
             foreach ($langs as $langtype => $langname) {
                 $this->language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
             }

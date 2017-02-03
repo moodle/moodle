@@ -123,4 +123,8 @@ class mnet_access_control_updated extends base {
         // Nothing to map.
         return false;
     }
+
+    public static function is_deprecated() {
+        return true;
+    }
 }

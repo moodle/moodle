@@ -172,6 +172,9 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['attemptscount']);
     }
 
+    /**
+     * @expectedException required_capability_exception
+     */
     public function test_mod_scorm_get_scorm_attempt_count_others_as_student() {
         // Create a second student.
         $student2 = self::getDataGenerator()->create_user();
@@ -181,24 +184,27 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         self::setUser($student2);
 
         // I should not be able to view the attempts of another student.
-        $this->setExpectedException('required_capability_exception');
         mod_scorm_external::get_scorm_attempt_count($this->scorm->id, $this->student->id);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_mod_scorm_get_scorm_attempt_count_invalid_instanceid() {
         // As student.
         self::setUser($this->student);
 
         // Test invalid instance id.
-        $this->setExpectedException('moodle_exception');
         mod_scorm_external::get_scorm_attempt_count(0, $this->student->id);
     }
 
+    /**
+     * @expectedException moodle_exception
+     */
     public function test_mod_scorm_get_scorm_attempt_count_invalid_userid() {
         // As student.
         self::setUser($this->student);
 
-        $this->setExpectedException('moodle_exception');
         mod_scorm_external::get_scorm_attempt_count($this->scorm->id, -1);
     }
 
@@ -649,8 +655,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
         $result = external_api::clean_returnvalue($returndescription, $result);
         $this->assertCount(1, $result['warnings']);
-        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat'.
-        $this->assertCount(6, $result['scorms'][0]);
+        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles'.
+        $this->assertCount(7, $result['scorms'][0]);
         $this->assertEquals('expired', $result['warnings'][0]['warningcode']);
 
         $scorm1->timeopen = $timenow + DAYSECS;
@@ -660,8 +666,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
         $result = external_api::clean_returnvalue($returndescription, $result);
         $this->assertCount(1, $result['warnings']);
-        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat'.
-        $this->assertCount(6, $result['scorms'][0]);
+        // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles'.
+        $this->assertCount(7, $result['scorms'][0]);
         $this->assertEquals('notopenyet', $result['warnings'][0]['warningcode']);
 
         // Reset times.
@@ -716,6 +722,9 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
 
             // Since we return the fields used as boolean as PARAM_BOOL instead PARAM_INT we need to force casting here.
             // From the returned fields definition we obtain the type expected for the field.
+            if (empty($returndescription->keys['scorms']->content->keys[$field]->type)) {
+                continue;
+            }
             $fieldtype = $returndescription->keys['scorms']->content->keys[$field]->type;
             if ($fieldtype == PARAM_BOOL) {
                 $expected1[$field] = (bool) $scorm1->{$field};
@@ -725,6 +734,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
                 $expected2[$field] = $scorm2->{$field};
             }
         }
+        $expected1['introfiles'] = [];
+        $expected2['introfiles'] = [];
 
         $expectedscorms = array();
         $expectedscorms[] = $expected2;
@@ -759,8 +770,8 @@ class mod_scorm_external_testcase extends externallib_advanced_testcase {
         self::setUser($teacher);
 
         $additionalfields = array('updatefreq', 'timemodified', 'options',
-                                    'completionstatusrequired', 'completionscorerequired', 'autocommit',
-                                    'section', 'visible', 'groupmode', 'groupingid');
+                                    'completionstatusrequired', 'completionscorerequired', 'completionstatusallscos',
+                                    'autocommit', 'section', 'visible', 'groupmode', 'groupingid');
 
         foreach ($additionalfields as $field) {
             $fieldtype = $returndescription->keys['scorms']->content->keys[$field]->type;

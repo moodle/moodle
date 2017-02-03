@@ -26,9 +26,6 @@
 require_once(__DIR__ . '/../../../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode,
-    Behat\Behat\Context\Step\Given as Given,
-    Behat\Behat\Context\Step\When as When,
-    Behat\Behat\Context\Step\Then as Then,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Mink\Exception\ExpectationException as ExpectationException;
 
@@ -60,7 +57,7 @@ class behat_gradingform_guide extends behat_base {
      * @param TableNode $guide
      */
     public function i_define_the_following_marking_guide(TableNode $guide) {
-        $steptableinfo = '| Criterion name | Description for students | Description for markers | Maximum mark |';
+        $steptableinfo = '| Criterion name | Description for students | Description for markers | Maximum score |';
 
         if ($criteria = $guide->getHash()) {
             $addcriterionbutton = $this->find_button(get_string('addcriterion', 'gradingform_guide'));
@@ -95,7 +92,7 @@ class behat_gradingform_guide extends behat_base {
                 $this->set_guide_field_value($criterionroot . '[descriptionmarkers]', $criterion['Description for markers']);
 
                 // Set the field value for the Max score field.
-                $this->set_guide_field_value($criterionroot . '[maxscore]', $criterion['Maximum mark']);
+                $this->set_guide_field_value($criterionroot . '[maxscore]', $criterion['Maximum score']);
             }
         }
     }
@@ -162,9 +159,6 @@ class behat_gradingform_guide extends behat_base {
         $stepusage = '"I grade by filling the rubric with:" step needs you to provide a table where each row is a criterion' .
             ' and each criterion has 3 different values: | Criterion name | Number of points | Remark text |';
 
-        // To fill with the steps to execute.
-        $steps = array();
-
         // First element -> name, second -> points, third -> Remark.
         foreach ($criteria as $name => $criterion) {
 
@@ -192,12 +186,11 @@ class behat_gradingform_guide extends behat_base {
             if ($criterionid) {
                 $criterionroot = 'advancedgrading[criteria]' . '[' . $criterionid . ']';
 
-                $steps[] = new Given('I set the field "' . $criterionroot . '[score]' . '" to "' . $points . '"');
-                $steps[] = new Given('I set the field "' . $criterionroot . '[remark]' . '" to "' . $criterion[1] . '"');
+                $this->execute('behat_forms::i_set_the_field_to', array($criterionroot . '[score]', $points));
+
+                $this->execute('behat_forms::i_set_the_field_to', array($criterionroot . '[remark]', $criterion[1]));
             }
         }
-
-        return $steps;
     }
 
     /**

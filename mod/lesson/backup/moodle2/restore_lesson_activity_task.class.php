@@ -119,4 +119,43 @@ class restore_lesson_activity_task extends restore_activity_task {
 
         return $rules;
     }
+
+
+    /**
+     * Re-map the dependency and activitylink information
+     * If a depency or activitylink has no mapping in the backup data then it could either be a duplication of a
+     * lesson, or a backup/restore of a single lesson. We have no way to determine which and whether this is the
+     * same site and/or course. Therefore we try and retrieve a mapping, but fallback to the original value if one
+     * was not found. We then test to see whether the value found is valid for the course being restored into.
+     */
+    public function after_restore() {
+        global $DB;
+
+        $lesson = $DB->get_record('lesson', array('id' => $this->get_activityid()), 'id, course, dependency, activitylink');
+        $updaterequired = false;
+
+        if (!empty($lesson->dependency)) {
+            $updaterequired = true;
+            if ($newitem = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'lesson', $lesson->dependency)) {
+                $lesson->dependency = $newitem->newitemid;
+            }
+            if (!$DB->record_exists('lesson', array('id' => $lesson->dependency, 'course' => $lesson->course))) {
+                $lesson->dependency = 0;
+            }
+        }
+
+        if (!empty($lesson->activitylink)) {
+            $updaterequired = true;
+            if ($newitem = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'course_module', $lesson->activitylink)) {
+                $lesson->activitylink = $newitem->newitemid;
+            }
+            if (!$DB->record_exists('course_modules', array('id' => $lesson->activitylink, 'course' => $lesson->course))) {
+                $lesson->activitylink = 0;
+            }
+        }
+
+        if ($updaterequired) {
+            $DB->update_record('lesson', $lesson);
+        }
+    }
 }

@@ -22,7 +22,7 @@ SEARCH.prototype = {
      * @type Node
      * @protected
      */
-    form : null,
+    form: null,
     /**
      * The capability select node.
      * @property select
@@ -36,7 +36,7 @@ SEARCH.prototype = {
      * @type Object
      * @protected
      */
-    selectoptions : {},
+    selectoptions: {},
     /**
      * The search input field.
      * @property input
@@ -58,12 +58,12 @@ SEARCH.prototype = {
      * @type Node
      * @protected
      */
-    lastsearch : null,
+    lastsearch: null,
     /**
      * Constructs the search manager.
      * @method initializer
      */
-    initializer : function() {
+    initializer: function() {
         this.form = Y.one('#capability-overview-form');
         this.select = this.form.one('select[data-search=capability]');
         this.select.setStyle('minWidth', this.select.get('offsetWidth'));
@@ -75,7 +75,7 @@ SEARCH.prototype = {
         this.lastsearch = this.form.one('input[name=search]');
 
         var div = Y.Node.create('<div id="capabilitysearchui"></div>'),
-            label = Y.Node.create('<label for="capabilitysearch">'+this.get('strsearch')+'</label>');
+            label = Y.Node.create('<label for="capabilitysearch">' + this.get('strsearch') + '</label>');
         this.input = Y.Node.create('<input type="text" id="capabilitysearch" />');
 
         div.append(label).append(this.input);
@@ -99,7 +99,7 @@ SEARCH.prototype = {
      * Disables the submit button if there are no capabilities selected.
      * @method validate
      */
-    validate : function() {
+    validate: function() {
         this.button.set('disabled', (this.select.get('value') === ''));
     },
     /**
@@ -107,7 +107,7 @@ SEARCH.prototype = {
      * This method hides any capabilities that don't match the search term.
      * @method typed
      */
-    typed : function() {
+    typed: function() {
         var search = this.input.get('value'),
             matching = 0,
             last = null,
@@ -135,9 +135,9 @@ SEARCH.prototype = {
     }
 };
 Y.extend(SEARCH, Y.Base, SEARCH.prototype, {
-    NAME : 'tool_capability-search',
-    ATTRS : {
-        strsearch : {}
+    NAME: 'tool_capability-search',
+    ATTRS: {
+        strsearch: {}
     }
 });
 

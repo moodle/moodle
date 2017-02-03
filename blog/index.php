@@ -20,7 +20,7 @@
  * if a blog id is specified then the latest entries from that blog are shown
  */
 
-require_once(dirname(dirname(__FILE__)).'/config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot .'/blog/lib.php');
 require_once($CFG->dirroot .'/blog/locallib.php');
 require_once($CFG->dirroot .'/course/lib.php');
@@ -62,7 +62,7 @@ if ($entryid and !isset($userid)) {
     $userid = $entry->userid;
 }
 
-if (isset($userid) && empty($courseid)) {
+if (isset($userid) && empty($courseid) && empty($modid)) {
     $context = context_user::instance($userid);
 } else if (!empty($courseid) && $courseid != SITEID) {
     $context = context_course::instance($courseid);
@@ -92,7 +92,7 @@ if ($CFG->bloglevel == BLOG_GLOBAL_LEVEL) {
     require_login();
     if (isguestuser()) {
         // They must have entered the url manually.
-        print_error('blogdisable', 'blog');
+        print_error('noguest');
     }
 
 } else if ($CFG->bloglevel == BLOG_USER_LEVEL) {
@@ -229,10 +229,11 @@ $courseid = (empty($courseid)) ? SITEID : $courseid;
 
 $blogheaders = blog_get_headers();
 
+$rsscontext = null;
+$filtertype = null;
+$thingid = null;
+$rsstitle = '';
 if ($CFG->enablerssfeeds) {
-    $rsscontext = null;
-    $filtertype = null;
-    $thingid = null;
     list($thingid, $rsscontext, $filtertype) = blog_rss_get_params($blogheaders['filters']);
     if (empty($rsscontext)) {
         $rsscontext = context_system::instance();
@@ -274,6 +275,10 @@ echo $OUTPUT->heading($blogheaders['heading'], 2);
 
 $bloglisting = new blog_listing($blogheaders['filters']);
 $bloglisting->print_entries();
+
+if ($CFG->enablerssfeeds) {
+    blog_rss_print_link($rsscontext, $filtertype, $thingid, $tagid, get_string('rssfeed', 'blog'));
+}
 
 echo $OUTPUT->footer();
 $eventparams = array(

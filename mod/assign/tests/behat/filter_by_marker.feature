@@ -32,15 +32,18 @@ Feature: In an assignment, teachers can filter displayed submissions by assigned
       | Use marking workflow | Yes |
       | Use marking allocation | Yes |
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
-    And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
+    And I navigate to "View all submissions" in current page administration
+    And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "allocatedmarker" to "Marker 1"
-    And I click on "Save changes" "button"
+    And I set the field "Notify students" to "0"
+    And I press "Save changes"
+    And I press "Ok"
+    And I click on "Edit settings" "link"
     And I log out
     When I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test assignment name"
-    And I follow "View/grade all submissions"
+    And I navigate to "View all submissions" in current page administration
     And I set the field "markerfilter" to "Marker 1"
     Then I should see "Student 1"
     And I should not see "Student 2"

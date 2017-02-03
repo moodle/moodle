@@ -225,8 +225,6 @@ foreach ($instances as $instance) {
     $edit = array();
 
     if ($canconfig) {
-        // up/down link
-        $updown = '';
         if ($updowncount > 1) {
             $aurl = new moodle_url($url, array('action'=>'up', 'instance'=>$instance->id));
             $updown[] = $OUTPUT->action_icon($aurl, new pix_icon('t/up', $strup, 'core', array('class' => 'iconsmall')));
@@ -277,10 +275,19 @@ echo html_writer::table($table);
 // access security is in each plugin
 $candidates = array();
 foreach (enrol_get_plugins(true) as $name=>$plugin) {
-    if (!$link = $plugin->get_newinstance_link($course->id)) {
-        continue;
+    if ($plugin->use_standard_editing_ui()) {
+        if ($plugin->can_add_instance($course->id)) {
+            // Standard add/edit UI.
+            $params = array('type' => $name, 'courseid' => $course->id);
+            $url = new moodle_url('/enrol/editinstance.php', $params);
+            $link = $url->out(false);
+            $candidates[$link] = get_string('pluginname', 'enrol_'.$name);
+        }
+    } else if ($url = $plugin->get_newinstance_link($course->id)) {
+        // Old custom UI.
+        $link = $url->out(false);
+        $candidates[$link] = get_string('pluginname', 'enrol_'.$name);
     }
-    $candidates[$link->out(false)] = get_string('pluginname', 'enrol_'.$name);
 }
 
 if ($candidates) {

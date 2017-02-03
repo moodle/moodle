@@ -24,7 +24,7 @@
  */
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir.'/flickrlib.php');
-require_once(dirname(__FILE__) . '/image.php');
+require_once(__DIR__ . '/image.php');
 
 /**
  * repository_flickr_public class

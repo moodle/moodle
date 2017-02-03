@@ -44,12 +44,11 @@ Feature: Access visible and hidden cohorts
       | user    | course | role           |
       | teacher | C1     | editingteacher |
 
-  @javascript
   Scenario: Teacher can see visible cohorts defined in the above contexts
     When I log in as "teacher"
     And I follow "Course 1"
     And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I set the field "Add method" to "Cohort sync"
+    And I select "Cohort sync" from the "Add method" singleselect
     Then the "Cohort" select box should contain "Cohort in category 1"
     And the "Cohort" select box should contain "System cohort"
     And the "Cohort" select box should not contain "Cohort hidden in category 1"
@@ -59,8 +58,10 @@ Feature: Access visible and hidden cohorts
     And the "Cohort" select box should contain "System empty cohort"
     And I set the field "Cohort" to "System cohort"
     And I press "Add method"
+    And I follow "Course 1"
     And I navigate to "Enrolled users" node in "Course administration > Users"
     And I should see "student@example.com"
+    And I follow "Course 1"
     And I navigate to "Groups" node in "Course administration > Users"
     And I press "Auto-create groups"
     And the "Select members from cohort" select box should contain "Cohort in category 1"
@@ -71,13 +72,12 @@ Feature: Access visible and hidden cohorts
     And the "Select members from cohort" select box should not contain "Cohort empty in category 1"
     And the "Select members from cohort" select box should not contain "System empty cohort"
 
-  @javascript
   Scenario: System manager can see all cohorts defined in the above contexts
     When I log in as "user1"
     And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I set the field "Add method" to "Cohort sync"
+    And I select "Cohort sync" from the "Add method" singleselect
     Then the "Cohort" select box should contain "Cohort in category 1"
     And the "Cohort" select box should contain "System cohort"
     And the "Cohort" select box should contain "Cohort hidden in category 1"
@@ -99,13 +99,12 @@ Feature: Access visible and hidden cohorts
     And the "Select members from cohort" select box should not contain "Cohort empty in category 1"
     And the "Select members from cohort" select box should not contain "System empty cohort"
 
-  @javascript
   Scenario: Category manager can see all cohorts defined in his category and visible cohorts defined above
     When I log in as "user2"
     And I am on site homepage
     And I follow "Course 1"
     And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I set the field "Add method" to "Cohort sync"
+    And I select "Cohort sync" from the "Add method" singleselect
     Then the "Cohort" select box should contain "Cohort in category 1"
     And the "Cohort" select box should contain "System cohort"
     And the "Cohort" select box should contain "Cohort hidden in category 1"
@@ -126,4 +125,3 @@ Feature: Access visible and hidden cohorts
     And the "Select members from cohort" select box should not contain "Cohort in category 2"
     And the "Select members from cohort" select box should not contain "Cohort empty in category 1"
     And the "Select members from cohort" select box should not contain "System empty cohort"
-

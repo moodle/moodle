@@ -5,8 +5,9 @@ require_once("lib.php");
 require_once($CFG->libdir . '/completionlib.php');
 
 $id         = required_param('id', PARAM_INT);                 // Course Module ID
-$action     = optional_param('action', '', PARAM_ALPHA);
-$attemptids = optional_param_array('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
+$action     = optional_param('action', '', PARAM_ALPHANUMEXT);
+$attemptids = optional_param_array('attemptid', array(), PARAM_INT); // Get array of responses to delete or modify.
+$userids    = optional_param_array('userid', array(), PARAM_INT); // Get array of users whose choices need to be modified.
 $notify     = optional_param('notify', '', PARAM_ALPHA);
 
 $url = new moodle_url('/mod/choice/view.php', array('id'=>$id));
@@ -40,13 +41,10 @@ if ($action == 'delchoice' and confirm_sesskey() and is_enrolled($context, NULL,
         and $choiceavailable) {
     $answercount = $DB->count_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
     if ($answercount > 0) {
-        $DB->delete_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id));
-
-        // Update completion state
-        $completion = new completion_info($course);
-        if ($completion->is_enabled($cm) && $choice->completionsubmit) {
-            $completion->update_state($cm, COMPLETION_INCOMPLETE);
-        }
+        $choiceanswers = $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id),
+            '', 'id');
+        $todelete = array_keys($choiceanswers);
+        choice_delete_responses($todelete, $choice, $cm, $course);
         redirect("view.php?id=$cm->id");
     }
 }
@@ -55,12 +53,20 @@ $PAGE->set_title($choice->name);
 $PAGE->set_heading($course->fullname);
 
 /// Submit any new data if there is any
-if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && confirm_sesskey()) {
+if (data_submitted() && !empty($action) && confirm_sesskey()) {
     $timenow = time();
-    if (has_capability('mod/choice:deleteresponses', $context) && $action == 'delete') {
-        //some responses need to be deleted
-        choice_delete_responses($attemptids, $choice, $cm, $course); //delete responses.
-        redirect("view.php?id=$cm->id");
+    if (has_capability('mod/choice:deleteresponses', $context)) {
+        if ($action === 'delete') {
+            // Some responses need to be deleted.
+            choice_delete_responses($attemptids, $choice, $cm, $course);
+            redirect("view.php?id=$cm->id");
+        }
+        if (preg_match('/^choose_(\d+)$/', $action, $actionmatch)) {
+            // Modify responses of other users.
+            $newoptionid = (int)$actionmatch[1];
+            choice_modify_responses($userids, $attemptids, $newoptionid, $choice, $cm, $course);
+            redirect("view.php?id=$cm->id");
+        }
     }
 
     // Redirection after all POSTs breaks block editing, we need to be more specific!
@@ -75,7 +81,7 @@ if (data_submitted() && is_enrolled($context, NULL, 'mod/choice:choose') && conf
         throw new moodle_exception($reason, 'choice', '', $warnings[$reason]);
     }
 
-    if ($answer) {
+    if ($answer && is_enrolled($context, null, 'mod/choice:choose')) {
         choice_user_submit_response($answer, $choice, $USER->id, $course, $cm);
         redirect(new moodle_url('/mod/choice/view.php',
             array('id' => $cm->id, 'notify' => 'choicesaved', 'sesskey' => sesskey())));
@@ -144,19 +150,17 @@ if (isloggedin() && (!empty($current)) &&
 
 /// Print the form
 $choiceopen = true;
-if ($choice->timeclose !=0) {
-    if ($choice->timeopen > $timenow ) {
-        if ($choice->showpreview) {
-            echo $OUTPUT->box(get_string('previewonly', 'choice', userdate($choice->timeopen)), 'generalbox alert');
-        } else {
-            echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
-            echo $OUTPUT->footer();
-            exit;
-        }
-    } else if ($timenow > $choice->timeclose) {
-        echo $OUTPUT->box(get_string("expired", "choice", userdate($choice->timeclose)), "generalbox expired");
-        $choiceopen = false;
+if ((!empty($choice->timeopen)) && ($choice->timeopen > $timenow)) {
+    if ($choice->showpreview) {
+        echo $OUTPUT->box(get_string('previewonly', 'choice', userdate($choice->timeopen)), 'generalbox alert');
+    } else {
+        echo $OUTPUT->box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "generalbox notopenyet");
+        echo $OUTPUT->footer();
+        exit;
     }
+} else if ((!empty($choice->timeclose)) && ($timenow > $choice->timeclose)) {
+    echo $OUTPUT->box(get_string("expired", "choice", userdate($choice->timeclose)), "generalbox expired");
+    $choiceopen = false;
 }
 
 if ( (!$current or $choice->allowupdate) and $choiceopen and is_enrolled($context, NULL, 'mod/choice:choose')) {
@@ -197,11 +201,6 @@ if (!$choiceformshown) {
 
 // print the results at the bottom of the screen
 if (choice_can_view_results($choice, $current, $choiceopen)) {
-
-    if (!empty($choice->showunanswered)) {
-        $choice->option[0] = get_string('notanswered', 'choice');
-        $choice->maxanswers[0] = 0;
-    }
     $results = prepare_choice_show_results($choice, $course, $cm, $allresponses);
     $renderer = $PAGE->get_renderer('mod_choice');
     echo $renderer->display_result($results);

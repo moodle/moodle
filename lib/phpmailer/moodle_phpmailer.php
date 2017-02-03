@@ -52,6 +52,8 @@ class moodle_phpmailer extends PHPMailer {
         global $CFG;
         $this->Version   = 'Moodle '.$CFG->version;         // mailer version
         $this->CharSet   = 'UTF-8';
+        // MDL-52637: Disable the automatic TLS encryption added in v5.2.10 (9da56fc1328a72aa124b35b738966315c41ef5c6).
+        $this->SMTPAutoTLS = false;
 
         if (!empty($CFG->smtpauthtype)) {
             $this->AuthType = $CFG->smtpauthtype;
@@ -72,10 +74,10 @@ class moodle_phpmailer extends PHPMailer {
      */
     public function addCustomHeader($custom_header, $value = null) {
         if ($value === null and preg_match('/message-id:(.*)/i', $custom_header, $matches)) {
-            $this->MessageID = $matches[1];
+            $this->MessageID = trim($matches[1]);
             return true;
         } else if ($value !== null and strcasecmp($custom_header, 'message-id') === 0) {
-            $this->MessageID = $value;
+            $this->MessageID = trim($value);
             return true;
         } else {
             return parent::addCustomHeader($custom_header, $value);
@@ -89,11 +91,15 @@ class moodle_phpmailer extends PHPMailer {
     public function encodeHeader($str, $position = 'text') {
         $encoded = core_text::encode_mimeheader($str, $this->CharSet);
         if ($encoded !== false) {
-            $encoded = str_replace("\n", $this->LE, $encoded);
             if ($position === 'phrase') {
-                return ("\"$encoded\"");
+                // Escape special symbols in each line in the encoded string, join back together and enclose in quotes.
+                $chunks = preg_split("/\\n/", $encoded);
+                $chunks = array_map(function($chunk) {
+                    return addcslashes($chunk, "\0..\37\177\\\"");
+                }, $chunks);
+                return '"' . join($this->LE, $chunks) . '"';
             }
-            return $encoded;
+            return str_replace("\n", $this->LE, $encoded);
         }
 
         return parent::encodeHeader($str, $position);

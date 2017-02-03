@@ -77,7 +77,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
 
             // Replace the Clear submit button with a clone that is not a submit button.
             var clearbtn = Y.one('#' + this.name + '_clearbutton');
-            this.clearbutton = Y.Node.create('<input type="button" value="' + clearbtn.get('value') + '" />');
+            this.clearbutton = Y.Node.create('<input type="button" value="' + clearbtn.get('value') + '" class="btn btn-secondary m-x-1"/>');
             clearbtn.replace(Y.Node.getDOMNode(this.clearbutton));
             this.clearbutton.set('id', this.name + "_clearbutton");
             this.clearbutton.on('click', this.handle_clear, this);
@@ -179,6 +179,14 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                     return new M.core.ajaxException(data);
                 }
                 this.output_options(data);
+
+                // If updated userSummaries are present, overwrite the global variable
+                // that's output by group_non_members_selector::print_user_summaries() in user/selector/lib.php
+                if (typeof data.userSummaries !== "undefined") {
+                    /* global userSummaries:true */
+                    /* exported userSummaries */
+                    userSummaries = data.userSummaries;
+                }
             } catch (e) {
                 this.listbox.setStyle('background','');
                 this.searchfield.addClass('error');

@@ -132,7 +132,7 @@ class core_role_permissions_table extends core_role_capability_table_base {
 
         $risks = $this->get_risks($capability);
 
-        $contents = html_writer::tag('td', $risks, array('class' => 'risks'));
+        $contents = html_writer::tag('td', $risks, array('class' => 'risks text-nowrap'));
         $contents .= html_writer::tag('td', $neededroles, array('class' => 'allowedroles'));
         $contents .= html_writer::tag('td', $forbiddenroles, array('class' => 'forbiddenroles'));
         return $contents;

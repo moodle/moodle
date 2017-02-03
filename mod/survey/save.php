@@ -68,14 +68,6 @@
 
     survey_save_answers($survey, $formdata, $course, $context);
 
-    $params = array(
-        'context' => $context,
-        'courseid' => $course->id,
-        'other' => array('surveyid' => $survey->id)
-    );
-    $event = \mod_survey\event\response_submitted::create($params);
-    $event->trigger();
-
 // Print the page and finish up.
 
     notice(get_string("thanksforanswers","survey", $USER->firstname), "$CFG->wwwroot/course/view.php?id=$course->id");

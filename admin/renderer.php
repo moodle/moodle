@@ -275,25 +275,29 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param array|null $availableupdates array of \core\update\info objects or null
      * @param int|null $availableupdatesfetch timestamp of the most recent updates fetch or null (unknown)
      * @param string[] $cachewarnings An array containing warnings from the Cache API.
+     * @param array $eventshandlers Events 1 API handlers.
      *
      * @return string HTML to output.
      */
     public function admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
             $cronoverdue, $dbproblems, $maintenancemode, $availableupdates, $availableupdatesfetch,
-            $buggyiconvnomb, $registered, array $cachewarnings = array()) {
+            $buggyiconvnomb, $registered, array $cachewarnings = array(), $eventshandlers = 0, $themedesignermode = false) {
         global $CFG;
         $output = '';
 
         $output .= $this->header();
         $output .= $this->maturity_info($maturity);
+        $output .= $this->legacy_log_store_writing_error();
         $output .= empty($CFG->disableupdatenotifications) ? $this->available_updates($availableupdates, $availableupdatesfetch) : '';
         $output .= $this->insecure_dataroot_warning($insecuredataroot);
+        $output .= $this->themedesignermode_warning($themedesignermode);
         $output .= $this->display_errors_warning($errorsdisplayed);
         $output .= $this->buggy_iconv_warning($buggyiconvnomb);
         $output .= $this->cron_overdue_warning($cronoverdue);
         $output .= $this->db_problems($dbproblems);
         $output .= $this->maintenance_mode_warning($maintenancemode);
         $output .= $this->cache_warnings($cachewarnings);
+        $output .= $this->events_handlers($eventshandlers);
         $output .= $this->registration_warning($registered);
 
         //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -530,6 +534,19 @@ class core_admin_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render an appropriate message if themdesignermode is enabled.
+     * @param bool $themedesignermode true if enabled
+     * @return string HTML to output.
+     */
+    protected function themedesignermode_warning($themedesignermode) {
+        if (!$themedesignermode) {
+            return '';
+        }
+
+        return $this->warning(get_string('themedesignermodewarning', 'admin'));
+    }
+
+    /**
      * Render an appropriate message if iconv is buggy and mbstring missing.
      * @param bool $buggyiconvnomb
      * @return string HTML to output.
@@ -592,6 +609,23 @@ class core_admin_renderer extends plugin_renderer_base {
             return '';
         }
         return join("\n", array_map(array($this, 'warning'), $cachewarnings));
+    }
+
+    /**
+     * Renders events 1 API handlers warning.
+     *
+     * @param array $eventshandlers
+     * @return string
+     */
+    public function events_handlers($eventshandlers) {
+        if ($eventshandlers) {
+            $components = '';
+            foreach ($eventshandlers as $eventhandler) {
+                $components .= $eventhandler->component . ', ';
+            }
+            $components = rtrim($components, ', ');
+            return $this->warning(get_string('eventshandlersinuse', 'admin', $components));
+        }
     }
 
     /**
@@ -1865,14 +1899,21 @@ class core_admin_renderer extends plugin_renderer_base {
                 } else {
                     $report = $this->doc_link(join($linkparts, '/'), get_string($stringtouse, 'admin', $rec));
                 }
+                // Enclose report text in div so feedback text will be displayed underneath it.
+                $report = html_writer::div($report);
 
                 // Format error or warning line
-                if ($errorline || $warningline) {
-                    $messagetype = $errorline? 'error':'warn';
+                if ($errorline) {
+                    $messagetype = 'error';
+                    $statusclass = 'label-important';
+                } else if ($warningline) {
+                    $messagetype = 'warn';
+                    $statusclass = 'label-warning';
                 } else {
                     $messagetype = 'ok';
+                    $statusclass = 'label-success';
                 }
-                $status = '<span class="'.$messagetype.'">'.$status.'</span>';
+                $status = html_writer::span($status, 'label ' . $statusclass);
                 // Here we'll store all the feedback found
                 $feedbacktext = '';
                 // Append the feedback if there is some
@@ -1934,5 +1975,20 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->footer();
 
         return $output;
+    }
+
+    /**
+     * Check to see if writing to the deprecated legacy log store is enabled.
+     *
+     * @return string An error message if writing to the legacy log store is enabled.
+     */
+    protected function legacy_log_store_writing_error() {
+        $enabled = get_config('logstore_legacy', 'loglegacy');
+        $plugins = explode(',', get_config('tool_log', 'enabled_stores'));
+        $enabled = $enabled && in_array('logstore_legacy', $plugins);
+
+        if ($enabled) {
+            return $this->warning(get_string('legacylogginginuse'));
+        }
     }
 }

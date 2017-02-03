@@ -264,7 +264,8 @@ abstract class backup_cron_automated_helper {
             $subject = $prefix.get_string('automatedbackupstatus', 'backup');
 
             //Send the message
-            $eventdata = new stdClass();
+            $eventdata = new \core\message\message();
+            $eventdata->courseid          = SITEID;
             $eventdata->modulename        = 'moodle';
             $eventdata->userfrom          = $admin;
             $eventdata->userto            = $admin;

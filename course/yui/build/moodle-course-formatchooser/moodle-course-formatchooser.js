@@ -5,10 +5,10 @@ var FORMATCHOOSER = function() {
 };
 
 Y.extend(FORMATCHOOSER, Y.Base, {
-    initializer : function(params) {
+    initializer: function(params) {
         if (params && params.formid) {
-            var updatebut = Y.one('#'+params.formid+' #id_updatecourseformat');
-            var formatselect = Y.one('#'+params.formid+' #id_format');
+            var updatebut = Y.one('#' + params.formid + ' #id_updatecourseformat');
+            var formatselect = Y.one('#' + params.formid + ' #id_format');
             var ancestor = updatebut.ancestor('fieldset');
             var action = Y.one('form.mform').get('action');
             if (updatebut && formatselect) {

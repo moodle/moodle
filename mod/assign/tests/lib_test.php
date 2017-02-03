@@ -72,7 +72,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
         // This is required so that the submissions timemodified > the grade timemodified.
-        sleep(2);
+        $this->waitForSecond();
 
         // Edit the submission again.
         $this->setUser($this->students[0]);
@@ -80,7 +80,7 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
 
         // This is required so that the submissions timemodified > the grade timemodified.
-        sleep(2);
+        $this->waitForSecond();
 
         // Allow the student another attempt.
         $this->teachers[0]->ignoresesskey = true;
@@ -158,6 +158,13 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         $data = new stdClass();
         $data->grade = '50.0';
         $openassign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+
+        // The assign_print_overview expects the grade date to be after the submission date.
+        $graderecord = $DB->get_record('assign_grades', array('assignment' => $openassign->get_instance()->id,
+            'userid' => $this->students[0]->id, 'attemptnumber' => 0));
+        $graderecord->timemodified += 1;
+        $DB->update_record('assign_grades', $graderecord);
+
         $overview = array();
         assign_print_overview($courses, $overview);
         $this->assertEquals(1, count($overview));

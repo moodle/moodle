@@ -1,5 +1,6 @@
 YUI.add('moodle-mod_quiz-toolboxes', function (Y, NAME) {
 
+/* eslint-disable no-unused-vars */
 /**
  * Resource and activity toolbox class.
  *
@@ -12,61 +13,61 @@ YUI.add('moodle-mod_quiz-toolboxes', function (Y, NAME) {
 
 // The CSS classes we use.
 var CSS = {
-        ACTIVITYINSTANCE : 'activityinstance',
-        AVAILABILITYINFODIV : 'div.availabilityinfo',
-        CONTENTWITHOUTLINK : 'contentwithoutlink',
-        CONDITIONALHIDDEN : 'conditionalhidden',
-        DIMCLASS : 'dimmed',
-        DIMMEDTEXT : 'dimmed_text',
-        EDITINSTRUCTIONS : 'editinstructions',
-        EDITINGMAXMARK : 'editor_displayed',
-        HIDE : 'hide',
+        ACTIVITYINSTANCE: 'activityinstance',
+        AVAILABILITYINFODIV: 'div.availabilityinfo',
+        CONTENTWITHOUTLINK: 'contentwithoutlink',
+        CONDITIONALHIDDEN: 'conditionalhidden',
+        DIMCLASS: 'dimmed',
+        DIMMEDTEXT: 'dimmed_text',
+        EDITINSTRUCTIONS: 'editinstructions',
+        EDITINGMAXMARK: 'editor_displayed',
+        HIDE: 'hide',
         JOIN: 'page_join',
-        MODINDENTCOUNT : 'mod-indent-',
-        MODINDENTHUGE : 'mod-indent-huge',
+        MODINDENTCOUNT: 'mod-indent-',
+        MODINDENTHUGE: 'mod-indent-huge',
         PAGE: 'page',
-        SECTIONHIDDENCLASS : 'hidden',
-        SECTIONIDPREFIX : 'section-',
-        SLOT : 'slot',
-        SHOW : 'editing_show',
-        TITLEEDITOR : 'titleeditor'
+        SECTIONHIDDENCLASS: 'hidden',
+        SECTIONIDPREFIX: 'section-',
+        SLOT: 'slot',
+        SHOW: 'editing_show',
+        TITLEEDITOR: 'titleeditor'
     },
     // The CSS selectors we use.
     SELECTOR = {
         ACTIONAREA: '.actions',
-        ACTIONLINKTEXT : '.actionlinktext',
-        ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_maxmark, a.editing_section, input.shuffle_questions',
-        ACTIVITYFORM : 'span.instancemaxmarkcontainer form',
-        ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
-        SECTIONINSTANCE : '.sectioninstance',
-        ACTIVITYLI : 'li.activity, li.section',
-        ACTIVITYMAXMARK : 'input[name=maxmark]',
-        COMMANDSPAN : '.commands',
-        CONTENTAFTERLINK : 'div.contentafterlink',
-        CONTENTWITHOUTLINK : 'div.contentwithoutlink',
+        ACTIONLINKTEXT: '.actionlinktext',
+        ACTIVITYACTION: 'a.cm-edit-action[data-action], a.editing_maxmark, a.editing_section, input.shuffle_questions',
+        ACTIVITYFORM: 'span.instancemaxmarkcontainer form',
+        ACTIVITYINSTANCE: '.' + CSS.ACTIVITYINSTANCE,
+        SECTIONINSTANCE: '.sectioninstance',
+        ACTIVITYLI: 'li.activity, li.section',
+        ACTIVITYMAXMARK: 'input[name=maxmark]',
+        COMMANDSPAN: '.commands',
+        CONTENTAFTERLINK: 'div.contentafterlink',
+        CONTENTWITHOUTLINK: 'div.contentwithoutlink',
         DELETESECTIONICON: 'a.editing_delete img',
         EDITMAXMARK: 'a.editing_maxmark',
         EDITSECTION: 'a.editing_section',
         EDITSECTIONICON: 'a.editing_section img',
         EDITSHUFFLEQUESTIONSACTION: 'input.cm-edit-action[data-action]',
         EDITSHUFFLEAREA: '.instanceshufflequestions .shuffle-progress',
-        HIDE : 'a.editing_hide',
-        HIGHLIGHT : 'a.editing_highlight',
-        INSTANCENAME : 'span.instancename',
-        INSTANCEMAXMARK : 'span.instancemaxmark',
-        INSTANCESECTION : 'span.instancesection',
-        INSTANCESECTIONAREA : 'div.section-heading',
-        MODINDENTDIV : '.mod-indent',
-        MODINDENTOUTER : '.mod-indent-outer',
-        NUMQUESTIONS : '.numberofquestions',
-        PAGECONTENT : 'div#page-content',
-        PAGELI : 'li.page',
-        SECTIONUL : 'ul.section',
-        SECTIONFORM : '.instancesectioncontainer form',
-        SECTIONINPUT : 'input[name=section]',
-        SHOW : 'a.' + CSS.SHOW,
-        SLOTLI : 'li.slot',
-        SUMMARKS : '.mod_quiz_summarks'
+        HIDE: 'a.editing_hide',
+        HIGHLIGHT: 'a.editing_highlight',
+        INSTANCENAME: 'span.instancename',
+        INSTANCEMAXMARK: 'span.instancemaxmark',
+        INSTANCESECTION: 'span.instancesection',
+        INSTANCESECTIONAREA: 'div.section-heading',
+        MODINDENTDIV: '.mod-indent',
+        MODINDENTOUTER: '.mod-indent-outer',
+        NUMQUESTIONS: '.numberofquestions',
+        PAGECONTENT: 'div#page-content',
+        PAGELI: 'li.page',
+        SECTIONUL: 'ul.section',
+        SECTIONFORM: '.instancesectioncontainer form',
+        SECTIONINPUT: 'input[name=section]',
+        SHOW: 'a.' + CSS.SHOW,
+        SLOTLI: 'li.slot',
+        SUMMARKS: '.mod_quiz_summarks'
     },
     BODY = Y.one(document.body);
 
@@ -127,7 +128,9 @@ Y.extend(TOOLBOX, Y.Base, {
                         if (responsetext.error) {
                             new M.core.ajaxException(responsetext);
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        // Ignore.
+                    }
 
                     // Run the callback if we have one.
                     if (responsetext.hasOwnProperty('newsummarks')) {
@@ -220,6 +223,8 @@ Y.extend(TOOLBOX, Y.Base, {
     }
 }
 );
+/* global TOOLBOX, BODY, SELECTOR */
+
 /**
  * Resource and activity toolbox class.
  *
@@ -371,7 +376,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         ev.preventDefault();
 
         // Get the element we're working on.
-        var element   = activity,
+        var element = activity,
             // Create confirm string (different if element has or does not have name)
             confirmstring = '',
             qtypename = M.util.get_string('pluginname',
@@ -421,19 +426,19 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {String} action The action that has been requested.
      * @return Boolean
      */
-    edit_maxmark : function(ev, button, activity) {
+    edit_maxmark: function(ev, button, activity) {
         // Get the element we're working on
-        var instancemaxmark  = activity.one(SELECTOR.INSTANCEMAXMARK),
+        var instancemaxmark = activity.one(SELECTOR.INSTANCEMAXMARK),
             instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
             currentmaxmark = instancemaxmark.get('firstChild'),
             oldmaxmark = currentmaxmark.get('data'),
             maxmarktext = oldmaxmark,
             thisevent,
-            anchor = instancemaxmark,// Grab the anchor so that we can swap it with the edit form.
+            anchor = instancemaxmark, // Grab the anchor so that we can swap it with the edit form.
             data = {
-                'class'   : 'resource',
-                'field'   : 'getmaxmark',
-                'id'      : Y.Moodle.mod_quiz.util.slot.getId(activity)
+                'class': 'resource',
+                'field': 'getmaxmark',
+                'id': Y.Moodle.mod_quiz.util.slot.getId(activity)
             };
 
         // Prevent the default actions.
@@ -454,11 +459,11 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             var editinstructions = Y.Node.create('<span class="' + CSS.EDITINSTRUCTIONS + '" id="id_editinstructions" />')
                 .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
             var editor = Y.Node.create('<input name="maxmark" type="text" class="' + CSS.TITLEEDITOR + '" />').setAttrs({
-                'value' : maxmarktext,
-                'autocomplete' : 'off',
-                'aria-describedby' : 'id_editinstructions',
-                'maxLength' : '12',
-                'size' : parseInt(this.get('config').questiondecimalpoints, 10) + 2
+                'value': maxmarktext,
+                'autocomplete': 'off',
+                'aria-describedby': 'id_editinstructions',
+                'maxLength': '12',
+                'size': parseInt(this.get('config').questiondecimalpoints, 10) + 2
             });
 
             // Clear the existing content and put the editor in.
@@ -466,12 +471,6 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             editform.setData('anchor', anchor);
             instance.insert(editinstructions, 'before');
             anchor.replace(editform);
-
-            // Force the editing instruction to match the mod-indent position.
-            var padside = 'left';
-            if (window.right_to_left()) {
-                padside = 'right';
-            }
 
             // We hide various components whilst editing:
             activity.addClass(CSS.EDITINGMAXMARK);
@@ -500,7 +499,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {String} originalmaxmark The original maxmark the activity or resource had.
      */
-    edit_maxmark_submit : function(ev, activity, originalmaxmark) {
+    edit_maxmark_submit: function(ev, activity, originalmaxmark) {
         // We don't actually want to submit anything.
         ev.preventDefault();
         var newmaxmark = Y.Lang.trim(activity.one(SELECTOR.ACTIVITYFORM + ' ' + SELECTOR.ACTIVITYMAXMARK).get('value'));
@@ -509,10 +508,10 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         activity.one(SELECTOR.INSTANCEMAXMARK).setContent(newmaxmark);
         if (newmaxmark !== null && newmaxmark !== "" && newmaxmark !== originalmaxmark) {
             var data = {
-                'class'   : 'resource',
-                'field'   : 'updatemaxmark',
-                'maxmark'   : newmaxmark,
-                'id'      : Y.Moodle.mod_quiz.util.slot.getId(activity)
+                'class': 'resource',
+                'field': 'updatemaxmark',
+                'maxmark': newmaxmark,
+                'id': Y.Moodle.mod_quiz.util.slot.getId(activity)
             };
             this.send_request(data, spinner, function(response) {
                 if (response.instancemaxmark) {
@@ -531,7 +530,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @param {Node} activity The activity whose maxmark we are altering.
      * @param {Boolean} preventdefault If true we should prevent the default action from occuring.
      */
-    edit_maxmark_cancel : function(ev, activity, preventdefault) {
+    edit_maxmark_cancel: function(ev, activity, preventdefault) {
         if (preventdefault) {
             ev.preventDefault();
         }
@@ -545,7 +544,7 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
      * @method edit_maxmark_clear
      * @param {Node} activity  The activity whose maxmark we were altering.
      */
-    edit_maxmark_clear : function(activity) {
+    edit_maxmark_clear: function(activity) {
         // Detach all listen events to prevent duplicate triggers
         new Y.EventHandle(this.editmaxmarkevents).detach();
 
@@ -663,13 +662,13 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         Y.Moodle.mod_quiz.util.slot.updateAllDependencyIcons();
     },
 
-    NAME : 'mod_quiz-resource-toolbox',
-    ATTRS : {
-        courseid : {
-            'value' : 0
+    NAME: 'mod_quiz-resource-toolbox',
+    ATTRS: {
+        courseid: {
+            'value': 0
         },
-        quizid : {
-            'value' : 0
+        quizid: {
+            'value': 0
         }
     }
 });
@@ -679,6 +678,8 @@ M.mod_quiz.init_resource_toolbox = function(config) {
     M.mod_quiz.resource_toolbox = new RESOURCETOOLBOX(config);
     return M.mod_quiz.resource_toolbox;
 };
+/* global TOOLBOX, BODY, SELECTOR */
+
 /**
  * Section toolbox class.
  *
@@ -830,7 +831,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
     edit_section_title: function(ev, button, activity) {
         // Get the element we're working on
         var activityid = activity.get('id').replace('section-', ''),
-            instancesection  = activity.one(SELECTOR.INSTANCESECTION),
+            instancesection = activity.one(SELECTOR.INSTANCESECTION),
             thisevent,
             anchor = instancesection, // Grab the anchor so that we can swap it with the edit form.
             data = {
@@ -1000,7 +1001,7 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
         this.send_request(data, spinner);
     }
 
-},  {
+}, {
     NAME: 'mod_quiz-section-toolbox',
     ATTRS: {
         courseid: {

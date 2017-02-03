@@ -22,7 +22,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../config.php');
+require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course ID.
@@ -61,6 +61,8 @@ if ($delete === md5($course->timemodified)) {
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strdeletingcourse);
+    // This might take a while. Raise the execution time limit.
+    core_php_time_limit::raise();
     // We do this here because it spits out feedback as it goes.
     delete_course($course);
     echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );

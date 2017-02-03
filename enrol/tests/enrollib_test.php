@@ -136,7 +136,7 @@ class core_enrollib_testcase extends advanced_testcase {
         // Make sure sorting and columns work.
 
         $basefields = array('id', 'category', 'sortorder', 'shortname', 'fullname', 'idnumber',
-            'startdate', 'visible', 'groupmode', 'groupmodeforce');
+            'startdate', 'visible', 'groupmode', 'groupmodeforce', 'defaultgroupingid');
 
         $courses = enrol_get_all_users_courses($user2->id, true);
         $course = reset($courses);

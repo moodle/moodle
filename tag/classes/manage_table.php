@@ -54,17 +54,18 @@ class core_tag_manage_table extends table_sql {
 
         $perpage = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
+        $filter = optional_param('filter', '', PARAM_NOTAGS);
         $baseurl = new moodle_url('/tag/manage.php', array('tc' => $tagcollid,
-            'perpage' => $perpage, 'page' => $page));
+            'perpage' => $perpage, 'page' => $page, 'filter' => $filter));
 
-        $tablecolumns = array('select', 'name', 'fullname', 'count', 'flag', 'timemodified', 'tagtype', 'controls');
+        $tablecolumns = array('select', 'name', 'fullname', 'count', 'flag', 'timemodified', 'isstandard', 'controls');
         $tableheaders = array(get_string('select', 'tag'),
                               get_string('name', 'tag'),
                               get_string('owner', 'tag'),
                               get_string('count', 'tag'),
                               get_string('flag', 'tag'),
                               get_string('timemodified', 'tag'),
-                              get_string('officialtag', 'tag'),
+                              get_string('standardtag', 'tag'),
                               '');
 
         $this->define_columns($tablecolumns);
@@ -77,7 +78,7 @@ class core_tag_manage_table extends table_sql {
         $this->column_class('count', 'mdl-align col-count');
         $this->column_class('flag', 'mdl-align col-flag');
         $this->column_class('timemodified', 'col-timemodified');
-        $this->column_class('tagtype', 'mdl-align col-tagtype');
+        $this->column_class('isstandard', 'mdl-align col-isstandard');
         $this->column_class('controls', 'mdl-align col-controls');
 
         $this->sortable(true, 'flag', SORT_DESC);
@@ -88,9 +89,9 @@ class core_tag_manage_table extends table_sql {
         $this->set_attribute('id', 'tag-management-list');
         $this->set_attribute('class', 'admintable generaltable tag-management-table');
 
-        $totalcount = "SELECT COUNT(id)
-            FROM {tag}
-            WHERE tagcollid = :tagcollid";
+        $totalcount = "SELECT COUNT(tg.id)
+            FROM {tag} tg
+            WHERE tg.tagcollid = :tagcollid";
         $params = array('tagcollid' => $this->tagcollid);
 
         $this->set_count_sql($totalcount, $params);
@@ -99,8 +100,21 @@ class core_tag_manage_table extends table_sql {
 
         $this->collapsible(true);
 
-        $PAGE->requires->js_call_amd('core/tag', 'init_manage_page', array());
+        $PAGE->requires->js_call_amd('core/tag', 'initManagePage', array());
 
+    }
+
+    /**
+     * @return string sql to add to where statement.
+     */
+    function get_sql_where() {
+        $filter = optional_param('filter', '', PARAM_NOTAGS);
+        list($wsql, $wparams) = parent::get_sql_where();
+        if ($filter !== '') {
+            $wsql .= ($wsql ? ' AND ' : '') . 'tg.name LIKE :tagfilter';
+            $wparams['tagfilter'] = '%' . $filter . '%';
+        }
+        return array($wsql, $wparams);
     }
 
     /**
@@ -143,14 +157,14 @@ class core_tag_manage_table extends table_sql {
 
         $allusernames = get_all_user_name_fields(true, 'u');
         $sql = "
-            SELECT tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
+            SELECT tg.id, tg.name, tg.rawname, tg.isstandard, tg.flag, tg.timemodified,
                        u.id AS owner, $allusernames,
                        COUNT(ti.id) AS count, tg.tagcollid
             FROM {tag} tg
             LEFT JOIN {tag_instance} ti ON ti.tagid = tg.id
             LEFT JOIN {user} u ON u.id = tg.userid
                        WHERE tagcollid = :tagcollid $where
-            GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
+            GROUP BY tg.id, tg.name, tg.rawname, tg.isstandard, tg.flag, tg.timemodified,
                        u.id, $allusernames, tg.tagcollid
             ORDER BY $sort";
 
@@ -179,8 +193,8 @@ class core_tag_manage_table extends table_sql {
      */
     public function col_name($tag) {
         global $OUTPUT;
-        $tagoutput = new core_tag\output\tag($tag);
-        return $OUTPUT->render_from_template('core_tag/tagname', $tagoutput->export_for_template($OUTPUT));
+        $tagoutput = new core_tag\output\tagname($tag);
+        return $tagoutput->render($OUTPUT);
     }
 
     /**
@@ -191,8 +205,8 @@ class core_tag_manage_table extends table_sql {
      */
     public function col_flag($tag) {
         global $OUTPUT;
-        $tagoutput = new core_tag\output\tag($tag);
-        return $OUTPUT->render_from_template('core_tag/tagflag', $tagoutput->export_for_template($OUTPUT));
+        $tagoutput = new core_tag\output\tagflag($tag);
+        return $tagoutput->render($OUTPUT);
     }
 
     /**
@@ -224,10 +238,10 @@ class core_tag_manage_table extends table_sql {
      * @param stdClass $tag
      * @return string
      */
-    public function col_tagtype($tag) {
+    public function col_isstandard($tag) {
         global $OUTPUT;
-        $tagoutput = new core_tag\output\tag($tag);
-        return $OUTPUT->render_from_template('core_tag/tagtype', $tagoutput->export_for_template($OUTPUT));
+        $tagoutput = new core_tag\output\tagisstandard($tag);
+        return $tagoutput->render($OUTPUT);
     }
 
     /**

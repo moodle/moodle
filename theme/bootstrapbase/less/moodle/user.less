@@ -53,19 +53,52 @@
     }
 }
 
-.dir-rtl {
-    .user-box {
-        float:right;
-    }
-    .userprofile .node_category {
-        .editprofile,
-        .viewmore {
-            text-align: left;
+/**
+ * This rule has been added to duplicate the style of icons with the
+ * .iconsmall class for consistent rendering.
+ *
+ * Loading a pix icon using the template helper returns icons with
+ * the class 'smallicon' instead of 'iconsmall'.
+ */
+#page-user-profile {
+    .ajax-contact-button {
+        img {
+            &.smallicon {
+                margin: 0;
+                padding: 0.3em;
+                height: 12px;
+                width: 12px;
+                vertical-align: middle;
+            }
         }
     }
-    .userprofile dl dd {
-        margin-left:0;
-        margin-right: 10px;
+}
+
+.ajax-contact-button {
+    box-sizing: border-box;
+    position: relative;
+
+    &.loading {
+        .loading-icon {
+            display: block;
+        }
+    }
+
+    .loading-icon {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.7);
+
+        .smallicon {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
     }
 }
 
@@ -204,9 +237,6 @@
     margin: 0.2em 0;
     text-align: left;
 }
-.dir-rtl #userselector_options p {
-    text-align: right;
-}
 /** user full profile */
 #page-user-profile .messagebox {
     text-align: center;
@@ -219,17 +249,6 @@
     margin-left: auto;
     margin-right: auto;
 }
-/** Overide for RTL layout **/
-.dir-rtl .userlist table#participants td,
-.dir-rtl .userlist table#participants th {
-    text-align: right;
-}
-.dir-rtl .userlist table#participants {
-    margin: 0 auto;
-}
-#page-my-index.dir-rtl .block h3 {
-    text-align: right;
-}
 
 .profileeditor {
     > .singleselect {
@@ -238,32 +257,25 @@
     > .singlebutton {
         display: inline-block;
         margin: 0 0 0 0.5em;
-        div, input {
+        div,
+        input {
             margin: 0;
         }
     }
 }
-.dir-rtl .profileeditor {
-    > .singleselect {
-        margin: 0 0 0 0.5em;
-    }
-    > .singlebutton {
-        margin: 0 0.5em 0 0;
-    }
-}
+
 #groupeditform {
     .groups,
     .members {
+        min-width: 175px;
         width: 49%;
         float: left;
         text-align: left;
-    }
-}
-.dir-rtl #groupeditform {
-    .groups,
-    .members {
-        float: right;
-        text-align: right;
+
+        select {
+            min-width: 175px;
+            max-width: 90%;
+        }
     }
 }
 
@@ -273,10 +285,5 @@
         list-style: none;
         margin-left: 0;
         margin-right: 0;
-    }
-}
-.dir-rtl {
-    .preferences-group {
-        float: right;
     }
 }

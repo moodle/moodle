@@ -208,6 +208,9 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
      * @return string HTML fragment.
      */
     protected function submit_button(question_attempt $qa, question_display_options $options) {
+        if (!$qa->get_state()->is_active()) {
+            return '';
+        }
         $attributes = array(
             'type' => 'submit',
             'id' => $qa->get_behaviour_field_name('submit'),

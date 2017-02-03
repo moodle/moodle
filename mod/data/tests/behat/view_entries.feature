@@ -50,7 +50,7 @@ Feature: Users can view and search database entries
     And I follow "Next"
     And I should see "Teacher entry 2"
     And I should not see "Teacher entry 1"
-    And I follow "3"
+    And I click on "3" "link" in the "region-main" "region"
     And I should see "Teacher entry 3"
     And I should not see "Teacher entry 2"
     And I follow "Previous"

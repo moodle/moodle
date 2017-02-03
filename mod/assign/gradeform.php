@@ -65,7 +65,7 @@ class mod_assign_grade_form extends moodleform {
      */
     protected function get_form_identifier() {
         $params = $this->_customdata[2];
-        return get_class($this) . '_' . $params['rownum'];
+        return get_class($this) . '_' . $params['userid'];
     }
 
     /**
@@ -80,7 +80,7 @@ class mod_assign_grade_form extends moodleform {
 
         if ($instance->markingworkflow && !empty($data['sendstudentnotifications']) &&
                 $data['workflowstate'] != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
-            $errors['sendstudentnotifications'] = get_string('studentnotificationworkflowstateerror', 'assign');
+            $errors['workflowstate'] = get_string('studentnotificationworkflowstateerror', 'assign');
         }
 
         // Advanced grading.

@@ -63,7 +63,7 @@ M.core_backup.backupselectall = function(modnames) {
         // This is not a relevant page.
         return;
     }
-    if (!firstsection.one('.felement.fcheckbox')) {
+    if (!firstsection.one('input[type="checkbox"]')) {
         // No checkboxes.
         return;
     }
@@ -91,11 +91,19 @@ M.core_backup.backupselectall = function(modnames) {
 
     // Add select all/none for each module type.
     var initlinks = function(links, mod) {
-        Y.one('#backup-all-mod_' + mod).on('click', function(e) { helper(e, true, '_included', mod); });
-        Y.one('#backup-none-mod_' + mod).on('click', function(e) { helper(e, false, '_included', mod); });
+        Y.one('#backup-all-mod_' + mod).on('click', function(e) {
+            helper(e, true, '_included', mod);
+        });
+        Y.one('#backup-none-mod_' + mod).on('click', function(e) {
+            helper(e, false, '_included', mod);
+        });
         if (withuserdata) {
-            Y.one('#backup-all-userdata-mod_' + mod).on('click', function(e) { helper(e, true, withuserdata, mod); });
-            Y.one('#backup-none-userdata-mod_' + mod).on('click', function(e) { helper(e, false, withuserdata, mod); });
+            Y.one('#backup-all-userdata-mod_' + mod).on('click', function(e) {
+                helper(e, true, withuserdata, mod);
+            });
+            Y.one('#backup-none-userdata-mod_' + mod).on('click', function(e) {
+                helper(e, false, withuserdata, mod);
+            });
         }
     };
 
@@ -133,32 +141,48 @@ M.core_backup.backupselectall = function(modnames) {
         modlist.currentlyshown = !modlist.currentlyshown;
 
         // Either hide or show the links.
-        var animcfg = { node: modlist, duration: 0.2 },
+        var animcfg = {node: modlist, duration: 0.2},
             anim;
         if (modlist.currentlyshown) {
             // Animate reveal of the module links.
             modlist.show();
-            animcfg.to = { maxHeight: modlist.get('clientHeight') + 'px' };
+            animcfg.to = {maxHeight: modlist.get('clientHeight') + 'px'};
             modlist.setStyle('maxHeight', '0px');
             anim = new Y.Anim(animcfg);
-            anim.on('end', function() { modlist.setStyle('maxHeight', 'none'); });
+            anim.on('end', function() {
+                modlist.setStyle('maxHeight', 'none');
+            });
             anim.run();
         } else {
             // Animate hide of the module links.
-            animcfg.to = { maxHeight: '0px' };
+            animcfg.to = {maxHeight: '0px'};
             modlist.setStyle('maxHeight', modlist.get('clientHeight') + 'px');
             anim = new Y.Anim(animcfg);
-            anim.on('end', function() { modlist.hide(); modlist.setStyle('maxHeight', 'none'); });
+            anim.on('end', function() {
+                modlist.hide();
+                modlist.setStyle('maxHeight', 'none');
+            });
             anim.run();
         }
 
     };
-    Y.one('#backup-bytype').on('click', function() { toggletypes(); });
+    Y.one('#backup-bytype').on('click', function(e) {
+        e.preventDefault();
+        toggletypes();
+    });
 
-    Y.one('#backup-all-included').on('click',  function(e) { helper(e, true,  '_included'); });
-    Y.one('#backup-none-included').on('click', function(e) { helper(e, false, '_included'); });
+    Y.one('#backup-all-included').on('click', function(e) {
+        helper(e, true, '_included');
+    });
+    Y.one('#backup-none-included').on('click', function(e) {
+        helper(e, false, '_included');
+    });
     if (withuserdata) {
-        Y.one('#backup-all-userdata').on('click',  function(e) { helper(e, true,  withuserdata); });
-        Y.one('#backup-none-userdata').on('click', function(e) { helper(e, false, withuserdata); });
+        Y.one('#backup-all-userdata').on('click', function(e) {
+            helper(e, true, withuserdata);
+        });
+        Y.one('#backup-none-userdata').on('click', function(e) {
+            helper(e, false, withuserdata);
+        });
     }
 };

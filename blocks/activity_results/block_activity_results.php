@@ -56,6 +56,15 @@ class block_activity_results extends block_base {
     }
 
     /**
+     * Allow the block to have a configuration page
+     *
+     * @return boolean
+     */
+    public function has_config() {
+        return true;
+    }
+
+    /**
      * Core function, specifies where the block can be used.
      * @return array
      */

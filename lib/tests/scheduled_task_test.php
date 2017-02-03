@@ -127,7 +127,7 @@ class core_scheduled_task_testcase extends advanced_testcase {
         // The timezones used in this test are chosen because they do not use DST - that would break the test.
         $this->resetAfterTest();
 
-        $this->setTimezone('America/Caracas');
+        $this->setTimezone('Asia/Kabul');
 
         $testclass = new \core\task\scheduled_test_task();
 
@@ -143,9 +143,9 @@ class core_scheduled_task_testcase extends advanced_testcase {
         $userdate = userdate($nexttime);
 
         // Should be displayed in user timezone.
-        // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20140314T01&p1=58
-        // to verify this time.
-        $this->assertContains('11:15 AM', core_text::strtoupper($userdate));
+        // I used http://www.timeanddate.com/worldclock/fixedtime.html?msg=Moodle+Test&iso=20160502T01&p1=113
+        // setting my location to Kathmandu to verify this time.
+        $this->assertContains('2:15 AM', core_text::strtoupper($userdate));
     }
 
     public function test_reset_scheduled_tasks_for_component() {

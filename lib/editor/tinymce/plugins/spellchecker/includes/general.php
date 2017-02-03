@@ -4,19 +4,19 @@
  *
  * @package MCManager.includes
  * @author Moxiecode
- * @copyright Copyright © 2007, Moxiecode Systems AB, All rights reserved.
+ * @copyright Copyright ï¿½ 2007, Moxiecode Systems AB, All rights reserved.
  */
 
 @error_reporting(E_ALL ^ E_NOTICE);
 $config = array();
 
-require_once(dirname(__FILE__) . "/../classes/utils/Logger.php");
-require_once(dirname(__FILE__) . "/../classes/utils/JSON.php");
-require_once(dirname(__FILE__) . "/../config.php");
-require_once(dirname(__FILE__) . "/../classes/SpellChecker.php");
+require_once(__DIR__ . "/../classes/utils/Logger.php");
+require_once(__DIR__ . "/../classes/utils/JSON.php");
+require_once(__DIR__ . "/../config.php");
+require_once(__DIR__ . "/../classes/SpellChecker.php");
 
 if (isset($config['general.engine']))
-	require_once(dirname(__FILE__) . "/../classes/" . $config["general.engine"] . ".php");
+	require_once(__DIR__ . "/../classes/" . $config["general.engine"] . ".php");
 
 /**
  * Returns an request value by name without magic quoting.
@@ -51,7 +51,7 @@ function &getLogger() {
 		$mcLogger = new Moxiecode_Logger();
 
 		// Set logger options
-		$mcLogger->setPath(dirname(__FILE__) . "/../logs");
+		$mcLogger->setPath(__DIR__ . "/../logs");
 		$mcLogger->setMaxSize("100kb");
 		$mcLogger->setMaxFiles("10");
 		$mcLogger->setFormat("{time} - {message}");

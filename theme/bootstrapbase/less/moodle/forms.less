@@ -18,7 +18,7 @@ form {
     display: block;
 }
 .mform fieldset.group {
-    margin-bottom: 0
+    margin-bottom: 0;
 }
 .mform fieldset.error {
     border: 1px solid @errorText;
@@ -35,19 +35,14 @@ form {
 .mform fieldset.collapsible legend a.fheader {
     padding: 0 5px 0 20px;
     margin-left: -20px;
-    background: url([[pix:t/expanded]]) 2px center no-repeat;
-}
-.dir-rtl .mform fieldset.collapsible legend a.fheader {
-    padding: 0 20px 0 5px;
-    margin-right: -20px;
-    margin-left: 0;
-    background-position: right center;
+    background: url([[pix:t/expanded]]) left center no-repeat;
 }
 .mform fieldset.collapsed legend a.fheader {
-    background-image: url([[pix:t/collapsed]]);
-}
-.dir-rtl .mform fieldset.collapsed legend a.fheader {
+    /*rtl:raw:
     background-image: url([[pix:t/collapsed_rtl]]);
+    */
+    /*rtl:remove*/
+    background-image: url([[pix:t/collapsed]]);
 }
 .jsenabled .mform .collapsed .fcontainer {
     display: none;
@@ -81,9 +76,6 @@ form {
 .mform .iconhelp {
     margin-left: 4px;
 }
-.dir-rtl .mform .iconhelp {
-    margin-right: 4px;
-}
 .mform .ftextarea #id_alltext {
     width: 100%;
 }
@@ -109,15 +101,6 @@ form {
 .mform fieldset.fdate_selector label {
     display: inline;
     float: none;
-    width: auto;
-}
-.mform .ftags label.accesshide {
-    display: block;
-    position: static;
-}
-.mform .ftags select {
-    margin-bottom: 0.7em;
-    min-width: 22em;
 }
 .mform .helplink img {
     margin: 0 .45em;
@@ -129,13 +112,7 @@ form {
 .singleselect label {
     margin-right: .3em;
 }
-.dir-rtl .singleselect label {
-    margin-left: .3em;
-    margin-right: 0;
-}
-input#id_externalurl {
-    direction: ltr;
-}
+
 #portfolio-add-button {
     display: inline;
 }
@@ -152,13 +129,6 @@ input#id_externalurl {
 .mform .fitem div.fitemtitle {
     .form-horizontal .control-label
 }
-.dir-rtl {
-    .form-item .form-label,
-    .mform .fitem div.fitemtitle {
-        float:right;
-        text-align: left;
-    }
-}
 .form-defaultinfo,
 .form-label .form-shortname {
     .muted;
@@ -166,9 +136,6 @@ input#id_externalurl {
 .form-label .form-shortname {
     font-size: @fontSizeMini;
     display: block;
-}
-.dir-rtl .form-label .form-shortname {
-    text-align: left;
 }
 .form-item .form-setting,
 .form-item .form-description,
@@ -212,22 +179,6 @@ div.backup-section + form,
 .form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
     padding-left: @horizontalComponentOffset;
 }
-.dir-rtl {
-    table#form td.submit,
-    .form-buttons,
-    .path-admin .buttons,
-    #fitem_id_submitbutton,
-    .fp-content-center form + div,
-    div.backup-section + form,
-    #fgroup_id_buttonar {
-        .form-actions;
-        padding-right: 0;
-    }
-    .path-admin .buttons,
-    .form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
-        padding-right: @horizontalComponentOffset;
-    }
-}
 .form-item .form-setting .form-checkbox.defaultsnext {
     // Need to specify .defaultsnext and the .form-checkbox class
     // is somewhat randomly re-used on various actual checkboxes
@@ -253,94 +204,14 @@ div.backup-section + form,
     color: @textColor;
     text-decoration: none;
 }
-.dir-rtl .mform .fitem .felement {
-    margin-right: 30%;
-    margin-left: auto;
-    text-align: right;
-}
-// I think this could be avoided (or at least tidied up) ifr
-// we used HTML5 input types like url, phone, email, number etc.
-.dir-rtl .mform .fitem .felement input[name=email],
-.dir-rtl .mform .fitem .felement input[name=email2],
-.dir-rtl .mform .fitem .felement input[name=url],
-.dir-rtl .mform .fitem .felement input[name=idnumber],
-.dir-rtl .mform .fitem .felement input[name=phone1],
-.dir-rtl .mform .fitem .felement input[name=phone2] {
-    text-align: left;
-    direction: ltr;
-}
-.dir-rtl #id_s__pathtodu,
-.dir-rtl #id_s__aspellpath,
-.dir-rtl #id_s__pathtodot,
-.dir-rtl #id_s__supportemail,
-.dir-rtl #id_s__supportpage,
-.dir-rtl #id_s__sessioncookie,
-.dir-rtl #id_s__sessioncookiepath,
-.dir-rtl #id_s__sessioncookiedomain,
-.dir-rtl #id_s__proxyhost,
-.dir-rtl #id_s__proxyuser,
-.dir-rtl #id_s__proxypassword,
-.dir-rtl #id_s__proxybypass,
-.dir-rtl #id_s__jabberhost,
-.dir-rtl #id_s__jabberserver,
-.dir-rtl #id_s__jabberusername,
-.dir-rtl #id_s__jabberpassword,
-.dir-rtl #id_s__additionalhtmlhead,
-.dir-rtl #id_s__additionalhtmltopofbody,
-.dir-rtl #id_s__additionalhtmlfooter,
-.dir-rtl #id_s__docroot,
-.dir-rtl #id_s__filter_tex_latexpreamble,
-.dir-rtl #id_s__filter_tex_latexbackground,
-.dir-rtl #id_s__filter_tex_pathlatex,
-.dir-rtl #id_s__filter_tex_pathdvips,
-.dir-rtl #id_s__filter_tex_pathconvert,
-.dir-rtl #id_s__blockedip,
-.dir-rtl #id_s__pathtoclam,
-.dir-rtl #id_s__quarantinedir,
-.dir-rtl #id_s__sitepolicy,
-.dir-rtl #id_s__sitepolicyguest,
-.dir-rtl #id_s__cronremotepassword,
-.dir-rtl #id_s__allowedip,
-.dir-rtl #id_s__blockedip,
-.dir-rtl #id_s_enrol_meta_nosyncroleids,
-.dir-rtl #id_s_enrol_ldap_host_url,
-.dir-rtl #id_s_enrol_ldap_ldapencoding,
-.dir-rtl #id_s_enrol_ldap_bind_dn,
-.dir-rtl #id_s_enrol_ldap_bind_pw,
-.dir-rtl #admin-emoticons .form-text,
-.dir-rtl #admin-role_mapping input[type=text],
-.dir-rtl #id_s_enrol_paypal_paypalbusiness,
-.dir-rtl #id_s_enrol_flatfile_location,
-#page-admin-setting-enrolsettingsflatfile.dir-rtl input[type=text],
-#page-admin-setting-enrolsettingsdatabase.dir-rtl input[type=text],
-#page-admin-auth-db.dir-rtl input[type=text] {
-    direction: ltr;
-}
-#page-admin-setting-enrolsettingsflatfile.dir-rtl .informationbox {
-    direction: ltr;
-    text-align: left;
-}
-#page-admin-grade-edit-scale-edit.dir-rtl .error input#id_name {
-    margin-right: 170px;
-}
+
 #page-grade-edit-outcome-course .courseoutcomes {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
 }
 #page-grade-edit-outcome-course .courseoutcomes td {
-    text-align:center;
-}
-/* Install Process' text fields Forms, should always be justified to the left */
-#installform #id_wwwroot,
-#installform #id_dirroot,
-#installform #id_dataroot,
-#installform #id_dbhost,
-#installform #id_dbname,
-#installform #id_dbuser,
-#installform #id_dbpass,
-#installform #id_prefix {
-    direction: ltr;
+    text-align: center;
 }
 
 .mdl-right > label {
@@ -362,25 +233,15 @@ input[type="checkbox"] {
     margin-top: -4px; // Dodgy hack, must be better way.
     margin-right: 7px;
 }
-.dir-rtl {
-    input[type="radio"],
-    input[type="checkbox"] {
-        margin-left: 7px;
-        margin-right: auto;
-    }
-}
 .singleselect {
     display: inline-block;
     form,
-    select{
+    select {
         margin: 0;
     }
 }
 .form-item .form-label label {
     margin-bottom: 0;
-}
-.dir-rtl .form-item .form-label label {
-     text-align:left;
 }
 .felement.ffilepicker {
     margin-top: 5px;
@@ -439,7 +300,7 @@ fieldset.coursesearchbox label {
                 width: auto;
             }
         }
-        .fitem_fcheckbox{
+        .fitem_fcheckbox {
             .fitemtitle,
             .felement {
                 display: inline-block;
@@ -448,26 +309,6 @@ fieldset.coursesearchbox label {
             .felement {
                 padding: 6px;
             }
-        }
-    }
-    &.dir-rtl #region-main .mform:not(.unresponsive) {
-        .femptylabel .fitemtitle {
-            margin-right: 0px;
-            margin-left: 8px;
-        }
-        .fitem {
-            .fitemtitle {
-                text-align: right;
-            }
-            .felement {
-                margin-right: 0;
-                float: right;
-                padding-right: 0;
-                padding-left: 0;
-            }
-        }
-        .fitem_fcheckbox .felement {
-            float: right;
         }
     }
 }
@@ -481,6 +322,7 @@ fieldset.coursesearchbox label {
     }
 }
 
+
 /**
  * Make forms vertical when the screen is less than 1474px AND both side-pre and side-post contain blocks.
  * This is an extra special media rule.
@@ -488,9 +330,11 @@ fieldset.coursesearchbox label {
  * 1199px + (1199px * 23%)
  * Where 23% is the width of span3
  * Full calculation is:
- *   @maxWidthForVerticalForms: 1199px * (unit(((@fluidGridColumnWidth1200 * 3) + (@fluidGridGutterWidth * (3 - 1)))) / 100) + 1199px;
+ *   @maxWidthForVerticalForms: 1199px * (unit(((@fluidGridColumnWidth1200 * 3) +
+ *    (@fluidGridGutterWidth * (3 - 1)))) / 100) + 1199px;
  */
 @maxWidthForVerticalForms: 1474px;
+
 @media (max-width: @maxWidthForVerticalForms) {
     .used-region-side-pre.used-region-side-post {
         .makeFormsVertical;
@@ -499,104 +343,48 @@ fieldset.coursesearchbox label {
 
 /* Section and module editing forms contain special JS components for the
    availability system (if enabled). */
-#fitem_id_availabilityconditionsjson {
-    *[aria-hidden=true] {
-        display: none;
-    }
-    select,
-    input[type=text] {
-        position:relative;
-        top: 4px;
-    }
-    label {
-        display: inline;
-    }
-    .availability-group {
-        margin-right: 8px;
-    }
-    .availability-item {
-        margin-bottom: 6px;
-    }
-    .availability-none {
-        margin-left: 20px;
-        margin-bottom: 4px;
-    }
-    .availability-plugincontrols {
-        padding: 2px 0px 0px 4px;
-        background: none repeat scroll 0% 0% @wellBackground;
-        border: 1px solid @grayLighter;
-        border-radius: 4px;
-        display: inline-block;
-        margin-right: 8px;
-    }
-    /* Eye icon in front of an item and delete icon after it. */
-    .availability-eye,
-    .availability-delete {
-        margin-right: 8px;
-    }
-    /* Hidden eye icon still takes up space. */
-    .availability-eye[aria-hidden=true] {
-        display: inline;
-        visibility: hidden;
-    }
-    /* Eye icons in front of child lists are aligned specially. */
-    .availability-list > .availability-eye img {
-        vertical-align: top;
-        margin-top: 12px;
-    }
-    /* Add button lines up with child elements. */
-    .availability-button {
-        margin-left: 15px;
-    }
-    /* Nested section is grey. */
-    .availability-childlist > .availability-inner {
-        display: inline-block;
-        background: @wellBackground;
-        border: 1px solid @grayLighter;
-        border-radius: 4px;
-        padding: 6px;
-        margin-bottom: 6px;
-    }
-    /* Second (and more) levels of nested sections are white. */
-    .availability-childlist .availability-childlist > .availability-inner {
-        background: white;
-    }
-    /* Connecting text needs to be indented. */
-    .availability-connector {
-        margin-left: 20px;
-        margin-bottom: 6px;
+#id_availabilityconditionsjson[aria-hidden=true],
+.availability-field [aria-hidden=true] {
+    display: none;
+}
+.availability-eye,
+.availability-delete {
+    margin-right: 8px;
+}
+/* Eye icons in front of child lists are aligned specially. */
+.availability-list > .availability-eye img {
+    vertical-align: top;
+    margin-top: 12px;
+}
+.availability-plugincontrols {
+    min-height: 40px;
+    padding: 2px 0 0 4px;
+    background: none repeat scroll 0% 0% @wellBackground;
+    border: 1px solid @grayLighter;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 8px;
+    select {
+        width: auto;
+        max-width: 200px;
     }
 }
-.dir-rtl #fitem_id_availabilityconditionsjson {
-    .availability-group {
-        margin-right: 0;
-        margin-left: 8px;
-    }
-    .availability-none {
-        margin-right: 20px;
-        margin-left: 0;
-    }
-    .availability-plugincontrols {
-        padding-right: 4px;
-        padding-left: 0px;
-        margin-right: 0;
-        margin-left: 8px;
-    }
-    .availability-eye,
-    .availability-delete {
-        margin-left: 8px;
-        margin-right: 0;
-    }
-    .availability-button {
-        margin-right: 15px;
-        margin-left: 0;
-    }
-    .availability-connector {
-        margin-right: 20px;
-        margin-left: 0;
-    }
+.availability-field .availability-plugincontrols .availability-group select {
+    max-width: 12rem;
 }
-
+/* Nested section is grey. */
+.availability-childlist > .availability-inner {
+    display: inline-block;
+    background: @wellBackground;
+    border: 1px solid @grayLighter;
+    border-radius: 4px;
+    padding: 6px;
+    margin-bottom: 6px;
+}
+/* Second (and more) levels of nested sections are white. */
+.availability-childlist .availability-childlist > .availability-inner {
+    background: white;
+}
 /* Default form styling colours all text red. With availability conditions
    this looks excessive as we show 'Invalid' markers in specific places. */
 .mform .error .availability-field {
@@ -639,17 +427,6 @@ fieldset.coursesearchbox label {
         margin-top: 4px;
     }
 }
-.dir-rtl .availability-dialogue {
-    ul button {
-        float: right;
-        margin-right: 1em;
-        margin-left: 0;
-    }
-    label {
-        margin-right: 170px;
-        margin-left: 1em;
-    }
-}
 
 /* Revert to the non-fixed width where a textarea has the number of columns
    specified, or an input has it's size specified. */
@@ -675,8 +452,8 @@ input[size] {
     min-width: 206px;
     max-height: 20em;
     overflow: auto;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     margin-top: -0.2em;
     z-index: 1;
 }
@@ -703,10 +480,6 @@ input[size] {
     left: -1.5em;
     cursor: pointer;
 }
-.dir-rtl .form-autocomplete-downarrow {
-    right: -1.5em;
-    left: inherit;
-}
 
 .form-autocomplete-selection:focus {
     outline: none;
@@ -714,4 +487,14 @@ input[size] {
 .form-autocomplete-selection [data-active-selection=true] {
     padding: 0.5em;
     font-size: large;
+}
+
+textarea[data-auto-rows] {
+    overflow-x: hidden;
+}
+
+div[data-passwordunmask="wrapper"] {
+    height: 30px;
+    line-height: 30px;
+    margin-bottom: 10px;
 }

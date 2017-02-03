@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(dirname(__FILE__).'/../../config.php');
-require_once(dirname(__FILE__).'/locallib.php');
-require_once(dirname(__FILE__).'/edit_form.php');
+require(__DIR__.'/../../config.php');
+require_once(__DIR__.'/locallib.php');
+require_once(__DIR__.'/edit_form.php');
 
 $cmid       = required_param('cmid', PARAM_INT);  // Book Course Module ID
 $chapterid  = optional_param('id', 0, PARAM_INT); // Chapter ID
@@ -112,6 +112,10 @@ if ($mform->is_cancelled()) {
 // Otherwise fill and print the form.
 $PAGE->set_title($book->name);
 $PAGE->set_heading($course->fullname);
+
+if ($chapters = book_preload_chapters($book)) {
+    book_add_fake_block($chapters, $chapter, $book, $cm);
+}
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($book->name);

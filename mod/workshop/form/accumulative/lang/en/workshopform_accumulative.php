@@ -26,9 +26,9 @@
 $string['absent'] = 'Absent';
 $string['addmoredimensions'] = 'Blanks for {$a} more aspects';
 $string['correct'] = 'Correct';
-$string['dimensioncomment'] = 'Comment';
+$string['dimensioncommentfor'] = 'Comment for {$a}';
 $string['dimensiondescription'] = 'Description';
-$string['dimensiongrade'] = 'Grade';
+$string['dimensiongradefor'] = 'Grade for {$a}';
 $string['dimensionmaxgrade'] = 'Best possible grade / Scale to use';
 $string['dimensionnumber'] = 'Aspect {$a}';
 $string['dimensionweight'] = 'Weight';
@@ -47,3 +47,7 @@ $string['scalename4'] = 'Excellent/Very poor (4 point)';
 $string['scalename5'] = 'Excellent/Very poor (5 point)';
 $string['scalename6'] = 'Excellent/Very poor (7 point)';
 $string['verypoor'] = 'Very poor';
+
+// Deprecated since Moodle 3.1.
+$string['dimensioncomment'] = 'Comment';
+$string['dimensiongrade'] = 'Grade';

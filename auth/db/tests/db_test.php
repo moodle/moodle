@@ -31,6 +31,9 @@ class auth_db_testcase extends advanced_testcase {
     /** @var string Original error log */
     protected $oldlog;
 
+    /** @var int The amount of users to create for the large user set deletion test  */
+    protected $largedeletionsetsize = 128;
+
     protected function init_auth_database() {
         global $DB, $CFG;
         require_once("$CFG->dirroot/auth/db/auth.php");
@@ -121,7 +124,9 @@ class auth_db_testcase extends advanced_testcase {
         set_config('table', $CFG->prefix.'auth_db_users', 'auth/db');
         set_config('fielduser', 'name', 'auth/db');
         set_config('fieldpass', 'pass', 'auth/db');
-
+        set_config('field_map_lastname', 'lastname', 'auth/db');
+        set_config('field_updatelocal_lastname', 'oncreate', 'auth/db');
+        set_config('field_lock_lastname', 'unlocked', 'auth/db');
         // Setu up field mappings.
 
         set_config('field_map_email', 'email', 'auth/db');
@@ -149,7 +154,7 @@ class auth_db_testcase extends advanced_testcase {
     public function test_plugin() {
         global $DB, $CFG;
 
-        $this->resetAfterTest(false);
+        $this->resetAfterTest(true);
 
         // NOTE: It is strongly discouraged to create new tables in advanced_testcase classes,
         //       but there is no other simple way to test ext database enrol sync, so let's
@@ -306,7 +311,6 @@ class auth_db_testcase extends advanced_testcase {
         $DB->update_record('auth_db_users', $user3);
         $this->assertTrue($auth->user_login('u3', 'heslo'));
 
-        require_once($CFG->libdir.'/password_compat/lib/password.php');
         set_config('passtype', 'saltedcrypt', 'auth/db');
         $auth->config->passtype = 'saltedcrypt';
         $user3->pass = password_hash('heslo', PASSWORD_BCRYPT);
@@ -398,5 +402,101 @@ class auth_db_testcase extends advanced_testcase {
         list($sqlout, $arrout) = _colonscope($sql,$arr);
         $this->assertEquals("select * from table WHERE column=? AND anothercolumn > ?", $sqlout);
         $this->assertEquals(array(1, 'b'), $arrout);
+    }
+
+    /**
+     * Testing the clean_data() method.
+     */
+    public function test_clean_data() {
+        global $DB;
+
+        $this->resetAfterTest(false);
+        $this->preventResetByRollback();
+        $this->init_auth_database();
+        $auth = get_auth_plugin('db');
+        $auth->db_init();
+
+        // Create users on external table.
+        $extdbuser1 = (object)array('name'=>'u1', 'pass'=>'heslo', 'email'=>'u1@example.com');
+        $extdbuser1->id = $DB->insert_record('auth_db_users', $extdbuser1);
+
+        // User with malicious data on the name (won't be imported).
+        $extdbuser2 = (object)array('name'=>'user<script>alert(1);</script>xss', 'pass'=>'heslo', 'email'=>'xssuser@example.com');
+        $extdbuser2->id = $DB->insert_record('auth_db_users', $extdbuser2);
+
+        $extdbuser3 = (object)array('name'=>'u3', 'pass'=>'heslo', 'email'=>'u3@example.com',
+                'lastname' => 'user<script>alert(1);</script>xss');
+        $extdbuser3->id = $DB->insert_record('auth_db_users', $extdbuser3);
+        $trace = new null_progress_trace();
+
+        // Let's test user sync make sure still works as expected..
+        $auth->sync_users($trace, true);
+        $this->assertDebuggingCalled("The property 'lastname' has invalid data and has been cleaned.");
+        // User with correct data, should be equal to external db.
+        $user1 = $DB->get_record('user', array('email'=> $extdbuser1->email, 'auth'=>'db'));
+        $this->assertEquals($extdbuser1->name, $user1->username);
+        $this->assertEquals($extdbuser1->email, $user1->email);
+
+        // Get the user on moodle user table.
+        $user2 = $DB->get_record('user', array('email'=> $extdbuser2->email, 'auth'=>'db'));
+        $user3 = $DB->get_record('user', array('email'=> $extdbuser3->email, 'auth'=>'db'));
+
+        $this->assertEmpty($user2);
+        $this->assertEquals($extdbuser3->name, $user3->username);
+        $this->assertEquals('useralert(1);xss', $user3->lastname);
+
+        $this->cleanup_auth_database();
+    }
+
+    /**
+     * Testing the deletion of a user when there are many users in the external DB.
+     */
+    public function test_deleting_with_many_users() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $this->preventResetByRollback();
+        $this->init_auth_database();
+        $auth = get_auth_plugin('db');
+        $auth->db_init();
+
+        // Set to delete from moodle when missing from DB.
+        set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth/db');
+        $auth->config->removeuser = AUTH_REMOVEUSER_FULLDELETE;
+
+        // Create users.
+        $users = [];
+        for ($i = 0; $i < $this->largedeletionsetsize; $i++) {
+            $user = (object)array('username' => "u$i", 'name' => "u$i", 'pass' => 'heslo', 'email' => "u$i@example.com");
+            $user->id  = $DB->insert_record('auth_db_users', $user);
+            $users[] = $user;
+        }
+
+        // Sync to moodle.
+        $trace = new null_progress_trace();
+        $auth->sync_users($trace, true);
+
+        // Check user is there.
+        $user = array_shift($users);
+        $moodleuser = $DB->get_record('user', array('email' => $user->email, 'auth' => 'db'));
+        $this->assertNotNull($moodleuser);
+        $this->assertEquals($user->username, $moodleuser->username);
+
+        // Delete a user.
+        $DB->delete_records('auth_db_users', array('id' => $user->id));
+
+        // Sync again.
+        $auth->sync_users($trace, true);
+
+        // Check user is no longer there.
+        $moodleuser = $DB->get_record('user', array('id' => $moodleuser->id));
+        $this->assertFalse($auth->user_login($user->username, 'heslo'));
+        $this->assertEquals(1, $moodleuser->deleted);
+
+        // Make sure it was the only user deleted.
+        $numberdeleted = $DB->count_records('user', array('deleted' => 1, 'auth' => 'db'));
+        $this->assertEquals(1, $numberdeleted);
+
+        $this->cleanup_auth_database();
     }
 }

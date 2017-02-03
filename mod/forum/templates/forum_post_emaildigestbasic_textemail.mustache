@@ -33,5 +33,8 @@
 }}
 
 {{ discussionlink }}
-{{{ subject }}} {{# str }} bynameondate, forum, { "name": "{{{ authorfullname }}}", "date": "{{ postdate }}" } {{/ str }}
+{{{ subject }}} {{# str }} bynameondate, forum, {
+        "name": {{# quote }}{{{ authorfullname }}}{{/ quote }},
+        "date": {{# quote }}{{ postdate }}{{/ quote }}
+    } {{/ str }}
 ---------------------------------------------------------------------

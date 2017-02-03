@@ -123,18 +123,28 @@ if ($action === 'delete') {
     // Only load students if there attempts for this lesson.
     $attempts = $DB->record_exists('lesson_attempts', array('lessonid' => $lesson->id));
     $branches = $DB->record_exists('lesson_branch', array('lessonid' => $lesson->id));
-    if ($attempts or $branches) {
+    $timer = $DB->record_exists('lesson_timer', array('lessonid' => $lesson->id));
+    if ($attempts or $branches or $timer) {
         list($esql, $params) = get_enrolled_sql($context, '', $currentgroup, true);
         list($sort, $sortparams) = users_order_by_sql('u');
 
-        $params['lessonid'] = $lesson->id;
+        $params['a1lessonid'] = $lesson->id;
+        $params['b1lessonid'] = $lesson->id;
+        $params['c1lessonid'] = $lesson->id;
         $ufields = user_picture::fields('u');
         $sql = "SELECT DISTINCT $ufields
                 FROM {user} u
-                JOIN (SELECT userid, lessonid FROM {lesson_attempts} a1 UNION
-                SELECT userid, lessonid FROM {lesson_branch} b1) a ON u.id = a.userid
+                JOIN (
+                    SELECT userid, lessonid FROM {lesson_attempts} a1
+                    WHERE a1.lessonid = :a1lessonid
+                        UNION
+                    SELECT userid, lessonid FROM {lesson_branch} b1
+                    WHERE b1.lessonid = :b1lessonid
+                        UNION
+                    SELECT userid, lessonid FROM {lesson_timer} c1
+                    WHERE c1.lessonid = :c1lessonid
+                    ) a ON u.id = a.userid
                 JOIN ($esql) ue ON ue.id = a.userid
-                WHERE a.lessonid = :lessonid
                 ORDER BY $sort";
 
         $students = $DB->get_recordset_sql($sql, $params);
@@ -271,6 +281,43 @@ if ($action === 'delete') {
     }
     $branches->close();
 
+    // Need the same thing for timed entries that were not completed.
+    foreach ($times as $time) {
+        $endoflesson = $time->completed;
+        // If the time start is the same with another record then we shouldn't be adding another item to this array.
+        if (isset($studentdata[$time->userid])) {
+            $foundmatch = false;
+            $n = 0;
+            foreach ($studentdata[$time->userid] as $key => $value) {
+                if ($value['timestart'] == $time->starttime) {
+                    // Don't add this to the array.
+                    $foundmatch = true;
+                    break;
+                }
+            }
+            $n = count($studentdata[$time->userid]) + 1;
+            if (!$foundmatch) {
+                // Add a record.
+                $studentdata[$time->userid][] = array(
+                                "timestart" => $time->starttime,
+                                "timeend" => $time->lessontime,
+                                "grade" => null,
+                                "end" => $endoflesson,
+                                "try" => $n,
+                                "userid" => $time->userid
+                            );
+            }
+        } else {
+            $studentdata[$time->userid][] = array(
+                                "timestart" => $time->starttime,
+                                "timeend" => $time->lessontime,
+                                "grade" => null,
+                                "end" => $endoflesson,
+                                "try" => 0,
+                                "userid" => $time->userid
+                            );
+        }
+    }
     // Determine if lesson should have a score.
     if ($branchcount > 0 AND $questioncount == 0) {
         // This lesson only contains content pages and is not graded.
@@ -395,20 +442,32 @@ if ($action === 'delete') {
     $students->close();
     // Print it all out!
     if (has_capability('mod/lesson:edit', $context)) {
-        echo  "<form id=\"theform\" method=\"post\" action=\"report.php\">\n
+        echo  "<form id=\"mod-lesson-report-form\" method=\"post\" action=\"report.php\">\n
                <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />\n
                <input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
     }
     echo html_writer::table($table);
     if (has_capability('mod/lesson:edit', $context)) {
-        $checklinks  = '<a href="javascript: checkall();">'.get_string('selectall').'</a> / ';
-        $checklinks .= '<a href="javascript: checknone();">'.get_string('deselectall').'</a>';
+        $checklinks  = '<a id="checkall" href="#">'.get_string('selectall').'</a> / ';
+        $checklinks .= '<a id="checknone" href="#">'.get_string('deselectall').'</a>';
         $checklinks .= html_writer::label('action', 'menuaction', false, array('class' => 'accesshide'));
-        $checklinks .= html_writer::select(array('delete' => get_string('deleteselected')), 'action', 0, array(''=>'choosedots'), array('id'=>'actionid', 'class' => 'autosubmit'));
-        $PAGE->requires->yui_module('moodle-core-formautosubmit',
-            'M.core.init_formautosubmit',
-            array(array('selectid' => 'actionid', 'nothing' => false))
-        );
+        $options = array('delete' => get_string('deleteselected'));
+        $attributes = array('id' => 'actionid', 'class' => 'custom-select m-l-1');
+        $checklinks .= html_writer::select($options, 'action', 0, array('' => 'choosedots'), $attributes);
+        $PAGE->requires->js_amd_inline("
+        require(['jquery'], function($) {
+            $('#actionid').change(function() {
+                $('#mod-lesson-report-form').submit();
+            });
+            $('#checkall').click(function(e) {
+                $('#mod-lesson-report-form').find('input:checkbox').prop('checked', true);
+                e.preventDefault();
+            });
+            $('#checknone').click(function(e) {
+                $('#mod-lesson-report-form').find('input:checkbox').prop('checked', false);
+                e.preventDefault();
+            });
+        });");
         echo $OUTPUT->box($checklinks, 'center');
         echo '</form>';
     }
@@ -617,7 +676,7 @@ if ($action === 'delete') {
 
         $table->head = array();
         $table->align = array('right', 'left');
-        $table->attributes['class'] = 'compacttable generaltable';
+        $table->attributes['class'] = 'compacttable generaltable form-inline';
 
         $params = array("lessonid"=>$lesson->id, "userid"=>$userid);
         if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $try, 1)) {
@@ -659,7 +718,7 @@ if ($action === 'delete') {
 
     $table->align = array('left', 'left');
     $table->size = array('70%', null);
-    $table->attributes['class'] = 'compacttable generaltable';
+    $table->attributes['class'] = 'compacttable generaltable form-inline';
 
     foreach ($answerpages as $page) {
         unset($table->data);

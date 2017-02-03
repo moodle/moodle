@@ -186,4 +186,28 @@ class message_airnotifier_manager {
                 !empty($CFG->airnotifiermobileappname));
     }
 
+    /**
+     * Enables or disables a registered user device so it can receive Push notifications
+     *
+     * @param  int $deviceid the device id
+     * @param  bool $enable  true to enable it, false to disable it
+     * @return bool true if the device was enabled, false in case of error
+     * @since  Moodle 3.2
+     */
+    public static function enable_device($deviceid, $enable) {
+        global $DB, $USER;
+
+        if (!$device = $DB->get_record('message_airnotifier_devices', array('id' => $deviceid), '*')) {
+            return false;
+        }
+
+        // Check that the device belongs to the current user.
+        if (!$userdevice = $DB->get_record('user_devices', array('id' => $device->userdeviceid, 'userid' => $USER->id), '*')) {
+            return false;
+        }
+
+        $device->enable = $enable;
+        return $DB->update_record('message_airnotifier_devices', $device);
+    }
+
 }

@@ -1,0 +1,23 @@
+<div class="pull-right well">
+<p>{{{groupselector}}}</p>
+<form class="user-competency-course-navigation">
+{{#hasusers}}
+<span>
+<label for="user-nav-{{uniqid}}" class="accesshide">{{#str}}jumptouser, tool_lp{{/str}}</label>
+<select id="user-nav-{{uniqid}}">
+{{#users}}
+<option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{fullname}}</option>
+{{/users}}
+</select>
+</span>
+{{/hasusers}}
+</form>
+</div>
+{{#js}}
+require(['core/form-autocomplete', 'report_competency/user_course_navigation'], function(autocomplete, nav) {
+    (new nav('#user-nav-{{uniqid}}', '{{baseurl}}', {{userid}}, {{courseid}}));
+{{#hasusers}}
+    autocomplete.enhance('#user-nav-{{uniqid}}', false, false, {{# quote }}{{# str }}jumptouser, tool_lp{{/ str }}{{/ quote }});
+{{/hasusers}}
+});
+{{/js}}

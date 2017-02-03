@@ -23,8 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
+global $CFG;
 require_once(__DIR__ . '/fixtures/screen.php');
+require_once($CFG->libdir . '/gradelib.php');
 
 defined('MOODLE_INTERNAL') || die();
 /**
@@ -59,6 +60,8 @@ class gradereport_singleview_screen_testcase extends advanced_testcase {
         $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user1->id));
         $this->getDataGenerator()->create_group_member(array('groupid' => $group->id, 'userid' => $user2->id));
 
+        // Perform a regrade before creating the report.
+        grade_regrade_final_grades($course->id);
         $screentest = new gradereport_singleview_screen_testable($course->id, 0, $group->id);
         $groupusers = $screentest->test_load_users();
         $this->assertCount(2, $groupusers);

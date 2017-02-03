@@ -14,28 +14,18 @@
     text-align: left;
 }
 
-.dir-rtl.path-admin .admintable .leftalign {
-    text-align: right;
-}
-
 .environmenttable {
-    p.warn {
-        background-color : @warningBackground;
+    .warn {
+        background-color: @warningBackground;
         color: @warningText;
     }
-    .error,
-    span.warn,
-    .ok {
-        .label;
-    }
     .error {
-        background-color : @errorText;
-    }
-    span.warn {
-        background-color : @orange;
+        background-color: @errorBackground;
+        color: @errorText;
     }
     .ok {
-        background-color: @successText;
+        background-color: @successBackground;
+        color: @successText;
     }
 }
 
@@ -159,6 +149,12 @@ img.iconsmall {
     margin-left: auto;
     margin-right: auto;
 }
+#page-admin-tool-spamcleaner-index .spamcleanerform input[type="submit"] {
+    margin-bottom: 0;
+}
+.path-admin-roles .capabilitysearchui input[type="button"] {
+    margin-bottom: 0;
+}
 
 #page-admin-roles-define .topfields {
     margin: 1em 0 2em;
@@ -200,12 +196,25 @@ img.iconsmall {
     text-align: left;
 }
 
-#notice {
-    // Would like the use the alert stuff below for this,
-    // but the way buttons are used makes it tricky.
+// Allow in-page modals like bootstrap 4.
+.modal.modal-in-page {
+    position: static;
+    z-index: 0;
+    margin: 0 auto 0 auto;
+}
+
+// We need to keep this rule because confirm messages during upgrade use it. We can never change it because we don't
+// serve new stylesheets until after upgrade.
+#page-admin-index #notice {
     width: 60%;
     min-width: 220px;
     margin: auto;
+
+    .buttons {
+        padding-left: 0;
+        padding-right: 0;
+        text-align: center;
+    }
 }
 
 #page-admin-index .releasenoteslink,
@@ -264,7 +273,7 @@ img.iconsmall {
 
 .path-admin .roleassigntable td {
     vertical-align: top;
-    padding: 0.2em 0.3em
+    padding: 0.2em 0.3em;
 }
 
 .path-admin .roleassigntable p {
@@ -299,10 +308,6 @@ img.iconsmall {
 .path-admin table.rolecap tr.rolecap th {
     text-align: left;
     font-weight: normal;
-}
-
-.path-admin.dir-rtl table.rolecap tr.rolecap th {
-    text-align: right;
 }
 
 .path-admin .rolecap .hiddenrow {
@@ -358,11 +363,6 @@ img.iconsmall {
     padding-right: .3em;
 }
 
-.dir-rtl .environmenttable img.iconhelp {
-    padding-left: .3em;
-    padding-right: 0
-}
-
 #trustedhosts .generaltable {
     margin-left: auto;
     margin-right: auto;
@@ -389,8 +389,9 @@ img.iconsmall {
     display: block;
 }
 
-.dir-rtl #admin-spelllanguagelist textarea,
-#page-admin-setting-editorsettingstinymce.dir-rtl .form-textarea textarea {
+/*rtl:ignore*/
+#admin-spelllanguagelist textarea,
+#page-admin-setting-editorsettingstinymce .form-textarea textarea {
     text-align: left;
     direction: ltr;
 }
@@ -400,28 +401,24 @@ img.iconsmall {
     float: right;
 }
 
-.dir-rtl .adminsettingsflags {
-    float: left;
-}
-
 .adminsettingsflags label {
     margin-right: 7px;
-}
-
-.dir-rtl .adminsettingsflags label {
-    margin-left: 7px;
 }
 
 .form-description {
     clear: right;
 }
 
-.dir-rtl .form-description {
-    clear: left;
+.form-description,
+.formsettingheading {
+    pre {
+        /* Code examples should be left aligned. */
+        /*rtl:ignore*/
+        direction: ltr;
+    }
 }
 
 .form-item .form-setting .form-htmlarea {
-    width: 640px;
     display: inline;
 }
 
@@ -440,19 +437,9 @@ img.iconsmall {
     margin-right: 0.5em;
     display: inline;
 }
-.dir-rtl .form-item .form-setting .defaultsnext {
-    margin-left: 0.5em;
-    margin-right: 0;
-}
 .form-item .form-setting .locked-checkbox {
     margin-right: 0.2em;
     margin-left: 0.5em;
-    display: inline;
-}
-
-.dir-rtl .form-item .form-setting .locked-checkbox {
-    margin-right: 0.5em;
-    margin-left: 0.2em;
     display: inline;
 }
 
@@ -521,14 +508,6 @@ img.iconsmall {
     border-top-width: 0;
 }
 
-/** Overide for RTL layout **/
-.dir-rtl .form-item  .form-setting,
-.dir-rtl .form-item  .form-label,
-.dir-rtl .form-item .form-description,
-.dir-rtl.path-admin .roleassigntable p {
-    text-align: right
-}
-
 #page-admin-index #notice .checkforupdates {
     text-align: center;
 }
@@ -561,7 +540,8 @@ img.iconsmall {
         .singlebutton {
             margin: 5px 0;
             padding: 0;
-            div, input {
+            div,
+            input {
                 margin: 0 3px 0 0;
             }
         }
@@ -570,7 +550,8 @@ img.iconsmall {
     .updateavailableinstallall {
         margin: 5px 0;
         padding: 0;
-        div, input {
+        div,
+        input {
             margin: 0 3px 5px 0;
         }
     }
@@ -595,13 +576,8 @@ img.iconsmall {
                 font-size: @fontSizeSmall;
                 .muted;
             }
-            .release {
-            }
         }
-        .availability {
-        }
-        .settings {
-        }
+
         .uninstall {
             a {
                 color: @errorText;
@@ -632,7 +608,8 @@ img.iconsmall {
         .singlebutton {
             margin: 5px 0;
             padding: 0;
-            div, input {
+            div,
+            input {
                 margin: 0 3px 0 0;
             }
         }
@@ -648,7 +625,8 @@ img.iconsmall {
             .singlebutton {
                 margin: 5px 0;
                 padding: 0;
-                div, input {
+                div,
+                input {
                     margin: 0 3px 0 0;
                 }
             }
@@ -661,7 +639,8 @@ img.iconsmall {
             .muted;
         }
 
-        .status-missing, .status-downgrade {
+        .status-missing,
+        .status-downgrade {
             td {
                 background-color: @errorBackground;
             }
@@ -684,7 +663,7 @@ img.iconsmall {
 
         .status {
             .actionbutton {
-                margin: 5px 0px;
+                margin: 5px 0;
                 padding: 0;
                 input {
                     margin: 0;
@@ -701,7 +680,8 @@ img.iconsmall {
         .singlebutton {
             margin: 5px 0;
             padding: 0;
-            div, input {
+            div,
+            input {
                 margin: 0 3px 0 0;
             }
         }
@@ -732,13 +712,15 @@ img.iconsmall {
 
 // Available plugin update notification.
 
-#plugins-check-page, #plugins-control-panel {
+#plugins-check-page,
+#plugins-control-panel {
     .pluginupdateinfo {
         background-color: @infoBackground;
         &.maturity50 {
             background-color: @errorBackground;
         }
-        &.maturity100, &.maturity150 {
+        &.maturity100,
+        &.maturity150 {
             background-color: @warningBackground;
         }
         padding: 5px;
@@ -753,7 +735,8 @@ img.iconsmall {
         .singlebutton {
             margin: 5px 0;
             padding: 0;
-            div, input {
+            div,
+            input {
                 margin: 0 3px 0 0;
             }
         }
@@ -767,7 +750,8 @@ img.iconsmall {
     }
     .continue {
         padding: 0;
-        div, input {
+        div,
+        input {
             margin: 0;
         }
     }
@@ -787,14 +771,16 @@ img.iconsmall {
     content: " | ";
 }
 
-.dir-rtl {
-    #plugins-check .pluginupdateinfo {
+#plugins-check {
+    .pluginupdateinfo {
         text-align: center;
+        /*rtl:ignore*/
         direction: ltr;
     }
-
-    #plugins-check .requires-ok {
+    .requires-ok {
+        /*rtl:ignore*/
         text-align: left;
+        /*rtl:ignore*/
         direction: ltr;
     }
 }
@@ -863,4 +849,8 @@ img.iconsmall {
 #adminsettings .form-overridden {
     color: @infoText;
     background-color: @infoBackground;
+}
+
+#overriderolestable .overriddenpermission {
+    background-color: @warningBackground;
 }

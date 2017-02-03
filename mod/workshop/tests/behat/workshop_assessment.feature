@@ -152,5 +152,3 @@ Feature: Workshop submission and assessment
 
   @javascript
   Scenario: Add and assess submissions in workshop with javascript enabled
-
-  Scenario: Add and assess submissions in workshop with javascript disabled
