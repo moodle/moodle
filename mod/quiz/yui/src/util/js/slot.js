@@ -29,12 +29,12 @@ Y.Moodle.mod_quiz.util.slot = {
         NUMBER: 'span.slotnumber',
         PAGECONTENT: 'div#page-content',
         PAGEBREAK: 'span.page_split_join_wrapper',
-        ICON: 'img',
+        ICON: '.icon',
         QUESTIONTYPEDESCRIPTION: '.qtype_description',
         SECTIONUL: 'ul.section',
         DEPENDENCY_WRAPPER: '.question_dependency_wrapper',
         DEPENDENCY_LINK: '.question_dependency_wrapper .cm-edit-action',
-        DEPENDENCY_ICON: '.question_dependency_wrapper img'
+        DEPENDENCY_ICON: '.question_dependency_wrapper .icon'
     },
 
     /**

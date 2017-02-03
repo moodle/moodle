@@ -501,7 +501,7 @@ case workshop::PHASE_EVALUATION:
         echo $output->render($btn);
         echo $output->help_icon('clearassessments', 'workshop');
 
-        echo $OUTPUT->pix_icon('i/risk_dataloss', get_string('diskdatalossshort', 'admin'));
+        echo $OUTPUT->pix_icon('i/risk_dataloss', get_string('riskdatalossshort', 'admin'));
         echo $output->container_end();
 
         echo $output->box_end();

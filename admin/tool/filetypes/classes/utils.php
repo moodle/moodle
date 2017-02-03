@@ -97,7 +97,7 @@ class utils {
         if ($handle = @opendir($path)) {
             while (($file = readdir($handle)) !== false) {
                 $matches = array();
-                if (preg_match('~(.+?)(?:-24|-32|-48|-64|-72|-80|-96|-128|-256)?\.(?:gif|png)$~',
+                if (preg_match('~(.+?)(?:-24|-32|-48|-64|-72|-80|-96|-128|-256)?\.(?:svg|gif|png)$~',
                         $file, $matches)) {
                     $key = $matches[1];
                     $icons[$key] = $key;

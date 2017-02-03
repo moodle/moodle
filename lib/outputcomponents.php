@@ -574,9 +574,9 @@ class pix_icon_font implements templatable {
 
         $pixdata = $this->pixicon->export_for_template($output);
 
-        $title = isset($pixdata['attributes']['title']) ? $pixdata['attributes']['title'] : '';
+        $title = isset($this->pixicon->attributes['title']) ? $this->pixicon->attributes['title'] : '';
         if (empty($title)) {
-            $title = isset($pixdata['attributes']['alt']) ? $pixdata['attributes']['alt'] : '';
+            $title = isset($this->pixicon->attributes['alt']) ? $this->pixicon->attributes['alt'] : '';
         }
         $data = array(
             'extraclasses' => $pixdata['extraclasses'],
@@ -4441,12 +4441,9 @@ class action_menu_link extends action_link implements renderable {
         unset($attributes['class']);
 
         // Handle text being a renderable.
-        $comparetoalt = $this->text;
         if ($this->text instanceof renderable) {
             $data->text = $this->render($this->text);
-            $comparetoalt = '';
         }
-        $comparetoalt = (string) $comparetoalt;
 
         $data->showtext = (!$this->icon || $this->primary === false);
 
@@ -4455,14 +4452,6 @@ class action_menu_link extends action_link implements renderable {
             $icon = $this->icon;
             if ($this->primary || !$this->actionmenu->will_be_enhanced()) {
                 $attributes['title'] = $data->text;
-            }
-            if (!$this->primary && $this->actionmenu->will_be_enhanced()) {
-                if ((string) $icon->attributes['alt'] === $comparetoalt) {
-                    $icon->attributes['alt'] = '';
-                }
-                if (isset($icon->attributes['title']) && (string) $icon->attributes['title'] === $comparetoalt) {
-                    unset($icon->attributes['title']);
-                }
             }
             $data->icon = $icon ? $icon->export_for_pix() : null;
         }

@@ -48,15 +48,15 @@ class behat_mod_workshop extends behat_base {
     public function i_change_phase_in_workshop_to($workshopname, $phase) {
         $workshopname = $this->escape($workshopname);
         $phaseliteral = behat_context_helper::escape($phase);
-        $switchphase = behat_context_helper::escape(get_string('switchphase', 'workshop'));
 
-        $xpath = "//*[@class='userplan']/descendant::div[./span[contains(.,$phaseliteral)]]/".
-                "descendant-or-self::a[./img[@alt=$switchphase]]";
+        $xpath = "//*[@class='userplan']/descendant::div[./span[contains(.,$phaseliteral)]]";
         $continue = $this->escape(get_string('continue'));
 
         $this->execute('behat_general::click_link', $workshopname);
 
-        $this->execute("behat_general::i_click_on", array($xpath, "xpath_element"));
+        $this->execute('behat_general::i_click_on_in_the',
+            array('a.action-icon', "css_element", $this->escape($xpath), "xpath_element")
+        );
 
         $this->execute("behat_forms::press_button", $continue);
     }

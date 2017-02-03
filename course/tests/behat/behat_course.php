@@ -337,7 +337,7 @@ class behat_course extends behat_base {
      * @param int $sectionnumber
      */
     public function i_show_section($sectionnumber) {
-        $showlink = $this->show_section_icon_exists($sectionnumber);
+        $showlink = $this->show_section_link_exists($sectionnumber);
 
         // Ensure section edit menu is open before interacting with it.
         if ($this->running_javascript()) {
@@ -358,13 +358,26 @@ class behat_course extends behat_base {
      * @param int $sectionnumber
      */
     public function i_hide_section($sectionnumber) {
-        $hidelink = $this->hide_section_icon_exists($sectionnumber);
+        // Ensures the section exists.
+        $xpath = $this->section_exists($sectionnumber);
 
-        // Ensure section edit menu is open before interacting with it.
+        // We need to know the course format as the text strings depends on them.
+        $courseformat = $this->get_course_format();
+        if (get_string_manager()->string_exists('hidefromothers', $courseformat)) {
+            $strhide = get_string('hidefromothers', $courseformat);
+        } else {
+            $strhide = get_string('hidesection');
+        }
+
+        // If javascript is on, link is inside a menu.
         if ($this->running_javascript()) {
             $this->i_open_section_edit_menu($sectionnumber);
         }
-        $hidelink->click();
+
+        // Click on delete link.
+        $this->execute('behat_general::i_click_on_in_the',
+              array($strhide, "link", $this->escape($xpath), "xpath_element")
+        );
 
         if ($this->running_javascript()) {
             $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
@@ -431,9 +444,7 @@ class behat_course extends behat_base {
         $xpath = $this->section_exists($sectionnumber);
 
         // The important checking, we can not check the img.
-        $xpath = $xpath . "/descendant::img[contains(@src, 'marked')]";
-        $exception = new ExpectationException('The "' . $sectionnumber . '" section is not highlighted', $this->getSession());
-        $this->find('xpath', $xpath, $exception);
+        $this->execute('behat_general::should_exist_in_the', ['This topic is highlighted as the current topic', 'icon', $xpath, 'xpath_element']);
     }
 
     /**
@@ -498,7 +509,7 @@ class behat_course extends behat_base {
         if ($this->is_course_editor()) {
 
             // The section must be hidden.
-            $this->show_section_icon_exists($sectionnumber);
+            $this->show_section_link_exists($sectionnumber);
 
             // If there are activities they should be hidden and the visibility icon should not be available.
             if ($activities = $this->get_section_activities($sectionxpath)) {
@@ -764,7 +775,7 @@ class behat_course extends behat_base {
         // Ensure the destination is valid.
         $sectionxpath = $this->section_exists($sectionnumber);
 
-        $activitynode = $this->get_activity_element('.editing_move img', 'css_element', $activityname);
+        $activitynode = $this->get_activity_element('Move', 'icon', $activityname);
 
         // JS enabled.
         if ($this->running_javascript()) {
@@ -1144,7 +1155,7 @@ class behat_course extends behat_base {
      * @param int $sectionnumber
      * @return NodeElement
      */
-    protected function show_section_icon_exists($sectionnumber) {
+    protected function show_section_link_exists($sectionnumber) {
 
         // Gets the section xpath and ensure it exists.
         $xpath = $this->section_exists($sectionnumber);
@@ -1153,12 +1164,10 @@ class behat_course extends behat_base {
         $courseformat = $this->get_course_format();
 
         // Checking the show button alt text and show icon.
-        $showtext = behat_context_helper::escape(get_string('showfromothers', $courseformat));
-        $linkxpath = $xpath . "/descendant::a[@title=$showtext]";
-        $imgxpath = $linkxpath . "/descendant::img[contains(@src, 'show')]";
+        $showtext = get_string('showfromothers', $courseformat);
+        $linkxpath = $xpath . "/descendant::a[@title=" . behat_context_helper::escape($showtext) . "]";
 
-        $exception = new ElementNotFoundException($this->getSession(), 'Show section icon ');
-        $this->find('xpath', $imgxpath, $exception);
+        $exception = new ElementNotFoundException($this->getSession(), 'Show section link ');
 
         // Returing the link so both Non-JS and JS browsers can interact with it.
         return $this->find('xpath', $linkxpath, $exception);
@@ -1171,7 +1180,7 @@ class behat_course extends behat_base {
      * @param int $sectionnumber
      * @return NodeElement
      */
-    protected function hide_section_icon_exists($sectionnumber) {
+    protected function hide_section_link_exists($sectionnumber) {
 
         // Gets the section xpath and ensure it exists.
         $xpath = $this->section_exists($sectionnumber);
@@ -1182,10 +1191,9 @@ class behat_course extends behat_base {
         // Checking the hide button alt text and hide icon.
         $hidetext = behat_context_helper::escape(get_string('hidefromothers', $courseformat));
         $linkxpath = $xpath . "/descendant::a[@title=$hidetext]";
-        $imgxpath = $linkxpath . "/descendant::img[contains(@src, 'hide')]";
 
         $exception = new ElementNotFoundException($this->getSession(), 'Hide section icon ');
-        $this->find('xpath', $imgxpath, $exception);
+        $this->find('icon', 'Hide', $exception);
 
         // Returing the link so both Non-JS and JS browsers can interact with it.
         return $this->find('xpath', $linkxpath, $exception);

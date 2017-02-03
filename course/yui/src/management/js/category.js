@@ -169,10 +169,14 @@ Category.prototype = {
         node.removeClass('collapsed').setAttribute('aria-expanded', 'true');
         action.setAttribute('data-action', 'collapse').setAttrs({
             title: M.util.get_string('collapsecategory', 'moodle', this.getName())
-        }).one('img').setAttrs({
-            src: M.util.image_url('t/switch_minus', 'moodle'),
-            alt: M.util.get_string('collapse', 'moodle')
         });
+
+        require(['core/templates', 'core/notification'], function(Templates, Notification) {
+            Templates.renderPix('t/switch_minus', 'core', M.util.get_string('collapse', 'moodle')).then(function(html) {
+                action.set('innerHTML', html);
+            }).fail(Notification.exception);
+        });
+
         if (ul) {
             ul.setAttribute('aria-hidden', 'false');
         }

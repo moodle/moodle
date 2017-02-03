@@ -1223,7 +1223,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 
     $return = '<span class="commands">';
     // Differentiate links for each entry.
-    $altsuffix = ': '.strip_tags(format_text($entry->concept));
+    $altsuffix = strip_tags(format_text($entry->concept));
 
     if (!$entry->approved) {
         $output = true;
@@ -1268,11 +1268,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $output = true;
             $url = "deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=".urlencode($hook);
             $return .= "<a class='icon' title=\"" . get_string("delete") . "\" " .
-                       "href=\"$url\">" . $OUTPUT->pix_icon($icon, get_string('delete'), $iconcomponent) . '</a>';
+                       "href=\"$url\">" . $OUTPUT->pix_icon($icon, get_string('deleteentrya', 'mod_glossary', $altsuffix), $iconcomponent) . '</a>';
 
             $url = "edit.php?cmid=$cm->id&amp;id=$entry->id&amp;mode=$mode&amp;hook=".urlencode($hook);
             $return .= "<a class='icon' title=\"" . get_string("edit") . "\" href=\"$url\">" .
-                       $OUTPUT->pix_icon('t/edit', get_string('edit')) . '</a>';
+                       $OUTPUT->pix_icon('t/edit', get_string('editentrya', 'mod_glossary', $altsuffix)) . '</a>';
         } elseif ( $importedentry ) {
             $return .= "<font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }

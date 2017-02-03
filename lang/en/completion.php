@@ -54,8 +54,6 @@ $string['completion-alt-manual-y'] = 'Completed: {$a}. Select to mark as not com
 $string['completion-fail'] = 'Completed (did not achieve pass grade)';
 $string['completion-n'] = 'Not completed';
 $string['completion-pass'] = 'Completed (achieved pass grade)';
-$string['completion-title-manual-n'] = 'Mark as complete: {$a}';
-$string['completion-title-manual-y'] = 'Mark as not complete: {$a}';
 $string['completion-y'] = 'Completed';
 $string['completion_automatic'] = 'Show activity as complete when conditions are met';
 $string['completion_help'] = 'If enabled, activity completion is tracked, either manually or automatically, based on certain conditions. Multiple conditions may be set if desired. If so, the activity will only be considered complete when ALL conditions are met.
@@ -182,3 +180,7 @@ $string['viewingactivity'] = 'Viewing the {$a}';
 $string['writingcompletiondata'] = 'Writing completion data';
 $string['xdays'] = '{$a} days';
 $string['yourprogress'] = 'Your progress';
+
+// Deprecated since Moodle 3.3.
+$string['completion-title-manual-n'] = 'Mark as complete: {$a}';
+$string['completion-title-manual-y'] = 'Mark as not complete: {$a}';

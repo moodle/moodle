@@ -33,9 +33,9 @@ Feature: A teacher can set whether glossary entries are always editable or not
     When I add a glossary entry with the following data:
       | Concept | Test concept name |
       | Definition | Test concept description |
-    Then "Delete: Test concept name" "link" should exist
-    And "Edit: Test concept name" "link" should exist
+    Then "Delete entry: Test concept name" "link" should exist
+    And "Edit entry: Test concept name" "link" should exist
     And I wait "65" seconds
     And I reload the page
-    Then "Delete: Test concept name" "link" should not exist
-    And "Edit: Test concept name" "link" should not exist
+    Then "Delete entry: Test concept name" "link" should not exist
+    And "Edit entry: Test concept name" "link" should not exist

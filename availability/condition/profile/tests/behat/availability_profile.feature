@@ -76,7 +76,7 @@ Feature: availability_profile
 
     # Set field value for user.
     And I navigate to "Browse list of users" node in "Site administration > Users > Accounts"
-    And I click on "a[title=Edit]" "css_element" in the "s@example.com" "table_row"
+    And I click on ".icon[title=Edit]" "css_element" in the "s@example.com" "table_row"
     And I expand all fieldsets
     And I set the field "Super field" to "Bananaman"
     And I click on "Update profile" "button"

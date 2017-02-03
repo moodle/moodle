@@ -1256,7 +1256,7 @@ class theme_config {
                 return $parent_config->iconsystem;
             }
         }
-        return 'standard';
+        return \core\output\icon_system::STANDARD;
     }
 
     /**

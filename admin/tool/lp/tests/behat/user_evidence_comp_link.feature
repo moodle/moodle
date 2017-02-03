@@ -67,5 +67,6 @@ Feature: Manage competencies linked to evidence of prior learning
     And I should see "Test-Comp1"
     And I should see "Test-Comp2"
     When I click on "Delete" "link" in the "Test-Comp1" "table_row"
+    And I wait until the page is ready
     Then I should not see "Test-Comp1"
     And I should see "Test-Comp2"

@@ -65,12 +65,12 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
             "/li[contains(concat(' ', normalize-space(@class), ' '), ' contains_branch ')]" .
             "/ul/li[contains(concat(' ', normalize-space(@class), ' '), ' contains_branch ')]" .
             "[p[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]" .
-            "/*[normalize-space(.)=" . $nodetextliteral ."]]" .
+            "/*[contains(normalize-space(.), " . $nodetextliteral .")]]" .
             "|" .
             "//div[contains(concat(' ', normalize-space(@class), ' '), ' card-text ')]/div" .
             "/ul[contains(concat(' ', normalize-space(@class), ' '), ' block_tree ')]" .
             "/li[p[contains(concat(' ', normalize-space(@class), ' '), ' branch ')]" .
-            "/*[normalize-space(.)=" . $nodetextliteral ."]]";
+            "/*[contains(normalize-space(.), " . $nodetextliteral .")]]";
 
         $node = $this->find('xpath', $xpath, $exception);
 
@@ -154,7 +154,7 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
         // Check if there is a separate tab for this submenu of the page. If found go to it.
         if ($parentnodes) {
             $tabname = behat_context_helper::escape($parentnodes[0]);
-            $tabxpath = '//ul[@role=\'tablist\']/li/a[normalize-space(.)=' . $tabname . ']';
+            $tabxpath = '//ul[@role=\'tablist\']/li/a[contains(normalize-space(.), ' . $tabname . ')]';
             if ($node = $this->getSession()->getPage()->find('xpath', $tabxpath)) {
                 if ($this->running_javascript()) {
                     // Click on the tab and add 'active' tab to the xpath.
@@ -178,7 +178,7 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
 
         // Find a link and click on it.
         $linkname = behat_context_helper::escape($lastnode);
-        $xpath .= '//a[normalize-space(.)=' . $linkname . ']';
+        $xpath .= '//a[contains(normalize-space(.), ' . $linkname . ')]';
         if (!$node = $this->getSession()->getPage()->find('xpath', $xpath)) {
             throw new ElementNotFoundException($this->getSession(), 'Link "' . join(' > ', $nodelist) . '"" not found on the page');
         }
@@ -258,7 +258,7 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
         if (!$isheader || count($nodelist) == 1) {
             $lastnode = end($nodelist);
             $linkname = behat_context_helper::escape($lastnode);
-            $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[normalize-space(.)=' . $linkname . ']');
+            $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' . $linkname . ')]');
             if ($link) {
                 $link->click();
                 $this->wait_for_pending_js();
@@ -269,7 +269,7 @@ class behat_theme_boost_behat_navigation extends behat_navigation {
         if ($isheader) {
             // Course administration and Front page administration will have subnodes under "More...".
             $linkname = behat_context_helper::escape(get_string('morenavigationlinks'));
-            $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[normalize-space(.)=' . $linkname . ']');
+            $link = $this->getSession()->getPage()->find('xpath', $menuxpath . '//a[contains(normalize-space(.), ' . $linkname . ')]');
             if ($link) {
                 $link->click();
                 $this->execute('behat_general::wait_until_the_page_is_ready');

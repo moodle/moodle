@@ -27,19 +27,13 @@ Feature: Toggle activities groups mode from the course page
       | Force group mode | No |
     When I press "Save and display"
     Then "No groups (Click to change)" "link" should exist
-    And "//a/child::img[contains(@src, 'groupn')]" "xpath_element" should exist
     And I click on "No groups (Click to change)" "link" in the "Test forum name" activity
     And "Separate groups (Click to change)" "link" should exist
-    And "//a/child::img[contains(@src, 'groups')]" "xpath_element" should exist
     And I reload the page
     And "Separate groups (Click to change)" "link" should exist
-    And "//a/child::img[contains(@src, 'groups')]" "xpath_element" should exist
     And I click on "Separate groups (Click to change)" "link" in the "Test forum name" activity
     And "Visible groups (Click to change)" "link" should exist
-    And "//a/child::img[contains(@src, 'groupv')]" "xpath_element" should exist
     And I reload the page
     And "Visible groups (Click to change)" "link" should exist
-    And "//a/child::img[contains(@src, 'groupv')]" "xpath_element" should exist
     And I click on "Visible groups (Click to change)" "link" in the "Test forum name" activity
     And "No groups (Click to change)" "link" should exist
-    And "//a/child::img[contains(@src, 'groupn')]" "xpath_element" should exist

@@ -43,6 +43,9 @@ class icon_system_standard {
         return $output->render_from_template('core/pix_icon', $data);
     }
 
+    public function get_amd_name() {
+        return 'core/icon_system_standard';
+    }
 
 }
 

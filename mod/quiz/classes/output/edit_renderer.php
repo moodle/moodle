@@ -765,11 +765,11 @@ class edit_renderer extends \plugin_renderer_base {
 
         if ($insertpagebreak) {
             $title = get_string('addpagebreak', 'quiz');
-            $image = $this->pix_icon('e/insert_page_break', $title);
+            $image = $this->activity_icon('e/insert_page_break', $title);
             $action = 'addpagebreak';
         } else {
             $title = get_string('removepagebreak', 'quiz');
-            $image = $this->pix_icon('e/remove_page_break', $title);
+            $image = $this->activity_icon('e/remove_page_break', $title);
             $action = 'removepagebreak';
         }
 
@@ -965,7 +965,7 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function question_bank_loading() {
-        return $this->pix_icon('i/loading', get_string('loading'));
+        return html_writer::div($this->pix_icon('i/loading', get_string('loading')), 'questionbankloading');
     }
 
     /**

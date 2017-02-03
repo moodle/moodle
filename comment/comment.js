@@ -200,7 +200,7 @@ M.core_comment = {
                         list[i].content = '<div class="comment-delete">' +
                             '<a href="#" role="button" id ="comment-delete-' + this.client_id + '-' + list[i].id + '"' +
                             '   title="' + deleteStr + '">' +
-                            '<span data-replace-icon="t/delete" data-component="core" data-title=""/>' +
+                            '<span></span>' +
                             '</a>' +
                             '</div>' + list[i].content;
                     }
@@ -334,6 +334,13 @@ M.core_comment = {
                         // 13 and 32 are the keycodes for space and enter.
                     }
                 );
+
+                require(['core/templates', 'core/notification'], function(Templates, Notification) {
+                    Templates.renderPix('t/delete', 'core', M.util.get_string('deletecomment', 'moodle')).then(function(html) {
+                        Y.all('div.comment-delete a').set('innerHTML', html);
+                    }).catch(Notification.exception);
+                    
+                });
             },
             register_pagination: function() {
                 var scope = this;

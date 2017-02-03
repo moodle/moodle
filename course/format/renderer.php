@@ -116,11 +116,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $icon = empty($value['icon']) ? '' : $value['icon'];
                 $name = empty($value['name']) ? '' : $value['name'];
                 $attr = empty($value['attr']) ? array() : $value['attr'];
-                $class = empty($item['pixattr']['class']) ? '' : $item['pixattr']['class'];
-                $alt = empty($item['pixattr']['alt']) ? '' : $item['pixattr']['alt'];
+                $class = empty($value['pixattr']['class']) ? '' : $value['pixattr']['class'];
+                $alt = empty($value['pixattr']['alt']) ? '' : $value['pixattr']['alt'];
                 $al = new action_menu_link_secondary(
                     new moodle_url($url),
-                    new pix_icon($icon, $name, null, array('class' => "smallicon " . $class, 'alt' => $alt)),
+                    new pix_icon($icon, $alt, null, array('class' => "smallicon " . $class)),
                     $name,
                     $attr
                 );
