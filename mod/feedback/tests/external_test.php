@@ -531,4 +531,63 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
         $itemsaved = $DB->get_field('feedback_value', 'value', array('item' => $itemid));
         $this->assertEquals('b', $itemsaved);
     }
+
+    /**
+     * Test get_analysis.
+     */
+    public function test_get_analysis() {
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Create a very simple feedback.
+        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
+        $textfielditem = $feedbackgenerator->create_item_textfield($this->feedback);
+
+        $pagedata = [
+            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
+            ['name' => $textfielditem->typ .'_'. $textfielditem->id, 'value' => 'abc'],
+        ];
+        // Process the feedback, there is only one page so the feedback will be completed.
+        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertTrue($result['completed']);
+
+        // Retrieve analysis.
+        $this->setUser($this->teacher);
+        $result = mod_feedback_external::get_analysis($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_analysis_returns(), $result);
+        $this->assertEquals(1, $result['completedcount']);  // 1 feedback completed.
+        $this->assertEquals(2, $result['itemscount']);  // 2 items in the feedback.
+        $this->assertCount(2, $result['itemsdata']);
+        $this->assertCount(1, $result['itemsdata'][0]['data']); // There are 1 response per item.
+        $this->assertCount(1, $result['itemsdata'][1]['data']);
+        // Check we receive the info the students filled.
+        foreach ($result['itemsdata'] as $data) {
+            if ($data['item']['id'] == $numericitem->id) {
+                $this->assertEquals(5, $data['data'][0]);
+            } else {
+                $this->assertEquals('abc', $data['data'][0]);
+            }
+        }
+
+        // Create another user / response.
+        $anotherstudent = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($anotherstudent->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->setUser($anotherstudent);
+
+        // Process the feedback, there is only one page so the feedback will be completed.
+        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertTrue($result['completed']);
+
+        // Retrieve analysis.
+        $this->setUser($this->teacher);
+        $result = mod_feedback_external::get_analysis($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_analysis_returns(), $result);
+        $this->assertEquals(2, $result['completedcount']);  // 2 feedback completed.
+        $this->assertEquals(2, $result['itemscount']);
+        $this->assertCount(2, $result['itemsdata'][0]['data']); // There are 2 responses per item.
+        $this->assertCount(2, $result['itemsdata'][1]['data']);
+    }
 }

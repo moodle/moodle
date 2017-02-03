@@ -93,4 +93,12 @@ $functions = array(
         'capabilities'  => 'mod/feedback:complete',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_feedback_get_analysis' => array(
+        'classname'     => 'mod_feedback_external',
+        'methodname'    => 'get_analysis',
+        'description'   => 'Retrieves the feedback analysis.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/feedback:viewanalysepage',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

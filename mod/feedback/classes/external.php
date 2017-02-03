@@ -704,4 +704,131 @@ class mod_feedback_external extends external_api {
             )
         );
     }
+
+    /**
+     * Describes the parameters for get_analysis.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_analysis_parameters() {
+        return new external_function_parameters (
+            array(
+                'feedbackid' => new external_value(PARAM_INT, 'Feedback instance id'),
+                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
+                                                VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Retrieves the feedback analysis.
+     *
+     * @param array $feedbackid feedback instance id
+     * @return array of warnings and launch information
+     * @since Moodle 3.3
+     */
+    public static function get_analysis($feedbackid, $groupid = 0) {
+        global $PAGE;
+
+        $params = array('feedbackid' => $feedbackid, 'groupid' => $groupid);
+        $params = self::validate_parameters(self::get_analysis_parameters(), $params);
+        $warnings = $itemsdata = array();
+
+        list($feedback, $course, $cm, $context) = self::validate_feedback($params['feedbackid']);
+
+        // Check permissions.
+        $feedbackstructure = new mod_feedback_structure($feedback, $cm);
+        if (!$feedbackstructure->can_view_analysis()) {
+            throw new required_capability_exception($context, 'mod/feedback:viewanalysepage', 'nopermission', '');
+        }
+
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode = groups_get_activity_groupmode($cm)) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        // Summary data.
+        $summary = new mod_feedback\output\summary($feedbackstructure, $groupid);
+        $summarydata = $summary->export_for_template($PAGE->get_renderer('core'));
+
+        $checkanonymously = true;
+        if ($groupid > 0 AND $feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
+            $completedcount = $feedbackstructure->count_completed_responses($groupid);
+            if ($completedcount < FEEDBACK_MIN_ANONYMOUS_COUNT_IN_GROUP) {
+                $checkanonymously = false;
+            }
+        }
+
+        if ($checkanonymously) {
+            // Get the items of the feedback.
+            $items = $feedbackstructure->get_items(true);
+            foreach ($items as $item) {
+                $itemobj = feedback_get_item_class($item->typ);
+                $itemnumber = empty($item->itemnr) ? null : $item->itemnr;
+                unset($item->itemnr);   // Added by the function, not part of the record.
+                $exporter = new feedback_item_exporter($item, array('context' => $context, 'itemnumber' => $itemnumber));
+
+                $itemsdata[] = array(
+                    'item' => $exporter->export($PAGE->get_renderer('core')),
+                    'data' => $itemobj->get_analysed_for_external($item, $groupid),
+                );
+            }
+        } else {
+            $warnings[] = array(
+                'item' => 'feedback',
+                'itemid' => $feedback->id,
+                'warningcode' => 'insufficientresponsesforthisgroup',
+                'message' => s(get_string('insufficient_responses_for_this_group', 'feedback'))
+            );
+        }
+
+        $result = array(
+            'completedcount' => $summarydata->completedcount,
+            'itemscount' => $summarydata->itemscount,
+            'itemsdata' => $itemsdata,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Describes the get_analysis return value.
+     *
+     * @return external_single_structure
+     * @since Moodle 3.3
+     */
+    public static function get_analysis_returns() {
+        return new external_single_structure(
+            array(
+            'completedcount' => new external_value(PARAM_INT, 'Number of completed submissions.'),
+            'itemscount' => new external_value(PARAM_INT, 'Number of items (questions).'),
+            'itemsdata' => new external_multiple_structure(
+                new external_single_structure(
+                    array(
+                        'item' => feedback_item_exporter::get_read_structure(),
+                        'data' => new external_multiple_structure(
+                            new external_value(PARAM_RAW, 'The analysis data (can be json encoded)')
+                        ),
+                    )
+                )
+            ),
+            'warnings' => new external_warnings(),
+            )
+        );
+    }
 }
