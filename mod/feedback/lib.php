@@ -962,10 +962,9 @@ function feedback_get_incomplete_users(cm_info $cm,
 
     //now get all completeds
     $params = array('feedback'=>$cm->instance);
-    if (!$completedusers = $DB->get_records_menu('feedback_completed', $params, '', 'userid,id')) {
+    if (!$completedusers = $DB->get_records_menu('feedback_completed', $params, '', 'id, userid')) {
         return $allusers;
     }
-    $completedusers = array_keys($completedusers);
 
     //now strike all completedusers from allusers
     $allusers = array_diff($allusers, $completedusers);
