@@ -388,13 +388,16 @@ function get_array_of_activities($courseid) {
     if (empty($rawmods)) {
         return $mod; // always return array
     }
+    $courseformat = course_get_format($course);
 
-    if ($sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence')) {
+    if ($sections = $DB->get_records('course_sections', array('course' => $courseid),
+            'section ASC', 'id,section,sequence,visible')) {
         // First check and correct obvious mismatches between course_sections.sequence and course_modules.section.
         if ($errormessages = course_integrity_check($courseid, $rawmods, $sections)) {
             debugging(join('<br>', $errormessages));
             $rawmods = get_course_mods($courseid);
-            $sections = $DB->get_records('course_sections', array('course' => $courseid), 'section ASC', 'id,section,sequence');
+            $sections = $DB->get_records('course_sections', array('course' => $courseid),
+                'section ASC', 'id,section,sequence,visible');
         }
         // Build array of activities.
        foreach ($sections as $section) {
@@ -404,6 +407,13 @@ function get_array_of_activities($courseid) {
                    if (empty($rawmods[$seq])) {
                        continue;
                    }
+                   // Adjust visibleoncoursepage, value in DB may not respect format availability.
+                   $rawmods[$seq]->visibleoncoursepage = (!$rawmods[$seq]->visible
+                           || $rawmods[$seq]->visibleoncoursepage
+                           || empty($CFG->allowstealth)
+                           || !$courseformat->allow_stealth_module_visibility($rawmods[$seq], $section)) ? 1 : 0;
+
+                   // Create an object that will be cached.
                    $mod[$seq] = new stdClass();
                    $mod[$seq]->id               = $rawmods[$seq]->instance;
                    $mod[$seq]->cm               = $rawmods[$seq]->id;
@@ -418,6 +428,7 @@ function get_array_of_activities($courseid) {
                    $mod[$seq]->score            = $rawmods[$seq]->score;
                    $mod[$seq]->idnumber         = $rawmods[$seq]->idnumber;
                    $mod[$seq]->visible          = $rawmods[$seq]->visible;
+                   $mod[$seq]->visibleoncoursepage = $rawmods[$seq]->visibleoncoursepage;
                    $mod[$seq]->visibleold       = $rawmods[$seq]->visibleold;
                    $mod[$seq]->groupmode        = $rawmods[$seq]->groupmode;
                    $mod[$seq]->groupingid       = $rawmods[$seq]->groupingid;
@@ -557,9 +568,15 @@ function get_module_types_names($plural = false) {
  * @return void
  */
 function course_set_marker($courseid, $marker) {
-    global $DB;
+    global $DB, $COURSE;
     $DB->set_field("course", "marker", $marker, array('id' => $courseid));
-    format_base::reset_course_cache($courseid);
+    if ($COURSE && $COURSE->id == $courseid) {
+        $COURSE->marker = $marker;
+    }
+    if (class_exists('format_base')) {
+        format_base::reset_course_cache($courseid);
+    }
+    course_modinfo::clear_instance_cache($courseid);
 }
 
 /**
@@ -950,18 +967,13 @@ function set_coursemodule_idnumber($id, $idnumber) {
  *
  * @param int $id of the module
  * @param int $visible state of the module
+ * @param int $visibleoncoursepage state of the module on the course page
  * @return bool false when the module was not found, true otherwise
  */
-function set_coursemodule_visible($id, $visible) {
+function set_coursemodule_visible($id, $visible, $visibleoncoursepage = 1) {
     global $DB, $CFG;
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
-
-    // Trigger developer's attention when using the previously removed argument.
-    if (func_num_args() > 2) {
-        debugging('Wrong number of arguments passed to set_coursemodule_visible(), $prevstateoverrides
-            has been removed.', DEBUG_DEVELOPER);
-    }
 
     if (!$cm = $DB->get_record('course_modules', array('id'=>$id))) {
         return false;
@@ -969,14 +981,15 @@ function set_coursemodule_visible($id, $visible) {
 
     // Create events and propagate visibility to associated grade items if the value has changed.
     // Only do this if it's changed to avoid accidently overwriting manual showing/hiding of student grades.
-    if ($cm->visible == $visible) {
+    if ($cm->visible == $visible && $cm->visibleoncoursepage == $visibleoncoursepage) {
         return true;
     }
 
     if (!$modulename = $DB->get_field('modules', 'name', array('id'=>$cm->module))) {
         return false;
     }
-    if ($events = $DB->get_records('event', array('instance'=>$cm->instance, 'modulename'=>$modulename))) {
+    if (($cm->visible != $visible) &&
+            ($events = $DB->get_records('event', array('instance' => $cm->instance, 'modulename' => $modulename)))) {
         foreach($events as $event) {
             if ($visible) {
                 $event = new calendar_event($event);
@@ -993,17 +1006,19 @@ function set_coursemodule_visible($id, $visible) {
     $cminfo = new stdClass();
     $cminfo->id = $id;
     $cminfo->visible = $visible;
+    $cminfo->visibleoncoursepage = $visibleoncoursepage;
     $cminfo->visibleold = $visible;
     $DB->update_record('course_modules', $cminfo);
 
     // Hide the associated grade items so the teacher doesn't also have to go to the gradebook and hide them there.
     // Note that this must be done after updating the row in course_modules, in case
     // the modules grade_item_update function needs to access $cm->visible.
-    if (plugin_supports('mod', $modulename, FEATURE_CONTROLS_GRADE_VISIBILITY) &&
+    if ($cm->visible != $visible &&
+            plugin_supports('mod', $modulename, FEATURE_CONTROLS_GRADE_VISIBILITY) &&
             component_callback_exists('mod_' . $modulename, 'grade_item_update')) {
         $instance = $DB->get_record($modulename, array('id' => $cm->instance), '*', MUST_EXIST);
         component_callback('mod_' . $modulename, 'grade_item_update', array($instance));
-    } else {
+    } else if ($cm->visible != $visible) {
         $grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course));
         if ($grade_items) {
             foreach ($grade_items as $grade_item) {
@@ -1593,10 +1608,10 @@ function course_update_section($course, $section, $data) {
             if ($cm = get_coursemodule_from_id(null, $moduleid, $courseid)) {
                 if ($data['visible']) {
                     // As we unhide the section, we use the previously saved visibility stored in visibleold.
-                    set_coursemodule_visible($moduleid, $cm->visibleold);
+                    set_coursemodule_visible($moduleid, $cm->visibleold, $cm->visibleoncoursepage);
                 } else {
                     // We hide the section, so we hide the module but we store the original state in visibleold.
-                    set_coursemodule_visible($moduleid, 0);
+                    set_coursemodule_visible($moduleid, 0, $cm->visibleoncoursepage);
                     $DB->set_field('course_modules', 'visibleold', $cm->visible, array('id' => $moduleid));
                 }
                 \core\event\course_module_updated::create_from_cm($cm)->trigger();
@@ -1765,12 +1780,13 @@ function moveto_module($mod, $section, $beforemod=NULL) {
  * @return array array of action_link or pix_icon objects
  */
 function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
-    global $COURSE, $SITE;
+    global $COURSE, $SITE, $CFG;
 
     static $str;
 
     $coursecontext = context_course::instance($mod->course);
     $modcontext = context_module::instance($mod->id);
+    $courseformat = course_get_format($mod->get_course());
 
     $editcaps = array('moodle/course:manageactivities', 'moodle/course:activityvisibility', 'moodle/role:assign');
     $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
@@ -1784,7 +1800,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
     if (!isset($str)) {
         $str = get_strings(array('delete', 'move', 'moveright', 'moveleft',
-            'editsettings', 'duplicate', 'hide', 'show'), 'moodle');
+            'editsettings', 'duplicate', 'hide', 'makeavailable', 'makeunavailable', 'show'), 'moodle');
         $str->assign         = get_string('assignroles', 'role');
         $str->groupsnone     = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsnone"));
         $str->groupsseparate = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsseparate"));
@@ -1830,7 +1846,8 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '1')),
             new pix_icon($rightarrow, $str->moveright, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->moveright,
-            array('class' => 'editing_moveright ' . $enabledclass, 'data-action' => 'moveright', 'data-keepopen' => true)
+            array('class' => 'editing_moveright ' . $enabledclass, 'data-action' => 'moveright',
+                'data-keepopen' => true, 'data-sectionreturn' => $sr)
         );
 
         if ($indent <= $indentlimits->min) {
@@ -1842,21 +1859,33 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '-1')),
             new pix_icon($leftarrow, $str->moveleft, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->moveleft,
-            array('class' => 'editing_moveleft ' . $enabledclass, 'data-action' => 'moveleft', 'data-keepopen' => true)
+            array('class' => 'editing_moveleft ' . $enabledclass, 'data-action' => 'moveleft',
+                'data-keepopen' => true, 'data-sectionreturn' => $sr)
         );
 
     }
 
-    // Hide/Show.
+    // Hide/Show/Available/Unavailable.
     if (has_capability('moodle/course:activityvisibility', $modcontext)) {
-        if ($mod->visible) {
+        $allowstealth = !empty($CFG->allowstealth) && $courseformat->allow_stealth_module_visibility($mod, $mod->get_section_info());
+
+        $sectionvisible = $mod->get_section_info()->visible;
+        // The module on the course page may be in one of the following states:
+        // - Available and displayed on the course page ($displayedoncoursepage);
+        // - Not available and not displayed on the course page ($unavailable);
+        // - Available but not displayed on the course page ($stealth) - this can also be a visible activity in a hidden section.
+        $displayedoncoursepage = $mod->visible && $mod->visibleoncoursepage && $sectionvisible;
+        $unavailable = !$mod->visible;
+        $stealth = $mod->visible && (!$mod->visibleoncoursepage || !$sectionvisible);
+        if ($displayedoncoursepage) {
             $actions['hide'] = new action_menu_link_secondary(
                 new moodle_url($baseurl, array('hide' => $mod->id)),
                 new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str->hide,
                 array('class' => 'editing_hide', 'data-action' => 'hide')
             );
-        } else {
+        } else if (!$displayedoncoursepage && $sectionvisible) {
+            // Offer to "show" only if the section is visible.
             $actions['show'] = new action_menu_link_secondary(
                 new moodle_url($baseurl, array('show' => $mod->id)),
                 new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall', 'title' => '')),
@@ -1864,16 +1893,38 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 array('class' => 'editing_show', 'data-action' => 'show')
             );
         }
+
+        if ($stealth) {
+            // When making the "stealth" module unavailable we perform the same action as hiding the visible module.
+            $actions['hide'] = new action_menu_link_secondary(
+                new moodle_url($baseurl, array('hide' => $mod->id)),
+                new pix_icon('t/unblock', $str->makeunavailable, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $str->makeunavailable,
+                array('class' => 'editing_makeunavailable', 'data-action' => 'hide', 'data-sectionreturn' => $sr)
+            );
+        } else if ($unavailable && (!$sectionvisible || $allowstealth) && $mod->has_view()) {
+            // Allow to make visually hidden module available in gradebook and other reports by making it a "stealth" module.
+            // When the section is hidden it is an equivalent of "showing" the module.
+            // Activities without the link (i.e. labels) can not be made available but hidden on course page.
+            $action = $sectionvisible ? 'stealth' : 'show';
+            $actions[$action] = new action_menu_link_secondary(
+                new moodle_url($baseurl, array($action => $mod->id)),
+                new pix_icon('t/block', $str->makeavailable, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $str->makeavailable,
+                array('class' => 'editing_makeavailable', 'data-action' => $action, 'data-sectionreturn' => $sr)
+            );
+        }
     }
 
     // Duplicate (require both target import caps to be able to duplicate and backup2 support, see modduplicate.php)
     if (has_all_capabilities($dupecaps, $coursecontext) &&
-            plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2)) {
+            plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2) &&
+            course_allowed_module($mod->get_course(), $mod->modname)) {
         $actions['duplicate'] = new action_menu_link_secondary(
             new moodle_url($baseurl, array('duplicate' => $mod->id)),
             new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->duplicate,
-            array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sr' => $sr)
+            array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sectionreturn' => $sr)
         );
     }
 
@@ -1884,16 +1935,19 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 $nextgroupmode = VISIBLEGROUPS;
                 $grouptitle = $str->groupsseparate;
                 $actionname = 'groupsseparate';
+                $nextactionname = 'groupsvisible';
                 $groupimage = 'i/groups';
             } else if ($mod->effectivegroupmode == VISIBLEGROUPS) {
                 $nextgroupmode = NOGROUPS;
                 $grouptitle = $str->groupsvisible;
                 $actionname = 'groupsvisible';
+                $nextactionname = 'groupsnone';
                 $groupimage = 'i/groupv';
             } else {
                 $nextgroupmode = SEPARATEGROUPS;
                 $grouptitle = $str->groupsnone;
                 $actionname = 'groupsnone';
+                $nextactionname = 'groupsseparate';
                 $groupimage = 'i/groupn';
             }
 
@@ -1901,7 +1955,8 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
                 new pix_icon($groupimage, null, 'moodle', array('class' => 'iconsmall')),
                 $grouptitle,
-                array('class' => 'editing_'. $actionname, 'data-action' => $actionname, 'data-nextgroupmode' => $nextgroupmode, 'aria-live' => 'assertive')
+                array('class' => 'editing_'. $actionname, 'data-action' => $nextactionname,
+                    'aria-live' => 'assertive', 'data-sectionreturn' => $sr)
             );
         } else {
             $actions['nogroupsupport'] = new action_menu_filler();
@@ -1914,7 +1969,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url('/admin/roles/assign.php', array('contextid' => $modcontext->id)),
             new pix_icon('t/assignroles', $str->assign, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->assign,
-            array('class' => 'editing_assign', 'data-action' => 'assignroles')
+            array('class' => 'editing_assign', 'data-action' => 'assignroles', 'data-sectionreturn' => $sr)
         );
     }
 
@@ -1924,7 +1979,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('delete' => $mod->id)),
             new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->delete,
-            array('class' => 'editing_delete', 'data-action' => 'delete')
+            array('class' => 'editing_delete', 'data-action' => 'delete', 'data-sectionreturn' => $sr)
         );
     }
 
@@ -1970,7 +2025,7 @@ function course_get_cm_move(cm_info $mod, $sr = null) {
         return html_writer::link(
             new moodle_url($baseurl, array('copy' => $mod->id)),
             $OUTPUT->pix_icon($pixicon, $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-            array('class' => 'editing_move', 'data-action' => 'move')
+            array('class' => 'editing_move', 'data-action' => 'move', 'data-sectionreturn' => $sr)
         );
     }
     return '';
@@ -3007,25 +3062,6 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
         $config->pageparams = array();
     }
 
-    // Include toolboxes
-    $PAGE->requires->yui_module('moodle-course-toolboxes',
-            'M.course.init_resource_toolbox',
-            array(array(
-                'courseid' => $course->id,
-                'ajaxurl' => $config->resourceurl,
-                'config' => $config,
-            ))
-    );
-    $PAGE->requires->yui_module('moodle-course-toolboxes',
-            'M.course.init_section_toolbox',
-            array(array(
-                'courseid' => $course->id,
-                'format' => $course->format,
-                'ajaxurl' => $config->sectionurl,
-                'config' => $config,
-            ))
-    );
-
     // Include course dragdrop
     if (course_format_uses_sections($course->format)) {
         $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_section_dragdrop',
@@ -3087,6 +3123,8 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
     // Load drag and drop upload AJAX.
     require_once($CFG->dirroot.'/course/dnduploadlib.php');
     dndupload_add_to_course($course, $enabledmodules);
+
+    $PAGE->requires->js_call_amd('core_course/actions', 'initCoursePage', array($course->format));
 
     return true;
 }

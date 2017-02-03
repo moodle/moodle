@@ -2893,7 +2893,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         } else {
             $url = new moodle_url('/');
         }
-        redirect($url, get_string('activityiscurrentlyhidden'));
+        redirect($url, get_string('activityiscurrentlyhidden'), null,
+                \core\output\notification::NOTIFY_ERROR);
     }
 
     // Set the global $COURSE.

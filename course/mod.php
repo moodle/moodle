@@ -33,6 +33,7 @@ $indent        = optional_param('indent', 0, PARAM_INT);
 $update        = optional_param('update', 0, PARAM_INT);
 $duplicate     = optional_param('duplicate', 0, PARAM_INT);
 $hide          = optional_param('hide', 0, PARAM_INT);
+$stealth       = optional_param('stealth', 0, PARAM_INT);
 $show          = optional_param('show', 0, PARAM_INT);
 $copy          = optional_param('copy', 0, PARAM_INT);
 $moveto        = optional_param('moveto', 0, PARAM_INT);
@@ -202,28 +203,30 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     $modcontext = context_module::instance($cm->id);
     require_capability('moodle/course:activityvisibility', $modcontext);
 
-    set_coursemodule_visible($cm->id, 0);
-    \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+    if (set_coursemodule_visible($cm->id, 0)) {
+        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+    }
+    redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
+
+} else if (!empty($stealth) and confirm_sesskey()) {
+    list($course, $cm) = get_course_and_cm_from_cmid($stealth);
+    require_login($course, false, $cm);
+    require_capability('moodle/course:activityvisibility', $cm->context);
+
+    if (set_coursemodule_visible($cm->id, 1, 0)) {
+        \core\event\course_module_updated::create_from_cm($cm)->trigger();
+    }
     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
 
 } else if (!empty($show) and confirm_sesskey()) {
-    $cm     = get_coursemodule_from_id('', $show, 0, true, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-
+    list($course, $cm) = get_course_and_cm_from_cmid($show);
     require_login($course, false, $cm);
-    $coursecontext = context_course::instance($course->id);
-    $modcontext = context_module::instance($cm->id);
-    require_capability('moodle/course:activityvisibility', $modcontext);
+    require_capability('moodle/course:activityvisibility', $cm->context);
+    $section = $cm->get_section_info();
 
-    $section = $DB->get_record('course_sections', array('id'=>$cm->section), '*', MUST_EXIST);
-
-    $module = $DB->get_record('modules', array('id'=>$cm->module), '*', MUST_EXIST);
-
-    if ($module->visible and ($section->visible or (SITEID == $cm->course))) {
-        set_coursemodule_visible($cm->id, 1);
-        \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+    if (set_coursemodule_visible($cm->id, 1)) {
+        \core\event\course_module_updated::create_from_cm($cm)->trigger();
     }
-
     redirect(course_get_url($course, $section->section, array('sr' => $sectionreturn)));
 
 } else if ($groupmode > -1 and confirm_sesskey()) {
