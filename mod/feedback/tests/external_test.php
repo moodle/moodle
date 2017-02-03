@@ -664,4 +664,63 @@ class mod_feedback_external_testcase extends externallib_advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test get_non_respondents (student trying to get this information).
+     */
+    public function test_get_non_respondents_no_permissions() {
+        $this->setUser($this->student);
+        $this->setExpectedException('moodle_exception');
+        mod_feedback_external::get_non_respondents($this->feedback->id);
+    }
+
+    /**
+     * Test get_non_respondents.
+     */
+    public function test_get_non_respondents() {
+        // Create another student.
+        $anotherstudent = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($anotherstudent->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->setUser($anotherstudent);
+
+        // Test user with full capabilities.
+        $this->setUser($this->student);
+
+        // Create a very simple feedback.
+        $feedbackgenerator = $this->getDataGenerator()->get_plugin_generator('mod_feedback');
+        $numericitem = $feedbackgenerator->create_item_numeric($this->feedback);
+
+        $pagedata = [
+            ['name' => $numericitem->typ .'_'. $numericitem->id, 'value' => 5],
+        ];
+
+        // Process the feedback, there is only one page so the feedback will be completed.
+        $result = mod_feedback_external::process_page($this->feedback->id, 0, $pagedata);
+        $result = external_api::clean_returnvalue(mod_feedback_external::process_page_returns(), $result);
+        $this->assertTrue($result['completed']);
+
+        // Retrieve the non-respondent users.
+        $this->setUser($this->teacher);
+        $result = mod_feedback_external::get_non_respondents($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_non_respondents_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['users']);
+        $this->assertEquals($anotherstudent->id, $result['users'][0]);
+
+        // Create another student.
+        $anotherstudent2 = self::getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($anotherstudent2->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->setUser($anotherstudent2);
+        $this->setUser($this->teacher);
+        $result = mod_feedback_external::get_non_respondents($this->feedback->id);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_non_respondents_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['users']);
+
+        // Test pagination.
+        $result = mod_feedback_external::get_non_respondents($this->feedback->id, 0, 'lastaccess', 0, 1);
+        $result = external_api::clean_returnvalue(mod_feedback_external::get_non_respondents_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['users']);
+    }
 }

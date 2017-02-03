@@ -117,4 +117,12 @@ $functions = array(
         'capabilities'  => 'mod/feedback:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_feedback_get_non_respondents' => array(
+        'classname'     => 'mod_feedback_external',
+        'methodname'    => 'get_non_respondents',
+        'description'   => 'Retrieves a list of students who didn\'t submit the feedback.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/feedback:viewreports',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
