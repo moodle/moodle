@@ -274,6 +274,17 @@ abstract class feedback_item_base {
     public function get_data_for_external($item) {
         return null;
     }
+
+    /**
+     * Return the analysis data ready for external functions.
+     *
+     * @param stdClass $item     the item (question) information
+     * @param int      $groupid  the group id to filter data (optional)
+     * @param int      $courseid the course id (optional)
+     * @return array an array of data with non scalar types json encoded
+     * @since  Moodle 3.3
+     */
+    abstract public function get_analysed_for_external($item, $groupid = false, $courseid = false);
 }
 
 //a dummy class to realize pagebreaks
@@ -346,5 +357,18 @@ class feedback_item_pagebreak extends feedback_item_base {
             array('class' => 'editing_delete', 'data-action' => 'delete')
         );
         return $actions;
+    }
+
+    /**
+     * Return the analysis data ready for external functions.
+     *
+     * @param stdClass $item     the item (question) information
+     * @param int      $groupid  the group id to filter data (optional)
+     * @param int      $courseid the course id (optional)
+     * @return array an array of data with non scalar types json encoded
+     * @since  Moodle 3.3
+     */
+    public function get_analysed_for_external($item, $groupid = false, $courseid = false) {
+        return;
     }
 }
