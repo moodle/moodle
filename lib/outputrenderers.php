@@ -2959,7 +2959,7 @@ EOD;
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
-        $button = new single_button($url, get_string('continue'), 'get');
+        $button = new single_button($url, get_string('continue'), 'get', true);
         $button->class = 'continuebutton';
 
         return $this->render($button);
