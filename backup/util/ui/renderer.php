@@ -519,7 +519,7 @@ class core_backup_renderer extends plugin_renderer_base {
             $method = 'get';
         }
         $url->param('sesskey', sesskey());
-        $button = new single_button($url, get_string('continue'), $method);
+        $button = new single_button($url, get_string('continue'), $method, true);
         $button->class = 'continuebutton';
         return $this->render($button);
     }
