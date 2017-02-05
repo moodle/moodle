@@ -485,7 +485,9 @@ if ($data = $mform->get_data()) {
             if ($allow) {
                 $count++;
                 $DB->insert_record('companylicense_users',
-                                    array('userid' => $userdata->id, 'licenseid' => $licenseid,
+                                    array('userid' => $userdata->id,
+                                          'licenseid' => $licenseid,
+                                          'issuedate' => time(),
                                           'licensecourseid' => $licensecourse));
             }
             // Create an email event.
