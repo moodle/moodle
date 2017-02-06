@@ -102,7 +102,7 @@ class department_display_form extends company_moodleform {
             $buttonarray[] = $mform->createElement('submit', 'delete',
                                 get_string('deletedepartment', 'block_iomad_company_admin'));
         }
-        $mform->addGroup($buttonarray, '', array(' '), ' ', false);
+        $mform->addGroup($buttonarray, 'buttonarray', '', array(' '), false);
     }
 
     public function get_data() {
