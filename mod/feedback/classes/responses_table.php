@@ -72,12 +72,19 @@ class mod_feedback_responses_table extends table_sql {
      * (no more than TABLEJOINLIMIT tables with values can be joined). */
     protected $hasmorecolumns = 0;
 
+    /** @var bool whether we are building this table for a external function */
+    protected $buildforexternal = false;
+
+    /** @var array the data structure containing the table data for the external function */
+    protected $dataforexternal = [];
+
     /**
      * Constructor
      *
      * @param mod_feedback_structure $feedbackstructure
+     * @param int $group retrieve only users from this group (optional)
      */
-    public function __construct(mod_feedback_structure $feedbackstructure) {
+    public function __construct(mod_feedback_structure $feedbackstructure, $group = 0) {
         $this->feedbackstructure = $feedbackstructure;
 
         parent::__construct('feedback-showentry-list-' . $feedbackstructure->get_cm()->instance);
@@ -97,13 +104,14 @@ class mod_feedback_responses_table extends table_sql {
         $this->is_downloading(optional_param($this->downloadparamname, 0, PARAM_ALPHA),
                 $name, get_string('responses', 'feedback'));
         $this->useridfield = 'userid';
-        $this->init();
+        $this->init($group);
     }
 
     /**
      * Initialises table
+     * @param int $group retrieve only users from this group (optional)
      */
-    protected function init() {
+    protected function init($group = 0) {
 
         $tablecolumns = array('userpic', 'fullname');
         $tableheaders = array(get_string('userpic'), get_string('fullnameuser'));
@@ -154,7 +162,7 @@ class mod_feedback_responses_table extends table_sql {
         $params['notdeleted'] = 0;
         $params['courseid'] = $this->feedbackstructure->get_courseid();
 
-        $group = groups_get_activity_group($this->feedbackstructure->get_cm(), true);
+        $group = (empty($group)) ? groups_get_activity_group($this->feedbackstructure->get_cm(), true) : $group;
         if ($group) {
             $where .= ' AND c.userid IN (SELECT g.userid FROM {groups_members} g WHERE g.groupid = :group)';
             $params['group'] = $group;
@@ -488,7 +496,11 @@ class mod_feedback_responses_table extends table_sql {
                     $chunk = [];
                 }
             } else {
-                $this->add_data_keyed($this->format_row($row), $this->get_row_class($row));
+                if ($this->buildforexternal) {
+                    $this->add_data_for_external($row);
+                } else {
+                    $this->add_data_keyed($this->format_row($row), $this->get_row_class($row));
+                }
             }
         }
         $this->build_table_chunk($chunk, $columnsgroups);
@@ -531,7 +543,11 @@ class mod_feedback_responses_table extends table_sql {
         }
 
         foreach ($rows as $row) {
-            $this->add_data_keyed($this->format_row($row), $this->get_row_class($row));
+            if ($this->buildforexternal) {
+                $this->add_data_for_external($row);
+            } else {
+                $this->add_data_keyed($this->format_row($row), $this->get_row_class($row));
+            }
         }
     }
 
@@ -547,5 +563,74 @@ class mod_feedback_responses_table extends table_sql {
         } else {
             return '';
         }
+    }
+
+    /**
+     * Return user responses data ready for the external function.
+     *
+     * @param stdClass $row the table row containing the responses
+     * @return array returns the responses ready to be used by an external function
+     * @since Moodle 3.3
+     */
+    protected function get_responses_for_external($row) {
+        $responses = [];
+        foreach ($row as $el => $val) {
+            // Get id from column name.
+            if (preg_match('/^val(\d+)$/', $el, $matches)) {
+                $id = $matches[1];
+
+                $responses[] = [
+                    'id' => $id,
+                    'name' => $this->headers[$this->columns[$el]],
+                    'printval' => $this->other_cols($el, $row),
+                    'rawval' => $val,
+                ];
+            }
+        }
+        return $responses;
+    }
+
+    /**
+     * Add data for the external structure that will be returned.
+     *
+     * @param stdClass $row a database query record row
+     * @since Moodle 3.3
+     */
+    protected function add_data_for_external($row) {
+        $this->dataforexternal[] = [
+            'id' => $row->id,
+            'courseid' => $row->courseid,
+            'userid' => $row->userid,
+            'fullname' => fullname($row),
+            'timemodified' => $row->completed_timemodified,
+            'responses' => $this->get_responses_for_external($row),
+        ];
+    }
+
+    /**
+     * Exports the table as an external structure handling pagination.
+     *
+     * @param int $page page number (for pagination)
+     * @param int $perpage elements per page
+     * @since Moodle 3.3
+     * @return array returns the table ready to be used by an external function
+     */
+    public function export_external_structure($page = 0, $perpage = 0) {
+
+        $this->add_all_values_to_output();
+        $this->buildforexternal = true;
+        // Set-up.
+        $this->setup();
+        // Override values, if needed.
+        if ($perpage > 0) {
+            $this->pageable = true;
+            $this->currpage = $page;
+            $this->pagesize = $perpage;
+        } else {
+            $this->pagesize = $this->get_total_responses_count();
+        }
+        $this->query_db($this->pagesize, false);
+        $this->build_table();
+        return $this->dataforexternal;
     }
 }
