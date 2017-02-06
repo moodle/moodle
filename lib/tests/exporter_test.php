@@ -41,8 +41,22 @@ class core_exporter_testcase extends advanced_testcase {
 
     public function setUp() {
         $s = new stdClass();
-        $this->validrelated = array('simplestdClass' => $s, 'arrayofstdClass' => array($s, $s), 'context' => null);
-        $this->invalidrelated = array('simplestdClass' => 'a string', 'arrayofstdClass' => 5, 'context' => null);
+        $this->validrelated = array(
+            'simplestdClass' => $s,
+            'arrayofstdClass' => array($s, $s),
+            'context' => null,
+            'aint' => 5,
+            'astring' => 'valid string',
+            'abool' => false
+        );
+        $this->invalidrelated = array(
+            'simplestdClass' => 'a string',
+            'arrayofstdClass' => 5,
+            'context' => null,
+            'aint' => false,
+            'astring' => 4,
+            'abool' => 'not a boolean'
+        );
 
         $this->validdata = array('stringA' => 'A string', 'stringAformat' => FORMAT_HTML, 'intB' => 4);
 
@@ -166,7 +180,8 @@ class core_testable_exporter extends \core\external\exporter {
 
     protected static function define_related() {
         // We cache the context so it does not need to be retrieved from the course.
-        return array('simplestdClass' => 'stdClass', 'arrayofstdClass' => 'stdClass[]', 'context' => 'context?');
+        return array('simplestdClass' => 'stdClass', 'arrayofstdClass' => 'stdClass[]', 'context' => 'context?',
+            'astring' => 'string', 'abool' => 'bool', 'aint' => 'int');
     }
 
     protected function get_other_values(renderer_base $output) {
