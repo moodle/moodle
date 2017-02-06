@@ -125,4 +125,12 @@ $functions = array(
         'capabilities'  => 'mod/feedback:viewreports',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_feedback_get_responses_analysis' => array(
+        'classname'     => 'mod_feedback_external',
+        'methodname'    => 'get_responses_analysis',
+        'description'   => 'Return the feedback user responses analysis.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/feedback:viewreports',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
