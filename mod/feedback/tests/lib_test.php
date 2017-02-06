@@ -76,4 +76,64 @@ class mod_feedback_lib_testcase extends advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test check_updates_since callback.
+     */
+    public function test_check_updates_since() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create user.
+        $student = self::getDataGenerator()->create_user();
+
+        // User enrolment.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, $studentrole->id, 'manual');
+
+        $this->setCurrentTimeStart();
+        $record = array(
+            'course' => $course->id,
+            'custom' => 0,
+            'feedback' => 1,
+        );
+        $feedback = $this->getDataGenerator()->create_module('feedback', $record);
+        $cm = get_coursemodule_from_instance('feedback', $feedback->id, $course->id);
+        $cm = cm_info::create($cm);
+
+        $this->setUser($student);
+        // Check that upon creation, the updates are only about the new configuration created.
+        $onehourago = time() - HOURSECS;
+        $updates = feedback_check_updates_since($cm, $onehourago);
+        foreach ($updates as $el => $val) {
+            if ($el == 'configuration') {
+                $this->assertTrue($val->updated);
+                $this->assertTimeCurrent($val->timeupdated);
+            } else {
+                $this->assertFalse($val->updated);
+            }
+        }
+
+        $record = [
+            'feedback' => $feedback->id,
+            'userid' => $student->id,
+            'timemodified' => time(),
+            'random_response' => 0,
+            'anonymous_response' => FEEDBACK_ANONYMOUS_NO,
+            'courseid' => $course->id,
+        ];
+        $DB->insert_record('feedback_completed', (object) $record);
+        $DB->insert_record('feedback_completedtmp', (object) $record);
+
+        // Check now for finished and unfinished attempts.
+        $updates = feedback_check_updates_since($cm, $onehourago);
+        $this->assertTrue($updates->attemptsunfinished->updated);
+        $this->assertCount(1, $updates->attemptsunfinished->itemids);
+
+        $this->assertTrue($updates->attemptsfinished->updated);
+        $this->assertCount(1, $updates->attemptsfinished->itemids);
+    }
 }
