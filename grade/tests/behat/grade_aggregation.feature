@@ -345,6 +345,7 @@ Feature: We can use calculated grade totals
     And I set the field "Show weightings" to "Show"
     And I press "Save changes"
     And I select "User report" from the "Grade report" singleselect
+    And I select "Myself" from the "View report as" singleselect
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Contribution to course total |
@@ -534,6 +535,7 @@ Feature: We can use calculated grade totals
     And I press "Save changes"
     Then I should see "75.00 (16.85 %)" in the ".course" "css_element"
     And I select "User report" from the "Grade report" singleselect
+    And I select "Myself" from the "View report as" singleselect
     And I select "Student 1" from the "Select all or one user" singleselect
     And the following should exist in the "user-grade" table:
       | Grade item            | Calculated weight | Grade           | Contribution to course total |
