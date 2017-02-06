@@ -52,6 +52,7 @@ class block_activity_results_edit_form extends block_edit_form {
         $sql = 'SELECT id, itemname FROM {grade_items} WHERE courseid = ? and itemtype = ? and (gradetype = ? or gradetype = ?)';
         $params = array($this->page->course->id, 'mod', GRADE_TYPE_VALUE, GRADE_TYPE_SCALE);
         $activities = $DB->get_records_sql_menu($sql, $params);
+        core_collator::asort($activities);
 
         if (empty($activities)) {
             $mform->addElement('static', 'noactivitieswarning', get_string('config_select_activity', 'block_activity_results'),
