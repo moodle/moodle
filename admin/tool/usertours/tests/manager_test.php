@@ -118,7 +118,7 @@ class tool_usertours_manager_testcase extends advanced_testcase {
         $rcm = $rc->getMethod($function);
         $rcm->setAccessible(true);
 
-        $this->setExpectedException('moodle_exception', 'A required parameter (sesskey) was missing');
+        $this->expectException('moodle_exception');
         $rcm->invokeArgs($manager, $arguments);
     }
 
