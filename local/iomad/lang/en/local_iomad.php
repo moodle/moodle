@@ -25,6 +25,7 @@ $string['companycourses'] = 'Other company courses';
 $string['companyfilter'] = 'Filter results';
 $string['companynamefilter'] = 'Company name contains'; 
 $string['companysearchfields'] = 'Company search fields';
+$string['crontask'] = 'Iomad Cron';
 $string['emailfilter'] = 'Email address contains';
 $string['firstnamefilter'] = 'First name contains';
 $string['lastnamefilter'] = 'Last name contains';
