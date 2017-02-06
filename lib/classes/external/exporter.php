@@ -266,6 +266,9 @@ abstract class exporter {
             if (!isset($definition['null'])) {
                 $customprops[$property]['null'] = NULL_NOT_ALLOWED;
             }
+            if (!isset($definition['description'])) {
+                $customprops[$property]['description'] = $property;
+            }
         }
         $properties += $customprops;
         return $properties;
@@ -283,6 +286,9 @@ abstract class exporter {
             // Ensures that null is set to its default.
             if (!isset($definition['null'])) {
                 $properties[$property]['null'] = NULL_NOT_ALLOWED;
+            }
+            if (!isset($definition['description'])) {
+                $properties[$property]['description'] = $property;
             }
         }
         return $properties;
@@ -335,7 +341,8 @@ abstract class exporter {
      * Return the list of properties.
      *
      * The format of the array returned by this method has to match the structure
-     * defined in {@link \core\persistent::define_properties()}.
+     * defined in {@link \core\persistent::define_properties()}. Howewer you can
+     * add a new attribute "description" to describe the parameter for documenting the API.
      *
      * Note that the type PARAM_TEXT should ONLY be used for strings which need to
      * go through filters (multilang, etc...) and do not have a FORMAT_* associated
@@ -445,7 +452,8 @@ abstract class exporter {
                 $returns += self::get_context_structure();
 
             } else {
-                $returns[$property] = new external_value($definition['type'], $property, $required, $default, $definition['null']);
+                $returns[$property] = new external_value($definition['type'], $definition['description'], $required, $default,
+                    $definition['null']);
 
                 // Magically treat the format properties.
                 if ($formatproperty = self::get_format_field($properties, $property)) {
@@ -508,10 +516,11 @@ abstract class exporter {
                     // PARAM_TEXT always becomes PARAM_RAW because filters may be applied.
                     $type = PARAM_RAW;
                 }
-                $thisvalue = new external_value($type, $property, $proprequired, $propdefault, $definition['null']);
+                $thisvalue = new external_value($type, $definition['description'], $proprequired, $propdefault, $definition['null']);
             }
             if (!empty($definition['multiple'])) {
-                $returns[$property] = new external_multiple_structure($thisvalue, '', $proprequired, $propdefault);
+                $returns[$property] = new external_multiple_structure($thisvalue, $definition['description'], $proprequired,
+                    $propdefault);
             } else {
                 $returns[$property] = $thisvalue;
 
@@ -560,7 +569,8 @@ abstract class exporter {
                 $returns += self::get_context_structure();
 
             } else {
-                $returns[$property] = new external_value($definition['type'], $property, $required, $default, $definition['null']);
+                $returns[$property] = new external_value($definition['type'], $definition['description'], $required, $default,
+                    $definition['null']);
 
                 // Magically treat the format properties.
                 if ($formatproperty = self::get_format_field($properties, $property)) {

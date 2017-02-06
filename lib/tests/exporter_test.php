@@ -167,6 +167,19 @@ class core_exporter_testcase extends advanced_testcase {
         $this->assertEquals($expected, $result->stringA);
         $this->assertEquals(FORMAT_HTML, $result->stringAformat);
     }
+
+    public function test_properties_description() {
+        $properties = core_testable_exporter::read_properties_definition();
+        // Properties default description.
+        $this->assertEquals('stringA', $properties['stringA']['description']);
+        $this->assertEquals('stringAformat', $properties['stringAformat']['description']);
+        // Properties custom description.
+        $this->assertEquals('intB description', $properties['intB']['description']);
+        // Other properties custom description.
+        $this->assertEquals('otherstring description', $properties['otherstring']['description']);
+        // Other properties default description.
+        $this->assertEquals('otherstrings', $properties['otherstrings']['description']);
+    }
 }
 
 /**
@@ -201,6 +214,7 @@ class core_testable_exporter extends \core\external\exporter {
             ),
             'intB' => array(
                 'type' => PARAM_INT,
+                'description' => 'intB description',
             )
         );
     }
@@ -209,6 +223,7 @@ class core_testable_exporter extends \core\external\exporter {
         return array(
             'otherstring' => array(
                 'type' => PARAM_TEXT,
+                'description' => 'otherstring description',
             ),
             'otherstrings' => array(
                 'type' => PARAM_TEXT,
