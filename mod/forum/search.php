@@ -318,7 +318,7 @@ echo $OUTPUT->footer();
   * @return void The function prints the form.
   */
 function forum_print_big_search_form($course) {
-    global $CFG, $DB, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto, $PAGE, $OUTPUT;
+    global $CFG, $DB, $words, $subject, $phrase, $user, $fullwords, $notwords, $datefrom, $dateto, $OUTPUT, $forumid;
 
     echo $OUTPUT->box(get_string('searchforumintro', 'forum'), 'searchbox boxaligncenter', 'intro');
 
@@ -408,7 +408,7 @@ function forum_print_big_search_form($course) {
     echo '<tr>';
     echo '<td class="c0"><label for="menuforumid">'.get_string('searchwhichforums', 'forum').'</label></td>';
     echo '<td class="c1">';
-    echo html_writer::select(forum_menu_list($course), 'forumid', '', array(''=>get_string('allforums', 'forum')));
+    echo html_writer::select(forum_menu_list($course), 'forumid', $forumid, array('' => get_string('allforums', 'forum')));
     echo '</td>';
     echo '</tr>';
 
