@@ -409,8 +409,8 @@ class pdf extends \FPDI {
     /**
      * Generate an image of the specified page in the PDF
      * @param int $pageno the page to generate the image of
-     * @throws moodle_exception
-     * @throws coding_exception
+     * @throws \moodle_exception
+     * @throws \coding_exception
      * @return string the filename of the generated image
      */
     public function get_image($pageno) {
@@ -431,7 +431,7 @@ class pdf extends \FPDI {
         $imagefile = $this->imagefolder.'/image_page' . $pageno . '.png';
         $generate = true;
         if (file_exists($imagefile)) {
-            if (filemtime($imagefile)>filemtime($this->filename)) {
+            if (filemtime($imagefile) > filemtime($this->filename)) {
                 // Make sure the image is newer than the PDF file.
                 $generate = false;
             }
@@ -455,7 +455,7 @@ class pdf extends \FPDI {
                 $fullerror .= get_string('result', 'assignfeedback_editpdf')."\n";
                 $fullerror .= htmlspecialchars($result) . "\n\n";
                 $fullerror .= get_string('output', 'assignfeedback_editpdf')."\n";
-                $fullerror .= htmlspecialchars(implode("\n",$output)) . '</pre>';
+                $fullerror .= htmlspecialchars(implode("\n", $output)) . '</pre>';
                 throw new \moodle_exception('errorgenerateimage', 'assignfeedback_editpdf', '', $fullerror);
             }
         }
@@ -465,7 +465,7 @@ class pdf extends \FPDI {
 
     /**
      * Check to see if PDF is version 1.4 (or below); if not: use ghostscript to convert it
-     * @param stored_file $file
+     * @param \stored_file $file
      * @return string path to copy or converted pdf (false == fail)
      */
     public static function ensure_pdf_compatible(\stored_file $file) {
@@ -525,7 +525,7 @@ class pdf extends \FPDI {
     /**
      * Test that the configured path to ghostscript is correct and working.
      * @param bool $generateimage - If true - a test image will be generated to verify the install.
-     * @return stdClass
+     * @return \stdClass
      */
     public static function test_gs_path($generateimage = true) {
         global $CFG;
