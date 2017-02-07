@@ -74,5 +74,20 @@ function xmldb_message_popup_upgrade($oldversion) {
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016122100) {
+
+        // Define index isread (not unique) to be added to message_popup.
+        $table = new xmldb_table('message_popup');
+        $index = new xmldb_index('isread', XMLDB_INDEX_NOTUNIQUE, array('isread'));
+
+        // Conditionally launch add index isread.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Popup savepoint reached.
+        upgrade_plugin_savepoint(true, 2016122100, 'message', 'popup');
+    }
+
     return true;
 }

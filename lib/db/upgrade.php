@@ -2465,5 +2465,65 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016122800.00);
     }
 
+    if ($oldversion < 2017020200.01) {
+
+        // Define index useridfrom_timeuserfromdeleted_notification (not unique) to be added to message.
+        $table = new xmldb_table('message');
+        $index = new xmldb_index('useridfrom_timeuserfromdeleted_notification', XMLDB_INDEX_NOTUNIQUE, array('useridfrom', 'timeuserfromdeleted', 'notification'));
+
+        // Conditionally launch add index useridfrom_timeuserfromdeleted_notification.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index useridto_timeusertodeleted_notification (not unique) to be added to message.
+        $index = new xmldb_index('useridto_timeusertodeleted_notification', XMLDB_INDEX_NOTUNIQUE, array('useridto', 'timeusertodeleted', 'notification'));
+
+        // Conditionally launch add index useridto_timeusertodeleted_notification.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $index = new xmldb_index('useridto', XMLDB_INDEX_NOTUNIQUE, array('useridto'));
+
+        // Conditionally launch drop index useridto.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017020200.01);
+    }
+
+    if ($oldversion < 2017020200.02) {
+
+        // Define index useridfrom_timeuserfromdeleted_notification (not unique) to be added to message_read.
+        $table = new xmldb_table('message_read');
+        $index = new xmldb_index('useridfrom_timeuserfromdeleted_notification', XMLDB_INDEX_NOTUNIQUE, array('useridfrom', 'timeuserfromdeleted', 'notification'));
+
+        // Conditionally launch add index useridfrom_timeuserfromdeleted_notification.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index useridto_timeusertodeleted_notification (not unique) to be added to message_read.
+        $index = new xmldb_index('useridto_timeusertodeleted_notification', XMLDB_INDEX_NOTUNIQUE, array('useridto', 'timeusertodeleted', 'notification'));
+
+        // Conditionally launch add index useridto_timeusertodeleted_notification.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        $index = new xmldb_index('useridto', XMLDB_INDEX_NOTUNIQUE, array('useridto'));
+
+        // Conditionally launch drop index useridto.
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2017020200.02);
+    }
+
     return true;
 }
