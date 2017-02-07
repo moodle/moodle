@@ -183,6 +183,7 @@ $events = calendar_get_events($timestart, $timeend, $users, $groups, array_keys(
 
 $ical = new iCalendar;
 $ical->add_property('method', 'PUBLISH');
+$PAGE->set_context(context_user::instance($userid));
 foreach($events as $event) {
    if (!empty($event->modulename)) {
         $cm = get_coursemodule_from_instance($event->modulename, $event->instance);
@@ -193,10 +194,15 @@ foreach($events as $event) {
     $hostaddress = str_replace('http://', '', $CFG->wwwroot);
     $hostaddress = str_replace('https://', '', $hostaddress);
 
-    $ev = new iCalendar_event;
+    $me = new calendar_event($event); // To use moodle calendar event services.
+    $ev = new iCalendar_event; // To export in ical format.
+
     $ev->add_property('uid', $event->id.'@'.$hostaddress);
-    $ev->add_property('summary', $event->name);
-    $ev->add_property('description', clean_param($event->description, PARAM_NOTAGS));
+
+    $ev->add_property('summary', format_string($event->name, true, array('context' => $me->context)));
+    $descr = format_string($event->description, true, array('context' => $me->context));
+    $ev->add_property('description', clean_param($descr, PARAM_NOTAGS));
+
     $ev->add_property('class', 'PUBLIC'); // PUBLIC / PRIVATE / CONFIDENTIAL
     $ev->add_property('last-modified', Bennu::timestamp_to_datetime($event->timemodified));
     $ev->add_property('dtstamp', Bennu::timestamp_to_datetime()); // now
