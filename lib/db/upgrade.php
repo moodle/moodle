@@ -2465,7 +2465,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2016120500.04);
     }
 
-    if ($oldversion < 2017020200.01) {
+    if ($oldversion < 2016120500.05) {
 
         // Define index useridfrom_timeuserfromdeleted_notification (not unique) to be added to message.
         $table = new xmldb_table('message');
@@ -2492,10 +2492,10 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017020200.01);
+        upgrade_main_savepoint(true, 2016120500.05);
     }
 
-    if ($oldversion < 2017020200.02) {
+    if ($oldversion < 2016120500.06) {
 
         // Define index useridfrom_timeuserfromdeleted_notification (not unique) to be added to message_read.
         $table = new xmldb_table('message_read');
@@ -2522,7 +2522,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2017020200.02);
+        upgrade_main_savepoint(true, 2016120500.06);
     }
 
     return true;
