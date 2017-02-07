@@ -97,6 +97,9 @@ class core_media_manager {
     /** @var core_media_manager caches a singleton instance */
     static protected $instance;
 
+    /** @var moodle_page page this instance was initialised for */
+    protected $page;
+
     /**
      * Returns a singleton instance of a manager
      *
@@ -105,7 +108,12 @@ class core_media_manager {
      * @return core_media_manager
      */
     public static function instance($page = null) {
-        if (self::$instance === null) {
+        // Use the passed $page if given, otherwise the $PAGE global.
+        if (!$page) {
+            global $PAGE;
+            $page = $PAGE;
+        }
+        if (self::$instance === null || ($page && self::$instance->page !== $page)) {
             self::$instance = new self($page);
         }
         return self::$instance;
@@ -117,15 +125,9 @@ class core_media_manager {
      * @param moodle_page $page The page we are going to add requirements to.
      * @see core_media_manager::instance()
      */
-    protected function __construct($page = null) {
-        // Use the passed $page if given, otherwise the $PAGE global.
-        if ($page == null) {
-            global $PAGE;
-            if (isset($PAGE)) {
-                $page = $PAGE;
-            }
-        }
+    protected function __construct($page) {
         if ($page) {
+            $this->page = $page;
             $players = $this->get_players();
             foreach ($players as $player) {
                 $player->setup($page);
