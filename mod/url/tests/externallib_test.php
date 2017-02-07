@@ -152,8 +152,9 @@ class mod_url_external_testcase extends externallib_advanced_testcase {
         $returndescription = mod_url_external::get_urls_by_courses_returns();
 
         // Create what we expect to be returned when querying the two courses.
-        $expectedfields = array('id', 'course', 'name', 'intro', 'introformat', 'introfiles', 'externalurl', 'display',
-                                'displayoptions', 'parameters', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles', 'externalurl',
+                                'display', 'displayoptions', 'parameters', 'timemodified', 'section', 'visible', 'groupmode',
+                                'groupingid');
 
         // Add expected coursemodule and data.
         $url1->coursemodule = $url1->cmid;
