@@ -785,8 +785,7 @@ span.editinstructions {
  * Borders                  #e1e1e8
  */
 #course-category-listings {
-    background-color: $body-bg;
-    margin-bottom: 200px;
+    margin-bottom: 0;
 
     /** Two column layout */
     &.columns-2 {
@@ -1172,7 +1171,6 @@ span.editinstructions {
 @media (max-width: 1199px) {
     #course-category-listings.columns-2,
     #course-category-listings.columns-3 {
-        background-color: $body-bg;
         border: 0;
 
         #category-listing,
@@ -1180,12 +1178,6 @@ span.editinstructions {
         #course-detail {
             width: 100%;
             margin: 0 0 1em;
-        }
-
-        #category-listing > div,
-        #course-listing > div,
-        #course-detail > div {
-            background-color: $body-bg;
         }
     }
 }
