@@ -53,10 +53,13 @@ class eventobservers {
      * @param \core\event\course_deleted $event The course deleted event.
      */
     public static function course_deleted(\core\event\course_deleted $event) {
+        // Delete rules defined inside this course and associated subscriptions.
         $rules = rule_manager::get_rules_by_courseid($event->courseid, 0, 0, false);
         foreach ($rules as $rule) {
             rule_manager::delete_rule($rule->id, $event->get_context());
         }
+        // Delete remaining subscriptions inside this course (from site-wide rules).
+        subscription_manager::remove_all_subscriptions_in_course($event->get_context());
     }
 
     /**

@@ -80,5 +80,21 @@ function xmldb_tool_monitor_upgrade($oldversion) {
     // Automatically generated Moodle v3.2.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2016120501) {
+
+        // Delete "orphaned" subscriptions.
+        $deletedcourses = $DB->get_field_sql("SELECT DISTINCT s.courseid
+            FROM {tool_monitor_subscriptions} s
+            LEFT OUTER JOIN {course} c ON c.id = s.courseid
+            WHERE s.courseid <> 0 and c.id IS NULL");
+        if ($deletedcourses) {
+            list($sql, $params) = $DB->get_in_or_equal($deletedcourses);
+            $DB->execute("DELETE FROM {tool_monitor_subscriptions} WHERE courseid " . $sql, $params);
+        }
+
+        // Monitor savepoint reached.
+        upgrade_plugin_savepoint(true, 2016120501, 'tool', 'monitor');
+    }
+
     return true;
 }
