@@ -421,6 +421,7 @@ class file_system_filedir extends file_system {
         @unlink($hashfile.'.tmp');
         if (!copy($pathname, $hashfile.'.tmp')) {
             // Borked permissions or out of disk space.
+            @unlink($hashfile.'.tmp');
             ignore_user_abort($prev);
             throw new file_exception('storedfilecannotcreatefile');
         }
