@@ -91,7 +91,7 @@ if ($courseid != SITEID && !empty($courseid)) {
     navigation_node::override_active_url(new moodle_url('/course/view.php', array('id' => $course->id)));
 } else {
     $course = get_site();
-    $courses = calendar_get_default_courses();
+    $courses = \core_calendar\api::get_default_courses();
     $issite = true;
 }
 
@@ -158,7 +158,7 @@ switch($view) {
 echo $OUTPUT->container_start('bottom');
 if (!empty($CFG->enablecalendarexport)) {
     echo $OUTPUT->single_button(new moodle_url('export.php', array('course'=>$courseid)), get_string('exportcalendar', 'calendar'));
-    if (calendar_user_can_add_event($course)) {
+    if (\core_calendar\api::can_add_event_to_course($course)) {
         echo $OUTPUT->single_button(new moodle_url('/calendar/managesubscriptions.php', array('course'=>$courseid)), get_string('managesubscriptions', 'calendar'));
     }
     if (isloggedin()) {

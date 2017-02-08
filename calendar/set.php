@@ -61,16 +61,16 @@ $PAGE->set_context(context_system::instance());
 
 switch($var) {
     case 'showgroups':
-        calendar_set_event_type_display(CALENDAR_EVENT_GROUP);
+        \core_calendar\api::set_event_type_display(CALENDAR_EVENT_GROUP);
         break;
     case 'showcourses':
-        calendar_set_event_type_display(CALENDAR_EVENT_COURSE);
+        \core_calendar\api::set_event_type_display(CALENDAR_EVENT_COURSE);
         break;
     case 'showglobal':
-        calendar_set_event_type_display(CALENDAR_EVENT_GLOBAL);
+        \core_calendar\api::set_event_type_display(CALENDAR_EVENT_GLOBAL);
         break;
     case 'showuser':
-        calendar_set_event_type_display(CALENDAR_EVENT_USER);
+        \core_calendar\api::set_event_type_display(CALENDAR_EVENT_USER);
         break;
 }
 

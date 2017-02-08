@@ -78,7 +78,7 @@ class event {
         }
 
         if (!empty($data->subscriptionid)) {
-            $data->subscription = calendar_get_subscription($data->subscriptionid);
+            $data->subscription = api::get_subscription($data->subscriptionid);
         }
 
         // Default to a user event.
@@ -306,7 +306,7 @@ class event {
         if (empty($this->properties->id) || $this->properties->id < 1) {
 
             if ($checkcapability) {
-                if (!calendar_add_event_allowed($this->properties)) {
+                if (!\core_calendar\api::can_add_event($this->properties)) {
                     print_error('nopermissiontoupdatecalendar');
                 }
             }
@@ -417,7 +417,7 @@ class event {
         } else {
 
             if ($checkcapability) {
-                if (!calendar_edit_event_allowed($this->properties)) {
+                if (!api::can_edit_event($this->properties)) {
                     print_error('nopermissiontoupdatecalendar');
                 }
             }

@@ -82,7 +82,7 @@ if ($courseid != SITEID && !empty($courseid)) {
     $issite = false;
 } else {
     $course = get_site();
-    $courses = calendar_get_default_courses();
+    $courses = \core_calendar\api::get_default_courses();
     $issite = true;
 }
 require_course_login($course);
@@ -108,7 +108,7 @@ if ($issite) {
     $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
 }
 $link = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming', 'course'=>$calendar->courseid));
-$PAGE->navbar->add(get_string('calendar', 'calendar'), calendar_get_link_href($link, 0, 0, 0, $time));
+$PAGE->navbar->add(get_string('calendar', 'calendar'), \core_calendar\api::get_link_href($link, 0, 0, 0, $time));
 $PAGE->navbar->add($pagetitle);
 
 $PAGE->set_title($course->shortname.': '.get_string('calendar', 'calendar').': '.$pagetitle);
@@ -133,7 +133,7 @@ $formdata = array(
     // If today it's weekend, give the "next week" option.
     'allownextweek' => $weekend & (1 << $now['wday']),
     // If it's the last week of the month, give the "next month" option.
-    'allownextmonth' => calendar_days_in_month($now['mon'], $now['year']) - $now['mday'] < $numberofdaysinweek,
+    'allownextmonth' => \core_calendar\api::get_days_in_month($now['mon'], $now['year']) - $now['mday'] < $numberofdaysinweek,
     // If today it's weekend but tomorrow it isn't, do NOT give the "this week" option.
     'allowthisweek' => !(($weekend & (1 << $now['wday'])) && !($weekend & (1 << (($now['wday'] + 1) % $numberofdaysinweek))))
 );

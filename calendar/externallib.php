@@ -81,7 +81,7 @@ class core_calendar_external extends external_api {
             $eventobj = \core_calendar\event::load($event['eventid']);
 
             // Let's check if the user is allowed to delete an event.
-            if (!calendar_edit_event_allowed($eventobj)) {
+            if (!\core_calendar\api::can_edit_event($eventobj)) {
                 throw new moodle_exception("nopermissions");
             }
             // Time to do the magic.
@@ -228,14 +228,14 @@ class core_calendar_external extends external_api {
         }
 
         // Event list does not check visibility and permissions, we'll check that later.
-        $eventlist = calendar_get_events($params['options']['timestart'], $params['options']['timeend'], $funcparam['users'], $funcparam['groups'],
-                $funcparam['courses'], true, $params['options']['ignorehidden']);
+        $eventlist = \core_calendar\api::get_events($params['options']['timestart'], $params['options']['timeend'],
+            $funcparam['users'], $funcparam['groups'], $funcparam['courses'], true, $params['options']['ignorehidden']);
 
         // WS expects arrays.
         $events = array();
 
         // We need to get events asked for eventids.
-        if ($eventsbyid = calendar_get_events_by_id($params['events']['eventids'])) {
+        if ($eventsbyid = \core_calendar\api::get_events_by_id($params['events']['eventids'])) {
             $eventlist += $eventsbyid;
         }
 
@@ -260,7 +260,7 @@ class core_calendar_external extends external_api {
                             (!empty($eventobj->groupid) && in_array($eventobj->groupid, $groups)) ||
                             (!empty($eventobj->courseid) && in_array($eventobj->courseid, $courses)) ||
                             ($USER->id == $eventobj->userid) ||
-                            (calendar_edit_event_allowed($eventid))) {
+                            (\core_calendar\api::can_edit_event($eventid))) {
                     $events[$eventid] = $event;
                 } else {
                     $warnings[] = array('item' => $eventid, 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to view this event');
@@ -373,7 +373,7 @@ class core_calendar_external extends external_api {
             $eventobj = new \core_calendar\event($event);
 
             // Let's check if the user is allowed to delete an event.
-            if (!calendar_add_event_allowed($eventobj)) {
+            if (!\core_calendar\api::can_add_event($eventobj)) {
                 $warnings [] = array('item' => $event['name'], 'warningcode' => 'nopermissions', 'message' => 'you do not have permissions to create this event');
                 continue;
             }

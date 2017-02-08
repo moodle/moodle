@@ -33,9 +33,6 @@ require_once($CFG->dirroot . '/calendar/tests/calendartype_test_example.php');
 require_once($CFG->libdir . '/form/dateselector.php');
 require_once($CFG->libdir . '/form/datetimeselector.php');
 
-// Used to test the calendar/lib.php functions.
-require_once($CFG->dirroot . '/calendar/lib.php');
-
 // Used to test the user datetime profile field.
 require_once($CFG->dirroot . '/user/profile/lib.php');
 require_once($CFG->dirroot . '/user/profile/definelib.php');
@@ -108,8 +105,6 @@ class core_calendar_type_testcase extends advanced_testcase {
      * different calendar types.
      */
     public function test_calendar_type_dateselector_elements() {
-        global $CFG;
-
         // We want to reset the test data after this run.
         $this->resetAfterTest();
 
@@ -200,11 +195,11 @@ class core_calendar_type_testcase extends advanced_testcase {
             userdate($this->user->timecreated));
 
         // Test the calendar/lib.php functions.
-        $this->assertEquals($calendar->get_weekdays(), calendar_get_days());
-        $this->assertEquals($calendar->get_starting_weekday(), calendar_get_starting_weekday());
-        $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), calendar_days_in_month('9', '1986'));
-        $this->assertEquals($calendar->get_next_month('1986', '9'), calendar_add_month('9', '1986'));
-        $this->assertEquals($calendar->get_prev_month('1986', '9'), calendar_sub_month('9', '1986'));
+        $this->assertEquals($calendar->get_weekdays(), \core_calendar\api::get_days());
+        $this->assertEquals($calendar->get_starting_weekday(), \core_calendar\api::get_starting_weekday());
+        $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), \core_calendar\api::get_days_in_month('9', '1986'));
+        $this->assertEquals($calendar->get_next_month('1986', '9'), \core_calendar\api::get_next_month('9', '1986'));
+        $this->assertEquals($calendar->get_prev_month('1986', '9'), \core_calendar\api::get_prev_month('9', '1986'));
 
         // Test the lib/moodle.php functions.
         $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), days_in_month('9', '1986'));

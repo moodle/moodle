@@ -15,31 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Calendar lib unit tests
+ * Contains the class containing unit tests for the calendar API.
  *
  * @package    core_calendar
- * @copyright  2013 Dan Poltawski <dan@moodle.com>
+ * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot . '/calendar/lib.php');
 
 /**
- * Unit tests for calendar lib
+ * Class contaning unit tests for the calendar API.
  *
  * @package    core_calendar
- * @copyright  2013 Dan Poltawski <dan@moodle.com>
+ * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_calendar_lib_testcase extends advanced_testcase {
+class core_calendar_api_testcase extends advanced_testcase {
 
+    /**
+     * Tests set up
+     */
     protected function setUp() {
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
     }
 
-    public function test_calendar_get_course_cached() {
+    public function test_get_course_cached() {
         // Setup some test courses.
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -47,9 +48,9 @@ class core_calendar_lib_testcase extends advanced_testcase {
 
         // Load courses into cache.
         $coursecache = null;
-        calendar_get_course_cached($coursecache, $course1->id);
-        calendar_get_course_cached($coursecache, $course2->id);
-        calendar_get_course_cached($coursecache, $course3->id);
+        \core_calendar\api::get_course_cached($coursecache, $course1->id);
+        \core_calendar\api::get_course_cached($coursecache, $course2->id);
+        \core_calendar\api::get_course_cached($coursecache, $course3->id);
 
         // Verify the cache.
         $this->assertArrayHasKey($course1->id, $coursecache);
@@ -72,51 +73,9 @@ class core_calendar_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test calendar cron with a working subscription URL.
+     * Test that the get_events() function only returns activity events that are enabled.
      */
-    public function test_calendar_cron_working_url() {
-        global $CFG;
-        require_once($CFG->dirroot . '/lib/cronlib.php');
-
-        // ICal URL from external test repo.
-        $subscriptionurl = $this->getExternalTestFileUrl('/ical.ics');
-
-        $subscription = new stdClass();
-        $subscription->eventtype = 'site';
-        $subscription->name = 'test';
-        $subscription->url = $subscriptionurl;
-        $subscription->pollinterval = 86400;
-        $subscription->lastupdated = 0;
-        calendar_add_subscription($subscription);
-
-        $this->expectOutputRegex('/Events imported: .* Events updated:/');
-        calendar_cron();
-    }
-
-    /**
-     * Test calendar cron with a broken subscription URL.
-     */
-    public function test_calendar_cron_broken_url() {
-        global $CFG;
-        require_once($CFG->dirroot . '/lib/cronlib.php');
-
-        $subscription = new stdClass();
-        $subscription->eventtype = 'site';
-        $subscription->name = 'test';
-        $subscription->url = 'brokenurl';
-        $subscription->pollinterval = 86400;
-        $subscription->lastupdated = 0;
-        calendar_add_subscription($subscription);
-
-        $this->expectOutputRegex('/Error updating calendar subscription: The given iCal URL is invalid/');
-        calendar_cron();
-    }
-
-    /**
-     * Test the calendar_get_events() function only returns activity
-     * events that are enabled.
-     */
-    public function test_calendar_get_events_with_disabled_module() {
+    public function test_get_events_with_disabled_module() {
         global $DB;
 
         $generator = $this->getDataGenerator();
@@ -124,7 +83,6 @@ class core_calendar_lib_testcase extends advanced_testcase {
         $student = $generator->create_user();
         $generator->enrol_user($student->id, $course->id, 'student');
         $this->setUser($student);
-
         $events = [
             [
                 'name' => 'Start of assignment',
@@ -140,7 +98,6 @@ class core_calendar_lib_testcase extends advanced_testcase {
                 'timeduration' => 86400,
                 'visible' => 1
             ], [
-
                 'name' => 'Start of lesson',
                 'description' => '',
                 'format' => 1,
@@ -155,25 +112,20 @@ class core_calendar_lib_testcase extends advanced_testcase {
                 'visible' => 1
             ]
         ];
-
         foreach ($events as $event) {
             \core_calendar\event::create($event, false);
         }
-
         $timestart = time() - 60;
         $timeend = time() + 60;
-
         // Get all events.
-        $events = calendar_get_events($timestart, $timeend, true, 0, true);
+        $events = \core_calendar\api::get_events($timestart, $timeend, true, 0, true);
         $this->assertCount(2, $events);
-
         // Disable the lesson module.
         $modulerecord = $DB->get_record('modules', ['name' => 'lesson']);
         $modulerecord->visible = 0;
         $DB->update_record('modules', $modulerecord);
-
         // Check that we only return the assign event.
-        $events = calendar_get_events($timestart, $timeend, true, 0, true);
+        $events = \core_calendar\api::get_events($timestart, $timeend, true, 0, true);
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertEquals('assign', $event->modulename);
@@ -184,7 +136,6 @@ class core_calendar_lib_testcase extends advanced_testcase {
      */
     public function test_calendar_get_events_with_overrides() {
         global $DB;
-
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -192,31 +143,26 @@ class core_calendar_lib_testcase extends advanced_testcase {
             $params['course'] = $course->id;
         }
         $instance = $plugingenerator->create_instance($params);
-
         // Create users.
         $useroverridestudent = $generator->create_user();
         $group1student = $generator->create_user();
         $group2student = $generator->create_user();
         $group12student = $generator->create_user();
         $nogroupstudent = $generator->create_user();
-
         // Enrol users.
         $generator->enrol_user($useroverridestudent->id, $course->id, 'student');
         $generator->enrol_user($group1student->id, $course->id, 'student');
         $generator->enrol_user($group2student->id, $course->id, 'student');
         $generator->enrol_user($group12student->id, $course->id, 'student');
         $generator->enrol_user($nogroupstudent->id, $course->id, 'student');
-
         // Create groups.
         $group1 = $generator->create_group(['courseid' => $course->id]);
         $group2 = $generator->create_group(['courseid' => $course->id]);
-
         // Add members to groups.
         $generator->create_group_member(['groupid' => $group1->id, 'userid' => $group1student->id]);
         $generator->create_group_member(['groupid' => $group2->id, 'userid' => $group2student->id]);
         $generator->create_group_member(['groupid' => $group1->id, 'userid' => $group12student->id]);
         $generator->create_group_member(['groupid' => $group2->id, 'userid' => $group12student->id]);
-
         $now = time();
         // Events with the same module name, instance and event type.
         $events = [
@@ -277,48 +223,39 @@ class core_calendar_lib_testcase extends advanced_testcase {
                 'priority' => 2,
             ],
         ];
-
         foreach ($events as $event) {
-            calendar_event::create($event, false);
+            \core_calendar\event::create($event, false);
         }
-
         $timestart = $now - 100;
         $timeend = $now + (3 * 86400);
-
         $groups = [$group1->id, $group2->id];
-
         // Get user override events.
         $this->setUser($useroverridestudent);
-        $events = calendar_get_events($timestart, $timeend, $useroverridestudent->id, $groups, $course->id);
+        $events = \core_calendar\api::get_events($timestart, $timeend, $useroverridestudent->id, $groups, $course->id);
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertEquals('Assignment 1 due date - User override', $event->name);
-
         // Get event for user with override but with the timestart and timeend parameters only covering the original event.
-        $events = calendar_get_events($timestart, $now, $useroverridestudent->id, $groups, $course->id);
+        $events = \core_calendar\api::get_events($timestart, $now, $useroverridestudent->id, $groups, $course->id);
         $this->assertCount(0, $events);
-
         // Get events for user that does not belong to any group and has no user override events.
         $this->setUser($nogroupstudent);
-        $events = calendar_get_events($timestart, $timeend, $nogroupstudent->id, $groups, $course->id);
+        $events = \core_calendar\api::get_events($timestart, $timeend, $nogroupstudent->id, $groups, $course->id);
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertEquals('Assignment 1 due date', $event->name);
-
         // Get events for user that belongs to groups A and B and has no user override events.
         $this->setUser($group12student);
-        $events = calendar_get_events($timestart, $timeend, $group12student->id, $groups, $course->id);
+        $events = \core_calendar\api::get_events($timestart, $timeend, $group12student->id, $groups, $course->id);
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertEquals('Assignment 1 due date - Group B override', $event->name);
-
         // Get events for user that belongs to group A and has no user override events.
         $this->setUser($group1student);
-        $events = calendar_get_events($timestart, $timeend, $group1student->id, $groups, $course->id);
+        $events = \core_calendar\api::get_events($timestart, $timeend, $group1student->id, $groups, $course->id);
         $this->assertCount(1, $events);
         $event = reset($events);
         $this->assertEquals('Assignment 1 due date - Group A override', $event->name);
-
         // Add repeating events.
         $repeatingevents = [
             [
@@ -353,11 +290,100 @@ class core_calendar_lib_testcase extends advanced_testcase {
             ],
         ];
         foreach ($repeatingevents as $event) {
-            calendar_event::create($event, false);
+            \core_calendar\event::create($event, false);
         }
-
         // Make sure repeating events are not filtered out.
-        $events = calendar_get_events($timestart, $timeend, true, true, true);
+        $events = \core_calendar\api::get_events($timestart, $timeend, true, true, true);
         $this->assertCount(3, $events);
+    }
+
+    /**
+     * Test the update_subscription() function.
+     */
+    public function test_update_subscription() {
+        $this->resetAfterTest(true);
+
+        $subscription = new stdClass();
+        $subscription->eventtype = 'site';
+        $subscription->name = 'test';
+        $id = \core_calendar\api::add_subscription($subscription);
+
+        $subscription = \core_calendar\api::get_subscription($id);
+        $subscription->name = 'awesome';
+        \core_calendar\api::update_subscription($subscription);
+        $sub = \core_calendar\api::get_subscription($id);
+        $this->assertEquals($subscription->name, $sub->name);
+
+        $subscription = \core_calendar\api::get_subscription($id);
+        $subscription->name = 'awesome2';
+        $subscription->pollinterval = 604800;
+        \core_calendar\api::update_subscription($subscription);
+        $sub = \core_calendar\api::get_subscription($id);
+        $this->assertEquals($subscription->name, $sub->name);
+        $this->assertEquals($subscription->pollinterval, $sub->pollinterval);
+
+        $subscription = new stdClass();
+        $subscription->name = 'awesome4';
+        $this->expectException('coding_exception');
+        \core_calendar\api::update_subscription($subscription);
+    }
+
+    public function test_add_subscription() {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/lib/bennu/bennu.inc.php');
+
+        $this->resetAfterTest(true);
+
+        // Test for Microsoft Outlook 2010.
+        $subscription = new stdClass();
+        $subscription->name = 'Microsoft Outlook 2010';
+        $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
+        $subscription->eventtype = 'site';
+        $id = \core_calendar\api::add_subscription($subscription);
+
+        $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/ms_outlook_2010.ics');
+        $ical = new iCalendar();
+        $ical->unserialize($calendar);
+        $this->assertEquals($ical->parser_errors, array());
+
+        $sub = \core_calendar\api::get_subscription($id);
+        \core_calendar\api::import_icalendar_events($ical, $sub->courseid, $sub->id);
+        $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
+        $this->assertEquals($count, 1);
+
+        // Test for OSX Yosemite.
+        $subscription = new stdClass();
+        $subscription->name = 'OSX Yosemite';
+        $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
+        $subscription->eventtype = 'site';
+        $id = \core_calendar\api::add_subscription($subscription);
+
+        $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/osx_yosemite.ics');
+        $ical = new iCalendar();
+        $ical->unserialize($calendar);
+        $this->assertEquals($ical->parser_errors, array());
+
+        $sub = \core_calendar\api::get_subscription($id);
+        \core_calendar\api::import_icalendar_events($ical, $sub->courseid, $sub->id);
+        $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
+        $this->assertEquals($count, 1);
+
+        // Test for Google Gmail.
+        $subscription = new stdClass();
+        $subscription->name = 'Google Gmail';
+        $subscription->importfrom = CALENDAR_IMPORT_FROM_FILE;
+        $subscription->eventtype = 'site';
+        $id = \core_calendar\api::add_subscription($subscription);
+
+        $calendar = file_get_contents($CFG->dirroot . '/lib/tests/fixtures/google_gmail.ics');
+        $ical = new iCalendar();
+        $ical->unserialize($calendar);
+        $this->assertEquals($ical->parser_errors, array());
+
+        $sub = \core_calendar\api::get_subscription($id);
+        \core_calendar\api::import_icalendar_events($ical, $sub->courseid, $sub->id);
+        $count = $DB->count_records('event', array('subscriptionid' => $sub->id));
+        $this->assertEquals($count, 1);
     }
 }

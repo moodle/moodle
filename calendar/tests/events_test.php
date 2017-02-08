@@ -438,7 +438,7 @@ class core_calendar_events_testcase extends advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        $id = calendar_add_subscription($subscription);
+        $id = \core_calendar\api::add_subscription($subscription);
 
         $events = $sink->get_events();
         $event = reset($events);
@@ -465,13 +465,13 @@ class core_calendar_events_testcase extends advanced_testcase {
         $subscription->eventtype = 'site';
         $subscription->name = 'test';
         $subscription->courseid = $this->course->id;
-        $subscription->id = calendar_add_subscription($subscription);
+        $subscription->id = \core_calendar\api::add_subscription($subscription);
         // Now edit it.
         $subscription->name = 'awesome';
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        calendar_update_subscription($subscription);
+        \core_calendar\api::update_subscription($subscription);
         $events = $sink->get_events();
         $event = reset($events);
         // Check that the event data is valid.
@@ -497,11 +497,11 @@ class core_calendar_events_testcase extends advanced_testcase {
         $subscription->eventtype = 'site';
         $subscription->name = 'test';
         $subscription->courseid = $this->course->id;
-        $subscription->id = calendar_add_subscription($subscription);
+        $subscription->id = \core_calendar\api::add_subscription($subscription);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        calendar_delete_subscription($subscription);
+        \core_calendar\api::delete_subscription($subscription);
         $events = $sink->get_events();
         $event = reset($events);
         // Check that the event data is valid.

@@ -49,10 +49,10 @@ if ($courseid != SITEID && !empty($courseid)) {
     $courses = array($course->id => $course);
 } else {
     $course = get_site();
-    $courses = calendar_get_default_courses();
+    $courses = \core_calendar\api::get_default_courses();
 }
 require_course_login($course);
-if (!calendar_user_can_add_event($course)) {
+if (!\core_calendar\api::can_add_event_to_course($course)) {
     print_error('errorcannotimport', 'calendar');
 }
 
@@ -66,20 +66,20 @@ $importresults = '';
 $formdata = $form->get_data();
 if (!empty($formdata)) {
     require_sesskey(); // Must have sesskey for all actions.
-    $subscriptionid = calendar_add_subscription($formdata);
+    $subscriptionid = \core_calendar\api::add_subscription($formdata);
     if ($formdata->importfrom == CALENDAR_IMPORT_FROM_FILE) {
         // Blank the URL if it's a file import.
         $formdata->url = '';
         $calendar = $form->get_file_content('importfile');
         $ical = new iCalendar();
         $ical->unserialize($calendar);
-        $importresults = calendar_import_icalendar_events($ical, $courseid, $subscriptionid);
+        $importresults = \core_calendar\api::import_icalendar_events($ical, $courseid, $subscriptionid);
     } else {
         try {
-            $importresults = calendar_update_subscription_events($subscriptionid);
+            $importresults = \core_calendar\api::update_subscription_events($subscriptionid);
         } catch (moodle_exception $e) {
             // Delete newly added subscription and show invalid url error.
-            calendar_delete_subscription($subscriptionid);
+            \core_calendar\api::delete_subscription($subscriptionid);
             print_error($e->errorcode, $e->module, $PAGE->url);
         }
     }
@@ -88,9 +88,9 @@ if (!empty($formdata)) {
 } else if (!empty($subscriptionid)) {
     // The user is wanting to perform an action upon an existing subscription.
     require_sesskey(); // Must have sesskey for all actions.
-    if (calendar_can_edit_subscription($subscriptionid)) {
+    if (\core_calendar\api::can_edit_subscription($subscriptionid)) {
         try {
-            $importresults = calendar_process_subscription_row($subscriptionid, $pollinterval, $action);
+            $importresults = \core_calendar\api::process_subscription_row($subscriptionid, $pollinterval, $action);
         } catch (moodle_exception $e) {
             // If exception caught, then user should be redirected to page where he/she came from.
             print_error($e->errorcode, $e->module, $PAGE->url);
@@ -117,7 +117,7 @@ echo $OUTPUT->header();
 
 // Filter subscriptions which user can't edit.
 foreach($subscriptions as $subscription) {
-    if (!calendar_can_edit_subscription($subscription)) {
+    if (!\core_calendar\api::can_edit_subscription($subscription)) {
         unset($subscriptions[$subscription->id]);
     }
 }

@@ -60,7 +60,8 @@ if (!empty($generateurl)) {
 if(!empty($what) && !empty($time)) {
     if(in_array($what, $allowed_what) && in_array($time, $allowed_time)) {
         $courses = enrol_get_users_courses($user->id, true, 'id, visible, shortname');
-        // Array of courses that we will pass to calendar_get_events() which is initially set to the list of the user's courses.
+        // Array of courses that we will pass to \core_calendar\api::get_events() which
+        // is initially set to the list of the user's courses.
         $paramcourses = $courses;
         if ($what == 'all' || $what == 'groups') {
             $groups = array();
@@ -94,12 +95,12 @@ if(!empty($what) && !empty($time)) {
 
         switch($time) {
             case 'weeknow':
-                $startweekday = calendar_get_starting_weekday();
+                $startweekday = \core_calendar\api::get_starting_weekday();
                 $startmonthday = find_day_in_month($now['mday'] - ($numberofdaysinweek - 1), $startweekday, $now['mon'], $now['year']);
                 $startmonth = $now['mon'];
                 $startyear = $now['year'];
-                if($startmonthday > calendar_days_in_month($startmonth, $startyear)) {
-                    list($startmonth, $startyear) = calendar_add_month($startmonth, $startyear);
+                if ($startmonthday > \core_calendar\api::get_days_in_month($startmonth, $startyear)) {
+                    list($startmonth, $startyear) = \core_calendar\api::get_next_month($startmonth, $startyear);
                     $startmonthday = find_day_in_month(1, $startweekday, $startmonth, $startyear);
                 }
                 $gregoriandate = $calendartype->convert_to_gregorian($startyear, $startmonth, $startmonthday);
@@ -109,8 +110,8 @@ if(!empty($what) && !empty($time)) {
                 $endmonthday = $startmonthday + $numberofdaysinweek;
                 $endmonth = $startmonth;
                 $endyear = $startyear;
-                if($endmonthday > calendar_days_in_month($endmonth, $endyear)) {
-                    list($endmonth, $endyear) = calendar_add_month($endmonth, $endyear);
+                if ($endmonthday > \core_calendar\api::get_days_in_month($endmonth, $endyear)) {
+                    list($endmonth, $endyear) = \core_calendar\api::get_next_month($endmonth, $endyear);
                     $endmonthday = find_day_in_month(1, $startweekday, $endmonth, $endyear);
                 }
                 $gregoriandate = $calendartype->convert_to_gregorian($endyear, $endmonth, $endmonthday);
@@ -118,12 +119,12 @@ if(!empty($what) && !empty($time)) {
                     $gregoriandate['hour'], $gregoriandate['minute']);
             break;
             case 'weeknext':
-                $startweekday = calendar_get_starting_weekday();
+                $startweekday = \core_calendar\api::get_starting_weekday();
                 $startmonthday = find_day_in_month($now['mday'] + 1, $startweekday, $now['mon'], $now['year']);
                 $startmonth = $now['mon'];
                 $startyear = $now['year'];
-                if($startmonthday > calendar_days_in_month($startmonth, $startyear)) {
-                    list($startmonth, $startyear) = calendar_add_month($startmonth, $startyear);
+                if ($startmonthday > \core_calendar\api::get_days_in_month($startmonth, $startyear)) {
+                    list($startmonth, $startyear) = \core_calendar\api::get_next_month($startmonth, $startyear);
                     $startmonthday = find_day_in_month(1, $startweekday, $startmonth, $startyear);
                 }
                 $gregoriandate = $calendartype->convert_to_gregorian($startyear, $startmonth, $startmonthday);
@@ -133,8 +134,8 @@ if(!empty($what) && !empty($time)) {
                 $endmonthday = $startmonthday + $numberofdaysinweek;
                 $endmonth = $startmonth;
                 $endyear = $startyear;
-                if($endmonthday > calendar_days_in_month($endmonth, $endyear)) {
-                    list($endmonth, $endyear) = calendar_add_month($endmonth, $endyear);
+                if ($endmonthday > \core_calendar\api::get_days_in_month($endmonth, $endyear)) {
+                    list($endmonth, $endyear) = \core_calendar\api::get_next_month($endmonth, $endyear);
                     $endmonthday = find_day_in_month(1, $startweekday, $endmonth, $endyear);
                 }
                 $gregoriandate = $calendartype->convert_to_gregorian($endyear, $endmonth, $endmonthday);
@@ -147,11 +148,11 @@ if(!empty($what) && !empty($time)) {
 
                 $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
                     $gregoriandate['hour'], $gregoriandate['minute']);
-                $timeend = $timestart + (calendar_days_in_month($now['mon'], $now['year']) * DAYSECS);
+                $timeend = $timestart + (\core_calendar\api::get_days_in_month($now['mon'], $now['year']) * DAYSECS);
             break;
             case 'monthnext':
                 // Get the next month for this calendar.
-                list($nextmonth, $nextyear) = calendar_add_month($now['mon'], $now['year']);
+                list($nextmonth, $nextyear) = \core_calendar\api::get_next_month($now['mon'], $now['year']);
 
                 // Convert to gregorian.
                 $gregoriandate = $calendartype->convert_to_gregorian($nextyear, $nextmonth, 1);
@@ -159,7 +160,7 @@ if(!empty($what) && !empty($time)) {
                 // Create the timestamps.
                 $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
                     $gregoriandate['hour'], $gregoriandate['minute']);
-                $timeend = $timestart + (calendar_days_in_month($nextmonth, $nextyear) * DAYSECS);
+                $timeend = $timestart + (\core_calendar\api::get_days_in_month($nextmonth, $nextyear) * DAYSECS);
             break;
             case 'recentupcoming':
                 //Events in the last 5 or next 60 days
@@ -179,7 +180,7 @@ if(!empty($what) && !empty($time)) {
         die();
     }
 }
-$events = calendar_get_events($timestart, $timeend, $users, $groups, array_keys($paramcourses), false);
+$events = \core_calendar\api::get_events($timestart, $timeend, $users, $groups, array_keys($paramcourses), false);
 
 $ical = new iCalendar;
 $ical->add_property('method', 'PUBLISH');

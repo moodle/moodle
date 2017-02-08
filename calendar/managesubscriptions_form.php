@@ -63,7 +63,7 @@ class calendar_addsubscription_form extends moodleform {
         $mform->setForceLtr('url');
 
         // Poll interval
-        $choices = calendar_get_pollinterval_choices();
+        $choices = \core_calendar\api::get_poll_interval_choices();
         $mform->addElement('select', 'pollinterval', get_string('pollinterval', 'calendar'), $choices);
         $mform->setDefault('pollinterval', 604800);
         $mform->addHelpButton('pollinterval', 'pollinterval', 'calendar');
@@ -78,7 +78,7 @@ class calendar_addsubscription_form extends moodleform {
         $mform->disabledIf('importfile', 'importfrom', 'eq', CALENDAR_IMPORT_FROM_URL);
 
         // Eventtype: 0 = user, 1 = global, anything else = course ID.
-        list($choices, $groups) = calendar_get_eventtype_choices($courseid);
+        list($choices, $groups) = \core_calendar\api::get_event_type_choices($courseid);
         $mform->addElement('select', 'eventtype', get_string('eventkind', 'calendar'), $choices);
         $mform->addRule('eventtype', get_string('required'), 'required');
         $mform->setType('eventtype', PARAM_ALPHA);
