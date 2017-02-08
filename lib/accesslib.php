@@ -3649,9 +3649,13 @@ function get_users_by_capability(context $context, $capability, $fields = '', $s
                 } else {
                     $unions[] = "SELECT userid
                                    FROM {role_assignments}
-                                  WHERE contextid IN ($ctxids)
-                                        AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
-                                        AND roleid NOT IN (".implode(',', array_keys($prohibited[$cap])) .")";
+                                  WHERE contextid IN ($ctxids) AND roleid IN (".implode(',', array_keys($needed[$cap])) .")
+                                        AND userid NOT IN (
+                                            SELECT userid
+                                              FROM {role_assignments}
+                                             WHERE contextid IN ($ctxids)
+                                                    AND roleid IN (" . implode(',', array_keys($prohibited[$cap])) . ")
+                                                        )";
                 }
             }
         }

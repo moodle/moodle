@@ -1311,6 +1311,8 @@ class question_attempt {
         if ($finished) {
             $this->finish();
         }
+
+        $this->set_flagged($oldqa->is_flagged());
     }
 
     /**

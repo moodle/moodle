@@ -931,11 +931,11 @@ class core_message_externallib_testcase extends externallib_advanced_testcase {
         $prefs = core_message_external::get_user_notification_preferences();
         $prefs = external_api::clean_returnvalue(core_message_external::get_user_notification_preferences_returns(), $prefs);
         // Check processors.
-        $this->assertCount(2, $prefs['preferences']['processors']);
+        $this->assertGreaterThanOrEqual(2, count($prefs['preferences']['processors']));
         $this->assertEquals($user->id, $prefs['preferences']['userid']);
 
         // Check components.
-        $this->assertCount(8, $prefs['preferences']['components']);
+        $this->assertGreaterThanOrEqual(8, count($prefs['preferences']['components']));
 
         // Check some preferences that we previously set.
         $found = 0;

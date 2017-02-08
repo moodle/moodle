@@ -54,6 +54,7 @@ list($options, $unrecognised) = cli_get_params(
         'fromrun'  => 1,
         'torun'    => 0,
         'single-run' => false,
+        'rerun' => 0,
     ),
     array(
         'h' => 'help',
@@ -77,6 +78,7 @@ Options:
 --replace          Replace args string with run process number, useful for output.
 --fromrun          Execute run starting from (Used for parallel runs on different vms)
 --torun            Execute run till (Used for parallel runs on different vms)
+--rerun            Re-run scenarios that failed during last execution.
 
 -h, --help         Print out this help
 
@@ -91,11 +93,31 @@ if (!empty($options['help'])) {
     exit(0);
 }
 
-$parallelrun = behat_config_manager::get_parallel_test_runs($options['fromrun']);
+$parallelrun = behat_config_manager::get_behat_run_config_value('parallel');
 
-// Default torun is maximum parallel runs.
-if (empty($options['torun'])) {
-    $options['torun'] = $parallelrun;
+// Check if the options provided are valid to run behat.
+if ($parallelrun === false) {
+    // Parallel run should not have fromrun or torun options greater than 1.
+    if (($options['fromrun'] > 1) || ($options['torun'] > 1)) {
+        echo "Test site is not initialized  for parallel run." . PHP_EOL;
+        exit(1);
+    }
+} else {
+    // Ensure fromrun is within limits of initialized test site.
+    if (!empty($options['fromrun']) && ($options['fromrun'] > $parallelrun)) {
+        echo "From run (" . $options['fromrun'] . ") is more than site with parallel runs (" . $parallelrun . ")" . PHP_EOL;
+        exit(1);
+    }
+
+    // Default torun is maximum parallel runs and should be less than equal to parallelruns.
+    if (empty($options['torun'])) {
+        $options['torun'] = $parallelrun;
+    } else {
+        if ($options['torun'] > $parallelrun) {
+            echo "To run (" . $options['torun'] . ") is more than site with parallel runs (" . $parallelrun . ")" . PHP_EOL;
+            exit(1);
+        }
+    }
 }
 
 // Capture signals and ensure we clean symlinks.
@@ -127,7 +149,7 @@ if ($options['profile']) {
         exit(1);
     }
 
-    $extraopts[] = '--profile="' . $profile . '"';
+    $extraopts['profile'] = '--profile="' . $profile . '"';
     // By default, profile tags will be used.
     if (!empty($CFG->behat_config[$profile]['filters']['tags'])) {
         $tags = $CFG->behat_config[$profile]['filters']['tags'];
@@ -137,116 +159,158 @@ if ($options['profile']) {
 // Command line tags have precedence (std behat behavior).
 if ($options['tags']) {
     $tags = $options['tags'];
-    $extraopts[] = '--tags="' . $tags . '"';
+    $extraopts['tags'] = '--tags="' . $tags . '"';
 }
 
 // Add suite option if specified.
 if ($options['suite']) {
-    $extraopts[] = '--suite="' . $options['suite'] . '"';
+    $extraopts['suite'] = '--suite="' . $options['suite'] . '"';
 }
 
 // Feature should be added to last, for behat command.
 if ($options['feature']) {
-    $extraopts[] = $options['feature'];
+    $extraopts['feature'] = $options['feature'];
     // Only run 1 process as process.
     // Feature file is picked from absolute path provided, so no need to check for behat.yml.
     $options['torun'] = $options['fromrun'];
 }
 
 // Set of options to pass to behat.
-$extraopts = implode(' ', $extraopts);
+$extraoptstr = implode(' ', $extraopts);
 
-// If empty parallelrun then just check with user if it's a run single behat test.
+// If rerun is passed then ensure we just run the failed processes.
+$lastfailedstatus = 0;
+$lasttorun = $options['torun'];
+$lastfromrun = $options['fromrun'];
+if ($options['rerun']) {
+    // Get last combined failed status.
+    $lastfailedstatus = behat_config_manager::get_behat_run_config_value('lastcombinedfailedstatus');
+    $lasttorun = behat_config_manager::get_behat_run_config_value('lasttorun');
+    $lastfromrun = behat_config_manager::get_behat_run_config_value('lastfromrun');
+
+    if ($lastfailedstatus !== false) {
+        $extraoptstr .= ' --rerun';
+    }
+
+    // If torun is less than last torun, then just set this to min last to run and similar for fromrun.
+    if ($options['torun'] < $lasttorun) {
+        $options['torun'];
+    }
+    if ($options['fromrun'] > $lastfromrun) {
+        $options['fromrun'];
+    }
+    unset($options['rerun']);
+}
+
+$cmds = array();
+$exitcodes = array();
+$status = 0;
+$verbose = empty($options['verbose']) ? false : true;
+
+// Execute behat run commands.
 if (empty($parallelrun)) {
     $cwd = getcwd();
     chdir(__DIR__);
     $runtestscommand = behat_command::get_behat_command(false, false, true);
     $runtestscommand .= ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
-    $runtestscommand .= ' ' . $extraopts;
+    $runtestscommand .= ' ' . $extraoptstr;
     echo "Running single behat site:" . PHP_EOL;
-    passthru("php $runtestscommand", $code);
+    passthru("php $runtestscommand", $status);
     chdir($cwd);
-    exit($code);
-}
+} else {
 
-$cmds = array();
-echo "Running " . ($options['torun'] - $options['fromrun'] + 1) . " parallel behat sites:" . PHP_EOL;
+    echo "Running " . ($options['torun'] - $options['fromrun'] + 1) . " parallel behat sites:" . PHP_EOL;
 
-for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
-    $CFG->behatrunprocess = $i;
+    for ($i = $options['fromrun']; $i <= $options['torun']; $i++) {
+        $lastfailed = 1 & $lastfailedstatus >> ($i - 1);
 
-    // Options parameters to be added to each run.
-    $myopts = !empty($options['replace']) ? str_replace($options['replace'], $i, $extraopts) : $extraopts;
+        // Bypass if not failed in last run.
+        if ($lastfailedstatus && !$lastfailed && ($i <= $lasttorun) && ($i >= $lastfromrun)) {
+            continue;
+        }
 
-    $behatcommand = behat_command::get_behat_command(false, false, true);
-    $behatconfigpath = behat_config_manager::get_behat_cli_config_filepath($i);
+        $CFG->behatrunprocess = $i;
 
-    // Command to execute behat run.
-    $cmds[BEHAT_PARALLEL_SITE_NAME . $i] = $behatcommand . ' --config ' . $behatconfigpath . " " . $myopts;
-    echo "[" . BEHAT_PARALLEL_SITE_NAME . $i . "] " . $cmds[BEHAT_PARALLEL_SITE_NAME . $i] . PHP_EOL;
-}
+        // Options parameters to be added to each run.
+        $myopts = !empty($options['replace']) ? str_replace($options['replace'], $i, $extraoptstr) : $extraoptstr;
 
-if (empty($cmds)) {
-    echo "No commands to execute " . PHP_EOL;
-    exit(1);
-}
+        $behatcommand = behat_command::get_behat_command(false, false, true);
+        $behatconfigpath = behat_config_manager::get_behat_cli_config_filepath($i);
 
-// Create site symlink if necessary.
-if (!behat_config_manager::create_parallel_site_links($options['fromrun'], $options['torun'])) {
-    echo "Check permissions. If on windows, make sure you are running this command as admin" . PHP_EOL;
-    exit(1);
-}
-
-// Execute all commands, relative to moodle root directory.
-$processes = cli_execute_parallel($cmds, __DIR__ . "/../../../../");
-$stoponfail = empty($options['stop-on-failure']) ? false : true;
-
-// Print header.
-print_process_start_info($processes);
-
-// Print combined run o/p from processes.
-$exitcodes = print_combined_run_output($processes, $stoponfail);
-$time = round(microtime(true) - $time, 1);
-echo "Finished in " . gmdate("G\h i\m s\s", $time) . PHP_EOL . PHP_EOL;
-
-ksort($exitcodes);
-
-// Print exit info from each run.
-// Status bits contains pass/fail status of parallel runs.
-$status = 0;
-$processcounter = 0;
-foreach ($exitcodes as $exitcode) {
-    if ($exitcode) {
-        $status |= (1 << $processcounter);
+        // Command to execute behat run.
+        $cmds[BEHAT_PARALLEL_SITE_NAME . $i] = $behatcommand . ' --config ' . $behatconfigpath . " " . $myopts;
+        echo "[" . BEHAT_PARALLEL_SITE_NAME . $i . "] " . $cmds[BEHAT_PARALLEL_SITE_NAME . $i] . PHP_EOL;
     }
-    $processcounter++;
+
+    if (empty($cmds)) {
+        echo "No commands to execute " . PHP_EOL;
+        exit(1);
+    }
+
+    // Create site symlink if necessary.
+    if (!behat_config_manager::create_parallel_site_links($options['fromrun'], $options['torun'])) {
+        echo "Check permissions. If on windows, make sure you are running this command as admin" . PHP_EOL;
+        exit(1);
+    }
+
+    // Save torun and from run, so it can be used to detect if it was executed in last run.
+    behat_config_manager::set_behat_run_config_value('lasttorun', $options['torun']);
+    behat_config_manager::set_behat_run_config_value('lastfromrun', $options['fromrun']);
+
+    // Execute all commands, relative to moodle root directory.
+    $processes = cli_execute_parallel($cmds, __DIR__ . "/../../../../");
+    $stoponfail = empty($options['stop-on-failure']) ? false : true;
+
+    // Print header.
+    print_process_start_info($processes);
+
+    // Print combined run o/p from processes.
+    $exitcodes = print_combined_run_output($processes, $stoponfail);
+    // Time to finish run.
+    $time = round(microtime(true) - $time, 1);
+    echo "Finished in " . gmdate("G\h i\m s\s", $time) . PHP_EOL . PHP_EOL;
+    ksort($exitcodes);
+
+    // Print exit info from each run.
+    // Status bits contains pass/fail status of parallel runs.
+    foreach ($exitcodes as $name => $exitcode) {
+        if ($exitcode) {
+            $runno = str_replace(BEHAT_PARALLEL_SITE_NAME, '', $name);
+            $status |= (1 << ($runno - 1));
+        }
+    }
+
+    // Print each process information.
+    print_each_process_info($processes, $verbose, $status);
 }
 
-// Run finished. Show exit code and output from individual process.
-$verbose = empty($options['verbose']) ? false : true;
-$verbose = $verbose || !empty($status);
-
-// Show exit code from each process, if any process failed.
-if ($verbose) {
-    // Echo exit codes.
-    echo "Exit codes for each behat run: " . PHP_EOL;
-    foreach ($exitcodes as $run => $exitcode) {
-        echo $run . ": " . $exitcode . PHP_EOL;
-    }
+// Show exit code from each process, if any process failed and how to rerun failed process.
+if ($verbose || $status) {
+    // Save final exit code containing which run failed.
+    behat_config_manager::set_behat_run_config_value('lastcombinedfailedstatus', $status);
 
     // Show failed re-run commands.
     if ($status) {
-        echo "To re-run failed processes, you can use following commands:" . PHP_EOL;
-        foreach ($cmds as $name => $cmd) {
-            if (!empty($exitcodes[$name])) {
-                echo "[" . $name . "] " . $cmd . PHP_EOL;
+        if (!empty($cmds)) {
+            // Echo exit codes.
+            echo "Exit codes for each behat run: " . PHP_EOL;
+            foreach ($exitcodes as $run => $exitcode) {
+                echo $run . ": " . $exitcode . PHP_EOL;
             }
         }
+
+        echo "To re-run failed processes, you can use following command:" . PHP_EOL;
+        unset($extraopts['fromrun']);
+        unset($extraopts['torun']);
+        $extraopts['rerun'] = '--rerun';
+        if (!empty($options['replace'])) {
+            $extraopts['replace'] =  '--replace="' . $options['replace'] . '"';
+        }
+        $extraoptstr = implode(' ', $extraopts);
+        echo behat_command::get_behat_command(true, true, true) . " " . $extraoptstr . PHP_EOL;
     }
     echo PHP_EOL;
 }
-
-print_each_process_info($processes, $verbose);
 
 // Remove site symlink if necessary.
 behat_config_manager::drop_parallel_site_links();
@@ -364,23 +428,47 @@ function print_combined_run_output($processes, $stoponfail = false) {
  * @param array $processes list of processes to loop though.
  * @param bool $verbose Show verbose output for each process.
  */
-function print_each_process_info($processes, $verbose = false) {
+function print_each_process_info($processes, $verbose = false, $status = 0) {
     foreach ($processes as $name => $process) {
         echo "**************** [" . $name . "] ****************" . PHP_EOL;
         if ($verbose) {
             echo $process->getOutput();
             echo $process->getErrorOutput();
-        } else {
-            $op = explode(PHP_EOL, $process->getOutput());
-            foreach ($op as $line) {
-                // Don't print progress .
-                if (trim($line) && (strpos($line, '.') !== 0) && (strpos($line, 'Moodle ') !== 0) &&
-                    (strpos($line, 'Server OS ') !== 0) && (strpos($line, 'Started at ') !== 0) &&
-                    (strpos($line, 'Browser specific fixes ') !== 0)) {
-                    echo $line . PHP_EOL;
-                }
+
+        } else if ($status) {
+            // Only show failed o/p.
+            $runno = str_replace(BEHAT_PARALLEL_SITE_NAME, '', $name);
+            if ((1 << ($runno - 1)) & $status) {
+                echo $process->getOutput();
+                echo $process->getErrorOutput();
+            } else {
+                echo get_status_lines_from_run_op($process);
             }
+
+        } else {
+            echo get_status_lines_from_run_op($process);
         }
         echo PHP_EOL;
     }
 }
+
+/**
+ * Extract status information from behat o/p and return.
+ * @param Symfony\Component\Process\Process $process
+ * @return string
+ */
+function get_status_lines_from_run_op(Symfony\Component\Process\Process $process) {
+    $statusstr = '';
+    $op = explode(PHP_EOL, $process->getOutput());
+    foreach ($op as $line) {
+        // Don't print progress .
+        if (trim($line) && (strpos($line, '.') !== 0) && (strpos($line, 'Moodle ') !== 0) &&
+            (strpos($line, 'Server OS ') !== 0) && (strpos($line, 'Started at ') !== 0) &&
+            (strpos($line, 'Browser specific fixes ') !== 0)) {
+            $statusstr .= $line . PHP_EOL;
+        }
+    }
+
+    return $statusstr;
+}
+

@@ -36,11 +36,7 @@ define('NO_OUTPUT_BUFFERING', true);
 define('IGNORE_COMPONENT_CACHE', true);
 define('ABORT_AFTER_CONFIG', true);
 
-require_once(__DIR__ . '/../../../../config.php');
 require_once(__DIR__ . '/../../../../lib/clilib.php');
-require_once(__DIR__ . '/../../../../lib/behat/lib.php');
-require_once(__DIR__ . '/../../../../lib/behat/classes/behat_command.php');
-require_once(__DIR__ . '/../../../../lib/behat/classes/behat_config_manager.php');
 
 // CLI options.
 list($options, $unrecognized) = cli_get_params(
@@ -103,14 +99,26 @@ if (!empty($options['help'])) {
 
 $cwd = getcwd();
 
+// If Behat parallel site is being initiliased, then define a param to be used to ignore single run install.
+if (!empty($options['parallel'])) {
+    define('BEHAT_PARALLEL_UTIL', true);
+}
+
+require_once(__DIR__ . '/../../../../config.php');
+require_once(__DIR__ . '/../../../../lib/behat/lib.php');
+require_once(__DIR__ . '/../../../../lib/behat/classes/behat_command.php');
+require_once(__DIR__ . '/../../../../lib/behat/classes/behat_config_manager.php');
+
 // For drop option check if parallel site.
 if ((empty($options['parallel'])) && ($options['drop']) || $options['updatesteps']) {
-    // Get parallel run info from first run.
-    $options['parallel'] = behat_config_manager::get_parallel_test_runs($options['fromrun']);
+    $options['parallel'] = behat_config_manager::get_behat_run_config_value('parallel');
 }
 
 // If not a parallel site then open single run.
 if (empty($options['parallel'])) {
+    // Set run config value for single run.
+    behat_config_manager::set_behat_run_config_value('singlerun', 1);
+
     chdir(__DIR__);
     // Check if behat is initialised, if not exit.
     passthru("php util_single_run.php --diag", $status);
@@ -145,6 +153,21 @@ if ($options['diag'] || $options['enable'] || $options['disable']) {
     $exitcodes = print_combined_drop_output($processes);
     foreach ($exitcodes as $exitcode) {
         $status = (bool)$status || (bool)$exitcode;
+    }
+
+    // Remove run config file.
+    $behatrunconfigfile = behat_config_manager::get_behat_run_config_file_path();
+    if (file_exists($behatrunconfigfile)) {
+        if (!unlink($behatrunconfigfile)) {
+            behat_error(BEHAT_EXITCODE_PERMISSIONS, 'Can not delete behat run config file');
+        }
+    }
+
+    // Remove test file path.
+    if (file_exists(behat_util::get_test_file_path())) {
+        if (!unlink(behat_util::get_test_file_path())) {
+            behat_error(BEHAT_EXITCODE_PERMISSIONS, 'Can not delete test file enable info');
+        }
     }
 
 } else if ($options['install']) {
@@ -233,6 +256,19 @@ if ($options['install']) {
 } else if ($options['enable']) {
     echo "Acceptance tests environment enabled on $CFG->behat_wwwroot, to run the tests use:" . PHP_EOL;
     echo behat_command::get_behat_command(true, true);
+
+    // Save fromrun and to run information.
+    if (isset($options['fromrun'])) {
+        behat_config_manager::set_behat_run_config_value('fromrun', $options['fromrun']);
+    }
+
+    if (isset($options['torun'])) {
+        behat_config_manager::set_behat_run_config_value('torun', $options['torun']);
+    }
+    if (isset($options['parallel'])) {
+        behat_config_manager::set_behat_run_config_value('parallel', $options['parallel']);
+    }
+
     echo PHP_EOL;
 
 } else if ($options['disable']) {

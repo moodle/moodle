@@ -99,7 +99,9 @@ if ($action) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('toolsprovided', 'enrol_lti'));
-echo "<p>" . get_string('toolsprovided_help', 'enrol_lti') . "</p>";
+echo "<p>" .get_string('toolsprovided_help', 'enrol_lti') . "</p>";
+echo "<p class=helplink>" . $OUTPUT->doc_link('enrol/lti/index',
+    get_string('morehelp')) ."</p>";
 
 if (\enrol_lti\helper::count_lti_tools(array('courseid' => $courseid)) > 0) {
     $table = new \enrol_lti\manage_table($courseid);

@@ -33,4 +33,10 @@
         "channellink": "https://www.example.com/feeds/rss"
     }
 }}
-<a href="{{{channellink}}}">{{#str}} clientchannellink, block_rss_client {{/str}}</a>
+{{#channellink}}
+    <a href="{{{channellink}}}">{{#str}} clientchannellink, block_rss_client {{/str}}</a>
+    {{#hasfailedfeeds}}<br>{{/hasfailedfeeds}}
+{{/channellink}}
+{{#hasfailedfeeds}}
+    <a href="{{{manageurl}}}">{{#str}} failedfeeds, block_rss_client {{/str}}</a>
+{{/hasfailedfeeds}}
