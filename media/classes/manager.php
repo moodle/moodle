@@ -97,16 +97,44 @@ class core_media_manager {
     /** @var core_media_manager caches a singleton instance */
     static protected $instance;
 
+    /** @var moodle_page page this instance was initialised for */
+    protected $page;
+
     /**
      * Returns a singleton instance of a manager
      *
+     * Note as of Moodle 3.2.2, this will call setup for you.
+     *
      * @return core_media_manager
      */
-    public static function instance() {
-        if (self::$instance === null) {
-            self::$instance = new self();
+    public static function instance($page = null) {
+        // Use the passed $page if given, otherwise the $PAGE global.
+        if (!$page) {
+            global $PAGE;
+            $page = $PAGE;
+        }
+        if (self::$instance === null || ($page && self::$instance->page !== $page)) {
+            self::$instance = new self($page);
         }
         return self::$instance;
+    }
+
+    /**
+     * Construct a new core_media_manager instance
+     *
+     * @param moodle_page $page The page we are going to add requirements to.
+     * @see core_media_manager::instance()
+     */
+    protected function __construct($page) {
+        if ($page) {
+            $this->page = $page;
+            $players = $this->get_players();
+            foreach ($players as $player) {
+                $player->setup($page);
+            }
+        } else {
+            debugging('Could not determine the $PAGE. Media plugins will not be set up', DEBUG_DEVELOPER);
+        }
     }
 
     /**
@@ -114,13 +142,12 @@ class core_media_manager {
      *
      * This should must only be called once per page request.
      *
+     * This function will be deprecated in Moodle 3.3, The setup is now done in ::instance() so there is no need to call this.
      * @param moodle_page $page The page we are going to add requirements to.
+     * @see core_media_manager::instance()
      */
     public function setup($page) {
-        $players = $this->get_players();
-        foreach ($players as $player) {
-            $player->setup($page);
-        }
+        // No need to call ::instance from here, because the instance has already be set up.
     }
 
     /**

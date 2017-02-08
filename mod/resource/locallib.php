@@ -75,7 +75,7 @@ function resource_display_embed($resource, $cm, $course, $file) {
 
     $extension = resourcelib_get_extension($file->get_filename());
 
-    $mediamanager = core_media_manager::instance();
+    $mediamanager = core_media_manager::instance($PAGE);
     $embedoptions = array(
         core_media_manager::OPTION_TRUSTED => true,
         core_media_manager::OPTION_BLOCK => true,
