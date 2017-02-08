@@ -309,7 +309,7 @@ class api {
         $conversationssql = "SELECT $convosig, max(timecreated) as timecreated
                              FROM ($allmessages) x
                              GROUP BY $convocase
-                             ORDER BY max(timecreated) DESC, max(id) DESC";
+                             ORDER BY timecreated DESC, max(id) DESC";
         $conversationrecords = $DB->get_records_sql($conversationssql, $allmessagesparams, $limitfrom, $limitnum);
 
         // This user has no conversations so we can return early here.
@@ -360,12 +360,12 @@ class api {
                             OR
                             (useridfrom = ? AND timeuserfromdeleted = 0 AND notification = 0)
                             AND timecreated $timecreatedsql";
-        $messageidsql = "SELECT max(id)
+        $messageidsql = "SELECT $convosig, max(id) as id, timecreated
                          FROM ($allmessagestimecreated) x
                          WHERE $messageidwhere
                          GROUP BY $convocase, timecreated";
         $messageidparams = array_merge([$userid, $userid], $timecreatedparams, [$userid, $userid], $timecreatedparams);
-        $messageids = array_keys($DB->get_records_sql($messageidsql, $messageidparams));
+        $messageidrecords = $DB->get_records_sql($messageidsql, $messageidparams);
 
         // Ok, let's recap. We've pulled a descending ordered list of conversations by latest time created
         // for the given user. For each of those conversations we've grabbed the max id for messages
@@ -373,16 +373,19 @@ class api {
         //
         // So at this point we have the list of ids for the most recent message in each of the user's most
         // recent conversations. Now we need to pull all of the message and user data for each message id.
-        list($idsql, $idparams) = $DB->get_in_or_equal($messageids);
+        $whereclauses = [];
+        foreach ($messageidrecords as $record) {
+            $whereclauses[] = "(m.id = {$record->id} AND timecreated = {$record->timecreated})";
+        }
+        $messagewhere = implode(' OR ', $whereclauses);
         $messagesql = "SELECT $convosig, m.smallmessage, m.id, m.useridto, m.useridfrom, m.timeread
                        FROM ($allmessages) m
-                       WHERE m.id $idsql";
-        $messageparams = array_merge($allmessagesparams, $idparams);
+                       WHERE $messagewhere";
 
         // We need to handle the case where the $messageids contains two ids from the same conversation
         // (which can happen because there can be id clashes between the read and unread tables). In
         // this case we will prioritise the unread message.
-        $messageset = $DB->get_recordset_sql($messagesql, $messageparams);
+        $messageset = $DB->get_recordset_sql($messagesql, $allmessagesparams);
         $messages = [];
         foreach ($messageset as $message) {
             $id = $message->convo_signature;
@@ -481,7 +484,7 @@ class api {
                 $conversation->isread = true;
             }
 
-            $arrconversations[$message->convo_signature] = helper::create_contact($conversation);
+            $arrconversations[$otheruserid] = helper::create_contact($conversation);
         }
 
         return $arrconversations;
