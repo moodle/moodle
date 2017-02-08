@@ -21,7 +21,7 @@ Feature: Courses can be searched for and moved in bulk.
   Scenario: Search courses finds correct results
     Given I log in as "admin"
     And I go to the courses management page
-    When I set the field "Search courses:" to "Biology"
+    When I set the field "Search courses" to "Biology"
     And I press "Go"
     Then I should see "Biology Y1"
     And I should see "Biology Y2"
@@ -32,7 +32,7 @@ Feature: Courses can be searched for and moved in bulk.
   Scenario: Search courses and move results in bulk
     Given I log in as "admin"
     And I go to the courses management page
-    And I set the field "Search courses:" to "Biology"
+    And I set the field "Search courses" to "Biology"
     And I press "Go"
     When I select course "Biology Y1" in the management interface
     And I select course "Biology Y2" in the management interface
