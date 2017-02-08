@@ -1698,14 +1698,25 @@ class company {
      *
      **/
     public static function autoenrol($user) {
-        global $DB;
+        global $DB, $CFG, $SITE;
 
         // Get the courses which are assigned to the company which are not licensed.
-        $courses = $DB->get_records_sql("SELECT * FROM {company_course} WHERE companyid = :companyid
+        $courses = $DB->get_records_sql("SELECT courseid FROM {company_course} WHERE companyid = :companyid
                                          AND courseid IN (
                                              SELECT courseid from {iomad_courses}
                                              WHERE licensed = 0)",
                                          array('companyid' => $user->companyid));
+
+        // Are we also enrolling to unattached courses?
+        if (!empty($CFG->local_iomad_signup_autoenrol_unassigned)) {
+            $unassignedcourses = $DB->get_records_sql("SELECT id AS courseid FROM {course}
+                                                       WHERE id NOT IN (
+                                                        SELECT courseid FROM {company_course}
+                                                       )
+                                                       AND id != :siteid",
+                                                       array('siteid' => $SITE->id));
+            $courses = $courses + $unassignedcourses;
+        }
 
         // Enrol the user onto them.
         foreach ($courses as $addcourse) {
