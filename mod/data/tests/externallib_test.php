@@ -42,6 +42,33 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 class mod_data_external_testcase extends externallib_advanced_testcase {
 
     /**
+     * Set up for every test
+     */
+    public function setUp() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Setup test data.
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->data = $this->getDataGenerator()->create_module('data', array('course' => $this->course->id));
+        $this->context = context_module::instance($this->data->cmid);
+        $this->cm = get_coursemodule_from_instance('data', $this->data->id);
+
+        // Create users.
+        $this->student1 = self::getDataGenerator()->create_user();
+        $this->student2 = self::getDataGenerator()->create_user();
+        $this->teacher = self::getDataGenerator()->create_user();
+
+        // Users enrolments.
+        $this->studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        $this->getDataGenerator()->enrol_user($this->student1->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($this->student2->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
+    }
+
+    /**
      * Test get databases by courses
      */
     public function test_mod_data_get_databases_by_courses() {
@@ -167,5 +194,67 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = mod_data_external::get_databases_by_courses(array($course1->id));
         $result = external_api::clean_returnvalue(mod_data_external::get_databases_by_courses_returns(), $result);
         $this->assertEquals($expecteddatabases, $result['databases']);
+    }
+
+    /**
+     * Test view_database invalid id.
+     */
+    public function test_view_database_invalid_id() {
+
+        // Test invalid instance id.
+        $this->setExpectedException('moodle_exception');
+        mod_data_external::view_database(0);
+    }
+
+    /**
+     * Test view_database not enrolled user.
+     */
+    public function test_view_database_not_enrolled_user() {
+
+        $usernotenrolled = self::getDataGenerator()->create_user();
+        $this->setUser($usernotenrolled);
+
+        $this->setExpectedException('moodle_exception');
+        mod_data_external::view_database(0);
+    }
+
+    /**
+     * Test view_database no capabilities.
+     */
+    public function test_view_database_no_capabilities() {
+        // Test user with no capabilities.
+        // We need a explicit prohibit since this capability is allowed for students by default.
+        assign_capability('mod/data:viewpage', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setExpectedException('moodle_exception');
+        mod_data_external::view_database(0);
+    }
+
+    /**
+     * Test view_database.
+     */
+    public function test_view_database() {
+
+        // Test user with full capabilities.
+        $this->setUser($this->student1);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $result = mod_data_external::view_database($this->data->id);
+        $result = external_api::clean_returnvalue(mod_data_external::view_database_returns(), $result);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_shift($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_data\event\course_module_viewed', $event);
+        $this->assertEquals($this->context, $event->get_context());
+        $moodledata = new \moodle_url('/mod/data/view.php', array('id' => $this->cm->id));
+        $this->assertEquals($moodledata, $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
     }
 }
