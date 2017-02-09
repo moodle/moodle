@@ -151,6 +151,27 @@ class mod_data_external extends external_api {
     }
 
     /**
+     * Utility function for validating a database.
+     *
+     * @param int $databaseid database instance id
+     * @return array array containing the database object, course, context and course module objects
+     * @since  Moodle 3.3
+     */
+    protected static function validate_database($databaseid) {
+        global $DB;
+
+        // Request and permission validation.
+        $database = $DB->get_record('data', array('id' => $databaseid), '*', MUST_EXIST);
+        list($course, $cm) = get_course_and_cm_from_instance($database, 'data');
+
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/data:viewentry', $context);
+
+        return array($database, $course, $cm, $context);
+    }
+
+    /**
      * Returns description of method parameters
      *
      * @return external_function_parameters
@@ -173,22 +194,14 @@ class mod_data_external extends external_api {
      * @throws moodle_exception
      */
     public static function view_database($databaseid) {
-        global $DB;
 
         $params = self::validate_parameters(self::view_database_parameters(), array('databaseid' => $databaseid));
         $warnings = array();
 
-        // Request and permission validation.
-        $data = $DB->get_record('data', array('id' => $params['databaseid']), '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($data, 'data');
-
-        $context = context_module::instance($cm->id);
-        self::validate_context($context);
-
-        require_capability('mod/data:viewentry', $context);
+        list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
 
         // Call the data/lib API.
-        data_view($data, $course, $cm, $context);
+        data_view($database, $course, $cm, $context);
 
         $result = array();
         $result['status'] = true;
@@ -211,4 +224,102 @@ class mod_data_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of method parameters.
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_data_access_information_parameters() {
+        return new external_function_parameters(
+            array(
+                'databaseid' => new external_value(PARAM_INT, 'Database instance id.'),
+                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group.',
+                                                   VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Return access information for a given database.
+     *
+     * @param int $databaseid the database instance id
+     * @param int $groupid (optional) group id, 0 means that the function will determine the user group
+     * @return array of warnings and access information
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_data_access_information($databaseid, $groupid = 0) {
+
+        $params = array('databaseid' => $databaseid, 'groupid' => $groupid);
+        $params = self::validate_parameters(self::get_data_access_information_parameters(), $params);
+        $warnings = array();
+
+        list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
+
+        $result = array(
+            'warnings' => $warnings
+        );
+
+        $groupmode = groups_get_activity_groupmode($cm);
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+        // Group related information.
+        $result['groupid'] = $groupid;
+        $result['canaddentry'] = data_user_can_add_entry($database, $groupid, $groupmode, $context);
+
+        // Now capabilities.
+        $result['canmanageentries'] = has_capability('mod/data:manageentries', $context);
+        $result['canapprove'] = has_capability('mod/data:approve', $context);
+
+        // Now time access restrictions.
+        list($result['timeavailable'], $warnings) = data_get_time_availability_status($database, $result['canmanageentries']);
+
+        // Other information.
+        $result['numentries'] = data_numentries($database);
+        $result['entrieslefttoadd'] = data_get_entries_left_to_add($database, $result['numentries'], $result['canmanageentries']);
+        $result['entrieslefttoview'] = data_get_entries_left_to_view($database, $result['numentries'], $result['canmanageentries']);
+        $result['inreadonlyperiod'] = data_in_readonly_period($database);
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function get_data_access_information_returns() {
+        return new external_single_structure(
+            array(
+                'groupid' => new external_value(PARAM_INT, 'User current group id (calculated)'),
+                'canaddentry' => new external_value(PARAM_BOOL, 'Whether the user can add entries or not.'),
+                'canmanageentries' => new external_value(PARAM_BOOL, 'Whether the user can manage entries or not.'),
+                'canapprove' => new external_value(PARAM_BOOL, 'Whether the user can approve entries or not.'),
+                'timeavailable' => new external_value(PARAM_BOOL, 'Whether the database is available or not by time restrictions.'),
+                'inreadonlyperiod' => new external_value(PARAM_BOOL, 'Whether the database is in read mode only.'),
+                'numentries' => new external_value(PARAM_INT, 'The number of entries the current user added.'),
+                'entrieslefttoadd' => new external_value(PARAM_INT, 'The number of entries left to complete the activity.'),
+                'entrieslefttoview' => new external_value(PARAM_INT, 'The number of entries left to view other users entries.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
