@@ -2424,6 +2424,7 @@ class calendar_event {
         $calevent = $DB->get_record('event',  array('id' => $this->properties->id), '*', MUST_EXIST);
         // Delete the event
         $DB->delete_records('event', array('id'=>$this->properties->id));
+        add_to_log($this->properties->courseid, 'calendar', 'delete', 'delete.php?id='.$this->properties->id.'&amp;course='.$this->properties->courseid, $this->properties->name);
 
         // Trigger an event for the delete action.
         $eventargs = array(

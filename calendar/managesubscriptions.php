@@ -24,6 +24,7 @@
 
 require_once('../config.php');
 require_once($CFG->libdir.'/bennu/bennu.inc.php');
+require_once($CFG->libdir.'/datalib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 require_once($CFG->dirroot.'/calendar/managesubscriptions_form.php');
@@ -74,9 +75,11 @@ if (!empty($formdata)) {
         $ical = new iCalendar();
         $ical->unserialize($calendar);
         $importresults = calendar_import_icalendar_events($ical, $courseid, $subscriptionid);
+        add_to_log($courseid, 'calendar', 'subscribe', 'managesubscriptions.php?course='.$courseid, 'subscriptionid='.$subscriptionid);
     } else {
         try {
             $importresults = calendar_update_subscription_events($subscriptionid);
+            add_to_log($courseid, 'calendar', 'subscribe', 'managesubscriptions.php?course='.$courseid, 'subscriptionid='.$subscriptionid);
         } catch (moodle_exception $e) {
             // Delete newly added subscription and show invalid url error.
             calendar_delete_subscription($subscriptionid);
@@ -91,6 +94,11 @@ if (!empty($formdata)) {
     if (calendar_can_edit_subscription($subscriptionid)) {
         try {
             $importresults = calendar_process_subscription_row($subscriptionid, $pollinterval, $action);
+            if($action == 1)
+                $actionname = 'update_subscription';
+            else
+                $actionname = 'remove_subscription';
+            add_to_log($courseid, 'calendar', $actionname, 'managesubscriptions.php?course='.$courseid.'&amp;action='.$action, 'subscriptionid='.$subscriptionid);
         } catch (moodle_exception $e) {
             // If exception caught, then user should be redirected to page where he/she came from.
             print_error($e->errorcode, $e->module, $PAGE->url);
