@@ -140,6 +140,8 @@ information provided here is intended especially for developers.
   tool_recyclebin_course_module_background_deletion_recommended(), to indicate to core that the deletion (and
   execution of tool_recyclebin_pre_course_module_delete) should be handled with an adhoc task, meaning it will not
   occur in real time.
+* get_user_capability_course() now has an additional parameter 'limit'. This can be used to return a set number of records with
+  the submitted capability. The parameter 'fieldsexceptid' will now accept context fields which can be used for preloading.
 
 === 3.1 ===
 
