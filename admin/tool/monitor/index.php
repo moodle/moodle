@@ -41,7 +41,7 @@ if (empty($courseid)) {
     // check system level capability.
     if (!has_capability('tool/monitor:subscribe', $context)) {
         // If not system level then check to see if they have access to any course level rules.
-        if (tool_monitor_get_user_courses()){
+        if (tool_monitor_can_subscribe()) {
             // Make them choose a course.
             $choose = true;
         } else {

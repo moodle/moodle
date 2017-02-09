@@ -50,6 +50,8 @@ information provided here is intended especially for developers.
     - "<element_string>" "<selector_string>" should exists
     - "<element_string>" "<selector_string>" should not exists
     - the following "<element_string>" exists:
+* get_user_capability_course() now has an additional parameter 'limit'. This can be used to return a set number of records with
+  the submitted capability. The parameter 'fieldsexceptid' will now accept context fields which can be used for preloading.
 
 === 3.2 ===
 
