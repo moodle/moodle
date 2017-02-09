@@ -168,6 +168,9 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
         return false;
     }
 
+    // Get the track info if there is one.
+    $trackinfo = $DB->get_record('local_iomad_track', array('id' => $trackid));
+
     // Iterate over to find certs for given user
     foreach ($certificates as $certificate) {
 
@@ -179,6 +182,13 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
         // Find certificate issue record or create it (in cert lib.php)
         $certissue_function = CERTIFICATE . '_get_issue';
         $certissue = $certissue_function($course, $user, $certificate, $cm);
+        // Fix the issue date.
+        if (!empty($trackinfo->timecompleted)) {
+            $certissue->timecreated = $timecompleted;
+        }
+
+        // Add the trackid.
+        $certissue->trackid = $trackid;
 
         // Generate correct filename (same as certificate mod's view.php does)
         $certname = rtrim($certificate->name, '.');

@@ -1135,21 +1135,9 @@ function iomadcertificate_get_date($iomadcertificate, $certrecord, $course, $use
         // Do we have a date on the tracking tables.
         $certname = rtrim($iomadcertificate->name, '.');
         $filename = clean_filename("$certname.pdf");
-        if ($trackinfo = $DB->get_record_sql("SELECT * from {local_iomad_track} lit
-                                              JOIN {local_iomad_track_certs} litc
-                                              ON (lit.id = litc.trackid)
-                                              WHERE lit.userid = :userid
-                                              AND lit.courseid = :courseid
-                                              AND litc.filename = :filename",
-                                              array('userid' => $userid,
-                                                    'courseid' => $course->id,
-                                                    'filename' => $filename))) {
-            $date = $trackinfo->timecompleted;
-        } else {
-            if ($timecompleted = $DB->get_record_sql($sql, array('userid' => $userid, 'courseid' => $course->id))) {
-                if (!empty($timecompleted->timecompleted)) {
-                    $date = $timecompleted->timecompleted;
-                }
+        if (empty($certrecord->trackid) && $timecompleted = $DB->get_record_sql($sql, array('userid' => $userid, 'courseid' => $course->id))) {
+            if (!empty($timecompleted->timecompleted)) {
+                $date = $timecompleted->timecompleted;
             }
         }
     } else if ($iomadcertificate->printdate > 2) {
