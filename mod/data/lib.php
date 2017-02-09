@@ -3245,6 +3245,7 @@ function data_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
 
 function data_extend_navigation($navigation, $course, $module, $cm) {
     global $CFG, $OUTPUT, $USER, $DB;
+    require_once($CFG->dirroot . '/mod/data/locallib.php');
 
     $rid = optional_param('rid', 0, PARAM_INT);
 
@@ -3252,10 +3253,10 @@ function data_extend_navigation($navigation, $course, $module, $cm) {
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 
-     $numentries = data_numentries($data);
-    /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
-    if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', context_module::instance($cm->id))) {
-        $data->entriesleft = $data->requiredentries - $numentries;
+    $numentries = data_numentries($data);
+    $canmanageentries = has_capability('mod/data:manageentries', context_module::instance($cm->id));
+
+    if ($data->entriesleft = data_get_entries_left_to_add($data, $numentries, $canmanageentries)) {
         $entriesnode = $navigation->add(get_string('entrieslefttoadd', 'data', $data));
         $entriesnode->add_class('note');
     }
