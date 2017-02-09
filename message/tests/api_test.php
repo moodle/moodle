@@ -462,14 +462,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
         $this->assertCount(0, $conversations);
     }
 
-    /**
-     * The data provider for get_conversations_mixed.
-     *
-     * This provides sets of data to for testing.
-     * @return array
-     */
-    public function get_conversations_mixed_provider() {
-        return array(
+   /**
+    * The data provider for get_conversations_mixed.
+    *
+    * This provides sets of data to for testing.
+    * @return array
+    */
+   public function get_conversations_mixed_provider() {
+       return array(
             'Test that conversations with messages contacts is correctly ordered.' => array(
                 'users' => array(
                     'user1',
@@ -527,12 +527,14 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user3',
                             'subject'           => 'S5',
+                            'unreadcount'       => 0,
                         ),
                         // User1 has also conversed with user2. The most recent message is S2.
                         array(
                             'messageposition'   => 1,
                             'with'              => 'user2',
                             'subject'           => 'S2',
+                            'unreadcount'       => 1,
                         ),
                     ),
                     'user2' => array(
@@ -541,6 +543,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user1',
                             'subject'           => 'S2',
+                            'unreadcount'       => 2,
                         ),
                     ),
                     'user3' => array(
@@ -549,6 +552,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user1',
                             'subject'           => 'S5',
+                            'unreadcount'       => 0,
                         ),
                     ),
                 ),
@@ -589,6 +593,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user1',
                             'subject'           => 'S2',
+                            'unreadcount'       => 2,
                         ),
                     ),
                 ),
@@ -635,6 +640,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user2',
                             'subject'           => 'S4',
+                            'unreadcount'       => 0,
                         ),
                     ),
                     'user2' => array(
@@ -643,6 +649,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user1',
                             'subject'           => 'S4',
+                            'unreadcount'       => 2,
                         ),
                     ),
                 ),
@@ -692,6 +699,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user2',
                             'subject'           => 'S2',
+                            'unreadcount'       => 0,
                         ),
                     ),
                     'user2' => array(
@@ -699,6 +707,92 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                             'messageposition'   => 0,
                             'with'              => 'user1',
                             'subject'           => 'S2',
+                            'unreadcount'       => 2
+                        ),
+                    ),
+                ),
+            ),
+            'Test unread message count is correct for both users' => array(
+                'users' => array(
+                    'user1',
+                    'user2',
+                ),
+                'contacts' => array(
+                ),
+                'messages' => array(
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S1',
+                        'timemodifier'  => 1,
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'read',
+                        'subject'       => 'S2',
+                        'timemodifier'  => 2,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S3',
+                        'timemodifier'  => 3,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'read',
+                        'subject'       => 'S4',
+                        'timemodifier'  => 4,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S5',
+                        'timemodifier'  => 5,
+                    ),
+                    array(
+                        'from'          => 'user2',
+                        'to'            => 'user1',
+                        'state'         => 'unread',
+                        'subject'       => 'S6',
+                        'timemodifier'  => 6,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S7',
+                        'timemodifier'  => 7,
+                    ),
+                    array(
+                        'from'          => 'user1',
+                        'to'            => 'user2',
+                        'state'         => 'unread',
+                        'subject'       => 'S8',
+                        'timemodifier'  => 8,
+                    ),
+                ),
+                'expectations' => array(
+                    // The most recent message between user1 and user2 was S2, even though later IDs have not been read.
+                    'user1' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user2',
+                            'subject'           => 'S8',
+                            'unreadcount'       => 1,
+                        ),
+                    ),
+                    'user2' => array(
+                        array(
+                            'messageposition'   => 0,
+                            'with'              => 'user1',
+                            'subject'           => 'S8',
+                            'unreadcount'       => 3,
                         ),
                     ),
                 ),
@@ -757,6 +851,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
             } else {
                 $updatemessage->timecreated = $defaulttimecreated;
             }
+
             $DB->update_record($table, $updatemessage);
         }
 
@@ -769,6 +864,7 @@ class core_message_api_testcase extends core_message_messagelib_testcase {
                 $conversation = $conversations[$expectation['messageposition']];
                 $this->assertEquals($otheruser->id, $conversation->userid);
                 $this->assertEquals($expectation['subject'], $conversation->lastmessage);
+                $this->assertEquals($expectation['unreadcount'], $conversation->unreadcount);
             }
         }
     }
