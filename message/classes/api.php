@@ -375,12 +375,22 @@ class api {
         // recent conversations. Now we need to pull all of the message and user data for each message id.
         $whereclauses = [];
         foreach ($messageidrecords as $record) {
-            $whereclauses[] = "(m.id = {$record->id} AND timecreated = {$record->timecreated})";
+            $whereclauses[] = "(id = {$record->id} AND timecreated = {$record->timecreated})";
         }
         $messagewhere = implode(' OR ', $whereclauses);
+        $messagesunionsql = "SELECT
+                                id, useridfrom, useridto, smallmessage, 0 as timeread
+                            FROM {message}
+                            WHERE
+                                {$messagewhere}
+                            UNION ALL
+                            SELECT
+                                id, useridfrom, useridto, smallmessage, timeread
+                            FROM {message_read}
+                            WHERE
+                                {$messagewhere}";
         $messagesql = "SELECT $convosig, m.smallmessage, m.id, m.useridto, m.useridfrom, m.timeread
-                       FROM ($allmessages) m
-                       WHERE $messagewhere";
+                       FROM ($messagesunionsql) m";
 
         // We need to handle the case where the $messageids contains two ids from the same conversation
         // (which can happen because there can be id clashes between the read and unread tables). In
