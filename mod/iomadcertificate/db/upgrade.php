@@ -510,5 +510,29 @@ function xmldb_iomadcertificate_upgrade($oldversion=0) {
         upgrade_mod_savepoint(true, 2015061800, 'iomadcertificate');
     }
 
+    if ($oldversion < 2015111601) {
+
+        // Define field customtext2 to be added to iomadcertificate.
+        $table = new xmldb_table('iomadcertificate');
+        $field = new xmldb_field('customtext2', XMLDB_TYPE_TEXT, null, null, null, null, null, 'timemodified');
+
+        // Conditionally launch add field customtext2.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field customtext3 to be added to iomadcertificate.
+        $table = new xmldb_table('iomadcertificate');
+        $field = new xmldb_field('customtext3', XMLDB_TYPE_TEXT, null, null, null, null, null, 'timemodified');
+
+        // Conditionally launch add field customtext3.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomadcertificate savepoint reached.
+        upgrade_mod_savepoint(true, 2015111601, 'iomadcertificate');
+    }
+
     return true;
 }

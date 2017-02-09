@@ -24,7 +24,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
 
-$plugin->version   = 2015111600; // The current module version (Date: YYYYMMDDXX)
+$plugin->version   = 2015111601; // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2015111600; // Requires this Moodle version
 $plugin->cron      = 0; // Period for cron to check this module (secs)
 $plugin->component = 'mod_iomadcertificate';
