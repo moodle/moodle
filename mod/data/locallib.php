@@ -764,3 +764,277 @@ function data_get_entries_left_to_view($data, $numentries, $canmanageentries) {
     }
     return 0;
 }
+
+/**
+ * Search entries in a database.
+ *
+ * @param  stdClass  $data         database object
+ * @param  stdClass  $cm           course module object
+ * @param  stdClass  $context      context object
+ * @param  stdClass  $mode         in which mode we are viewing the database (list, single)
+ * @param  int  $currentgroup      the current group being used
+ * @param  str  $search            search for this text in the entry data
+ * @param  str  $sort              the field to sort by
+ * @param  str  $order             the order to use when sorting
+ * @param  int $page               for pagination, the current page
+ * @param  int $perpage            entries per page
+ * @param  bool  $advanced         whether we are using or not advanced search
+ * @param  array  $searcharray     when using advanced search, the advanced data to use
+ * @param  stdClass  $record       if we jsut want this record after doing all the access checks
+ * @return array the entries found among other data related to the search
+ * @since  Moodle 3.3
+ */
+function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search = '', $sort = null, $order = null, $page = 0,
+        $perpage = 0, $advanced = null, $searcharray = null, $record = null) {
+    global $DB, $USER;
+
+    if ($sort === null) {
+        $sort = $data->defaultsort;
+    }
+    if ($order === null) {
+        $order = ($data->defaultsortdir == 0) ? 'ASC' : 'DESC';
+    }
+    if ($searcharray === null) {
+        $searcharray = array();
+    }
+
+    $approvecap = has_capability('mod/data:approve', $context);
+    $canmanageentries = has_capability('mod/data:manageentries', $context);
+
+    // If a student is not part of a group and seperate groups is enabled, we don't
+    // want them seeing all records.
+    $groupmode = groups_get_activity_groupmode($cm);
+    if ($currentgroup == 0 && $groupmode == 1 && !$canmanageentries) {
+        $canviewallrecords = false;
+    } else {
+        $canviewallrecords = true;
+    }
+
+    $numentries = data_numentries($data);
+    $requiredentriesallowed = true;
+    if (data_get_entries_left_to_view($data, $numentries, $canmanageentries)) {
+        $requiredentriesallowed = false;
+    }
+
+    // Initialise the first group of params for advanced searches.
+    $initialparams   = array();
+    $params = array(); // Named params array.
+
+    // Setup group and approve restrictions.
+    if (!$approvecap && $data->approval) {
+        if (isloggedin()) {
+            $approveselect = ' AND (r.approved=1 OR r.userid=:myid1) ';
+            $params['myid1'] = $USER->id;
+            $initialparams['myid1'] = $params['myid1'];
+        } else {
+            $approveselect = ' AND r.approved=1 ';
+        }
+    } else {
+        $approveselect = ' ';
+    }
+
+    if ($currentgroup) {
+        $groupselect = " AND (r.groupid = :currentgroup OR r.groupid = 0)";
+        $params['currentgroup'] = $currentgroup;
+        $initialparams['currentgroup'] = $params['currentgroup'];
+    } else {
+        if ($canviewallrecords) {
+            $groupselect = ' ';
+        } else {
+            // If separate groups are enabled and the user isn't in a group or
+            // a teacher, manager, admin etc, then just show them entries for 'All participants'.
+            $groupselect = " AND r.groupid = 0";
+        }
+    }
+
+    // Init some variables to be used by advanced search.
+    $advsearchselect = '';
+    $advwhere        = '';
+    $advtables       = '';
+    $advparams       = array();
+    // This is used for the initial reduction of advanced search results with required entries.
+    $entrysql        = '';
+    $namefields = user_picture::fields('u');
+    // Remove the id from the string. This already exists in the sql statement.
+    $namefields = str_replace('u.id,', '', $namefields);
+
+    // Find the field we are sorting on.
+    if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
+
+        switch ($sort) {
+            case DATA_LASTNAME:
+                $ordering = "u.lastname $order, u.firstname $order";
+                break;
+            case DATA_FIRSTNAME:
+                $ordering = "u.firstname $order, u.lastname $order";
+                break;
+            case DATA_APPROVED:
+                $ordering = "r.approved $order, r.timecreated $order";
+                break;
+            case DATA_TIMEMODIFIED:
+                $ordering = "r.timemodified $order";
+                break;
+            case DATA_TIMEADDED:
+            default:
+                $sort     = 0;
+                $ordering = "r.timecreated $order";
+        }
+
+        $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, r.groupid, r.dataid, ' . $namefields;
+        $count = ' COUNT(DISTINCT c.recordid) ';
+        $tables = '{data_content} c,{data_records} r, {user} u ';
+        $where = 'WHERE c.recordid = r.id
+                     AND r.dataid = :dataid
+                     AND r.userid = u.id ';
+        $params['dataid'] = $data->id;
+        $sortorder = " ORDER BY $ordering, r.id $order";
+        $searchselect = '';
+
+        // If requiredentries is not reached, only show current user's entries.
+        if (!$requiredentriesallowed) {
+            $where .= ' AND u.id = :myid2 ';
+            $entrysql = ' AND r.userid = :myid3 ';
+            $params['myid2'] = $USER->id;
+            $initialparams['myid3'] = $params['myid2'];
+        }
+
+        if (!empty($advanced)) {                    // If advanced box is checked.
+            $i = 0;
+            foreach ($searcharray as $key => $val) { // what does $searcharray hold?
+                if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
+                    $i++;
+                    $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
+                    $params['search_flname_'.$i] = "%$val->data%";
+                    continue;
+                }
+                $advtables .= ', {data_content} c'.$key.' ';
+                $advwhere .= ' AND c'.$key.'.recordid = r.id';
+                $advsearchselect .= ' AND ('.$val->sql.') ';
+                $advparams = array_merge($advparams, $val->params);
+            }
+        } else if ($search) {
+            $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)."
+                              OR ".$DB->sql_like('u.firstname', ':search2', false)."
+                              OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+            $params['search1'] = "%$search%";
+            $params['search2'] = "%$search%";
+            $params['search3'] = "%$search%";
+        } else {
+            $searchselect = ' ';
+        }
+
+    } else {
+
+        $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
+        $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
+
+        $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, r.groupid, r.dataid, ' . $namefields . ',
+                ' . $sortcontentfull . ' AS sortorder ';
+        $count = ' COUNT(DISTINCT c.recordid) ';
+        $tables = '{data_content} c, {data_records} r, {user} u ';
+        $where = 'WHERE c.recordid = r.id
+                     AND r.dataid = :dataid
+                     AND r.userid = u.id ';
+        if (!$advanced) {
+            $where .= 'AND c.fieldid = :sort';
+        }
+        $params['dataid'] = $data->id;
+        $params['sort'] = $sort;
+        $sortorder = ' ORDER BY sortorder '.$order.' , r.id ASC ';
+        $searchselect = '';
+
+        // If requiredentries is not reached, only show current user's entries.
+        if (!$requiredentriesallowed) {
+            $where .= ' AND u.id = :myid2';
+            $entrysql = ' AND r.userid = :myid3';
+            $params['myid2'] = $USER->id;
+            $initialparams['myid3'] = $params['myid2'];
+        }
+        $i = 0;
+        if (!empty($advanced)) {                      // If advanced box is checked.
+            foreach ($searcharray as $key => $val) {   // what does $searcharray hold?
+                if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
+                    $i++;
+                    $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
+                    $params['search_flname_'.$i] = "%$val->data%";
+                    continue;
+                }
+                $advtables .= ', {data_content} c'.$key.' ';
+                $advwhere .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
+                $advsearchselect .= ' AND ('.$val->sql.') ';
+                $advparams = array_merge($advparams, $val->params);
+            }
+        } else if ($search) {
+            $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR
+                ".$DB->sql_like('u.firstname', ':search2', false)." OR
+                ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+            $params['search1'] = "%$search%";
+            $params['search2'] = "%$search%";
+            $params['search3'] = "%$search%";
+        } else {
+            $searchselect = ' ';
+        }
+    }
+
+    // To actually fetch the records.
+
+    $fromsql    = "FROM $tables $advtables $where $advwhere $groupselect $approveselect $searchselect $advsearchselect";
+    $allparams  = array_merge($params, $advparams);
+
+    // Provide initial sql statements and parameters to reduce the number of total records.
+    $initialselect = $groupselect . $approveselect . $entrysql;
+
+    $recordids = data_get_all_recordids($data->id, $initialselect, $initialparams);
+    $newrecordids = data_get_advance_search_ids($recordids, $searcharray, $data->id);
+    $totalcount = count($newrecordids);
+    $selectdata = $where . $groupselect . $approveselect;
+
+    if (!empty($advanced)) {
+        $advancedsearchsql = data_get_advanced_search_sql($sort, $data, $newrecordids, $selectdata, $sortorder);
+        $sqlselect = $advancedsearchsql['sql'];
+        $allparams = array_merge($allparams, $advancedsearchsql['params']);
+    } else {
+        $sqlselect  = "SELECT $what $fromsql $sortorder";
+    }
+
+    // Work out the paging numbers and counts.
+    if (empty($searchselect) && empty($advsearchselect)) {
+        $maxcount = $totalcount;
+    } else {
+        $maxcount = count($recordids);
+    }
+
+    if ($record) {     // We need to just show one, so where is it in context?
+        $nowperpage = 1;
+        $mode = 'single';
+        $page = 0;
+        // TODO MDL-33797 - Reduce this or consider redesigning the paging system.
+        if ($allrecordids = $DB->get_fieldset_sql($sqlselect, $allparams)) {
+            $page = (int)array_search($record->id, $allrecordids);
+            unset($allrecordids);
+        }
+    } else if ($mode == 'single') {  // We rely on ambient $page settings
+        $nowperpage = 1;
+
+    } else {
+        $nowperpage = $perpage;
+    }
+
+    // Get the actual records.
+    if (!$records = $DB->get_records_sql($sqlselect, $allparams, $page * $nowperpage, $nowperpage)) {
+        // Nothing to show!
+        if ($record) {         // Something was requested so try to show that at least (bug 5132)
+            if ($canmanageentries || empty($data->approval) ||
+                     $record->approved || (isloggedin() && $record->userid == $USER->id)) {
+                if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
+                    // OK, we can show this one
+                    $records = array($record->id => $record);
+                    $totalcount = 1;
+                }
+            }
+        }
+
+    }
+
+    return [$records, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode];
+}
