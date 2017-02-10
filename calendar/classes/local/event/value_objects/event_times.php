@@ -51,6 +51,11 @@ class event_times implements times_interface {
     protected $sort;
 
     /**
+     * @var \DateTimeImmutable $modified Time event was last modified.
+     */
+    protected $modified;
+
+    /**
      * Constructor.
      *
      * @param \DateTimeImmutable $start    Event start time.

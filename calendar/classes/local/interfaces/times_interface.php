@@ -60,4 +60,11 @@ interface times_interface {
      * @return \DateTimeImmutable
      */
     public function get_sort_time();
+
+    /**
+     * Get the modified time.
+     *
+     * @return \DateTimeImmutable
+     */
+    public function get_modified_time();
 }
