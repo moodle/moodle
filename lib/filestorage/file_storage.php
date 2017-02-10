@@ -1991,22 +1991,6 @@ class file_storage {
     }
 
     /**
-     * Attempt to move a file to trash.
-     *
-     * Note: The file will only be moved to trash if it is no longer in use anywhere within Moodle.
-     *
-     * DO NOT call directly - reserved for core!!
-     *
-     * @param string $contenthash
-     * @deprecated since 3.3
-     */
-    public function deleted_file_cleanup($contenthash) {
-        debugging('The deleted_file_cleanup function has been deprecated and should no longer be used.', DEBUG_DEVELOPER);
-
-        $this->filesystem->remove_file($contenthash);
-    }
-
-    /**
      * When user referring to a moodle file, we build the reference field
      *
      * @param array $params
