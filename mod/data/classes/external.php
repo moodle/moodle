@@ -480,4 +480,91 @@ class mod_data_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_entry_parameters() {
+        return new external_function_parameters(
+            array(
+                'entryid' => new external_value(PARAM_INT, 'record entry id'),
+                'returncontents' => new external_value(PARAM_BOOL, 'Whether to return contents or not.', VALUE_DEFAULT, false),
+            )
+        );
+    }
+
+    /**
+     * Return one entry record from the database, including contents optionally.
+     *
+     * @param int $entryid          the record entry id id
+     * @param bool $returncontents  whether to return the entries contents or not
+     * @return array of warnings and the entries
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_entry($entryid, $returncontents = false) {
+        global $PAGE, $DB;
+
+        $params = array('entryid' => $entryid, 'returncontents' => $returncontents);
+        $params = self::validate_parameters(self::get_entry_parameters(), $params);
+        $warnings = array();
+
+        $record = $DB->get_record('data_records', array('id' => $params['entryid']), '*', MUST_EXIST);
+        list($database, $course, $cm, $context) = self::validate_database($record->dataid);
+
+        // Check database is open in time.
+        $canmanageentries = has_capability('mod/data:manageentries', $context);
+        data_require_time_available($database, $canmanageentries);
+
+        if ($record->groupid !== 0) {
+            if (!groups_group_visible($record->groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        }
+
+        // Check correct record entry. Group check was done before.
+        if (!data_can_view_record($database, $record, $record->groupid, $canmanageentries)) {
+            throw new moodle_exception('notapproved', 'data');
+        }
+
+        $related = array('context' => $context, 'database' => $database, 'user' => null);
+        if ($params['returncontents']) {
+            $related['contents'] = $DB->get_records('data_content', array('recordid' => $record->id));
+        } else {
+            $related['contents'] = null;
+        }
+        $exporter = new record_exporter($record, $related);
+        $entry = $exporter->export($PAGE->get_renderer('core'));
+
+        $result = array(
+            'entry' => $entry,
+            'warnings' => $warnings
+        );
+        // Check if we should return the entry rendered.
+        if ($params['returncontents']) {
+            $records = [$record];
+            $result['entryviewcontents'] = data_print_template('singletemplate', $records, $database, '', 0, true);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function get_entry_returns() {
+        return new external_single_structure(
+            array(
+                'entry' => record_exporter::get_read_structure(),
+                'entryviewcontents' => new external_value(PARAM_RAW, 'The entry as is rendered in the site.', VALUE_OPTIONAL),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }
