@@ -50,7 +50,10 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->setAdminUser();
 
         // Setup test data.
-        $this->course = $this->getDataGenerator()->create_course();
+        $course = new stdClass();
+        $course->groupmode = SEPARATEGROUPS;
+        $course->groupmodeforce = true;
+        $this->course = $this->getDataGenerator()->create_course($course);
         $this->data = $this->getDataGenerator()->create_module('data', array('course' => $this->course->id));
         $this->context = context_module::instance($this->data->cmid);
         $this->cm = get_coursemodule_from_instance('data', $this->data->id);
@@ -58,6 +61,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         // Create users.
         $this->student1 = self::getDataGenerator()->create_user();
         $this->student2 = self::getDataGenerator()->create_user();
+        $this->student3 = self::getDataGenerator()->create_user();
         $this->teacher = self::getDataGenerator()->create_user();
 
         // Users enrolments.
@@ -65,7 +69,14 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
         $this->getDataGenerator()->enrol_user($this->student1->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->student2->id, $this->course->id, $this->studentrole->id, 'manual');
+        $this->getDataGenerator()->enrol_user($this->student3->id, $this->course->id, $this->studentrole->id, 'manual');
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
+
+        $this->group1 = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
+        $this->group2 = $this->getDataGenerator()->create_group(array('courseid' => $this->course->id));
+        groups_add_member($this->group1, $this->student1);
+        groups_add_member($this->group1, $this->student2);
+        groups_add_member($this->group2, $this->student3);
     }
 
     /**
@@ -275,7 +286,7 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $result = mod_data_external::get_data_access_information($this->data->id);
         $result = external_api::clean_returnvalue(mod_data_external::get_data_access_information_returns(), $result);
 
-        $this->assertEquals(0, $result['groupid']);
+        $this->assertEquals($this->group1->id, $result['groupid']);
 
         $this->assertFalse($result['canmanageentries']);
         $this->assertFalse($result['canapprove']);
@@ -314,5 +325,166 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $result['numentries']);
         $this->assertEquals(0, $result['entrieslefttoadd']);
         $this->assertEquals(0, $result['entrieslefttoview']);
+    }
+
+    /**
+     * Helper method to populate the database with some entries.
+     *
+     * @return array the entry ids created
+     */
+    public function populate_database_with_entries() {
+        global $DB;
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+        $fieldtypes = array('checkbox', 'date', 'menu', 'multimenu', 'number', 'radiobutton', 'text', 'textarea', 'url');
+
+        $count = 1;
+        // Creating test Fields with default parameter values.
+        foreach ($fieldtypes as $fieldtype) {
+            $fieldname = 'field-' . $count;
+            $record = new StdClass();
+            $record->name = $fieldname;
+            $record->type = $fieldtype;
+            $record->required = 1;
+
+            $generator->create_field($record, $this->data);
+            $count++;
+        }
+        // Get all the fields created.
+        $fields = $DB->get_records('data_fields', array('dataid' => $this->data->id), 'id');
+
+        // Populate with contents, creating a new entry.
+        $contents = array();
+        $contents[] = array('opt1', 'opt2', 'opt3', 'opt4');
+        $contents[] = '01-01-2037'; // It should be lower than 2038, to avoid failing on 32-bit windows.
+        $contents[] = 'menu1';
+        $contents[] = array('multimenu1', 'multimenu2', 'multimenu3', 'multimenu4');
+        $contents[] = '12345';
+        $contents[] = 'radioopt1';
+        $contents[] = 'text for testing';
+        $contents[] = '<p>text area testing<br /></p>';
+        $contents[] = array('example.url', 'sampleurl');
+        $count = 0;
+        $fieldcontents = array();
+        foreach ($fields as $fieldrecord) {
+            $fieldcontents[$fieldrecord->id] = $contents[$count++];
+        }
+
+        $this->setUser($this->student1);
+        $entry11 = $generator->create_entry($this->data, $fieldcontents, $this->group1->id);
+        $this->setUser($this->student2);
+        $entry12 = $generator->create_entry($this->data, $fieldcontents, $this->group1->id);
+
+        $this->setUser($this->student3);
+        $entry21 = $generator->create_entry($this->data, $fieldcontents, $this->group2->id);
+        return [$entry11, $entry12, $entry21];
+    }
+
+    /**
+     * Test get_entries
+     */
+    public function test_get_entries() {
+        global $DB;
+        list($entry11, $entry12, $entry21) = self::populate_database_with_entries();
+
+        // First of all, expect to see only my group entries (not other users in other groups ones).
+        $this->setUser($this->student1);
+        $result = mod_data_external::get_entries($this->data->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals($entry11, $result['entries'][0]['id']);
+        $this->assertEquals($this->student1->id, $result['entries'][0]['userid']);
+        $this->assertEquals($this->group1->id, $result['entries'][0]['groupid']);
+        $this->assertEquals($this->data->id, $result['entries'][0]['dataid']);
+        $this->assertEquals($entry12, $result['entries'][1]['id']);
+        $this->assertEquals($this->student2->id, $result['entries'][1]['userid']);
+        $this->assertEquals($this->group1->id, $result['entries'][1]['groupid']);
+        $this->assertEquals($this->data->id, $result['entries'][1]['dataid']);
+        // Other user in same group.
+        $this->setUser($this->student2);
+        $result = mod_data_external::get_entries($this->data->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+
+        // Now try with the user in the second group that must see only one entry.
+        $this->setUser($this->student3);
+        $result = mod_data_external::get_entries($this->data->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['entries']);
+        $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals($entry21, $result['entries'][0]['id']);
+        $this->assertEquals($this->student3->id, $result['entries'][0]['userid']);
+        $this->assertEquals($this->group2->id, $result['entries'][0]['groupid']);
+        $this->assertEquals($this->data->id, $result['entries'][0]['dataid']);
+
+        // Now, as teacher we should see all (we have permissions to view all groups).
+        $this->setUser($this->teacher);
+        $result = mod_data_external::get_entries($this->data->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(3, $result['entries']);
+        $this->assertEquals(3, $result['totalcount']);
+
+        $entries = $DB->get_records('data_records', array('dataid' => $this->data->id), 'id');
+        $this->assertCount(3, $entries);
+        $count = 0;
+        foreach ($entries as $entry) {
+            $this->assertEquals($entry->id, $result['entries'][$count]['id']);
+            $count++;
+        }
+
+        // Basic test passing the parameter (instead having to calculate it).
+        $this->setUser($this->student1);
+        $result = mod_data_external::get_entries($this->data->id, $this->group1->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+
+        // Test ordering (reverse).
+        $this->setUser($this->student1);
+        $result = mod_data_external::get_entries($this->data->id, $this->group1->id, false, null, 'DESC');
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals($entry12, $result['entries'][0]['id']);
+
+        // Test pagination.
+        $this->setUser($this->student1);
+        $result = mod_data_external::get_entries($this->data->id, $this->group1->id, false, null, null, 0, 1);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals($entry11, $result['entries'][0]['id']);
+
+        $result = mod_data_external::get_entries($this->data->id, $this->group1->id, false, null, null, 1, 1);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(1, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertEquals($entry12, $result['entries'][0]['id']);
+
+        // Now test the return contents.
+        data_generate_default_template($this->data, 'listtemplate', 0, false, true); // Generate a default list template.
+        $result = mod_data_external::get_entries($this->data->id, $this->group1->id, true, null, null, 0, 2);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entries_returns(), $result);
+        $this->assertCount(0, $result['warnings']);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+        $this->assertCount(9, $result['entries'][0]['contents']);
+        $this->assertCount(9, $result['entries'][1]['contents']);
+        // Search for some content.
+        $this->assertTrue(strpos($result['listviewcontents'], 'opt1') !== false);
+        $this->assertTrue(strpos($result['listviewcontents'], 'January') !== false);
+        $this->assertTrue(strpos($result['listviewcontents'], 'menu1') !== false);
+        $this->assertTrue(strpos($result['listviewcontents'], 'text for testing') !== false);
+        $this->assertTrue(strpos($result['listviewcontents'], 'sampleurl') !== false);
     }
 }
