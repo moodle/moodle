@@ -53,6 +53,7 @@ interface event_factory_interface {
      * @param int    $timesort               Timestamp by which to sort events.
      * @param bool   $visible                The event's visibility. True for visible, false for invisible.
      * @param int    $subscriptionid         The subscription ID of the event.
+     * @return \core_calendar\local\interfaces\event_interface
      */
     public function create_instance(
         $id,
