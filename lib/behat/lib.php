@@ -493,9 +493,10 @@ function behat_get_run_process() {
  *
  * @param array $cmds list of commands to be executed.
  * @param string $cwd absolute path of working directory.
+ * @param int $delay time in seconds to add delay between each parallel process.
  * @return array list of processes.
  */
-function cli_execute_parallel($cmds, $cwd = null) {
+function cli_execute_parallel($cmds, $cwd = null, $delay = 0) {
     require_once(__DIR__ . "/../../vendor/autoload.php");
 
     $processes = array();
@@ -518,6 +519,11 @@ function cli_execute_parallel($cmds, $cwd = null) {
                 }
             }
             exit(1);
+        }
+
+        // Sleep for specified delay.
+        if ($delay) {
+            sleep($delay);
         }
     }
     return $processes;
