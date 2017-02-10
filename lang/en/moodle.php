@@ -464,6 +464,7 @@ $string['deletecategoryempty'] = 'This category is empty.';
 $string['deletecategorycheck'] = 'Are you absolutely sure you want to completely delete this category <b>\'{$a}\'</b>?<br />This will move all courses into the parent category if there is one, or into Miscellaneous.';
 $string['deletecategorycheck2'] = 'If you delete this category, you need to choose what to do with the courses and subcategories it contains.';
 $string['deletecomment'] = 'Delete this comment';
+$string['deletecommentbyon'] = 'Delete comment posted by {$a->user} on {$a->time}';
 $string['deletecompletely'] = 'Delete completely';
 $string['deletecourse'] = 'Delete a course';
 $string['deletecoursecheck'] = 'Are you absolutely sure you want to completely delete this course and all the data it contains?';
