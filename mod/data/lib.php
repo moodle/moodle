@@ -1335,6 +1335,10 @@ function data_print_template($template, $records, $data, $search='', $page=0, $r
 
         $patterns[] = '##userpicture##';
         $ruser = user_picture::unalias($record, null, 'userid');
+        // If the record didn't come with user data, retrieve the user from database.
+        if (!isset($ruser->picture)) {
+            $ruser = core_user::get_user($record->userid);
+        }
         $replacement[] = $OUTPUT->user_picture($ruser, array('courseid' => $data->course));
 
         $patterns[]='##export##';
