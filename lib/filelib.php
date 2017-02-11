@@ -2201,7 +2201,7 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
             $immutable = ', immutable';
             // Overwrite lifetime accordingly:
             // 90 days only - based on Moodle point release cadence being every 3 months.
-            $lifetimemin = 60*60*24*90;
+            $lifetimemin = 60 * 60 * 24 * 90;
             $lifetime = max($lifetime, $lifetimemin);
         }
         $cacheability = ' public,';
