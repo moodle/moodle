@@ -76,7 +76,8 @@ if (!$file or is_dir($file)) {
 }
 
 $etag = sha1("$component/$path");
-$lifetime = 60*60*24*120; // 120 days should be enough.
+// 90 days only - based on Moodle point release cadence being every 3 months.
+$lifetime = 60 * 60 * 24 * 90;
 $pathinfo = pathinfo($path);
 
 if (empty($pathinfo['extension'])) {
