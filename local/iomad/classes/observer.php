@@ -75,6 +75,7 @@ class observer {
         return true;
     }
 
+    /**
      * Triggered via course_completed event.
      *
      * @param \core\event\course_completed $event
