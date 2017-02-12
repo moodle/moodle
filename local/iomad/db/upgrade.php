@@ -1339,20 +1339,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016090503, 'local', 'iomad');
     }
 
-    if ($oldversion < 2015040701.02) {
+    if ($oldversion < 2015040702) {
 
-        // Define field supervisorprofileid to be added to company.
+        // Define field emailprofileid to be added to company.
         $table = new xmldb_table('company');
         $field = new xmldb_field('emailprofileid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'suspended');
 
-        // Conditionally launch add field supervisorprofileid.
+        // Conditionally launch add field emailprofileid.
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
         // Define field managernotify to be added to company.
         $table = new xmldb_table('company');
-        $field = new xmldb_field('managernotify', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'supervisorprofileid');
+        $field = new xmldb_field('managernotify', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'emailprofileid');
 
         // Conditionally launch add field managernotify.
         if (!$dbman->field_exists($table, $field)) {
@@ -1360,7 +1360,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
 
         // Iomad savepoint reached.
-        upgrade_plugin_savepoint(true, 2015040701.02, 'local', 'iomad');
+        upgrade_plugin_savepoint(true, 2015040702, 'local', 'iomad');
     }
     return $result;
 }
