@@ -68,6 +68,8 @@ class pdf extends \FPDI {
     const MIN_ANNOTATION_WIDTH = 5;
     /** Min. height an annotation should have */
     const MIN_ANNOTATION_HEIGHT = 5;
+    /** Blank PDF file used during error. */
+    const BLANK_PDF = '/mod/assign/feedback/editpdf/fixtures/blank.pdf';
 
     /**
      * Combine the given PDF files into a single PDF. Optionally add a coversheet and coversheet fields.
@@ -520,6 +522,43 @@ class pdf extends \FPDI {
         }
 
         return $tempdst;
+    }
+
+    /**
+     * Generate an localised error image for the given pagenumber.
+     *
+     * @param string $errorimagefolder path of the folder where error image needs to be created.
+     * @param int $pageno page number for which error image needs to be created.
+     *
+     * @return string File name
+     * @throws \coding_exception
+     */
+    public static function get_error_image($errorimagefolder, $pageno) {
+        global $CFG;
+
+        $errorfile = $CFG->dirroot . self::BLANK_PDF;
+        if (!file_exists($errorfile)) {
+            throw new \coding_exception("Blank PDF not found", "File path" . $errorfile);
+        }
+
+        $tmperrorimagefolder = make_request_directory();
+
+        $pdf = new pdf();
+        $pdf->set_pdf($errorfile);
+        $pdf->copy_page();
+        $pdf->add_comment(get_string('errorpdfpage', 'assignfeedback_editpdf'), 250, 300, 200, "red");
+        $generatedpdf = $tmperrorimagefolder . '/' . 'error.pdf';
+        $pdf->save_pdf($generatedpdf);
+
+        $pdf = new pdf();
+        $pdf->set_pdf($generatedpdf);
+        $pdf->set_image_folder($tmperrorimagefolder);
+        $image = $pdf->get_image(0);
+        $pdf->Close(); // PDF loaded and never saved/outputted needs to be closed.
+        $newimg = 'image_page' . $pageno . '.png';
+
+        copy($tmperrorimagefolder . '/' . $image, $errorimagefolder . '/' . $newimg);
+        return $newimg;
     }
 
     /**
