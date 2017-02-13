@@ -80,12 +80,14 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
     $blockinstances = $DB->get_records('block_instances', array('parentcontextid' => $systemcontext->id,
                                                                 'pagetypepattern' => $pagetype,
                                                                 'subpagepattern' => $systempage->id));
+    $newblockinstanceids = [];
     foreach ($blockinstances as $instance) {
         $originalid = $instance->id;
         unset($instance->id);
         $instance->parentcontextid = $usercontext->id;
         $instance->subpagepattern = $page->id;
         $instance->id = $DB->insert_record('block_instances', $instance);
+        $newblockinstanceids[$originalid] = $instance->id;
         $blockcontext = context_block::instance($instance->id);  // Just creates the context record
         $block = block_instance($instance->blockname, $instance);
         if (!$block->instance_copy($originalid)) {
@@ -94,12 +96,21 @@ function my_copy_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') {
         }
     }
 
-    // FIXME: block position overrides should be merged in with block instance
-    //$blockpositions = $DB->get_records('block_positions', array('subpage' => $page->name));
-    //foreach($blockpositions as $positions) {
-    //    $positions->subpage = $page->name;
-    //    $DB->insert_record('block_positions', $tc);
-    //}
+    // Clone block position overrides.
+    if ($blockpositions = $DB->get_records('block_positions',
+            ['subpage' => $systempage->id, 'pagetype' => $pagetype, 'contextid' => $systemcontext->id])) {
+        foreach ($blockpositions as &$positions) {
+            $positions->subpage = $page->id;
+            $positions->contextid = $usercontext->id;
+            if (array_key_exists($positions->blockinstanceid, $newblockinstanceids)) {
+                // For block instances that were defined on the default dashboard and copied to the user dashboard
+                // use the new blockinstanceid.
+                $positions->blockinstanceid = $newblockinstanceids[$positions->blockinstanceid];
+            }
+            unset($positions->id);
+        }
+        $DB->insert_records('block_positions', $blockpositions);
+    }
 
     return $page;
 }
@@ -126,6 +137,7 @@ function my_reset_page($userid, $private=MY_PAGE_PRIVATE, $pagetype='my-index') 
                 }
             }
         }
+        $DB->delete_records('block_positions', ['subpage' => $page->id, 'pagetype' => $pagetype, 'contextid' => $context->id]);
         $DB->delete_records('my_pages', array('id' => $page->id));
     }
 
