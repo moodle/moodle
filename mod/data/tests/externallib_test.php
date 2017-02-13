@@ -749,4 +749,63 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_data_external::approve_entry($entry13);
     }
+
+    /**
+     * Test delete_entry as teacher. Check I can delete any entry.
+     */
+    public function test_delete_entry_as_teacher() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->teacher);
+        $result = mod_data_external::delete_entry($entry11);
+        $result = external_api::clean_returnvalue(mod_data_external::delete_entry_returns(), $result);
+        $this->assertEquals(0, $DB->count_records('data_records', array('id' => $entry11)));
+
+        // Entry in other group.
+        $result = mod_data_external::delete_entry($entry21);
+        $result = external_api::clean_returnvalue(mod_data_external::delete_entry_returns(), $result);
+        $this->assertEquals(0, $DB->count_records('data_records', array('id' => $entry21)));
+    }
+
+    /**
+     * Test delete_entry as student. Check I can delete my own entries.
+     */
+    public function test_delete_entry_as_student() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->student1);
+        $result = mod_data_external::delete_entry($entry11);
+        $result = external_api::clean_returnvalue(mod_data_external::delete_entry_returns(), $result);
+        $this->assertEquals(0, $DB->count_records('data_records', array('id' => $entry11)));
+    }
+
+    /**
+     * Test delete_entry as student in read only mode period. Check I cannot delete my own entries in that period.
+     */
+    public function test_delete_entry_as_student_in_read_only_period() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        // Set a time period.
+        $this->data->timeviewfrom = time() - HOURSECS;
+        $this->data->timeviewto = time() + HOURSECS;
+        $DB->update_record('data', $this->data);
+
+        $this->setUser($this->student1);
+        $this->expectException('moodle_exception');
+        mod_data_external::delete_entry($entry11);
+    }
+
+    /**
+     * Test delete_entry with an user missing permissions.
+     */
+    public function test_delete_entry_missing_permissions() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->student1);
+        $this->expectException('moodle_exception');
+        mod_data_external::delete_entry($entry21);
+    }
 }

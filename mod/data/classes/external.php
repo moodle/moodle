@@ -873,4 +873,64 @@ class mod_data_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function delete_entry_parameters() {
+        return new external_function_parameters(
+            array(
+                'entryid' => new external_value(PARAM_INT, 'Record entry id.'),
+            )
+        );
+    }
+
+    /**
+     * Deletes an entry.
+     *
+     * @param int $entryid the record entry id
+     * @return array of warnings success status
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function delete_entry($entryid) {
+        global $PAGE, $DB;
+
+        $params = array('entryid' => $entryid);
+        $params = self::validate_parameters(self::delete_entry_parameters(), $params);
+        $warnings = array();
+
+        $record = $DB->get_record('data_records', array('id' => $params['entryid']), '*', MUST_EXIST);
+        list($database, $course, $cm, $context) = self::validate_database($record->dataid);
+
+        if (data_user_can_manage_entry($record, $database, $context)) {
+            data_delete_record($record->id, $database, $course->id, $cm->id);
+        } else {
+            throw new moodle_exception('noaccess', 'data');
+        }
+
+        $result = array(
+            'status' => true,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function delete_entry_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'Always true. If we see this field it means that the entry was deleted.'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

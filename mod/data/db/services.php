@@ -91,4 +91,12 @@ $functions = array(
         'capabilities'  => 'mod/data:approve',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_delete_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'delete_entry',
+        'description'   => 'Deletes an entry.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:manageentries',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
