@@ -387,14 +387,11 @@ if ($showactivity) {
         $approvecap = has_capability('mod/data:approve', $context);
 
         if (($approve || $disapprove) && confirm_sesskey() && $approvecap) {
-            $newapproved = $approve ? 1 : 0;
+            $newapproved = $approve ? true : false;
             $recordid = $newapproved ? $approve : $disapprove;
             if ($approverecord = $DB->get_record('data_records', array('id' => $recordid))) {   // Need to check this is valid
                 if ($approverecord->dataid == $data->id) {                       // Must be from this database
-                    $newrecord = new stdClass();
-                    $newrecord->id = $approverecord->id;
-                    $newrecord->approved = $newapproved;
-                    $DB->update_record('data_records', $newrecord);
+                    data_approve_entry($approverecord->id, $newapproved);
                     $msgkey = $newapproved ? 'recordapproved' : 'recorddisapproved';
                     echo $OUTPUT->notification(get_string($msgkey, 'data'), 'notifysuccess');
                 }
