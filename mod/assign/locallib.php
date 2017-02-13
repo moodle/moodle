@@ -1564,6 +1564,7 @@ class assign {
      * @return array List of user records
      */
     public function list_participants($currentgroup, $idsonly) {
+        global $DB, $USER;
 
         if (empty($currentgroup)) {
             $currentgroup = 0;
@@ -1571,12 +1572,57 @@ class assign {
 
         $key = $this->context->id . '-' . $currentgroup . '-' . $this->show_only_active_users();
         if (!isset($this->participants[$key])) {
-            $order = 'u.lastname, u.firstname, u.id';
-            if ($this->is_blind_marking()) {
-                $order = 'u.id';
-            }
-            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.*', $order, null, null,
+            list($esql, $params) = get_enrolled_sql($this->context, 'mod/assign:submit', $currentgroup,
                     $this->show_only_active_users());
+
+            $fields = 'u.*';
+            $orderby = 'u.lastname, u.firstname, u.id';
+            $additionaljoins = '';
+            $additionalfilters = '';
+            $instance = $this->get_instance();
+            if (!empty($instance->blindmarking)) {
+                $additionaljoins .= " LEFT JOIN {assign_user_mapping} um
+                                  ON u.id = um.userid
+                                 AND um.assignment = :assignmentid1
+                           LEFT JOIN {assign_submission} s
+                                  ON u.id = s.userid
+                                 AND s.assignment = :assignmentid2
+                                 AND s.latest = 1
+                        ";
+                $params['assignmentid1'] = (int) $instance->id;
+                $params['assignmentid2'] = (int) $instance->id;
+                $fields .= ', um.id as recordid ';
+
+                // Sort by submission time first, then by um.id to sort reliably by the blind marking id.
+                // Note, different DBs have different ordering of NULL values.
+                // Therefore we coalesce the current time into the timecreated field, and the max possible integer into
+                // the ID field.
+                $orderby = "COALESCE(s.timecreated, " . time() . ") ASC, COALESCE(s.id, " . PHP_INT_MAX . ") ASC, um.id ASC";
+            }
+
+            if ($instance->markingworkflow &&
+                    $instance->markingallocation &&
+                    !has_capability('mod/assign:manageallocations', $this->get_context())) {
+
+                $additionaljoins .= ' LEFT JOIN {assign_user_flags} uf
+                                     ON u.id = uf.userid
+                                     AND uf.assignment = :assignmentid3';
+
+                $params['assignmentid3'] = (int) $instance->id;
+
+                $additionalfilters .= ' AND uf.allocatedmarker = :markerid';
+                $params['markerid'] = $USER->id;
+            }
+
+            $sql = "SELECT $fields
+                      FROM {user} u
+                      JOIN ($esql) je ON je.id = u.id
+                           $additionaljoins
+                     WHERE u.deleted = 0
+                           $additionalfilters
+                  ORDER BY $orderby";
+
+            $users = $DB->get_records_sql($sql, $params);
 
             $cm = $this->get_course_module();
             $info = new \core_availability\info_module($cm);
