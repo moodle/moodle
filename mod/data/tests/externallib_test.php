@@ -601,4 +601,22 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         $result = mod_data_external::get_entry($entry21);
     }
+
+    /**
+     * Test get_fields.
+     */
+    public function test_get_fields() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->student1);
+        $result = mod_data_external::get_fields($this->data->id);
+        $result = external_api::clean_returnvalue(mod_data_external::get_fields_returns(), $result);
+
+        // Basically compare we retrieve all the fields and the correct values.
+        $fields = $DB->get_records('data_fields', array('dataid' => $this->data->id), 'id');
+        foreach ($result['fields'] as $field) {
+            $this->assertEquals($field, (array) $fields[$field['id']]);
+        }
+    }
 }

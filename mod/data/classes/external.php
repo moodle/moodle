@@ -32,6 +32,7 @@ require_once($CFG->dirroot . "/mod/data/locallib.php");
 use mod_data\external\database_summary_exporter;
 use mod_data\external\record_exporter;
 use mod_data\external\content_exporter;
+use mod_data\external\field_exporter;
 
 /**
  * Database module external functions
@@ -563,6 +564,80 @@ class mod_data_external extends external_api {
             array(
                 'entry' => record_exporter::get_read_structure(),
                 'entryviewcontents' => new external_value(PARAM_RAW, 'The entry as is rendered in the site.', VALUE_OPTIONAL),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function get_fields_parameters() {
+        return new external_function_parameters(
+            array(
+                'databaseid' => new external_value(PARAM_INT, 'Database instance id.'),
+            )
+        );
+    }
+
+    /**
+     * Return the list of configured fields for the given database.
+     *
+     * @param int $databaseid the database id
+     * @return array of warnings and the fields
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function get_fields($databaseid) {
+        global $PAGE;
+
+        $params = array('databaseid' => $databaseid);
+        $params = self::validate_parameters(self::get_fields_parameters(), $params);
+        $warnings = array();
+
+        list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
+
+        // Check database is open in time.
+        $canmanageentries = has_capability('mod/data:manageentries', $context);
+        data_require_time_available($database, $canmanageentries);
+
+        $fieldinstances = data_get_field_instances($database);
+
+        foreach ($fieldinstances as $fieldinstance) {
+            $record = $fieldinstance->field;
+            // Now get the configs the user can see with his current permissions.
+            $configs = $fieldinstance->get_config_for_external();
+            foreach ($configs as $name => $value) {
+                // Overwrite.
+                $record->{$name} = $value;
+            }
+
+            $exporter = new field_exporter($record, array('context' => $context));
+            $fields[] = $exporter->export($PAGE->get_renderer('core'));
+        }
+
+        $result = array(
+            'fields' => $fields,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function get_fields_returns() {
+        return new external_single_structure(
+            array(
+                'fields' => new external_multiple_structure(
+                    field_exporter::get_read_structure()
+                ),
                 'warnings' => new external_warnings()
             )
         );

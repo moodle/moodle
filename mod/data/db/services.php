@@ -67,4 +67,12 @@ $functions = array(
         'capabilities'  => 'mod/data:viewentry',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_get_fields' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'get_fields',
+        'description'   => 'Return the list of configured fields for the given database.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
