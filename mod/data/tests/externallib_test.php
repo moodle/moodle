@@ -619,4 +619,94 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
             $this->assertEquals($field, (array) $fields[$field['id']]);
         }
     }
+
+    /**
+     * Test search_entries.
+     */
+    public function test_search_entries() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        // First do a normal text search as student 1. I should see my two group entries.
+        $this->setUser($this->student1);
+        $result = mod_data_external::search_entries($this->data->id, 0, false, 'text');
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(2, $result['entries']);
+        $this->assertEquals(2, $result['totalcount']);
+
+        // Now as the other student I should receive my not approved entry. Apply ordering here.
+        $this->setUser($this->student2);
+        $result = mod_data_external::search_entries($this->data->id, 0, false, 'text', [], DATA_APPROVED, 'ASC');
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(3, $result['entries']);
+        $this->assertEquals(3, $result['totalcount']);
+        // The not approved one should be the first.
+        $this->assertEquals($entry13, $result['entries'][0]['id']);
+
+        // Now as the other group student.
+        $this->setUser($this->student3);
+        $result = mod_data_external::search_entries($this->data->id, 0, false, 'text');
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(1, $result['entries']);
+        $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals($this->student3->id, $result['entries'][0]['userid']);
+
+        // Same normal text search as teacher.
+        $this->setUser($this->teacher);
+        $result = mod_data_external::search_entries($this->data->id, 0, false, 'text');
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(4, $result['entries']);  // I can see all groups and non approved.
+        $this->assertEquals(4, $result['totalcount']);
+
+        // Pagination.
+        $this->setUser($this->teacher);
+        $result = mod_data_external::search_entries($this->data->id, 0, false, 'text', [], DATA_TIMEADDED, 'ASC', 0, 2);
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(2, $result['entries']);  // Only 2 per page.
+        $this->assertEquals(4, $result['totalcount']);
+
+        // Now advanced search or not dinamic fields (user firstname for example).
+        $this->setUser($this->student1);
+        $advsearch = [
+            ['name' => 'fn', 'value' => json_encode($this->student2->firstname)]
+        ];
+        $result = mod_data_external::search_entries($this->data->id, 0, false, '', $advsearch);
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(1, $result['entries']);
+        $this->assertEquals(1, $result['totalcount']);
+        $this->assertEquals($this->student2->id, $result['entries'][0]['userid']);  // I only found mine!
+
+        // Advanced search for fields.
+        $field = $DB->get_record('data_fields', array('type' => 'url'));
+        $advsearch = [
+            ['name' => 'f_' . $field->id , 'value' => 'sampleurl']
+        ];
+        $result = mod_data_external::search_entries($this->data->id, 0, false, '', $advsearch);
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(2, $result['entries']);  // Found two entries matching this.
+        $this->assertEquals(2, $result['totalcount']);
+
+        // Combined search.
+        $field2 = $DB->get_record('data_fields', array('type' => 'number'));
+        $advsearch = [
+            ['name' => 'f_' . $field->id , 'value' => 'sampleurl'],
+            ['name' => 'f_' . $field2->id , 'value' => '12345'],
+            ['name' => 'ln', 'value' => json_encode($this->student2->lastname)]
+        ];
+        $result = mod_data_external::search_entries($this->data->id, 0, false, '', $advsearch);
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(1, $result['entries']);  // Only one matching everything.
+        $this->assertEquals(1, $result['totalcount']);
+
+        // Combined search (no results).
+        $field2 = $DB->get_record('data_fields', array('type' => 'number'));
+        $advsearch = [
+            ['name' => 'f_' . $field->id , 'value' => 'sampleurl'],
+            ['name' => 'f_' . $field2->id , 'value' => '98780333'], // Non existent number.
+        ];
+        $result = mod_data_external::search_entries($this->data->id, 0, false, '', $advsearch);
+        $result = external_api::clean_returnvalue(mod_data_external::search_entries_returns(), $result);
+        $this->assertCount(0, $result['entries']);  // Only one matching everything.
+        $this->assertEquals(0, $result['totalcount']);
+    }
 }

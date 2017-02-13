@@ -642,4 +642,172 @@ class mod_data_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function search_entries_parameters() {
+        return new external_function_parameters(
+            array(
+                'databaseid' => new external_value(PARAM_INT, 'data instance id'),
+                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
+                                                   VALUE_DEFAULT, 0),
+                'returncontents' => new external_value(PARAM_BOOL, 'Whether to return contents or not.', VALUE_DEFAULT, false),
+                'search' => new external_value(PARAM_NOTAGS, 'search string (empty when using advanced)', VALUE_DEFAULT, ''),
+                'advsearch' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'name' => new external_value(PARAM_ALPHANUMEXT, 'Field key for search.
+                                                            Use fn or ln for first or last name'),
+                            'value' => new external_value(PARAM_RAW, 'JSON encoded value for search'),
+                        )
+                    ), 'Advanced search', VALUE_DEFAULT, array()
+                ),
+                'sort' => new external_value(PARAM_INT, 'Sort the records by this field id, reserved ids are:
+                                                0: timeadded
+                                                -1: firstname
+                                                -2: lastname
+                                                -3: approved
+                                                -4: timemodified.
+                                                Empty for using the default database setting.', VALUE_DEFAULT, null),
+                'order' => new external_value(PARAM_ALPHA, 'The direction of the sorting: \'ASC\' or \'DESC\'.
+                                                Empty for using the default database setting.', VALUE_DEFAULT, null),
+                'page' => new external_value(PARAM_INT, 'The page of records to return.', VALUE_DEFAULT, 0),
+                'perpage' => new external_value(PARAM_INT, 'The number of records to return per page', VALUE_DEFAULT, 0),
+            )
+        );
+    }
+
+    /**
+     * Return access information for a given feedback
+     *
+     * @param int $databaseid       the data instance id
+     * @param int $groupid          (optional) group id, 0 means that the function will determine the user group
+     * @param bool $returncontents  whether to return contents or not
+     * @param str $search           search text
+     * @param array $advsearch      advanced search data
+     * @param str $sort             sort by this field
+     * @param int $order            the direction of the sorting
+     * @param int $page             page of records to return
+     * @param int $perpage          number of records to return per page
+     * @return array of warnings and the entries
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function search_entries($databaseid, $groupid = 0, $returncontents = false, $search = '', $advsearch = [],
+            $sort = null, $order = null, $page = 0, $perpage = 0) {
+        global $PAGE, $DB;
+
+        $params = array('databaseid' => $databaseid, 'groupid' => $groupid, 'returncontents' => $returncontents, 'search' => $search,
+                        'advsearch' => $advsearch, 'sort' => $sort, 'order' => $order, 'page' => $page, 'perpage' => $perpage);
+        $params = self::validate_parameters(self::search_entries_parameters(), $params);
+        $warnings = array();
+
+        if (!empty($params['order'])) {
+            $params['order'] = strtoupper($params['order']);
+            if ($params['order'] != 'ASC' && $params['order'] != 'DESC') {
+                throw new invalid_parameter_exception('Invalid value for sortdirection parameter (value: ' . $params['order'] . ')');
+            }
+        }
+
+        list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
+        // Check database is open in time.
+        data_require_time_available($database, null, $context);
+
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode = groups_get_activity_groupmode($cm)) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        if (!empty($params['advsearch'])) {
+            $advanced = true;
+            $defaults = [];
+            $fn = $ln = ''; // Defaults for first and last name.
+            // Force defaults for advanced search.
+            foreach ($params['advsearch'] as $adv) {
+                if ($adv['name'] == 'fn' || $adv['name'] == 'ln') {
+                    $$adv['name'] = json_decode($adv['value']);
+                    continue;
+                }
+                $defaults[$adv['name']] = json_decode($adv['value']);
+            }
+            list($searcharray, $params['search']) = data_build_search_array($database, false, [], $defaults, $fn, $ln);
+        } else {
+            $advanced = null;
+            $searcharray = null;
+        }
+
+        list($records, $maxcount, $totalcount, $page, $nowperpage, $sort, $mode) =
+            data_search_entries($database, $cm, $context, 'list', $groupid, $params['search'], $params['sort'], $params['order'],
+                $params['page'], $params['perpage'], $advanced, $searcharray);
+
+        $entries = [];
+        foreach ($records as $record) {
+            $user = user_picture::unalias($record, null, 'userid');
+            $related = array('context' => $context, 'database' => $database, 'user' => $user);
+            if ($params['returncontents']) {
+                $related['contents'] = $DB->get_records('data_content', array('recordid' => $record->id));
+            } else {
+                $related['contents'] = null;
+            }
+
+            $exporter = new record_exporter($record, $related);
+            $entries[] = $exporter->export($PAGE->get_renderer('core'));
+        }
+
+        $result = array(
+            'entries' => $entries,
+            'totalcount' => $totalcount,
+            'maxcount' => $maxcount,
+            'warnings' => $warnings
+        );
+
+        // Check if we should return the list rendered.
+        if ($params['returncontents']) {
+            ob_start();
+            // The return parameter stops the execution after the first record.
+            data_print_template('listtemplate', $records, $database, '', $page, false);
+            $result['listviewcontents'] = ob_get_contents();
+            ob_end_clean();
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function search_entries_returns() {
+        return new external_single_structure(
+            array(
+                'entries' => new external_multiple_structure(
+                    record_exporter::get_read_structure()
+                ),
+                'totalcount' => new external_value(PARAM_INT, 'Total count of records.'),
+                'listviewcontents' => new external_value(PARAM_RAW, 'The list view contents as is rendered in the site.',
+                                                            VALUE_OPTIONAL),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

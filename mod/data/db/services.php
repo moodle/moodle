@@ -75,4 +75,12 @@ $functions = array(
         'capabilities'  => 'mod/data:viewentry',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_search_entries' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'search_entries',
+        'description'   => 'Search for entries in the given database.',
+        'type'          => 'read',
+        'capabilities'  => 'mod/data:viewentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
