@@ -290,6 +290,7 @@ function core_competency_pluginfile($course, $cm, $context, $filearea, $args, $f
     if ($filearea == 'userevidence' && $context->contextlevel == CONTEXT_USER) {
         if (user_evidence::can_read_user($context->instanceid)) {
             $file = $fs->get_file($context->id, 'core_competency', $filearea, $itemid, $filepath, $filename);
+            $forcedownload = true;
         }
     }
 
