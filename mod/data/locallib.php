@@ -1182,3 +1182,47 @@ function data_approve_entry($entryid, $approve) {
     $newrecord->approved = $approve ? 1 : 0;
     $DB->update_record('data_records', $newrecord);
 }
+
+/**
+ * Populate the field contents of a new record with the submitted data.
+ *
+ * @param  stdClass $data           database object
+ * @param  stdClass $context        context object
+ * @param  int $recordid            the new record id
+ * @param  array $fields            list of fields of the database
+ * @param  stdClass $datarecord     the submitted data
+ * @param  stdClass $processeddata  pre-processed submitted fields
+ * @since  Moodle 3.3
+ */
+function data_add_fields_contents_to_new_record($data, $context, $recordid, $fields, $datarecord, $processeddata) {
+    global $DB;
+
+    // Insert a whole lot of empty records to make sure we have them.
+    $records = array();
+    foreach ($fields as $field) {
+        $content = new stdClass();
+        $content->recordid = $recordid;
+        $content->fieldid = $field->id;
+        $records[] = $content;
+    }
+
+    // Bulk insert the records now. Some records may have no data but all must exist.
+    $DB->insert_records('data_content', $records);
+
+    // Add all provided content.
+    foreach ($processeddata->fields as $fieldname => $field) {
+        $field->update_content($recordid, $datarecord->$fieldname, $fieldname);
+    }
+
+    // Trigger an event for updating this record.
+    $event = \mod_data\event\record_created::create(array(
+        'objectid' => $recordid,
+        'context' => $context,
+        'courseid' => $data->course,
+        'other' => array(
+            'dataid' => $data->id
+        )
+    ));
+    $event->add_record_snapshot('data', $data);
+    $event->trigger();
+}
