@@ -810,4 +810,67 @@ class mod_data_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function approve_entry_parameters() {
+        return new external_function_parameters(
+            array(
+                'entryid' => new external_value(PARAM_INT, 'Record entry id.'),
+                'approve' => new external_value(PARAM_BOOL, 'Whether to approve (true) or unapprove the entry.',
+                                                VALUE_DEFAULT, true),
+            )
+        );
+    }
+
+    /**
+     * Approves or unapproves an entry.
+     *
+     * @param int $entryid          the record entry id id
+     * @param bool $approve         whether to approve (true) or unapprove the entry
+     * @return array of warnings and the entries
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function approve_entry($entryid, $approve = true) {
+        global $PAGE, $DB;
+
+        $params = array('entryid' => $entryid, 'approve' => $approve);
+        $params = self::validate_parameters(self::approve_entry_parameters(), $params);
+        $warnings = array();
+
+        $record = $DB->get_record('data_records', array('id' => $params['entryid']), '*', MUST_EXIST);
+        list($database, $course, $cm, $context) = self::validate_database($record->dataid);
+        // Check database is open in time.
+        data_require_time_available($database, null, $context);
+        // Check specific capabilities.
+        require_capability('mod/data:approve', $context);
+
+        data_approve_entry($record->id, $params['approve']);
+
+        $result = array(
+            'status' => true,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function approve_entry_returns() {
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

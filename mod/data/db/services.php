@@ -83,4 +83,12 @@ $functions = array(
         'capabilities'  => 'mod/data:viewentry',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_approve_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'approve_entry',
+        'description'   => 'Approves or unapproves an entry.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:approve',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );

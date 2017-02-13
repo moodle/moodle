@@ -709,4 +709,44 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->assertCount(0, $result['entries']);  // Only one matching everything.
         $this->assertEquals(0, $result['totalcount']);
     }
+
+    /**
+     * Test approve_entry.
+     */
+    public function test_approve_entry() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->teacher);
+        $this->assertEquals(0, $DB->get_field('data_records', 'approved', array('id' => $entry13)));
+        $result = mod_data_external::approve_entry($entry13);
+        $result = external_api::clean_returnvalue(mod_data_external::approve_entry_returns(), $result);
+        $this->assertEquals(1, $DB->get_field('data_records', 'approved', array('id' => $entry13)));
+    }
+
+    /**
+     * Test unapprove_entry.
+     */
+    public function test_unapprove_entry() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->teacher);
+        $this->assertEquals(1, $DB->get_field('data_records', 'approved', array('id' => $entry11)));
+        $result = mod_data_external::approve_entry($entry11, false);
+        $result = external_api::clean_returnvalue(mod_data_external::approve_entry_returns(), $result);
+        $this->assertEquals(0, $DB->get_field('data_records', 'approved', array('id' => $entry11)));
+    }
+
+    /**
+     * Test approve_entry missing permissions.
+     */
+    public function test_approve_entry_missing_permissions() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->student1);
+        $this->expectException('moodle_exception');
+        mod_data_external::approve_entry($entry13);
+    }
 }
