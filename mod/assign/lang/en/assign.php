@@ -249,6 +249,8 @@ $string['gradeoutofhelp_help'] = 'Enter the grade for the student\'s submission 
 $string['gradestudent'] = 'Grade student: (id={$a->id}, fullname={$a->fullname}). ';
 $string['grading'] = 'Grading';
 $string['gradingchangessaved'] = 'The grade changes were saved';
+$string['gradingduedate'] = 'Grading due date';
+$string['gradingduedate_help'] = 'The expected date that marking of the submissions should be completed by. This date is used to prioritise dashboard notifications for teachers.';
 $string['gradechangessaveddetail'] = 'The changes to the grade and feedback were saved';
 $string['gradingmethodpreview'] = 'Grading criteria';
 $string['gradingoptions'] = 'Options';

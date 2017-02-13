@@ -23,6 +23,7 @@
         <FIELD NAME="requiresubmissionstatement" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Forces the student to accept a submission statement when submitting an assignment"/>
         <FIELD NAME="completionsubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their assignment."/>
         <FIELD NAME="cutoffdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The final date after which submissions will no longer be accepted for this assignment without an extensions."/>
+        <FIELD NAME="gradingduedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The expected date for marking the submissions."/>
         <FIELD NAME="teamsubmission" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Do students submit in teams?"/>
         <FIELD NAME="requireallteammemberssubmit" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If enabled, a submission will not be accepted until all team members have submitted it."/>
         <FIELD NAME="teamsubmissiongroupingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="A grouping id to get groups for team submissions"/>

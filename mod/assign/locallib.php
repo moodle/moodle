@@ -635,6 +635,7 @@ class assign {
         }
         $update->duedate = $formdata->duedate;
         $update->cutoffdate = $formdata->cutoffdate;
+        $update->gradingduedate = $formdata->gradingduedate;
         $update->allowsubmissionsfromdate = $formdata->allowsubmissionsfromdate;
         $update->grade = $formdata->grade;
         $update->completionsubmit = !empty($formdata->completionsubmit);
@@ -1244,6 +1245,7 @@ class assign {
         }
         $update->duedate = $formdata->duedate;
         $update->cutoffdate = $formdata->cutoffdate;
+        $update->gradingduedate = $formdata->gradingduedate;
         $update->allowsubmissionsfromdate = $formdata->allowsubmissionsfromdate;
         $update->grade = $formdata->grade;
         if (!empty($formdata->completionunlocked)) {

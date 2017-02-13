@@ -131,6 +131,16 @@ if ($ADMIN->fulltree) {
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
+    $name = new lang_string('gradingduedate', 'mod_assign');
+    $description = new lang_string('gradingduedate_help', 'mod_assign');
+    $setting = new admin_setting_configduration('assign/gradingduedate',
+                                                    $name,
+                                                    $description,
+                                                    1209600);
+    $setting->set_enabled_flag_options(admin_setting_flag::ENABLED, true);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
     $name = new lang_string('submissiondrafts', 'mod_assign');
     $description = new lang_string('submissiondrafts_help', 'mod_assign');
     $setting = new admin_setting_configcheckbox('assign/submissiondrafts',

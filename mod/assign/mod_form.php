@@ -95,6 +95,10 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('date_time_selector', 'cutoffdate', $name, array('optional'=>true));
         $mform->addHelpButton('cutoffdate', 'cutoffdate', 'assign');
 
+        $name = get_string('gradingduedate', 'assign');
+        $mform->addElement('date_time_selector', 'gradingduedate', $name, array('optional' => true));
+        $mform->addHelpButton('gradingduedate', 'gradingduedate', 'assign');
+
         $name = get_string('alwaysshowdescription', 'assign');
         $mform->addElement('checkbox', 'alwaysshowdescription', $name);
         $mform->addHelpButton('alwaysshowdescription', 'alwaysshowdescription', 'assign');

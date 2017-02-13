@@ -113,6 +113,9 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         if (!isset($data->cutoffdate)) {
             $data->cutoffdate = 0;
         }
+        if (!isset($data->gradingduedate)) {
+            $data->gradingduedate = 0;
+        }
         if (!isset($data->markingworkflow)) {
             $data->markingworkflow = 0;
         }

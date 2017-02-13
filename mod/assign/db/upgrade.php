@@ -282,5 +282,19 @@ function xmldb_assign_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017031000, 'assign');
     }
 
+    if ($oldversion < 2017031300) {
+        // Add a 'gradingduedate' field to the 'assign' table.
+        $table = new xmldb_table('assign');
+        $field = new xmldb_field('gradingduedate', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'cutoffdate');
+
+        // Conditionally launch add field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Assign savepoint reached.
+        upgrade_mod_savepoint(true, 2017031300, 'assign');
+    }
+
     return true;
 }

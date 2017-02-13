@@ -97,6 +97,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $moduleinfo->sendlatenotifications = true;
         $moduleinfo->duedate = time() + (7 * 24 * 3600);
         $moduleinfo->cutoffdate = time() + (7 * 24 * 3600);
+        $moduleinfo->gradingduedate = time() + (7 * 24 * 3600);
         $moduleinfo->allowsubmissionsfromdate = time();
         $moduleinfo->teamsubmission = true;
         $moduleinfo->requireallteammemberssubmit = true;
