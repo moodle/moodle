@@ -175,20 +175,11 @@ if (!is_enrolled($context)) {
     exit;
 }
 
-$checkarray = Array('questions' => Array());
-if (!empty($checklist)) {
-    foreach ($checklist as $question => $default) {
-        $checkarray['questions'][] = Array('question' => $question, 'default' => $default);
-    }
+$questions = array();
+foreach ($checklist as $question => $default) {
+    $questions[] = array('name' => $question, 'default' => $default);
 }
-$PAGE->requires->data_for_js('surveycheck', $checkarray);
-$module = array(
-    'name'      => 'mod_survey',
-    'fullpath'  => '/mod/survey/survey.js',
-    'requires'  => array('yui2-event'),
-);
-$PAGE->requires->string_for_js('questionsnotanswered', 'survey');
-$PAGE->requires->js_init_call('M.mod_survey.init', $checkarray, true, $module);
+$PAGE->requires->js_call_amd('mod_survey/validation', 'ensureRadiosChosen', array('surveyform', $questions));
 
 echo '<br />';
 echo '<input type="submit" class="btn btn-primary" value="'.get_string("clicktocontinue", "survey").'" />';
