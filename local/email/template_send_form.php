@@ -66,8 +66,11 @@ class template_send_form extends moodleform {
         $strrequired = get_string('required');
 
         $mform->addElement('hidden', 'templateid', $this->templateid);
+        $mform->setType('templateid', PARAM_INT);
         $mform->addElement('hidden', 'templatename', $this->templaterecord->name);
+        $mform->setType('templatename', PARAM_NOTAGS);
         $mform->addElement('hidden', 'companyid', $this->companyid);
+        $mform->setType('companyid', PARAM_INT);
 
         $company = new company($this->companyid);
 
