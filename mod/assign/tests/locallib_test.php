@@ -2174,15 +2174,18 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         // Check the allocated marker can view the submission.
         $this->setUser($this->teachers[0]);
-        $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
-        $output = $assign->get_renderer()->render($gradingtable);
-        $this->assertEquals(true, strpos($output, $this->students[0]->lastname));
 
+        $users = $assign->list_participants(0, true);
+        $user = reset($users);
+        $this->assertEquals($this->students[0]->id, $user->id);
+
+        $cm = get_coursemodule_from_instance('assign', $assign->get_instance()->id);
+        $context = context_module::instance($cm->id);
+        $assign = new testable_assign($context, $cm, $this->course);
         // Check that other teachers can't view this submission.
         $this->setUser($this->teachers[1]);
-        $gradingtable = new assign_grading_table($assign, 100, '', 0, true);
-        $output = $assign->get_renderer()->render($gradingtable);
-        $this->assertNotEquals(true, strpos($output, $this->students[0]->lastname));
+        $users = $assign->list_participants(0, true);
+        $this->assertEquals(0, count($users));
     }
 
     /**
