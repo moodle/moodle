@@ -298,12 +298,10 @@ define(['jquery', 'core/yui', 'core/notification', 'core/templates', 'core/fragm
                         }.bind(this))
                         .fail(notification.exception);
                     }.bind(this)).fail(notification.exception);
+                    $('[data-region="review-panel"]').show();
                 } else {
                     this._region.hide();
-                    var reviewPanel = $('[data-region="review-panel"]');
-                    if (reviewPanel.length) {
-                        this._niceReplaceNodeContents(reviewPanel, '', '');
-                    }
+                    $('[data-region="review-panel"]').hide();
                     $(document).trigger('finish-loading-user');
                     // Tell behat we are friends again.
                     window.M.util.js_complete('mod-assign-loading-user');
