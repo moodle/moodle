@@ -77,8 +77,7 @@ class block_login extends block_base {
 
             $this->content->text .= '<div class="form-group"><label for="login_password">'.get_string('password').'</label>';
 
-            $this->content->text .= '<input type="password" name="password" id="login_password" class="form-control" 
-value="" /></div>';
+            $this->content->text .= '<input type="password" name="password" id="login_password" class="form-control" value="" /></div>';
 
             if (isset($CFG->rememberusername) and $CFG->rememberusername == 2) {
                 $checked = $username ? 'checked="checked"' : '';
