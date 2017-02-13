@@ -1031,6 +1031,9 @@ class assign_grading_table extends table_sql implements renderable {
         $due = $instance->duedate;
         if ($row->extensionduedate) {
             $due = $row->extensionduedate;
+        } else if (!empty($row->duedate)) {
+            // The override due date.
+            $due = $row->duedate;
         }
 
         $group = false;
