@@ -933,4 +933,140 @@ class mod_data_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function add_entry_parameters() {
+        return new external_function_parameters(
+            array(
+                'databaseid' => new external_value(PARAM_INT, 'data instance id'),
+                'groupid' => new external_value(PARAM_INT, 'Group id, 0 means that the function will determine the user group',
+                                                   VALUE_DEFAULT, 0),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'fieldid' => new external_value(PARAM_INT, 'The field id.'),
+                            'subfield' => new external_value(PARAM_NOTAGS, 'The subfield name (if required).', VALUE_DEFAULT, ''),
+                            'value' => new external_value(PARAM_RAW, 'The contents for the field always JSON encoded.'),
+                        )
+                    ), 'The fields data to be created'
+                ),
+            )
+        );
+    }
+
+    /**
+     * Adds a new entry to a database
+     *
+     * @param int $databaseid the data instance id
+     * @param int $groupid (optional) group id, 0 means that the function will determine the user group
+     * @param array $data the fields data to be created
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function add_entry($databaseid, $groupid, $data) {
+        global $DB;
+
+        $params = array('databaseid' => $databaseid, 'groupid' => $groupid, 'data' => $data);
+        $params = self::validate_parameters(self::add_entry_parameters(), $params);
+        $warnings = array();
+        $fieldnotifications = array();
+
+        list($database, $course, $cm, $context) = self::validate_database($params['databaseid']);
+        // Check database is open in time.
+        data_require_time_available($database, null, $context);
+
+        $groupmode = groups_get_activity_groupmode($cm);
+        if (!empty($params['groupid'])) {
+            $groupid = $params['groupid'];
+            // Determine is the group is visible to user.
+            if (!groups_group_visible($groupid, $course, $cm)) {
+                throw new moodle_exception('notingroup');
+            }
+        } else {
+            // Check to see if groups are being used here.
+            if ($groupmode) {
+                $groupid = groups_get_activity_group($cm);
+                // Determine is the group is visible to user (this is particullary for the group 0 -> all groups).
+                if (!groups_group_visible($groupid, $course, $cm)) {
+                    throw new moodle_exception('notingroup');
+                }
+            } else {
+                $groupid = 0;
+            }
+        }
+
+        if (!data_user_can_add_entry($database, $groupid, $groupmode, $context)) {
+            throw new moodle_exception('noaccess', 'data');
+        }
+
+        // Prepare the data as is expected by the API.
+        $datarecord = new stdClass;
+        foreach ($params['data'] as $data) {
+            $subfield = ($data['subfield'] !== '') ? '_' . $data['subfield'] : '';
+            // We ask for JSON encoded values because of multiple choice forms or checkboxes that use array parameters.
+            $datarecord->{'field_' . $data['fieldid'] . $subfield} = json_decode($data['value']);
+        }
+        // Validate to ensure that enough data was submitted.
+        $fields = $DB->get_records('data_fields', array('dataid' => $database->id));
+        $processeddata = data_process_submission($database, $fields, $datarecord);
+
+        // Format notifications.
+        if (!empty($processeddata->fieldnotifications)) {
+            foreach ($processeddata->fieldnotifications as $field => $notififications) {
+                foreach ($notififications as $notif) {
+                    $fieldnotifications[] = [
+                        'fieldname' => $field,
+                        'notification' => $notif,
+                    ];
+                }
+            }
+        }
+
+        // Create a new (empty) record.
+        $newentryid = 0;
+        if ($processeddata->validated && $recordid = data_add_record($database, $groupid)) {
+            $newentryid = $recordid;
+            // Now populate the fields contents of the new record.
+            data_add_fields_contents_to_new_record($database, $context, $recordid, $fields, $datarecord, $processeddata);
+        }
+
+        $result = array(
+            'newentryid' => $newentryid,
+            'generalnotifications' => $processeddata->generalnotifications,
+            'fieldnotifications' => $fieldnotifications,
+        );
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function add_entry_returns() {
+        return new external_single_structure(
+            array(
+                'newentryid' => new external_value(PARAM_INT, 'True new created entry id. 0 if the entry was not created.'),
+                'generalnotifications' => new external_multiple_structure(
+                    new external_value(PARAM_RAW, 'General notifications')
+                ),
+                'fieldnotifications' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'fieldname' => new external_value(PARAM_TEXT, 'The field name.'),
+                            'notification' => new external_value(PARAM_RAW, 'The notification for the field.'),
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

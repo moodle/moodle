@@ -99,4 +99,12 @@ $functions = array(
         'capabilities'  => 'mod/data:manageentries',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_add_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'add_entry',
+        'description'   => 'Adds a new entry.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:writeentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
