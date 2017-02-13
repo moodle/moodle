@@ -185,6 +185,7 @@ class mod_folder_external extends external_api {
                     new external_single_structure(
                         array(
                             'id' => new external_value(PARAM_INT, 'Module id'),
+                            'coursemodule' => new external_value(PARAM_INT, 'Course module id'),
                             'course' => new external_value(PARAM_INT, 'Course id'),
                             'name' => new external_value(PARAM_RAW, 'Page name'),
                             'intro' => new external_value(PARAM_RAW, 'Summary'),

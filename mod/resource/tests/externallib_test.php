@@ -153,7 +153,7 @@ class mod_resource_external_testcase extends externallib_advanced_testcase {
         $returndescription = mod_resource_external::get_resources_by_courses_returns();
 
         // Create what we expect to be returned when querying the two courses.
-        $expectedfields = array('id', 'course', 'name', 'intro', 'introformat', 'introfiles',
+        $expectedfields = array('id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles',
                                 'contentfiles', 'tobemigrated', 'legacyfiles', 'legacyfileslast', 'display', 'displayoptions',
                                 'filterfiles', 'revision', 'timemodified', 'section', 'visible', 'groupmode', 'groupingid');
 
