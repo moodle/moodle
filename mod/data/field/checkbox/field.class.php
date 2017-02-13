@@ -114,9 +114,17 @@ class data_field_checkbox extends data_field_base {
         return $str;
     }
 
-    function parse_search_field() {
-        $selected    = optional_param_array('f_'.$this->field->id, array(), PARAM_NOTAGS);
-        $allrequired = optional_param('f_'.$this->field->id.'_allreq', 0, PARAM_BOOL);
+    public function parse_search_field($defaults = null) {
+        $paramselected = 'f_'.$this->field->id;
+        $paramallrequired = 'f_'.$this->field->id.'_allreq';
+
+        if (empty($defaults[$paramselected])) { // One empty means the other ones are empty too.
+            $defaults = array($paramselected => array(), $paramallrequired => 0);
+        }
+
+        $selected    = optional_param_array($paramselected, $defaults[$paramselected], PARAM_NOTAGS);
+        $allrequired = optional_param($paramallrequired, $defaults[$paramallrequired], PARAM_BOOL);
+
         if (empty($selected)) {
             // no searching
             return '';

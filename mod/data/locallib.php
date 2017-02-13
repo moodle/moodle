@@ -798,6 +798,10 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
         $searcharray = array();
     }
 
+    if (core_text::strlen($search) < 2) {
+        $search = '';
+    }
+
     $approvecap = has_capability('mod/data:approve', $context);
     $canmanageentries = has_capability('mod/data:manageentries', $context);
 
@@ -1076,4 +1080,89 @@ function data_get_field_instances($data) {
         }
     }
     return $instances;
+}
+
+/**
+ * Build the search array.
+ *
+ * @param  stdClass $data      the database object
+ * @param  bool $paging        if paging is being used
+ * @param  array $searcharray  the current search array (saved by session)
+ * @param  array $defaults     default values for the searchable fields
+ * @param  str $fn             the first name to search (optional)
+ * @param  str $ln             the last name to search (optional)
+ * @return array               the search array and plain search build based on the different elements
+ * @since  Moodle 3.3
+ */
+function data_build_search_array($data, $paging, $searcharray, $defaults = null, $fn = '', $ln = '') {
+    global $DB;
+
+    $search = '';
+    $vals = array();
+    $fields = $DB->get_records('data_fields', array('dataid' => $data->id));
+
+    if (!empty($fields)) {
+        foreach ($fields as $field) {
+            $searchfield = data_get_field_from_id($field->id, $data);
+            // Get field data to build search sql with.  If paging is false, get from user.
+            // If paging is true, get data from $searcharray which is obtained from the $SESSION (see line 116).
+            if (!$paging) {
+                $val = $searchfield->parse_search_field($defaults);
+            } else {
+                // Set value from session if there is a value @ the required index.
+                if (isset($searcharray[$field->id])) {
+                    $val = $searcharray[$field->id]->data;
+                } else { // If there is not an entry @ the required index, set value to blank.
+                    $val = '';
+                }
+            }
+            if (!empty($val)) {
+                $searcharray[$field->id] = new stdClass();
+                list($searcharray[$field->id]->sql, $searcharray[$field->id]->params) = $searchfield->generate_sql('c'.$field->id, $val);
+                $searcharray[$field->id]->data = $val;
+                $vals[] = $val;
+            } else {
+                // Clear it out.
+                unset($searcharray[$field->id]);
+            }
+        }
+    }
+
+    if (!$paging) {
+        // Name searching.
+        $fn = optional_param('u_fn', $fn, PARAM_NOTAGS);
+        $ln = optional_param('u_ln', $ln, PARAM_NOTAGS);
+    } else {
+        $fn = isset($searcharray[DATA_FIRSTNAME]) ? $searcharray[DATA_FIRSTNAME]->data : '';
+        $ln = isset($searcharray[DATA_LASTNAME]) ? $searcharray[DATA_LASTNAME]->data : '';
+    }
+    if (!empty($fn)) {
+        $searcharray[DATA_FIRSTNAME] = new stdClass();
+        $searcharray[DATA_FIRSTNAME]->sql    = '';
+        $searcharray[DATA_FIRSTNAME]->params = array();
+        $searcharray[DATA_FIRSTNAME]->field  = 'u.firstname';
+        $searcharray[DATA_FIRSTNAME]->data   = $fn;
+        $vals[] = $fn;
+    } else {
+        unset($searcharray[DATA_FIRSTNAME]);
+    }
+    if (!empty($ln)) {
+        $searcharray[DATA_LASTNAME] = new stdClass();
+        $searcharray[DATA_LASTNAME]->sql     = '';
+        $searcharray[DATA_LASTNAME]->params = array();
+        $searcharray[DATA_LASTNAME]->field   = 'u.lastname';
+        $searcharray[DATA_LASTNAME]->data    = $ln;
+        $vals[] = $ln;
+    } else {
+        unset($searcharray[DATA_LASTNAME]);
+    }
+
+    // In case we want to switch to simple search later - there might be multiple values there ;-).
+    if ($vals) {
+        $val = reset($vals);
+        if (is_string($val)) {
+            $search = $val;
+        }
+    }
+    return [$searcharray, $search];
 }

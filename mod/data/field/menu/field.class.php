@@ -108,9 +108,13 @@ class data_field_menu extends data_field_base {
         return $return;
     }
 
-     function parse_search_field() {
-            return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
-     }
+    public function parse_search_field($defaults = null) {
+        $param = 'f_'.$this->field->id;
+        if (empty($defaults[$param])) {
+            $defaults = array($param => '');
+        }
+        return optional_param($param, $defaults[$param], PARAM_NOTAGS);
+    }
 
     function generate_sql($tablealias, $value) {
         global $DB;

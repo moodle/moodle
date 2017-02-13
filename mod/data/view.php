@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
     require_once(__DIR__ . '/../../config.php');
-    require_once($CFG->dirroot . '/mod/data/lib.php');
+    require_once($CFG->dirroot . '/mod/data/locallib.php');
     require_once($CFG->libdir . '/rsslib.php');
 
 /// One of these is necessary!
@@ -132,8 +132,6 @@
 
     if (!empty($advanced)) {
         $search = '';
-        $vals = array();
-        $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
 
         //Added to ammend paging error. This error would occur when attempting to go from one page of advanced
         //search results to another.  All fields were reset in the page transfer, and there was no way of determining
@@ -155,71 +153,10 @@
         else {
             $paging = true;
         }
-        if (!empty($fields)) {
-            foreach($fields as $field) {
-                $searchfield = data_get_field_from_id($field->id, $data);
-                //Get field data to build search sql with.  If paging is false, get from user.
-                //If paging is true, get data from $search_array which is obtained from the $SESSION (see line 116).
-                if(!$paging) {
-                    $val = $searchfield->parse_search_field();
-                } else {
-                    //Set value from session if there is a value @ the required index.
-                    if (isset($search_array[$field->id])) {
-                        $val = $search_array[$field->id]->data;
-                    } else {             //If there is not an entry @ the required index, set value to blank.
-                        $val = '';
-                    }
-                }
-                if (!empty($val)) {
-                    $search_array[$field->id] = new stdClass();
-                    list($search_array[$field->id]->sql, $search_array[$field->id]->params) = $searchfield->generate_sql('c'.$field->id, $val);
-                    $search_array[$field->id]->data = $val;
-                    $vals[] = $val;
-                } else {
-                    // clear it out
-                    unset($search_array[$field->id]);
-                }
-            }
-        }
 
-        if (!$paging) {
-            // name searching
-            $fn = optional_param('u_fn', '', PARAM_NOTAGS);
-            $ln = optional_param('u_ln', '', PARAM_NOTAGS);
-        } else {
-            $fn = isset($search_array[DATA_FIRSTNAME]) ? $search_array[DATA_FIRSTNAME]->data : '';
-            $ln = isset($search_array[DATA_LASTNAME]) ? $search_array[DATA_LASTNAME]->data : '';
-        }
-        if (!empty($fn)) {
-            $search_array[DATA_FIRSTNAME] = new stdClass();
-            $search_array[DATA_FIRSTNAME]->sql    = '';
-            $search_array[DATA_FIRSTNAME]->params = array();
-            $search_array[DATA_FIRSTNAME]->field  = 'u.firstname';
-            $search_array[DATA_FIRSTNAME]->data   = $fn;
-            $vals[] = $fn;
-        } else {
-            unset($search_array[DATA_FIRSTNAME]);
-        }
-        if (!empty($ln)) {
-            $search_array[DATA_LASTNAME] = new stdClass();
-            $search_array[DATA_LASTNAME]->sql     = '';
-            $search_array[DATA_LASTNAME]->params = array();
-            $search_array[DATA_LASTNAME]->field   = 'u.lastname';
-            $search_array[DATA_LASTNAME]->data    = $ln;
-            $vals[] = $ln;
-        } else {
-            unset($search_array[DATA_LASTNAME]);
-        }
-
-        $SESSION->dataprefs[$data->id]['search_array'] = $search_array;     // Make it sticky
-
-        // in case we want to switch to simple search later - there might be multiple values there ;-)
-        if ($vals) {
-            $val = reset($vals);
-            if (is_string($val)) {
-                $search = $val;
-            }
-        }
+        // Now build the advanced search array.
+        list($search_array, $search) = data_build_search_array($data, $paging, $search_array);
+        $SESSION->dataprefs[$data->id]['search_array'] = $search_array;     // Make it sticky.
 
     } else {
         $search = optional_param('search', $SESSION->dataprefs[$data->id]['search'], PARAM_NOTAGS);
@@ -232,9 +169,6 @@
         $search = '';
     }
 
-    if (core_text::strlen($search) < 2) {
-        $search = '';
-    }
     $SESSION->dataprefs[$data->id]['search'] = $search;   // Make it sticky
 
     $sort = optional_param('sort', $SESSION->dataprefs[$data->id]['sort'], PARAM_INT);

@@ -85,7 +85,7 @@ class data_field_radiobutton extends data_field_base {
         return $str;
     }
 
-     function display_search_field($value = '') {
+    function display_search_field($value = '') {
         global $CFG, $DB;
 
         $varcharcontent = $DB->sql_compare_text('content', 255);
@@ -107,8 +107,12 @@ class data_field_radiobutton extends data_field_base {
         return $return;
     }
 
-    function parse_search_field() {
-        return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
+    public function parse_search_field($defaults = null) {
+        $param = 'f_'.$this->field->id;
+        if (empty($defaults[$param])) {
+            $defaults = array($param => '');
+        }
+        return optional_param($param, $defaults[$param], PARAM_NOTAGS);
     }
 
     function generate_sql($tablealias, $value) {
