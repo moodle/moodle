@@ -63,17 +63,18 @@ class company_ccu_courses_form extends company_moodleform {
         // function so that when the currentcourses or potentialcourses get changed in the process
         // function, the changes get displayed, rather than the lists as they are before processing.
 
-        $mform->addElement('html', "<div class='fitem'><div class='fitemtitle'>" .
+        $courses = $this->currentcourses->find_courses('');
+        if ($courses) {
+            $mform->addElement('html', "<hr /><div class='fitem'><div class='fitemtitle'>" .
                                 get_string('selectenrolmentcourse', 'block_iomad_company_admin') .
                                 "</div><div class='felement'>");
-        $mform->addElement('html', $this->currentcourses->display(true));
-        $mform->addElement('html', "</div></div>");
+            $mform->addElement('html', $this->currentcourses->display(true));
+            $mform->addElement('html', "</div></div>");
 
-        if ($this->currentcourses) {
             $this->add_action_buttons(true,
                               get_string('enrolunenrollusers', 'block_iomad_company_admin'));
         } else {
-            $mform->addElement('html', get_string('nocourses', 'block_iomad_company_admin'));
+            $mform->addElement('html', '<div class="alert alert-warning">' . get_string('nocourses', 'block_iomad_company_admin') . '</div>');
         }
     }
 
