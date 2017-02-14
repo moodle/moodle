@@ -605,6 +605,7 @@ class core_message_messagelib_testcase extends advanced_testcase {
             // Get the recent conversations for the specified user.
             $user = $users[$username];
             $conversations = message_get_recent_conversations($user);
+            $this->assertDebuggingCalled();
             foreach ($data as $expectation) {
                 $otheruser = $users[$expectation['with']];
                 $conversation = $conversations[$expectation['messageposition']];

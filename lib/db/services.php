@@ -702,6 +702,7 @@ $functions = array(
         'description' => 'Retrieve the template data for the conversation list',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_data_for_messagearea_contacts' => array(
         'classname' => 'core_message_external',
@@ -710,6 +711,7 @@ $functions = array(
         'description' => 'Retrieve the template data for the contact list',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_data_for_messagearea_messages' => array(
         'classname' => 'core_message_external',
@@ -718,6 +720,7 @@ $functions = array(
         'description' => 'Retrieve the template data for the messages',
         'type' => 'read',
         'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_message_data_for_messagearea_get_most_recent_message' => array(
         'classname' => 'core_message_external',

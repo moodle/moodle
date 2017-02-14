@@ -868,7 +868,7 @@ class core_user_externallib_testcase extends externallib_advanced_testcase {
         $anotheruser = self::getDataGenerator()->create_user();
         $this->setUser($anotheruser);
 
-        $this->setExpectedException('required_capability_exception');
+        $this->expectException('required_capability_exception');
         $result = core_user_external::get_user_preferences('', $user->id);
     }
 

@@ -318,7 +318,7 @@ echo $OUTPUT->footer();
   * @return void The function prints the form.
   */
 function forum_print_big_search_form($course) {
-    global $PAGE, $words, $subject, $phrase, $user, $userid, $fullwords, $notwords, $datefrom, $dateto, $OUTPUT;
+    global $PAGE, $words, $subject, $phrase, $user, $fullwords, $notwords, $datefrom, $dateto, $forumid;
 
     $renderable = new \mod_forum\output\big_search_form($course, $user);
     $renderable->set_words($words);
@@ -329,6 +329,7 @@ function forum_print_big_search_form($course) {
     $renderable->set_dateto($dateto);
     $renderable->set_subject($subject);
     $renderable->set_user($user);
+    $renderable->set_forumid($forumid);
 
     $output = $PAGE->get_renderer('mod_forum');
     echo $output->render($renderable);

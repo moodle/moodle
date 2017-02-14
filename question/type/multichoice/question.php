@@ -113,7 +113,7 @@ abstract class qtype_multichoice_base extends question_graded_automatically {
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'question' && in_array($filearea,
                 array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'))) {
-            return $this->check_combined_feedback_file_access($qa, $options, $filearea);
+            return $this->check_combined_feedback_file_access($qa, $options, $filearea, $args);
 
         } else if ($component == 'question' && $filearea == 'answer') {
             $answerid = reset($args); // Itemid is answer id.

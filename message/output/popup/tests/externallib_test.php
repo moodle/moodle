@@ -57,7 +57,7 @@ class message_popup_externallib_testcase extends advanced_testcase {
     public function test_get_popup_notifications_no_user_exception() {
         $this->resetAfterTest(true);
 
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $result = message_popup_external::get_popup_notifications(-2132131, false, 0, 0);
     }
 
@@ -72,7 +72,7 @@ class message_popup_externallib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         $this->setUser($user);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $result = message_popup_external::get_popup_notifications($sender->id, false, 0, 0);
     }
 
@@ -141,7 +141,7 @@ class message_popup_externallib_testcase extends advanced_testcase {
     public function test_get_unread_popup_notification_count_invalid_user_exception() {
         $this->resetAfterTest(true);
 
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $result = message_popup_external::get_unread_popup_notification_count(-2132131, 0);
     }
 
@@ -156,7 +156,7 @@ class message_popup_externallib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         $this->setUser($user);
-        $this->setExpectedException('moodle_exception');
+        $this->expectException('moodle_exception');
         $result = message_popup_external::get_unread_popup_notification_count($sender->id, 0);
     }
 
