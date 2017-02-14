@@ -911,6 +911,11 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
                     $params['search_flname_'.$i] = "%$val->data%";
                     continue;
                 }
+                if ($key == DATA_TIMEMODIFIED) {
+                    $searchselect .= " AND $val->field >= :timemodified";
+                    $params['timemodified'] = $val->data;
+                    continue;
+                }
                 $advtables .= ', {data_content} c'.$key.' ';
                 $advwhere .= ' AND c'.$key.'.recordid = r.id';
                 $advsearchselect .= ' AND ('.$val->sql.') ';
@@ -961,6 +966,11 @@ function data_search_entries($data, $cm, $context, $mode, $currentgroup, $search
                     $i++;
                     $searchselect .= " AND ".$DB->sql_like($val->field, ":search_flname_$i", false);
                     $params['search_flname_'.$i] = "%$val->data%";
+                    continue;
+                }
+                if ($key == DATA_TIMEMODIFIED) {
+                    $searchselect .= " AND $val->field >= :timemodified";
+                    $params['timemodified'] = $val->data;
                     continue;
                 }
                 $advtables .= ', {data_content} c'.$key.' ';

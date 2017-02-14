@@ -3757,7 +3757,7 @@ function data_get_advance_search_ids($recordids, $searcharray, $dataid) {
  */
 function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
     global $DB;
-
+    $searchcriteria = $alias;   // Keep the criteria.
     $nestsearch = $searcharray[$alias];
     // searching for content outside of mdl_data_content
     if ($alias < 0) {
@@ -3780,7 +3780,10 @@ function data_get_recordids($alias, $searcharray, $dataid, $recordids) {
     if (count($nestsearch->params) != 0) {
         $params = array_merge($params, $nestsearch->params);
         $nestsql = $nestselect . $nestwhere . $nestsearch->sql;
-    } else {
+    } else if ($searchcriteria == DATA_TIMEMODIFIED) {
+        $nestsql = $nestselect . $nestwhere . $nestsearch->field . ' >= :timemodified GROUP BY c' . $alias . '.recordid';
+        $params['timemodified'] = $nestsearch->data;
+    } else {    // First name or last name.
         $thing = $DB->sql_like($nestsearch->field, ':search1', false);
         $nestsql = $nestselect . $nestwhere . $thing . ' GROUP BY c' . $alias . '.recordid';
         $params['search1'] = "%$nestsearch->data%";
