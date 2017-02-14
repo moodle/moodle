@@ -54,7 +54,7 @@ class core_files_mbz_packer_testcase extends advanced_testcase {
         $this->assertNotEmpty($packer->archive_to_pathname($files, $filetrue));
         $context = context_system::instance();
         $this->assertNotEmpty($storagetrue = $packer->archive_to_storage(
-                $files, $context->id, 'phpunit', 'data', 0, '/', 'false.mbz'));
+                $files, $context->id, 'phpunit', 'data', 0, '/', 'true.mbz'));
 
         // Check the sizes are different (indicating different formats).
         $this->assertNotEquals(filesize($filefalse), filesize($filetrue));

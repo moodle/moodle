@@ -21,6 +21,10 @@ information provided here is intended especially for developers.
         checkall, checknone, select_all_in_element_with_id, select_all_in, deselect_all_in, confirm_if, findParentNode,
         filterByParent, stripHTML
     * M.util.init_toggle_class_on_click has been removed.
+* The following functions have been deprecated and should not be used any more:
+  - file_storage::try_content_recovery  - See MDL-46375 for more information
+  - file_storage::content_exists        - See MDL-46375 for more information
+  - file_storage::deleted_file_cleanup  - See MDL-46375 for more information
 
 === 3.2 ===
 
