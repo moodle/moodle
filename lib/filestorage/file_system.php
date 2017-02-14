@@ -35,18 +35,6 @@ defined('MOODLE_INTERNAL') || die();
 abstract class file_system {
 
     /**
-     * Constructor for the file_system.
-     */
-    final public function __construct() {
-        $this->setup_instance();
-    }
-
-    /**
-     * Perform any custom setup for this type of file_system.
-     */
-    abstract protected function setup_instance();
-
-    /**
      * Private clone method to prevent cloning of the instance.
      */
     final protected function __clone() {

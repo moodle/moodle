@@ -58,7 +58,7 @@ class file_system_filedir extends file_system {
     /**
      * Perform any custom setup for this type of file_system.
      */
-    public function setup_instance() {
+    public function __construct() {
         global $CFG;
 
         if (isset($CFG->filedir)) {
