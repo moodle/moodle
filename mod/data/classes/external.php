@@ -1069,4 +1069,118 @@ class mod_data_external extends external_api {
             )
         );
     }
+
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 3.3
+     */
+    public static function update_entry_parameters() {
+        return new external_function_parameters(
+            array(
+                'entryid' => new external_value(PARAM_INT, 'The entry record id.'),
+                'data' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'fieldid' => new external_value(PARAM_INT, 'The field id.'),
+                            'subfield' => new external_value(PARAM_NOTAGS, 'The subfield name (if required).', VALUE_DEFAULT, null),
+                            'value' => new external_value(PARAM_RAW, 'The new contents for the field always JSON encoded.'),
+                        )
+                    ), 'The fields data to be updated'
+                ),
+            )
+        );
+    }
+
+    /**
+     * Updates an existing entry.
+     *
+     * @param int $entryid the data instance id
+     * @param array $data the fields data to be created
+     * @return array of warnings and status result
+     * @since Moodle 3.3
+     * @throws moodle_exception
+     */
+    public static function update_entry($entryid, $data) {
+        global $DB;
+
+        $params = array('entryid' => $entryid, 'data' => $data);
+        $params = self::validate_parameters(self::update_entry_parameters(), $params);
+        $warnings = array();
+        $fieldnotifications = array();
+        $updated = false;
+
+        $record = $DB->get_record('data_records', array('id' => $params['entryid']), '*', MUST_EXIST);
+        list($database, $course, $cm, $context) = self::validate_database($record->dataid);
+        // Check database is open in time.
+        data_require_time_available($database, null, $context);
+
+        if (!data_user_can_manage_entry($record, $database, $context)) {
+            throw new moodle_exception('noaccess', 'data');
+        }
+
+        // Prepare the data as is expected by the API.
+        $datarecord = new stdClass;
+        foreach ($params['data'] as $data) {
+            $subfield = ($data['subfield'] !== '') ? '_' . $data['subfield'] : '';
+            // We ask for JSON encoded values because of multiple choice forms or checkboxes that use array parameters.
+            $datarecord->{'field_' . $data['fieldid'] . $subfield} = json_decode($data['value']);
+        }
+        // Validate to ensure that enough data was submitted.
+        $fields = $DB->get_records('data_fields', array('dataid' => $database->id));
+        $processeddata = data_process_submission($database, $fields, $datarecord);
+
+        // Format notifications.
+        if (!empty($processeddata->fieldnotifications)) {
+            foreach ($processeddata->fieldnotifications as $field => $notififications) {
+                foreach ($notififications as $notif) {
+                    $fieldnotifications[] = [
+                        'fieldname' => $field,
+                        'notification' => $notif,
+                    ];
+                }
+            }
+        }
+
+        if ($processeddata->validated) {
+            // Now update the fields contents.
+            data_update_record_fields_contents($database, $record, $context, $datarecord, $processeddata);
+            $updated = true;
+        }
+
+        $result = array(
+            'updated' => $updated,
+            'generalnotifications' => $processeddata->generalnotifications,
+            'fieldnotifications' => $fieldnotifications,
+            'warnings' => $warnings,
+        );
+        return $result;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 3.3
+     */
+    public static function update_entry_returns() {
+        return new external_single_structure(
+            array(
+                'updated' => new external_value(PARAM_BOOL, 'True if the entry was successfully updated, false other wise.'),
+                'generalnotifications' => new external_multiple_structure(
+                    new external_value(PARAM_RAW, 'General notifications')
+                ),
+                'fieldnotifications' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'fieldname' => new external_value(PARAM_TEXT, 'The field name.'),
+                            'notification' => new external_value(PARAM_RAW, 'The notification for the field.'),
+                        )
+                    )
+                ),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
 }

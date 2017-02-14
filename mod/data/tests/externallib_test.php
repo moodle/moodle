@@ -993,4 +993,190 @@ class mod_data_external_testcase extends externallib_advanced_testcase {
         $this->expectException('moodle_exception');
         mod_data_external::add_entry($this->data->id, 0, []);
     }
+
+    /**
+     * Test update_entry.
+     */
+    public function test_update_entry() {
+        global $DB;
+        // First create the record structure and add some entries.
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->student1);
+        $newentrydata = [];
+        $fields = $DB->get_records('data_fields', array('dataid' => $this->data->id), 'id');
+        // Prepare the new entry data.
+        foreach ($fields as $field) {
+            $subfield = $value = '';
+
+            switch ($field->type) {
+                case 'checkbox':
+                    $value = ['opt1', 'opt2'];
+                    break;
+                case 'date':
+                    // Add two extra.
+                    $newentrydata[] = [
+                        'fieldid' => $field->id,
+                        'subfield' => 'day',
+                        'value' => json_encode('5')
+                    ];
+                    $newentrydata[] = [
+                        'fieldid' => $field->id,
+                        'subfield' => 'month',
+                        'value' => json_encode('1')
+                    ];
+                    $subfield = 'year';
+                    $value = '1981';
+                    break;
+                case 'menu':
+                    $value = 'menu1';
+                    break;
+                case 'multimenu':
+                    $value = ['multimenu1', 'multimenu4'];
+                    break;
+                case 'number':
+                    $value = 6;
+                    break;
+                case 'radiobutton':
+                    $value = 'radioopt2';
+                    break;
+                case 'text':
+                    $value = 'some text';
+                    break;
+                case 'textarea':
+                    $newentrydata[] = [
+                        'fieldid' => $field->id,
+                        'subfield' => 'content1',
+                        'value' => json_encode(FORMAT_MOODLE)
+                    ];
+                    $newentrydata[] = [
+                        'fieldid' => $field->id,
+                        'subfield' => 'itemid',
+                        'value' => json_encode(0)
+                    ];
+                    $value = 'more text';
+                    break;
+                case 'url':
+                    $value = 'https://moodle.org';
+                    $subfield = 0;
+                    break;
+            }
+
+            $newentrydata[] = [
+                'fieldid' => $field->id,
+                'subfield' => $subfield,
+                'value' => json_encode($value)
+            ];
+        }
+        $result = mod_data_external::update_entry($entry11, $newentrydata);
+        $result = external_api::clean_returnvalue(mod_data_external::update_entry_returns(), $result);
+        $this->assertTrue($result['updated']);
+        $this->assertCount(0, $result['generalnotifications']);
+        $this->assertCount(0, $result['fieldnotifications']);
+
+        $result = mod_data_external::get_entry($entry11, 0, true);
+        $result = external_api::clean_returnvalue(mod_data_external::get_entry_returns(), $result);
+        $this->assertEquals($this->student1->id, $result['entry']['userid']);
+        $this->assertCount(9, $result['entry']['contents']);
+        foreach ($result['entry']['contents'] as $content) {
+            $field = $fields[$content['fieldid']];
+            // Stored content same that the one retrieved by WS.
+            $dbcontent = $DB->get_record('data_content', array('fieldid' => $field->id, 'recordid' => $entry11));
+            $this->assertEquals($dbcontent->content, $content['content']);
+
+            // Now double check everything stored is correct.
+            if ($field->type == 'checkbox') {
+                $this->assertEquals('opt1##opt2', $content['content']);
+                continue;
+            }
+            if ($field->type == 'date') {
+                $this->assertEquals(347500800, $content['content']); // Date in gregorian format.
+                continue;
+            }
+            if ($field->type == 'menu') {
+                $this->assertEquals('menu1', $content['content']);
+                continue;
+            }
+            if ($field->type == 'multimenu') {
+                $this->assertEquals('multimenu1##multimenu4', $content['content']);
+                continue;
+            }
+            if ($field->type == 'number') {
+                $this->assertEquals(6, $content['content']);
+                continue;
+            }
+            if ($field->type == 'radiobutton') {
+                $this->assertEquals('radioopt2', $content['content']);
+                continue;
+            }
+            if ($field->type == 'text') {
+                $this->assertEquals('some text', $content['content']);
+                continue;
+            }
+            if ($field->type == 'textarea') {
+                $this->assertEquals('more text', $content['content']);
+                $this->assertEquals(FORMAT_MOODLE, $content['content1']);
+                continue;
+            }
+            if ($field->type == 'url') {
+                $this->assertEquals('https://moodle.org', $content['content']);
+                continue;
+            }
+            $this->assertEquals('multimenu1##multimenu4', $content['content']);
+        }
+
+        // Now, try to update the entry but removing some required data.
+        unset($newentrydata[0]);
+        $result = mod_data_external::update_entry($entry11, $newentrydata);
+        $result = external_api::clean_returnvalue(mod_data_external::update_entry_returns(), $result);
+        $this->assertFalse($result['updated']);
+        $this->assertCount(0, $result['generalnotifications']);
+        $this->assertCount(1, $result['fieldnotifications']);
+        $this->assertEquals('field-1', $result['fieldnotifications'][0]['fieldname']);
+        $this->assertEquals(get_string('errormustsupplyvalue', 'data'), $result['fieldnotifications'][0]['notification']);
+    }
+
+    /**
+     * Test update_entry sending empty data.
+     */
+    public function test_update_entry_empty_data() {
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+
+        $this->setUser($this->student1);
+        $result = mod_data_external::update_entry($entry11, []);
+        $result = external_api::clean_returnvalue(mod_data_external::update_entry_returns(), $result);
+        $this->assertFalse($result['updated']);
+        $this->assertCount(1, $result['generalnotifications']);
+        $this->assertCount(9, $result['fieldnotifications']);
+        $this->assertEquals(get_string('emptyaddform', 'data'), $result['generalnotifications'][0]);
+    }
+
+    /**
+     * Test update_entry in read only period.
+     */
+    public function test_update_entry_read_only_period() {
+        global $DB;
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        // Set a time period.
+        $this->data->timeviewfrom = time() - HOURSECS;
+        $this->data->timeviewto = time() + HOURSECS;
+        $DB->update_record('data', $this->data);
+
+        $this->setUser($this->student1);
+        $this->expectExceptionMessage(get_string('noaccess', 'data'));
+        $this->expectException('moodle_exception');
+        mod_data_external::update_entry($entry11, []);
+    }
+
+    /**
+     * Test update_entry other_user.
+     */
+    public function test_update_entry_other_user() {
+        // Try to update other user entry.
+        list($entry11, $entry12, $entry13, $entry21) = self::populate_database_with_entries();
+        $this->setUser($this->student2);
+        $this->expectExceptionMessage(get_string('noaccess', 'data'));
+        $this->expectException('moodle_exception');
+        mod_data_external::update_entry($entry11, []);
+    }
 }

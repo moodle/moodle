@@ -107,4 +107,12 @@ $functions = array(
         'capabilities'  => 'mod/data:writeentry',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'mod_data_update_entry' => array(
+        'classname'     => 'mod_data_external',
+        'methodname'    => 'update_entry',
+        'description'   => 'Updates an existing entry.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/data:writeentry',
+        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ),
 );
