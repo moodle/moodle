@@ -1,4 +1,4 @@
-@block @block_main_menu
+@block @block_site_main_menu
 Feature: Add URL to main menu block
   In order to add helpful resources for students
   As a admin

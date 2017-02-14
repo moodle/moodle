@@ -61,12 +61,12 @@ class block_social_activities extends block_list {
             if (!empty($modinfo->sections[0])) {
                 foreach($modinfo->sections[0] as $cmid) {
                     $cm = $modinfo->cms[$cmid];
-                    if (!$cm->uservisible) {
+                    if (!$cm->uservisible || !$cm->is_visible_on_course_page()) {
                         continue;
                     }
 
                     if (!$cm->url) {
-                        $content = $cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+                        $content = $courserenderer->course_section_cm_text($cm);
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
@@ -98,7 +98,7 @@ class block_social_activities extends block_list {
         if (!empty($modinfo->sections[0])) {
             foreach ($modinfo->sections[0] as $modnumber) {
                 $mod = $modinfo->cms[$modnumber];
-                if (!$mod->uservisible) {
+                if (!$mod->uservisible || !$mod->is_visible_on_course_page()) {
                     continue;
                 }
                 if (!$ismoving) {
@@ -128,7 +128,7 @@ class block_social_activities extends block_list {
                         $this->content->icons[] = '';
                     }
                     if (!$mod->url) {
-                        $content = $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
+                        $content = $courserenderer->course_section_cm_text($mod);
                         $this->content->items[] = $content . $editbuttons;
                         $this->content->icons[] = '';
                     } else {

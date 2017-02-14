@@ -1680,7 +1680,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(27, $result['cm']);
+        $this->assertCount(28, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
         $this->assertEquals(100, $result['cm']['grade']);
@@ -1747,7 +1747,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         $this->assertCount(0, $result['warnings']);
         // Test we retrieve all the fields.
-        $this->assertCount(22, $result['cm']);
+        $this->assertCount(23, $result['cm']);
         $this->assertEquals($record['name'], $result['cm']['name']);
         $this->assertEquals($options['idnumber'], $result['cm']['idnumber']);
 

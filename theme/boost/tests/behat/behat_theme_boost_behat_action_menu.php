@@ -40,6 +40,12 @@ class behat_theme_boost_behat_action_menu extends behat_action_menu {
     public function i_open_the_action_menu_in($element, $selectortype) {
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_node_in_container("css_element", "[role=button][aria-haspopup=true]", $selectortype, $element);
+
+        // Check if it is not already opened.
+        if ($node->getAttribute('aria-expanded') === 'true') {
+            return;
+        }
+
         $this->ensure_node_is_visible($node);
         $node->click();
     }

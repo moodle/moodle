@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class format_section_renderer_base extends plugin_renderer_base {
 
-    /** @var contains instance of core course renderer */
+    /** @var core_course_renderer contains instance of core course renderer */
     protected $courserenderer;
 
     /**
@@ -127,7 +127,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $menu->add($al);
             }
 
-            $o .= html_writer::div($this->render($menu), 'section_action_menu');
+            $o .= html_writer::div($this->render($menu), 'section_action_menu',
+                array('data-sectionid' => $section->id));
         }
 
         return $o;
@@ -194,7 +195,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             // Only in the non-general sections.
             if (!$section->visible) {
                 $sectionstyle = ' hidden';
-            } else if (course_get_format($course)->is_section_current($section)) {
+            }
+            if (course_get_format($course)->is_section_current($section)) {
                 $sectionstyle = ' current';
             }
         }
@@ -226,13 +228,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $sectionname = html_writer::tag('span', $this->section_title($section, $course));
         $o.= $this->output->heading($sectionname, 3, 'sectionname' . $classes);
 
-        $o.= html_writer::start_tag('div', array('class' => 'summary'));
-        $o.= $this->format_summary_text($section);
-        $o.= html_writer::end_tag('div');
+        $o .= $this->section_availability($section);
 
-        $context = context_course::instance($course->id);
-        $o .= $this->section_availability_message($section,
-                has_capability('moodle/course:viewhiddensections', $context));
+        $o .= html_writer::start_tag('div', array('class' => 'summary'));
+        $o .= $this->format_summary_text($section);
+        $o .= html_writer::end_tag('div');
 
         return $o;
     }
@@ -305,14 +305,12 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             return array();
         }
 
+        $sectionreturn = $onsectionpage ? $section->section : null;
+
         $coursecontext = context_course::instance($course->id);
         $isstealth = isset($course->numsections) && ($section->section > $course->numsections);
 
-        if ($onsectionpage) {
-            $baseurl = course_get_url($course, $section->section);
-        } else {
-            $baseurl = course_get_url($course);
-        }
+        $baseurl = course_get_url($course, $sectionreturn);
         $baseurl->param('sesskey', sesskey());
 
         $controls = array();
@@ -325,7 +323,6 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 $streditsection = get_string('editsection');
             }
 
-            $sectionreturn = $onsectionpage ? $section->section : 0;
             $controls['edit'] = array(
                 'url'   => new moodle_url('/course/editsection.php', array('id' => $section->id, 'sr' => $sectionreturn)),
                 'icon' => 'i/settings',
@@ -346,7 +343,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                             'icon' => 'i/hide',
                             'name' => $strhidefromothers,
                             'pixattr' => array('class' => '', 'alt' => $strhidefromothers),
-                            'attr' => array('class' => 'icon editing_showhide', 'title' => $strhidefromothers));
+                            'attr' => array('class' => 'icon editing_showhide', 'title' => $strhidefromothers,
+                                'data-sectionreturn' => $sectionreturn, 'data-action' => 'hide'));
                     } else {
                         $strshowfromothers = get_string('showfromothers', 'format_'.$course->format);
                         $url->param('show',  $section->section);
@@ -355,7 +353,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                             'icon' => 'i/show',
                             'name' => $strshowfromothers,
                             'pixattr' => array('class' => '', 'alt' => $strshowfromothers),
-                            'attr' => array('class' => 'icon editing_showhide', 'title' => $strshowfromothers));
+                            'attr' => array('class' => 'icon editing_showhide', 'title' => $strshowfromothers,
+                                'data-sectionreturn' => $sectionreturn, 'data-action' => 'show'));
                     }
                 }
 
@@ -398,14 +397,14 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 }
                 $url = new moodle_url('/course/editsection.php', array(
                     'id' => $section->id,
-                    'sr' => $onsectionpage ? $section->section : 0,
+                    'sr' => $sectionreturn,
                     'delete' => 1));
                 $controls['delete'] = array(
                     'url' => $url,
                     'icon' => 'i/delete',
                     'name' => $strdelete,
                     'pixattr' => array('class' => '', 'alt' => $strdelete),
-                    'attr' => array('class' => 'icon delete', 'title' => $strdelete));
+                    'attr' => array('class' => 'icon editing_delete', 'title' => $strdelete));
             }
         }
 
@@ -452,9 +451,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::end_tag('div');
         $o.= $this->section_activity_summary($section, $course, null);
 
-        $context = context_course::instance($course->id);
-        $o .= $this->section_availability_message($section,
-                has_capability('moodle/course:viewhiddensections', $context));
+        $o .= $this->section_availability($section);
 
         $o .= html_writer::end_tag('div');
         $o .= html_writer::end_tag('li');
@@ -548,29 +545,48 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
      * are going to be unavailable etc). This logic is the same as for
      * activities.
      *
-     * @param stdClass $section The course_section entry from DB
+     * @param section_info $section The course_section entry from DB
      * @param bool $canviewhidden True if user can view hidden sections
      * @return string HTML to output
      */
     protected function section_availability_message($section, $canviewhidden) {
         global $CFG;
         $o = '';
-        if (!$section->uservisible) {
-            // Note: We only get to this function if availableinfo is non-empty,
-            // so there is definitely something to print.
-            $formattedinfo = \core_availability\info::format_info(
-                    $section->availableinfo, $section->course);
-            $o .= html_writer::div($formattedinfo, 'availabilityinfo');
-        } else if ($canviewhidden && !empty($CFG->enableavailability) && $section->visible) {
+        if (!$section->visible) {
+            if ($canviewhidden) {
+                $o .= $this->courserenderer->availability_info(get_string('hiddenfromstudents'), 'ishidden');
+            }
+        } else if (!$section->uservisible) {
+            if ($section->availableinfo) {
+                // Note: We only get to this function if availableinfo is non-empty,
+                // so there is definitely something to print.
+                $formattedinfo = \core_availability\info::format_info(
+                        $section->availableinfo, $section->course);
+                $o .= $this->courserenderer->availability_info($formattedinfo);
+            }
+        } else if ($canviewhidden && !empty($CFG->enableavailability)) {
+            // Check if there is an availability restriction.
             $ci = new \core_availability\info_section($section);
             $fullinfo = $ci->get_full_information();
             if ($fullinfo) {
                 $formattedinfo = \core_availability\info::format_info(
                         $fullinfo, $section->course);
-                $o .= html_writer::div($formattedinfo, 'availabilityinfo');
+                $o .= $this->courserenderer->availability_info($formattedinfo);
             }
         }
         return $o;
+    }
+
+    /**
+     * Displays availability information for the section (hidden, not available unles, etc.)
+     *
+     * @param section_info $section
+     * @return string
+     */
+    public function section_availability($section) {
+        $context = context_course::instance($section->course);
+        $canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
+        return html_writer::div($this->section_availability_message($section, $canviewhidden), 'section_availability');
     }
 
     /**

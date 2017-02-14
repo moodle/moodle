@@ -419,7 +419,8 @@ Y.extend(DRAGRESOURCE, M.core.dragdrop, {
             // Replace move icons
             var move = resourcesnode.one('a.' + CSS.EDITINGMOVE);
             if (move) {
-                move.replace(this.resourcedraghandle.cloneNode(true));
+                var sr = move.getData('sr');
+                move.replace(this.resourcedraghandle.cloneNode(true).setAttribute('data-sectionreturn', sr));
             }
         }, this);
     },
