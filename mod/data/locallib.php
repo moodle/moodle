@@ -1226,3 +1226,43 @@ function data_add_fields_contents_to_new_record($data, $context, $recordid, $fie
     $event->add_record_snapshot('data', $data);
     $event->trigger();
 }
+
+/**
+ * Updates the fields contents of an existing record.
+ *
+ * @param  stdClass $data           database object
+ * @param  stdClass $record         record to update object
+ * @param  stdClass $context        context object
+ * @param  stdClass $datarecord     the submitted data
+ * @param  stdClass $processeddata  pre-processed submitted fields
+ * @since  Moodle 3.3
+ */
+function data_update_record_fields_contents($data, $record, $context, $datarecord, $processeddata) {
+    global $DB;
+
+    // Reset the approved flag after edit if the user does not have permission to approve their own entries.
+    if (!has_capability('mod/data:approve', $context)) {
+        $record->approved = 0;
+    }
+
+    // Update the parent record.
+    $record->timemodified = time();
+    $DB->update_record('data_records', $record);
+
+    // Update all content.
+    foreach ($processeddata->fields as $fieldname => $field) {
+        $field->update_content($record->id, $datarecord->$fieldname, $fieldname);
+    }
+
+    // Trigger an event for updating this record.
+    $event = \mod_data\event\record_updated::create(array(
+        'objectid' => $record->id,
+        'context' => $context,
+        'courseid' => $data->course,
+        'other' => array(
+            'dataid' => $data->id
+        )
+    ));
+    $event->add_record_snapshot('data', $data);
+    $event->trigger();
+}

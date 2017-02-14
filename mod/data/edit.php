@@ -181,34 +181,7 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
 
         if ($processeddata->validated) {
             // Enough data to update the record.
-
-            // Obtain the record to be updated.
-
-            // Reset the approved flag after edit if the user does not have permission to approve their own entries.
-            if (!has_capability('mod/data:approve', $context)) {
-                $record->approved = 0;
-            }
-
-            // Update the parent record.
-            $record->timemodified = time();
-            $DB->update_record('data_records', $record);
-
-            // Update all content.
-            foreach ($processeddata->fields as $fieldname => $field) {
-                $field->update_content($rid, $datarecord->$fieldname, $fieldname);
-            }
-
-            // Trigger an event for updating this record.
-            $event = \mod_data\event\record_updated::create(array(
-                'objectid' => $rid,
-                'context' => $context,
-                'courseid' => $course->id,
-                'other' => array(
-                    'dataid' => $data->id
-                )
-            ));
-            $event->add_record_snapshot('data', $data);
-            $event->trigger();
+            data_update_record_fields_contents($data, $record, $context, $datarecord, $processeddata);
 
             $viewurl = new moodle_url('/mod/data/view.php', array(
                 'd' => $data->id,
