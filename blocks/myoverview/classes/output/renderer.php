@@ -39,6 +39,7 @@ class renderer extends plugin_renderer_base {
     /**
      * Return the main content for the block overview.
      *
+     * @param course_summary $coursesummary Course summary.
      * @return string HTML string
      */
     public function render_course_summary(course_summary $coursesummary) {
