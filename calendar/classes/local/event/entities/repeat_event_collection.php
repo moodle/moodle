@@ -97,25 +97,7 @@ class repeat_event_collection implements event_collection_interface {
         foreach ($this->load_event_records() as $eventrecords) {
             foreach ($eventrecords as $eventrecord) {
                 // In the case of the repeat event having unset information, fallback on the parent.
-                yield $this->factory->create_instance(
-                    $eventrecord->id,
-                    !empty($eventrecord->name) ? $eventrecord->name : $parentrecord->name,
-                    !empty($eventrecord->description) ? $eventrecord->description : $parentrecord->description,
-                    !empty($eventrecord->format) ? $eventrecord->format : $parentrecord->format,
-                    !empty($eventrecord->courseid) ? $eventrecord->courseid : $parentrecord->courseid,
-                    !empty($eventrecord->groupid) ? $eventrecord->groupid : $parentrecord->groupid,
-                    !empty($eventrecord->userid) ? $eventrecord->userid : $parentrecord->userid,
-                    !empty($eventrecord->repeatid) ? $eventrecord->repeatid : $parentrecord->repeatid,
-                    !empty($eventrecord->modulename) ? $eventrecord->modulename : $parentrecord->modulename,
-                    !empty($eventrecord->instance) ? $eventrecord->instance : $parentrecord->instance,
-                    !empty($eventrecord->eventtype) ? $eventrecord->eventtype : $parentrecord->eventtype,
-                    !empty($eventrecord->timestart) ? $eventrecord->timestart : $parentrecord->timestart,
-                    !empty($eventrecord->timeduration) ? $eventrecord->timeduration : $parentrecord->timeduration,
-                    !empty($eventrecord->timemodified) ? $eventrecord->timemodified : $parentrecord->timemodified,
-                    !empty($eventrecord->timesort) ? $eventrecord->timesort : $parentrecord->timesort,
-                    !empty($eventrecord->visible) ? $eventrecord->visible : $parentrecord->visible,
-                    !empty($eventrecord->subscriptionid) ? $eventrecord->subscriptionid : $parentrecord->subscriptionid
-                );
+                yield $this->factory->create_instance((object)array_merge((array)$parentrecord, (array)$eventrecord));
             }
         }
     }
@@ -132,7 +114,7 @@ class repeat_event_collection implements event_collection_interface {
                 return $this->parentrecord;
         }
 
-        return $DB->get_record('event', ['id' => $this->parentid]); 
+        return $DB->get_record('event', ['id' => $this->parentid]);
     }
 
     /**

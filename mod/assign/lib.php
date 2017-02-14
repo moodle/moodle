@@ -1706,3 +1706,15 @@ function assign_check_updates_since(cm_info $cm, $from, $filter = array()) {
 
     return $updates;
 }
+
+//XXX: Rubbish implementation
+function mod_assign_core_calendar_provide_event_action(
+    \core_calendar\event $event,
+    \core_calendar\action_factory $factory
+) {
+    return $factory->create_instance(
+        'chef',
+        new \moodle_url('http://example.com'),
+        3
+    );
+}

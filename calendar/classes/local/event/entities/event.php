@@ -95,9 +95,9 @@ class event implements event_interface {
     protected $visible;
 
     /**
-     * @var int $subscriptionid The event's subscription ID.
+     * @var proxy_interface $subscription Subscription for this event.
      */
-    protected $subscriptionid;
+    protected $subscription;
 
     /**
      * Constructor.
@@ -113,7 +113,7 @@ class event implements event_interface {
      * @param string                     $type           The event's type.
      * @param times_interface            $times          The times associated with the event.
      * @param bool                       $visible        The event's visibility. True for visible, false for invisible.
-     * @param int                        $subscriptionid The event's subscription ID.
+     * @param proxy_interface            $subscription   The event's subscription.
      */
     public function __construct(
         $id,
@@ -127,7 +127,7 @@ class event implements event_interface {
         $type,
         times_interface $times,
         $visible,
-        $subscriptionid
+        proxy_interface $subscription = null
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -140,7 +140,7 @@ class event implements event_interface {
         $this->type = $type;
         $this->times = $times;
         $this->visible = $visible;
-        $this->subscriptionid = $subscriptionid;
+        $this->subscription = $subscription;
     }
 
     public function get_id() {
@@ -183,8 +183,8 @@ class event implements event_interface {
         return $this->repeats;
     }
 
-    public function get_subscription_id() {
-        return $this->subscriptionid;
+    public function get_subscription() {
+        return $this->subscription;
     }
 
     public function is_visible() {

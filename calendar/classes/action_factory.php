@@ -15,29 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event factory interface.
+ * Action factory.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
+namespace core_calendar;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_calendar\local\interfaces\action_factory_interface;
+use core_calendar\local\event\value_objects\action;
+
 /**
- * Interface for an event factory class.
+ * Action factory class.
  *
- * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface event_factory_interface {
-    /**
-     * Creates an instance of an event.
-     *
-     * @param \stdClass $dbrow The event row from the database.
-     * @return \core_calendar\local\interfaces\event_interface
-     */
-    public function create_instance(\stdClass $dbrow);
+class action_factory implements action_factory_interface {
+    public function create_instance($name, \moodle_url $url, $itemcount ) {
+        return new action ($name, $url, $itemcount);
+    }
 }

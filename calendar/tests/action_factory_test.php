@@ -15,29 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event factory interface.
+ * Action factory test.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
-
 defined('MOODLE_INTERNAL') || die();
 
+use core_calendar\action_factory;
+use core_calendar\local\interfaces\action_interface;
+
 /**
- * Interface for an event factory class.
+ * Action factory testcase.
  *
- * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface event_factory_interface {
+class core_calendar_action_factory_test extends advanced_testcase {
     /**
-     * Creates an instance of an event.
-     *
-     * @param \stdClass $dbrow The event row from the database.
-     * @return \core_calendar\local\interfaces\event_interface
+     * Test action factory.
      */
-    public function create_instance(\stdClass $dbrow);
+    public function test_action_factory() {
+        $factory = new action_factory();
+        $instance = $factory->create_instance(
+            'test',
+            new \moodle_url('http://example.com'),
+            1729
+        );
+
+        $this->assertInstanceOf(action_interface::class, $instance);
+    }
 }

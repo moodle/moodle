@@ -126,6 +126,16 @@ define('CALENDAR_SUBSCRIPTION_REMOVE', 2);
 define('CALENDAR_EVENT_USER_OVERRIDE_PRIORITY', 9999999);
 
 /**
+ * CALENDAR_EVENT_TYPE_STANDARD - Standard events.
+ */
+define('CALENDAR_EVENT_TYPE_STANDARD', 0);
+
+/**
+ * CALENDAR_EVENT_TYPE_ACTION - Action events.
+ */
+define('CALENDAR_EVENT_TYPE_ACTION', 1);
+
+/**
  * Calendar information class
  *
  * This class is used simply to organise the information pertaining to a calendar

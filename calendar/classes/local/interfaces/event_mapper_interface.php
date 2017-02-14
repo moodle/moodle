@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event factory interface.
+ * Event mapper interface.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
@@ -26,18 +26,29 @@ namespace core_calendar\local\interfaces;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_calendar\event;
+use core_calendar\local\interfaces\event_interface;
+
 /**
- * Interface for an event factory class.
+ * Interface for an event mapper class
  *
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface event_factory_interface {
+interface event_mapper_interface {
     /**
-     * Creates an instance of an event.
+     * Map a legacy event to an event.
      *
-     * @param \stdClass $dbrow The event row from the database.
-     * @return \core_calendar\local\interfaces\event_interface
+     * @param event $event The legacy event.
+     * @return event_interface The mapped event.
      */
-    public function create_instance(\stdClass $dbrow);
+    public function from_legacy_event_to_event(event $event);
+
+    /**
+     * Map an event to a legacy event.
+     *
+     * @param event_interface $event The legacy event.
+     * @return event The mapped legacy event.
+     */
+    public function from_event_to_legacy_event(event_interface $event);
 }

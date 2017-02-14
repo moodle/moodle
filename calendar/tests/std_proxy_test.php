@@ -99,6 +99,7 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      *
      * @dataProvider test_get_set_testcases()
      * @expectedException \core_calendar\local\event\exceptions\member_does_not_exist_exception
+     * @param int $id ID of the object being proxied.
      */
     public function test_get_invalid_member($id) {
         $proxy = new std_proxy($id, function($id) {
@@ -113,6 +114,7 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      *
      * @dataProvider test_get_set_testcases()
      * @expectedException \core_calendar\local\event\exceptions\member_does_not_exist_exception
+     * @param int $id ID of the object being proxied.
      */
     public function test_set_invalid_member($id) {
         $proxy = new std_proxy($id, function($id) {

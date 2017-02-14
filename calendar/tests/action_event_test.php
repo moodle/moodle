@@ -138,8 +138,8 @@ class core_calendar_action_event_test_event implements event_interface {
         return new core_calendar_action_event_test_event_collection();
     }
 
-    public function get_subscription_id() {
-        return 1729;
+    public function get_subscription() {
+        return new \stdClass();
     }
 
     public function is_visible() {

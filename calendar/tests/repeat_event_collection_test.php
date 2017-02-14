@@ -149,46 +149,28 @@ class core_calendar_repeat_event_collection_testcase extends advanced_testcase {
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_calendar_repeat_event_collection_event_test_factory implements event_factory_interface {
-    public function create_instance(
-        $id,
-        $name,
-        $descriptionvalue,
-        $descriptionformat,
-        $courseid,
-        $groupid,
-        $userid,
-        $repeatid,
-        $modulename,
-        $moduleinstance,
-        $type,
-        $timestart,
-        $timeduration,
-        $timemodified,
-        $timesort,
-        $visible,
-        $subscriptionid
-    ) {
+    public function create_instance(\stdClass $dbrow) {
         $identity = function($id) {
             return $id;
         };
         return new event(
-            $id,
-            $name,
-            new event_description($descriptionvalue, $descriptionformat),
-            new std_proxy($courseid, $identity),
-            new std_proxy($groupid, $identity),
-            new std_proxy($userid, $identity),
-            new repeat_event_collection($id, $this),
-            new std_proxy($moduleinstance, $identity),
-            $type,
+            $dbrow->id,
+            $dbrow->name,
+            new event_description($dbrow->description, $dbrow->format),
+            new std_proxy($dbrow->courseid, $identity),
+            new std_proxy($dbrow->groupid, $identity),
+            new std_proxy($dbrow->userid, $identity),
+            new repeat_event_collection($dbrow->id, $this),
+            new std_proxy($dbrow->instance, $identity),
+            $dbrow->type,
             new event_times(
-                (new \DateTimeImmutable())->setTimestamp($timestart),
-                (new \DateTimeImmutable())->setTimestamp($timestart + $timeduration),
-                (new \DateTimeImmutable())->setTimestamp($timesort ? $timesort : $timestart),
-                (new \DateTimeImmutable())->setTimestamp($timemodified)
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timestart),
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timestart + $dbrow->timeduration),
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timesort ? $dbrow->timesort : $dbrow->timestart),
+                (new \DateTimeImmutable())->setTimestamp($dbrow->timemodified)
             ),
-            !empty($visible),
-            $subscriptionid
+            !empty($dbrow->visible),
+            new std_proxy($dbrow->subscriptionid, $identity)
         );
     }
 }

@@ -37,7 +37,8 @@ interface proxy_interface {
      * Retrieve a member of the proxied class.
      *
      * @param string $member The name of the member to retrieve
-     * @throws \core_calendar\local\event\exceptions\member_does_not_exist_exception If the proxied class does not have the requested member.
+     * @throws \core_calendar\local\event\exceptions\member_does_not_exist_exception If the proxied class does not have the
+     *                                                                               requested member.
      * @return mixed The member.
      */
     public function get($member);
@@ -53,7 +54,8 @@ interface proxy_interface {
      *
      * @param string $member The name of the member to set
      * @param mixed  $value  The value to set the member to
-     * @throws \core_calendar\local\event\exceptions\member_does_not_exist_exception If the proxied class does not have the requested member.
+     * @throws \core_calendar\local\event\exceptions\member_does_not_exist_exception If the proxied class does not have the
+     *                                                                               requested member.
      * @return void
      */
     public function set($member, $value);

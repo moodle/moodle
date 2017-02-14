@@ -104,11 +104,11 @@ interface event_interface {
     public function get_repeats();
 
     /**
-     * Get the event's subscritpion ID.
+     * Get the event's subscritpion.
      *
-     * @return int
+     * @return \core_calendar\local\event\proxies\proxy_interface
      */
-    public function get_subscription_id();
+    public function get_subscription();
 
     /**
      * Get the event's visibility.

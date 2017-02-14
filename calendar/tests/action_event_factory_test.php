@@ -15,103 +15,102 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Calendar action event class.
+ * Action event factory tests.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\event\entities;
-
 defined('MOODLE_INTERNAL') || die();
 
+use core_calendar\local\event\factories\action_event_factory;
 use core_calendar\local\interfaces\action_event_interface;
-use core_calendar\local\interfaces\action_interface;
 use core_calendar\local\interfaces\event_interface;
+use core_calendar\local\event\value_objects\action;
 
 /**
- * Class representing an actionable event.
- *
- * An actionable event can be thought of as an embellished event. That is,
- * it does everything a regular event does, but has some extra information
- * attached to it. For example, the URL a user needs to visit to complete
- * an action, the number of actionable items, etc.
+ * Action testcase.
  *
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_event implements action_event_interface {
+class core_calendar_action_event_factory_testcase extends advanced_testcase {
     /**
-     * @var event_interface $event The event to delegate to.
+     * Test create instance.
      */
-    protected $event;
+    public function test_create_instance() {
+        $factory = new action_event_factory();
+        $instance = $factory->create_instance(
+            new action_event_factory_test_event(),
+            new action(
+                'Test',
+                new \moodle_url('http://example.com'),
+                1729
+            )
+        );
 
-    /**
-     * @var action_interface $action The action associated with this event.
-     */
-    protected $action;
-
-    /**
-     * Constructor.
-     *
-     * @param event_interface  $event  The event to delegate to.
-     * @param action_interface $action The action associated with this event.
-     */
-    public function __construct(event_interface $event, action_interface $action) {
-        $this->event = $event;
-        $this->action = $action;
+        $this->assertInstanceOf(action_event_interface::class, $instance);
     }
+}
 
+/**
+ * A test event factory.
+ *
+ * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class action_event_factory_test_event implements event_interface {
     public function get_id() {
-        return $this->event->get_id();
+        return 1729;
     }
 
     public function get_name() {
-        return $this->event->get_name();
+        return 'Jeff';
     }
 
     public function get_description() {
-        return $this->event->get_description();
+        return new event_description('asdf', 1);
     }
 
     public function get_course() {
-        return $this->event->get_course();
+        return new \stdClass();
     }
 
     public function get_course_module() {
-        return $this->event->get_course_module();
+        return new \stdClass();
     }
 
     public function get_group() {
-        return $this->event->get_group();
+        return new \stdClass();
     }
 
     public function get_user() {
-        return $this->event->get_user();
+        return new \stdClass();
     }
 
     public function get_type() {
-        return $this->event->get_type();
+        return 'asdf';
     }
 
     public function get_times() {
-        return $this->event->get_times();
+        return new event_times(
+            (new \DateTimeImmutable())->setTimestamp('-2461276800'),
+            (new \DateTimeImmutable())->setTimestamp('115776000'),
+            (new \DateTimeImmutable())->setTimestamp('115776000'),
+            (new \DateTimeImmutable())->setTimestamp(time())
+        );
     }
 
     public function get_repeats() {
-        return $this->event->get_repeats();
+        return new test_event_collection();
     }
 
     public function get_subscription() {
-        return $this->event->get_subscription();
+        return new \stdClass();
     }
 
     public function is_visible() {
-        return $this->event->is_visible();
-    }
-
-    public function get_action() {
-        return $this->action;
+        return true;
     }
 }

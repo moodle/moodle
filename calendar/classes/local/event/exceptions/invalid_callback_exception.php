@@ -15,29 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event factory interface.
+ * Invalid callback exception.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\interfaces;
+namespace core_calendar\local\event\exceptions;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Interface for an event factory class.
+ * Invalid callback exception.
  *
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface event_factory_interface {
-    /**
-     * Creates an instance of an event.
-     *
-     * @param \stdClass $dbrow The event row from the database.
-     * @return \core_calendar\local\interfaces\event_interface
-     */
-    public function create_instance(\stdClass $dbrow);
+class invalid_callback_exception extends \moodle_exception {
 }

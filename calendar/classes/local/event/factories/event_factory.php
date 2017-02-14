@@ -15,52 +15,40 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Description value object.
+ * Event factory class.
  *
  * @package    core_calendar
  * @copyright  2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_calendar\local\event\value_objects;
+namespace core_calendar\local\event\factories;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_calendar\local\interfaces\description_interface;
+use core_calendar\local\event\exceptions\invalid_callback_exception;
+use core_calendar\local\event\factories\event_abstract_factory;
+use core_calendar\local\interfaces\event_interface;
 
 /**
- * Class representing a description value object.
+ * Event factory class.
  *
  * @copyright 2017 Cameron Ball <cameron@cameron1729.xyz>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class event_description implements description_interface {
-    /**
-     * @var string $value The description's text.
-     */
-    protected $value;
+class event_factory extends event_abstract_factory {
+    protected function apply_component_action(event_interface $event) {
+        if (!$event->get_course_module()) {
+            return $event;
+        }
 
-    /**
-     * @var int $format The description's format.
-     */
-    protected $format;
+        $callbackapplier = $this->callbackapplier;
+        $callbackresult = $callbackapplier($event);
 
-    /**
-     * Constructor.
-     *
-     * @param stirng $value  The description's value.
-     * @param int    $format The description's format.
-     */
-    public function __construct($value, $format) {
-        $this->value = $value;
-        $this->format = $format;
-    }
+        if (!$callbackresult instanceof event_interface) {
+            throw new invalid_callback_exception('Event factory callback applier must return an instance of action_interface');
+        }
 
-    public function get_value() {
-        return $this->value;
-    }
-
-    public function get_format() {
-        return $this->format;
+        return $callbackresult;
     }
 }
