@@ -55,20 +55,41 @@ class std_proxy implements proxy_interface {
     protected $callback;
 
     /**
+     * @var \stdClass $base Base class to get members from.
+     */
+    protected $base;
+
+
+    /**
      * Constructor.
      *
-     * @param int      $id       The ID of the record in the database.
-     * @param callable $callback Callback to load the class.
+     * @param int       $id       The ID of the record in the database.
+     * @param callable  $callback Callback to load the class.
+     * @param \stdClass $base     Class containing base values.
      */
-    public function __construct($id, callable $callback) {
+    public function __construct($id, callable $callback, \stdClass $base = null) {
         $this->id = $id;
         $this->callback = $callback;
+        $this->base = $base;
+    }
+
+    public function get_id() {
+        return $this->id;
     }
 
     public function get($member) {
+        if ($member === 'id') {
+            return $this->get_id();
+        }
+
+        if ($this->base && property_exists($this->base, $member)) {
+            return $this->base->{$member};
+        }
+
         if (!property_exists($this->get_proxied_instance(), $member)) {
             throw new member_does_not_exist_exception(sprintf('Member %s does not exist', $member));
         }
+
         return $this->get_proxied_instance()->{$member};
     }
 

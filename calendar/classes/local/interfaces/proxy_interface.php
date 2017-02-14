@@ -43,6 +43,12 @@ interface proxy_interface {
     public function get($member);
 
     /**
+     * Retrieve the ID of the proxied class.
+     * @return int The proxied class' ID.
+     */
+    public function get_id();
+
+    /**
      * Set a member of the proxied class.
      *
      * @param string $member The name of the member to set

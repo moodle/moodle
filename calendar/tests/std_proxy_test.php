@@ -36,10 +36,10 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
     /**
      * @var \stdClass[] $objects Array of objects to proxy.
      */
-    public static $objects;
+    public $objects;
 
-    public static function setUpBeforeClass() {
-        self::$objects = [
+    public function setUp() {
+        $this->objects = [
             1 => (object) [
                 'member1' => 'Hello',
                 'member2' => 1729,
@@ -63,14 +63,35 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      */
     public function test_proxy($id, $member, $expected) {
         $proxy = new std_proxy($id, function($id) {
-            return self::$objects[$id];
+            return $this->objects[$id];
         });
 
         $this->assertEquals($proxy->get($member), $expected);
 
         // Test changing the value.
-        $proxy->set($member, 'something else');
-        $this->assertEquals($proxy->get($member), 'something else');
+        $proxy->set($member, 'something even more else');
+        $this->assertEquals($proxy->get($member), 'something even more else');
+    }
+
+    /**
+     * Test setting values with a base class.
+     *
+     * @dataProvider test_proxy_testcases()
+     * @param int    $id          Object ID.
+     * @param string $member      Object member to retrieve.
+     * @param mixed  $storedvalue Value as would be stored externally.
+     */
+    public function test_base_values($id, $member, $storedvalue) {
+        $proxy = new std_proxy(
+            $id,
+            function($id) {
+                return $this->objects[$id];
+            },
+            (object)['member1' => 'should clobber 1']
+        );
+
+        $expected = $member == 'member1' ? 'should clobber 1' : $storedvalue;
+        $this->assertEquals($proxy->get($member), $expected);
     }
 
     /**
@@ -81,7 +102,7 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      */
     public function test_get_invalid_member($id) {
         $proxy = new std_proxy($id, function($id) {
-            return self::$objects[$id];
+            return $this->objects[$id];
         });
 
         $proxy->get('thisdoesnotexist');
@@ -95,7 +116,7 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      */
     public function test_set_invalid_member($id) {
         $proxy = new std_proxy($id, function($id) {
-            return self::$objects[$id];
+            return $this->objects[$id];
         });
 
         $proxy->set('thisdoesnotexist', 'should break');
@@ -109,10 +130,10 @@ class core_calendar_std_proxy_testcase extends advanced_testcase {
      */
     public function test_get_proxied_instance($id) {
         $proxy = new std_proxy($id, function($id) {
-            return self::$objects[$id];
+            return $this->objects[$id];
         });
 
-        $this->assertEquals($proxy->get_proxied_instance(), self::$objects[$id]);
+        $this->assertEquals($proxy->get_proxied_instance(), $this->objects[$id]);
     }
 
     /**
