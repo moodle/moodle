@@ -215,7 +215,7 @@ abstract class course_selector_base {
             $multiselect = 'multiple="multiple" ';
         }
         $output = '<div class="courseselector" id="' . $this->name . '_wrapper">' . "\n" .
-                '<select class="select singleselect" name="' . $name . '" id="' . $this->name . '" ' .
+                '<select class="select" name="' . $name . '" id="' . $this->name . '" ' .
                 $multiselect . 'size="' . $this->rows . '">' . "\n";
 
         // Populate the select.
